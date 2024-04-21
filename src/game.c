@@ -8481,9 +8481,348 @@ void research_unkn_func_002(void)
 
 void unkn_research_func_006(void)
 {
+#if 0
     asm volatile ("call ASM_unkn_research_func_006\n"
         :  :  : "eax" );
     return;
+#endif
+    TbBool visible, reserve_space;
+    struct TbSprite *spr;
+    ushort bri;
+    char *text;
+    const char *subtext;
+    char locstr[52];
+    short iconid, icontot;
+    short cx, tx;
+    ushort icon_width;
+
+    icon_width = sprites_Icons0_0[102].SWidth;
+    cx = 3;
+    icontot = (research.NumBases != 0) + 5;
+    for (iconid = 0; iconid < icontot; iconid++)
+    {
+        if (login_control__State == 5)
+        {
+            if (is_unkn_current_player())
+                visible = (iconid != 1 && iconid != 5);
+            else
+                visible = (iconid != 1 && iconid != 2 && iconid != 5);
+            if ((unkn_flags_08 & 0x02) == 0 || (unkn_flags_08 & 0x01) == 0)
+                visible = (iconid == 0);
+            reserve_space = (iconid != 1);
+        }
+        else
+        {
+            visible = (iconid != 1);
+            reserve_space = (iconid != 1);
+        }
+        if (visible)
+        {
+            spr = &sprites_Icons0_0[byte_155124[iconid]];
+            if (mouse_move_over_rect(cx, cx + spr->SWidth + 1, 432,
+                spr->SHeight + 433))
+            {
+                if ((byte_1C497E & (1 << iconid)) == 0) {
+                    byte_1C497E |= (1 << iconid);
+                    play_sample_using_heap(0, 123, 127, 64, 100, 0, 1);
+                }
+                lbDisplay.DrawFlags = 0x0004;
+                if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
+                {
+                    lbDisplay.LeftButton = 0;
+                    lbDisplay.DrawFlags = 0;
+                    word_1C498A = 2 * (iconid + 1);
+                }
+                else if (word_1C498A == 2 * iconid + 2)
+                {
+                    if (mo_weapon != -1 && mo_weapon == research.CurrentWeapon)
+                    {
+                        player_cryo_remove_weapon_one(mo_from_agent, mo_weapon + 1);
+                        research_unkn_func_003();
+                        mo_weapon = -1;
+                    }
+                    else if (screentype != SCRT_ALERTBOX)
+                    {
+                        change_screen = iconid + 1;
+                        play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
+                    }
+                    word_1C498A = 0;
+                }
+                if (lbDisplay.MRightButton || (joy.Buttons[0] && !net_unkn_pos_02))
+                {
+                    lbDisplay.RightButton = 0;
+                    lbDisplay.DrawFlags = 0;
+                    word_1C498A = 2 * (iconid + 1) + 1;
+                }
+                else if (word_1C498A == 2 * iconid + 3)
+                {
+                    if (screentype != SCRT_ALERTBOX)
+                    {
+                        change_screen = iconid + 1;
+                        play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
+                    }
+                    word_1C498A = 0;
+                }
+                lbDisplay.DrawFlags |= 0x8000;
+                spr = &sprites_Icons0_0[byte_155124[iconid]
+                    + byte_1C4984[iconid] + byte_15512C[iconid]];
+                draw_sprite_purple_list(cx, 432, spr);
+                lbDisplay.DrawFlags = 0;
+                spr = &sprites_Icons0_0[byte_1C4984[iconid]
+                    + byte_155124[iconid]];
+                draw_sprite_purple_list(cx, 432, spr);
+                byte_1C4984[iconid]++;
+                if (byte_1C4984[iconid] == byte_15512C[iconid])
+                    byte_1C4984[iconid] = 0;
+            }
+            else
+            {
+                byte_1C497E &= ~(1 << iconid);
+                lbDisplay.DrawFlags = 0x8000 | 0x0004;
+                spr = &sprites_Icons0_0[byte_1C4984[iconid]
+                    + byte_155124[iconid] + byte_15512C[iconid]];
+                draw_sprite_purple_list(cx, 432, spr);
+                lbDisplay.DrawFlags = 0;
+                if (byte_1C4984[iconid])
+                {
+                    byte_1C4984[iconid]++;
+                    if (byte_1C4984[iconid] == byte_15512C[iconid])
+                        byte_1C4984[iconid] = 0;
+                }
+                if (word_1C498A == 2 * iconid + 2
+                    || word_1C498A == 2 * iconid + 3)
+                    word_1C498A = 0;
+            }
+        }
+        if (reserve_space)
+        {
+            spr = &sprites_Icons0_0[byte_155124[iconid]];
+            cx += spr->SWidth + 3;
+        }
+    }
+
+    if (icontot == 5)
+    {
+        cx += sprites_Icons0_0[byte_155124[iconid]].SWidth + 3;
+    }
+    if (new_mail
+        && (game_system_screen != SCRT_MISSION || screentype != SCRT_NETGAME))
+    {
+        if ((lbKeyOn[KC_RETURN]
+            && ((game_system_screen != 3 && game_system_screen != 1)
+                || screentype != SCRT_NETGAME) && !edit_flag)
+            || mouse_move_over_rect(cx, cx + sprites_Icons0_0[79].SWidth + 1,
+                432, 433 + sprites_Icons0_0[79].SHeight))
+        {
+            if (!byte_1C4980 && !lbKeyOn[KC_RETURN])
+            {
+                byte_1C4980 = 1;
+                play_sample_using_heap(0, 123, 127, 64, 100, 0, 1);
+            }
+            lbDisplay.DrawFlags = 0x0004;
+            if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
+            {
+                lbDisplay.LeftButton = 0;
+                lbDisplay.DrawFlags = 0;
+                word_1C498A = 50;
+            }
+            else
+            {
+                if (word_1C498A == 50 || lbKeyOn[KC_RETURN])
+                {
+                    word_1C498A = 0;
+                    lbKeyOn[KC_RETURN] = 0;
+                    if (screentype != SCRT_ALERTBOX)
+                    {
+                        if (activate_queued_mail() == 1)
+                        {
+                            word_1C6F40 = next_brief - 5;
+                            if (word_1C6F40 < 0)
+                                word_1C6F40 = 0;
+                            open_brief = next_brief;
+                            change_screen = 7;
+                            subtext = gui_strings[372];
+                        }
+                        else
+                        {
+                            word_1C6F3E = next_email - 4;
+                            if (word_1C6F3E < 0)
+                                word_1C6F3E = 0;
+                            change_screen = 7;
+                            subtext = gui_strings[373];
+                            open_brief = -next_email;
+                        }
+                        set_heading_box_text(subtext);
+                        play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
+                        if (new_mail)
+                        {
+                            play_sample_using_heap(0,
+                              119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3);
+                        }
+                        else
+                        {
+                            byte_1C4980 = new_mail;
+                        }
+                    }
+                }
+            }
+            lbDisplay.DrawFlags |= 0x8000;
+            switch (byte_1C498C)
+            {
+            case 1:
+                spr = &sprites_Icons0_0[79];
+                draw_sprite_purple_list(cx, 432, spr);
+                break;
+            case 2:
+                play_sample_using_heap(0, 112, 127, 64, 100, 0, 1);
+                // fall through
+            case 3:
+            case 4:
+            case 5:
+                spr = &sprites_Icons0_0[byte_1C498C + 77];
+                draw_sprite_purple_list(cx, 432, spr);
+                lbDisplay.DrawFlags = 0;
+                spr = &sprites_Icons0_0[byte_1C498C + 96];
+                draw_sprite_purple_list(cx, 432, spr);
+                break;
+            case 6:
+                spr = &sprites_Icons0_0[82];
+                draw_sprite_purple_list(cx, 432, spr);
+                lbDisplay.DrawFlags = 0;
+                break;
+            default:
+                break;
+            }
+            lbDisplay.DrawFlags = 0;
+            if (gameturn & 1)
+            {
+                if (++byte_1C498C > 5)
+                    byte_1C498C = 2;
+            }
+        }
+        else
+        {
+            byte_1C4980 = 0;
+            lbDisplay.DrawFlags = 0x8000 | 0x0004;
+            switch (byte_1C498C)
+            {
+            case 1:
+                spr = &sprites_Icons0_0[79];
+                draw_sprite_purple_list(cx, 432, spr);
+                break;
+            case 2:
+                play_sample_using_heap(0, 112, 127, 64, 100, 0, 1);
+                // fall through
+            case 3:
+            case 4:
+            case 5:
+                spr = &sprites_Icons0_0[byte_1C498C + 77];
+                draw_sprite_purple_list(cx, 432, spr);
+                lbDisplay.DrawFlags = 0;
+                spr = &sprites_Icons0_0[byte_1C498C + 96];
+                draw_sprite_purple_list(cx, 432, spr);
+                break;
+            case 6:
+                spr = &sprites_Icons0_0[82];
+                draw_sprite_purple_list(cx, 432, spr);
+                lbDisplay.DrawFlags = 0;
+                break;
+            default:
+                break;
+            }
+            lbDisplay.DrawFlags = 0;
+            if (gameturn & 1)
+            {
+                if (++byte_1C498C > 6)
+                    byte_1C498C = 0;
+            }
+        }
+    }
+    lbDisplay.DrawFlags = 0;
+
+    cx = 637 - icon_width;
+    bri = word_1C6F40;
+
+    for (iconid = word_1C6F40; iconid < next_brief && iconid < word_1C6F40 + 10;
+        iconid++)
+    {
+        lbDisplay.DrawFlags = 0x0004;
+        spr = &sprites_Icons0_0[102];
+        if (mouse_move_over_rect(cx, cx + icon_width + 1, 432,
+            spr->SHeight + 433))
+        {
+            if ((byte_1C497F & (1 << (iconid - word_1C6F40))) == 0)
+            {
+                byte_1C497F |= (1 << (iconid - word_1C6F40));
+                play_sample_using_heap(0, 123, 127, 64, 100, 0, 1u);
+            }
+            if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
+            {
+                lbDisplay.LeftButton = 0;
+                lbDisplay.DrawFlags = 0;
+                word_1C498A = 2 * (iconid + 1) + 100;
+            }
+            else if (word_1C498A == 2 * iconid + 102)
+            {
+                if (screentype != 12)
+                {
+                    change_screen = 7;
+                    set_heading_box_text(gui_strings[372]);
+                    open_brief = iconid + 1;
+                    play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
+                }
+                word_1C498A = 0;
+            }
+            lbDisplay.DrawFlags |= 0x8000;
+            spr = &sprites_Icons0_0[102];
+            draw_sprite_purple_list(cx, 432, spr);
+            lbDisplay.DrawFlags = 0;
+        }
+        else
+        {
+            byte_1C497F &= ~(1 << (iconid - word_1C6F40));
+            lbDisplay.DrawFlags |= 0x8000;
+            spr = &sprites_Icons0_0[102];
+            draw_sprite_purple_list(cx, 432, spr);
+            lbDisplay.DrawFlags &= ~0x8000;
+        }
+        lbFontPtr = small2_font;
+        lbDisplay.DrawColour = 87;
+        if (mission_remain_until_success(brief_store[bri].Mission))
+            lbDisplay.DrawFlags |= 0x0040;
+        spr = &sprites_Icons0_0[102];
+        my_set_text_window(cx, 0x1B0u, icon_width + 2, spr->SHeight);
+        draw_text_purple_list2(8, 3, misc_text[4], 0);
+
+        lbFontPtr = med2_font;
+        sprintf(locstr, "%d", brief_store[bri].RefNum);
+        tx = (35 - LbTextStringWidth(locstr)) >> 1;
+        text = (char*) back_buffer + text_buf_pos;
+        strcpy(text, locstr);
+        draw_text_purple_list2(tx, 10, text, 0);
+
+        lbFontPtr = small2_font;
+        text_buf_pos += strlen(locstr) + 1;
+        sprintf(locstr, "%02d/%02d", (int) brief_store[bri].RecvDay,
+            (int) brief_store[bri].RecvMonth);
+        tx = (35 - LbTextStringWidth(locstr)) >> 1;
+        text = (char*) back_buffer + text_buf_pos;
+        strcpy(text, locstr);
+        draw_text_purple_list2(tx, 23, text, 0);
+        text_buf_pos += strlen(locstr) + 1;
+        sprintf(locstr, "%02dNC", (int) brief_store[bri].RecvYear);
+
+        tx = (35 - LbTextStringWidth(locstr)) >> 1;
+        text = (char*) back_buffer + text_buf_pos;
+        strcpy(text, locstr);
+        draw_text_purple_list2(tx, 30, text, 0);
+        text_buf_pos += strlen(locstr) + 1;
+        draw_text_purple_list2(4, 37, gui_strings[375], 0);
+        lbDisplay.DrawFlags = 0;
+
+        bri++;
+        cx -= icon_width + 3;
+    }
 }
 
 void net_unkn_func_29(short a1, short a2, ubyte a3, sbyte a4, ubyte a5)
