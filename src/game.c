@@ -256,6 +256,7 @@ extern ubyte byte_1C497D;
 extern ubyte month_days[12];
 
 struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};
+struct ScreenBoxBase global_apps_bar_box = {3, 432, 634, 48};
 
 extern ubyte byte_155124[];
 extern ubyte byte_15512C[];
@@ -6349,6 +6350,9 @@ void init_global_boxes(void)
     start_x = (scr_w - global_top_bar_box.Width) / 2;
     global_top_bar_box.X = start_x;
     global_top_bar_box.Y = 4;
+    start_x = (scr_w - global_apps_bar_box.Width) / 2;
+    global_apps_bar_box.X = start_x;
+    global_apps_bar_box.Y = 432;
 }
 
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
@@ -8565,11 +8569,12 @@ void show_apps_selection_bar(void)
     const char *subtext;
     char locstr[52];
     short iconid, icontot;
-    short cx, tx;
+    short cx, cy, tx;
     ushort icon_width;
 
     icon_width = sprites_Icons0_0[102].SWidth;
-    cx = 3;
+    cx = global_apps_bar_box.X;
+    cy = global_apps_bar_box.Y;
     icontot = (research.NumBases != 0) + 5;
     for (iconid = 0; iconid < icontot; iconid++)
     {
@@ -8592,8 +8597,8 @@ void show_apps_selection_bar(void)
         if (visible)
         {
             spr = &sprites_Icons0_0[byte_155124[iconid]];
-            if (mouse_move_over_rect(cx, cx + spr->SWidth + 1, 432,
-                spr->SHeight + 433))
+            if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth,
+              cy, cy + 1 + spr->SHeight))
             {
                 if ((byte_1C497E & (1 << iconid)) == 0) {
                     byte_1C497E |= (1 << iconid);
@@ -8636,7 +8641,7 @@ void show_apps_selection_bar(void)
                     }
                     word_1C498A = 0;
                 }
-                draw_app_icon_hilight(cx, 432, iconid, byte_1C4984[iconid]);
+                draw_app_icon_hilight(cx, cy, iconid, byte_1C4984[iconid]);
                 byte_1C4984[iconid]++;
                 if (byte_1C4984[iconid] == byte_15512C[iconid])
                     byte_1C4984[iconid] = 0;
@@ -8645,7 +8650,7 @@ void show_apps_selection_bar(void)
             {
                 byte_1C497E &= ~(1 << iconid);
                 lbDisplay.DrawFlags = 0x0004;
-                draw_app_icon_normal(cx, 432, iconid, byte_1C4984[iconid]);
+                draw_app_icon_normal(cx, cy, iconid, byte_1C4984[iconid]);
                 if (byte_1C4984[iconid])
                 {
                     byte_1C4984[iconid]++;
@@ -8671,11 +8676,12 @@ void show_apps_selection_bar(void)
     if (new_mail
         && (game_system_screen != SCRT_MISSION || screentype != SCRT_NETGAME))
     {
+        spr = &sprites_Icons0_0[79];
         if ((lbKeyOn[KC_RETURN]
-            && ((game_system_screen != 3 && game_system_screen != 1)
+            && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
                 || screentype != SCRT_NETGAME) && !edit_flag)
-            || mouse_move_over_rect(cx, cx + sprites_Icons0_0[79].SWidth + 1,
-                432, 433 + sprites_Icons0_0[79].SHeight))
+            || mouse_move_over_rect(cx, cx + 1 + spr->SWidth,
+                cy, cy + 1 + spr->SHeight))
         {
             if (!byte_1C4980 && !lbKeyOn[KC_RETURN])
             {
@@ -8729,7 +8735,7 @@ void show_apps_selection_bar(void)
                     }
                 }
             }
-            draw_email_icon(cx, 432, byte_1C498C);
+            draw_email_icon(cx, cy, byte_1C498C);
             if (gameturn & 1)
             {
                 if (++byte_1C498C > 5)
@@ -8740,7 +8746,7 @@ void show_apps_selection_bar(void)
         {
             byte_1C4980 = 0;
             lbDisplay.DrawFlags = 0x0004;
-            draw_email_icon(cx, 432, byte_1C498C);
+            draw_email_icon(cx, cy, byte_1C498C);
             if (gameturn & 1)
             {
                 if (++byte_1C498C > 6)
@@ -8750,7 +8756,7 @@ void show_apps_selection_bar(void)
     }
     lbDisplay.DrawFlags = 0;
 
-    cx = 637 - icon_width;
+    cx = global_apps_bar_box.X + global_apps_bar_box.Width - icon_width;
     bri = word_1C6F40;
 
     for (iconid = word_1C6F40; iconid < next_brief && iconid < word_1C6F40 + 10;
@@ -8758,8 +8764,8 @@ void show_apps_selection_bar(void)
     {
         lbDisplay.DrawFlags = 0x0004;
         spr = &sprites_Icons0_0[102];
-        if (mouse_move_over_rect(cx, cx + icon_width + 1, 432,
-            spr->SHeight + 433))
+        if (mouse_move_over_rect(cx, cx + icon_width + 1, cy,
+            cy + 1 + spr->SHeight))
         {
             if ((byte_1C497F & (1 << (iconid - word_1C6F40))) == 0)
             {
@@ -8785,7 +8791,7 @@ void show_apps_selection_bar(void)
             }
             lbDisplay.DrawFlags |= 0x8000;
             spr = &sprites_Icons0_0[102];
-            draw_sprite_purple_list(cx, 432, spr);
+            draw_sprite_purple_list(cx, cy, spr);
             lbDisplay.DrawFlags = 0;
         }
         else
@@ -8793,7 +8799,7 @@ void show_apps_selection_bar(void)
             byte_1C497F &= ~(1 << (iconid - word_1C6F40));
             lbDisplay.DrawFlags |= 0x8000;
             spr = &sprites_Icons0_0[102];
-            draw_sprite_purple_list(cx, 432, spr);
+            draw_sprite_purple_list(cx, cy, spr);
             lbDisplay.DrawFlags &= ~0x8000;
         }
         lbFontPtr = small2_font;
