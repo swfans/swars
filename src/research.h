@@ -56,6 +56,7 @@ extern char scientist_lost_reason[60];
 extern short daily_scientist_death_chance_permil;
 extern short scientists_per_group;
 extern short weapon_donate_research_incr_permil;
+extern short research_progress_rtc_minutes;
 
 void load_scientist_lost_reason(ushort reason_no);
 

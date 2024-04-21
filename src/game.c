@@ -8204,8 +8204,6 @@ void global_date_tick(void)
 {
     struct TbTime curr_time;
     TbBool notable;
-    //TODO make this a research config option
-    static long research_progress_tmdiff = 0;
 
     LbTime(&curr_time);
     global_date.Minute = curr_time.Minute;
@@ -8226,9 +8224,9 @@ void global_date_tick(void)
 
     notable = false;
 
-    if (research_progress_tmdiff > 0)
+    if (research_progress_rtc_minutes > 0)
     {
-        if (time_difference(&global_date, &research_curr_mod_date) >= research_progress_tmdiff)
+        if (time_difference(&global_date, &research_curr_mod_date) >= research_progress_rtc_minutes)
         {
             if (research_curr_mod_daily_done) {
                 research_curr_mod_daily_done = 0;
@@ -8242,7 +8240,7 @@ void global_date_tick(void)
                 research_curr_mod_daily_done = 1;
             }
         }
-        if (time_difference(&global_date, &research_curr_wep_date) >= research_progress_tmdiff)
+        if (time_difference(&global_date, &research_curr_wep_date) >= research_progress_rtc_minutes)
         {
             if (research_curr_wep_daily_done) {
                 research_curr_wep_daily_done = 0;
