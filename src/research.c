@@ -29,6 +29,7 @@
 /******************************************************************************/
 short daily_scientist_death_chance_permil = 20;
 short scientists_per_group = 4;
+short weapon_donate_research_incr_permil = 125;
 
 void load_scientist_lost_reason(ushort reason_no)
 {

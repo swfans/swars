@@ -8109,11 +8109,10 @@ void research_unkn_func_003(void)
         return;
 
     wdef = &weapon_defs[weapon];
-    //TODO CONFIG the increas should be configurable
     //TODO this modifies configuration which is not saved.
     // instead we should count the dropped weapons in
     // a separate variable within structs which are saved/loaded
-    wdef->PercentPerDay += wdef->PercentPerDay / 8;
+    wdef->PercentPerDay += wdef->PercentPerDay * weapon_donate_research_incr_permil / 1000;
 }
 
 ushort activate_queued_mail(void)
