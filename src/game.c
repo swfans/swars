@@ -250,8 +250,8 @@ extern ushort netgame_agent_pos_y[8][4];
 
 extern ubyte byte_153198;
 
-extern ubyte byte_1C497B;
-extern ubyte byte_1C497C;
+extern ubyte research_curr_wep_daily_done;
+extern ubyte research_curr_mod_daily_done;
 extern ubyte byte_1C497D;
 extern ubyte month_days[12];
 
@@ -8168,10 +8168,29 @@ TbBool research_cybmod_daily_progress(void)
     return (lost != 0) || (research.CurrentWeapon != prev);
 }
 
+/** Increment timestamp stored in given syntime by one day.
+ */
+void syntime_inc_day(struct SynTime *tm)
+{
+    tm->Day++;
+    if (tm->Day > month_days[tm->Month-1])
+    {
+        tm->Month++;
+        tm->Day = 1;
+        if (tm->Month > 12) {
+            tm->Year++;
+            tm->Month = 1;
+            tm->Year %= 100;
+        }
+    }
+}
+
 void global_date_tick(void)
 {
     struct TbTime curr_time;
     TbBool notable;
+    //TODO make this a research config option
+    static long research_progress_tmdiff = 0;
 
     LbTime(&curr_time);
     global_date.Minute = curr_time.Minute;
@@ -8186,46 +8205,41 @@ void global_date_tick(void)
     {
         if (!byte_1C497D) {
             byte_1C497D = 1;
-            global_date.Day++;
-            if (global_date.Day > month_days[global_date.Month-1])
-            {
-                global_date.Month++;
-                global_date.Day = 1;
-                if (global_date.Month > 12) {
-                    global_date.Year++;
-                    global_date.Month = 1;
-                    global_date.Year %= 100;
-                }
-            }
+            syntime_inc_day(&global_date);
         }
     }
 
     notable = false;
 
-    if (time_difference(&global_date, &research_curr_mod_date))
+    if (research_progress_tmdiff > 0)
     {
-        if (byte_1C497C) {
-            byte_1C497C = 0;
+        if (time_difference(&global_date, &research_curr_mod_date) >= research_progress_tmdiff)
+        {
+            if (research_curr_mod_daily_done) {
+                research_curr_mod_daily_done = 0;
+            }
+            LbMemoryCopy(&research_curr_mod_date, &global_date, sizeof(struct SynTime));
         }
-    }
-    else
-    {
-        if (!byte_1C497C) {
-            notable |= research_cybmod_daily_progress();
-            byte_1C497C = 1;
+        else
+        {
+            if (!research_curr_mod_daily_done) {
+                notable |= research_cybmod_daily_progress();
+                research_curr_mod_daily_done = 1;
+            }
         }
-    }
-    if (time_difference(&global_date, &research_curr_wep_date))
-    {
-        if (byte_1C497B) {
-            byte_1C497B = 0;
+        if (time_difference(&global_date, &research_curr_wep_date) >= research_progress_tmdiff)
+        {
+            if (research_curr_wep_daily_done) {
+                research_curr_wep_daily_done = 0;
+            }
+            LbMemoryCopy(&research_curr_wep_date, &global_date, sizeof(struct SynTime));
         }
-    }
-    else
-    {
-        if (!byte_1C497B) {
-            notable |= research_weapon_daily_progress();
-            byte_1C497B = 1;
+        else
+        {
+            if (!research_curr_wep_daily_done) {
+                notable |= research_weapon_daily_progress();
+                research_curr_wep_daily_done = 1;
+            }
         }
     }
 
