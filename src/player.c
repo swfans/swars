@@ -45,6 +45,8 @@ void cryo_update_from_player_agent(ushort cryo_no, PlayerInfo *p_player, ushort 
     ushort wepfp;
 
     p_agent = p_player->MyAgent[plagent];
+    if (p_agent->Type != TT_PERSON)
+        return;
 
     cryo_agents.Weapons[cryo_no] = p_agent->U.UPerson.WeaponsCarried & ~(1 << (WEP_ENERGYSHLD-1));
     cryo_agents.Mods[cryo_no].Mods = p_agent->U.UPerson.UMod.Mods;
@@ -75,6 +77,8 @@ void cryo_update_agents_from_player(PlayerInfo *p_player)
         struct Thing *p_agent;
 
         p_agent = p_player->MyAgent[plagent];
+        if (p_agent->Type != TT_PERSON)
+            continue;
         if ((p_agent->Flag & TngF_Unkn0002) != 0) {
             remove_agent(plagent);
             ++nremoved;

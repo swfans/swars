@@ -615,6 +615,7 @@ void update_danger_music(ubyte a1)
             for (i = 0; i < playable_agents; i++)
             {
                 p_agent = players[local_player_no].MyAgent[i];
+                if (p_agent->Type != TT_PERSON) continue;
                 if (((p_agent->Flag & TngF_Unkn0002) == 0) &&
                   (p_agent->Health < p_agent->U.UPerson.MaxHealth / 2)) {
                     dword_1DDECC = -100;
@@ -2034,7 +2035,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
     }
     p_agent = p_locplayer->MyAgent[nagent];
     // Protect from damaged / unfinished levels
-    if (p_agent == NULL)
+    if (p_agent->Type != TT_PERSON)
         return 0;
 
     curwep = p_agent->U.UPerson.CurrentWeapon;
@@ -2075,8 +2076,6 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
     {
         if (!p_locplayer->WepDelays[nagent][curwep] || (gameturn & 1))
         {
-            struct Thing *p_agent;
-            p_agent = p_locplayer->MyAgent[nagent];
             if (p_agent->State == PerSt_PROTECT_PERSON)
             {
                 struct TbSprite *spr;
@@ -2115,8 +2114,6 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
         curwep = prevwep;
         if (curwep && (!p_locplayer->WepDelays[nagent][curwep] || (gameturn & 1)))
         {
-            struct Thing *p_agent;
-            p_agent = p_locplayer->MyAgent[nagent];
             if (p_agent->State == PerSt_PROTECT_PERSON)
                 draw_new_panel_sprite_dark(cx, cy, weapon_sprite_index(curwep, false));
             else
@@ -2283,7 +2280,7 @@ TbBool func_1caf8(void)
         {
             ushort curwep;
             p_agent = p_locplayer->MyAgent[nagent];
-            if ((p_agent->Flag & TngF_Unkn0002) != 0) {
+            if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Unkn0002) != 0) {
                 cur_weapons[nagent] = 0;
                 continue;
             }
@@ -2297,7 +2294,8 @@ TbBool func_1caf8(void)
         {
             nagent = (panstate - 1) & 3;
             p_agent = p_locplayer->MyAgent[nagent];
-            ret |= draw_agent_weapons_selection(p_locplayer, p_agent, cur_weapons, nagent);
+            if (p_agent->Type == TT_PERSON)
+                ret |= draw_agent_weapons_selection(p_locplayer, p_agent, cur_weapons, nagent);
 
         }
     }
@@ -2316,6 +2314,7 @@ void draw_agent_grouping_bars(void)
     for (i = 0; i < playable_agents; i++)
     {
         p_thing = players[local_player_no].MyAgent[i];
+        if (p_thing->Type != TT_PERSON) continue;
         dcthing = players[local_player_no].DirectControl[byte_153198-1];
         if ((p_thing->State != PerSt_PROTECT_PERSON) || (p_thing->GotoThingIndex != dcthing)) {
             if (((p_thing->Flag2 & 0x10000000) == 0) || (p_thing->Owner != dcthing))
@@ -2612,7 +2611,7 @@ void draw_new_panel()
     {
         struct Thing *p_agent;
         p_agent = p_locplayer->MyAgent[i];
-        if (person_carries_any_medikit(p_agent))
+        if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
             game_panel[8+i].Spr = 96;
         else
             game_panel[8+i].Spr = 95;
@@ -2621,7 +2620,7 @@ void draw_new_panel()
     { // If supershield is enabled for the current agent, draw energy bar in red
         struct Thing *p_agent;
         p_agent = &things[p_locplayer->DirectControl[0]];
-        if ((p_agent->Flag & TngF_Unkn0100) != 0)
+        if ((p_agent->Type == TT_PERSON) && (p_agent->Flag & TngF_Unkn0100) != 0)
         {
             game_panel[16].Spr = 99;
             if (lbDisplay.GraphicsScreenHeight >= 400)
@@ -2661,7 +2660,7 @@ void draw_new_panel()
                 ubyte weapon;
 
                 p_agent = p_locplayer->MyAgent[panel->ID];
-                if (p_agent < &things[0] || p_agent > &things[THINGS_LIMIT])
+                if (p_agent->Type != TT_PERSON)
                     break;
                 weapon = p_agent->U.UPerson.CurrentWeapon;
                 if (weapon == 0)
@@ -2677,7 +2676,7 @@ void draw_new_panel()
                 if (panel->ID >= playable_agents)
                     continue;
                 p_agent = p_locplayer->MyAgent[panel->ID];
-                if (p_agent->Flag & TngF_Unkn0002)
+                if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Unkn0002))
                     continue;
                 draw_new_panel_sprite_std(panel->X, panel->Y, panel->Spr);
             }
@@ -2689,7 +2688,7 @@ void draw_new_panel()
                 if (panel->ID >= playable_agents)
                     continue;
                 p_agent = p_locplayer->MyAgent[panel->ID];
-                if (p_agent->Flag & TngF_Unkn0002)
+                if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Unkn0002))
                     continue;
 
                 if (panel->Type == 5) {
@@ -2806,7 +2805,7 @@ void draw_new_panel()
         int lv, lvmax, x, w;
 
         p_agent = p_locplayer->MyAgent[i];
-        if ((p_agent->Flag & TngF_PlayerAgent) == 0) {
+        if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_PlayerAgent) == 0) {
             LOGERR("Agent %d unexpected flags", i);
             return;
         }
@@ -3728,7 +3727,9 @@ void beefup_all_agents(PlayerInfo *p_locplayer)
     {
         struct Thing *p_agent;
         p_agent = p_locplayer->MyAgent[i];
-        if (p_agent->Flag & TngF_Unkn0002)
+        if (p_agent->Type != TT_PERSON)
+            continue;
+        if ((p_agent->Flag & TngF_Unkn0002) != 0)
             person_resurrect(p_agent);
         person_give_all_weapons(p_agent);
         if (lbShift & KMod_SHIFT)
@@ -4227,7 +4228,7 @@ void init_player(void)
         struct Thing *p_agent;
         place_single_player();
         p_agent = p_locplayer->MyAgent[0];
-        if (p_agent != NULL) {
+        if (p_agent->Type == TT_PERSON) {
             ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
             ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
         } else {
@@ -4244,7 +4245,7 @@ void init_player(void)
     {
         struct Thing *p_agent;
         p_agent = p_locplayer->MyAgent[0];
-        if (p_agent != NULL) {
+        if (p_agent->Type == TT_PERSON) {
             ingame.MyGroup = p_agent->U.UPerson.EffectiveGroup;
         } else {
             ingame.MyGroup = 0;
@@ -4273,7 +4274,7 @@ void init_player(void)
         struct Thing *p_agent;
         ulong wep;
         p_agent = p_locplayer->MyAgent[i];
-        if (p_agent != NULL)
+        if (p_agent->Type == TT_PERSON)
             wep = find_nth_weapon_held(p_agent->ThingOffset, 1);
         else
             wep = 0;
@@ -4442,7 +4443,12 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             break;
     }
     // At this point, plagent is a count of filled agents
-    return plagent;
+    n = plagent;
+    // Fill the rest of agents array, to avoid using leftovers
+    for (; plagent < AGENTS_SQUAD_MAX_COUNT; plagent++)
+        players[plyr].MyAgent[plagent] = &things[0];
+
+    return n;
 }
 
 int place_default_player(ushort player_id, TbBool replace)
@@ -7181,17 +7187,17 @@ ubyte do_user_interface(void)
             struct Thing *p_agent;
 
             p_agent = p_locplayer->MyAgent[n];
-            if (p_agent != NULL)
+            if (p_agent->Type != TT_PERSON) continue;
+
+            if (person_can_accept_control(p_agent) && ((p_agent->Flag2 & 0x10) == 0))
             {
-                if (person_can_accept_control(p_agent) && ((p_agent->Flag2 & 0x10) == 0))
+                lbKeyOn[kbkeys[gkey]] = 0;
+                if (p_locplayer->DoubleMode)
                 {
-                  lbKeyOn[kbkeys[gkey]] = 0;
-                  if (p_locplayer->DoubleMode)
-                  {
                     byte_153198 = n+1;
-                  }
-                  else
-                  {
+                }
+                else
+                {
                     short dcthing;
                     dcthing = p_locplayer->DirectControl[n];
                     my_build_packet(&packets[local_player_no], PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
@@ -7201,7 +7207,6 @@ ubyte do_user_interface(void)
                     {
                       struct Packet *p_pckt;
 
-                      p_agent = p_locplayer->MyAgent[n];
                       p_pckt = &packets[local_player_no];
 
                       ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
@@ -7216,9 +7221,8 @@ ubyte do_user_interface(void)
                       }
                     }
                     last_sel_agent_turn[n] = gameturn;
-                  }
-                  return 1;
                 }
+                return 1;
             }
         }
     }
@@ -7344,6 +7348,9 @@ TbBool panel_active_based_on_target(short panel)
 
     p_locplayer = &players[local_player_no];
     p_agent = p_locplayer->MyAgent[p_panel->ID];
+
+    if (p_agent->Type != TT_PERSON)
+        return false;
 
     return ((p_agent->Flag & TngF_Unkn0002) == 0);
 }
@@ -7592,7 +7599,7 @@ short process_panel_state(void)
 
             lbDisplay.RightButton = 0;
             p_agent = p_locplayer->MyAgent[agent];
-            if (pnitm != 0)
+            if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
                 my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
@@ -7609,7 +7616,7 @@ short process_panel_state(void)
             {
                 // Hold left, hold right, release left weapon drop
                 lbDisplay.RightButton = 0;
-                if (pnitm != 0)
+                if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
                 {
                     p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
                     my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
@@ -7617,14 +7624,17 @@ short process_panel_state(void)
                     return 1;
                 }
             }
-            if (pnitm != 0)
-            {
-                my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, p_agent->ThingOffset, pnitm, 0, 0);
-                p_locplayer->PanelState[mouser] = 0;
-                lbDisplay.RightButton = 0;
-                lbDisplay.LeftButton = 0;
-                p_locplayer->UserInput[mouser].ControlMode &= 0x3FFF;
-                return 1;
+
+            { // no mouse action required
+                if ((p_agent != NULL) && (pnitm != 0))
+                {
+                    my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, p_agent->ThingOffset, pnitm, 0, 0);
+                    p_locplayer->PanelState[mouser] = 0;
+                    lbDisplay.RightButton = 0;
+                    lbDisplay.LeftButton = 0;
+                    p_locplayer->UserInput[mouser].ControlMode &= ~(0x4000|0x8000);
+                    return 1;
+                }
             }
             p_locplayer->PanelState[mouser] = 0;
         }
@@ -7645,7 +7655,7 @@ short process_panel_state(void)
 
             lbDisplay.LeftButton = 0;
             p_agent = p_locplayer->MyAgent[agent];
-            if (pnitm != 0)
+            if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
                 my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
@@ -7658,13 +7668,13 @@ short process_panel_state(void)
             struct Thing *p_agent;
 
             p_agent = p_locplayer->MyAgent[agent];
-            if (pnitm != 0)
+            if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
             {
                 my_build_packet(p_pckt, PAct_31, p_agent->ThingOffset, pnitm, 0, 0);
                 p_locplayer->PanelState[mouser] = 0;
                 lbDisplay.RightButton = 0;
                 lbDisplay.LeftButton = 0;
-                p_locplayer->UserInput[mouser].ControlMode &= 0x3FFF;
+                p_locplayer->UserInput[mouser].ControlMode &= ~(0x4000|0x8000);
                 return 1;
             }
             p_locplayer->PanelState[mouser] = 0;
@@ -7693,7 +7703,7 @@ short process_panel_state(void)
             if (i < -88) i = -88;
             if (i > 88) i = 88;
 
-            if (can_control)
+            if ((p_agent->Type == TT_PERSON) && (can_control))
                 build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
             return 1;
         }
@@ -7721,11 +7731,11 @@ short process_panel_state(void)
             if (i < -88) i = -88;
             if (i > 88) i = 88;
 
-            if (can_control)
+            if ((p_agent->Type == TT_PERSON) && (can_control))
                 build_packet(p_pckt, PAct_34, p_agent->ThingOffset, i, 0, 0);
             return 1;
         }
-        p_locplayer->UserInput[mouser].ControlMode &= 0x3FFF;
+        p_locplayer->UserInput[mouser].ControlMode &= ~0xC000;
         p_locplayer->PanelState[mouser] = 0;
     }
     else if (pnsta == 17)
@@ -7769,7 +7779,7 @@ TbBool check_panel_input(short panel)
         case 1:
             // Select controlled agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent == NULL) || ((p_agent->Flag & TngF_Unkn0002) != 0) || ((p_agent->Flag2 & 0x10) != 0))
+            if ((p_agent->Type != TT_PERSON) || ((p_agent->Flag & TngF_Unkn0002) != 0) || ((p_agent->Flag2 & 0x10) != 0))
                 return 0;
             if (p_locplayer->DoubleMode) {
                 byte_153198 = p_panel->ID + 1;
@@ -7782,7 +7792,7 @@ TbBool check_panel_input(short panel)
         case 2:
             // Change mood / drugs level
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent != NULL) && (p_agent->State != PerSt_DEAD))
+            if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
                 i = 2 * (mouse_down_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
@@ -7798,7 +7808,7 @@ TbBool check_panel_input(short panel)
         case 5:
             // Weapon selection for single agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent != NULL) && (p_agent->State != PerSt_DEAD) && person_can_accept_control(p_agent))
+            if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD) && person_can_accept_control(p_agent))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
                 p_locplayer->PanelState[mouser] = p_panel->ID + 1;
@@ -7808,7 +7818,7 @@ TbBool check_panel_input(short panel)
         case 6:
             // Use medikit
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent != NULL) && person_carries_any_medikit(p_agent))
+            if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
             {
                 my_build_packet(p_pckt, PAct_32, p_agent->ThingOffset, 0, 0, 0);
                 return 1;
@@ -7824,6 +7834,8 @@ TbBool check_panel_input(short panel)
             if (things[dcthing].Flag & 0x02)
                 break;
             p_agent = p_locplayer->MyAgent[p_panel->ID];
+            if (p_agent->Type != TT_PERSON)
+                break;
             build_packet(p_pckt, PAct_SHIELD_TOGGLE, dcthing, p_agent->ThingOffset, 0, 0);
             p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
             return 1;
@@ -7878,7 +7890,7 @@ TbBool check_panel_input(short panel)
         case 2:
             // Change mood / drugs level
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent != NULL) && (p_agent->State != PerSt_DEAD))
+            if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
                 i = 2 * (mouse_down_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
@@ -7894,7 +7906,7 @@ TbBool check_panel_input(short panel)
         case 5:
             // Weapon selection for all grouped agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent != NULL) && person_can_accept_control(p_agent))
+            if ((p_agent->Type == TT_PERSON) && person_can_accept_control(p_agent))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
                 p_locplayer->PanelState[mouser] = p_panel->ID + 5;
@@ -7932,7 +7944,7 @@ TbBool check_panel_input(short panel)
             if (!p_locplayer->DoubleMode)
             {
                 p_agent = p_locplayer->MyAgent[p_panel->ID];
-                if ((p_agent != NULL) && ((p_agent->Flag & TngF_Unkn0002) == 0))
+                if ((p_agent->Type == TT_PERSON) && ((p_agent->Flag & TngF_Unkn0002) == 0))
                 {
                     ushort dcthing;
 
