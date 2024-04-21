@@ -2147,14 +2147,14 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
     wepflags &= ~(1 << (WEP_ENERGYSHLD-1));
     nshown = 0;
     nchecked = 0;
-    for (weptype = 0; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
+    for (weptype = 1; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
     {
         if (wepflags == 0)
             break;
         if ((wepflags & 1) == 0)
             continue;
 
-        if (nunk1 > nshown || cur_weapons[plagent] == weptype + 1)
+        if (nunk1 > nshown || cur_weapons[plagent] == weptype)
         {
             ++nshown;
             if (nchecked == 12)
@@ -2162,7 +2162,7 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
             continue;
         }
         lbDisplay.DrawFlags = 0;
-        if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
+        if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1))
         {
             if (!nchecked)
                 draw_new_panel_sprite_std(cx, cy, 13);
@@ -2170,12 +2170,12 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
                 draw_new_panel_sprite_std(cx, cy, 94);
         }
 
-        if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
+        if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1))
         {
             if (!nchecked)
-                draw_new_panel_sprite_std(cx + 24, cy + 12, weapon_sprite_index(weptype+1, false));
+                draw_new_panel_sprite_std(cx + 24, cy + 12, weapon_sprite_index(weptype, false));
             else
-                draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype+1, false));
+                draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype, false));
         }
         dcx = 0;
         dcy = 0;
@@ -2207,7 +2207,7 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
         if (wep_highlight)
         {
             lbDisplay.DrawFlags = 0;
-            p_locplayer->PanelItem[mouser] = weptype + 1;
+            p_locplayer->PanelItem[mouser] = weptype;
             if (nchecked)
                 draw_new_panel_sprite_std(cx, cy, 93);
             else
@@ -2216,9 +2216,9 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
         }
 
         if (nchecked)
-            draw_fourpack_items(cx, cy + 4, plagent, weptype + 1);
+            draw_fourpack_items(cx, cy + 4, plagent, weptype);
         else
-            draw_fourpack_items(cx + 16, cy + 8, plagent, weptype + 1);
+            draw_fourpack_items(cx + 16, cy + 8, plagent, weptype);
         if (nchecked) {
             cy += 28;
         } else {
@@ -7178,7 +7178,8 @@ ubyte do_user_interface(void)
     static ushort sel_agent_gkeys[] = {
         GKey_SEL_AGENT_1, GKey_SEL_AGENT_2, GKey_SEL_AGENT_3, GKey_SEL_AGENT_4
     };
-    static ulong last_sel_agent_turn[4] = {0};
+    static ulong last_sel_agent_turn[AGENTS_SQUAD_MAX_COUNT] = {0};
+    assert(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0]) <= AGENTS_SQUAD_MAX_COUNT);
     for (n = 0; n < (int)(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0])); n++)
     {
         ulong gkey = sel_agent_gkeys[n];

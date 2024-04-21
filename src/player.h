@@ -76,7 +76,7 @@ typedef struct {
      * during the tactical mission, not in-menu.
      */
     struct Thing *MyAgent[AGENTS_SQUAD_MAX_COUNT];
-    ubyte PrevWeapon[4];  /* offs=0xAC */
+    ubyte PrevWeapon[AGENTS_SQUAD_MAX_COUNT];  /* offs=0xAC */
     ubyte PanelState[4];
     ubyte PanelItem[4];
     ushort Dummy98; /* offs=0xB8 */
@@ -102,8 +102,8 @@ typedef struct {
     short Target;
   short field_102;
     short TargetType;
-    ubyte FourPacks[5][4];
-    ubyte WepDelays[4][32];
+    ubyte FourPacks[5][AGENTS_SQUAD_MAX_COUNT];
+    ubyte WepDelays[AGENTS_SQUAD_MAX_COUNT][32];
   ushort field_19A[4];
   ushort field_1A2[4];
 } PlayerInfo;

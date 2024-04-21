@@ -756,9 +756,10 @@ TbBool item_is_carried_by_player(short thing, ushort weapon, ushort plyr)
         return (p_person->U.UPerson.Group == plygroup);
     }
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < AGENTS_SQUAD_MAX_COUNT; i++)
     {
         struct Thing *p_agent;
+
         p_agent = p_player->MyAgent[i];
         if (p_agent->Type != TT_PERSON) continue;
         if (person_carries_weapon(p_agent, weapon))
