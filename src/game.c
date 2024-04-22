@@ -6278,7 +6278,7 @@ void campaign_new_game_prepare(void)
 
     p_campgn = &campaigns[background_type];
 
-    screentype = 99;
+    screentype = SCRT_99;
     game_system_screen = 0;
     players[local_player_no].MissionAgents = 0x0F;
     init_weapon_text();
@@ -6391,7 +6391,7 @@ void reload_background(void)
 
     proj_origin.X = lbDisplay.GraphicsScreenWidth / 2 - 1;
     proj_origin.Y = ((480 * 143) >> 8) + 1;
-    if (screentype == 6 || screentype == 10 || restore_savegame)
+    if (screentype == SCRT_MAINMENU || screentype == SCRT_LOGIN || restore_savegame)
     {
         screen_switch_to_custom_buffer(&bkp, back_buffer,
           lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
@@ -6441,11 +6441,11 @@ void reload_background(void)
         }
     }
 
-    if (screentype == 5 && selected_weapon != -1)
+    if (screentype == SCRT_EQUIP && selected_weapon != -1)
     {
         init_weapon_anim(selected_weapon + 1 - 1);
     }
-    if (screentype == 4 && selected_mod != -1)
+    if (screentype == SCRT_CRYO && selected_mod != -1)
     {
         init_weapon_anim(selected_mod + 32);
     }
@@ -8588,30 +8588,34 @@ void show_apps_selection_bar(void)
     icon_width = sprites_Icons0_0[102].SWidth;
     cx = global_apps_bar_box.X;
     cy = global_apps_bar_box.Y;
-    icontot = (research.NumBases != 0) + 5;
+    icontot = 5;
+    // Show research icon only if the player has research facility
+    if (research.NumBases != 0)
+        icontot++;
     for (iconid = 0; iconid < icontot; iconid++)
     {
         if (login_control__State == 5)
         {
             if (is_unkn_current_player())
-                visible = (iconid != 1 && iconid != 5);
+                visible = (iconid != ApBar_PANET && iconid != 5);
             else
-                visible = (iconid != 1 && iconid != 2 && iconid != 5);
+                visible = (iconid != ApBar_PANET &&
+                  iconid != ApBar_WORLDMAP &&
+                  iconid != ApBar_RESEARCH);
             if ((unkn_flags_08 & 0x02) == 0 || (unkn_flags_08 & 0x01) == 0)
-                visible = (iconid == 0);
-            reserve_space = (iconid != 1);
+                visible = (iconid == ApBar_SYSTEM);
+            reserve_space = (iconid != ApBar_PANET);
         }
         else
         {
-            // Completely hide PAN icon
-            visible = (iconid != 1);
-            reserve_space = (iconid != 1);
+            // Completely hide Public Access Network icon
+            visible = (iconid != ApBar_PANET);
+            reserve_space = (iconid != ApBar_PANET);
         }
         if (visible)
         {
             spr = &sprites_Icons0_0[byte_155124[iconid]];
-            if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth,
-              cy, cy + 1 + spr->SHeight))
+            if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
             {
                 if ((byte_1C497E & (1 << iconid)) == 0) {
                     byte_1C497E |= (1 << iconid);
@@ -8693,8 +8697,7 @@ void show_apps_selection_bar(void)
         if ((lbKeyOn[KC_RETURN]
             && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
                 || screentype != SCRT_NETGAME) && !edit_flag)
-            || mouse_move_over_rect(cx, cx + 1 + spr->SWidth,
-                cy, cy + 1 + spr->SHeight))
+            || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
         {
             if (!byte_1C4980 && !lbKeyOn[KC_RETURN])
             {
@@ -8722,7 +8725,7 @@ void show_apps_selection_bar(void)
                             if (word_1C6F40 < 0)
                                 word_1C6F40 = 0;
                             open_brief = next_brief;
-                            change_screen = 7;
+                            change_screen = ChSCRT_MISSION;
                             subtext = gui_strings[372];
                         }
                         else
@@ -8730,7 +8733,7 @@ void show_apps_selection_bar(void)
                             word_1C6F3E = next_email - 4;
                             if (word_1C6F3E < 0)
                                 word_1C6F3E = 0;
-                            change_screen = 7;
+                            change_screen = ChSCRT_MISSION;
                             subtext = gui_strings[373];
                             open_brief = -next_email;
                         }
@@ -8793,9 +8796,9 @@ void show_apps_selection_bar(void)
             }
             else if (word_1C498A == 2 * iconid + 102)
             {
-                if (screentype != 12)
+                if (screentype != SCRT_ALERTBOX)
                 {
-                    change_screen = 7;
+                    change_screen = ChSCRT_MISSION;
                     set_heading_box_text(gui_strings[372]);
                     open_brief = iconid + 1;
                     play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
@@ -8820,7 +8823,7 @@ void show_apps_selection_bar(void)
         if (mission_remain_until_success(brief_store[bri].Mission))
             lbDisplay.DrawFlags |= 0x0040;
         spr = &sprites_Icons0_0[102];
-        my_set_text_window(cx, 0x1B0u, icon_width + 2, spr->SHeight);
+        my_set_text_window(cx, cy, icon_width + 2, spr->SHeight);
         draw_text_purple_list2(8, 3, misc_text[4], 0);
 
         lbFontPtr = med2_font;
@@ -8828,10 +8831,10 @@ void show_apps_selection_bar(void)
         tx = (35 - LbTextStringWidth(locstr)) >> 1;
         text = (char*) back_buffer + text_buf_pos;
         strcpy(text, locstr);
+        text_buf_pos += strlen(locstr) + 1;
         draw_text_purple_list2(tx, 10, text, 0);
 
         lbFontPtr = small2_font;
-        text_buf_pos += strlen(locstr) + 1;
         sprintf(locstr, "%02d/%02d", (int) brief_store[bri].RecvDay,
             (int) brief_store[bri].RecvMonth);
         tx = (35 - LbTextStringWidth(locstr)) >> 1;
@@ -8844,8 +8847,8 @@ void show_apps_selection_bar(void)
         tx = (35 - LbTextStringWidth(locstr)) >> 1;
         text = (char*) back_buffer + text_buf_pos;
         strcpy(text, locstr);
-        draw_text_purple_list2(tx, 30, text, 0);
         text_buf_pos += strlen(locstr) + 1;
+        draw_text_purple_list2(tx, 30, text, 0);
         draw_text_purple_list2(4, 37, gui_strings[375], 0);
         lbDisplay.DrawFlags = 0;
 
@@ -9072,7 +9075,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
             if (p_netplyr->U.Progress.val_15516D == netplyr)
             {
                 net_new_game_prepare();
-                if (screentype == 4)
+                if (screentype == SCRT_CRYO)
                 {
                     update_flic_mods(flic_mods);
                     for (i = 0; i < 4; i++) {
@@ -9116,7 +9119,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
             LbNetworkReset();
             byte_1C4A7C = 0;
         }
-        if (screentype == 4)
+        if (screentype == SCRT_CRYO)
         {
             update_flic_mods(flic_mods);
             for (i = 0; i < 4; i++) {
@@ -9940,13 +9943,13 @@ void show_menu_screen(void)
     show_date_time();
     if ((screentype != SCRT_MAINMENU) && (screentype != SCRT_LOGIN) && !restore_savegame)
           show_apps_selection_bar();
-    if ((screentype == SCRT_9 || screentype == SCRT_B) && change_screen == 7)
+    if ((screentype == SCRT_9 || screentype == SCRT_B) && change_screen == ChSCRT_MISSION)
     {
         screentype = SCRT_MISSION;
         brief_load_mission_info();
         redraw_screen_flag = 1;
         edit_flag = 0;
-        change_screen = 0;
+        change_screen = ChSCRT_NONE;
     }
 
     switch (screentype)
@@ -10023,37 +10026,37 @@ void show_menu_screen(void)
         if (lbKeyOn[KC_F1])
         {
             lbKeyOn[KC_F1] = 0;
-            change_screen = 1;
+            change_screen = ChSCRT_NETGAME;
         }
         if (lbKeyOn[KC_F2])
         {
             lbKeyOn[KC_F2] = 0;
-            change_screen = 3;
+            change_screen = ChSCRT_WORLDMAP;
         }
         if (lbKeyOn[KC_F3])
         {
             lbKeyOn[KC_F3] = 0;
-            change_screen = 4;
+            change_screen = ChSCRT_CRYO;
         }
         if (lbKeyOn[KC_F4])
         {
             lbKeyOn[KC_F4] = 0;
-            change_screen = 5;
+            change_screen = ChSCRT_EQUIP;
         }
         if (lbKeyOn[KC_F5])
         {
             lbKeyOn[KC_F5] = 0;
             if (research.NumBases > 0)
-                change_screen = 6;
+                change_screen = ChSCRT_RESEARCH;
         }
         if (lbKeyOn[KC_F6])
         {
             lbKeyOn[KC_F6] = 0;
             if (open_brief != 0)
-                change_screen = 7;
+                change_screen = ChSCRT_MISSION;
         }
     }
-    if (change_screen == 1)
+    if (change_screen == ChSCRT_NETGAME)
     {
         screentype = SCRT_NETGAME;
         redraw_screen_flag = 1;
@@ -10061,15 +10064,15 @@ void show_menu_screen(void)
         edit_flag = 0;
         change_screen = 0;
     }
-    if (change_screen == 2)
+    if (change_screen == ChSCRT_PANET)
     {
-        screentype = SCRT_2;
+        screentype = SCRT_PANET;
         redraw_screen_flag = 1;
         set_heading_box_text(gui_strings[367]);
         edit_flag = 0;
         change_screen = 0;
     }
-    if (change_screen == 3)
+    if (change_screen == ChSCRT_WORLDMAP)
     {
         set_heading_box_text(gui_strings[368]);
         redraw_screen_flag = 1;
@@ -10079,7 +10082,7 @@ void show_menu_screen(void)
         if (selected_city_id != -1)
           unkn_city_no = selected_city_id;
     }
-    if (change_screen == 4)
+    if (change_screen == ChSCRT_CRYO)
     {
         screentype = SCRT_CRYO;
         switch_shared_equip_screen_buttons_to_cybmod();
@@ -10098,7 +10101,7 @@ void show_menu_screen(void)
         edit_flag = 0;
         change_screen = 0;
     }
-    if (change_screen == 5)
+    if (change_screen == ChSCRT_EQUIP)
     {
         screentype = SCRT_EQUIP;
         switch_shared_equip_screen_buttons_to_equip();
@@ -10107,7 +10110,7 @@ void show_menu_screen(void)
         edit_flag = 0;
         change_screen = 0;
     }
-    if (change_screen == 6)
+    if (change_screen == ChSCRT_RESEARCH)
     {
         screentype = SCRT_RESEARCH;
         set_heading_box_text(gui_strings[371]);
@@ -10116,7 +10119,7 @@ void show_menu_screen(void)
         change_screen = 0;
         redraw_screen_flag = 1;
     }
-    if (change_screen == 7)
+    if (change_screen == ChSCRT_MISSION)
     {
         selected_city_id = -1;
         screentype = SCRT_MISSION;
