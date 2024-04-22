@@ -5751,7 +5751,7 @@ void do_start_triggers(short missi)
             break;
         nxmissi = sptrig;
         mission_open[mslot] = nxmissi;
-        mission_state[mslot] = 0;
+        mission_state[mslot] = MResol_UNDECIDED;
     }
 }
 
@@ -5792,7 +5792,7 @@ ushort open_new_mission(short missi)
 
     if (mslot > 0) {
         mission_open[mslot] = missi;
-        mission_state[mslot] = 0;
+        mission_state[mslot] = MResol_UNDECIDED;
     } else {
         LOGERR("No free slot found for mission %d", (int)missi);
     }
@@ -5945,7 +5945,7 @@ void update_mission_list_to_mission_state(ushort mslot, sbyte state)
         mission_list[missi].Complete = state;
     } else if (mission_remain_until_success(missi)) {
           mission_list[missi].Complete = 0;
-          mission_state[mslot] = 0;
+          mission_state[mslot] = MResol_UNDECIDED;
     } else {
           mission_list[missi].Complete = state;
     }
@@ -5991,7 +5991,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
                 mission_copy_conds_and_succ_fail_triggers(trg_missi, missi);
                 mission_reset_spec_triggers_2_chain(trg_missi);
 
-                ingame.MissionStatus = 0;
+                ingame.MissionStatus = MStatu_UNDECIDED;
 
                 return OMiSta_ContSuccess;
             }
@@ -5999,7 +5999,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
             {
                 if (mission_remain_until_success(missi))
                 {
-                    ingame.MissionStatus = 0;
+                    ingame.MissionStatus = MStatu_UNDECIDED;
 
                     return OMiSta_ContFailed;
                 }
@@ -6026,7 +6026,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
             {
                 if (mission_remain_until_success(missi))
                 {
-                    ingame.MissionStatus = 0;
+                    ingame.MissionStatus = MStatu_UNDECIDED;
 
                     return OMiSta_ContFailed;
                 }
@@ -6065,7 +6065,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
                 else
                     mission_list[next_missi].SpecialTrigger[0] = mission_list[tmp_missi].SpecialTrigger[1];
             }
-            ingame.MissionStatus = 0;
+            ingame.MissionStatus = MStatu_UNDECIDED;
 
             return OMiSta_ContSuccess;
         }
@@ -6073,7 +6073,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
         {
             if (mission_remain_until_success(missi))
             {
-                ingame.MissionStatus = 0;
+                ingame.MissionStatus = MStatu_UNDECIDED;
 
                 return OMiSta_ContFailed;
             }
@@ -6188,11 +6188,12 @@ void mission_over(void)
 
     last_missi = ingame.CurrentMission;
     mslot = find_mission_state_slot(last_missi);
-    if (mission_state[mslot] == 0)
+    if (mission_state[mslot] == MResol_UNDECIDED)
+        //TODO this is a bug - these statuses have different values (for no reason)
         mission_state[mslot] = ingame.MissionStatus;
 
     lstate = 0;
-    if (mission_state[mslot] == 1)
+    if (mission_state[mslot] == MResol_COMPLETED)
     {
         long cr_award;
         short email;
@@ -6208,7 +6209,7 @@ void mission_over(void)
             queue_up_new_mail(0, -email);
         misend = check_delete_open_mission(mslot, 1);
     }
-    else if (mission_state[mslot] == -1)
+    else if (mission_state[mslot] == MResol_FAILED)
     {
         short email;
         ushort missi;
@@ -9614,11 +9615,11 @@ void show_menu_screen_st2(void)
       update_mission_time(0);
       selected_city_id = -1;
       byte_1C4AA3 = brief_store[open_brief - 1].RefNum;
-      if ((ingame.MissionStatus != 0) && (ingame.MissionStatus != 2))
+      if ((ingame.MissionStatus != MStatu_UNDECIDED) && (ingame.MissionStatus != MStatu_FAILED))
       {
             memcpy(&mission_status[0], &mission_status[open_brief],
               sizeof(struct MissionStatus));
-            delete_mail(open_brief - 1, 1u);
+            delete_mail(open_brief - 1, 1);
             open_brief = 0;
             old_mission_brief = 0;
             cities[unkn_city_no].Info = 0;
@@ -9680,9 +9681,9 @@ void init_random_seed(void)
         struct NetworkPlayer *p_netplyr;
 
         mission_open[1] = ingame.CurrentMission;
-        mission_state[1] = 0;
+        mission_state[1] = MResol_UNDECIDED;
         mission_open[2] = 0;
-        mission_state[2] = 0;
+        mission_state[2] = MResol_UNDECIDED;
 
         p_netplyr = &network_players[net_host_player_no];
         if (is_unkn_current_player())

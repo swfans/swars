@@ -71,6 +71,19 @@ enum MissionExtraRewards {
     MEReward_WeaponSingle,
 };
 
+//TODO why do we have two different sets of values for mission status?
+enum MissionStatuses {
+    MStatu_UNDECIDED = 0,
+    MStatu_COMPLETED,
+    MStatu_FAILED,
+};
+
+enum MissionResolutionStatus {
+    MResol_FAILED = -1,
+    MResol_UNDECIDED = 0,
+    MResol_COMPLETED = 1,
+};
+
 struct Campaign {
     /** Default campaign title. */
     const char *TextName;
