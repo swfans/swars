@@ -4656,12 +4656,104 @@ void compound_mission_immediate_start_next(void)
     restart_back_into_mission(missi);
 }
 
+short test_single_mission(short missi)
+{
+    short ret;
+    asm volatile ("call ASM_test_single_mission\n"
+        : "=r" (ret) : "a" (missi));
+    return ret;
+}
+
+void post_process_blips(void)
+{
+    asm volatile ("call ASM_post_process_blips\n"
+        :  :  : "eax" );
+}
+
 short test_missions(ubyte flag)
 {
+#if 0
     short ret;
     asm volatile ("call ASM_test_missions\n"
         : "=r" (ret) : "a" (flag));
     return ret;
+#endif
+    ushort mslot;
+    short missi;
+    short res;
+
+    if (flag == 0 && ingame.TrackThing)
+        return 0;
+
+    if (mission_open[1] == 0)
+        mission_open[1] = ingame.CurrentMission;
+
+    if (flag == 0) {
+        draw_objective(flag, 1);
+        add_signal_to_scanner(0, 1);
+    }
+
+    mslot = find_mission_state_slot(ingame.CurrentMission);
+    if (flag != 0) {
+        mission_state[mslot] = MResol_UNDECIDED;
+        return 0;
+    }
+    if (in_network_game) {
+        mslot = 1;
+        mission_open[mslot] = ingame.CurrentMission;
+    }
+    else if (mslot == 0)
+    {
+        mslot = find_empty_mission_state_slot();
+    }
+
+    if (mission_open[mslot] > next_mission)
+        mission_open[mslot] = 1;
+    if (mission_state[mslot] == MResol_FAILED)
+    {
+        screen_objective_text_set_failed();
+        return -1;
+    }
+    missi = mission_open[mslot];
+    mission_state[mslot] = MResol_UNDECIDED;
+
+    res = test_single_mission(missi);
+    if (ingame.CurrentMission == mission_open[mslot])
+    {
+        if (mission_result == 1)
+            res = 1;
+        if (mission_result == -1)
+            res = -1;
+    }
+    if (res == 0)
+    {
+        short i;
+
+        res = -1;
+        for (i = 0; i < playable_agents; i++)
+        {
+            struct Thing *p_agent;
+
+            p_agent = players[local_player_no].MyAgent[i];
+            if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD)) {
+                res = 0;
+                break;
+            }
+        }
+    }
+    if (res > 0)
+    {
+        mission_state[mslot] = MResol_COMPLETED;
+        return 1;
+    }
+    if (res == 0)
+    {
+        post_process_blips();
+        return 0;
+    }
+    mission_state[mslot] = MResol_FAILED;
+    screen_objective_text_set_failed();
+    return -1;
 }
 
 void create_tables_file_from_fade(void)
