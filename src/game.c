@@ -8023,6 +8023,11 @@ void show_research_screen(void)
         :  :  : "eax" );
 }
 
+void show_panet_screen(void)
+{
+    //TODO PANET screen not implemented
+}
+
 void show_netgame_screen(void)
 {
     asm volatile ("call ASM_show_netgame_screen\n"
@@ -9974,6 +9979,9 @@ void show_menu_screen(void)
         break;
     case SCRT_RESEARCH:
         show_research_screen();
+        break;
+    case SCRT_PANET:
+        show_panet_screen();
         break;
     case SCRT_9:
         show_debrief_screen();
