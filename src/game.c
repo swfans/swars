@@ -143,6 +143,7 @@ struct Frame;
 
 extern char *fadedat_fname;
 extern unsigned long unkn_buffer_04;
+char session_name[20] = "SWARA";
 
 extern ubyte *small_font_data;
 extern ubyte *small2_font_data;

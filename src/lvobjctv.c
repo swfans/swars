@@ -621,8 +621,11 @@ void draw_objective(ushort objectv, ubyte flag)
 
 TbBool screen_objective_text_set_failed(void)
 {
-    if (ingame.fld_unkCB5 > 0)
+    if (ingame.fld_unkCB5 > 0) {
         scroll_text = objective_text[ingame.fld_unkCB5];
+        return true;
+    }
+    return false;
 }
 
 /** Crude version of thing_arrived_at_objectv(), deprecated.
