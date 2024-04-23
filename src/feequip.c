@@ -760,7 +760,7 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
     {
         short w1, w2;
 
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_box_purple_list(text_window_x1, text_window_y1,
           text_window_x2 - text_window_x1 + 1,
           text_window_y2 - text_window_y1 + 1, 56);
@@ -836,7 +836,7 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
         }
 
         if (weapon == selected_weapon) {
-            lbDisplay.DrawFlags = 0x0040;
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
             lbDisplay.DrawColour = 87;
         } else {
             lbDisplay.DrawFlags = 0;

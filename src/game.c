@@ -8397,9 +8397,9 @@ static void global_date_box_draw(void)
     cx = global_top_bar_box.X + 63;
     cy = global_top_bar_box.Y;
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     draw_box_purple_list(cx + 0, cy + 0, 81, global_top_bar_box.Height, 56);
-    lbDisplay.DrawFlags = 0x0010;
+    lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
     draw_box_purple_list(cx + 1, cy + 1, 79, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
@@ -8429,9 +8429,9 @@ static void global_time_box_draw(void)
     cx = global_top_bar_box.X + 4;
     cy = global_top_bar_box.Y;
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     draw_box_purple_list(cx + 0, cy + 0, 59, global_top_bar_box.Height, 56);
-    lbDisplay.DrawFlags = 0x0010;
+    lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
     draw_box_purple_list(cx + 1, cy + 1, 57, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
@@ -8475,9 +8475,9 @@ static void global_credits_box_draw(void)
     cx = global_top_bar_box.X + 511;
     cy = global_top_bar_box.Y;
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     draw_box_purple_list(cx + 0, cy + 0, 121, global_top_bar_box.Height, 56);
-    lbDisplay.DrawFlags = 0x0010;
+    lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
     draw_box_purple_list(cx + 1, cy + 1, 119, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
@@ -8497,7 +8497,7 @@ static void global_credits_box_draw(void)
     text[n] = '\0';
     text_buf_pos += n + 1;
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     draw_text_purple_list2(tx, 3, text, 0);
     lbDisplay.DrawFlags = 0;
     tx += LbTextStringWidth(text);
@@ -8522,9 +8522,9 @@ static void global_citydrop_box_draw(void)
     cx = global_top_bar_box.X + 148;
     cy = global_top_bar_box.Y;
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     draw_box_purple_list(cx + 0, cy + 0, 200, global_top_bar_box.Height, 56);
-    lbDisplay.DrawFlags = 0x0010;
+    lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
     draw_box_purple_list(cx + 1, cy + 1, 198, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
@@ -8554,9 +8554,9 @@ static void global_techlevel_box_draw(void)
     cx = global_top_bar_box.X + 352;
     cy = global_top_bar_box.Y;
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     draw_box_purple_list(cx + 0, cy + 0, 156, global_top_bar_box.Height, 56);
-    lbDisplay.DrawFlags = 0x0010;
+    lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
     draw_box_purple_list(cx + 1, cy + 1, 154, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
@@ -8719,7 +8719,7 @@ void show_apps_selection_bar(void)
                     byte_1C497E |= (1 << iconid);
                     play_sample_using_heap(0, 123, 127, 64, 100, 0, 1);
                 }
-                lbDisplay.DrawFlags = 0x0004;
+                lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
                 if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
                 {
                     lbDisplay.LeftButton = 0;
@@ -8764,7 +8764,7 @@ void show_apps_selection_bar(void)
             else
             {
                 byte_1C497E &= ~(1 << iconid);
-                lbDisplay.DrawFlags = 0x0004;
+                lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
                 draw_app_icon_normal(cx, cy, iconid, byte_1C4984[iconid]);
                 if (byte_1C4984[iconid])
                 {
@@ -8802,7 +8802,7 @@ void show_apps_selection_bar(void)
                 byte_1C4980 = 1;
                 play_sample_using_heap(0, 123, 127, 64, 100, 0, 1);
             }
-            lbDisplay.DrawFlags = 0x0004;
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
             if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
             {
                 lbDisplay.LeftButton = 0;
@@ -8859,7 +8859,7 @@ void show_apps_selection_bar(void)
         else
         {
             byte_1C4980 = 0;
-            lbDisplay.DrawFlags = 0x0004;
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
             draw_email_icon(cx, cy, byte_1C498C);
             if (gameturn & 1)
             {
@@ -8876,7 +8876,7 @@ void show_apps_selection_bar(void)
     for (iconid = word_1C6F40; iconid < next_brief && iconid < word_1C6F40 + 10;
         iconid++)
     {
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         spr = &sprites_Icons0_0[102];
         if (mouse_move_over_rect(cx, cx + icon_width + 1, cy,
             cy + 1 + spr->SHeight))
