@@ -62,12 +62,12 @@ struct ModemResponse { // sizeof=0x2C
 #pragma pack()
 /******************************************************************************/
 
-extern ubyte lbICommSessionActive;
+ubyte lbICommSessionActive;
 extern struct TbIPXHandler *IPXHandler;
 extern struct TbIPXPlayer IPXPlayer;
 
-extern char ModemResponseString[80];
-extern char ModemRequestString[80];
+char ModemResponseString[80];
+char ModemRequestString[80];
 extern ubyte byte_1E81E0[1027];
 
 extern ulong ipx_send_packet_count[8][8];

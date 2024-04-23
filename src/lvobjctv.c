@@ -563,11 +563,6 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
     }
 }
 
-/** Prepares objective text. Can also draw objective data and additional info directly on 3D scene.
- *
- * @param objectv Index of the target objective.
- * @param flag Resets objective drawind if 1, otherwise draws the objective.
- */
 void draw_objective(ushort objectv, ubyte flag)
 {
     struct Objective *p_objectv;
@@ -622,6 +617,15 @@ void draw_objective(ushort objectv, ubyte flag)
     }
     draw_objectv_y += 8;
     dword_1C8460++;
+}
+
+TbBool screen_objective_text_set_failed(void)
+{
+    if (ingame.fld_unkCB5 > 0) {
+        scroll_text = objective_text[ingame.fld_unkCB5];
+        return true;
+    }
+    return false;
 }
 
 /** Crude version of thing_arrived_at_objectv(), deprecated.
@@ -756,11 +760,12 @@ TbBool item_is_carried_by_player(short thing, ushort weapon, ushort plyr)
         return (p_person->U.UPerson.Group == plygroup);
     }
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < AGENTS_SQUAD_MAX_COUNT; i++)
     {
         struct Thing *p_agent;
+
         p_agent = p_player->MyAgent[i];
-        if (p_agent == NULL) continue;
+        if (p_agent->Type != TT_PERSON) continue;
         if (person_carries_weapon(p_agent, weapon))
             return true;
     }

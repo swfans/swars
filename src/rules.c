@@ -39,11 +39,15 @@ const struct TbNamedEnum rules_conf_engine_cmnds[] = {
 enum RulesResearchConfigCmd {
     RResrchCmd_DailyScientistDeathChance = 1,
     RResrchCmd_ScientistsPerGroup,
+    RResrchCmd_WeaponDonateResearchIncrPermil,
+    RResrchCmd_DailyProgressRtcMinutes,
 };
 
 const struct TbNamedEnum rules_conf_research_cmnds[] = {
   {"DailyScientistDeathChancePermil",	RResrchCmd_DailyScientistDeathChance},
   {"ScientistsPerGroup",			RResrchCmd_ScientistsPerGroup},
+  {"WeaponDonateResearchIncrPermil",	RResrchCmd_WeaponDonateResearchIncrPermil},
+  {"DailyProgressRtcMinutes",		RResrchCmd_DailyProgressRtcMinutes},
   {NULL,			0},
 };
 
@@ -165,6 +169,24 @@ TbBool read_rules_file(void)
             }
             scientists_per_group = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)scientists_per_group);
+            break;
+        case RResrchCmd_WeaponDonateResearchIncrPermil:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            weapon_donate_research_incr_permil = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)weapon_donate_research_incr_permil);
+            break;
+        case RResrchCmd_DailyProgressRtcMinutes:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            research_progress_rtc_minutes = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)research_progress_rtc_minutes);
             break;
         case 0: // comment
             break;

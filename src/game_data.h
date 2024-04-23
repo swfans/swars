@@ -56,7 +56,7 @@ typedef struct {
 
 #pragma pack()
 
-extern PathInfo game_dirs[8];
+extern PathInfo game_dirs[];
 extern char cd_drive[52];
 extern char language_3str[4];
 

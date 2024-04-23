@@ -66,7 +66,7 @@ enum UserFlags {
 enum ScreenType {
   SCRT_NONE = 0x0,
   SCRT_MISSION,
-  SCRT_2,
+  SCRT_PANET,
   SCRT_WORLDMAP,
   SCRT_CRYO,
   SCRT_EQUIP,
@@ -109,6 +109,28 @@ enum PacketRecordMode {
   PktR_NONE = 0x0,
   PktR_RECORD = 0x1,
   PktR_PLAYBACK = 0x2,
+};
+
+enum AppBarIcons {
+  ApBar_SYSTEM = 0,
+  ApBar_PANET,
+  ApBar_WORLDMAP,
+  ApBar_CRYO,
+  ApBar_EQUIP,
+  ApBar_RESEARCH,
+};
+
+// For some reason, we have different values for change_screen
+//TODO consolidate with ScreenType, use the same values
+enum ChangeScreenType {
+  ChSCRT_NONE = 0,
+  ChSCRT_NETGAME,
+  ChSCRT_PANET,
+  ChSCRT_WORLDMAP,
+  ChSCRT_CRYO,
+  ChSCRT_EQUIP,
+  ChSCRT_RESEARCH,
+  ChSCRT_MISSION,
 };
 
 enum OpenMissionEndStatus {

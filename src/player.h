@@ -30,6 +30,7 @@ extern "C" {
 #pragma pack(1)
 
 #define CRYO_PODS_MAX_COUNT 32
+#define AGENTS_SQUAD_MAX_COUNT 4
 
 struct Thing;
 
@@ -66,10 +67,16 @@ typedef struct {
   int field_78;
   int field_7C[2];
   int field_84;
-    ulong DirectControl[4]; /* offs=0x88 */
+    ulong DirectControl[AGENTS_SQUAD_MAX_COUNT]; /* offs=0x88 */
     ulong ControlPad;
-    struct Thing *MyAgent[4];
-    ubyte PrevWeapon[4];  /* offs=0xAC */
+    /* Pointers to agents in the squad of this player.
+     * These are guaranteed treference a valid thing (non-NULL),
+     * but if an agent is not in use, the reference may be
+     * to a dummy thing. Obviously the pointers are valid only
+     * during the tactical mission, not in-menu.
+     */
+    struct Thing *MyAgent[AGENTS_SQUAD_MAX_COUNT];
+    ubyte PrevWeapon[AGENTS_SQUAD_MAX_COUNT];  /* offs=0xAC */
     ubyte PanelState[4];
     ubyte PanelItem[4];
     ushort Dummy98; /* offs=0xB8 */
@@ -82,8 +89,8 @@ typedef struct {
     ubyte SubStateTimer[4];
     ubyte DoubleMode;
     ubyte PlayerNo;
-    ulong Weapons[4];
-    union Mod Mods[4];
+    ulong Weapons[AGENTS_SQUAD_MAX_COUNT];
+    union Mod Mods[AGENTS_SQUAD_MAX_COUNT];
   short field_E8;
   int field_EA;
   int field_EE;
@@ -95,8 +102,8 @@ typedef struct {
     short Target;
   short field_102;
     short TargetType;
-    ubyte FourPacks[5][4];
-    ubyte WepDelays[4][32];
+    ubyte FourPacks[5][AGENTS_SQUAD_MAX_COUNT];
+    ubyte WepDelays[AGENTS_SQUAD_MAX_COUNT][32];
   ushort field_19A[4];
   ushort field_1A2[4];
 } PlayerInfo;

@@ -157,6 +157,14 @@ int parse_next_netscan_objective(const char *buf, long buflen, long nsobv);
 int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno, ubyte level);
 void load_netscan_objectives(ubyte mapno, ubyte level);
 TbResult load_objectives_text(void);
+TbBool screen_objective_text_set_failed(void);
+
+/** Prepares objective text. Can also draw objective data and additional info directly on 3D scene.
+ *
+ * @param objectv Index of the target objective.
+ * @param flag Resets objective drawind if 1, otherwise draws the objective.
+ */
+void draw_objective(ushort objectv, ubyte flag);
 
 void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ushort objectv);
 /******************************************************************************/

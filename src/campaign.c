@@ -243,7 +243,7 @@ ushort replace_mission_state_slot(ushort old_missi, ushort new_missi)
 
     mslot = find_mission_state_slot(old_missi);
     mission_open[mslot] = new_missi;
-    mission_state[mslot] = 0;
+    mission_state[mslot] = MResol_UNDECIDED;
     return mslot;
 }
 
@@ -270,7 +270,7 @@ void init_mission_states(void)
     mslot = find_mission_state_slot(ingame.CurrentMission);
     if (mslot > 0) {
         missi = mission_open[mslot];
-        mission_state[mslot] = 0;
+        mission_state[mslot] = MResol_UNDECIDED;
     } else {
         missi = ingame.CurrentMission;
         LOGWARN("Mission %d has no slot; initing anyway", (int)missi);

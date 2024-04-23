@@ -92,6 +92,17 @@ MemSystem mem_game[] = {
   { NULL,				NULL,							0u, 0, 0, 0, 0 }
 };
 
+PathInfo game_dirs[] = {
+  {"data",		1},
+  {"qdata",		0},
+  {"maps",		1},
+  {"levels",	1},
+  {"intro",		1},
+  {"Sound",		1},
+  {"data/equip",1},
+  {NULL,		0},
+};
+
 const char *
 GetDirectoryUser(void)
 {

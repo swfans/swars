@@ -50,6 +50,27 @@ TbBool level_deep_fix = false;
 
 extern struct QuickLoad quick_load_pc[19];
 
+struct QuickLoad quick_load_pc[] = {
+  {NULL,				(void **)&game_my_big_map,	18, 16384},
+  {&next_floor_texture,	(void **)&game_textures,		18, 800},
+  {&next_face_texture,	(void **)&game_face_textures,	16, 800},
+  {&next_object_point,	(void **)&game_object_points,	10, 2000},
+  {&next_object_face,	(void **)&game_object_faces,	32, 2000},
+  {&next_object,		(void **)&game_objects,		36, 120},
+  {&next_quick_light,	(void **)&game_quick_lights,	 6, 4000},
+  {&next_full_light,	(void **)&game_full_lights,	32, 10},
+  {&next_normal,		(void **)&game_normals,		16, 3500},
+  {&next_object_face4,	(void **)&game_object_faces4, 40, 2000},
+  {&next_anim_tmap,		(void **)&game_anim_tmaps,	54, 50},
+  {&next_traffic_node,	(void **)&game_traffic_nodes, 36, 50},
+  {&next_light_command,	(void **)&game_light_commands,36, 50},
+  {&next_vects_list,	(void **)&game_col_vects_list, 6, 1000},
+  {&next_col_vect,		(void **)&game_col_vects,		14, 600},
+  {&next_walk_header,	(void **)&game_walk_headers,	 4, 0},
+  {&next_walk_item,		(void **)&game_walk_items,	 2, 0},
+  {&next_col_column,	(void **)&game_col_columns,	16, 0},
+  {NULL,				NULL,				 0, 0},
+};
 
 void debug_level(const char *text, int player)
 {
