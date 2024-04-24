@@ -293,6 +293,14 @@ const char *miss_end_sta_names[] = {
   "",
 };
 
+const char *misc_text[] = {
+  "0",
+  "C",
+  "/",
+  "NC",
+  "REF:",
+};
+
 struct TbLoadFiles unk02_load_files[] =
 {
   { "*VESA",			(void **)&lbVesaData,		(void **)NULL,LB_VESA_DATA_SIZE, 1, 0 },
