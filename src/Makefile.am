@@ -99,6 +99,7 @@ swars_SOURCES = \
 	../bfariadne/src/delaunay.c \
 	../bfariadne/include/delaunay.h \
 	config.h \
+	bat.sx \
 	bigmap.c \
 	bigmap.h \
 	building.c \
