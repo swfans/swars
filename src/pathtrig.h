@@ -29,6 +29,7 @@ extern "C" {
 #pragma pack(1)
 
 struct Path;
+struct Thing;
 
 #pragma pack()
 /******************************************************************************/
@@ -59,6 +60,8 @@ void print_mapel_collision_columns(void);
 /** Print collision vectors into log file, for debug.
  */
 void print_collision_vects(void);
+
+int unkn_path_func_001(struct Thing *p_thing, ubyte a2);
 
 /******************************************************************************/
 #ifdef __cplusplus

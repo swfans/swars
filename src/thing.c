@@ -197,12 +197,6 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing)
     snprintf(s, buflen - (s-buf), " )");
 }
 
-void things_debug_hud(void)
-{
-    asm volatile ("call ASM_things_debug_hud\n"
-        :  :  : "eax" );
-}
-
 TbResult delete_node(struct Thing *p_thing)
 {
     TbResult ret;

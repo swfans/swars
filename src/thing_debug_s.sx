@@ -412,7 +412,7 @@ unused_func_201:	/* 0xb8914 */
 
 
 /*----------------------------------------------------------------*/
-unused_func_202:	/* 0xb8acc */
+GLOBAL_FUNC(ASM_select_thing_for_debug)	/* 0xb8acc */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -1208,7 +1208,7 @@ unused_func_204:	/* 0xba010 */
 
 
 /*----------------------------------------------------------------*/
-unused_func_205:	/* 0xba6e4 */
+GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -1696,7 +1696,7 @@ GLOBAL_FUNC(ASM_things_debug_hud)	/* 0xbac50 */
 		xor    %edx,%edx
 		sar    $0x10,%ebx
 		sar    $0x10,%eax
-		call   unused_func_202
+		call   ac_select_thing_for_debug
 		mov    %eax,%edx
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+0x11
 		je     jump_bacaa
@@ -1705,17 +1705,17 @@ GLOBAL_FUNC(ASM_things_debug_hud)	/* 0xbac50 */
 		testb  $0x1,EXPORT_SYMBOL(lbShift)
 		je     jump_bac9c
 		xor    %ebx,%ebx
-		mov    %ebx,data_1dc7a4
+		mov    %ebx,EXPORT_SYMBOL(dword_1DC7A4)
 		jmp    jump_bacaa
 	jump_bac9c:
 		and    $0xffff,%eax
 		test   %eax,%eax
 		jle    jump_bacaa
-		mov    %eax,data_1dc7a4
+		mov    %eax,EXPORT_SYMBOL(dword_1DC7A4)
 	jump_bacaa:
-		cmpl   $0x0,data_1dc7a4
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1DC7A4)
 		je     jump_bacba
-		mov    data_1dc7a4,%dx
+		mov    EXPORT_SYMBOL(dword_1DC7A4),%dx
 	jump_bacba:
 		xor    %esi,%esi
 		mov    %dx,%si
@@ -1771,7 +1771,7 @@ GLOBAL_FUNC(ASM_things_debug_hud)	/* 0xbac50 */
 		push   %esi
 		mov    $0x50,%edx
 		mov    $0x164,%eax
-		call   unused_func_205
+		call   ac_unused_func_205
 	jump_bad81:
 		cmpb   $0x0,EXPORT_SYMBOL(execute_commands)
 		je     jump_bb3c7
@@ -2916,6 +2916,11 @@ data_1dc7a0:
 		.short  0x0
 data_1dc7a2:
 		.short  0x0
-data_1dc7a4:
+GLOBAL (dword_1DC7A4)	/* 0x1dc7a4 */
 		.long	0x0
 		.fill   0x84
+
+GLOBAL (p_track_thing)	/* 0x1777C0 */
+		.long	0x0
+GLOBAL (p_track2_thing)	/* 0x1777C4 */
+		.long	0x0
