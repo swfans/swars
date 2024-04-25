@@ -26,6 +26,7 @@
 #include "game.h"
 #include "pathtrig.h"
 #include "scandraw.h"
+#include "vehicle.h"
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -83,7 +84,7 @@ void things_debug_hud(void)
 
     if (lbShift == KMod_SHIFT)
         return;
-    if (thing <= 0 || thing >= 1000)
+    if (thing <= 0 || thing >= THINGS_LIMIT)
         return;
 
     p_track_thing = &things[thing];
@@ -98,26 +99,68 @@ void things_debug_hud(void)
     {
         snprintf(locstr, sizeof(locstr), "State %d ",
           (int)p_track_thing->State);
-        snprint_person_state(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), p_track_thing);
-        snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Mood %d G %d comcur %x EG %d th %d am %d",
-          (int)p_track_thing->U.UPerson.Mood,
-          (int)p_track_thing->U.UPerson.Group,
-          (uint)p_track_thing->U.UPerson.ComCur,
-          (int)p_track_thing->U.UPerson.EffectiveGroup,
-          (int)p_track_thing->ThingOffset,
-          (int)p_track_thing->U.UPerson.AnimMode);
+        switch (p_track_thing->Type)
+        {
+        case TT_VEHICLE:
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Pasng %d G %d comcur %x EG %d th %d wb %d",
+              (int)veh_passenger_count(p_track_thing),
+              (int)p_track_thing->U.UVehicle.Group,
+              (uint)p_track_thing->U.UVehicle.ComCur,
+              (int)p_track_thing->U.UVehicle.EffectiveGroup,
+              (int)p_track_thing->ThingOffset,
+              (int)p_track_thing->U.UVehicle.WobbleZP);
+            break;
+        case TT_PERSON:
+            snprint_person_state(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), p_track_thing);
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Mood %d G %d comcur %x EG %d th %d am %d",
+              (int)p_track_thing->U.UPerson.Mood,
+              (int)p_track_thing->U.UPerson.Group,
+              (uint)p_track_thing->U.UPerson.ComCur,
+              (int)p_track_thing->U.UPerson.EffectiveGroup,
+              (int)p_track_thing->ThingOffset,
+              (int)p_track_thing->U.UPerson.AnimMode);
+            break;
+        default:
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " th %d",
+              (int)p_track_thing->ThingOffset);
+            break;
+        }
         draw_text(30, 30, locstr, colour_lookup[1]);
 
-        sprintf(locstr, "F  %08x Spd %d OF %d He %d/%d Se %d/%d SF %d F %d",
-          (uint)p_track_thing->Flag,
-          (int)p_track_thing->Speed,
-          (int)p_track_thing->U.UPerson.OnFace,
-          (int)p_track_thing->Health,
-          (int)p_track_thing->U.UPerson.MaxHealth,
-          (int)p_track_thing->U.UPerson.ShieldEnergy,
-          (int)p_track_thing->U.UPerson.MaxShieldEnergy,
-          (int)p_track_thing->StartFrame,
-          (int)p_track_thing->Frame);
+        switch (p_track_thing->Type)
+        {
+        case TT_VEHICLE:
+            sprintf(locstr, "F  %08x Spd %d OF %d He %d/%d Armr %d SF %d F %d",
+              (uint)p_track_thing->Flag,
+              (int)p_track_thing->Speed,
+              (int)p_track_thing->U.UVehicle.OnFace,
+              (int)p_track_thing->Health,
+              (int)p_track_thing->U.UVehicle.MaxHealth,
+              (int)p_track_thing->U.UVehicle.Armour,
+              (int)p_track_thing->StartFrame,
+              (int)p_track_thing->Frame);
+            break;
+        case TT_PERSON:
+            sprintf(locstr, "F  %08x Spd %d OF %d He %d/%d Se %d/%d SF %d F %d",
+              (uint)p_track_thing->Flag,
+              (int)p_track_thing->Speed,
+              (int)p_track_thing->U.UPerson.OnFace,
+              (int)p_track_thing->Health,
+              (int)p_track_thing->U.UPerson.MaxHealth,
+              (int)p_track_thing->U.UPerson.ShieldEnergy,
+              (int)p_track_thing->U.UPerson.MaxShieldEnergy,
+              (int)p_track_thing->StartFrame,
+              (int)p_track_thing->Frame);
+            break;
+        default:
+            sprintf(locstr, "F  %08x Spd %d He %d SF %d F %d",
+              (uint)p_track_thing->Flag,
+              (int)p_track_thing->Speed,
+              (int)p_track_thing->Health,
+              (int)p_track_thing->StartFrame,
+              (int)p_track_thing->Frame);
+            break;
+        }
         draw_text(30, 45, locstr, colour_lookup[1]);
 
         sprintf(locstr, "F2 %08x F3 %x cw %d wc %x WE %d wti %d wt %d PC %d",
@@ -137,39 +180,43 @@ void things_debug_hud(void)
           (int)p_track_thing->GotoThingIndex);
         draw_text(30, 75, locstr, colour_lookup[1]);
 
-        if (p_track_thing->Flag & 0x40000)
+        if (p_track_thing->Flag & TngF_Unkn00040000)
             draw_text(30, 90, "Da", colour_lookup[1]);
-        if (p_track_thing->Flag & 0x10000)
+        if (p_track_thing->Flag & TngF_Unkn00010000)
             draw_text(50, 90, "Re", colour_lookup[1]);
-        if (p_track_thing->Flag & 0x20000)
+        if (p_track_thing->Flag & TngF_Unkn00020000)
             draw_text(70, 90, "Si", colour_lookup[1]);
-        if (p_track_thing->Flag & 0x0002)
+        if (p_track_thing->Flag & TngF_Unkn0002)
             draw_text(90, 90, "De", colour_lookup[1]);
-        if (p_track_thing->Flag & 0x0400)
+        if (p_track_thing->Flag & TngF_Unkn0400)
             draw_text(110, 90, "Ch", colour_lookup[1]);
-        if (p_track_thing->Flag & 0x0040)
+        if (p_track_thing->Flag & TngF_Unkn0040)
             draw_text(130, 90, "CI", colour_lookup[1]);
-        if (p_track_thing->Flag & 0x20000000)
+        if (p_track_thing->Flag & TngF_Unkn20000000)
             draw_text(150, 90, "SAP", colour_lookup[1]);
-        if (p_track_thing->Flag & 0x0200)
+        if (p_track_thing->Flag & TngF_Unkn0200)
             draw_text(190, 90, "Sta", colour_lookup[2]);
-        if (p_track_thing->Flag & 0x0800)
+        if (p_track_thing->Flag & TngF_Unkn0800)
             draw_text(260, 90, "TRIG", colour_lookup[1]);
 
         switch (p_track_thing->Type)
         {
-        case 2:
-            draw_text(360, 90, "VEHICLE", colour_lookup[2]);
+        case TT_VEHICLE:
+            sprintf(locstr, "%s",
+              thing_type_name(p_track_thing->Type, p_track_thing->SubType));
+            draw_text(360, 90, locstr, colour_lookup[2]);
             break;
-        case 3:
-            sprintf(locstr, "PERSON: lastdist %d VX,VZ (%d,%d)",
+        case TT_PERSON:
+            sprintf(locstr, "%s: lastdist %d VX,VZ (%d,%d)",
+              thing_type_name(p_track_thing->Type, p_track_thing->SubType),
               (int)p_track_thing->U.UObject.BuildNumbVect,
               (int)p_track_thing->VX,
               (int)p_track_thing->VZ);
             draw_text(360, 90, locstr, colour_lookup[3]);
             break;
         default:
-            sprintf(locstr, "Type %d", (int)p_track_thing->Type);
+            sprintf(locstr, "%s",
+              thing_type_name(p_track_thing->Type, p_track_thing->SubType));
             draw_text(360, 90, locstr, colour_lookup[7]);
             break;
         }

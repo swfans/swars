@@ -61,6 +61,8 @@ void mech_unkn_func_09(short thing);
 
 void veh_add(struct Thing *p_thing, short frame);
 
+ushort veh_passenger_count(struct Thing *p_veh);
+
 void VNAV_unkn_func_207(struct Thing *p_thing);
 
 /******************************************************************************/

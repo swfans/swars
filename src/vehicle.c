@@ -101,6 +101,24 @@ void veh_add(struct Thing *p_thing, short frame)
         : : "a" (p_thing), "d" (frame));
 }
 
+ushort veh_passenger_count(struct Thing *p_veh)
+{
+    struct Thing *p_thing;
+    short thing;
+    ushort c;
+
+    c = 0;
+
+    thing = p_veh->U.UVehicle.PassengerHead;
+    while (thing > 0 && c < THINGS_LIMIT)
+    {
+        c++;
+        p_thing = &things[thing];
+        thing = p_thing->U.UPerson.LinkPassenger;
+    }
+    return c;
+}
+
 void VNAV_unkn_func_207(struct Thing *p_thing)
 {
     asm volatile ("call ASM_VNAV_unkn_func_207\n"
