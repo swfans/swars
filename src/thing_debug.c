@@ -163,18 +163,36 @@ void things_debug_hud(void)
         }
         draw_text(30, 45, locstr, colour_lookup[1]);
 
-        sprintf(locstr, "F2 %08x F3 %x cw %d wc %x WE %d wti %d wt %d PC %d",
-          (uint)p_track_thing->Flag2,
-          (uint)p_track_thing->U.UPerson.Flag3,
-          (int)p_track_thing->U.UPerson.CurrentWeapon,
-          (uint)p_track_thing->U.UPerson.WeaponsCarried,
-          (int)p_track_thing->U.UPerson.Energy,
-          (int)p_track_thing->U.UPerson.WeaponTimer,
-          (int)p_track_thing->U.UPerson.WeaponTurn,
-          my_paths[p_track_thing->U.UPerson.PathIndex].Flag - p_track_thing->PathOffset);
+        switch (p_track_thing->Type)
+        {
+        case TT_VEHICLE:
+            sprintf(locstr, "F2 %08x mi %d TN %d poww %x wt %d PC %d",
+              (uint)p_track_thing->Flag2,
+              (int)p_track_thing->U.UVehicle.MatrixIndex,
+              (int)p_track_thing->U.UVehicle.TNode,
+              (uint)p_track_thing->U.UVehicle.PissedOffWithWaiting,
+              (int)p_track_thing->U.UVehicle.WeaponTurn,
+              my_paths[p_track_thing->U.UVehicle.PathIndex].Flag - p_track_thing->PathOffset);
+            break;
+        case TT_PERSON:
+            sprintf(locstr, "F2 %08x F3 %x cw %d wc %x WE %d wti %d wt %d PC %d",
+              (uint)p_track_thing->Flag2,
+              (uint)p_track_thing->U.UPerson.Flag3,
+              (int)p_track_thing->U.UPerson.CurrentWeapon,
+              (uint)p_track_thing->U.UPerson.WeaponsCarried,
+              (int)p_track_thing->U.UPerson.Energy,
+              (int)p_track_thing->U.UPerson.WeaponTimer,
+              (int)p_track_thing->U.UPerson.WeaponTurn,
+              my_paths[p_track_thing->U.UPerson.PathIndex].Flag - p_track_thing->PathOffset);
+            break;
+        default:
+            sprintf(locstr, "F2 %08x",
+              (uint)p_track_thing->Flag2);
+            break;
+        }
         draw_text(30, 60, locstr, colour_lookup[1]);
 
-        sprintf(locstr, "TARG2 %d PTARG %x gotoTI %d",
+        sprintf(locstr, "Targ2 %d pTarg %x gotoTI %d",
           (int)p_track_thing->U.UPerson.Target2,
           (uint)p_track_thing->PTarget,
           (int)p_track_thing->GotoThingIndex);
