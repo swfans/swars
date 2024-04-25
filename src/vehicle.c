@@ -18,6 +18,14 @@
 /******************************************************************************/
 #include "vehicle.h"
 
+#include "bfmath.h"
+#include "bfutility.h"
+#include "ssampply.h"
+#include "bigmap.h"
+#include "bmbang.h"
+#include "game.h"
+#include "pathtrig.h"
+#include "sound.h"
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -123,6 +131,152 @@ void VNAV_unkn_func_207(struct Thing *p_thing)
 {
     asm volatile ("call ASM_VNAV_unkn_func_207\n"
         : : "a" (p_thing));
+}
+
+void start_crashing(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_start_crashing\n"
+        : : "a" (p_vehicle));
+}
+
+void process_shuttle_pod(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_shuttle_pod\n"
+        : : "a" (p_vehicle));
+}
+
+void init_vehicle_explode(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_init_vehicle_explode\n"
+        : : "a" (p_vehicle));
+}
+
+void process_tank_stationary(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_tank_stationary\n"
+        : : "a" (p_vehicle));
+}
+
+void process_tank(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_tank\n"
+        : : "a" (p_vehicle));
+}
+
+void set_passengers_location(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_set_passengers_location\n"
+        : : "a" (p_vehicle));
+}
+
+short angle_between_points(int x1, int z1, int x2, int z2)
+{
+  return LbArcTanAngle(x2 - x1, z1 - z2);
+}
+
+void process_tank_turret(struct Thing *p_tank)
+{
+    struct Thing *p_turret;
+    int target_x, target_y;
+    int turret;
+    short angle;
+    int dt_angle;
+
+    turret = p_tank->U.UVehicle.SubThing;
+    if (turret == 0) {
+        p_tank->OldTarget = LbFPMath_PI+1;
+        return;
+    }
+    p_turret = &things[turret];
+    if ((p_tank->Flag & TngF_Unkn20000000) != 0)
+    {
+        target_x = p_tank->U.UVehicle.TargetDX;
+        target_y = p_tank->U.UVehicle.TargetDZ;
+    }
+    else
+    {
+        struct Thing *p_target;
+        p_target = p_tank->PTarget;
+        if (p_target == NULL)
+        {
+            p_tank->OldTarget = 20000;
+            return;
+        }
+        target_x = PRCCOORD_TO_MAPCOORD(p_target->X);
+        target_y = PRCCOORD_TO_MAPCOORD(p_target->Z);
+    }
+    angle = p_turret->U.UMGun.AngleY
+        - angle_between_points(target_x, target_y, PRCCOORD_TO_MAPCOORD(p_tank->X), PRCCOORD_TO_MAPCOORD(p_tank->Z));
+    if (angle < -LbFPMath_PI)
+        angle += 2*LbFPMath_PI;
+    else if (angle > LbFPMath_PI)
+        angle -= 2*LbFPMath_PI;
+
+    //TODO CONFIG how fast the tank can target could be a difficulty-related setting
+    // Travel 1/8 of the distance in each game turn
+    dt_angle = angle / 8;
+    if (dt_angle > LbFPMath_PI/17)
+        dt_angle = LbFPMath_PI/17;
+    if (dt_angle < -LbFPMath_PI/17)
+        dt_angle = -LbFPMath_PI/17;
+    if (dt_angle == 0)
+    {
+        if (angle > 0)
+            dt_angle = 1;
+        if (angle < 0)
+            dt_angle = -1;
+    }
+
+    // Despite being caused by the turret, we bind the sound samples to the vehicle part
+    // of the tank. This is because turrets do not contain full position on map, so the
+    // sound update would misplace the sound source if it was bound to the turret
+    if ((p_turret->Flag2 & 0x0200) != 0)
+    {
+        if (dt_angle <= 1) {
+            // Play rotation stop sample
+            if (!IsSamplePlaying(p_tank->ThingOffset, 47, 0))
+                play_dist_sample(p_tank, 47, 127, 0x40u, 100, 0, 1);
+            p_turret->Flag2 &= ~0x0200;
+        }
+    }
+    else
+    {
+        // Play rotation sample if moving over 1.2 degree per turn and the angle is not getting smaller.
+        // Huge values of OldTarget (beyond pi) indicate that previously we had no target.
+        if ((abs(dt_angle) >= LbFPMath_PI/75) && (p_tank->OldTarget < abs(angle) || p_tank->OldTarget > LbFPMath_PI)) {
+            if (!IsSamplePlaying(p_tank->ThingOffset, 48, 0))
+                play_dist_sample(p_tank, 48, 127, 0x40u, 100, 0, 1);
+            p_turret->Flag2 |= 0x0200;
+        }
+    }
+
+    p_turret->U.UMGun.AngleY -= dt_angle;
+    p_tank->OldTarget = abs(angle);
+    p_turret->U.UMGun.AngleY = (p_turret->U.UMGun.AngleY + 2*LbFPMath_PI) & LbFPMath_AngleMask;
+}
+
+void process_ship(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_ship\n"
+        : : "a" (p_vehicle));
+}
+
+void process_mech_stationary(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_mech_stationary\n"
+        : : "a" (p_vehicle));
+}
+
+void process_mech(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_mech\n"
+        : : "a" (p_vehicle));
+}
+
+void process_mech_unknown1(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_mech_unknown1\n"
+        : : "a" (p_vehicle));
 }
 
 void process_vehicle(struct Thing *p_vehicle)
