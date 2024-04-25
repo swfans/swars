@@ -65,6 +65,8 @@ ushort veh_passenger_count(struct Thing *p_veh);
 
 void VNAV_unkn_func_207(struct Thing *p_thing);
 
+void process_vehicle(struct Thing *p_vehicle);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

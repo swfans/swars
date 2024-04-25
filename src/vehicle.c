@@ -125,4 +125,11 @@ void VNAV_unkn_func_207(struct Thing *p_thing)
         : : "a" (p_thing));
 }
 
+void process_vehicle(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_vehicle\n"
+        : : "a" (p_vehicle));
+}
+
+
 /******************************************************************************/
