@@ -325,6 +325,84 @@ void train_unkn_st20_func_1(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
 }
 
+void process_my_flying_vehicle(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_my_flying_vehicle\n"
+        : : "a" (p_vehicle));
+}
+
+void process_unplacing(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_unplacing\n"
+        : : "a" (p_vehicle));
+}
+
+void process_stop_as_soon_as_you_can(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_stop_as_soon_as_you_can\n"
+        : : "a" (p_vehicle));
+}
+
+void process_hovering_vehicle(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_hovering_vehicle\n"
+        : : "a" (p_vehicle));
+}
+
+void process_my_takeoff(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_my_takeoff\n"
+        : : "a" (p_vehicle));
+}
+
+void process_my_land_vehicle(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_my_land_vehicle\n"
+        : : "a" (p_vehicle));
+}
+
+void set_vehicle_alt(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_set_vehicle_alt\n"
+        : : "a" (p_vehicle));
+}
+
+void process_next_tnode(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_next_tnode\n"
+        : : "a" (p_vehicle));
+}
+
+void process_unstopping(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_unstopping\n"
+        : : "a" (p_vehicle));
+}
+
+void process_stopping(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_stopping\n"
+        : : "a" (p_vehicle));
+}
+
+void process_vehicle_goto_point_land(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_vehicle_goto_point_land\n"
+        : : "a" (p_vehicle));
+}
+
+void process_vehicle_goto_point_fly(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_vehicle_goto_point_fly\n"
+        : : "a" (p_vehicle));
+}
+
+void process_parked_flyer(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_parked_flyer\n"
+        : : "a" (p_vehicle));
+}
+
 void process_veh_unkn29(struct Thing *p_vehicle)
 {
     int dtvel;
@@ -403,6 +481,152 @@ void process_veh_unkn29(struct Thing *p_vehicle)
     }
 }
 
+void process_vehicle_goto_point_liftoff(struct Thing *p_vehicle)
+{
+    int i;
+
+    set_passengers_location(p_vehicle);
+    i = alt_at_point(PRCCOORD_TO_MAPCOORD(p_vehicle->X), PRCCOORD_TO_MAPCOORD(p_vehicle->Z));
+    if (p_vehicle->Y < MAPCOORD_TO_PRCCOORD(400, 0) + (i << 3)) {
+        p_vehicle->Speed = 0;
+        p_vehicle->Y += MAPCOORD_TO_PRCCOORD(8, 0);
+    } else {
+        p_vehicle->SubState = 6;
+    }
+}
+
+void process_veh_ground(struct Thing *p_vehicle)
+{
+    int dtvel;
+
+    dtvel = p_vehicle->U.UVehicle.ReqdSpeed - p_vehicle->Speed;
+    if (dtvel != 0)
+    {
+        if (dtvel > 100)
+            p_vehicle->Speed += 100;
+        else if (dtvel < -400)
+            p_vehicle->Speed -= 400;
+        else
+            p_vehicle->Speed = p_vehicle->U.UVehicle.ReqdSpeed;
+    }
+
+    switch (p_vehicle->State)
+    {
+    case VehSt_UNKN_3A:
+    case VehSt_UNKN_42:
+    case VehSt_UNKN_43:
+        p_vehicle->Y <<= 3;
+        process_my_flying_vehicle(p_vehicle);
+        move_flying_vehicle(p_vehicle);
+        set_passengers_location(p_vehicle);
+        p_vehicle->Y >>= 3;
+        break;
+    case VehSt_UNKN_3E:
+        process_unplacing(p_vehicle);
+        move_vehicle(p_vehicle);
+        set_passengers_location(p_vehicle);
+        break;
+    case VehSt_UNKN_41:
+        p_vehicle->U.UVehicle.ReqdSpeed = 0;
+        p_vehicle->U.UVehicle.AngleDY = 0;
+        p_vehicle->Y <<= 3;
+        process_hovering_vehicle(p_vehicle);
+        move_flying_vehicle(p_vehicle);
+        set_passengers_location(p_vehicle);
+        p_vehicle->Y >>= 3;
+        break;
+    case VehSt_UNKN_45:
+        p_vehicle->Y <<= 3;
+        if (process_my_crashing_vehicle(p_vehicle)) {
+            move_flying_vehicle(p_vehicle);
+            set_passengers_location(p_vehicle);
+        }
+        p_vehicle->Y >>= 3;
+        break;
+    case VehSt_UNKN_39:
+    case VehSt_UNKN_44:
+        p_vehicle->Y <<= 3;
+        process_my_takeoff(p_vehicle);
+        move_flying_vehicle(p_vehicle);
+        set_passengers_location(p_vehicle);
+        p_vehicle->Y >>= 3;
+        break;
+    case VehSt_FLY_LANDING:
+        p_vehicle->Y <<= 3;
+        process_my_land_vehicle(p_vehicle);
+        move_flying_vehicle(p_vehicle);
+        set_passengers_location(p_vehicle);
+        p_vehicle->Y >>= 3;
+        break;
+    case VehSt_UNKN_3C:
+        p_vehicle->State = VehSt_UNKN_11;
+        if (p_vehicle->U.UVehicle.TNode != 0)
+              process_next_tnode(p_vehicle);
+        move_vehicle(p_vehicle);
+        set_passengers_location(p_vehicle);
+        p_vehicle->State = VehSt_UNKN_3C;
+        process_stop_as_soon_as_you_can(p_vehicle);
+        break;
+    case VehSt_UNKN_0:
+    case VehSt_UNKN_3D:
+    case VehSt_UNKN_21:
+        if (p_vehicle->SubType == SubTT_VEH_FLYING)
+            process_parked_flyer(p_vehicle);
+        break;
+    case VehSt_UNKN_27:
+        switch (p_vehicle->SubState)
+        {
+        case 5:
+            process_vehicle_goto_point_liftoff(p_vehicle);
+            move_vehicle(p_vehicle);
+            set_passengers_location(p_vehicle);
+            break;
+        case 6:
+            process_vehicle_goto_point_fly(p_vehicle);
+            move_vehicle(p_vehicle);
+            set_passengers_location(p_vehicle);
+            break;
+        case 7:
+            process_vehicle_goto_point_land(p_vehicle);
+            move_vehicle(p_vehicle);
+            set_passengers_location(p_vehicle);
+            break;
+        default:
+            move_vehicle(p_vehicle);
+            set_passengers_location(p_vehicle);
+            break;
+        }
+        break;
+    case VehSt_UNKN_36:
+        process_stopping(p_vehicle);
+        move_vehicle(p_vehicle);
+        set_passengers_location(p_vehicle);
+        break;
+    case VehSt_UNKN_38:
+        process_unstopping(p_vehicle);
+        move_vehicle(p_vehicle);
+        set_passengers_location(p_vehicle);
+        break;
+    case VehSt_UNKN_11:
+    case VehSt_UNKN_32:
+    case VehSt_UNKN_33:
+    case VehSt_UNKN_34:
+        if (p_vehicle->U.UVehicle.TNode != 0)
+            process_next_tnode(p_vehicle);
+        move_vehicle(p_vehicle);
+        set_passengers_location(p_vehicle);
+        break;
+    default:
+        LOGERR("Unexpected vehicle state %d", (int)p_vehicle->State);
+        break;
+    }
+
+    if ((p_vehicle->SubType != SubTT_VEH_FLYING)
+     && ((p_vehicle->Flag & 0x0002) == 0)) {
+        set_vehicle_alt(p_vehicle);
+    }
+}
+
 void vehicle_check_outside_map(struct Thing *p_vehicle)
 {
     if ((p_vehicle->X <= 0) || (p_vehicle->X >= 0x800000) ||
@@ -415,9 +639,70 @@ void vehicle_check_outside_map(struct Thing *p_vehicle)
 
 void process_vehicle(struct Thing *p_vehicle)
 {
+#if 0
     asm volatile ("call ASM_process_vehicle\n"
         : : "a" (p_vehicle));
     return;
+#endif
+    if ((p_vehicle->Flag & 0x02) == 0)
+        p_vehicle->OldTarget = 0;
+    if (p_vehicle->U.UVehicle.RecoilTimer > 0)
+        p_vehicle->U.UVehicle.RecoilTimer--;
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x80) != 0)
+    {
+        p_vehicle->Health -= 16;
+        if (p_vehicle->Health < 0)
+            start_crashing(p_vehicle);
+        if (((gameturn & 7) == 0) && (LbRandomAnyShort() & 7) == 0)
+            p_vehicle->U.UVehicle.WorkPlace &= ~0x80;
+    }
+
+    switch (p_vehicle->SubType)
+    {
+    case SubTT_VEH_UNKN29:
+        if (p_vehicle->State == VehSt_UNKN_D)
+            break;
+        process_veh_unkn29(p_vehicle);
+        break;
+    case SubTT_VEH_SHUTTLE_POD:
+        process_shuttle_pod(p_vehicle);
+        break;
+    case SubTT_VEH_GROUND:
+    case SubTT_VEH_UNKN43:
+        process_veh_ground(p_vehicle);
+        break;
+    case SubTT_VEH_FLYING:
+        vehicle_check_outside_map(p_vehicle);
+        process_veh_ground(p_vehicle);
+        break;
+    case SubTT_VEH_TANK:
+        if (p_vehicle->State == VehSt_UNKN_45) {
+            bang_new4(p_vehicle->X, p_vehicle->Y, p_vehicle->Z, 10);
+            init_vehicle_explode(p_vehicle);
+        } else if (p_vehicle->State == VehSt_UNKN_21) {
+            process_tank_stationary(p_vehicle);
+        } else {
+            process_tank(p_vehicle);
+            set_passengers_location(p_vehicle);
+        }
+        process_tank_turret(p_vehicle);
+        break;
+    case SubTT_VEH_SHIP:
+        process_ship(p_vehicle);
+        set_passengers_location(p_vehicle);
+        break;
+    case SubTT_VEH_MECH:
+        unkn_path_func_001(p_vehicle, 0);
+        if (p_vehicle->State == VehSt_UNKN_21)
+            process_mech_stationary(p_vehicle);
+        else
+            process_mech(p_vehicle);
+        process_mech_unknown1(p_vehicle);
+        set_passengers_location(p_vehicle);
+        break;
+    default:
+        break;
+    }
 }
 
 
