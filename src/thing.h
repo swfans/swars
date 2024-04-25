@@ -217,7 +217,9 @@ struct TngUVehicle
   short WeaponTurn;
   short ReqdSpeed;
   ushort MaxSpeed; // within Thing, pos=92
-  ushort PassengerHead;
+  /** Index of a first thing in a linked list of passengers.
+   */
+  short PassengerHead;
   /** Traffic node where the vehicle is moving.
    */
   short TNode;
@@ -264,7 +266,7 @@ struct TngUEffect
   short WeaponTurn;
   ubyte NumbObjects;
   ubyte Angle;
-  ushort PassengerHead;
+  short PassengerHead;
   short TNode;
   short AngleDY; // within Thing, pos=92
   short AngleX;
@@ -312,6 +314,8 @@ struct TngUPerson
   ubyte BumpMode; // within Thing, pos=92
   ubyte BumpCount;
   short Vehicle;
+  /** Index of a next thing in a linked list of passengers.
+   */
   short LinkPassenger;
   ushort Within;
   ushort LastDist;
