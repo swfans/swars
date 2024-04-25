@@ -169,6 +169,12 @@ void set_passengers_location(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
 }
 
+void move_flying_vehicle(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_move_flying_vehicle\n"
+        : : "a" (p_vehicle));
+}
+
 short angle_between_points(int x1, int z1, int x2, int z2)
 {
   return LbArcTanAngle(x2 - x1, z1 - z2);
@@ -279,10 +285,139 @@ void process_mech_unknown1(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
 }
 
+int process_my_crashing_vehicle(struct Thing *p_vehicle)
+{
+    int ret;
+    asm volatile ("call ASM_process_my_crashing_vehicle\n"
+        : "=r" (ret) : "a" (p_vehicle));
+    return ret;
+}
+
+int train_unkn_st21_exit_func_1(struct Thing *p_vehicle)
+{
+    int ret;
+    asm volatile ("call ASM_train_unkn_st21_exit_func_1\n"
+        : "=r" (ret) : "a" (p_vehicle));
+    return ret;
+}
+
+void train_unkn_st18_func_1(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_train_unkn_st18_func_1\n"
+        : : "a" (p_vehicle));
+}
+
+void train_unkn_st18_func_2(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_train_unkn_st18_func_2\n"
+        : : "a" (p_vehicle));
+}
+
+void move_vehicle(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_move_vehicle\n"
+        : : "a" (p_vehicle));
+}
+
+void train_unkn_st20_func_1(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_train_unkn_st20_func_1\n"
+        : : "a" (p_vehicle));
+}
+
+void process_veh_unkn29(struct Thing *p_vehicle)
+{
+    int dtvel;
+
+    dtvel = p_vehicle->U.UVehicle.ReqdSpeed - p_vehicle->Speed;
+    if (abs(dtvel) >= 4) {
+        p_vehicle->Speed += dtvel >> 1;
+    } else {
+        p_vehicle->Speed = p_vehicle->U.UVehicle.ReqdSpeed;
+    }
+
+    if (p_vehicle->State == VehSt_UNKN_45)
+    {
+          p_vehicle->Y <<= 3;
+          if (process_my_crashing_vehicle(p_vehicle))
+          {
+              move_flying_vehicle(p_vehicle);
+              p_vehicle->Y >>= 3;
+              set_passengers_location(p_vehicle);
+          }
+          return;
+    }
+
+    if (p_vehicle->U.UVehicle.TNode != 0)
+    {
+        struct Thing *p_tnode;
+
+        p_tnode = &things[p_vehicle->U.UVehicle.TNode];
+        if ((p_tnode->Flag & 0x0002) != 0)
+        {
+            p_vehicle->Flag |= 0x0002;
+            start_crashing(p_vehicle);
+            p_vehicle->U.UVehicle.ReqdSpeed = 0;
+            return;
+        }
+    }
+
+    switch (p_vehicle->State)
+    {
+    case VehSt_UNKN_12:
+        if (p_vehicle->U.UVehicle.TNode != 0)
+        {
+            if ((p_vehicle->Flag & 0x8000000) != 0)
+                train_unkn_st18_func_1(p_vehicle);
+            else
+                train_unkn_st18_func_2(p_vehicle);
+        }
+        set_passengers_location(p_vehicle);
+        move_vehicle(p_vehicle);
+        break;
+    case VehSt_UNKN_13:
+        if (!train_unkn_st21_exit_func_1(p_vehicle))
+        {
+            p_vehicle->State = VehSt_UNKN_14;
+            p_vehicle->U.UVehicle.Timer2 = 100;
+            play_dist_sample(p_vehicle, 225 + (LbRandomAnyShort() % 4), 0x7Fu, 0x40u, 100, 0, 1);
+        }
+        break;
+    case VehSt_UNKN_14:
+        train_unkn_st20_func_1(p_vehicle);
+        set_passengers_location(p_vehicle);
+        break;
+    case VehSt_UNKN_15:
+        train_unkn_st21_exit_func_1(p_vehicle);
+        if (p_vehicle->U.UVehicle.GotoX != 0 && things[p_vehicle->U.UVehicle.GotoX].State == VehSt_UNKN_12) {
+            p_vehicle->State = VehSt_UNKN_12;
+        }
+        else if (p_vehicle->Owner != 0 && things[p_vehicle->Owner].State == VehSt_UNKN_12) {
+            p_vehicle->State = VehSt_UNKN_12;
+        }
+        set_passengers_location(p_vehicle);
+        break;
+    default:
+        LOGERR("Shagged train state %d", (int)p_vehicle->State);
+        break;
+    }
+}
+
+void vehicle_check_outside_map(struct Thing *p_vehicle)
+{
+    if ((p_vehicle->X <= 0) || (p_vehicle->X >= 0x800000) ||
+        (p_vehicle->Z <= 0) || (p_vehicle->Z >= 0x800000))
+    {
+        if (p_vehicle->State != VehSt_UNKN_45)
+            start_crashing(p_vehicle);
+    }
+}
+
 void process_vehicle(struct Thing *p_vehicle)
 {
     asm volatile ("call ASM_process_vehicle\n"
         : : "a" (p_vehicle));
+    return;
 }
 
 
