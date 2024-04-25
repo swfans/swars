@@ -30,13 +30,14 @@
 #include "bfplanar.h"
 #include "bfscrsurf.h"
 #include "bfscrcopy.h"
-#include "ssampply.h"
+#include "bmbang.h"
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_fmvids.h"
 #include "bflib_vidraw.h"
 #include "bfscd.h"
 #include "bflib_joyst.h"
+#include "ssampply.h"
 #include "matrix.h"
 #include "drawtext.h"
 #include "enginlights.h"
@@ -4916,20 +4917,6 @@ void mapwho_unkn01(int a1, int a2)
 {
     asm volatile ("call ASM_mapwho_unkn01\n"
         : : "a" (a1), "d" (a2));
-}
-
-void new_bang(int a1, int a2, int a3, int a4, int a5, int a6)
-{
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_new_bang\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
-}
-
-void new_bang_3(int a1, int a2, int a3, int a4)
-{
-    new_bang(a1, a2, a3, a4, 0, 0);
 }
 
 void input(void)
@@ -10416,10 +10403,10 @@ void game_process_orbital_station_explode(void)
 
             stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
             stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
-            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
+            bang_new4(stl_x << 16, 0, stl_y << 16, 95);
             stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
             stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
-            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
+            bang_new4(stl_x << 16, 0, stl_y << 16, 95);
         }
     }
 }
