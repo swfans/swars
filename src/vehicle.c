@@ -428,10 +428,11 @@ void process_veh_unkn29(struct Thing *p_vehicle)
 
     if (p_vehicle->U.UVehicle.TNode != 0)
     {
-        struct Thing *p_tnode;
+        struct Thing *p_traffic;
 
-        p_tnode = &things[p_vehicle->U.UVehicle.TNode];
-        if ((p_tnode->Flag & 0x0002) != 0)
+        //TODO aren't Traffic items SimpleThings?
+        p_traffic = &things[p_vehicle->U.UVehicle.TNode];
+        if ((p_traffic->Flag & 0x0002) != 0)
         {
             p_vehicle->Flag |= 0x0002;
             start_crashing(p_vehicle);
