@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "vehicle.h"
 
+#include <assert.h>
 #include "bfmath.h"
 #include "bfutility.h"
 #include "ssampply.h"
@@ -403,7 +404,7 @@ void process_parked_flyer(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
 }
 
-void process_veh_unkn29(struct Thing *p_vehicle)
+void process_train(struct Thing *p_vehicle)
 {
     int dtvel;
 
@@ -428,13 +429,13 @@ void process_veh_unkn29(struct Thing *p_vehicle)
 
     if (p_vehicle->U.UVehicle.TNode != 0)
     {
-        struct Thing *p_traffic;
+        struct Thing *p_station;
 
-        //TODO aren't Traffic items SimpleThings?
-        p_traffic = &things[p_vehicle->U.UVehicle.TNode];
-        if ((p_traffic->Flag & 0x0002) != 0)
+        assert(p_vehicle->SubType == SubTT_VEH_TRAIN); // only trains have stations
+        p_station = &things[p_vehicle->U.UVehicle.TNode];
+        if ((p_station->Type != TT_BUILDING) || (p_station->Flag & TngF_Unkn0002) != 0)
         {
-            p_vehicle->Flag |= 0x0002;
+            p_vehicle->Flag |= TngF_Unkn0002;
             start_crashing(p_vehicle);
             p_vehicle->U.UVehicle.ReqdSpeed = 0;
             return;
@@ -660,10 +661,10 @@ void process_vehicle(struct Thing *p_vehicle)
 
     switch (p_vehicle->SubType)
     {
-    case SubTT_VEH_UNKN29:
+    case SubTT_VEH_TRAIN:
         if (p_vehicle->State == VehSt_UNKN_D)
             break;
-        process_veh_unkn29(p_vehicle);
+        process_train(p_vehicle);
         break;
     case SubTT_VEH_SHUTTLE_POD:
         process_shuttle_pod(p_vehicle);

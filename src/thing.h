@@ -220,7 +220,8 @@ struct TngUVehicle
   /** Index of a first thing in a linked list of passengers.
    */
   short PassengerHead;
-  /** Traffic node where the vehicle is moving.
+  /** Traffic Node or Station thing where the vehicle is moving.
+   * Most vehicles travel between traffic nodes. Trains travel beween stations.
    */
   short TNode;
   short AngleDY;
