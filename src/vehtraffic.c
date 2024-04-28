@@ -86,12 +86,14 @@ void process_next_tnode(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
     return;
 #endif
+    // TODO FIX exploding vehicles with this code at border of map 0,26
     short tnode;
-    int cx, cz;
-    int dx, dz, delta;
+    int tndt_x, tndt_z;
+    int delta;
 
     tnode = p_vehicle->U.UVehicle.TNode;
     if (tnode == 0) {
+        LOGERR("Crashing vehicle %d due to no TNode assigned", p_vehicle->ThingOffset);
         start_crashing(p_vehicle);
         return;
     }
@@ -106,36 +108,41 @@ void process_next_tnode(struct Thing *p_vehicle)
         p_vehicle->U.UVehicle.WorkPlace &= ~0x0100;
     }
 
-    if (tnode <= 0) // we've alteady made sure it's not 0
     {
-        struct TrafficNode *p_tnode;
+        int cux, cuz;
 
-        p_tnode = &game_traffic_nodes[-tnode];
-        if (p_vehicle->State == VehSt_UNKN_33) {
-            cx = p_vehicle->U.UVehicle.Dummy5b;
-            cz = p_vehicle->U.UVehicle.Dummy5a;
-        } else {
-            cx = p_tnode->X;
-            cz = p_tnode->Z;
+        if (tnode <= 0) // we've alteady made sure it's not 0
+        {
+            struct TrafficNode *p_tnode;
+
+            p_tnode = &game_traffic_nodes[-tnode];
+            if (p_vehicle->State == VehSt_UNKN_33) {
+                cux = p_vehicle->U.UVehicle.Dummy5b;
+                cuz = p_vehicle->U.UVehicle.Dummy5a;
+            } else {
+                cux = p_tnode->X;
+                cuz = p_tnode->Z;
+            }
         }
-    }
-    else
-    {
-        struct Thing *p_station;
+        else
+        {
+            struct Thing *p_station;
 
-        p_station = &things[tnode];
-        if ((p_vehicle->Flag & 0x8000000) != 0) {
-            cx = PRCCOORD_TO_MAPCOORD(p_station->X) - 5 * p_station->U.UObject.OffX;
-            cz = PRCCOORD_TO_MAPCOORD(p_station->Z) - 5 * p_station->U.UObject.OffZ;
-        } else {
-            cx = PRCCOORD_TO_MAPCOORD(p_station->X) + 5 * p_station->U.UObject.OffX;
-            cz = PRCCOORD_TO_MAPCOORD(p_station->Z) + 5 * p_station->U.UObject.OffZ;
+            p_station = &things[tnode];
+            if ((p_vehicle->Flag & 0x8000000) != 0) {
+                cux = PRCCOORD_TO_MAPCOORD(p_station->X) - 5 * p_station->U.UObject.OffX;
+                cuz = PRCCOORD_TO_MAPCOORD(p_station->Z) - 5 * p_station->U.UObject.OffZ;
+            } else {
+                cux = PRCCOORD_TO_MAPCOORD(p_station->X) + 5 * p_station->U.UObject.OffX;
+                cuz = PRCCOORD_TO_MAPCOORD(p_station->Z) + 5 * p_station->U.UObject.OffZ;
+            }
         }
+
+        tndt_x = cux - PRCCOORD_TO_MAPCOORD(p_vehicle->X);
+        tndt_z = cuz - PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
+        delta = tndt_z * tndt_z + tndt_x * tndt_x;
     }
 
-    dx = cx - PRCCOORD_TO_MAPCOORD(p_vehicle->X);
-    dz = cz - PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
-    delta = dz * dz + dx * dx;
     if (tnode > 0)
     {
         p_vehicle->U.UVehicle.ReqdSpeed = 1512;
@@ -268,6 +275,8 @@ void process_next_tnode(struct Thing *p_vehicle)
             p_nxtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.Dummy4b];
             if ((p_tnode->Flags & 0x0800) != 0)
             {
+                int dx, dz;
+
                 dx = p_tnode->X - p_nxtnode->X;
                 dz = p_tnode->Z - p_nxtnode->Z;
                 p_vehicle->U.UVehicle.AccelZ = 0;
@@ -281,6 +290,7 @@ void process_next_tnode(struct Thing *p_vehicle)
                 int simp_dist;
                 int accX, accZ;
                 int selX, selZ;
+                int dx, dz;
 
                 dx = p_tnode->X - p_nxtnode->X;
                 dz = p_nxtnode->Z - p_tnode->Z;
@@ -351,7 +361,7 @@ void process_next_tnode(struct Thing *p_vehicle)
                     p_vehicle->U.UVehicle.WorkPlace |= 0x0040;
                 }
 
-                p_vehicle->U.UVehicle.Dummy4b = 0;
+                p_vehicle->U.UVehicle.Dummy4a = 0;
                 p_vehicle->U.UVehicle.Dummy4b = p_vehicle->U.UVehicle.TNode;
                 if ((p_vehicle->U.UVehicle.WorkPlace & 0x0010) != 0)
                 {
@@ -361,6 +371,8 @@ void process_next_tnode(struct Thing *p_vehicle)
                 lnk = get_next_tnode(p_vehicle, p_tnode);
                 p_vehicle->U.UVehicle.TNode = p_tnode->UTraffic.Link[lnk];
                 if (p_vehicle->U.UVehicle.TNode == 0) {
+                    LOGERR("Crashing vehicle %d state %d due to no next TNode in TNode %d link %d",
+                      p_vehicle->ThingOffset, p_vehicle->State, p_vehicle->U.UVehicle.Dummy4b, lnk);
                     start_crashing(p_vehicle);
                 }
 
@@ -383,6 +395,7 @@ void process_next_tnode(struct Thing *p_vehicle)
             else
             {
                 int i, lnk;
+                int dx, dz;
 
                 for (i = 0; i < 8; i++)
                 {
@@ -396,12 +409,12 @@ void process_next_tnode(struct Thing *p_vehicle)
                         break;
 
                     p_lntnode = &game_traffic_nodes[-p_tnode->UTraffic.Link[lnk]];
-                    dx = (p_lntnode->X << 8) - (p_tnode->X << 8);
-                    dz = (p_lntnode->Z << 8) - (p_tnode->Z << 8);
                     if ((p_lntnode->Flags & 0x40) == 0)
                     {
                         struct TrafficNode *p_agtnode;
 
+                        dx = (p_lntnode->X << 8) - (p_tnode->X << 8);
+                        dz = (p_lntnode->Z << 8) - (p_tnode->Z << 8);
                         p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
                         move_mapwho(p_vehicle, p_tnode->X << 8, (p_tnode->Y + 15) << 8, p_tnode->Z << 8);
                         remove_locks(p_vehicle);
@@ -414,6 +427,8 @@ void process_next_tnode(struct Thing *p_vehicle)
                     }
                 }
                 if (i >= 8) {
+                    LOGERR("Crashing vehicle %d due to no random next TNode despite %d tries",
+                      p_vehicle->ThingOffset, i);
                     start_crashing(p_vehicle);
                     return;
                 }
@@ -435,6 +450,8 @@ void process_next_tnode(struct Thing *p_vehicle)
             p_station = &things[tnode];
             if ((p_station->Flag & 0x0002) != 0)
             {
+                LOGERR("Crashing vehicle %d due to destroyed station %d",
+                  p_vehicle->ThingOffset, tnode);
                 start_crashing(p_vehicle);
                 return;
             }
@@ -444,6 +461,7 @@ void process_next_tnode(struct Thing *p_vehicle)
                 {
                     int cux, cuy, cuz, nxx, nxy, nxz, dy, faxz;
                     struct Thing *p_nxstation;
+                    int dx, dz;
 
                     p_nxstation = &things[p_station->U.UObject.NextThing];
                     cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
@@ -472,6 +490,7 @@ void process_next_tnode(struct Thing *p_vehicle)
                 {
                     int cux, cuy, cuz, pvx, pvy, pvz, dy, faxz;
                     struct Thing *p_pvstation;
+                    int dx, dz;
 
                     p_pvstation = &things[p_station->U.UObject.PrevThing];
                     cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
@@ -498,6 +517,8 @@ void process_next_tnode(struct Thing *p_vehicle)
 
         if ((p_vehicle->State == VehSt_UNKN_32) && ((gameturn & 3) == 0) && ((p_vehicle->U.UVehicle.Dummy4a & 0x3F) > 2))
         {
+            int dx, dz;
+
             dx = abs(p_vehicle->U.UVehicle.destx - (p_vehicle->X >> 8));
             dz = abs(p_vehicle->U.UVehicle.destz - (p_vehicle->Z >> 8));
             if (dx <= dz)
@@ -516,7 +537,7 @@ void process_next_tnode(struct Thing *p_vehicle)
     {
         short angleY, angDY;
 
-        angleY = p_vehicle->U.UVehicle.AngleY - arctan(dx, dz);
+        angleY = p_vehicle->U.UVehicle.AngleY - arctan(tndt_x, tndt_z);
         if (angleY < -1024)
             angleY += 2048;
         else if (angleY > 1024)
