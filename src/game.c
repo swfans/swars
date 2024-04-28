@@ -339,6 +339,14 @@ ubyte scanner_height_pct = 25;
 
 void ac_purple_unkn1_data_to_screen(void);
 
+short arctan(int dx, int dz)
+{
+    ushort ret;
+    asm volatile ("call ASM_arctan\n"
+        : "=r" (ret) : "a" (dx), "d" (dz));
+    return ret;
+}
+
 void PacketRecord_Close(void)
 {
     if (in_network_game)
