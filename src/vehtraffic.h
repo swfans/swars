@@ -27,19 +27,33 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-struct TrafficNode { // sizeof=36
-    ubyte field_0[18];
-    ubyte field_12;
-    ubyte field_13;
-    ubyte field_14[15];
-    ubyte field_23;
+struct STngUTraffic {
+    short Link[4];
+    ubyte Flags[4];
 };
+
+struct TrafficNode { // sizeof=36
+    short X;
+    short Y;
+    short Z;
+    struct STngUTraffic UTraffic;
+    short Flags;	// ofs=0x12
+    short GateLink;
+    ubyte field_16[11];
+    short Dummy1;
+    ubyte Dummy2;
+};
+
+struct Thing;
 
 #pragma pack()
 /******************************************************************************/
 extern struct TrafficNode *game_traffic_nodes;
 extern ushort next_traffic_node;
 
+short get_next_tnode(struct Thing *p_vehicle, struct TrafficNode *p_tnode);
+
+void process_next_tnode(struct Thing *p_vehicle);
 
 /******************************************************************************/
 #ifdef __cplusplus

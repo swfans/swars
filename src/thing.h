@@ -21,6 +21,7 @@
 
 #include "bftypes.h"
 #include "cybmod.h"
+#include "vehtraffic.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -220,7 +221,7 @@ struct TngUVehicle
   /** Index of a first thing in a linked list of passengers.
    */
   short PassengerHead;
-  /** Traffic Node or Station thing where the vehicle is moving.
+  /** Index of a Traffic Node (negative) or Station thing (positive) where the vehicle is moving.
    * Most vehicles travel between traffic nodes. Trains travel beween stations.
    */
   short TNode;
@@ -243,7 +244,12 @@ struct TngUVehicle
   short Timer2;
   short RecoilTimer;
   ushort MaxHealth;
-  int Dummy[3];
+  short Dummy4a;
+  short Dummy4b;
+  short Dummy5a;
+  short Dummy5b;
+  short AccelZ;
+  short AccelX;
   ushort SubThing;
   short Agok;
   int WobbleZP;
@@ -429,11 +435,6 @@ struct STngUWeapon {
     short Ammo;
     short Owner;
     short OnFace;
-};
-
-struct STngUTraffic {
-    short Link[4];
-    ubyte Flags[4];
 };
 
 struct STngULight {
@@ -900,6 +901,8 @@ void remove_thing(short tngno);
 void add_node_sthing(ushort new_thing);
 short get_new_sthing(void);
 void remove_sthing(short tngno);
+
+void move_mapwho(struct Thing *p_thing, int x, int y, int z);
 
 short add_static(int x, int y, int z, ushort frame, int timer);
 

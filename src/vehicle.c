@@ -134,6 +134,15 @@ void VNAV_unkn_func_207(struct Thing *p_thing)
         : : "a" (p_thing));
 }
 
+int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle)
+{
+    int ret;
+    asm volatile (
+      "call ASM_check_for_a_vehicle_here\n"
+        : "=r" (ret) : "a" (x), "d" (z), "b" (p_vehicle));
+    return ret;
+}
+
 void start_crashing(struct Thing *p_vehicle)
 {
     asm volatile ("call ASM_start_crashing\n"
@@ -368,12 +377,6 @@ void set_vehicle_alt(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
 }
 
-void process_next_tnode(struct Thing *p_vehicle)
-{
-    asm volatile ("call ASM_process_next_tnode\n"
-        : : "a" (p_vehicle));
-}
-
 void process_unstopping(struct Thing *p_vehicle)
 {
     asm volatile ("call ASM_process_unstopping\n"
@@ -432,6 +435,7 @@ void process_train(struct Thing *p_vehicle)
         struct Thing *p_station;
 
         assert(p_vehicle->SubType == SubTT_VEH_TRAIN); // only trains have stations
+        assert(p_vehicle->U.UVehicle.TNode > 0); // trains stations have positive indexes
         p_station = &things[p_vehicle->U.UVehicle.TNode];
         if ((p_station->Type != TT_BUILDING) || (p_station->Flag & TngF_Unkn0002) != 0)
         {
