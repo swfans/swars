@@ -79,6 +79,264 @@ void remove_locks_apart_from_agok(struct Thing *p_thing)
     return;
 }
 
+void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
+{
+    short angleX;
+
+    angleX = 0;
+    if (statn > 0)
+    {
+        struct Thing *p_station;
+
+        p_station = &things[statn];
+        if ((p_station->Flag & 0x0002) != 0)
+        {
+            LOGERR("Crashing vehicle %d due to destroyed station %d",
+              p_vehicle->ThingOffset, statn);
+            start_crashing(p_vehicle);
+            return;
+        }
+        if ((p_vehicle->Flag & 0x8000000) != 0)
+        {
+            if (p_station->U.UObject.NextThing > 0)
+            {
+                int cux, cuy, cuz, nxx, nxy, nxz, dy, faxz;
+                struct Thing *p_nxstation;
+                int dx, dz;
+
+                p_nxstation = &things[p_station->U.UObject.NextThing];
+                cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
+                nxx = (p_nxstation->X >> 8) - 5 * p_nxstation->U.UObject.OffX;
+                cuz = (p_station->Z >> 8) - 5 * p_station->U.UObject.OffZ;
+                nxz = (p_nxstation->Z >> 8) - 5 * p_nxstation->U.UObject.OffZ;
+                cuy = (p_station->Y >> 3) + 3840;
+                nxy = (p_nxstation->Y >> 3) + 3840;
+
+                dx = abs(cux - nxx);
+                dy = (cuy - nxy) >> 5;
+                dz = abs(cuz - nxz);
+                if (dx >= dz)
+                    faxz = dx + (dz >> 2) + (dz >> 3) - (dx >> 5) + (dz >> 6) - (dx >> 7) + (dz >> 7);
+                else
+                    faxz = dz + (dx >> 2) + (dx >> 3) - (dz >> 5) + (dx >> 6) + (dx >> 7) - (dz >> 7);
+                angleX = arctan(abs(dy), faxz) - 1024;
+                if (dy < 0)
+                    angleX = -angleX;
+                p_vehicle->Y += (cuy - p_vehicle->Y) >> 3;
+            }
+        }
+        else
+        {
+            if (p_station->U.UObject.PrevThing > 0)
+            {
+                int cux, cuy, cuz, pvx, pvy, pvz, dy, faxz;
+                struct Thing *p_pvstation;
+                int dx, dz;
+
+                p_pvstation = &things[p_station->U.UObject.PrevThing];
+                cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
+                pvx = (p_pvstation->X >> 8) - 5 * p_pvstation->U.UObject.OffX;
+                cuz = (p_station->Z >> 8) - 5 * p_station->U.UObject.OffZ;
+                pvz = (p_pvstation->Z >> 8) - 5 * p_pvstation->U.UObject.OffZ;
+                cuy = (p_station->Y >> 3) + 3840;
+                pvy = (p_pvstation->Y >> 3) + 3840;
+
+                dx = abs(cux - pvx);
+                dy = (cuy - pvy) >> 5;
+                dz = abs(cuz - pvz);
+                if (dx >= dz)
+                    faxz = dx + (dz >> 2) + (dz >> 3) - (dx >> 5) + (dz >> 6) - (dx >> 7) + (dz >> 7);
+                else
+                    faxz = dz + (dx >> 2) + (dx >> 3) - (dz >> 5) + (dx >> 6) + (dx >> 7) - (dz >> 7);
+                angleX = arctan(abs(dy), faxz) - 1024;
+                if (dy < 0)
+                    angleX = -angleX;
+                p_vehicle->Y += (cuy - p_vehicle->Y) >> 3;
+            }
+        }
+    }
+
+    if ((p_vehicle->State == VehSt_UNKN_32) && ((gameturn & 3) == 0) && ((p_vehicle->U.UVehicle.Dummy4a & 0x3F) > 2))
+    {
+        int dx, dz;
+
+        dx = abs(p_vehicle->U.UVehicle.destx - (p_vehicle->X >> 8));
+        dz = abs(p_vehicle->U.UVehicle.destz - (p_vehicle->Z >> 8));
+        if (dx <= dz)
+            dx >>= 1;
+        else
+            dz >>= 1;
+        if (dx + dz < 768)
+            p_vehicle->State = VehSt_UNKN_3C;
+    }
+    if (p_vehicle->U.UVehicle.AngleX < angleX)
+        p_vehicle->U.UVehicle.AngleX += 4;
+    if (p_vehicle->U.UVehicle.AngleX > angleX)
+        p_vehicle->U.UVehicle.AngleX -= 4;
+}
+
+void update_vehicle_speed_and_direction(struct Thing *p_vehicle, int tndt_x, int tndt_z, long nxdist_sq)
+{
+    short angleY, angDY;
+
+    angleY = p_vehicle->U.UVehicle.AngleY - arctan(tndt_x, tndt_z);
+    if (angleY < -1024)
+        angleY += 2048;
+    else if (angleY > 1024)
+        angleY -= 2048;
+
+    if (angleY > 0)
+    {
+        if (angleY >= 50)
+          angDY = (2048 - (p_vehicle->Speed >> 3)) >> 2;
+        else
+          angDY = 2 * angleY;
+        angDY = -angDY;
+    }
+    else
+    {
+        if (angleY <= -50)
+            angDY = (2048 - (p_vehicle->Speed >> 3)) >> 2;
+        else
+            angDY = -2 * angleY;
+    }
+    p_vehicle->U.UVehicle.AngleDY = angDY;
+
+    if ((angleY > 512) || (angleY < -512))
+        angleY = 512;
+    if (p_vehicle->SubState == 2)
+    {
+        p_vehicle->U.UVehicle.ReqdSpeed = nxdist_sq >= 0x8000 ? 2048 - 4 * abs(angleY) : 512;
+        if (p_vehicle->U.UVehicle.ReqdSpeed < 10)
+            p_vehicle->U.UVehicle.ReqdSpeed = 10;
+    }
+}
+
+void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
+{
+    struct TrafficNode *p_tnode;
+    struct Thing *p_gate;
+
+    // Only Traffic Nodes support stopping for pedestrians
+    if (p_vehicle->U.UVehicle.TNode >= 0)
+        return;
+
+    p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0008) != 0)
+    {
+        if (p_vehicle->State == VehSt_UNKN_32 || p_vehicle->State == VehSt_UNKN_11)
+        {
+            if ((p_tnode->Flags & 0x40) != 0)
+            {
+                p_vehicle->U.UVehicle.ReqdSpeed = 0;
+                p_gate = &things[p_tnode->GateLink];
+                if ((p_gate->U.UObject.Timer[1] & 0x0008) != 0)
+                {
+                    struct TrafficNode *p_tztnode;
+
+                    p_tztnode = &game_traffic_nodes[-p_gate->U.UObject.TargetDZ];
+                    if ((p_tztnode->Flags & 0x0040) != 0)
+                    {
+                        if (p_tztnode->GateLink == p_vehicle->ThingOffset)
+                        {
+                            if (p_vehicle->U.UVehicle.Dummy4b == p_gate->U.UObject.TargetDZ)
+                            {
+                                p_tztnode->GateLink = 0;
+                                p_tztnode->Flags &= ~0x0040;
+                                p_vehicle->U.UVehicle.WorkPlace &= ~0x0020;
+                            }
+                            else
+                            {
+                                p_tztnode->GateLink = 0;
+                                p_tztnode->Flags &= 0x0040;
+                                p_vehicle->U.UVehicle.WorkPlace &= ~0x0040;
+                            }
+                            if (p_gate->U.UObject.BHeight >> 16 == p_vehicle->U.UVehicle.TNode)
+                            {
+                                p_tztnode->GateLink = 0;
+                                p_tztnode->Flags &= ~0x0040;
+                                p_gate->U.UObject.Timer[1] &= ~0x0020;
+                            }
+                            else
+                            {
+                                struct TrafficNode *p_tnode;
+                                p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
+                                p_tnode->GateLink = 0;
+                                p_tnode->Flags &= ~0x0040;
+                                p_gate->U.UObject.Timer[1] &= ~0x0040;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                remove_locks_apart_from_agok(p_vehicle);
+                p_tnode->Flags |= 0x0040;
+                p_tnode->GateLink = p_vehicle->ThingOffset;
+                p_vehicle->U.UVehicle.WorkPlace |= 0x0010;
+                p_vehicle->U.UVehicle.WorkPlace &= ~0x0008;
+            }
+        }
+    }
+
+    if (((p_tnode->Flags & 0x0008) != 0) && check_person_close(p_tnode))
+    {
+        if (p_vehicle->U.UVehicle.PissedOffWithWaiting < 100)
+        {
+            if (p_vehicle->U.UVehicle.PissedOffWithWaiting == 0) {
+                p_vehicle->U.UVehicle.ZebraOldHealth = p_vehicle->Health;
+            }
+            if (p_vehicle->U.UVehicle.ZebraOldHealth == p_vehicle->Health) {
+                p_vehicle->U.UVehicle.ReqdSpeed = 0;
+                p_vehicle->U.UVehicle.ZebraOldHealth = p_vehicle->Health;
+                p_vehicle->U.UVehicle.PissedOffWithWaiting++;
+            } else {
+                p_vehicle->U.UVehicle.PissedOffWithWaiting = 200;
+            }
+        }
+    }
+    else
+    {
+        p_vehicle->U.UVehicle.PissedOffWithWaiting = 0;
+    }
+}
+
+void vehicle_workplace_states_finish(struct Thing *p_vehicle)
+{
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0020) != 0)
+    {
+        struct TrafficNode *p_dmtnode;
+        int dx, dz;
+
+        p_dmtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.Dummy4b];
+        dx = (p_vehicle->X >> 8) - p_dmtnode->X;
+        dz = (p_vehicle->Z >> 8) - p_dmtnode->Z;
+        if (dz * dz + dx * dx > 0x20000)
+        {
+            p_dmtnode->GateLink = 0;
+            p_dmtnode->Flags &= ~0x0040;
+            p_vehicle->U.UVehicle.WorkPlace &= ~0x0020;
+        }
+    }
+
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0040) != 0)
+    {
+        struct TrafficNode *p_agtnode;
+        int dx, dz;
+
+        p_agtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.Agok];
+        dx = (p_vehicle->X >> 8) - p_agtnode->X;
+        dz = (p_vehicle->Z >> 8) - p_agtnode->Z;
+        if (dz * dz + dx * dx > 0x20000)
+        {
+            p_agtnode->GateLink = 0;
+            p_agtnode->Flags &= ~0x0040;
+            p_vehicle->U.UVehicle.WorkPlace &= ~0x0040;
+        }
+    }
+}
+
 void process_next_tnode(struct Thing *p_vehicle)
 {
 #if 1
@@ -89,7 +347,7 @@ void process_next_tnode(struct Thing *p_vehicle)
     // TODO FIX exploding vehicles with this code at border of map 0,26
     short tnode;
     int tndt_x, tndt_z;
-    int delta;
+    int nxdist_sq; //< Squared distance to next traffic node or station
 
     tnode = p_vehicle->U.UVehicle.TNode;
     if (tnode == 0) {
@@ -140,7 +398,7 @@ void process_next_tnode(struct Thing *p_vehicle)
 
         tndt_x = cux - PRCCOORD_TO_MAPCOORD(p_vehicle->X);
         tndt_z = cuz - PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
-        delta = tndt_z * tndt_z + tndt_x * tndt_x;
+        nxdist_sq = tndt_z * tndt_z + tndt_x * tndt_x;
     }
 
     if (tnode > 0)
@@ -153,8 +411,8 @@ void process_next_tnode(struct Thing *p_vehicle)
 
         p_tnode = &game_traffic_nodes[-tnode];
         p_vehicle->U.UVehicle.ReqdSpeed = 1200 - 2 * abs(p_vehicle->U.UVehicle.AngleDY);
-        if ((p_vehicle->U.UVehicle.WorkPlace & 0x08)
-         && (p_vehicle->U.UVehicle.WorkPlace & 0x10)
+        if ((p_vehicle->U.UVehicle.WorkPlace & 0x0008)
+         && (p_vehicle->U.UVehicle.WorkPlace & 0x0010)
          && (p_tnode->GateLink == p_vehicle->ThingOffset)) {
             p_vehicle->U.UVehicle.WorkPlace &= ~0x0008;
         }
@@ -176,10 +434,10 @@ void process_next_tnode(struct Thing *p_vehicle)
         struct Thing *p_gate;
 
         p_tnode = &game_traffic_nodes[-tnode];
-        if ((p_tnode->GateLink != 0) && ((p_tnode->Flags & 0x8000) != 0) && (delta < 0x90000))
+        if ((p_tnode->GateLink != 0) && ((p_tnode->Flags & 0x8000) != 0) && (nxdist_sq < 0x90000))
         {
             p_gate = &things[p_tnode->GateLink];
-            if ((p_gate->Flag & 0x40) == 0) {
+            if ((p_gate->Flag & 0x0040) == 0) {
                 p_gate->Flag |= 0x0020;
                 p_vehicle->U.UVehicle.ReqdSpeed = 0;
                 p_vehicle->U.UVehicle.AngleDY = 0;
@@ -194,7 +452,7 @@ void process_next_tnode(struct Thing *p_vehicle)
         struct Thing *p_gate;
 
         p_tnode = &game_traffic_nodes[-tnode];
-        if ((p_tnode->GateLink != 0) && ((p_tnode->Flags & 0x8000) == 0) && (delta < 0x10000))
+        if ((p_tnode->GateLink != 0) && ((p_tnode->Flags & 0x8000) == 0) && (nxdist_sq < 0x10000))
         {
             p_gate = &things[p_tnode->GateLink];
             p_gate->Flag |= 0x0100;
@@ -206,7 +464,7 @@ void process_next_tnode(struct Thing *p_vehicle)
         struct Thing *p_station;
         short nxstation;
 
-        if (delta < 0xC000)
+        if (nxdist_sq < 0xC000)
         {
             p_station = &things[tnode];
             if ((p_vehicle->Flag & 0x8000000) != 0)
@@ -223,9 +481,9 @@ void process_next_tnode(struct Thing *p_vehicle)
         struct TrafficNode *p_tnode;
 
         p_tnode = &game_traffic_nodes[-tnode];
-        if ((p_tnode->GateLink != 0) && (delta < 0x10000))
+        if ((p_tnode->GateLink != 0) && (nxdist_sq < 0x10000))
             do_state = true;
-        if ((p_tnode->GateLink == 0) && (delta < 0x20000))
+        if ((p_tnode->GateLink == 0) && (nxdist_sq < 0x20000))
             do_state = true;
     }
 
@@ -265,7 +523,7 @@ void process_next_tnode(struct Thing *p_vehicle)
             {
                 p_nxtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
                 if ((p_nxtnode->Flags & 0x30) != 0) {
-                    delta = 0x7FFFFFFF;
+                    nxdist_sq = 0x7FFFFFFF;
                     p_vehicle->U.UVehicle.WorkPlace |= 0x0008;
                 }
             }
@@ -339,15 +597,15 @@ void process_next_tnode(struct Thing *p_vehicle)
             p_vehicle->U.UVehicle.WorkPlace &= ~0x0004;
             if ((p_tnode->Flags & 0x8000) == 0)
             {
-                int lnk;
+                short lnk;
 
-                if ((p_tnode->Flags & 0x30) != 0)
+                if ((p_tnode->Flags & 0x0030) != 0)
                     p_vehicle->U.UVehicle.WorkPlace |= 0x0001;
                 else
                     p_vehicle->U.UVehicle.WorkPlace &= ~0x0001;
-                if ((p_vehicle->U.UVehicle.WorkPlace & 0x20) != 0)
+                if ((p_vehicle->U.UVehicle.WorkPlace & 0x0020) != 0)
                 {
-                    if ((p_vehicle->U.UVehicle.WorkPlace & 0x40) != 0)
+                    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0040) != 0)
                     {
                         struct TrafficNode *p_agtnode;
 
@@ -383,7 +641,7 @@ void process_next_tnode(struct Thing *p_vehicle)
                     p_lntnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
                     if (((p_tnode->UTraffic.Flags[lnk] & 0x8000) != 0) || (p_lntnode->Flags & (0x0010|0x0020)))
                     {
-                        delta = 0x7FFFFFFF;
+                        nxdist_sq = 0x7FFFFFFF;
                         p_vehicle->U.UVehicle.WorkPlace |= 0x0008;
                     }
                 }
@@ -439,257 +697,16 @@ void process_next_tnode(struct Thing *p_vehicle)
         }
     }
 
+    update_vehicle_elevation(p_vehicle, tnode);
+
+    update_vehicle_speed_and_direction(p_vehicle, tndt_x, tndt_z, nxdist_sq);
+
+    if (nxdist_sq < 0xC0000)
     {
-        short angleX;
-
-        angleX = 0;
-        if (tnode > 0)
-        {
-            struct Thing *p_station;
-
-            p_station = &things[tnode];
-            if ((p_station->Flag & 0x0002) != 0)
-            {
-                LOGERR("Crashing vehicle %d due to destroyed station %d",
-                  p_vehicle->ThingOffset, tnode);
-                start_crashing(p_vehicle);
-                return;
-            }
-            if ((p_vehicle->Flag & 0x8000000) != 0)
-            {
-                if (p_station->U.UObject.NextThing > 0)
-                {
-                    int cux, cuy, cuz, nxx, nxy, nxz, dy, faxz;
-                    struct Thing *p_nxstation;
-                    int dx, dz;
-
-                    p_nxstation = &things[p_station->U.UObject.NextThing];
-                    cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
-                    nxx = (p_nxstation->X >> 8) - 5 * p_nxstation->U.UObject.OffX;
-                    cuz = (p_station->Z >> 8) - 5 * p_station->U.UObject.OffZ;
-                    nxz = (p_nxstation->Z >> 8) - 5 * p_nxstation->U.UObject.OffZ;
-                    cuy = (p_station->Y >> 3) + 3840;
-                    nxy = (p_nxstation->Y >> 3) + 3840;
-
-                    dx = abs(cux - nxx);
-                    dy = (cuy - nxy) >> 5;
-                    dz = abs(cuz - nxz);
-                    if (dx >= dz)
-                        faxz = dx + (dz >> 2) + (dz >> 3) - (dx >> 5) + (dz >> 6) - (dx >> 7) + (dz >> 7);
-                    else
-                        faxz = dz + (dx >> 2) + (dx >> 3) - (dz >> 5) + (dx >> 6) + (dx >> 7) - (dz >> 7);
-                    angleX = arctan(abs(dy), faxz) - 1024;
-                    if (dy < 0)
-                        angleX = -angleX;
-                    p_vehicle->Y += (cuy - p_vehicle->Y) >> 3;
-                }
-            }
-            else
-            {
-                if (p_station->U.UObject.PrevThing > 0)
-                {
-                    int cux, cuy, cuz, pvx, pvy, pvz, dy, faxz;
-                    struct Thing *p_pvstation;
-                    int dx, dz;
-
-                    p_pvstation = &things[p_station->U.UObject.PrevThing];
-                    cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
-                    pvx = (p_pvstation->X >> 8) - 5 * p_pvstation->U.UObject.OffX;
-                    cuz = (p_station->Z >> 8) - 5 * p_station->U.UObject.OffZ;
-                    pvz = (p_pvstation->Z >> 8) - 5 * p_pvstation->U.UObject.OffZ;
-                    cuy = (p_station->Y >> 3) + 3840;
-                    pvy = (p_pvstation->Y >> 3) + 3840;
-
-                    dx = abs(cux - pvx);
-                    dy = (cuy - pvy) >> 5;
-                    dz = abs(cuz - pvz);
-                    if (dx >= dz)
-                        faxz = dx + (dz >> 2) + (dz >> 3) - (dx >> 5) + (dz >> 6) + (dz >> 7) - (dx >> 7);
-                    else
-                        faxz = dz + (dx >> 2) + (dx >> 3) - (dz >> 5) + (dx >> 6) + (dx >> 7) - (dz >> 7);
-                    angleX = arctan(abs(dy), faxz) - 1024;
-                    if (dy < 0)
-                        angleX = -angleX;
-                    p_vehicle->Y += (cuy - p_vehicle->Y) >> 3;
-                }
-            }
-        }
-
-        if ((p_vehicle->State == VehSt_UNKN_32) && ((gameturn & 3) == 0) && ((p_vehicle->U.UVehicle.Dummy4a & 0x3F) > 2))
-        {
-            int dx, dz;
-
-            dx = abs(p_vehicle->U.UVehicle.destx - (p_vehicle->X >> 8));
-            dz = abs(p_vehicle->U.UVehicle.destz - (p_vehicle->Z >> 8));
-            if (dx <= dz)
-                dx >>= 1;
-            else
-                dz >>= 1;
-            if (dx + dz < 768)
-                p_vehicle->State = VehSt_UNKN_3C;
-        }
-        if (p_vehicle->U.UVehicle.AngleX < angleX)
-            p_vehicle->U.UVehicle.AngleX += 4;
-        if (p_vehicle->U.UVehicle.AngleX > angleX)
-            p_vehicle->U.UVehicle.AngleX -= 4;
+        process_vehicle_stop_for_pedestrians(p_vehicle);
     }
 
-    {
-        short angleY, angDY;
-
-        angleY = p_vehicle->U.UVehicle.AngleY - arctan(tndt_x, tndt_z);
-        if (angleY < -1024)
-            angleY += 2048;
-        else if (angleY > 1024)
-            angleY -= 2048;
-
-        if (angleY > 0)
-        {
-            if (angleY >= 50)
-              angDY = (2048 - (p_vehicle->Speed >> 3)) >> 2;
-            else
-              angDY = 2 * angleY;
-            angDY = -angDY;
-        }
-        else
-        {
-            if (angleY <= -50)
-                angDY = (2048 - (p_vehicle->Speed >> 3)) >> 2;
-            else
-                angDY = -2 * angleY;
-        }
-        p_vehicle->U.UVehicle.AngleDY = angDY;
-
-        if ((angleY > 512) || (angleY < -512))
-            angleY = 512;
-        if (p_vehicle->SubState == 2)
-        {
-            p_vehicle->U.UVehicle.ReqdSpeed = delta >= 0x8000 ? 2048 - 4 * abs(angleY) : 512;
-            if (p_vehicle->U.UVehicle.ReqdSpeed < 10)
-                p_vehicle->U.UVehicle.ReqdSpeed = 10;
-        }
-    }
-
-    if ( delta < 0xC0000)
-    {
-        if (p_vehicle->U.UVehicle.TNode < 0)
-        {
-            struct TrafficNode *p_tnode;
-            struct Thing *p_gate;
-
-            p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
-            if ((p_vehicle->U.UVehicle.WorkPlace & 0x0008) != 0)
-            {
-                if (p_vehicle->State == VehSt_UNKN_32 || p_vehicle->State == VehSt_UNKN_11)
-                {
-                    if ((p_tnode->Flags & 0x40) != 0)
-                    {
-                        p_vehicle->U.UVehicle.ReqdSpeed = 0;
-                        p_gate = &things[p_tnode->GateLink];
-                        if ((p_gate->U.UObject.Timer[1] & 0x0008) != 0)
-                        {
-                            struct TrafficNode *p_tztnode;
-
-                            p_tztnode = &game_traffic_nodes[-p_gate->U.UObject.TargetDZ];
-                            if ((p_tztnode->Flags & 0x0040) != 0)
-                            {
-                                if (p_tztnode->GateLink == p_vehicle->ThingOffset)
-                                {
-                                    if (p_vehicle->U.UVehicle.Dummy4b == p_gate->U.UObject.TargetDZ)
-                                    {
-                                        p_tztnode->GateLink = 0;
-                                        p_tztnode->Flags &= ~0x0040;
-                                        p_vehicle->U.UVehicle.WorkPlace &= ~0x0020;
-                                    }
-                                    else
-                                    {
-                                        p_tztnode->GateLink = 0;
-                                        p_tztnode->Flags &= 0x0040;
-                                        p_vehicle->U.UVehicle.WorkPlace &= ~0x0040;
-                                    }
-                                    if (p_gate->U.UObject.BHeight >> 16 == p_vehicle->U.UVehicle.TNode)
-                                    {
-                                        p_tztnode->GateLink = 0;
-                                        p_tztnode->Flags &= ~0x0040;
-                                        p_gate->U.UObject.Timer[1] &= ~0x0020;
-                                    }
-                                    else
-                                    {
-                                        struct TrafficNode *p_tnode;
-                                        p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
-                                        p_tnode->GateLink = 0;
-                                        p_tnode->Flags &= ~0x0040;
-                                        p_gate->U.UObject.Timer[1] &= ~0x0040;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        remove_locks_apart_from_agok(p_vehicle);
-                        p_tnode->Flags |= 0x0040;
-                        p_tnode->GateLink = p_vehicle->ThingOffset;
-                        p_vehicle->U.UVehicle.WorkPlace |= 0x0010;
-                        p_vehicle->U.UVehicle.WorkPlace &= ~0x0008;
-                    }
-                }
-            }
-
-            if (((p_tnode->Flags & 0x0008) != 0) && check_person_close(p_tnode))
-            {
-                if (p_vehicle->U.UVehicle.PissedOffWithWaiting < 100)
-                {
-                    if (p_vehicle->U.UVehicle.PissedOffWithWaiting == 0) {
-                        p_vehicle->U.UVehicle.ZebraOldHealth = p_vehicle->Health;
-                    }
-                    if (p_vehicle->U.UVehicle.ZebraOldHealth == p_vehicle->Health) {
-                        p_vehicle->U.UVehicle.ReqdSpeed = 0;
-                        p_vehicle->U.UVehicle.ZebraOldHealth = p_vehicle->Health;
-                        p_vehicle->U.UVehicle.PissedOffWithWaiting++;
-                    } else {
-                        p_vehicle->U.UVehicle.PissedOffWithWaiting = 200;
-                    }
-                }
-            }
-            else
-            {
-                p_vehicle->U.UVehicle.PissedOffWithWaiting = 0;
-            }
-        }
-    }
-
-    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0020) != 0)
-    {
-        struct TrafficNode *p_dmtnode;
-        int dx, dz;
-
-        p_dmtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.Dummy4b];
-        dx = (p_vehicle->X >> 8) - p_dmtnode->X;
-        dz = (p_vehicle->Z >> 8) - p_dmtnode->Z;
-        if (dz * dz + dx * dx > 0x20000)
-        {
-            p_dmtnode->GateLink = 0;
-            p_dmtnode->Flags &= ~0x0040;
-            p_vehicle->U.UVehicle.WorkPlace &= ~0x0020;
-        }
-    }
-
-    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0040) != 0)
-    {
-        struct TrafficNode *p_agtnode;
-        int dx, dz;
-
-        p_agtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.Agok];
-        dx = (p_vehicle->X >> 8) - p_agtnode->X;
-        dz = (p_vehicle->Z >> 8) - p_agtnode->Z;
-        if (dz * dz + dx * dx > 0x20000)
-        {
-            p_agtnode->GateLink = 0;
-            p_agtnode->Flags &= ~0x0040;
-            p_vehicle->U.UVehicle.WorkPlace &= ~0x0040;
-        }
-    }
+    vehicle_workplace_states_finish(p_vehicle);
 }
 
 
