@@ -667,7 +667,7 @@ void process_next_tnode(struct Thing *p_vehicle)
                         break;
 
                     p_lntnode = &game_traffic_nodes[-p_tnode->UTraffic.Link[lnk]];
-                    if ((p_lntnode->Flags & 0x40) == 0)
+                    if ((p_lntnode->Flags & 0x0040) == 0)
                     {
                         struct TrafficNode *p_agtnode;
 
@@ -685,8 +685,8 @@ void process_next_tnode(struct Thing *p_vehicle)
                     }
                 }
                 if (i >= 8) {
-                    LOGERR("Crashing vehicle %d due to no random next TNode despite %d tries",
-                      p_vehicle->ThingOffset, i);
+                    LOGERR("Crashing vehicle %d state %d due to no random next TNode despite %d tries",
+                      p_vehicle->ThingOffset, p_vehicle->State, i);
                     start_crashing(p_vehicle);
                     return;
                 }
