@@ -161,7 +161,8 @@ struct TngUObject
     short TNode;
     short Cost;
     short Shite;
-    int BHeight;
+    short BHeightA;
+    short BHeightB;
     ushort Turn;
     ushort TurnPadOnPS;
     short tnode[4];

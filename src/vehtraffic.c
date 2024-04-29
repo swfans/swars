@@ -226,7 +226,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
     {
         if (p_vehicle->State == VehSt_UNKN_32 || p_vehicle->State == VehSt_UNKN_11)
         {
-            if ((p_tnode->Flags & 0x40) != 0)
+            if ((p_tnode->Flags & 0x0040) != 0)
             {
                 p_vehicle->U.UVehicle.ReqdSpeed = 0;
                 p_gate = &things[p_tnode->GateLink];
@@ -251,7 +251,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
                                 p_tztnode->Flags &= 0x0040;
                                 p_vehicle->U.UVehicle.WorkPlace &= ~0x0040;
                             }
-                            if (p_gate->U.UObject.BHeight >> 16 == p_vehicle->U.UVehicle.TNode)
+                            if (p_gate->U.UObject.BHeightB == p_vehicle->U.UVehicle.TNode)
                             {
                                 p_tztnode->GateLink = 0;
                                 p_tztnode->Flags &= ~0x0040;
