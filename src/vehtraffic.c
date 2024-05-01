@@ -313,12 +313,11 @@ void vehicle_workplace_states_finish(struct Thing *p_vehicle)
 
 void process_next_tnode(struct Thing *p_vehicle)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_process_next_tnode\n"
         : : "a" (p_vehicle));
     return;
 #endif
-    // TODO FIX exploding vehicles with this code at border of map 0,26
     short tnode;
     int tndt_x, tndt_z;
     int nxdist_sq; //< Squared distance to next traffic node or station
@@ -463,6 +462,16 @@ void process_next_tnode(struct Thing *p_vehicle)
 
     if (do_state)
     {
+#if 1
+        {//use the original assembly for this part
+        long ret;
+        asm volatile (
+          "call ASM_process_next_tnode_switch_state\n"
+            : "=r" (ret) : "a" (p_vehicle), "d" (tndt_x), "b" (tndt_z), "c" (nxdist_sq));
+        nxdist_sq = ret;
+        }
+#else
+        // TODO FIX exploding vehicles with this code at border of map 0,26
         struct TrafficNode *p_tnode;
         struct TrafficNode *p_nxtnode;
 
@@ -671,6 +680,7 @@ void process_next_tnode(struct Thing *p_vehicle)
             }
             break;
         }
+#endif
     }
 
     update_vehicle_elevation(p_vehicle, tnode);
