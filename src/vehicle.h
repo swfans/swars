@@ -63,7 +63,7 @@ enum SubTypeVehicle {
 };
 
 enum VehicleState {
-  VehSt_UNKN_0 = 0x0,
+  VehSt_NONE = 0x0,
   VehSt_UNKN_1 = 0x1,
   VehSt_UNKN_2 = 0x2,
   VehSt_UNKN_3 = 0x3,
@@ -150,6 +150,14 @@ enum VehicleState {
 
 struct Thing;
 
+/** Stores configuration for a state of a vehicle.
+ */
+struct VehStateConfig
+{
+    char Name[17];
+};
+
+
 #pragma pack()
 /******************************************************************************/
 void init_mech(void);
@@ -169,6 +177,8 @@ void process_vehicle(struct Thing *p_vehicle);
 void start_crashing(struct Thing *p_vehicle);
 
 int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle);
+
+void snprint_vehicle_state(char *buf, ulong buflen, struct Thing *p_thing);
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -102,6 +102,7 @@ void things_debug_hud(void)
         switch (p_track_thing->Type)
         {
         case TT_VEHICLE:
+            snprint_vehicle_state(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), p_track_thing);
             snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Pasng %d G %d comcur %x EG %d th %d wb %d",
               (int)veh_passenger_count(p_track_thing),
               (int)p_track_thing->U.UVehicle.Group,

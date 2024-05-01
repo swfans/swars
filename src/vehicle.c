@@ -42,6 +42,94 @@ struct CarGlare { // sizeof=7
 
 #pragma pack()
 
+/** Configuration options for each person state.
+ */
+struct VehStateConfig vehicle_states[] = {
+  {"NONE_STATE",},
+  {"UNKN_1",},
+  {"UNKN_2",},
+  {"UNKN_3",},
+  {"UNKN_4",},
+  {"UNKN_5",},
+  {"UNKN_6",},
+  {"UNKN_7",},
+  {"UNKN_8",},
+  {"UNKN_9",},
+  {"UNKN_A",},
+  {"UNKN_B",},
+  {"UNKN_C",},
+  {"UNKN_D",},
+  {"UNKN_E",},
+  {"UNKN_F",},
+  {"UNKN_10",},
+  {"UNKN_11",},//wander?
+  {"UNKN_12",},
+  {"UNKN_13",},
+  {"UNKN_14",},
+  {"UNKN_15",},
+  {"UNKN_16",},
+  {"UNKN_17",},
+  {"UNKN_18",},
+  {"UNKN_19",},
+  {"UNKN_1A",},
+  {"UNKN_1B",},
+  {"UNKN_1C",},
+  {"UNKN_1D",},
+  {"UNKN_1E",},
+  {"UNKN_1F",},
+  {"UNKN_20",},
+  {"UNKN_21",},
+  {"UNKN_22",},
+  {"UNKN_23",},
+  {"UNKN_24",},
+  {"UNKN_25",},
+  {"UNKN_26",},
+  {"UNKN_27",},
+  {"UNKN_28",},
+  {"UNKN_29",},
+  {"UNKN_2A",},
+  {"UNKN_2B",},
+  {"UNKN_2C",},
+  {"UNKN_2D",},
+  {"UNKN_2E",},
+  {"UNKN_2F",},
+  {"UNKN_30",},
+  {"UNKN_31",},
+  {"UNKN_32",},
+  {"UNKN_33",},
+  {"UNKN_34",},
+  {"UNKN_35",},
+  {"UNKN_36",},
+  {"UNKN_37",},
+  {"UNKN_38",},
+  {"UNKN_39",},
+  {"UNKN_3A",},
+  {"FLY_LANDING",},
+  {"UNKN_3C",},
+  {"UNKN_3D",},
+  {"UNKN_3E",},
+  {"UNKN_3F",},
+  {"UNKN_40",},
+  {"UNKN_41",},
+  {"UNKN_42",},
+  {"UNKN_43",},
+  {"UNKN_44",},
+  {"UNKN_45",},
+  {"UNKN_46",},
+  {"UNKN_47",},
+  {"UNKN_48",},
+  {"UNKN_49",},
+  {"UNKN_4A",},
+  {"UNKN_4B",},
+  {"UNKN_4C",},
+  {"UNKN_4D",},
+  {"UNKN_4E",},
+  {"UNKN_4F",},
+  {"UNKN_50",},
+  {"UNKN_51",},
+  {"UNKN_52",},
+};
+
 struct CarGlare car_glare[] = {
   {0, 16, 336, 0},
   {-96, -64, 400, 0},
@@ -85,6 +173,38 @@ struct CarGlare car_glare[] = {
   {112, -16, 304, 0},
   {-96, -16, 304, 0},
 };
+
+#if 0
+// Enable when we have vehicle config file with names
+const char *vehicle_type_name(ushort vtype)
+{
+    struct PeepStatAdd *p_vhstata;
+
+    p_vhstata = &peep_type_stats_a[ptype];
+    if (strlen(p_vhstata->Name) == 0)
+        return "OUTRNG_VEHICLE";
+    return p_vhstata->Name;
+}
+#endif
+
+void snprint_vehicle_state(char *buf, ulong buflen, struct Thing *p_thing)
+{
+    char *s;
+    //ubyte nparams;
+    struct VehStateConfig *p_vstatcfg;
+
+    p_vstatcfg = &vehicle_states[p_thing->State];
+    s = buf;
+
+    sprintf(s, "%s( ", p_vstatcfg->Name);
+    s += strlen(s);
+    //nparams = 0;
+
+    // TODO support parameters of states
+
+    snprintf(s, buflen - (s-buf), " )");
+}
+
 
 void init_mech(void)
 {
@@ -573,7 +693,7 @@ void process_veh_ground(struct Thing *p_vehicle)
         p_vehicle->State = VehSt_UNKN_3C;
         process_stop_as_soon_as_you_can(p_vehicle);
         break;
-    case VehSt_UNKN_0:
+    case VehSt_NONE:
     case VehSt_UNKN_3D:
     case VehSt_UNKN_21:
         if (p_vehicle->SubType == SubTT_VEH_FLYING)
