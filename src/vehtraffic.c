@@ -87,6 +87,7 @@ void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
     if (statn > 0)
     {
         struct Thing *p_station;
+        short nxstatn;
 
         p_station = &things[statn];
         if ((p_station->Flag & 0x0002) != 0)
@@ -97,62 +98,35 @@ void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
             return;
         }
         if ((p_vehicle->Flag & 0x8000000) != 0)
-        {
-            if (p_station->U.UObject.NextThing > 0)
-            {
-                int cux, cuy, cuz, nxx, nxy, nxz, dy, faxz;
-                struct Thing *p_nxstation;
-                int dx, dz;
-
-                p_nxstation = &things[p_station->U.UObject.NextThing];
-                cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
-                nxx = (p_nxstation->X >> 8) - 5 * p_nxstation->U.UObject.OffX;
-                cuz = (p_station->Z >> 8) - 5 * p_station->U.UObject.OffZ;
-                nxz = (p_nxstation->Z >> 8) - 5 * p_nxstation->U.UObject.OffZ;
-                cuy = (p_station->Y >> 3) + 3840;
-                nxy = (p_nxstation->Y >> 3) + 3840;
-
-                dx = abs(cux - nxx);
-                dy = (cuy - nxy) >> 5;
-                dz = abs(cuz - nxz);
-                if (dx >= dz)
-                    faxz = dx + (dz >> 2) + (dz >> 3) - (dx >> 5) + (dz >> 6) - (dx >> 7) + (dz >> 7);
-                else
-                    faxz = dz + (dx >> 2) + (dx >> 3) - (dz >> 5) + (dx >> 6) + (dx >> 7) - (dz >> 7);
-                angleX = arctan(abs(dy), faxz) - 1024;
-                if (dy < 0)
-                    angleX = -angleX;
-                p_vehicle->Y += (cuy - p_vehicle->Y) >> 3;
-            }
-        }
+            nxstatn = p_station->U.UObject.NextThing;
         else
+            nxstatn = p_station->U.UObject.PrevThing;
+
+        if (nxstatn > 0)
         {
-            if (p_station->U.UObject.PrevThing > 0)
-            {
-                int cux, cuy, cuz, pvx, pvy, pvz, dy, faxz;
-                struct Thing *p_pvstation;
-                int dx, dz;
+            int cux, cuy, cuz, nxx, nxy, nxz, dy, faxz;
+            struct Thing *p_nxstation;
+            int dx, dz;
 
-                p_pvstation = &things[p_station->U.UObject.PrevThing];
-                cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
-                pvx = (p_pvstation->X >> 8) - 5 * p_pvstation->U.UObject.OffX;
-                cuz = (p_station->Z >> 8) - 5 * p_station->U.UObject.OffZ;
-                pvz = (p_pvstation->Z >> 8) - 5 * p_pvstation->U.UObject.OffZ;
-                cuy = (p_station->Y >> 3) + 3840;
-                pvy = (p_pvstation->Y >> 3) + 3840;
+            p_nxstation = &things[nxstatn];
+            cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
+            nxx = (p_nxstation->X >> 8) - 5 * p_nxstation->U.UObject.OffX;
+            cuz = (p_station->Z >> 8) - 5 * p_station->U.UObject.OffZ;
+            nxz = (p_nxstation->Z >> 8) - 5 * p_nxstation->U.UObject.OffZ;
+            cuy = (p_station->Y >> 3) + 3840;
+            nxy = (p_nxstation->Y >> 3) + 3840;
 
-                dx = abs(cux - pvx);
-                dy = (cuy - pvy) >> 5;
-                dz = abs(cuz - pvz);
-                if (dx >= dz)
-                    faxz = dx + (dz >> 2) + (dz >> 3) - (dx >> 5) + (dz >> 6) - (dx >> 7) + (dz >> 7);
-                else
-                    faxz = dz + (dx >> 2) + (dx >> 3) - (dz >> 5) + (dx >> 6) + (dx >> 7) - (dz >> 7);
-                angleX = arctan(abs(dy), faxz) - 1024;
-                if (dy < 0)
-                    angleX = -angleX;
-                p_vehicle->Y += (cuy - p_vehicle->Y) >> 3;
-            }
+            dx = abs(cux - nxx);
+            dy = (cuy - nxy) >> 5;
+            dz = abs(cuz - nxz);
+            if (dx >= dz)
+                faxz = dx + (dz >> 2) + (dz >> 3) - (dx >> 5) + (dz >> 6) - (dx >> 7) + (dz >> 7);
+            else
+                faxz = dz + (dx >> 2) + (dx >> 3) - (dz >> 5) + (dx >> 6) + (dx >> 7) - (dz >> 7);
+            angleX = arctan(abs(dy), faxz) - 1024;
+            if (dy < 0)
+                angleX = -angleX;
+            p_vehicle->Y += (cuy - p_vehicle->Y) >> 3;
         }
     }
 
@@ -417,11 +391,11 @@ void process_next_tnode(struct Thing *p_vehicle)
             p_vehicle->U.UVehicle.WorkPlace &= ~0x0008;
         }
         if (((p_vehicle->U.UVehicle.WorkPlace & 0x0008) != 0)
-         && ((p_tnode->Flags & 0x30) == 0)) {
+         && ((p_tnode->Flags & (0x0010|0x0020)) == 0)) {
             p_vehicle->U.UVehicle.WorkPlace &= ~0x0008;
         }
         if (((p_vehicle->U.UVehicle.WorkPlace & 0x0010) != 0)
-         && ((p_tnode->Flags & 0x30) == 0)) {
+         && ((p_tnode->Flags & (0x0010|0x0020)) == 0)) {
             p_vehicle->U.UVehicle.WorkPlace &= ~0x0010;
             p_tnode->Flags &= ~0x0040;
             p_tnode->GateLink = 0;
@@ -462,16 +436,16 @@ void process_next_tnode(struct Thing *p_vehicle)
     if (tnode > 0)
     {
         struct Thing *p_station;
-        short nxstation;
+        short nxstatn;
 
         if (nxdist_sq < 0xC000)
         {
             p_station = &things[tnode];
             if ((p_vehicle->Flag & 0x8000000) != 0)
-                nxstation = p_station->U.UObject.PrevThing;
+                nxstatn = p_station->U.UObject.PrevThing;
             else
-                nxstation = p_station->U.UObject.NextThing;
-            p_vehicle->U.UVehicle.TNode = nxstation;
+                nxstatn = p_station->U.UObject.NextThing;
+            p_vehicle->U.UVehicle.TNode = nxstatn;
         }
     }
 
@@ -603,6 +577,7 @@ void process_next_tnode(struct Thing *p_vehicle)
                     p_vehicle->U.UVehicle.WorkPlace |= 0x0001;
                 else
                     p_vehicle->U.UVehicle.WorkPlace &= ~0x0001;
+
                 if ((p_vehicle->U.UVehicle.WorkPlace & 0x0020) != 0)
                 {
                     if ((p_vehicle->U.UVehicle.WorkPlace & 0x0040) != 0)
@@ -639,7 +614,8 @@ void process_next_tnode(struct Thing *p_vehicle)
                     struct TrafficNode *p_lntnode;
 
                     p_lntnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
-                    if (((p_tnode->UTraffic.Flags[lnk] & 0x8000) != 0) || (p_lntnode->Flags & (0x0010|0x0020)))
+                    if (((p_tnode->UTraffic.Flags[lnk] & 0x8000) != 0) ||
+                      ((p_lntnode->Flags & (0x0010|0x0020)) != 0))
                     {
                         nxdist_sq = 0x7FFFFFFF;
                         p_vehicle->U.UVehicle.WorkPlace |= 0x0008;
