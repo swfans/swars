@@ -118,6 +118,7 @@ int alt_change_at_tile(short tile_x, short tile_z, int *change_xz);
 /** Sets some of the map elements flags based on other properties.
  */
 void update_map_flags(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

@@ -30,13 +30,14 @@
 #include "bfplanar.h"
 #include "bfscrsurf.h"
 #include "bfscrcopy.h"
-#include "ssampply.h"
+#include "bmbang.h"
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_fmvids.h"
 #include "bflib_vidraw.h"
 #include "bfscd.h"
 #include "bflib_joyst.h"
+#include "ssampply.h"
 #include "matrix.h"
 #include "drawtext.h"
 #include "enginlights.h"
@@ -293,6 +294,14 @@ const char *miss_end_sta_names[] = {
   "",
 };
 
+const char *misc_text[] = {
+  "0",
+  "C",
+  "/",
+  "NC",
+  "REF:",
+};
+
 struct TbLoadFiles unk02_load_files[] =
 {
   { "*VESA",			(void **)&lbVesaData,		(void **)NULL,LB_VESA_DATA_SIZE, 1, 0 },
@@ -329,6 +338,14 @@ ubyte scanner_width_pct = 20;
 ubyte scanner_height_pct = 25;
 
 void ac_purple_unkn1_data_to_screen(void);
+
+short arctan(int dx, int dz)
+{
+    ushort ret;
+    asm volatile ("call ASM_arctan\n"
+        : "=r" (ret) : "a" (dx), "d" (dz));
+    return ret;
+}
 
 void PacketRecord_Close(void)
 {
@@ -400,11 +417,6 @@ void PacketRecord_OpenRead(void)
 void debug_trace_place(int place)
 {
     LOGDBG("reached place %d", place);
-}
-
-short angle_between_points(int x1, int z1, int x2, int z2)
-{
-  return LbArcTanAngle(x2 - x1, z1 - z2);
 }
 
 bool game_initialise(void)
@@ -1286,87 +1298,6 @@ void traffic_unkn_func_01(void)
 {
     asm volatile ("call ASM_traffic_unkn_func_01\n"
         :  :  : "eax" );
-}
-
-void process_tank_turret(struct Thing *p_tank)
-{
-    struct Thing *p_turret;
-    int target_x, target_y;
-    int turret;
-    short angle;
-    int dt_angle;
-
-    turret = p_tank->U.UVehicle.SubThing;
-    if (turret == 0) {
-        p_tank->OldTarget = LbFPMath_PI+1;
-        return;
-    }
-    p_turret = &things[turret];
-    if ((p_tank->Flag & TngF_Unkn20000000) != 0)
-    {
-        target_x = p_tank->U.UVehicle.TargetDX;
-        target_y = p_tank->U.UVehicle.TargetDZ;
-    }
-    else
-    {
-        struct Thing *p_target;
-        p_target = p_tank->PTarget;
-        if (p_target == NULL)
-        {
-            p_tank->OldTarget = 20000;
-            return;
-        }
-        target_x = PRCCOORD_TO_MAPCOORD(p_target->X);
-        target_y = PRCCOORD_TO_MAPCOORD(p_target->Z);
-    }
-    angle = p_turret->U.UMGun.AngleY
-        - angle_between_points(target_x, target_y, PRCCOORD_TO_MAPCOORD(p_tank->X), PRCCOORD_TO_MAPCOORD(p_tank->Z));
-    if (angle < -LbFPMath_PI)
-        angle += 2*LbFPMath_PI;
-    else if (angle > LbFPMath_PI)
-        angle -= 2*LbFPMath_PI;
-
-    //TODO CONFIG how fast the tank can target could be a difficulty-related setting
-    // Travel 1/8 of the distance in each game turn
-    dt_angle = angle / 8;
-    if (dt_angle > LbFPMath_PI/17)
-        dt_angle = LbFPMath_PI/17;
-    if (dt_angle < -LbFPMath_PI/17)
-        dt_angle = -LbFPMath_PI/17;
-    if (dt_angle == 0)
-    {
-        if (angle > 0)
-            dt_angle = 1;
-        if (angle < 0)
-            dt_angle = -1;
-    }
-
-    // Despite being caused by the turret, we bind the sound samples to the vehicle part
-    // of the tank. This is because turrets do not contain full position on map, so the
-    // sound update would misplace the sound source if it was bound to the turret
-    if ((p_turret->Flag2 & 0x0200) != 0)
-    {
-        if (dt_angle <= 1) {
-            // Play rotation stop sample
-            if (!IsSamplePlaying(p_tank->ThingOffset, 47, 0))
-                play_dist_sample(p_tank, 47, 127, 0x40u, 100, 0, 1);
-            p_turret->Flag2 &= ~0x0200;
-        }
-    }
-    else
-    {
-        // Play rotation sample if moving over 1.2 degree per turn and the angle is not getting smaller.
-        // Huge values of OldTarget (beyond pi) indicate that previously we had no target.
-        if ((abs(dt_angle) >= LbFPMath_PI/75) && (p_tank->OldTarget < abs(angle) || p_tank->OldTarget > LbFPMath_PI)) {
-            if (!IsSamplePlaying(p_tank->ThingOffset, 48, 0))
-                play_dist_sample(p_tank, 48, 127, 0x40u, 100, 0, 1);
-            p_turret->Flag2 |= 0x0200;
-        }
-    }
-
-    p_turret->U.UMGun.AngleY -= dt_angle;
-    p_tank->OldTarget = abs(angle);
-    p_turret->U.UMGun.AngleY = (p_turret->U.UMGun.AngleY + 2*LbFPMath_PI) & LbFPMath_AngleMask;
 }
 
 /** Step overall scale towards given zoom value.
@@ -4908,20 +4839,6 @@ void mapwho_unkn01(int a1, int a2)
 {
     asm volatile ("call ASM_mapwho_unkn01\n"
         : : "a" (a1), "d" (a2));
-}
-
-void new_bang(int a1, int a2, int a3, int a4, int a5, int a6)
-{
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_new_bang\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
-}
-
-void new_bang_3(int a1, int a2, int a3, int a4)
-{
-    new_bang(a1, a2, a3, a4, 0, 0);
 }
 
 void input(void)
@@ -10408,10 +10325,10 @@ void game_process_orbital_station_explode(void)
 
             stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
             stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
-            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
+            bang_new4(stl_x << 16, 0, stl_y << 16, 95);
             stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
             stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
-            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
+            bang_new4(stl_x << 16, 0, stl_y << 16, 95);
         }
     }
 }

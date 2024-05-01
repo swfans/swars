@@ -19,11 +19,293 @@
 #include "thing.h"
 
 #include <string.h>
+#include "bfkeybd.h"
 #include "command.h"
+#include "drawtext.h"
+#include "display.h"
+#include "game.h"
+#include "pathtrig.h"
+#include "scandraw.h"
+#include "vehicle.h"
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
 TbBool debug_hud_things = false;
+
+extern ubyte execute_commands;
+extern struct Thing *p_track_thing;
+extern struct Thing *p_track2_thing;
+extern int dword_1DC7A4;
+
+int select_thing_for_debug(short x, short y, short z, short type)
+{
+    int ret;
+    asm volatile ("call ASM_select_thing_for_debug\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
+    return ret;
+}
+
+void unused_func_205(int a1, int a2, int a3, int a4, short thing, ubyte a6, ubyte a7, ubyte a8)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_unused_func_205\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (thing), "g" (a6), "g" (a7), "g" (a8));
+}
+
+void things_debug_hud(void)
+{
+#if 0
+    asm volatile ("call ASM_things_debug_hud\n"
+        :  :  : "eax" );
+    return;
+#endif
+    short thing;
+    short path;
+    char locstr[100];
+
+    thing = select_thing_for_debug(mouse_map_x, 0, mouse_map_z, -1);
+    // Lock on current thing
+    if (lbKeyOn[KC_W])
+    {
+        lbKeyOn[KC_W] = 0;
+        if (lbShift & KMod_SHIFT) {
+            dword_1DC7A4 = 0;
+        } else if (thing > 0) {
+            dword_1DC7A4 = thing;
+        }
+    }
+
+    if (dword_1DC7A4)
+        thing = dword_1DC7A4;
+
+    if (lbShift == KMod_SHIFT)
+        return;
+    if (thing <= 0 || thing >= THINGS_LIMIT)
+        return;
+
+    p_track_thing = &things[thing];
+    p_track2_thing = &things[thing];
+    func_6fe80(mouse_map_x, mouse_map_y, mouse_map_z,
+      p_track_thing->X >> 8, p_track_thing->Y >> 5, p_track_thing->Z >> 8,
+      colour_lookup[1]);
+    if (p_track_thing->Type == TT_PERSON)
+          unused_func_205(356, 80, 280, 150, thing, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
+
+    if (execute_commands)
+    {
+        snprintf(locstr, sizeof(locstr), "State %d ",
+          (int)p_track_thing->State);
+        switch (p_track_thing->Type)
+        {
+        case TT_VEHICLE:
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Pasng %d G %d comcur %x EG %d th %d wb %d",
+              (int)veh_passenger_count(p_track_thing),
+              (int)p_track_thing->U.UVehicle.Group,
+              (uint)p_track_thing->U.UVehicle.ComCur,
+              (int)p_track_thing->U.UVehicle.EffectiveGroup,
+              (int)p_track_thing->ThingOffset,
+              (int)p_track_thing->U.UVehicle.WobbleZP);
+            break;
+        case TT_PERSON:
+            snprint_person_state(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), p_track_thing);
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Mood %d G %d comcur %x EG %d th %d am %d",
+              (int)p_track_thing->U.UPerson.Mood,
+              (int)p_track_thing->U.UPerson.Group,
+              (uint)p_track_thing->U.UPerson.ComCur,
+              (int)p_track_thing->U.UPerson.EffectiveGroup,
+              (int)p_track_thing->ThingOffset,
+              (int)p_track_thing->U.UPerson.AnimMode);
+            break;
+        default:
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " th %d",
+              (int)p_track_thing->ThingOffset);
+            break;
+        }
+        draw_text(30, 30, locstr, colour_lookup[1]);
+
+        switch (p_track_thing->Type)
+        {
+        case TT_VEHICLE:
+            sprintf(locstr, "F  %08x Spd %d OF %d He %d/%d Armr %d SF %d F %d",
+              (uint)p_track_thing->Flag,
+              (int)p_track_thing->Speed,
+              (int)p_track_thing->U.UVehicle.OnFace,
+              (int)p_track_thing->Health,
+              (int)p_track_thing->U.UVehicle.MaxHealth,
+              (int)p_track_thing->U.UVehicle.Armour,
+              (int)p_track_thing->StartFrame,
+              (int)p_track_thing->Frame);
+            break;
+        case TT_PERSON:
+            sprintf(locstr, "F  %08x Spd %d OF %d He %d/%d Se %d/%d SF %d F %d",
+              (uint)p_track_thing->Flag,
+              (int)p_track_thing->Speed,
+              (int)p_track_thing->U.UPerson.OnFace,
+              (int)p_track_thing->Health,
+              (int)p_track_thing->U.UPerson.MaxHealth,
+              (int)p_track_thing->U.UPerson.ShieldEnergy,
+              (int)p_track_thing->U.UPerson.MaxShieldEnergy,
+              (int)p_track_thing->StartFrame,
+              (int)p_track_thing->Frame);
+            break;
+        default:
+            sprintf(locstr, "F  %08x Spd %d He %d SF %d F %d",
+              (uint)p_track_thing->Flag,
+              (int)p_track_thing->Speed,
+              (int)p_track_thing->Health,
+              (int)p_track_thing->StartFrame,
+              (int)p_track_thing->Frame);
+            break;
+        }
+        draw_text(30, 45, locstr, colour_lookup[1]);
+
+        switch (p_track_thing->Type)
+        {
+        case TT_VEHICLE:
+            sprintf(locstr, "F2 %08x mi %d TN %d poww %x wt %d PC %d",
+              (uint)p_track_thing->Flag2,
+              (int)p_track_thing->U.UVehicle.MatrixIndex,
+              (int)p_track_thing->U.UVehicle.TNode,
+              (uint)p_track_thing->U.UVehicle.PissedOffWithWaiting,
+              (int)p_track_thing->U.UVehicle.WeaponTurn,
+              my_paths[p_track_thing->U.UVehicle.PathIndex].Flag - p_track_thing->PathOffset);
+            break;
+        case TT_PERSON:
+            sprintf(locstr, "F2 %08x F3 %x cw %d wc %x WE %d wti %d wt %d PC %d",
+              (uint)p_track_thing->Flag2,
+              (uint)p_track_thing->U.UPerson.Flag3,
+              (int)p_track_thing->U.UPerson.CurrentWeapon,
+              (uint)p_track_thing->U.UPerson.WeaponsCarried,
+              (int)p_track_thing->U.UPerson.Energy,
+              (int)p_track_thing->U.UPerson.WeaponTimer,
+              (int)p_track_thing->U.UPerson.WeaponTurn,
+              my_paths[p_track_thing->U.UPerson.PathIndex].Flag - p_track_thing->PathOffset);
+            break;
+        default:
+            sprintf(locstr, "F2 %08x",
+              (uint)p_track_thing->Flag2);
+            break;
+        }
+        draw_text(30, 60, locstr, colour_lookup[1]);
+
+        sprintf(locstr, "Targ2 %d pTarg %x gotoTI %d",
+          (int)p_track_thing->U.UPerson.Target2,
+          (uint)p_track_thing->PTarget,
+          (int)p_track_thing->GotoThingIndex);
+        draw_text(30, 75, locstr, colour_lookup[1]);
+
+        if (p_track_thing->Flag & TngF_Unkn00040000)
+            draw_text(30, 90, "Da", colour_lookup[1]);
+        if (p_track_thing->Flag & TngF_Unkn00010000)
+            draw_text(50, 90, "Re", colour_lookup[1]);
+        if (p_track_thing->Flag & TngF_Unkn00020000)
+            draw_text(70, 90, "Si", colour_lookup[1]);
+        if (p_track_thing->Flag & TngF_Unkn0002)
+            draw_text(90, 90, "De", colour_lookup[1]);
+        if (p_track_thing->Flag & TngF_Unkn0400)
+            draw_text(110, 90, "Ch", colour_lookup[1]);
+        if (p_track_thing->Flag & TngF_Unkn0040)
+            draw_text(130, 90, "CI", colour_lookup[1]);
+        if (p_track_thing->Flag & TngF_Unkn20000000)
+            draw_text(150, 90, "SAP", colour_lookup[1]);
+        if (p_track_thing->Flag & TngF_Unkn0200)
+            draw_text(190, 90, "Sta", colour_lookup[2]);
+        if (p_track_thing->Flag & TngF_Unkn0800)
+            draw_text(260, 90, "TRIG", colour_lookup[1]);
+
+        switch (p_track_thing->Type)
+        {
+        case TT_VEHICLE:
+            sprintf(locstr, "%s",
+              thing_type_name(p_track_thing->Type, p_track_thing->SubType));
+            draw_text(360, 90, locstr, colour_lookup[2]);
+            break;
+        case TT_PERSON:
+            sprintf(locstr, "%s: lastdist %d VX,VZ (%d,%d)",
+              thing_type_name(p_track_thing->Type, p_track_thing->SubType),
+              (int)p_track_thing->U.UObject.BuildNumbVect,
+              (int)p_track_thing->VX,
+              (int)p_track_thing->VZ);
+            draw_text(360, 90, locstr, colour_lookup[3]);
+            break;
+        default:
+            sprintf(locstr, "%s",
+              thing_type_name(p_track_thing->Type, p_track_thing->SubType));
+            draw_text(360, 90, locstr, colour_lookup[7]);
+            break;
+        }
+
+        sprintf(locstr, "b %d l %d a %d br %d sk %d",
+          (int)cybmod_chest_level(&p_track_thing->U.UPerson.UMod),
+          (int)cybmod_legs_level(&p_track_thing->U.UPerson.UMod),
+          (int)cybmod_arms_level(&p_track_thing->U.UPerson.UMod),
+          (int)cybmod_brain_level(&p_track_thing->U.UPerson.UMod),
+          (int)cybmod_skin_level(&p_track_thing->U.UPerson.UMod));
+        draw_text(30, 105, locstr, colour_lookup[1]);
+
+        sprintf(locstr, "T1 %d T2 %d ct %d RT %d BC %d",
+          (int)p_track_thing->Timer1,
+          (int)p_track_thing->U.UPerson.Timer2,
+          (int)p_track_thing->U.UPerson.ComTimer,
+          (int)p_track_thing->U.UPerson.RecoilTimer,
+          (int)p_track_thing->U.UPerson.BumpCount);
+        draw_text(30, 120, locstr, colour_lookup[1]);
+
+        path = p_track_thing->U.UPerson.PathIndex;
+        if (path != 0)
+        {
+            short cy;
+
+            cy = 140;
+            while (path != 0)
+            {
+                sprintf(locstr, " n %d  f %d  x %d z %d",
+                  (int)path,
+                  (int)my_paths[path].Flag,
+                  (int)my_paths[path].X[0] >> 8,
+                  (int)my_paths[path].Z[0] >> 8);
+                draw_text(52, cy, locstr, colour_lookup[0]);
+                draw_text(50, cy, locstr, colour_lookup[1]);
+                path = my_paths[path].Next;
+                cy += 15;
+            }
+        }
+
+        if (p_track_thing->U.UPerson.Target2 != 0)
+        {
+            struct Thing *p_target;
+            p_target = &things[p_track_thing->U.UPerson.Target2];
+            unkn_draw_transformed_point(50, 41, p_target->X >> 8, p_target->Y >> 8, p_target->Z >> 8, colour_lookup[2]);
+        }
+
+        if (p_track_thing->GotoThingIndex != 0)
+        {
+            struct Thing *p_gotng;
+            p_gotng = &things[p_track_thing->GotoThingIndex];
+            unkn_draw_transformed_point(140, 41, p_gotng->X >> 8, p_gotng->Y >> 8, p_gotng->Z >> 8, colour_lookup[3]);
+        }
+
+        if (p_track_thing->PTarget != NULL)
+        {
+            struct Thing *p_target;
+            p_target = p_track_thing->PTarget;
+            func_6fd1c(
+              p_track_thing->X >> 8,
+              p_track_thing->Y >> 8,
+              p_track_thing->Z >> 8,
+              p_target->X >> 8,
+              p_target->Y >> 8,
+              p_target->Z >> 8,
+              colour_lookup[4]);
+        }
+
+        unkn_path_func_001(p_track_thing, 0);
+    }
+}
 
 TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
 {

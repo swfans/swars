@@ -21,6 +21,7 @@
 
 #include "bftypes.h"
 #include "cybmod.h"
+#include "vehtraffic.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -160,7 +161,8 @@ struct TngUObject
     short TNode;
     short Cost;
     short Shite;
-    int BHeight;
+    short BHeightA;
+    short BHeightB;
     ushort Turn;
     ushort TurnPadOnPS;
     short tnode[4];
@@ -217,8 +219,11 @@ struct TngUVehicle
   short WeaponTurn;
   short ReqdSpeed;
   ushort MaxSpeed; // within Thing, pos=92
-  ushort PassengerHead;
-  /** Traffic node where the vehicle is moving.
+  /** Index of a first thing in a linked list of passengers.
+   */
+  short PassengerHead;
+  /** Index of a Traffic Node (negative) or Station thing (positive) where the vehicle is moving.
+   * Most vehicles travel between traffic nodes. Trains travel beween stations.
    */
   short TNode;
   short AngleDY;
@@ -240,7 +245,12 @@ struct TngUVehicle
   short Timer2;
   short RecoilTimer;
   ushort MaxHealth;
-  int Dummy[3];
+  short Dummy4a;
+  short Dummy4b;
+  short Dummy5a;
+  short Dummy5b;
+  short AccelZ;
+  short AccelX;
   ushort SubThing;
   short Agok;
   int WobbleZP;
@@ -264,7 +274,7 @@ struct TngUEffect
   short WeaponTurn;
   ubyte NumbObjects;
   ubyte Angle;
-  ushort PassengerHead;
+  short PassengerHead;
   short TNode;
   short AngleDY; // within Thing, pos=92
   short AngleX;
@@ -312,6 +322,8 @@ struct TngUPerson
   ubyte BumpMode; // within Thing, pos=92
   ubyte BumpCount;
   short Vehicle;
+  /** Index of a next thing in a linked list of passengers.
+   */
   short LinkPassenger;
   ushort Within;
   ushort LastDist;
@@ -424,11 +436,6 @@ struct STngUWeapon {
     short Ammo;
     short Owner;
     short OnFace;
-};
-
-struct STngUTraffic {
-    short Link[4];
-    ubyte Flags[4];
 };
 
 struct STngULight {
@@ -895,6 +902,8 @@ void remove_thing(short tngno);
 void add_node_sthing(ushort new_thing);
 short get_new_sthing(void);
 void remove_sthing(short tngno);
+
+void move_mapwho(struct Thing *p_thing, int x, int y, int z);
 
 short add_static(int x, int y, int z, ushort frame, int timer);
 

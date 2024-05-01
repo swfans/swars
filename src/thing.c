@@ -105,6 +105,13 @@ const char *thing_type_names[] = {
   "UNKN56",
 };
 
+void move_mapwho(struct Thing *p_thing, int x, int y, int z)
+{
+    asm volatile (
+      "call ASM_move_mapwho\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z));
+}
+
 void init_things(void)
 {
     asm volatile ("call ASM_init_things\n"
@@ -195,12 +202,6 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing)
     // TODO support more properties
 
     snprintf(s, buflen - (s-buf), " )");
-}
-
-void things_debug_hud(void)
-{
-    asm volatile ("call ASM_things_debug_hud\n"
-        :  :  : "eax" );
 }
 
 TbResult delete_node(struct Thing *p_thing)

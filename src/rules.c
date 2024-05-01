@@ -1,7 +1,7 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file scandraw.c
+/** @file rules.c
  *     Ingame rules loading from file.
  * @par Purpose:
  *     Implement functions for reading file with in-game rules.
@@ -16,10 +16,11 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bfmemory.h"
+#include "rules.h"
 
 #include "bffile.h"
 #include "bfini.h"
+#include "bfmemory.h"
 #include "enginzoom.h"
 #include "research.h"
 #include "swlog.h"

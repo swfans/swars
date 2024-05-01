@@ -28,6 +28,17 @@ extern "C" {
 #pragma pack(1)
 
 enum SubTypeVehicle {
+  SubTT_VEH_TRAIN = 0x1D,
+  SubTT_VEH_UNKN30 = 0x1E,
+  SubTT_VEH_UNKN31 = 0x1F,
+  SubTT_VEH_UNKN32 = 0x20,
+  SubTT_VEH_UNKN33 = 0x21,
+  SubTT_VEH_UNKN34 = 0x22,
+  SubTT_VEH_UNKN35 = 0x23,
+  SubTT_VEH_UNKN36 = 0x24,
+  SubTT_VEH_UNKN37 = 0x25,
+  SubTT_VEH_UNKN38 = 0x26,
+  SubTT_VEH_UNKN39 = 0x27,
   SubTT_VEH_GROUND = 0x28,
   SubTT_VEH_SHUTTLE_POD = 0x29,
   SubTT_VEH_UNKN42 = 0x2A,
@@ -51,6 +62,92 @@ enum SubTypeVehicle {
   SubTT_VEH_UNKN60 = 0x3C,
 };
 
+enum VehicleState {
+  VehSt_UNKN_0 = 0x0,
+  VehSt_UNKN_1 = 0x1,
+  VehSt_UNKN_2 = 0x2,
+  VehSt_UNKN_3 = 0x3,
+  VehSt_UNKN_4 = 0x4,
+  VehSt_UNKN_5 = 0x5,
+  VehSt_UNKN_6 = 0x6,
+  VehSt_UNKN_7 = 0x7,
+  VehSt_UNKN_8 = 0x8,
+  VehSt_UNKN_9 = 0x9,
+  VehSt_UNKN_A = 0xA,
+  VehSt_UNKN_B = 0xB,
+  VehSt_UNKN_C = 0xC,
+  VehSt_UNKN_D = 0xD,
+  VehSt_UNKN_E = 0xE,
+  VehSt_UNKN_F = 0xF,
+  VehSt_UNKN_10 = 0x10,
+  VehSt_UNKN_11 = 0x11,
+  VehSt_UNKN_12 = 0x12,
+  VehSt_UNKN_13 = 0x13,
+  VehSt_UNKN_14 = 0x14,
+  VehSt_UNKN_15 = 0x15,
+  VehSt_UNKN_16 = 0x16,
+  VehSt_UNKN_17 = 0x17,
+  VehSt_UNKN_18 = 0x18,
+  VehSt_UNKN_19 = 0x19,
+  VehSt_UNKN_1A = 0x1A,
+  VehSt_UNKN_1B = 0x1B,
+  VehSt_UNKN_1C = 0x1C,
+  VehSt_UNKN_1D = 0x1D,
+  VehSt_UNKN_1E = 0x1E,
+  VehSt_UNKN_1F = 0x1F,
+  VehSt_UNKN_20 = 0x20,
+  VehSt_UNKN_21 = 0x21,
+  VehSt_UNKN_22 = 0x22,
+  VehSt_UNKN_23 = 0x23,
+  VehSt_UNKN_24 = 0x24,
+  VehSt_UNKN_25 = 0x25,
+  VehSt_UNKN_26 = 0x26,
+  VehSt_UNKN_27 = 0x27,
+  VehSt_UNKN_28 = 0x28,
+  VehSt_UNKN_29 = 0x29,
+  VehSt_UNKN_2A = 0x2A,
+  VehSt_UNKN_2B = 0x2B,
+  VehSt_UNKN_2C = 0x2C,
+  VehSt_UNKN_2D = 0x2D,
+  VehSt_UNKN_2E = 0x2E,
+  VehSt_UNKN_2F = 0x2F,
+  VehSt_UNKN_30 = 0x30,
+  VehSt_UNKN_31 = 0x31,
+  VehSt_UNKN_32 = 0x32,
+  VehSt_UNKN_33 = 0x33,
+  VehSt_UNKN_34 = 0x34,
+  VehSt_UNKN_35 = 0x35,
+  VehSt_UNKN_36 = 0x36,
+  VehSt_UNKN_37 = 0x37,
+  VehSt_UNKN_38 = 0x38,
+  VehSt_UNKN_39 = 0x39,
+  VehSt_UNKN_3A = 0x3A,
+  VehSt_FLY_LANDING = 0x3B,
+  VehSt_UNKN_3C = 0x3C,
+  VehSt_UNKN_3D = 0x3D,
+  VehSt_UNKN_3E = 0x3E,
+  VehSt_UNKN_3F = 0x3F,
+  VehSt_UNKN_40 = 0x40,
+  VehSt_UNKN_41 = 0x41,
+  VehSt_UNKN_42 = 0x42,
+  VehSt_UNKN_43 = 0x43,
+  VehSt_UNKN_44 = 0x44,
+  VehSt_UNKN_45 = 0x45,
+  VehSt_UNKN_46 = 0x46,
+  VehSt_UNKN_47 = 0x47,
+  VehSt_UNKN_48 = 0x48,
+  VehSt_UNKN_49 = 0x49,
+  VehSt_UNKN_4A = 0x4A,
+  VehSt_UNKN_4B = 0x4B,
+  VehSt_UNKN_4C = 0x4C,
+  VehSt_UNKN_4D = 0x4D,
+  VehSt_UNKN_4E = 0x4E,
+  VehSt_UNKN_4F = 0x4F,
+  VehSt_UNKN_50 = 0x50,
+  VehSt_UNKN_51 = 0x51,
+  VehSt_UNKN_52 = 0x52,
+};
+
 struct Thing;
 
 #pragma pack()
@@ -61,7 +158,17 @@ void mech_unkn_func_09(short thing);
 
 void veh_add(struct Thing *p_thing, short frame);
 
+ushort veh_passenger_count(struct Thing *p_veh);
+
 void VNAV_unkn_func_207(struct Thing *p_thing);
+
+void process_tank_turret(struct Thing *p_tank);
+
+void process_vehicle(struct Thing *p_vehicle);
+
+void start_crashing(struct Thing *p_vehicle);
+
+int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle);
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -728,6 +728,7 @@ extern sbyte mo_weapon;
 extern ubyte selected_agent;
 
 extern ushort mouse_map_x;
+extern ushort mouse_map_y;
 extern ushort mouse_map_z;
 extern void *scratch_malloc_mem;
 
@@ -750,6 +751,9 @@ extern ushort text_window_x1;
 extern ushort text_window_y1;
 extern ushort text_window_x2;
 extern ushort text_window_y2;
+
+// To be replaced by LbArcTanAngle()
+short arctan(int dx, int dz);
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);
@@ -803,6 +807,8 @@ void unkn_lights_processing(void);
 void bang_set_detail(int a1);
 void init_free_explode_faces(void);
 int sub_73C64(char *a1, ubyte a2);
+void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
+void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 
 #ifdef __cplusplus
 };
