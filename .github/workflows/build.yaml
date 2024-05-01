@@ -218,11 +218,14 @@ jobs:
         env:
           DL_WORKSPACE: ${{ runner.workspace }}\dl
         run: |
-          mkdir -p release/nsis-plugins
+          mkdir -p release/nsis-plugins/x86-unicode
+          mkdir -p release/nsis-plugins/x86-ansi
           cd release
-          unzip -uj -q "${DL_WORKSPACE}\\Inetc.zip" "Plugins/x86-unicode/INetC.dll" -d nsis-plugins
-          unzip -uj -q "${DL_WORKSPACE}\\NSISunzU.zip" "NSISunzU/Plugin unicode/nsisunz.dll" -d nsis-plugins
-          unzip -uj -q "${DL_WORKSPACE}\\Md5dll.zip" "md5dll/UNICODE/md5dll.dll" -d nsis-plugins
+          unzip -uj -q "${DL_WORKSPACE}\\Inetc.zip" "Plugins/x86-unicode/INetC.dll" -d nsis-plugins/x86-unicode
+          unzip -uj -q "${DL_WORKSPACE}\\NSISunzU.zip" "NSISunzU/Plugin unicode/nsisunz.dll" -d nsis-plugins/x86-unicode
+          unzip -uj -q "${DL_WORKSPACE}\\Md5dll.zip" "md5dll/UNICODE/md5dll.dll" -d nsis-plugins/x86-unicode
+          unzip -uj -q "${DL_WORKSPACE}\\Inetc.zip" "Plugins/x86-ansi/INetC.dll" -d nsis-plugins/x86-ansi
+          unzip -uj -q "${DL_WORKSPACE}\\Md5dll.zip" "md5dll/ANSI/md5dll.dll" -d nsis-plugins/x86-ansi
 
       - name: Installer utils unpack
         run: |
