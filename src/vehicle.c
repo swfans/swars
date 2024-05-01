@@ -62,7 +62,7 @@ struct VehStateConfig vehicle_states[] = {
   {"UNKN_E",},
   {"UNKN_F",},
   {"UNKN_10",},
-  {"UNKN_11",},//wander?
+  {"WANDER",},
   {"UNKN_12",},
   {"UNKN_13",},
   {"UNKN_14",},
@@ -78,7 +78,7 @@ struct VehStateConfig vehicle_states[] = {
   {"UNKN_1E",},
   {"UNKN_1F",},
   {"UNKN_20",},
-  {"UNKN_21",},
+  {"PARKED_PARAL",},
   {"UNKN_22",},
   {"UNKN_23",},
   {"UNKN_24",},
@@ -95,7 +95,7 @@ struct VehStateConfig vehicle_states[] = {
   {"UNKN_2F",},
   {"UNKN_30",},
   {"UNKN_31",},
-  {"UNKN_32",},
+  {"GOTO_LOC",},
   {"UNKN_33",},
   {"UNKN_34",},
   {"UNKN_35",},
@@ -106,7 +106,7 @@ struct VehStateConfig vehicle_states[] = {
   {"UNKN_3A",},
   {"FLY_LANDING",},
   {"UNKN_3C",},
-  {"UNKN_3D",},
+  {"PARKED_PERPN",},
   {"UNKN_3E",},
   {"UNKN_3F",},
   {"UNKN_40",},
@@ -685,7 +685,7 @@ void process_veh_ground(struct Thing *p_vehicle)
         p_vehicle->Y >>= 3;
         break;
     case VehSt_UNKN_3C:
-        p_vehicle->State = VehSt_UNKN_11;
+        p_vehicle->State = VehSt_WANDER;
         if (p_vehicle->U.UVehicle.TNode != 0)
               process_next_tnode(p_vehicle);
         move_vehicle(p_vehicle);
@@ -694,8 +694,8 @@ void process_veh_ground(struct Thing *p_vehicle)
         process_stop_as_soon_as_you_can(p_vehicle);
         break;
     case VehSt_NONE:
-    case VehSt_UNKN_3D:
-    case VehSt_UNKN_21:
+    case VehSt_PARKED_PERPN:
+    case VehSt_PARKED_PARAL:
         if (p_vehicle->SubType == SubTT_VEH_FLYING)
             process_parked_flyer(p_vehicle);
         break;
@@ -733,8 +733,8 @@ void process_veh_ground(struct Thing *p_vehicle)
         move_vehicle(p_vehicle);
         set_passengers_location(p_vehicle);
         break;
-    case VehSt_UNKN_11:
-    case VehSt_UNKN_32:
+    case VehSt_WANDER:
+    case VehSt_GOTO_LOC:
     case VehSt_UNKN_33:
     case VehSt_UNKN_34:
         if (p_vehicle->U.UVehicle.TNode != 0)
@@ -805,7 +805,7 @@ void process_vehicle(struct Thing *p_vehicle)
         if (p_vehicle->State == VehSt_UNKN_45) {
             bang_new4(p_vehicle->X, p_vehicle->Y, p_vehicle->Z, 10);
             init_vehicle_explode(p_vehicle);
-        } else if (p_vehicle->State == VehSt_UNKN_21) {
+        } else if (p_vehicle->State == VehSt_PARKED_PARAL) {
             process_tank_stationary(p_vehicle);
         } else {
             process_tank(p_vehicle);
@@ -819,7 +819,7 @@ void process_vehicle(struct Thing *p_vehicle)
         break;
     case SubTT_VEH_MECH:
         unkn_path_func_001(p_vehicle, 0);
-        if (p_vehicle->State == VehSt_UNKN_21)
+        if (p_vehicle->State == VehSt_PARKED_PARAL)
             process_mech_stationary(p_vehicle);
         else
             process_mech(p_vehicle);

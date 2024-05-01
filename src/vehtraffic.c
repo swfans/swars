@@ -130,7 +130,7 @@ void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
         }
     }
 
-    if ((p_vehicle->State == VehSt_UNKN_32) && ((gameturn & 3) == 0) && ((p_vehicle->U.UVehicle.Dummy4a & 0x3F) > 2))
+    if ((p_vehicle->State == VehSt_GOTO_LOC) && ((gameturn & 3) == 0) && ((p_vehicle->U.UVehicle.Dummy4a & 0x3F) > 2))
     {
         int dx, dz;
 
@@ -198,7 +198,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
     p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
     if ((p_vehicle->U.UVehicle.WorkPlace & 0x0008) != 0)
     {
-        if (p_vehicle->State == VehSt_UNKN_32 || p_vehicle->State == VehSt_UNKN_11)
+        if (p_vehicle->State == VehSt_GOTO_LOC || p_vehicle->State == VehSt_WANDER)
         {
             if ((p_tnode->Flags & 0x0040) != 0)
             {
@@ -332,7 +332,7 @@ void process_next_tnode(struct Thing *p_vehicle)
     if ((p_vehicle->State == VehSt_UNKN_34 || p_vehicle->State == VehSt_UNKN_33)
       && (tnode == 0) && (p_vehicle->Speed == 0))
     {
-        p_vehicle->State = VehSt_UNKN_21;
+        p_vehicle->State = VehSt_PARKED_PARAL;
         p_vehicle->U.UVehicle.AccelZ = 0;
         p_vehicle->U.UVehicle.AccelX = 0;
         p_vehicle->Flag |= 0x0004;
@@ -468,7 +468,7 @@ void process_next_tnode(struct Thing *p_vehicle)
         p_tnode = &game_traffic_nodes[-tnode];
         switch (p_vehicle->State)
         {
-        case VehSt_UNKN_32:
+        case VehSt_GOTO_LOC:
             if ((p_tnode->Flags & (0x0010|0x0020)) != 0)
                 p_vehicle->U.UVehicle.WorkPlace |= 0x0001;
             else
