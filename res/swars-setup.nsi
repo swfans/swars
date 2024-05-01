@@ -31,7 +31,7 @@ LangString STR_CHOOSE_DRIVE 1033 "Choose the CD-ROM drive"
 LangString STR_CHOOSE_LANG 1033 "Choose the language"
 
 ; --------------------
-; VARIABLES: 9
+; VARIABLES: 10
 
 Var selected_lang_text
 Var selected_lang_abbr
@@ -42,6 +42,7 @@ Var selected_music
 Var gog_path
 Var RadioSelected
 Var inst_src_root_dir
+Var levels_md5
 
 InstallDir "$PROGRAMFILES\Syndicate Wars\"
 
@@ -484,7 +485,39 @@ Function CopyGameFilesFromCD
     SetOutPath $INSTDIR
   ${EndIf}
 
-  Return
+  ;Update levels and maps from swars-levels repository
+
+  StrCpy $levels_md5 "2af6eca3cd139579f0f86cd10b0583f7"
+
+  !if /FileExists "$PLUGINSDIR\swars-levels-1_0_0_15.zip"
+  !else
+ 	 Call DownloadLevels
+  !endif
+
+  ;Check MD5 of downloaded file to see if it's intact
+
+  md5dll::GetMD5File "$PLUGINSDIR\swars-levels-1_0_0_15.zip"
+  Pop $0
+  StrCmp $0 $levels_md5 extract_level_files retry_level_download
+
+retry_level_download:
+ DetailPrint "Error detected with level files zip, retrying download"
+ Call DownloadLevels
+ md5dll::GetMD5File "$PLUGINSDIR\swars-levels-1_0_0_15.zip"
+ Pop $0
+ StrCmp $0 $levels_md5 extract_level_files 0
+ SetErrors
+ DetailPrint "Error downloading level files from swars-levels repository, please check the source file."
+ DetailPrint "Aborting install"
+ Abort
+
+extract_level_files:
+ DetailPrint "Extracting updated game levels..."
+ nsisunz::Unzip  "$PLUGINSDIR\swars-levels-1_0_0_15.zip" "$PLUGINSDIR\"
+ CopyFiles /SILENT $PLUGINSDIR\SWARS\levels\* $INSTDIR\levels
+ CopyFiles /SILENT $PLUGINSDIR\SWARS\maps\* $INSTDIR\maps
+
+ Return
 
 copy_files_fail:
   SetErrors
@@ -492,6 +525,12 @@ copy_files_fail:
   DetailPrint "Aborting Install"
   Abort
 
+FunctionEnd
+
+
+Function DownloadLevels
+  DetailPrint "Downloading latest game levels from Github..."
+  inetc::get "https://github.com/swfans/swars-levels/releases/download/1.0.0.15/swars-levels-1_0_0_15.zip" "$PLUGINSDIR\swars-levels-1_0_0_15.zip"
 FunctionEnd
 
 
@@ -776,228 +815,7 @@ Delete '$INSTDIR\data\equip\WEP-29Z.FLI'
 Delete '$INSTDIR\data\equip\WEP-30.FLI'
 Delete '$INSTDIR\data\equip\WEP-30Z.FLI'
 
-
-Delete '$INSTDIR\levels\ALL000.BEN'
-Delete '$INSTDIR\levels\ALL000.MIS'
-Delete '$INSTDIR\levels\ALL000.OLD'
-Delete '$INSTDIR\levels\ALL001.MIS'
-Delete '$INSTDIR\levels\ALL098.MIS'
-Delete '$INSTDIR\levels\ALL099.MIS'
-Delete '$INSTDIR\levels\C000L001.D3'
-Delete '$INSTDIR\levels\C000L001.DAT'
-Delete '$INSTDIR\levels\C001L001.D1'
-Delete '$INSTDIR\levels\C001L001.D3'
-Delete '$INSTDIR\levels\C001L001.DAT'
-Delete '$INSTDIR\levels\C001L002.DAT'
-Delete '$INSTDIR\levels\C001L003.D1'
-Delete '$INSTDIR\levels\C001L003.D2'
-Delete '$INSTDIR\levels\C001L003.DAT'
-Delete '$INSTDIR\levels\C001L005.DAT'
-Delete '$INSTDIR\levels\C001L007.DAT'
-Delete '$INSTDIR\levels\C001L010.DAT'
-Delete '$INSTDIR\levels\C001L015.DAT'
-Delete '$INSTDIR\levels\C002L001.D1'
-Delete '$INSTDIR\levels\C002L001.D2'
-Delete '$INSTDIR\levels\C002L001.D3'
-Delete '$INSTDIR\levels\C002L001.DAT'
-Delete '$INSTDIR\levels\C002L002.DAT'
-Delete '$INSTDIR\levels\C002L003.D1'
-Delete '$INSTDIR\levels\C002L003.DAT'
-Delete '$INSTDIR\levels\C002L005.DAT'
-Delete '$INSTDIR\levels\C002L007.D1'
-Delete '$INSTDIR\levels\C002L007.DAT'
-Delete '$INSTDIR\levels\C002L015.DAT'
-Delete '$INSTDIR\levels\C003L001.D1'
-Delete '$INSTDIR\levels\C003L001.DAT'
-Delete '$INSTDIR\levels\C003L002.DAT'
-Delete '$INSTDIR\levels\C003L003.DAT'
-Delete '$INSTDIR\levels\C003L007.D1'
-Delete '$INSTDIR\levels\C003L007.D2'
-Delete '$INSTDIR\levels\C003L007.DAT'
-Delete '$INSTDIR\levels\C003L010.DAT'
-Delete '$INSTDIR\levels\C003L015.DAT'
-Delete '$INSTDIR\levels\C004L001.D2'
-Delete '$INSTDIR\levels\C004L001.DAT'
-Delete '$INSTDIR\levels\C004L003.DAT'
-Delete '$INSTDIR\levels\C004L004.DAT'
-Delete '$INSTDIR\levels\C004L007.D1'
-Delete '$INSTDIR\levels\C004L007.DAT'
-Delete '$INSTDIR\levels\C004L013.DAT'
-Delete '$INSTDIR\levels\C004L015.DAT'
-Delete '$INSTDIR\levels\C005L001.D1'
-Delete '$INSTDIR\levels\C005L001.D2'
-Delete '$INSTDIR\levels\C005L001.DAT'
-Delete '$INSTDIR\levels\C005L005.DAT'
-Delete '$INSTDIR\levels\C005L015.DAT'
-Delete '$INSTDIR\levels\C006L001.D1'
-Delete '$INSTDIR\levels\C006L001.D2'
-Delete '$INSTDIR\levels\C006L001.DAT'
-Delete '$INSTDIR\levels\C006L003.D1'
-Delete '$INSTDIR\levels\C006L003.D2'
-Delete '$INSTDIR\levels\C006L003.DAT'
-Delete '$INSTDIR\levels\C006L005.DAT'
-Delete '$INSTDIR\levels\C006L007.DAT'
-Delete '$INSTDIR\levels\C006L015.D3'
-Delete '$INSTDIR\levels\C007L001.D1'
-Delete '$INSTDIR\levels\C007L001.D2'
-Delete '$INSTDIR\levels\C007L001.DAT'
-Delete '$INSTDIR\levels\C007L003.D1'
-Delete '$INSTDIR\levels\C007L003.D2'
-Delete '$INSTDIR\levels\C007L003.D3'
-Delete '$INSTDIR\levels\C007L003.DAT'
-Delete '$INSTDIR\levels\C007L005.DAT'
-Delete '$INSTDIR\levels\C007L007.D1'
-Delete '$INSTDIR\levels\C008L001.DAT'
-Delete '$INSTDIR\levels\C008L003.D1'
-Delete '$INSTDIR\levels\C008L003.D2'
-Delete '$INSTDIR\levels\C008L003.DAT'
-Delete '$INSTDIR\levels\C008L005.DAT'
-Delete '$INSTDIR\levels\C009L001.D1'
-Delete '$INSTDIR\levels\C009L001.D2'
-Delete '$INSTDIR\levels\C009L001.DAT'
-Delete '$INSTDIR\levels\C009L003.DAT'
-Delete '$INSTDIR\levels\C009L007.DAT'
-Delete '$INSTDIR\levels\C010L001.D1'
-Delete '$INSTDIR\levels\C010L001.D2'
-Delete '$INSTDIR\levels\C010L001.D3'
-Delete '$INSTDIR\levels\C010L001.DAT'
-Delete '$INSTDIR\levels\C010L015.DAT'
-Delete '$INSTDIR\levels\C011L001.DAT'
-Delete '$INSTDIR\levels\C012L001.DAT'
-Delete '$INSTDIR\levels\C020L001.D1'
-Delete '$INSTDIR\levels\C020L002.DAT'
-Delete '$INSTDIR\levels\C020L007.DAT'
-Delete '$INSTDIR\levels\C021L001.D2'
-Delete '$INSTDIR\levels\C021L001.D3'
-Delete '$INSTDIR\levels\C022L001.D1'
-Delete '$INSTDIR\levels\C022L001.D2'
-Delete '$INSTDIR\levels\C022L002.DAT'
-Delete '$INSTDIR\levels\C022L003.D2'
-Delete '$INSTDIR\levels\C022L003.DAT'
-Delete '$INSTDIR\levels\C022L004.DAT'
-Delete '$INSTDIR\levels\C022L013.DAT'
-Delete '$INSTDIR\levels\C025L001.D1'
-Delete '$INSTDIR\levels\C025L001.D3'
-Delete '$INSTDIR\levels\C025L015.D3'
-Delete '$INSTDIR\levels\C026L001.DAT'
-Delete '$INSTDIR\levels\C026L002.DAT'
-Delete '$INSTDIR\levels\C026L003.DAT'
-Delete '$INSTDIR\levels\C026L004.DAT'
-Delete '$INSTDIR\levels\C027L001.DAT'
-Delete '$INSTDIR\levels\C027L002.DAT'
-Delete '$INSTDIR\levels\C027L003.DAT'
-Delete '$INSTDIR\levels\C027L015.D3'
-Delete '$INSTDIR\levels\C028L001.D2'
-Delete '$INSTDIR\levels\C028L001.D3'
-Delete '$INSTDIR\levels\C028L002.DAT'
-Delete '$INSTDIR\levels\C028L015.DAT'
-Delete '$INSTDIR\levels\C030L001.D1'
-Delete '$INSTDIR\levels\C030L001.D2'
-Delete '$INSTDIR\levels\C030L001.D3'
-Delete '$INSTDIR\levels\C030L002.DAT'
-Delete '$INSTDIR\levels\C030L008.D1'
-Delete '$INSTDIR\levels\C030L008.D2'
-Delete '$INSTDIR\levels\C032L001.D1'
-Delete '$INSTDIR\levels\C032L002.D1'
-Delete '$INSTDIR\levels\C032L002.DAT'
-Delete '$INSTDIR\levels\C032L005.DAT'
-Delete '$INSTDIR\levels\C032L015.DAT'
-Delete '$INSTDIR\levels\C035L001.D1'
-Delete '$INSTDIR\levels\C035L001.DAT'
-Delete '$INSTDIR\levels\C035L002.DAT'
-Delete '$INSTDIR\levels\C035L004.DAT'
-Delete '$INSTDIR\levels\C035L005.DAT'
-Delete '$INSTDIR\levels\C035L007.DAT'
-Delete '$INSTDIR\levels\C035L015.D3'
-Delete '$INSTDIR\levels\C036L001.D3'
-Delete '$INSTDIR\levels\C036L001.DAT'
-Delete '$INSTDIR\levels\C036L002.DAT'
-Delete '$INSTDIR\levels\C036L003.D2'
-Delete '$INSTDIR\levels\C036L003.DAT'
-Delete '$INSTDIR\levels\C036L004.DAT'
-Delete '$INSTDIR\levels\C036L005.DAT'
-Delete '$INSTDIR\levels\C040L001.D1'
-Delete '$INSTDIR\levels\C040L001.D2'
-Delete '$INSTDIR\levels\C040L001.D3'
-Delete '$INSTDIR\levels\C040L001.DAT'
-Delete '$INSTDIR\levels\C040L005.DAT'
-Delete '$INSTDIR\levels\C040L013.DAT'
-Delete '$INSTDIR\levels\C040L015.D1'
-Delete '$INSTDIR\levels\C040L015.D2'
-Delete '$INSTDIR\levels\C040L015.DAT'
-Delete '$INSTDIR\levels\C041L001.D1'
-Delete '$INSTDIR\levels\C041L001.D2'
-Delete '$INSTDIR\levels\C041L001.D3'
-Delete '$INSTDIR\levels\C041L001.DAT'
-Delete '$INSTDIR\levels\C041L002.D1'
-Delete '$INSTDIR\levels\C041L002.D2'
-Delete '$INSTDIR\levels\C041L002.D3'
-Delete '$INSTDIR\levels\C041L002.DAT'
-Delete '$INSTDIR\levels\C041L003.DAT'
-Delete '$INSTDIR\levels\C041L005.DAT'
-Delete '$INSTDIR\levels\C044L001.D1'
-Delete '$INSTDIR\levels\C044L001.D2'
-Delete '$INSTDIR\levels\C044L001.D3'
-Delete '$INSTDIR\levels\C044L001.DAT'
-Delete '$INSTDIR\levels\C044L002.D1'
-Delete '$INSTDIR\levels\C044L002.D2'
-Delete '$INSTDIR\levels\C044L002.DAT'
-Delete '$INSTDIR\levels\C044L003.D1'
-Delete '$INSTDIR\levels\C044L003.DAT'
-Delete '$INSTDIR\levels\C044L005.DAT'
-Delete '$INSTDIR\levels\C044L007.D1'
-Delete '$INSTDIR\levels\C044L007.DAT'
-Delete '$INSTDIR\levels\C044L015.D1'
-Delete '$INSTDIR\levels\C044L015.DAT'
-Delete '$INSTDIR\levels\C045L001.DAT'
-Delete '$INSTDIR\levels\C045L002.DAT'
-Delete '$INSTDIR\levels\C045L015.D3'
-Delete '$INSTDIR\levels\C046L001.D1'
-Delete '$INSTDIR\levels\C046L001.D2'
-Delete '$INSTDIR\levels\C046L001.D3'
-Delete '$INSTDIR\levels\C046L001.DAT'
-Delete '$INSTDIR\levels\C046L002.D2'
-Delete '$INSTDIR\levels\C046L002.DAT'
-Delete '$INSTDIR\levels\C046L005.DAT'
-Delete '$INSTDIR\levels\C046L008.DAT'
-Delete '$INSTDIR\levels\C046L009.DAT'
-Delete '$INSTDIR\levels\C046L010.DAT'
-Delete '$INSTDIR\levels\C046L014.DAT'
-Delete '$INSTDIR\levels\C046L015.D1'
-Delete '$INSTDIR\levels\C046L015.D2'
-Delete '$INSTDIR\levels\C046L015.D3'
-Delete '$INSTDIR\levels\C046L015.DAT'
-Delete '$INSTDIR\levels\C047L001.D1'
-Delete '$INSTDIR\levels\C047L001.D2'
-Delete '$INSTDIR\levels\C047L001.D3'
-Delete '$INSTDIR\levels\C047L001.DAT'
-Delete '$INSTDIR\levels\C047L002.DAT'
-Delete '$INSTDIR\levels\C047L011.DAT'
-Delete '$INSTDIR\levels\C047L015.D1'
-Delete '$INSTDIR\levels\C047L015.DAT'
-Delete '$INSTDIR\levels\C049L009.DAT'
-Delete '$INSTDIR\levels\C050L001.D1'
-Delete '$INSTDIR\levels\C050L001.D2'
-Delete '$INSTDIR\levels\C050L001.D3'
-Delete '$INSTDIR\levels\C050L001.DAT'
-Delete '$INSTDIR\levels\C050L002.D1'
-Delete '$INSTDIR\levels\C050L002.D2'
-Delete '$INSTDIR\levels\C050L002.D3'
-Delete '$INSTDIR\levels\C050L002.DAT'
-Delete '$INSTDIR\levels\C050L003.DAT'
-Delete '$INSTDIR\levels\C052L001.DAT'
-Delete '$INSTDIR\levels\C052L007.DAT'
-Delete '$INSTDIR\levels\C060L005.DAT'
-Delete '$INSTDIR\levels\C060L015.DAT'
-Delete '$INSTDIR\levels\C065L001.DAT'
-Delete '$INSTDIR\levels\C065L002.DAT'
-Delete '$INSTDIR\levels\C065L003.DAT'
-Delete '$INSTDIR\levels\C065L005.DAT'
-Delete '$INSTDIR\levels\C070L011.D1'
-Delete '$INSTDIR\levels\C070L011.DAT'
-Delete '$INSTDIR\levels\C079L001.D2'
-Delete '$INSTDIR\levels\C079L002.DAT'
-Delete '$INSTDIR\levels\C079L015.D3'
+Delete $INSTDIR\levels\*
 
 Delete '$INSTDIR\maps\MAP000.SCN'
 Delete '$INSTDIR\maps\MAP001.MAD'
