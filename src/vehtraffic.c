@@ -462,16 +462,6 @@ void process_next_tnode(struct Thing *p_vehicle)
 
     if (do_state)
     {
-#if 1
-        {//use the original assembly for this part
-        long ret;
-        asm volatile (
-          "call ASM_process_next_tnode_switch_state\n"
-            : "=r" (ret) : "a" (p_vehicle), "d" (tndt_x), "b" (tndt_z), "c" (nxdist_sq));
-        nxdist_sq = ret;
-        }
-#else
-        // TODO FIX exploding vehicles with this code at border of map 0,26
         struct TrafficNode *p_tnode;
         struct TrafficNode *p_nxtnode;
 
@@ -578,7 +568,7 @@ void process_next_tnode(struct Thing *p_vehicle)
             break;
         default:
             p_vehicle->U.UVehicle.WorkPlace &= ~0x0004;
-            if ((p_tnode->Flags & 0x8000) == 0)
+            if ((p_tnode->Flags & 0x0080) == 0)
             {
                 short lnk;
 
@@ -623,14 +613,14 @@ void process_next_tnode(struct Thing *p_vehicle)
                     struct TrafficNode *p_lntnode;
 
                     p_lntnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
-                    if (((p_tnode->UTraffic.Flags[lnk] & 0x8000) != 0) ||
+                    if (((p_tnode->UTraffic.Flags[lnk] & 0x80) != 0) ||
                       ((p_lntnode->Flags & (0x0010|0x0020)) != 0))
                     {
                         nxdist_sq = 0x7FFFFFFF;
                         p_vehicle->U.UVehicle.WorkPlace |= 0x0008;
                     }
                 }
-                if ((p_tnode->UTraffic.Flags[lnk] & 0x0001) != 0)
+                if ((p_tnode->UTraffic.Flags[lnk] & 0x01) != 0)
                     p_vehicle->Flag |= 0x0800;
                 else
                     p_vehicle->Flag &= ~0x0800;
@@ -680,7 +670,6 @@ void process_next_tnode(struct Thing *p_vehicle)
             }
             break;
         }
-#endif
     }
 
     update_vehicle_elevation(p_vehicle, tnode);
