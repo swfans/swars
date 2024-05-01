@@ -65,6 +65,7 @@ void things_debug_hud(void)
 #endif
     short thing;
     short path;
+    short pasngr;
     char locstr[100];
 
     thing = select_thing_for_debug(mouse_map_x, 0, mouse_map_z, -1);
@@ -92,8 +93,11 @@ void things_debug_hud(void)
     func_6fe80(mouse_map_x, mouse_map_y, mouse_map_z,
       p_track_thing->X >> 8, p_track_thing->Y >> 5, p_track_thing->Z >> 8,
       colour_lookup[1]);
+    // Show commands list
     if (p_track_thing->Type == TT_PERSON)
           unused_func_205(356, 80, 280, 150, thing, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
+    else if ((p_track_thing->Type == TT_VEHICLE) && (p_track_thing->U.UVehicle.PassengerHead > 0))
+          unused_func_205(356, 80, 280, 150, p_track_thing->U.UVehicle.PassengerHead, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
 
     if (execute_commands)
     {
@@ -221,14 +225,32 @@ void things_debug_hud(void)
         switch (p_track_thing->Type)
         {
         case TT_VEHICLE:
-            sprintf(locstr, "%s",
-              thing_type_name(p_track_thing->Type, p_track_thing->SubType));
+                pasngr = p_track_thing->U.UVehicle.PassengerHead;
+                if (pasngr == 0) {
+                    sprintf(locstr, "%s: empty",
+                      thing_type_name(p_track_thing->Type, p_track_thing->SubType));
+                } else if (p_track_thing->U.UVehicle.PassengerHead > 0) {
+                    struct Thing *p_pasngr;
+
+                    p_pasngr = &things[pasngr];
+                    sprintf(locstr, "%s: passenger %s offs %d lastdist %d",
+                      thing_type_name(p_track_thing->Type, p_track_thing->SubType),
+                      thing_type_name(p_pasngr->Type, p_pasngr->SubType),
+                      (int)pasngr, (int)p_pasngr->U.UPerson.LastDist);
+                } else { // Not expected to happen; but just in case
+                    struct SimpleThing *p_spasngr;
+
+                    p_spasngr = &sthings[pasngr];
+                    sprintf(locstr, "%s: passenger %s offs %d",
+                      thing_type_name(p_track_thing->Type, p_track_thing->SubType),
+                      thing_type_name(p_spasngr->Type, p_spasngr->SubType), (int)pasngr);
+                }
             draw_text(360, 90, locstr, colour_lookup[2]);
             break;
         case TT_PERSON:
             sprintf(locstr, "%s: lastdist %d VX,VZ (%d,%d)",
               thing_type_name(p_track_thing->Type, p_track_thing->SubType),
-              (int)p_track_thing->U.UObject.BuildNumbVect,
+              (int)p_track_thing->U.UPerson.LastDist,
               (int)p_track_thing->VX,
               (int)p_track_thing->VZ);
             draw_text(360, 90, locstr, colour_lookup[3]);
