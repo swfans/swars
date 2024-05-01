@@ -815,7 +815,10 @@ Delete '$INSTDIR\data\equip\WEP-29Z.FLI'
 Delete '$INSTDIR\data\equip\WEP-30.FLI'
 Delete '$INSTDIR\data\equip\WEP-30Z.FLI'
 
-Delete $INSTDIR\levels\*
+Delete $INSTDIR\levels\C*.DAT
+Delete $INSTDIR\levels\C*.D1
+Delete $INSTDIR\levels\C*.D2
+Delete $INSTDIR\levels\C*.D3
 
 Delete '$INSTDIR\maps\MAP000.SCN'
 Delete '$INSTDIR\maps\MAP001.MAD'
