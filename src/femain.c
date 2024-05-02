@@ -25,6 +25,7 @@
 #include "display.h"
 #include "guiboxes.h"
 #include "guitext.h"
+#include "game_speed.h"
 #include "game.h"
 #include "sound.h"
 #include "swlog.h"
@@ -310,8 +311,7 @@ void show_mission_loading_screen(void)
     reload_background();
     play_sample_using_heap(0, 118, 127, 64, 100, 0, 3);
 
-    DwBool stop;
-    TbClockMSec last_loop_time = LbTimerClock();
+    ulong finished = 0; // Amount of frames after the drawing animation finished
     do
     {
         memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
@@ -322,16 +322,14 @@ void show_mission_loading_screen(void)
         //loading_INITIATING_box.DrawFn(&loading_INITIATING_box); -- incompatible calling convention
         asm volatile ("call *%1\n"
             : : "a" (&loading_INITIATING_box), "g" (loading_INITIATING_box.DrawFn));
-        stop = loading_INITIATING_box.Flags & GBxFlg_Unkn1000;
+        if ((loading_INITIATING_box.Flags & GBxFlg_Unkn1000) != 0)
+            finished++;
         draw_purple_screen();
         swap_wscreen();
 
         game_update();
-        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
-        LbSleepUntil(sleep_end);
-        last_loop_time = LbTimerClock();
     }
-    while (!stop);
+    while (finished <= game_num_fps/2);
 
     loading_INITIATING_box.Flags = GBxFlg_Unkn0001;
     wait_for_sound_sample_finish(118);

@@ -167,6 +167,8 @@ swars_SOURCES = \
 	game.c \
 	game_data.c \
 	game_data.h \
+	game_speed.c \
+	game_speed.h \
 	game.h \
 	globals.h \
 	joy_modul1.sx \

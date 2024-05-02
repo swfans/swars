@@ -75,6 +75,7 @@
 #include "dos.h"
 #include "game.h"
 #include "game_data.h"
+#include "game_speed.h"
 #include "keyboard.h"
 #include "mouse.h"
 #include "network.h"
@@ -3346,7 +3347,6 @@ void func_cc0d4(char **str)
 
 void init_outro(void)
 {
-    TbClockMSec last_loop_time;
     const char *text1;
     const char *text2;
     int i;
@@ -3384,8 +3384,7 @@ void init_outro(void)
     func_cc638(text1, text2);
 
     // Sleep for up to 10 seconds
-    last_loop_time = LbTimerClock();
-    for (i = 10*GAME_FPS; i != 0; i--)
+    for (i = 10*game_num_fps; i != 0; i--)
     {
         if ( lbKeyOn[KC_SPACE] )
           break;
@@ -3393,9 +3392,7 @@ void init_outro(void)
           break;
         if ( lbKeyOn[KC_RETURN] )
           break;
-        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
-        LbSleepUntil(sleep_end);
-        last_loop_time = LbTimerClock();
+        game_update();
     }
     lbKeyOn[KC_SPACE] = 0;
     lbKeyOn[KC_ESCAPE] = 0;
@@ -10424,23 +10421,13 @@ void game_transform_path(const char *file_name, char *result)
 
 static void game_update_full(bool wait)
 {
-    static TbClockMSec last_loop_time = 0;
-
     display_unlock();
 
     game_handle_sdl_events();
 
     if (wait)
     {
-        TbClockMSec curr_time = LbTimerClock();
-        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
-        // If we missed the normal sleep target (ie. there was a slowdown), reset the value and do not sleep
-        if ((sleep_end < curr_time) || (sleep_end > curr_time + 1000/GAME_FPS)) {
-            LOGNO("missed FPS target, last frame time %ld too far from current %ld", (ulong)sleep_end, (ulong)curr_time);
-            sleep_end = curr_time;
-        }
-        LbSleepUntil(sleep_end);
-        last_loop_time = sleep_end;
+        wait_next_gameturn();
     }
 
     display_lock();

@@ -17,9 +17,6 @@ extern "C" {
 
 #pragma pack(1)
 
-// Not sure about the value
-#define GAME_FPS 16
-
 enum GameModes {
     GamM_None        = 0,
     GamM_Unkn1       = 1,

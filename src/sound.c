@@ -23,6 +23,7 @@
 #include "ailss.h"
 #include "aila.h"
 #include "game_data.h"
+#include "game_speed.h"
 #include "game.h"
 #include "util.h"
 
@@ -77,12 +78,8 @@ void snd_unkn1_volume_all_samples(void)
 
 void wait_for_sound_sample_finish(ushort smpl_id)
 {
-    TbClockMSec last_loop_time = LbTimerClock();
     while (IsSamplePlaying(0, smpl_id, NULL)) {
         game_update();
-        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
-        LbSleepUntil(sleep_end);
-        last_loop_time = LbTimerClock();
     }
 }
 
