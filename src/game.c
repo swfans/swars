@@ -3159,8 +3159,6 @@ void draw_screen(void)
     __outbyte(0x3C9u, 0);
     __outbyte(0x3C9u, 0);
 #endif
-    //TODO a very strange place to inject the update - find somewhere better!
-    game_update();
 
     tnext_screen_point = next_screen_point;
     next_sort_line = 0;
@@ -8362,9 +8360,6 @@ void show_date_time(void)
 
     global_credits_box_draw();
 
-    /* TODO tmp, put this some place better later */
-    game_update();
-
     global_date_tick();
     global_date_inputs();
 
@@ -10097,7 +10092,7 @@ void draw_game(void)
         break;
     case DpM_UNKN_32:
         PlayCDTrack(ingame.CDTrack);
-        if ( !(ingame.Flags & GamF_Unkn0020) || !(gameturn & 0xF) )
+        if (((ingame.Flags & GamF_Unkn0020) == 0) || ((gameturn & 0xF) == 0))
         {
             show_game_engine();
             if ((ingame.Flags & GamF_Unkn0800) != 0)
@@ -10206,6 +10201,7 @@ void game_process(void)
       if (ingame.DisplayMode == DpM_UNKN_37) {
           LOGDBG("id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
       }
+      game_update();
       if (!LbScreenIsLocked()) {
           while (LbScreenLock() != Lb_SUCCESS)
               ;
