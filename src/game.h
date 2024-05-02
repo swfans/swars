@@ -573,12 +573,6 @@ extern struct TbSprite *unk2_sprites_end;
 
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
-extern ulong curr_tick_time;
-extern ulong prev_tick_time;
-extern GameTurn gameturn;
-extern GameTurn prev_gameturn;
-extern ulong turns_delta;
-extern ushort fifties_per_gameturn;
 extern ushort gamep_scene_effect;
 extern ubyte *vec_tmap[18];
 extern ubyte linear_vec_pal[256];

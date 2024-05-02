@@ -21,6 +21,7 @@
 #include <assert.h>
 #include "bfkeybd.h"
 #include "bftime.h"
+#include "game.h"
 #include "keyboard.h"
 #include "swlog.h"
 
@@ -94,8 +95,12 @@ void wait_next_gameturn(void)
 {
     static TbClockMSec last_loop_time = 0;
     TbClockMSec curr_time = LbTimerClock();
-    TbClockMSec sleep_end = last_loop_time + 1000/game_num_fps;
+    TbClockMSec sleep_end;
 
+    if (frameskip == 0)
+        sleep_end = last_loop_time + 1000/game_num_fps;
+    else
+        sleep_end = curr_time;
     // If we missed the normal sleep target (ie. there was a slowdown), reset the value and do not sleep
     if ((sleep_end < curr_time) || (sleep_end > curr_time + 1000/game_num_fps)) {
         LOGNO("missed FPS target, last frame time %ld too far from current %ld",
@@ -104,6 +109,40 @@ void wait_next_gameturn(void)
     }
     LbSleepUntil(sleep_end);
     last_loop_time = sleep_end;
+}
+
+/**
+ * Checks if the game screen needs redrawing.
+ */
+TbBool display_needs_redraw_this_turn(void)
+{
+    if ( (frameskip == 0) || ((gameturn % frameskip) == 0))
+        return true;
+    return false;
+}
+
+void update_tick_time(void)
+{
+    ulong tick_time = clock();
+    tick_time = tick_time / 100;
+    curr_tick_time = tick_time;
+    if (tick_time != prev_tick_time)
+    {
+        ulong tmp;
+        tmp = gameturn - prev_gameturn;
+        prev_gameturn = gameturn;
+        turns_delta = tmp;
+    }
+    if ( turns_delta != 0 ) {
+        fifties_per_gameturn = 800 / turns_delta;
+    } else {
+        fifties_per_gameturn = 50;
+    }
+    if ( in_network_game )
+        fifties_per_gameturn = 80;
+    if ( fifties_per_gameturn > 400 )
+        fifties_per_gameturn = 400;
+    prev_tick_time = curr_tick_time;
 }
 
 /******************************************************************************/

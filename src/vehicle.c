@@ -25,6 +25,7 @@
 #include "bigmap.h"
 #include "bmbang.h"
 #include "game.h"
+#include "game_speed.h"
 #include "pathtrig.h"
 #include "sound.h"
 #include "thing.h"

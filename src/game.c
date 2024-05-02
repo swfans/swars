@@ -4774,30 +4774,6 @@ void game_setup(void)
     }
 }
 
-void game_process_sub01(void)
-{
-    unsigned long tick_time = clock();
-    tick_time = tick_time / 100;
-    curr_tick_time = tick_time;
-    if (tick_time != prev_tick_time)
-    {
-        unsigned long tmp;
-        tmp = gameturn - prev_gameturn;
-        prev_gameturn = gameturn;
-        turns_delta = tmp;
-    }
-    if ( turns_delta != 0 ) {
-        fifties_per_gameturn = 800 / turns_delta;
-    } else {
-        fifties_per_gameturn = 50;
-    }
-    if ( in_network_game )
-        fifties_per_gameturn = 80;
-    if ( fifties_per_gameturn > 400 )
-        fifties_per_gameturn = 400;
-    prev_tick_time = curr_tick_time;
-}
-
 void game_process_sub08(void)
 {
     asm volatile ("call ASM_game_process_sub08\n"
@@ -7087,6 +7063,12 @@ ubyte do_user_interface(void)
             ingame.Flags |= GamF_Unkn2000;
     }
 
+    // Game Speed control
+    if (!in_network_game)
+    {
+        get_speed_control_inputs();
+    }
+#if 0 // Old game speed control - remove pending
     // TODO Speed control - make it work, maybe?
     if (lbKeyOn[KC_EQUALS])
     {
@@ -7100,7 +7082,6 @@ ubyte do_user_interface(void)
         lbKeyOn[KC_MINUS] = 0;
         game_speed += 2500;
     }
-#if 0 // What was that supposed to do?
     for (n = 1; n < game_speed; n++)
     {
         ulong k;
@@ -10352,7 +10333,7 @@ void game_process(void)
               ;
       }
       input();
-      game_process_sub01();
+      update_tick_time();
       draw_game();
       debug_trace_turn_bound(gameturn + 100);
       load_packet();

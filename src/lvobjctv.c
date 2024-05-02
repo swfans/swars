@@ -35,6 +35,7 @@
 #include "scandraw.h"
 #include "display.h"
 #include "game.h"
+#include "game_speed.h"
 #include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/

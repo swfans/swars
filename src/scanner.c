@@ -24,6 +24,7 @@
 #include "thing.h"
 #include "player.h"
 #include "game.h"
+#include "game_speed.h"
 #include "lvobjctv.h"
 #include "display.h"
 #include "swlog.h"

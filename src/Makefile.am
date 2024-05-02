@@ -165,6 +165,7 @@ swars_SOURCES = \
 	guitext.c \
 	guitext.h \
 	game.c \
+	game_bstype.h \
 	game_data.c \
 	game_data.h \
 	game_speed.c \

@@ -22,6 +22,7 @@
 #include "bfutility.h"
 #include "bigmap.h"
 #include "game.h"
+#include "game_speed.h"
 #include "thing.h"
 #include "vehicle.h"
 #include "swlog.h"
