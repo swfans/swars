@@ -35,6 +35,8 @@ extern GameTurn prev_gameturn;
 extern ulong turns_delta;
 extern ushort fifties_per_gameturn;
 
+/** Amount of frames per second drawn by the game, and also aount of game
+ * turns per second. */
 extern ushort game_num_fps;
 
 TbBool get_speed_control_inputs(void);

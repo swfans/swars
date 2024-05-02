@@ -26,6 +26,8 @@
 #include "swlog.h"
 
 short frameskip = 0;
+
+// TODO implement separate turns per second, when drawing frames will get separated from game loop
 ushort game_num_fps = 16;
 
 /******************************************************************************/

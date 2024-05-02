@@ -279,7 +279,6 @@ extern ubyte unkn_changing_color_2;
 extern ulong unkn_changing_color_counter1;
 
 extern short brightness;
-extern long game_speed;
 
 extern short super_quick_light[(RENDER_AREA_MAX+1)*(RENDER_AREA_MAX+1)];
 
@@ -6975,34 +6974,6 @@ ubyte do_user_interface(void)
     {
         get_speed_control_inputs();
     }
-#if 0 // Old game speed control - remove pending
-    // TODO Speed control - make it work, maybe?
-    if (lbKeyOn[KC_EQUALS])
-    {
-        lbKeyOn[KC_EQUALS] = 0;
-        game_speed -= 2500;
-        if (game_speed < 0)
-            game_speed = 0;
-    }
-    if (lbKeyOn[KC_MINUS])
-    {
-        lbKeyOn[KC_MINUS] = 0;
-        game_speed += 2500;
-    }
-    for (n = 1; n < game_speed; n++)
-    {
-        ulong k;
-
-        k = n;
-        while (k > 1)
-        {
-            if (k & 1)
-                k = 3 * k + 1;
-            else
-                k = k >> 1;
-        }
-    }
-#endif
 
     // Toggle Scanner beep
     if (lbKeyOn[KC_S])
