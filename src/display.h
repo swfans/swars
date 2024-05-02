@@ -32,6 +32,7 @@ extern TbPixel colour_lookup[];
 extern long engn_xc;
 extern long engn_yc;
 extern long engn_zc;
+extern long engn_anglexz;
 
 extern struct TbSprite *pointer_sprites;
 extern struct TbSprite *pointer_sprites_end;
@@ -47,6 +48,9 @@ extern struct TbSprite *med2_font;
 extern struct TbSprite *med2_font_end;
 extern struct TbSprite *big_font;
 extern struct TbSprite *big_font_end;
+
+// TODO move engine texture atlas to separate file
+extern ubyte *vec_tmap[18];
 
 void display_set_full_screen(bool full_screen);
 void display_set_lowres_stretch(bool stretch);

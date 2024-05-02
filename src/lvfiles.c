@@ -29,6 +29,7 @@
 #include "bigmap.h"
 #include "campaign.h"
 #include "command.h"
+#include "display.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginsngobjs.h"
@@ -331,7 +332,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         LbFileRead(lev_fh, game_level_miscs, 4400);
 
     if (fmtver >= 16)
-        LbFileRead(lev_fh, &dword_176D58, 4);
+        LbFileRead(lev_fh, &engn_anglexz, 4);
 
     return fmtver;
 }

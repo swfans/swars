@@ -573,8 +573,6 @@ extern struct TbSprite *unk2_sprites_end;
 
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
-extern ushort gamep_scene_effect;
-extern ubyte *vec_tmap[18];
 extern ubyte linear_vec_pal[256];
 extern ulong nsta_size;
 extern TbPixel colour_grey1;
@@ -687,8 +685,6 @@ extern ushort *nstart_ani;
 extern ushort *nstart_ani_end;
 extern struct Frame *frame;
 extern struct Frame *frame_end;
-
-extern long dword_176D58;
 
 extern long dword_17710C;
 extern long dword_177110;

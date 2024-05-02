@@ -128,6 +128,8 @@ swars_SOURCES = \
 	enginsngobjs.h \
 	enginsngtxtr.c \
 	enginsngtxtr.h \
+	enginpeff.c \
+	enginpeff.h \
 	engintrns.c \
 	engintrns.h \
 	enginzoom.c \

@@ -45,6 +45,7 @@
 #include "enginpritxtr.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
+#include "enginpeff.h"
 #include "engintrns.h"
 #include "enginzoom.h"
 #include "game_data.h"
@@ -2777,7 +2778,7 @@ void draw_new_panel()
 
     ingame.Scanner.MX = engn_xc >> 7;
     ingame.Scanner.MZ = engn_zc >> 7;
-    ingame.Scanner.Angle = 2047 - ((dword_176D58 >> 5) & 0x7FF);
+    ingame.Scanner.Angle = 2047 - ((engn_anglexz >> 5) & 0x7FF);
     SCANNER_draw_new_transparent();
 
     // Objective text, or net players list
@@ -2900,68 +2901,6 @@ void draw_sort_sprite1c(ushort a1)
     struct SortSprite *sspr;
     sspr = &game_sort_sprites[a1];
     draw_sort_sprite1c_sub(sspr->Frame, sspr->X, sspr->Y, sspr->Brightness, sspr->Scale);
-}
-
-static void draw_droplet(TbPixel *o, short scanln, short w, short h, TbPixel *coltb)
-{
-    short x, y;
-
-    for (y = 0; y < h; y++)
-    {
-        for (x = 0; x < w; x++) {
-            o[y * scanln + x] = coltb[o[y * scanln + x]];
-        }
-    }
-}
-
-void draw_falling_rain(int frm)
-{
-    ulong icol;
-    short limit_y;
-    ushort rnd, m;
-    ulong shift_y;
-    TbPixel *o;
-    TbPixel *coltb;
-    ulong seed_bkp;
-    short x, y;
-    short scanln, w, h;
-
-    seed_bkp = lbSeed;
-    scanln = lbDisplay.GraphicsScreenWidth;
-
-    icol = (10000 - frm) / 416 << 7;
-    shift_y = gameturn * (10000 - frm);
-    limit_y = 236 - (frm >> 5);
-    if (limit_y < 20)
-        return;
-
-    m = lbDisplay.GraphicsScreenHeight / 200;
-    if (m == 0) m++;
-
-    lbSeed = frm;
-    rnd = LbRandomPosShort();
-    x = (rnd + (engn_xc >> 4) + (dword_176D58 >> 7)) % scanln;
-    rnd = LbRandomPosShort();
-    y = m * ((rnd + (shift_y >> 10)) % limit_y);
-    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-    o = &lbDisplay.WScreen[scanln * y + x];
-    w = m;
-    h = m;
-    if (frm < 4000) h += m;
-    if (frm < 3000) h += m;
-    if (frm < 1000) h += m;
-    coltb = &pixmap.ghost_table[256 * pixmap.fade_table[15*PALETTE_8b_COLORS + 63 + icol]];
-    draw_droplet(o, scanln, w, h, coltb);
-
-    lbDisplay.DrawFlags = 0;
-    lbSeed = seed_bkp;
-}
-
-void sub_2AAA0(int a1)
-{
-    asm volatile (
-      "call ASM_sub_2AAA0\n"
-        : : "a" (a1));
 }
 
 void draw_object_face1c(ushort a1)
@@ -3128,13 +3067,7 @@ void draw_screen(void)
         {
             iidx = *p_bucket;
             *p_bucket = 0;
-            if (((n & 7) == 0) && gamep_scene_effect)
-            {
-              if (gamep_scene_effect == 1)
-                  draw_falling_rain(n);
-              else if (gamep_scene_effect == 2)
-                  sub_2AAA0(n);
-            }
+            scene_post_effect_for_bucket(n);
             for (i = 0; iidx != 0; iidx = itm->Child)
             {
               i++;
@@ -4770,32 +4703,6 @@ void game_setup(void)
         break;
     case 2:
         create_tables_file_from_fade();
-        break;
-    }
-}
-
-void game_process_sub08(void)
-{
-    asm volatile ("call ASM_game_process_sub08\n"
-        :  : );
-}
-
-void game_process_sub09(void)
-{
-    int i;
-    switch (gamep_scene_effect)
-    {
-    case 1:
-        game_process_sub08();
-        break;
-    case 2:
-        for (i = 0; i < 10; i++) {
-            ushort pos;
-            ubyte *ptr;
-            pos = LbRandomAnyShort() + (gameturn >> 2);
-            ptr = vec_tmap[0] + pos;
-            *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
-        }
         break;
     }
 }
@@ -6580,7 +6487,7 @@ void do_scroll_map(void)
         }
     }
 
-    abase = -dword_176D58 >> 5;
+    abase = -engn_anglexz >> 5;
     angle = -1;
     if (dx > 0)
         angle = (abase + 3583) & 0x7FF;
@@ -10359,7 +10266,7 @@ void game_process(void)
       update_unkn_changing_colors();
       game_process_orbital_station_explode();
       gameturn++;
-      game_process_sub09();
+      scene_post_effect_prepare();
     }
     PacketRecord_Close();
     LbPaletteFade(NULL, 0x10u, 1);
