@@ -314,6 +314,20 @@ struct BezierPt { // sizeof=28
     ushort field_2A;
 };
 
+struct FloorTile { // sizeof=39
+    short X[4];
+    short Y[4];
+    struct SingleFloorTexture *Texture;
+    ubyte V[4];
+    short Shade[4];
+    ubyte Col;
+    ubyte Flags;
+    ubyte Flags2;
+    ubyte Flags2b;
+    ubyte Page;
+    short Offset;
+};
+
 struct MissionStatus { // sizeof=40
     ulong CityDays;
     ulong CityHours;
@@ -588,7 +602,7 @@ extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];
 extern ushort word_1C8446;
 extern ushort unkn3de_len;
-extern ubyte data_19ec6f;
+extern ubyte byte_19EC6F;
 extern ulong save_mortal_salt;
 
 extern ushort weapon_text_index[32];

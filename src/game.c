@@ -139,6 +139,15 @@ struct PacketFileHead {
     ushort levelno;
 };
 
+struct UnknArrD {
+    short X;
+    short Y;
+    int field_4;
+    ubyte Flags;
+    short field_9;
+    short Shade;
+};
+
 struct Element;
 struct Frame;
 
@@ -191,6 +200,7 @@ extern unsigned short unkn2_pos_x;
 extern unsigned short unkn2_pos_y;
 extern unsigned short unkn2_pos_z;
 extern int data_1c8428;
+extern ubyte byte_1C8444;
 extern const char *primvehobj_fname;
 extern unsigned char textwalk_data[640];
 
@@ -264,6 +274,18 @@ struct ScreenBoxBase global_apps_bar_box = {3, 432, 634, 48};
 
 extern ubyte byte_155124[];
 extern ubyte byte_15512C[];
+extern short word_1552F8;
+
+extern long dword_176D10;
+extern long dword_176D14;
+extern long dword_176D18;
+extern long dword_176D1C;
+extern long dword_176D3C;
+extern long dword_176D40;
+
+extern short word_19CC64;
+extern short word_19CC66;
+
 extern ubyte byte_1C497E;
 extern ubyte byte_1C497F;
 extern ubyte byte_1C4980;
@@ -500,7 +522,7 @@ void load_prim_quad(void)
     prim_unknprop01 = 1000;
     read_primveh_obj(primvehobj_fname, 1);
     read_textwalk();
-    data_19ec6f = 1;
+    byte_19EC6F = 1;
     ingame.DisplayMode = DpM_UNKN_37;
     if (cmdln_param_bcg == 99)
         test_open(99);
@@ -3245,6 +3267,31 @@ void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
             *p_sqlight += intensity;
         }
     }
+}
+
+void draw_engine_unk3_last(short a1, short a2)
+{
+    asm volatile (
+      "call ASM_draw_engine_unk3_last\n"
+        : : "a" (a1), "d" (a2));
+}
+
+void draw_engine_net_text(void)
+{
+    asm volatile ("call ASM_draw_engine_net_text\n"
+        :  :  : "eax" );
+}
+
+void draw_explode(void)
+{
+    asm volatile ("call ASM_draw_explode\n"
+        :  :  : "eax" );
+}
+
+void func_211B0(void)
+{
+    asm volatile ("call ASM_func_211B0\n"
+        :  :  : "eax" );
 }
 
 void process_engine_unk3(void)
@@ -9635,7 +9682,7 @@ void show_load_and_prep_mission(void)
         }
 
         ingame.fld_unkC4F = 0;
-        data_19ec6f = 1;
+        byte_19EC6F = 1;
 
         debug_trace_place(10);
         if ( in_network_game )
@@ -10096,9 +10143,9 @@ void draw_game(void)
         {
             show_game_engine();
             if ((ingame.Flags & GamF_Unkn0800) != 0)
-              gproc3_unknsub2();
+                gproc3_unknsub2();
             BAT_play();
-            if ( execute_commands )
+            if (execute_commands)
             {
                 long tmp;
                 gamep_unknval_16 = nav_stats__ThisTurn;
