@@ -264,12 +264,23 @@ int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle)
     return ret;
 }
 
+/** Checks vehicle collisions.
+ */
 TbBool check_vehicle_col(struct Thing *p_vehicle)
 {
     TbBool ret;
     asm volatile (
       "call ASM_check_vehicle_col\n"
         : "=r" (ret) : "a" (p_vehicle));
+    return ret;
+}
+
+TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
+{
+    TbBool ret;
+    asm volatile (
+      "call ASM_check_two_vehicles\n"
+        : "=r" (ret) : "a" (p_vehA), "d" (p_vehB));
     return ret;
 }
 
