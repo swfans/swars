@@ -264,6 +264,15 @@ int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle)
     return ret;
 }
 
+TbBool check_vehicle_col(struct Thing *p_vehicle)
+{
+    TbBool ret;
+    asm volatile (
+      "call ASM_check_vehicle_col\n"
+        : "=r" (ret) : "a" (p_vehicle));
+    return ret;
+}
+
 void start_crashing(struct Thing *p_vehicle)
 {
     asm volatile ("call ASM_start_crashing\n"
