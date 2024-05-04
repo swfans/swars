@@ -3729,7 +3729,7 @@ void unkstruct03_process(void)
         :  :  : "eax" );
 }
 
-void engine_draw_things(int pos_beg_x, int pos_beg_z, short rend_beg_x, short rend_beg_z, short tlcount_x, short tlcount_z)
+void engine_draw_things(int pos_beg_x, int pos_beg_z, int rend_beg_x, int rend_beg_z, short tlcount_x, short tlcount_z)
 {
     int tlno_x, pos_x;
     int view_end_x, view_beg_z;
