@@ -3729,6 +3729,116 @@ void unkstruct03_process(void)
         :  :  : "eax" );
 }
 
+void engine_draw_things(int pos_beg_x, int pos_beg_z, short rend_beg_x, short rend_beg_z, short tlcount_x, short tlcount_z)
+{
+    int tlno_x, pos_x;
+    int view_end_x, view_beg_z;
+    int view_beg_x, view_end_z;
+
+    view_end_x = rend_beg_x + 512;
+    view_beg_z = rend_beg_z - 512;
+    view_beg_x = rend_beg_x - ((render_area_a << 8) + 512);
+    view_end_z = rend_beg_z + ((render_area_b << 8) + 512);
+
+    for (tlno_x = 0, pos_x = pos_beg_x; tlno_x < tlcount_x; tlno_x++, pos_x += -256)
+    {
+        int tlno_z, pos_z;
+
+        for (tlno_z = 0, pos_z = pos_beg_z; tlno_z < tlcount_z; tlno_z++, pos_z += 256)
+        {
+            struct MyMapElement *p_mapel;
+
+            if (pos_x <= 0 || pos_x >= 0x8000)
+                continue;
+            if (pos_z <= 0 || pos_z >= 0x8000)
+                continue;
+
+            p_mapel = &game_my_big_map[(pos_x >> 8) + (pos_z >> 8 << 7)];
+
+            if (pos_x >= view_beg_x && pos_x <= view_end_x && pos_z >= view_beg_z && pos_z <= view_end_z)
+            {
+                short thing;
+                ushort lv;
+
+                lv = p_mapel->ColHead;
+                if (lv != 0)
+                {
+                    thing = game_col_vects_list[lv].Object;
+                    if (thing > 0)
+                    {
+                        struct Thing *p_thing;
+                        p_thing = &things[thing];
+                        if ((p_thing->Type == TT_BUILDING)
+                         && (p_thing->U.UObject.DrawTurn != gameturn)) {
+                            draw_thing_object(p_thing);
+                        }
+                    }
+                }
+                thing = p_mapel->Child;
+                while (thing != 0)
+                {
+                    if (thing > 0)
+                    {
+                        struct Thing *p_thing;
+                        p_thing = &things[thing];
+                        thing = draw_thing_object(p_thing);
+                        continue;
+                    }
+                    else
+                    {
+                        struct SimpleThing *p_sthing;
+                        p_sthing = &sthings[thing];
+                        thing = draw_sthing_object(p_sthing);
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                short thing;
+                ushort lv;
+
+                lv = p_mapel->ColHead;
+                if (lv != 0)
+                {
+                    thing = game_col_vects_list[lv].Object;
+                    if (thing > 0)
+                    {
+                        struct Thing *p_thing;
+                        p_thing = &things[thing];
+                        if ((p_thing->Type == TT_BUILDING)
+                          && (p_thing->U.UObject.DrawTurn != gameturn)
+                          && (p_thing->U.UObject.BHeight > 1400)) {
+                            draw_thing_object(p_thing);
+                        }
+                    }
+                }
+                thing = p_mapel->Child;
+                while (thing != 0)
+                {
+                    if (thing > 0)
+                    {
+                        struct Thing *p_thing;
+                        p_thing = &things[thing];
+                        if ( p_thing->Type == TT_BUILDING
+                          && (p_thing->U.UObject.DrawTurn != gameturn)
+                          && (p_thing->U.UObject.BHeight > 1400)) {
+                            thing = draw_thing_object(p_thing);
+                            continue;
+                        }
+                        thing = p_thing->Next;
+                    }
+                    else
+                    {
+                        struct SimpleThing *p_sthing;
+                        p_sthing = &sthings[thing];
+                        thing = p_sthing->Next;
+                    }
+                }
+            }
+        }
+    }
+}
 
 void process_engine_unk3(void)
 {
@@ -3769,8 +3879,10 @@ void process_engine_unk3(void)
     dword_1DC88C = mech_unkn_tile_y2;
     dword_1DC890 = mech_unkn_tile_x3;
     dword_1DC894 = mech_unkn_tile_y3;
+
     unkstruct03_process();
     func_13A78();
+
     if (((ingame.Flags & GamF_Unkn00400000) == 0) &&
       ((ingame.Flags & GamF_Unkn0001) != 0))
     {
@@ -3787,11 +3899,9 @@ void process_engine_unk3(void)
     }
 
     int angXZ;
-    int v4, v5, v8, v9;
-    int v7, v10;
-    int v128, v150;
-    int v151, v129;
-    int v152, v130;
+    int rend_beg_x, rend_beg_z, tlreach_x, tlreach_z;
+    int pos_beg_x, pos_beg_z;
+    int tlcount_x, tlcount_z;
 
     angXZ = (engn_anglexz >> 5) & 0x7FF;
     byte_176D48 = ((angXZ + 256) >> 9) & 3;
@@ -3799,139 +3909,36 @@ void process_engine_unk3(void)
     byte_176D4A = ((angXZ + 85) / 170) % 12;
     byte_176D4B = ((angXZ + 64) >> 7) & 0xF;
     byte_19EC7A = ((angXZ + 256) >> 9) & 3;
-    v4 = (engn_xc & 0xFF00) + (render_area_a << 7);
-    v5 = (engn_zc & 0xFF00) - (render_area_b << 7);
-    v8 = ((-lbSinTable[angXZ]) >> 12) + ((-lbSinTable[angXZ]) >> 13);
-    if (v8 <= 0) {
-        v128 = render_area_a - v8;
-        v7 = v4;
+    rend_beg_x = (engn_xc & 0xFF00) + (render_area_a << 7);
+    rend_beg_z = (engn_zc & 0xFF00) - (render_area_b << 7);
+    tlreach_x = ((-lbSinTable[angXZ]) >> 12) + ((-lbSinTable[angXZ]) >> 13);
+    if (tlreach_x <= 0) {
+        tlcount_x = render_area_a - tlreach_x;
+        pos_beg_x = rend_beg_x;
     } else {
-        v128 = render_area_a + v8;
-        v7 = v4 + (v8 << 8);
+        tlcount_x = render_area_a + tlreach_x;
+        pos_beg_x = rend_beg_x + (tlreach_x << 8);
     }
-    v9 = (lbSinTable[angXZ + 512] >> 12) + (lbSinTable[angXZ + 512] >> 13);
-    if (v9 <= 0) {
-        v10 = render_area_b - v9;
-        v150 = v5;
+    tlreach_z = (lbSinTable[angXZ + 512] >> 12) + (lbSinTable[angXZ + 512] >> 13);
+    if (tlreach_z <= 0) {
+        tlcount_z = render_area_b - tlreach_z;
+        pos_beg_z = rend_beg_z;
     } else {
-        v10 = render_area_b + v9;
-        v150 = v5 - (v9 << 8);
+        tlcount_z = render_area_b + tlreach_z;
+        pos_beg_z = rend_beg_z - (tlreach_z << 8);
     }
-    v151 = v4 + 512;
-    v129 = v5 - 512;
-    v152 = v4 - ((render_area_a << 8) + 512);
-    v130 = v5 + ((render_area_b << 8) + 512);
-    dword_176D80 = (v4 >> 8) + 50;
-    dword_176D70 = (v7 >> 8) + 50;
+    dword_176D80 = (rend_beg_x >> 8) + 50;
+    dword_176D84 = (rend_beg_z >> 8) + 50;
+    dword_176D70 = (pos_beg_x >> 8) + 50;
+    dword_176D74 = (pos_beg_z >> 8) + 50;
     dword_176D88 = dword_176D80 - render_area_a;
-    dword_176D74 = (v150 >> 8) + 50;
-    dword_176D84 = (v5 >> 8) + 50;
-    dword_176D78 = (v7 >> 8) + 50 - v128;
     dword_176D8C = dword_176D84 + render_area_b;
-    dword_176D7C = dword_176D74 + v10;
+    dword_176D78 = dword_176D70 - tlcount_x;
+    dword_176D7C = dword_176D74 + tlcount_z;
 
     if ((ingame.Flags & GamF_Unkn0040) != 0)
     {
-        int v146, v131;
-
-        for (v146 = 0, v131 = v7; v146 < v128; v146++, v131 += -256)
-        {
-            int v11, v132;
-
-            for (v11 = 0, v132 = v150; v11 < v10; v11++, v132 += 256)
-            {
-                struct MyMapElement *p_mapel;
-
-                if (v131 <= 0 || v131 >= 0x8000)
-                    continue;
-                if (v132 <= 0 || v132 >= 0x8000)
-                    continue;
-
-                p_mapel = &game_my_big_map[(v131 >> 8) + (v132 >> 8 << 7)];
-
-                if (v131 <= v151 && v131 >= v152 && v132 >= v129 && v132 <= v130)
-                {
-                    short thing;
-                    ushort lv;
-
-                    lv = p_mapel->ColHead;
-                    if (lv != 0)
-                    {
-                        thing = game_col_vects_list[lv].Object;
-                        if (thing > 0)
-                        {
-                            struct Thing *p_thing;
-                            p_thing = &things[thing];
-                            if ((p_thing->Type == TT_BUILDING)
-                             && (p_thing->U.UObject.DrawTurn != gameturn)) {
-                                draw_thing_object(p_thing);
-                            }
-                        }
-                    }
-                    thing = p_mapel->Child;
-                    while (thing != 0)
-                    {
-                        if (thing > 0)
-                        {
-                            struct Thing *p_thing;
-                            p_thing = &things[thing];
-                            thing = draw_thing_object(p_thing);
-                            continue;
-                        }
-                        else
-                        {
-                            struct SimpleThing *p_sthing;
-                            p_sthing = &sthings[thing];
-                            thing = draw_sthing_object(p_sthing);
-                            continue;
-                        }
-                    }
-                }
-                else
-                {
-                    short thing;
-                    ushort lv;
-
-                    lv = p_mapel->ColHead;
-                    if (lv != 0)
-                    {
-                        thing = game_col_vects_list[lv].Object;
-                        if (thing > 0)
-                        {
-                            struct Thing *p_thing;
-                            p_thing = &things[thing];
-                            if ((p_thing->Type == TT_BUILDING)
-                              && (p_thing->U.UObject.DrawTurn != gameturn)
-                              && (p_thing->U.UObject.BHeight > 1400)) {
-                                draw_thing_object(p_thing);
-                            }
-                        }
-                    }
-                    thing = p_mapel->Child;
-                    while (thing != 0)
-                    {
-                        if (thing > 0)
-                        {
-                            struct Thing *p_thing;
-                            p_thing = &things[thing];
-                            if ( p_thing->Type == TT_BUILDING
-                              && (p_thing->U.UObject.DrawTurn != gameturn)
-                              && (p_thing->U.UObject.BHeight > 1400)) {
-                                thing = draw_thing_object(p_thing);
-                                continue;
-                            }
-                            thing = p_thing->Next;
-                        }
-                        else
-                        {
-                            struct SimpleThing *p_sthing;
-                            p_sthing = &sthings[thing];
-                            thing = p_sthing->Next;
-                        }
-                    }
-                }
-            }
-        }
+        engine_draw_things(pos_beg_x, pos_beg_z, rend_beg_x, rend_beg_z, tlcount_x, tlcount_z);
     }
 
     if ((ingame.Flags & GamF_Unkn0040) != 0)
