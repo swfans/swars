@@ -327,6 +327,9 @@ extern long dword_1DC88C;
 extern long dword_1DC890;
 extern long dword_1DC894;
 
+extern ubyte deep_radar_surface_col;
+extern ubyte deep_radar_line_col;
+
 extern ubyte unkn_changing_color_1;
 extern ubyte unkn_changing_color_2;
 extern ulong unkn_changing_color_counter1;
@@ -3478,7 +3481,7 @@ void func_218D3(void)
         :  :  : "eax" );
     return;
 #endif
-    struct UnknArrD loc_unknarrD[272];
+    struct UnknArrD loc_unknarrD[(RENDER_AREA_MAX+1)*4];
     int shift_a, shift_b;
     int elcr_z, elpv_z;
     struct FloorTile *p_floortl;
@@ -3729,7 +3732,7 @@ void unkstruct03_process(void)
 
 void process_engine_unk3(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_process_engine_unk3\n"
         :  :  : "eax" );
     return;
