@@ -57,11 +57,41 @@ void process_next_vnav_turn(struct Thing *p_vehicle)
     return;
 }
 
-void remove_locks(struct Thing *p_thing)
+void remove_locks(struct Thing *p_vehicle)
 {
+#if 0
     asm volatile ("call ASM_remove_locks\n"
-        : : "a" (p_thing));
+        : : "a" (p_vehicle));
     return;
+#endif
+    struct TrafficNode *p_tnode;
+    ushort tnode;
+
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x10) != 0)
+    {
+        tnode = -p_vehicle->U.UVehicle.TNode;
+        p_vehicle->U.UVehicle.WorkPlace &= ~0x0010;
+        p_tnode = &game_traffic_nodes[tnode];
+        p_tnode->Flags &= ~0x0040;
+        p_tnode->GateLink = 0;
+    }
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x20) != 0)
+    {
+        tnode = -p_vehicle->U.UVehicle.Dummy4b;
+        p_vehicle->U.UVehicle.WorkPlace &= ~0x0020;
+        p_tnode = &game_traffic_nodes[tnode];
+        p_tnode->Flags &= ~0x0040;
+        p_tnode->GateLink = 0;
+    }
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x40) != 0)
+    {
+        tnode = -p_vehicle->U.UVehicle.Agok;
+        p_vehicle->U.UVehicle.WorkPlace &= ~0x0040;
+        p_tnode = &game_traffic_nodes[tnode];
+        p_tnode->Flags &= ~0x0040;
+        p_tnode->GateLink = 0;
+    }
+    p_vehicle->U.UVehicle.WorkPlace &= ~0x0008;
 }
 
 int check_person_close(struct TrafficNode *p_tnode)

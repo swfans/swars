@@ -37,7 +37,7 @@ struct TrafficNode { // sizeof=36
     short Y;
     short Z;
     struct STngUTraffic UTraffic;
-    short Flags;	// ofs=0x12
+    ushort Flags;	// ofs=0x12
     short GateLink;
     ubyte field_16[11];
     short Dummy1;
