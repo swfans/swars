@@ -3840,15 +3840,8 @@ void engine_draw_things(int pos_beg_x, int pos_beg_z, short rend_beg_x, short re
     }
 }
 
-void process_engine_unk3(void)
+TbBool get_engine_inputs(void)
 {
-#if 0
-    asm volatile ("call ASM_process_engine_unk3\n"
-        :  :  : "eax" );
-    return;
-#endif
-    PlayerInfo *p_locplayer;
-
     if ((lbKeyOn[KC_J]) && (lbShift & KMod_CONTROL))
     {
         short i;
@@ -3869,6 +3862,20 @@ void process_engine_unk3(void)
         deep_radar_line_col += i;
         lbKeyOn[KC_H] = 0;
     }
+    return false;
+}
+
+void process_engine_unk3(void)
+{
+#if 0
+    asm volatile ("call ASM_process_engine_unk3\n"
+        :  :  : "eax" );
+    return;
+#endif
+    PlayerInfo *p_locplayer;
+
+    get_engine_inputs();
+
     word_152F00 = 1;
     p_locplayer = &players[local_player_no];
     p_locplayer->Target = 0;
