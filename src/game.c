@@ -3376,6 +3376,31 @@ short unkarrD_compute_shade(struct UnknArrD *p_unknarrD, struct MyMapElement *p_
     return shd;
 }
 
+/** Bitwise shift left with rotation (wrapping the bits).
+ *
+ * This is under consideration to be added to bfendian.
+ */
+static inline uint bw_rotl(uint n, ubyte c)
+{
+    const uint mask = (CHAR_BIT*sizeof(n) - 1);  // assumes width is a power of 2
+
+    c &= mask;
+    return (n<<c) | (n>>( (-c)&mask ));
+}
+
+/** Bitwise shift right with rotation (wrapping the bits).
+ *
+ * This is under consideration to be added to bfendian.
+ */
+static inline uint bw_rotr(uint n, ubyte c)
+{
+    const uint mask = (CHAR_BIT*sizeof(n) - 1);
+
+    c &= mask;
+    return (n>>c) | (n<<( (-c)&mask ));
+}
+
+
 void func_218D3(void)
 {
 #if 0
@@ -3432,7 +3457,7 @@ void func_218D3(void)
         {
             int v48, dvfactor;
             dyc = 8 * p_mapel1->Alt;
-            dvfactor = 140 + ((_rotl(0x5D3BA6C3, v133) ^ _rotr(0xA7B4D8AC, v131 >> 8)) & 0x7F);
+            dvfactor = 140 + ((bw_rotl(0x5D3BA6C3, v133) ^ bw_rotr(0xA7B4D8AC, v131 >> 8)) & 0x7F);
             v48 = (waft_table2[(gameturn + (v131 >> 7)) & 0x1F]
                  + waft_table2[(gameturn + v134) & 0x1F]
                  + waft_table2[(32 * gameturn / dvfactor) & 0x1F]) >> 3;
@@ -3659,7 +3684,7 @@ LABEL_114:
       {
           int v60, dvfactor;
           dyc = 8 * v51->Alt;
-          dvfactor = 140 + ((_rotl(0x5D3BA6C3, v135) ^ _rotr(0xA7B4D8AC, v131 >> 8)) & 0x7F);
+          dvfactor = 140 + ((bw_rotl(0x5D3BA6C3, v135) ^ bw_rotr(0xA7B4D8AC, v131 >> 8)) & 0x7F);
           v60 = (waft_table2[(32 * gameturn / dvfactor) & 0x1F]
             + waft_table2[(gameturn + (v131 >> 7)) & 0x1F]
             + waft_table2[(gameturn + v136) & 0x1F]) >> 3;
@@ -3681,8 +3706,64 @@ LABEL_114:
 
 void process_engine_unk3(void)
 {
+#if 1
     asm volatile ("call ASM_process_engine_unk3\n"
         :  :  : "eax" );
+    return;
+#endif
+
+  //TODO missing start
+    if ((ingame.Flags & GamF_Unkn0040) != 0)
+    {
+        if (current_map == 11 && byte_19EC6F)     // // map011 Orbital Station
+            func_211B0();
+        if (game_perspective == 6) {
+            func_211B0();
+        } else {
+            func_218D3();
+        }
+    }
+
+    if (word_1552F8 != 36 && !byte_1C8444)
+    {
+        int i;
+        for (i = 0; i < render_area_a * (render_area_b + 1); i++)
+        {
+            short *p_sqlight;
+            p_sqlight = &super_quick_light[i];
+            *p_sqlight = 0;
+        }
+    }
+    vec_map = vec_tmap[1];
+    if ((ingame.Flags & GamF_Unkn0040) != 0)
+    {
+        draw_explode();
+        draw_screen();
+        draw_hud(players[local_player_no].DirectControl[0]);
+        if (in_network_game)
+            draw_engine_net_text();
+        if (debug_hud_collision)
+            draw_engine_unk3_last(engn_xc, engn_zc);
+    }
+    else
+    {
+        draw_hud(players[local_player_no].DirectControl[0]);
+        tnext_screen_point = next_screen_point;
+        next_sort_line = 0;
+        tnext_draw_item = next_draw_item;
+        next_special_face = 1;
+        tnext_sort_sprite = next_sort_sprite;
+        ingame.NextRocket = 0;
+        dword_176CC4 = 0;
+        tnext_special_face4 = next_special_face4;
+        next_screen_point = 0;
+        tnext_floor_texture = next_floor_texture;
+        next_draw_item = 1;
+        p_current_sort_sprite = game_sort_sprites;
+        next_sort_sprite = 0;
+        next_special_face4 = 1;
+        p_current_draw_item = &game_draw_list[1];
+    }
 }
 
 void setup_engine_nullsub4(void)
