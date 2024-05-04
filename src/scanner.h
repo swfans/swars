@@ -81,6 +81,9 @@ struct Scanner
 extern long *SCANNER_width;
 extern ubyte SCANNER_data[256][256];
 
+extern ubyte deep_radar_surface_col;
+extern ubyte deep_radar_line_col;
+
 extern short waft_table2[32];
 extern short waft_table[32];
 

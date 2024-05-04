@@ -226,7 +226,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
                                 p_tztnode->Flags &= 0x0040;
                                 p_vehicle->U.UVehicle.WorkPlace &= ~0x0040;
                             }
-                            if (p_gate->U.UObject.BHeightB == p_vehicle->U.UVehicle.TNode)
+                            if (p_gate->U.UObject.GateBH.ValB == p_vehicle->U.UVehicle.TNode)
                             {
                                 p_tztnode->GateLink = 0;
                                 p_tztnode->Flags &= ~0x0040;

@@ -161,8 +161,14 @@ struct TngUObject
     short TNode;
     short Cost;
     short Shite;
-    short BHeightA;
-    short BHeightB;
+    // Looks like most things have a dword here, only gates have words
+    union {
+      ulong BHeight;
+      struct {
+        short ValA;
+        short ValB;
+      } GateBH;
+    };
     ushort Turn;
     ushort TurnPadOnPS;
     short tnode[4];
