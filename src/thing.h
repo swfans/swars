@@ -245,7 +245,7 @@ struct TngUVehicle
   short TargetDY;
   short TargetDZ;
   short OnFace;
-  short WorkPlace;
+  ushort WorkPlace;
   ushort ComHead;
   short ComCur;
   short Timer2;

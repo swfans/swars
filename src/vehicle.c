@@ -959,7 +959,9 @@ void process_train(struct Thing *p_vehicle)
         set_passengers_location(p_vehicle);
         break;
     default:
-        LOGERR("Shagged train state %d", (int)p_vehicle->State);
+        LOGERR("Shagged %s %d state %d",
+          vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+          (int)p_vehicle->State);
         break;
     }
 }
@@ -1102,7 +1104,9 @@ void process_veh_ground(struct Thing *p_vehicle)
         set_passengers_location(p_vehicle);
         break;
     default:
-        LOGERR("Unexpected vehicle state %d", (int)p_vehicle->State);
+        LOGERR("Unexpected %s %d state %d",
+          vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+          (int)p_vehicle->State);
         break;
     }
 
@@ -1133,13 +1137,13 @@ void process_vehicle(struct Thing *p_vehicle)
         p_vehicle->OldTarget = 0;
     if (p_vehicle->U.UVehicle.RecoilTimer > 0)
         p_vehicle->U.UVehicle.RecoilTimer--;
-    if ((p_vehicle->U.UVehicle.WorkPlace & 0x80) != 0)
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0080) != 0)
     {
         p_vehicle->Health -= 16;
         if (p_vehicle->Health < 0)
             start_crashing(p_vehicle);
         if (((gameturn & 7) == 0) && (LbRandomAnyShort() & 7) == 0)
-            p_vehicle->U.UVehicle.WorkPlace &= ~0x80;
+            p_vehicle->U.UVehicle.WorkPlace &= ~0x0080;
     }
 
     switch (p_vehicle->SubType)

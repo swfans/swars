@@ -67,7 +67,7 @@ void remove_locks(struct Thing *p_vehicle)
     struct TrafficNode *p_tnode;
     ushort tnode;
 
-    if ((p_vehicle->U.UVehicle.WorkPlace & 0x10) != 0)
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0010) != 0)
     {
         tnode = -p_vehicle->U.UVehicle.TNode;
         p_vehicle->U.UVehicle.WorkPlace &= ~0x0010;
@@ -75,7 +75,7 @@ void remove_locks(struct Thing *p_vehicle)
         p_tnode->Flags &= ~0x0040;
         p_tnode->GateLink = 0;
     }
-    if ((p_vehicle->U.UVehicle.WorkPlace & 0x20) != 0)
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0020) != 0)
     {
         tnode = -p_vehicle->U.UVehicle.Dummy4b;
         p_vehicle->U.UVehicle.WorkPlace &= ~0x0020;
@@ -83,7 +83,7 @@ void remove_locks(struct Thing *p_vehicle)
         p_tnode->Flags &= ~0x0040;
         p_tnode->GateLink = 0;
     }
-    if ((p_vehicle->U.UVehicle.WorkPlace & 0x40) != 0)
+    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0040) != 0)
     {
         tnode = -p_vehicle->U.UVehicle.Agok;
         p_vehicle->U.UVehicle.WorkPlace &= ~0x0040;
@@ -94,13 +94,84 @@ void remove_locks(struct Thing *p_vehicle)
     p_vehicle->U.UVehicle.WorkPlace &= ~0x0008;
 }
 
+static TbBool check_person_close_on_mapel(struct MyMapElement *p_mapel)
+{
+    short thing;
+
+    thing = p_mapel->Child;
+    while (thing != 0)
+    {
+      if (thing > 0)
+      {
+          struct Thing *p_thing;
+          p_thing = &things[thing];
+          switch (p_thing->Type)
+          {
+          case TT_PERSON:
+              if ((p_thing->State != PerSt_DEAD)
+                && (p_thing->State != PerSt_PERSON_BURNING)
+                && (p_thing->State != PerSt_DIEING)
+                && ((p_thing->Flag2 & 0x10) == 0))
+                  return true;
+              break;
+          default:
+              break;
+          }
+          thing = p_thing->Next;
+      }
+      else
+      {
+          struct SimpleThing *p_sthing;
+          p_sthing = &sthings[thing];
+          thing = p_sthing->Next;
+      }
+    }
+    return false;
+}
+
 int check_person_close(struct TrafficNode *p_tnode)
 {
+#if 0
     int ret;
     asm volatile (
       "call ASM_check_person_close\n"
         : "=r" (ret) : "a" (p_tnode));
     return ret;
+#endif
+    int tile_ctr_x, tile_ctr_z;
+    int tlno;
+    int tile_x;
+    int du;
+    int tlx2;
+
+    tile_ctr_z = p_tnode->Z >> 8;
+    tile_ctr_x = p_tnode->X >> 8;
+    du = -1;
+    tlx2 = tile_ctr_x + 255;
+    tile_x = tile_ctr_x - 1;
+    // TODO refactor the gotos into proper loops
+LABEL_2:
+    {
+    tlno = 128 * tile_ctr_z + tile_x - 128;
+LABEL_3:
+        {
+            struct MyMapElement *p_mapel;
+            p_mapel = &game_my_big_map[tlno];
+            if (check_person_close_on_mapel(p_mapel))
+                return true;
+            tlno += 128;
+            if ( tlno < tlx2 + 128 * tile_ctr_z )
+            {
+                goto LABEL_3;
+            }
+        }
+        tlx2 += 1;
+        tile_x += 1;
+        du++;
+        if (du < 2)
+          goto LABEL_2;
+    }
+    return 0;
 }
 
 void remove_locks_apart_from_agok(struct Thing *p_thing)
@@ -527,7 +598,7 @@ void process_next_tnode(struct Thing *p_vehicle)
             if (p_vehicle->U.UVehicle.TNode < 0)
             {
                 p_nxtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
-                if ((p_nxtnode->Flags & 0x30) != 0) {
+                if ((p_nxtnode->Flags & (0x10|0x20)) != 0) {
                     nxdist_sq = 0x7FFFFFFF;
                     p_vehicle->U.UVehicle.WorkPlace |= 0x0008;
                 }
