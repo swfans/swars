@@ -26,6 +26,7 @@
 #include "bmbang.h"
 #include "game.h"
 #include "game_speed.h"
+#include "matrix.h"
 #include "pathtrig.h"
 #include "sound.h"
 #include "thing.h"
@@ -264,15 +265,10 @@ int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle)
     return ret;
 }
 
-/** Checks vehicle collisions.
- */
-TbBool check_vehicle_col(struct Thing *p_vehicle)
+void person_hit_by_car(struct Thing *p_person, struct Thing *p_vehicle)
 {
-    TbBool ret;
-    asm volatile (
-      "call ASM_check_vehicle_col\n"
-        : "=r" (ret) : "a" (p_vehicle));
-    return ret;
+    asm volatile ("call ASM_person_hit_by_car\n"
+        : : "a" (p_person), "d" (p_vehicle));
 }
 
 TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
@@ -281,6 +277,17 @@ TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
     asm volatile (
       "call ASM_check_two_vehicles\n"
         : "=r" (ret) : "a" (p_vehA), "d" (p_vehB));
+    return ret;
+}
+
+/** Checks vehicle collisions.
+ */
+TbBool check_vehicle_col(struct Thing *p_vehicle)
+{
+    TbBool ret;
+    asm volatile (
+      "call ASM_check_vehicle_col\n"
+        : "=r" (ret) : "a" (p_vehicle));
     return ret;
 }
 
