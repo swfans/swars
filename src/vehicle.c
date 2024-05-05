@@ -280,15 +280,235 @@ TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
     return ret;
 }
 
+static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_vehB, int pos_x, int pos_y, int pos_z)
+{
+    struct M33 *mat;
+    int rad_incl_speed, matA, matB;
+    int factorA, factorB;
+    int distXZ_sq;
+    int distZ_sq, distX_sq;
+
+    if (p_vehB == p_vehA)
+        return false;
+    if ((p_vehB->Flag & 0x04) != 0)
+        return false;
+    if (abs(p_vehB->Y - pos_y) >= 2048)
+        return false;
+
+    mat = &local_mats[p_vehB->U.UVehicle.MatrixIndex];
+    matA = -4 * mat->R[0][2];
+    matB = -4 * mat->R[2][2];
+    rad_incl_speed = 384 * p_vehB->Radius >> 9;
+    factorA = rad_incl_speed * matA >> 8;
+    factorB = rad_incl_speed * matB >> 8;
+
+    distXZ_sq = ((p_vehB->X + factorA - pos_x) >> 8) * ((p_vehB->X + factorA - pos_x) >> 8)
+        + ((p_vehB->Z + factorB - pos_z) >> 8) * ((p_vehB->Z + factorB - pos_z) >> 8);
+    distZ_sq = ((p_vehB->Z - factorB - pos_z) >> 8) * ((p_vehB->Z - factorB - pos_z) >> 8);
+    distX_sq = ((p_vehB->X - factorA - pos_x) >> 8) * ((p_vehB->X - factorA - pos_x) >> 8);
+
+    if (distXZ_sq >= distZ_sq + distX_sq)
+        distXZ_sq = distZ_sq + distX_sq;
+
+    if (distXZ_sq >= rad_incl_speed * rad_incl_speed)
+        return false;
+
+    if (p_vehB->ThingOffset >= p_vehA->ThingOffset || !check_two_vehicles(p_vehB, p_vehA))
+    {
+        p_vehA->SubState = 3;
+        p_vehA->U.UVehicle.ReqdSpeed = 0;
+        p_vehA->U.UVehicle.AngleDY = 0;
+        return true;
+    }
+    return false;
+}
+
+static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct Thing *p_vehB, int pos_x, int pos_y, int pos_z)
+{
+    if (p_vehB->ThingOffset <= p_vehA->ThingOffset)
+        return false;
+    if ((p_vehB->Flag & 0x04) != 0)
+        return false;
+    if (abs(p_vehB->Y - pos_y) >= 2048)
+        return false;
+
+    p_vehA->SubState = 3;
+    p_vehA->U.UVehicle.ReqdSpeed = 0;
+    p_vehA->U.UVehicle.AngleDY = 0;
+    return false; //TODO is that the best result?
+}
+
+static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing *p_person, int pos_x, int pos_y, int pos_z)
+{
+    int dx, dz, per_r_sq, veh_r_sq;
+
+    if ((p_person->Flag2 & 0x10) != 0)
+        return false;
+    if (p_person->State == 13)
+        return false;
+    if ((p_person->Flag & 0x02) != 0)
+        return false;
+    if (p_person->State == 36)
+        return false;
+    if (abs((p_person->Y >> 3) - pos_y) >= 2048)
+        return false;
+
+    dx = (p_person->X - pos_x) >> 8;
+    dz = (p_person->Z - pos_z) >> 8;
+    per_r_sq = p_person->Radius * p_person->Radius;
+    veh_r_sq = p_vehicle->Radius * p_vehicle->Radius;
+
+    if ((dx) * (dx) + (dz) * (dz) >= veh_r_sq + per_r_sq)
+        return false;
+
+    person_hit_by_car(p_person, p_vehicle);
+
+    return false;
+}
+
+static TbBool check_vehicle_col_with_mine(struct Thing *p_vehicle, struct SimpleThing *p_minetng, int pos_x, int pos_y, int pos_z)
+{
+    if (p_minetng->SubType != 12)
+        return false;
+
+    if ((p_minetng->Timer1 != 999) && (p_minetng->Timer1 > 0))
+        p_minetng->Timer1 = 0;
+
+    return false;
+}
+
+static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel, int pos_x, int pos_y, int pos_z)
+{
+    short thing;
+
+    thing = p_mapel->Child;
+    while (thing != 0)
+    {
+      if (thing > 0)
+      {
+          struct Thing *p_thing;
+          p_thing = &things[thing];
+          switch (p_thing->Type)
+          {
+          case TT_VEHICLE:
+              if (check_vehicle_col_with_veh(p_vehicle, p_thing, pos_x, pos_y, pos_z))
+                  return true;
+              break;
+          case TT_PERSON:
+              if (check_vehicle_col_with_pers(p_vehicle, p_thing, pos_x, pos_y, pos_z))
+                  return true;
+              break;
+          default:
+              break;
+          }
+          thing = p_thing->Next;
+      }
+      else
+      {
+          struct SimpleThing *p_sthing;
+          p_sthing = &sthings[thing];
+          switch (p_sthing->Type)
+          {
+          case TT_MINE:
+              if (check_vehicle_col_with_mine(p_vehicle, p_sthing, pos_x, pos_y, pos_z))
+                  return true;
+              break;
+          default:
+              break;
+          }
+          thing = p_sthing->Next;
+      }
+    }
+    return false;
+}
+
+static TbBool check_vehicle_col_on_same_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel, int pos_x, int pos_y, int pos_z)
+{
+    short thing;
+
+    thing = p_mapel->Child;
+    while (thing != 0)
+    {
+      if (thing > 0)
+      {
+          struct Thing *p_thing;
+          p_thing = &things[thing];
+          switch (p_thing->Type)
+          {
+          case TT_VEHICLE:
+              if (check_vehicle_col_same_mapel_with_veh(p_vehicle, p_thing, pos_x, pos_y, pos_z))
+                  return true;
+              break;
+          default:
+              break;
+          }
+          thing = p_thing->Next;
+      }
+      else
+      {
+          struct SimpleThing *p_sthing;
+          p_sthing = &sthings[thing];
+          thing = p_sthing->Next;
+      }
+    }
+    return false;
+}
+
 /** Checks vehicle collisions.
  */
 TbBool check_vehicle_col(struct Thing *p_vehicle)
 {
+#if 0
     TbBool ret;
     asm volatile (
       "call ASM_check_vehicle_col\n"
         : "=r" (ret) : "a" (p_vehicle));
     return ret;
+#endif
+    ushort r;
+    struct M33 *mat;
+    int rad_incl_speed, matA, matB;
+    int tile_ctr_x, tile_ctr_z;
+    int tile_x, tile_z;
+    int pos_x, pos_y, pos_z;
+
+    if (abs(p_vehicle->U.UVehicle.AngleDY) > 20)
+        return false;
+
+    r = p_vehicle->Radius;
+    mat = &local_mats[p_vehicle->U.UVehicle.MatrixIndex];
+    pos_x = p_vehicle->X;
+    pos_y = p_vehicle->Y;
+    pos_z = p_vehicle->Z;
+    rad_incl_speed = (p_vehicle->Speed >> 4) + (p_vehicle->Speed >> 3) + (386 * r >> 8);
+    matA = -4 * mat->R[0][2];
+    matB = -4 * mat->R[2][2];
+    pos_x = (matA * rad_incl_speed >> 8) + pos_x - (matB >> 2);
+    pos_z = (matB * rad_incl_speed >> 8) + pos_z + (matA >> 2);
+    tile_ctr_z = pos_z >> 16;
+    tile_ctr_x = pos_x >> 16;
+
+    for (tile_x = tile_ctr_x - 2; tile_x <= tile_ctr_x + 2; tile_x++)
+    {
+        if ((tile_x < 0) || (tile_x >= 128))
+            continue;
+        for (tile_z = tile_ctr_z - 2; tile_z <= tile_ctr_z + 2; tile_z++)
+        {
+            if ((tile_z < 0) || (tile_z >= 128))
+                continue;
+            struct MyMapElement *p_mapel;
+            p_mapel = &game_my_big_map[128 * tile_z + tile_x];
+            if (check_vehicle_col_on_mapel(p_vehicle, p_mapel, pos_x, pos_y, pos_z))
+                return true;
+        }
+    }
+
+    struct MyMapElement *p_mapel;
+    p_mapel = &game_my_big_map[128 * (p_vehicle->Z >> 16) + (p_vehicle->X >> 16)];
+    if (check_vehicle_col_on_same_mapel(p_vehicle, p_mapel, pos_x, pos_y, pos_z))
+        return true;
+
+    return false;
 }
 
 void start_crashing(struct Thing *p_vehicle)
