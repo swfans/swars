@@ -271,65 +271,160 @@ void person_hit_by_car(struct Thing *p_person, struct Thing *p_vehicle)
         : : "a" (p_person), "d" (p_vehicle));
 }
 
+/** Checks if the vehicle collides with another object, provided as separate params.
+ */
+static TbBool vehicle_check_collide_with_area(struct Thing *p_vehA,
+  int posBx, int posBy, int posBz, int radB, int matBid)
+{
+    struct M33 *matA;
+    int radA_incl_speed, matA02, matA22;
+    int futureAx, futureAz;
+    int posAx, posAz;
+    struct M33 *matB;
+    int radB_incl_speed, matB02, matB22;
+    int futureBx, futureBz;
+    int posB_beg_x, posB_beg_z;
+    int posB_end_x, posB_end_z;
+    int dist_begX, dist_begZ;
+    int dist_endX, dist_endZ;
+    int distXZ_sq;
+
+    matA = &local_mats[p_vehA->U.UVehicle.MatrixIndex];
+    matA02 = -4 * matA->R[0][2];
+    matA22 = -4 * matA->R[2][2];
+    radA_incl_speed = (386 * p_vehA->Radius >> 8)
+      + (p_vehA->Speed >> 3) + (p_vehA->Speed >> 4);
+    futureAx = radA_incl_speed * matA02 >> 8;
+    futureAz = radA_incl_speed * matA22 >> 8;
+
+    posAx = p_vehA->X + futureAx - (matA22 >> 2);
+    posAz = p_vehA->Z + futureAz + (matA02 >> 2);
+
+    if (abs(posBy - p_vehA->Y) >= 2048)
+        return false;
+
+    if ((p_vehA->X >> 16 == posBx >> 16) && (p_vehA->Z >> 16 == posBz >> 16))
+        return true;
+
+    matB = &local_mats[matBid];
+    matB02 = -4 * matB->R[0][2];
+    matB22 = -4 * matB->R[2][2];
+    radB_incl_speed = (384 * radB >> 9);
+    futureBx = radB_incl_speed * matB02 >> 8;
+    futureBz = radB_incl_speed * matB22 >> 8;
+
+    posB_beg_x = posBx - futureBx;
+    posB_beg_z = posBz - futureBz;
+    posB_end_x = posBx + futureBx;
+    posB_end_z = posBz + futureBz;
+
+    dist_begX = (posB_beg_x - posAx) >> 8;
+    dist_begZ = (posB_beg_z - posAz) >> 8;
+    dist_endX = (posB_end_x - posAx) >> 8;
+    dist_endZ = (posB_end_z - posAz) >> 8;
+
+    distXZ_sq = dist_endZ * dist_endZ + dist_endX * dist_endX;
+    if (distXZ_sq >= dist_begZ * dist_begZ + dist_begX * dist_begX)
+        distXZ_sq = dist_begZ * dist_begZ + dist_begX * dist_begX;
+
+    if (distXZ_sq >= radB_incl_speed * radB_incl_speed)
+        return false;
+
+    return true;
+}
+
 TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
 {
+#if 0
     TbBool ret;
     asm volatile (
       "call ASM_check_two_vehicles\n"
         : "=r" (ret) : "a" (p_vehA), "d" (p_vehB));
     return ret;
-}
-
-static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_vehB, int pos_x, int pos_y, int pos_z)
-{
-    struct M33 *mat;
-    int rad_incl_speed, matA, matB;
-    int factorA, factorB;
-    int distXZ_sq;
-    int distZ_sq, distX_sq;
-
-    if (p_vehB == p_vehA)
+#endif
+    if (abs(p_vehA->U.UVehicle.AngleDY) > 20)
         return false;
+
+    if (p_vehB->ThingOffset == p_vehA->ThingOffset)
+        return false;
+
     if ((p_vehB->Flag & 0x04) != 0)
         return false;
-    if (abs(p_vehB->Y - pos_y) >= 2048)
-        return false;
 
-    mat = &local_mats[p_vehB->U.UVehicle.MatrixIndex];
-    matA = -4 * mat->R[0][2];
-    matB = -4 * mat->R[2][2];
-    rad_incl_speed = 384 * p_vehB->Radius >> 9;
-    factorA = rad_incl_speed * matA >> 8;
-    factorB = rad_incl_speed * matB >> 8;
-
-    distXZ_sq = ((p_vehB->X + factorA - pos_x) >> 8) * ((p_vehB->X + factorA - pos_x) >> 8)
-        + ((p_vehB->Z + factorB - pos_z) >> 8) * ((p_vehB->Z + factorB - pos_z) >> 8);
-    distZ_sq = ((p_vehB->Z - factorB - pos_z) >> 8) * ((p_vehB->Z - factorB - pos_z) >> 8);
-    distX_sq = ((p_vehB->X - factorA - pos_x) >> 8) * ((p_vehB->X - factorA - pos_x) >> 8);
-
-    if (distXZ_sq >= distZ_sq + distX_sq)
-        distXZ_sq = distZ_sq + distX_sq;
-
-    if (distXZ_sq >= rad_incl_speed * rad_incl_speed)
-        return false;
-
-    if (p_vehB->ThingOffset >= p_vehA->ThingOffset || !check_two_vehicles(p_vehB, p_vehA))
-    {
-        p_vehA->SubState = 3;
-        p_vehA->U.UVehicle.ReqdSpeed = 0;
-        p_vehA->U.UVehicle.AngleDY = 0;
-        return true;
-    }
-    return false;
+    return vehicle_check_collide_with_area(p_vehA, p_vehB->X, p_vehB->Y, p_vehB->Z,
+      p_vehB->Radius, p_vehB->U.UVehicle.MatrixIndex);
 }
 
+/** Collision check between two vehicles.
+ */
+static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_vehB, int posAx, int posAy, int posAz)
+{
+    struct M33 *matB;
+    int radB_incl_speed, matB02, matB22;
+    int futureBx, futureBz;
+    int posB_beg_x, posB_beg_z;
+    int posB_end_x, posB_end_z;
+    int dist_begZ, dist_begX;
+    int dist_endX, dist_endZ;
+    int distXZ_sq;
+
+    if (p_vehB->ThingOffset == p_vehA->ThingOffset)
+        return false;
+
+    if ((p_vehB->Flag & 0x04) != 0)
+        return false;
+
+    // The following is the same as in vehicle_check_collide_with_area(), but some position computations were moved
+    // to upper function as speed optimization (maybe there's no need for that anymore?)
+    if (abs(p_vehB->Y - posAy) >= 2048)
+        return false;
+
+    matB = &local_mats[p_vehB->U.UVehicle.MatrixIndex];
+    matB02 = -4 * matB->R[0][2];
+    matB22 = -4 * matB->R[2][2];
+    radB_incl_speed = 384 * p_vehB->Radius >> 9;
+    futureBx = radB_incl_speed * matB02 >> 8;
+    futureBz = radB_incl_speed * matB22 >> 8;
+
+    posB_beg_x = p_vehB->X - futureBx;
+    posB_beg_z = p_vehB->Z - futureBz;
+    posB_end_x = p_vehB->X + futureBx;
+    posB_end_z = p_vehB->Z + futureBz;
+
+    dist_begX = (posB_beg_x - posAx) >> 8;
+    dist_begZ = (posB_beg_z - posAz) >> 8;
+    dist_endX = (posB_end_x - posAx) >> 8;
+    dist_endZ = (posB_end_z - posAz) >> 8;
+
+    distXZ_sq = dist_endZ * dist_endZ + dist_endX * dist_endX;
+    if (distXZ_sq >= dist_begZ * dist_begZ + dist_begX * dist_begX)
+        distXZ_sq = dist_begZ * dist_begZ + dist_begX * dist_begX;
+
+    if (distXZ_sq >= radB_incl_speed * radB_incl_speed)
+        return false;
+
+    // Of two colliding vehicles, Stop the one with lower ThingOffset
+    if ((p_vehA->ThingOffset >= p_vehB->ThingOffset) && check_two_vehicles(p_vehB, p_vehA))
+        return false;
+
+    p_vehA->SubState = 3;
+    p_vehA->U.UVehicle.ReqdSpeed = 0;
+    p_vehA->U.UVehicle.AngleDY = 0;
+    return true;
+}
+
+/** Simplified vehicle collision check for when the vehicles are on the same tile.
+ * We don't have to check for overlap, as every vehicle is larger than a tile.
+ */
 static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct Thing *p_vehB, int pos_x, int pos_y, int pos_z)
 {
-    if (p_vehB->ThingOffset <= p_vehA->ThingOffset)
-        return false;
     if ((p_vehB->Flag & 0x04) != 0)
         return false;
     if (abs(p_vehB->Y - pos_y) >= 2048)
+        return false;
+
+    // Of two colliding vehicles, Stop the one with lower ThingOffset
+    if (p_vehA->ThingOffset >= p_vehB->ThingOffset)
         return false;
 
     p_vehA->SubState = 3;
@@ -466,8 +561,8 @@ TbBool check_vehicle_col(struct Thing *p_vehicle)
     return ret;
 #endif
     ushort r;
-    struct M33 *mat;
-    int rad_incl_speed, matA, matB;
+    struct M33 *matA;
+    int rad_incl_speed, matA02, matA22;
     int tile_ctr_x, tile_ctr_z;
     int tile_x, tile_z;
     int pos_x, pos_y, pos_z;
@@ -476,15 +571,15 @@ TbBool check_vehicle_col(struct Thing *p_vehicle)
         return false;
 
     r = p_vehicle->Radius;
-    mat = &local_mats[p_vehicle->U.UVehicle.MatrixIndex];
+    matA = &local_mats[p_vehicle->U.UVehicle.MatrixIndex];
     pos_x = p_vehicle->X;
     pos_y = p_vehicle->Y;
     pos_z = p_vehicle->Z;
     rad_incl_speed = (p_vehicle->Speed >> 4) + (p_vehicle->Speed >> 3) + (386 * r >> 8);
-    matA = -4 * mat->R[0][2];
-    matB = -4 * mat->R[2][2];
-    pos_x = (matA * rad_incl_speed >> 8) + pos_x - (matB >> 2);
-    pos_z = (matB * rad_incl_speed >> 8) + pos_z + (matA >> 2);
+    matA02 = -4 * matA->R[0][2];
+    matA22 = -4 * matA->R[2][2];
+    pos_x = (matA02 * rad_incl_speed >> 8) + pos_x - (matA22 >> 2);
+    pos_z = (matA22 * rad_incl_speed >> 8) + pos_z + (matA02 >> 2);
     tile_ctr_z = pos_z >> 16;
     tile_ctr_x = pos_x >> 16;
 
