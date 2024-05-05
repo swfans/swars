@@ -101,8 +101,8 @@ void things_debug_hud(void)
 
     if (execute_commands)
     {
-        snprintf(locstr, sizeof(locstr), "State %d ",
-          (int)p_track_thing->State);
+        snprintf(locstr, sizeof(locstr), "State %d.%d ",
+          (int)p_track_thing->State, (int)p_track_thing->SubState);
         switch (p_track_thing->Type)
         {
         case TT_VEHICLE:

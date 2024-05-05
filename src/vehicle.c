@@ -176,18 +176,19 @@ struct CarGlare car_glare[] = {
   {-96, -16, 304, 0},
 };
 
-#if 0
-// Enable when we have vehicle config file with names
 const char *vehicle_type_name(ushort vtype)
 {
+#if 0
+// Enable when we have vehicle config file with names
     struct PeepStatAdd *p_vhstata;
 
     p_vhstata = &peep_type_stats_a[ptype];
     if (strlen(p_vhstata->Name) == 0)
         return "OUTRNG_VEHICLE";
     return p_vhstata->Name;
-}
 #endif
+    return "VEHICLE";
+}
 
 void snprint_vehicle_state(char *buf, ulong buflen, struct Thing *p_thing)
 {
@@ -407,6 +408,12 @@ static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_v
     if ((p_vehA->ThingOffset >= p_vehB->ThingOffset) && check_two_vehicles(p_vehB, p_vehA))
         return false;
 
+    LOGSYNC("Stopping %s thing %d rqspeed %d due to %s thing %d rqspeed %d",
+      vehicle_type_name(p_vehA->Type), (int)p_vehA->ThingOffset,
+      (int)p_vehA->U.UVehicle.ReqdSpeed,
+      vehicle_type_name(p_vehB->Type), (int)p_vehB->ThingOffset,
+      (int)p_vehB->U.UVehicle.ReqdSpeed);
+
     p_vehA->SubState = 3;
     p_vehA->U.UVehicle.ReqdSpeed = 0;
     p_vehA->U.UVehicle.AngleDY = 0;
@@ -420,12 +427,19 @@ static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct
 {
     if ((p_vehB->Flag & 0x04) != 0)
         return false;
+
     if (abs(p_vehB->Y - pos_y) >= 2048)
         return false;
 
     // Of two colliding vehicles, Stop the one with lower ThingOffset
     if (p_vehA->ThingOffset >= p_vehB->ThingOffset)
         return false;
+
+    LOGSYNC("Stopping %s thing %d rqspeed %d due to %s thing %d rqspeed %d",
+      vehicle_type_name(p_vehA->Type), (int)p_vehA->ThingOffset,
+      (int)p_vehA->U.UVehicle.ReqdSpeed,
+      vehicle_type_name(p_vehB->Type), (int)p_vehB->ThingOffset,
+      (int)p_vehB->U.UVehicle.ReqdSpeed);
 
     p_vehA->SubState = 3;
     p_vehA->U.UVehicle.ReqdSpeed = 0;
@@ -1028,11 +1042,13 @@ void process_veh_ground(struct Thing *p_vehicle)
         p_vehicle->Y >>= 3;
         break;
     case VehSt_UNKN_3C:
+        // Pretend we are wandering
         p_vehicle->State = VehSt_WANDER;
         if (p_vehicle->U.UVehicle.TNode != 0)
               process_next_tnode(p_vehicle);
         move_vehicle(p_vehicle);
         set_passengers_location(p_vehicle);
+        // Get back to specifics of this state
         p_vehicle->State = VehSt_UNKN_3C;
         process_stop_as_soon_as_you_can(p_vehicle);
         break;

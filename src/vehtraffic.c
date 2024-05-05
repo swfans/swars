@@ -355,7 +355,8 @@ void process_next_tnode(struct Thing *p_vehicle)
 
     tnode = p_vehicle->U.UVehicle.TNode;
     if (tnode == 0) {
-        LOGERR("Crashing vehicle %d due to no TNode assigned", p_vehicle->ThingOffset);
+        LOGERR("Crashing %s %d due to no TNode assigned",
+          vehicle_type_name(p_vehicle->Type), p_vehicle->ThingOffset);
         start_crashing(p_vehicle);
         return;
     }
@@ -634,8 +635,9 @@ void process_next_tnode(struct Thing *p_vehicle)
                 lnk = get_next_tnode(p_vehicle, p_tnode);
                 p_vehicle->U.UVehicle.TNode = p_tnode->UTraffic.Link[lnk];
                 if (p_vehicle->U.UVehicle.TNode == 0) {
-                    LOGERR("Crashing vehicle %d state %d due to no next TNode in TNode %d link %d",
-                      p_vehicle->ThingOffset, p_vehicle->State, p_vehicle->U.UVehicle.Dummy4b, lnk);
+                    LOGERR("Crashing %s %d state %d.%d due to no next TNode in TNode %d link %d",
+                       vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+                       p_vehicle->State, p_vehicle->SubState, p_vehicle->U.UVehicle.Dummy4b, lnk);
                     start_crashing(p_vehicle);
                 }
 
@@ -691,8 +693,9 @@ void process_next_tnode(struct Thing *p_vehicle)
                     }
                 }
                 if (i >= 8) {
-                    LOGERR("Crashing vehicle %d state %d due to no random next TNode despite %d tries",
-                      p_vehicle->ThingOffset, p_vehicle->State, i);
+                    LOGERR("Crashing %s %d state %d.%d due to no random next TNode despite %d tries",
+                      vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+                      p_vehicle->State, p_vehicle->SubState, i);
                     start_crashing(p_vehicle);
                     return;
                 }
