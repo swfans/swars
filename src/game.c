@@ -1821,7 +1821,7 @@ void update_dropped_item_under_agent_exists(struct Thing *p_agent)
     if (p_agent->Flag & TngF_Unkn08000000)
     {
         thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
-        if (thing != 0)
+        if (thing < 0)
             p_pickup = &sthings[thing];
         else
             p_pickup = NULL;
@@ -1842,7 +1842,7 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
     {
         ushort weptype;
         thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
-        if (thing != 0)
+        if (thing < 0)
             p_pickup = &sthings[thing];
         else
             p_pickup = NULL;

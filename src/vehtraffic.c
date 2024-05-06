@@ -111,6 +111,7 @@ static TbBool check_person_close_on_mapel(struct MyMapElement *p_mapel)
               if ((p_thing->State != PerSt_DEAD)
                 && (p_thing->State != PerSt_PERSON_BURNING)
                 && (p_thing->State != PerSt_DIEING)
+                //&& ((p_thing->Flag & TngF_InVehicle) == 0) -- people in vehicles should not be within the list
                 && ((p_thing->Flag2 & 0x10) == 0))
                   return true;
               break;
@@ -324,7 +325,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
                             else
                             {
                                 p_tztnode->GateLink = 0;
-                                p_tztnode->Flags &= 0x0040;
+                                p_tztnode->Flags &= ~0x0040;
                                 p_vehicle->U.UVehicle.WorkPlace &= ~0x0040;
                             }
                             if (p_gate->U.UObject.GateBH.ValB == p_vehicle->U.UVehicle.TNode)
@@ -487,8 +488,8 @@ void process_next_tnode(struct Thing *p_vehicle)
 
         p_tnode = &game_traffic_nodes[-tnode];
         p_vehicle->U.UVehicle.ReqdSpeed = 1200 - 2 * abs(p_vehicle->U.UVehicle.AngleDY);
-        if ((p_vehicle->U.UVehicle.WorkPlace & 0x0008)
-         && (p_vehicle->U.UVehicle.WorkPlace & 0x0010)
+        if (((p_vehicle->U.UVehicle.WorkPlace & 0x0008) != 0)
+         && ((p_vehicle->U.UVehicle.WorkPlace & 0x0010) != 0)
          && (p_tnode->GateLink == p_vehicle->ThingOffset)) {
             p_vehicle->U.UVehicle.WorkPlace &= ~0x0008;
         }
