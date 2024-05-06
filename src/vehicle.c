@@ -334,6 +334,8 @@ static TbBool vehicle_check_collide_with_area(struct Thing *p_vehA,
     return true;
 }
 
+/** Check if the second vehicle is in the way of first.
+ */
 TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
 {
 #if 0
@@ -354,6 +356,14 @@ TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
 
     return vehicle_check_collide_with_area(p_vehA, p_vehB->X, p_vehB->Y, p_vehB->Z,
       p_vehB->Radius, p_vehB->U.UVehicle.MatrixIndex);
+}
+
+/** Of two competing (potentially colliding) vehicles, check if the first one has right-of-way to move forward.
+ */
+TbBool vehicle_first_has_right_of_way(struct Thing *p_vehA, struct Thing *p_vehB)
+{
+    // If no special circumstances, allow the one with higher ThingOffset first
+    return (p_vehA->ThingOffset >= p_vehB->ThingOffset);
 }
 
 /** Collision check between two vehicles.
@@ -404,8 +414,8 @@ static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_v
     if (distXZ_sq >= radB_incl_speed * radB_incl_speed)
         return false;
 
-    // Of two colliding vehicles, Stop the one with lower ThingOffset
-    if ((p_vehA->ThingOffset >= p_vehB->ThingOffset) && check_two_vehicles(p_vehB, p_vehA))
+    // Check if the current vehicle has right-of-way over the second
+    if (vehicle_first_has_right_of_way(p_vehA, p_vehB) && check_two_vehicles(p_vehB, p_vehA))
         return false;
 
     LOGSYNC("Stopping %s thing %d rqspeed %d due to %s thing %d rqspeed %d",
@@ -431,8 +441,8 @@ static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct
     if (abs(p_vehB->Y - pos_y) >= 2048)
         return false;
 
-    // Of two colliding vehicles, Stop the one with lower ThingOffset
-    if (p_vehA->ThingOffset >= p_vehB->ThingOffset)
+    // Check if the current vehicle has right-of-way over the second
+    if (vehicle_first_has_right_of_way(p_vehA, p_vehB))
         return false;
 
     LOGSYNC("Stopping %s thing %d rqspeed %d due to %s thing %d rqspeed %d",
