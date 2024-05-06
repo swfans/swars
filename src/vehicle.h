@@ -148,6 +148,25 @@ enum VehicleState {
   VehSt_UNKN_52 = 0x52,
 };
 
+enum VehWorkPlaceFlags {
+    VWPFlg_Unkn0001     = 0x0001,
+    VWPFlg_Unkn0002     = 0x0002,
+    VWPFlg_Unkn0004     = 0x0004,
+    VWPFlg_Unkn0008     = 0x0008,
+    VWPFlg_Unkn0010     = 0x0010,
+    VWPFlg_Unkn0020     = 0x0020,
+    VWPFlg_Unkn0040     = 0x0040,
+    VWPFlg_Unkn0080     = 0x0080,
+    VWPFlg_Unkn0100     = 0x0100,
+    VWPFlg_Unkn0200     = 0x0200,
+    VWPFlg_Unkn0400     = 0x0400,
+    VWPFlg_Unkn0800     = 0x0800,
+    VWPFlg_Unkn1000     = 0x1000,
+    VWPFlg_Unkn2000     = 0x2000,
+    VWPFlg_Unkn4000     = 0x4000,
+    VWPFlg_Unkn8000     = 0x8000,
+};
+
 struct Thing;
 
 /** Stores configuration for a state of a vehicle.

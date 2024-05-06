@@ -27,6 +27,25 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum TNodeFlags {
+    TNdF_Unkn0001     = 0x0001,
+    TNdF_Unkn0002     = 0x0002,
+    TNdF_Unkn0004     = 0x0004,
+    TNdF_Unkn0008     = 0x0008,
+    TNdF_Unkn0010     = 0x0010,
+    TNdF_Unkn0020     = 0x0020,
+    TNdF_Unkn0040     = 0x0040,
+    TNdF_Unkn0080     = 0x0080,
+    TNdF_Unkn0100     = 0x0100,
+    TNdF_Unkn0200     = 0x0200,
+    TNdF_Unkn0400     = 0x0400,
+    TNdF_Unkn0800     = 0x0800,
+    TNdF_Unkn1000     = 0x1000,
+    TNdF_Unkn2000     = 0x2000,
+    TNdF_Unkn4000     = 0x4000,
+    TNdF_Unkn8000     = 0x8000,
+};
+
 struct STngUTraffic {
     short Link[4];
     ubyte Flags[4];

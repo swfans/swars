@@ -1137,13 +1137,13 @@ void process_vehicle(struct Thing *p_vehicle)
         p_vehicle->OldTarget = 0;
     if (p_vehicle->U.UVehicle.RecoilTimer > 0)
         p_vehicle->U.UVehicle.RecoilTimer--;
-    if ((p_vehicle->U.UVehicle.WorkPlace & 0x0080) != 0)
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0080) != 0)
     {
         p_vehicle->Health -= 16;
         if (p_vehicle->Health < 0)
             start_crashing(p_vehicle);
         if (((gameturn & 7) == 0) && (LbRandomAnyShort() & 7) == 0)
-            p_vehicle->U.UVehicle.WorkPlace &= ~0x0080;
+            p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0080;
     }
 
     switch (p_vehicle->SubType)
