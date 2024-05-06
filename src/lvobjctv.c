@@ -1832,19 +1832,23 @@ int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibufl
 
 int parse_objective_param(struct Objective *p_objectv, const char *buf, long buflen)
 {
+    struct ObjectiveDef *p_odef;
     char *toklist[PARAM_TOKEN_MAX];
     char tokbuf[128];
     int i;
 
+    p_odef = &objectv_defs[p_objectv->Type];
     LbMemorySet(toklist, 0, sizeof(toklist));
     i = tokenize_script_func(toklist, tokbuf, buf, buflen);
     if (i < 2) {
-        LOGWARN("Objective parameter consists of less than 2 tokens.");
+        LOGWARN("Objective \"%s\" parameter consists of less than 2 tokens.",
+          p_odef->CmdName);
         return -1;
     }
     if (i >= PARAM_TOKEN_MAX) {
         // If too many params, tokbuf[] have been overwritten partially
-        LOGWARN("Objective parameter consists of too many (%d) tokens.", i);
+        LOGWARN("Objective \"%s\" parameter consists of too many (%d) tokens.",
+          p_odef->CmdName, i);
         return -1;
     }
 
@@ -1868,36 +1872,94 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
     switch (i)
     {
     case ObvP_Group:
+        if ((p_odef->Flags & ObDF_ReqGroup) == 0) {
+            LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
+              p_odef->CmdName, toklist[0]);
+        }
+        p_objectv->Thing = atoi(toklist[1]);
+        break;
     case ObvP_Count:
+        if ((p_odef->Flags & ObDF_ReqCount) == 0) {
+            LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
+              p_odef->CmdName, toklist[0]);
+        }
         p_objectv->Thing = atoi(toklist[1]);
         break;
     case ObvP_Thing:
         if (toklist[2] == NULL)  {
-            LOGWARN("Objective parameter \"%s\" requires 2 numbers, got less.", toklist[0]);
+            LOGWARN("Objective \"%s\" parameter \"%s\" requires 2 numbers, got less.",
+              p_odef->CmdName, toklist[0]);
             return -1;
+        }
+        if ((p_odef->Flags & (ObDF_ReqThing|ObDF_ReqPerson|ObDF_ReqVehicle|ObDF_ReqItem|ObDF_ReqObject)) == 0) {
+            LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
+              p_odef->CmdName, toklist[0]);
         }
         p_objectv->Thing = atoi(toklist[1]);
         p_objectv->UniqueID = atoi(toklist[2]);
         break;
-    case ObvP_UniqueID:
+    case ObvP_UniqueID: // deprecated / testing only
+        LOGWARN("Objective \"%s\" parameter \"%s\" has no need of being used directly.",
+          p_odef->CmdName, toklist[0]);
         p_objectv->UniqueID = atoi(toklist[1]);
         break;
     case ObvP_Coord:
         if (toklist[3] == NULL)  {
-            LOGWARN("Objective parameter \"%s\" requires 3 numbers, got less.", toklist[0]);
+            LOGWARN("Objective \"%s\" parameter \"%s\" requires 3 numbers, got less.",
+              p_odef->CmdName, toklist[0]);
             return -1;
         }
+        if ((p_odef->Flags & ObDF_ReqCoord) == 0) {
+            LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
+              p_odef->CmdName, toklist[0]);
+        }
         p_objectv->X = atoi(toklist[1]);
-        p_objectv->Y = atoi(toklist[2]);
+        if ((p_odef->Flags & (ObDF_ReqAmountY|ObDF_ReqThingY)) == 0) {
+            p_objectv->Y = atoi(toklist[2]);
+        }
         p_objectv->Z = atoi(toklist[3]);
         break;
     case ObvP_Radius:
+        if ((p_odef->Flags & ObDF_ReqRadius) == 0) {
+            LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
+              p_odef->CmdName, toklist[0]);
+        }
         p_objectv->Radius = atoi(toklist[1]);
         break;
     case ObvP_Amount:
+        if ((p_odef->Flags & ObDF_ReqAmount) != 0) {
+            p_objectv->Arg2 = atoi(toklist[1]);
+        }
+        else if ((p_odef->Flags & ObDF_ReqAmountY) != 0) {
+            p_objectv->Y = atoi(toklist[1]);
+        }
+        else {
+            LOGWARN("Objective \"%s\" parameter \"%s\" is not expected; ignored.",
+              p_odef->CmdName, toklist[0]);
+        }
+        break;
     case ObvP_SecGroup:
+        if ((p_odef->Flags & ObDF_ReqSecGrp) == 0) {
+            LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
+              p_odef->CmdName, toklist[0]);
+        }
+        p_objectv->Arg2 = atoi(toklist[1]);
+        break;
     case ObvP_SecThing:
-    case ObvP_Arg2:
+        if ((p_odef->Flags & ObDF_ReqSecTng) != 0) {
+            p_objectv->Arg2 = atoi(toklist[1]);
+        }
+        else if ((p_odef->Flags & ObDF_ReqThingY) != 0) {
+            p_objectv->Y = atoi(toklist[1]);
+        }
+        else {
+            LOGWARN("Objective \"%s\" parameter \"%s\" is not expected; ignored.",
+              p_odef->CmdName, toklist[0]);
+        }
+        break;
+    case ObvP_Arg2: // deprecated / testing only
+        LOGWARN("Objective \"%s\" parameter \"%s\" has no need of being used directly.",
+          p_odef->CmdName, toklist[0]);
         p_objectv->Arg2 = atoi(toklist[1]);
         break;
     case ObvP_StringIndex:
@@ -1946,7 +2008,7 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
     }
     p_odef = &objectv_defs[i];
     if (p_odef->CmdName == NULL) {
-        LOGWARN("Objective name not recognized.");
+        LOGWARN("Objective name \"%s\" not recognized.", toklist[0]);
         return -1;
     }
     objectv = add_used_objective(mapno, levelno);
