@@ -188,6 +188,7 @@ enum ObjectiveConfigParam {
     ObvP_Count,
     ObvP_UniqueID,
     ObvP_Coord,
+    ObvP_CoordY, /**< Field only for usage verification, no corresponding text param */
     ObvP_Radius,
     ObvP_Amount,
     ObvP_SecGroup,
@@ -1129,7 +1130,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
             thing = search_things_for_index(p_objectv->Thing);
             // One mistake which often happens on the map, is that we have static
             // lights assigned as items. This should be really fixed in the level,
-            // but there is also no reson not to try fix it here.
+            // but there is also no reason not to try fix it here.
             if (thing < 0) {
                 struct SimpleThing *p_sthing = &sthings[thing];
                 if (p_sthing->Type == SmTT_STATIC) {
@@ -1830,11 +1831,12 @@ int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibufl
     return li;
 }
 
-int parse_objective_param(struct Objective *p_objectv, const char *buf, long buflen)
+int parse_objective_param(struct Objective *p_objectv, ulong *fields_used, const char *buf, long buflen)
 {
     struct ObjectiveDef *p_odef;
     char *toklist[PARAM_TOKEN_MAX];
     char tokbuf[128];
+    ulong stored_field;
     int i;
 
     p_odef = &objectv_defs[p_objectv->Type];
@@ -1853,6 +1855,7 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
     }
 
     // Finding parameter number
+    stored_field = 0;
     i = 0;
     while (1)
     {
@@ -1876,6 +1879,7 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
             LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
               p_odef->CmdName, toklist[0]);
         }
+        stored_field = (1 << ObvP_Thing);
         p_objectv->Thing = atoi(toklist[1]);
         break;
     case ObvP_Count:
@@ -1883,6 +1887,7 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
             LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
               p_odef->CmdName, toklist[0]);
         }
+        stored_field = (1 << ObvP_Thing);
         p_objectv->Thing = atoi(toklist[1]);
         break;
     case ObvP_Thing:
@@ -1891,16 +1896,19 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
               p_odef->CmdName, toklist[0]);
             return -1;
         }
-        if ((p_odef->Flags & (ObDF_ReqThing|ObDF_ReqPerson|ObDF_ReqVehicle|ObDF_ReqItem|ObDF_ReqObject)) == 0) {
+        if ((p_odef->Flags & (ObDF_ReqThing|ObDF_ReqPerson
+          |ObDF_ReqVehicle|ObDF_ReqItem|ObDF_ReqObject)) == 0) {
             LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
               p_odef->CmdName, toklist[0]);
         }
+        stored_field = (1 << ObvP_Thing) | (1 << ObvP_UniqueID);
         p_objectv->Thing = atoi(toklist[1]);
         p_objectv->UniqueID = atoi(toklist[2]);
         break;
     case ObvP_UniqueID: // deprecated / testing only
         LOGWARN("Objective \"%s\" parameter \"%s\" has no need of being used directly.",
           p_odef->CmdName, toklist[0]);
+        stored_field = (1 << ObvP_UniqueID);
         p_objectv->UniqueID = atoi(toklist[1]);
         break;
     case ObvP_Coord:
@@ -1913,8 +1921,10 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
             LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
               p_odef->CmdName, toklist[0]);
         }
+        stored_field = (1 << ObvP_Coord);
         p_objectv->X = atoi(toklist[1]);
         if ((p_odef->Flags & (ObDF_ReqAmountY|ObDF_ReqThingY)) == 0) {
+            stored_field |= (1 << ObvP_CoordY);
             p_objectv->Y = atoi(toklist[2]);
         }
         p_objectv->Z = atoi(toklist[3]);
@@ -1924,13 +1934,16 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
             LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
               p_odef->CmdName, toklist[0]);
         }
+        stored_field = (1 << ObvP_Radius);
         p_objectv->Radius = atoi(toklist[1]);
         break;
     case ObvP_Amount:
         if ((p_odef->Flags & ObDF_ReqAmount) != 0) {
+            stored_field = (1 << ObvP_Arg2);
             p_objectv->Arg2 = atoi(toklist[1]);
         }
         else if ((p_odef->Flags & ObDF_ReqAmountY) != 0) {
+            stored_field = (1 << ObvP_CoordY);
             p_objectv->Y = atoi(toklist[1]);
         }
         else {
@@ -1943,13 +1956,16 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
             LOGWARN("Objective \"%s\" parameter \"%s\" is not expected.",
               p_odef->CmdName, toklist[0]);
         }
+        stored_field = (1 << ObvP_Arg2);
         p_objectv->Arg2 = atoi(toklist[1]);
         break;
     case ObvP_SecThing:
         if ((p_odef->Flags & ObDF_ReqSecTng) != 0) {
+            stored_field = (1 << ObvP_Arg2);
             p_objectv->Arg2 = atoi(toklist[1]);
         }
         else if ((p_odef->Flags & ObDF_ReqThingY) != 0) {
+            stored_field = (1 << ObvP_CoordY);
             p_objectv->Y = atoi(toklist[1]);
         }
         else {
@@ -1960,21 +1976,31 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
     case ObvP_Arg2: // deprecated / testing only
         LOGWARN("Objective \"%s\" parameter \"%s\" has no need of being used directly.",
           p_odef->CmdName, toklist[0]);
+        stored_field = (1 << ObvP_Arg2);
         p_objectv->Arg2 = atoi(toklist[1]);
         break;
     case ObvP_StringIndex:
+        stored_field = (1 << ObvP_StringIndex);
         p_objectv->StringIndex = atoi(toklist[1]);
         break;
     case ObvP_Flags:
+        stored_field = (1 << ObvP_Flags);
         p_objectv->Flags = atoi(toklist[1]);
         break;
     case ObvP_TextId:
+        stored_field = (1 << ObvP_TextId);
         p_objectv->ObjText = atoi(toklist[1]);
         break;
     default:
-        LOGWARN("Objective parameter name \"%s\" not recognized.", toklist[0]);
+        LOGWARN("Objective \"%s\" parameter name \"%s\" not recognized.",
+          p_odef->CmdName, toklist[0]);
         return -1;
     }
+    if ((*fields_used & stored_field) != 0) {
+        LOGWARN("Objective \"%s\" parameter \"%s\" overwites previously set param, used=0x%x.",
+          p_odef->CmdName, toklist[0], (*fields_used & stored_field));
+    }
+    *fields_used |= stored_field;
     return 1;
 }
 
@@ -1984,6 +2010,7 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
     struct Objective *p_objectv;
     char *toklist[COMMAND_TOKEN_MAX];
     char tokbuf[256];
+    ulong fields_used;
     int i, objectv, nret;
 
     i = tokenize_script_func(toklist, tokbuf, buf, buflen);
@@ -2017,10 +2044,11 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
     p_objectv->Pri = pri;
 
     nret = objectv;
+    fields_used = 0;
     for (i = 1; toklist[i] != NULL; i++)
     {
         int ret;
-        ret = parse_objective_param(p_objectv, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
+        ret = parse_objective_param(p_objectv, &fields_used, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
         if (ret != 1)
             nret = -1;
     }
