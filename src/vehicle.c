@@ -514,7 +514,7 @@ static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapEl
                   return true;
               break;
           case TT_PERSON:
-              if (check_vehicle_col_with_pers(p_vehicle, p_thing, pos_x, pos_y, pos_z))
+              if (check_vehicle_col_with_pers(p_vehicle, p_thing, p_vehicle->X, pos_y, p_vehicle->Z))
                   return true;
               break;
           default:
@@ -529,7 +529,7 @@ static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapEl
           switch (p_sthing->Type)
           {
           case TT_MINE:
-              if (check_vehicle_col_with_mine(p_vehicle, p_sthing, pos_x, pos_y, pos_z))
+              if (check_vehicle_col_with_mine(p_vehicle, p_sthing, p_vehicle->X, pos_y, p_vehicle->Z))
                   return true;
               break;
           default:
