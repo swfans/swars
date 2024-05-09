@@ -19,6 +19,7 @@
 #include "vehtraffic.h"
 
 #include <stdlib.h>
+#include <assert.h>
 #include "bfutility.h"
 #include "bigmap.h"
 #include "game.h"
@@ -57,6 +58,98 @@ void process_next_vnav_turn(struct Thing *p_vehicle)
     return;
 }
 
+void add_unkn0010_lock(struct Thing *p_vehicle)
+{
+    struct TrafficNode *p_tnode;
+    short tnode;
+
+    tnode = p_vehicle->U.UVehicle.TNode;
+    assert(tnode < 0);
+
+    p_tnode = &game_traffic_nodes[-tnode];
+    p_tnode->Flags |= TNdF_Unkn0040;
+    p_tnode->GateLink = p_vehicle->ThingOffset;
+    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0010;
+}
+
+void remove_unkn0010_node_lock(struct Thing *p_vehicle, short tnode)
+{
+    struct TrafficNode *p_tnode;
+
+    assert(tnode <= 0);
+
+    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0010;
+    p_tnode = &game_traffic_nodes[-tnode];
+    p_tnode->Flags &= ~TNdF_Unkn0040;
+    p_tnode->GateLink = 0;
+}
+
+void remove_unkn0010_lock(struct Thing *p_vehicle)
+{
+    remove_unkn0010_node_lock(p_vehicle, p_vehicle->U.UVehicle.TNode);
+}
+
+void promote_unkn0010_lock(struct Thing *p_vehicle)
+{
+    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0020;
+    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0010;
+}
+
+void remove_unkn0020_node_lock(struct Thing *p_vehicle, short tnode)
+{
+    struct TrafficNode *p_tnode;
+
+    assert(tnode <= 0);
+
+    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0020;
+    p_tnode = &game_traffic_nodes[-tnode];
+    p_tnode->Flags &= ~TNdF_Unkn0040;
+    p_tnode->GateLink = 0;
+}
+
+void remove_unkn0020_lock(struct Thing *p_vehicle)
+{
+    remove_unkn0020_node_lock(p_vehicle, p_vehicle->U.UVehicle.Dummy4b);
+}
+
+void promote_unkn0020_lock(struct Thing *p_vehicle)
+{
+    p_vehicle->U.UVehicle.Agok = p_vehicle->U.UVehicle.Dummy4b;
+    p_vehicle->U.UVehicle.WorkPlace &= ~(VWPFlg_Unkn0020|VWPFlg_Unkn0040);
+    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0040;
+}
+
+void add_agok_lock(struct Thing *p_vehicle)
+{
+    struct TrafficNode *p_tnode;
+    short tnode;
+
+    tnode = p_vehicle->U.UVehicle.Agok;
+    assert(tnode < 0);
+
+    p_tnode = &game_traffic_nodes[-tnode];
+    p_tnode->Flags |= TNdF_Unkn0040;
+    p_tnode->GateLink = p_vehicle->ThingOffset;
+    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0040;
+}
+
+void remove_agok_node_lock(struct Thing *p_vehicle, short tnode)
+{
+    struct TrafficNode *p_tnode;
+
+    assert(tnode <= 0);
+
+    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0040;
+    p_tnode = &game_traffic_nodes[-tnode];
+    p_tnode->Flags &= ~TNdF_Unkn0040;
+    p_tnode->GateLink = 0;
+}
+
+void remove_agok_lock(struct Thing *p_vehicle)
+{
+    remove_agok_node_lock(p_vehicle, p_vehicle->U.UVehicle.Agok);
+}
+
 void remove_locks(struct Thing *p_vehicle)
 {
 #if 0
@@ -64,33 +157,26 @@ void remove_locks(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
     return;
 #endif
-    struct TrafficNode *p_tnode;
-    ushort tnode;
-
     if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0)
-    {
-        tnode = -p_vehicle->U.UVehicle.TNode;
-        p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0010;
-        p_tnode = &game_traffic_nodes[tnode];
-        p_tnode->Flags &= ~TNdF_Unkn0040;
-        p_tnode->GateLink = 0;
-    }
+        remove_unkn0010_lock(p_vehicle);
     if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0020) != 0)
-    {
-        tnode = -p_vehicle->U.UVehicle.Dummy4b;
-        p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0020;
-        p_tnode = &game_traffic_nodes[tnode];
-        p_tnode->Flags &= ~TNdF_Unkn0040;
-        p_tnode->GateLink = 0;
-    }
+        remove_unkn0020_lock(p_vehicle);
     if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0040) != 0)
-    {
-        tnode = -p_vehicle->U.UVehicle.Agok;
-        p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0040;
-        p_tnode = &game_traffic_nodes[tnode];
-        p_tnode->Flags &= ~TNdF_Unkn0040;
-        p_tnode->GateLink = 0;
-    }
+        remove_agok_lock(p_vehicle);
+    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0008;
+}
+
+void remove_locks_apart_from_agok(struct Thing *p_vehicle)
+{
+#if 0
+    asm volatile ("call ASM_remove_locks_apart_from_agok\n"
+        : : "a" (p_vehicle));
+    return;
+#endif
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0)
+        remove_unkn0010_lock(p_vehicle);
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0020) != 0)
+        remove_unkn0020_lock(p_vehicle);
     p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0008;
 }
 
@@ -173,13 +259,6 @@ LABEL_3:
           goto LABEL_2;
     }
     return 0;
-}
-
-void remove_locks_apart_from_agok(struct Thing *p_thing)
-{
-    asm volatile ("call ASM_remove_locks_apart_from_agok\n"
-        : : "a" (p_thing));
-    return;
 }
 
 void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
@@ -292,7 +371,7 @@ void update_vehicle_speed_and_direction(struct Thing *p_vehicle, int tndt_x, int
 void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
 {
     struct TrafficNode *p_tnode;
-    struct Thing *p_gate;
+    struct Thing *p_gtveh;
 
     // Only Traffic Nodes support stopping for pedestrians
     if (p_vehicle->U.UVehicle.TNode >= 0)
@@ -305,42 +384,36 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
         {
             if ((p_tnode->Flags & TNdF_Unkn0040) != 0)
             {
+                LOGDBG("Stopping %s thing %d rqspeed %d due to TNode %d flags",
+                  vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+                  (int)p_vehicle->U.UVehicle.ReqdSpeed, (int)p_vehicle->U.UVehicle.TNode);
+
                 p_vehicle->U.UVehicle.ReqdSpeed = 0;
-                p_gate = &things[p_tnode->GateLink];
-                if ((p_gate->U.UObject.Timer[1] & 0x0008) != 0)
+                p_gtveh = &things[p_tnode->GateLink];
+                if ((p_gtveh->U.UVehicle.WorkPlace & VWPFlg_Unkn0008) != 0)
                 {
                     struct TrafficNode *p_tztnode;
 
-                    p_tztnode = &game_traffic_nodes[-p_gate->U.UObject.TargetDZ];
+                    p_tztnode = &game_traffic_nodes[-p_gtveh->U.UVehicle.TNode];
                     if ((p_tztnode->Flags & TNdF_Unkn0040) != 0)
                     {
                         if (p_tztnode->GateLink == p_vehicle->ThingOffset)
                         {
-                            if (p_vehicle->U.UVehicle.Dummy4b == p_gate->U.UObject.TargetDZ)
+                            if (p_vehicle->U.UVehicle.Dummy4b == p_gtveh->U.UVehicle.TNode)
                             {
-                                p_tztnode->GateLink = 0;
-                                p_tztnode->Flags &= ~TNdF_Unkn0040;
-                                p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0020;
+                                remove_unkn0020_lock(p_vehicle);
                             }
                             else
                             {
-                                p_tztnode->GateLink = 0;
-                                p_tztnode->Flags &= ~TNdF_Unkn0040;
-                                p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0040;
+                                remove_agok_node_lock(p_vehicle, p_gtveh->U.UVehicle.TNode);
                             }
-                            if (p_gate->U.UObject.GateBH.ValB == p_vehicle->U.UVehicle.TNode)
+                            if (p_gtveh->U.UVehicle.Dummy4b == p_vehicle->U.UVehicle.TNode)
                             {
-                                p_tztnode->GateLink = 0;
-                                p_tztnode->Flags &= ~TNdF_Unkn0040;
-                                p_gate->U.UObject.Timer[1] &= ~0x0020;
+                                remove_unkn0020_lock(p_gtveh);
                             }
                             else
                             {
-                                struct TrafficNode *p_tnode;
-                                p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
-                                p_tnode->GateLink = 0;
-                                p_tnode->Flags &= ~TNdF_Unkn0040;
-                                p_gate->U.UObject.Timer[1] &= ~0x0040;
+                                remove_agok_node_lock(p_gtveh, p_vehicle->U.UVehicle.TNode);
                             }
                         }
                     }
@@ -349,9 +422,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
             else
             {
                 remove_locks_apart_from_agok(p_vehicle);
-                p_tnode->Flags |= TNdF_Unkn0040;
-                p_tnode->GateLink = p_vehicle->ThingOffset;
-                p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0010;
+                add_unkn0010_lock(p_vehicle);
                 p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0008;
             }
         }
@@ -365,10 +436,15 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
                 p_vehicle->U.UVehicle.ZebraOldHealth = p_vehicle->Health;
             }
             if (p_vehicle->U.UVehicle.ZebraOldHealth == p_vehicle->Health) {
+                LOGDBG("Stopping %s thing %d rqspeed %d due to TNode %d near pedestrian",
+                  vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+                  (int)p_vehicle->U.UVehicle.ReqdSpeed, (int)p_vehicle->U.UVehicle.TNode);
+
                 p_vehicle->U.UVehicle.ReqdSpeed = 0;
                 p_vehicle->U.UVehicle.ZebraOldHealth = p_vehicle->Health;
                 p_vehicle->U.UVehicle.PissedOffWithWaiting++;
             } else {
+                // Lost health while waiting - stop the wait immediatelly
                 p_vehicle->U.UVehicle.PissedOffWithWaiting = 200;
             }
         }
@@ -391,9 +467,7 @@ void vehicle_workplace_states_finish(struct Thing *p_vehicle)
         dz = (p_vehicle->Z >> 8) - p_dmtnode->Z;
         if (dz * dz + dx * dx > 0x20000)
         {
-            p_dmtnode->GateLink = 0;
-            p_dmtnode->Flags &= ~TNdF_Unkn0040;
-            p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0020;
+            remove_unkn0020_lock(p_vehicle);
         }
     }
 
@@ -407,9 +481,7 @@ void vehicle_workplace_states_finish(struct Thing *p_vehicle)
         dz = (p_vehicle->Z >> 8) - p_agtnode->Z;
         if (dz * dz + dx * dx > 0x20000)
         {
-            p_agtnode->GateLink = 0;
-            p_agtnode->Flags &= ~TNdF_Unkn0040;
-            p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0040;
+            remove_agok_lock(p_vehicle);
         }
     }
 }
@@ -499,23 +571,21 @@ void process_next_tnode(struct Thing *p_vehicle)
         }
         if (((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0)
          && ((p_tnode->Flags & (TNdF_Unkn0010|TNdF_Unkn0020)) == 0)) {
-            p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0010;
-            p_tnode->Flags &= ~TNdF_Unkn0040;
-            p_tnode->GateLink = 0;
+            remove_unkn0010_lock(p_vehicle);
         }
     }
 
     if (tnode < 0)
     {
         struct TrafficNode *p_tnode;
-        struct Thing *p_gate;
+        struct Thing *p_gtveh;
 
         p_tnode = &game_traffic_nodes[-tnode];
         if ((p_tnode->GateLink != 0) && ((p_tnode->Flags & TNdF_Unkn8000) != 0) && (nxdist_sq < 0x90000))
         {
-            p_gate = &things[p_tnode->GateLink];
-            if ((p_gate->Flag & 0x0040) == 0) {
-                p_gate->Flag |= 0x0020;
+            p_gtveh = &things[p_tnode->GateLink];
+            if ((p_gtveh->Flag & 0x0040) == 0) {
+                p_gtveh->Flag |= 0x0020;
                 p_vehicle->U.UVehicle.ReqdSpeed = 0;
                 p_vehicle->U.UVehicle.AngleDY = 0;
                 return;
@@ -526,13 +596,13 @@ void process_next_tnode(struct Thing *p_vehicle)
     if (tnode < 0)
     {
         struct TrafficNode *p_tnode;
-        struct Thing *p_gate;
+        struct Thing *p_gtveh;
 
         p_tnode = &game_traffic_nodes[-tnode];
         if ((p_tnode->GateLink != 0) && ((p_tnode->Flags & TNdF_Unkn8000) == 0) && (nxdist_sq < 0x10000))
         {
-            p_gate = &things[p_tnode->GateLink];
-            p_gate->Flag |= 0x0100;
+            p_gtveh = &things[p_tnode->GateLink];
+            p_gtveh->Flag |= 0x0100;
         }
     }
 
@@ -580,16 +650,9 @@ void process_next_tnode(struct Thing *p_vehicle)
             if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0020) != 0)
             {
                 if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0040) != 0) {
-                    struct TrafficNode *p_agtnode;
-
-                    p_agtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.Agok];
-                    p_agtnode->Flags &= ~TNdF_Unkn0040;
-                    p_agtnode->GateLink = 0;
-                    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0040;
+                    remove_agok_lock(p_vehicle);
                 }
-                p_vehicle->U.UVehicle.Agok = p_vehicle->U.UVehicle.Dummy4b;
-                p_vehicle->U.UVehicle.WorkPlace &= ~(VWPFlg_Unkn0020|VWPFlg_Unkn0040);
-                p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0040;
+                promote_unkn0020_lock(p_vehicle);
             }
             if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0) {
                 p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0020;
@@ -685,24 +748,16 @@ void process_next_tnode(struct Thing *p_vehicle)
                 {
                     if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0040) != 0)
                     {
-                        struct TrafficNode *p_agtnode;
-
-                        p_agtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.Agok];
-                        p_agtnode->Flags &= ~TNdF_Unkn0040;
-                        p_agtnode->GateLink = 0;
-                        p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0040;
+                        remove_agok_lock(p_vehicle);
                     }
-                    p_vehicle->U.UVehicle.Agok = p_vehicle->U.UVehicle.Dummy4b;
-                    p_vehicle->U.UVehicle.WorkPlace &= ~(VWPFlg_Unkn0020|VWPFlg_Unkn0040);
-                    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0040;
+                    promote_unkn0020_lock(p_vehicle);
                 }
 
                 p_vehicle->U.UVehicle.Dummy4a = 0;
                 p_vehicle->U.UVehicle.Dummy4b = p_vehicle->U.UVehicle.TNode;
                 if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0)
                 {
-                    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0020;
-                    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0010;
+                    promote_unkn0010_lock(p_vehicle);
                 }
                 lnk = get_next_tnode(p_vehicle, p_tnode);
                 p_vehicle->U.UVehicle.TNode = p_tnode->UTraffic.Link[lnk];
@@ -749,18 +804,13 @@ void process_next_tnode(struct Thing *p_vehicle)
                     p_lntnode = &game_traffic_nodes[-p_tnode->UTraffic.Link[lnk]];
                     if ((p_lntnode->Flags & TNdF_Unkn0040) == 0)
                     {
-                        struct TrafficNode *p_agtnode;
-
                         dx = (p_lntnode->X << 8) - (p_tnode->X << 8);
                         dz = (p_lntnode->Z << 8) - (p_tnode->Z << 8);
                         p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
                         move_mapwho(p_vehicle, p_tnode->X << 8, (p_tnode->Y + 15) << 8, p_tnode->Z << 8);
                         remove_locks(p_vehicle);
-                        p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0040;
                         p_vehicle->U.UVehicle.Agok = p_tnode->UTraffic.Link[lnk];
-                        p_agtnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.Agok];
-                        p_agtnode->Flags |= TNdF_Unkn0040;
-                        p_agtnode->GateLink = p_vehicle->ThingOffset;
+                        add_agok_lock(p_vehicle);
                         break;
                     }
                 }
