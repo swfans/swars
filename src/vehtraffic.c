@@ -243,35 +243,22 @@ int check_person_close(struct TrafficNode *p_tnode)
     int tile_ctr_x, tile_ctr_z;
     int tlno;
     int tile_x;
-    int du;
-    int tlx2;
 
     tile_ctr_z = p_tnode->Z >> 8;
     tile_ctr_x = p_tnode->X >> 8;
-    du = -1;
-    tlx2 = tile_ctr_x + 255;
-    tile_x = tile_ctr_x - 1;
-    // TODO refactor the gotos into proper loops
-LABEL_2:
+
+    for (tile_x = tile_ctr_x - 1; tile_x <= tile_ctr_x + 1; tile_x++)
     {
-    tlno = 128 * tile_ctr_z + tile_x - 128;
-LABEL_3:
+        tlno = 128 * (tile_ctr_z - 1);
+        while (tlno < 128 * tile_ctr_z + 256)
         {
             struct MyMapElement *p_mapel;
-            p_mapel = &game_my_big_map[tlno];
+
+            p_mapel = &game_my_big_map[tlno + tile_x];
             if (check_person_close_on_mapel(p_mapel))
                 return true;
             tlno += 128;
-            if ( tlno < tlx2 + 128 * tile_ctr_z )
-            {
-                goto LABEL_3;
-            }
         }
-        tlx2 += 1;
-        tile_x += 1;
-        du++;
-        if (du < 2)
-          goto LABEL_2;
     }
     return 0;
 }
@@ -327,7 +314,8 @@ void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
         }
     }
 
-    if ((p_vehicle->State == VehSt_GOTO_LOC) && ((gameturn & 3) == 0) && ((p_vehicle->U.UVehicle.Dummy4a & 0x3F) > 2))
+    if ((p_vehicle->State == VehSt_GOTO_LOC) && ((gameturn & 3) == 0)
+      && ((p_vehicle->U.UVehicle.Dummy4a & 0x3F) > 2))
     {
         int dx, dz;
 
@@ -414,20 +402,14 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
                     {
                         if (p_tztnode->GateLink == p_vehicle->ThingOffset)
                         {
-                            if (p_vehicle->U.UVehicle.Dummy4b == p_gtveh->U.UVehicle.TNode)
-                            {
+                            if (p_vehicle->U.UVehicle.Dummy4b == p_gtveh->U.UVehicle.TNode) {
                                 remove_agphase2_lock(p_vehicle);
-                            }
-                            else
-                            {
+                            } else {
                                 remove_agok_node_lock(p_vehicle, p_gtveh->U.UVehicle.TNode);
                             }
-                            if (p_gtveh->U.UVehicle.Dummy4b == p_vehicle->U.UVehicle.TNode)
-                            {
+                            if (p_gtveh->U.UVehicle.Dummy4b == p_vehicle->U.UVehicle.TNode) {
                                 remove_agphase2_lock(p_gtveh);
-                            }
-                            else
-                            {
+                            } else {
                                 remove_agok_node_lock(p_gtveh, p_vehicle->U.UVehicle.TNode);
                             }
                         }
