@@ -58,7 +58,7 @@ void process_next_vnav_turn(struct Thing *p_vehicle)
     return;
 }
 
-void add_unkn0010_lock(struct Thing *p_vehicle)
+void add_agphase1_lock(struct Thing *p_vehicle)
 {
     struct TrafficNode *p_tnode;
     short tnode;
@@ -69,54 +69,54 @@ void add_unkn0010_lock(struct Thing *p_vehicle)
     p_tnode = &game_traffic_nodes[-tnode];
     p_tnode->Flags |= TNdF_Unkn0040;
     p_tnode->GateLink = p_vehicle->ThingOffset;
-    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0010;
+    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_HasAgPhase1;
 }
 
-void remove_unkn0010_node_lock(struct Thing *p_vehicle, short tnode)
+void remove_agphase1_node_lock(struct Thing *p_vehicle, short tnode)
 {
     struct TrafficNode *p_tnode;
 
     assert(tnode <= 0);
 
-    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0010;
+    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_HasAgPhase1;
     p_tnode = &game_traffic_nodes[-tnode];
     p_tnode->Flags &= ~TNdF_Unkn0040;
     p_tnode->GateLink = 0;
 }
 
-void remove_unkn0010_lock(struct Thing *p_vehicle)
+void remove_agphase1_lock(struct Thing *p_vehicle)
 {
-    remove_unkn0010_node_lock(p_vehicle, p_vehicle->U.UVehicle.TNode);
+    remove_agphase1_node_lock(p_vehicle, p_vehicle->U.UVehicle.TNode);
 }
 
-void promote_unkn0010_lock(struct Thing *p_vehicle)
+void promote_agphase1_lock(struct Thing *p_vehicle)
 {
-    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0020;
-    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0010;
+    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_HasAgPhase2;
+    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_HasAgPhase1;
 }
 
-void remove_unkn0020_node_lock(struct Thing *p_vehicle, short tnode)
+void remove_agphase2_node_lock(struct Thing *p_vehicle, short tnode)
 {
     struct TrafficNode *p_tnode;
 
     assert(tnode <= 0);
 
-    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0020;
+    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_HasAgPhase2;
     p_tnode = &game_traffic_nodes[-tnode];
     p_tnode->Flags &= ~TNdF_Unkn0040;
     p_tnode->GateLink = 0;
 }
 
-void remove_unkn0020_lock(struct Thing *p_vehicle)
+void remove_agphase2_lock(struct Thing *p_vehicle)
 {
-    remove_unkn0020_node_lock(p_vehicle, p_vehicle->U.UVehicle.Dummy4b);
+    remove_agphase2_node_lock(p_vehicle, p_vehicle->U.UVehicle.Dummy4b);
 }
 
-void promote_unkn0020_lock(struct Thing *p_vehicle)
+void promote_agphase2_lock(struct Thing *p_vehicle)
 {
     p_vehicle->U.UVehicle.Agok = p_vehicle->U.UVehicle.Dummy4b;
-    p_vehicle->U.UVehicle.WorkPlace &= ~(VWPFlg_Unkn0020|VWPFlg_Unkn0040);
-    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0040;
+    p_vehicle->U.UVehicle.WorkPlace &= ~(VWPFlg_HasAgPhase2|VWPFlg_HasAgok);
+    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_HasAgok;
 }
 
 void add_agok_lock(struct Thing *p_vehicle)
@@ -130,7 +130,7 @@ void add_agok_lock(struct Thing *p_vehicle)
     p_tnode = &game_traffic_nodes[-tnode];
     p_tnode->Flags |= TNdF_Unkn0040;
     p_tnode->GateLink = p_vehicle->ThingOffset;
-    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0040;
+    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_HasAgok;
 }
 
 void remove_agok_node_lock(struct Thing *p_vehicle, short tnode)
@@ -139,7 +139,7 @@ void remove_agok_node_lock(struct Thing *p_vehicle, short tnode)
 
     assert(tnode <= 0);
 
-    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0040;
+    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_HasAgok;
     p_tnode = &game_traffic_nodes[-tnode];
     p_tnode->Flags &= ~TNdF_Unkn0040;
     p_tnode->GateLink = 0;
@@ -157,11 +157,11 @@ void remove_locks(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
     return;
 #endif
-    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0)
-        remove_unkn0010_lock(p_vehicle);
-    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0020) != 0)
-        remove_unkn0020_lock(p_vehicle);
-    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0040) != 0)
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase1) != 0)
+        remove_agphase1_lock(p_vehicle);
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase2) != 0)
+        remove_agphase2_lock(p_vehicle);
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgok) != 0)
         remove_agok_lock(p_vehicle);
     p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0008;
 }
@@ -173,11 +173,26 @@ void remove_locks_apart_from_agok(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
     return;
 #endif
-    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0)
-        remove_unkn0010_lock(p_vehicle);
-    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0020) != 0)
-        remove_unkn0020_lock(p_vehicle);
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase1) != 0)
+        remove_agphase1_lock(p_vehicle);
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase2) != 0)
+        remove_agphase2_lock(p_vehicle);
     p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0008;
+}
+
+void update_workplace_unkn0001_flag(struct Thing *p_vehicle)
+{
+    struct TrafficNode *p_tnode;
+    short tnode;
+
+    tnode = p_vehicle->U.UVehicle.TNode;
+    assert(tnode < 0);
+
+    p_tnode = &game_traffic_nodes[-tnode];
+    if ((p_tnode->Flags & (TNdF_Unkn0010|TNdF_Unkn0020)) != 0)
+        p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0001;
+    else
+        p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0001;
 }
 
 static TbBool check_person_close_on_mapel(struct MyMapElement *p_mapel)
@@ -401,7 +416,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
                         {
                             if (p_vehicle->U.UVehicle.Dummy4b == p_gtveh->U.UVehicle.TNode)
                             {
-                                remove_unkn0020_lock(p_vehicle);
+                                remove_agphase2_lock(p_vehicle);
                             }
                             else
                             {
@@ -409,7 +424,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
                             }
                             if (p_gtveh->U.UVehicle.Dummy4b == p_vehicle->U.UVehicle.TNode)
                             {
-                                remove_unkn0020_lock(p_gtveh);
+                                remove_agphase2_lock(p_gtveh);
                             }
                             else
                             {
@@ -422,7 +437,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
             else
             {
                 remove_locks_apart_from_agok(p_vehicle);
-                add_unkn0010_lock(p_vehicle);
+                add_agphase1_lock(p_vehicle);
                 p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0008;
             }
         }
@@ -457,7 +472,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
 
 void vehicle_workplace_states_finish(struct Thing *p_vehicle)
 {
-    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0020) != 0)
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase2) != 0)
     {
         struct TrafficNode *p_dmtnode;
         int dx, dz;
@@ -467,11 +482,11 @@ void vehicle_workplace_states_finish(struct Thing *p_vehicle)
         dz = (p_vehicle->Z >> 8) - p_dmtnode->Z;
         if (dz * dz + dx * dx > 0x20000)
         {
-            remove_unkn0020_lock(p_vehicle);
+            remove_agphase2_lock(p_vehicle);
         }
     }
 
-    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0040) != 0)
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgok) != 0)
     {
         struct TrafficNode *p_agtnode;
         int dx, dz;
@@ -561,7 +576,7 @@ void process_next_tnode(struct Thing *p_vehicle)
         p_tnode = &game_traffic_nodes[-tnode];
         p_vehicle->U.UVehicle.ReqdSpeed = 1200 - 2 * abs(p_vehicle->U.UVehicle.AngleDY);
         if (((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0008) != 0)
-         && ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0)
+         && ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase1) != 0)
          && (p_tnode->GateLink == p_vehicle->ThingOffset)) {
             p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0008;
         }
@@ -569,9 +584,9 @@ void process_next_tnode(struct Thing *p_vehicle)
          && ((p_tnode->Flags & (TNdF_Unkn0010|TNdF_Unkn0020)) == 0)) {
             p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0008;
         }
-        if (((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0)
+        if (((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase1) != 0)
          && ((p_tnode->Flags & (TNdF_Unkn0010|TNdF_Unkn0020)) == 0)) {
-            remove_unkn0010_lock(p_vehicle);
+            remove_agphase1_lock(p_vehicle);
         }
     }
 
@@ -643,20 +658,16 @@ void process_next_tnode(struct Thing *p_vehicle)
         switch (p_vehicle->State)
         {
         case VehSt_GOTO_LOC:
-            if ((p_tnode->Flags & (TNdF_Unkn0010|TNdF_Unkn0020)) != 0)
-                p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0001;
-            else
-                p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0001;
-            if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0020) != 0)
+            update_workplace_unkn0001_flag(p_vehicle);
+            if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase2) != 0)
             {
-                if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0040) != 0) {
+                if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgok) != 0) {
                     remove_agok_lock(p_vehicle);
                 }
-                promote_unkn0020_lock(p_vehicle);
+                promote_agphase2_lock(p_vehicle);
             }
-            if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0) {
-                p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0020;
-                p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0010;
+            if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase1) != 0) {
+                promote_agphase1_lock(p_vehicle);
             }
             process_next_vnav_turn(p_vehicle);
             if (p_vehicle->U.UVehicle.TNode < 0)
@@ -739,25 +750,21 @@ void process_next_tnode(struct Thing *p_vehicle)
             {
                 short lnk;
 
-                if ((p_tnode->Flags & (TNdF_Unkn0010|TNdF_Unkn0020)) != 0)
-                    p_vehicle->U.UVehicle.WorkPlace |= VWPFlg_Unkn0001;
-                else
-                    p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0001;
-
-                if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0020) != 0)
+                update_workplace_unkn0001_flag(p_vehicle);
+                if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase2) != 0)
                 {
-                    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0040) != 0)
+                    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgok) != 0)
                     {
                         remove_agok_lock(p_vehicle);
                     }
-                    promote_unkn0020_lock(p_vehicle);
+                    promote_agphase2_lock(p_vehicle);
                 }
 
                 p_vehicle->U.UVehicle.Dummy4a = 0;
                 p_vehicle->U.UVehicle.Dummy4b = p_vehicle->U.UVehicle.TNode;
-                if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0010) != 0)
+                if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_HasAgPhase1) != 0)
                 {
-                    promote_unkn0010_lock(p_vehicle);
+                    promote_agphase1_lock(p_vehicle);
                 }
                 lnk = get_next_tnode(p_vehicle, p_tnode);
                 p_vehicle->U.UVehicle.TNode = p_tnode->UTraffic.Link[lnk];
