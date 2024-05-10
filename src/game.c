@@ -8445,7 +8445,7 @@ TbBool check_panel_input(short panel)
             if (p_locplayer->DoubleMode)
                 break;
             dcthing = p_locplayer->DirectControl[mouser];
-            if (things[dcthing].Flag & 0x02)
+            if ((things[dcthing].Flag & TngF_Unkn0002) != 0)
                 break;
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if (p_agent->Type != TT_PERSON)
@@ -8563,7 +8563,7 @@ TbBool check_panel_input(short panel)
                     ushort dcthing;
 
                     dcthing = p_locplayer->DirectControl[mouser];
-                    if ((things[dcthing].Flag & 0x0400) == 0)
+                    if ((things[dcthing].Flag & TngF_Unkn0400) == 0)
                     {
                         ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
                         engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);

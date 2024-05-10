@@ -274,14 +274,14 @@ void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
         short nxstatn;
 
         p_station = &things[statn];
-        if ((p_station->Flag & 0x0002) != 0)
+        if ((p_station->Flag & TngF_Unkn0002) != 0)
         {
             LOGERR("Crashing vehicle %d due to destroyed station %d",
               p_vehicle->ThingOffset, statn);
             start_crashing(p_vehicle);
             return;
         }
-        if ((p_vehicle->Flag & 0x8000000) != 0)
+        if ((p_vehicle->Flag & TngF_Unkn08000000) != 0)
             nxstatn = p_station->U.UObject.NextThing;
         else
             nxstatn = p_station->U.UObject.PrevThing;
@@ -508,7 +508,7 @@ void process_next_tnode(struct Thing *p_vehicle)
         p_vehicle->State = VehSt_PARKED_PARAL;
         p_vehicle->U.UVehicle.AccelZ = 0;
         p_vehicle->U.UVehicle.AccelX = 0;
-        p_vehicle->Flag |= 0x0004;
+        p_vehicle->Flag |= TngF_Unkn0004;
         p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0100;
     }
 
@@ -533,7 +533,7 @@ void process_next_tnode(struct Thing *p_vehicle)
             struct Thing *p_station;
 
             p_station = &things[tnode];
-            if ((p_vehicle->Flag & 0x8000000) != 0) {
+            if ((p_vehicle->Flag & TngF_Unkn08000000) != 0) {
                 cux = PRCCOORD_TO_MAPCOORD(p_station->X) - 5 * p_station->U.UObject.OffX;
                 cuz = PRCCOORD_TO_MAPCOORD(p_station->Z) - 5 * p_station->U.UObject.OffZ;
             } else {
@@ -581,8 +581,8 @@ void process_next_tnode(struct Thing *p_vehicle)
         if ((p_tnode->GateLink != 0) && ((p_tnode->Flags & TNdF_Unkn8000) != 0) && (nxdist_sq < 0x90000))
         {
             p_gtveh = &things[p_tnode->GateLink];
-            if ((p_gtveh->Flag & 0x0040) == 0) {
-                p_gtveh->Flag |= 0x0020;
+            if ((p_gtveh->Flag & TngF_Unkn0040) == 0) {
+                p_gtveh->Flag |= TngF_Unkn0020;
                 p_vehicle->U.UVehicle.ReqdSpeed = 0;
                 p_vehicle->U.UVehicle.AngleDY = 0;
                 return;
@@ -599,7 +599,7 @@ void process_next_tnode(struct Thing *p_vehicle)
         if ((p_tnode->GateLink != 0) && ((p_tnode->Flags & TNdF_Unkn8000) == 0) && (nxdist_sq < 0x10000))
         {
             p_gtveh = &things[p_tnode->GateLink];
-            p_gtveh->Flag |= 0x0100;
+            p_gtveh->Flag |= TngF_Unkn0100;
         }
     }
 
@@ -611,7 +611,7 @@ void process_next_tnode(struct Thing *p_vehicle)
         if (nxdist_sq < 0xC000)
         {
             p_station = &things[tnode];
-            if ((p_vehicle->Flag & 0x8000000) != 0)
+            if ((p_vehicle->Flag & TngF_Unkn08000000) != 0)
                 nxstatn = p_station->U.UObject.PrevThing;
             else
                 nxstatn = p_station->U.UObject.NextThing;
@@ -770,9 +770,9 @@ void process_next_tnode(struct Thing *p_vehicle)
                     }
                 }
                 if ((p_tnode->UTraffic.Flags[lnk] & 0x01) != 0)
-                    p_vehicle->Flag |= 0x0800;
+                    p_vehicle->Flag |= TngF_Unkn0800;
                 else
-                    p_vehicle->Flag &= ~0x0800;
+                    p_vehicle->Flag &= ~TngF_Unkn0800;
             }
             else
             {

@@ -351,7 +351,7 @@ TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
     if (p_vehB->ThingOffset == p_vehA->ThingOffset)
         return false;
 
-    if ((p_vehB->Flag & 0x04) != 0)
+    if ((p_vehB->Flag & TngF_Unkn0004) != 0)
         return false;
 
     return vehicle_check_collide_with_area(p_vehA, p_vehB->X, p_vehB->Y, p_vehB->Z,
@@ -382,7 +382,7 @@ static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_v
     if (p_vehB->ThingOffset == p_vehA->ThingOffset)
         return false;
 
-    if ((p_vehB->Flag & 0x04) != 0)
+    if ((p_vehB->Flag & TngF_Unkn0004) != 0)
         return false;
 
     // The following is the same as in vehicle_check_collide_with_area(), but some position computations were moved
@@ -435,7 +435,7 @@ static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_v
  */
 static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct Thing *p_vehB, int pos_x, int pos_y, int pos_z)
 {
-    if ((p_vehB->Flag & 0x04) != 0)
+    if ((p_vehB->Flag & TngF_Unkn0004) != 0)
         return false;
 
     if (abs(p_vehB->Y - pos_y) >= 2048)
@@ -465,7 +465,7 @@ static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing 
         return false;
     if (p_person->State == 13)
         return false;
-    if ((p_person->Flag & 0x02) != 0)
+    if ((p_person->Flag & TngF_Unkn0002) != 0)
         return false;
     if (p_person->State == 36)
         return false;
@@ -938,7 +938,7 @@ void process_train(struct Thing *p_vehicle)
     case VehSt_UNKN_12:
         if (p_vehicle->U.UVehicle.TNode != 0)
         {
-            if ((p_vehicle->Flag & 0x8000000) != 0)
+            if ((p_vehicle->Flag & TngF_Unkn08000000) != 0)
                 train_unkn_st18_func_1(p_vehicle);
             else
                 train_unkn_st18_func_2(p_vehicle);
@@ -1121,7 +1121,7 @@ void process_veh_ground(struct Thing *p_vehicle)
     }
 
     if ((p_vehicle->SubType != SubTT_VEH_FLYING)
-     && ((p_vehicle->Flag & 0x0002) == 0)) {
+     && ((p_vehicle->Flag & TngF_Unkn0002) == 0)) {
         set_vehicle_alt(p_vehicle);
     }
 }
@@ -1143,7 +1143,7 @@ void process_vehicle(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
     return;
 #endif
-    if ((p_vehicle->Flag & 0x02) == 0)
+    if ((p_vehicle->Flag & TngF_Unkn0002) == 0)
         p_vehicle->OldTarget = 0;
     if (p_vehicle->U.UVehicle.RecoilTimer > 0)
         p_vehicle->U.UVehicle.RecoilTimer--;

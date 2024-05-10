@@ -793,7 +793,7 @@ TbBool all_group_persuaded(ushort group)
     for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
-        if (!person_is_persuaded(thing) || ((things[p_thing->Owner].Flag & 0x2000) == 0))
+        if (!person_is_persuaded(thing) || ((things[p_thing->Owner].Flag & TngF_PlayerAgent) == 0))
         {
             if (!person_is_dead(thing) && !thing_is_destroyed(thing))
                 return false;

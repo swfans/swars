@@ -715,7 +715,7 @@ void remove_path(struct Thing *p_thing)
         p_thing->U.UPerson.PathIndex = 0;
         path_free_linked_list(path);
         p_thing->PathOffset = 0;
-        p_thing->Flag &= ~0x00020000;
+        p_thing->Flag &= ~TngF_Unkn00020000;
     }
 }
 
