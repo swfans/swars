@@ -2288,8 +2288,6 @@ void LbSpriteDrawRemapUsingScalingSub11(ubyte *outbuf, int scanline,
   ubyte *v8;
   ubyte v27;
   ubyte *v28;
-  ubyte *v29;
-  ubyte *v30;
   long *v31;
   ubyte v32;
   ubyte v33;
@@ -2423,16 +2421,16 @@ LABEL_65:
               break;
             if ( (v27 & 0x80u) == 0 )
             {
-              v29 = &v8[v27];
-              v27 = *v29;
-              v8 = v29 + 1;
+              v28 = &v8[v27];
+              v27 = *v28;
+              v8 = v28 + 1;
               if ( !v27 )
                 break;
               if ( (v27 & 0x80u) == 0 )
               {
-                v30 = &v8[v27];
-                v27 = *v30;
-                v8 = v30 + 1;
+                v28 = &v8[v27];
+                v27 = *v28;
+                v8 = v28 + 1;
                 if ( !v27 )
                   break;
                 if ( (v27 & 0x80u) == 0 )
@@ -2460,12 +2458,6 @@ void LbSpriteDrawRemapUsingScalingSub12(ubyte *outbuf, int scanline,
   long *v16;
   ubyte v17;
   ubyte v18;
-  ubyte v19;
-  ubyte v20;
-  ubyte v21;
-  ubyte v22;
-  ubyte v23;
-  ubyte v24;
   ubyte v25;
   ubyte *v26;
   ubyte *v305;
@@ -2508,48 +2500,50 @@ LABEL_27:
                     goto LABEL_27;
                   if ( v16[1] )
                   {
-                    v19 = *v8++;
+                    v18 = *v8++;
                     v16 += 2;
-                    *outbuf++ = v19;
+                    *outbuf++ = v18;
                     if ( !--v17 )
                       goto LABEL_27;
                     if ( v16[1] )
                     {
-                      v20 = *v8++;
+                      v18 = *v8++;
                       v16 += 2;
-                      *outbuf++ = v20;
+                      *outbuf++ = v18;
                       if ( !--v17 )
                         goto LABEL_27;
                       if ( v16[1] )
                       {
-                        v21 = *v8++;
+                        v18 = *v8++;
                         v16 += 2;
-                        *outbuf++ = v21;
+                        *outbuf++ = v18;
                         if ( !--v17 )
                           goto LABEL_27;
                         if ( v16[1] )
                         {
-                          v22 = *v8++;
+                          v18 = *v8++;
                           v16 += 2;
-                          *outbuf++ = v22;
+                          *outbuf++ = v18;
                           if ( !--v17 )
                             goto LABEL_27;
                           if ( v16[1] )
                           {
-                            v23 = *v8++;
+                            v18 = *v8++;
                             v16 += 2;
-                            *outbuf++ = v23;
+                            *outbuf++ = v18;
                             if ( !--v17 )
                               goto LABEL_27;
                             if ( v16[1] )
                             {
-                              v24 = *v8++;
+                              v18 = *v8++;
                               v16 += 2;
-                              *outbuf++ = v24;
+                              *outbuf++ = v18;
                               if ( !--v17 )
                                 goto LABEL_27;
                               if ( v16[1] )
+                              {
                                 break;
+                              }
                             }
                           }
                         }
