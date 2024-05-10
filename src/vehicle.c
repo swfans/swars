@@ -334,7 +334,32 @@ static TbBool vehicle_check_collide_with_area(struct Thing *p_vehA,
     return true;
 }
 
-/** Check if the second vehicle is in the way of first.
+/** Check if the vehicle is stopped due to state of tnode it rides on.
+ */
+TbBool vehicle_stopped_on_tnode(struct Thing *p_vehicle)
+{
+    if (p_vehicle->U.UVehicle.TNode >= 0)
+        return false;
+
+    // Repeat the stop conditions from process_vehicle_stop_for_pedestrians() exactly
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0008) != 0)
+    {
+        if (p_vehicle->State == VehSt_GOTO_LOC || p_vehicle->State == VehSt_WANDER)
+        {
+            struct TrafficNode *p_tnode;
+            p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
+            if ((p_tnode->Flags & TNdF_Unkn0040) != 0)
+            {
+                if (p_tnode->GateLink == p_vehicle->ThingOffset)
+                    return false;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/** Check if the second vehicle is in the way of first vehicle.
  */
 TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
 {
@@ -358,6 +383,24 @@ TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
       p_vehB->Radius, p_vehB->U.UVehicle.MatrixIndex);
 }
 
+TbBool vehicles_check_second_is_blocked(struct Thing *p_vehA, struct Thing *p_vehB)
+{
+    if (!vehicle_stopped_on_tnode(p_vehB))
+        return false;
+
+    // Check if the vehicles are riding on the same TNode, or the second has Agok node set
+    if ((p_vehA->U.UVehicle.TNode == p_vehB->U.UVehicle.TNode)
+     || ((p_vehB->U.UVehicle.WorkPlace & VWPFlg_HasAgok) != 0))
+    {
+        // If one of the vehicles already claimed the TNode, it should go first
+        struct TrafficNode *p_tnode;
+        p_tnode = &game_traffic_nodes[-p_vehB->U.UVehicle.TNode];
+        if (p_tnode->GateLink == p_vehA->ThingOffset)
+            return true;
+    }
+    return false;
+}
+
 /** Of two competing (potentially colliding) vehicles, check if the first one has right-of-way to move forward.
  */
 TbBool vehicle_first_has_right_of_way(struct Thing *p_vehA, struct Thing *p_vehB)
@@ -368,7 +411,8 @@ TbBool vehicle_first_has_right_of_way(struct Thing *p_vehA, struct Thing *p_vehB
 
 /** Collision check between two vehicles.
  */
-static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_vehB, int posAx, int posAy, int posAz)
+static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_vehB,
+  int posAx, int posAy, int posAz)
 {
     struct M33 *matB;
     int radB_incl_speed, matB02, matB22;
@@ -418,6 +462,15 @@ static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_v
     if (vehicle_first_has_right_of_way(p_vehA, p_vehB) && check_two_vehicles(p_vehB, p_vehA))
         return false;
 
+    // Check if the 2nd vehicle is blocked, in which case the first should assume
+    // right of way to avoid blockade; this workarounds an issue where on two crossroads
+    // close to each other, two vehicles will get blocked on each other. The issue
+    // was prominent on `-m 0,21`, where it would happen sooner or later without any
+    // actions required from the player. A better solution to such jams may be developed
+    // later, when the workings of the traffic system are better understood.
+    if (vehicles_check_second_is_blocked(p_vehA, p_vehB))
+        return false;
+
     LOGSYNC("Stopping %s thing %d rqspeed %d due to %s thing %d rqspeed %d",
       vehicle_type_name(p_vehA->Type), (int)p_vehA->ThingOffset,
       (int)p_vehA->U.UVehicle.ReqdSpeed,
@@ -433,7 +486,8 @@ static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_v
 /** Simplified vehicle collision check for when the vehicles are on the same tile.
  * We don't have to check for overlap, as every vehicle is larger than a tile.
  */
-static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct Thing *p_vehB, int pos_x, int pos_y, int pos_z)
+static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct Thing *p_vehB,
+  int pos_x, int pos_y, int pos_z)
 {
     if ((p_vehB->Flag & TngF_Unkn0004) != 0)
         return false;
@@ -457,7 +511,8 @@ static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct
     return false; //TODO is that the best result?
 }
 
-static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing *p_person, int pos_x, int pos_y, int pos_z)
+static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing *p_person,
+  int pos_x, int pos_y, int pos_z)
 {
     int dx, dz, per_r_sq, veh_r_sq;
 
@@ -485,7 +540,8 @@ static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing 
     return false;
 }
 
-static TbBool check_vehicle_col_with_mine(struct Thing *p_vehicle, struct SimpleThing *p_minetng, int pos_x, int pos_y, int pos_z)
+static TbBool check_vehicle_col_with_mine(struct Thing *p_vehicle, struct SimpleThing *p_minetng,
+  int pos_x, int pos_y, int pos_z)
 {
     if (p_minetng->SubType != 12)
         return false;
@@ -496,7 +552,8 @@ static TbBool check_vehicle_col_with_mine(struct Thing *p_vehicle, struct Simple
     return false;
 }
 
-static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel, int pos_x, int pos_y, int pos_z)
+static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel,
+  int pos_x, int pos_y, int pos_z)
 {
     short thing;
 
@@ -541,7 +598,8 @@ static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapEl
     return false;
 }
 
-static TbBool check_vehicle_col_on_same_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel, int pos_x, int pos_y, int pos_z)
+static TbBool check_vehicle_col_on_same_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel,
+  int pos_x, int pos_y, int pos_z)
 {
     short thing;
 
