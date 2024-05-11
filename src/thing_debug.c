@@ -20,6 +20,7 @@
 
 #include <string.h>
 #include "bfkeybd.h"
+#include "bfbox.h"
 #include "command.h"
 #include "drawtext.h"
 #include "display.h"
@@ -63,8 +64,10 @@ void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
         : : "a" (x), "d" (y), "b" (a3), "c" (a4), "g" (a5));
 }
 
+// TODO separate get_person_commands_debug_hud_inputs() from the below
 void person_commands_debug_hud(int x, int y, int w, int h, short person, ubyte col1, ubyte col2, ubyte col3)
 {
+#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
@@ -72,6 +75,107 @@ void person_commands_debug_hud(int x, int y, int w, int h, short person, ubyte c
       "push %4\n"
       "call ASM_person_commands_debug_hud\n"
         : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (person), "g" (col1), "g" (col2), "g" (col3));
+    return;
+#endif
+    struct Thing *p_person;
+    ushort cmds_count;
+    short cmd, cmdhead;
+#if 0
+    short hilight_cmd;
+#endif
+    short cy;
+    short ms_y;
+    char locstr[52];
+    short box_x, box_y;
+    short box_width, box_height;
+    short row_height;
+    int j;
+
+#if 0
+    hilight_cmd = -1;
+#endif
+    box_width = 200;
+    p_person = &things[person];
+    box_height = 150;
+    box_x = 400;
+    box_y = 100;
+    row_height = 16;
+    cmdhead = p_person->U.UPerson.ComHead;
+    if (lbDisplay.GraphicsScreenHeight >= 400)
+        box_width = 100;
+    cmds_count = 0;
+    for (cmd = cmdhead; cmd; cmds_count++)
+        cmd = game_commands[cmd].Next;
+
+    if (cmds_count == 0)
+        return;
+
+    if (16 * cmds_count + 8 < box_height)
+        box_height = 16 * cmds_count + 8;
+    if ((word_1DC7A0 >> 2) > word_1DC7A2 - 4)
+        word_1DC7A0 = 0;
+    word_1DC7A2 = cmds_count;
+    lbDisplay.DrawFlags = 0x0004;
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        LbDrawBox(box_x/2, box_y/2, box_width/2, box_height/2, col3);
+    else
+        LbDrawBox(box_x, box_y, box_width, box_height, col3);
+    lbDisplay.DrawFlags = 0;
+    draw_unkn_func_07(box_x, box_y, box_width, box_height, col1);
+    cmd = cmdhead;
+    for (j = word_1DC7A0 >> 2; cmd; j--)
+    {
+        if (j == 0)
+            break;
+        cmd = game_commands[cmd].Next;
+    }
+    cy = box_y + 4 - 4 * (word_1DC7A0 & 3);
+    person_command_to_text(0, 0, 1);
+
+    while (cmd != 0)
+    {
+        if (cy > box_y)
+        {
+            if (mouse_move_over_box_coords(box_x + 8, cy, box_x + 8 + box_width, cy + row_height - 1))
+            {
+                if (lbDisplay.GraphicsScreenHeight < 400)
+                    LbDrawBox((box_x + 4)/2, (cy - 2)/2, (box_width - 8)/2, (row_height - 1)/2, col1);
+                else
+                    LbDrawBox(box_x + 4, cy - 2, box_width - 8, row_height - 1, col1);
+            }
+            if ((p_person != NULL) && (p_person->U.UPerson.ComCur == cmd))
+            {
+                if (lbDisplay.GraphicsScreenHeight < 400)
+                    LbDrawBox((box_x + 4)/2, (cy - 2)/2, (box_width - 8)/2, (row_height - 1)/2, colour_lookup[3]);
+                else
+                    LbDrawBox(box_x + 4, cy - 2, box_width - 8, row_height - 1, colour_lookup[3]);
+            }
+
+#if 0
+            if (mouse_move_over_box_coords(box_x + 8, cy, box_x + 8 + box_width, cy + row_height - 1))
+            {
+                hilight_cmd = cmd;
+            }
+#endif
+            if (p_person != NULL)
+                unused_func_204(box_x + 8 - 20, cy + 5, cmd, p_person);
+            if (person_command_to_text(locstr, cmd, 0))
+                draw_text(box_x + 8, cy, locstr, col2);
+            else
+                cy -= row_height;
+            if (cy + 28 > box_height + box_y)
+                break;
+        }
+        cy += row_height;
+        cmd = game_commands[cmd].Next;
+        ++j;
+    }
+
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    if ((ms_y < box_y - 20) && (word_1DC7A0 > 0))
+        word_1DC7A0--;
+    if ((ms_y > box_height + box_y + 10) && (word_1DC7A0 >> 2 < word_1DC7A2 - (box_height >> 4)))
+        word_1DC7A0++;
 }
 
 void things_debug_hud(void)
