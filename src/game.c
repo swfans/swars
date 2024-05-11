@@ -4319,14 +4319,10 @@ void teleport_current_agent(PlayerInfo *p_locplayer)
 
 void person_resurrect(struct Thing *p_person)
 {
-    ulong person_anim;
     p_person->Flag &= ~TngF_Unkn0002;
     p_person->Flag &= ~TngF_Unkn02000000;
     p_person->State = PerSt_WAIT;
-    p_person->U.UPerson.AnimMode = 1;
-    person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
-    p_person->StartFrame = person_anim - 1;
-    p_person->Frame = nstart_ani[person_anim + p_person->U.UPerson.Angle];
+    set_person_anim_mode(p_person, 1);
 }
 
 void person_give_all_weapons(struct Thing *p_person)
@@ -4940,7 +4936,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
     }
 
     if (((p_person->Flag2 & 0x1000000) == 0)
-      && ((p_person->Flag & 0x02) == 0))
+      && ((p_person->Flag & TngF_Unkn0002) == 0))
     {
         struct GroupAction *p_grpact;
 
@@ -4956,16 +4952,16 @@ void init_level_unknsub01_person(struct Thing *p_person)
     p_person->U.UPerson.WeaponsCarried |= (1 << (WEP_ENERGYSHLD-1));
     p_person->OldTarget = 0;
 
-    if ((p_person->Flag & 0x02) != 0) {
-        p_person->State = 13;
+    if ((p_person->Flag & TngF_Unkn0002) != 0) {
+        p_person->State = PerSt_DEAD;
     } else {
-        p_person->State = 0;
+        p_person->State = PerSt_NONE;
     }
-    if ((p_person->Flag & 0x2000) != 0) {
+    if ((p_person->Flag & TngF_PlayerAgent) != 0) {
         p_person->U.UPerson.ComCur = 0;
     } else {
         p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
-        p_person->Flag |= 0x0040;
+        p_person->Flag |= TngF_Unkn0040;
     }
 
     if ((p_person->Flag2 & 0x1000000) != 0)
@@ -4973,7 +4969,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
     else
         p_person->Flag2 &= ~0x20000000;
 
-    if ((p_person->Flag & 0x0002) == 0)
+    if ((p_person->Flag & TngF_Unkn0002) == 0)
     {
         if (p_person->U.UPerson.CurrentWeapon != 0)
             switch_person_anim_mode(p_person, 1);
@@ -4984,7 +4980,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
 
 void init_level_unknsub01_building(struct Thing *p_buildng)
 {
-    p_buildng->Flag &= 0x0800;
+    p_buildng->Flag &= TngF_Unkn0800;
     if (p_buildng->SubType == SubTT_BLD_MGUN)
     {
         p_buildng->PTarget = 0;
@@ -5079,7 +5075,7 @@ void init_level(void)
     }
 
     set_default_brightness();
-    ingame.Flags &= ~0x8000;
+    ingame.Flags &= ~TngF_Unkn8000;
     if (!in_network_game)
         ingame.InNetGame_UNSURE = 1;
     word_1531DA = 1;
@@ -5285,7 +5281,7 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
 {
-    ulong n, nframe;
+    ulong n;
     ushort plagent, high_tier;
     PlayerInfo *p_player;
     struct Thing *p_person;
@@ -5391,31 +5387,21 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         {
         case 0:
             p_person->SubType = SubTT_PERS_AGENT;
-            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
-            p_person->StartFrame = nframe - 1;
-            p_person->Frame = nstart_ani[nframe + p_person->U.UPerson.Angle];
+            reset_person_frame(p_person);
             break;
         case 1:
             p_person->SubType = SubTT_PERS_ZEALOT;
-            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
-            p_person->StartFrame = nframe - 1;
-            p_person->Frame = nstart_ani[nframe + p_person->U.UPerson.Angle];
+            reset_person_frame(p_person);
             break;
         case 2:
             p_person->SubType = SubTT_PERS_PUNK_M;
-            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
-            p_person->StartFrame = nframe - 1;
-            p_person->Frame = nstart_ani[nframe + p_person->U.UPerson.Angle];
+            reset_person_frame(p_person);
             break;
         }
         p_person->U.UPerson.FrameId.Version[0] = 0;
         if (p_person->U.UPerson.CurrentWeapon == 0)
         {
-            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
-            p_person->Frame -= nstart_ani[nframe + p_person->U.UPerson.Angle];
-            p_person->U.UPerson.AnimMode = 0;
-            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
-            p_person->Frame += nstart_ani[nframe + p_person->U.UPerson.Angle];
+            switch_person_anim_mode(p_person, 0);
         }
 
         if ((p_person->SubType == SubTT_PERS_AGENT) || (p_person->SubType == SubTT_PERS_ZEALOT))

@@ -155,8 +155,6 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 
             if (p_thing->Type == TT_PERSON)
             {
-                ushort person_anim;
-
                 if (fmtver < 15)
                     // Causes invisible NPCs when non-zero
                     p_thing->Flag2 = 0;
@@ -169,9 +167,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     delete_node(p_thing);
                     continue;
                 }
-                person_anim = people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode];
-                p_thing->StartFrame = person_anim - 1;
-                p_thing->Frame = nstart_ani[person_anim + p_thing->U.UPerson.Angle];
+                reset_person_frame(p_thing);
                 init_person_thing(p_thing);
                 p_thing->Flag |= TngF_Unkn0004;
                 if (fmtver < 6)

@@ -184,7 +184,17 @@ void set_person_stats_type(struct Thing *p_person, ushort type);
 void init_person_thing(struct Thing *p_person);
 void person_give_best_mods(struct Thing *p_person);
 
+/** Switches AnimMode of a person without removing any shifts to current frame.
+ */
 void switch_person_anim_mode(struct Thing *p_person, ubyte animode);
+
+/** Sets new AnimMode of a person, replacing the old frame number.
+ */
+void set_person_anim_mode(struct Thing *p_person, ubyte animode);
+
+/** Resets Frame number of a person, using its current properties.
+ */
+void reset_person_frame(struct Thing *p_person);
 
 TbBool person_is_persuaded(short thing);
 TbBool person_is_persuaded_by_person(short thing, short owntng);
