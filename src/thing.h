@@ -864,11 +864,13 @@ struct ThingOldV9 { // sizeof=216
 /******************************************************************************/
 extern struct Thing *things;
 extern short things_used_head;
+extern ushort things_used;
 extern short same_type_head[256+32];
 extern short static_radii[];
 
 extern struct SimpleThing *sthings;
 extern short sthings_used_head;
+extern ushort sthings_used;
 
 extern TbBool debug_hud_things;
 

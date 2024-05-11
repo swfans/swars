@@ -1262,5 +1262,31 @@ void process_vehicle(struct Thing *p_vehicle)
     }
 }
 
+void progress_trains(ulong nturns)
+{
+    ulong turns;
+
+    for (turns = nturns; turns > 0; turns--)
+    {
+        short thing;
+        int tng_remain;
+        struct Thing *p_thing;
+
+        thing = things_used_head;
+        tng_remain = things_used;
+        while (thing > 0)
+        {
+            if (tng_remain == 0)
+                break;
+            p_thing = &things[thing];
+            thing = p_thing->LinkChild;
+            tng_remain--;
+
+            if ((p_thing->Type == TT_VEHICLE)
+              && (p_thing->SubType == SubTT_VEH_TRAIN))
+                process_vehicle(p_thing);
+        }
+    }
+}
 
 /******************************************************************************/

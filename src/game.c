@@ -299,9 +299,13 @@ extern ubyte byte_176D49;
 extern ubyte byte_176D4A;
 extern ubyte byte_176D4B;
 
+extern ushort shield_frm[4];
+
 extern short word_19CC64;
 extern short word_19CC66;
 extern ubyte byte_19EC7A;
+
+extern ushort word_1AABD0;
 
 extern ubyte byte_1C497E;
 extern ubyte byte_1C497F;
@@ -582,9 +586,9 @@ void bang_set_detail(int a1)
         : : "a" (a1));
 }
 
-void game_setup_sub3(void)
+void FIRE_init_or_samples_init(void)
 {
-    asm volatile ("call ASM_game_setup_sub3\n"
+    asm volatile ("call ASM_FIRE_init_or_samples_init\n"
         :  :  : "eax" );
 }
 
@@ -4853,6 +4857,13 @@ void find_the_tall_buildings(void)
     return;
 }
 
+void func_749fc(void)
+{
+    asm volatile ("call ASM_func_749fc\n"
+        :  :  : "eax" );
+    return;
+}
+
 void init_level(void)
 {
 #if 1
@@ -4901,6 +4912,34 @@ void init_level(void)
 
     set_default_brightness();
     ingame.Flags &= ~0x8000;
+    if (!in_network_game)
+        ingame.InNetGame_UNSURE = 1;
+    word_1531DA = 1;
+    shield_frm[0] = nstart_ani[984];
+    shield_frm[1] = frame[frame[shield_frm[0]].Next].Next;
+    shield_frm[2] = frame[frame[shield_frm[1]].Next].Next;
+    shield_frm[3] = frame[frame[shield_frm[2]].Next].Next;
+    ingame.fld_unkCB7 = 0;
+    ingame.fld_unkC59 = 0;
+    ingame.FlameCount = 0;
+    ingame.SoundThing = 0;
+    ingame.fld_unkCB5 = 0;
+    clear_open_mission_status();
+    init_free_explode_faces();
+    StopAllSamples();
+    ingame.TrackThing = 0;
+    func_74934();
+    ingame.TrackX = engn_xc;
+    ingame.fld_unkCA6 = 0;
+    ingame.TrackZ = engn_zc;
+    ingame.UserZoom = 120;
+    word_1AABD0 = next_floor_texture;
+    init_crater_textures();
+    bang_init();
+    FIRE_init_or_samples_init();
+    func_749fc();
+    progress_trains(50);
+
     //TODO rewrite the rest
 }
 
@@ -5518,7 +5557,7 @@ void game_setup(void)
     init_free_explode_faces();
     init_search_spiral();
     bang_set_detail(0);
-    game_setup_sub3();
+    FIRE_init_or_samples_init();
     ingame.draw_unknprop_01 = 0;
     debug_trace_setup(-5);
     game_setup_stuff();

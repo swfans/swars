@@ -478,6 +478,15 @@ struct SortSprite {
     short Scale;
 };
 
+struct Frame {
+    ushort FirstElement;
+    ubyte SWidth;
+    ubyte SHeight;
+    ubyte FX;
+    ubyte Flags;
+    ushort Next;
+};
+
 #pragma pack()
 
 extern char session_name[20];
