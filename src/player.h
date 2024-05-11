@@ -91,11 +91,10 @@ typedef struct {
     ubyte PlayerNo;
     ulong Weapons[AGENTS_SQUAD_MAX_COUNT];
     union Mod Mods[AGENTS_SQUAD_MAX_COUNT];
-  short field_E8;
-  int field_EA;
-  int field_EE;
-  int field_F2;
-  int field_F6;
+  short field_E8[3];
+  short field_EE;
+    short SpecialItems[4];
+    short GotoFace;
     ushort PanelTimer;
     short PanelX;
     short PanelY;

@@ -4777,10 +4777,131 @@ void blind_progress_game(ulong nturns)
     }
 }
 
+void clear_mission_status(ulong id)
+{
+    mission_status[id].CivsKilled = 0;
+    mission_status[id].EnemiesKilled = 0;
+    mission_status[id].CivsPersuaded = 0;
+    mission_status[id].SecurityPersuaded = 0;
+    mission_status[id].EnemiesPersuaded = 0;
+    mission_status[id].AgentsGained = 0;
+    mission_status[id].AgentsLost = 0;
+    mission_status[id].SecurityKilled = 0;
+    mission_status[id].CityDays = 0;
+    mission_status[id].CityHours = 0;
+}
+
+void clear_open_mission_status(void)
+{
+    ulong id;
+
+    if (in_network_game)
+    {
+        // In network game, mission status is per-player rather than per-mission
+        for (id = 0; id < 8; id++)
+        {
+            clear_mission_status(id);
+        }
+    }
+    else if (!in_network_game)
+    {
+        // Each mission has its status (unless in network game)
+        clear_mission_status(open_brief);
+    }
+}
+
+void unkn_lights_func_11(void)
+{
+    asm volatile ("call ASM_unkn_lights_func_11\n"
+        :  :  : "eax" );
+}
+
+void people_intel(ubyte flag)
+{
+    asm volatile ("call ASM_people_intel\n"
+        : : "a" (flag));
+}
+
+void func_74934(void)
+{
+    asm volatile ("call ASM_func_74934\n"
+        :  :  : "eax" );
+}
+
+void set_default_brightness(void)
+{
+#if 0
+    asm volatile ("call ASM_set_default_brightness\n"
+        :  :  : "eax" );
+    return;
+#endif
+    palette_brightness = brightness;
+    change_brightness(0);
+}
+
+void init_crater_textures(void)
+{
+    asm volatile ("call ASM_init_crater_textures\n"
+        :  :  : "eax" );
+    return;
+}
+
+void find_the_tall_buildings(void)
+{
+    asm volatile ("call ASM_find_the_tall_buildings\n"
+        :  :  : "eax" );
+    return;
+}
+
 void init_level(void)
 {
+#if 1
     asm volatile ("call ASM_init_level\n"
         :  :  : "eax" );
+    return;
+#endif
+    short plyr_no;
+
+    people_intel(1);
+    if (in_network_game)
+    {
+        ingame.DetailLevel = 1;
+        for (plyr_no = 0; plyr_no < 8; plyr_no++)
+        {
+            player_unkn0C9[plyr_no] = 0;
+            player_unknCC9[plyr_no][0] =  '\0';
+        }
+    }
+    else
+    {
+        init_mission_states();
+    }
+
+    plyr_no = 0;
+    for (plyr_no = 0; plyr_no < 8; plyr_no++)
+    {
+        PlayerInfo *p_player;
+        short mouser;
+
+        p_player = &players[plyr_no];
+        for (mouser = 0; mouser < 4; mouser++)
+        {
+            p_player->field_19A[mouser] = 0;
+            p_player->field_E8[mouser] = 0;
+            p_player->field_1A2[mouser] = 0;
+            p_player->SpecialItems[mouser] = 0;
+            p_player->PanelItem[mouser] = 0;
+            p_player->PanelState[mouser] = 0;
+        }
+        p_player->TargetType = 0;
+        p_player->GotoFace = 0;
+        p_player->Target = 0;
+        p_player->field_102 = 0;
+    }
+
+    set_default_brightness();
+    ingame.Flags &= ~0x8000;
+    //TODO rewrite the rest
 }
 
 void init_level_3d(ubyte flag)
@@ -5203,12 +5324,6 @@ void init_game(ubyte reload)
     execute_commands = 1;
     ingame.DisplayMode = DpM_UNKN_32;
     debug_trace_setup(5);
-}
-
-void unkn_lights_func_11(void)
-{
-    asm volatile ("call ASM_unkn_lights_func_11\n"
-        :  :  : "eax" );
 }
 
 void prep_single_mission(void)
@@ -10188,20 +10303,6 @@ void draw_purple_screen(void)
     draw_purple_screen_hotspots(hsnext);
 }
 
-void clear_mission_status(ulong id)
-{
-    mission_status[id].CivsKilled = 0;
-    mission_status[id].EnemiesKilled = 0;
-    mission_status[id].CivsPersuaded = 0;
-    mission_status[id].SecurityPersuaded = 0;
-    mission_status[id].EnemiesPersuaded = 0;
-    mission_status[id].AgentsGained = 0;
-    mission_status[id].AgentsLost = 0;
-    mission_status[id].SecurityKilled = 0;
-    mission_status[id].CityDays = 0;
-    mission_status[id].CityHours = 0;
-}
-
 void show_menu_screen_st2(void)
 {
     if ( in_network_game )
@@ -10431,14 +10532,10 @@ void show_load_and_prep_mission(void)
     // Update game progress and prepare level to play
     if ( start_into_mission )
     {
+        clear_open_mission_status();
         if ( in_network_game )
         {
-            int i;
             update_mission_time(1);
-            // In network game, mission status is per-player rather than per-mission
-            for (i = 0; i < 8; i++) {
-                clear_mission_status(i);
-            }
             gameturn = 0;
         }
         else
@@ -10449,8 +10546,6 @@ void show_load_and_prep_mission(void)
             }
             strncpy(unkn2_names[0], login_name, 16);
 
-            // Each mission has its status (unless in network game)
-            clear_mission_status(open_brief);
             update_mission_time(1);
             cities[unkn_city_no].Info = 0;
             mission_result = 0;
