@@ -74,6 +74,9 @@ short get_next_tnode(struct Thing *p_vehicle, struct TrafficNode *p_tnode);
 
 void process_next_tnode(struct Thing *p_vehicle);
 
+void VNAV_preprocess_bezier_turns(ulong nturns);
+void VNAV_init_new_traffic_system(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

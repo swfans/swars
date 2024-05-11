@@ -1262,7 +1262,7 @@ void process_vehicle(struct Thing *p_vehicle)
     }
 }
 
-void progress_trains(ulong nturns)
+void preprogress_trains_turns(ulong nturns)
 {
     ulong turns;
 

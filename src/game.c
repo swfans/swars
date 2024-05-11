@@ -39,6 +39,7 @@
 #include "bflib_joyst.h"
 #include "ssampply.h"
 #include "matrix.h"
+#include "dos.h"
 #include "drawtext.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
@@ -272,6 +273,8 @@ extern ubyte month_days[12];
 
 struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};
 struct ScreenBoxBase global_apps_bar_box = {3, 432, 634, 48};
+
+extern short last_map_for_lights_func_11;
 
 extern ubyte byte_155124[];
 extern ubyte byte_15512C[];
@@ -4974,10 +4977,10 @@ void init_level(void)
     bang_init();
     FIRE_init_or_samples_init();
     func_749fc();
-    progress_trains(50);
+    preprogress_trains_turns(50);
     tnext_floor_texture = next_floor_texture + 1;
     init_col_vects_linked_list();
-    ingame.fld_unkC91 = clock();
+    ingame.fld_unkC91 = dos_clock();
 
     if ( current_map != 11 && current_map != 65 ) // If not map011 orbital station and not map065 the moon
     {
@@ -5012,7 +5015,18 @@ void init_level(void)
     missions_clear_bank_tests();
     thing_groups_clear_all_actions();
     init_my_paths();
+
     //TODO rewrite the rest
+
+    VNAV_preprocess_bezier_turns(1);
+    VNAV_init_new_traffic_system();
+    if (last_map_for_lights_func_11 != current_map)
+        unkn_lights_func_11();
+    last_map_for_lights_func_11 = current_map;
+    init_scanner();
+    find_the_tall_buildings();
+    PlayCDTrack(ingame.CDTrack);
+    StartMusic(ingame.DangerTrack, 0);
 }
 
 void init_level_3d(ubyte flag)

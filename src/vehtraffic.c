@@ -22,6 +22,7 @@
 #include <assert.h>
 #include "bfutility.h"
 #include "bigmap.h"
+#include "building.h"
 #include "game.h"
 #include "game_speed.h"
 #include "thing.h"
@@ -481,6 +482,43 @@ void vehicle_workplace_states_finish(struct Thing *p_vehicle)
             remove_agok_lock(p_vehicle);
         }
     }
+}
+
+void VNAV_process_bezier(struct Thing *p_road)
+{
+    asm volatile ("call ASM_VNAV_process_bezier\n"
+        : : "a" (p_road));
+}
+
+void VNAV_preprocess_bezier_turns(ulong nturns)
+{
+    ulong turns;
+
+    for (turns = nturns; turns > 0; turns--)
+    {
+        short thing;
+        ushort i;
+
+        thing = things_used_head;
+        i = things_used;
+        while ((thing > 0) && (i > 0))
+        {
+            struct Thing *p_thing;
+
+            p_thing = &things[thing];
+            if ((p_thing->Type == TT_BUILDING)
+              && (p_thing->SubType == SubTT_BLD_15))
+                VNAV_process_bezier(p_thing);
+            thing = p_thing->LinkChild;
+            i--;
+        }
+    }
+}
+
+void VNAV_init_new_traffic_system(void)
+{
+    asm volatile ("call ASM_VNAV_init_new_traffic_system\n"
+        :  :  : "eax" );
 }
 
 void process_next_tnode(struct Thing *p_vehicle)

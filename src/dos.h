@@ -51,6 +51,8 @@ void dos_gettime (struct dostime_t *t);
 
 void dos_getdate (struct dosdate_t *d);
 
+uint32_t dos_clock(void);
+
 void dos_free(unsigned short n);
 
 int dos_int386 (int num, union REGS *regs, union REGS *out_regs)

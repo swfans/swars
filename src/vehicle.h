@@ -197,7 +197,7 @@ void start_crashing(struct Thing *p_vehicle);
 
 int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle);
 
-void progress_trains(ulong nturns);
+void preprogress_trains_turns(ulong nturns);
 
 const char *vehicle_type_name(ushort vtype);
 void snprint_vehicle_state(char *buf, ulong buflen, struct Thing *p_thing);
