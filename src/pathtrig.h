@@ -63,6 +63,8 @@ void print_collision_vects(void);
 
 int unkn_path_func_001(struct Thing *p_thing, ubyte a2);
 
+void init_col_vects_linked_list(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

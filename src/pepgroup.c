@@ -176,4 +176,24 @@ int thing_group_transfer_people(short pv_group, short nx_group, short subtype, i
     return count;
 }
 
+void thing_group_clear_action(short group)
+{
+    group_actions[group].Alive = 0;
+    group_actions[group].Dead = 0;
+    group_actions[group].Hit = 0;
+    group_actions[group].FiredOn = 0;
+    group_actions[group].Persuaded = 0;
+    group_actions[group].Storming = 0;
+}
+
+void thing_groups_clear_all_actions(void)
+{
+    short group;
+
+    for (group = 0; group < PEOPLE_GROUPS_COUNT; group++)
+    {
+        thing_group_clear_action(group);
+    }
+}
+
 /******************************************************************************/

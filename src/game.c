@@ -299,6 +299,7 @@ extern ubyte byte_176D49;
 extern ubyte byte_176D4A;
 extern ubyte byte_176D4B;
 
+extern short word_1774E8[2 * 150];
 extern ushort shield_frm[4];
 
 extern short word_19CC64;
@@ -4864,6 +4865,41 @@ void func_749fc(void)
     return;
 }
 
+void func_3d904(void)
+{
+    asm volatile ("call ASM_func_3d904\n"
+        :  :  : "eax" );
+    return;
+}
+
+void missions_clear_bank_tests(void)
+{
+    short missi;
+
+    for (missi = 1; missi < next_mission; missi++)
+    {
+        mission_list[missi].BankTest = 0;
+        mission_list[missi].BankTestFail = 0;
+    }
+}
+
+void clear_word_1774E8(void)
+{
+    short i;
+
+    for (i = 0; i < 150; i++)
+    {
+        word_1774E8[2 * i + 0] = 0;
+    }
+}
+
+void init_my_paths(void)
+{
+    asm volatile ("call ASM_init_my_paths\n"
+        :  :  : "eax" );
+    return;
+}
+
 void init_level(void)
 {
 #if 1
@@ -4939,7 +4975,43 @@ void init_level(void)
     FIRE_init_or_samples_init();
     func_749fc();
     progress_trains(50);
+    tnext_floor_texture = next_floor_texture + 1;
+    init_col_vects_linked_list();
+    ingame.fld_unkC91 = clock();
 
+    if ( current_map != 11 && current_map != 65 ) // If not map011 orbital station and not map065 the moon
+    {
+        if ((things_used & 3) || (current_map == 30) || (in_network_game))
+        {
+            if (gamep_scene_effect != 0)
+                stop_sample_using_heap(0, 77);
+            LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
+            gamep_scene_effect = 0;
+            play_sample_using_heap(0, 8, 64, 64, 100, -1, 2);
+        }
+        else
+        {
+            gamep_scene_effect = 1;
+            LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
+            play_sample_using_heap(0, 77, 64, 64, 100, -1, 2);
+            func_3d904();
+        }
+    }
+    else
+    {
+        play_sample_using_heap(0, 78, 64, 64, 100, -1, 2);
+    }
+
+    gamep_unknval_10 = 0;
+    gamep_unknval_12 = 0;
+    nav_stats__ThisTurn = 0;
+    gamep_unknval_16 = 0;
+    ingame.fld_unkCB1 = 1;
+    ingame.fld_unkCB2 = 1;
+    clear_word_1774E8();
+    missions_clear_bank_tests();
+    thing_groups_clear_all_actions();
+    init_my_paths();
     //TODO rewrite the rest
 }
 
