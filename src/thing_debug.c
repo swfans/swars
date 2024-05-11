@@ -36,6 +36,8 @@ extern ubyte execute_commands;
 extern struct Thing *p_track_thing;
 extern struct Thing *p_track2_thing;
 extern int dword_1DC7A4;
+extern short word_1DC7A0;
+extern short word_1DC7A2;
 
 int select_thing_for_debug(short x, short y, short z, short type)
 {
@@ -45,15 +47,31 @@ int select_thing_for_debug(short x, short y, short z, short type)
     return ret;
 }
 
-void unused_func_205(int a1, int a2, int a3, int a4, short thing, ubyte a6, ubyte a7, ubyte a8)
+int unused_func_204(short a1, short a2, short a3, struct Thing *p_person)
+{
+    int ret;
+    asm volatile ("call ASM_unused_func_204\n"
+        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3), "c" (p_person));
+    return ret;
+}
+
+void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_draw_unkn_func_07\n"
+        : : "a" (x), "d" (y), "b" (a3), "c" (a4), "g" (a5));
+}
+
+void person_commands_debug_hud(int x, int y, int w, int h, short person, ubyte col1, ubyte col2, ubyte col3)
 {
     asm volatile (
       "push %7\n"
       "push %6\n"
       "push %5\n"
       "push %4\n"
-      "call ASM_unused_func_205\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (thing), "g" (a6), "g" (a7), "g" (a8));
+      "call ASM_person_commands_debug_hud\n"
+        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (person), "g" (col1), "g" (col2), "g" (col3));
 }
 
 void things_debug_hud(void)
@@ -95,9 +113,9 @@ void things_debug_hud(void)
       colour_lookup[1]);
     // Show commands list
     if (p_track_thing->Type == TT_PERSON)
-          unused_func_205(356, 80, 280, 150, thing, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
+          person_commands_debug_hud(356, 80, 280, 150, thing, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
     else if ((p_track_thing->Type == TT_VEHICLE) && (p_track_thing->U.UVehicle.PassengerHead > 0))
-          unused_func_205(356, 80, 280, 150, p_track_thing->U.UVehicle.PassengerHead, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
+          person_commands_debug_hud(356, 80, 280, 150, p_track_thing->U.UVehicle.PassengerHead, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
 
     if (execute_commands)
     {

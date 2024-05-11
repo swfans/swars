@@ -43,7 +43,7 @@
 .global EXPORT_SYMBOL(my_paths);
 
 /*----------------------------------------------------------------*/
-draw_unkn_func_07:	/* 0x426fc */
+GLOBAL_FUNC(ASM_draw_unkn_func_07)	/* 0x426fc */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -587,7 +587,7 @@ unused_func_203:	/* 0xb8c0c */
 		ret
 
 /*----------------------------------------------------------------*/
-unused_func_204:	/* 0xba010 */
+GLOBAL_FUNC(ASM_unused_func_204)	/* 0xba010 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -1208,7 +1208,7 @@ unused_func_204:	/* 0xba010 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
+GLOBAL_FUNC(ASM_person_commands_debug_hud)	/* 0xba6e4 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -1273,7 +1273,7 @@ GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
 		mov    %ax,0x44(%esp)
 	jump_ba7ae:
 		mov    data_1dc79e,%ebx
-		mov    data_1dc7a0,%eax
+		mov    EXPORT_SYMBOL(word_1DC7A0),%eax
 		sar    $0x10,%ebx
 		sar    $0x10,%eax
 		sar    $0x2,%ebx
@@ -1281,10 +1281,10 @@ GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
 		cmp    %eax,%ebx
 		jle    jump_ba7d2
 		xor    %ecx,%ecx
-		mov    %cx,data_1dc7a0
+		mov    %cx,EXPORT_SYMBOL(word_1DC7A0)
 	jump_ba7d2:
 		mov    $0x4,%eax
-		mov    %dx,data_1dc7a2
+		mov    %dx,EXPORT_SYMBOL(word_1DC7A2)
 		mov    %ax,EXPORT_SYMBOL(lbDisplay)+0x60
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(lbDisplay)+0x64,%ax
@@ -1331,7 +1331,7 @@ GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
 		push   %eax
 		sar    $0x10,%edx
 		mov    %edi,%eax
-		call   draw_unkn_func_07
+		call   ac_draw_unkn_func_07
 		mov    data_1dc79e,%eax
 		sar    $0x10,%eax
 		sar    $0x2,%eax
@@ -1352,7 +1352,7 @@ GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
 		test   %di,%di
 		jne    jump_ba885
 	jump_ba8aa:
-		mov    data_1dc7a0,%ax
+		mov    EXPORT_SYMBOL(word_1DC7A0),%ax
 		xor    %ah,%ah
 		and    $0x3,%al
 		mov    $0x1,%ebx
@@ -1577,7 +1577,7 @@ GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
 		mov    0x52(%esp),%eax
 		mov    %ebp,%ecx
 		sar    $0x10,%eax
-		call   unused_func_204
+		call   ac_unused_func_204
 	jump_bab3e:
 		mov    %esp,%eax
 		movswl %di,%edx
@@ -1636,7 +1636,7 @@ GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
 		sar    $0x10,%eax
 		test   %eax,%eax
 		jle    jump_babe5
-		decw   data_1dc7a0
+		decw   EXPORT_SYMBOL(word_1DC7A0)
 	jump_babe5:
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(lbDisplay)+0x64,%ax
@@ -1657,7 +1657,7 @@ GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
 		cmp    %ebx,%edx
 		jle    jump_bac40
 		mov    %eax,%edx
-		mov    data_1dc7a0,%eax
+		mov    EXPORT_SYMBOL(word_1DC7A0),%eax
 		sar    $0x4,%edx
 		sar    $0x10,%eax
 		sub    %edx,%eax
@@ -1667,7 +1667,7 @@ GLOBAL_FUNC(ASM_unused_func_205)	/* 0xba6e4 */
 		sar    $0x2,%eax
 		cmp    %edx,%eax
 		jge    jump_bac40
-		incw   data_1dc7a0
+		incw   EXPORT_SYMBOL(word_1DC7A0)
 	jump_bac40:
 		mov    0x38(%esp),%eax
 	jump_bac44:
@@ -1771,7 +1771,7 @@ GLOBAL_FUNC(ASM_things_debug_hud)	/* 0xbac50 */
 		push   %esi
 		mov    $0x50,%edx
 		mov    $0x164,%eax
-		call   ac_unused_func_205
+		call   ac_person_commands_debug_hud
 	jump_bad81:
 		cmpb   $0x0,EXPORT_SYMBOL(execute_commands)
 		je     jump_bb3c7
@@ -2912,9 +2912,9 @@ aSt_undef65:	/* 0x15D153 */
 
 data_1dc79e:
 		.short  0x0
-data_1dc7a0:
+GLOBAL (word_1DC7A0)	/* 0x1dc7a0 */
 		.short  0x0
-data_1dc7a2:
+GLOBAL (word_1DC7A2)	/* 0x1dc7a2 */
 		.short  0x0
 GLOBAL (dword_1DC7A4)	/* 0x1dc7a4 */
 		.long	0x0

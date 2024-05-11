@@ -888,6 +888,8 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
  */
 void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
 
+TbBool person_command_to_text(char *out, ushort cmd, ubyte a3);
+
 void things_debug_hud(void);
 
 /** Delete the thing from `mapwho` chain.
