@@ -178,12 +178,15 @@ int thing_group_transfer_people(short pv_group, short nx_group, short subtype, i
 
 void thing_group_clear_action(short group)
 {
-    group_actions[group].Alive = 0;
-    group_actions[group].Dead = 0;
-    group_actions[group].Hit = 0;
-    group_actions[group].FiredOn = 0;
-    group_actions[group].Persuaded = 0;
-    group_actions[group].Storming = 0;
+    struct GroupAction *p_grpact;
+
+    p_grpact = &group_actions[group];
+    p_grpact->Alive = 0;
+    p_grpact->Dead = 0;
+    p_grpact->Hit = 0;
+    p_grpact->FiredOn = 0;
+    p_grpact->Persuaded = 0;
+    p_grpact->Storming = 0;
 }
 
 void thing_groups_clear_all_actions(void)

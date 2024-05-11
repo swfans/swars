@@ -648,6 +648,17 @@ void set_person_stats_type(struct Thing *p_person, ushort stype)
     p_person->Speed = calc_person_speed(p_person);
 }
 
+void switch_person_anim_mode(struct Thing *p_person, ubyte animode)
+{
+    ushort person_anim;
+    person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+    p_person->Frame -= nstart_ani[person_anim + p_person->U.UPerson.Angle];
+    p_person->U.UPerson.AnimMode = animode;
+    person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+    p_person->Frame += nstart_ani[person_anim + p_person->U.UPerson.Angle];
+    p_person->StartFrame = person_anim - 1;
+}
+
 void init_person_thing(struct Thing *p_person)
 {
     set_person_health_energy_shield_stamina_type(p_person, p_person->SubType);
@@ -666,13 +677,7 @@ void init_person_thing(struct Thing *p_person)
     }
     else
     {
-        ushort person_anim;
-        person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
-        p_person->Frame -= nstart_ani[person_anim + p_person->U.UPerson.Angle];
-        p_person->U.UPerson.AnimMode = 0;
-        p_person->Frame += nstart_ani[person_anim + p_person->U.UPerson.Angle];
-        p_person->StartFrame = person_anim - 1;
-        p_person->Speed = calc_person_speed(p_person);
+        switch_person_anim_mode(p_person, 0);
     }
 }
 

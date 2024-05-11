@@ -399,7 +399,7 @@ struct Thing { // sizeof=168
     ubyte PathOffset;
     ubyte SubState;
     struct Thing *PTarget;
-    long Flag2;
+    ulong Flag2;
     short GotoThingIndex;
     short OldTarget;
     union { // pos=76

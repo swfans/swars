@@ -4331,7 +4331,21 @@ void person_resurrect(struct Thing *p_person)
 
 void person_give_all_weapons(struct Thing *p_person)
 {
-    p_person->U.UPerson.WeaponsCarried = 0x3FFBDFFF;
+    ushort wtype;
+
+    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    {
+        struct WeaponDef *wdef;
+        ulong wepflg;
+
+        wdef = &weapon_defs[wtype];
+
+        if ((wdef->Flags & WEPDFLG_CanPurchease) == 0)
+            continue;
+
+        wepflg = 1 << (wtype-1);
+        p_person->U.UPerson.WeaponsCarried |= wepflg;
+    }
     do_weapon_quantities1(p_person);
 }
 
@@ -4903,9 +4917,124 @@ void init_my_paths(void)
     return;
 }
 
+void init_level_unknsub01_person(struct Thing *p_person)
+{
+    struct Command *p_cmd;
+
+    p_cmd = &game_commands[p_person->U.UPerson.ComHead];
+
+    if (p_cmd->Type == PCmd_HARD_AS_AGENT)
+    {
+        set_person_stats_type(p_person, 1);
+        p_person->U.UPerson.ComHead = p_cmd->Next;
+    }
+
+    if (p_cmd->Type == PCmd_FULL_STAMINA)
+    {
+        struct PeepStat *p_pestat;
+
+        p_pestat = &peep_type_stats[SubTT_PERS_AGENT];
+        p_person->U.UPerson.MaxStamina = p_pestat->MaximumStamina;
+        p_person->U.UPerson.Stamina = p_person->U.UPerson.MaxStamina;
+        p_person->U.UPerson.ComHead = p_cmd->Next;
+    }
+
+    if (((p_person->Flag2 & 0x1000000) == 0)
+      && ((p_person->Flag & 0x02) == 0))
+    {
+        struct GroupAction *p_grpact;
+
+        p_grpact = &group_actions[p_person->U.UPerson.Group];
+        p_grpact->Alive++;
+    }
+    p_person->U.UPerson.CurrentWeapon = 0;
+    p_person->U.UPerson.PathIndex = 0;
+    p_person->U.UPerson.Target2 = 0;
+    p_person->U.UPerson.Within = 0;
+    p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
+    p_person->PTarget = 0;
+    p_person->U.UPerson.WeaponsCarried |= (1 << (WEP_ENERGYSHLD-1));
+    p_person->OldTarget = 0;
+
+    if ((p_person->Flag & 0x02) != 0) {
+        p_person->State = 13;
+    } else {
+        p_person->State = 0;
+    }
+    if ((p_person->Flag & 0x2000) != 0) {
+        p_person->U.UPerson.ComCur = 0;
+    } else {
+        p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
+        p_person->Flag |= 0x0040;
+    }
+
+    if ((p_person->Flag2 & 0x1000000) != 0)
+        delete_node(p_person);
+    else
+        p_person->Flag2 &= ~0x20000000;
+
+    if ((p_person->Flag & 0x0002) == 0)
+    {
+        if (p_person->U.UPerson.CurrentWeapon != 0)
+            switch_person_anim_mode(p_person, 1);
+        else
+            switch_person_anim_mode(p_person, 0);
+    }
+}
+
+void init_level_unknsub01_building(struct Thing *p_buildng)
+{
+    p_buildng->Flag &= 0x0800;
+    if (p_buildng->SubType == SubTT_BLD_MGUN)
+    {
+        p_buildng->PTarget = 0;
+        p_buildng->U.UObject.EffectiveGroup = p_buildng->U.UObject.Group;
+    }
+    if ((p_buildng->Flag2 & 0x1000000) != 0)
+    {
+        delete_node(p_buildng);
+    }
+}
+
+void init_level_unknsub01_vehicle(struct Thing *p_vehicle)
+{
+    if ((p_vehicle->Flag2 & 0x1000000) != 0)
+    {
+        delete_node(p_vehicle);
+    }
+}
+
+void init_level_unknsub01(void)
+{
+    short thing;
+
+    thing = things_used_head;
+    while (thing > 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        switch (p_thing->Type)
+        {
+        case TT_VEHICLE:
+            init_level_unknsub01_vehicle(p_thing);
+            break;
+        case TT_PERSON:
+            init_level_unknsub01_person(p_thing);
+            break;
+        case TT_BUILDING:
+            init_level_unknsub01_building(p_thing);
+            break;
+        default:
+            break;
+        }
+        thing = p_thing->LinkChild;
+    }
+}
+
 void init_level(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_init_level\n"
         :  :  : "eax" );
     return;
@@ -5016,7 +5145,7 @@ void init_level(void)
     thing_groups_clear_all_actions();
     init_my_paths();
 
-    //TODO rewrite the rest
+    init_level_unknsub01();
 
     VNAV_preprocess_bezier_turns(1);
     VNAV_init_new_traffic_system();
@@ -5204,7 +5333,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         {
             if ((p_person->SubType == SubTT_PERS_AGENT) || (p_person->SubType == SubTT_PERS_ZEALOT))
             {
-                p_person->U.UPerson.WeaponsCarried = p_player->Weapons[high_tier] | 0x400000;
+                p_person->U.UPerson.WeaponsCarried = p_player->Weapons[high_tier] | (1 << (WEP_ENERGYSHLD-1));
                 p_person->U.UPerson.UMod.Mods = p_player->Mods[high_tier].Mods;
             }
             p_person->U.UPerson.CurrentWeapon = 0;

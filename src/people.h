@@ -184,6 +184,8 @@ void set_person_stats_type(struct Thing *p_person, ushort type);
 void init_person_thing(struct Thing *p_person);
 void person_give_best_mods(struct Thing *p_person);
 
+void switch_person_anim_mode(struct Thing *p_person, ubyte animode);
+
 TbBool person_is_persuaded(short thing);
 TbBool person_is_persuaded_by_person(short thing, short owntng);
 TbBool person_is_persuaded_by_player(short thing, ushort plyr);
