@@ -19,10 +19,12 @@
 #include "enginpeff.h"
 
 #include "bfgentab.h"
+#include "bfpixel.h"
 #include "bfscreen.h"
 #include "bfutility.h"
 #include "display.h"
 #include "game_speed.h"
+#include "scanner.h"
 #include "swlog.h"
 /******************************************************************************/
 ushort gamep_scene_effect_intensity = 1000;
@@ -118,11 +120,49 @@ void draw_falling_rain(int bckt)
     lbSeed = seed_bkp;
 }
 
-void draw_static_noise(int a1)
+static void draw_static_dot(short x, short y, short w, short h, short ftpos)
 {
+    short dx, dy;
+
+    for (dy = 0; dy < h; dy++)
+    {
+        for (dx = 0; dx < w; dx++) {
+            LbDrawPixelClip(x + dx, y + dy, pixmap.fade_table[20*PALETTE_8b_COLORS + ftpos]);
+        }
+    }
+}
+
+void draw_static_noise(int bckt)
+{
+#if 0
     asm volatile (
       "call ASM_draw_static_noise\n"
         : : "a" (a1));
+#endif
+    int height;
+    uint seed_bkp;
+    int shift1;
+    uint shift2;
+    uint x, y;
+    ushort m, scanln;
+
+    scanln = lbDisplay.GraphicsScreenWidth;
+    m = lbDisplay.GraphicsScreenHeight / 200;
+    if (m == 0) m++;
+    height = 240 - (bckt >> 5);
+    seed_bkp = lbSeed;
+    if (height >= 20)
+    {
+        lbSeed = bckt;
+        shift1 = waft_table[(bckt + gameturn) & 0x1F];
+        x = (shift1 >> 1) + (engn_xc >> 4) + (engn_anglexz >> 7) + LbRandomPosShort();
+        shift2 = (10000 - bckt) * gameturn;
+        y = (shift2 >> 12) + LbRandomPosShort();
+        lbDisplay.DrawFlags = 0x0004;
+        draw_static_dot((x * m) % scanln, (y % height) * m, m, m, 128 * ((10000 - bckt) / 416) + colour_lookup[1]);
+        lbSeed = seed_bkp;
+        lbDisplay.DrawFlags = 0;
+    }
 }
 
 void scene_post_effect_for_bucket(short bckt)
