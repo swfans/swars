@@ -201,7 +201,6 @@ void things_debug_hud(void)
             dword_1DC7A4 = thing;
         }
     }
-
     if (dword_1DC7A4)
         thing = dword_1DC7A4;
 

@@ -27,7 +27,7 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-enum GamePostSceneEffect {
+enum GamePostSceneEffectType {
     ScEff_NONE = 0,
     ScEff_RAIN,
     ScEff_STATIC,
@@ -35,8 +35,8 @@ enum GamePostSceneEffect {
 
 #pragma pack()
 /******************************************************************************/
-extern ushort gamep_scene_effect;
-
+extern ushort gamep_scene_effect_type;
+extern ushort gamep_scene_effect_intensity;
 
 void scene_post_effect_prepare(void);
 void scene_post_effect_for_bucket(short bckt);

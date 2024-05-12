@@ -4040,7 +4040,8 @@ void init_outro(void)
     const char *text2;
     int i;
 
-    gamep_scene_effect = ScEff_NONE;
+    gamep_scene_effect_type = ScEff_NONE;
+    gamep_scene_effect_intensity = 1000;
     StopAllSamples();
     StopCD();
 
@@ -5060,7 +5061,7 @@ void init_level_unknsub01(void)
 
 void start_level_ambient_sound(void)
 {
-    switch (gamep_scene_effect)
+    switch (gamep_scene_effect_type)
     {
     case ScEff_NONE:
     default:
@@ -5160,17 +5161,20 @@ void init_level(void)
     if (current_map == 11 || current_map == 65) // If map011 orbital station or map065 the moon
     {
         LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-        gamep_scene_effect = ScEff_NONE;
+        gamep_scene_effect_type = ScEff_NONE;
+        gamep_scene_effect_intensity = 1000;
     }
     if ((things_used & 3) || (current_map == 30) || (in_network_game)) // map030 london
     {
         LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-        gamep_scene_effect = ScEff_NONE;
+        gamep_scene_effect_type = ScEff_NONE;
+        gamep_scene_effect_intensity = 1000;
     }
     else
     {
         LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-        gamep_scene_effect = ScEff_RAIN;
+        gamep_scene_effect_type = ScEff_RAIN;
+        gamep_scene_effect_intensity = 1000;
         func_3d904();
     }
 

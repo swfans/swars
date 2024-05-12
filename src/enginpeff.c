@@ -25,6 +25,8 @@
 #include "game_speed.h"
 #include "swlog.h"
 /******************************************************************************/
+ushort gamep_scene_effect_intensity = 1000;
+short gamep_scene_effect_change = -1;
 
 void game_process_sub08(void)
 {
@@ -35,7 +37,16 @@ void game_process_sub08(void)
 void scene_post_effect_prepare(void)
 {
     int i;
-    switch (gamep_scene_effect)
+#if 0 // experimental function to alter effect intensity
+    if ((LbRandomAnyShort() & 0xfff) > 0xf80)
+        gamep_scene_effect_change = -gamep_scene_effect_change;
+    gamep_scene_effect_intensity += gamep_scene_effect_change;
+    if (gamep_scene_effect_intensity < 250)
+        gamep_scene_effect_intensity = 250;
+    else if (gamep_scene_effect_intensity > 2000)
+        gamep_scene_effect_intensity = 2000;
+#endif
+    switch (gamep_scene_effect_type)
     {
     case ScEff_RAIN:
         game_process_sub08();
@@ -107,28 +118,33 @@ void draw_falling_rain(int bckt)
     lbSeed = seed_bkp;
 }
 
-void sub_2AAA0(int a1)
+void draw_static_noise(int a1)
 {
     asm volatile (
-      "call ASM_sub_2AAA0\n"
+      "call ASM_draw_static_noise\n"
         : : "a" (a1));
 }
 
 void scene_post_effect_for_bucket(short bckt)
 {
-    if ((bckt & 7) == 0)
+    uint every;
+
+    switch (gamep_scene_effect_type)
     {
-        switch (gamep_scene_effect)
-        {
-        case ScEff_RAIN:
+    case ScEff_RAIN:
+        every = 8 * 1000 / gamep_scene_effect_intensity;
+        if ((bckt % every) == 0) {
             draw_falling_rain(bckt);
-            break;
-        case ScEff_STATIC:
-            sub_2AAA0(bckt);
-            break;
-        default:
-            break;
         }
+        break;
+    case ScEff_STATIC:
+        every = 8 * 1000 / gamep_scene_effect_intensity;
+        if ((bckt % every) == 0) {
+            draw_static_noise(bckt);
+        }
+        break;
+    default:
+        break;
     }
 }
 
