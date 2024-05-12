@@ -19,6 +19,7 @@
 #include "enginpeff.h"
 
 #include "bfgentab.h"
+#include "bfmath.h"
 #include "bfpixel.h"
 #include "bfscreen.h"
 #include "bfutility.h"
@@ -141,9 +142,6 @@ void draw_static_noise(int bckt)
 #endif
     int height;
     uint seed_bkp;
-    int shift1;
-    uint shift2;
-    uint x, y;
     ushort m, scanln;
 
     scanln = lbDisplay.GraphicsScreenWidth;
@@ -153,11 +151,22 @@ void draw_static_noise(int bckt)
     seed_bkp = lbSeed;
     if (height >= 20)
     {
+        int shift1;
+        uint shift2;
+        uint x, y;
+        ushort speed;
+        ushort angXZs, angXZc;
+
+        angXZs = ((engn_anglexz >> 5)) & 0x7FF;
+        angXZc = ((engn_anglexz >> 5) + LbFPMath_PI/2) & 0x7FF;
+
         lbSeed = bckt;
+        speed = (bckt >> 5) & 0x3;
         shift1 = waft_table[(bckt + gameturn) & 0x1F];
-        x = (shift1 >> 1) + (engn_xc >> 4) + (engn_anglexz >> 7) + LbRandomPosShort();
+        // Moving with full background speed would be >> 19, dividing by half to make rotation look beter
+        x = (shift1 >> (speed + 1)) + ((engn_zc * lbSinTable[angXZs]) >> 20) - ((engn_xc * lbSinTable[angXZc]) >> 20) + LbRandomAnyShort();
         shift2 = (10000 - bckt) * gameturn;
-        y = (shift2 >> 12) + LbRandomPosShort();
+        y = (shift2 >> (12 - speed/2)) + ((engn_xc * lbSinTable[angXZs]) >> 20) + ((engn_zc * lbSinTable[angXZc]) >> 20) + LbRandomAnyShort();
         lbDisplay.DrawFlags = 0x0004;
         draw_static_dot((x * m) % scanln, (y % height) * m, m, m, 128 * ((10000 - bckt) / 416) + colour_lookup[1]);
         lbSeed = seed_bkp;
