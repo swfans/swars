@@ -4785,7 +4785,7 @@ void init_level(void)
         gamep_scene_effect_type = ScEff_NONE;
         gamep_scene_effect_intensity = 1000;
     }
-    if ((things_used & 3) || (current_map == 30) || (in_network_game)) // map030 london
+    else if ((things_used & 3) || (current_map == 30) || (in_network_game)) // map030 london
     {
         LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
         gamep_scene_effect_type = ScEff_NONE;
