@@ -21,6 +21,7 @@
 #include <string.h>
 #include "bfkeybd.h"
 #include "bfbox.h"
+#include "bigmap.h"
 #include "command.h"
 #include "drawtext.h"
 #include "display.h"
@@ -40,12 +41,49 @@ extern int dword_1DC7A4;
 extern short word_1DC7A0;
 extern short word_1DC7A2;
 
+short unused_func_201(short x, short y, short z, short type)
+{
+    short ret;
+    asm volatile ("call ASM_unused_func_201\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
+    return ret;
+}
+
 int select_thing_for_debug(short x, short y, short z, short type)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_select_thing_for_debug\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
     return ret;
+#endif
+    short thing;
+    short alt;
+    char locstr[52];
+
+    thing = unused_func_201(x, y, z, type);
+    alt = alt_at_point(x, z) >> 5;
+    if (thing > 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        func_6fe80(x, alt, z, p_thing->X >> 8,
+        p_thing->Y >> 5, p_thing->Z >> 8, colour_lookup[1]);
+        sprintf(locstr, "TH %d ID %d", thing, p_thing->U.UPerson.UniqueID);
+        draw_text_transformed_at_ground(p_thing->X >> 8, p_thing->Z >> 8, locstr);
+    }
+    else if (thing < 0)
+    {
+        struct SimpleThing *p_sthing;
+
+        p_sthing = &sthings[thing];
+        func_6fe80(x, alt, z, p_sthing->X >> 8, p_sthing->Y >> 5,
+          p_sthing->Z >> 8, colour_lookup[1]);
+        sprintf(locstr, "TH %d ID %d", thing, p_sthing->UniqueID);
+        draw_text_transformed_at_ground(p_sthing->X >> 8, p_sthing->Z >> 8, locstr);
+    }
+    return thing;
 }
 
 int unused_func_204(short a1, short a2, short a3, struct Thing *p_person)

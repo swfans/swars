@@ -253,7 +253,7 @@ unused_func_200:	/* 0xb8860 */
 
 
 /*----------------------------------------------------------------*/
-unused_func_201:	/* 0xb8914 */
+GLOBAL_FUNC(ASM_unused_func_201)	/* 0xb8914 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -424,7 +424,7 @@ GLOBAL_FUNC(ASM_select_thing_for_debug)	/* 0xb8acc */
 		movswl %ax,%esi
 		mov    %edi,%ebx
 		mov    %esi,%eax
-		call   unused_func_201
+		call   ac_unused_func_201
 		mov    %eax,%ebx
 		mov    %eax,0x38(%esp)
 		mov    %edi,%edx
