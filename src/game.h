@@ -250,12 +250,6 @@ struct DIHotspot {
 	short Y;
 };
 
-struct DrawItem {
-    ubyte Type;
-    ushort Offset;
-    ushort Child;
-};
-
 struct PurpleDrawItem { // sizeof=26
 	union {
 		//struct DITrig Trig; // unused? too large to be here
@@ -457,27 +451,6 @@ struct Animation {
   short field_6E;
 };
 
-struct SortLine {
-    short X1;
-    short Y1;
-    short X2;
-    short Y2;
-    ubyte Col;
-    ubyte Shade;
-    ubyte Flags;
-};
-
-struct SortSprite {
-    short X;
-    short Y;
-    short Z;
-    ushort Frame;
-    struct Thing *PThing;
-    ubyte Brightness;
-    ubyte Angle;
-    short Scale;
-};
-
 struct Frame {
     ushort FirstElement;
     ubyte SWidth;
@@ -547,8 +520,6 @@ extern ubyte byte_1810E6[40];
 extern ubyte byte_18110E[40];
 
 extern ushort word_1531E0;
-extern ushort next_special_face;
-extern ushort next_special_face4;
 extern struct ColVectList *game_col_vects_list;
 extern ushort next_vects_list;
 extern struct ColVect *game_col_vects;
@@ -578,9 +549,6 @@ extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;
 extern ubyte *game_user_heap;
 extern struct SpecialPoint *game_screen_point_pool;
-extern struct DrawItem *game_draw_list;
-extern struct SortSprite *game_sort_sprites;
-extern struct SortLine *game_sort_lines;
 extern struct UnknBezEdit *bezier_pts;
 extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;

@@ -75,6 +75,8 @@ extern ushort next_floor_texture;
 extern ushort next_anim_tmap;
 extern ushort next_local_mat;
 
+extern ushort tnext_floor_texture;
+
 /** Maps content of old SingleFloorTexture struct to the current one.
  */
 void refresh_old_floor_texture_format(struct SingleFloorTexture *p_fltextr,
