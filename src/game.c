@@ -5137,27 +5137,38 @@ void init_level(void)
     init_col_vects_linked_list();
     ingame.fld_unkC91 = dos_clock();
 
-    if ( current_map != 11 && current_map != 65 ) // If not map011 orbital station and not map065 the moon
+    if (current_map == 11 || current_map == 65) // If map011 orbital station or map065 the moon
     {
-        if ((things_used & 3) || (current_map == 30) || (in_network_game))
-        {
-            if (gamep_scene_effect != 0)
-                stop_sample_using_heap(0, 77);
-            LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-            gamep_scene_effect = 0;
-            play_sample_using_heap(0, 8, 64, 64, 100, -1, 2);
-        }
-        else
-        {
-            gamep_scene_effect = 1;
-            LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-            play_sample_using_heap(0, 77, 64, 64, 100, -1, 2);
-            func_3d904();
-        }
+        LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
+        gamep_scene_effect = 0;
+    }
+    if ((things_used & 3) || (current_map == 30) || (in_network_game))
+    {
+        LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
+        gamep_scene_effect = 0;
     }
     else
     {
-        play_sample_using_heap(0, 78, 64, 64, 100, -1, 2);
+        gamep_scene_effect = 1;
+        LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
+        func_3d904();
+    }
+
+    switch (gamep_scene_effect)
+    {
+    case 0:
+    default:
+        stop_sample_using_heap(0, 77);
+        if (current_map == 11 || current_map == 65) {
+            play_sample_using_heap(0, 78, 64, 64, 100, -1, 2);
+        } else {
+            play_sample_using_heap(0, 8, 64, 64, 100, -1, 2);
+        }
+        break;
+    case 1:
+        stop_sample_using_heap(0, 8);
+        play_sample_using_heap(0, 77, 64, 64, 100, -1, 2);
+        break;
     }
 
     gamep_unknval_10 = 0;
