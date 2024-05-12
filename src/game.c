@@ -41,6 +41,7 @@
 #include "matrix.h"
 #include "dos.h"
 #include "drawtext.h"
+#include "enginbckt.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginpritxtr.h"
@@ -108,14 +109,6 @@
 /** Expected sizes for translation strings TXT files.
  */
 #define EXPECTED_LANG_TXT_SIZE 8000
-
-/** Amount of buckets for draw list elements.
- */
-#define BUCKETS_COUNT 10000
-
-/** Max amount of draw list elements within a bucket.
- */
-#define BUCKET_ITEMS_MAX 2000
 
 #pragma pack(1)
 
@@ -225,27 +218,8 @@ extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
 extern long dword_176CBC;
-extern long dword_176CC4;
 
 extern long dword_19F4F8;
-
-extern ushort buckets[BUCKETS_COUNT];
-extern struct SortSprite *p_current_sort_sprite;
-extern struct SortLine *p_current_sort_line;
-extern struct DrawItem *p_current_draw_item;
-
-extern ushort next_screen_point;
-extern ushort next_draw_item;
-extern ushort next_sort_sprite;
-extern ushort next_sort_line;
-
-extern ushort tnext_screen_point;
-extern ushort tnext_draw_item;
-extern ushort tnext_sort_sprite;
-//extern ushort tnext_sort_line; -- no such var?
-//extern ushort tnext_special_face;
-extern ushort tnext_special_face4;
-extern ushort tnext_floor_texture;
 
 extern ubyte execute_commands;
 extern long gamep_unknval_10;
@@ -2877,374 +2851,6 @@ void draw_new_panel()
     }
 }
 
-void draw_object_face1a(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face1a\n"
-        : : "a" (a1));
-}
-
-void draw_sort_sprite1a(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_sort_sprite1a\n"
-        : : "a" (a1));
-}
-
-void draw_floor_tile1a(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_floor_tile1a\n"
-        : : "a" (a1));
-}
-
-void draw_ex_face(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_ex_face\n"
-        : : "a" (a1));
-}
-
-void draw_floor_tile1b(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_floor_tile1b\n"
-        : : "a" (a1));
-}
-
-void draw_object_face1b(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face1b\n"
-        : : "a" (a1));
-}
-
-void draw_object_face4a(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face4a\n"
-        : : "a" (a1));
-}
-
-void draw_sort_line(struct SortLine *sline)
-{
-    asm volatile (
-      "call ASM_draw_sort_line\n"
-        : : "a" (sline));
-}
-
-void draw_object_face4b(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face4b\n"
-        : : "a" (a1));
-}
-
-void draw_sort_sprite1b(int a1)
-{
-    asm volatile (
-      "call ASM_draw_sort_sprite1b\n"
-        : : "a" (a1));
-}
-
-void draw_object_face4c(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face4c\n"
-        : : "a" (a1));
-}
-
-void draw_sort_sprite1c_sub(ushort a1, short a2, short a3, ubyte a4, ushort a5)
-{
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_sort_sprite1c_sub\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
-}
-
-void draw_sort_sprite1c(ushort a1)
-{
-    struct SortSprite *sspr;
-    sspr = &game_sort_sprites[a1];
-    draw_sort_sprite1c_sub(sspr->Frame, sspr->X, sspr->Y, sspr->Brightness, sspr->Scale);
-}
-
-void draw_object_face1c(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face1c\n"
-        : : "a" (a1));
-}
-
-void draw_object_face4d(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face4d\n"
-        : : "a" (a1));
-}
-
-void draw_object_face4g(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face4g\n"
-        : : "a" (a1));
-}
-
-void draw_object_face1e(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face1e\n"
-        : : "a" (a1));
-}
-
-void draw_object_face4f(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face4f\n"
-        : : "a" (a1));
-}
-
-void draw_effect_object_face(ushort face)
-{
-    asm volatile (
-      "call ASM_draw_effect_object_face\n"
-        : : "a" (face));
-}
-
-void draw_shrapnel(ushort shrap)
-{
-    asm volatile (
-      "call ASM_draw_shrapnel\n"
-        : : "a" (shrap));
-}
-
-void draw_phwoar(ushort ph)
-{
-    asm volatile (
-      "call ASM_draw_phwoar\n"
-        : : "a" (ph));
-}
-
-void draw_sort_sprite_tng(short a1)
-{
-    asm volatile (
-      "call ASM_draw_sort_sprite_tng\n"
-        : : "a" (a1));
-}
-
-void draw_object_face4e(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face4e\n"
-        : : "a" (a1));
-}
-
-void draw_object_face1d(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_object_face1d\n"
-        : : "a" (a1));
-}
-
-void draw_ssample_screen_point(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_ssample_screen_point\n"
-        : : "a" (a1));
-}
-
-void draw_screen_number(ushort a1)
-{
-    char locstr[50];
-    struct SortSprite *sspr;
-    sspr = &game_sort_sprites[a1];
-    sprintf(locstr, "%d", (int)sspr->PThing);
-    draw_text(2 * sspr->X,2 * sspr->Y, locstr, colour_lookup[2]);
-}
-
-void draw_screen(void)
-{
-    ushort *p_bucket;
-    ushort iidx;
-    struct DrawItem *itm;
-    short n;
-    ushort i;
-
-    p_bucket = &buckets[BUCKETS_COUNT-1];
-    if (dword_19F4F8)
-    {
-        for (n = BUCKETS_COUNT-1; n >= 0; n--)
-        {
-            iidx = *p_bucket;
-            *p_bucket = 0;
-            for (; iidx != 0; iidx = itm->Child)
-            {
-              itm = &game_draw_list[iidx];
-              switch (itm->Type)
-              {
-              case 1:
-              case 10:
-                  draw_object_face1a(itm->Offset);
-                  break;
-              case 2:
-              case 8:
-                  break;
-              case 3:
-                  draw_sort_sprite1a(itm->Offset);
-                  break;
-              case 4:
-                  draw_floor_tile1a(itm->Offset);
-                  break;
-              case 5:
-                  draw_ex_face(itm->Offset);
-                  break;
-              case 6:
-                  draw_floor_tile1b(itm->Offset);
-                  break;
-              case 7:
-                  draw_object_face1b(itm->Offset);
-                  break;
-              case 9:
-                  draw_object_face4a(itm->Offset);
-                  break;
-              case 11:
-                  draw_sort_line(&game_sort_lines[itm->Offset]);
-                  break;
-              case 12:
-                  draw_object_face4b(itm->Offset);
-                  break;
-              case 13:
-                  draw_sort_sprite1b(itm->Offset);
-                  break;
-              case 14:
-                  draw_object_face4c(itm->Offset);
-                  break;
-              case 15:
-                  draw_sort_sprite1c(itm->Offset);
-                  break;
-              }
-          }
-          p_bucket--;
-        }
-    }
-    else
-    {
-        for (n = BUCKETS_COUNT-1; n >= 0; n--)
-        {
-            iidx = *p_bucket;
-            *p_bucket = 0;
-            scene_post_effect_for_bucket(n);
-            for (i = 0; iidx != 0; iidx = itm->Child)
-            {
-              i++;
-              if (i > BUCKET_ITEMS_MAX)
-                  break;
-              itm = &game_draw_list[iidx];
-              switch (itm->Type)
-              {
-              case 1:
-              case 10:
-                  draw_object_face1c(itm->Offset);
-                  break;
-              case 3:
-                  draw_sort_sprite1a(itm->Offset);
-                  break;
-              case 4:
-                  draw_floor_tile1a(itm->Offset);
-                  break;
-              case 5:
-                  draw_ex_face(itm->Offset);
-                  break;
-              case 6:
-                  draw_floor_tile1b(itm->Offset);
-                  break;
-              case 7:
-                  draw_object_face1b(itm->Offset);
-                  break;
-              case 9:
-                  draw_object_face4d(itm->Offset);
-                  break;
-              case 11:
-                  draw_sort_line(&game_sort_lines[itm->Offset]);
-                  break;
-              case 12:
-                  draw_object_face4b(itm->Offset);
-                  break;
-              case 13:
-                  draw_sort_sprite1b(itm->Offset);
-                  break;
-              case 14:
-                  draw_object_face4c(itm->Offset);
-                  break;
-              case 15:
-                  draw_sort_sprite1c(itm->Offset);
-                  break;
-              case 16:
-                  draw_object_face4g(itm->Offset);
-                  break;
-              case 17:
-                  draw_object_face1e(itm->Offset);
-                  break;
-              case 18:
-                  draw_object_face4f(itm->Offset);
-                  break;
-              case 19:
-                  draw_effect_object_face(itm->Offset);
-                  break;
-              case 20:
-                  draw_shrapnel(itm->Offset);
-                  break;
-              case 21:
-                  draw_phwoar(itm->Offset);
-                  break;
-              case 22:
-                  draw_sort_sprite_tng(itm->Offset);
-                  break;
-              case 23:
-                  draw_object_face4e(itm->Offset);
-                  break;
-              case 24:
-                  draw_object_face1d(itm->Offset);
-                  break;
-              case 25:
-                  draw_ssample_screen_point(itm->Offset);
-                  break;
-              case 26:
-                  draw_screen_number(itm->Offset);
-                  break;
-              default:
-                  break;
-              }
-            }
-            p_bucket--;
-        }
-    }
-#if 0
-    //TODO Setting first palette colour was often used as debug helper; to be removed
-    __outbyte(0x3C8u, 0);
-    __outbyte(0x3C9u, byte_1C83E0);
-    __outbyte(0x3C9u, 0);
-    __outbyte(0x3C9u, 0);
-#endif
-
-    tnext_screen_point = next_screen_point;
-    next_sort_line = 0;
-    tnext_draw_item = next_draw_item;
-    next_special_face = 1;
-    tnext_sort_sprite = next_sort_sprite;
-    ingame.NextRocket = 0;
-    tnext_special_face4 = next_special_face4;
-    next_screen_point = 0;
-    tnext_floor_texture = next_floor_texture;
-    dword_176CC4 = 0;
-    p_current_sort_line = game_sort_lines;
-    next_draw_item = 1;
-    p_current_sort_sprite = game_sort_sprites;
-    next_sort_sprite = 0;
-    next_special_face4 = 1;
-    p_current_draw_item = &game_draw_list[1];
-}
-
 #define SUPER_QUICK_RADIUS 5
 void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
 {
@@ -3600,6 +3206,7 @@ void func_218D3(void)
               struct MyMapElement *p_mapelXZnx;
               struct MyMapElement *p_mapelZnx;
               int bckt;
+              ubyte ditype;
 
               p_floortl->X[0] = p_unknarrDnx->X;
               p_floortl->Y[0] = p_unknarrDnx->Y;
@@ -3696,25 +3303,17 @@ void func_218D3(void)
               if ((p_mapel->Flags & 0x08) != 0)
                   p_floortl->Flags2 |= 0x02;
               bktalt += 200;
-              bckt += 5000 + bktalt;
               p_floortl->Flags2 = p_mapel->Flags;
               p_floortl->Offset = p_mapel - game_my_big_map;
               p_floortl->Flags2b = p_mapel->Flags2;
-              if (bckt < 1)
-                  bckt = 1;
-              if (bckt >= 10000)
-                  bckt = 9997;
               p_floortl->Page = p_mapel->ColumnHead >> 12;
-              if ((p_mapel->Texture & 0x4000) != 0)
-                  p_current_draw_item->Type = 6;
-              else
-                  p_current_draw_item->Type = 4;
               p_floortl++;
-              p_current_draw_item->Offset = word_152F00;
-              p_current_draw_item->Child = buckets[bckt];
-              p_current_draw_item++;
-              buckets[bckt] = next_draw_item;
-              next_draw_item++;
+              bckt += 5000 + bktalt;
+               if ((p_mapel->Texture & 0x4000) != 0)
+                  ditype = 6;
+              else
+                  ditype = 4;
+              draw_item_add(ditype, word_152F00, bckt);
               p_sqlight = &p_sqlight[-render_area_a + 1];
               p_unknarrDcr += 2;
               ++word_152F00;
@@ -3876,6 +3475,26 @@ TbBool get_engine_inputs(void)
     return false;
 }
 
+void draw_screen(void)
+{
+    if (dword_19F4F8)
+    {
+        draw_drawlist_1();
+    }
+    else
+    {
+        draw_drawlist_2();
+    }
+#if 0
+    //TODO Setting first palette colour was often used as debug helper; to be removed
+    __outbyte(0x3C8u, 0);
+    __outbyte(0x3C9u, byte_1C83E0);
+    __outbyte(0x3C9u, 0);
+    __outbyte(0x3C9u, 0);
+#endif
+    reset_drawlist();
+}
+
 void process_engine_unk3(void)
 {
 #if 0
@@ -3994,21 +3613,7 @@ void process_engine_unk3(void)
     else
     {
         draw_hud(players[local_player_no].DirectControl[0]);
-        tnext_screen_point = next_screen_point;
-        next_sort_line = 0;
-        tnext_draw_item = next_draw_item;
-        next_special_face = 1;
-        tnext_sort_sprite = next_sort_sprite;
-        ingame.NextRocket = 0;
-        dword_176CC4 = 0;
-        tnext_special_face4 = next_special_face4;
-        next_screen_point = 0;
-        tnext_floor_texture = next_floor_texture;
-        next_draw_item = 1;
-        p_current_sort_sprite = game_sort_sprites;
-        next_sort_sprite = 0;
-        next_special_face4 = 1;
-        p_current_draw_item = &game_draw_list[1];
+        reset_drawlist();
     }
 }
 
