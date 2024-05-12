@@ -37,10 +37,10 @@ void scene_post_effect_prepare(void)
     int i;
     switch (gamep_scene_effect)
     {
-    case 1:
+    case ScEff_RAIN:
         game_process_sub08();
         break;
-    case 2:
+    case ScEff_STATIC:
         for (i = 0; i < 10; i++) {
             ushort pos;
             ubyte *ptr;
@@ -116,12 +116,19 @@ void sub_2AAA0(int a1)
 
 void scene_post_effect_for_bucket(short bckt)
 {
-    if (((bckt & 7) == 0) && gamep_scene_effect != 0)
+    if ((bckt & 7) == 0)
     {
-        if (gamep_scene_effect == 1)
+        switch (gamep_scene_effect)
+        {
+        case ScEff_RAIN:
             draw_falling_rain(bckt);
-        else if (gamep_scene_effect == 2)
+            break;
+        case ScEff_STATIC:
             sub_2AAA0(bckt);
+            break;
+        default:
+            break;
+        }
     }
 }
 

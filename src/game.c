@@ -4040,7 +4040,7 @@ void init_outro(void)
     const char *text2;
     int i;
 
-    gamep_scene_effect = 0;
+    gamep_scene_effect = ScEff_NONE;
     StopAllSamples();
     StopCD();
 
@@ -5058,6 +5058,26 @@ void init_level_unknsub01(void)
     }
 }
 
+void start_level_ambient_sound(void)
+{
+    switch (gamep_scene_effect)
+    {
+    case ScEff_NONE:
+    default:
+        stop_sample_using_heap(0, 77);
+        if (current_map == 11 || current_map == 65) {
+            play_sample_using_heap(0, 78, 64, 64, 100, -1, 2);
+        } else {
+            play_sample_using_heap(0, 8, 64, 64, 100, -1, 2);
+        }
+        break;
+    case ScEff_RAIN:
+        stop_sample_using_heap(0, 8);
+        play_sample_using_heap(0, 77, 64, 64, 100, -1, 2);
+        break;
+    }
+}
+
 void init_level(void)
 {
 #if 0
@@ -5140,37 +5160,21 @@ void init_level(void)
     if (current_map == 11 || current_map == 65) // If map011 orbital station or map065 the moon
     {
         LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-        gamep_scene_effect = 0;
+        gamep_scene_effect = ScEff_NONE;
     }
-    if ((things_used & 3) || (current_map == 30) || (in_network_game))
+    if ((things_used & 3) || (current_map == 30) || (in_network_game)) // map030 london
     {
         LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-        gamep_scene_effect = 0;
+        gamep_scene_effect = ScEff_NONE;
     }
     else
     {
-        gamep_scene_effect = 1;
         LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
+        gamep_scene_effect = ScEff_RAIN;
         func_3d904();
     }
 
-    switch (gamep_scene_effect)
-    {
-    case 0:
-    default:
-        stop_sample_using_heap(0, 77);
-        if (current_map == 11 || current_map == 65) {
-            play_sample_using_heap(0, 78, 64, 64, 100, -1, 2);
-        } else {
-            play_sample_using_heap(0, 8, 64, 64, 100, -1, 2);
-        }
-        break;
-    case 1:
-        stop_sample_using_heap(0, 8);
-        play_sample_using_heap(0, 77, 64, 64, 100, -1, 2);
-        break;
-    }
-
+    start_level_ambient_sound();
     gamep_unknval_10 = 0;
     gamep_unknval_12 = 0;
     nav_stats__ThisTurn = 0;

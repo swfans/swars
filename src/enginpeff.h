@@ -27,6 +27,12 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum GamePostSceneEffect {
+    ScEff_NONE = 0,
+    ScEff_RAIN,
+    ScEff_STATIC,
+};
+
 #pragma pack()
 /******************************************************************************/
 extern ushort gamep_scene_effect;
