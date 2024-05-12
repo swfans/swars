@@ -54,7 +54,7 @@ void scene_post_effect_prepare(void)
     case ScEff_RAIN:
         game_process_sub08();
         break;
-    case ScEff_STATIC:
+    case ScEff_SNOW:
         for (i = 0; i < 10; i++) {
             ushort pos;
             ubyte *ptr;
@@ -133,11 +133,11 @@ static void draw_static_dot(short x, short y, short w, short h, short ftpos)
     }
 }
 
-void draw_static_noise(int bckt)
+void draw_falling_snow(int bckt)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_static_noise\n"
+      "call ASM_draw_falling_snow\n"
         : : "a" (a1));
 #endif
     int height;
@@ -186,10 +186,10 @@ void scene_post_effect_for_bucket(short bckt)
             draw_falling_rain(bckt);
         }
         break;
-    case ScEff_STATIC:
+    case ScEff_SNOW:
         every = 8 * 1000 / gamep_scene_effect_intensity;
         if ((bckt % every) == 0) {
-            draw_static_noise(bckt);
+            draw_falling_snow(bckt);
         }
         break;
     default:

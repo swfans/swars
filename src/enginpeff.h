@@ -30,7 +30,7 @@ extern "C" {
 enum GamePostSceneEffectType {
     ScEff_NONE = 0,
     ScEff_RAIN,
-    ScEff_STATIC,
+    ScEff_SNOW,
 };
 
 #pragma pack()
