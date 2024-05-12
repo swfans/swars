@@ -244,9 +244,33 @@ void things_debug_hud(void)
 
     if (lbShift == KMod_SHIFT)
         return;
-    if (thing <= 0 || thing >= THINGS_LIMIT)
+    if (thing == 0 || thing >= THINGS_LIMIT)
         return;
+    if (thing < 0)
+    {
+        struct SimpleThing *p_sthing;
 
+        if (execute_commands)
+        {
+            p_sthing = &sthings[thing];
+            snprintf(locstr, sizeof(locstr), "State %d ",
+              (int)p_sthing->State);
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " th %d",
+              (int)p_sthing->ThingOffset);
+            draw_text(30, 30, locstr, colour_lookup[1]);
+
+            sprintf(locstr, "F  %08x SF %d F %d",
+              (uint)p_sthing->Flag,
+              (int)p_sthing->StartFrame,
+              (int)p_sthing->Frame);
+            draw_text(30, 45, locstr, colour_lookup[1]);
+
+            sprintf(locstr, "%s",
+              thing_type_name(p_sthing->Type, p_sthing->SubType));
+            draw_text(360, 90, locstr, colour_lookup[7]);
+        }
+        return;
+    }
     p_track_thing = &things[thing];
     p_track2_thing = &things[thing];
     func_6fe80(mouse_map_x, mouse_map_y, mouse_map_z,
@@ -256,7 +280,8 @@ void things_debug_hud(void)
     if (p_track_thing->Type == TT_PERSON)
           person_commands_debug_hud(356, 80, 280, 150, thing, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
     else if ((p_track_thing->Type == TT_VEHICLE) && (p_track_thing->U.UVehicle.PassengerHead > 0))
-          person_commands_debug_hud(356, 80, 280, 150, p_track_thing->U.UVehicle.PassengerHead, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
+          person_commands_debug_hud(356, 80, 280, 150,
+            p_track_thing->U.UVehicle.PassengerHead, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
 
     if (execute_commands)
     {
@@ -266,7 +291,8 @@ void things_debug_hud(void)
         {
         case TT_VEHICLE:
             snprint_vehicle_state(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), p_track_thing);
-            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Pasng %d G %d comcur %x EG %d th %d wb %d",
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr),
+              " Pasng %d G %d comcur %x EG %d th %d wb %d",
               (int)veh_passenger_count(p_track_thing),
               (int)p_track_thing->U.UVehicle.Group,
               (uint)p_track_thing->U.UVehicle.ComCur,
@@ -276,7 +302,8 @@ void things_debug_hud(void)
             break;
         case TT_PERSON:
             snprint_person_state(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), p_track_thing);
-            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Mood %d G %d comcur %x EG %d th %d am %d",
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr),
+              " Mood %d G %d comcur %x EG %d th %d am %d",
               (int)p_track_thing->U.UPerson.Mood,
               (int)p_track_thing->U.UPerson.Group,
               (uint)p_track_thing->U.UPerson.ComCur,
