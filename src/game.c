@@ -4437,9 +4437,9 @@ void clear_open_mission_status(void)
     }
 }
 
-void unkn_lights_func_11(void)
+void map_lights_update(void)
 {
-    asm volatile ("call ASM_unkn_lights_func_11\n"
+    asm volatile ("call ASM_map_lights_update\n"
         :  :  : "eax" );
 }
 
@@ -4799,8 +4799,10 @@ void init_level(void)
 
     VNAV_preprocess_bezier_turns(1);
     VNAV_init_new_traffic_system();
-    if (last_map_for_lights_func_11 != current_map)
-        unkn_lights_func_11();
+#if 0
+    if (last_map_for_lights_func_11 != current_map) // maps are often reloaded, so we cannot skip filghts update
+#endif
+    map_lights_update();
     last_map_for_lights_func_11 = current_map;
     init_scanner();
     find_the_tall_buildings();
@@ -5242,7 +5244,7 @@ void restart_back_into_mission(ushort missi)
     ingame.CurrentMission = missi;
     mission_list[missi].Complete = 0;
     change_current_map(mapno);
-    unkn_lights_func_11();
+    map_lights_update();
     if (ingame.GameMode == GamM_Unkn2)
         execute_commands = 0;
     engn_yc = 0;
