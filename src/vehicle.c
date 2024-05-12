@@ -25,6 +25,8 @@
 #include "bigmap.h"
 #include "bmbang.h"
 #include "game.h"
+#include "game_speed.h"
+#include "matrix.h"
 #include "pathtrig.h"
 #include "sound.h"
 #include "thing.h"
@@ -41,6 +43,94 @@ struct CarGlare { // sizeof=7
 };
 
 #pragma pack()
+
+/** Configuration options for each person state.
+ */
+struct VehStateConfig vehicle_states[] = {
+  {"NONE_STATE",},
+  {"UNKN_1",},
+  {"UNKN_2",},
+  {"UNKN_3",},
+  {"UNKN_4",},
+  {"UNKN_5",},
+  {"UNKN_6",},
+  {"UNKN_7",},
+  {"UNKN_8",},
+  {"UNKN_9",},
+  {"UNKN_A",},
+  {"UNKN_B",},
+  {"UNKN_C",},
+  {"UNKN_D",},
+  {"UNKN_E",},
+  {"UNKN_F",},
+  {"UNKN_10",},
+  {"WANDER",},
+  {"UNKN_12",},
+  {"UNKN_13",},
+  {"UNKN_14",},
+  {"UNKN_15",},
+  {"UNKN_16",},
+  {"UNKN_17",},
+  {"UNKN_18",},
+  {"UNKN_19",},
+  {"UNKN_1A",},
+  {"UNKN_1B",},
+  {"UNKN_1C",},
+  {"UNKN_1D",},
+  {"UNKN_1E",},
+  {"UNKN_1F",},
+  {"UNKN_20",},
+  {"PARKED_PARAL",},
+  {"UNKN_22",},
+  {"UNKN_23",},
+  {"UNKN_24",},
+  {"UNKN_25",},
+  {"UNKN_26",},
+  {"UNKN_27",},
+  {"UNKN_28",},
+  {"UNKN_29",},
+  {"UNKN_2A",},
+  {"UNKN_2B",},
+  {"UNKN_2C",},
+  {"UNKN_2D",},
+  {"UNKN_2E",},
+  {"UNKN_2F",},
+  {"UNKN_30",},
+  {"UNKN_31",},
+  {"GOTO_LOC",},
+  {"UNKN_33",},
+  {"UNKN_34",},
+  {"UNKN_35",},
+  {"UNKN_36",},
+  {"UNKN_37",},
+  {"UNKN_38",},
+  {"UNKN_39",},
+  {"UNKN_3A",},
+  {"FLY_LANDING",},
+  {"UNKN_3C",},
+  {"PARKED_PERPN",},
+  {"UNKN_3E",},
+  {"UNKN_3F",},
+  {"UNKN_40",},
+  {"UNKN_41",},
+  {"UNKN_42",},
+  {"UNKN_43",},
+  {"UNKN_44",},
+  {"UNKN_45",},
+  {"UNKN_46",},
+  {"UNKN_47",},
+  {"UNKN_48",},
+  {"UNKN_49",},
+  {"UNKN_4A",},
+  {"UNKN_4B",},
+  {"UNKN_4C",},
+  {"UNKN_4D",},
+  {"UNKN_4E",},
+  {"UNKN_4F",},
+  {"UNKN_50",},
+  {"UNKN_51",},
+  {"UNKN_52",},
+};
 
 struct CarGlare car_glare[] = {
   {0, 16, 336, 0},
@@ -85,6 +175,39 @@ struct CarGlare car_glare[] = {
   {112, -16, 304, 0},
   {-96, -16, 304, 0},
 };
+
+const char *vehicle_type_name(ushort vtype)
+{
+#if 0
+// Enable when we have vehicle config file with names
+    struct PeepStatAdd *p_vhstata;
+
+    p_vhstata = &peep_type_stats_a[ptype];
+    if (strlen(p_vhstata->Name) == 0)
+        return "OUTRNG_VEHICLE";
+    return p_vhstata->Name;
+#endif
+    return "VEHICLE";
+}
+
+void snprint_vehicle_state(char *buf, ulong buflen, struct Thing *p_thing)
+{
+    char *s;
+    //ubyte nparams;
+    struct VehStateConfig *p_vstatcfg;
+
+    p_vstatcfg = &vehicle_states[p_thing->State];
+    s = buf;
+
+    sprintf(s, "%s( ", p_vstatcfg->Name);
+    s += strlen(s);
+    //nparams = 0;
+
+    // TODO support parameters of states
+
+    snprintf(s, buflen - (s-buf), " )");
+}
+
 
 void init_mech(void)
 {
@@ -141,6 +264,428 @@ int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle)
       "call ASM_check_for_a_vehicle_here\n"
         : "=r" (ret) : "a" (x), "d" (z), "b" (p_vehicle));
     return ret;
+}
+
+void person_hit_by_car(struct Thing *p_person, struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_person_hit_by_car\n"
+        : : "a" (p_person), "d" (p_vehicle));
+}
+
+/** Checks if the vehicle collides with another object, provided as separate params.
+ */
+static TbBool vehicle_check_collide_with_area(struct Thing *p_vehA,
+  int posBx, int posBy, int posBz, int radB, int matBid)
+{
+    struct M33 *matA;
+    int radA_incl_speed, matA02, matA22;
+    int futureAx, futureAz;
+    int posAx, posAz;
+    struct M33 *matB;
+    int radB_incl_speed, matB02, matB22;
+    int futureBx, futureBz;
+    int posB_beg_x, posB_beg_z;
+    int posB_end_x, posB_end_z;
+    int dist_begX, dist_begZ;
+    int dist_endX, dist_endZ;
+    int distXZ_sq;
+
+    matA = &local_mats[p_vehA->U.UVehicle.MatrixIndex];
+    matA02 = -4 * matA->R[0][2];
+    matA22 = -4 * matA->R[2][2];
+    radA_incl_speed = (386 * p_vehA->Radius >> 8)
+      + (p_vehA->Speed >> 3) + (p_vehA->Speed >> 4);
+    futureAx = radA_incl_speed * matA02 >> 8;
+    futureAz = radA_incl_speed * matA22 >> 8;
+
+    posAx = p_vehA->X + futureAx - (matA22 >> 2);
+    posAz = p_vehA->Z + futureAz + (matA02 >> 2);
+
+    if (abs(posBy - p_vehA->Y) >= 2048)
+        return false;
+
+    if ((p_vehA->X >> 16 == posBx >> 16) && (p_vehA->Z >> 16 == posBz >> 16))
+        return true;
+
+    matB = &local_mats[matBid];
+    matB02 = -4 * matB->R[0][2];
+    matB22 = -4 * matB->R[2][2];
+    radB_incl_speed = (384 * radB >> 9);
+    futureBx = radB_incl_speed * matB02 >> 8;
+    futureBz = radB_incl_speed * matB22 >> 8;
+
+    posB_beg_x = posBx - futureBx;
+    posB_beg_z = posBz - futureBz;
+    posB_end_x = posBx + futureBx;
+    posB_end_z = posBz + futureBz;
+
+    dist_begX = (posB_beg_x - posAx) >> 8;
+    dist_begZ = (posB_beg_z - posAz) >> 8;
+    dist_endX = (posB_end_x - posAx) >> 8;
+    dist_endZ = (posB_end_z - posAz) >> 8;
+
+    distXZ_sq = dist_endZ * dist_endZ + dist_endX * dist_endX;
+    if (distXZ_sq >= dist_begZ * dist_begZ + dist_begX * dist_begX)
+        distXZ_sq = dist_begZ * dist_begZ + dist_begX * dist_begX;
+
+    if (distXZ_sq >= radB_incl_speed * radB_incl_speed)
+        return false;
+
+    return true;
+}
+
+/** Check if the vehicle is stopped due to state of tnode it rides on.
+ */
+TbBool vehicle_stopped_on_tnode(struct Thing *p_vehicle)
+{
+    if (p_vehicle->U.UVehicle.TNode >= 0)
+        return false;
+
+    // Repeat the stop conditions from process_vehicle_stop_for_pedestrians() exactly
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0008) != 0)
+    {
+        if (p_vehicle->State == VehSt_GOTO_LOC || p_vehicle->State == VehSt_WANDER)
+        {
+            struct TrafficNode *p_tnode;
+            p_tnode = &game_traffic_nodes[-p_vehicle->U.UVehicle.TNode];
+            if ((p_tnode->Flags & TNdF_Unkn0040) != 0)
+            {
+                if (p_tnode->GateLink == p_vehicle->ThingOffset)
+                    return false;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/** Check if the second vehicle is in the way of first vehicle.
+ */
+TbBool check_two_vehicles(struct Thing *p_vehA, struct Thing *p_vehB)
+{
+#if 0
+    TbBool ret;
+    asm volatile (
+      "call ASM_check_two_vehicles\n"
+        : "=r" (ret) : "a" (p_vehA), "d" (p_vehB));
+    return ret;
+#endif
+    if (abs(p_vehA->U.UVehicle.AngleDY) > 20)
+        return false;
+
+    if (p_vehB->ThingOffset == p_vehA->ThingOffset)
+        return false;
+
+    if ((p_vehB->Flag & TngF_Unkn0004) != 0)
+        return false;
+
+    return vehicle_check_collide_with_area(p_vehA, p_vehB->X, p_vehB->Y, p_vehB->Z,
+      p_vehB->Radius, p_vehB->U.UVehicle.MatrixIndex);
+}
+
+TbBool vehicles_check_second_is_blocked(struct Thing *p_vehA, struct Thing *p_vehB)
+{
+    if (!vehicle_stopped_on_tnode(p_vehB))
+        return false;
+
+    // Check if the vehicles are riding on the same TNode, or the second has Agok node set
+    if ((p_vehA->U.UVehicle.TNode == p_vehB->U.UVehicle.TNode)
+     || ((p_vehB->U.UVehicle.WorkPlace & VWPFlg_HasAgok) != 0))
+    {
+        // If one of the vehicles already claimed the TNode, it should go first
+        struct TrafficNode *p_tnode;
+        p_tnode = &game_traffic_nodes[-p_vehB->U.UVehicle.TNode];
+        if (p_tnode->GateLink == p_vehA->ThingOffset)
+            return true;
+    }
+    return false;
+}
+
+/** Of two competing (potentially colliding) vehicles, check if the first one has right-of-way to move forward.
+ */
+TbBool vehicle_first_has_right_of_way(struct Thing *p_vehA, struct Thing *p_vehB)
+{
+    // If no special circumstances, allow the one with higher ThingOffset first
+    return (p_vehA->ThingOffset >= p_vehB->ThingOffset);
+}
+
+/** Collision check between two vehicles.
+ */
+static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_vehB,
+  int posAx, int posAy, int posAz)
+{
+    struct M33 *matB;
+    int radB_incl_speed, matB02, matB22;
+    int futureBx, futureBz;
+    int posB_beg_x, posB_beg_z;
+    int posB_end_x, posB_end_z;
+    int dist_begZ, dist_begX;
+    int dist_endX, dist_endZ;
+    int distXZ_sq;
+
+    if (p_vehB->ThingOffset == p_vehA->ThingOffset)
+        return false;
+
+    if ((p_vehB->Flag & TngF_Unkn0004) != 0)
+        return false;
+
+    // The following is the same as in vehicle_check_collide_with_area(), but some position computations were moved
+    // to upper function as speed optimization (maybe there's no need for that anymore?)
+    if (abs(p_vehB->Y - posAy) >= 2048)
+        return false;
+
+    matB = &local_mats[p_vehB->U.UVehicle.MatrixIndex];
+    matB02 = -4 * matB->R[0][2];
+    matB22 = -4 * matB->R[2][2];
+    radB_incl_speed = 384 * p_vehB->Radius >> 9;
+    futureBx = radB_incl_speed * matB02 >> 8;
+    futureBz = radB_incl_speed * matB22 >> 8;
+
+    posB_beg_x = p_vehB->X - futureBx;
+    posB_beg_z = p_vehB->Z - futureBz;
+    posB_end_x = p_vehB->X + futureBx;
+    posB_end_z = p_vehB->Z + futureBz;
+
+    dist_begX = (posB_beg_x - posAx) >> 8;
+    dist_begZ = (posB_beg_z - posAz) >> 8;
+    dist_endX = (posB_end_x - posAx) >> 8;
+    dist_endZ = (posB_end_z - posAz) >> 8;
+
+    distXZ_sq = dist_endZ * dist_endZ + dist_endX * dist_endX;
+    if (distXZ_sq >= dist_begZ * dist_begZ + dist_begX * dist_begX)
+        distXZ_sq = dist_begZ * dist_begZ + dist_begX * dist_begX;
+
+    if (distXZ_sq >= radB_incl_speed * radB_incl_speed)
+        return false;
+
+    // Check if the current vehicle has right-of-way over the second
+    if (vehicle_first_has_right_of_way(p_vehA, p_vehB) && check_two_vehicles(p_vehB, p_vehA))
+        return false;
+
+    // Check if the 2nd vehicle is blocked, in which case the first should assume
+    // right of way to avoid blockade; this workarounds an issue where on two crossroads
+    // close to each other, two vehicles will get blocked on each other. The issue
+    // was prominent on `-m 0,21`, where it would happen sooner or later without any
+    // actions required from the player. A better solution to such jams may be developed
+    // later, when the workings of the traffic system are better understood.
+    if (vehicles_check_second_is_blocked(p_vehA, p_vehB))
+        return false;
+
+    LOGSYNC("Stopping %s thing %d rqspeed %d due to %s thing %d rqspeed %d",
+      vehicle_type_name(p_vehA->Type), (int)p_vehA->ThingOffset,
+      (int)p_vehA->U.UVehicle.ReqdSpeed,
+      vehicle_type_name(p_vehB->Type), (int)p_vehB->ThingOffset,
+      (int)p_vehB->U.UVehicle.ReqdSpeed);
+
+    p_vehA->SubState = 3;
+    p_vehA->U.UVehicle.ReqdSpeed = 0;
+    p_vehA->U.UVehicle.AngleDY = 0;
+    return true;
+}
+
+/** Simplified vehicle collision check for when the vehicles are on the same tile.
+ * We don't have to check for overlap, as every vehicle is larger than a tile.
+ */
+static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct Thing *p_vehB,
+  int pos_x, int pos_y, int pos_z)
+{
+    if ((p_vehB->Flag & TngF_Unkn0004) != 0)
+        return false;
+
+    if (abs(p_vehB->Y - pos_y) >= 2048)
+        return false;
+
+    // Check if the current vehicle has right-of-way over the second
+    if (vehicle_first_has_right_of_way(p_vehA, p_vehB))
+        return false;
+
+    LOGSYNC("Stopping %s thing %d rqspeed %d due to %s thing %d rqspeed %d",
+      vehicle_type_name(p_vehA->Type), (int)p_vehA->ThingOffset,
+      (int)p_vehA->U.UVehicle.ReqdSpeed,
+      vehicle_type_name(p_vehB->Type), (int)p_vehB->ThingOffset,
+      (int)p_vehB->U.UVehicle.ReqdSpeed);
+
+    p_vehA->SubState = 3;
+    p_vehA->U.UVehicle.ReqdSpeed = 0;
+    p_vehA->U.UVehicle.AngleDY = 0;
+    return false; //TODO is that the best result?
+}
+
+static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing *p_person,
+  int pos_x, int pos_y, int pos_z)
+{
+    int dx, dz, per_r_sq, veh_r_sq;
+
+    if ((p_person->Flag2 & 0x10) != 0)
+        return false;
+    if (p_person->State == 13)
+        return false;
+    if ((p_person->Flag & TngF_Unkn0002) != 0)
+        return false;
+    if (p_person->State == 36)
+        return false;
+    if (abs((p_person->Y >> 3) - pos_y) >= 2048)
+        return false;
+
+    dx = (p_person->X - pos_x) >> 8;
+    dz = (p_person->Z - pos_z) >> 8;
+    per_r_sq = p_person->Radius * p_person->Radius;
+    veh_r_sq = p_vehicle->Radius * p_vehicle->Radius;
+
+    if ((dx) * (dx) + (dz) * (dz) >= veh_r_sq + per_r_sq)
+        return false;
+
+    person_hit_by_car(p_person, p_vehicle);
+
+    return false;
+}
+
+static TbBool check_vehicle_col_with_mine(struct Thing *p_vehicle, struct SimpleThing *p_minetng,
+  int pos_x, int pos_y, int pos_z)
+{
+    if (p_minetng->SubType != 12)
+        return false;
+
+    if ((p_minetng->Timer1 != 999) && (p_minetng->Timer1 > 0))
+        p_minetng->Timer1 = 0;
+
+    return false;
+}
+
+static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel,
+  int pos_x, int pos_y, int pos_z)
+{
+    short thing;
+
+    thing = p_mapel->Child;
+    while (thing != 0)
+    {
+      if (thing > 0)
+      {
+          struct Thing *p_thing;
+          p_thing = &things[thing];
+          switch (p_thing->Type)
+          {
+          case TT_VEHICLE:
+              if (check_vehicle_col_with_veh(p_vehicle, p_thing, pos_x, pos_y, pos_z))
+                  return true;
+              break;
+          case TT_PERSON:
+              if (check_vehicle_col_with_pers(p_vehicle, p_thing, p_vehicle->X, pos_y, p_vehicle->Z))
+                  return true;
+              break;
+          default:
+              break;
+          }
+          thing = p_thing->Next;
+      }
+      else
+      {
+          struct SimpleThing *p_sthing;
+          p_sthing = &sthings[thing];
+          switch (p_sthing->Type)
+          {
+          case TT_MINE:
+              if (check_vehicle_col_with_mine(p_vehicle, p_sthing, p_vehicle->X, pos_y, p_vehicle->Z))
+                  return true;
+              break;
+          default:
+              break;
+          }
+          thing = p_sthing->Next;
+      }
+    }
+    return false;
+}
+
+static TbBool check_vehicle_col_on_same_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel,
+  int pos_x, int pos_y, int pos_z)
+{
+    short thing;
+
+    thing = p_mapel->Child;
+    while (thing != 0)
+    {
+      if (thing > 0)
+      {
+          struct Thing *p_thing;
+          p_thing = &things[thing];
+          switch (p_thing->Type)
+          {
+          case TT_VEHICLE:
+              if (check_vehicle_col_same_mapel_with_veh(p_vehicle, p_thing, pos_x, pos_y, pos_z))
+                  return true;
+              break;
+          default:
+              break;
+          }
+          thing = p_thing->Next;
+      }
+      else
+      {
+          struct SimpleThing *p_sthing;
+          p_sthing = &sthings[thing];
+          thing = p_sthing->Next;
+      }
+    }
+    return false;
+}
+
+/** Checks vehicle collisions.
+ */
+TbBool check_vehicle_col(struct Thing *p_vehicle)
+{
+#if 0
+    TbBool ret;
+    asm volatile (
+      "call ASM_check_vehicle_col\n"
+        : "=r" (ret) : "a" (p_vehicle));
+    return ret;
+#endif
+    ushort r;
+    struct M33 *matA;
+    int rad_incl_speed, matA02, matA22;
+    int tile_ctr_x, tile_ctr_z;
+    int tile_x, tile_z;
+    int pos_x, pos_y, pos_z;
+
+    if (abs(p_vehicle->U.UVehicle.AngleDY) > 20)
+        return false;
+
+    r = p_vehicle->Radius;
+    matA = &local_mats[p_vehicle->U.UVehicle.MatrixIndex];
+    pos_x = p_vehicle->X;
+    pos_y = p_vehicle->Y;
+    pos_z = p_vehicle->Z;
+    rad_incl_speed = (p_vehicle->Speed >> 4) + (p_vehicle->Speed >> 3) + (386 * r >> 8);
+    matA02 = -4 * matA->R[0][2];
+    matA22 = -4 * matA->R[2][2];
+    pos_x = (matA02 * rad_incl_speed >> 8) + pos_x - (matA22 >> 2);
+    pos_z = (matA22 * rad_incl_speed >> 8) + pos_z + (matA02 >> 2);
+    tile_ctr_z = pos_z >> 16;
+    tile_ctr_x = pos_x >> 16;
+
+    for (tile_x = tile_ctr_x - 2; tile_x <= tile_ctr_x + 2; tile_x++)
+    {
+        if ((tile_x < 0) || (tile_x >= 128))
+            continue;
+        for (tile_z = tile_ctr_z - 2; tile_z <= tile_ctr_z + 2; tile_z++)
+        {
+            if ((tile_z < 0) || (tile_z >= 128))
+                continue;
+            struct MyMapElement *p_mapel;
+            p_mapel = &game_my_big_map[128 * tile_z + tile_x];
+            if (check_vehicle_col_on_mapel(p_vehicle, p_mapel, pos_x, pos_y, pos_z))
+                return true;
+        }
+    }
+
+    struct MyMapElement *p_mapel;
+    p_mapel = &game_my_big_map[128 * (p_vehicle->Z >> 16) + (p_vehicle->X >> 16)];
+    if (check_vehicle_col_on_same_mapel(p_vehicle, p_mapel, pos_x, pos_y, pos_z))
+        return true;
+
+    return false;
 }
 
 void start_crashing(struct Thing *p_vehicle)
@@ -451,7 +996,7 @@ void process_train(struct Thing *p_vehicle)
     case VehSt_UNKN_12:
         if (p_vehicle->U.UVehicle.TNode != 0)
         {
-            if ((p_vehicle->Flag & 0x8000000) != 0)
+            if ((p_vehicle->Flag & TngF_Unkn08000000) != 0)
                 train_unkn_st18_func_1(p_vehicle);
             else
                 train_unkn_st18_func_2(p_vehicle);
@@ -482,7 +1027,9 @@ void process_train(struct Thing *p_vehicle)
         set_passengers_location(p_vehicle);
         break;
     default:
-        LOGERR("Shagged train state %d", (int)p_vehicle->State);
+        LOGERR("Shagged %s %d state %d",
+          vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+          (int)p_vehicle->State);
         break;
     }
 }
@@ -565,17 +1112,19 @@ void process_veh_ground(struct Thing *p_vehicle)
         p_vehicle->Y >>= 3;
         break;
     case VehSt_UNKN_3C:
-        p_vehicle->State = VehSt_UNKN_11;
+        // Pretend we are wandering
+        p_vehicle->State = VehSt_WANDER;
         if (p_vehicle->U.UVehicle.TNode != 0)
               process_next_tnode(p_vehicle);
         move_vehicle(p_vehicle);
         set_passengers_location(p_vehicle);
+        // Get back to specifics of this state
         p_vehicle->State = VehSt_UNKN_3C;
         process_stop_as_soon_as_you_can(p_vehicle);
         break;
-    case VehSt_UNKN_0:
-    case VehSt_UNKN_3D:
-    case VehSt_UNKN_21:
+    case VehSt_NONE:
+    case VehSt_PARKED_PERPN:
+    case VehSt_PARKED_PARAL:
         if (p_vehicle->SubType == SubTT_VEH_FLYING)
             process_parked_flyer(p_vehicle);
         break;
@@ -613,8 +1162,8 @@ void process_veh_ground(struct Thing *p_vehicle)
         move_vehicle(p_vehicle);
         set_passengers_location(p_vehicle);
         break;
-    case VehSt_UNKN_11:
-    case VehSt_UNKN_32:
+    case VehSt_WANDER:
+    case VehSt_GOTO_LOC:
     case VehSt_UNKN_33:
     case VehSt_UNKN_34:
         if (p_vehicle->U.UVehicle.TNode != 0)
@@ -623,12 +1172,14 @@ void process_veh_ground(struct Thing *p_vehicle)
         set_passengers_location(p_vehicle);
         break;
     default:
-        LOGERR("Unexpected vehicle state %d", (int)p_vehicle->State);
+        LOGERR("Unexpected %s %d state %d",
+          vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+          (int)p_vehicle->State);
         break;
     }
 
     if ((p_vehicle->SubType != SubTT_VEH_FLYING)
-     && ((p_vehicle->Flag & 0x0002) == 0)) {
+     && ((p_vehicle->Flag & TngF_Unkn0002) == 0)) {
         set_vehicle_alt(p_vehicle);
     }
 }
@@ -650,17 +1201,17 @@ void process_vehicle(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
     return;
 #endif
-    if ((p_vehicle->Flag & 0x02) == 0)
+    if ((p_vehicle->Flag & TngF_Unkn0002) == 0)
         p_vehicle->OldTarget = 0;
     if (p_vehicle->U.UVehicle.RecoilTimer > 0)
         p_vehicle->U.UVehicle.RecoilTimer--;
-    if ((p_vehicle->U.UVehicle.WorkPlace & 0x80) != 0)
+    if ((p_vehicle->U.UVehicle.WorkPlace & VWPFlg_Unkn0080) != 0)
     {
         p_vehicle->Health -= 16;
         if (p_vehicle->Health < 0)
             start_crashing(p_vehicle);
         if (((gameturn & 7) == 0) && (LbRandomAnyShort() & 7) == 0)
-            p_vehicle->U.UVehicle.WorkPlace &= ~0x80;
+            p_vehicle->U.UVehicle.WorkPlace &= ~VWPFlg_Unkn0080;
     }
 
     switch (p_vehicle->SubType)
@@ -685,7 +1236,7 @@ void process_vehicle(struct Thing *p_vehicle)
         if (p_vehicle->State == VehSt_UNKN_45) {
             bang_new4(p_vehicle->X, p_vehicle->Y, p_vehicle->Z, 10);
             init_vehicle_explode(p_vehicle);
-        } else if (p_vehicle->State == VehSt_UNKN_21) {
+        } else if (p_vehicle->State == VehSt_PARKED_PARAL) {
             process_tank_stationary(p_vehicle);
         } else {
             process_tank(p_vehicle);
@@ -699,7 +1250,7 @@ void process_vehicle(struct Thing *p_vehicle)
         break;
     case SubTT_VEH_MECH:
         unkn_path_func_001(p_vehicle, 0);
-        if (p_vehicle->State == VehSt_UNKN_21)
+        if (p_vehicle->State == VehSt_PARKED_PARAL)
             process_mech_stationary(p_vehicle);
         else
             process_mech(p_vehicle);
@@ -711,5 +1262,31 @@ void process_vehicle(struct Thing *p_vehicle)
     }
 }
 
+void preprogress_trains_turns(ulong nturns)
+{
+    ulong turns;
+
+    for (turns = nturns; turns > 0; turns--)
+    {
+        short thing;
+        int tng_remain;
+        struct Thing *p_thing;
+
+        thing = things_used_head;
+        tng_remain = things_used;
+        while (thing > 0)
+        {
+            if (tng_remain == 0)
+                break;
+            p_thing = &things[thing];
+            thing = p_thing->LinkChild;
+            tng_remain--;
+
+            if ((p_thing->Type == TT_VEHICLE)
+              && (p_thing->SubType == SubTT_VEH_TRAIN))
+                process_vehicle(p_thing);
+        }
+    }
+}
 
 /******************************************************************************/

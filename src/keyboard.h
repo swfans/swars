@@ -20,8 +20,8 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#include <SDL.h>
 #include "bftypes.h"
+#include "bfkeybd.h"
 
 enum GameKeys
 {
@@ -63,6 +63,19 @@ extern ushort jskeys[GKey_KEYS_COUNT];
 void init_buffered_keys(void);
 void reset_buffered_keys(void);
 ulong next_buffered_key(void);
+
+/**
+ * Checks if a specific key is pressed.
+ *
+ * @param key Code of the key to check.
+ * @param kmodif Key modifier flags required.
+ */
+ubyte is_key_pressed(TbKeyCode key, TbKeyMods kmodif);
+
+/**
+ * Clears the marking that a specific key was pressed.
+ */
+void clear_key_pressed(TbKeyCode key);
 
 #endif
 /******************************************************************************/

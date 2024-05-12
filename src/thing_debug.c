@@ -20,6 +20,7 @@
 
 #include <string.h>
 #include "bfkeybd.h"
+#include "bfbox.h"
 #include "command.h"
 #include "drawtext.h"
 #include "display.h"
@@ -36,6 +37,8 @@ extern ubyte execute_commands;
 extern struct Thing *p_track_thing;
 extern struct Thing *p_track2_thing;
 extern int dword_1DC7A4;
+extern short word_1DC7A0;
+extern short word_1DC7A2;
 
 int select_thing_for_debug(short x, short y, short z, short type)
 {
@@ -45,15 +48,134 @@ int select_thing_for_debug(short x, short y, short z, short type)
     return ret;
 }
 
-void unused_func_205(int a1, int a2, int a3, int a4, short thing, ubyte a6, ubyte a7, ubyte a8)
+int unused_func_204(short a1, short a2, short a3, struct Thing *p_person)
 {
+    int ret;
+    asm volatile ("call ASM_unused_func_204\n"
+        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3), "c" (p_person));
+    return ret;
+}
+
+void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_draw_unkn_func_07\n"
+        : : "a" (x), "d" (y), "b" (a3), "c" (a4), "g" (a5));
+}
+
+// TODO separate get_person_commands_debug_hud_inputs() from the below
+void person_commands_debug_hud(int x, int y, int w, int h, short person, ubyte col1, ubyte col2, ubyte col3)
+{
+#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
       "push %5\n"
       "push %4\n"
-      "call ASM_unused_func_205\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (thing), "g" (a6), "g" (a7), "g" (a8));
+      "call ASM_person_commands_debug_hud\n"
+        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (person), "g" (col1), "g" (col2), "g" (col3));
+    return;
+#endif
+    struct Thing *p_person;
+    ushort cmds_count;
+    short cmd, cmdhead;
+#if 0
+    short hilight_cmd;
+#endif
+    short cy;
+    short ms_y;
+    char locstr[52];
+    short box_x, box_y;
+    short box_width, box_height;
+    short row_height;
+    int j;
+
+#if 0
+    hilight_cmd = -1;
+#endif
+    box_width = 200;
+    p_person = &things[person];
+    box_height = 150;
+    box_x = 400;
+    box_y = 100;
+    row_height = 16;
+    cmdhead = p_person->U.UPerson.ComHead;
+    if (lbDisplay.GraphicsScreenHeight >= 400)
+        box_width = 100;
+    cmds_count = 0;
+    for (cmd = cmdhead; cmd; cmds_count++)
+        cmd = game_commands[cmd].Next;
+
+    if (cmds_count == 0)
+        return;
+
+    if (16 * cmds_count + 8 < box_height)
+        box_height = 16 * cmds_count + 8;
+    if ((word_1DC7A0 >> 2) > word_1DC7A2 - 4)
+        word_1DC7A0 = 0;
+    word_1DC7A2 = cmds_count;
+    lbDisplay.DrawFlags = 0x0004;
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        LbDrawBox(box_x/2, box_y/2, box_width/2, box_height/2, col3);
+    else
+        LbDrawBox(box_x, box_y, box_width, box_height, col3);
+    lbDisplay.DrawFlags = 0;
+    draw_unkn_func_07(box_x, box_y, box_width, box_height, col1);
+    cmd = cmdhead;
+    for (j = word_1DC7A0 >> 2; cmd; j--)
+    {
+        if (j == 0)
+            break;
+        cmd = game_commands[cmd].Next;
+    }
+    cy = box_y + 4 - 4 * (word_1DC7A0 & 3);
+    person_command_to_text(0, 0, 1);
+
+    while (cmd != 0)
+    {
+        if (cy > box_y)
+        {
+            if (mouse_move_over_box_coords(box_x + 8, cy, box_x + 8 + box_width, cy + row_height - 1))
+            {
+                if (lbDisplay.GraphicsScreenHeight < 400)
+                    LbDrawBox((box_x + 4)/2, (cy - 2)/2, (box_width - 8)/2, (row_height - 1)/2, col1);
+                else
+                    LbDrawBox(box_x + 4, cy - 2, box_width - 8, row_height - 1, col1);
+            }
+            if ((p_person != NULL) && (p_person->U.UPerson.ComCur == cmd))
+            {
+                if (lbDisplay.GraphicsScreenHeight < 400)
+                    LbDrawBox((box_x + 4)/2, (cy - 2)/2, (box_width - 8)/2, (row_height - 1)/2, colour_lookup[3]);
+                else
+                    LbDrawBox(box_x + 4, cy - 2, box_width - 8, row_height - 1, colour_lookup[3]);
+            }
+
+#if 0
+            if (mouse_move_over_box_coords(box_x + 8, cy, box_x + 8 + box_width, cy + row_height - 1))
+            {
+                hilight_cmd = cmd;
+            }
+#endif
+            if (p_person != NULL)
+                unused_func_204(box_x + 8 - 20, cy + 5, cmd, p_person);
+            if (person_command_to_text(locstr, cmd, 0))
+                draw_text(box_x + 8, cy, locstr, col2);
+            else
+                cy -= row_height;
+            if (cy + 28 > box_height + box_y)
+                break;
+        }
+        cy += row_height;
+        cmd = game_commands[cmd].Next;
+        ++j;
+    }
+
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    if ((ms_y < box_y - 20) && (word_1DC7A0 > 0))
+        word_1DC7A0--;
+    if ((ms_y > box_height + box_y + 10) && (word_1DC7A0 >> 2 < word_1DC7A2 - (box_height >> 4)))
+        word_1DC7A0++;
 }
 
 void things_debug_hud(void)
@@ -65,6 +187,7 @@ void things_debug_hud(void)
 #endif
     short thing;
     short path;
+    short pasngr;
     char locstr[100];
 
     thing = select_thing_for_debug(mouse_map_x, 0, mouse_map_z, -1);
@@ -78,7 +201,6 @@ void things_debug_hud(void)
             dword_1DC7A4 = thing;
         }
     }
-
     if (dword_1DC7A4)
         thing = dword_1DC7A4;
 
@@ -92,16 +214,20 @@ void things_debug_hud(void)
     func_6fe80(mouse_map_x, mouse_map_y, mouse_map_z,
       p_track_thing->X >> 8, p_track_thing->Y >> 5, p_track_thing->Z >> 8,
       colour_lookup[1]);
+    // Show commands list
     if (p_track_thing->Type == TT_PERSON)
-          unused_func_205(356, 80, 280, 150, thing, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
+          person_commands_debug_hud(356, 80, 280, 150, thing, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
+    else if ((p_track_thing->Type == TT_VEHICLE) && (p_track_thing->U.UVehicle.PassengerHead > 0))
+          person_commands_debug_hud(356, 80, 280, 150, p_track_thing->U.UVehicle.PassengerHead, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
 
     if (execute_commands)
     {
-        snprintf(locstr, sizeof(locstr), "State %d ",
-          (int)p_track_thing->State);
+        snprintf(locstr, sizeof(locstr), "State %d.%d ",
+          (int)p_track_thing->State, (int)p_track_thing->SubState);
         switch (p_track_thing->Type)
         {
         case TT_VEHICLE:
+            snprint_vehicle_state(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), p_track_thing);
             snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Pasng %d G %d comcur %x EG %d th %d wb %d",
               (int)veh_passenger_count(p_track_thing),
               (int)p_track_thing->U.UVehicle.Group,
@@ -220,14 +346,32 @@ void things_debug_hud(void)
         switch (p_track_thing->Type)
         {
         case TT_VEHICLE:
-            sprintf(locstr, "%s",
-              thing_type_name(p_track_thing->Type, p_track_thing->SubType));
+                pasngr = p_track_thing->U.UVehicle.PassengerHead;
+                if (pasngr == 0) {
+                    sprintf(locstr, "%s: empty",
+                      thing_type_name(p_track_thing->Type, p_track_thing->SubType));
+                } else if (p_track_thing->U.UVehicle.PassengerHead > 0) {
+                    struct Thing *p_pasngr;
+
+                    p_pasngr = &things[pasngr];
+                    sprintf(locstr, "%s: passenger %s offs %d lastdist %d",
+                      thing_type_name(p_track_thing->Type, p_track_thing->SubType),
+                      thing_type_name(p_pasngr->Type, p_pasngr->SubType),
+                      (int)pasngr, (int)p_pasngr->U.UPerson.LastDist);
+                } else { // Not expected to happen; but just in case
+                    struct SimpleThing *p_spasngr;
+
+                    p_spasngr = &sthings[pasngr];
+                    sprintf(locstr, "%s: passenger %s offs %d",
+                      thing_type_name(p_track_thing->Type, p_track_thing->SubType),
+                      thing_type_name(p_spasngr->Type, p_spasngr->SubType), (int)pasngr);
+                }
             draw_text(360, 90, locstr, colour_lookup[2]);
             break;
         case TT_PERSON:
             sprintf(locstr, "%s: lastdist %d VX,VZ (%d,%d)",
               thing_type_name(p_track_thing->Type, p_track_thing->SubType),
-              (int)p_track_thing->U.UObject.BuildNumbVect,
+              (int)p_track_thing->U.UPerson.LastDist,
               (int)p_track_thing->VX,
               (int)p_track_thing->VZ);
             draw_text(360, 90, locstr, colour_lookup[3]);

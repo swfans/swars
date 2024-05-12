@@ -57,6 +57,8 @@ void FreeMusic(void);
 
 int LoadMusic(ushort bankNo);
 
+void StartMusic(int songNo, ubyte volume);
+
 void StopMusicIfActive(void);
 void StopMusic(void);
 

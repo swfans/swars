@@ -121,7 +121,7 @@ enum ThingFlags {
     TngF_Unkn02000000 = 0x02000000,
     TngF_Unkn04000000 = 0x04000000,
     TngF_Unkn08000000 = 0x08000000,
-    TngF_Unkn10000000 = 0x10000000,
+    TngF_InVehicle = 0x10000000,
     TngF_Unkn20000000 = 0x20000000,
     TngF_Unkn40000000 = 0x40000000,
 };
@@ -161,8 +161,7 @@ struct TngUObject
     short TNode;
     short Cost;
     short Shite;
-    short BHeightA;
-    short BHeightB;
+    ulong BHeight;
     ushort Turn;
     ushort TurnPadOnPS;
     short tnode[4];
@@ -239,7 +238,7 @@ struct TngUVehicle
   short TargetDY;
   short TargetDZ;
   short OnFace;
-  short WorkPlace;
+  ushort WorkPlace;
   ushort ComHead;
   short ComCur;
   short Timer2;
@@ -400,7 +399,7 @@ struct Thing { // sizeof=168
     ubyte PathOffset;
     ubyte SubState;
     struct Thing *PTarget;
-    long Flag2;
+    ulong Flag2;
     short GotoThingIndex;
     short OldTarget;
     union { // pos=76
@@ -865,11 +864,13 @@ struct ThingOldV9 { // sizeof=216
 /******************************************************************************/
 extern struct Thing *things;
 extern short things_used_head;
+extern ushort things_used;
 extern short same_type_head[256+32];
 extern short static_radii[];
 
 extern struct SimpleThing *sthings;
 extern short sthings_used_head;
+extern ushort sthings_used;
 
 extern TbBool debug_hud_things;
 
@@ -888,6 +889,8 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
 /** Fill buffer with function-like declaration of simple thing properties.
  */
 void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
+
+TbBool person_command_to_text(char *out, ushort cmd, ubyte a3);
 
 void things_debug_hud(void);
 

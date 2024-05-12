@@ -23,7 +23,6 @@ TbScreenMode screen_mode_fmvid_hi = Lb_SCREEN_MODE_640_480_8;
 
 extern ushort data_1aa330;
 extern ushort data_1aa332;
-extern ubyte *vec_tmap[18];
 extern unsigned char *display_palette;
 
 TbPixel fade_unaffected_colours[] = {

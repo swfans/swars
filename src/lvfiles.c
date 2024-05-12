@@ -29,6 +29,7 @@
 #include "bigmap.h"
 #include "campaign.h"
 #include "command.h"
+#include "display.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginsngobjs.h"
@@ -36,6 +37,7 @@
 #include "enginsngobjs.h"
 #include "game.h"
 #include "game_data.h"
+#include "game_speed.h"
 #include "lvobjctv.h"
 #include "matrix.h"
 #include "building.h"
@@ -153,8 +155,6 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 
             if (p_thing->Type == TT_PERSON)
             {
-                ushort person_anim;
-
                 if (fmtver < 15)
                     // Causes invisible NPCs when non-zero
                     p_thing->Flag2 = 0;
@@ -167,9 +167,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     delete_node(p_thing);
                     continue;
                 }
-                person_anim = people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode];
-                p_thing->StartFrame = person_anim - 1;
-                p_thing->Frame = nstart_ani[person_anim + p_thing->U.UPerson.Angle];
+                reset_person_frame(p_thing);
                 init_person_thing(p_thing);
                 p_thing->Flag |= TngF_Unkn0004;
                 if (fmtver < 6)
@@ -330,7 +328,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         LbFileRead(lev_fh, game_level_miscs, 4400);
 
     if (fmtver >= 16)
-        LbFileRead(lev_fh, &dword_176D58, 4);
+        LbFileRead(lev_fh, &engn_anglexz, 4);
 
     return fmtver;
 }

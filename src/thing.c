@@ -859,7 +859,7 @@ short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, sho
         {
             p_thing->VX = p_thing->X >> 16;
             p_thing->VZ = p_thing->Z >> 16;
-            p_thing->Flag |= 0x01;
+            p_thing->Flag |=  TngF_Unkn0001;
         }
         if (shut_h < 15)
             p_thing->Y >>= 3;
@@ -888,7 +888,7 @@ short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, sho
             memcpy(&local_mats[p_thing->U.UObject.MatrixIndex], p_clmat, sizeof(struct M33));
         else
             matrix_identity_fill(&local_mats[p_thing->U.UObject.MatrixIndex]);
-        p_thing->Flag |= 0x1000;
+        p_thing->Flag |=  TngF_Unkn1000;
     }
     p_thing->SubState = p_clthing->SubState;
     p_thing->Timer1 = p_clthing->Timer1;

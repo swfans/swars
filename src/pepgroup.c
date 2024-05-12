@@ -176,4 +176,27 @@ int thing_group_transfer_people(short pv_group, short nx_group, short subtype, i
     return count;
 }
 
+void thing_group_clear_action(short group)
+{
+    struct GroupAction *p_grpact;
+
+    p_grpact = &group_actions[group];
+    p_grpact->Alive = 0;
+    p_grpact->Dead = 0;
+    p_grpact->Hit = 0;
+    p_grpact->FiredOn = 0;
+    p_grpact->Persuaded = 0;
+    p_grpact->Storming = 0;
+}
+
+void thing_groups_clear_all_actions(void)
+{
+    short group;
+
+    for (group = 0; group < PEOPLE_GROUPS_COUNT; group++)
+    {
+        thing_group_clear_action(group);
+    }
+}
+
 /******************************************************************************/

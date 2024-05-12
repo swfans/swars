@@ -40,6 +40,9 @@ extern long ixE;
 extern long thin_wall_x1, thin_wall_y1;
 extern long thin_wall_x2, thin_wall_y2;
 
+extern short link__MapColListEmptyHead;
+extern short link__MapColVectEmptyHead;
+
 /** Map of the ground surface for triangluation purposes, 2x2 per tile.
  */
 ubyte *ground_map = NULL;
@@ -893,6 +896,36 @@ void triangulation_clear(void)
 {
     triangulation_init();
     triangulation_init_edges();
+}
+
+void init_col_vects_linked_list(void)
+{
+    int i, limit;
+
+    link__MapColListEmptyHead = 0;
+    link__MapColVectEmptyHead = 0;
+
+    // TODO why this amount?
+    limit = 1000;//get_memory_ptr_allocated_count((void **)&game_col_vects_list);
+    for (i = 0; i < limit; i++)
+    {
+        struct ColVectList *p_cvlist;
+
+        p_cvlist = &game_col_vects_list[next_vects_list + i];
+        p_cvlist->NextColList = link__MapColListEmptyHead;
+        link__MapColListEmptyHead = i + next_vects_list;
+    }
+
+    // TODO why this amount?
+    limit = 600;//get_memory_ptr_allocated_count((void **)&game_col_vects);
+    for (i = 0; i < limit; i++)
+    {
+        struct ColVect *p_colvect;
+
+        p_colvect = &game_col_vects[next_col_vect + i];
+        p_colvect->Face = link__MapColVectEmptyHead;
+        link__MapColVectEmptyHead = i + next_col_vect;
+    }
 }
 
 void init_collision_vects(void)

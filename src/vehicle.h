@@ -63,7 +63,7 @@ enum SubTypeVehicle {
 };
 
 enum VehicleState {
-  VehSt_UNKN_0 = 0x0,
+  VehSt_NONE = 0x0,
   VehSt_UNKN_1 = 0x1,
   VehSt_UNKN_2 = 0x2,
   VehSt_UNKN_3 = 0x3,
@@ -80,7 +80,7 @@ enum VehicleState {
   VehSt_UNKN_E = 0xE,
   VehSt_UNKN_F = 0xF,
   VehSt_UNKN_10 = 0x10,
-  VehSt_UNKN_11 = 0x11,
+  VehSt_WANDER = 0x11,
   VehSt_UNKN_12 = 0x12,
   VehSt_UNKN_13 = 0x13,
   VehSt_UNKN_14 = 0x14,
@@ -96,7 +96,7 @@ enum VehicleState {
   VehSt_UNKN_1E = 0x1E,
   VehSt_UNKN_1F = 0x1F,
   VehSt_UNKN_20 = 0x20,
-  VehSt_UNKN_21 = 0x21,
+  VehSt_PARKED_PARAL = 0x21,
   VehSt_UNKN_22 = 0x22,
   VehSt_UNKN_23 = 0x23,
   VehSt_UNKN_24 = 0x24,
@@ -113,7 +113,7 @@ enum VehicleState {
   VehSt_UNKN_2F = 0x2F,
   VehSt_UNKN_30 = 0x30,
   VehSt_UNKN_31 = 0x31,
-  VehSt_UNKN_32 = 0x32,
+  VehSt_GOTO_LOC = 0x32,
   VehSt_UNKN_33 = 0x33,
   VehSt_UNKN_34 = 0x34,
   VehSt_UNKN_35 = 0x35,
@@ -124,7 +124,7 @@ enum VehicleState {
   VehSt_UNKN_3A = 0x3A,
   VehSt_FLY_LANDING = 0x3B,
   VehSt_UNKN_3C = 0x3C,
-  VehSt_UNKN_3D = 0x3D,
+  VehSt_PARKED_PERPN = 0x3D,
   VehSt_UNKN_3E = 0x3E,
   VehSt_UNKN_3F = 0x3F,
   VehSt_UNKN_40 = 0x40,
@@ -148,7 +148,34 @@ enum VehicleState {
   VehSt_UNKN_52 = 0x52,
 };
 
+enum VehWorkPlaceFlags {
+    VWPFlg_Unkn0001     = 0x0001,
+    VWPFlg_Unkn0002     = 0x0002,
+    VWPFlg_Unkn0004     = 0x0004,
+    VWPFlg_Unkn0008     = 0x0008,
+    VWPFlg_HasAgPhase1  = 0x0010,
+    VWPFlg_HasAgPhase2  = 0x0020,
+    VWPFlg_HasAgok      = 0x0040,
+    VWPFlg_Unkn0080     = 0x0080,
+    VWPFlg_Unkn0100     = 0x0100,
+    VWPFlg_Unkn0200     = 0x0200,
+    VWPFlg_Unkn0400     = 0x0400,
+    VWPFlg_Unkn0800     = 0x0800,
+    VWPFlg_Unkn1000     = 0x1000,
+    VWPFlg_Unkn2000     = 0x2000,
+    VWPFlg_Unkn4000     = 0x4000,
+    VWPFlg_Unkn8000     = 0x8000,
+};
+
 struct Thing;
+
+/** Stores configuration for a state of a vehicle.
+ */
+struct VehStateConfig
+{
+    char Name[17];
+};
+
 
 #pragma pack()
 /******************************************************************************/
@@ -169,6 +196,11 @@ void process_vehicle(struct Thing *p_vehicle);
 void start_crashing(struct Thing *p_vehicle);
 
 int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle);
+
+void preprogress_trains_turns(ulong nturns);
+
+const char *vehicle_type_name(ushort vtype);
+void snprint_vehicle_state(char *buf, ulong buflen, struct Thing *p_thing);
 
 /******************************************************************************/
 #ifdef __cplusplus

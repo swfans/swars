@@ -28,6 +28,7 @@
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
+#include "game_speed.h"
 #include "game.h"
 #include "network.h"
 #include "sound.h"

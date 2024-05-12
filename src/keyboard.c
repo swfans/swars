@@ -52,6 +52,26 @@ ulong buffered_keys_write_index;
 
 #pragma pack()
 
+ubyte is_key_pressed(TbKeyCode key, TbKeyMods kmodif)
+{
+    if ((kmodif == KMod_DONTCARE) || (kmodif == lbShift))
+        return lbKeyOn[key];
+    return 0;
+}
+
+void clear_key_pressed(TbKeyCode key)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtype-limits"
+    if (key >= sizeof(lbKeyOn))
+        return;
+#pragma GCC diagnostic pop
+    lbKeyOn[key] = 0;
+    if (key == lbInkey) {
+        lbInkey = KC_UNASSIGNED;
+    }
+}
+
 static void add_key_to_buffer(ubyte key)
 {
     ulong new_write_index;

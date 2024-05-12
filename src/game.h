@@ -17,9 +17,6 @@ extern "C" {
 
 #pragma pack(1)
 
-// Not sure about the value
-#define GAME_FPS 16
-
 enum GameModes {
     GamM_None        = 0,
     GamM_Unkn1       = 1,
@@ -253,12 +250,6 @@ struct DIHotspot {
 	short Y;
 };
 
-struct DrawItem {
-    ubyte Type;
-    ushort Offset;
-    ushort Child;
-};
-
 struct PurpleDrawItem { // sizeof=26
 	union {
 		//struct DITrig Trig; // unused? too large to be here
@@ -315,6 +306,20 @@ struct WalkHeader { // sizeof=4
 struct BezierPt { // sizeof=28
     ubyte field_0[26];
     ushort field_2A;
+};
+
+struct FloorTile { // sizeof=39
+    short X[4];
+    short Y[4];
+    struct SingleFloorTexture *Texture;
+    ubyte V[4];
+    short Shade[4];
+    ubyte Col;
+    ubyte Flags;
+    ubyte Flags2;
+    ubyte Flags2b;
+    ubyte Page;
+    short Offset;
 };
 
 struct MissionStatus { // sizeof=40
@@ -446,25 +451,13 @@ struct Animation {
   short field_6E;
 };
 
-struct SortLine {
-    short X1;
-    short Y1;
-    short X2;
-    short Y2;
-    ubyte Col;
-    ubyte Shade;
+struct Frame {
+    ushort FirstElement;
+    ubyte SWidth;
+    ubyte SHeight;
+    ubyte FX;
     ubyte Flags;
-};
-
-struct SortSprite {
-    short X;
-    short Y;
-    short Z;
-    ushort Frame;
-    struct Thing *PThing;
-    ubyte Brightness;
-    ubyte Angle;
-    short Scale;
+    ushort Next;
 };
 
 #pragma pack()
@@ -527,8 +520,6 @@ extern ubyte byte_1810E6[40];
 extern ubyte byte_18110E[40];
 
 extern ushort word_1531E0;
-extern ushort next_special_face;
-extern ushort next_special_face4;
 extern struct ColVectList *game_col_vects_list;
 extern ushort next_vects_list;
 extern struct ColVect *game_col_vects;
@@ -558,9 +549,6 @@ extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;
 extern ubyte *game_user_heap;
 extern struct SpecialPoint *game_screen_point_pool;
-extern struct DrawItem *game_draw_list;
-extern struct SortSprite *game_sort_sprites;
-extern struct SortLine *game_sort_lines;
 extern struct UnknBezEdit *bezier_pts;
 extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;
@@ -576,14 +564,6 @@ extern struct TbSprite *unk2_sprites_end;
 
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
-extern ulong curr_tick_time;
-extern ulong prev_tick_time;
-extern GameTurn gameturn;
-extern GameTurn prev_gameturn;
-extern ulong turns_delta;
-extern ushort fifties_per_gameturn;
-extern ushort gamep_scene_effect;
-extern ubyte *vec_tmap[18];
 extern ubyte linear_vec_pal[256];
 extern ulong nsta_size;
 extern TbPixel colour_grey1;
@@ -599,7 +579,7 @@ extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];
 extern ushort word_1C8446;
 extern ushort unkn3de_len;
-extern ubyte data_19ec6f;
+extern ubyte byte_19EC6F;
 extern ulong save_mortal_salt;
 
 extern ushort weapon_text_index[32];
@@ -696,8 +676,6 @@ extern ushort *nstart_ani;
 extern ushort *nstart_ani_end;
 extern struct Frame *frame;
 extern struct Frame *frame_end;
-
-extern long dword_176D58;
 
 extern long dword_17710C;
 extern long dword_177110;

@@ -118,6 +118,10 @@ swars_SOURCES = \
 	dos.h \
 	drawtext.c \
 	drawtext.h \
+	enginbckt.c \
+	enginbckt.h \
+	engindrwlst.c \
+	engindrwlst.h \
 	enginlights.c \
 	enginlights.h \
 	enginpriobjs.c \
@@ -128,6 +132,8 @@ swars_SOURCES = \
 	enginsngobjs.h \
 	enginsngtxtr.c \
 	enginsngtxtr.h \
+	enginpeff.c \
+	enginpeff.h \
 	engintrns.c \
 	engintrns.h \
 	enginzoom.c \
@@ -165,8 +171,11 @@ swars_SOURCES = \
 	guitext.c \
 	guitext.h \
 	game.c \
+	game_bstype.h \
 	game_data.c \
 	game_data.h \
+	game_speed.c \
+	game_speed.h \
 	game.h \
 	globals.h \
 	joy_modul1.sx \

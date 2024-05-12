@@ -85,6 +85,8 @@ void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill);
 int thing_group_transfer_people(short pv_group, short nx_group, short subtype,
   int stay_limit, int tran_limit);
 
+void thing_groups_clear_all_actions(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
