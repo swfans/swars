@@ -710,7 +710,7 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
 
     if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
-        if (screentype == SCRT_9)
+        if (screentype == SCRT_DEBRIEF)
         {
             draw_mission_people_stats_names_column(box, p_rep);
         }
@@ -722,7 +722,7 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
         copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
     }
 
-    if (screentype == SCRT_9)
+    if (screentype == SCRT_DEBRIEF)
     {
         draw_mission_people_stats_vals_column(box, p_rep);
     }

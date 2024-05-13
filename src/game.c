@@ -10228,7 +10228,7 @@ void show_menu_screen_st2(void)
         scientists_lost = 0;
         update_mission_time(0);
         in_network_game = 0;
-        screentype = SCRT_B;
+        screentype = SCRT_NETDEBRF;
         redraw_screen_flag = 1;
         set_heading_box_text(gui_strings[374]);
     }
@@ -10266,7 +10266,7 @@ void show_menu_screen_st2(void)
             if ((ingame.Flags & GamF_MortalGame) != 0) {
                 save_game_write(0, save_active_desc);
             }
-            screentype = SCRT_9;
+            screentype = SCRT_DEBRIEF;
             set_heading_box_text(gui_strings[374]);
             redraw_screen_flag = 1;
       }
@@ -10565,7 +10565,7 @@ void show_menu_screen(void)
     show_date_time();
     if ((screentype != SCRT_MAINMENU) && (screentype != SCRT_LOGIN) && !restore_savegame)
           show_apps_selection_bar();
-    if ((screentype == SCRT_9 || screentype == SCRT_B) && change_screen == ChSCRT_MISSION)
+    if ((screentype == SCRT_DEBRIEF || screentype == SCRT_NETDEBRF) && change_screen == ChSCRT_MISSION)
     {
         screentype = SCRT_MISSION;
         brief_load_mission_info();
@@ -10600,13 +10600,13 @@ void show_menu_screen(void)
     case SCRT_PANET:
         show_panet_screen();
         break;
-    case SCRT_9:
+    case SCRT_DEBRIEF:
         show_debrief_screen();
         break;
     case SCRT_LOGIN:
         show_login_screen();
         break;
-    case SCRT_B:
+    case SCRT_NETDEBRF:
         show_debrief_screen();
         break;
     case SCRT_ALERTBOX:
