@@ -1013,7 +1013,8 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
             p_thing->U.UPerson.Group = p_thing->U.UPerson.EffectiveGroup;
         }
         // The current weapon should always be in a list of carried wepons (issue mostly for fmtver < 5)
-        p_thing->U.UPerson.WeaponsCarried |= (1 << (p_thing->U.UPerson.CurrentWeapon - 1));
+        if (p_thing->U.UPerson.CurrentWeapon > 0)
+            p_thing->U.UPerson.WeaponsCarried |= (1 << (p_thing->U.UPerson.CurrentWeapon - 1));
     }
     else if (p_thing->Type == TT_VEHICLE)
     {
