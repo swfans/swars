@@ -31,6 +31,12 @@ extern "C" {
 #define MISSION_NETSCAN_OBV_COUNT 1000
 #define NETSCAN_OBJECTIVES_MAX_COUNT 10
 
+enum ObjectiveStatuses {
+    ObvStatu_UNDECIDED = 0,
+    ObvStatu_COMPLETED,
+    ObvStatu_FAILED,
+};
+
 /* deprecated - when callbacks are defined within objectv_defs[],
  * there will be no need to reference specific objective.
  */

@@ -264,7 +264,7 @@ int add_used_objective(long mapno, long levelno)
     p_objectv->Pri = 0;
     p_objectv->Map = mapno;
     p_objectv->Level = (levelno - 1) % 15 + 1;
-    p_objectv->Status = 0;
+    p_objectv->Status = ObvStatu_UNDECIDED;
 
     return objectv;
 }
@@ -1274,26 +1274,26 @@ short test_objective(ushort objectv, ushort show_obj)
     {
         p_objectv = &game_used_lvl_objectives[objectv];
         if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
-          (p_objectv->Status != 2) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
+          (p_objectv->Status != ObvStatu_FAILED) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
         {
             lbKeyOn[KC_SLASH] = 0;
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
         }
-        if (p_objectv->Status == 2)
+        if (p_objectv->Status == ObvStatu_FAILED)
             return 1;
-        if (p_objectv->Status == 1)
+        if (p_objectv->Status == ObvStatu_COMPLETED)
             return 0;
     }
     else
     {
         p_objectv = &game_used_objectives[objectv];
         if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
-          (p_objectv->Status != 2) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
+          (p_objectv->Status != ObvStatu_FAILED) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
         {
             lbKeyOn[KC_SLASH] = 0;
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
         }
-        if (p_objectv->Status == 2)
+        if (p_objectv->Status == ObvStatu_FAILED)
             return 1;
         if (((p_objectv->Flags & GObjF_HIDDEN) == 0) && word_1C8446 && (show_obj != 0))
             draw_objective(objectv, 0);
@@ -1301,7 +1301,7 @@ short test_objective(ushort objectv, ushort show_obj)
             add_signal_to_scanner(p_objectv, 0);
         if ((p_objectv->Flags & GObjF_CANT_MET) != 0)
             return 1;
-        if (p_objectv->Status == 1)
+        if (p_objectv->Status == ObvStatu_COMPLETED)
             return -1;
     }
 
@@ -1310,15 +1310,15 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_P_DEAD:
         thing = p_objectv->Thing;
         if (person_is_dead(thing) || thing_is_destroyed(thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
-        p_objectv->Status = 0;
+        p_objectv->Status = ObvStatu_UNDECIDED;
         break;
     case GAME_OBJ_ALL_G_DEAD:
         group = p_objectv->Thing;
         if (group_actions[group].Alive <= 0) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1326,7 +1326,7 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
         if (group_members_dead(group, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1334,7 +1334,7 @@ short test_objective(ushort objectv, ushort show_obj)
         thing = p_objectv->Thing;
         thing2 = p_objectv->Y;
         if (person_is_near_thing(thing, thing2, p_objectv->Radius)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1343,14 +1343,14 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Arg2;
         amount = p_objectv->Y;
         if (group_members_near_thing(thing, group, amount, p_objectv->Radius)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_P_ARRIVES:
         thing = p_objectv->Thing;
         if (thing_arrived_at_objectv(thing, p_objectv)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1358,21 +1358,21 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
         if (group_members_arrived_at_objectv(group, p_objectv, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_ALL_G_ARRIVES:
         group = p_objectv->Thing;
         if (all_group_arrived(group, p_objectv->X, p_objectv->Y, p_objectv->Z, p_objectv->Radius)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_PERSUADE_P:
         thing = p_objectv->Thing;
         if (person_is_persuaded_by_player(thing, local_player_no)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1380,14 +1380,14 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
         if (group_members_persuaded_by_player(group, local_player_no, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_PERSUADE_ALL_G:
         group = p_objectv->Thing;
         if (all_group_persuaded(group)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1395,14 +1395,14 @@ short test_objective(ushort objectv, ushort show_obj)
         p_objectv->Radius++;
         if (p_objectv->Radius >= p_objectv->Thing) {
             p_objectv->Radius = 0;
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_GET_ITEM:
         thing = p_objectv->Thing;
         if (item_is_carried_by_player(thing, p_objectv->Arg2, local_player_no)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1413,7 +1413,7 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_DESTROY_OBJECT:
         thing = p_objectv->Thing;
         if (thing_is_destroyed(thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1421,7 +1421,7 @@ short test_objective(ushort objectv, ushort show_obj)
         thing = p_objectv->Thing;
         if (person_is_persuaded_by_player(thing, local_player_no) ||
           person_is_dead(thing) || thing_is_destroyed(thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1429,14 +1429,14 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
         if (group_members_killed_or_persuaded_by_player(group, local_player_no, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_PKILL_ALL_G:
         group = p_objectv->Thing;
         if (group_all_killed_or_persuaded_by_player(group, local_player_no)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1447,7 +1447,7 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_PROTECT_G:
         group = p_objectv->Thing;
         if (group_members_dead(group, 1)) {
-            p_objectv->Status = 1;
+            p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
         break;
@@ -1455,7 +1455,7 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         thing = p_objectv->Arg2;
         if (group_members_persuaded_by_person(group, thing, 1)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1463,11 +1463,11 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Arg2;
         thing = p_objectv->Thing;
         if (vehicle_is_destroyed(thing)) {
-            p_objectv->Status = 1;
+            p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
         if (group_all_survivors_in_vehicle(group, thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1476,38 +1476,38 @@ short test_objective(ushort objectv, ushort show_obj)
         thing = p_objectv->Thing;
         amount = p_objectv->Y;
         if (vehicle_is_destroyed(thing)) {
-            p_objectv->Status = 1;
+            p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
         if (group_members_in_vehicle(group, thing, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_V_ARRIVES:
         thing = p_objectv->Thing;
         if (vehicle_is_destroyed(thing)) {
-            p_objectv->Status = 1;
+            p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
         if (thing_arrived_at_objectv(thing, p_objectv)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_DESTROY_V:
         thing = p_objectv->Thing;
         if (vehicle_is_destroyed(thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         // TODO why would we set it to 0 here? And why unconditionally?
-        p_objectv->Status = 0;
+        p_objectv->Status = ObvStatu_UNDECIDED;
         break;
     case GAME_OBJ_ITEM_ARRIVES:
         thing = p_objectv->Thing;
         if (item_arrived_at_objectv(thing, p_objectv->Arg2, p_objectv)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;

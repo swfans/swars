@@ -6653,7 +6653,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
                 mission_copy_conds_and_succ_fail_triggers(trg_missi, missi);
                 mission_reset_spec_triggers_2_chain(trg_missi);
 
-                ingame.MissionStatus = MStatu_UNDECIDED;
+                ingame.MissionStatus = ObvStatu_UNDECIDED;
 
                 return OMiSta_ContSuccess;
             }
@@ -6661,7 +6661,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
             {
                 if (mission_remain_until_success(missi))
                 {
-                    ingame.MissionStatus = MStatu_UNDECIDED;
+                    ingame.MissionStatus = ObvStatu_UNDECIDED;
 
                     return OMiSta_ContFailed;
                 }
@@ -6688,7 +6688,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
             {
                 if (mission_remain_until_success(missi))
                 {
-                    ingame.MissionStatus = MStatu_UNDECIDED;
+                    ingame.MissionStatus = ObvStatu_UNDECIDED;
 
                     return OMiSta_ContFailed;
                 }
@@ -6727,7 +6727,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
                 else
                     mission_list[next_missi].SpecialTrigger[0] = mission_list[tmp_missi].SpecialTrigger[1];
             }
-            ingame.MissionStatus = MStatu_UNDECIDED;
+            ingame.MissionStatus = ObvStatu_UNDECIDED;
 
             return OMiSta_ContSuccess;
         }
@@ -6735,7 +6735,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
         {
             if (mission_remain_until_success(missi))
             {
-                ingame.MissionStatus = MStatu_UNDECIDED;
+                ingame.MissionStatus = ObvStatu_UNDECIDED;
 
                 return OMiSta_ContFailed;
             }
@@ -10237,7 +10237,7 @@ void show_menu_screen_st2(void)
       update_mission_time(0);
       selected_city_id = -1;
       byte_1C4AA3 = brief_store[open_brief - 1].RefNum;
-      if ((ingame.MissionStatus != MStatu_UNDECIDED) && (ingame.MissionStatus != MStatu_FAILED))
+      if ((ingame.MissionStatus != ObvStatu_UNDECIDED) && (ingame.MissionStatus != ObvStatu_FAILED))
       {
             memcpy(&mission_status[0], &mission_status[open_brief],
               sizeof(struct MissionStatus));

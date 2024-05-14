@@ -287,9 +287,11 @@ void init_mission_states(void)
         if (objectv == 0)
             break;
         p_objectv = &game_used_objectives[objectv];
-        p_objectv->Status = 0;
+        p_objectv->Status = ObvStatu_UNDECIDED;
         objectv = p_objectv->Next;
     }
+    if (i >= 100)
+        LOGERR("Over %d success objectives attached to mission %d", i, (int)missi);
     LOGSYNC("Prepared %d success objectives for mission %d", i, (int)missi);
 
     objectv = mission_list[missi].FailHead;
@@ -297,9 +299,11 @@ void init_mission_states(void)
         if (objectv == 0)
             break;
         p_objectv = &game_used_objectives[objectv];
-        p_objectv->Status = 0;
+        p_objectv->Status = ObvStatu_UNDECIDED;
         objectv = p_objectv->Next;
     }
+    if (i >= 100)
+        LOGERR("Over %d fail objectives attached to mission %d", i, (int)missi);
     LOGSYNC("Prepared %d fail objectives for mission %d", i, (int)missi);
 }
 
