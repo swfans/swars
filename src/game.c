@@ -6143,22 +6143,6 @@ ubyte save_game_slot(ubyte click)
     return ret;
 }
 
-ubyte main_do_my_quit(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_main_do_my_quit\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte main_do_login_1(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_main_do_login_1\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 ubyte goto_savegame(ubyte click)
 {
     ubyte ret;
