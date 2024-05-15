@@ -5327,18 +5327,19 @@ short test_missions(ubyte flag)
         add_signal_to_scanner(0, 1);
     }
 
-    mslot = find_mission_state_slot(ingame.CurrentMission);
     if (flag != 0) {
-        mission_state[mslot] = MResol_UNDECIDED;
+        set_mission_state_using_state_slot(ingame.CurrentMission, MResol_UNDECIDED);
         return 0;
     }
+
     if (in_network_game) {
         mslot = 1;
         mission_open[mslot] = ingame.CurrentMission;
-    }
-    else if (mslot == 0)
-    {
-        mslot = find_empty_mission_state_slot();
+    } else {
+        mslot = find_mission_state_slot(ingame.CurrentMission);
+        if (mslot == 0) {
+            mslot = find_empty_mission_state_slot();
+        }
     }
 
     if (mission_open[mslot] > next_mission)
@@ -6379,15 +6380,8 @@ void init_agents(void)
 void do_start_triggers(short missi)
 {
     short nxmissi, sptrig;
-    short mslot;
 
-    mslot = find_empty_mission_state_slot();
-    if (mslot < 1) {
-        LOGERR("No free slot found for mission %d", (int)missi);
-        return;
-    }
-
-    for (nxmissi = missi; mslot < MISSION_STATES_COUNT; mslot++)
+    for (nxmissi = missi; 1; nxmissi = sptrig)
     {
         if (true)
             sptrig = mission_list[nxmissi].SpecialTrigger[0];
@@ -6395,9 +6389,7 @@ void do_start_triggers(short missi)
             sptrig = mission_list[nxmissi].SpecialTrigger[1];
         if (sptrig == 0)
             break;
-        nxmissi = sptrig;
-        mission_open[mslot] = nxmissi;
-        mission_state[mslot] = MResol_UNDECIDED;
+        set_mission_state_using_state_slot(sptrig, MResol_UNDECIDED);
     }
 }
 
@@ -6427,21 +6419,12 @@ void queue_up_new_mail(ubyte emtype, short missi)
 
 ushort open_new_mission(short missi)
 {
-    int mslot;
-
     if (mission_has_immediate_previous(missi)) {
         LOGSYNC("No slot needed for mission %d", (int)missi);
         return 0;
     }
 
-    mslot = find_empty_mission_state_slot();
-
-    if (mslot > 0) {
-        mission_open[mslot] = missi;
-        mission_state[mslot] = MResol_UNDECIDED;
-    } else {
-        LOGERR("No free slot found for mission %d", (int)missi);
-    }
+    set_mission_state_using_state_slot(missi, MResol_UNDECIDED);
     do_start_triggers(missi);
     queue_up_new_mail(1, missi);
 
@@ -6764,13 +6747,13 @@ void play_post_mission_fmv(ubyte misend)
     }
 }
 
-ubyte check_delete_open_mission(ushort mslot, sbyte state)
+ubyte check_delete_open_mission(ushort missi, sbyte state)
 {
-    ushort missi;
     TbBool conds_met;
     ubyte misend;
+    ushort mslot;
 
-    missi = mission_open[mslot];
+    mslot = find_mission_state_slot(missi);
 
     update_mission_list_to_mission_state(mslot, state);
 
@@ -6790,7 +6773,7 @@ ubyte check_delete_open_mission(ushort mslot, sbyte state)
         if (conds_met) {
             mission_fire_success_triggers(missi);
         }
-        remove_mission_state_slot(mslot);
+        remove_mission_state_slot_no(mslot);
         break;
     case OMiSta_ContImmSuccess:
         if (conds_met) {
@@ -6853,7 +6836,7 @@ void mission_over(void)
         ingame.Credits += cr_award;
         if (email != 0)
             queue_up_new_mail(0, -email);
-        misend = check_delete_open_mission(mslot, 1);
+        misend = check_delete_open_mission(missi, MResol_COMPLETED);
     }
     else if (mission_state[mslot] == MResol_FAILED)
     {
@@ -6866,7 +6849,7 @@ void mission_over(void)
         ingame.fld_unkC57++;
         if (email != 0)
             queue_up_new_mail(0, -email);
-        misend = check_delete_open_mission(mslot, -1);
+        misend = check_delete_open_mission(missi, MResol_FAILED);
     }
 
     if (misend == OMiSta_EndSuccess) {
@@ -6934,6 +6917,7 @@ void campaign_new_game_prepare(void)
     init_variables();
     init_agents();
     load_missions(background_type);
+    clear_mission_state_slots();
     load_objectives_text();
     srm_reset_research();
 

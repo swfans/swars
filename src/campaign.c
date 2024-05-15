@@ -198,17 +198,27 @@ ushort selectable_campaigns_count(void)
     return matches;
 }
 
+void clear_mission_state_slots(void)
+{
+    ushort mslot;
+
+    for (mslot = 0; mslot < MISSION_STATE_SLOTS_COUNT; mslot++) {
+        mission_open[mslot] = 0;
+        mission_state[mslot] = MResol_UNDECIDED;
+    }
+}
+
 ushort find_mission_state_slot(ushort missi)
 {
     ushort mslot;
 
     if (missi < 1)
         return 0;
-    for (mslot = 1; mslot < MISSION_STATES_COUNT; mslot++) {
+    for (mslot = 1; mslot < MISSION_STATE_SLOTS_COUNT; mslot++) {
         if (mission_open[mslot] == missi)
             break;
     }
-    if (mslot >= MISSION_STATES_COUNT)
+    if (mslot >= MISSION_STATE_SLOTS_COUNT)
         mslot = 0;
     return mslot;
 }
@@ -217,20 +227,20 @@ ushort find_empty_mission_state_slot(void)
 {
     ushort mslot;
 
-    for (mslot = 1; mslot < MISSION_STATES_COUNT; mslot++) {
+    for (mslot = 1; mslot < MISSION_STATE_SLOTS_COUNT; mslot++) {
         if (mission_open[mslot] == 0)
             break;
     }
-    if (mslot >= MISSION_STATES_COUNT)
+    if (mslot >= MISSION_STATE_SLOTS_COUNT)
         mslot = 0;
     return mslot;
 }
 
-void remove_mission_state_slot(ushort mslot)
+void remove_mission_state_slot_no(ushort mslot)
 {
     ushort i;
 
-    for (i = mslot; i < MISSION_STATES_COUNT-1; i++)
+    for (i = mslot; i < MISSION_STATE_SLOTS_COUNT-1; i++)
     {
         mission_open[i] = mission_open[i + 1];
         mission_state[i] = mission_state[i + 1];
@@ -245,6 +255,35 @@ ushort replace_mission_state_slot(ushort old_missi, ushort new_missi)
     mission_open[mslot] = new_missi;
     mission_state[mslot] = MResol_UNDECIDED;
     return mslot;
+}
+
+short get_mission_state_using_state_slot(ushort missi)
+{
+    ushort mslot;
+
+    mslot = find_mission_state_slot(missi);
+    if (mslot == 0) {
+        LOGWARN("Tried to get state for mission %d with no slot assigned", (int)missi);
+        return MResol_UNDECIDED;
+    }
+    return mission_state[mslot];
+}
+
+void set_mission_state_using_state_slot(ushort missi, short mstate)
+{
+    ushort mslot;
+
+    mslot = find_mission_state_slot(missi);
+    if (mslot == 0) {
+        mslot = find_empty_mission_state_slot();
+        if (mslot != 0)
+            mission_open[mslot] = missi;
+    }
+    if (mslot == 0) {
+        LOGERR("No free slot found for mission %d state %d", (int)missi, (int)mstate);
+        return;
+    }
+    mission_state[mslot] = MResol_UNDECIDED;
 }
 
 ushort find_mission_with_map_and_level(ushort mapno, ushort level)

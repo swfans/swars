@@ -620,8 +620,6 @@ extern ubyte save_crypto_data_state[3];
 extern char *mission_briefing_text;
 #define mission_briefing_text_len 16384
 
-extern short mission_open[50];
-extern short mission_state[50];
 extern sbyte mission_result;
 
 extern char *weapon_text;

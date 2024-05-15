@@ -29,7 +29,7 @@ extern "C" {
 
 #define CAMPAIGNS_MAX_COUNT 6
 #define MISSIONS_MAX_COUNT 120
-#define MISSION_STATES_COUNT 50
+#define MISSION_STATE_SLOTS_COUNT 50
 
 enum CampaignFlags {
     CmpgF_IsSinglePlayer = 0x0001,
@@ -170,6 +170,12 @@ struct Mission { // sizeof=76
 /******************************************************************************/
 extern struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
 extern struct Mission mission_list[MISSIONS_MAX_COUNT];
+
+extern short mission_open[MISSION_STATE_SLOTS_COUNT];
+extern short mission_state[MISSION_STATE_SLOTS_COUNT];
+
+/** Text name of the current mission (citydrop name).
+ */
 extern char mission_name[50];
 
 extern char *netscan_text;
@@ -178,10 +184,13 @@ extern char *netscan_text;
 void load_campaigns(void);
 ushort selectable_campaigns_count(void);
 
+void clear_mission_state_slots(void);
 ushort find_mission_state_slot(ushort missi);
 ushort find_empty_mission_state_slot(void);
-void remove_mission_state_slot(ushort mslot);
+void remove_mission_state_slot_no(ushort mslot);
 ushort replace_mission_state_slot(ushort old_missi, ushort new_missi);
+short get_mission_state_using_state_slot(ushort missi);
+void set_mission_state_using_state_slot(ushort missi, short mstate);
 void init_mission_states(void);
 
 ushort find_mission_with_map_and_level(ushort mapno, ushort level);
