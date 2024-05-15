@@ -5381,14 +5381,14 @@ short test_missions(ubyte flag)
         mission_state[mslot] = MResol_COMPLETED;
         return 1;
     }
-    if (res == 0)
+    if (res < 0)
     {
-        post_process_blips();
-        return 0;
+        mission_state[mslot] = MResol_FAILED;
+        screen_objective_text_set_failed();
+        return -1;
     }
-    mission_state[mslot] = MResol_FAILED;
-    screen_objective_text_set_failed();
-    return -1;
+    post_process_blips();
+    return 0;
 }
 
 void create_tables_file_from_fade(void)
@@ -6564,40 +6564,32 @@ ushort mission_fire_fail_triggers(ushort missi)
     return n;
 }
 
-void update_mission_list_to_mission_state(ushort mslot, sbyte state)
+void update_mission_list_to_mission_state(ushort missi, sbyte state)
 {
-    ushort missi;
-
-    missi = mission_open[mslot];
-
-    if (state == 1) {
+    if (state == MResol_COMPLETED) {
         mission_list[missi].Complete = state;
     } else if (mission_remain_until_success(missi)) {
           mission_list[missi].Complete = 0;
-          mission_state[mslot] = MResol_UNDECIDED;
+          set_mission_state_using_state_slot(missi, MResol_UNDECIDED);
     } else {
           mission_list[missi].Complete = state;
     }
 }
 
-ubyte check_open_next_mission(ushort mslot, sbyte state)
+ubyte check_open_next_mission(ushort missi, sbyte state)
 {
-    ushort missi;
-
-    missi = mission_open[mslot];
-
     if (mission_has_no_special_triggers(missi))
     {
         LOGSYNC("SpecialTriggers none, mission=%d, state=%d",
           (int)missi, (int)state);
-        if (state == 1)
+        if (state == MResol_COMPLETED)
         {
             if (mission_has_immediate_next_on_success(missi))
                 return OMiSta_ContImmSuccess;
             else
                 return OMiSta_EndSuccess;
         }
-        else if (state == -1)
+        else if (state == MResol_FAILED)
         {
             return OMiSta_EndFailed;
         }
@@ -6613,7 +6605,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
         {
             LOGSYNC("SpecialTriggers self-owned and set, mission=%d, state=%d",
               (int)missi, (int)state);
-            if (state == 1)
+            if (state == MResol_COMPLETED)
             {
                 brief_store[open_brief - 1].Mission = trg_missi;
 
@@ -6624,7 +6616,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
 
                 return OMiSta_ContSuccess;
             }
-            else if (state == -1)
+            else if (state == MResol_FAILED)
             {
                 if (mission_remain_until_success(missi))
                 {
@@ -6644,14 +6636,14 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
         {
             LOGSYNC("SpecialTriggers self-owned but unset, mission=%d, state=%d",
               (int)missi, (int)state);
-            if (state == 1)
+            if (state == MResol_COMPLETED)
             {
                 if (mission_has_immediate_next_on_success(missi))
                     return OMiSta_ContImmSuccess;
                 else
                     return OMiSta_EndSuccess;
             }
-            else if (state == -1)
+            else if (state == MResol_FAILED)
             {
                 if (mission_remain_until_success(missi))
                 {
@@ -6673,7 +6665,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
         trg_missi = mission_list[missi].SpecialTrigger[2];
 
         LOGSYNC("SpecialTriggers owner=%d, mission=%d, state=%d", (int)trg_missi, (int)missi, (int)state);
-        if (state == 1)
+        if (state == MResol_COMPLETED)
         {
             ushort tmp_missi, tmp2_missi, next_missi;
 
@@ -6698,7 +6690,7 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
 
             return OMiSta_ContSuccess;
         }
-        else if (state == -1)
+        else if (state == MResol_FAILED)
         {
             if (mission_remain_until_success(missi))
             {
@@ -6751,17 +6743,14 @@ ubyte check_delete_open_mission(ushort missi, sbyte state)
 {
     TbBool conds_met;
     ubyte misend;
-    ushort mslot;
 
-    mslot = find_mission_state_slot(missi);
-
-    update_mission_list_to_mission_state(mslot, state);
+    update_mission_list_to_mission_state(missi, state);
 
     conds_met = check_mission_conds(missi);
 
     research_unkn_func_006(missi);
 
-    misend = check_open_next_mission(mslot, state);
+    misend = check_open_next_mission(missi, state);
 
     LOGSYNC("Reached %s, mission=%d, current=%d, conds_met=%d",
       miss_end_sta_names[misend], (int)missi,
@@ -6773,7 +6762,7 @@ ubyte check_delete_open_mission(ushort missi, sbyte state)
         if (conds_met) {
             mission_fire_success_triggers(missi);
         }
-        remove_mission_state_slot_no(mslot);
+        remove_mission_state_slot(missi);
         break;
     case OMiSta_ContImmSuccess:
         if (conds_met) {
@@ -6811,49 +6800,46 @@ void mission_over(void)
     mission_over_gain_persuaded_crowd_rewards();
     players_sync_from_cryo();
 
-    ushort mslot;
-    ushort last_missi;
-    short lstate;
+    ushort missi;
+    short mstate;
 
-    last_missi = ingame.CurrentMission;
-    mslot = find_mission_state_slot(last_missi);
-    if (mission_state[mslot] == MResol_UNDECIDED)
+    missi = ingame.CurrentMission;
+    mstate = get_mission_state_using_state_slot(missi);
+
+    if (mstate == MResol_UNDECIDED) {
         //TODO this is a bug - these statuses have different values (for no reason)
-        mission_state[mslot] = ingame.MissionStatus;
+        mstate = ingame.MissionStatus;
+        set_mission_state_using_state_slot(missi, mstate);
+    }
 
-    lstate = 0;
-    if (mission_state[mslot] == MResol_COMPLETED)
+    long cr_award;
+    short email;
+
+    switch (mstate)
     {
-        long cr_award;
-        short email;
-        ushort missi;
-
-        lstate = 1;
-        missi = mission_open[mslot];
+    case MResol_COMPLETED:
         cr_award = 1000 * mission_list[missi].CashReward;
         ingame.fld_unkC57++;
         email = mission_list[missi].SuccessID;
         ingame.Credits += cr_award;
         if (email != 0)
             queue_up_new_mail(0, -email);
-        misend = check_delete_open_mission(missi, MResol_COMPLETED);
-    }
-    else if (mission_state[mslot] == MResol_FAILED)
-    {
-        short email;
-        ushort missi;
-
-        lstate = -1;
-        missi = mission_open[mslot];
+        misend = check_delete_open_mission(missi, mstate);
+        break;
+    case MResol_FAILED:
         email = mission_list[missi].FailID;
         ingame.fld_unkC57++;
         if (email != 0)
             queue_up_new_mail(0, -email);
-        misend = check_delete_open_mission(missi, MResol_FAILED);
+        misend = check_delete_open_mission(missi, mstate);
+        break;
+    default:
+        mstate = MResol_UNDECIDED;
+        break;
     }
 
     if (misend == OMiSta_EndSuccess) {
-        if (mission_is_final_at_game_end(last_missi))
+        if (mission_is_final_at_game_end(missi))
             misend = OMiSta_CampaignDone;
     }
 
@@ -6864,17 +6850,17 @@ void mission_over(void)
     }
 
     ingame.GameOver = 0;
-    if (lstate == -1)
+    if (mstate == MResol_FAILED)
     {
-      if (!mission_remain_until_success(ingame.CurrentMission))
-        ingame.GameOver = 1;
+        if (!mission_remain_until_success(ingame.CurrentMission))
+            ingame.GameOver = 1;
     }
     if (new_mail)
         ingame.GameOver = 0;
     if (cryo_agents.NumAgents == 0)
         ingame.GameOver = 1;
     LOGSYNC("Mission %d ended with state=%d gameover=%d",
-      (int)last_missi, (int)lstate, (int)ingame.GameOver);
+      (int)missi, (int)mstate, (int)ingame.GameOver);
     if (ingame.GameOver)
         play_smacker(MPly_GameOver);
 }

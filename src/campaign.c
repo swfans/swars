@@ -217,6 +217,11 @@ ushort find_mission_state_slot(ushort missi)
     for (mslot = 1; mslot < MISSION_STATE_SLOTS_COUNT; mslot++) {
         if (mission_open[mslot] == missi)
             break;
+        // First empty slot means all further slots are empty too
+        if (mission_open[mslot] == 0) {
+            mslot = 0;
+            break;
+        }
     }
     if (mslot >= MISSION_STATE_SLOTS_COUNT)
         mslot = 0;
@@ -233,18 +238,29 @@ ushort find_empty_mission_state_slot(void)
     }
     if (mslot >= MISSION_STATE_SLOTS_COUNT)
         mslot = 0;
+    // since the empty slot may now become used,
+    // clear the next to assure 0-terminated list
+    if ((mslot > 0) && (mslot < MISSION_STATE_SLOTS_COUNT-1))
+        mission_open[mslot+1] = 0;
     return mslot;
 }
 
-void remove_mission_state_slot_no(ushort mslot)
+void remove_mission_state_slot(ushort missi)
 {
-    ushort i;
+    ushort mslot, i;
+
+    mslot = find_mission_state_slot(missi);
+    if (mslot == 0)
+        return;
 
     for (i = mslot; i < MISSION_STATE_SLOTS_COUNT-1; i++)
     {
         mission_open[i] = mission_open[i + 1];
         mission_state[i] = mission_state[i + 1];
     }
+    // Clear the last element, to mark it as unused
+    mission_open[i] = 0;
+    mission_state[i] = MResol_UNDECIDED;
 }
 
 ushort replace_mission_state_slot(ushort old_missi, ushort new_missi)

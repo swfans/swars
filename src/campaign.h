@@ -187,7 +187,7 @@ ushort selectable_campaigns_count(void);
 void clear_mission_state_slots(void);
 ushort find_mission_state_slot(ushort missi);
 ushort find_empty_mission_state_slot(void);
-void remove_mission_state_slot_no(ushort mslot);
+void remove_mission_state_slot(ushort missi);
 ushort replace_mission_state_slot(ushort old_missi, ushort new_missi);
 short get_mission_state_using_state_slot(ushort missi);
 void set_mission_state_using_state_slot(ushort missi, short mstate);
