@@ -287,7 +287,6 @@ extern ushort word_1A7330[1000];
 extern ubyte byte_1A7B00[1000];
 extern ubyte byte_1A7EE8[8192];
 extern ushort word_1AABD0;
-extern short unkn01_thing_idx;
 
 extern ubyte byte_1C497E;
 extern ubyte byte_1C497F;
@@ -4942,120 +4941,6 @@ void init_player(void)
         blind_progress_game(p_missi->PreProcess);
     }
 }
-
-struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
-{
-#if 0
-    struct Thing *p_person;
-    asm volatile ("call ASM_new_sim_person\n"
-        : "=r" (p_person) : "a" (x), "d" (y), "b" (z), "c" (subtype));
-    return p_person;
-#endif
-    ubyte ptype;
-    struct PeepStat *p_pestat;
-    short person;
-    struct Thing *p_person;
-    ushort rnd;
-    int ry;
-
-    ptype = subtype;
-    if (subtype <= 100) {
-        person = get_new_thing();
-    } else {
-        ptype = SubTT_PERS_AGENT;
-        person = unkn01_thing_idx;
-    }
-    if (person <= 0)
-        return &things[0];
-    p_pestat = &peep_type_stats[ptype];
-    rnd = LbRandomAnyShort();
-
-    p_person = &things[person];
-    p_person->X = x << 8;
-    p_person->Z = z << 8;
-    p_person->U.UPerson.Target2 = 0;
-    ry = alt_at_point(x, z);
-    p_person->Speed = 512;
-    p_person->U.UPerson.Angle = (rnd >> 1) % 8;
-    p_person->U.UPerson.AnimMode = 0;
-    p_person->StartTimer1 = 48;
-    p_person->Timer1 = 48;
-    p_person->Y = ry;
-    p_person->U.UPerson.OnFace = 0;
-    p_person->Type = TT_PERSON;
-    switch (ptype)
-    {
-    case SubTT_PERS_AGENT:
-        p_person->U.UPerson.Angle = 0;
-        p_person->Radius = 80;
-        p_person->U.UPerson.AnimMode = 1;
-        p_person->U.UPerson.CurrentWeapon = WEP_MINIGUN;
-        break;
-    case SubTT_PERS_ZEALOT:
-    case SubTT_PERS_HIGH_PRIEST:
-        p_person->Radius = 100;
-        p_person->U.UPerson.AnimMode = 1;
-        p_person->U.UPerson.CurrentWeapon = WEP_ELLASER;
-        break;
-    case SubTT_PERS_PUNK_F:
-        p_person->Radius = 80;
-        p_person->Speed = 400;
-        p_person->U.UPerson.AnimMode = 1;
-        p_person->U.UPerson.CurrentWeapon = WEP_UZI;
-        p_person->U.UPerson.FrameId.Version[0] = rnd % 3;
-        break;
-    case SubTT_PERS_BRIEFCASE_M:
-    case SubTT_PERS_WHITE_BRUN_F:
-    case SubTT_PERS_MERCENARY:
-    case SubTT_PERS_SCIENTIST:
-    case SubTT_PERS_WHIT_BLOND_F:
-    case SubTT_PERS_LETH_JACKT_M:
-        p_person->Radius = 100;
-        p_person->U.UPerson.AnimMode = 0;
-        p_person->U.UPerson.CurrentWeapon = WEP_NULL;
-        break;
-    case SubTT_PERS_MECH_SPIDER:
-        p_person->Radius = 384;
-        p_person->U.UPerson.AnimMode = 1;
-        p_person->U.UPerson.CurrentWeapon = WEP_LASER;
-        break;
-    case SubTT_PERS_POLICE:
-        p_person->Radius = 80;
-        p_person->U.UPerson.AnimMode = 1;
-        p_person->U.UPerson.CurrentWeapon = WEP_LASER;
-        break;
-    case SubTT_PERS_PUNK_M:
-        p_person->Radius = 80;
-        p_person->Speed = 400;
-        p_person->U.UPerson.AnimMode = 1;
-        p_person->U.UPerson.CurrentWeapon = WEP_UZI;
-        break;
-    case SubTT_PERS_SHADY_M:
-        p_person->Radius = 100;
-        p_person->Speed = 400;
-        p_person->U.UPerson.AnimMode = 1;
-        p_person->U.UPerson.CurrentWeapon = WEP_UZI;
-        break;
-    default:
-        break;
-    }
-    p_person->SubType = ptype;
-    p_person->U.UPerson.Group = ptype + 4;
-    p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
-    reset_person_frame(p_person);
-    init_person_thing(p_person);
-    p_person->U.UPerson.WeaponsCarried = 0;
-    if (p_person->U.UPerson.CurrentWeapon)
-        p_person->U.UPerson.WeaponsCarried |= (1 << (p_person->U.UPerson.CurrentWeapon - 1));
-    p_person->U.UPerson.WeaponsCarried |= (1 << (WEP_ENERGYSHLD-1));
-    p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
-    p_person->Speed = p_pestat->Speed;
-    add_node_thing(person);
-    p_person->U.UPerson.ComHead = 0;
-    p_person->U.UPerson.ComCur = 0;
-    return p_person;
-}
-
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
 {
