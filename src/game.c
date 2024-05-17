@@ -8615,9 +8615,9 @@ void show_panet_screen(void)
     //TODO PANET screen not implemented
 }
 
-void show_netgame_screen(void)
+void show_sysmenu_screen(void)
 {
-    asm volatile ("call ASM_show_netgame_screen\n"
+    asm volatile ("call ASM_show_sysmenu_screen\n"
         :  :  : "eax" );
 }
 
@@ -9382,12 +9382,12 @@ void show_purple_apps_selection_bar(void)
         cx += sprites_Icons0_0[byte_155124[iconid]].SWidth + 3;
     }
     if (new_mail
-        && (game_system_screen != SCRT_MISSION || screentype != SCRT_NETGAME))
+        && (game_system_screen != SCRT_MISSION || screentype != SCRT_SYSMENU))
     {
         spr = &sprites_Icons0_0[79];
         if ((lbKeyOn[KC_RETURN]
             && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
-                || screentype != SCRT_NETGAME) && !edit_flag)
+                || screentype != SCRT_SYSMENU) && !edit_flag)
             || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
         {
             if (!byte_1C4980 && !lbKeyOn[KC_RETURN])
@@ -9506,7 +9506,7 @@ TbBool get_purple_apps_selection_bar_inputs(void)
         if (lbKeyOn[KC_F1])
         {
             lbKeyOn[KC_F1] = 0;
-            change_screen = ChSCRT_NETGAME;
+            change_screen = ChSCRT_SYSMENU;
         }
         if (lbKeyOn[KC_F2])
         {
@@ -10644,8 +10644,8 @@ void show_menu_screen(void)
     case SCRT_MAINMENU:
         show_main_screen();
         break;
-    case SCRT_NETGAME:
-        show_netgame_screen();
+    case SCRT_SYSMENU:
+        show_sysmenu_screen();
         break;
     case SCRT_RESEARCH:
         show_research_screen();
@@ -10706,9 +10706,9 @@ void show_menu_screen(void)
         LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
     }
 
-    if (change_screen == ChSCRT_NETGAME)
+    if (change_screen == ChSCRT_SYSMENU)
     {
-        screentype = SCRT_NETGAME;
+        screentype = SCRT_SYSMENU;
         redraw_screen_flag = 1;
         set_heading_box_text("");
         edit_flag = 0;

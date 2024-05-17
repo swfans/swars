@@ -68,7 +68,7 @@ enum ScreenType {
   SCRT_CRYO,
   SCRT_EQUIP,
   SCRT_MAINMENU,
-  SCRT_NETGAME,
+  SCRT_SYSMENU,
   SCRT_RESEARCH,
   SCRT_DEBRIEF,
   SCRT_LOGIN,
@@ -121,7 +121,7 @@ enum AppBarIcons {
 //TODO consolidate with ScreenType, use the same values
 enum ChangeScreenType {
   ChSCRT_NONE = 0,
-  ChSCRT_NETGAME,
+  ChSCRT_SYSMENU,
   ChSCRT_PANET,
   ChSCRT_WORLDMAP,
   ChSCRT_CRYO,
