@@ -944,8 +944,8 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
     rnd = LbRandomAnyShort();
 
     p_person = &things[person];
-    p_person->X = x << 8;
-    p_person->Z = z << 8;
+    p_person->X = MAPCOORD_TO_PRCCOORD(x,0);
+    p_person->Z = MAPCOORD_TO_PRCCOORD(z,0);
     p_person->U.UPerson.Target2 = 0;
     ry = alt_at_point(x, z);
     p_person->Speed = 512;

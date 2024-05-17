@@ -589,7 +589,7 @@ extern ubyte old_screentype;
 extern ubyte screentype;
 extern long data_155704;
 extern ubyte data_1c498d;
-extern ubyte data_1c498e;
+extern ubyte mouse_sprite_anim_frame;
 extern char *outro_text_s;
 extern char *outro_text_z;
 extern long data_197150;
