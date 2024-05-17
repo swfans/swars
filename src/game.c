@@ -9121,7 +9121,7 @@ void draw_app_icon_normal(short x, short y, ubyte iconid, ubyte aframe)
     lbDisplay.DrawFlags = 0;
 }
 
-void draw_email_icon(short x, short y, ubyte aframe)
+void draw_unread_email_icon(short x, short y, ubyte aframe)
 {
     struct TbSprite *spr;
 
@@ -9165,6 +9165,206 @@ TbBool is_purple_apps_selection_bar_visible(void)
     return (screentype != SCRT_MAINMENU) && (screentype != SCRT_LOGIN) && !restore_savegame;
 }
 
+void draw_purple_app_utility_icon(short cx, short cy, short iconid)
+{
+    struct TbSprite *spr;
+
+    spr = &sprites_Icons0_0[byte_155124[iconid]];
+    if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
+    {
+        if ((byte_1C497E & (1 << iconid)) == 0) {
+            byte_1C497E |= (1 << iconid);
+            play_sample_using_heap(0, 123, 127, 64, 100, 0, 1);
+        }
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        // If clicked, draw the icon without transparency
+        if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
+        {
+            lbDisplay.DrawFlags = 0;
+        }
+        if (lbDisplay.MRightButton || (joy.Buttons[0] && !net_unkn_pos_02))
+        {
+            lbDisplay.DrawFlags = 0;
+        }
+        draw_app_icon_hilight(cx, cy, iconid, byte_1C4984[iconid]);
+        byte_1C4984[iconid]++;
+        if (byte_1C4984[iconid] == byte_15512C[iconid])
+            byte_1C4984[iconid] = 0;
+    }
+    else
+    {
+        byte_1C497E &= ~(1 << iconid);
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        draw_app_icon_normal(cx, cy, iconid, byte_1C4984[iconid]);
+        if (byte_1C4984[iconid])
+        {
+            byte_1C4984[iconid]++;
+            if (byte_1C4984[iconid] == byte_15512C[iconid])
+                byte_1C4984[iconid] = 0;
+        }
+        if (word_1C498A == 2 * (iconid + 1)
+            || word_1C498A == 2 * (iconid + 1) + 1)
+            word_1C498A = 0;
+    }
+    lbDisplay.DrawFlags = 0;
+}
+
+TbBool get_purple_app_utility_icon_inputs(short cx, short cy, short iconid)
+{
+    struct TbSprite *spr;
+
+    spr = &sprites_Icons0_0[byte_155124[iconid]];
+    if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
+    {
+        if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
+        {
+            lbDisplay.LeftButton = 0;
+            word_1C498A = 2 * (iconid + 1);
+        }
+        else if (word_1C498A == 2 * (iconid + 1) + 0)
+        {
+            if (mo_weapon != -1 && mo_weapon == research.CurrentWeapon)
+            {
+                player_cryo_remove_weapon_one(mo_from_agent, mo_weapon + 1);
+                research_unkn_func_003();
+                mo_weapon = -1;
+            }
+            else
+            {
+                change_screen = iconid + 1;
+                play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
+            }
+            word_1C498A = 0;
+        }
+
+        if (lbDisplay.MRightButton || (joy.Buttons[0] && !net_unkn_pos_02))
+        {
+            lbDisplay.RightButton = 0;
+            word_1C498A = 2 * (iconid + 1) + 1;
+        }
+        else if (word_1C498A == 2 * (iconid + 1) + 1)
+        {
+            change_screen = iconid + 1;
+            play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
+
+            word_1C498A = 0;
+        }
+    }
+    // If not mouse over, make sure to clear the state
+    else if (word_1C498A == 2 * (iconid + 1) + 0)
+        word_1C498A = 0;
+    else if (word_1C498A == 2 * (iconid + 1) + 1)
+        word_1C498A = 0;
+
+    return false;
+}
+
+void draw_purple_app_unread_email_icon(short cx, short cy)
+{
+    struct TbSprite *spr;
+
+    spr = &sprites_Icons0_0[79];
+    if ((lbKeyOn[KC_RETURN]
+        && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
+            || screentype != SCRT_SYSMENU) && !edit_flag)
+        || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
+    {
+        if (!byte_1C4980 && !lbKeyOn[KC_RETURN])
+        {
+            byte_1C4980 = 1;
+            play_sample_using_heap(0, 123, 127, 64, 100, 0, 1);
+        }
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        // If clicked, draw the icon without transparency
+        if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
+        {
+            lbDisplay.DrawFlags = 0;
+        }
+        draw_unread_email_icon(cx, cy, byte_1C498C);
+        if (gameturn & 1)
+        {
+            if (++byte_1C498C > 5)
+                byte_1C498C = 2;
+        }
+    }
+    else
+    {
+        byte_1C4980 = 0;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        draw_unread_email_icon(cx, cy, byte_1C498C);
+        if (gameturn & 1)
+        {
+            if (++byte_1C498C > 6)
+                byte_1C498C = 0;
+        }
+    }
+    lbDisplay.DrawFlags = 0;
+}
+
+TbBool get_purple_app_unread_email_icon_inputs(short cx, short cy)
+{
+    struct TbSprite *spr;
+    const char *subtext;
+
+    spr = &sprites_Icons0_0[79];
+    if ((lbKeyOn[KC_RETURN]
+        && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
+            || screentype != SCRT_SYSMENU) && !edit_flag)
+        || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
+    {
+        if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
+        {
+            lbDisplay.LeftButton = 0;
+            word_1C498A = 50;
+        }
+        else
+        {
+            if (word_1C498A == 50 || lbKeyOn[KC_RETURN])
+            {
+                word_1C498A = 0;
+                lbKeyOn[KC_RETURN] = 0;
+                if (!is_purple_alert_on_top())
+                {
+                    if (activate_queued_mail() == 1)
+                    {
+                        word_1C6F40 = next_brief - 5;
+                        if (word_1C6F40 < 0)
+                            word_1C6F40 = 0;
+                        open_brief = next_brief;
+                        change_screen = ChSCRT_MISSION;
+                        subtext = gui_strings[372];
+                    }
+                    else
+                    {
+                        word_1C6F3E = next_email - 4;
+                        if (word_1C6F3E < 0)
+                            word_1C6F3E = 0;
+                        change_screen = ChSCRT_MISSION;
+                        subtext = gui_strings[373];
+                        open_brief = -next_email;
+                    }
+                    set_heading_box_text(subtext);
+                    play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
+                    if (new_mail)
+                    {
+                        play_sample_using_heap(0,
+                          119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3);
+                    }
+                    else
+                    {
+                        byte_1C4980 = new_mail;
+                    }
+                }
+            }
+        }
+    }
+    // If not mouse over, make sure to clear the state
+    else if (word_1C498A == 50)
+        word_1C498A = 0;
+
+    return false;
+}
+
 void draw_purple_app_email_icon(short cx, short cy, short bri)
 {
     struct TbSprite *spr;
@@ -9184,6 +9384,7 @@ void draw_purple_app_email_icon(short cx, short cy, short bri)
             byte_1C497F |= (1 << iconid);
             play_sample_using_heap(0, 123, 127, 64, 100, 0, 1u);
         }
+        // If clicked, draw the icon without transparency
         if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
         {
             lbDisplay.DrawFlags = 0;
@@ -9256,7 +9457,42 @@ TbBool get_purple_app_email_icon_inputs(short cx, short cy, short bri)
             word_1C498A = 0;
         }
     }
+    // If not mouse over, make sure to clear the state
+    else if (word_1C498A == 2 * (bri + 1) + 100)
+        word_1C498A = 0;
+
     return false;
+}
+
+TbBool is_purple_apps_utility_space_reserved(short iconid)
+{
+    return  (iconid != ApBar_PANET);
+}
+
+TbBool is_purple_apps_utility_visible(short iconid)
+{
+    // Show research icon only if the player has research facility
+    if ((iconid == ApBar_RESEARCH) && (research.NumBases == 0))
+        return false;
+
+    if (login_control__State == 5)
+    {
+        TbBool visible;
+
+        if (is_unkn_current_player()) {
+            visible = (iconid != ApBar_PANET && iconid != ApBar_RESEARCH);
+        } else {
+            visible = (iconid != ApBar_PANET &&
+              iconid != ApBar_WORLDMAP &&
+              iconid != ApBar_RESEARCH);
+        }
+        if ((unkn_flags_08 & 0x02) == 0 || (unkn_flags_08 & 0x01) == 0)
+            visible = (iconid == ApBar_SYSTEM);
+        return visible;
+    }
+
+    // Completely hide Public Access Network icon
+    return (iconid != ApBar_PANET);
 }
 
 /** Show a collection of icons at bottom of the screen.
@@ -9268,203 +9504,41 @@ void show_purple_apps_selection_bar(void)
         :  :  : "eax" );
     return;
 #endif
-    TbBool visible, reserve_space;
-    struct TbSprite *spr;
     ushort bri;
-    const char *subtext;
-    short iconid, icontot;
+    short iconid;
     short cx, cy;
-    ushort icon_width;
 
-    icon_width = sprites_Icons0_0[102].SWidth;
+    // Show utility icons in bottom left
     cx = global_apps_bar_box.X;
     cy = global_apps_bar_box.Y;
-    icontot = 5;
-    // Show research icon only if the player has research facility
-    if (research.NumBases != 0)
-        icontot++;
-    for (iconid = 0; iconid < icontot; iconid++)
+
+    for (iconid = 0; iconid < 6; iconid++)
     {
-        if (login_control__State == 5)
+        if (is_purple_apps_utility_visible(iconid))
         {
-            if (is_unkn_current_player())
-                visible = (iconid != ApBar_PANET && iconid != 5);
-            else
-                visible = (iconid != ApBar_PANET &&
-                  iconid != ApBar_WORLDMAP &&
-                  iconid != ApBar_RESEARCH);
-            if ((unkn_flags_08 & 0x02) == 0 || (unkn_flags_08 & 0x01) == 0)
-                visible = (iconid == ApBar_SYSTEM);
-            reserve_space = (iconid != ApBar_PANET);
+            draw_purple_app_utility_icon(cx, cy, iconid);
         }
-        else
+        if (is_purple_apps_utility_space_reserved(iconid))
         {
-            // Completely hide Public Access Network icon
-            visible = (iconid != ApBar_PANET);
-            reserve_space = (iconid != ApBar_PANET);
-        }
-        if (visible)
-        {
-            spr = &sprites_Icons0_0[byte_155124[iconid]];
-            if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
-            {
-                if ((byte_1C497E & (1 << iconid)) == 0) {
-                    byte_1C497E |= (1 << iconid);
-                    play_sample_using_heap(0, 123, 127, 64, 100, 0, 1);
-                }
-                lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-                if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
-                {
-                    lbDisplay.LeftButton = 0;
-                    lbDisplay.DrawFlags = 0;
-                    word_1C498A = 2 * (iconid + 1);
-                }
-                else if (word_1C498A == 2 * iconid + 2)
-                {
-                    if (mo_weapon != -1 && mo_weapon == research.CurrentWeapon)
-                    {
-                        player_cryo_remove_weapon_one(mo_from_agent, mo_weapon + 1);
-                        research_unkn_func_003();
-                        mo_weapon = -1;
-                    }
-                    else if (!is_purple_alert_on_top())
-                    {
-                        change_screen = iconid + 1;
-                        play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
-                    }
-                    word_1C498A = 0;
-                }
-                if (lbDisplay.MRightButton || (joy.Buttons[0] && !net_unkn_pos_02))
-                {
-                    lbDisplay.RightButton = 0;
-                    lbDisplay.DrawFlags = 0;
-                    word_1C498A = 2 * (iconid + 1) + 1;
-                }
-                else if (word_1C498A == 2 * iconid + 3)
-                {
-                    if (!is_purple_alert_on_top())
-                    {
-                        change_screen = iconid + 1;
-                        play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
-                    }
-                    word_1C498A = 0;
-                }
-                draw_app_icon_hilight(cx, cy, iconid, byte_1C4984[iconid]);
-                byte_1C4984[iconid]++;
-                if (byte_1C4984[iconid] == byte_15512C[iconid])
-                    byte_1C4984[iconid] = 0;
-            }
-            else
-            {
-                byte_1C497E &= ~(1 << iconid);
-                lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-                draw_app_icon_normal(cx, cy, iconid, byte_1C4984[iconid]);
-                if (byte_1C4984[iconid])
-                {
-                    byte_1C4984[iconid]++;
-                    if (byte_1C4984[iconid] == byte_15512C[iconid])
-                        byte_1C4984[iconid] = 0;
-                }
-                if (word_1C498A == 2 * iconid + 2
-                    || word_1C498A == 2 * iconid + 3)
-                    word_1C498A = 0;
-            }
-        }
-        if (reserve_space)
-        {
+            struct TbSprite *spr;
             spr = &sprites_Icons0_0[byte_155124[iconid]];
             cx += spr->SWidth + 3;
         }
     }
 
-    if (icontot == 5)
-    {
-        cx += sprites_Icons0_0[byte_155124[iconid]].SWidth + 3;
-    }
+    // Show unread mail notification icon
     if (new_mail
         && (game_system_screen != SCRT_MISSION || screentype != SCRT_SYSMENU))
     {
-        spr = &sprites_Icons0_0[79];
-        if ((lbKeyOn[KC_RETURN]
-            && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
-                || screentype != SCRT_SYSMENU) && !edit_flag)
-            || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
-        {
-            if (!byte_1C4980 && !lbKeyOn[KC_RETURN])
-            {
-                byte_1C4980 = 1;
-                play_sample_using_heap(0, 123, 127, 64, 100, 0, 1);
-            }
-            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-            if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
-            {
-                lbDisplay.LeftButton = 0;
-                lbDisplay.DrawFlags = 0;
-                word_1C498A = 50;
-            }
-            else
-            {
-                if (word_1C498A == 50 || lbKeyOn[KC_RETURN])
-                {
-                    word_1C498A = 0;
-                    lbKeyOn[KC_RETURN] = 0;
-                    if (!is_purple_alert_on_top())
-                    {
-                        if (activate_queued_mail() == 1)
-                        {
-                            word_1C6F40 = next_brief - 5;
-                            if (word_1C6F40 < 0)
-                                word_1C6F40 = 0;
-                            open_brief = next_brief;
-                            change_screen = ChSCRT_MISSION;
-                            subtext = gui_strings[372];
-                        }
-                        else
-                        {
-                            word_1C6F3E = next_email - 4;
-                            if (word_1C6F3E < 0)
-                                word_1C6F3E = 0;
-                            change_screen = ChSCRT_MISSION;
-                            subtext = gui_strings[373];
-                            open_brief = -next_email;
-                        }
-                        set_heading_box_text(subtext);
-                        play_sample_using_heap(0, 111, 127, 64, 100, 0, 2);
-                        if (new_mail)
-                        {
-                            play_sample_using_heap(0,
-                              119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3);
-                        }
-                        else
-                        {
-                            byte_1C4980 = new_mail;
-                        }
-                    }
-                }
-            }
-            draw_email_icon(cx, cy, byte_1C498C);
-            if (gameturn & 1)
-            {
-                if (++byte_1C498C > 5)
-                    byte_1C498C = 2;
-            }
-        }
-        else
-        {
-            byte_1C4980 = 0;
-            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-            draw_email_icon(cx, cy, byte_1C498C);
-            if (gameturn & 1)
-            {
-                if (++byte_1C498C > 6)
-                    byte_1C498C = 0;
-            }
-        }
+        draw_purple_app_unread_email_icon(cx, cy);
     }
-    lbDisplay.DrawFlags = 0;
 
     // Show email icons in bottom right
-    cx = global_apps_bar_box.X + global_apps_bar_box.Width - icon_width;
+    {
+        struct TbSprite *spr;
+        spr = &sprites_Icons0_0[102];
+        cx = global_apps_bar_box.X + global_apps_bar_box.Width - spr->SWidth;
+    }
 
     for (bri = word_1C6F40; bri < next_brief; bri++)
     {
@@ -9473,23 +9547,52 @@ void show_purple_apps_selection_bar(void)
 
         draw_purple_app_email_icon(cx, cy, bri);
 
-        cx -= icon_width + 3;
+        {
+            struct TbSprite *spr;
+            spr = &sprites_Icons0_0[102];
+            cx -= spr->SWidth + 3;
+        }
     }
 }
 
 TbBool get_purple_apps_selection_bar_inputs(void)
 {
+    short iconid;
     ushort bri;
     short cx, cy;
-    ushort icon_width;
 
-    icon_width = sprites_Icons0_0[102].SWidth;
+    // Get inputs from utility icons in bottom left
+    cx = global_apps_bar_box.X;
     cy = global_apps_bar_box.Y;
 
-    // TODO add inputs from utility icons of the bar
+    for (iconid = 0; iconid < 6; iconid++)
+    {
+        if (is_purple_apps_utility_visible(iconid))
+        {
+            if (!is_purple_alert_on_top())
+                get_purple_app_utility_icon_inputs(cx, cy, iconid);
+        }
+        if (is_purple_apps_utility_space_reserved(iconid))
+        {
+            struct TbSprite *spr;
+            spr = &sprites_Icons0_0[byte_155124[iconid]];
+            cx += spr->SWidth + 3;
+        }
+    }
+
+    // Get inputs from unread mail notification icon
+    if (new_mail
+        && (game_system_screen != SCRT_MISSION || screentype != SCRT_SYSMENU))
+    {
+        get_purple_app_unread_email_icon_inputs(cx, cy);
+    }
 
     // Get inputs from email icons in bottom right
-    cx = global_apps_bar_box.X + global_apps_bar_box.Width - icon_width;
+    {
+        struct TbSprite *spr;
+        spr = &sprites_Icons0_0[102];
+        cx = global_apps_bar_box.X + global_apps_bar_box.Width - spr->SWidth;
+    }
 
     for (bri = word_1C6F40; bri < next_brief; bri++)
     {
@@ -9498,7 +9601,11 @@ TbBool get_purple_apps_selection_bar_inputs(void)
 
         get_purple_app_email_icon_inputs(cx, cy, bri);
 
-        cx -= icon_width + 3;
+        {
+            struct TbSprite *spr;
+            spr = &sprites_Icons0_0[102];
+            cx -= spr->SWidth + 3;
+        }
     }
 
     if (!net_unkn_pos_01b)
