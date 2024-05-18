@@ -4662,22 +4662,77 @@ void init_level_unknsub01(void)
     }
 }
 
-void start_level_ambient_sound(void)
+void setup_ingame_scene_effect(void)
 {
-    switch (gamep_scene_effect_type)
+    struct Mission *p_missi;
+    ubyte atmos, weather;
+
+    p_missi = &mission_list[ingame.CurrentMission];
+    atmos = ((p_missi->Atmosphere) & 0x0F);
+    weather = ((p_missi->Atmosphere >> 4) & 0x0F);
+
+    // Reload texture regardless of the effect
+    LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
+
+    switch (atmos)
     {
-    case ScEff_NONE:
-    default:
-        stop_sample_using_heap(0, 77);
-        if (current_map == 11 || current_map == 65) { // If map011 orbital station or map065 the moon
-            play_sample_using_heap(0, 78, 64, 64, 100, -1, 2);
+    case MAtmsph_Space:
+    case MAtmsph_Moon:
+        gamep_scene_effect_type = ScEff_NONE;
+        gamep_scene_effect_intensity = 1000;
+        break;
+    case MAtmsph_Earth:
+        stop_sample_using_heap(0, 78);
+        if (weather == MWeathr_Rainy) {
+            gamep_scene_effect_type = ScEff_RAIN;
+            gamep_scene_effect_intensity = 1000;
+            func_3d904();
+        } else if (weather == MWeathr_Snowy) {
+            gamep_scene_effect_type = ScEff_SNOW;
+            gamep_scene_effect_intensity = 1000;
+            //TODO add some initial effect to textures?
         } else {
+            gamep_scene_effect_type = ScEff_NONE;
+            gamep_scene_effect_intensity = 1000;
+        }
+        break;
+    default:
+        gamep_scene_effect_type = ScEff_NONE;
+        gamep_scene_effect_intensity = 1000;
+        break;
+    }
+}
+
+void start_ingame_ambient_sound(void)
+{
+    struct Mission *p_missi;
+    ubyte atmos;
+
+    p_missi = &mission_list[ingame.CurrentMission];
+    atmos = ((p_missi->Atmosphere) & 0x0F);
+
+    switch (atmos)
+    {
+    case MAtmsph_Space:
+    case MAtmsph_Moon:
+        stop_sample_using_heap(0, 8);
+        stop_sample_using_heap(0, 77);
+        play_sample_using_heap(0, 78, 64, 64, 100, -1, 2);
+        break;
+    case MAtmsph_Earth:
+        stop_sample_using_heap(0, 78);
+        if (gamep_scene_effect_type == ScEff_RAIN) {
+            stop_sample_using_heap(0, 8);
+            play_sample_using_heap(0, 77, 64, 64, 100, -1, 2);
+        } else {
+            stop_sample_using_heap(0, 77);
             play_sample_using_heap(0, 8, 64, 64, 100, -1, 2);
         }
         break;
-    case ScEff_RAIN:
+    default:
+        stop_sample_using_heap(0, 78);
         stop_sample_using_heap(0, 8);
-        play_sample_using_heap(0, 77, 64, 64, 100, -1, 2);
+        stop_sample_using_heap(0, 77);
         break;
     }
 }
@@ -4760,28 +4815,8 @@ void init_level(void)
     tnext_floor_texture = next_floor_texture + 1;
     init_col_vects_linked_list();
     ingame.fld_unkC91 = dos_clock();
-
-    if (current_map == 11 || current_map == 65) // If map011 orbital station or map065 the moon
-    {
-        LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-        gamep_scene_effect_type = ScEff_NONE;
-        gamep_scene_effect_intensity = 1000;
-    }
-    else if ((things_used & 3) || (current_map == 30) || (in_network_game)) // map030 london
-    {
-        LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-        gamep_scene_effect_type = ScEff_NONE;
-        gamep_scene_effect_intensity = 1000;
-    }
-    else
-    {
-        LbFileLoadAt("data/tex00.dat", vec_tmap[0]);
-        gamep_scene_effect_type = ScEff_RAIN;
-        gamep_scene_effect_intensity = 1000;
-        func_3d904();
-    }
-
-    start_level_ambient_sound();
+    setup_ingame_scene_effect();
+    start_ingame_ambient_sound();
     gamep_unknval_10 = 0;
     gamep_unknval_12 = 0;
     nav_stats__ThisTurn = 0;

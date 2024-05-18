@@ -71,6 +71,20 @@ enum MissionExtraRewards {
     MEReward_WeaponSingle,
 };
 
+enum MissionAtmosphere {
+    MAtmsph_None = 0,
+    MAtmsph_Earth,
+    MAtmsph_Space,
+    MAtmsph_Moon,
+};
+
+enum MissionWeather {
+    MWeathr_None = 0,
+    MWeathr_Sunny,
+    MWeathr_Rainy,
+    MWeathr_Snowy,
+};
+
 //TODO use the same values as ObjectiveStatuses?
 enum MissionResolutionStatus {
     MResol_FAILED = -1,
@@ -162,7 +176,8 @@ struct Mission { // sizeof=76
 	ushort PreProcess;
     /** Flag switches for the mission. */
     ushort Flags;
-    ubyte field_4A;
+    /** Atmosphere and weather during the mission. */
+    ubyte Atmosphere;
     ubyte field_4B;
 };
 

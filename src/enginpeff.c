@@ -37,9 +37,21 @@ void game_process_sub08(void)
         :  : );
 }
 
-void scene_post_effect_prepare(void)
+void scene_post_effect_texture_with_snow(void)
 {
     int i;
+
+    for (i = 0; i < 10; i++) {
+        ushort pos;
+        ubyte *ptr;
+        pos = LbRandomAnyShort() + (gameturn >> 2);
+        ptr = vec_tmap[0] + pos;
+        *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
+    }
+}
+
+void scene_post_effect_prepare(void)
+{
 #if 0 // experimental function to alter effect intensity
     if ((LbRandomAnyShort() & 0xfff) > 0xf80)
         gamep_scene_effect_change = -gamep_scene_effect_change;
@@ -55,13 +67,7 @@ void scene_post_effect_prepare(void)
         game_process_sub08();
         break;
     case ScEff_SNOW:
-        for (i = 0; i < 10; i++) {
-            ushort pos;
-            ubyte *ptr;
-            pos = LbRandomAnyShort() + (gameturn >> 2);
-            ptr = vec_tmap[0] + pos;
-            *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
-        }
+        scene_post_effect_texture_with_snow();
         break;
     }
 }

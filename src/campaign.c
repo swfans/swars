@@ -144,17 +144,16 @@ const struct TbNamedEnum missions_conf_common_types[] = {
 };
 
 const struct TbNamedEnum missions_conf_atmosphere_types[] = {
-  {"NONE",			1},
-  {"EARTH",			2},
-  {"SPACE",			3},
-  {"MOON",			4},
+  {"EARTH",			MAtmsph_Earth},
+  {"SPACE",			MAtmsph_Space},
+  {"MOON",			MAtmsph_Moon},
   {NULL,			0},
 };
 
 const struct TbNamedEnum missions_conf_weather_types[] = {
-  {"SUNNY",			1},
-  {"RAINY",			2},
-  {"SNOWY",			3},
+  {"SUNNY",			MWeathr_Sunny},
+  {"RAINY",			MWeathr_Rainy},
+  {"SNOWY",			MWeathr_Snowy},
   {NULL,			0},
 };
 
@@ -673,8 +672,8 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
       sprintf(buf, "PreProcess = %hu\n", p_missi->PreProcess);
       LbFileWrite(fh, buf, strlen(buf));
     }
-    if ((p_missi->field_4A) != 0) {
-        sprintf(buf, "field_4A = %d\n", (int)p_missi->field_4A);
+    if ((p_missi->Atmosphere) != 0) {
+        sprintf(buf, "Atmosphere = %d %d\n", (int)(p_missi->Atmosphere) & 0x0F, (int)(p_missi->Atmosphere >> 4) & 0x0F);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->field_4B != 0) {
@@ -1498,13 +1497,13 @@ void read_missions_conf_file(int num)
                     CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                //TODO store the value
+                p_missi->Atmosphere = (p_missi->Atmosphere & 0xF0) | (i << 0);
                 i = LbIniValueGetNamedEnum(&parser, missions_conf_weather_types);
                 if (i <= 0) {
                     CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                //TODO store the value
+                p_missi->Atmosphere = (p_missi->Atmosphere & 0x0F) | (i << 4);
                 break;
             case 0: // comment
                 break;
