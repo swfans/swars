@@ -24,6 +24,7 @@
 #include "bfmemut.h"
 #include "bfscrcopy.h"
 #include "campaign.h"
+#include "femail.h"
 #include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"

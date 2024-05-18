@@ -265,14 +265,6 @@ struct PurpleDrawItem { // sizeof=26
 	ushort Flags;
 };
 
-struct SynTime {
-    ubyte Minute;
-    ubyte Hour;
-    ubyte Day;
-    ubyte Month;
-    ubyte Year;
-};
-
 struct ColVect { // sizeof=14
   short X1;
   short Y1;
@@ -339,22 +331,6 @@ struct MissionStatus { // sizeof=40
     ubyte ObjectivesComplete;
     ubyte AgentsLost;
     ubyte AgentsGained;
-};
-
-struct EmailItem { // sizeof=5
-	ubyte RefNum;
-	ubyte RecvDay;
-	ubyte RecvMonth;
-	ubyte RecvYear;
-	ubyte Mission;
-};
-
-struct NewMailItem { // sizeof=5
-	ubyte RecvDay;
-	ubyte RecvMonth;
-	ubyte RecvYear;
-	ubyte Mission;
-	ubyte Flag;
 };
 
 struct LevelDef {
@@ -682,22 +658,13 @@ extern ubyte *dword_1AA280;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;
 
-extern struct SynTime global_date;
-extern struct SynTime research_curr_wep_date;
-extern struct SynTime research_curr_mod_date;
-
 extern struct MissionStatus mission_status[120];
-extern ubyte new_mail;
-extern struct NewMailItem newmail_store[29];
-extern ushort next_email;
 extern short old_mission_brief;
 extern short open_brief;
 extern short next_brief;
 extern short next_ref;
 extern ushort next_mission;
 extern ushort replay_intro_timer;
-extern struct EmailItem email_store[20];
-extern struct EmailItem brief_store[10];
 extern ubyte show_alert;
 extern sbyte mo_weapon;
 

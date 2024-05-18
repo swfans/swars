@@ -18,6 +18,8 @@
 /******************************************************************************/
 #include "femail.h"
 
+#include "campaign.h"
+#include "femain.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -33,6 +35,30 @@ void delete_mail(ushort mailnum, ubyte type)
 {
     asm volatile ("call ASM_delete_mail\n"
         : : "a" (mailnum), "d" (type));
+}
+
+void queue_up_new_mail(ubyte emtype, short missi)
+{
+    int i;
+
+    LOGSYNC("New email type %d after mission %d, source %d", (int)emtype,
+      (int)missi, (int)mission_list[missi].SourceID);
+    if ((emtype == 1) && (mission_list[missi].SourceID == 0))
+        return;
+    if (missi < 0) {
+        missi = -missi;
+        emtype = 0;
+    }
+    i = new_mail;
+    newmail_store[i].Mission = missi;
+    newmail_store[i].RecvDay = global_date.Day;
+    newmail_store[i].RecvMonth = global_date.Month;
+    newmail_store[i].RecvYear = global_date.Year;
+    if (emtype != 1)
+        newmail_store[i].Flag = 2;
+    else
+        newmail_store[i].Flag = 1;
+    new_mail++;
 }
 
 /******************************************************************************/

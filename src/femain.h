@@ -27,11 +27,23 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct SynTime {
+    ubyte Minute;
+    ubyte Hour;
+    ubyte Day;
+    ubyte Month;
+    ubyte Year;
+};
+
 struct ScreenTextBox;
 
 #pragma pack()
 /******************************************************************************/
 extern struct ScreenTextBox unkn13_SYSTEM_button;
+
+extern struct SynTime global_date;
+extern struct SynTime research_curr_wep_date;
+extern struct SynTime research_curr_mod_date;
 
 void show_main_screen(void);
 void init_main_screen_boxes(void);

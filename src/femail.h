@@ -27,12 +27,33 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct EmailItem { // sizeof=5
+	ubyte RefNum;
+	ubyte RecvDay;
+	ubyte RecvMonth;
+	ubyte RecvYear;
+	ubyte Mission;
+};
+
+struct NewMailItem { // sizeof=5
+	ubyte RecvDay;
+	ubyte RecvMonth;
+	ubyte RecvYear;
+	ubyte Mission;
+	ubyte Flag;
+};
 
 #pragma pack()
 /******************************************************************************/
+extern ubyte new_mail;
+extern struct NewMailItem newmail_store[29];
+extern ushort next_email;
+extern struct EmailItem email_store[20];
+extern struct EmailItem brief_store[10];
 
 ushort activate_queued_mail(void);
 void delete_mail(ushort mailnum, ubyte type);
+void queue_up_new_mail(ubyte emtype, short missi);
 
 /******************************************************************************/
 #ifdef __cplusplus
