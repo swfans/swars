@@ -241,6 +241,27 @@ void research_cymod_complete(ushort mtype)
     research.ModsCompleted |= mflag;
 }
 
+void research_unkn_func_003(void)
+{
+#if 0
+    asm volatile ("call ASM_research_unkn_func_003\n"
+        :  :  : "eax" );
+    return;
+#endif
+    struct WeaponDef *wdef;
+    short weapon;
+
+    weapon = research.CurrentWeapon + 1;
+    if (weapon < 0 || weapon >= WEP_TYPES_COUNT)
+        return;
+
+    wdef = &weapon_defs[weapon];
+    //TODO this modifies configuration which is not saved.
+    // instead we should count the dropped weapons in
+    // a separate variable within structs which are saved/loaded
+    wdef->PercentPerDay += wdef->PercentPerDay * weapon_donate_research_incr_permil / 1000;
+}
+
 void research_current_cymod_complete(void)
 {
     short mtype;

@@ -47,6 +47,57 @@ ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
 ubyte ac_show_research_graph(struct ScreenBox *box);
 ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 
+TbBool research_weapon_daily_progress(void)
+{
+    short prev, lost;
+
+    prev = research.CurrentWeapon;
+    lost = research_daily_progress_for_type(0);
+    scientists_lost += lost;
+    if (research.CurrentWeapon != prev)
+        new_weapons_researched |= 1 << prev;
+
+    return (lost != 0) || (research.CurrentWeapon != prev);
+}
+
+TbBool research_cybmod_daily_progress(void)
+{
+    short prev, lost;
+
+    prev = research.CurrentMod;
+    lost = research_daily_progress_for_type(1);
+    scientists_lost += lost;
+    if (research.CurrentMod != prev)
+        new_mods_researched |= 1 << prev;
+
+    return (lost != 0) || (research.CurrentWeapon != prev);
+}
+
+/** If an agent in Cryo Chamber owns a weapon, allow its research.
+ */
+void research_allow_weapons_in_cryo(void)
+{
+    asm volatile ("call ASM_research_allow_weapons_in_cryo\n"
+        :  :  : "eax" );
+}
+
+void forward_research_progress_after_mission(int num_days)
+{
+    int i;
+
+    // TODO clear the data after filling research report, not here - there may be items accumulated
+    // by time progress while waiting in menu; also clear on game load and new game
+    new_mods_researched = 0;
+    new_weapons_researched = 0;
+    scientists_lost = 0;
+    for (i = 0; i < num_days; i++)
+    {
+        research_weapon_daily_progress();
+        research_cybmod_daily_progress();
+    }
+    research_allow_weapons_in_cryo();
+}
+
 ubyte do_research_submit(ubyte click)
 {
     ubyte ret;

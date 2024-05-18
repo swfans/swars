@@ -37,6 +37,7 @@ void show_main_screen(void);
 void init_main_screen_boxes(void);
 void set_flag01_main_screen_boxes(void);
 
+TbBool is_purple_alert_on_top(void);
 void show_alert_box(void);
 void init_alert_screen_boxes(void);
 void reset_alert_screen_boxes_flags(void);
@@ -45,6 +46,7 @@ void set_flag01_alert_screen_boxes(void);
 ubyte ac_show_title_box(struct ScreenTextBox *box);
 
 void init_system_menu_boxes(void);
+void init_global_boxes(void);
 
 /** Re-enables a button from system menu, moving the following buttons down.
  */
@@ -63,6 +65,13 @@ void reset_system_menu_boxes_flags(void);
 void clear_someflags_system_menu_screen_boxes(void);
 
 void show_mission_loading_screen(void);
+
+void show_date_time(void);
+
+TbBool is_purple_apps_selection_bar_visible(void);
+void show_purple_apps_selection_bar(void);
+TbBool get_purple_apps_selection_bar_inputs(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

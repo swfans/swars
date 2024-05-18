@@ -62,6 +62,7 @@ void load_scientist_lost_reason(ushort reason_no);
 
 int research_daily_progress_for_type(ubyte rstype);
 int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_funding);
+void research_unkn_func_003(void);
 
 TbBool is_research_weapon_completed(ushort wtype);
 TbBool is_research_weapon_allowed(ushort wtype);
