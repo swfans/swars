@@ -4668,7 +4668,7 @@ void start_level_ambient_sound(void)
     case ScEff_NONE:
     default:
         stop_sample_using_heap(0, 77);
-        if (current_map == 11 || current_map == 65) {
+        if (current_map == 11 || current_map == 65) { // If map011 orbital station or map065 the moon
             play_sample_using_heap(0, 78, 64, 64, 100, -1, 2);
         } else {
             play_sample_using_heap(0, 8, 64, 64, 100, -1, 2);

@@ -77,6 +77,7 @@ enum MissionListConfigCmd {
     MissL_RemainUntilSuccess,
     MissL_IsFinalMission,
     MissL_PreProcess,
+    MissL_Atmosphere,
 };
 
 const struct TbNamedEnum missions_conf_common_cmds[] = {
@@ -132,12 +133,28 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
   {"RemainUntilSuccess",MissL_RemainUntilSuccess},
   {"IsFinalMission",MissL_IsFinalMission},
   {"PreProcess",	MissL_PreProcess},
+  {"Atmosphere",	MissL_Atmosphere},
   {NULL,			0},
 };
 
 const struct TbNamedEnum missions_conf_common_types[] = {
   {"SP",			1},
   {"MP",			2},
+  {NULL,			0},
+};
+
+const struct TbNamedEnum missions_conf_atmosphere_types[] = {
+  {"NONE",			1},
+  {"EARTH",			2},
+  {"SPACE",			3},
+  {"MOON",			4},
+  {NULL,			0},
+};
+
+const struct TbNamedEnum missions_conf_weather_types[] = {
+  {"SUNNY",			1},
+  {"RAINY",			2},
+  {"SNOWY",			3},
   {NULL,			0},
 };
 
@@ -1474,6 +1491,20 @@ void read_missions_conf_file(int num)
                 }
                 p_missi->PreProcess = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->PreProcess);
+                break;
+            case MissL_Atmosphere:
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_atmosphere_types);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                //TODO store the value
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_weather_types);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                //TODO store the value
                 break;
             case 0: // comment
                 break;
