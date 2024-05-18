@@ -4,7 +4,7 @@
 /** @file enginpeff.h
  *     Header file for enginpeff.c.
  * @par Purpose:
- *     Engine scene post-processing effects.
+ *     Engine scene pre-/post-processing effects.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
@@ -40,6 +40,8 @@ extern ushort gamep_scene_effect_intensity;
 
 void scene_post_effect_prepare(void);
 void scene_post_effect_for_bucket(short bckt);
+
+void draw_background_stars(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

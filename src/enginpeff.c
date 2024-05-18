@@ -2,7 +2,7 @@
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
 /** @file enginpeff.c
- *     Engine scene post-processing effects.
+ *     Engine scene pre-/post-processing effects.
  * @par Purpose:
  *     Implement functions for adding effects while rendering a scene.
  * @par Comment:
@@ -30,6 +30,9 @@
 /******************************************************************************/
 ushort gamep_scene_effect_intensity = 1000;
 short gamep_scene_effect_change = -1;
+
+extern long dword_176D10;
+extern long dword_176D14;
 
 void game_process_sub08(void)
 {
@@ -201,6 +204,61 @@ void scene_post_effect_for_bucket(short bckt)
     default:
         break;
     }
+}
+
+static void draw_distant_stars(short x, short y, short w, short h, TbPixel color)
+{
+    short dx, dy;
+
+    for (dy = 0; dy < h; dy++)
+    {
+        for (dx = 0; dx < w; dx++) {
+            LbDrawPixelClip(x + dx, y + dy, color);
+        }
+    }
+}
+
+void draw_background_stars(void)
+{
+#if 0
+    asm volatile ("call ASM_draw_background_stars\n"
+        :  :  : "eax" );
+#endif
+    ulong seed_bkp;
+    int i;
+    int scr_x0, scr_y0;
+    ushort m;
+
+    m = lbDisplay.GraphicsScreenHeight / 300;
+    if (m == 0) m++;
+    scr_x0 = lbDisplay.GraphicsScreenWidth / 2;
+    scr_y0 = lbDisplay.GraphicsScreenHeight / 2;
+
+    seed_bkp = lbSeed;
+    lbSeed = 0x8D747;
+    for (i = 0; i < 1223; i++)
+    {
+        int gt, plane, speed;
+        int simp_x, simp_y;
+        int scr_x, scr_y;
+
+        gt = gameturn & 0x7FF;
+        plane = (i >> 4) + 1;
+#if 0 // some testing code which remained for no reason, remove later
+        if (lbShift == KMod_SHIFT)
+            speed = 32 * gt;
+        else
+#endif
+        speed = plane * gt;
+        simp_x = (LbRandomAnyShort() - (speed >> 6)) % 800 - 400;
+        simp_y = LbRandomAnyShort() % 800 - 400;
+
+        scr_x = scr_x0 + ((simp_x * m * dword_176D14 - simp_y * m * dword_176D10) >> 16);
+        scr_y = scr_y0 - ((simp_x * m * dword_176D10 + simp_y * m * dword_176D14) >> 16);
+
+        draw_distant_stars(scr_x, scr_y, m, m, 79 - (plane >> 1));
+    }
+    lbSeed = seed_bkp;
 }
 
 /******************************************************************************/

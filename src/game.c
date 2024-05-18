@@ -2936,12 +2936,6 @@ void draw_explode(void)
         :  :  : "eax" );
 }
 
-void func_211B0(void)
-{
-    asm volatile ("call ASM_func_211B0\n"
-        :  :  : "eax" );
-}
-
 void unkarrD_compute_position(struct UnknArrD *p_unknarrD, int dxc, int dyc, int dzc)
 {
     int fctDxz, fctEzx, fcAyzx, fcByzx;
@@ -3578,9 +3572,9 @@ void process_engine_unk3(void)
     if ((ingame.Flags & GamF_Unkn0040) != 0)
     {
         if (current_map == 11 && byte_19EC6F)     // // map011 Orbital Station
-            func_211B0();
+            draw_background_stars();
         if (game_perspective == 6) {
-            func_211B0();
+            draw_background_stars();
         } else {
             func_218D3();
         }
@@ -4833,7 +4827,7 @@ void init_level(void)
     VNAV_preprocess_bezier_turns(1);
     VNAV_init_new_traffic_system();
 #if 0
-    if (last_map_for_lights_func_11 != current_map) // maps are often reloaded, so we cannot skip filghts update
+    if (last_map_for_lights_func_11 != current_map) // maps are often reloaded, so we cannot skip lights update
 #endif
     map_lights_update();
     last_map_for_lights_func_11 = current_map;
