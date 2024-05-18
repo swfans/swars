@@ -3571,7 +3571,7 @@ void process_engine_unk3(void)
 
     if ((ingame.Flags & GamF_Unkn0040) != 0)
     {
-        if (current_map == 11 && byte_19EC6F)     // // map011 Orbital Station
+        if ((gamep_scene_effect_type == ScEff_SPACE) && byte_19EC6F)
             draw_background_stars();
         if (game_perspective == 6) {
             draw_background_stars();
@@ -4671,6 +4671,9 @@ void setup_ingame_scene_effect(void)
     switch (atmos)
     {
     case MAtmsph_Space:
+        gamep_scene_effect_type = ScEff_SPACE;
+        gamep_scene_effect_intensity = 1000;
+        break;
     case MAtmsph_Moon:
         gamep_scene_effect_type = ScEff_NONE;
         gamep_scene_effect_intensity = 1000;

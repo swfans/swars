@@ -225,7 +225,7 @@ void draw_background_stars(void)
         :  :  : "eax" );
 #endif
     ulong seed_bkp;
-    int i;
+    int i, limit;
     int scr_x0, scr_y0;
     ushort m;
 
@@ -236,7 +236,8 @@ void draw_background_stars(void)
 
     seed_bkp = lbSeed;
     lbSeed = 0x8D747;
-    for (i = 0; i < 1223; i++)
+    limit = 1223 * gamep_scene_effect_intensity / 1000;
+    for (i = 0; i < limit; i++)
     {
         int gt, plane, speed;
         int simp_x, simp_y;

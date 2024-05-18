@@ -31,6 +31,7 @@ enum GamePostSceneEffectType {
     ScEff_NONE = 0,
     ScEff_RAIN,
     ScEff_SNOW,
+    ScEff_SPACE,
 };
 
 #pragma pack()
