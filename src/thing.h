@@ -459,7 +459,9 @@ struct SimpleThing
      * but not always; ie. for doors, the Parent is rectangular face index.
      */
     short Parent;
-    short Next;
+    /** Next thing in the `mapwho` linked list.
+     */
+    ThingIdx Next;
     short LinkParent;
     short LinkChild;
     ubyte SubType;
@@ -469,7 +471,7 @@ struct SimpleThing
     short LinkSame;
     short Object;
     short Radius;
-    short ThingOffset;
+    ThingIdx ThingOffset;
     long X;
     long Y;
     long Z;

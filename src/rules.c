@@ -24,6 +24,7 @@
 #include "enginzoom.h"
 #include "research.h"
 #include "swlog.h"
+#include "weapon.h"
 /******************************************************************************/
 
 enum RulesEngineConfigCmd {
@@ -44,11 +45,20 @@ enum RulesResearchConfigCmd {
     RResrchCmd_DailyProgressRtcMinutes,
 };
 
+enum RulesRevenueConfigCmd {
+    RRevenuCmd_PersuadedPersonWeaponsSellCostPermil = 1,
+};
+
 const struct TbNamedEnum rules_conf_research_cmnds[] = {
   {"DailyScientistDeathChancePermil",	RResrchCmd_DailyScientistDeathChance},
   {"ScientistsPerGroup",			RResrchCmd_ScientistsPerGroup},
   {"WeaponDonateResearchIncrPermil",	RResrchCmd_WeaponDonateResearchIncrPermil},
   {"DailyProgressRtcMinutes",		RResrchCmd_DailyProgressRtcMinutes},
+  {NULL,			0},
+};
+
+const struct TbNamedEnum rules_conf_revenue_cmnds[] = {
+  {"PersuadedPersonWeaponsSellCostPermil",	RRevenuCmd_PersuadedPersonWeaponsSellCostPermil},
   {NULL,			0},
 };
 
@@ -188,6 +198,46 @@ TbBool read_rules_file(void)
             }
             research_progress_rtc_minutes = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)research_progress_rtc_minutes);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+
+    // Parse the [revenue] section of loaded file
+    done = false;
+    if (LbIniFindSection(&parser, "revenue") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section.", "revenue");
+        done = true;
+    }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(rules_conf_revenue_cmnds,cmd_num)
+    while (!done)
+    {
+        int cmd_num;
+
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, rules_conf_revenue_cmnds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case RRevenuCmd_PersuadedPersonWeaponsSellCostPermil:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            persuaded_person_weapons_sell_cost_permil = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)persuaded_person_weapons_sell_cost_permil);
             break;
         case 0: // comment
             break;

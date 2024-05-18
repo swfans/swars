@@ -6227,6 +6227,35 @@ void mission_over_update_players(void)
     cryo_update_agents_from_player(p_locplayer);
 }
 
+ulong calculate_cash_gain_from_persuaded_person(struct Thing *p_person)
+{
+    ulong credits;
+
+    credits = 0;
+    switch (p_person->SubType)
+    {
+    case SubTT_PERS_AGENT:
+        credits += 1000;
+        break;
+    case SubTT_PERS_ZEALOT:
+        credits += 1000;
+        break;
+    case SubTT_PERS_PUNK_M:
+    case SubTT_PERS_PUNK_F:
+        credits += 150;
+        break;
+    case SubTT_PERS_SCIENTIST:
+        credits += 500;
+        break;
+    default:
+        credits += 100;
+        break;
+    }
+    credits += person_carried_weapons_pesuaded_sell_value(p_person);
+
+    return credits;
+}
+
 ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
 {
     ulong credits;
@@ -6242,25 +6271,7 @@ ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
             continue;
         if (p_person->U.UPerson.EffectiveGroup != tgroup)
             continue;
-        switch (p_person->SubType)
-        {
-        case SubTT_PERS_AGENT:
-            credits += 1000;
-            break;
-        case SubTT_PERS_ZEALOT:
-            credits += 1000;
-            break;
-        case SubTT_PERS_PUNK_M:
-        case SubTT_PERS_PUNK_F:
-            credits += 150;
-            break;
-        case SubTT_PERS_SCIENTIST:
-            credits += 500;
-            break;
-        default:
-            credits += 100;
-            break;
-        }
+        credits += calculate_cash_gain_from_persuaded_person(p_person);
     }
     return credits;
 }

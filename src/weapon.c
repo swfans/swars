@@ -74,6 +74,8 @@ ubyte weapon_tech_level[33] = {
 struct WeaponDefAdd weapon_defs_a[33] = {0};
 struct TbNamedEnum weapon_names[33] = {0};
 
+short persuaded_person_weapons_sell_cost_permil = 0;
+
 enum WeaponsConfigCmd {
     CCWep_WeaponsCount = 1,
     CCWep_Name,
@@ -674,6 +676,25 @@ void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_four
             n = 4;
         p_fourpacks->Amount[fp] = n;
     }
+}
+
+ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person)
+{
+    ulong credits;
+    ushort wtype;
+
+    credits = 0;
+    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    {
+        struct WeaponDef *wdef;
+
+        if (!person_carries_weapon(p_person, wtype))
+            continue;
+
+        wdef = &weapon_defs[wtype];
+        credits += wdef->Cost * persuaded_person_weapons_sell_cost_permil / 1000;
+    }
+    return credits;
 }
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person)
