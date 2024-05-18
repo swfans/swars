@@ -221,7 +221,7 @@ void mech_unkn_func_02(void)
         :  :  : "eax" );
 }
 
-void mech_unkn_func_09(short thing)
+void mech_unkn_func_09(ThingIdx thing)
 {
     asm volatile ("call ASM_mech_unkn_func_09\n"
         : : "a" (thing));
@@ -236,7 +236,7 @@ void veh_add(struct Thing *p_thing, short frame)
 ushort veh_passenger_count(struct Thing *p_veh)
 {
     struct Thing *p_thing;
-    short thing;
+    ThingIdx thing;
     ushort c;
 
     c = 0;
@@ -555,7 +555,7 @@ static TbBool check_vehicle_col_with_mine(struct Thing *p_vehicle, struct Simple
 static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel,
   int pos_x, int pos_y, int pos_z)
 {
-    short thing;
+    ThingIdx thing;
 
     thing = p_mapel->Child;
     while (thing != 0)
@@ -601,7 +601,7 @@ static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapEl
 static TbBool check_vehicle_col_on_same_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel,
   int pos_x, int pos_y, int pos_z)
 {
-    short thing;
+    ThingIdx thing;
 
     thing = p_mapel->Child;
     while (thing != 0)
@@ -1268,7 +1268,7 @@ void preprogress_trains_turns(ulong nturns)
 
     for (turns = nturns; turns > 0; turns--)
     {
-        short thing;
+        ThingIdx thing;
         int tng_remain;
         struct Thing *p_thing;
 

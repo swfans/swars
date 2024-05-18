@@ -393,7 +393,7 @@ TbBool objective_target_is_any_thing(struct Objective *p_objectv)
 
 void draw_objective_group_whole_on_engine_scene(ushort group)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -408,7 +408,7 @@ void draw_objective_group_whole_on_engine_scene(ushort group)
 
 void draw_objective_group_non_flag2_on_engine_scene(ushort group)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -425,7 +425,7 @@ void draw_objective_group_non_flag2_on_engine_scene(ushort group)
 
 void draw_objective_group_non_pers_on_engine_scene(ushort group)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -443,7 +443,7 @@ void draw_objective_group_non_pers_on_engine_scene(ushort group)
 void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort plyr)
 {
     short plyagent, plygroup;
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -463,7 +463,7 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
 
 void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short owntng)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -482,7 +482,8 @@ void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short ow
 void draw_objective_dirctly_on_engine_scene(ushort objectv)
 {
     struct Objective *p_objectv;
-    short thing, group;
+    ThingIdx thing;
+    short group;
     ubyte colk;
 
     p_objectv = &game_used_objectives[objectv];
@@ -632,12 +633,12 @@ TbBool screen_objective_text_set_failed(void)
 
 /** Crude version of thing_arrived_at_objectv(), deprecated.
  */
-TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
+TbBool thing_arrived_at_obj(ThingIdx thing, struct Objective *p_objectv)
 {
     return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
 }
 
-TbBool thing_is_destroyed(short thing)
+TbBool thing_is_destroyed(ThingIdx thing)
 {
     if (thing == 0) {
         return true;
@@ -652,7 +653,7 @@ TbBool thing_is_destroyed(short thing)
     }
 }
 
-TbBool vehicle_is_destroyed(short thing)
+TbBool vehicle_is_destroyed(ThingIdx thing)
 {
     struct Thing *p_thing;
 
@@ -663,7 +664,7 @@ TbBool vehicle_is_destroyed(short thing)
     return thing_is_destroyed(thing) || (p_thing->Type != TT_VEHICLE);
 }
 
-TbBool person_is_dead(short thing)
+TbBool person_is_dead(ThingIdx thing)
 {
     struct Thing *p_thing;
 
@@ -683,7 +684,7 @@ TbBool person_is_dead(short thing)
  * @param thing Thing index (of any type) to to check.
  * @param p_objectv Pointer to the objective which XYZ coords and radius will be checked.
  */
-TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
+TbBool thing_arrived_at_objectv(ThingIdx thing, struct Objective *p_objectv)
 {
     if (thing == 0)
         return false;
@@ -698,7 +699,7 @@ TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
  * @param weapon Weapon type, in case it was picked up and therfore is no longer at expected Thing index.
  * @param p_objectv Pointer to the objective which XYZ coords and radius will be checked.
  */
-TbBool item_arrived_at_objectv(short thing, ushort weapon, struct Objective *p_objectv)
+TbBool item_arrived_at_objectv(ThingIdx thing, ushort weapon, struct Objective *p_objectv)
 {
     struct SimpleThing *p_sthing;
 
@@ -735,7 +736,7 @@ TbBool item_arrived_at_objectv(short thing, ushort weapon, struct Objective *p_o
  * exact same weapon instance, but that should not matter in most practical
  * uses of the objective.
  */
-TbBool item_is_carried_by_player(short thing, ushort weapon, ushort plyr)
+TbBool item_is_carried_by_player(ThingIdx thing, ushort weapon, ushort plyr)
 {
     struct SimpleThing *p_sthing;
     short plyagent, plygroup;
@@ -786,7 +787,7 @@ ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
 
 TbBool all_group_persuaded(ushort group)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
 
     thing = same_type_head[256 + group];
@@ -804,7 +805,7 @@ TbBool all_group_persuaded(ushort group)
 
 TbBool group_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
 
     thing = same_type_head[256 + group];
@@ -822,7 +823,7 @@ TbBool group_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
 
 TbBool group_all_survivors_in_vehicle(ushort group, short vehicle)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
 
     thing = same_type_head[256 + group];
@@ -840,7 +841,7 @@ TbBool group_all_survivors_in_vehicle(ushort group, short vehicle)
 
 TbBool group_members_in_vehicle(ushort group, short vehicle, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -862,7 +863,7 @@ TbBool group_members_in_vehicle(ushort group, short vehicle, ushort amount)
 
 TbBool group_members_persuaded_by_player(ushort group, ushort plyr, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -881,7 +882,7 @@ TbBool group_members_persuaded_by_player(ushort group, ushort plyr, ushort amoun
 
 TbBool group_members_killed_or_persuaded_by_player(ushort group, ushort plyr, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -901,7 +902,7 @@ TbBool group_members_killed_or_persuaded_by_player(ushort group, ushort plyr, us
 
 TbBool group_members_dead(ushort group, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -918,7 +919,7 @@ TbBool group_members_dead(ushort group, ushort amount)
     return false;
 }
 
-TbBool person_is_near_thing(short neartng, short thing, ushort radius)
+TbBool person_is_near_thing(ThingIdx neartng, ThingIdx thing, ushort radius)
 {
     short nearX, nearZ;
 
@@ -943,9 +944,9 @@ TbBool person_is_near_thing(short neartng, short thing, ushort radius)
 }
 
 
-TbBool group_members_near_thing(short neartng, ushort group, ushort amount, ushort radius)
+TbBool group_members_near_thing(ThingIdx neartng, ushort group, ushort amount, ushort radius)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
     short nearX, nearZ;
@@ -980,9 +981,9 @@ TbBool group_members_near_thing(short neartng, ushort group, ushort amount, usho
     return false;
 }
 
-TbBool group_members_persuaded_by_person(ushort group, short owntng, ushort amount)
+TbBool group_members_persuaded_by_person(ushort group, ThingIdx owntng, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -1001,7 +1002,7 @@ TbBool group_members_persuaded_by_person(ushort group, short owntng, ushort amou
 
 TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_objectv, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -1021,7 +1022,7 @@ TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_object
 ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext)
 {
     struct ObjectiveDef *p_odef;
-    short thing;
+    ThingIdx thing;
     ubyte ret;
 
     // Skip objectives for other levels
@@ -1268,7 +1269,8 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 short test_objective(ushort objectv, ushort show_obj)
 {
     struct Objective *p_objectv;
-    short thing, thing2, group, amount;
+    ThingIdx thing, thing2;
+    short group, amount;
 
     if (show_obj == 2)
     {

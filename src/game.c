@@ -1220,7 +1220,7 @@ void fill_netgame_agent_pos(int player, int group, int num_agents)
 
 void unkn_f_pressed_func(void)
 {
-    short thing;
+    ThingIdx thing;
     short i;
 
     thing = same_type_head[1];
@@ -1798,7 +1798,7 @@ sbyte find_nth_weapon_held(ushort index, ubyte n)
 void update_dropped_item_under_agent_exists(struct Thing *p_agent)
 {
     struct SimpleThing *p_pickup;
-    short thing;
+    ThingIdx thing;
 
     if (p_agent->Flag & TngF_Unkn08000000)
     {
@@ -1816,7 +1816,7 @@ void update_dropped_item_under_agent_exists(struct Thing *p_agent)
 TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
 {
     struct SimpleThing *p_pickup;
-    short thing;
+    ThingIdx thing;
     TbBool drawn;
 
     drawn = false;
@@ -1846,7 +1846,7 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
 {
     ;
     struct SimpleThing *p_pickup;
-    short thing;
+    ThingIdx thing;
     TbBool drawn;
 
     drawn = false;
@@ -3364,7 +3364,7 @@ void engine_draw_things(int pos_beg_x, int pos_beg_z, int rend_beg_x, int rend_b
 
             if (pos_x >= view_beg_x && pos_x <= view_end_x && pos_z >= view_beg_z && pos_z <= view_end_z)
             {
-                short thing;
+                ThingIdx thing;
                 ushort lv;
 
                 lv = p_mapel->ColHead;
@@ -3402,7 +3402,7 @@ void engine_draw_things(int pos_beg_x, int pos_beg_z, int rend_beg_x, int rend_b
             }
             else
             {
-                short thing;
+                ThingIdx thing;
                 ushort lv;
 
                 lv = p_mapel->ColHead;
@@ -4635,7 +4635,7 @@ void init_level_unknsub01_vehicle(struct Thing *p_vehicle)
 
 void init_level_unknsub01(void)
 {
-    short thing;
+    ThingIdx thing;
 
     thing = things_used_head;
     while (thing > 0)
@@ -6231,7 +6231,7 @@ ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
 {
     ulong credits;
     struct Thing *p_person;
-    short person;
+    ThingIdx person;
 
     credits = 0;
     person = get_thing_same_type_head(TT_PERSON, -1);
@@ -6268,7 +6268,7 @@ ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
 void mission_over_gain_personnel_from_persuaded_crowd(void)
 {
     struct Thing *p_person;
-    short person;
+    ThingIdx person;
 
     person = get_thing_same_type_head(TT_PERSON, -1);
     for (; person > 0; person = p_person->LinkSame)

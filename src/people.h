@@ -20,6 +20,7 @@
 #define PEOPLE_H
 
 #include "bftypes.h"
+#include "game_bstype.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -198,9 +199,9 @@ void set_person_anim_mode(struct Thing *p_person, ubyte animode);
  */
 void reset_person_frame(struct Thing *p_person);
 
-TbBool person_is_persuaded(short thing);
-TbBool person_is_persuaded_by_person(short thing, short owntng);
-TbBool person_is_persuaded_by_player(short thing, ushort plyr);
+TbBool person_is_persuaded(ThingIdx thing);
+TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
+TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);
 

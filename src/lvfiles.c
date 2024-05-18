@@ -76,7 +76,7 @@ struct QuickLoad quick_load_pc[] = {
 
 void debug_level(const char *text, int player)
 {
-    short thing;
+    ThingIdx thing;
 
     thing = things_used_head;
     while (thing != 0)
@@ -264,7 +264,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     if (fmtver >= 4)
     {
         ulong count;
-        short thing;
+        ThingIdx thing;
 
         count = 0;
         LbFileRead(lev_fh, &count, 2);
@@ -390,7 +390,7 @@ short find_group_which_looks_like_human_player(TbBool strict)
     return -1;
 }
 
-ushort person_add_command(short person, ubyte cmdtype)
+ushort person_add_command(ThingIdx person, ubyte cmdtype)
 {
     struct Thing *p_person;
     struct Command *p_cmd;
@@ -414,7 +414,7 @@ ushort person_add_command(short person, ubyte cmdtype)
 void add_commands_from_person_states(void)
 {
     struct Thing *p_thing;
-    short thing;
+    ThingIdx thing;
 
     for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
     {
@@ -510,7 +510,7 @@ void level_perform_deep_fix(void)
 void fix_level_indexes(short missi, ulong fmtver, ubyte reload, TbBool deep)
 {
     ushort objectv;
-    short thing;
+    ThingIdx thing;
 
     fix_thing_commands_indexes(deep);
 

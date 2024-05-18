@@ -384,7 +384,7 @@ ubyte fix_thing_command_indexes(ushort cmd, TbBool deep)
 {
     struct Command *p_cmd;
     struct CommandDef *p_cdef;
-    short thing;
+    ThingIdx thing;
     ubyte ret;
 
     p_cmd = &game_commands[cmd];
@@ -750,7 +750,7 @@ void check_and_fix_commands(void)
 
 void check_and_fix_thing_commands(void)
 {
-    short thing;
+    ThingIdx thing;
     short i;
     ushort cmd;
 

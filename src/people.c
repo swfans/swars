@@ -505,7 +505,7 @@ void person_give_best_mods(struct Thing *p_person)
     set_person_mod_chest_level(p_person, 3);
 }
 
-TbBool person_is_persuaded(short thing)
+TbBool person_is_persuaded(ThingIdx thing)
 {
     struct Thing *p_person;
 
@@ -516,7 +516,7 @@ TbBool person_is_persuaded(short thing)
     return ((p_person->Flag & TngF_Persuaded) != 0);
 }
 
-TbBool person_is_persuaded_by_person(short thing, short owntng)
+TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng)
 {
     struct Thing *p_person;
 
@@ -530,7 +530,7 @@ TbBool person_is_persuaded_by_person(short thing, short owntng)
     return (p_person->Owner == owntng);
 }
 
-TbBool person_is_persuaded_by_player(short thing, ushort plyr)
+TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr)
 {
     struct Thing *p_thing;
     short plyagent, plygroup;
@@ -886,7 +886,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
 
 void unpersuade_my_peeps(struct Thing *p_owntng)
 {
-    short person;
+    ThingIdx person;
     struct Thing *p_person;
     ushort count;
     int i, k;
@@ -926,7 +926,7 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
 #endif
     ubyte ptype;
     struct PeepStat *p_pestat;
-    short person;
+    ThingIdx person;
     struct Thing *p_person;
     ushort rnd;
     int ry;

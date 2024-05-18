@@ -37,7 +37,7 @@ void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ,
     LbDrawLine(x, y, ep.pp.X, ep.pp.Y, colour);
 }
 
-void draw_objective_point(long x, long y, short thing, short a4, ubyte colour)
+void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour)
 {
     long ptX, ptY, ptZ;
 

@@ -1202,7 +1202,7 @@ void add_walk_items_for_face_things_near(short x, short y, short z, short radius
         {
             int tile_x, tile_z;
             struct MyMapElement *p_mapel;
-            short thing;
+            ThingIdx thing;
             int i;
 
             tile_x = MAPCOORD_TO_TILE(x) + shift_x;
@@ -1545,7 +1545,7 @@ void update_mapel_collision_columns(void)
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
             struct MyMapElement *p_mapel;
-            short thing;
+            ThingIdx thing;
             int i;
 
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
@@ -1568,7 +1568,7 @@ void update_mapel_collision_columns(void)
     }
 }
 
-void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, ushort vect, ubyte flags)
+void add_next_col_vect_to_vects_list(short x, short z, ThingIdx thing, short face, ushort vect, ubyte flags)
 {
     short tile_x, tile_z;
     struct MyMapElement *p_mapel;
@@ -1632,7 +1632,7 @@ int new_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, sho
     return vect;
 }
 
-void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short thing, short face, ushort flags)
+void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, ThingIdx thing, short face, ushort flags)
 {
     int vect, limit;
 
@@ -1672,7 +1672,7 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
 
 /** Adds a face to col_vect lists in nearby MapElements, if the face has two sibling points close to the ground.
  */
-void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
+void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, ThingIdx thing, short face, ushort a2)
 {
     int alt_cor[4];
     int x_cor[4];
@@ -1716,7 +1716,7 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short t
 
 /** Adds a face to col_vect lists in nearby MapElements, if the face has two sibling points close to the ground.
  */
-void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
+void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, ThingIdx thing, short face, ushort a2)
 {
     int alt_cor[4];
     int x_cor[4];
@@ -1765,7 +1765,7 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
 
 #undef TOLERANCE
 
-void add_all_object_faces_to_col_vect(short thing, ushort obj, ushort a2)
+void add_all_object_faces_to_col_vect(ThingIdx thing, ushort obj, ushort a2)
 {
     short face;
     short startface3, endface3;
@@ -1814,7 +1814,7 @@ void generate_collision_vects(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            short thing;
+            ThingIdx thing;
             int i;
 
             thing = get_mapwho_thing_index(tile_x, tile_z);
@@ -1856,7 +1856,7 @@ void generate_thin_walls(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            short thing;
+            ThingIdx thing;
             int i;
 
             thing = get_mapwho_thing_index(tile_x, tile_z);
@@ -2014,7 +2014,7 @@ void generate_thin_paths(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            short thing;
+            ThingIdx thing;
             int i;
 
             thing = get_mapwho_thing_index(tile_x, tile_z);

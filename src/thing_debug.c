@@ -57,7 +57,7 @@ int select_thing_for_debug(short x, short y, short z, short type)
         : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
     return ret;
 #endif
-    short thing;
+    ThingIdx thing;
     short alt;
     char locstr[52];
 
@@ -103,7 +103,7 @@ void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
 }
 
 // TODO separate get_person_commands_debug_hud_inputs() from the below
-void person_commands_debug_hud(int x, int y, int w, int h, short person, ubyte col1, ubyte col2, ubyte col3)
+void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyte col1, ubyte col2, ubyte col3)
 {
 #if 0
     asm volatile (
@@ -223,7 +223,7 @@ void things_debug_hud(void)
         :  :  : "eax" );
     return;
 #endif
-    short thing;
+    ThingIdx thing;
     short path;
     short pasngr;
     char locstr[100];

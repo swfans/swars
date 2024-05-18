@@ -198,7 +198,7 @@ void update_workplace_unkn0001_flag(struct Thing *p_vehicle)
 
 static TbBool check_person_close_on_mapel(struct MyMapElement *p_mapel)
 {
-    short thing;
+    ThingIdx thing;
 
     thing = p_mapel->Child;
     while (thing != 0)
@@ -496,7 +496,7 @@ void VNAV_preprocess_bezier_turns(ulong nturns)
 
     for (turns = nturns; turns > 0; turns--)
     {
-        short thing;
+        ThingIdx thing;
         ushort i;
 
         thing = things_used_head;

@@ -806,7 +806,7 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
 {
     struct Thing *p_target;
     struct Thing *p_thing;
-    short thing;
+    ThingIdx thing;
     ushort group, n_targets;
 
     p_target = p_person->PTarget;

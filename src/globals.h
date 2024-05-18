@@ -71,8 +71,7 @@ typedef signed char PlayerNumber;
 typedef unsigned char ThingClass;
 /** Type which stores thing model. */
 typedef unsigned char ThingModel;
-/** Type which stores thing index. */
-typedef unsigned short ThingIndex;
+
 typedef long HitPoints;
 /** Level number within a campaign. */
 typedef long LevelNumber;

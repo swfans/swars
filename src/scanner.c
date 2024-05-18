@@ -281,7 +281,7 @@ ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
     long X, Z;
     ushort n;
     ubyte colr;
-    short thing;
+    ThingIdx thing;
 
     thing = p_objectv->Thing;
 
@@ -315,7 +315,7 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
     ushort n;
     ushort weapon;
     ubyte colr;
-    short thing;
+    ThingIdx thing;
 
     thing = p_objectv->Thing;
     weapon = p_objectv->Arg2;
@@ -343,7 +343,7 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
             Z = p_person->Z;
         } else {
             struct Thing *p_person;
-            short person;
+            ThingIdx person;
             person = find_person_carrying_weapon(weapon);
             p_person = &things[person];
             X = p_person->X;
@@ -364,7 +364,7 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     long X, Z;
     ushort n;
     ubyte colr;
-    short thing;
+    ThingIdx thing;
 
     thing = p_objectv->Thing;
 
@@ -414,7 +414,7 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
     long X2, Z2;
     ushort n;
     ubyte colr;
-    short thing1, thing2;
+    ThingIdx thing1, thing2;
 
     thing1 = p_objectv->Thing;
     thing2 = p_objectv->Y;
