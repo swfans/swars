@@ -4300,6 +4300,7 @@ void read_user_settings(void)
         LbFileRead(fh, &ingame.DangerTrack, sizeof(ingame.DangerTrack));
         LbFileRead(fh, &ingame.UseMultiMedia, sizeof(ingame.UseMultiMedia));
         LbFileRead(fh, &locflags, sizeof(locflags));
+        locflags &= ~UsrF_Cheats; // Cheats are per-session setting, not per-user
         ingame.UserFlags |= locflags; // Do not replace these, add to them
         LbFileRead(fh, &save_mortal_salt, sizeof(save_mortal_salt));
         LbFileClose(fh);
