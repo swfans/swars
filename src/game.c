@@ -3072,6 +3072,15 @@ int unkarrD_compute_coord_y(struct UnknArrD *p_unknarrD, struct MyMapElement *p_
     return elcr_y;
 }
 
+ushort draw_object(int x, int y, int z, struct SingleObject *point_object)
+{
+    ushort ret;
+    asm volatile ("call ASM_draw_object\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (point_object));
+    return ret;
+}
+
+
 short draw_thing_object(struct Thing *p_thing)
 {
     short ret;
