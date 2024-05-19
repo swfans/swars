@@ -71,7 +71,7 @@ void sysmnu_button_disable(int btnno, int count);
 void set_heading_box_text(const char *text);
 void reset_heading_screen_boxes_flags(void);
 TbBool is_heading_flag01(void);
-int draw_heading_box(void);
+ubyte draw_heading_box(void);
 void set_flag02_heading_screen_boxes(void);
 void reset_system_menu_boxes_flags(void);
 void clear_someflags_system_menu_screen_boxes(void);

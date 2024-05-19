@@ -8647,12 +8647,6 @@ void show_sysmenu_screen(void)
         :  :  : "eax" );
 }
 
-void show_mission_screen(void)
-{
-    asm volatile ("call ASM_show_mission_screen\n"
-        :  :  : "eax" );
-}
-
 void show_menu_screen_st0(void)
 {
     debug_trace_place(16);

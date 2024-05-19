@@ -481,6 +481,65 @@ void load_netscan_data(ubyte city_id, ubyte level)
     update_netscan_cost_button(city_id);
 }
 
+void show_mission_screen(void)
+{
+#if 0
+    asm volatile ("call ASM_show_mission_screen\n"
+        :  :  : "eax" );
+#endif
+    ubyte draw_done = true;
+
+    if (((game_projector_speed != 0) && is_heading_flag01()) ||
+      (lbKeyOn[KC_SPACE] && !edit_flag))
+    {
+        lbKeyOn[KC_SPACE] = 0;
+        set_flag02_heading_screen_boxes();
+        brief_graphical_box.Flags |= GBxFlg_Unkn0002;
+        brief_NETSCAN_button.Flags |= GBxFlg_Unkn0002;
+        brief_mission_text_box.Flags |= GBxFlg_Unkn0002;
+        brief_netscan_box.Flags |= GBxFlg_Unkn0002;
+        brief_NETSCAN_COST_box.Flags |= GBxFlg_Unkn0002;
+    }
+    // Draw sequentially
+    draw_done = draw_done && draw_heading_box();
+    draw_done = draw_done && brief_mission_text_box.DrawFn(&brief_mission_text_box);
+    if (draw_done)
+    {
+        if (lbKeyOn[KC_F])
+        {
+          if ( mouse_move_over_rect(
+                 brief_mission_text_box.X,
+                 brief_mission_text_box.Width + brief_mission_text_box.X,
+                 brief_mission_text_box.Y,
+                 brief_mission_text_box.Height + brief_mission_text_box.Y) )
+          {
+            lbKeyOn[KC_F] = 0;
+            if ((brief_mission_text_box.Flags & 0x1000) == 0)
+            {
+              if (brief_mission_text_box.Font == small_font)
+              {
+                brief_mission_text_box.Font = small_med_font;
+              }
+              else if (brief_mission_text_box.Font == small_med_font)
+              {
+                brief_mission_text_box.Font = med_font;
+              }
+              else
+              {
+                brief_mission_text_box.Font = small_font;
+              }
+              brief_mission_text_box.Lines = 0;
+              brief_mission_text_box.BGColour = 0;
+              brief_mission_text_box.Flags |= GBxFlg_Unkn0080;
+            }
+          }
+        }
+        if (brief_graphical_box.DrawFn(&brief_graphical_box)) {
+            brief_netscan_box.DrawFn(&brief_netscan_box);
+        }
+    }
+}
+
 void init_brief_screen_scanner(void)
 {
     ingame.Scanner.MX = 127;

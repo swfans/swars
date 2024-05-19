@@ -366,7 +366,7 @@ void set_flag02_heading_screen_boxes(void)
     heading_box.Flags |= GBxFlg_Unkn0002;
 }
 
-int draw_heading_box(void)
+ubyte draw_heading_box(void)
 {
     int ret;
     //ret = heading_box.DrawFn(&heading_box); -- incompatible calling convention
