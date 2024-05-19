@@ -3358,12 +3358,12 @@ void engine_draw_things(int pos_beg_x, int pos_beg_z, int rend_beg_x, int rend_b
         {
             struct MyMapElement *p_mapel;
 
-            if (pos_x <= 0 || pos_x >= 0x8000)
+            if (pos_x <= TILE_TO_MAPCOORD(0,0) || pos_x >= MAP_COORD_WIDTH)
                 continue;
-            if (pos_z <= 0 || pos_z >= 0x8000)
+            if (pos_z <= TILE_TO_MAPCOORD(0,0) || pos_z >= MAP_COORD_HEIGHT)
                 continue;
 
-            p_mapel = &game_my_big_map[(pos_x >> 8) + (pos_z >> 8 << 7)];
+            p_mapel = &game_my_big_map[MAPCOORD_TO_TILE(pos_x) + MAPCOORD_TO_TILE(pos_z) * MAP_TILE_WIDTH];
 
             if (pos_x >= view_beg_x && pos_x <= view_end_x && pos_z >= view_beg_z && pos_z <= view_end_z)
             {
@@ -3956,7 +3956,9 @@ void person_give_all_weapons(struct Thing *p_person)
 
 void beefup_all_agents(PlayerInfo *p_locplayer)
 {
+    ushort wtype;
     int i;
+
     for (i = 0; i < playable_agents; i++)
     {
         struct Thing *p_agent;
@@ -3976,7 +3978,17 @@ void beefup_all_agents(PlayerInfo *p_locplayer)
             p_agent->U.UPerson.Energy = p_agent->U.UPerson.MaxEnergy;
         }
     }
-    research.WeaponsCompleted = 0x3FFFFFFF;
+    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    {
+        struct WeaponDef *wdef;
+
+        wdef = &weapon_defs[wtype];
+
+        if ((wdef->Flags & WEPDFLG_CanPurchease) == 0)
+            continue;
+
+        research_weapon_complete(wtype);
+    }
 }
 
 void game_graphics_inputs(void)

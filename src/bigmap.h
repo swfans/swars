@@ -30,6 +30,9 @@ extern "C" {
 #define MAP_TILE_WIDTH 128
 #define MAP_TILE_HEIGHT 128
 
+#define MAP_COORD_WIDTH TILE_TO_MAPCOORD(MAP_TILE_WIDTH, 0)
+#define MAP_COORD_HEIGHT TILE_TO_MAPCOORD(MAP_TILE_HEIGHT, 0)
+
 /* Convert precise map coordinate to normal map coordinate.
  */
 #define PRCCOORD_TO_MAPCOORD(pcor) ((pcor) >> 8)

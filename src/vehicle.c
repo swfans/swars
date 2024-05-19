@@ -1186,8 +1186,10 @@ void process_veh_ground(struct Thing *p_vehicle)
 
 void vehicle_check_outside_map(struct Thing *p_vehicle)
 {
-    if ((p_vehicle->X <= 0) || (p_vehicle->X >= 0x800000) ||
-        (p_vehicle->Z <= 0) || (p_vehicle->Z >= 0x800000))
+    if ((p_vehicle->X <= MAPCOORD_TO_PRCCOORD(0,0))
+      || (p_vehicle->X >= MAPCOORD_TO_PRCCOORD(MAP_COORD_WIDTH,0))
+      || (p_vehicle->Z <= MAPCOORD_TO_PRCCOORD(0,0))
+      || (p_vehicle->Z >= MAPCOORD_TO_PRCCOORD(MAP_COORD_HEIGHT,0)))
     {
         if (p_vehicle->State != VehSt_UNKN_45)
             start_crashing(p_vehicle);
