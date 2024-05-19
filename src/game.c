@@ -219,6 +219,11 @@ extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
 extern long dword_176CBC;
+extern long dword_176D0C;
+extern long dword_176D44;
+extern long dword_176D4C;
+extern long dword_176D54;
+extern long dword_176D64;
 
 extern long dword_19F4F8;
 
@@ -1378,8 +1383,26 @@ void process_view_inputs(int thing)
 
 void process_engine_unk1(void)
 {
+#if 0
     asm volatile ("call ASM_process_engine_unk1\n"
         :  :  : "eax" );
+    return;
+#endif
+    int angle;
+
+    dword_176D4C = 0;
+    dword_176D64 = -70;
+    dword_176D3C = vec_window_width / 2;
+    dword_176D40 = vec_window_height / 2;
+    engn_anglexz += dword_176D54;
+    dword_176D44 = 4 * (vec_window_width / 2) / 3;
+    angle = (engn_anglexz >> 5) & LbFPMath_AngleMask;
+    dword_176D0C = angle;
+    dword_176D14 = lbSinTable[angle + LbFPMath_PI/2];
+    dword_176D10 = lbSinTable[angle];
+    angle = dword_152EEC & LbFPMath_AngleMask;
+    dword_176D18 = lbSinTable[angle];
+    dword_176D1C = lbSinTable[angle + LbFPMath_PI/2];
 }
 
 void process_engine_unk2(void)
@@ -5648,19 +5671,12 @@ void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, T
 
 void show_game_engine(void)
 {
-    int zoom;
     short dcthing;
 
     dcthing = players[local_player_no].DirectControl[0];
     process_view_inputs(dcthing);// inlined call gengine_ctrl
 
-    zoom = (900 - overall_scale) >> 1;
-    if (zoom < 50)
-        ingame.Scanner.Zoom = 50;
-    else if (zoom > 556)
-        ingame.Scanner.Zoom = 556;
-    else
-        ingame.Scanner.Zoom = zoom;
+    SCANNER_set_zoom((900 - overall_scale) >> 1);
     process_engine_unk1();
     process_engine_unk2();
     process_engine_unk3();

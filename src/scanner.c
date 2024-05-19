@@ -35,6 +35,16 @@ extern ulong turn_last; // = 999;
 extern ulong SCANNER_keep_arcs;
 extern ulong dword_1DB1A0;
 
+void SCANNER_set_zoom(int zoom)
+{
+    if (zoom < 50)
+        ingame.Scanner.Zoom = 50;
+    else if (zoom > 556)
+        ingame.Scanner.Zoom = 556;
+    else
+        ingame.Scanner.Zoom = zoom;
+}
+
 void SCANNER_init(void)
 {
     asm volatile ("call ASM_SCANNER_init\n"
