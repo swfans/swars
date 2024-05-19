@@ -1405,10 +1405,60 @@ void process_engine_unk1(void)
     dword_176D1C = lbSinTable[angle + LbFPMath_PI/2];
 }
 
+void setup_engine_nullsub4(void)
+{
+}
+
+void calc_mouse_pos(void)
+{
+    asm volatile ("call ASM_calc_mouse_pos\n"
+        :  :  : "eax" );
+}
+
 void process_engine_unk2(void)
 {
+#if 0
     asm volatile ("call ASM_process_engine_unk2\n"
         :  :  : "eax" );
+    return;
+#endif
+    short msx, msy;
+    int offs_y;
+    int point_x, point_y;
+
+    if (ingame.DisplayMode == 50)
+      offs_y = overall_scale * engn_yc >> 8;
+    else
+      offs_y = 0;
+    msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+    {
+        point_y = (msy >> 1) - offs_y;
+        point_x = msx >> 1;
+    }
+    else
+    {
+        point_y = msy - offs_y;
+        point_x = msx;
+    }
+    if ( dword_176D18 )
+    {
+        int shift_x, shift_y;
+        int mmap_z;
+
+        shift_x = ((point_x - dword_176D3C) << 11) / overall_scale;
+        shift_y = -((((point_y - dword_176D40) << 11) / overall_scale << 16) / dword_176D18);
+        mouse_map_x = (shift_x * dword_176D14 - shift_y * dword_176D10) >> 16;
+        mmap_z = (dword_176D10 * shift_x + dword_176D14 * shift_y) >> 16;
+        mouse_map_z = -mmap_z;
+    }
+    mouse_map_x += engn_xc;
+    mouse_map_z += engn_zc;
+    if (ingame.DisplayMode == 50)
+        calc_mouse_pos();
+    setup_engine_nullsub4();
 }
 
 void draw_hud(int thing)
@@ -3645,10 +3695,6 @@ void process_engine_unk3(void)
         draw_hud(p_locplayer->DirectControl[0]);
         reset_drawlist();
     }
-}
-
-void setup_engine_nullsub4(void)
-{
 }
 
 void process_sound_heap(void)
