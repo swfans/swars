@@ -627,12 +627,14 @@ ushort calc_person_radius_type(struct Thing *p_person, ushort stype)
         r = 80;
         break;
     case SubTT_PERS_ZEALOT:
-    case SubTT_PERS_BRIEFCASE_M:
-    case SubTT_PERS_WHITE_BRUN_F:
+    case SubTT_PERS_HIGH_PRIEST:
+        r = 100;
+        break;
     case SubTT_PERS_MERCENARY:
     case SubTT_PERS_SCIENTIST:
     case SubTT_PERS_SHADY_M:
-    case SubTT_PERS_HIGH_PRIEST:
+    case SubTT_PERS_BRIEFCASE_M:
+    case SubTT_PERS_WHITE_BRUN_F:
     case SubTT_PERS_WHIT_BLOND_F:
     case SubTT_PERS_LETH_JACKT_M:
         r = 100;
@@ -756,9 +758,9 @@ void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
           ++mission_status[brief].AgentsGained;
           // fall through
     case SubTT_PERS_ZEALOT:
+    case SubTT_PERS_HIGH_PRIEST:
     case SubTT_PERS_PUNK_F:
     case SubTT_PERS_PUNK_M:
-    case SubTT_PERS_HIGH_PRIEST:
           ++mission_status[brief].EnemiesPersuaded;
           break;
     case SubTT_PERS_BRIEFCASE_M:
@@ -956,24 +958,18 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
     p_person->Y = ry;
     p_person->U.UPerson.OnFace = 0;
     p_person->Type = TT_PERSON;
+    p_person->Radius = calc_person_radius_type(p_person, ptype);
     switch (ptype)
     {
     case SubTT_PERS_AGENT:
         p_person->U.UPerson.Angle = 0;
-        p_person->Radius = 80;
-        p_person->U.UPerson.AnimMode = 1;
         p_person->U.UPerson.CurrentWeapon = WEP_MINIGUN;
         break;
     case SubTT_PERS_ZEALOT:
     case SubTT_PERS_HIGH_PRIEST:
-        p_person->Radius = 100;
-        p_person->U.UPerson.AnimMode = 1;
         p_person->U.UPerson.CurrentWeapon = WEP_ELLASER;
         break;
     case SubTT_PERS_PUNK_F:
-        p_person->Radius = 80;
-        p_person->Speed = 400;
-        p_person->U.UPerson.AnimMode = 1;
         p_person->U.UPerson.CurrentWeapon = WEP_UZI;
         p_person->U.UPerson.FrameId.Version[0] = rnd % 3;
         break;
@@ -983,30 +979,18 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
     case SubTT_PERS_SCIENTIST:
     case SubTT_PERS_WHIT_BLOND_F:
     case SubTT_PERS_LETH_JACKT_M:
-        p_person->Radius = 100;
-        p_person->U.UPerson.AnimMode = 0;
         p_person->U.UPerson.CurrentWeapon = WEP_NULL;
         break;
     case SubTT_PERS_MECH_SPIDER:
-        p_person->Radius = 384;
-        p_person->U.UPerson.AnimMode = 1;
         p_person->U.UPerson.CurrentWeapon = WEP_LASER;
         break;
     case SubTT_PERS_POLICE:
-        p_person->Radius = 80;
-        p_person->U.UPerson.AnimMode = 1;
         p_person->U.UPerson.CurrentWeapon = WEP_LASER;
         break;
     case SubTT_PERS_PUNK_M:
-        p_person->Radius = 80;
-        p_person->Speed = 400;
-        p_person->U.UPerson.AnimMode = 1;
         p_person->U.UPerson.CurrentWeapon = WEP_UZI;
         break;
     case SubTT_PERS_SHADY_M:
-        p_person->Radius = 100;
-        p_person->Speed = 400;
-        p_person->U.UPerson.AnimMode = 1;
         p_person->U.UPerson.CurrentWeapon = WEP_UZI;
         break;
     default:
@@ -1015,6 +999,7 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
     p_person->SubType = ptype;
     p_person->U.UPerson.Group = ptype + 4;
     p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
+    p_person->U.UPerson.AnimMode = (p_person->U.UPerson.CurrentWeapon != WEP_NULL) ? 1 : 0;
     reset_person_frame(p_person);
     init_person_thing(p_person);
     p_person->U.UPerson.WeaponsCarried = 0;
