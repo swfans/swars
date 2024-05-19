@@ -3600,11 +3600,12 @@ void process_engine_unk3(void)
         }
     }
     vec_map = vec_tmap[1];
+    p_locplayer = &players[local_player_no];
     if ((ingame.Flags & GamF_Unkn0040) != 0)
     {
         draw_explode();
         draw_screen();
-        draw_hud(players[local_player_no].DirectControl[0]);
+        draw_hud(p_locplayer->DirectControl[0]);
         if (in_network_game)
             draw_engine_net_text();
         if (debug_hud_collision)
@@ -3612,7 +3613,7 @@ void process_engine_unk3(void)
     }
     else
     {
-        draw_hud(players[local_player_no].DirectControl[0]);
+        draw_hud(p_locplayer->DirectControl[0]);
         reset_drawlist();
     }
 }
@@ -3639,26 +3640,10 @@ void func_cc0d4(char **str)
         : : "a" (str));
 }
 
-void init_outro(void)
+void screen_animate_draw_outro_text(void)
 {
     const char *text1;
     const char *text2;
-    int i;
-
-    gamep_scene_effect_type = ScEff_NONE;
-    gamep_scene_effect_intensity = 1000;
-    StopAllSamples();
-    StopCD();
-
-    play_smacker(MPly_Outro);
-
-    screen_dark_curtain_down();
-
-    data_155704 = -1;
-    init_things();
-    //TODO hard-coded map ID
-    change_current_map(51);
-    load_outro_sprites();
 
     switch (background_type)
     {
@@ -3677,29 +3662,58 @@ void init_outro(void)
         break;
     }
     func_cc638(text1, text2);
+}
 
-    // Sleep for up to 10 seconds
-    for (i = 10*game_num_fps; i != 0; i--)
+void screen_wait_seconds_or_until_continue_key(int sec)
+{
+    int i;
+
+    for (i = sec*game_num_fps; i != 0; i--)
     {
-        if ( lbKeyOn[KC_SPACE] )
-          break;
-        if ( lbKeyOn[KC_ESCAPE] )
-          break;
-        if ( lbKeyOn[KC_RETURN] )
-          break;
+        if (is_key_pressed(KC_SPACE, KMod_DONTCARE))
+            break;
+        if (is_key_pressed(KC_ESCAPE, KMod_DONTCARE))
+            break;
+        if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
+            break;
+
         game_update();
     }
-    lbKeyOn[KC_SPACE] = 0;
-    lbKeyOn[KC_ESCAPE] = 0;
-    lbKeyOn[KC_RETURN] = 0;
+    clear_key_pressed(KC_SPACE);
+    clear_key_pressed(KC_ESCAPE);
+    clear_key_pressed(KC_RETURN);
+}
 
-    LbPaletteFade(0, 0xC8u, 1);
+void init_outro(void)
+{
+    int i;
+
+    gamep_scene_effect_type = ScEff_NONE;
+    gamep_scene_effect_intensity = 1000;
+    StopAllSamples();
+    StopCD();
+
+    play_smacker(MPly_Outro);
+
+    screen_dark_curtain_down();
+
+    data_155704 = -1;
+    init_things();
+    //TODO hard-coded map ID
+    change_current_map(51);
+    load_outro_sprites();
+
+    screen_animate_draw_outro_text();
+    // Sleep for up to 10 seconds
+    screen_wait_seconds_or_until_continue_key(10);
+
+    LbPaletteFade(0, 200, 1);
     LbScreenClear(0);
     swap_wscreen();
     StopAllSamples();
     reset_heaps();
     setup_heaps(100);
-    play_sample_using_heap(0, 1, 127, 64, 100, -1, 3u);
+    play_sample_using_heap(0, 1, 127, 64, 100, -1, 3);
 
     data_197150 = 1;
     data_1dd91c = 0;
@@ -3722,12 +3736,13 @@ void init_outro(void)
 
     while (1)
     {
-        if ( lbKeyOn[KC_SPACE] )
-          break;
-        if ( lbKeyOn[KC_ESCAPE] )
-          break;
-        if ( lbKeyOn[KC_RETURN] )
-          break;
+        if (is_key_pressed(KC_SPACE, KMod_DONTCARE))
+            break;
+        if (is_key_pressed(KC_ESCAPE, KMod_DONTCARE))
+            break;
+        if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
+            break;
+
         gameturn++;
         traffic_unkn_func_01();
         process_engine_unk1();
@@ -3753,6 +3768,10 @@ void init_outro(void)
           swap_wscreen();
           LbScreenClear(0);
     }
+    clear_key_pressed(KC_SPACE);
+    clear_key_pressed(KC_ESCAPE);
+    clear_key_pressed(KC_RETURN);
+
     StopAllSamples();
     reset_heaps();
     setup_heaps(2);
