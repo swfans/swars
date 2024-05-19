@@ -240,10 +240,14 @@ extern ushort netgame_agent_pos_x[8][4];
 extern ushort netgame_agent_pos_y[8][4];
 
 extern ubyte byte_153198;
+extern long dword_155010;
+extern long dword_155014;
+extern long dword_155018;
 
 extern short last_map_for_lights_func_11;
 
 extern short word_1552F8;
+extern long dword_152EEC;
 extern short word_152F00;
 
 extern long dword_176D10;
@@ -277,6 +281,8 @@ extern ubyte byte_19EC7A;
 extern ushort word_1A7330[1000];
 extern ubyte byte_1A7B00[1000];
 extern ubyte byte_1A7EE8[8192];
+extern long dword_1AAB74;
+extern long dword_1AAB78;
 extern ushort word_1AABD0;
 
 extern long mech_unkn_tile_x1;
@@ -5558,7 +5564,7 @@ void input(void)
     lbShift = n;
 }
 
-void gproc3_unknsub3(int a1)
+void show_unkn3A_screen(int a1)
 {
     // Empty
 }
@@ -5663,8 +5669,120 @@ void show_game_engine(void)
 
 void gproc3_unknsub2(void)
 {
+#if 0
     asm volatile ("call ASM_gproc3_unknsub2\n"
         :  :  : "eax" );
+    return;
+#endif
+    short ms_x, ms_y;
+    int i;
+
+    int bkp_ingame_flags;
+    int long bkp_engn_anglexz;
+    ushort bkp_render_area_a, bkp_render_area_b;
+    long bkp_dword_152EEC;
+    ubyte bkp_unkn_flags_01;
+    ushort bkp_overall_scale;
+    long bkp_engn_xc, bkp_engn_yc, bkp_engn_zc;
+
+    ingame.Flags &= ~0x0001;
+    if (lbKeyOn[KC_Q])
+    {
+        dword_155010 = 0x4000;
+        dword_155014 = 0x4000;
+        dword_1AAB74 = 0;
+        dword_1AAB78 = 0;
+        dword_155018 = 50;
+    }
+
+    bkp_render_area_a = render_area_a;
+    bkp_render_area_b = render_area_b;
+    bkp_overall_scale = overall_scale;
+    bkp_engn_xc = engn_xc;
+    bkp_engn_yc = engn_yc;
+    bkp_engn_zc = engn_zc;
+    bkp_engn_anglexz = engn_anglexz;
+    bkp_ingame_flags = ingame.Flags;
+    bkp_dword_152EEC = dword_152EEC;
+    bkp_unkn_flags_01 = unkn_flags_01;
+
+    render_area_a = 24;
+    render_area_b = 24;
+    ingame.Flags = 0;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+
+    if (ms_x < 200)
+      dword_1AAB74 -= 16;
+    if (ms_x > 440)
+      dword_1AAB74 += 16;
+    dword_1AAB74 &= 0x7FF;
+
+    if (!lbDisplay.MRightButton)
+    {
+        dword_155010 += lbSinTable[dword_1AAB74] >> 9;
+        dword_155014 += lbSinTable[dword_1AAB74 + 512] >> 9;
+    }
+
+    if (ms_y < 180)
+        dword_1AAB78 -= (180 - ms_y) >> 5;
+    if (ms_y > 220)
+        dword_1AAB78 -= (220 - ms_y) >> 5;
+    if (dword_1AAB78 > 300)
+        dword_1AAB78 = 300;
+    if (dword_1AAB78 < -300)
+        dword_1AAB78 = -300;
+
+    i = (alt_at_point(dword_155010, dword_155014) >> 8) - 50;
+    if (i > dword_155018)
+        dword_155018 = i;
+
+    if (dword_155010 < 0)
+        dword_155010 = 0x8000;
+    if (dword_155010 > 0x8000)
+        dword_155010 = 0;
+
+    if (dword_155014 < 0)
+        dword_155014 = 0x8000;
+    if (dword_155014 > 0x8000)
+        dword_155014 = 0;
+
+    dword_152EEC = dword_1AAB78;
+    engn_xc = dword_155010;
+    engn_yc = dword_155018;
+    engn_zc = dword_155014;
+    engn_anglexz = 32 * dword_1AAB74;
+
+    setup_vecs(vec_tmap[5], vec_tmap[0], 0x100u, 0x60u, 64);
+    process_engine_unk1();
+
+    unkn_flags_01 = 1;
+    overall_scale = 18;
+    memset(vec_tmap[5], 0, 0x4000);
+    gameturn -= 10;
+    func_2e440();
+    gameturn += 10;
+
+    setup_vecs(lbDisplay.WScreen, vec_tmap[0],
+      lbDisplay.PhysicalScreenWidth,
+      lbDisplay.PhysicalScreenWidth,
+      lbDisplay.PhysicalScreenHeight);
+    dword_176D3C = vec_window_width / 2;
+    dword_176D40 = vec_window_height / 2;
+
+    render_area_a = bkp_render_area_a;
+    render_area_b = bkp_render_area_b;
+    overall_scale = bkp_overall_scale;
+    engn_xc = bkp_engn_xc;
+    engn_yc = bkp_engn_yc;
+    engn_zc = bkp_engn_zc;
+    engn_anglexz = bkp_engn_anglexz;
+    ingame.Flags = bkp_ingame_flags;
+    dword_152EEC = bkp_dword_152EEC;
+    unkn_flags_01 = bkp_unkn_flags_01;
+
+    process_engine_unk1();
 }
 
 void BAT_play(void)
@@ -10078,7 +10196,7 @@ void draw_game(void)
         show_menu_screen();
         break;
     case DpM_UNKN_3A:
-        gproc3_unknsub3(0);
+        show_unkn3A_screen(0);
         break;
     default:
         LOGERR("DisplayMode %d empty\n", (int)ingame.DisplayMode);
