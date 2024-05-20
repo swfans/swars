@@ -3652,12 +3652,12 @@ void process_engine_unk3(void)
     dword_176D78 = dword_176D70 - tlcount_x;
     dword_176D7C = dword_176D74 + tlcount_z;
 
-    if ((ingame.Flags & GamF_Unkn0040) != 0)
+    if ((ingame.Flags & GamF_RenderScene) != 0)
     {
         engine_draw_things(pos_beg_x, pos_beg_z, rend_beg_x, rend_beg_z, tlcount_x, tlcount_z);
     }
 
-    if ((ingame.Flags & GamF_Unkn0040) != 0)
+    if ((ingame.Flags & GamF_RenderScene) != 0)
     {
         if ((gamep_scene_effect_type == ScEff_SPACE) && byte_19EC6F)
             draw_background_stars();
@@ -3680,7 +3680,7 @@ void process_engine_unk3(void)
     }
     vec_map = vec_tmap[1];
     p_locplayer = &players[local_player_no];
-    if ((ingame.Flags & GamF_Unkn0040) != 0)
+    if ((ingame.Flags & GamF_RenderScene) != 0)
     {
         draw_explode();
         draw_screen();
@@ -5747,7 +5747,7 @@ void gproc3_unknsub2(void)
     ushort bkp_overall_scale;
     long bkp_engn_xc, bkp_engn_yc, bkp_engn_zc;
 
-    ingame.Flags &= ~0x0001;
+    ingame.Flags &= ~GamF_BillboardMovies;
     if (lbKeyOn[KC_Q])
     {
         dword_155010 = 0x4000;
@@ -7857,18 +7857,18 @@ ubyte do_user_interface(void)
     if (lbKeyOn[KC_F2] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F2] = 0;
-        if (ingame.Flags & GamF_Unkn0040)
-            ingame.Flags &= ~GamF_Unkn0040;
+        if (ingame.Flags & GamF_RenderScene)
+            ingame.Flags &= ~GamF_RenderScene;
         else
-            ingame.Flags |= GamF_Unkn0040;
+            ingame.Flags |= GamF_RenderScene;
     }
     if (lbKeyOn[KC_F3] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F3] = 0;
-        if (ingame.Flags & GamF_Unkn0080)
-            ingame.Flags &= ~GamF_Unkn0080;
+        if (ingame.Flags & GamF_StopThings)
+            ingame.Flags &= ~GamF_StopThings;
         else
-            ingame.Flags |= GamF_Unkn0080;
+            ingame.Flags |= GamF_StopThings;
     }
     if (lbKeyOn[KC_F4] && (lbShift & KMod_CONTROL))
     {
@@ -7889,10 +7889,10 @@ ubyte do_user_interface(void)
     if ( lbKeyOn[KC_F10] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F10] = 0;
-        if (ingame.Flags & GamF_Unkn2000)
-            ingame.Flags &= ~GamF_Unkn2000;
+        if (ingame.Flags & GamF_HUDPanel)
+            ingame.Flags &= ~GamF_HUDPanel;
         else
-            ingame.Flags |= GamF_Unkn2000;
+            ingame.Flags |= GamF_HUDPanel;
     }
 
     // Game Speed control
@@ -7904,10 +7904,10 @@ ubyte do_user_interface(void)
     // Toggle Scanner beep
     if (lbKeyOn[KC_S])
     {
-        if (ingame.Flags & GamF_Unkn00200000)
-            ingame.Flags &= ~GamF_Unkn00200000;
+        if (ingame.Flags & GamF_NoScannerBeep)
+            ingame.Flags &= ~GamF_NoScannerBeep;
         else
-            ingame.Flags |= GamF_Unkn00200000;
+            ingame.Flags |= GamF_NoScannerBeep;
     }
 
     // Control map area to draw
