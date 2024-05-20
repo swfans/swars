@@ -30,6 +30,7 @@
 #include "campaign.h"
 #include "command.h"
 #include "display.h"
+#include "drawtext.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginsngobjs.h"
@@ -49,6 +50,16 @@
 /******************************************************************************/
 
 TbBool level_deep_fix = false;
+
+extern ulong stored_g3d_next_object[1];
+extern ulong stored_g3d_next_object_face[1];
+extern ulong stored_g3d_next_object_face4[1];
+extern ulong stored_g3d_next_object_point[1];
+extern ulong stored_g3d_next_normal[1];
+extern ulong stored_g3d_next_face_texture[1];
+extern ulong stored_g3d_next_floor_texture[1];
+extern ulong stored_g3d_next_local_mat[1];
+extern ulong stored_global3d_inuse[1];
 
 extern struct QuickLoad quick_load_pc[19];
 
@@ -86,6 +97,44 @@ void debug_level(const char *text, int player)
         p_thing = &things[thing];
         // TODO place debug/verification code
         thing = p_thing->LinkChild;
+    }
+}
+
+void global_3d_store(int action)
+{
+    if (action == 2)
+    {
+        if (stored_global3d_inuse[0])
+            draw_text(100, 120, " GLOBAL 3d STORED ->INUSE", colour_lookup[2]);
+    }
+    else if (action == 1)
+    {
+        if (stored_global3d_inuse[0])
+        {
+            next_object = stored_g3d_next_object[0];
+            next_object_face = stored_g3d_next_object_face[0];
+            next_object_face4 = stored_g3d_next_object_face4[0];
+            next_object_point = stored_g3d_next_object_point[0];
+            next_normal = stored_g3d_next_normal[0];
+            next_face_texture = stored_g3d_next_face_texture[0];
+            next_floor_texture = stored_g3d_next_floor_texture[0];
+            next_local_mat = stored_g3d_next_local_mat[0];
+            stored_global3d_inuse[0] = 0;
+        }
+    } else
+    {
+        if (!stored_global3d_inuse[0])
+        {
+            stored_g3d_next_object[0] = next_object;
+            stored_g3d_next_object_face[0] = next_object_face;
+            stored_g3d_next_object_face4[0] = next_object_face4;
+            stored_g3d_next_object_point[0] = next_object_point;
+            stored_g3d_next_normal[0] = next_normal;
+            stored_g3d_next_face_texture[0] = next_face_texture;
+            stored_g3d_next_floor_texture[0] = next_floor_texture;
+            stored_g3d_next_local_mat[0] = next_local_mat;
+            stored_global3d_inuse[0] = 1;
+        }
     }
 }
 
@@ -587,19 +636,14 @@ void load_level_pc(short level, short missi, ubyte reload)
     LOGSYNC("Next level %hd prev level %hd mission %hd reload 0x%x",
       next_level, prev_level, missi, (uint)reload);
 
-    /* XXX: This fixes the inter-mission memory corruption bug
-     * mefisto: No idea what "the" bug is, to be tested and described properly (or re-enabled)
+    /* In campaign mode, this flag is always set; so is this editor feature?
      */
-#if 0
     if ((ingame.Flags & GamF_Unkn0008) == 0)
     {
         if (prev_level)
             global_3d_store(1);
         global_3d_store(0);
     }
-#else
-    (void)prev_level; // avoid unused var warning
-#endif
     debug_level(" load level restart coms", 1);
 
     lev_fh = LbFileOpen(lev_fname, Lb_FILE_MODE_READ_ONLY);

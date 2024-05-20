@@ -180,16 +180,6 @@ extern ulong stored_l3d_next_floor_texture[1];
 extern ulong stored_l3d_next_local_mat[1];
 extern ulong stored_level3d_inuse;
 
-extern ulong stored_g3d_next_object[1];
-extern ulong stored_g3d_next_object_face[1];
-extern ulong stored_g3d_next_object_face4[1];
-extern ulong stored_g3d_next_object_point[1];
-extern ulong stored_g3d_next_normal[1];
-extern ulong stored_g3d_next_face_texture[1];
-extern ulong stored_g3d_next_floor_texture[1];
-extern ulong stored_g3d_next_local_mat[1];
-extern ulong stored_global3d_inuse[1];
-
 extern unsigned char *display_palette;
 extern unsigned short unkn2_pos_x;
 extern unsigned short unkn2_pos_y;
@@ -1182,44 +1172,6 @@ void fill_floor_textures(void)
 {
     asm volatile ("call ASM_fill_floor_textures\n"
         :  :  : "eax" );
-}
-
-void global_3d_store(int action)
-{
-    if (action == 2)
-    {
-        if (stored_global3d_inuse[0])
-            draw_text(100, 120, " GLOBAL 3d STORED ->INUSE", colour_lookup[2]);
-    }
-    else if (action == 1)
-    {
-        if (stored_global3d_inuse[0])
-        {
-            next_object = stored_g3d_next_object[0];
-            next_object_face = stored_g3d_next_object_face[0];
-            next_object_face4 = stored_g3d_next_object_face4[0];
-            next_object_point = stored_g3d_next_object_point[0];
-            next_normal = stored_g3d_next_normal[0];
-            next_face_texture = stored_g3d_next_face_texture[0];
-            next_floor_texture = stored_g3d_next_floor_texture[0];
-            next_local_mat = stored_g3d_next_local_mat[0];
-            stored_global3d_inuse[0] = 0;
-        }
-    } else
-    {
-        if (!stored_global3d_inuse[0])
-        {
-            stored_g3d_next_object[0] = next_object;
-            stored_g3d_next_object_face[0] = next_object_face;
-            stored_g3d_next_object_face4[0] = next_object_face4;
-            stored_g3d_next_object_point[0] = next_object_point;
-            stored_g3d_next_normal[0] = next_normal;
-            stored_g3d_next_face_texture[0] = next_face_texture;
-            stored_g3d_next_floor_texture[0] = next_floor_texture;
-            stored_g3d_next_local_mat[0] = next_local_mat;
-            stored_global3d_inuse[0] = 1;
-        }
-    }
 }
 
 void fill_netgame_agent_pos(int player, int group, int num_agents)
