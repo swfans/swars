@@ -25,8 +25,8 @@ enum GameModes {
 };
 
 enum GameFlags {
-    GamF_Unkn0001     = 0x0001,
-    GamF_Unkn0002     = 0x0002,
+    GamF_BillboardMovies = 0x0001,
+    GamF_AdvLights    = 0x0002,
     GamF_Unkn0004     = 0x0004,
     GamF_Unkn0008     = 0x0008,
     GamF_MortalGame   = 0x0010,
@@ -35,7 +35,7 @@ enum GameFlags {
     GamF_Unkn0080     = 0x0080,
     GamF_Unkn0100     = 0x0100,
     GamF_Unkn0200     = 0x0200,
-    GamF_Unkn0400     = 0x0400,
+    GamF_DeepRadar    = 0x0400,
     GamF_Unkn0800     = 0x0800,
     GamF_Unkn1000     = 0x1000,
     GamF_Unkn2000     = 0x2000,
@@ -678,9 +678,9 @@ extern void *scratch_malloc_mem;
 extern struct ScreenPoint *hotspot_buffer;
 #define hotspot_buffer_len 512
 
-extern ubyte unkn_gfx_option_2;
-extern ubyte unkn_option_3;
-extern ubyte unkn_option_4;
+extern ubyte game_gfx_advanced_lights;
+extern ubyte game_billboard_movies;
+extern ubyte game_gfx_deep_radar;
 extern ubyte byte_1C4A6F;
 
 extern char net_unkn2_text[];

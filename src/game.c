@@ -1426,7 +1426,7 @@ void process_engine_unk2(void)
     int offs_y;
     int point_x, point_y;
 
-    if (ingame.DisplayMode == 50)
+    if (ingame.DisplayMode == DpM_UNKN_32)
       offs_y = overall_scale * engn_yc >> 8;
     else
       offs_y = 0;
@@ -1456,7 +1456,7 @@ void process_engine_unk2(void)
     }
     mouse_map_x += engn_xc;
     mouse_map_z += engn_zc;
-    if (ingame.DisplayMode == 50)
+    if (ingame.DisplayMode == DpM_UNKN_32)
         calc_mouse_pos();
     setup_engine_nullsub4();
 }
@@ -3600,7 +3600,7 @@ void process_engine_unk3(void)
     func_13A78();
 
     if (((ingame.Flags & GamF_Unkn00400000) == 0) &&
-      ((ingame.Flags & GamF_Unkn0001) != 0))
+      ((ingame.Flags & GamF_BillboardMovies) != 0))
     {
         dword_176CBC += fifties_per_gameturn;
         if (dword_176CBC > 80)
@@ -3608,7 +3608,7 @@ void process_engine_unk3(void)
             dword_176CBC = 0;
             if (!in_network_game && ((ingame.Flags & GamF_Unkn00040000) != 0))
             {
-                ingame.Flags &= ~0x040000;
+                ingame.Flags &= ~GamF_Unkn00040000;
                 xdo_next_frame(1);
             }
         }
@@ -4330,20 +4330,20 @@ void set_default_user_settings(void)
 
 void apply_user_settings(void)
 {
-    if (unkn_gfx_option_2)
-        ingame.Flags |= GamF_Unkn0002;
+    if (game_gfx_advanced_lights)
+        ingame.Flags |= GamF_AdvLights;
     else
-        ingame.Flags &= ~GamF_Unkn0002;
+        ingame.Flags &= ~GamF_AdvLights;
 
-    if (unkn_option_3)
-        ingame.Flags |= GamF_Unkn0001;
+    if (game_billboard_movies)
+        ingame.Flags |= GamF_BillboardMovies;
     else
-        ingame.Flags &= ~GamF_Unkn0001;
+        ingame.Flags &= ~GamF_BillboardMovies;
 
-    if (unkn_option_4)
-        ingame.Flags |= GamF_Unkn0400;
+    if (game_gfx_deep_radar)
+        ingame.Flags |= GamF_DeepRadar;
     else
-        ingame.Flags &= ~GamF_Unkn0400;
+        ingame.Flags &= ~GamF_DeepRadar;
 
     bang_set_detail(ingame.DetailLevel == 0);
     SetSoundMasterVolume(127 * startscr_samplevol / 322);
@@ -4396,9 +4396,9 @@ void read_user_settings(void)
         LbFileRead(fh, &startscr_samplevol, sizeof(startscr_samplevol));
         LbFileRead(fh, &startscr_midivol, sizeof(startscr_midivol));
         LbFileRead(fh, &startscr_cdvolume, sizeof(startscr_cdvolume));
-        LbFileRead(fh, &unkn_gfx_option_2, sizeof(unkn_gfx_option_2));
-        LbFileRead(fh, &unkn_option_3, sizeof(unkn_option_3));
-        LbFileRead(fh, &unkn_option_4, sizeof(unkn_option_4));
+        LbFileRead(fh, &game_gfx_advanced_lights, sizeof(game_gfx_advanced_lights));
+        LbFileRead(fh, &game_billboard_movies, sizeof(game_billboard_movies));
+        LbFileRead(fh, &game_gfx_deep_radar, sizeof(game_gfx_deep_radar));
         LbFileRead(fh, &ingame.DetailLevel, sizeof(ingame.DetailLevel));
         LbFileRead(fh, &game_high_resolution, sizeof(game_high_resolution));
         LbFileRead(fh, &game_projector_speed, sizeof(game_projector_speed));
@@ -4464,9 +4464,9 @@ ubyte save_user_settings(void)
     LbFileWrite(fh, &startscr_samplevol, sizeof(startscr_samplevol));
     LbFileWrite(fh, &startscr_midivol, sizeof(startscr_midivol));
     LbFileWrite(fh, &startscr_cdvolume, sizeof(startscr_cdvolume));
-    LbFileWrite(fh, &unkn_gfx_option_2, sizeof(unkn_gfx_option_2));
-    LbFileWrite(fh, &unkn_option_3, sizeof(unkn_option_3));
-    LbFileWrite(fh, &unkn_option_4, sizeof(unkn_option_4));
+    LbFileWrite(fh, &game_gfx_advanced_lights, sizeof(game_gfx_advanced_lights));
+    LbFileWrite(fh, &game_billboard_movies, sizeof(game_billboard_movies));
+    LbFileWrite(fh, &game_gfx_deep_radar, sizeof(game_gfx_deep_radar));
     LbFileWrite(fh, &ingame.DetailLevel, sizeof(ingame.DetailLevel));
     LbFileWrite(fh, &game_high_resolution, sizeof(game_high_resolution));
     LbFileWrite(fh, &game_projector_speed, sizeof(game_projector_speed));
@@ -7849,10 +7849,10 @@ ubyte do_user_interface(void)
     if (lbKeyOn[KC_F1] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F1] = 0;
-        if (ingame.Flags & GamF_Unkn0001)
-            ingame.Flags &= ~GamF_Unkn0001;
+        if ((ingame.Flags & GamF_BillboardMovies) != 0)
+            ingame.Flags &= ~GamF_BillboardMovies;
         else
-            ingame.Flags |= GamF_Unkn0001;
+            ingame.Flags |= GamF_BillboardMovies;
     }
     if (lbKeyOn[KC_F2] && (lbShift & KMod_CONTROL))
     {
@@ -7873,18 +7873,18 @@ ubyte do_user_interface(void)
     if (lbKeyOn[KC_F4] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F4] = 0;
-        if (ingame.Flags & GamF_Unkn0002)
-            ingame.Flags &= ~GamF_Unkn0002;
+        if ((ingame.Flags & GamF_AdvLights) != 0)
+            ingame.Flags &= ~GamF_AdvLights;
         else
-            ingame.Flags |= GamF_Unkn0002;
+            ingame.Flags |= GamF_AdvLights;
     }
     if (lbKeyOn[KC_F6] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F6] = 0;
-        if (ingame.Flags & GamF_Unkn0400)
-            ingame.Flags &= ~GamF_Unkn0400;
+        if ((ingame.Flags & GamF_DeepRadar) != 0)
+            ingame.Flags &= ~GamF_DeepRadar;
         else
-            ingame.Flags |= GamF_Unkn0400;
+            ingame.Flags |= GamF_DeepRadar;
     }
     if ( lbKeyOn[KC_F10] && (lbShift & KMod_CONTROL))
     {

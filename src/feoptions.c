@@ -476,30 +476,30 @@ void init_options_visual_screen_boxes(void)
     val = 0;
     for (i = 8; i < 10; i++)
     {
-        options_gfx_buttons[i].Radio = &unkn_gfx_option_2;
+        options_gfx_buttons[i].Radio = &game_gfx_advanced_lights;
         options_gfx_buttons[i].RadioValue = val;
         options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
-        ingame.Flags |= GamF_Unkn0002;
+        ingame.Flags |= GamF_AdvLights;
         val++;
     }
 
     val = 0;
     for (i = 10; i < 12; i++)
     {
-        options_gfx_buttons[i].Radio = &unkn_option_3;
+        options_gfx_buttons[i].Radio = &game_billboard_movies;
         options_gfx_buttons[i].RadioValue = val;
         options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
-        ingame.Flags |= GamF_Unkn0001;
+        ingame.Flags |= GamF_BillboardMovies;
         val++;
     }
 
     val = 0;
     for (i = 12; i < 14; i++)
     {
-        options_gfx_buttons[i].Radio = &unkn_option_4;
+        options_gfx_buttons[i].Radio = &game_gfx_deep_radar;
         options_gfx_buttons[i].RadioValue = val;
         options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
-        ingame.Flags &= ~GamF_Unkn0400;
+        ingame.Flags &= ~GamF_DeepRadar;
         val++;
     }
 
