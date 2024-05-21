@@ -925,7 +925,8 @@ void play_intro(void)
     LOGSYNC("Starting");
     lbDisplay.LeftButton = 0;
     lbKeyOn[KC_ESCAPE] = 0;
-    if ( (cmdln_param_bcg || is_single_game) && ((ingame.Flags & GamF_SkipIntro) == 0))
+    if ( (cmdln_param_bcg || is_single_game) &&
+      ((ingame.Flags & GamF_SkipIntro) == 0))
     {
         setup_screen_mode(screen_mode_fmvid_lo);
         LbMouseChangeSprite(NULL);
@@ -1413,10 +1414,86 @@ void process_engine_unk2(void)
     setup_engine_nullsub4();
 }
 
-void draw_hud(int thing)
+void draw_hud_target_mouse(short dcthing)
 {
+    PlayerInfo *p_locplayer;
+    struct Thing *p_dcthing;
+
+    p_dcthing = &things[dcthing];
+    p_locplayer = &players[local_player_no];
+    if (p_locplayer->Target > 0)
+    {
+        struct Thing *p_targtng;
+        int weprange;
+        ushort msspr;
+        uint range;
+
+        weprange = current_weapon_range(p_dcthing);
+        switch (p_locplayer->TargetType)
+        {
+        case 1:
+        case 2:
+        case 6:
+        case 7:
+            p_locplayer->field_102 = p_locplayer->Target;
+            p_locplayer->TargetType = 7;
+            p_targtng = &things[p_locplayer->Target];
+            range = weprange * weprange;
+            if (can_i_see_thing(p_dcthing, p_targtng, range, 3) ) {
+                msspr = 3;
+            } else {
+                msspr = 2;
+            }
+            do_change_mouse(msspr);
+            break;
+        case 3:
+            p_locplayer->field_102 = p_locplayer->Target;
+            do_change_mouse(7);
+            break;
+        case 4:
+            p_locplayer->field_102 = p_locplayer->Target;
+            p_targtng = &things[p_locplayer->field_102];
+            p_dcthing = &things[p_locplayer->DirectControl[mouser]];
+            if (can_i_enter_vehicle(p_dcthing, p_targtng)) {
+              msspr = 6;
+            } else {
+              p_targtng = &things[p_locplayer->Target];
+              range = p_targtng->Radius * p_targtng->Radius + weprange * weprange;
+              if (can_i_see_thing(p_dcthing, p_targtng, range, 3) ) {
+                msspr = 3;
+              } else {
+                msspr = 2;
+              }
+            }
+            do_change_mouse(msspr);
+            break;
+        default:
+            break;
+        }
+    }
+    else if (p_locplayer->Target < 0)
+    {
+        if (p_locplayer->TargetType == 3) {
+          p_locplayer->field_102 = p_locplayer->Target;
+          do_change_mouse(7);
+        } else {
+          p_locplayer->field_102 = p_locplayer->Target;
+          do_change_mouse(5);
+        }
+    }
+    else
+    {
+        do_change_mouse(8);
+    }
+}
+
+void draw_hud(int dcthing)
+{
+#if 1
     asm volatile ("call ASM_draw_hud\n"
-        : : "a" (thing));
+        : : "a" (dcthing));
+    return;
+#endif
 }
 
 void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)

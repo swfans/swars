@@ -146,6 +146,7 @@ TbBool weapons_add_one(ulong *p_weapons,
 void sanitize_weapon_quantities(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks);
 
+short current_weapon_range(struct Thing *p_person);
 ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person);
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person);

@@ -199,6 +199,9 @@ void set_person_anim_mode(struct Thing *p_person, ubyte animode);
  */
 void reset_person_frame(struct Thing *p_person);
 
+int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushort flags);
+TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle);
+
 TbBool person_is_persuaded(ThingIdx thing);
 TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
 TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);

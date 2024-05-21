@@ -499,9 +499,9 @@ TbBool person_carries_any_medikit(struct Thing *p_person)
 
 void person_give_best_mods(struct Thing *p_person)
 {
+    set_person_mod_brain_level(p_person, 3);
     set_person_mod_legs_level(p_person, 3);
     set_person_mod_arms_level(p_person, 3);
-    set_person_mod_brain_level(p_person, 3);
     set_person_mod_chest_level(p_person, 3);
 }
 
@@ -748,6 +748,22 @@ void set_person_animmode_walk(struct Thing *p_person)
 {
     asm volatile ("call ASM_set_person_animmode_walk\n"
         : : "a" (p_person));
+}
+
+int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushort flags)
+{
+    int ret;
+    asm volatile ("call ASM_can_i_see_thing\n"
+        : "=r" (ret) : "a" (p_me), "d" (p_him), "b" (max_dist), "c" (flags));
+    return ret;
+}
+
+TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle)
+{
+    TbBool ret;
+    asm volatile ("call ASM_can_i_enter_vehicle\n"
+        : "=r" (ret) : "a" (p_me), "d" (p_vehicle));
+    return ret;
 }
 
 void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)

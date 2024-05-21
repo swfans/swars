@@ -678,6 +678,26 @@ void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_four
     }
 }
 
+short current_weapon_range(struct Thing *p_person)
+{
+#if 0
+    short ret;
+    asm volatile ("call ASM_current_weapon_range\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+#endif
+    struct WeaponDef *wdef;
+    ushort wtype;
+
+    wtype = p_person->U.UPerson.CurrentWeapon;
+    if (wtype >= WEP_TYPES_COUNT)
+        return 0;
+
+    wdef = &weapon_defs[wtype];
+
+  return wdef->RangeBlocks << 8;
+}
+
 ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person)
 {
     ulong credits;
