@@ -208,6 +208,7 @@ extern struct GamePanel *game_panel;
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
+extern long dword_176CB8;
 extern long dword_176CBC;
 extern long dword_176D0C;
 extern long dword_176D44;
@@ -1457,7 +1458,6 @@ void draw_hud_target_mouse(short dcthing)
             if (can_i_enter_vehicle(p_dcthing, p_targtng)) {
               msspr = 6;
             } else {
-              p_targtng = &things[p_locplayer->Target];
               range = p_targtng->Radius * p_targtng->Radius + weprange * weprange;
               if (can_i_see_thing(p_dcthing, p_targtng, range, 3) ) {
                 msspr = 3;
@@ -1487,6 +1487,99 @@ void draw_hud_target_mouse(short dcthing)
     }
 }
 
+void draw_hud_lock_target(void)
+{
+    asm volatile ("call ASM_draw_hud_lock_target\n"
+        :  :  : "eax" );
+}
+
+void draw_target_person(struct Thing *p_person, uint radius)
+{
+    asm volatile ("call ASM_draw_target_person\n"
+        : : "a" (p_person), "d" (radius));
+}
+
+void draw_target_vehicle(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_draw_target_vehicle\n"
+        : : "a" (p_vehicle));
+}
+
+void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
+{
+    asm volatile ("call ASM_draw_hud_health_bar\n"
+        : : "a" (x), "d" (y), "b" (p_thing));
+}
+
+void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
+{
+    asm volatile ("call ASM_draw_hud_shield_bar\n"
+        : : "a" (x), "d" (y), "b" (p_thing));
+}
+
+void draw_hud_target2(short dcthing, short target)
+{
+    struct Thing *p_dcthing;
+    struct Thing *p_target;
+    short x, y;
+
+    p_dcthing = &things[dcthing];
+    p_target = &things[target];
+    x = p_target->X >> 8;
+    y = p_target->Y >> 8;
+
+    if (p_dcthing->U.UPerson.CurrentWeapon == WEP_RAP)
+    {
+        struct Thing *p_dctarget;
+        p_dctarget = p_dcthing->PTarget;
+        if (p_dctarget != NULL && ((p_dctarget->Flag & 0x0002) == 0))
+        {
+            int sz;
+
+            sz = 4 * (18 - p_dcthing->U.UPerson.WeaponTimer);
+            if (sz < 6)
+                sz = 6;
+            draw_target_person(p_dctarget, sz);
+        }
+        goto LABEL_52;
+    }
+    else
+    {
+        struct Thing *p_dctarget;
+        switch (p_target->Type)
+        {
+        case 2:
+            draw_target_vehicle(p_target);
+            break;
+        case 3:
+            if ((p_target->Flag & 0x10000000) != 0) {
+                p_dctarget = &things[p_target->U.UPerson.Vehicle];
+            } else {
+                p_dctarget = p_target;
+            }
+            draw_target_person(p_dctarget, 2);
+            break;
+        }
+    }
+LABEL_52:
+    draw_hud_health_bar(x, y, p_target);
+    draw_hud_shield_bar(x, y, p_target);
+    dword_176CB8 = frame[dword_176CB8].Next;
+}
+
+void show_goto_point(uint flag)
+{
+    asm volatile ("call ASM_show_goto_point\n"
+        : : "a" (flag));
+    return;
+}
+
+void number_player(struct Thing *p_person, ubyte n)
+{
+    asm volatile ("call ASM_number_player\n"
+        : : "a" (p_person), "d" (n));
+}
+
 void draw_hud(int dcthing)
 {
 #if 1
@@ -1494,6 +1587,74 @@ void draw_hud(int dcthing)
         : : "a" (dcthing));
     return;
 #endif
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    if (((ingame.TrackThing != 0) && (things[ingame.TrackThing].Flag & 0x2000) == 0))
+        return;
+
+    if (((ingame.Flags & 0x2000) == 0) || debug_hud_collision)
+        return;
+
+    show_goto_point(0);
+
+    if (!dword_176CB8)
+        dword_176CB8 = nstart_ani[983];
+
+    {
+        struct Thing *p_mothing;
+
+        p_mothing = &things[p_locplayer->DirectControl[mouser]];
+        if ( !lbDisplay.MRightButton
+            || (p_mothing->PTarget == NULL)
+            || (p_mothing->U.UPerson.CurrentWeapon != WEP_RAP)
+            || (p_mothing->U.UPerson.WeaponTimer < 14))
+        {
+            p_locplayer->field_102 = 0;
+        }
+    }
+
+    draw_hud_lock_target();
+
+    if (ingame.DisplayMode == 50)
+    {
+        short plagent;
+        short target;
+
+        for (plagent = 0; plagent < playable_agents; plagent++)
+        {
+            struct Thing *p_agent;
+
+            p_agent = p_locplayer->MyAgent[plagent];
+            number_player(p_agent, plagent);
+            if ((p_agent->Flag & 0x1000) != 0)
+            {
+                short ctlmode;
+                ctlmode = p_locplayer->UserInput[plagent].ControlMode & 0x1FFF;
+                if (ctlmode != 1)
+                {
+                    if (p_agent->PTarget != NULL)
+                        draw_target_person(p_agent->PTarget, 2);
+                }
+            }
+        }
+
+        if (pktrec_mode != 2)
+        {
+          draw_hud_target_mouse(dcthing);
+        }
+
+        target = p_locplayer->field_102;
+        if (target > 0)
+        {
+            struct Thing *p_target;
+
+            p_target = &things[target];
+            if ((p_target->Flag & 0x0002) == 0)
+                draw_hud_target2(dcthing, target);
+        }
+        draw_new_panel();
+    }
 }
 
 void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)
@@ -2679,7 +2840,7 @@ void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
     }
 }
 
-void draw_new_panel()
+void draw_new_panel(void)
 {
     int i;
     PlayerInfo *p_locplayer;

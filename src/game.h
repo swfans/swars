@@ -746,6 +746,8 @@ void update_danger_music(ubyte a1);
 ushort my_draw_text(short x, short y, const char *text, ushort startline);
 void draw_text_transformed_at_ground(int a1, int a2, const char *text);
 
+void draw_new_panel(void);
+
 void update_map_thing_and_traffic_refs(void);
 void unkn_lights_processing(void);
 void bang_set_detail(int a1);
