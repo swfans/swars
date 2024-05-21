@@ -368,11 +368,11 @@ void set_flag02_heading_screen_boxes(void)
 
 ubyte draw_heading_box(void)
 {
-    int ret;
-    //ret = heading_box.DrawFn(&heading_box); -- incompatible calling convention
+    ubyte drawn = true;
+    //drawn = heading_box.DrawFn(&heading_box); -- incompatible calling convention
     asm volatile ("call *%2\n"
-        : "=r" (ret) : "a" (&heading_box), "g" (heading_box.DrawFn));
-    return ret;
+        : "=r" (drawn) : "a" (&heading_box), "g" (heading_box.DrawFn));
+    return drawn;
 }
 
 void global_date_tick(void)

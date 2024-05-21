@@ -481,13 +481,13 @@ void load_netscan_data(ubyte city_id, ubyte level)
     update_netscan_cost_button(city_id);
 }
 
-void show_mission_screen(void)
+ubyte show_mission_screen(void)
 {
 #if 0
     asm volatile ("call ASM_show_mission_screen\n"
         :  :  : "eax" );
 #endif
-    ubyte draw_done = true;
+    ubyte drawn = true;
 
     if (((game_projector_speed != 0) && is_heading_flag01()) ||
       (lbKeyOn[KC_SPACE] && !edit_flag))
@@ -501,14 +501,17 @@ void show_mission_screen(void)
         brief_NETSCAN_COST_box.Flags |= GBxFlg_Unkn0002;
     }
     // Draw sequentially
-    if (draw_done)
-        draw_done = draw_heading_box();
-    if (draw_done) {
-        //draw_done = brief_mission_text_box.DrawFn(&brief_mission_text_box); -- incompatible calling convention
+    if (drawn)
+        drawn = draw_heading_box();
+
+    if (drawn)
+    {
+        //drawn = brief_mission_text_box.DrawFn(&brief_mission_text_box); -- incompatible calling convention
         asm volatile ("call *%2\n"
-            : "=r" (draw_done) : "a" (&brief_mission_text_box), "g" (brief_mission_text_box.DrawFn));
+            : "=r" (drawn) : "a" (&brief_mission_text_box), "g" (brief_mission_text_box.DrawFn));
     }
-    if (draw_done)
+
+    if (drawn)
     {
         if (lbKeyOn[KC_F])
         {
@@ -539,15 +542,19 @@ void show_mission_screen(void)
             }
           }
         }
-        //draw_done = brief_graphical_box.DrawFn(&brief_graphical_box); -- incompatible calling convention
+        //drawn = brief_graphical_box.DrawFn(&brief_graphical_box); -- incompatible calling convention
         asm volatile ("call *%2\n"
-            : "=r" (draw_done) : "a" (&brief_graphical_box), "g" (brief_graphical_box.DrawFn));
-        if (draw_done) {
-            //draw_done = brief_netscan_box.DrawFn(&brief_netscan_box); -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (draw_done) : "a" (&brief_netscan_box), "g" (brief_netscan_box.DrawFn));
-        }
+            : "=r" (drawn) : "a" (&brief_graphical_box), "g" (brief_graphical_box.DrawFn));
     }
+
+    if (drawn)
+    {
+        //drawn = brief_netscan_box.DrawFn(&brief_netscan_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&brief_netscan_box), "g" (brief_netscan_box.DrawFn));
+    }
+
+    return drawn;
 }
 
 void init_brief_screen_scanner(void)

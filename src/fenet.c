@@ -399,6 +399,8 @@ void show_net_benefits_sub7(struct ScreenBox *box)
 
 ubyte show_net_benefits_box(struct ScreenBox *box)
 {
+    ubyte drawn = true;
+
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
     if ((box->Flags & GBxFlg_Unkn1000) == 0)
     {
@@ -428,13 +430,13 @@ ubyte show_net_benefits_box(struct ScreenBox *box)
     if (is_unkn_current_player() && (login_control__State == 5))
     {
         //net_SET2_button.DrawFn(&net_SET2_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            : : "a" (&net_SET2_button), "g" (net_SET2_button.DrawFn));
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&net_SET2_button), "g" (net_SET2_button.DrawFn));
         //net_SET_button.DrawFn(&net_SET_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            : : "a" (&net_SET_button), "g" (net_SET_button.DrawFn));
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&net_SET_button), "g" (net_SET_button.DrawFn));
     }
-    return 0;
+    return drawn;
 }
 
 void purple_unkn3_data_to_screen(void)
