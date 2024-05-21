@@ -1582,7 +1582,7 @@ void number_player(struct Thing *p_person, ubyte n)
 
 void draw_hud(int dcthing)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_draw_hud\n"
         : : "a" (dcthing));
     return;
