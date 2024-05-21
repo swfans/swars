@@ -1590,10 +1590,10 @@ void draw_hud(int dcthing)
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
-    if (((ingame.TrackThing != 0) && (things[ingame.TrackThing].Flag & 0x2000) == 0))
+    if (((ingame.TrackThing != 0) && (things[ingame.TrackThing].Flag & TngF_PlayerAgent) == 0))
         return;
 
-    if (((ingame.Flags & 0x2000) == 0) || debug_hud_collision)
+    if (((ingame.Flags & GamF_HUDPanel) == 0) || debug_hud_collision)
         return;
 
     show_goto_point(0);
@@ -1650,7 +1650,7 @@ void draw_hud(int dcthing)
             struct Thing *p_target;
 
             p_target = &things[target];
-            if ((p_target->Flag & 0x0002) == 0)
+            if ((p_target->Flag & TngF_Unkn0002) == 0)
                 draw_hud_target2(dcthing, target);
         }
         draw_new_panel();

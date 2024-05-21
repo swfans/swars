@@ -501,8 +501,13 @@ void show_mission_screen(void)
         brief_NETSCAN_COST_box.Flags |= GBxFlg_Unkn0002;
     }
     // Draw sequentially
-    draw_done = draw_done && draw_heading_box();
-    draw_done = draw_done && brief_mission_text_box.DrawFn(&brief_mission_text_box);
+    if (draw_done)
+        draw_done = draw_heading_box();
+    if (draw_done) {
+        //draw_done = brief_mission_text_box.DrawFn(&brief_mission_text_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (draw_done) : "a" (&brief_mission_text_box), "g" (brief_mission_text_box.DrawFn));
+    }
     if (draw_done)
     {
         if (lbKeyOn[KC_F])
@@ -534,8 +539,13 @@ void show_mission_screen(void)
             }
           }
         }
-        if (brief_graphical_box.DrawFn(&brief_graphical_box)) {
-            brief_netscan_box.DrawFn(&brief_netscan_box);
+        //draw_done = brief_graphical_box.DrawFn(&brief_graphical_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (draw_done) : "a" (&brief_graphical_box), "g" (brief_graphical_box.DrawFn));
+        if (draw_done) {
+            //draw_done = brief_netscan_box.DrawFn(&brief_netscan_box); -- incompatible calling convention
+            asm volatile ("call *%2\n"
+                : "=r" (draw_done) : "a" (&brief_netscan_box), "g" (brief_netscan_box.DrawFn));
         }
     }
 }
