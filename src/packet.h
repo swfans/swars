@@ -4,7 +4,7 @@
 /** @file packet.h
  *     Header file for packet.c.
  * @par Purpose:
- *     Player state and information handling.
+ *     Handling of packets storing player actions.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
@@ -134,6 +134,10 @@ void build_packet(struct Packet *packet, ushort type, ulong param1, long x, long
 void build_packet2(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 void build_packet3(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 void build_packet4(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
+
+void PacketRecord_Close(void);
+void PacketRecord_OpenWrite(void);
+void PacketRecord_OpenRead(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

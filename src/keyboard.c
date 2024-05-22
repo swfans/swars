@@ -1,5 +1,5 @@
 /******************************************************************************/
-// Free implementation of Bullfrog's Syndicate Wars strategy game.
+// Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
 /** @file keyboard.c
  *     Buffered handler for keystrokes.

@@ -127,14 +127,6 @@ struct GamePanel
   ubyte Type;
 };
 
-struct PacketFileHead {
-    ulong magic;
-    ushort campgn;
-    ushort missi;
-    ushort mapno;
-    ushort levelno;
-};
-
 struct UnknArrD {
     short X;
     short Y;
@@ -349,9 +341,6 @@ struct TbLoadFiles unk02_load_files[] =
   { "",					(void **)NULL, 				(void **)NULL,			0, 0, 0 }
 };
 
-extern TbFileHandle packet_rec_fh;
-ushort packet_rec_no = 0;
-
 char unk_credits_text_s[] = "";
 char unk_credits_text_z[] = "";
 char unk_credits_text_p[] = "";
@@ -371,73 +360,6 @@ short arctan(int dx, int dz)
     asm volatile ("call ASM_arctan\n"
         : "=r" (ret) : "a" (dx), "d" (dz));
     return ret;
-}
-
-void PacketRecord_Close(void)
-{
-    if (in_network_game)
-        return;
-    LbFileClose(packet_rec_fh);
-}
-
-void PacketRecord_OpenWrite(void)
-{
-    char fname[DISKPATH_SIZE];
-    struct Mission *p_missi;
-    struct PacketFileHead head;
-    int file_no;
-
-    head.magic = 0x544B4350; // 'PCKT'
-    head.campgn = background_type;
-    head.missi = ingame.CurrentMission;
-    p_missi = &mission_list[head.missi];
-    head.mapno = p_missi->MapNo;
-    head.levelno = p_missi->LevelNo;
-
-    file_no = get_highest_used_packet_record_no(head.campgn, head.missi);
-    packet_rec_no = file_no + 1;
-    get_packet_record_fname(fname, head.campgn, head.missi, packet_rec_no);
-    LOGDBG("%s: Opening for packet save", fname);
-    packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
-    LbFileWrite(packet_rec_fh, &head, sizeof(head));
-}
-
-void PacketRecord_OpenRead(void)
-{
-    char fname[DISKPATH_SIZE];
-    struct Mission *p_missi;
-    struct PacketFileHead head;
-
-    head.campgn = background_type;
-    head.missi = ingame.CurrentMission;
-    get_packet_record_fname(fname, head.campgn, head.missi, packet_rec_no);
-    LOGDBG("%s: Opening for packet input", fname);
-    packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-    if (packet_rec_fh == INVALID_FILE) {
-        LOGERR("Packet file open failed");
-        pktrec_mode = PktR_NONE;
-        exit_game = true;
-        return;
-    }
-    LbFileRead(packet_rec_fh, &head, sizeof(head));
-    if (head.missi < next_mission)
-        p_missi = &mission_list[head.missi];
-    else
-        p_missi = &mission_list[0];
-    if (head.magic != 0x544B4350)
-        LOGWARN("%s: Packet file has bad magic value", fname);
-    if ((head.campgn != background_type) && (head.campgn != 0xFFFF))
-        LOGWARN("Packet file expects campaign %hu, not %d",
-          fname, head.campgn, (int)background_type);
-    if ((head.missi != ingame.CurrentMission) && (head.missi != 0xFFFF))
-        LOGWARN("Packet file expects mission %hu, not %d",
-          fname, head.missi, (int)ingame.CurrentMission);
-    if ((head.mapno != p_missi->MapNo) && (head.mapno != 0xFFFF))
-        LOGWARN("Packet file expects map %hu, not %d",
-          fname, head.mapno, (int)p_missi->MapNo);
-    if ((head.levelno != p_missi->LevelNo) && (head.levelno != 0xFFFF))
-        LOGWARN("Packet file expects level %hu, not %d",
-          fname, head.levelno, (int)p_missi->LevelNo);
 }
 
 void debug_trace_place(int place)
