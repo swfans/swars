@@ -271,6 +271,12 @@ ubyte show_title_box(struct ScreenTextBox *box)
     return ret;
 }
 
+void show_sysmenu_screen(void)
+{
+    asm volatile ("call ASM_show_sysmenu_screen\n"
+        :  :  : "eax" );
+}
+
 ubyte do_sysmnu_button(ubyte click)
 {
     ubyte ret;

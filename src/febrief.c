@@ -419,7 +419,8 @@ ubyte load_mail_text(const char *filename)
         return 0;
     }
     if (3+totlen >= mission_briefing_text_len) {
-        LOGERR("Insufficient memory for mission_briefing_text - %d instead of %d", mission_briefing_text_len, 3+totlen);
+        LOGERR("Insufficient memory for mission_briefing_text - %d instead of %d",
+          mission_briefing_text_len, 3+totlen);
         totlen = mission_briefing_text_len - 3 - 1;
     }
     p = mission_briefing_text;

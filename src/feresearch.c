@@ -137,6 +137,12 @@ void draw_unkn20_subfunc_01(int x, int y, char *text, ubyte a4)
         : : "a" (x), "d" (y), "b" (text), "c" (a4));
 }
 
+void show_research_screen(void)
+{
+    asm volatile ("call ASM_show_research_screen\n"
+        :  :  : "eax" );
+}
+
 ubyte show_research_graph(struct ScreenBox *box)
 {
     char *text;

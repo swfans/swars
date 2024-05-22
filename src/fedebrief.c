@@ -51,6 +51,12 @@ extern ushort word_1C4856[8];
 ubyte ac_show_mission_stats(struct ScreenBox *box);
 ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 
+void show_debrief_screen(void)
+{
+    asm volatile ("call ASM_show_debrief_screen\n"
+        :  :  : "eax" );
+}
+
 void draw_mission_stats_names_column(struct ScreenBox *box,
   ubyte research_ln, ubyte scilost_ln)
 {

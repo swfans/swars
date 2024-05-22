@@ -1,14 +1,14 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file fedebrief.h
- *     Header file for fedebrief.c.
+/** @file fepanet.h
+ *     Header file for fepanet.c.
  * @par Purpose:
- *     Front-end desktop and menu system, mission debrief screen.
+ *     Front-end desktop and menu system, P. A. Network screen.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
- * @date     22 Apr 2023 - 22 Oct 2023
+ * @date     05 Apr 2024 - 22 May 2024
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef FEDEBRIEF_H
-#define FEDEBRIEF_H
+#ifndef FEPANET_H
+#define FEPANET_H
 
 #include "bftypes.h"
 
@@ -27,25 +27,11 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-struct DebriefReport {
-    short RefNo;
-    short BriefNo;
-    short Status;
-    ulong Income;
-    ulong Expenditure;
-    ulong WeaponsResearched;
-    ulong ModsResearched;
-    ubyte ScientistsLost;
-    ubyte SciLostReason;
-};
 
 #pragma pack()
 /******************************************************************************/
 
-void show_debrief_screen(void);
-
-void init_debrief_screen_boxes(void);
-void reset_debrief_screen_boxes_flags(void);
+ubyte show_panet_screen(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

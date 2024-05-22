@@ -64,6 +64,7 @@
 #include "fenet.h"
 #include "feoptions.h"
 #include "fepause.h"
+#include "fepanet.h"
 #include "feresearch.h"
 #include "festorage.h"
 #include "feworld.h"
@@ -8992,29 +8993,6 @@ TbBool check_panel_button(void)
         }
     }
     return 0;
-}
-
-void show_debrief_screen(void)
-{
-    asm volatile ("call ASM_show_debrief_screen\n"
-        :  :  : "eax" );
-}
-
-void show_research_screen(void)
-{
-    asm volatile ("call ASM_show_research_screen\n"
-        :  :  : "eax" );
-}
-
-void show_panet_screen(void)
-{
-    //TODO PANET screen not implemented
-}
-
-void show_sysmenu_screen(void)
-{
-    asm volatile ("call ASM_show_sysmenu_screen\n"
-        :  :  : "eax" );
 }
 
 void show_menu_screen_st0(void)

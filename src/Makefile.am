@@ -150,6 +150,8 @@ swars_SOURCES = \
 	feequip.h \
 	feoptions.c \
 	feoptions.h \
+	fepanet.c \
+	fepanet.h \
 	felogin.c \
 	felogin.h \
 	femail.c \

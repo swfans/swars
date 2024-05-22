@@ -1,14 +1,14 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file fedebrief.h
- *     Header file for fedebrief.c.
+/** @file fepanet.c
+ *     Front-end desktop and menu system, P. A. Network screen.
  * @par Purpose:
- *     Front-end desktop and menu system, mission debrief screen.
+ *     Implement functions for Public Access Network screen in front-end desktop.
  * @par Comment:
- *     Just a header file - #defines, typedefs, function prototypes etc.
+ *     None.
  * @author   Tomasz Lis
- * @date     22 Apr 2023 - 22 Oct 2023
+ * @date     05 Apr 2024 - 22 May 2024
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,39 +16,26 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef FEDEBRIEF_H
-#define FEDEBRIEF_H
+#include "fepanet.h"
 
-#include "bftypes.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-/******************************************************************************/
-#pragma pack(1)
-
-struct DebriefReport {
-    short RefNo;
-    short BriefNo;
-    short Status;
-    ulong Income;
-    ulong Expenditure;
-    ulong WeaponsResearched;
-    ulong ModsResearched;
-    ubyte ScientistsLost;
-    ubyte SciLostReason;
-};
-
-#pragma pack()
+#include "femain.h"
+#include "guiboxes.h"
+#include "guitext.h"
+#include "display.h"
+#include "swlog.h"
 /******************************************************************************/
 
-void show_debrief_screen(void);
+ubyte show_panet_screen(void)
+{
+    ubyte drawn = true;
 
-void init_debrief_screen_boxes(void);
-void reset_debrief_screen_boxes_flags(void);
+    // Draw sequentially
+    if (drawn)
+        drawn = draw_heading_box();
 
-/******************************************************************************/
-#ifdef __cplusplus
+    //TODO PANET screen not implemented
+
+    return drawn;
 }
-#endif
-#endif
+
+/******************************************************************************/
