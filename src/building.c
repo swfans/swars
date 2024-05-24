@@ -19,6 +19,8 @@
 #include "building.h"
 
 #include "bfmemory.h"
+#include "game.h"
+#include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -31,6 +33,44 @@ struct Thing *create_building_thing(int x, int y, int z, ushort obj, ushort nobj
       "call ASM_create_building_thing\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (obj), "g" (nobj), "g" (a6));
     return ret;
+}
+
+void set_dome_col(struct Thing *p_building, ubyte flag)
+{
+    struct ColVectList *p_cvlist;
+    ushort cvl_beg, cvl_num;
+    ushort  cvl;
+
+    cvl_beg = p_building->U.UObject.BuildStartVect;
+    cvl_num = p_building->U.UObject.BuildNumbVect;
+    if (flag)
+    {
+        for (cvl = cvl_beg; cvl < cvl_beg + cvl_num; cvl++)
+        {
+            p_cvlist = &game_col_vects_list[cvl];
+            p_cvlist->NextColList |= 0x8000;
+        }
+    }
+    else
+    {
+        for (cvl = cvl_beg; cvl < cvl_beg + cvl_num; cvl++)
+        {
+            p_cvlist = &game_col_vects_list[cvl];
+            p_cvlist->NextColList &= ~0x8000;
+        }
+    }
+}
+
+void do_dome_rotate1(struct Thing *p_building)
+{
+    asm volatile ("call ASM_do_dome_rotate1\n"
+        : : "a" (p_building));
+}
+
+void process_dome1(struct Thing *p_building)
+{
+    asm volatile ("call ASM_process_dome1\n"
+        : : "a" (p_building));
 }
 
 /******************************************************************************/
