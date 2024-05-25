@@ -67,6 +67,16 @@ int unkn_path_func_001(struct Thing *p_thing, ubyte a2);
 
 void init_col_vects_linked_list(void);
 
+/** Update assigned ColVectList range within each Thing.
+ *
+ * The ColVectList instances contain references to things containing geometry
+ * they own, but we also want Things instances to contain references to the
+ * ColVectList, to speed up access in objects which change them dynamically.
+ *
+ * This function resets said references within all Object things.
+ */
+void reset_things_col_vect_range(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

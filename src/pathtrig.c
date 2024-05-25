@@ -954,6 +954,60 @@ void init_collision_vects(void)
     }
 }
 
+void reset_things_col_vect_range(void)
+{
+    ushort vl;
+    short thing;
+    ushort count;
+
+    thing = get_thing_same_type_head(TT_BUILDING, -1);
+    while (thing > 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        p_thing->U.UObject.BuildStartVect = 0;
+        p_thing->U.UObject.BuildNumbVect = 0;
+        thing = p_thing->LinkSame;
+    }
+
+    thing = 0;
+    count = 0;
+    for (vl = 0; vl < next_vects_list; vl++)
+    {
+        struct ColVectList *p_cvlist;
+
+        p_cvlist = &game_col_vects_list[vl];
+        if (p_cvlist->Object == thing)
+        {
+            count++;
+            continue;
+        }
+        if (thing > 0)
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            if (p_thing->Type == TT_BUILDING) {
+                p_thing->U.UObject.BuildStartVect = vl - count;
+                p_thing->U.UObject.BuildNumbVect = count;
+            }
+        }
+        thing = p_cvlist->Object;
+        count = 1;
+    }
+    { // Setting properties in the last thing after we've reeached end of vects_list
+        if (thing > 0)
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            if (p_thing->Type == TT_BUILDING) {
+                p_thing->U.UObject.BuildStartVect = vl - count;
+                p_thing->U.UObject.BuildNumbVect = count;
+            }
+        }
+    }
+}
+
 /** Adds given walk face to a list of walk items of another face.
  *
  * Can only be called continously for one face, until another face gats it walk head created.

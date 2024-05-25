@@ -51,8 +51,10 @@ void set_dome_col(struct Thing *p_building, ubyte flag)
     ushort vl_beg, vl_num;
     ushort  vl;
 
-    vl_beg = p_building->U.UObject.BuildStartVect;
-    vl_num = p_building->U.UObject.BuildNumbVect;
+    // Dome has collision vectors spread evenly around; we want to switch only
+    // half of them, as only half of the dome is being opened
+    vl_num = p_building->U.UObject.BuildNumbVect / 2;
+    vl_beg = p_building->U.UObject.BuildStartVect + vl_num;
     if (flag)
     {
         for (vl = vl_beg; vl < vl_beg + vl_num; vl++)
