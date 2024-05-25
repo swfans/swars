@@ -18,7 +18,9 @@
 /******************************************************************************/
 #include "building.h"
 
+#include "bfmath.h"
 #include "bfmemory.h"
+#include "enginsngobjs.h"
 #include "game.h"
 #include "thing.h"
 #include "swlog.h"
@@ -63,8 +65,37 @@ void set_dome_col(struct Thing *p_building, ubyte flag)
 
 void do_dome_rotate1(struct Thing *p_building)
 {
+#if 0
     asm volatile ("call ASM_do_dome_rotate1\n"
         : : "a" (p_building));
+#endif
+    ushort obj, i;
+    ushort pt1_beg, pt1_num;
+
+    obj = p_building->U.UObject.Object;
+    pt1_beg = game_objects[obj].StartPoint;
+    pt1_num = game_objects[obj].EndPoint - pt1_beg;
+    for (i = obj + 1; i < obj + 8; i++)
+    {
+        int factrS, factrC;
+        short angle;
+        ushort pt2_beg;
+        ushort dpt;
+
+        angle = (i - obj) * p_building->SubState;
+        pt2_beg = game_objects[i].StartPoint;
+        factrC = lbSinTable[angle + 512];
+        factrS = lbSinTable[angle];
+        for (dpt = 0; dpt <= pt1_num; dpt++)
+        {
+            struct SinglePoint *p_point1;
+            struct SinglePoint *p_point2;
+            p_point1 = &game_object_points[pt1_beg + dpt];
+            p_point2 = &game_object_points[pt2_beg + dpt];
+            p_point2->Y = (factrC * p_point1->Y - factrS * p_point1->Z) >> 16;
+            p_point2->Z = (factrC * p_point1->Z + factrS * p_point1->Y) >> 16;
+        }
+    }
 }
 
 void process_dome1(struct Thing *p_building)
