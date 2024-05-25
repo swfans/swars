@@ -25,6 +25,8 @@
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
+ubyte dome_open_speed = 4;
+
 
 struct Thing *create_building_thing(int x, int y, int z, ushort obj, ushort nobj, ushort a6)
 {
@@ -109,12 +111,13 @@ void process_dome1(struct Thing *p_building)
     switch (p_building->State)
     {
     case 1:
-        timer0 = p_building->SubState - 4;
+        timer0 = p_building->SubState - dome_open_speed;
         p_building->SubState = timer0;
         if (timer0 <= 127)
         {
-            if (timer0 == 111)
+            if ((timer0 >= 111u) && (timer0 < 111u + dome_open_speed)) {
                 set_dome_col(p_building, 1);
+            }
             do_dome_rotate1(p_building);
         }
         else
@@ -125,12 +128,13 @@ void process_dome1(struct Thing *p_building)
         }
         break;
     case 4:
-        timer0 = p_building->SubState + 4;
+        timer0 = p_building->SubState + dome_open_speed;
         p_building->SubState = timer0;
         if (timer0 <= 127)
         {
-            if (timer0 == 112)
+            if ((timer0 >= 112u) && (timer0 < 112u + dome_open_speed)) {
                 set_dome_col(p_building, 0);
+            }
             do_dome_rotate1(p_building);
         }
         else

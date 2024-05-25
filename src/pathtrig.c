@@ -1885,7 +1885,7 @@ void thin_paths_entrance_on_vectlist(ushort vl_head)
     struct ColVectList *p_cvlist;
     ushort vl;
 
-    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList)
+    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList & 0x7FFF)
     {
         struct ColVect *p_colvect;
         int sx1, sx2, sy1, sy2;
@@ -1943,7 +1943,7 @@ void thin_paths_on_vectlist(ushort vl_head,
     struct ColVectList *p_cvlist;
     ushort vl;
 
-    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList)
+    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList & 0x7FFF)
     {
         struct ColVect *p_colvect;
         int sx1, sx2, sy1, sy2;
