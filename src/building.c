@@ -162,4 +162,44 @@ void process_dome1(struct Thing *p_building)
     }
 }
 
+void collapse_building(short x, short height, short z, struct Thing *p_thing)
+{
+    asm volatile (
+      "call ASM_collapse_building\n"
+        :  : "a" (x), "d" (height), "b" (z), "c" (p_thing));
+}
+
+short create_a_pod(struct Thing *p_thing, struct Thing *p_loader, ushort pod_id)
+{
+    short ret;
+    asm volatile (
+      "call ASM_create_a_pod\n"
+        : "=r" (ret) : "a" (p_thing), "d" (p_loader), "b" (pod_id));
+    return ret;
+}
+
+void process_shuttle_loader(struct Thing *p_building)
+{
+    asm volatile ("call ASM_process_shuttle_loader\n"
+        : : "a" (p_building));
+}
+
+void process_mounted_gun(struct Thing *p_building)
+{
+    asm volatile ("call ASM_process_mounted_gun\n"
+        : : "a" (p_building));
+}
+
+void process_gate1(struct Thing *p_building)
+{
+    asm volatile ("call ASM_process_gate1\n"
+        : : "a" (p_building));
+}
+
+void process_building(struct Thing *p_building)
+{
+    asm volatile ("call ASM_process_building\n"
+        : : "a" (p_building));
+}
+
 /******************************************************************************/
