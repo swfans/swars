@@ -2039,6 +2039,13 @@ void generate_thin_paths(void)
     LbMemoryFree(faces4_added);
 }
 
+void triangulation_unkn_func_002(int x1, int z1, int x2, int z2)
+{
+    asm volatile (
+      "call ASM_triangulation_unkn_func_002\n"
+        : : "a" (x1), "d" (z1), "b" (x2), "c" (z2));
+}
+
 int fringe_at_tile(short tile_x, short tile_z)
 {
     struct MyMapElement *p_mapel;

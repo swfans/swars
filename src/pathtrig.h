@@ -45,6 +45,8 @@ void generate_ground_map(void);
 void thin_wall_around_object_rm(ushort obj, ushort colt);
 void generate_map_triangulation(void);
 
+void triangulation_unkn_func_002(int x1, int z1, int x2, int z2);
+
 /** Print triangulation arrays into log file, for debug.
  */
 void print_triangulation(void);

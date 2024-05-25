@@ -48,24 +48,24 @@ struct Thing *create_building_thing(int x, int y, int z, ushort obj, ushort nobj
 void set_dome_col(struct Thing *p_building, ubyte flag)
 {
     struct ColVectList *p_cvlist;
-    ushort cvl_beg, cvl_num;
-    ushort  cvl;
+    ushort vl_beg, vl_num;
+    ushort  vl;
 
-    cvl_beg = p_building->U.UObject.BuildStartVect;
-    cvl_num = p_building->U.UObject.BuildNumbVect;
+    vl_beg = p_building->U.UObject.BuildStartVect;
+    vl_num = p_building->U.UObject.BuildNumbVect;
     if (flag)
     {
-        for (cvl = cvl_beg; cvl < cvl_beg + cvl_num; cvl++)
+        for (vl = vl_beg; vl < vl_beg + vl_num; vl++)
         {
-            p_cvlist = &game_col_vects_list[cvl];
+            p_cvlist = &game_col_vects_list[vl];
             p_cvlist->NextColList |= 0x8000;
         }
     }
     else
     {
-        for (cvl = cvl_beg; cvl < cvl_beg + cvl_num; cvl++)
+        for (vl = vl_beg; vl < vl_beg + vl_num; vl++)
         {
-            p_cvlist = &game_col_vects_list[cvl];
+            p_cvlist = &game_col_vects_list[vl];
             p_cvlist->NextColList &= ~0x8000;
         }
     }
