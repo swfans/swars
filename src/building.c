@@ -100,8 +100,62 @@ void do_dome_rotate1(struct Thing *p_building)
 
 void process_dome1(struct Thing *p_building)
 {
+#if 0
     asm volatile ("call ASM_process_dome1\n"
         : : "a" (p_building));
+#endif
+    uint timer0;
+
+    switch (p_building->State)
+    {
+    case 1:
+        timer0 = p_building->SubState - 4;
+        p_building->SubState = timer0;
+        if (timer0 <= 127)
+        {
+            if (timer0 == 111)
+                set_dome_col(p_building, 1);
+            do_dome_rotate1(p_building);
+        }
+        else
+        {
+            p_building->SubState = 0;
+            p_building->Timer1 = 100;
+            p_building->State = 7;
+        }
+        break;
+    case 4:
+        timer0 = p_building->SubState + 4;
+        p_building->SubState = timer0;
+        if (timer0 <= 127)
+        {
+            if (timer0 == 112)
+                set_dome_col(p_building, 0);
+            do_dome_rotate1(p_building);
+        }
+        else
+        {
+            p_building->SubState = 127;
+            p_building->Timer1 = 100;
+            p_building->State = 8;
+        }
+        break;
+    case 7:
+        if ((p_building->Flag & 0x0080) != 0)
+            p_building->State = 4;
+        p_building->Flag &= ~(0x0080|0x0040);
+        break;
+    case 8:
+        if ((p_building->Flag & 0x0040) != 0)
+            p_building->State = 1;
+        p_building->Flag &= ~(0x0080|0x0040);
+        break;
+    default:
+        p_building->SubState = 127;
+        p_building->Timer1 = 100;
+        p_building->State = 8;
+        break;
+    }
 }
 
 /******************************************************************************/
