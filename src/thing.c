@@ -1082,4 +1082,15 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     }
 }
 
+struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop)
+{
+    struct SimpleThing *ret;
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "call ASM_create_sound_effect\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (sample), "g" (vol), "g" (loop));
+    return ret;
+}
+
 /******************************************************************************/

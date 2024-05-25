@@ -122,6 +122,8 @@ int alt_change_at_tile(short tile_x, short tile_z, int *change_xz);
  */
 void update_map_flags(void);
 
+void quick_crater(int x, int z, int size);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

@@ -345,4 +345,10 @@ void update_map_flags(void)
     }
 }
 
+void quick_crater(int x, int z, int size)
+{
+    asm volatile ("call ASM_quick_crater\n"
+        :  : "a" (x), "d" (z), "b" (size));
+}
+
 /******************************************************************************/
