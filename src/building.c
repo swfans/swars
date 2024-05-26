@@ -48,14 +48,13 @@ struct Thing *create_building_thing(int x, int y, int z, ushort obj, ushort nobj
 void set_dome_col(struct Thing *p_building, ubyte flag)
 {
     struct ColVectList *p_cvlist;
-    ushort vl_beg, vl_num, vl_end;
+    ushort vl_beg, vl_end;
     ushort  vl;
 
-    // Dome has collision vectors spread evenly around; we want to switch only
-    // half of them, as only half of the dome is being opened
-    vl_num = p_building->U.UObject.BuildNumbVect;
-    vl_beg = p_building->U.UObject.BuildStartVect + vl_num / 2;
-    vl_end = vl_beg + vl_num;
+    // The thing data contains properties with range of ColVectList
+    // which can switch the passability
+    vl_beg = p_building->U.UObject.BuildStartVect;
+    vl_end = vl_beg + p_building->U.UObject.BuildNumbVect;
     if (flag)
     {
         for (vl = vl_beg; vl < vl_end; vl++)

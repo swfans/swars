@@ -148,8 +148,8 @@ struct TngUObject
     short TargetDX; /**< Thing offs=0x5C */
     short TargetDY;
     short TargetDZ;
-    ushort BuildStartVect; /**< Index of the first ColVectList associated to this object. */
-    ushort BuildNumbVect; /**< Amount of ColVectList items associated to this object. */
+    ushort BuildStartVect; /**< Index of the first ColVectList for toggling passability which are associated to this object. */
+    ushort BuildNumbVect; /**< Amount of ColVectList items for toggling passability which are associated to this object. */
     ushort ZZ_unused_but_pads_to_long_ObjectNo;
     ushort ComHead;
     short ComCur;

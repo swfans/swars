@@ -24,6 +24,7 @@
 #include "bfmath.h"
 #include "bfmemory.h"
 #include "bigmap.h"
+#include "building.h"
 #include "enginsngobjs.h"
 #include "game.h"
 #include "game_data.h"
@@ -987,7 +988,17 @@ void reset_things_col_vect_range(void)
         {
             struct Thing *p_thing;
             p_thing = &things[thing];
-            if (p_thing->Type == TT_BUILDING) {
+            if (p_thing->Type == TT_BUILDING)
+            {
+                if (p_thing->SubType == SubTT_BLD_DOME) {
+                    // Dome has collision vectors spread evenly around; we want
+                    // to make toggleable only a little above half of them,
+                    // as only half of the dome is being opened
+                    count = count * 5 / 9;
+                } else {
+                    // Other building types have no toggleable collision vectors
+                    count = 0;
+                }
                 p_thing->U.UObject.BuildStartVect = vl - count;
                 p_thing->U.UObject.BuildNumbVect = count;
             }
