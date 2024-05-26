@@ -824,12 +824,6 @@ ThingIdx new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, 
       PRCCOORD_TO_MAPCOORD(p_clthing->Z), p_clthing->U.UObject.Object,
       p_clthing->U.UObject.NumbObjects, p_clthing->ThingOffset);
 
-    p_thing->U.UObject.Token = p_clthing->U.UObject.Token;
-    p_thing->U.UObject.TokenDir = p_clthing->U.UObject.TokenDir;
-    p_thing->U.UObject.NextThing = p_clthing->U.UObject.NextThing;
-    p_thing->U.UObject.PrevThing = p_clthing->U.UObject.PrevThing;
-    p_thing->U.UObject.OffX = p_clthing->U.UObject.OffX;
-    p_thing->U.UObject.OffZ = p_clthing->U.UObject.OffZ;
     p_thing->ThingOffset = p_clthing->ThingOffset;
     p_thing->Flag = p_clthing->Flag;
     p_thing->VX = p_clthing->VX;
@@ -837,21 +831,50 @@ ThingIdx new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, 
     p_thing->VZ = p_clthing->VZ;
     p_thing->SubType = p_clthing->SubType;
 
-    // Copy 8 bytes _after_ UObject.DrawTurn (is anything really there?)
-    for (i = 1; i < 3; i++) {
-        *(&p_thing->U.UObject.DrawTurn + i) = *(&p_clthing->U.UObject.DrawTurn + i);
+    ubyte styp;
+    styp = p_thing->SubType;
+
+    if (styp == SubTT_BLD_MGUN)
+    {
+        p_thing->U.UMGun.PathIndex = p_clthing->U.UMGun.PathIndex;
+        p_thing->U.UMGun.UniqueID = p_clthing->U.UMGun.UniqueID;
+        p_thing->U.UMGun.NextThing = p_clthing->U.UMGun.NextThing;
+        p_thing->U.UMGun.PrevThing = p_clthing->U.UMGun.PrevThing;
+        p_thing->U.UMGun.Token = p_clthing->U.UMGun.Token;
+        p_thing->U.UMGun.TokenDir = p_clthing->U.UMGun.TokenDir;
+        p_thing->U.UMGun.ObjectNo = p_clthing->U.UMGun.ObjectNo;
+        p_thing->U.UMGun.CurrentWeapon = p_clthing->U.UMGun.CurrentWeapon;
     }
+    else
+    {
+        p_thing->U.UObject.Token = p_clthing->U.UObject.Token;
+        p_thing->U.UObject.TokenDir = p_clthing->U.UObject.TokenDir;
+        p_thing->U.UObject.NextThing = p_clthing->U.UObject.NextThing;
+        p_thing->U.UObject.PrevThing = p_clthing->U.UObject.PrevThing;
+        p_thing->U.UObject.OffX = p_clthing->U.UObject.OffX;
+        p_thing->U.UObject.OffZ = p_clthing->U.UObject.OffZ;
+#if 0 // Disabled until the domes entering is considered safe to enable
+        p_thing->U.UObject.BuildStartVect = p_clthing->U.UObject.BuildStartVect;
+        p_thing->U.UObject.BuildNumbVect = p_clthing->U.UObject.BuildNumbVect;
+#endif
+        // Copy all fields from Turn down
+        p_thing->U.UObject.Turn = p_clthing->U.UObject.Turn;
+        p_thing->U.UObject.TurnPadOnPS = p_clthing->U.UObject.TurnPadOnPS;
+        for (i = 0; i < 4; i++) {
+            p_thing->U.UObject.tnode[i] = p_clthing->U.UObject.tnode[i];
+        }
+        p_thing->U.UObject.player_in_me = p_clthing->U.UObject.player_in_me;
+        p_thing->U.UObject.unkn_4D = p_clthing->U.UObject.unkn_4D;
+        p_thing->U.UObject.DrawTurn = p_clthing->U.UObject.DrawTurn;
+        for (i = 0; i < 4; i++) {
+            p_thing->U.UObject.tnode_50[i] = p_clthing->U.UObject.tnode_50[i];
+        }
+    }
+
     p_sobj = &game_objects[p_clthing->U.UObject.Object];
     p_thing->U.UObject.MinY[0] = p_sobj->OffsetY - 500;
     p_thing->U.UObject.MaxY[0] = p_sobj->OffsetY;
     
-    // Copy 20 bytes from UObject.Turn (why in a loop instead of assigning separate fields? is there an array?)
-    for (i = 0; i < 10; i++) {
-        *(&p_thing->U.UObject.Turn + i) = *(&p_clthing->U.UObject.Turn + i);
-    }
-
-    ubyte styp;
-    styp = p_thing->SubType;
     if (styp == SubTT_BLD_SHUTLDR)
     {
         if (((p_thing->Flag & TngF_Unkn0001) == 0)

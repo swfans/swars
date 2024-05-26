@@ -1144,8 +1144,13 @@ void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
     {
         p_clthing = (struct Thing *)mad_ptr;
         mad_ptr += sizeof(struct Thing);
-        if (p_clthing->U.UObject.Object <= 0)
+        if (p_clthing->U.UObject.Object <= 0) {
+            char locbuf[256];
+            snprint_thing(locbuf, sizeof(locbuf), p_clthing);
+            LOGWARN("Bad object %d in %s",
+              (int)p_clthing->U.UObject.Object, locbuf);
             continue;
+        }
         switch (p_clthing->SubType)
         {
         case SubTT_BLD_36:

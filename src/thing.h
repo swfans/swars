@@ -145,27 +145,27 @@ struct TngUObject
     char TokenDir;
     char OffX;
     char OffZ;
-    short TargetDX; // within Thing, pos=92
+    short TargetDX; /**< Thing offs=0x5C */
     short TargetDY;
     short TargetDZ;
-    ushort BuildStartVect;
-    ushort BuildNumbVect;
+    ushort BuildStartVect; /**< Index of the first ColVectList associated to this object. */
+    ushort BuildNumbVect; /**< Amount of ColVectList items associated to this object. */
     ushort ZZ_unused_but_pads_to_long_ObjectNo;
     ushort ComHead;
     short ComCur;
-    short Mood;
+    short Mood; /**< Thing offs=0x6C */
     short RaiseDY[2];
     short RaiseY[2];
     short MinY[2];
     short Timer[2];
-    short MaxY[2];
+    short MaxY[2]; /**< Thing offs=0x7E */
     short TNode;
     short Cost;
     short Shite;
     ulong BHeight;
     ushort Turn;
     ushort TurnPadOnPS;
-    short tnode[4];
+    short tnode[4];  /**< Thing offs=0x90 */
     ubyte player_in_me;
     ubyte unkn_4D;
     ulong DrawTurn; // set within draw_thing_object() for a building
@@ -186,7 +186,7 @@ struct TngUMGun
     ubyte ShotTurn;
     short WeaponTurn;
     ushort ObjectNo;
-    short PrevThing; // within Thing, pos=92
+    short PrevThing; /**< Thing offs=0x5C */
     short NextThing;
     ubyte Token;
     char TokenDir;
@@ -195,10 +195,10 @@ struct TngUMGun
     short AngleY;
     short AngleZ;
     short GotoX;
-    short GotoY;
+    short GotoY; /**< Thing offs=0x6C */
     short GotoZ;
     int Dummy11[5];
-    short RecoilTimer;
+    short RecoilTimer; /**< Thing offs=0x84 */
     ushort MaxHealth;
     ubyte CurrentWeapon;
     ubyte Dummy12;
