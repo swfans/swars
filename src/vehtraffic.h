@@ -20,6 +20,7 @@
 #define VEHTRAFFIC_H
 
 #include "bftypes.h"
+#include "game_bstype.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,6 +72,7 @@ extern struct TrafficNode *game_traffic_nodes;
 extern ushort next_traffic_node;
 
 short get_next_tnode(struct Thing *p_vehicle, struct TrafficNode *p_tnode);
+void tnode_all_unlink_thing(ThingIdx thing);
 
 void process_next_tnode(struct Thing *p_vehicle);
 

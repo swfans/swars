@@ -29,6 +29,7 @@
 #include "matrix.h"
 #include "sound.h"
 #include "thing.h"
+#include "vehtraffic.h"
 #include "swlog.h"
 /******************************************************************************/
 ubyte dome_open_speed = 4;
@@ -261,27 +262,6 @@ void collapse_building_process_tnodes(struct Thing *p_building)
                 break;
             }
         }
-    }
-}
-
-void tnode_unlink_thing(short tnode, short thing)
-{
-    struct TrafficNode *p_tnode;
-    int i;
-
-    p_tnode = &game_traffic_nodes[tnode];
-    for (i = 0; i < 4; i++)
-    {
-        if (p_tnode->UTraffic.Link[i] == thing)
-            p_tnode->UTraffic.Link[i] = 0;
-    }
-}
-
-void tnode_all_unlink_thing(short thing)
-{
-    short tnode;
-    for (tnode = 1; tnode < next_traffic_node; tnode++) {
-        tnode_unlink_thing(tnode, thing);
     }
 }
 

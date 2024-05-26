@@ -43,6 +43,27 @@ short tnode_find_used_link(struct TrafficNode *p_tnode)
     return -1;
 }
 
+void tnode_unlink_thing(short tnode, ThingIdx thing)
+{
+    struct TrafficNode *p_tnode;
+    int i;
+
+    p_tnode = &game_traffic_nodes[tnode];
+    for (i = 0; i < 4; i++)
+    {
+        if (p_tnode->UTraffic.Link[i] == thing)
+            p_tnode->UTraffic.Link[i] = 0;
+    }
+}
+
+void tnode_all_unlink_thing(ThingIdx thing)
+{
+    short tnode;
+    for (tnode = 1; tnode < next_traffic_node; tnode++) {
+        tnode_unlink_thing(tnode, thing);
+    }
+}
+
 short get_next_tnode(struct Thing *p_vehicle, struct TrafficNode *p_tnode)
 {
     short ret;
