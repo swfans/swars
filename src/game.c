@@ -3109,11 +3109,85 @@ void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
     }
 }
 
-void draw_engine_unk3_last(short a1, short a2)
+void draw_line_transformed_at_ground(int x1, int y1, int x2, int y2, TbPixel colour)
 {
     asm volatile (
+      "push %4\n"
+      "call ASM_draw_line_transformed_at_ground\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (colour));
+}
+
+void draw_unkn1_bar(ushort cv)
+{
+    asm volatile (
+      "call ASM_draw_unkn1_bar\n"
+        : : "a" (cv));
+}
+
+void draw_engine_unk3_last(short x, short z)
+{
+#if 0
+    asm volatile (
       "call ASM_draw_engine_unk3_last\n"
-        : : "a" (a1), "d" (a2));
+        : : "a" (x), "d" (z));
+#endif
+    int x_beg, x_end;
+    int z_beg, z_end;
+    int cx, cz;
+
+    x_beg = (x >> 8) - (render_area_a >> 1);
+    x_end = (x >> 8) + (render_area_a >> 1);
+    z_beg = (z >> 8) - (render_area_b >> 1);
+    z_end = (z >> 8) + (render_area_b >> 1);
+    for (cx = x_beg; cx < x_end; cx++)
+    {
+        for (cz = z_beg; cz < z_end; cz++)
+        {
+          struct MyMapElement *p_mapel;
+          char str[52];
+          short vl;
+
+          if (cx < 0 || cx > 127 || cz < 0 || cz > 127)
+              continue;
+          p_mapel = &game_my_big_map[cx + (cz << 7)];
+
+          vl = p_mapel->ColHead;
+          while ( vl )
+          {
+              struct EnginePoint ep;
+              struct ColVectList *p_cvlist;
+              short cor_x, cor_y;
+              uint mapel;
+
+              mapel = (p_mapel - game_my_big_map);
+              cor_y = (mapel / 128) << 8;
+              cor_x = (mapel % 128) << 8;
+              draw_line_transformed_at_ground(cor_x, cor_y, cor_x + 256, cor_y, 0x63u);
+              draw_line_transformed_at_ground(cor_x + 256, cor_y, cor_x + 256, cor_y + 256, 0x63u);
+              draw_line_transformed_at_ground(cor_x, cor_y + 256, cor_x + 256, cor_y + 256, 0x63u);
+              draw_line_transformed_at_ground(cor_x, cor_y + 256, cor_x, cor_y, 0x63u);
+
+              p_cvlist = &game_col_vects_list[vl];
+              draw_unkn1_bar(p_cvlist->Vect);
+              vl = p_cvlist->NextColList & ~0x8000;
+              cor_x += 128;
+              cor_y += 128;
+
+              p_cvlist = &game_col_vects_list[vl];
+              sprintf(str, "%d", p_cvlist->Object);
+              //TODO use draw_text_transformed_at_ground()
+              ep.X3d = cor_x - engn_xc;
+              ep.Y3d = (alt_at_point(cor_x, cor_y) >> 8) - engn_yc;
+              ep.Z3d = cor_y - engn_zc;
+              transform_point(&ep);
+              if (ep.pp.X > 0 && ep.pp.X < lbDisplay.GraphicsScreenWidth) {
+                  if (ep.pp.Y > 0 && ep.pp.Y < lbDisplay.GraphicsScreenHeight) {
+                      draw_text(ep.pp.X, ep.pp.Y, str, colour_lookup[2]);
+                  }
+              }
+            }
+        }
+    }
 }
 
 void draw_engine_net_text(void)
