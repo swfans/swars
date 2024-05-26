@@ -1516,7 +1516,7 @@ void draw_hud(int dcthing)
     if (((ingame.TrackThing != 0) && (things[ingame.TrackThing].Flag & TngF_PlayerAgent) == 0))
         return;
 
-    if (((ingame.Flags & GamF_HUDPanel) == 0) || debug_hud_collision)
+    if ((ingame.Flags & GamF_HUDPanel) == 0)
         return;
 
     show_goto_point(0);
