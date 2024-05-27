@@ -3119,9 +3119,29 @@ void draw_line_transformed_at_ground(int x1, int y1, int x2, int y2, TbPixel col
 
 void draw_unkn1_bar(ushort cv)
 {
+#if 0
     asm volatile (
       "call ASM_draw_unkn1_bar\n"
         : : "a" (cv));
+#endif
+    short scr_x, scr_y;
+    struct EnginePoint ep1;
+    struct EnginePoint ep2;
+    char locstr[8];
+
+    ep1.X3d = game_col_vects[cv].X1 - engn_xc;
+    ep1.Y3d = game_col_vects[cv].Y1;
+    ep1.Z3d = game_col_vects[cv].Z1 - engn_zc;
+    transform_point(&ep1);
+    ep2.X3d = game_col_vects[cv].X2 - engn_xc;
+    ep2.Y3d = game_col_vects[cv].Y2;
+    ep2.Z3d = game_col_vects[cv].Z2 - engn_zc;
+    transform_point(&ep2);
+    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour_lookup[1]);
+    scr_x = ep2.pp.X + ep1.pp.X;
+    scr_y = ep2.pp.Y + ep1.pp.Y;
+    sprintf(locstr, "%d", cv);
+    draw_text(scr_x, scr_y, locstr, colour_lookup[7]);
 }
 
 void draw_engine_unk3_last(short x, short z)
@@ -3154,7 +3174,6 @@ void draw_engine_unk3_last(short x, short z)
           vl = p_mapel->ColHead;
           while ( vl )
           {
-              struct EnginePoint ep;
               struct ColVectList *p_cvlist;
               short cor_x, cor_y;
               uint mapel;
@@ -3169,22 +3188,13 @@ void draw_engine_unk3_last(short x, short z)
 
               p_cvlist = &game_col_vects_list[vl];
               draw_unkn1_bar(p_cvlist->Vect);
-              vl = p_cvlist->NextColList & ~0x8000;
+              vl = p_cvlist->NextColList & 0x7FFF;
               cor_x += 128;
               cor_y += 128;
 
               p_cvlist = &game_col_vects_list[vl];
               sprintf(str, "%d", p_cvlist->Object);
-              //TODO use draw_text_transformed_at_ground()
-              ep.X3d = cor_x - engn_xc;
-              ep.Y3d = (alt_at_point(cor_x, cor_y) >> 8) - engn_yc;
-              ep.Z3d = cor_y - engn_zc;
-              transform_point(&ep);
-              if (ep.pp.X > 0 && ep.pp.X < lbDisplay.GraphicsScreenWidth) {
-                  if (ep.pp.Y > 0 && ep.pp.Y < lbDisplay.GraphicsScreenHeight) {
-                      draw_text(ep.pp.X, ep.pp.Y, str, colour_lookup[2]);
-                  }
-              }
+              draw_text_transformed_at_ground(cor_x, cor_y, str);
             }
         }
     }
