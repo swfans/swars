@@ -1609,12 +1609,12 @@ void func_705bc(int a1, int a2, int a3, int a4, int a5, ubyte a6)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
 }
 
-void draw_text_transformed_at_ground(int coord_x, int coord_y, const char *text)
+void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text)
 {
 #if 0
     asm volatile (
       "call ASM_draw_text_transformed_at_ground\n"
-        : : "a" (coord_x), "d" (coord_y), "b" (text));
+        : : "a" (coord_x), "d" (coord_z), "b" (text));
     return;
 #endif
     struct EnginePoint ep;
@@ -1623,12 +1623,73 @@ void draw_text_transformed_at_ground(int coord_x, int coord_y, const char *text)
     w = lbDisplay.GraphicsScreenWidth;
     h = lbDisplay.GraphicsScreenHeight;
     ep.X3d = coord_x - engn_xc;
-    ep.Y3d = (alt_at_point(coord_x, coord_y) >> 5) - engn_yc;
-    ep.Z3d = coord_y - engn_zc;
+    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
+    ep.Z3d = coord_z - engn_zc;
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
         draw_text(ep.pp.X, ep.pp.Y, text, colour_lookup[2]);
+    }
+}
+
+void draw_number_transformed_at_ground(int coord_x, int coord_z, int num)
+{
+    char locstr[52];
+    struct EnginePoint ep;
+    short w, h;
+
+    w = lbDisplay.GraphicsScreenWidth;
+    h = lbDisplay.GraphicsScreenHeight;
+    ep.X3d = coord_x - engn_xc;
+    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
+    ep.Z3d = coord_z - engn_zc;
+    transform_point(&ep);
+    if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
+    {
+        sprintf(locstr, "%d", num);
+        draw_text(ep.pp.X, ep.pp.Y, locstr, colour_lookup[2]);
+    }
+}
+
+void draw_text_transformed(int coord_x, int coord_y, int coord_z, const char *text)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_text_transformed\n"
+        : : "a" (coord_x), "d" (coord_y), "b" (coord_z), "c" (text));
+    return;
+#endif
+    struct EnginePoint ep;
+    short w, h;
+
+    w = lbDisplay.GraphicsScreenWidth;
+    h = lbDisplay.GraphicsScreenHeight;
+    ep.X3d = coord_x - engn_xc;
+    ep.Y3d = coord_y - engn_yc;
+    ep.Z3d = coord_z - engn_zc;
+    transform_point(&ep);
+    if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
+    {
+        draw_text(ep.pp.X, ep.pp.Y, text, colour_lookup[3]);
+    }
+}
+
+void draw_number_transformed(int coord_x, int coord_y, int coord_z, int num)
+{
+    char locstr[52];
+    struct EnginePoint ep;
+    short w, h;
+
+    w = lbDisplay.GraphicsScreenWidth;
+    h = lbDisplay.GraphicsScreenHeight;
+    ep.X3d = coord_x - engn_xc;
+    ep.Y3d = coord_y - engn_yc;
+    ep.Z3d = coord_z - engn_zc;
+    transform_point(&ep);
+    if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
+    {
+        sprintf(locstr, "%d", num);
+        draw_text(ep.pp.X, ep.pp.Y, locstr, colour_lookup[3]);
     }
 }
 
@@ -3164,7 +3225,6 @@ void draw_engine_unk3_last(short x, short z)
         for (cz = z_beg; cz < z_end; cz++)
         {
           struct MyMapElement *p_mapel;
-          char str[52];
           short vl;
 
           if (cx < 0 || cx > 127 || cz < 0 || cz > 127)
@@ -3193,8 +3253,7 @@ void draw_engine_unk3_last(short x, short z)
               cor_y += 128;
 
               p_cvlist = &game_col_vects_list[vl];
-              sprintf(str, "%d", p_cvlist->Object);
-              draw_text_transformed_at_ground(cor_x, cor_y, str);
+              draw_number_transformed_at_ground(cor_x, cor_y, p_cvlist->Object);
             }
         }
     }
