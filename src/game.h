@@ -536,7 +536,6 @@ extern ushort word_176E38;
 extern struct TbSprite *pop1_sprites;
 
 extern struct TbSprite *unk2_sprites;
-extern struct TbSprite *unk2_sprites_end;
 
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
@@ -545,6 +544,9 @@ extern ulong nsta_size;
 extern TbPixel colour_grey1;
 extern TbPixel colour_grey2;
 extern TbPixel colour_brown2;
+
+extern short *dword_1C529C[6];
+extern short *landmap_2B4;
 
 extern ubyte *memload;
 #define memload_len 16384
@@ -605,8 +607,8 @@ extern struct PurpleDrawItem *purple_draw_list;
 extern ubyte *save_game_buffer;
 extern char save_active_desc[28];
 extern ubyte *unkn_buffer_05;
-extern ubyte *data_1c6de4;
-extern ubyte *data_1c6de8;
+extern ubyte *dword_1C6DE4;
+extern ubyte *dword_1C6DE8;
 extern ubyte scientists_lost;
 extern ulong new_mods_researched;
 extern ulong new_weapons_researched;

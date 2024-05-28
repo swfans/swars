@@ -153,8 +153,21 @@ extern ubyte *med2_font_data;
 extern ubyte *big_font_data;
 
 extern ubyte *pointer_data;
+
 extern struct TbSprite *sprites_Icons0_0;
 extern struct TbSprite *sprites_Icons0_0_end;
+extern ubyte *sprites_Icons0_0_data;
+
+extern struct TbSprite *unk1_sprites;
+extern struct TbSprite *unk1_sprites_end;
+extern ubyte *unk1_sprites_data;
+
+extern struct TbSprite *unk3_sprites_end;
+extern ubyte *unk3_sprites_data;
+
+extern struct TbSprite *unk2_sprites_end;
+extern ubyte *unk2_sprites_data;
+
 extern struct TbSprite *pop1_sprites_end;
 extern ubyte *pop1_data;
 
@@ -6191,9 +6204,242 @@ void BAT_play(void)
 
 TbResult init_read_all_sprite_files(void)
 {
+#if 0
     TbResult ret;
     asm volatile ("call ASM_init_read_all_sprite_files\n"
         : "=r" (ret) : );
+    return ret;
+#endif
+    char locstr[52];
+    PathInfo *pinfo;
+    ubyte *bufptr;
+    TbResult ret;
+    long len;
+    int i;
+
+    pinfo = &game_dirs[DirPlace_Data];
+    bufptr = (ubyte *)&purple_draw_list[750];
+    ret = Lb_OK;
+
+    sprites_Icons0_0_data = bufptr;
+    sprintf(locstr, "%s/icons0-0.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    bufptr += len;
+    sprites_Icons0_0 = (struct TbSprite *)bufptr;
+    sprintf(locstr, "%s/icons0-0.tab", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 32 * sizeof(struct TbSprite);
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+    sprites_Icons0_0_end = (struct TbSprite *)bufptr;
+
+    unk1_sprites_data = bufptr;
+    sprintf(locstr, "%s/w-icons.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    bufptr += len;
+    unk1_sprites = (struct TbSprite *)bufptr;
+    sprintf(locstr, "%s/w-icons.tab", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 32 * sizeof(struct TbSprite);
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+    unk1_sprites_end = (struct TbSprite *)bufptr;
+
+    unk2_sprites_data = bufptr;
+    sprintf(locstr, "%s/panel0-0.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    bufptr += len;
+    unk2_sprites = (struct TbSprite *)bufptr;
+    sprintf(locstr, "%s/panel0-0.tab", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 32 * sizeof(struct TbSprite);
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+    unk2_sprites_end = (struct TbSprite *)bufptr;
+
+    unk3_sprites_data = bufptr;
+    sprintf(locstr, "%s/mouse-0.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    bufptr += len;
+    unk3_sprites = (struct TbSprite *)bufptr;
+    sprintf(locstr, "%s/mouse-0.tab", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 32 * sizeof(struct TbSprite);
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+    unk3_sprites_end = (struct TbSprite *)bufptr;
+
+    med_font_data = bufptr;
+    sprintf(locstr, "%s/font0-1.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    bufptr += len;
+    med_font = (struct TbSprite *)bufptr;
+    sprintf(locstr, "%s/font0-1.tab", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 128 * sizeof(struct TbSprite);
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+    med_font_end = (struct TbSprite *)bufptr;
+
+    big_font_data = bufptr;
+    sprintf(locstr, "%s/font0-2.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    bufptr += len;
+    big_font = (struct TbSprite *)bufptr;
+    sprintf(locstr, "%s/font0-2.tab", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 128 * sizeof(struct TbSprite);
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+    big_font_end = (struct TbSprite *)bufptr;
+
+    small_med_font_data = bufptr;
+    sprintf(locstr, "%s/font0-3.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    bufptr += len;
+    small_med_font = (struct TbSprite *)bufptr;
+    sprintf(locstr, "%s/font0-3.tab", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 128 * sizeof(struct TbSprite);
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+    small_med_font_end = (struct TbSprite *)bufptr;
+
+    med2_font_data = bufptr;
+    sprintf(locstr, "%s/font0-4.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    bufptr += len;
+    med2_font = (struct TbSprite *)bufptr;
+    sprintf(locstr, "%s/font0-4.tab", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 128 * sizeof(struct TbSprite);
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+    med2_font_end = (struct TbSprite *)bufptr;
+
+    small2_font_data = bufptr;
+    sprintf(locstr, "%s/font0-5.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    bufptr += len;
+    small2_font = (struct TbSprite *)bufptr;
+    sprintf(locstr, "%s/font0-5.tab", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 128 * sizeof(struct TbSprite);
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+    small2_font_end = (struct TbSprite *)bufptr;
+
+    dword_1C6DE4 = bufptr;
+    bufptr += 24480;
+    dword_1C6DE8 = bufptr;
+    bufptr += 24480;
+
+    for (i = 0; i < 6; i++)
+    {
+        dword_1C529C[i] = (short *)bufptr;
+        sprintf(locstr, "%s/mapout%02d.dat", pinfo->directory, i);
+        len = LbFileLoadAt(locstr, dword_1C529C[i]);
+        if (len == -1) {
+            LOGSYNC("Could not read file '%s'", locstr);
+            ret = Lb_FAIL;
+            len = 64;
+            LbMemorySet(bufptr, '\0', len);
+        }
+        bufptr += len;
+    }
+
+    landmap_2B4 = (short *)bufptr;
+    sprintf(locstr, "%s/mapinsid.dat", pinfo->directory);
+    len = LbFileLoadAt(locstr, bufptr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 64;
+        LbMemorySet(bufptr, '\0', len);
+    }
+    bufptr += len;
+
+    // TODO why adding this without remembering previous pointer?
+    bufptr += 41005;
+    back_buffer = bufptr;
+
+    LbSpriteSetup(sprites_Icons0_0, sprites_Icons0_0_end, sprites_Icons0_0_data);
+    LbSpriteSetup(unk1_sprites, unk1_sprites_end, unk1_sprites_data);
+    LbSpriteSetup(unk2_sprites, unk2_sprites_end, unk2_sprites_data);
+    LbSpriteSetup(unk3_sprites, unk3_sprites_end, unk3_sprites_data);
+    LbSpriteSetup(small_font, small_font_end, small_font_data);
+    LbSpriteSetup(small2_font, small2_font_end, small2_font_data);
+    LbSpriteSetup(small_med_font, small_med_font_end, small_med_font_data);
+    LbSpriteSetup(med_font, med_font_end, med_font_data);
+    LbSpriteSetup(med2_font, med2_font_end, med2_font_data);
+    LbSpriteSetup(big_font, big_font_end, big_font_data);
+
+    if (ret == Lb_FAIL) {
+        LOGERR("Some files were not loaded successfully");
+        ingame.DisplayMode = DpM_UNKN_1;
+    }
     return ret;
 }
 
@@ -9237,7 +9483,7 @@ void update_mission_time(char a1)
 
 void purple_unkn1_data_to_screen(void)
 {
-    memcpy(data_1c6de4, data_1c6de8, 0x5FA0u);
+    memcpy(dword_1C6DE4, dword_1C6DE8, 24480);
 }
 
 void net_unkn_func_29(short a1, short a2, ubyte a3, sbyte a4, ubyte a5)

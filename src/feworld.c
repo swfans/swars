@@ -66,8 +66,6 @@ extern short word_1C4896[6];
 extern short word_1C48A2[6];
 extern short word_1C48AE[6];
 extern short word_1C48CC;
-extern short * dword_1C529C[6];
-extern short *landmap_2B4;
 
 extern short word_1C6E08;
 extern short word_1C6E0A;

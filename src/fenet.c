@@ -443,7 +443,7 @@ void purple_unkn3_data_to_screen(void)
 {
     LbScreenSetGraphicsWindow(net_unkn21.X + 4, net_unkn21.Y + 4,
       255, 96);
-    LbScreenCopy(data_1c6de8, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
+    LbScreenCopy(dword_1C6DE8, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
 }
@@ -452,7 +452,7 @@ void purple_unkn4_data_to_screen(void)
 {
     LbScreenSetGraphicsWindow(net_unkn21.X + 4, net_unkn21.Y + 4,
       255, 96);
-    LbScreenCopy(data_1c6de4, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
+    LbScreenCopy(dword_1C6DE4, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
 }
