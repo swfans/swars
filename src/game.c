@@ -4281,7 +4281,31 @@ void person_resurrect(struct Thing *p_person)
     p_person->Flag &= ~TngF_Unkn0002;
     p_person->Flag &= ~TngF_Unkn02000000;
     p_person->State = PerSt_WAIT;
+    p_person->Health = p_person->U.UPerson.MaxHealth * 3 / 4;
     set_person_anim_mode(p_person, 1);
+}
+
+void person_set_helath_to_max_limit(struct Thing *p_person)
+{
+    p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
+    p_person->Health = 2 * p_person->U.UPerson.MaxHealth; // double health - fill red bar
+}
+
+void person_set_energy_to_max_limit(struct Thing *p_person)
+{
+    p_person->U.UPerson.MaxEnergy = 32000;
+    p_person->U.UPerson.Energy = p_person->U.UPerson.MaxEnergy;
+}
+
+/** Artificially increases persuasion power of a person to allow parsuade anyone.
+ */
+void person_set_persuade_power__to_allow_all(struct Thing *p_person)
+{
+    short max_required_pers_power;
+
+    max_required_pers_power = 20;
+    p_person->U.UPerson.PersuadePower = max(p_person->U.UPerson.PersuadePower,
+      max_required_pers_power);
 }
 
 void person_give_all_weapons(struct Thing *p_person)
@@ -4304,30 +4328,10 @@ void person_give_all_weapons(struct Thing *p_person)
     do_weapon_quantities1(p_person);
 }
 
-void beefup_all_agents(PlayerInfo *p_locplayer)
+void mark_all_weapons_researched(void)
 {
     ushort wtype;
-    int i;
 
-    for (i = 0; i < playable_agents; i++)
-    {
-        struct Thing *p_agent;
-        p_agent = p_locplayer->MyAgent[i];
-        if (p_agent->Type != TT_PERSON)
-            continue;
-        if ((p_agent->Flag & TngF_Unkn0002) != 0)
-            person_resurrect(p_agent);
-        person_give_all_weapons(p_agent);
-        if (lbShift & KMod_SHIFT)
-        {
-            person_give_best_mods(p_agent);
-
-            p_agent->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
-            p_agent->Health = 2 * p_agent->U.UPerson.MaxHealth; // double health - fill red bar
-            p_agent->U.UPerson.MaxEnergy = 32000;
-            p_agent->U.UPerson.Energy = p_agent->U.UPerson.MaxEnergy;
-        }
-    }
     for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
     {
         struct WeaponDef *wdef;
@@ -4338,6 +4342,72 @@ void beefup_all_agents(PlayerInfo *p_locplayer)
             continue;
 
         research_weapon_complete(wtype);
+    }
+}
+
+void resurrect_any_dead_agents(PlayerInfo *p_locplayer)
+{
+    int i;
+
+    for (i = 0; i < playable_agents; i++)
+    {
+        struct Thing *p_agent;
+        p_agent = p_locplayer->MyAgent[i];
+        if (p_agent->Type != TT_PERSON)
+            continue;
+        if ((p_agent->Flag & TngF_Unkn0002) != 0)
+            person_resurrect(p_agent);
+    }
+}
+
+void give_all_weapons_to_all_agents(PlayerInfo *p_locplayer)
+{
+    int i;
+
+    for (i = 0; i < playable_agents; i++)
+    {
+        struct Thing *p_agent;
+        p_agent = p_locplayer->MyAgent[i];
+        if (p_agent->Type != TT_PERSON)
+            continue;
+        if (thing_is_destroyed(p_agent->ThingOffset))
+            continue;
+        person_give_all_weapons(p_agent);
+    }
+    mark_all_weapons_researched();
+}
+
+void give_best_mods_to_all_agents(PlayerInfo *p_locplayer)
+{
+    int i;
+
+    for (i = 0; i < playable_agents; i++)
+    {
+        struct Thing *p_agent;
+        p_agent = p_locplayer->MyAgent[i];
+        if (p_agent->Type != TT_PERSON)
+            continue;
+        if (thing_is_destroyed(p_agent->ThingOffset))
+            continue;
+        person_give_best_mods(p_agent);
+    }
+}
+
+void set_max_stats_to_all_agents(PlayerInfo *p_locplayer)
+{
+    int i;
+
+    for (i = 0; i < playable_agents; i++)
+    {
+        struct Thing *p_agent;
+        p_agent = p_locplayer->MyAgent[i];
+        if (p_agent->Type != TT_PERSON)
+            continue;
+        if (thing_is_destroyed(p_agent->ThingOffset))
+            continue;
+        person_set_helath_to_max_limit(p_agent);
+        person_set_energy_to_max_limit(p_agent);
+        person_set_persuade_power__to_allow_all(p_agent);
     }
 }
 
@@ -4361,18 +4431,28 @@ void game_graphics_inputs(void)
             game_perspective = 5;
     }
 
-    if ((ingame.UserFlags & UsrF_Cheats) && lbKeyOn[KC_T] && (lbShift & KMod_ALT))
+    if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
-        lbKeyOn[KC_T] = 0;
-        teleport_current_agent(p_locplayer);
+        if (lbKeyOn[KC_T] && (lbShift == KMod_ALT))
+        {
+            lbKeyOn[KC_T] = 0;
+            teleport_current_agent(p_locplayer);
+        }
     }
 
     if ((ingame.UserFlags & UsrF_Cheats) && !in_network_game)
     {
-        if (lbKeyOn[KC_Q] && (lbShift == KMod_SHIFT || lbShift == KMod_NONE))
+        if (lbKeyOn[KC_Q] && (lbShift == KMod_NONE))
         {
             lbKeyOn[KC_Q] = 0;
-            beefup_all_agents(p_locplayer);
+            give_best_mods_to_all_agents(p_locplayer);
+            set_max_stats_to_all_agents(p_locplayer);
+        }
+        if (lbKeyOn[KC_Q] && (lbShift == KMod_SHIFT))
+        {
+            lbKeyOn[KC_Q] = 0;
+            resurrect_any_dead_agents(p_locplayer);
+            give_all_weapons_to_all_agents(p_locplayer);
         }
     }
 
@@ -8285,13 +8365,20 @@ ubyte do_user_interface(void)
         return 1;
     }
 
-    // Resurrection and best equipment cheat
+    // Resurrection and best equipment cheat; why is it in two places?
     if (p_locplayer->DoubleMode && (ingame.UserFlags & UsrF_Cheats) && !in_network_game)
     {
-        if (lbKeyOn[KC_Q] && ((lbShift == KMod_SHIFT) || (lbShift == KMod_NONE)))
+        if (lbKeyOn[KC_Q] && (lbShift == KMod_NONE))
         {
             lbKeyOn[KC_Q] = 0;
-            beefup_all_agents(p_locplayer);
+            give_best_mods_to_all_agents(p_locplayer);
+            set_max_stats_to_all_agents(p_locplayer);
+        }
+        if (lbKeyOn[KC_Q] && (lbShift == KMod_SHIFT))
+        {
+            lbKeyOn[KC_Q] = 0;
+            resurrect_any_dead_agents(p_locplayer);
+            give_all_weapons_to_all_agents(p_locplayer);
         }
     }
 

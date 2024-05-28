@@ -36,6 +36,7 @@
 #include "display.h"
 #include "game.h"
 #include "game_speed.h"
+#include "vehicle.h"
 #include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -636,47 +637,6 @@ TbBool screen_objective_text_set_failed(void)
 TbBool thing_arrived_at_obj(ThingIdx thing, struct Objective *p_objectv)
 {
     return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
-}
-
-TbBool thing_is_destroyed(ThingIdx thing)
-{
-    if (thing == 0) {
-        return true;
-    } else if (thing > 0) {
-        struct Thing *p_thing;
-        p_thing = &things[thing];
-        return ((p_thing->Flag & TngF_Unkn0002) != 0);
-    } else {
-        struct SimpleThing *p_sthing;
-        p_sthing = &sthings[thing];
-        return ((p_sthing->Flag & TngF_Unkn0002) != 0);
-    }
-}
-
-TbBool vehicle_is_destroyed(ThingIdx thing)
-{
-    struct Thing *p_thing;
-
-    if (thing <= 0)
-        return false;
-
-    p_thing = &things[thing];
-    return thing_is_destroyed(thing) || (p_thing->Type != TT_VEHICLE);
-}
-
-TbBool person_is_dead(ThingIdx thing)
-{
-    struct Thing *p_thing;
-
-    if (thing <= 0)
-        return false;
-
-    p_thing = &things[thing];
-
-    if (p_thing->Type != TT_PERSON)
-        return false;
-
-    return (p_thing->State == PerSt_DEAD);
 }
 
 /** Returns whether given thing has arrived at given objective position.

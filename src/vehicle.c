@@ -215,6 +215,17 @@ void init_mech(void)
         :  :  : "eax" );
 }
 
+TbBool vehicle_is_destroyed(ThingIdx thing)
+{
+    struct Thing *p_thing;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+    return thing_is_destroyed(thing) || (p_thing->Type != TT_VEHICLE);
+}
+
 void mech_unkn_func_02(void)
 {
     asm volatile ("call ASM_mech_unkn_func_02\n"

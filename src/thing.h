@@ -898,6 +898,8 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3);
 
 void things_debug_hud(void);
 
+TbBool thing_is_destroyed(ThingIdx thing);
+
 /** Delete the thing from `mapwho` chain.
  */
 TbResult delete_node(struct Thing *p_thing);

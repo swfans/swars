@@ -204,6 +204,21 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing)
     snprintf(s, buflen - (s-buf), " )");
 }
 
+TbBool thing_is_destroyed(ThingIdx thing)
+{
+    if (thing == 0) {
+        return true;
+    } else if (thing > 0) {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        return ((p_thing->Flag & TngF_Unkn0002) != 0);
+    } else {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        return ((p_sthing->Flag & TngF_Unkn0002) != 0);
+    }
+}
+
 TbResult delete_node(struct Thing *p_thing)
 {
     TbResult ret;

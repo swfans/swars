@@ -184,6 +184,8 @@ void init_mech(void);
 void mech_unkn_func_02(void);
 void mech_unkn_func_09(ThingIdx thing);
 
+TbBool vehicle_is_destroyed(ThingIdx thing);
+
 void veh_add(struct Thing *p_thing, short frame);
 
 ushort veh_passenger_count(struct Thing *p_veh);

@@ -437,6 +437,21 @@ void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing)
 }
 
 
+TbBool person_is_dead(ThingIdx thing)
+{
+    struct Thing *p_thing;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+
+    if (p_thing->Type != TT_PERSON)
+        return false;
+
+    return (p_thing->State == PerSt_DEAD);
+}
+
 ubyte person_mod_chest_level(struct Thing *p_person)
 {
     return cybmod_chest_level(&p_person->U.UPerson.UMod);
