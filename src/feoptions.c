@@ -40,6 +40,8 @@ extern struct ScreenButton options_gfx_buttons[16];
 
 extern short word_1C4866[3];
 
+extern short textpos[10];
+
 extern struct TbSprite *sprites_Icons0_0;
 
 // Shared with other screens
@@ -298,10 +300,60 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
 
 ubyte show_audio_tracks_box(struct ScreenBox *box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_audio_tracks_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#endif
+    int i;
+    ubyte drawn1 = true;
+    ubyte drawn2 = true;
+
+    if ((box->Flags & 0x0080) != 0)
+    {
+        box->Flags &= ~0x0080;
+        for (i = 0; i < 3; i++) {
+            textpos[i] = -5;
+        }
+    }
+    if (box->Timer == 255)
+    {
+        for (i = 0; i < 3; i++) {
+            textpos[i] = strlen(gui_strings[528 + i]);
+        }
+    }
+
+    lbFontPtr = med_font;
+    my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
+
+    if (drawn1)
+        drawn1 = flashy_draw_text(20,  4, gui_strings[528], 1, 0, &textpos[0], 0);
+    if (drawn2)
+        drawn2 = flashy_draw_text(20, 22, gui_strings[529], 1, 0, &textpos[1], 0);
+
+    if (drawn1)
+    {
+        //drawn1 = options_audio_buttons[0].DrawFn(&options_audio_buttons[0]); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn1) : "a" (&options_audio_buttons[0]), "g" (options_audio_buttons[0].DrawFn));
+        //drawn1 = options_audio_buttons[1].DrawFn(&options_audio_buttons[1]); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn1) : "a" (&options_audio_buttons[1]), "g" (options_audio_buttons[1].DrawFn));
+        //drawn1 = options_audio_buttons[2].DrawFn(&options_audio_buttons[2]); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn1) : "a" (&options_audio_buttons[2]), "g" (options_audio_buttons[2].DrawFn));
+    }
+    if (drawn2)
+    {
+        //drawn2 = options_audio_buttons[3].DrawFn(&options_audio_buttons[3]); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn2) : "a" (&options_audio_buttons[3]), "g" (options_audio_buttons[3].DrawFn));
+        //drawn2 = options_audio_buttons[4].DrawFn(&options_audio_buttons[4]); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn2) : "a" (&options_audio_buttons[4]), "g" (options_audio_buttons[4].DrawFn));
+    }
+    return drawn1 && drawn2;
 }
 
 void init_options_audio_screen_boxes(void)

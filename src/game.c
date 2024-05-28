@@ -6403,7 +6403,7 @@ TbResult init_read_all_sprite_files(void)
         sprintf(locstr, "%s/mapout%02d.dat", pinfo->directory, i);
         len = LbFileLoadAt(locstr, dword_1C529C[i]);
         if (len == -1) {
-            LOGSYNC("Could not read file '%s'", locstr);
+            LOGERR("Could not read file '%s'", locstr);
             ret = Lb_FAIL;
             len = 64;
             LbMemorySet(bufptr, '\0', len);

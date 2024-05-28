@@ -529,11 +529,11 @@ static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing 
 
     if ((p_person->Flag2 & 0x10) != 0)
         return false;
-    if (p_person->State == 13)
+    if (p_person->State == PerSt_DEAD)
         return false;
     if ((p_person->Flag & TngF_Unkn0002) != 0)
         return false;
-    if (p_person->State == 36)
+    if (p_person->State == PerSt_PERSON_BURNING)
         return false;
     if (abs((p_person->Y >> 3) - pos_y) >= 2048)
         return false;
