@@ -868,10 +868,8 @@ ThingIdx new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, 
         p_thing->U.UObject.PrevThing = p_clthing->U.UObject.PrevThing;
         p_thing->U.UObject.OffX = p_clthing->U.UObject.OffX;
         p_thing->U.UObject.OffZ = p_clthing->U.UObject.OffZ;
-#if 0 // Disabled until the domes entering is considered safe to enable
         p_thing->U.UObject.BuildStartVect = p_clthing->U.UObject.BuildStartVect;
         p_thing->U.UObject.BuildNumbVect = p_clthing->U.UObject.BuildNumbVect;
-#endif
         // Copy all fields from Turn down
         p_thing->U.UObject.Turn = p_clthing->U.UObject.Turn;
         p_thing->U.UObject.TurnPadOnPS = p_clthing->U.UObject.TurnPadOnPS;
