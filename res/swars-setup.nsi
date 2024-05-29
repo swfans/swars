@@ -68,7 +68,7 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 !define MUI_ICON "swars.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
 !define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Port Setup"
-!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\n$\r$\nBuild ${PRODUCT_VERSION}"
+!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\n$\r$\nBuild ${PRODUCT_VERSION}\nLevels ${LEVELS_VERSION}"
 
 
 ; --------------------
@@ -487,23 +487,23 @@ Function CopyGameFilesFromCD
 
   ;Update levels and maps from swars-levels repository
 
-  StrCpy $levels_md5 "2af6eca3cd139579f0f86cd10b0583f7"
+  StrCpy $levels_md5 "${LEVELS_PKG_MD5}"
 
-  !if /FileExists "$PLUGINSDIR\swars-levels-1_0_0_15.zip"
+  !if /FileExists "$PLUGINSDIR\${LEVELS_PACKAGE}.zip"
   !else
  	 Call DownloadLevels
   !endif
 
   ;Check MD5 of downloaded file to see if it's intact
 
-  md5dll::GetMD5File "$PLUGINSDIR\swars-levels-1_0_0_15.zip"
+  md5dll::GetMD5File "$PLUGINSDIR\${LEVELS_PACKAGE}.zip"
   Pop $0
   StrCmp $0 $levels_md5 extract_level_files retry_level_download
 
 retry_level_download:
  DetailPrint "Error detected with level files zip, retrying download"
  Call DownloadLevels
- md5dll::GetMD5File "$PLUGINSDIR\swars-levels-1_0_0_15.zip"
+ md5dll::GetMD5File "$PLUGINSDIR\${LEVELS_PACKAGE}.zip"
  Pop $0
  StrCmp $0 $levels_md5 extract_level_files 0
  SetErrors
@@ -513,7 +513,7 @@ retry_level_download:
 
 extract_level_files:
  DetailPrint "Extracting updated game levels..."
- nsisunz::Unzip  "$PLUGINSDIR\swars-levels-1_0_0_15.zip" "$PLUGINSDIR\"
+ nsisunz::Unzip  "$PLUGINSDIR\${LEVELS_PACKAGE}.zip" "$PLUGINSDIR\"
  CopyFiles /SILENT $PLUGINSDIR\SWARS\levels\* $INSTDIR\levels
  CopyFiles /SILENT $PLUGINSDIR\SWARS\maps\* $INSTDIR\maps
 
@@ -530,7 +530,7 @@ FunctionEnd
 
 Function DownloadLevels
   DetailPrint "Downloading latest game levels from Github..."
-  inetc::get "https://github.com/swfans/swars-levels/releases/download/1.0.0.15/swars-levels-1_0_0_15.zip" "$PLUGINSDIR\swars-levels-1_0_0_15.zip"
+  inetc::get "https://github.com/swfans/swars-levels/releases/download/${LEVELS_VERSION}/${LEVELS_PACKAGE}.zip" "$PLUGINSDIR\${LEVELS_PACKAGE}.zip"
 FunctionEnd
 
 

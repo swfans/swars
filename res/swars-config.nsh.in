@@ -3,3 +3,7 @@
 ; Version number of package
 !define PRODUCT_VERSION "@VERSION@"
 
+; Version number and file name for levels package
+!define LEVELS_VERSION "1.0.0.18"
+!define LEVELS_PACKAGE "swars-levels-1_0_0_18"
+!define LEVELS_PKG_MD5 "629a3a7d091ed1c6c5760148406f775d"
