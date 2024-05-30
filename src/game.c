@@ -4020,6 +4020,7 @@ void screen_wait_seconds_or_until_continue_key(int sec)
         if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
             break;
 
+        swap_wscreen();
         game_update();
     }
     clear_key_pressed(KC_SPACE);
@@ -4051,8 +4052,8 @@ void init_outro(void)
     screen_wait_seconds_or_until_continue_key(10);
 
     LbPaletteFade(0, 200, 1);
-    LbScreenClear(0);
-    swap_wscreen();
+
+    show_black_screen();
     StopAllSamples();
     reset_heaps();
     setup_heaps(100);
@@ -4068,12 +4069,14 @@ void init_outro(void)
     for (i = 0; i < 128; i++)
     {
         if (i & 1)
-          change_brightness(1);
+            change_brightness(1);
         traffic_unkn_func_01();
         process_engine_unk1();
         process_sound_heap();
         func_2e440();
+
         swap_wscreen();
+        game_update();
         LbScreenClear(0);
     }
 
@@ -4103,12 +4106,14 @@ void init_outro(void)
             func_cc0d4((char **)&people_credits_groups[2 * outro_unkn03]);
             if (data_1ddb68 + 50 < outro_unkn02)
             {
-              outro_unkn02 = 0;
-              if (++outro_unkn03 == people_groups_count)
-                  outro_unkn03 = 0;
+                outro_unkn02 = 0;
+                outro_unkn03++;
+                if (outro_unkn03 == people_groups_count)
+                    outro_unkn03 = 0;
             }
           }
           swap_wscreen();
+          game_update();
           LbScreenClear(0);
     }
     clear_key_pressed(KC_SPACE);
@@ -10781,11 +10786,20 @@ void show_menu_screen(void)
     }
 }
 
+TbBool skip_redraw_this_turn(void)
+{
+    if ((ingame.Flags & GamF_Unkn0020) != 0)
+    {
+        return ((gameturn & 0xF) != 0);
+    }
+    return false;
+}
+
 void show_game_screen(void)
 {
     PlayCDTrack(ingame.CDTrack);
 
-    if (((ingame.Flags & GamF_Unkn0020) != 0) && ((gameturn & 0xF) != 0))
+    if (skip_redraw_this_turn())
         return;
 
     show_game_engine();
@@ -10897,58 +10911,57 @@ void game_process(void)
     LOGDBG("WSCREEN 0x%lx", (ulong)lbDisplay.WScreen);
     while ( !exit_game )
     {
-      process_sound_heap();
-      navi2_unkn_counter -= 2;
-      if (navi2_unkn_counter < 0)
-          navi2_unkn_counter = 0;
-      if (navi2_unkn_counter > navi2_unkn_counter_max)
-          navi2_unkn_counter_max = navi2_unkn_counter;
-      if (keyboard_mode_direct)
-          input_char = LbKeyboard();
-      if (ingame.DisplayMode == DpM_UNKN_37) {
-          LOGDBG("id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
-      }
-      game_update();
-      if (!LbScreenIsLocked()) {
-          while (LbScreenLock() != Lb_SUCCESS)
-              ;
-      }
-      input();
-      update_tick_time();
-      draw_game();
-      debug_trace_turn_bound(gameturn + 100);
-      load_packet();
-      if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
-        ((ingame.Flags & GamF_Unkn8000) != 0) )
-          LbPaletteSet(display_palette);
-      active_flags_general_unkn01 = ingame.Flags;
-      if ((ingame.DisplayMode == DpM_UNKN_32)
-        || (ingame.DisplayMode == DpM_UNKN_1)
-        || (ingame.DisplayMode == DpM_UNKN_3B))
-          process_things();
-      if (debug_hud_things)
-          things_debug_hud();
-      if (ingame.DisplayMode != DpM_UNKN_37)
-          process_packets();
-      joy_input();
-      if (ingame.DisplayMode == DpM_UNKN_37) {
-          swap_wscreen();
-      }
-      else if (((ingame.Flags & GamF_Unkn0020) == 0)
-        || ((gameturn & 0xF) == 0)) {
-          LbScreenSwapClear(0);
-      }
-      update_unkn_changing_colors();
-      game_process_orbital_station_explode();
-      gameturn++;
-      scene_post_effect_prepare();
+        process_sound_heap();
+        navi2_unkn_counter -= 2;
+        if (navi2_unkn_counter < 0)
+            navi2_unkn_counter = 0;
+        if (navi2_unkn_counter > navi2_unkn_counter_max)
+            navi2_unkn_counter_max = navi2_unkn_counter;
+        if (keyboard_mode_direct)
+            input_char = LbKeyboard();
+        if (ingame.DisplayMode == DpM_UNKN_37) {
+            LOGDBG("id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
+        }
+        input();
+        update_tick_time();
+        draw_game();
+        debug_trace_turn_bound(gameturn + 100);
+        load_packet();
+        if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
+          ((ingame.Flags & GamF_Unkn8000) != 0) )
+            LbPaletteSet(display_palette);
+        active_flags_general_unkn01 = ingame.Flags;
+        if ((ingame.DisplayMode == DpM_UNKN_32)
+          || (ingame.DisplayMode == DpM_UNKN_1)
+          || (ingame.DisplayMode == DpM_UNKN_3B))
+            process_things();
+        if (debug_hud_things)
+            things_debug_hud();
+        if (ingame.DisplayMode != DpM_UNKN_37)
+            process_packets();
+        joy_input();
+
+        if (ingame.DisplayMode == DpM_UNKN_37)
+        {
+            game_update();
+            swap_wscreen();
+        }
+        else if (!skip_redraw_this_turn())
+        {
+            game_update();
+            LbScreenSwapClear(0);
+        }
+
+        update_unkn_changing_colors();
+        game_process_orbital_station_explode();
+        gameturn++;
+        scene_post_effect_prepare();
     }
     PacketRecord_Close();
     LbPaletteFade(NULL, 0x10u, 1);
 }
 
-void
-game_quit(void)
+void game_quit(void)
 {
     host_reset();
     LbBaseReset();

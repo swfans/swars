@@ -98,25 +98,25 @@ display_set_full_screen (bool full_screen)
     }
 }
 
-void
-display_set_lowres_stretch (bool stretch)
+void display_set_lowres_stretch(bool stretch)
 {
-  if (stretch)
-      LbScreenSetMinScreenSurfaceDimension(400);
-  else
-      LbScreenSetMinScreenSurfaceDimension(1);
+    if (stretch)
+        LbScreenSetMinScreenSurfaceDimension(400);
+    else
+        LbScreenSetMinScreenSurfaceDimension(1);
 }
 
-void
-display_lock (void)
+void display_lock(void)
 {
-  LbScreenLock();
+    if (!LbScreenIsLocked()) {
+        while (LbScreenLock() != Lb_SUCCESS)
+            ;
+    }
 }
 
-void
-display_unlock (void)
+void display_unlock(void)
 {
-  LbScreenUnlock();
+    LbScreenUnlock();
 }
 
 void setup_simple_screen_mode(TbScreenMode mode)

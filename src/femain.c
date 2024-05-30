@@ -1257,8 +1257,8 @@ void show_mission_loading_screen(void)
         if ((loading_INITIATING_box.Flags & GBxFlg_Unkn1000) != 0)
             finished++;
         draw_purple_screen();
-        swap_wscreen();
 
+        swap_wscreen();
         game_update();
     }
     while (finished <= game_num_fps/2);
