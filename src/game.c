@@ -1456,18 +1456,22 @@ void draw_hud_target2(short dcthing, short target)
 {
     struct Thing *p_dcthing;
     struct Thing *p_target;
-    short x, y;
+    struct EnginePoint ep;
 
     p_dcthing = &things[dcthing];
     p_target = &things[target];
-    x = p_target->X >> 8;
-    y = p_target->Y >> 8;
+
+    ep.X3d = PRCCOORD_TO_MAPCOORD(p_target->X) - engn_xc;
+    ep.Z3d = PRCCOORD_TO_MAPCOORD(p_target->Z) - engn_zc;
+    ep.Y3d = (p_target->Y >> 5) - engn_yc;
+    transform_point(&ep);
+
 
     if (p_dcthing->U.UPerson.CurrentWeapon == WEP_RAP)
     {
         struct Thing *p_dctarget;
         p_dctarget = p_dcthing->PTarget;
-        if (p_dctarget != NULL && ((p_dctarget->Flag & 0x0002) == 0))
+        if ((p_dctarget != NULL) && ((p_dctarget->Flag & TngF_Unkn0002) == 0))
         {
             int sz;
 
@@ -1476,7 +1480,6 @@ void draw_hud_target2(short dcthing, short target)
                 sz = 6;
             draw_target_person(p_dctarget, sz);
         }
-        goto LABEL_52;
     }
     else
     {
@@ -1487,7 +1490,7 @@ void draw_hud_target2(short dcthing, short target)
             draw_target_vehicle(p_target);
             break;
         case 3:
-            if ((p_target->Flag & 0x10000000) != 0) {
+            if ((p_target->Flag & TngF_InVehicle) != 0) {
                 p_dctarget = &things[p_target->U.UPerson.Vehicle];
             } else {
                 p_dctarget = p_target;
@@ -1496,9 +1499,8 @@ void draw_hud_target2(short dcthing, short target)
             break;
         }
     }
-LABEL_52:
-    draw_hud_health_bar(x, y, p_target);
-    draw_hud_shield_bar(x, y, p_target);
+    draw_hud_health_bar(ep.pp.X, ep.pp.Y, p_target);
+    draw_hud_shield_bar(ep.pp.X, ep.pp.Y, p_target);
     dword_176CB8 = frame[dword_176CB8].Next;
 }
 
@@ -1525,9 +1527,13 @@ void draw_hud(int dcthing)
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
-    if (((ingame.TrackThing != 0) && (things[ingame.TrackThing].Flag & TngF_PlayerAgent) == 0))
-        return;
-
+    if (ingame.TrackThing != 0)
+    {
+        struct Thing *p_trktng;
+        p_trktng = &things[ingame.TrackThing];
+        if ((p_trktng->Flag & TngF_PlayerAgent) == 0)
+            return;
+    }
     if ((ingame.Flags & GamF_HUDPanel) == 0)
         return;
 
@@ -1562,7 +1568,7 @@ void draw_hud(int dcthing)
 
             p_agent = p_locplayer->MyAgent[plagent];
             number_player(p_agent, plagent);
-            if ((p_agent->Flag & 0x1000) != 0)
+            if ((p_agent->Flag & TngF_Unkn1000) != 0)
             {
                 short ctlmode;
                 ctlmode = p_locplayer->UserInput[plagent].ControlMode & 0x1FFF;
@@ -1582,10 +1588,7 @@ void draw_hud(int dcthing)
         target = p_locplayer->field_102;
         if (target > 0)
         {
-            struct Thing *p_target;
-
-            p_target = &things[target];
-            if ((p_target->Flag & TngF_Unkn0002) == 0)
+            if (!thing_is_destroyed(target))
                 draw_hud_target2(dcthing, target);
         }
         draw_new_panel();
