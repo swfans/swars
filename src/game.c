@@ -405,8 +405,7 @@ bool game_initialise(void)
     return true;
 }
 
-void
-game_handle_sdl_events (void)
+void game_handle_sdl_events(void)
 {
     TbBool contn;
     contn = LbWindowsControl();
@@ -10923,9 +10922,9 @@ void game_process(void)
         ((ingame.Flags & GamF_Unkn8000) != 0) )
           LbPaletteSet(display_palette);
       active_flags_general_unkn01 = ingame.Flags;
-      if ((ingame.DisplayMode == DpM_UNKN_32) ||
-          (ingame.DisplayMode == DpM_UNKN_1) ||
-          (ingame.DisplayMode == DpM_UNKN_3B))
+      if ((ingame.DisplayMode == DpM_UNKN_32)
+        || (ingame.DisplayMode == DpM_UNKN_1)
+        || (ingame.DisplayMode == DpM_UNKN_3B))
           process_things();
       if (debug_hud_things)
           things_debug_hud();
@@ -10935,7 +10934,8 @@ void game_process(void)
       if (ingame.DisplayMode == DpM_UNKN_37) {
           swap_wscreen();
       }
-      else if ( !(ingame.Flags & GamF_Unkn0020) || ((gameturn & 0xF) == 0) ) {
+      else if (((ingame.Flags & GamF_Unkn0020) == 0)
+        || ((gameturn & 0xF) == 0)) {
           LbScreenSwapClear(0);
       }
       update_unkn_changing_colors();
@@ -11009,7 +11009,7 @@ void game_update(void)
 
 void engine_reset(void)
 {
-  LbMemoryFree(engine_mem_alloc_ptr);
+    LbMemoryFree(engine_mem_alloc_ptr);
 }
 
 void host_reset(void)
