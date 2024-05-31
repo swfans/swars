@@ -20,6 +20,7 @@
 
 #include "game.h"
 #include "guitext.h"
+#include "hud_panel.h"
 #include "people.h"
 #include "thing.h"
 #include "weapon.h"
@@ -202,6 +203,19 @@ void add_agent(ulong weapons, ushort mods)
 {
     asm volatile ("call ASM_add_agent\n"
         : : "a" (weapons), "d" (mods));
+}
+
+short direct_control_thing_for_player(short plyr)
+{
+    PlayerInfo *p_player;
+    short dcthing;
+
+    p_player = &players[plyr];
+    if (p_player->DoubleMode)
+        dcthing = p_player->DirectControl[byte_153198-1];
+    else
+        dcthing = p_player->DirectControl[0];
+    return dcthing;
 }
 
 /******************************************************************************/

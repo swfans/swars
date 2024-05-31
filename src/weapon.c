@@ -698,6 +698,14 @@ short current_weapon_range(struct Thing *p_person)
   return wdef->RangeBlocks << 8;
 }
 
+sbyte find_nth_weapon_held(ushort index, ubyte n)
+{
+    char ret;
+    asm volatile ("call ASM_find_nth_weapon_held\n"
+        : "=r" (ret) : "a" (index), "d" (n));
+    return ret;
+}
+
 ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person)
 {
     ulong credits;
