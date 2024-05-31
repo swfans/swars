@@ -46,8 +46,14 @@ struct EnginePoint {
 
 #pragma pack()
 /******************************************************************************/
+extern long dword_176D10;
+extern long dword_176D14;
+extern long dword_176D18;
+extern long dword_176D1C;
+extern long dword_176D3C;
+extern long dword_176D40;
 
-void transform_point(struct EnginePoint *eptr);
+void transform_point(struct EnginePoint *p_ep);
 
 void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c);
 /******************************************************************************/

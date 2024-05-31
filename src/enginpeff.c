@@ -24,15 +24,13 @@
 #include "bfscreen.h"
 #include "bfutility.h"
 #include "display.h"
+#include "engintrns.h"
 #include "game_speed.h"
 #include "scanner.h"
 #include "swlog.h"
 /******************************************************************************/
 ushort gamep_scene_effect_intensity = 1000;
 short gamep_scene_effect_change = -1;
-
-extern long dword_176D10;
-extern long dword_176D14;
 
 void game_process_sub08(void)
 {

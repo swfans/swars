@@ -18,13 +18,68 @@
 /******************************************************************************/
 #include "engintrns.h"
 
+#include "display.h"
+#include "game.h"
 #include "swlog.h"
 /******************************************************************************/
 
-void transform_point(struct EnginePoint *eptr)
+void transform_point(struct EnginePoint *p_ep)
 {
+#if 0
     asm volatile ("call ASM_transform_point\n"
-        :  : "a" (eptr));
+        :  : "a" (p_ep));
+    return;
+#endif
+    int fctr_a, fctr_b, fctr_c;
+    int scr_shx, scr_shy;
+
+    p_ep->Y3d -= 8 * engn_yc;
+    fctr_a = (dword_176D14 * p_ep->X3d - dword_176D10 * p_ep->Z3d) >> 16;
+    fctr_b = (dword_176D14 * p_ep->Z3d + dword_176D10 * p_ep->X3d) >> 16;
+    fctr_c = (dword_176D1C * p_ep->Y3d - dword_176D18 * fctr_b) >> 16;
+
+    p_ep->Z3d = (dword_176D1C * fctr_b + dword_176D18 * p_ep->Y3d) >> 16;
+    p_ep->X3d = overall_scale * fctr_a;
+    p_ep->Y3d = overall_scale * fctr_c;
+
+    if (game_perspective == 5)
+        scr_shx = (0x4000 - p_ep->Z3d) * (p_ep->X3d >> 11) >> 14;
+    else
+        scr_shx = p_ep->X3d >> 11;
+
+    p_ep->pp.X = dword_176D3C + scr_shx;
+    if (p_ep->pp.X < 0)
+    {
+        p_ep->Flags |= 0x01;
+        if (p_ep->pp.X < -2000)
+            p_ep->pp.X = -2000;
+    }
+    else if (p_ep->pp.X >= vec_window_width)
+    {
+        p_ep->Flags |= 0x02;
+        if (p_ep->pp.X > 2000)
+            p_ep->pp.X = 2000;
+    }
+
+    if (game_perspective == 5)
+        scr_shy = (0x4000 - p_ep->Z3d) * (p_ep->Y3d >> 11) >> 14;
+    else
+        scr_shy = p_ep->Y3d >> 11;
+
+    p_ep->pp.Y = dword_176D40 - scr_shy;
+    if (p_ep->pp.Y < 0)
+    {
+        p_ep->Flags |= 0x04;
+        if (p_ep->pp.Y < -2000)
+            p_ep->pp.Y = -2000;
+    }
+    else if (p_ep->pp.Y >= vec_window_height)
+    {
+        p_ep->Flags |= 0x08;
+        if (p_ep->pp.Y > 2000)
+            p_ep->pp.Y = 2000;
+    }
+    p_ep->Flags |= 0x40;
 }
 
 /******************************************************************************/

@@ -254,10 +254,6 @@ extern short word_152F00;
 
 extern long dword_176D10;
 extern long dword_176D14;
-extern long dword_176D18;
-extern long dword_176D1C;
-extern long dword_176D3C;
-extern long dword_176D40;
 
 extern long dword_176D70;
 extern long dword_176D74;
