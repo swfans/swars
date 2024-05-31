@@ -1463,12 +1463,13 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
 #endif
     int dx, dy;
     int hp_per_px, val_cur;
-    int h_total, h_cur, h_ext;
+    int h_total, h_cur, h_ext, w;
     TbPixel colour;
 
     dx = 9 * overall_scale >> 8;
     dy = 10 * (overall_scale) >> 8;
     h_total = -15 * (overall_scale) >> 8;
+    w = 2 * overall_scale >> 8;
 
     hp_per_px = p_thing->U.UPerson.MaxHealth / dy;
     if (hp_per_px == 0)
@@ -1481,18 +1482,18 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
 
     h_cur = val_cur / hp_per_px;
     if (h_cur > dy)
-      h_cur = 10 * (overall_scale) >> 8;
+      h_cur = dy;
 
     lbDisplay.DrawFlags = 0x0004;
     colour = colour_lookup[4];
-    LbDrawBox(dx + x, y + h_total, 2, 10 * overall_scale >> 8, colour);
+    LbDrawBox(dx + x, y + h_total, w, dy, colour);
 
     if (p_thing->Health >= 0)
     {
         lbDisplay.DrawFlags = 0;
         if (h_cur < 3)
             colour = colour_lookup[2];
-        LbDrawBox(x + dx, y + dy + h_total - h_cur, 2, h_cur, colour);
+        LbDrawBox(x + dx, y + dy + h_total - h_cur, w, h_cur, colour);
 
         // Extra health if the thing is above max (soul gun bonus)
         if (p_thing->Health > p_thing->U.UPerson.MaxHealth)
@@ -1503,9 +1504,9 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
 
             lbDisplay.DrawFlags = 0x0004;
             colour = colour_lookup[5];
-            LbDrawBox(dx + x, h_total + y, 2, dy, colour);
+            LbDrawBox(dx + x, y + h_total, w, dy, colour);
             lbDisplay.DrawFlags = 0;
-            LbDrawBox(x + dx, y + dy + h_total - h_ext, 2, h_ext, colour);
+            LbDrawBox(x + dx, y + dy + h_total - h_ext, w, h_ext, colour);
         }
     }
 }
@@ -1519,28 +1520,31 @@ void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
 #endif
     int dx, dy;
     int sp_per_px;
-    int h_total, h_cur;
+    int h_total, h_cur, w;
     TbPixel colour;
 
     dx = 15 * overall_scale >> 8;
     dy = 10 * overall_scale >> 8;
     h_total = -20 * overall_scale >> 8;
+    w = 2 * overall_scale >> 8;
+
     sp_per_px = p_thing->U.UPerson.MaxShieldEnergy / dy;
     if (sp_per_px == 0)
         sp_per_px = 1;
+
     h_cur = p_thing->U.UPerson.ShieldEnergy / sp_per_px;
     if (h_cur > dy)
-      h_cur = 10 * overall_scale >> 8;
+      h_cur = dy;
 
     colour = colour_lookup[4];
     lbDisplay.DrawFlags = 0x0004;
-    LbDrawBox(dx + x, h_total + y, 2, 10 * overall_scale >> 8, colour);
+    LbDrawBox(dx + x, h_total + y, w, dy, colour);
     if (p_thing->U.UPerson.ShieldEnergy > 0)
     {
         lbDisplay.DrawFlags = 0;
         if (h_cur < 3)
             colour = colour_lookup[2];
-        LbDrawBox(x + dx, y + dy + h_total - h_cur, 2, h_cur, colour);
+        LbDrawBox(x + dx, y + dy + h_total - h_cur, w, h_cur, colour);
     }
 }
 
