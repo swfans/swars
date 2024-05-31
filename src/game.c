@@ -1512,8 +1512,36 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
 
 void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
 {
+#if 0
     asm volatile ("call ASM_draw_hud_shield_bar\n"
         : : "a" (x), "d" (y), "b" (p_thing));
+    return;
+#endif
+    int dx, dy;
+    int sp_per_px;
+    int h_total, h_cur;
+    TbPixel colour;
+
+    dx = 15 * overall_scale >> 8;
+    dy = 10 * overall_scale >> 8;
+    h_total = -20 * overall_scale >> 8;
+    sp_per_px = p_thing->U.UPerson.MaxShieldEnergy / dy;
+    if (sp_per_px == 0)
+        sp_per_px = 1;
+    h_cur = p_thing->U.UPerson.ShieldEnergy / sp_per_px;
+    if (h_cur > dy)
+      h_cur = 10 * overall_scale >> 8;
+
+    colour = colour_lookup[4];
+    lbDisplay.DrawFlags = 0x0004;
+    LbDrawBox(dx + x, h_total + y, 2, 10 * overall_scale >> 8, colour);
+    if (p_thing->U.UPerson.ShieldEnergy > 0)
+    {
+        lbDisplay.DrawFlags = 0;
+        if (h_cur < 3)
+            colour = colour_lookup[2];
+        LbDrawBox(x + dx, y + dy + h_total - h_cur, 2, h_cur, colour);
+    }
 }
 
 void draw_hud_target2(short dcthing, short target)
