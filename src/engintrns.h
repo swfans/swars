@@ -44,6 +44,17 @@ struct EnginePoint {
   ubyte Flags; // TODO check if it is ushort
 };
 
+/** Short and Shaded version of Engine Point.
+ */
+struct ShEnginePoint {
+    short X;
+    short Y;
+    int field_4;
+    ubyte Flags;
+    short field_9;
+    short Shade;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern long dword_176D10;
@@ -54,6 +65,7 @@ extern long dword_176D3C;
 extern long dword_176D40;
 
 void transform_point(struct EnginePoint *p_ep);
+void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc);
 
 void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c);
 /******************************************************************************/

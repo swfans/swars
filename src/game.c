@@ -127,15 +127,6 @@ struct GamePanel
   ubyte Type;
 };
 
-struct UnknArrD {
-    short X;
-    short Y;
-    int field_4;
-    ubyte Flags;
-    short field_9;
-    short Shade;
-};
-
 struct Element;
 struct Frame;
 
@@ -3346,70 +3337,12 @@ void draw_explode(void)
         :  :  : "eax" );
 }
 
-void unkarrD_compute_position(struct UnknArrD *p_unknarrD, int dxc, int dyc, int dzc)
-{
-    int fctDxz, fctEzx, fcAyzx, fcByzx;
-    int scaByzx, scaCxz, scaDyxz, scaEyzx;
-    int lgtx, lgty;
-    ubyte flg;
-
-    fctDxz = (dword_176D14 * dxc - dword_176D10 * dzc) >> 16;
-    fctEzx = (dword_176D10 * dxc + dword_176D14 * dzc) >> 16;
-    fcAyzx = (dword_176D1C * dyc - dword_176D18 * fctEzx) >> 16;
-    fcByzx = (dword_176D18 * dyc + dword_176D1C * fctEzx) >> 16;
-    scaCxz = overall_scale * fctDxz;
-    scaDyxz = overall_scale * fcAyzx;
-    flg = 0;
-
-    if (game_perspective == 5)
-        scaByzx = (scaCxz >> 11) * (0x4000 - fcByzx) >> 14;
-    else
-        scaByzx = scaCxz >> 11;
-    lgtx = dword_176D3C + scaByzx;
-    if (lgtx < 0)
-    {
-        flg |= 0x01;
-        if (lgtx < -2000)
-            lgtx = -2000;
-    }
-    else if (lgtx >= vec_window_width)
-    {
-        flg |= 0x02;
-        if (lgtx > 2000)
-            lgtx = 2000;
-    }
-
-    if (game_perspective == 5)
-        scaEyzx = (scaDyxz >> 11) * (0x4000 - fcByzx) >> 14;
-    else
-        scaEyzx = scaDyxz >> 11;
-    lgty = dword_176D40 - scaEyzx;
-    if (lgty < 0)
-    {
-        flg |= 0x04;
-        if (lgty < -2000)
-            lgty = -2000;
-    }
-    else if (lgty >= vec_window_height)
-    {
-        flg |= 0x08;
-        if (lgty > 2000)
-            lgty = 2000;
-    }
-
-    flg |= 0x40;
-    p_unknarrD->Flags = flg;
-    p_unknarrD->X = lgtx;
-    p_unknarrD->Y = lgty;
-    p_unknarrD->field_4 = fcByzx;
-}
-
-short unkarrD_compute_shade(struct UnknArrD *p_unknarrD, struct MyMapElement *p_mapel, short *p_sqlight)
+short shpoint_compute_shade(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, short *p_sqlight)
 {
     int shd;
     ushort qlght, n;
 
-    shd = (p_mapel->Ambient << 7) + (p_unknarrD->field_9) + 256 + (*p_sqlight << 8);
+    shd = (p_mapel->Ambient << 7) + (p_sp->field_9) + 256 + (*p_sqlight << 8);
     qlght = p_mapel->Shade;
     n = 0;
     while (qlght != 0)
@@ -3451,21 +3384,21 @@ static inline uint bw_rotr(uint n, ubyte c)
     return (n>>c) | (n<<( (-c)&mask ));
 }
 
-int unkarrD_compute_coord_y(struct UnknArrD *p_unknarrD, struct MyMapElement *p_mapel, int elcr_x, int elcr_z)
+int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int elcr_x, int elcr_z)
 {
     int elcr_y;
 
     if (game_perspective == 1)
     {
         elcr_y = 0;
-        p_unknarrD->field_9 = 0;
+        p_sp->field_9 = 0;
     }
     else if ((p_mapel->Flags & 0x10) == 0)
     {
         elcr_y = 8 * p_mapel->Alt;
         if ((p_mapel->Flags & 0x40) != 0)
             elcr_y += waft_table[gameturn & 0x1F];
-        p_unknarrD->field_9 = 0;
+        p_sp->field_9 = 0;
     }
     else
     {
@@ -3477,7 +3410,7 @@ int unkarrD_compute_coord_y(struct UnknArrD *p_unknarrD, struct MyMapElement *p_
              + waft_table2[(gameturn + (elcr_z >> 7)) & 0x1F]
              + waft_table2[(32 * gameturn / dvfactor) & 0x1F]) >> 3;
         elcr_y += 4 * wobble;
-        p_unknarrD->field_9 = (wobble + 32) << 9;
+        p_sp->field_9 = (wobble + 32) << 9;
     }
     return elcr_y;
 }
@@ -3508,7 +3441,7 @@ void func_218D3(void)
         :  :  : "eax" );
     return;
 #endif
-    struct UnknArrD loc_unknarrD[(RENDER_AREA_MAX+1)*4];
+    struct ShEnginePoint loc_unknarrD[(RENDER_AREA_MAX+1)*4];
     int shift_a, shift_b;
     int elcr_z, elpv_z;
     struct FloorTile *p_floortl;
@@ -3524,10 +3457,10 @@ void func_218D3(void)
     shift_b = 0;
     { // Separate first row from the rest as it has no previous
         struct MyMapElement *p_mapel;
-        struct UnknArrD *p_unknarrDcr;
+        struct ShEnginePoint *p_spcr;
         int elcr_x;
 
-        p_unknarrDcr = &loc_unknarrD[shift_b & 1];
+        p_spcr = &loc_unknarrD[shift_b & 1];
         shift_a = 0;
         elcr_x = word_19CC64;
         p_mapel = &game_my_big_map[(elcr_x >> 8) + (elcr_z >> 8 << 7)];
@@ -3537,15 +3470,15 @@ void func_218D3(void)
             int dxc, dyc, dzc;
             int elcr_y;
 
-            elcr_y = unkarrD_compute_coord_y(p_unknarrDcr, p_mapel, elcr_x, elcr_z);
+            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z);
             dxc = elcr_x - engn_xc;
             dzc = elcr_z - engn_zc;
             dyc = elcr_y - 8 * engn_yc;
 
-            unkarrD_compute_position(p_unknarrDcr, dxc, dyc, dzc);
-            p_unknarrDcr->Shade = unkarrD_compute_shade(p_unknarrDcr, p_mapel, p_sqlight);
+            transform_shpoint(p_spcr, dxc, dyc, dzc);
+            p_spcr->Shade = shpoint_compute_shade(p_spcr, p_mapel, p_sqlight);
 
-            p_unknarrDcr += 2;
+            p_spcr += 2;
             p_mapel++;
             shift_a++;
             elcr_x += 256;
@@ -3558,10 +3491,10 @@ void func_218D3(void)
     while (shift_b < render_area_b && elcr_z < 0x8000)
     {
         struct MyMapElement *p_mapel;
-        struct UnknArrD *p_unknarrDcr;
+        struct ShEnginePoint *p_spcr;
         int elcr_x;
 
-        p_unknarrDcr = &loc_unknarrD[shift_b & 1];
+        p_spcr = &loc_unknarrD[shift_b & 1];
         shift_a = 0;
         elcr_x = word_19CC64;
         p_mapel = &game_my_big_map[(elcr_x >> 8) + (elcr_z >> 8 << 7)];
@@ -3571,24 +3504,24 @@ void func_218D3(void)
             int dxc, dyc, dzc;
             int elcr_y;
 
-            elcr_y = unkarrD_compute_coord_y(p_unknarrDcr, p_mapel, elcr_x, elcr_z);
+            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z);
             dxc = elcr_x - engn_xc;
             dzc = elcr_z - engn_zc;
             dyc = elcr_y - 8 * engn_yc;
 
-            unkarrD_compute_position(p_unknarrDcr, dxc, dyc, dzc);
-            p_unknarrDcr->Shade = -1;
+            transform_shpoint(p_spcr, dxc, dyc, dzc);
+            p_spcr->Shade = -1;
 
-            p_unknarrDcr += 2;
+            p_spcr += 2;
             p_mapel++;
             shift_a++;
             elcr_x += 256;
         }
 
-        struct UnknArrD *p_unknarrDnx;
+        struct ShEnginePoint *p_spnx;
 
-        p_unknarrDnx = &loc_unknarrD[(shift_b + 1) & 1];
-        p_unknarrDcr = &loc_unknarrD[shift_b & 1];
+        p_spnx = &loc_unknarrD[(shift_b + 1) & 1];
+        p_spcr = &loc_unknarrD[shift_b & 1];
         shift_a = 0;
         elcr_x = word_19CC64;
         while (shift_a < render_area_a)
@@ -3600,15 +3533,15 @@ void func_218D3(void)
             break;
           }
           p_mapel = &game_my_big_map[(elpv_z >> 8 << 7) + (elcr_x >> 8)];
-          if (((p_unknarrDcr[2].Flags | p_unknarrDnx[2].Flags | p_unknarrDcr->Flags | p_unknarrDnx->Flags) & 0x20) != 0
-            || ((p_unknarrDnx[2].Flags & p_unknarrDcr->Flags & p_unknarrDnx->Flags & p_unknarrDcr[2].Flags) & 0x0F) != 0
+          if (((p_spcr[2].Flags | p_spnx[2].Flags | p_spcr->Flags | p_spnx->Flags) & 0x20) != 0
+            || ((p_spnx[2].Flags & p_spcr->Flags & p_spnx->Flags & p_spcr[2].Flags) & 0x0F) != 0
             || elcr_x <= 0 || elcr_x >= 0x8000
             || elcr_z <= 0 || elcr_z >= 0x8000
             || ((game_perspective != 2) && ((p_mapel->Flags & 0x80) != 0)))
           {
               p_sqlight++;
-              p_unknarrDcr += 2;
-              p_unknarrDnx += 2;
+              p_spcr += 2;
+              p_spnx += 2;
           }
           else
           {
@@ -3618,53 +3551,53 @@ void func_218D3(void)
               int bckt;
               ubyte ditype;
 
-              p_floortl->X[0] = p_unknarrDnx->X;
-              p_floortl->Y[0] = p_unknarrDnx->Y;
-              bckt = p_unknarrDnx->field_4;
-              if (p_unknarrDnx->Shade < 0) {
-                  p_unknarrDnx->Shade = unkarrD_compute_shade(p_unknarrDnx, p_mapel, p_sqlight);
+              p_floortl->X[0] = p_spnx->X;
+              p_floortl->Y[0] = p_spnx->Y;
+              bckt = p_spnx->field_4;
+              if (p_spnx->Shade < 0) {
+                  p_spnx->Shade = shpoint_compute_shade(p_spnx, p_mapel, p_sqlight);
               }
-              p_floortl->Shade[0] = p_unknarrDnx->Shade;
-              p_mapel->ShadeR = p_unknarrDnx->Shade >> 9;
+              p_floortl->Shade[0] = p_spnx->Shade;
+              p_mapel->ShadeR = p_spnx->Shade >> 9;
 
               p_mapelXnx = p_mapel + 1;
-              p_unknarrDnx += 2;
+              p_spnx += 2;
               p_sqlight += 1;
-              p_floortl->X[1] = p_unknarrDnx->X;
-              p_floortl->Y[1] = p_unknarrDnx->Y;
-              if (bckt < p_unknarrDnx->field_4)
-                  bckt = p_unknarrDnx->field_4;
-              if (p_unknarrDnx->Shade < 0) {
-                  p_unknarrDnx->Shade = unkarrD_compute_shade(p_unknarrDnx, p_mapelXnx, p_sqlight);
+              p_floortl->X[1] = p_spnx->X;
+              p_floortl->Y[1] = p_spnx->Y;
+              if (bckt < p_spnx->field_4)
+                  bckt = p_spnx->field_4;
+              if (p_spnx->Shade < 0) {
+                  p_spnx->Shade = shpoint_compute_shade(p_spnx, p_mapelXnx, p_sqlight);
               }
-              p_floortl->Shade[1] = p_unknarrDnx->Shade;
-              p_mapelXnx->ShadeR = p_unknarrDnx->Shade >> 9;
+              p_floortl->Shade[1] = p_spnx->Shade;
+              p_mapelXnx->ShadeR = p_spnx->Shade >> 9;
 
-              p_unknarrDcr += 2;
+              p_spcr += 2;
               p_mapelXZnx = p_mapel + 128 + 1;
               p_sqlight += render_area_a;
-              p_floortl->X[2] = p_unknarrDcr->X;
-              p_floortl->Y[2] = p_unknarrDcr->Y;
-              if (bckt < p_unknarrDcr->field_4)
-                  bckt = p_unknarrDcr->field_4;
-              if (p_unknarrDcr->Shade < 0) {
-                  p_unknarrDcr->Shade = unkarrD_compute_shade(p_unknarrDnx, p_mapelXZnx, p_sqlight);
+              p_floortl->X[2] = p_spcr->X;
+              p_floortl->Y[2] = p_spcr->Y;
+              if (bckt < p_spcr->field_4)
+                  bckt = p_spcr->field_4;
+              if (p_spcr->Shade < 0) {
+                  p_spcr->Shade = shpoint_compute_shade(p_spnx, p_mapelXZnx, p_sqlight);
               }
-              p_floortl->Shade[2] = p_unknarrDcr->Shade;
-              p_mapelXZnx->ShadeR = p_unknarrDcr->Shade >> 9;
+              p_floortl->Shade[2] = p_spcr->Shade;
+              p_mapelXZnx->ShadeR = p_spcr->Shade >> 9;
 
               p_sqlight--;
-              p_unknarrDcr -= 2;
+              p_spcr -= 2;
               p_mapelZnx = p_mapel + 128;
-              p_floortl->X[3] = p_unknarrDcr->X;
-              p_floortl->Y[3] = p_unknarrDcr->Y;
-              if (bckt < p_unknarrDcr->field_4)
-                  bckt = p_unknarrDcr->field_4;
-              if (p_unknarrDcr->Shade < 0) {
-                  p_unknarrDcr->Shade = unkarrD_compute_shade(p_unknarrDnx, p_mapelZnx, p_sqlight);
+              p_floortl->X[3] = p_spcr->X;
+              p_floortl->Y[3] = p_spcr->Y;
+              if (bckt < p_spcr->field_4)
+                  bckt = p_spcr->field_4;
+              if (p_spcr->Shade < 0) {
+                  p_spcr->Shade = shpoint_compute_shade(p_spnx, p_mapelZnx, p_sqlight);
               }
-              p_floortl->Shade[3] = p_unknarrDcr->Shade;
-              p_mapelZnx->ShadeR = p_unknarrDcr->Shade >> 9;
+              p_floortl->Shade[3] = p_spcr->Shade;
+              p_mapelZnx->ShadeR = p_spcr->Shade >> 9;
 
               p_mapel = &game_my_big_map[(elpv_z >> 8 << 7) + (elcr_x >> 8)];
               if (p_mapel->Texture)
@@ -3725,7 +3658,7 @@ void func_218D3(void)
                   ditype = 4;
               draw_item_add(ditype, word_152F00, bckt);
               p_sqlight = &p_sqlight[-render_area_a + 1];
-              p_unknarrDcr += 2;
+              p_spcr += 2;
               ++word_152F00;
             }
             shift_a++;
