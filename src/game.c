@@ -1456,8 +1456,58 @@ void draw_target_vehicle(struct Thing *p_vehicle)
 
 void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
 {
+#if 0
     asm volatile ("call ASM_draw_hud_health_bar\n"
         : : "a" (x), "d" (y), "b" (p_thing));
+    return;
+#endif
+    int dx, dy;
+    int hp_per_px, val_cur;
+    int h_total, h_cur, h_ext;
+    TbPixel colour;
+
+    dx = 9 * overall_scale >> 8;
+    dy = 10 * (overall_scale) >> 8;
+    h_total = -15 * (overall_scale) >> 8;
+
+    hp_per_px = p_thing->U.UPerson.MaxHealth / dy;
+    if (hp_per_px == 0)
+        hp_per_px = 1;
+
+    if (p_thing->Health <= p_thing->U.UPerson.MaxHealth)
+        val_cur = p_thing->Health;
+    else
+        val_cur = p_thing->U.UPerson.MaxHealth;
+
+    h_cur = val_cur / hp_per_px;
+    if (h_cur > dy)
+      h_cur = 10 * (overall_scale) >> 8;
+
+    lbDisplay.DrawFlags = 0x0004;
+    colour = colour_lookup[4];
+    LbDrawBox(dx + x, y + h_total, 2, 10 * overall_scale >> 8, colour);
+
+    if (p_thing->Health >= 0)
+    {
+        lbDisplay.DrawFlags = 0;
+        if (h_cur < 3)
+            colour = colour_lookup[2];
+        LbDrawBox(x + dx, y + dy + h_total - h_cur, 2, h_cur, colour);
+
+        // Extra health if the thing is above max (soul gun bonus)
+        if (p_thing->Health > p_thing->U.UPerson.MaxHealth)
+        {
+            h_ext = (p_thing->Health - p_thing->U.UPerson.MaxHealth) / hp_per_px;
+            if (h_ext > dy)
+                h_ext = dy;
+
+            lbDisplay.DrawFlags = 0x0004;
+            colour = colour_lookup[5];
+            LbDrawBox(dx + x, h_total + y, 2, dy, colour);
+            lbDisplay.DrawFlags = 0;
+            LbDrawBox(x + dx, y + dy + h_total - h_ext, 2, h_ext, colour);
+        }
+    }
 }
 
 void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
@@ -1514,8 +1564,12 @@ void draw_hud_target2(short dcthing, short target)
             break;
         }
     }
-    draw_hud_health_bar(ep.pp.X, ep.pp.Y, p_target);
-    draw_hud_shield_bar(ep.pp.X, ep.pp.Y, p_target);
+    // Vehicles have their own health drawing method
+    if (p_target->Type != TT_VEHICLE)
+    {
+        draw_hud_health_bar(ep.pp.X, ep.pp.Y, p_target);
+        draw_hud_shield_bar(ep.pp.X, ep.pp.Y, p_target);
+    }
     dword_176CB8 = frame[dword_176CB8].Next;
 }
 
