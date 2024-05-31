@@ -1422,60 +1422,30 @@ void draw_target_person(struct Thing *p_person, uint radius)
         : : "a" (p_person), "d" (radius));
     return;
 #endif
-    int map_dx, map_dy, map_dz;
-    int fctr_a, fctr_b, fctr_c;
-    int fctr_d, fctr_e;
-    int scr_x, scr_y;
-    int shift_x, shift_y;
+    struct EnginePoint ep;
     struct TbSprite *spr;
     struct TbSprite *aspr;
 
     if ((p_person->Flag & 0x0002) != 0)
         return;
 
-    map_dx = PRCCOORD_TO_MAPCOORD(p_person->X) - engn_xc;
-    map_dz = PRCCOORD_TO_MAPCOORD(p_person->Z) - engn_zc;
-    map_dy = (p_person->Y >> 5) - engn_yc;
-
-    //TODO inlined transform_point()
-    fctr_a = (dword_176D14 * map_dx - dword_176D10 * map_dz) >> 16;
-    fctr_b = (dword_176D10 * map_dx + dword_176D14 * map_dz) >> 16;
-    fctr_c = map_dy + 120 - 8 * engn_yc;
-
-    fctr_d = (dword_176D18 * fctr_c + dword_176D1C * fctr_b) >> 16;
-    fctr_e = (dword_176D1C * fctr_c - dword_176D18 * fctr_b) >> 16;
-
-    shift_y = (overall_scale * fctr_e) >> 11;
-    shift_x = (overall_scale * fctr_a) >> 11;
-
-    if (game_perspective == 5)
-        shift_x = ((0x4000 - fctr_d) * shift_x) >> 14;
-
-    scr_x = shift_x + dword_176D3C;
-    if ((scr_x >= vec_window_width) && (scr_x > 2000))
-        scr_x = 2000;
-    else if (scr_x < -2000)
-        scr_x = -2000;
-
-    if (game_perspective == 5)
-        shift_y = ((0x4000 - fctr_d) * shift_y) >> 14;
-
-    scr_y = dword_176D40 - shift_y;
-    if ((scr_y >= vec_window_height) && (scr_y > 2000))
-        scr_y = 2000;
-    else if (scr_y < -2000)
-        scr_y = -2000;
+    ep.X3d = PRCCOORD_TO_MAPCOORD(p_person->X) - engn_xc;
+    ep.Z3d = PRCCOORD_TO_MAPCOORD(p_person->Z) - engn_zc;
+    // TODO Why constant height of 120? Maybe differnt main body position for different thing types?
+    ep.Y3d = (p_person->Y >> 5) - engn_yc + 120;
+    ep.Flags = 0;
+    transform_point(&ep);
 
     aspr = &pop1_sprites[84];
     spr = &pop1_sprites[78];
-    LbSpriteDraw(scr_x - radius - pop1_sprites[84].SWidth, scr_y - radius - aspr->SHeight, spr);
+    LbSpriteDraw(ep.pp.X - radius - aspr->SWidth, ep.pp.Y - radius - aspr->SHeight, spr);
     spr = &pop1_sprites[79];
-    LbSpriteDraw(scr_x + radius, scr_y - radius - aspr->SHeight, spr);
+    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y - radius - aspr->SHeight, spr);
     spr = &pop1_sprites[81];
-    LbSpriteDraw(scr_x + radius, scr_y + radius, spr);
+    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y + radius, spr);
     aspr = &pop1_sprites[87];
     spr = &pop1_sprites[80];
-    LbSpriteDraw(scr_x - radius - aspr->SWidth, scr_y + radius, spr);
+    LbSpriteDraw(ep.pp.X - radius - aspr->SWidth, ep.pp.Y + radius, spr);
 }
 
 void draw_target_vehicle(struct Thing *p_vehicle)
