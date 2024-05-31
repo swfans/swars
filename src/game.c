@@ -1430,8 +1430,65 @@ void draw_hud_lock_target(void)
 
 void draw_target_person(struct Thing *p_person, uint radius)
 {
+#if 0
     asm volatile ("call ASM_draw_target_person\n"
         : : "a" (p_person), "d" (radius));
+    return;
+#endif
+    int map_dx, map_dy, map_dz;
+    int fctr_a, fctr_b, fctr_c;
+    int fctr_d, fctr_e;
+    int scr_x, scr_y;
+    int shift_x, shift_y;
+    struct TbSprite *spr;
+    struct TbSprite *aspr;
+
+    if ((p_person->Flag & 0x0002) != 0)
+        return;
+
+    map_dx = PRCCOORD_TO_MAPCOORD(p_person->X) - engn_xc;
+    map_dz = PRCCOORD_TO_MAPCOORD(p_person->Z) - engn_zc;
+    map_dy = (p_person->Y >> 5) - engn_yc;
+
+    //TODO inlined transform_point()
+    fctr_a = (dword_176D14 * map_dx - dword_176D10 * map_dz) >> 16;
+    fctr_b = (dword_176D10 * map_dx + dword_176D14 * map_dz) >> 16;
+    fctr_c = map_dy + 120 - 8 * engn_yc;
+
+    fctr_d = (dword_176D18 * fctr_c + dword_176D1C * fctr_b) >> 16;
+    fctr_e = (dword_176D1C * fctr_c - dword_176D18 * fctr_b) >> 16;
+
+    shift_y = (overall_scale * fctr_e) >> 11;
+    shift_x = (overall_scale * fctr_a) >> 11;
+
+    if (game_perspective == 5)
+        shift_x = ((0x4000 - fctr_d) * shift_x) >> 14;
+
+    scr_x = shift_x + dword_176D3C;
+    if ((scr_x >= vec_window_width) && (scr_x > 2000))
+        scr_x = 2000;
+    else if (scr_x < -2000)
+        scr_x = -2000;
+
+    if (game_perspective == 5)
+        shift_y = ((0x4000 - fctr_d) * shift_y) >> 14;
+
+    scr_y = dword_176D40 - shift_y;
+    if ((scr_y >= vec_window_height) && (scr_y > 2000))
+        scr_y = 2000;
+    else if (scr_y < -2000)
+        scr_y = -2000;
+
+    aspr = &pop1_sprites[84];
+    spr = &pop1_sprites[78];
+    LbSpriteDraw(scr_x - radius - pop1_sprites[84].SWidth, scr_y - radius - aspr->SHeight, spr);
+    spr = &pop1_sprites[79];
+    LbSpriteDraw(scr_x + radius, scr_y - radius - aspr->SHeight, spr);
+    spr = &pop1_sprites[81];
+    LbSpriteDraw(scr_x + radius, scr_y + radius, spr);
+    aspr = &pop1_sprites[87];
+    spr = &pop1_sprites[80];
+    LbSpriteDraw(scr_x - radius - aspr->SWidth, scr_y + radius, spr);
 }
 
 void draw_target_vehicle(struct Thing *p_vehicle)
@@ -1464,6 +1521,7 @@ void draw_hud_target2(short dcthing, short target)
     ep.X3d = PRCCOORD_TO_MAPCOORD(p_target->X) - engn_xc;
     ep.Z3d = PRCCOORD_TO_MAPCOORD(p_target->Z) - engn_zc;
     ep.Y3d = (p_target->Y >> 5) - engn_yc;
+    ep.Flags = 0;
     transform_point(&ep);
 
 
@@ -1486,10 +1544,10 @@ void draw_hud_target2(short dcthing, short target)
         struct Thing *p_dctarget;
         switch (p_target->Type)
         {
-        case 2:
+        case TT_VEHICLE:
             draw_target_vehicle(p_target);
             break;
-        case 3:
+        case TT_PERSON:
             if ((p_target->Flag & TngF_InVehicle) != 0) {
                 p_dctarget = &things[p_target->U.UPerson.Vehicle];
             } else {
@@ -1638,8 +1696,9 @@ void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text)
     w = lbDisplay.GraphicsScreenWidth;
     h = lbDisplay.GraphicsScreenHeight;
     ep.X3d = coord_x - engn_xc;
-    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
     ep.Z3d = coord_z - engn_zc;
+    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
+    ep.Flags = 0;
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
@@ -1656,8 +1715,9 @@ void draw_number_transformed_at_ground(int coord_x, int coord_z, int num)
     w = lbDisplay.GraphicsScreenWidth;
     h = lbDisplay.GraphicsScreenHeight;
     ep.X3d = coord_x - engn_xc;
-    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
     ep.Z3d = coord_z - engn_zc;
+    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
+    ep.Flags = 0;
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
@@ -1680,8 +1740,9 @@ void draw_text_transformed(int coord_x, int coord_y, int coord_z, const char *te
     w = lbDisplay.GraphicsScreenWidth;
     h = lbDisplay.GraphicsScreenHeight;
     ep.X3d = coord_x - engn_xc;
-    ep.Y3d = coord_y - engn_yc;
     ep.Z3d = coord_z - engn_zc;
+    ep.Y3d = coord_y - engn_yc;
+    ep.Flags = 0;
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
@@ -1698,8 +1759,9 @@ void draw_number_transformed(int coord_x, int coord_y, int coord_z, int num)
     w = lbDisplay.GraphicsScreenWidth;
     h = lbDisplay.GraphicsScreenHeight;
     ep.X3d = coord_x - engn_xc;
-    ep.Y3d = coord_y - engn_yc;
     ep.Z3d = coord_z - engn_zc;
+    ep.Y3d = coord_y - engn_yc;
+    ep.Flags = 0;
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
@@ -3206,12 +3268,14 @@ void draw_unkn1_bar(ushort cv)
     char locstr[8];
 
     ep1.X3d = game_col_vects[cv].X1 - engn_xc;
-    ep1.Y3d = game_col_vects[cv].Y1;
     ep1.Z3d = game_col_vects[cv].Z1 - engn_zc;
+    ep1.Y3d = game_col_vects[cv].Y1;
+    ep1.Flags = 0;
     transform_point(&ep1);
     ep2.X3d = game_col_vects[cv].X2 - engn_xc;
-    ep2.Y3d = game_col_vects[cv].Y2;
     ep2.Z3d = game_col_vects[cv].Z2 - engn_zc;
+    ep2.Y3d = game_col_vects[cv].Y2;
+    ep2.Flags = 0;
     transform_point(&ep2);
     LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour_lookup[1]);
     scr_x = ep2.pp.X + ep1.pp.X;

@@ -33,6 +33,7 @@ void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ,
     ep.X3d = ptX - engn_xc;
     ep.Z3d = ptZ - engn_zc;
     ep.Y3d = ptY - engn_yc;
+    ep.Flags = 0;
     transform_point(&ep);
     LbDrawLine(x, y, ep.pp.X, ep.pp.Y, colour);
 }

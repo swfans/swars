@@ -40,7 +40,8 @@ struct EnginePoint {
   long Y3d;
   long Z3d;
   long DistSqr;
-  ulong Flags; // TODO check if it is ushort
+  short EPUnkn24;
+  ubyte Flags; // TODO check if it is ushort
 };
 
 #pragma pack()
