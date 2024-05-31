@@ -531,6 +531,7 @@ extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;
 extern struct LevelMisc *game_level_miscs;
+extern long dword_176CB8;
 extern ushort word_176E38;
 
 extern struct TbSprite *pop1_sprites;

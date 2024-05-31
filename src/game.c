@@ -81,6 +81,7 @@
 #include "game.h"
 #include "game_data.h"
 #include "game_speed.h"
+#include "hud_target.h"
 #include "keyboard.h"
 #include "mouse.h"
 #include "network.h"
@@ -205,7 +206,6 @@ extern struct GamePanel *game_panel;
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
-extern long dword_176CB8;
 extern long dword_176CBC;
 extern long dword_176D0C;
 extern long dword_176D44;
@@ -1407,202 +1407,6 @@ void draw_hud_target_mouse(short dcthing)
     {
         do_change_mouse(8);
     }
-}
-
-void draw_hud_lock_target(void)
-{
-    asm volatile ("call ASM_draw_hud_lock_target\n"
-        :  :  : "eax" );
-}
-
-void draw_target_person(struct Thing *p_person, uint radius)
-{
-#if 0
-    asm volatile ("call ASM_draw_target_person\n"
-        : : "a" (p_person), "d" (radius));
-    return;
-#endif
-    struct EnginePoint ep;
-    struct TbSprite *spr;
-    struct TbSprite *aspr;
-
-    if ((p_person->Flag & 0x0002) != 0)
-        return;
-
-    ep.X3d = PRCCOORD_TO_MAPCOORD(p_person->X) - engn_xc;
-    ep.Z3d = PRCCOORD_TO_MAPCOORD(p_person->Z) - engn_zc;
-    // TODO Why constant height of 120? Maybe differnt main body position for different thing types?
-    ep.Y3d = (p_person->Y >> 5) - engn_yc + 120;
-    ep.Flags = 0;
-    transform_point(&ep);
-
-    aspr = &pop1_sprites[84];
-    spr = &pop1_sprites[78];
-    LbSpriteDraw(ep.pp.X - radius - aspr->SWidth, ep.pp.Y - radius - aspr->SHeight, spr);
-    spr = &pop1_sprites[79];
-    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y - radius - aspr->SHeight, spr);
-    spr = &pop1_sprites[81];
-    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y + radius, spr);
-    aspr = &pop1_sprites[87];
-    spr = &pop1_sprites[80];
-    LbSpriteDraw(ep.pp.X - radius - aspr->SWidth, ep.pp.Y + radius, spr);
-}
-
-void draw_target_vehicle(struct Thing *p_vehicle)
-{
-    asm volatile ("call ASM_draw_target_vehicle\n"
-        : : "a" (p_vehicle));
-}
-
-void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
-{
-#if 0
-    asm volatile ("call ASM_draw_hud_health_bar\n"
-        : : "a" (x), "d" (y), "b" (p_thing));
-    return;
-#endif
-    int dx, dy;
-    int hp_per_px, val_cur;
-    int h_total, h_cur, h_ext, w;
-    TbPixel colour;
-
-    dx = 9 * overall_scale >> 8;
-    dy = 10 * (overall_scale) >> 8;
-    h_total = -15 * (overall_scale) >> 8;
-    w = 2 * overall_scale >> 8;
-
-    hp_per_px = p_thing->U.UPerson.MaxHealth / dy;
-    if (hp_per_px == 0)
-        hp_per_px = 1;
-
-    if (p_thing->Health <= p_thing->U.UPerson.MaxHealth)
-        val_cur = p_thing->Health;
-    else
-        val_cur = p_thing->U.UPerson.MaxHealth;
-
-    h_cur = val_cur / hp_per_px;
-    if (h_cur > dy)
-      h_cur = dy;
-
-    lbDisplay.DrawFlags = 0x0004;
-    colour = colour_lookup[4];
-    LbDrawBox(dx + x, y + h_total, w, dy, colour);
-
-    if (p_thing->Health >= 0)
-    {
-        lbDisplay.DrawFlags = 0;
-        if (h_cur < 3)
-            colour = colour_lookup[2];
-        LbDrawBox(x + dx, y + dy + h_total - h_cur, w, h_cur, colour);
-
-        // Extra health if the thing is above max (soul gun bonus)
-        if (p_thing->Health > p_thing->U.UPerson.MaxHealth)
-        {
-            h_ext = (p_thing->Health - p_thing->U.UPerson.MaxHealth) / hp_per_px;
-            if (h_ext > dy)
-                h_ext = dy;
-
-            lbDisplay.DrawFlags = 0x0004;
-            colour = colour_lookup[5];
-            LbDrawBox(dx + x, y + h_total, w, dy, colour);
-            lbDisplay.DrawFlags = 0;
-            LbDrawBox(x + dx, y + dy + h_total - h_ext, w, h_ext, colour);
-        }
-    }
-}
-
-void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
-{
-#if 0
-    asm volatile ("call ASM_draw_hud_shield_bar\n"
-        : : "a" (x), "d" (y), "b" (p_thing));
-    return;
-#endif
-    int dx, dy;
-    int sp_per_px;
-    int h_total, h_cur, w;
-    TbPixel colour;
-
-    dx = 15 * overall_scale >> 8;
-    dy = 10 * overall_scale >> 8;
-    h_total = -20 * overall_scale >> 8;
-    w = 2 * overall_scale >> 8;
-
-    sp_per_px = p_thing->U.UPerson.MaxShieldEnergy / dy;
-    if (sp_per_px == 0)
-        sp_per_px = 1;
-
-    h_cur = p_thing->U.UPerson.ShieldEnergy / sp_per_px;
-    if (h_cur > dy)
-      h_cur = dy;
-
-    colour = colour_lookup[4];
-    lbDisplay.DrawFlags = 0x0004;
-    LbDrawBox(dx + x, h_total + y, w, dy, colour);
-    if (p_thing->U.UPerson.ShieldEnergy > 0)
-    {
-        lbDisplay.DrawFlags = 0;
-        if (h_cur < 3)
-            colour = colour_lookup[2];
-        LbDrawBox(x + dx, y + dy + h_total - h_cur, w, h_cur, colour);
-    }
-}
-
-void draw_hud_target2(short dcthing, short target)
-{
-    struct Thing *p_dcthing;
-    struct Thing *p_target;
-    struct EnginePoint ep;
-
-    p_dcthing = &things[dcthing];
-    p_target = &things[target];
-
-    ep.X3d = PRCCOORD_TO_MAPCOORD(p_target->X) - engn_xc;
-    ep.Z3d = PRCCOORD_TO_MAPCOORD(p_target->Z) - engn_zc;
-    ep.Y3d = (p_target->Y >> 5) - engn_yc;
-    ep.Flags = 0;
-    transform_point(&ep);
-
-
-    if (p_dcthing->U.UPerson.CurrentWeapon == WEP_RAP)
-    {
-        struct Thing *p_dctarget;
-        p_dctarget = p_dcthing->PTarget;
-        if ((p_dctarget != NULL) && ((p_dctarget->Flag & TngF_Unkn0002) == 0))
-        {
-            int sz;
-
-            sz = 4 * (18 - p_dcthing->U.UPerson.WeaponTimer);
-            if (sz < 6)
-                sz = 6;
-            draw_target_person(p_dctarget, sz);
-        }
-    }
-    else
-    {
-        struct Thing *p_dctarget;
-        switch (p_target->Type)
-        {
-        case TT_VEHICLE:
-            draw_target_vehicle(p_target);
-            break;
-        case TT_PERSON:
-            if ((p_target->Flag & TngF_InVehicle) != 0) {
-                p_dctarget = &things[p_target->U.UPerson.Vehicle];
-            } else {
-                p_dctarget = p_target;
-            }
-            draw_target_person(p_dctarget, 2);
-            break;
-        }
-    }
-    // Vehicles have their own health drawing method
-    if (p_target->Type != TT_VEHICLE)
-    {
-        draw_hud_health_bar(ep.pp.X, ep.pp.Y, p_target);
-        draw_hud_shield_bar(ep.pp.X, ep.pp.Y, p_target);
-    }
-    dword_176CB8 = frame[dword_176CB8].Next;
 }
 
 void show_goto_point(uint flag)

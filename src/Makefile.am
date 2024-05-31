@@ -182,6 +182,8 @@ swars_SOURCES = \
 	game_speed.h \
 	game.h \
 	globals.h \
+	hud_target.c \
+	hud_target.h \
 	joy_modul1.sx \
 	joy_modul2.sx \
 	keyboard.c \
