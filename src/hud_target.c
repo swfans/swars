@@ -22,6 +22,7 @@
 #include "bfbox.h"
 #include "bfgentab.h"
 #include "bfsprite.h"
+#include "insspr.h"
 #include "bigmap.h"
 #include "display.h"
 #include "engintrns.h"
@@ -108,7 +109,7 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
     if (h_cur > dy)
       h_cur = dy;
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     colour = colour_lookup[4];
     LbDrawBox(dx + x, y + h_total, w, dy, colour);
 
@@ -126,7 +127,7 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
             if (h_ext > dy)
                 h_ext = dy;
 
-            lbDisplay.DrawFlags = 0x0004;
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
             colour = colour_lookup[5];
             LbDrawBox(dx + x, y + h_total, w, dy, colour);
             lbDisplay.DrawFlags = 0;
@@ -161,7 +162,7 @@ void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
       h_cur = dy;
 
     colour = colour_lookup[4];
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     LbDrawBox(dx + x, h_total + y, w, dy, colour);
     if (p_thing->U.UPerson.ShieldEnergy > 0)
     {
@@ -212,6 +213,8 @@ void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scal
     pos_x = 99999;
     pos_y = 99999;
     lbSpriteReMapPtr = &pixmap.fade_table[256 * alpha];
+    //TODO would probably make more sense to set the ghost ptr somewhere during game setup
+    render_ghost = &pixmap.ghost_table[0*PALETTE_8b_COLORS];
     p_frm = &frame[fr];
 
     for (el = p_frm->FirstElement; ; el = p_el->Next)
@@ -230,7 +233,7 @@ void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scal
     if ((swidth * scale >> 9 <= 1) || (sheight * scale >> 9 <= 1))
         return;
 
-    SetAlphaScalingData(scr_x + (pos_x * scale >> 8), scr_y + (pos_y * scale >> 8),
+    LbSpriteSetScalingData(scr_x + (pos_x * scale >> 8), scr_y + (pos_y * scale >> 8),
       swidth >> 1, sheight >> 1, swidth * scale >> 9, sheight * scale >> 9);
 
     for (el = p_frm->FirstElement; ; el = p_el->Next)
@@ -248,11 +251,11 @@ void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scal
             continue;
 
         lbDisplay.DrawFlags = p_el->Flags & 0x0F;
-        if ((lbDisplay.DrawFlags & 0x0004) == 0)
-            lbDisplay.DrawFlags |= 0x0008;
+        if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) == 0)
+            lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
         sscr_x = (p_el->X >> 1) - pos_x;
         sscr_y = (p_el->Y >> 1) - pos_y;
-        DrawAlphaSpriteUsingScalingData(sscr_x, sscr_y, spr);
+        LbSpriteDrawUsingScalingData(sscr_x, sscr_y, spr);
     }
     lbDisplay.DrawFlags = 0;
 }
@@ -269,9 +272,19 @@ void draw_hud_target_old_frame(struct Thing *p_target, int fr)
 
 #if 0
     if ((overall_scale == 256) || (overall_scale <= 0) || (overall_scale >= 4096))
-        draw_unkn1_standard_sprite(fr, ep.pp.X, ep.pp.Y);
+    {
+        int sh_x;
+        sh_x = (12 * overall_scale) >> 9;
+        draw_unkn1_standard_sprite(fr +  0, ep.pp.X - sh_x, ep.pp.Y);
+        draw_unkn1_standard_sprite(fr + 10, ep.pp.X + sh_x, ep.pp.Y);
+    }
     else
-        draw_unkn1_scaled_alpha_sprite(fr, ep.pp.X, ep.pp.Y, overall_scale, 0x20u);
+    {
+        int sh_x;
+        sh_x = (12 * overall_scale) >> 9;
+        draw_unkn1_scaled_alpha_sprite(fr +  0, ep.pp.X - sh_x, ep.pp.Y, overall_scale, PALETTE_FADE_LEVELS / 2);
+        draw_unkn1_scaled_alpha_sprite(fr + 10, ep.pp.X + sh_x, ep.pp.Y, overall_scale, PALETTE_FADE_LEVELS / 2);
+    }
 #endif
 
     draw_hud_health_bar(ep.pp.X, ep.pp.Y, p_target);
