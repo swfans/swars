@@ -189,7 +189,7 @@ void draw_unkn1_standard_sprite(ushort fr, int scr_x, int scr_y)
             break;
         if ((p_el->Flags & 0xFE00) != 0)
             continue;
-        spr = (struct TbSprite *)((char *)m_sprites + p_el->ToSprite);
+        spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
         if (spr <= m_sprites)
             continue;
 
@@ -212,7 +212,9 @@ void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scal
     pos_x = 99999;
     pos_y = 99999;
     lbSpriteReMapPtr = &pixmap.fade_table[256 * alpha];
-    for (el = frame[fr].FirstElement; ; el = p_el->Next)
+    p_frm = &frame[fr];
+
+    for (el = p_frm->FirstElement; ; el = p_el->Next)
     {
         p_el = &melement_ani[el];
         if (p_el <= melement_ani)
@@ -222,7 +224,7 @@ void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scal
         if (p_el->Y >> 1 < pos_y)
             pos_y = p_el->Y >> 1;
     }
-    p_frm = &frame[fr];
+
     swidth = p_frm->SWidth;
     sheight = p_frm->SHeight;
     if ((swidth * scale >> 9 <= 1) || (sheight * scale >> 9 <= 1))
@@ -241,7 +243,7 @@ void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scal
             break;
         if ((p_el->Flags & 0xFE00) != 0)
             continue;
-        spr = (struct TbSprite *)((char *)m_sprites + p_el->ToSprite);
+        spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
         if (spr <= m_sprites)
             continue;
 
