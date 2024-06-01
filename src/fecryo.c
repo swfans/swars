@@ -28,11 +28,12 @@
 #include "specblit.h"
 #include "campaign.h"
 #include "cybmod.h"
+#include "display.h"
 #include "femain.h"
 #include "feequip.h"
 #include "guiboxes.h"
 #include "guitext.h"
-#include "display.h"
+#include "keyboard.h"
 #include "game.h"
 #include "player.h"
 #include "research.h"
@@ -902,8 +903,9 @@ ubyte show_cryo_chamber_screen(void)
     if (cryo_agent_list_box.Lines == 0)
         cryo_agent_list_box.Lines = cryo_agents.NumAgents;
     if (((game_projector_speed != 0) && is_heading_flag01()) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
+        clear_key_pressed(KC_SPACE);
         set_flag02_heading_screen_boxes();
         set_flag02_cryo_screen_boxes();
         byte_1C4978 = 1;

@@ -734,9 +734,9 @@ void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
 
 static void clear_smacker_skip_keys(void)
 {
-    lbKeyOn[KC_SPACE] = 0;
-    lbKeyOn[KC_RETURN] = 0;
-    lbKeyOn[KC_ESCAPE] = 0;
+    clear_key_pressed(KC_SPACE);
+    clear_key_pressed(KC_RETURN);
+    clear_key_pressed(KC_ESCAPE);
 }
 
 void play_smacker(ushort vid_type)

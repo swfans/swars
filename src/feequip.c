@@ -29,8 +29,9 @@
 #include "guitext.h"
 #include "display.h"
 #include "campaign.h"
-#include "game.h"
 #include "cybmod.h"
+#include "game.h"
+#include "keyboard.h"
 #include "player.h"
 #include "research.h"
 #include "weapon.h"
@@ -411,9 +412,9 @@ ubyte show_equipment_screen(void)
         byte_1C4976 = 0;
     }
     if (((game_projector_speed != 0) && is_heading_flag01()) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
         set_flag02_heading_screen_boxes();
         set_flag02_equipment_screen_boxes();
         byte_1C4975 = 1;

@@ -24,6 +24,8 @@
 #include "bfkeybd.h"
 #include "game.h"
 
+/******************************************************************************/
+
 #define KEYBOARD_BUFFER_SIZE 16
 
 #pragma pack(1)

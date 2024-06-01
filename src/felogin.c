@@ -29,6 +29,7 @@
 #include "femain.h"
 #include "feoptions.h"
 #include "game.h"
+#include "keyboard.h"
 #include "sound.h"
 #include "util.h"
 #include "swlog.h"
@@ -166,9 +167,9 @@ ubyte show_login_screen(void)
     ubyte drawn = true;
 
     if ((game_projector_speed && (login_name_box.Flags & GBxFlg_Unkn0001)) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
         login_campaigns_box.Flags |= GBxFlg_Unkn0002;
         login_name_box.Flags |= GBxFlg_Unkn0002;
         login_abort_button.Flags |= GBxFlg_Unkn0002;

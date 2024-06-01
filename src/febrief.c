@@ -30,6 +30,7 @@
 #include "guitext.h"
 #include "display.h"
 #include "game.h"
+#include "keyboard.h"
 #include "lvobjctv.h"
 #include "scanner.h"
 #include "sound.h"
@@ -491,9 +492,9 @@ ubyte show_mission_screen(void)
     ubyte drawn = true;
 
     if (((game_projector_speed != 0) && is_heading_flag01()) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
         set_flag02_heading_screen_boxes();
         brief_graphical_box.Flags |= GBxFlg_Unkn0002;
         brief_NETSCAN_button.Flags |= GBxFlg_Unkn0002;

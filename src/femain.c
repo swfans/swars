@@ -34,6 +34,7 @@
 #include "guitext.h"
 #include "game_speed.h"
 #include "game.h"
+#include "keyboard.h"
 #include "network.h"
 #include "player.h"
 #include "research.h"
@@ -150,9 +151,9 @@ ubyte main_do_login_1(ubyte click)
 void show_main_screen(void)
 {
     if ((game_projector_speed && (main_quit_button.Flags & GBxFlg_Unkn0001)) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
         main_quit_button.Flags |= GBxFlg_Unkn0002;
         main_load_button.Flags |= GBxFlg_Unkn0002;
         main_login_button.Flags |= GBxFlg_Unkn0002;
@@ -1249,8 +1250,10 @@ void show_mission_loading_screen(void)
         memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
         text_buf_pos = lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight;
         if ((0 != game_projector_speed && (loading_INITIATING_box.Flags & GBxFlg_Unkn0001))
-          || (0 != lbKeyOn[KC_SPACE] && 0 == edit_flag))
+          || (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag)) {
+            clear_key_pressed(KC_SPACE);
             loading_INITIATING_box.Flags |= GBxFlg_Unkn0002;
+        }
         //loading_INITIATING_box.DrawFn(&loading_INITIATING_box); -- incompatible calling convention
         asm volatile ("call *%1\n"
             : : "a" (&loading_INITIATING_box), "g" (loading_INITIATING_box.DrawFn));

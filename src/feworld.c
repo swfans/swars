@@ -30,6 +30,7 @@
 #include "display.h"
 #include "game_speed.h"
 #include "game.h"
+#include "keyboard.h"
 #include "network.h"
 #include "sound.h"
 #include "wrcities.h"
@@ -625,9 +626,9 @@ ubyte show_worldmap_screen(void)
     ubyte drawn = true;
 
     if ((game_projector_speed && is_heading_flag01()) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
         set_flag02_world_screen_boxes();
     }
 
