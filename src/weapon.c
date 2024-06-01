@@ -558,6 +558,11 @@ ushort weapon_fourpack_index(ushort wtype)
     return WFRPK_COUNT;
 }
 
+TbBool weapon_has_targetting(ushort wtype)
+{
+    return (wtype == WEP_RAP);
+}
+
 TbBool weapons_has_weapon(ulong weapons, ushort wtype)
 {
     ulong wepflg = 1 << (wtype-1);
@@ -695,7 +700,18 @@ short current_weapon_range(struct Thing *p_person)
 
     wdef = &weapon_defs[wtype];
 
-  return wdef->RangeBlocks << 8;
+    return TILE_TO_MAPCOORD(wdef->RangeBlocks, 0);
+}
+
+TbBool current_weapon_has_targetting(struct Thing *p_person)
+{
+    ushort wtype;
+
+    wtype = p_person->U.UPerson.CurrentWeapon;
+    if (wtype >= WEP_TYPES_COUNT)
+        return false;
+
+    return weapon_has_targetting(wtype);
 }
 
 sbyte find_nth_weapon_held(ushort index, ubyte n)

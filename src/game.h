@@ -436,6 +436,14 @@ struct Frame {
     ushort Next;
 };
 
+struct Element { // sizeof=0x0A
+    ushort ToSprite;
+    short X;
+    short Y;
+    ushort Flags;
+    ushort Next;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -531,12 +539,14 @@ extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;
 extern struct LevelMisc *game_level_miscs;
-extern long dword_176CB8;
+extern long target_old_frameno;
 extern ushort word_176E38;
 
 extern struct TbSprite *pop1_sprites;
 
 extern struct TbSprite *unk2_sprites;
+
+extern struct TbSprite *m_sprites;
 
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;

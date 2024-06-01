@@ -114,13 +114,6 @@
  */
 #define EXPECTED_LANG_TXT_SIZE 8000
 
-#pragma pack(1)
-
-struct Element;
-struct Frame;
-
-#pragma pack()
-
 extern char *fadedat_fname;
 extern unsigned long unkn_buffer_04;
 char session_name[20] = "SWARA";
@@ -153,7 +146,6 @@ extern ubyte *pop1_data;
 
 extern ubyte *m_spr_data;
 extern ubyte *m_spr_data_end;
-extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
 
 extern ulong stored_l3d_next_object[1];
@@ -1427,18 +1419,17 @@ void draw_hud(int dcthing)
 
     show_goto_point(0);
 
-    if (!dword_176CB8)
-        dword_176CB8 = nstart_ani[983];
+    if (target_old_frameno == 0)
+        target_old_frameno = nstart_ani[983];
 
     {
         struct Thing *p_mothing;
 
         p_mothing = &things[p_locplayer->DirectControl[mouser]];
-        if ( !lbDisplay.MRightButton
-            || (p_mothing->PTarget == NULL)
-            || (p_mothing->U.UPerson.CurrentWeapon != WEP_RAP)
-            || (p_mothing->U.UPerson.WeaponTimer < 14))
-        {
+        if (!lbDisplay.MRightButton
+          || (p_mothing->PTarget == NULL)
+          || current_weapon_has_targetting(p_mothing)
+          || (p_mothing->U.UPerson.WeaponTimer < 14)) {
             p_locplayer->field_102 = 0;
         }
     }

@@ -20,6 +20,7 @@
 #include "hud_target.h"
 
 #include "bfbox.h"
+#include "bfgentab.h"
 #include "bfsprite.h"
 #include "bigmap.h"
 #include "display.h"
@@ -171,14 +172,92 @@ void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
     }
 }
 
-void draw_hud_target2(short dcthing, short target)
+void draw_unkn1_standard_sprite(ushort fr, int scr_x, int scr_y)
 {
-    struct Thing *p_dcthing;
-    struct Thing *p_target;
-    struct EnginePoint ep;
+    struct Frame *p_frm;
+    struct Element *p_el;
+    int el;
 
-    p_dcthing = &things[dcthing];
-    p_target = &things[target];
+    p_frm = &frame[fr];
+    for (el = p_frm->FirstElement; ; el = p_el->Next)
+    {
+        struct TbSprite *spr;
+        int sscr_x, sscr_y;
+
+        p_el = &melement_ani[el];
+        if (p_el <= melement_ani)
+            break;
+        if ((p_el->Flags & 0xFE00) != 0)
+            continue;
+        spr = (struct TbSprite *)((char *)m_sprites + p_el->ToSprite);
+        if (spr <= m_sprites)
+            continue;
+
+        lbDisplay.DrawFlags = p_el->Flags & 0x07;
+        sscr_y = scr_y + (p_el->Y >> 1);
+        sscr_x = scr_x + (p_el->X >> 1);
+        LbSpriteDraw(sscr_x, sscr_y, spr);
+    }
+    lbDisplay.DrawFlags = 0;
+}
+
+void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scale, ushort alpha)
+{
+    struct Frame *p_frm;
+    struct Element *p_el;
+    int pos_x, pos_y;
+    int swidth, sheight;
+    int el;
+
+    pos_x = 99999;
+    pos_y = 99999;
+    lbSpriteReMapPtr = &pixmap.fade_table[256 * alpha];
+    for (el = frame[fr].FirstElement; ; el = p_el->Next)
+    {
+        p_el = &melement_ani[el];
+        if (p_el <= melement_ani)
+            break;
+        if (p_el->X >> 1 < pos_x)
+            pos_x = p_el->X >> 1;
+        if (p_el->Y >> 1 < pos_y)
+            pos_y = p_el->Y >> 1;
+    }
+    p_frm = &frame[fr];
+    swidth = p_frm->SWidth;
+    sheight = p_frm->SHeight;
+    if ((swidth * scale >> 9 <= 1) || (sheight * scale >> 9 <= 1))
+        return;
+
+    SetAlphaScalingData(scr_x + (pos_x * scale >> 8), scr_y + (pos_y * scale >> 8),
+      swidth >> 1, sheight >> 1, swidth * scale >> 9, sheight * scale >> 9);
+
+    for (el = p_frm->FirstElement; ; el = p_el->Next)
+    {
+        struct TbSprite *spr;
+        int sscr_x, sscr_y;
+
+        p_el = &melement_ani[el];
+        if (p_el <= melement_ani)
+            break;
+        if ((p_el->Flags & 0xFE00) != 0)
+            continue;
+        spr = (struct TbSprite *)((char *)m_sprites + p_el->ToSprite);
+        if (spr <= m_sprites)
+            continue;
+
+        lbDisplay.DrawFlags = p_el->Flags & 0x0F;
+        if ((lbDisplay.DrawFlags & 0x0004) == 0)
+            lbDisplay.DrawFlags |= 0x0008;
+        sscr_x = (p_el->X >> 1) - pos_x;
+        sscr_y = (p_el->Y >> 1) - pos_y;
+        DrawAlphaSpriteUsingScalingData(sscr_x, sscr_y, spr);
+    }
+    lbDisplay.DrawFlags = 0;
+}
+
+void draw_hud_target_old_frame(struct Thing *p_target, int fr)
+{
+    struct EnginePoint ep;
 
     ep.X3d = PRCCOORD_TO_MAPCOORD(p_target->X) - engn_xc;
     ep.Z3d = PRCCOORD_TO_MAPCOORD(p_target->Z) - engn_zc;
@@ -186,8 +265,26 @@ void draw_hud_target2(short dcthing, short target)
     ep.Flags = 0;
     transform_point(&ep);
 
+#if 0
+    if ((overall_scale == 256) || (overall_scale <= 0) || (overall_scale >= 4096))
+        draw_unkn1_standard_sprite(fr, ep.pp.X, ep.pp.Y);
+    else
+        draw_unkn1_scaled_alpha_sprite(fr, ep.pp.X, ep.pp.Y, overall_scale, 0x20u);
+#endif
 
-    if (p_dcthing->U.UPerson.CurrentWeapon == WEP_RAP)
+    draw_hud_health_bar(ep.pp.X, ep.pp.Y, p_target);
+    draw_hud_shield_bar(ep.pp.X, ep.pp.Y, p_target);
+}
+
+void draw_hud_target2(short dcthing, short target)
+{
+    struct Thing *p_dcthing;
+    struct Thing *p_target;
+
+    p_dcthing = &things[dcthing];
+    p_target = &things[target];
+
+    if (current_weapon_has_targetting(p_dcthing))
     {
         struct Thing *p_dctarget;
         p_dctarget = p_dcthing->PTarget;
@@ -222,10 +319,9 @@ void draw_hud_target2(short dcthing, short target)
     // Vehicles have their own health drawing method
     if ((p_target->Type != TT_VEHICLE) && hud_show_target_health)
     {
-        draw_hud_health_bar(ep.pp.X, ep.pp.Y, p_target);
-        draw_hud_shield_bar(ep.pp.X, ep.pp.Y, p_target);
+        draw_hud_target_old_frame(p_target, target_old_frameno);
     }
-    dword_176CB8 = frame[dword_176CB8].Next;
+    target_old_frameno = frame[target_old_frameno].Next;
 }
 
 /******************************************************************************/
