@@ -7,3 +7,8 @@
 !define LEVELS_VERSION "1.0.0.18"
 !define LEVELS_PACKAGE "swars-levels-1_0_0_18"
 !define LEVELS_PKG_MD5 "629a3a7d091ed1c6c5760148406f775d"
+
+; Version number and file name for gfx package
+!define GFX_VERSION "1.0.0.6"
+!define GFX_PACKAGE "swars-gfx-1_0_0_6"
+!define GFX_PKG_MD5 "43a21d649821ff5dabc3b6ab77913801"
