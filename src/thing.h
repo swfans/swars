@@ -20,6 +20,7 @@
 #define THING_H
 
 #include "bftypes.h"
+#include "game_bstype.h"
 #include "cybmod.h"
 #include "vehtraffic.h"
 
@@ -144,30 +145,31 @@ struct TngUObject
     char TokenDir;
     char OffX;
     char OffZ;
-    short TargetDX; // within Thing, pos=92
+    short TargetDX; /**< Thing offs=0x5C */
     short TargetDY;
     short TargetDZ;
-    ushort BuildStartVect;
-    ushort BuildNumbVect;
+    ushort BuildStartVect; /**< Index of the first ColVectList for toggling passability which are associated to this object. */
+    ushort BuildNumbVect; /**< Amount of ColVectList items for toggling passability which are associated to this object. */
     ushort ZZ_unused_but_pads_to_long_ObjectNo;
     ushort ComHead;
     short ComCur;
-    short Mood;
+    short Mood; /**< Thing offs=0x6C */
     short RaiseDY[2];
     short RaiseY[2];
     short MinY[2];
     short Timer[2];
-    short MaxY[2];
+    short MaxY[2]; /**< Thing offs=0x7E */
     short TNode;
     short Cost;
     short Shite;
     ulong BHeight;
     ushort Turn;
     ushort TurnPadOnPS;
-    short tnode[4];
+    short tnode[4];  /**< Thing offs=0x90 */
     ubyte player_in_me;
     ubyte unkn_4D;
     ulong DrawTurn; // set within draw_thing_object() for a building
+    short tnode_50[4];
 };
 
 /** State of Thing of type Mounted Gun.
@@ -184,7 +186,7 @@ struct TngUMGun
     ubyte ShotTurn;
     short WeaponTurn;
     ushort ObjectNo;
-    short PrevThing; // within Thing, pos=92
+    short PrevThing; /**< Thing offs=0x5C */
     short NextThing;
     ubyte Token;
     char TokenDir;
@@ -193,10 +195,10 @@ struct TngUMGun
     short AngleY;
     short AngleZ;
     short GotoX;
-    short GotoY;
+    short GotoY; /**< Thing offs=0x6C */
     short GotoZ;
     int Dummy11[5];
-    short RecoilTimer;
+    short RecoilTimer; /**< Thing offs=0x84 */
     ushort MaxHealth;
     ubyte CurrentWeapon;
     ubyte Dummy12;
@@ -372,7 +374,7 @@ struct Thing { // sizeof=168
     short Parent;
     /** Next thing in the `mapwho` linked list.
      */
-    short Next;
+    ThingIdx Next;
     short LinkParent;
     short LinkChild;
     ubyte SubType;
@@ -382,7 +384,7 @@ struct Thing { // sizeof=168
     short LinkSame;
     short LinkSameGroup;
     short Radius;
-    short ThingOffset;
+    ThingIdx ThingOffset;
     long X;
     long Y;
     long Z;
@@ -400,7 +402,7 @@ struct Thing { // sizeof=168
     ubyte SubState;
     struct Thing *PTarget;
     ulong Flag2;
-    short GotoThingIndex;
+    ThingIdx GotoThingIndex;
     short OldTarget;
     union { // pos=76
         struct TngUObject UObject;
@@ -458,7 +460,9 @@ struct SimpleThing
      * but not always; ie. for doors, the Parent is rectangular face index.
      */
     short Parent;
-    short Next;
+    /** Next thing in the `mapwho` linked list.
+     */
+    ThingIdx Next;
     short LinkParent;
     short LinkChild;
     ubyte SubType;
@@ -468,7 +472,7 @@ struct SimpleThing
     short LinkSame;
     short Object;
     short Radius;
-    short ThingOffset;
+    ThingIdx ThingOffset;
     long X;
     long Y;
     long Z;
@@ -498,7 +502,7 @@ typedef struct {
 } ThingFilterParams;
 
 /** Definition of a simple callback type which can only return true/false and has no memory of previous checks. */
-typedef TbBool (*ThingBoolFilter)(short thing, ThingFilterParams *params);
+typedef TbBool (*ThingBoolFilter)(ThingIdx thing, ThingFilterParams *params);
 
 /** Old structure for storing State of any Thing.
  * Used only to allow reading old, pre-release levels.
@@ -863,9 +867,9 @@ struct ThingOldV9 { // sizeof=216
 #pragma pack()
 /******************************************************************************/
 extern struct Thing *things;
-extern short things_used_head;
+extern ThingIdx things_used_head;
 extern ushort things_used;
-extern short same_type_head[256+32];
+extern ThingIdx same_type_head[256+32];
 extern short static_radii[];
 
 extern struct SimpleThing *sthings;
@@ -894,15 +898,17 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3);
 
 void things_debug_hud(void);
 
+TbBool thing_is_destroyed(ThingIdx thing);
+
 /** Delete the thing from `mapwho` chain.
  */
 TbResult delete_node(struct Thing *p_thing);
 
-void add_node_thing(ushort new_thing);
+void add_node_thing(ThingIdx new_thing);
 short get_new_thing(void);
 void remove_thing(short tngno);
 
-void add_node_sthing(ushort new_thing);
+void add_node_sthing(ThingIdx new_thing);
 short get_new_sthing(void);
 void remove_sthing(short tngno);
 
@@ -919,7 +925,7 @@ short new_thing_building_clone(struct Thing *p_clthing,
 void build_same_type_headers(void);
 short get_thing_same_type_head(short ttype, short subtype);
 
-TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);
+TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R);
 
 /** Unified function to find a thing of given type within given circle and matching filter.
  *
@@ -933,20 +939,22 @@ TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);
  * @param filter Filter callback function.
  * @param param Parameters for filter callback function.
  */
-short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
+ThingIdx find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params);
 
-short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon);
-short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
-short find_person_carrying_weapon(short weapon);
+ThingIdx find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon);
+ThingIdx find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
+ThingIdx find_person_carrying_weapon(short weapon);
 
-short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
-short search_things_for_index(short index);
-short find_nearest_object2(short mx, short mz, ushort sub_type);
+ThingIdx find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
+ThingIdx search_things_for_index(short index);
+ThingIdx find_nearest_object2(short mx, short mz, ushort sub_type);
 short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after);
-short search_for_station(short x, short z);
-short search_for_vehicle(short X, short Z);
-short search_things_for_uniqueid(short index, ubyte flag);
+ThingIdx search_for_station(short x, short z);
+ThingIdx search_for_vehicle(short X, short Z);
+ThingIdx search_things_for_uniqueid(short index, ubyte flag);
+
+struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop);
 
 /******************************************************************************/
 #ifdef __cplusplus

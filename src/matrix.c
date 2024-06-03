@@ -26,4 +26,10 @@ void matrix_identity_fill(struct M33 *p_mat)
         : : "a" (p_mat));
 }
 
+void rotate_object_axis(struct M33 *p_base, short xangle, short yangle, short zangle)
+{
+    asm volatile ("call ASM_rotate_object_axis\n"
+        : : "a" (p_base), "d" (xangle), "b" (yangle), "c" (zangle));
+}
+
 /******************************************************************************/

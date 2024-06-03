@@ -19,6 +19,7 @@
 #include "enginbckt.h"
 
 #include "engindrwlst.h"
+#include "enginpeff.h"
 #include "swlog.h"
 /******************************************************************************/
 extern ushort buckets[BUCKETS_COUNT];

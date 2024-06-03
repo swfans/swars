@@ -179,7 +179,7 @@ enum PersonCommandType
   PCmd_PLAY_SAMPLE = 0x8E,
   PCmd_IGNORE_ENEMIES = 0x8F,
   PCmd_FULL_STAMINA = 0x90, // Name uncertain
-  PCmd_UNKN91 = 0x91,
+  PCmd_CAMERA_ROTATE = 0x91,
   PCmd_TYPES_COUNT,
 };
 

@@ -25,20 +25,20 @@ enum GameModes {
 };
 
 enum GameFlags {
-    GamF_Unkn0001     = 0x0001,
-    GamF_Unkn0002     = 0x0002,
+    GamF_BillboardMovies = 0x0001,
+    GamF_AdvLights    = 0x0002,
     GamF_Unkn0004     = 0x0004,
     GamF_Unkn0008     = 0x0008,
     GamF_MortalGame   = 0x0010,
     GamF_Unkn0020     = 0x0020,
-    GamF_Unkn0040     = 0x0040,
-    GamF_Unkn0080     = 0x0080,
+    GamF_RenderScene  = 0x0040,
+    GamF_StopThings   = 0x0080, /**< Do not process things, stopping ingame action. */
     GamF_Unkn0100     = 0x0100,
     GamF_Unkn0200     = 0x0200,
-    GamF_Unkn0400     = 0x0400,
+    GamF_DeepRadar    = 0x0400,
     GamF_Unkn0800     = 0x0800,
     GamF_Unkn1000     = 0x1000,
-    GamF_Unkn2000     = 0x2000,
+    GamF_HUDPanel     = 0x2000,
     GamF_Unkn4000     = 0x4000,
     GamF_Unkn8000     = 0x8000,
     GamF_Unkn00010000 = 0x00010000,
@@ -46,7 +46,7 @@ enum GameFlags {
     GamF_Unkn00040000 = 0x00040000,
     GamF_SkipIntro    = 0x00080000,
     GamF_Unkn00100000 = 0x00100000,
-    GamF_Unkn00200000 = 0x00200000,
+    GamF_NoScannerBeep = 0x00200000,
     GamF_Unkn00400000 = 0x00400000,
     GamF_Unkn00800000 = 0x00800000,
     GamF_Unkn01000000 = 0x01000000,
@@ -68,11 +68,11 @@ enum ScreenType {
   SCRT_CRYO,
   SCRT_EQUIP,
   SCRT_MAINMENU,
-  SCRT_NETGAME,
+  SCRT_SYSMENU,
   SCRT_RESEARCH,
-  SCRT_9,
+  SCRT_DEBRIEF,
   SCRT_LOGIN,
-  SCRT_B,
+  SCRT_NETDEBRF,
   SCRT_ALERTBOX,
   SCRT_D,
   SCRT_E,
@@ -121,7 +121,7 @@ enum AppBarIcons {
 //TODO consolidate with ScreenType, use the same values
 enum ChangeScreenType {
   ChSCRT_NONE = 0,
-  ChSCRT_NETGAME,
+  ChSCRT_SYSMENU,
   ChSCRT_PANET,
   ChSCRT_WORLDMAP,
   ChSCRT_CRYO,
@@ -265,14 +265,6 @@ struct PurpleDrawItem { // sizeof=26
 	ushort Flags;
 };
 
-struct SynTime {
-    ubyte Minute;
-    ubyte Hour;
-    ubyte Day;
-    ubyte Month;
-    ubyte Year;
-};
-
 struct ColVect { // sizeof=14
   short X1;
   short Y1;
@@ -290,7 +282,7 @@ struct ColVect { // sizeof=14
  */
 struct ColVectList { // sizeof=6
   ushort Vect; /**< Index of the ColVect with geometry vector. */
-  ushort NextColList; /**< Index of the next ColVectList entry in a chain list. */
+  ushort NextColList; /**< Index of the next ColVectList entry in a chain list, top bit is passability. */
   short Object; /**< Index of a Thing containing the object whose geometry has that vector. */
 };
 
@@ -339,22 +331,6 @@ struct MissionStatus { // sizeof=40
     ubyte ObjectivesComplete;
     ubyte AgentsLost;
     ubyte AgentsGained;
-};
-
-struct EmailItem { // sizeof=5
-	ubyte RefNum;
-	ubyte RecvDay;
-	ubyte RecvMonth;
-	ubyte RecvYear;
-	ubyte Mission;
-};
-
-struct NewMailItem { // sizeof=5
-	ubyte RecvDay;
-	ubyte RecvMonth;
-	ubyte RecvYear;
-	ubyte Mission;
-	ubyte Flag;
 };
 
 struct LevelDef {
@@ -460,6 +436,14 @@ struct Frame {
     ushort Next;
 };
 
+struct Element { // sizeof=0x0A
+    ushort ToSprite;
+    short X;
+    short Y;
+    ushort Flags;
+    ushort Next;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -555,12 +539,14 @@ extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;
 extern struct LevelMisc *game_level_miscs;
+extern long target_old_frameno;
 extern ushort word_176E38;
 
 extern struct TbSprite *pop1_sprites;
 
 extern struct TbSprite *unk2_sprites;
-extern struct TbSprite *unk2_sprites_end;
+
+extern struct TbSprite *m_sprites;
 
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
@@ -569,6 +555,9 @@ extern ulong nsta_size;
 extern TbPixel colour_grey1;
 extern TbPixel colour_grey2;
 extern TbPixel colour_brown2;
+
+extern short *dword_1C529C[6];
+extern short *landmap_2B4;
 
 extern ubyte *memload;
 #define memload_len 16384
@@ -589,7 +578,7 @@ extern ubyte old_screentype;
 extern ubyte screentype;
 extern long data_155704;
 extern ubyte data_1c498d;
-extern ubyte data_1c498e;
+extern ubyte mouse_sprite_anim_frame;
 extern char *outro_text_s;
 extern char *outro_text_z;
 extern long data_197150;
@@ -620,8 +609,6 @@ extern ubyte save_crypto_data_state[3];
 extern char *mission_briefing_text;
 #define mission_briefing_text_len 16384
 
-extern short mission_open[50];
-extern short mission_state[50];
 extern sbyte mission_result;
 
 extern char *weapon_text;
@@ -631,8 +618,8 @@ extern struct PurpleDrawItem *purple_draw_list;
 extern ubyte *save_game_buffer;
 extern char save_active_desc[28];
 extern ubyte *unkn_buffer_05;
-extern ubyte *data_1c6de4;
-extern ubyte *data_1c6de8;
+extern ubyte *dword_1C6DE4;
+extern ubyte *dword_1C6DE8;
 extern ubyte scientists_lost;
 extern ulong new_mods_researched;
 extern ulong new_weapons_researched;
@@ -684,22 +671,13 @@ extern ubyte *dword_1AA280;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;
 
-extern struct SynTime global_date;
-extern struct SynTime research_curr_wep_date;
-extern struct SynTime research_curr_mod_date;
-
 extern struct MissionStatus mission_status[120];
-extern ubyte new_mail;
-extern struct NewMailItem newmail_store[29];
-extern ushort next_email;
 extern short old_mission_brief;
 extern short open_brief;
 extern short next_brief;
 extern short next_ref;
 extern ushort next_mission;
 extern ushort replay_intro_timer;
-extern struct EmailItem email_store[20];
-extern struct EmailItem brief_store[10];
 extern ubyte show_alert;
 extern sbyte mo_weapon;
 
@@ -713,9 +691,9 @@ extern void *scratch_malloc_mem;
 extern struct ScreenPoint *hotspot_buffer;
 #define hotspot_buffer_len 512
 
-extern ubyte unkn_gfx_option_2;
-extern ubyte unkn_option_3;
-extern ubyte unkn_option_4;
+extern ubyte game_gfx_advanced_lights;
+extern ubyte game_billboard_movies;
+extern ubyte game_gfx_deep_radar;
 extern ubyte byte_1C4A6F;
 
 extern char net_unkn2_text[];
@@ -779,6 +757,9 @@ void campaign_new_game_prepare(void);
 void process_sound_heap(void);
 void update_danger_music(ubyte a1);
 ushort my_draw_text(short x, short y, const char *text, ushort startline);
+void draw_text_transformed_at_ground(int a1, int a2, const char *text);
+
+void draw_new_panel(void);
 
 void update_map_thing_and_traffic_refs(void);
 void unkn_lights_processing(void);

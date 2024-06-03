@@ -30,7 +30,7 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-void show_worldmap_screen(void);
+ubyte show_worldmap_screen(void);
 void init_world_screen_boxes(void);
 void reset_world_screen_boxes_flags(void);
 void set_flag01_world_screen_boxes(void);

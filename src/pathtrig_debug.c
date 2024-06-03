@@ -126,7 +126,7 @@ void print_collision_vects(void)
                   (int)p_cvlist->Vect, p_colvect->Face,
                   p_colvect->X1, p_colvect->Y1, p_colvect->Z1,
                   p_colvect->X2, p_colvect->Y2, p_colvect->Z2);
-                cv = p_cvlist->NextColList;
+                cv = p_cvlist->NextColList & 0x7FFF;
             }
         }
     }

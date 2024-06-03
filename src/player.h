@@ -130,6 +130,7 @@ const char *get_cryo_agent_name(ushort cryo_no);
 void remove_agent(ubyte cryo_no);
 void add_agent(ulong weapons, ushort mods);
 
+short direct_control_thing_for_player(short plyr);
 /******************************************************************************/
 #ifdef __cplusplus
 }

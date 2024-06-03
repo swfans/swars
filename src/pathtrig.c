@@ -24,6 +24,7 @@
 #include "bfmath.h"
 #include "bfmemory.h"
 #include "bigmap.h"
+#include "building.h"
 #include "enginsngobjs.h"
 #include "game.h"
 #include "game_data.h"
@@ -954,6 +955,70 @@ void init_collision_vects(void)
     }
 }
 
+void reset_things_col_vect_range(void)
+{
+    ushort vl;
+    short thing;
+    ushort count;
+
+    thing = get_thing_same_type_head(TT_BUILDING, -1);
+    while (thing > 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        p_thing->U.UObject.BuildStartVect = 0;
+        p_thing->U.UObject.BuildNumbVect = 0;
+        thing = p_thing->LinkSame;
+    }
+
+    thing = 0;
+    count = 0;
+    for (vl = 0; vl < next_vects_list; vl++)
+    {
+        struct ColVectList *p_cvlist;
+
+        p_cvlist = &game_col_vects_list[vl];
+        if (p_cvlist->Object == thing)
+        {
+            count++;
+            continue;
+        }
+        if (thing > 0)
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            if (p_thing->Type == TT_BUILDING)
+            {
+                if (p_thing->SubType == SubTT_BLD_DOME) {
+                    // Dome has collision vectors spread evenly around; we want
+                    // to make toggleable only a little above half of them,
+                    // as only half of the dome is being opened
+                    count = count * 5 / 9;
+                } else {
+                    // Other building types have no toggleable collision vectors
+                    count = 0;
+                }
+                p_thing->U.UObject.BuildStartVect = vl - count;
+                p_thing->U.UObject.BuildNumbVect = count;
+            }
+        }
+        thing = p_cvlist->Object;
+        count = 1;
+    }
+    { // Setting properties in the last thing after we've reeached end of vects_list
+        if (thing > 0)
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            if (p_thing->Type == TT_BUILDING) {
+                p_thing->U.UObject.BuildStartVect = vl - count;
+                p_thing->U.UObject.BuildNumbVect = count;
+            }
+        }
+    }
+}
+
 /** Adds given walk face to a list of walk items of another face.
  *
  * Can only be called continously for one face, until another face gats it walk head created.
@@ -1202,7 +1267,7 @@ void add_walk_items_for_face_things_near(short x, short y, short z, short radius
         {
             int tile_x, tile_z;
             struct MyMapElement *p_mapel;
-            short thing;
+            ThingIdx thing;
             int i;
 
             tile_x = MAPCOORD_TO_TILE(x) + shift_x;
@@ -1545,7 +1610,7 @@ void update_mapel_collision_columns(void)
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
             struct MyMapElement *p_mapel;
-            short thing;
+            ThingIdx thing;
             int i;
 
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
@@ -1568,7 +1633,7 @@ void update_mapel_collision_columns(void)
     }
 }
 
-void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, ushort vect, ubyte flags)
+void add_next_col_vect_to_vects_list(short x, short z, ThingIdx thing, short face, ushort vect, ubyte flags)
 {
     short tile_x, tile_z;
     struct MyMapElement *p_mapel;
@@ -1632,7 +1697,7 @@ int new_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, sho
     return vect;
 }
 
-void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short thing, short face, ushort flags)
+void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, ThingIdx thing, short face, ushort flags)
 {
     int vect, limit;
 
@@ -1672,7 +1737,7 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
 
 /** Adds a face to col_vect lists in nearby MapElements, if the face has two sibling points close to the ground.
  */
-void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
+void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, ThingIdx thing, short face, ushort a2)
 {
     int alt_cor[4];
     int x_cor[4];
@@ -1716,7 +1781,7 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short t
 
 /** Adds a face to col_vect lists in nearby MapElements, if the face has two sibling points close to the ground.
  */
-void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
+void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, ThingIdx thing, short face, ushort a2)
 {
     int alt_cor[4];
     int x_cor[4];
@@ -1765,7 +1830,7 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
 
 #undef TOLERANCE
 
-void add_all_object_faces_to_col_vect(short thing, ushort obj, ushort a2)
+void add_all_object_faces_to_col_vect(ThingIdx thing, ushort obj, ushort a2)
 {
     short face;
     short startface3, endface3;
@@ -1814,7 +1879,7 @@ void generate_collision_vects(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            short thing;
+            ThingIdx thing;
             int i;
 
             thing = get_mapwho_thing_index(tile_x, tile_z);
@@ -1856,7 +1921,7 @@ void generate_thin_walls(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            short thing;
+            ThingIdx thing;
             int i;
 
             thing = get_mapwho_thing_index(tile_x, tile_z);
@@ -1885,7 +1950,7 @@ void thin_paths_entrance_on_vectlist(ushort vl_head)
     struct ColVectList *p_cvlist;
     ushort vl;
 
-    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList)
+    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList & 0x7FFF)
     {
         struct ColVect *p_colvect;
         int sx1, sx2, sy1, sy2;
@@ -1943,7 +2008,7 @@ void thin_paths_on_vectlist(ushort vl_head,
     struct ColVectList *p_cvlist;
     ushort vl;
 
-    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList)
+    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList & 0x7FFF)
     {
         struct ColVect *p_colvect;
         int sx1, sx2, sy1, sy2;
@@ -2014,7 +2079,7 @@ void generate_thin_paths(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            short thing;
+            ThingIdx thing;
             int i;
 
             thing = get_mapwho_thing_index(tile_x, tile_z);
@@ -2037,6 +2102,13 @@ void generate_thin_paths(void)
 
     LbMemoryFree(faces3_added);
     LbMemoryFree(faces4_added);
+}
+
+void triangulation_unkn_func_002(int x1, int z1, int x2, int z2)
+{
+    asm volatile (
+      "call ASM_triangulation_unkn_func_002\n"
+        : : "a" (x1), "d" (z1), "b" (x2), "c" (z2));
 }
 
 int fringe_at_tile(short tile_x, short tile_z)

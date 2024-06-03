@@ -150,8 +150,12 @@ swars_SOURCES = \
 	feequip.h \
 	feoptions.c \
 	feoptions.h \
+	fepanet.c \
+	fepanet.h \
 	felogin.c \
 	felogin.h \
+	femail.c \
+	femail.h \
 	femain.c \
 	femain.h \
 	fenet.c \
@@ -178,6 +182,10 @@ swars_SOURCES = \
 	game_speed.h \
 	game.h \
 	globals.h \
+	hud_panel.c \
+	hud_panel.h \
+	hud_target.c \
+	hud_target.h \
 	joy_modul1.sx \
 	joy_modul2.sx \
 	keyboard.c \

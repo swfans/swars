@@ -24,11 +24,13 @@
 #include "bfmemut.h"
 #include "bfscrcopy.h"
 #include "campaign.h"
+#include "femail.h"
 #include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
 #include "game.h"
+#include "keyboard.h"
 #include "lvobjctv.h"
 #include "scanner.h"
 #include "sound.h"
@@ -418,7 +420,8 @@ ubyte load_mail_text(const char *filename)
         return 0;
     }
     if (3+totlen >= mission_briefing_text_len) {
-        LOGERR("Insufficient memory for mission_briefing_text - %d instead of %d", mission_briefing_text_len, 3+totlen);
+        LOGERR("Insufficient memory for mission_briefing_text - %d instead of %d",
+          mission_briefing_text_len, 3+totlen);
         totlen = mission_briefing_text_len - 3 - 1;
     }
     p = mission_briefing_text;
@@ -478,6 +481,82 @@ void load_netscan_data(ubyte city_id, ubyte level)
     }
     recount_city_credit_reward(city_id);
     update_netscan_cost_button(city_id);
+}
+
+ubyte show_mission_screen(void)
+{
+#if 0
+    asm volatile ("call ASM_show_mission_screen\n"
+        :  :  : "eax" );
+#endif
+    ubyte drawn = true;
+
+    if (((game_projector_speed != 0) && is_heading_flag01()) ||
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
+    {
+        clear_key_pressed(KC_SPACE);
+        set_flag02_heading_screen_boxes();
+        brief_graphical_box.Flags |= GBxFlg_Unkn0002;
+        brief_NETSCAN_button.Flags |= GBxFlg_Unkn0002;
+        brief_mission_text_box.Flags |= GBxFlg_Unkn0002;
+        brief_netscan_box.Flags |= GBxFlg_Unkn0002;
+        brief_NETSCAN_COST_box.Flags |= GBxFlg_Unkn0002;
+    }
+    // Draw sequentially
+    if (drawn)
+        drawn = draw_heading_box();
+
+    if (drawn)
+    {
+        //drawn = brief_mission_text_box.DrawFn(&brief_mission_text_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&brief_mission_text_box), "g" (brief_mission_text_box.DrawFn));
+    }
+
+    if (drawn)
+    {
+        if (lbKeyOn[KC_F])
+        {
+          if ( mouse_move_over_rect(
+                 brief_mission_text_box.X,
+                 brief_mission_text_box.Width + brief_mission_text_box.X,
+                 brief_mission_text_box.Y,
+                 brief_mission_text_box.Height + brief_mission_text_box.Y) )
+          {
+            lbKeyOn[KC_F] = 0;
+            if ((brief_mission_text_box.Flags & 0x1000) == 0)
+            {
+              if (brief_mission_text_box.Font == small_font)
+              {
+                brief_mission_text_box.Font = small_med_font;
+              }
+              else if (brief_mission_text_box.Font == small_med_font)
+              {
+                brief_mission_text_box.Font = med_font;
+              }
+              else
+              {
+                brief_mission_text_box.Font = small_font;
+              }
+              brief_mission_text_box.Lines = 0;
+              brief_mission_text_box.BGColour = 0;
+              brief_mission_text_box.Flags |= GBxFlg_Unkn0080;
+            }
+          }
+        }
+        //drawn = brief_graphical_box.DrawFn(&brief_graphical_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&brief_graphical_box), "g" (brief_graphical_box.DrawFn));
+    }
+
+    if (drawn)
+    {
+        //drawn = brief_netscan_box.DrawFn(&brief_netscan_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&brief_netscan_box), "g" (brief_netscan_box.DrawFn));
+    }
+
+    return drawn;
 }
 
 void init_brief_screen_scanner(void)

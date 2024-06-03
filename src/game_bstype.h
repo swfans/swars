@@ -1,5 +1,5 @@
 /******************************************************************************/
-// Syndicate Wars Port - open-source reimplementation of SW.
+// Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
 /** @file game_bstype.h
  *     Basic data types declaration.
@@ -31,6 +31,12 @@ extern "C" {
 typedef ulong GameTurn;
 /** Signed game turn, for storing game turns difference. */
 typedef long SGameTurn;
+
+/** Type which stores index/offset of a Thing/SimpleThing.
+ *
+ * The value may refer to a Thing (if > 0) or SimpleThing (if < 0).
+ */
+typedef short ThingIdx;
 
 /******************************************************************************/
 #ifdef __cplusplus

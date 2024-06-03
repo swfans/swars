@@ -30,6 +30,7 @@
 #include "display.h"
 #include "game_speed.h"
 #include "game.h"
+#include "keyboard.h"
 #include "network.h"
 #include "sound.h"
 #include "wrcities.h"
@@ -66,8 +67,6 @@ extern short word_1C4896[6];
 extern short word_1C48A2[6];
 extern short word_1C48AE[6];
 extern short word_1C48CC;
-extern short * dword_1C529C[6];
-extern short *landmap_2B4;
 
 extern short word_1C6E08;
 extern short word_1C6E0A;
@@ -622,28 +621,34 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
     return 4;
 }
 
-void show_worldmap_screen(void)
+ubyte show_worldmap_screen(void)
 {
+    ubyte drawn = true;
+
     if ((game_projector_speed && is_heading_flag01()) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
         set_flag02_world_screen_boxes();
     }
-    int ret = 1;
-    if (ret) {
-        ret = draw_heading_box();
-    }
-    if (ret) {
-        //ret = world_landmap_box.DrawFn(&world_landmap_box); -- incompatible calling convention
+
+    // Draw sequentially
+    if (drawn)
+        drawn = draw_heading_box();
+
+    if (drawn)
+    {
+        //drawn = world_landmap_box.DrawFn(&world_landmap_box); -- incompatible calling convention
         asm volatile ("call *%2\n"
-            : "=r" (ret) : "a" (&world_landmap_box), "g" (world_landmap_box.DrawFn));
+            : "=r" (drawn) : "a" (&world_landmap_box), "g" (world_landmap_box.DrawFn));
     }
-    if (ret) {
-        //ret = world_city_info_box.DrawFn(&world_city_info_box); -- incompatible calling convention
+    if (drawn)
+    {
+        //drawn = world_city_info_box.DrawFn(&world_city_info_box); -- incompatible calling convention
         asm volatile ("call *%2\n"
-            : "=r" (ret) : "a" (&world_city_info_box), "g" (world_city_info_box.DrawFn));
+            : "=r" (drawn) : "a" (&world_city_info_box), "g" (world_city_info_box.DrawFn));
     }
+    return drawn;
 }
 
 void init_world_screen_boxes(void)

@@ -30,6 +30,9 @@ extern "C" {
 #define MAP_TILE_WIDTH 128
 #define MAP_TILE_HEIGHT 128
 
+#define MAP_COORD_WIDTH TILE_TO_MAPCOORD(MAP_TILE_WIDTH, 0)
+#define MAP_COORD_HEIGHT TILE_TO_MAPCOORD(MAP_TILE_HEIGHT, 0)
+
 /* Convert precise map coordinate to normal map coordinate.
  */
 #define PRCCOORD_TO_MAPCOORD(pcor) ((pcor) >> 8)
@@ -118,6 +121,8 @@ int alt_change_at_tile(short tile_x, short tile_z, int *change_xz);
 /** Sets some of the map elements flags based on other properties.
  */
 void update_map_flags(void);
+
+void quick_crater(int x, int z, int size);
 
 /******************************************************************************/
 #ifdef __cplusplus

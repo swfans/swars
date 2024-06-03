@@ -22,8 +22,10 @@
 #include "bfini.h"
 #include "bfmemory.h"
 #include "enginzoom.h"
+#include "hud_target.h"
 #include "research.h"
 #include "swlog.h"
+#include "weapon.h"
 /******************************************************************************/
 
 enum RulesEngineConfigCmd {
@@ -37,6 +39,15 @@ const struct TbNamedEnum rules_conf_engine_cmnds[] = {
   {NULL,			0},
 };
 
+enum RulesInterfaceonfigCmd {
+    RIfaceCmd_ShowTargetHealth = 1,
+};
+
+const struct TbNamedEnum rules_conf_interface_cmnds[] = {
+  {"ShowTargetHealth",				RIfaceCmd_ShowTargetHealth},
+  {NULL,							0},
+};
+
 enum RulesResearchConfigCmd {
     RResrchCmd_DailyScientistDeathChance = 1,
     RResrchCmd_ScientistsPerGroup,
@@ -44,11 +55,26 @@ enum RulesResearchConfigCmd {
     RResrchCmd_DailyProgressRtcMinutes,
 };
 
+enum RulesRevenueConfigCmd {
+    RRevenuCmd_PersuadedPersonWeaponsSellCostPermil = 1,
+};
+
 const struct TbNamedEnum rules_conf_research_cmnds[] = {
   {"DailyScientistDeathChancePermil",	RResrchCmd_DailyScientistDeathChance},
   {"ScientistsPerGroup",			RResrchCmd_ScientistsPerGroup},
   {"WeaponDonateResearchIncrPermil",	RResrchCmd_WeaponDonateResearchIncrPermil},
   {"DailyProgressRtcMinutes",		RResrchCmd_DailyProgressRtcMinutes},
+  {NULL,							0},
+};
+
+const struct TbNamedEnum rules_conf_revenue_cmnds[] = {
+  {"PersuadedPersonWeaponsSellCostPermil",	RRevenuCmd_PersuadedPersonWeaponsSellCostPermil},
+  {NULL,							0},
+};
+
+const struct TbNamedEnum rules_conf_any_bool[] = {
+  {"True",			1},
+  {"False",			2},
   {NULL,			0},
 };
 
@@ -136,6 +162,46 @@ TbBool read_rules_file(void)
     }
 #undef COMMAND_TEXT
 
+    // Parse the [interface] section of loaded file
+    done = false;
+    if (LbIniFindSection(&parser, "interface") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section.", "interface");
+        done = true;
+    }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(rules_conf_interface_cmnds,cmd_num)
+    while (!done)
+    {
+        int cmd_num;
+
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, rules_conf_interface_cmnds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case RIfaceCmd_ShowTargetHealth:
+            i = LbIniValueGetNamedEnum(&parser, rules_conf_any_bool);
+            if (i <= 0) {
+                CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            hud_show_target_health = (i == 1);
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)hud_show_target_health);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+
     // Parse the [research] section of loaded file
     done = false;
     if (LbIniFindSection(&parser, "research") != Lb_SUCCESS) {
@@ -188,6 +254,46 @@ TbBool read_rules_file(void)
             }
             research_progress_rtc_minutes = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)research_progress_rtc_minutes);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+
+    // Parse the [revenue] section of loaded file
+    done = false;
+    if (LbIniFindSection(&parser, "revenue") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section.", "revenue");
+        done = true;
+    }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(rules_conf_revenue_cmnds,cmd_num)
+    while (!done)
+    {
+        int cmd_num;
+
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, rules_conf_revenue_cmnds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case RRevenuCmd_PersuadedPersonWeaponsSellCostPermil:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            persuaded_person_weapons_sell_cost_permil = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)persuaded_person_weapons_sell_cost_permil);
             break;
         case 0: // comment
             break;

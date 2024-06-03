@@ -318,4 +318,4 @@ Then, do `make` as the [general building instructions](#general-building-instruc
 
 ## Done
 
-That's all. See more documentation at [swars.vexillium.org](http://swars.vexillium.org/).
+That's all. Have a nice play!

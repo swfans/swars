@@ -36,7 +36,7 @@ struct ScreenBoxBase;
 // to be fixed to define variables in the same way everywhere
 extern sbyte selected_weapon;
 
-void show_equipment_screen(void);
+ubyte show_equipment_screen(void);
 
 ubyte flashy_draw_draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate);
 void draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate);

@@ -74,6 +74,8 @@ ubyte weapon_tech_level[33] = {
 struct WeaponDefAdd weapon_defs_a[33] = {0};
 struct TbNamedEnum weapon_names[33] = {0};
 
+short persuaded_person_weapons_sell_cost_permil = 0;
+
 enum WeaponsConfigCmd {
     CCWep_WeaponsCount = 1,
     CCWep_Name,
@@ -556,6 +558,11 @@ ushort weapon_fourpack_index(ushort wtype)
     return WFRPK_COUNT;
 }
 
+TbBool weapon_has_targetting(ushort wtype)
+{
+    return (wtype == WEP_RAP);
+}
+
 TbBool weapons_has_weapon(ulong weapons, ushort wtype)
 {
     ulong wepflg = 1 << (wtype-1);
@@ -674,6 +681,64 @@ void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_four
             n = 4;
         p_fourpacks->Amount[fp] = n;
     }
+}
+
+short current_weapon_range(struct Thing *p_person)
+{
+#if 0
+    short ret;
+    asm volatile ("call ASM_current_weapon_range\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+#endif
+    struct WeaponDef *wdef;
+    ushort wtype;
+
+    wtype = p_person->U.UPerson.CurrentWeapon;
+    if (wtype >= WEP_TYPES_COUNT)
+        return 0;
+
+    wdef = &weapon_defs[wtype];
+
+    return TILE_TO_MAPCOORD(wdef->RangeBlocks, 0);
+}
+
+TbBool current_weapon_has_targetting(struct Thing *p_person)
+{
+    ushort wtype;
+
+    wtype = p_person->U.UPerson.CurrentWeapon;
+    if (wtype >= WEP_TYPES_COUNT)
+        return false;
+
+    return weapon_has_targetting(wtype);
+}
+
+sbyte find_nth_weapon_held(ushort index, ubyte n)
+{
+    char ret;
+    asm volatile ("call ASM_find_nth_weapon_held\n"
+        : "=r" (ret) : "a" (index), "d" (n));
+    return ret;
+}
+
+ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person)
+{
+    ulong credits;
+    ushort wtype;
+
+    credits = 0;
+    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    {
+        struct WeaponDef *wdef;
+
+        if (!person_carries_weapon(p_person, wtype))
+            continue;
+
+        wdef = &weapon_defs[wtype];
+        credits += wdef->Cost * persuaded_person_weapons_sell_cost_permil / 1000;
+    }
+    return credits;
 }
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person)
@@ -806,7 +871,7 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
 {
     struct Thing *p_target;
     struct Thing *p_thing;
-    short thing;
+    ThingIdx thing;
     ushort group, n_targets;
 
     p_target = p_person->PTarget;

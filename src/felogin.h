@@ -31,7 +31,7 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-void show_login_screen(void);
+ubyte show_login_screen(void);
 void init_login_screen_boxes(void);
 void reset_login_screen_boxes_flags(void);
 void set_flag01_login_screen_boxes(void);

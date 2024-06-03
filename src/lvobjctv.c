@@ -36,6 +36,7 @@
 #include "display.h"
 #include "game.h"
 #include "game_speed.h"
+#include "vehicle.h"
 #include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -264,7 +265,7 @@ int add_used_objective(long mapno, long levelno)
     p_objectv->Pri = 0;
     p_objectv->Map = mapno;
     p_objectv->Level = (levelno - 1) % 15 + 1;
-    p_objectv->Status = 0;
+    p_objectv->Status = ObvStatu_UNDECIDED;
 
     return objectv;
 }
@@ -393,7 +394,7 @@ TbBool objective_target_is_any_thing(struct Objective *p_objectv)
 
 void draw_objective_group_whole_on_engine_scene(ushort group)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -408,7 +409,7 @@ void draw_objective_group_whole_on_engine_scene(ushort group)
 
 void draw_objective_group_non_flag2_on_engine_scene(ushort group)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -425,7 +426,7 @@ void draw_objective_group_non_flag2_on_engine_scene(ushort group)
 
 void draw_objective_group_non_pers_on_engine_scene(ushort group)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -443,7 +444,7 @@ void draw_objective_group_non_pers_on_engine_scene(ushort group)
 void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort plyr)
 {
     short plyagent, plygroup;
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -463,7 +464,7 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
 
 void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short owntng)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ubyte colk;
 
@@ -482,7 +483,8 @@ void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short ow
 void draw_objective_dirctly_on_engine_scene(ushort objectv)
 {
     struct Objective *p_objectv;
-    short thing, group;
+    ThingIdx thing;
+    short group;
     ubyte colk;
 
     p_objectv = &game_used_objectives[objectv];
@@ -632,50 +634,9 @@ TbBool screen_objective_text_set_failed(void)
 
 /** Crude version of thing_arrived_at_objectv(), deprecated.
  */
-TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
+TbBool thing_arrived_at_obj(ThingIdx thing, struct Objective *p_objectv)
 {
     return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
-}
-
-TbBool thing_is_destroyed(short thing)
-{
-    if (thing == 0) {
-        return true;
-    } else if (thing > 0) {
-        struct Thing *p_thing;
-        p_thing = &things[thing];
-        return ((p_thing->Flag & TngF_Unkn0002) != 0);
-    } else {
-        struct SimpleThing *p_sthing;
-        p_sthing = &sthings[thing];
-        return ((p_sthing->Flag & TngF_Unkn0002) != 0);
-    }
-}
-
-TbBool vehicle_is_destroyed(short thing)
-{
-    struct Thing *p_thing;
-
-    if (thing <= 0)
-        return false;
-
-    p_thing = &things[thing];
-    return thing_is_destroyed(thing) || (p_thing->Type != TT_VEHICLE);
-}
-
-TbBool person_is_dead(short thing)
-{
-    struct Thing *p_thing;
-
-    if (thing <= 0)
-        return false;
-
-    p_thing = &things[thing];
-
-    if (p_thing->Type != TT_PERSON)
-        return false;
-
-    return (p_thing->State == PerSt_DEAD);
 }
 
 /** Returns whether given thing has arrived at given objective position.
@@ -683,7 +644,7 @@ TbBool person_is_dead(short thing)
  * @param thing Thing index (of any type) to to check.
  * @param p_objectv Pointer to the objective which XYZ coords and radius will be checked.
  */
-TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
+TbBool thing_arrived_at_objectv(ThingIdx thing, struct Objective *p_objectv)
 {
     if (thing == 0)
         return false;
@@ -698,7 +659,7 @@ TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
  * @param weapon Weapon type, in case it was picked up and therfore is no longer at expected Thing index.
  * @param p_objectv Pointer to the objective which XYZ coords and radius will be checked.
  */
-TbBool item_arrived_at_objectv(short thing, ushort weapon, struct Objective *p_objectv)
+TbBool item_arrived_at_objectv(ThingIdx thing, ushort weapon, struct Objective *p_objectv)
 {
     struct SimpleThing *p_sthing;
 
@@ -735,7 +696,7 @@ TbBool item_arrived_at_objectv(short thing, ushort weapon, struct Objective *p_o
  * exact same weapon instance, but that should not matter in most practical
  * uses of the objective.
  */
-TbBool item_is_carried_by_player(short thing, ushort weapon, ushort plyr)
+TbBool item_is_carried_by_player(ThingIdx thing, ushort weapon, ushort plyr)
 {
     struct SimpleThing *p_sthing;
     short plyagent, plygroup;
@@ -786,7 +747,7 @@ ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
 
 TbBool all_group_persuaded(ushort group)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
 
     thing = same_type_head[256 + group];
@@ -804,7 +765,7 @@ TbBool all_group_persuaded(ushort group)
 
 TbBool group_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
 
     thing = same_type_head[256 + group];
@@ -822,7 +783,7 @@ TbBool group_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
 
 TbBool group_all_survivors_in_vehicle(ushort group, short vehicle)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
 
     thing = same_type_head[256 + group];
@@ -840,7 +801,7 @@ TbBool group_all_survivors_in_vehicle(ushort group, short vehicle)
 
 TbBool group_members_in_vehicle(ushort group, short vehicle, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -862,7 +823,7 @@ TbBool group_members_in_vehicle(ushort group, short vehicle, ushort amount)
 
 TbBool group_members_persuaded_by_player(ushort group, ushort plyr, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -881,7 +842,7 @@ TbBool group_members_persuaded_by_player(ushort group, ushort plyr, ushort amoun
 
 TbBool group_members_killed_or_persuaded_by_player(ushort group, ushort plyr, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -901,7 +862,7 @@ TbBool group_members_killed_or_persuaded_by_player(ushort group, ushort plyr, us
 
 TbBool group_members_dead(ushort group, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -918,7 +879,7 @@ TbBool group_members_dead(ushort group, ushort amount)
     return false;
 }
 
-TbBool person_is_near_thing(short neartng, short thing, ushort radius)
+TbBool person_is_near_thing(ThingIdx neartng, ThingIdx thing, ushort radius)
 {
     short nearX, nearZ;
 
@@ -943,9 +904,9 @@ TbBool person_is_near_thing(short neartng, short thing, ushort radius)
 }
 
 
-TbBool group_members_near_thing(short neartng, ushort group, ushort amount, ushort radius)
+TbBool group_members_near_thing(ThingIdx neartng, ushort group, ushort amount, ushort radius)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
     short nearX, nearZ;
@@ -980,9 +941,9 @@ TbBool group_members_near_thing(short neartng, ushort group, ushort amount, usho
     return false;
 }
 
-TbBool group_members_persuaded_by_person(ushort group, short owntng, ushort amount)
+TbBool group_members_persuaded_by_person(ushort group, ThingIdx owntng, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -1001,7 +962,7 @@ TbBool group_members_persuaded_by_person(ushort group, short owntng, ushort amou
 
 TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_objectv, ushort amount)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort n;
 
@@ -1021,7 +982,7 @@ TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_object
 ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext)
 {
     struct ObjectiveDef *p_odef;
-    short thing;
+    ThingIdx thing;
     ubyte ret;
 
     // Skip objectives for other levels
@@ -1268,32 +1229,33 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 short test_objective(ushort objectv, ushort show_obj)
 {
     struct Objective *p_objectv;
-    short thing, thing2, group, amount;
+    ThingIdx thing, thing2;
+    short group, amount;
 
     if (show_obj == 2)
     {
         p_objectv = &game_used_lvl_objectives[objectv];
         if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
-          (p_objectv->Status != 2) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
+          (p_objectv->Status != ObvStatu_FAILED) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
         {
             lbKeyOn[KC_SLASH] = 0;
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
         }
-        if (p_objectv->Status == 2)
+        if (p_objectv->Status == ObvStatu_FAILED)
             return 1;
-        if (p_objectv->Status == 1)
+        if (p_objectv->Status == ObvStatu_COMPLETED)
             return 0;
     }
     else
     {
         p_objectv = &game_used_objectives[objectv];
         if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
-          (p_objectv->Status != 2) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
+          (p_objectv->Status != ObvStatu_FAILED) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
         {
             lbKeyOn[KC_SLASH] = 0;
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
         }
-        if (p_objectv->Status == 2)
+        if (p_objectv->Status == ObvStatu_FAILED)
             return 1;
         if (((p_objectv->Flags & GObjF_HIDDEN) == 0) && word_1C8446 && (show_obj != 0))
             draw_objective(objectv, 0);
@@ -1301,7 +1263,7 @@ short test_objective(ushort objectv, ushort show_obj)
             add_signal_to_scanner(p_objectv, 0);
         if ((p_objectv->Flags & GObjF_CANT_MET) != 0)
             return 1;
-        if (p_objectv->Status == 1)
+        if (p_objectv->Status == ObvStatu_COMPLETED)
             return -1;
     }
 
@@ -1310,15 +1272,15 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_P_DEAD:
         thing = p_objectv->Thing;
         if (person_is_dead(thing) || thing_is_destroyed(thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
-        p_objectv->Status = 0;
+        p_objectv->Status = ObvStatu_UNDECIDED;
         break;
     case GAME_OBJ_ALL_G_DEAD:
         group = p_objectv->Thing;
         if (group_actions[group].Alive <= 0) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1326,7 +1288,7 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
         if (group_members_dead(group, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1334,7 +1296,7 @@ short test_objective(ushort objectv, ushort show_obj)
         thing = p_objectv->Thing;
         thing2 = p_objectv->Y;
         if (person_is_near_thing(thing, thing2, p_objectv->Radius)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1343,14 +1305,14 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Arg2;
         amount = p_objectv->Y;
         if (group_members_near_thing(thing, group, amount, p_objectv->Radius)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_P_ARRIVES:
         thing = p_objectv->Thing;
         if (thing_arrived_at_objectv(thing, p_objectv)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1358,21 +1320,21 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
         if (group_members_arrived_at_objectv(group, p_objectv, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_ALL_G_ARRIVES:
         group = p_objectv->Thing;
         if (all_group_arrived(group, p_objectv->X, p_objectv->Y, p_objectv->Z, p_objectv->Radius)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_PERSUADE_P:
         thing = p_objectv->Thing;
         if (person_is_persuaded_by_player(thing, local_player_no)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1380,14 +1342,14 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
         if (group_members_persuaded_by_player(group, local_player_no, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_PERSUADE_ALL_G:
         group = p_objectv->Thing;
         if (all_group_persuaded(group)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1395,14 +1357,14 @@ short test_objective(ushort objectv, ushort show_obj)
         p_objectv->Radius++;
         if (p_objectv->Radius >= p_objectv->Thing) {
             p_objectv->Radius = 0;
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_GET_ITEM:
         thing = p_objectv->Thing;
         if (item_is_carried_by_player(thing, p_objectv->Arg2, local_player_no)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1413,7 +1375,7 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_DESTROY_OBJECT:
         thing = p_objectv->Thing;
         if (thing_is_destroyed(thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1421,7 +1383,7 @@ short test_objective(ushort objectv, ushort show_obj)
         thing = p_objectv->Thing;
         if (person_is_persuaded_by_player(thing, local_player_no) ||
           person_is_dead(thing) || thing_is_destroyed(thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1429,14 +1391,14 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
         if (group_members_killed_or_persuaded_by_player(group, local_player_no, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_PKILL_ALL_G:
         group = p_objectv->Thing;
         if (group_all_killed_or_persuaded_by_player(group, local_player_no)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1447,7 +1409,7 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_PROTECT_G:
         group = p_objectv->Thing;
         if (group_members_dead(group, 1)) {
-            p_objectv->Status = 1;
+            p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
         break;
@@ -1455,7 +1417,7 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Thing;
         thing = p_objectv->Arg2;
         if (group_members_persuaded_by_person(group, thing, 1)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1463,11 +1425,11 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Arg2;
         thing = p_objectv->Thing;
         if (vehicle_is_destroyed(thing)) {
-            p_objectv->Status = 1;
+            p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
         if (group_all_survivors_in_vehicle(group, thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
@@ -1476,38 +1438,38 @@ short test_objective(ushort objectv, ushort show_obj)
         thing = p_objectv->Thing;
         amount = p_objectv->Y;
         if (vehicle_is_destroyed(thing)) {
-            p_objectv->Status = 1;
+            p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
         if (group_members_in_vehicle(group, thing, amount)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_V_ARRIVES:
         thing = p_objectv->Thing;
         if (vehicle_is_destroyed(thing)) {
-            p_objectv->Status = 1;
+            p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
         if (thing_arrived_at_objectv(thing, p_objectv)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_DESTROY_V:
         thing = p_objectv->Thing;
         if (vehicle_is_destroyed(thing)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         // TODO why would we set it to 0 here? And why unconditionally?
-        p_objectv->Status = 0;
+        p_objectv->Status = ObvStatu_UNDECIDED;
         break;
     case GAME_OBJ_ITEM_ARRIVES:
         thing = p_objectv->Thing;
         if (item_arrived_at_objectv(thing, p_objectv->Arg2, p_objectv)) {
-            p_objectv->Status = 2;
+            p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;

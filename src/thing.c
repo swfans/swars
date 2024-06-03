@@ -204,6 +204,21 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing)
     snprintf(s, buflen - (s-buf), " )");
 }
 
+TbBool thing_is_destroyed(ThingIdx thing)
+{
+    if (thing == 0) {
+        return true;
+    } else if (thing > 0) {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        return ((p_thing->Flag & TngF_Unkn0002) != 0);
+    } else {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        return ((p_sthing->Flag & TngF_Unkn0002) != 0);
+    }
+}
+
 TbResult delete_node(struct Thing *p_thing)
 {
     TbResult ret;
@@ -212,7 +227,7 @@ TbResult delete_node(struct Thing *p_thing)
     return ret;
 }
 
-void add_node_thing(ushort new_thing)
+void add_node_thing(ThingIdx new_thing)
 {
     asm volatile ("call ASM_add_node_thing\n"
         : : "a" (new_thing));
@@ -232,7 +247,7 @@ void remove_thing(short tngno)
         : : "a" (tngno));
 }
 
-void add_node_sthing(ushort new_thing)
+void add_node_sthing(ThingIdx new_thing)
 {
     asm volatile ("call ASM_add_node_sthing\n"
         : : "a" (new_thing));
@@ -262,7 +277,7 @@ short add_static(int x, int y, int z, ushort frame, int timer)
     return ret;
 }
 
-TbBool thing_is_within_circle(short thing, short X, short Z, ushort R)
+TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R)
 {
     long dtX, dtZ, r2;
 
@@ -287,7 +302,7 @@ TbBool thing_is_within_circle(short thing, short X, short Z, ushort R)
 short find_thing_on_mapwho_tile_within_circle_with_filter(short tile_x, short tile_z, short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
-    short thing;
+    ThingIdx thing;
     ulong k;
 
     k = 0;
@@ -354,7 +369,7 @@ static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, lon
     for (around = 0; around < spiral_len; around++)
     {
         struct MapOffset *sstep;
-        short thing;
+        ThingIdx thing;
         long sX, sZ;
 
         sstep = &spiral_step[around];
@@ -376,7 +391,7 @@ void build_same_type_headers(void)
 
 short get_thing_same_type_head(short ttype, short subtype)
 {
-    short thing;
+    ThingIdx thing;
 
     switch (ttype)
     {
@@ -431,7 +446,7 @@ TbBool thing_type_is_simple(short ttype)
 static short find_thing_type_on_same_type_list_within_circle(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
-    short thing;
+    ThingIdx thing;
     ulong k;
 
     k = 0;
@@ -492,7 +507,7 @@ static short find_thing_type_on_same_type_list_within_circle(short X, short Z, u
 static short find_thing_type_on_same_type_list(short ttype, short subtype,
   ThingBoolFilter filter, ThingFilterParams *params)
 {
-    short thing;
+    ThingIdx thing;
     ulong k;
 
     k = 0;
@@ -549,7 +564,7 @@ static short find_thing_type_on_same_type_list(short ttype, short subtype,
 static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
-    short thing;
+    ThingIdx thing;
 
     if (thing_type_is_simple(ttype))
     {
@@ -594,7 +609,7 @@ short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     ushort tile_dist;
-    short thing;
+    ThingIdx thing;
 
     tile_dist = MAPCOORD_TO_TILE(R + 256);
     if (tile_dist <= spiral_dist_tiles_limit)
@@ -615,12 +630,12 @@ short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
     return thing;
 }
 
-TbBool bfilter_match_all(short thing, ThingFilterParams *params)
+TbBool bfilter_match_all(ThingIdx thing, ThingFilterParams *params)
 {
     return true;
 }
 
-TbBool bfilter_item_is_weapon(short thing, ThingFilterParams *params)
+TbBool bfilter_item_is_weapon(ThingIdx thing, ThingFilterParams *params)
 {
     struct SimpleThing *p_sthing;
     short weapon;
@@ -636,7 +651,7 @@ TbBool bfilter_item_is_weapon(short thing, ThingFilterParams *params)
     return (weapon == -1) || (p_sthing->U.UWeapon.WeaponType == weapon);
 }
 
-TbBool bfilter_person_carries_weapon(short thing, ThingFilterParams *params)
+TbBool bfilter_person_carries_weapon(ThingIdx thing, ThingFilterParams *params)
 {
     struct Thing *p_thing;
     short weapon;
@@ -654,7 +669,7 @@ TbBool bfilter_person_carries_weapon(short thing, ThingFilterParams *params)
 
 short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon)
 {
-    short thing;
+    ThingIdx thing;
     ThingFilterParams params;
 
     params.Arg1 = weapon;
@@ -665,7 +680,7 @@ short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon
 
 short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon)
 {
-    short thing;
+    ThingIdx thing;
     ThingFilterParams params;
 
     params.Arg1 = weapon;
@@ -682,9 +697,9 @@ short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_per
     return ret;
 }
 
-short find_person_carrying_weapon(short weapon)
+ThingIdx find_person_carrying_weapon(short weapon)
 {
-    short thing;
+    ThingIdx thing;
     ThingFilterParams params;
 
     params.Arg1 = weapon;
@@ -693,9 +708,9 @@ short find_person_carrying_weapon(short weapon)
     return thing;
 }
 
-short search_for_vehicle(short X, short Z)
+ThingIdx search_for_vehicle(short X, short Z)
 {
-    short thing;
+    ThingIdx thing;
     ThingFilterParams params;
 
     // Try finding very close to target coords
@@ -707,9 +722,9 @@ short search_for_vehicle(short X, short Z)
     return thing;
 }
 
-short search_things_for_index(short index)
+ThingIdx search_things_for_index(short index)
 {
-    short thing;
+    ThingIdx thing;
     if (index <= 0)
     {
         struct SimpleThing *p_sthing;
@@ -736,17 +751,17 @@ short search_things_for_index(short index)
     return 0;
 }
 
-short search_things_for_uniqueid(short index, ubyte flag)
+ThingIdx search_things_for_uniqueid(short uniqid, ubyte flag)
 {
-    short ret;
+    ThingIdx ret;
     asm volatile ("call ASM_search_things_for_uniqueid\n"
-        : "=r" (ret) : "a" (index), "d" (flag));
+        : "=r" (ret) : "a" (uniqid), "d" (flag));
     return ret;
 }
 
-short find_nearest_object2(short mx, short mz, ushort sub_type)
+ThingIdx find_nearest_object2(short mx, short mz, ushort sub_type)
 {
-    short ret;
+    ThingIdx ret;
     asm volatile ("call ASM_find_nearest_object2\n"
         : "=r" (ret) : "a" (mx), "d" (mz), "b" (sub_type));
     return ret;
@@ -760,7 +775,7 @@ short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort aft
     return ret;
 }
 
-short search_for_station(short x, short z)
+ThingIdx search_for_station(short x, short z)
 {
     ushort ret;
     asm volatile ("call ASM_search_for_station\n"
@@ -777,7 +792,7 @@ void new_thing_traffic_clone(struct SimpleThing *p_clsthing)
 short new_thing_smoke_gen_clone(struct SimpleThing *p_clsthing)
 {
     struct SimpleThing *p_sthing;
-    short thing;
+    ThingIdx thing;
 
     thing = add_static(PRCCOORD_TO_MAPCOORD(p_clsthing->X), p_clsthing->Y,
       PRCCOORD_TO_MAPCOORD(p_clsthing->Z), 0, p_clsthing->Timer1);
@@ -796,7 +811,7 @@ short new_thing_smoke_gen_clone(struct SimpleThing *p_clsthing)
 short new_thing_static_clone(struct SimpleThing *p_clsthing)
 {
     struct SimpleThing *p_sthing;
-    short thing;
+    ThingIdx thing;
     ushort frame;
 
     thing = add_static(PRCCOORD_TO_MAPCOORD(p_clsthing->X), p_clsthing->Y,
@@ -814,7 +829,7 @@ short new_thing_static_clone(struct SimpleThing *p_clsthing)
     return thing;
 }
 
-short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, short shut_h)
+ThingIdx new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, short shut_h)
 {
     struct Thing *p_thing;
     struct SingleObject *p_sobj;
@@ -824,12 +839,6 @@ short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, sho
       PRCCOORD_TO_MAPCOORD(p_clthing->Z), p_clthing->U.UObject.Object,
       p_clthing->U.UObject.NumbObjects, p_clthing->ThingOffset);
 
-    p_thing->U.UObject.Token = p_clthing->U.UObject.Token;
-    p_thing->U.UObject.TokenDir = p_clthing->U.UObject.TokenDir;
-    p_thing->U.UObject.NextThing = p_clthing->U.UObject.NextThing;
-    p_thing->U.UObject.PrevThing = p_clthing->U.UObject.PrevThing;
-    p_thing->U.UObject.OffX = p_clthing->U.UObject.OffX;
-    p_thing->U.UObject.OffZ = p_clthing->U.UObject.OffZ;
     p_thing->ThingOffset = p_clthing->ThingOffset;
     p_thing->Flag = p_clthing->Flag;
     p_thing->VX = p_clthing->VX;
@@ -837,21 +846,48 @@ short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, sho
     p_thing->VZ = p_clthing->VZ;
     p_thing->SubType = p_clthing->SubType;
 
-    // Copy 8 bytes _after_ UObject.DrawTurn (is anything really there?)
-    for (i = 1; i < 3; i++) {
-        *(&p_thing->U.UObject.DrawTurn + i) = *(&p_clthing->U.UObject.DrawTurn + i);
+    ubyte styp;
+    styp = p_thing->SubType;
+
+    if (styp == SubTT_BLD_MGUN)
+    {
+        p_thing->U.UMGun.PathIndex = p_clthing->U.UMGun.PathIndex;
+        p_thing->U.UMGun.UniqueID = p_clthing->U.UMGun.UniqueID;
+        p_thing->U.UMGun.NextThing = p_clthing->U.UMGun.NextThing;
+        p_thing->U.UMGun.PrevThing = p_clthing->U.UMGun.PrevThing;
+        p_thing->U.UMGun.Token = p_clthing->U.UMGun.Token;
+        p_thing->U.UMGun.TokenDir = p_clthing->U.UMGun.TokenDir;
+        p_thing->U.UMGun.ObjectNo = p_clthing->U.UMGun.ObjectNo;
+        p_thing->U.UMGun.CurrentWeapon = p_clthing->U.UMGun.CurrentWeapon;
     }
+    else
+    {
+        p_thing->U.UObject.Token = p_clthing->U.UObject.Token;
+        p_thing->U.UObject.TokenDir = p_clthing->U.UObject.TokenDir;
+        p_thing->U.UObject.NextThing = p_clthing->U.UObject.NextThing;
+        p_thing->U.UObject.PrevThing = p_clthing->U.UObject.PrevThing;
+        p_thing->U.UObject.OffX = p_clthing->U.UObject.OffX;
+        p_thing->U.UObject.OffZ = p_clthing->U.UObject.OffZ;
+        p_thing->U.UObject.BuildStartVect = p_clthing->U.UObject.BuildStartVect;
+        p_thing->U.UObject.BuildNumbVect = p_clthing->U.UObject.BuildNumbVect;
+        // Copy all fields from Turn down
+        p_thing->U.UObject.Turn = p_clthing->U.UObject.Turn;
+        p_thing->U.UObject.TurnPadOnPS = p_clthing->U.UObject.TurnPadOnPS;
+        for (i = 0; i < 4; i++) {
+            p_thing->U.UObject.tnode[i] = p_clthing->U.UObject.tnode[i];
+        }
+        p_thing->U.UObject.player_in_me = p_clthing->U.UObject.player_in_me;
+        p_thing->U.UObject.unkn_4D = p_clthing->U.UObject.unkn_4D;
+        p_thing->U.UObject.DrawTurn = p_clthing->U.UObject.DrawTurn;
+        for (i = 0; i < 4; i++) {
+            p_thing->U.UObject.tnode_50[i] = p_clthing->U.UObject.tnode_50[i];
+        }
+    }
+
     p_sobj = &game_objects[p_clthing->U.UObject.Object];
     p_thing->U.UObject.MinY[0] = p_sobj->OffsetY - 500;
     p_thing->U.UObject.MaxY[0] = p_sobj->OffsetY;
     
-    // Copy 20 bytes from UObject.Turn (why in a loop instead of assigning separate fields? is there an array?)
-    for (i = 0; i < 10; i++) {
-        *(&p_thing->U.UObject.Turn + i) = *(&p_clthing->U.UObject.Turn + i);
-    }
-
-    ubyte styp;
-    styp = p_thing->SubType;
     if (styp == SubTT_BLD_SHUTLDR)
     {
         if (((p_thing->Flag & TngF_Unkn0001) == 0)
@@ -1013,7 +1049,8 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
             p_thing->U.UPerson.Group = p_thing->U.UPerson.EffectiveGroup;
         }
         // The current weapon should always be in a list of carried wepons (issue mostly for fmtver < 5)
-        p_thing->U.UPerson.WeaponsCarried |= (1 << (p_thing->U.UPerson.CurrentWeapon - 1));
+        if (p_thing->U.UPerson.CurrentWeapon > 0)
+            p_thing->U.UPerson.WeaponsCarried |= (1 << (p_thing->U.UPerson.CurrentWeapon - 1));
     }
     else if (p_thing->Type == TT_VEHICLE)
     {
@@ -1079,6 +1116,17 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
             p_thing->U.UMGun.EffectiveGroup = p_oldthing->MGunEffectiveGroup;
         }
     }
+}
+
+struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop)
+{
+    struct SimpleThing *ret;
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "call ASM_create_sound_effect\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (sample), "g" (vol), "g" (loop));
+    return ret;
 }
 
 /******************************************************************************/

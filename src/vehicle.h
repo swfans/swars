@@ -20,6 +20,7 @@
 #define VEHICLE_H
 
 #include "bftypes.h"
+#include "game_bstype.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -181,7 +182,9 @@ struct VehStateConfig
 /******************************************************************************/
 void init_mech(void);
 void mech_unkn_func_02(void);
-void mech_unkn_func_09(short thing);
+void mech_unkn_func_09(ThingIdx thing);
+
+TbBool vehicle_is_destroyed(ThingIdx thing);
 
 void veh_add(struct Thing *p_thing, short frame);
 

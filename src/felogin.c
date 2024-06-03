@@ -25,9 +25,11 @@
 #include "guitext.h"
 #include "campaign.h"
 #include "display.h"
+#include "femail.h"
 #include "femain.h"
 #include "feoptions.h"
 #include "game.h"
+#include "keyboard.h"
 #include "sound.h"
 #include "util.h"
 #include "swlog.h"
@@ -160,29 +162,32 @@ ubyte show_login_name(struct ScreenBox *box)
     return ret;
 }
 
-void show_login_screen(void)
+ubyte show_login_screen(void)
 {
+    ubyte drawn = true;
+
     if ((game_projector_speed && (login_name_box.Flags & GBxFlg_Unkn0001)) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
         login_campaigns_box.Flags |= GBxFlg_Unkn0002;
         login_name_box.Flags |= GBxFlg_Unkn0002;
         login_abort_button.Flags |= GBxFlg_Unkn0002;
         login_continue_button.Flags |= GBxFlg_Unkn0002;
     }
-    //login_name_box.DrawFn(&login_name_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&login_name_box), "g" (login_name_box.DrawFn));
-    //login_campaigns_box.DrawFn(&login_campaigns_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&login_campaigns_box), "g" (login_campaigns_box.DrawFn));
-    //login_continue_button.DrawFn(&login_continue_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&login_continue_button), "g" (login_continue_button.DrawFn));
-    //login_abort_button.DrawFn(&login_abort_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&login_abort_button), "g" (login_abort_button.DrawFn));
+    //drawn = login_name_box.DrawFn(&login_name_box); -- incompatible calling convention
+    asm volatile ("call *%2\n"
+        : "=r" (drawn) : "a" (&login_name_box), "g" (login_name_box.DrawFn));
+    //drawn = login_campaigns_box.DrawFn(&login_campaigns_box); -- incompatible calling convention
+    asm volatile ("call *%2\n"
+        : "=r" (drawn) : "a" (&login_campaigns_box), "g" (login_campaigns_box.DrawFn));
+    //drawn = login_continue_button.DrawFn(&login_continue_button); -- incompatible calling convention
+    asm volatile ("call *%2\n"
+        : "=r" (drawn) : "a" (&login_continue_button), "g" (login_continue_button.DrawFn));
+    //drawn = login_abort_button.DrawFn(&login_abort_button); -- incompatible calling convention
+    asm volatile ("call *%2\n"
+        : "=r" (drawn) : "a" (&login_abort_button), "g" (login_abort_button.DrawFn));
+    return drawn;
 }
 
 void init_login_screen_boxes(void)

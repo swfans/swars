@@ -51,6 +51,12 @@ extern ushort word_1C4856[8];
 ubyte ac_show_mission_stats(struct ScreenBox *box);
 ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 
+void show_debrief_screen(void)
+{
+    asm volatile ("call ASM_show_debrief_screen\n"
+        :  :  : "eax" );
+}
+
 void draw_mission_stats_names_column(struct ScreenBox *box,
   ubyte research_ln, ubyte scilost_ln)
 {
@@ -710,7 +716,7 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
 
     if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
-        if (screentype == SCRT_9)
+        if (screentype == SCRT_DEBRIEF)
         {
             draw_mission_people_stats_names_column(box, p_rep);
         }
@@ -722,7 +728,7 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
         copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
     }
 
-    if (screentype == SCRT_9)
+    if (screentype == SCRT_DEBRIEF)
     {
         draw_mission_people_stats_vals_column(box, p_rep);
     }

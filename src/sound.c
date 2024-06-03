@@ -22,6 +22,7 @@
 #include "sound.h"
 #include "ailss.h"
 #include "aila.h"
+#include "display.h"
 #include "game_data.h"
 #include "game_speed.h"
 #include "game.h"
@@ -79,6 +80,7 @@ void snd_unkn1_volume_all_samples(void)
 void wait_for_sound_sample_finish(ushort smpl_id)
 {
     while (IsSamplePlaying(0, smpl_id, NULL)) {
+        swap_wscreen();
         game_update();
     }
 }

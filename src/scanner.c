@@ -35,6 +35,16 @@ extern ulong turn_last; // = 999;
 extern ulong SCANNER_keep_arcs;
 extern ulong dword_1DB1A0;
 
+void SCANNER_set_zoom(int zoom)
+{
+    if (zoom < 50)
+        ingame.Scanner.Zoom = 50;
+    else if (zoom > 556)
+        ingame.Scanner.Zoom = 556;
+    else
+        ingame.Scanner.Zoom = zoom;
+}
+
 void SCANNER_init(void)
 {
     asm volatile ("call ASM_SCANNER_init\n"
@@ -257,7 +267,7 @@ ushort do_group_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
         {
             struct Thing *p_thing;
             p_thing = &things[ingame.TrackThing];
-            if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_Unkn2000))
+            if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_HUDPanel))
                 SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
         }
         SCANNER_keep_arcs = 1;
@@ -281,7 +291,7 @@ ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
     long X, Z;
     ushort n;
     ubyte colr;
-    short thing;
+    ThingIdx thing;
 
     thing = p_objectv->Thing;
 
@@ -315,7 +325,7 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
     ushort n;
     ushort weapon;
     ubyte colr;
-    short thing;
+    ThingIdx thing;
 
     thing = p_objectv->Thing;
     weapon = p_objectv->Arg2;
@@ -343,7 +353,7 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
             Z = p_person->Z;
         } else {
             struct Thing *p_person;
-            short person;
+            ThingIdx person;
             person = find_person_carrying_weapon(weapon);
             p_person = &things[person];
             X = p_person->X;
@@ -364,7 +374,7 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     long X, Z;
     ushort n;
     ubyte colr;
-    short thing;
+    ThingIdx thing;
 
     thing = p_objectv->Thing;
 
@@ -399,7 +409,7 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     {
         struct Thing *p_thing;
         p_thing = &things[ingame.TrackThing];
-        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_Unkn2000))
+        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_HUDPanel))
             SCANNER_init_arcpoint(Z, X,
               MAPCOORD_TO_PRCCOORD(p_objectv->Z,0),
               MAPCOORD_TO_PRCCOORD(p_objectv->X,0), 1);
@@ -414,7 +424,7 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
     long X2, Z2;
     ushort n;
     ubyte colr;
-    short thing1, thing2;
+    ThingIdx thing1, thing2;
 
     thing1 = p_objectv->Thing;
     thing2 = p_objectv->Y;
@@ -459,7 +469,7 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
     {
         struct Thing *p_thing;
         p_thing = &things[ingame.TrackThing];
-        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_Unkn2000))
+        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_HUDPanel))
             SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
     }
     SCANNER_keep_arcs = 1;

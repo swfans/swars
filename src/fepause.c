@@ -249,8 +249,10 @@ TbBool pause_screen_handle(void)
     while ((jskeys[GKey_PAUSE] != 0) &&
       (jskeys[GKey_PAUSE] != joy.Buttons[0]))
     {
-        game_update();
         joy_func_065(&joy);
+
+        swap_wscreen();
+        game_update();
     }
 
     do_change_mouse(8);
@@ -345,9 +347,7 @@ TbBool pause_screen_handle(void)
     resume_game = false;
     while (!resume_game)
     {
-        game_update();
         joy_func_065(&joy);
-        PlayCDTrack(ingame.CDTrack);
         affected = NULL;
 
         {
@@ -514,22 +514,33 @@ TbBool pause_screen_handle(void)
             StopCD();
             return 1;
         }
-        lbDisplay.DrawFlags = 0;
-        process_sound_heap();
-        swap_wscreen();
 
         if (lbKeyOn[kbkeys[GKey_PAUSE]]
           || (jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0]))
             resume_game = true;
+
+        lbDisplay.DrawFlags = 0;
+        process_sound_heap();
+        PlayCDTrack(ingame.CDTrack);
+
+        swap_wscreen();
+        game_update();
     }
 
-    while ((lbKeyOn[kbkeys[GKey_PAUSE]])
-        || (jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0]))
+    // Wait for the pause key to be released
+    resume_game = false;
+    while (!resume_game)
     {
-        game_update();
         joy_func_065(&joy);
+
+        if (!(lbKeyOn[kbkeys[GKey_PAUSE]]
+          || (jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0])))
+            resume_game = true;
+
         PlayCDTrack(ingame.CDTrack);
+
         swap_wscreen();
+        game_update();
     }
     lbDisplay.RightButton = 0;
     lbDisplay.LeftButton = 0;

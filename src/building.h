@@ -104,6 +104,8 @@ enum SubTypeBuilding {
 
 struct Thing *create_building_thing(int x, int y, int z, ushort a4, ushort a5, ushort a6);
 
+void collapse_building(short x, short y, short z, struct Thing *p_building);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

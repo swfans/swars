@@ -39,6 +39,8 @@ void update_brief_screen_netscan_button(ushort text_id);
 void reset_brief_screen_boxes_flags(void);
 void set_flag01_brief_screen_boxes(void);
 
+ubyte show_mission_screen(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

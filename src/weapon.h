@@ -126,6 +126,7 @@ struct WeaponsFourPack {
 extern struct WeaponDef weapon_defs[33];
 extern struct TbNamedEnum weapon_names[33];
 extern ubyte weapon_tech_level[33];
+extern short persuaded_person_weapons_sell_cost_permil;
 
 void read_weapons_conf_file(void);
 void init_weapon_text(void);
@@ -144,6 +145,18 @@ TbBool weapons_add_one(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
 void sanitize_weapon_quantities(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks);
+
+sbyte find_nth_weapon_held(ushort index, ubyte n);
+
+/** Returns range (in normal map coord points) of the person current weapon.
+ */
+short current_weapon_range(struct Thing *p_person);
+
+/** Returns whether the person current weapon requires some time to achieve target lock.
+ */
+TbBool current_weapon_has_targetting(struct Thing *p_person);
+
+ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person);
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person);
 void do_weapon_quantities1(struct Thing *p_person);

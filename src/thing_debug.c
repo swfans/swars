@@ -21,6 +21,7 @@
 #include <string.h>
 #include "bfkeybd.h"
 #include "bfbox.h"
+#include "bigmap.h"
 #include "command.h"
 #include "drawtext.h"
 #include "display.h"
@@ -40,12 +41,49 @@ extern int dword_1DC7A4;
 extern short word_1DC7A0;
 extern short word_1DC7A2;
 
+short unused_func_201(short x, short y, short z, short type)
+{
+    short ret;
+    asm volatile ("call ASM_unused_func_201\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
+    return ret;
+}
+
 int select_thing_for_debug(short x, short y, short z, short type)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_select_thing_for_debug\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
     return ret;
+#endif
+    ThingIdx thing;
+    short alt;
+    char locstr[52];
+
+    thing = unused_func_201(x, y, z, type);
+    alt = alt_at_point(x, z) >> 5;
+    if (thing > 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        func_6fe80(x, alt, z, p_thing->X >> 8,
+        p_thing->Y >> 5, p_thing->Z >> 8, colour_lookup[1]);
+        sprintf(locstr, "TH %d ID %d", thing, p_thing->U.UPerson.UniqueID);
+        draw_text_transformed_at_ground(p_thing->X >> 8, p_thing->Z >> 8, locstr);
+    }
+    else if (thing < 0)
+    {
+        struct SimpleThing *p_sthing;
+
+        p_sthing = &sthings[thing];
+        func_6fe80(x, alt, z, p_sthing->X >> 8, p_sthing->Y >> 5,
+          p_sthing->Z >> 8, colour_lookup[1]);
+        sprintf(locstr, "TH %d ID %d", thing, p_sthing->UniqueID);
+        draw_text_transformed_at_ground(p_sthing->X >> 8, p_sthing->Z >> 8, locstr);
+    }
+    return thing;
 }
 
 int unused_func_204(short a1, short a2, short a3, struct Thing *p_person)
@@ -65,7 +103,7 @@ void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
 }
 
 // TODO separate get_person_commands_debug_hud_inputs() from the below
-void person_commands_debug_hud(int x, int y, int w, int h, short person, ubyte col1, ubyte col2, ubyte col3)
+void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyte col1, ubyte col2, ubyte col3)
 {
 #if 0
     asm volatile (
@@ -185,7 +223,7 @@ void things_debug_hud(void)
         :  :  : "eax" );
     return;
 #endif
-    short thing;
+    ThingIdx thing;
     short path;
     short pasngr;
     char locstr[100];
@@ -206,9 +244,33 @@ void things_debug_hud(void)
 
     if (lbShift == KMod_SHIFT)
         return;
-    if (thing <= 0 || thing >= THINGS_LIMIT)
+    if (thing == 0 || thing >= THINGS_LIMIT)
         return;
+    if (thing < 0)
+    {
+        struct SimpleThing *p_sthing;
 
+        if (execute_commands)
+        {
+            p_sthing = &sthings[thing];
+            snprintf(locstr, sizeof(locstr), "State %d ",
+              (int)p_sthing->State);
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " th %d",
+              (int)p_sthing->ThingOffset);
+            draw_text(30, 30, locstr, colour_lookup[1]);
+
+            sprintf(locstr, "F  %08x SF %d F %d",
+              (uint)p_sthing->Flag,
+              (int)p_sthing->StartFrame,
+              (int)p_sthing->Frame);
+            draw_text(30, 45, locstr, colour_lookup[1]);
+
+            sprintf(locstr, "%s",
+              thing_type_name(p_sthing->Type, p_sthing->SubType));
+            draw_text(360, 90, locstr, colour_lookup[7]);
+        }
+        return;
+    }
     p_track_thing = &things[thing];
     p_track2_thing = &things[thing];
     func_6fe80(mouse_map_x, mouse_map_y, mouse_map_z,
@@ -218,7 +280,8 @@ void things_debug_hud(void)
     if (p_track_thing->Type == TT_PERSON)
           person_commands_debug_hud(356, 80, 280, 150, thing, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
     else if ((p_track_thing->Type == TT_VEHICLE) && (p_track_thing->U.UVehicle.PassengerHead > 0))
-          person_commands_debug_hud(356, 80, 280, 150, p_track_thing->U.UVehicle.PassengerHead, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
+          person_commands_debug_hud(356, 80, 280, 150,
+            p_track_thing->U.UVehicle.PassengerHead, colour_lookup[1], colour_lookup[2], colour_lookup[4]);
 
     if (execute_commands)
     {
@@ -228,7 +291,8 @@ void things_debug_hud(void)
         {
         case TT_VEHICLE:
             snprint_vehicle_state(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), p_track_thing);
-            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Pasng %d G %d comcur %x EG %d th %d wb %d",
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr),
+              " Pasng %d G %d comcur %x EG %d th %d wb %d",
               (int)veh_passenger_count(p_track_thing),
               (int)p_track_thing->U.UVehicle.Group,
               (uint)p_track_thing->U.UVehicle.ComCur,
@@ -238,7 +302,8 @@ void things_debug_hud(void)
             break;
         case TT_PERSON:
             snprint_person_state(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), p_track_thing);
-            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " Mood %d G %d comcur %x EG %d th %d am %d",
+            snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr),
+              " Mood %d G %d comcur %x EG %d th %d am %d",
               (int)p_track_thing->U.UPerson.Mood,
               (int)p_track_thing->U.UPerson.Group,
               (uint)p_track_thing->U.UPerson.ComCur,

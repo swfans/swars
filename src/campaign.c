@@ -77,6 +77,7 @@ enum MissionListConfigCmd {
     MissL_RemainUntilSuccess,
     MissL_IsFinalMission,
     MissL_PreProcess,
+    MissL_Atmosphere,
 };
 
 const struct TbNamedEnum missions_conf_common_cmds[] = {
@@ -132,12 +133,27 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
   {"RemainUntilSuccess",MissL_RemainUntilSuccess},
   {"IsFinalMission",MissL_IsFinalMission},
   {"PreProcess",	MissL_PreProcess},
+  {"Atmosphere",	MissL_Atmosphere},
   {NULL,			0},
 };
 
 const struct TbNamedEnum missions_conf_common_types[] = {
   {"SP",			1},
   {"MP",			2},
+  {NULL,			0},
+};
+
+const struct TbNamedEnum missions_conf_atmosphere_types[] = {
+  {"EARTH",			MAtmsph_Earth},
+  {"SPACE",			MAtmsph_Space},
+  {"MOON",			MAtmsph_Moon},
+  {NULL,			0},
+};
+
+const struct TbNamedEnum missions_conf_weather_types[] = {
+  {"SUNNY",			MWeathr_Sunny},
+  {"RAINY",			MWeathr_Rainy},
+  {"SNOWY",			MWeathr_Snowy},
   {NULL,			0},
 };
 
@@ -198,17 +214,32 @@ ushort selectable_campaigns_count(void)
     return matches;
 }
 
+void clear_mission_state_slots(void)
+{
+    ushort mslot;
+
+    for (mslot = 0; mslot < MISSION_STATE_SLOTS_COUNT; mslot++) {
+        mission_open[mslot] = 0;
+        mission_state[mslot] = MResol_UNDECIDED;
+    }
+}
+
 ushort find_mission_state_slot(ushort missi)
 {
     ushort mslot;
 
     if (missi < 1)
         return 0;
-    for (mslot = 1; mslot < MISSION_STATES_COUNT; mslot++) {
+    for (mslot = 1; mslot < MISSION_STATE_SLOTS_COUNT; mslot++) {
         if (mission_open[mslot] == missi)
             break;
+        // First empty slot means all further slots are empty too
+        if (mission_open[mslot] == 0) {
+            mslot = 0;
+            break;
+        }
     }
-    if (mslot >= MISSION_STATES_COUNT)
+    if (mslot >= MISSION_STATE_SLOTS_COUNT)
         mslot = 0;
     return mslot;
 }
@@ -217,24 +248,35 @@ ushort find_empty_mission_state_slot(void)
 {
     ushort mslot;
 
-    for (mslot = 1; mslot < MISSION_STATES_COUNT; mslot++) {
+    for (mslot = 1; mslot < MISSION_STATE_SLOTS_COUNT; mslot++) {
         if (mission_open[mslot] == 0)
             break;
     }
-    if (mslot >= MISSION_STATES_COUNT)
+    if (mslot >= MISSION_STATE_SLOTS_COUNT)
         mslot = 0;
+    // since the empty slot may now become used,
+    // clear the next to assure 0-terminated list
+    if ((mslot > 0) && (mslot < MISSION_STATE_SLOTS_COUNT-1))
+        mission_open[mslot+1] = 0;
     return mslot;
 }
 
-void remove_mission_state_slot(ushort mslot)
+void remove_mission_state_slot(ushort missi)
 {
-    ushort i;
+    ushort mslot, i;
 
-    for (i = mslot; i < MISSION_STATES_COUNT-1; i++)
+    mslot = find_mission_state_slot(missi);
+    if (mslot == 0)
+        return;
+
+    for (i = mslot; i < MISSION_STATE_SLOTS_COUNT-1; i++)
     {
         mission_open[i] = mission_open[i + 1];
         mission_state[i] = mission_state[i + 1];
     }
+    // Clear the last element, to mark it as unused
+    mission_open[i] = 0;
+    mission_state[i] = MResol_UNDECIDED;
 }
 
 ushort replace_mission_state_slot(ushort old_missi, ushort new_missi)
@@ -245,6 +287,35 @@ ushort replace_mission_state_slot(ushort old_missi, ushort new_missi)
     mission_open[mslot] = new_missi;
     mission_state[mslot] = MResol_UNDECIDED;
     return mslot;
+}
+
+short get_mission_state_using_state_slot(ushort missi)
+{
+    ushort mslot;
+
+    mslot = find_mission_state_slot(missi);
+    if (mslot == 0) {
+        LOGWARN("Tried to get state for mission %d with no slot assigned", (int)missi);
+        return MResol_UNDECIDED;
+    }
+    return mission_state[mslot];
+}
+
+void set_mission_state_using_state_slot(ushort missi, short mstate)
+{
+    ushort mslot;
+
+    mslot = find_mission_state_slot(missi);
+    if (mslot == 0) {
+        mslot = find_empty_mission_state_slot();
+        if (mslot != 0)
+            mission_open[mslot] = missi;
+    }
+    if (mslot == 0) {
+        LOGERR("No free slot found for mission %d state %d", (int)missi, (int)mstate);
+        return;
+    }
+    mission_state[mslot] = MResol_UNDECIDED;
 }
 
 ushort find_mission_with_map_and_level(ushort mapno, ushort level)
@@ -287,9 +358,11 @@ void init_mission_states(void)
         if (objectv == 0)
             break;
         p_objectv = &game_used_objectives[objectv];
-        p_objectv->Status = 0;
+        p_objectv->Status = ObvStatu_UNDECIDED;
         objectv = p_objectv->Next;
     }
+    if (i >= 100)
+        LOGERR("Over %d success objectives attached to mission %d", i, (int)missi);
     LOGSYNC("Prepared %d success objectives for mission %d", i, (int)missi);
 
     objectv = mission_list[missi].FailHead;
@@ -297,9 +370,11 @@ void init_mission_states(void)
         if (objectv == 0)
             break;
         p_objectv = &game_used_objectives[objectv];
-        p_objectv->Status = 0;
+        p_objectv->Status = ObvStatu_UNDECIDED;
         objectv = p_objectv->Next;
     }
+    if (i >= 100)
+        LOGERR("Over %d fail objectives attached to mission %d", i, (int)missi);
     LOGSYNC("Prepared %d fail objectives for mission %d", i, (int)missi);
 }
 
@@ -597,8 +672,8 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
       sprintf(buf, "PreProcess = %hu\n", p_missi->PreProcess);
       LbFileWrite(fh, buf, strlen(buf));
     }
-    if ((p_missi->field_4A) != 0) {
-        sprintf(buf, "field_4A = %d\n", (int)p_missi->field_4A);
+    if ((p_missi->Atmosphere) != 0) {
+        sprintf(buf, "Atmosphere = %d %d\n", (int)(p_missi->Atmosphere) & 0x0F, (int)(p_missi->Atmosphere >> 4) & 0x0F);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->field_4B != 0) {
@@ -1415,6 +1490,20 @@ void read_missions_conf_file(int num)
                 }
                 p_missi->PreProcess = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->PreProcess);
+                break;
+            case MissL_Atmosphere:
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_atmosphere_types);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->Atmosphere = (p_missi->Atmosphere & 0xF0) | (i << 0);
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_weather_types);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->Atmosphere = (p_missi->Atmosphere & 0x0F) | (i << 4);
                 break;
             case 0: // comment
                 break;

@@ -215,13 +215,24 @@ void init_mech(void)
         :  :  : "eax" );
 }
 
+TbBool vehicle_is_destroyed(ThingIdx thing)
+{
+    struct Thing *p_thing;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+    return thing_is_destroyed(thing) || (p_thing->Type != TT_VEHICLE);
+}
+
 void mech_unkn_func_02(void)
 {
     asm volatile ("call ASM_mech_unkn_func_02\n"
         :  :  : "eax" );
 }
 
-void mech_unkn_func_09(short thing)
+void mech_unkn_func_09(ThingIdx thing)
 {
     asm volatile ("call ASM_mech_unkn_func_09\n"
         : : "a" (thing));
@@ -236,7 +247,7 @@ void veh_add(struct Thing *p_thing, short frame)
 ushort veh_passenger_count(struct Thing *p_veh)
 {
     struct Thing *p_thing;
-    short thing;
+    ThingIdx thing;
     ushort c;
 
     c = 0;
@@ -518,11 +529,11 @@ static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing 
 
     if ((p_person->Flag2 & 0x10) != 0)
         return false;
-    if (p_person->State == 13)
+    if (p_person->State == PerSt_DEAD)
         return false;
     if ((p_person->Flag & TngF_Unkn0002) != 0)
         return false;
-    if (p_person->State == 36)
+    if (p_person->State == PerSt_PERSON_BURNING)
         return false;
     if (abs((p_person->Y >> 3) - pos_y) >= 2048)
         return false;
@@ -555,7 +566,7 @@ static TbBool check_vehicle_col_with_mine(struct Thing *p_vehicle, struct Simple
 static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel,
   int pos_x, int pos_y, int pos_z)
 {
-    short thing;
+    ThingIdx thing;
 
     thing = p_mapel->Child;
     while (thing != 0)
@@ -601,7 +612,7 @@ static TbBool check_vehicle_col_on_mapel(struct Thing *p_vehicle, struct MyMapEl
 static TbBool check_vehicle_col_on_same_mapel(struct Thing *p_vehicle, struct MyMapElement *p_mapel,
   int pos_x, int pos_y, int pos_z)
 {
-    short thing;
+    ThingIdx thing;
 
     thing = p_mapel->Child;
     while (thing != 0)
@@ -1186,8 +1197,10 @@ void process_veh_ground(struct Thing *p_vehicle)
 
 void vehicle_check_outside_map(struct Thing *p_vehicle)
 {
-    if ((p_vehicle->X <= 0) || (p_vehicle->X >= 0x800000) ||
-        (p_vehicle->Z <= 0) || (p_vehicle->Z >= 0x800000))
+    if ((p_vehicle->X <= MAPCOORD_TO_PRCCOORD(0,0))
+      || (p_vehicle->X >= MAPCOORD_TO_PRCCOORD(MAP_COORD_WIDTH,0))
+      || (p_vehicle->Z <= MAPCOORD_TO_PRCCOORD(0,0))
+      || (p_vehicle->Z >= MAPCOORD_TO_PRCCOORD(MAP_COORD_HEIGHT,0)))
     {
         if (p_vehicle->State != VehSt_UNKN_45)
             start_crashing(p_vehicle);
@@ -1268,7 +1281,7 @@ void preprogress_trains_turns(ulong nturns)
 
     for (turns = nturns; turns > 0; turns--)
     {
-        short thing;
+        ThingIdx thing;
         int tng_remain;
         struct Thing *p_thing;
 

@@ -511,6 +511,12 @@ TbResult LbScreenFindVideoModes(void);
  */
 TbResult LbScreenSwap(void);
 
+/** Places working screen buffer to the physical screen, then fills working
+ * screen with colour.
+ *
+ * See LbScreenSwap() for detailed description. The only difference here is that
+ * after the work screen contaent was used, it is filled with given colour.
+ */
 TbResult LbScreenSwapClear(TbPixel colour);
 
 /** Updates a rectangle of working screen and places it to the physical screen.

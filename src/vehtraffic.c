@@ -43,6 +43,27 @@ short tnode_find_used_link(struct TrafficNode *p_tnode)
     return -1;
 }
 
+void tnode_unlink_thing(short tnode, ThingIdx thing)
+{
+    struct TrafficNode *p_tnode;
+    int i;
+
+    p_tnode = &game_traffic_nodes[tnode];
+    for (i = 0; i < 4; i++)
+    {
+        if (p_tnode->UTraffic.Link[i] == thing)
+            p_tnode->UTraffic.Link[i] = 0;
+    }
+}
+
+void tnode_all_unlink_thing(ThingIdx thing)
+{
+    short tnode;
+    for (tnode = 1; tnode < next_traffic_node; tnode++) {
+        tnode_unlink_thing(tnode, thing);
+    }
+}
+
 short get_next_tnode(struct Thing *p_vehicle, struct TrafficNode *p_tnode)
 {
     short ret;
@@ -198,7 +219,7 @@ void update_workplace_unkn0001_flag(struct Thing *p_vehicle)
 
 static TbBool check_person_close_on_mapel(struct MyMapElement *p_mapel)
 {
-    short thing;
+    ThingIdx thing;
 
     thing = p_mapel->Child;
     while (thing != 0)
@@ -496,7 +517,7 @@ void VNAV_preprocess_bezier_turns(ulong nturns)
 
     for (turns = nturns; turns > 0; turns--)
     {
-        short thing;
+        ThingIdx thing;
         ushort i;
 
         thing = things_used_head;

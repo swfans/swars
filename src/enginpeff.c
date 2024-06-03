@@ -2,7 +2,7 @@
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
 /** @file enginpeff.c
- *     Engine scene post-processing effects.
+ *     Engine scene pre-/post-processing effects.
  * @par Purpose:
  *     Implement functions for adding effects while rendering a scene.
  * @par Comment:
@@ -19,10 +19,12 @@
 #include "enginpeff.h"
 
 #include "bfgentab.h"
+#include "bfmath.h"
 #include "bfpixel.h"
 #include "bfscreen.h"
 #include "bfutility.h"
 #include "display.h"
+#include "engintrns.h"
 #include "game_speed.h"
 #include "scanner.h"
 #include "swlog.h"
@@ -36,9 +38,21 @@ void game_process_sub08(void)
         :  : );
 }
 
-void scene_post_effect_prepare(void)
+void scene_post_effect_texture_with_snow(void)
 {
     int i;
+
+    for (i = 0; i < 10; i++) {
+        ushort pos;
+        ubyte *ptr;
+        pos = LbRandomAnyShort() + (gameturn >> 2);
+        ptr = vec_tmap[0] + pos;
+        *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
+    }
+}
+
+void scene_post_effect_prepare(void)
+{
 #if 0 // experimental function to alter effect intensity
     if ((LbRandomAnyShort() & 0xfff) > 0xf80)
         gamep_scene_effect_change = -gamep_scene_effect_change;
@@ -53,14 +67,8 @@ void scene_post_effect_prepare(void)
     case ScEff_RAIN:
         game_process_sub08();
         break;
-    case ScEff_STATIC:
-        for (i = 0; i < 10; i++) {
-            ushort pos;
-            ubyte *ptr;
-            pos = LbRandomAnyShort() + (gameturn >> 2);
-            ptr = vec_tmap[0] + pos;
-            *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
-        }
+    case ScEff_SNOW:
+        scene_post_effect_texture_with_snow();
         break;
     }
 }
@@ -132,18 +140,15 @@ static void draw_static_dot(short x, short y, short w, short h, short ftpos)
     }
 }
 
-void draw_static_noise(int bckt)
+void draw_falling_snow(int bckt)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_static_noise\n"
+      "call ASM_draw_falling_snow\n"
         : : "a" (a1));
 #endif
     int height;
     uint seed_bkp;
-    int shift1;
-    uint shift2;
-    uint x, y;
     ushort m, scanln;
 
     scanln = lbDisplay.GraphicsScreenWidth;
@@ -153,11 +158,22 @@ void draw_static_noise(int bckt)
     seed_bkp = lbSeed;
     if (height >= 20)
     {
+        int shift1;
+        uint shift2;
+        uint x, y;
+        ushort speed;
+        ushort angXZs, angXZc;
+
+        angXZs = ((engn_anglexz >> 5)) & 0x7FF;
+        angXZc = ((engn_anglexz >> 5) + LbFPMath_PI/2) & 0x7FF;
+
         lbSeed = bckt;
+        speed = (bckt >> 5) & 0x3;
         shift1 = waft_table[(bckt + gameturn) & 0x1F];
-        x = (shift1 >> 1) + (engn_xc >> 4) + (engn_anglexz >> 7) + LbRandomPosShort();
+        // Moving with full background speed would be >> 19, dividing by half to make rotation look beter
+        x = (shift1 >> (speed + 1)) + ((engn_zc * lbSinTable[angXZs]) >> 20) - ((engn_xc * lbSinTable[angXZc]) >> 20) + LbRandomAnyShort();
         shift2 = (10000 - bckt) * gameturn;
-        y = (shift2 >> 12) + LbRandomPosShort();
+        y = (shift2 >> (12 - speed/2)) + ((engn_xc * lbSinTable[angXZs]) >> 20) + ((engn_zc * lbSinTable[angXZc]) >> 20) + LbRandomAnyShort();
         lbDisplay.DrawFlags = 0x0004;
         draw_static_dot((x * m) % scanln, (y % height) * m, m, m, 128 * ((10000 - bckt) / 416) + colour_lookup[1]);
         lbSeed = seed_bkp;
@@ -177,15 +193,71 @@ void scene_post_effect_for_bucket(short bckt)
             draw_falling_rain(bckt);
         }
         break;
-    case ScEff_STATIC:
+    case ScEff_SNOW:
         every = 8 * 1000 / gamep_scene_effect_intensity;
         if ((bckt % every) == 0) {
-            draw_static_noise(bckt);
+            draw_falling_snow(bckt);
         }
         break;
     default:
         break;
     }
+}
+
+static void draw_distant_stars(short x, short y, short w, short h, TbPixel color)
+{
+    short dx, dy;
+
+    for (dy = 0; dy < h; dy++)
+    {
+        for (dx = 0; dx < w; dx++) {
+            LbDrawPixelClip(x + dx, y + dy, color);
+        }
+    }
+}
+
+void draw_background_stars(void)
+{
+#if 0
+    asm volatile ("call ASM_draw_background_stars\n"
+        :  :  : "eax" );
+#endif
+    ulong seed_bkp;
+    int i, limit;
+    int scr_x0, scr_y0;
+    ushort m;
+
+    m = lbDisplay.GraphicsScreenHeight / 300;
+    if (m == 0) m++;
+    scr_x0 = lbDisplay.GraphicsScreenWidth / 2;
+    scr_y0 = lbDisplay.GraphicsScreenHeight / 2;
+
+    seed_bkp = lbSeed;
+    lbSeed = 0x8D747;
+    limit = 1223 * gamep_scene_effect_intensity / 1000;
+    for (i = 0; i < limit; i++)
+    {
+        int gt, plane, speed;
+        int simp_x, simp_y;
+        int scr_x, scr_y;
+
+        gt = gameturn & 0x7FF;
+        plane = (i >> 4) + 1;
+#if 0 // some testing code which remained for no reason, remove later
+        if (lbShift == KMod_SHIFT)
+            speed = 32 * gt;
+        else
+#endif
+        speed = plane * gt;
+        simp_x = (LbRandomAnyShort() - (speed >> 6)) % 800 - 400;
+        simp_y = LbRandomAnyShort() % 800 - 400;
+
+        scr_x = scr_x0 + ((simp_x * m * dword_176D14 - simp_y * m * dword_176D10) >> 16);
+        scr_y = scr_y0 - ((simp_x * m * dword_176D10 + simp_y * m * dword_176D14) >> 16);
+
+        draw_distant_stars(scr_x, scr_y, m, m, 79 - (plane >> 1));
+    }
+    lbSeed = seed_bkp;
 }
 
 /******************************************************************************/

@@ -22,6 +22,8 @@
 #include "bfmemory.h"
 #include "bffile.h"
 #include "bfini.h"
+#include "bfutility.h"
+#include "bigmap.h"
 #include "player.h"
 #include "game.h"
 #include "sound.h"
@@ -435,6 +437,21 @@ void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing)
 }
 
 
+TbBool person_is_dead(ThingIdx thing)
+{
+    struct Thing *p_thing;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+
+    if (p_thing->Type != TT_PERSON)
+        return false;
+
+    return (p_thing->State == PerSt_DEAD);
+}
+
 ubyte person_mod_chest_level(struct Thing *p_person)
 {
     return cybmod_chest_level(&p_person->U.UPerson.UMod);
@@ -497,13 +514,13 @@ TbBool person_carries_any_medikit(struct Thing *p_person)
 
 void person_give_best_mods(struct Thing *p_person)
 {
+    set_person_mod_brain_level(p_person, 3);
     set_person_mod_legs_level(p_person, 3);
     set_person_mod_arms_level(p_person, 3);
-    set_person_mod_brain_level(p_person, 3);
     set_person_mod_chest_level(p_person, 3);
 }
 
-TbBool person_is_persuaded(short thing)
+TbBool person_is_persuaded(ThingIdx thing)
 {
     struct Thing *p_person;
 
@@ -514,7 +531,7 @@ TbBool person_is_persuaded(short thing)
     return ((p_person->Flag & TngF_Persuaded) != 0);
 }
 
-TbBool person_is_persuaded_by_person(short thing, short owntng)
+TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng)
 {
     struct Thing *p_person;
 
@@ -528,7 +545,7 @@ TbBool person_is_persuaded_by_person(short thing, short owntng)
     return (p_person->Owner == owntng);
 }
 
-TbBool person_is_persuaded_by_player(short thing, ushort plyr)
+TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr)
 {
     struct Thing *p_thing;
     short plyagent, plygroup;
@@ -625,12 +642,14 @@ ushort calc_person_radius_type(struct Thing *p_person, ushort stype)
         r = 80;
         break;
     case SubTT_PERS_ZEALOT:
-    case SubTT_PERS_BRIEFCASE_M:
-    case SubTT_PERS_WHITE_BRUN_F:
+    case SubTT_PERS_HIGH_PRIEST:
+        r = 100;
+        break;
     case SubTT_PERS_MERCENARY:
     case SubTT_PERS_SCIENTIST:
     case SubTT_PERS_SHADY_M:
-    case SubTT_PERS_HIGH_PRIEST:
+    case SubTT_PERS_BRIEFCASE_M:
+    case SubTT_PERS_WHITE_BRUN_F:
     case SubTT_PERS_WHIT_BLOND_F:
     case SubTT_PERS_LETH_JACKT_M:
         r = 100;
@@ -746,6 +765,22 @@ void set_person_animmode_walk(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushort flags)
+{
+    int ret;
+    asm volatile ("call ASM_can_i_see_thing\n"
+        : "=r" (ret) : "a" (p_me), "d" (p_him), "b" (max_dist), "c" (flags));
+    return ret;
+}
+
+TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle)
+{
+    TbBool ret;
+    asm volatile ("call ASM_can_i_enter_vehicle\n"
+        : "=r" (ret) : "a" (p_me), "d" (p_vehicle));
+    return ret;
+}
+
 void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
 {
     switch (p_person->SubType)
@@ -754,9 +789,9 @@ void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
           ++mission_status[brief].AgentsGained;
           // fall through
     case SubTT_PERS_ZEALOT:
+    case SubTT_PERS_HIGH_PRIEST:
     case SubTT_PERS_PUNK_F:
     case SubTT_PERS_PUNK_M:
-    case SubTT_PERS_HIGH_PRIEST:
           ++mission_status[brief].EnemiesPersuaded;
           break;
     case SubTT_PERS_BRIEFCASE_M:
@@ -884,7 +919,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
 
 void unpersuade_my_peeps(struct Thing *p_owntng)
 {
-    short person;
+    ThingIdx person;
     struct Thing *p_person;
     ushort count;
     int i, k;
@@ -912,6 +947,102 @@ void unpersuade_my_peeps(struct Thing *p_owntng)
     }
     p_owntng->U.UPerson.PersuadePower = 0;
     word_1531DA = count;
+}
+
+struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
+{
+#if 0
+    struct Thing *p_person;
+    asm volatile ("call ASM_new_sim_person\n"
+        : "=r" (p_person) : "a" (x), "d" (y), "b" (z), "c" (subtype));
+    return p_person;
+#endif
+    ubyte ptype;
+    struct PeepStat *p_pestat;
+    ThingIdx person;
+    struct Thing *p_person;
+    ushort rnd;
+    int ry;
+
+    ptype = subtype;
+    if (subtype <= 100) {
+        person = get_new_thing();
+    } else {
+        ptype = SubTT_PERS_AGENT;
+        person = unkn01_thing_idx;
+    }
+    if (person <= 0)
+        return &things[0];
+    p_pestat = &peep_type_stats[ptype];
+    rnd = LbRandomAnyShort();
+
+    p_person = &things[person];
+    p_person->X = MAPCOORD_TO_PRCCOORD(x,0);
+    p_person->Z = MAPCOORD_TO_PRCCOORD(z,0);
+    p_person->U.UPerson.Target2 = 0;
+    ry = alt_at_point(x, z);
+    p_person->Speed = 512;
+    p_person->U.UPerson.Angle = (rnd >> 1) % 8;
+    p_person->U.UPerson.AnimMode = 0;
+    p_person->StartTimer1 = 48;
+    p_person->Timer1 = 48;
+    p_person->Y = ry;
+    p_person->U.UPerson.OnFace = 0;
+    p_person->Type = TT_PERSON;
+    p_person->Radius = calc_person_radius_type(p_person, ptype);
+    switch (ptype)
+    {
+    case SubTT_PERS_AGENT:
+        p_person->U.UPerson.Angle = 0;
+        p_person->U.UPerson.CurrentWeapon = WEP_MINIGUN;
+        break;
+    case SubTT_PERS_ZEALOT:
+    case SubTT_PERS_HIGH_PRIEST:
+        p_person->U.UPerson.CurrentWeapon = WEP_ELLASER;
+        break;
+    case SubTT_PERS_PUNK_F:
+        p_person->U.UPerson.CurrentWeapon = WEP_UZI;
+        p_person->U.UPerson.FrameId.Version[0] = rnd % 3;
+        break;
+    case SubTT_PERS_BRIEFCASE_M:
+    case SubTT_PERS_WHITE_BRUN_F:
+    case SubTT_PERS_MERCENARY:
+    case SubTT_PERS_SCIENTIST:
+    case SubTT_PERS_WHIT_BLOND_F:
+    case SubTT_PERS_LETH_JACKT_M:
+        p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+        break;
+    case SubTT_PERS_MECH_SPIDER:
+        p_person->U.UPerson.CurrentWeapon = WEP_LASER;
+        break;
+    case SubTT_PERS_POLICE:
+        p_person->U.UPerson.CurrentWeapon = WEP_LASER;
+        break;
+    case SubTT_PERS_PUNK_M:
+        p_person->U.UPerson.CurrentWeapon = WEP_UZI;
+        break;
+    case SubTT_PERS_SHADY_M:
+        p_person->U.UPerson.CurrentWeapon = WEP_UZI;
+        break;
+    default:
+        break;
+    }
+    p_person->SubType = ptype;
+    p_person->U.UPerson.Group = ptype + 4;
+    p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
+    p_person->U.UPerson.AnimMode = (p_person->U.UPerson.CurrentWeapon != WEP_NULL) ? 1 : 0;
+    reset_person_frame(p_person);
+    init_person_thing(p_person);
+    p_person->U.UPerson.WeaponsCarried = 0;
+    if (p_person->U.UPerson.CurrentWeapon)
+        p_person->U.UPerson.WeaponsCarried |= (1 << (p_person->U.UPerson.CurrentWeapon - 1));
+    p_person->U.UPerson.WeaponsCarried |= (1 << (WEP_ENERGYSHLD-1));
+    p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
+    p_person->Speed = p_pestat->Speed;
+    add_node_thing(person);
+    p_person->U.UPerson.ComHead = 0;
+    p_person->U.UPerson.ComCur = 0;
+    return p_person;
 }
 
 short check_for_other_people(int x, int y, int z, struct Thing *p_person)

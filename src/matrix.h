@@ -36,6 +36,7 @@ struct M33 {
 extern struct M33 local_mats[100];
 
 void matrix_identity_fill(struct M33 *p_mat);
+void rotate_object_axis(struct M33 *p_base, short xangle, short yangle, short zangle);
 /******************************************************************************/
 #ifdef __cplusplus
 }

@@ -26,7 +26,8 @@
 
 short find_unused_group_id(TbBool largest)
 {
-    short thing, group;
+    ThingIdx thing;
+    short group;
     ulong used_groups;
     struct Thing *p_thing;
 
@@ -55,7 +56,7 @@ short find_unused_group_id(TbBool largest)
 
 ushort count_people_in_group(ushort group, short subtype)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     ushort count;
 
@@ -142,7 +143,7 @@ void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
 
 int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int stay_limit, int tran_limit)
 {
-    short thing;
+    ThingIdx thing;
     struct Thing *p_thing;
     int count;
 

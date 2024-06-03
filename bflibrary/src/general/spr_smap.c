@@ -21,12 +21,14 @@
 #include "bfsprite.h"
 
 #include <stdlib.h>
+#include <assert.h>
 #include "insspr.h"
 #include "bfscreen.h"
 #include "privbflog.h"
 
 /**
- * Draws a scaled up sprite on given buffer, with transparency mapping and source colours remapped, from right to left.
+ * Draws a scaled up sprite on given buffer, with transparency mapping and
+ * source colours remapped, from right to left.
  * Requires step arrays for scaling.
  *
  * @param outbuf The output buffer.
@@ -1303,6 +1305,7 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
     {
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) != 0)
         {
+          assert(render_ghost != NULL);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawRemapUsingScalingUpDataTrans1RL(outbuf, scanline,
@@ -1317,6 +1320,7 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
         else
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR8) != 0)
         {
+          assert(render_ghost != NULL);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawRemapUsingScalingUpDataTrans2RL(outbuf, scanline,
@@ -1346,6 +1350,7 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
     {
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) != 0)
         {
+          assert(render_ghost != NULL);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawRemapUsingScalingDownDataTrans1RL(outbuf, scanline,
@@ -1360,6 +1365,7 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
         else
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR8) != 0)
         {
+          assert(render_ghost != NULL);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawRemapUsingScalingDownDataTrans2RL(outbuf, scanline,

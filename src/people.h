@@ -20,6 +20,7 @@
 #define PEOPLE_H
 
 #include "bftypes.h"
+#include "game_bstype.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -164,6 +165,8 @@ extern ushort head_my_path; // = 1;
 extern ushort path_count;
 extern struct MyPath my_paths[1600];
 
+extern short unkn01_thing_idx;
+
 void remove_path(struct Thing *p_thing);
 void set_person_animmode_walk(struct Thing *p_person);
 
@@ -176,6 +179,8 @@ const char *person_type_name(ushort ptype);
 /** Print person state in function-like style to a buffer.
  */
 void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing);
+
+TbBool person_is_dead(ThingIdx thing);
 
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 TbBool person_carries_any_medikit(struct Thing *p_person);
@@ -196,11 +201,16 @@ void set_person_anim_mode(struct Thing *p_person, ubyte animode);
  */
 void reset_person_frame(struct Thing *p_person);
 
-TbBool person_is_persuaded(short thing);
-TbBool person_is_persuaded_by_person(short thing, short owntng);
-TbBool person_is_persuaded_by_player(short thing, ushort plyr);
+int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushort flags);
+TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle);
+
+TbBool person_is_persuaded(ThingIdx thing);
+TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
+TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);
+
+struct Thing *new_sim_person(int x, int y, int z, ubyte subtype);
 
 /******************************************************************************/
 #ifdef __cplusplus

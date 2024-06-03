@@ -1,5 +1,5 @@
 /******************************************************************************/
-// Syndicate Wars Port - open-source reimplementation of SW.
+// Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
 /** @file game_speed.c
  *     Control of the game speed.
@@ -24,6 +24,8 @@
 #include "game.h"
 #include "keyboard.h"
 #include "swlog.h"
+
+/******************************************************************************/
 
 short frameskip = 0;
 

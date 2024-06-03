@@ -29,8 +29,9 @@
 #include "guitext.h"
 #include "display.h"
 #include "campaign.h"
-#include "game.h"
 #include "cybmod.h"
+#include "game.h"
+#include "keyboard.h"
 #include "player.h"
 #include "research.h"
 #include "weapon.h"
@@ -401,17 +402,19 @@ void draw_discrete_rects_bar_lv(struct ScreenBoxBase *box, int lv, int lv_max, T
     }
 }
 
-void show_equipment_screen(void)
+ubyte show_equipment_screen(void)
 {
+    ubyte drawn = true;
+
     if ((unk11_menu[0].Flags & GBxFlg_Unkn0001) != 0)
     {
         byte_1C4975 = 0;
         byte_1C4976 = 0;
     }
     if (((game_projector_speed != 0) && is_heading_flag01()) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
         set_flag02_heading_screen_boxes();
         set_flag02_equipment_screen_boxes();
         byte_1C4975 = 1;
@@ -442,7 +445,12 @@ void show_equipment_screen(void)
         equip_list_box.Flags |= GBxFlg_Unkn0080;
         refresh_equip_list = 0;
     }
-    if (draw_heading_box())
+
+    // Draw sequentially
+    if (drawn)
+        drawn = draw_heading_box();
+
+    if (drawn)
     {
         sbyte nagent;
         ubyte agnt[4];
@@ -500,34 +508,39 @@ void show_equipment_screen(void)
         if (byte_1C4975 == 0) {
             byte_1C4975 = agnt[0] && agnt[1] && agnt[2] && agnt[3];
         }
-        if (boxes_drawn)
-        {
-            ubyte ret;
-            //equip_all_agents_button.DrawFn(&equip_all_agents_button); -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (ret) : "a" (&equip_all_agents_button), "g" (equip_all_agents_button.DrawFn));
-            //equip_list_head_box.DrawFn(&equip_list_head_box); -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (ret) : "a" (&equip_list_head_box), "g" (equip_list_head_box.DrawFn));
-            //if (weapon_slots.DrawFn(&weapon_slots)) -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (ret) : "a" (&weapon_slots), "g" (weapon_slots.DrawFn));
-            if (ret)
-            {
-                //if (equip_list_box.DrawFn(&equip_list_box)) { -- incompatible calling convention
-                asm volatile ("call *%2\n"
-                    : "=r" (ret) : "a" (&equip_list_box), "g" (equip_list_box.DrawFn));
-                if (ret) {
-                    //equip_name_box.DrawFn(&equip_name_box); { -- incompatible calling convention
-                    asm volatile ("call *%2\n"
-                        : "=r" (ret) : "a" (&equip_name_box), "g" (equip_name_box.DrawFn));
-                    //equip_display_box.DrawFn(&equip_display_box); { -- incompatible calling convention
-                    asm volatile ("call *%2\n"
-                        : "=r" (ret) : "a" (&equip_display_box), "g" (equip_display_box.DrawFn));
-                }
-            }
-        }
+        drawn = boxes_drawn;
     }
+
+    if (drawn)
+    {
+        //drawn = equip_all_agents_button.DrawFn(&equip_all_agents_button); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&equip_all_agents_button), "g" (equip_all_agents_button.DrawFn));
+        //drawn = equip_list_head_box.DrawFn(&equip_list_head_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&equip_list_head_box), "g" (equip_list_head_box.DrawFn));
+        //drawn = weapon_slots.DrawFn(&weapon_slots); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&weapon_slots), "g" (weapon_slots.DrawFn));
+    }
+
+    if (drawn)
+    {
+        //drawn = equip_list_box.DrawFn(&equip_list_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&equip_list_box), "g" (equip_list_box.DrawFn));
+    }
+
+    if (drawn)
+    {
+        //drawn = equip_name_box.DrawFn(&equip_name_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&equip_name_box), "g" (equip_name_box.DrawFn));
+        //drawn = equip_display_box.DrawFn(&equip_display_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&equip_display_box), "g" (equip_display_box.DrawFn));
+    }
+
     if (mo_weapon != -1)
     {
         short ms_x, ms_y;
@@ -538,6 +551,8 @@ void show_equipment_screen(void)
         spr = &unk2_sprites[weapon_sprite_index(mo_weapon + 1, true)];
         draw_sprite_purple_list(ms_x, ms_y, spr);
     }
+
+    return drawn;
 }
 
 void init_weapon_anim(ubyte weapon)
