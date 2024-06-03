@@ -270,7 +270,6 @@ void draw_hud_target_old_frame(struct Thing *p_target, int fr)
     ep.Flags = 0;
     transform_point(&ep);
 
-#if 0
     if ((overall_scale == 256) || (overall_scale <= 0) || (overall_scale >= 4096))
     {
         int sh_x;
@@ -285,7 +284,6 @@ void draw_hud_target_old_frame(struct Thing *p_target, int fr)
         draw_unkn1_scaled_alpha_sprite(fr +  0, ep.pp.X - sh_x, ep.pp.Y, overall_scale, PALETTE_FADE_LEVELS / 2);
         draw_unkn1_scaled_alpha_sprite(fr + 10, ep.pp.X + sh_x, ep.pp.Y, overall_scale, PALETTE_FADE_LEVELS / 2);
     }
-#endif
 
     draw_hud_health_bar(ep.pp.X, ep.pp.Y, p_target);
     draw_hud_shield_bar(ep.pp.X, ep.pp.Y, p_target);
