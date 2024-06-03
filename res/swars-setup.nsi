@@ -31,7 +31,7 @@ LangString STR_CHOOSE_DRIVE 1033 "Choose the CD-ROM drive"
 LangString STR_CHOOSE_LANG 1033 "Choose the language"
 
 ; --------------------
-; VARIABLES: 10
+; VARIABLES: 11
 
 Var selected_lang_text
 Var selected_lang_abbr
@@ -43,6 +43,7 @@ Var gog_path
 Var RadioSelected
 Var inst_src_root_dir
 Var levels_md5
+Var gfx_md5
 
 InstallDir "$PROGRAMFILES\Syndicate Wars\"
 
@@ -517,6 +518,37 @@ extract_level_files:
  CopyFiles /SILENT $PLUGINSDIR\SWARS\levels\* $INSTDIR\levels
  CopyFiles /SILENT $PLUGINSDIR\SWARS\maps\* $INSTDIR\maps
 
+  ;Update graphics files from swars-gfx repository
+
+  StrCpy $gfx_md5 "${GFX_PKG_MD5}"
+
+  !if /FileExists "$PLUGINSDIR\${GFX_PACKAGE}.zip"
+  !else
+ 	 Call DownloadGfx
+  !endif
+
+  ;Check MD5 of downloaded file to see if it's intact
+
+  md5dll::GetMD5File "$PLUGINSDIR\${GFX_PACKAGE}.zip"
+  Pop $0
+  StrCmp $0 $gfx_md5 extract_gfx_files retry_gfx_download
+
+retry_gfx_download:
+ DetailPrint "Error detected with graphics files zip, retrying download"
+ Call DownloadGFX
+ md5dll::GetMD5File "$PLUGINSDIR\${GFX_PACKAGE}.zip"
+ Pop $0
+ StrCmp $0 $gfx_md5 extract_gfx_files 0
+ SetErrors
+ DetailPrint "Error downloading graphics files from swars-gfx repository, please check the source file."
+ DetailPrint "Aborting install"
+ Abort
+
+extract_gfx_files:
+ DetailPrint "Extracting updated graphics files..."
+ nsisunz::Unzip  "$PLUGINSDIR\${GFX_PACKAGE}.zip" "$PLUGINSDIR\"
+ CopyFiles /SILENT $PLUGINSDIR\SWARS\data\* $INSTDIR\data
+
  Return
 
 copy_files_fail:
@@ -531,6 +563,12 @@ FunctionEnd
 Function DownloadLevels
   DetailPrint "Downloading latest game levels from Github..."
   inetc::get "https://github.com/swfans/swars-levels/releases/download/${LEVELS_VERSION}/${LEVELS_PACKAGE}.zip" "$PLUGINSDIR\${LEVELS_PACKAGE}.zip"
+FunctionEnd
+
+
+Function DownloadGfx
+  DetailPrint "Downloading latest game graphics from Github..."
+   inetc::get "https://github.com/swfans/swars-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip" "$PLUGINSDIR\${GFX_PACKAGE}.zip"
 FunctionEnd
 
 
