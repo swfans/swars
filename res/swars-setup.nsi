@@ -31,7 +31,7 @@ LangString STR_CHOOSE_DRIVE 1033 "Choose the CD-ROM drive"
 LangString STR_CHOOSE_LANG 1033 "Choose the language"
 
 ; --------------------
-; VARIABLES: 10
+; VARIABLES: 11
 
 Var selected_lang_text
 Var selected_lang_abbr
@@ -43,6 +43,7 @@ Var gog_path
 Var RadioSelected
 Var inst_src_root_dir
 Var levels_md5
+Var gfx_md5
 
 InstallDir "$PROGRAMFILES\Syndicate Wars\"
 
@@ -68,7 +69,7 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 !define MUI_ICON "swars.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
 !define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Port Setup"
-!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\n$\r$\nBuild ${PRODUCT_VERSION}\nLevels ${LEVELS_VERSION}"
+!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\nBuild ${PRODUCT_VERSION}$\nLevels ${LEVELS_VERSION}"
 
 
 ; --------------------
@@ -517,6 +518,37 @@ extract_level_files:
  CopyFiles /SILENT $PLUGINSDIR\SWARS\levels\* $INSTDIR\levels
  CopyFiles /SILENT $PLUGINSDIR\SWARS\maps\* $INSTDIR\maps
 
+  ;Update graphics files from swars-gfx repository
+
+  StrCpy $gfx_md5 "${GFX_PKG_MD5}"
+
+  !if /FileExists "$PLUGINSDIR\${GFX_PACKAGE}.zip"
+  !else
+ 	 Call DownloadGfx
+  !endif
+
+  ;Check MD5 of downloaded file to see if it's intact
+
+  md5dll::GetMD5File "$PLUGINSDIR\${GFX_PACKAGE}.zip"
+  Pop $0
+  StrCmp $0 $gfx_md5 extract_gfx_files retry_gfx_download
+
+retry_gfx_download:
+ DetailPrint "Error detected with graphics files zip, retrying download"
+ Call DownloadGFX
+ md5dll::GetMD5File "$PLUGINSDIR\${GFX_PACKAGE}.zip"
+ Pop $0
+ StrCmp $0 $gfx_md5 extract_gfx_files 0
+ SetErrors
+ DetailPrint "Error downloading graphics files from swars-gfx repository, please check the source file."
+ DetailPrint "Aborting install"
+ Abort
+
+extract_gfx_files:
+ DetailPrint "Extracting updated graphics files..."
+ nsisunz::Unzip  "$PLUGINSDIR\${GFX_PACKAGE}.zip" "$PLUGINSDIR\"
+ CopyFiles /SILENT $PLUGINSDIR\SWARS\data\* $INSTDIR\data
+
  Return
 
 copy_files_fail:
@@ -531,6 +563,12 @@ FunctionEnd
 Function DownloadLevels
   DetailPrint "Downloading latest game levels from Github..."
   inetc::get "https://github.com/swfans/swars-levels/releases/download/${LEVELS_VERSION}/${LEVELS_PACKAGE}.zip" "$PLUGINSDIR\${LEVELS_PACKAGE}.zip"
+FunctionEnd
+
+
+Function DownloadGfx
+  DetailPrint "Downloading latest game graphics from Github..."
+   inetc::get "https://github.com/swfans/swars-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip" "$PLUGINSDIR\${GFX_PACKAGE}.zip"
 FunctionEnd
 
 
