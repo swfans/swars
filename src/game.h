@@ -683,9 +683,9 @@ extern sbyte mo_weapon;
 
 extern ubyte selected_agent;
 
-extern ushort mouse_map_x;
-extern ushort mouse_map_y;
-extern ushort mouse_map_z;
+extern uint mouse_map_x;
+extern uint mouse_map_y;
+extern uint mouse_map_z;
 extern void *scratch_malloc_mem;
 
 extern struct ScreenPoint *hotspot_buffer;

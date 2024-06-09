@@ -1276,6 +1276,8 @@ void process_engine_unk2(void)
     short msx, msy;
     int offs_y;
     int point_x, point_y;
+    int shift_x, shift_y;
+    int map_xc, map_yc;
 
     if (ingame.DisplayMode == DpM_UNKN_32)
       offs_y = overall_scale * engn_yc >> 8;
@@ -1294,19 +1296,23 @@ void process_engine_unk2(void)
         point_y = msy - offs_y;
         point_x = msx;
     }
-    if ( dword_176D18 )
+    if (dword_176D18 != 0)
     {
-        int shift_x, shift_y;
-        int mmap_z;
+        int shift_a;
 
         shift_x = ((point_x - dword_176D3C) << 11) / overall_scale;
-        shift_y = -((((point_y - dword_176D40) << 11) / overall_scale << 16) / dword_176D18);
-        mouse_map_x = (shift_x * dword_176D14 - shift_y * dword_176D10) >> 16;
-        mmap_z = (dword_176D10 * shift_x + dword_176D14 * shift_y) >> 16;
-        mouse_map_z = -mmap_z;
+        shift_a = ((point_y - dword_176D40) << 11) / overall_scale;
+        shift_y = -((shift_a << 16) / dword_176D18);
     }
-    mouse_map_x += engn_xc;
-    mouse_map_z += engn_zc;
+    else
+    {
+        shift_x = 0;
+        shift_y = 0;
+    }
+    map_xc =  ((dword_176D14 * shift_x - dword_176D10 * shift_y) >> 16);
+    map_yc = -((dword_176D10 * shift_x + dword_176D14 * shift_y) >> 16);
+    mouse_map_x = engn_xc + map_xc;
+    mouse_map_z = engn_zc + map_yc;
     if (ingame.DisplayMode == DpM_UNKN_32)
         calc_mouse_pos();
     setup_engine_nullsub4();
