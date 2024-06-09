@@ -2807,7 +2807,12 @@ void setup_initial_screen_mode(void)
     // Setup colour conversion tables, allowing generation
     LbColourTablesLoad(display_palette, "data/tables.dat");
     LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
+#if 0
+    // Not sure why we would do this fixup. Maybe it's only for
+    // sprite generation? If used before gameplay, it causes bad
+    // while fading beyond map borders (always fades to full white)
     colour_tables_ghost_fixup();
+#endif
 }
 
 void screen_mode_switch_to_next(void)
