@@ -147,7 +147,8 @@ short get_render_area_for_zoom(short zoom)
         h = lbDisplay.GraphicsScreenWidth;
         w = lbDisplay.GraphicsScreenHeight;
     }
-    dt += (w - h * 4 / 3) * 10 / (h * (16/4));
+    if (h != 0)
+        dt += (w - h * 4 / 3) * 10 / (h * (16/4));
     // Compute the area
     rarea = ((106*14/4) - zoom) * 4 / dt;
     // In low resolution, use even lower render area
