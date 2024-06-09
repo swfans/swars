@@ -32,4 +32,16 @@ void rotate_object_axis(struct M33 *p_base, short xangle, short yangle, short za
         : : "a" (p_base), "d" (xangle), "b" (yangle), "c" (zangle));
 }
 
+void vec_cross_prod(struct M31 *vecr, struct M31 *vec1, struct M31 *vec2)
+{
+    asm volatile ("call ASM_vec_cross_prod\n"
+        : : "a" (vecr), "d" (vec1), "b" (vec2));
+}
+
+void object_vec_normalisation(struct M33 *vec, ubyte col)
+{
+    asm volatile ("call ASM_object_vec_normalisation\n"
+        : : "a" (vec), "d" (col));
+}
+
 /******************************************************************************/

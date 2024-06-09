@@ -163,6 +163,7 @@ extern unsigned short unkn2_pos_x;
 extern unsigned short unkn2_pos_y;
 extern unsigned short unkn2_pos_z;
 extern int data_1c8428;
+extern ubyte byte_1C83E4;
 extern ubyte byte_1C8444;
 extern const char *primvehobj_fname;
 extern unsigned char textwalk_data[640];
@@ -1969,6 +1970,145 @@ ushort draw_object(int x, int y, int z, struct SingleObject *point_object)
     return ret;
 }
 
+void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign)
+{
+    asm volatile ("call ASM_check_mouse_overvehicle\n"
+        : : "a" (p_thing), "d" (target_assign));
+}
+
+int mech_unkn_func_03(struct Thing *p_thing)
+{
+    int ret;
+    asm volatile ("call ASM_mech_unkn_func_03\n"
+        : "=r" (ret) : "a" (p_thing));
+    return ret;
+}
+
+ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
+{
+    ushort ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_draw_rot_object\n"
+        : "=r" (ret) : "a" (offset_x), "d" (offset_y), "b" (offset_z), "c" (point_object), "g" (p_thing));
+    return ret;
+}
+
+ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
+{
+    ushort ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_draw_rot_object2\n"
+        : "=r" (ret) : "a" (offset_x), "d" (offset_y), "b" (offset_z), "c" (point_object), "g" (p_thing));
+    return ret;
+}
+
+void draw_vehicle_shadow(ushort veh, ushort sort)
+{
+    asm volatile ("call ASM_draw_vehicle_shadow\n"
+        : : "a" (veh), "d" (sort));
+}
+
+void draw_vehicle_health(struct Thing *p_thing)
+{
+    asm volatile ("call ASM_draw_vehicle_health\n"
+        : : "a" (p_thing));
+}
+
+void process_child_object(struct Thing *p_thing)
+{
+    asm volatile ("call ASM_process_child_object\n"
+        : : "a" (p_thing));
+}
+
+void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
+{
+    asm volatile (
+      "push %9\n"
+      "push %8\n"
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_build_polygon_circle\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (r1), "g" (r2), "g" (flag), "g" (p_tex), "g" (col), "g" (bright1), "g" (bright2));
+}
+
+void do_car_glare(struct Thing *p_car)
+{
+    asm volatile ("call ASM_do_car_glare\n"
+        : : "a" (p_car));
+}
+
+void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity)
+{
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_draw_pers_e_graphic\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (frame), "g" (radius), "g" (intensity));
+}
+
+void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity, struct Thing *p_thing)
+{
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_draw_e_graphic\n"
+        : : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (radius), "g" (intensity), "g" (p_thing));
+}
+
+struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
+{
+    struct SingleObjectFace4 *ret;
+    asm volatile (
+      "call ASM_build_glare\n"
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (r1));
+    return ret;
+}
+
+void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour)
+{
+    asm volatile (
+      "push %8\n"
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_build_laser\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner), "g" (colour));
+}
+
+void build_laser_guided_piece(struct Thing *p_laser)
+{
+    asm volatile ("call ASM_build_laser_guided_piece\n"
+        : : "a" (p_laser));
+}
+
+void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_draw_mapwho_vect_len\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (len), "g" (col));
+}
+
+void build_electricity(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_build_electricity\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner));
+}
 
 short draw_thing_object(struct Thing *p_thing)
 {
