@@ -2061,6 +2061,16 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
         : : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (radius), "g" (intensity), "g" (p_thing));
 }
 
+void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int intensity, int scale)
+{
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_draw_e_graphic_scale\n"
+        : : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (radius), "g" (intensity), "g" (scale));
+}
+
 struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
 {
     struct SingleObjectFace4 *ret;
@@ -2108,6 +2118,240 @@ void build_electricity(int x1, int y1, int z1, int x2, int y2, int z2, int itime
       "push %4\n"
       "call ASM_build_electricity\n"
         : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner));
+}
+
+void build_electricity_strand(struct SimpleThing *p_sthing, ubyte itime)
+{
+    asm volatile (
+      "call ASM_build_electricity_strand\n"
+        : : "a" (p_sthing), "d" (itime));
+}
+
+void build_razor_wire(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_build_razor_wire\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner));
+}
+
+void build_laser_beam(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_build_laser_beam\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner));
+}
+
+void build_laser_beam_q(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_build_laser_beam_q\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner));
+}
+
+void build_laser11(struct Thing *p_thing)
+{
+    struct Thing *p_owntng;
+    TbPixel colour;
+
+    if ((p_thing->Flag & 0x1000) != 0)
+        colour = colour_lookup[4];
+    else
+        colour = colour_lookup[2];
+    p_owntng = &things[p_thing->Owner];
+    build_laser(
+      PRCCOORD_TO_MAPCOORD(p_owntng->X),
+      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+      PRCCOORD_TO_MAPCOORD(p_owntng->Z),
+      p_thing->VX, p_thing->VY, p_thing->VZ,
+      p_thing->Timer1, p_owntng, colour);
+}
+
+void build_grenade(struct Thing *p_thing)
+{
+    struct MyMapElement *p_mapel;
+    ushort frame;
+
+    frame = p_thing->Frame;
+    p_mapel = &game_my_big_map[128 * (p_thing->Z >> 16) + (p_thing->X >> 16)];
+
+    draw_e_graphic(
+      PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
+      PRCCOORD_TO_MAPCOORD(p_thing->Y),
+      PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
+      frame, p_thing->Radius, p_mapel->ShadeR, p_thing);
+}
+
+void build_static(struct SimpleThing *p_sthing)
+{
+    struct MyMapElement *p_mapel;
+    ushort frame;
+
+    frame = p_sthing->Frame;
+    if (frame == nstart_ani[1008])
+        return;
+    p_mapel = &game_my_big_map[128 * (p_sthing->Z >> 16) + (p_sthing->X >> 16)];
+
+    draw_e_graphic(
+      PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
+      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
+      frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
+}
+
+void build_dropped_item(struct SimpleThing *p_sthing)
+{
+    struct MyMapElement *p_mapel;
+    ushort frame;
+
+    frame = p_sthing->Frame;
+    p_mapel = &game_my_big_map[128 * (p_sthing->Z >> 16) + (p_sthing->X >> 16)];
+
+    draw_e_graphic(
+      PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
+      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
+      frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
+}
+
+void build_spark(struct SimpleThing *p_sthing)
+{
+    draw_mapwho_vect_len(
+      PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
+      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
+      p_sthing->U.UEffect.OX - engn_xc,
+      p_sthing->U.UEffect.OY,
+      p_sthing->U.UEffect.OZ - engn_zc,
+      8, p_sthing->Object & 0xFF);
+}
+
+void build_unkn18(struct Thing *p_thing)
+{
+    draw_e_graphic(
+      PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
+      PRCCOORD_TO_MAPCOORD(p_thing->Y),
+      PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
+      nstart_ani[900], p_thing->Radius, 63, p_thing);
+}
+
+void build_laser_elec(struct Thing *p_thing)
+{
+    struct Thing *p_owntng;
+
+    p_owntng = &things[p_thing->Owner];
+    if (p_thing->State != 0)
+    {
+        build_electricity(
+          PRCCOORD_TO_MAPCOORD(p_owntng->X),
+          PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+          PRCCOORD_TO_MAPCOORD(p_owntng->Z),
+          p_thing->VX, p_thing->VY, p_thing->VZ,
+          100 + p_thing->Timer1, p_owntng);
+    }
+    else
+    {
+        int i;
+
+        for (i = 0; i < p_thing->SubType >> 1; i++)
+            build_electricity(
+              PRCCOORD_TO_MAPCOORD(p_owntng->X),
+              PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+              PRCCOORD_TO_MAPCOORD(p_owntng->Z),
+              p_thing->VX, p_thing->VY, p_thing->VZ,
+              p_thing->Timer1, p_owntng);
+    }
+}
+
+void build_scale_effect(struct SimpleThing *p_sthing)
+{
+    ushort frame;
+
+    frame = p_sthing->Frame;
+    draw_e_graphic_scale(
+      PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
+      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
+      frame, p_sthing->Radius, 32, p_sthing->Object);
+}
+
+void build_nuclear_bomb(struct SimpleThing *p_sthing)
+{
+    if (p_sthing->Radius <= 0 || ((p_sthing->Flag & 0x10000000) == 0))
+        return;
+    build_polygon_circle(
+      PRCCOORD_TO_MAPCOORD(p_sthing->X),
+      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_MAPCOORD(p_sthing->Z),
+      p_sthing->Radius, 20, 15,
+      game_textures, colour_lookup[1], 32, 96);
+}
+
+void build_laser29(struct Thing *p_thing)
+{
+    struct Thing *p_owntng;
+
+    p_owntng = &things[p_thing->Owner];
+    build_laser_beam(
+      PRCCOORD_TO_MAPCOORD(p_owntng->X),
+      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+      PRCCOORD_TO_MAPCOORD(p_owntng->Z),
+      p_thing->VX, p_thing->VY, p_thing->VZ,
+      p_thing->Timer1, p_owntng);
+}
+
+void build_soul(struct SimpleThing *p_sthing)
+{
+    build_glare(PRCCOORD_TO_MAPCOORD(p_sthing->X), p_sthing->Y >> 5,
+      PRCCOORD_TO_MAPCOORD(p_sthing->Z), 32);
+}
+
+void build_laser38(struct Thing *p_thing)
+{
+    struct Thing *p_owntng;
+
+    p_owntng = &things[p_thing->Owner];
+    build_laser_beam_q(
+      PRCCOORD_TO_MAPCOORD(p_owntng->X),
+      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+      PRCCOORD_TO_MAPCOORD(p_owntng->Z),
+      p_thing->VX, p_thing->VY, p_thing->VZ,
+      p_thing->Timer1, p_owntng);
+}
+
+void draw_bang(struct SimpleThing *p_pow)
+{
+    asm volatile ("call ASM_draw_bang\n"
+        : : "a" (p_pow));
+}
+
+void build_time_pod(struct SimpleThing *p_sthing)
+{
+    asm volatile ("call ASM_build_time_pod\n"
+        : : "a" (p_sthing));
+}
+
+void build_stasis_pod(struct SimpleThing *p_sthing)
+{
+    asm volatile ("call ASM_build_stasis_pod\n"
+        : : "a" (p_sthing));
+}
+
+void FIRE_draw_fire(struct SimpleThing *p_sthing)
+{
+    asm volatile ("call ASM_FIRE_draw_fire\n"
+        : : "a" (p_sthing));
 }
 
 short draw_thing_object(struct Thing *p_thing)
