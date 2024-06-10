@@ -392,7 +392,7 @@ struct InGame {
     short SoundThing;
     ubyte fld_unkCB1;
     ubyte fld_unkCB2;
-    short fld_unkCB3;
+    short VisibleBillboardThing;
     short fld_unkCB5;
     short fld_unkCB7;
     /** Flags representing active human players, in both net and local games. */
