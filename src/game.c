@@ -2016,10 +2016,37 @@ void draw_vehicle_health(struct Thing *p_thing)
         : : "a" (p_thing));
 }
 
-void process_child_object(struct Thing *p_thing)
+void process_child_object(struct Thing *p_vehicle)
 {
+#if 0
     asm volatile ("call ASM_process_child_object\n"
-        : : "a" (p_thing));
+        : : "a" (p_vehicle));
+#endif
+    struct SingleObject *p_sobj;
+    struct Thing *p_mgun;
+    struct M33 *m;
+    struct M31 vec1;
+    struct M31 vec2;
+    struct M31 gear;
+
+    gear.R[0] = p_vehicle->X >> 8;
+    gear.R[1] = p_vehicle->Y >> 5;
+    gear.R[2] = p_vehicle->Z >> 8;
+
+    p_mgun = &things[p_vehicle->U.UVehicle.SubThing];
+    vec2.R[0] = p_mgun->X >> 8;
+    vec2.R[1] = p_mgun->Y >> 4;
+    vec2.R[2] = p_mgun->Z >> 8;
+
+    m = &local_mats[p_vehicle->U.UVehicle.MatrixIndex];
+    matrix_transform(&vec1, m, &vec2);
+
+    p_sobj = &game_objects[p_mgun->U.UMGun.Object];
+    draw_rot_object(
+      gear.R[0] + (vec1.R[0] >> 15) - engn_xc,
+      gear.R[1] + (vec1.R[1] >> 15),
+      gear.R[2] + (vec1.R[2] >> 15) - engn_zc,
+      p_sobj, p_mgun);
 }
 
 void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)

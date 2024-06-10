@@ -44,4 +44,11 @@ void object_vec_normalisation(struct M33 *vec, ubyte col)
         : : "a" (vec), "d" (col));
 }
 
+void matrix_transform(struct M31 *p_result, struct M33 *p_trans, struct M31 *p_source)
+{
+    p_result->R[0] = p_trans->R[0][2] * p_source->R[2] + p_trans->R[0][0] * p_source->R[0] + p_source->R[1] * p_trans->R[0][1];
+    p_result->R[1] = p_trans->R[1][2] * p_source->R[2] + p_trans->R[1][0] * p_source->R[0] + p_source->R[1] * p_trans->R[1][1];
+    p_result->R[2] = p_trans->R[2][2] * p_source->R[2] + p_trans->R[2][1] * p_source->R[1] + p_source->R[0] * p_trans->R[2][0];
+}
+
 /******************************************************************************/
