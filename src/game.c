@@ -30,10 +30,11 @@
 #include "bfplanar.h"
 #include "bfscrsurf.h"
 #include "bfscrcopy.h"
+#include "bfsmack.h"
+#include "linksmk.h"
 #include "bmbang.h"
 #include "svesa.h"
 #include "swlog.h"
-#include "bflib_fmvids.h"
 #include "bflib_vidraw.h"
 #include "bfscd.h"
 #include "bflib_joyst.h"
@@ -377,12 +378,6 @@ void game_handle_sdl_events(void)
     }
 }
 
-void *ASM_smack_malloc(int msize);
-void ASM_smack_mfree(void *ptr);
-void *(*smack_malloc)(int);
-void (*smack_free)(void *);
-
-
 void load_texturemaps(void)
 {
     asm volatile ("call ASM_load_texturemaps\n"
@@ -509,11 +504,6 @@ void game_setup_stuff(void)
     colour_brown2 = LbPaletteFindColour(display_palette, 42, 37, 30);
     colour_grey2 = LbPaletteFindColour(display_palette, 32, 32, 32);
     colour_grey1 = LbPaletteFindColour(display_palette, 16, 16, 16);
-}
-
-void smack_malloc_free_all(void)
-{
-    smack_malloc_used_tot = 0;
 }
 
 void flic_unkn03(ubyte a1)
@@ -3788,16 +3778,6 @@ void setup_debug_obj_trace(void)
     debug_trace_place(0);
 }
 
-void set_smack_malloc(void *(*cb)(int))
-{
-    smack_malloc = cb;
-}
-
-void set_smack_free(void (*cb)(void *ptr))
-{
-    smack_free = cb;
-}
-
 void BAT_unknsub_20(int a1, int a2, int a3, int a4, unsigned long a5)
 {
     asm volatile (
@@ -3896,8 +3876,7 @@ void load_pop_sprites(void)
 void setup_host(void)
 {
     BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
-    set_smack_malloc(ASM_smack_malloc);
-    set_smack_free(ASM_smack_mfree);
+    smack_malloc_setup();
     LOGDBG("&setup_host() = 0x%lx", (ulong)setup_host);
     setup_initial_screen_mode();
 

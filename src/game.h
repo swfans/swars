@@ -490,7 +490,6 @@ extern void *engine_mem_alloc_ptr;
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
 
-extern ulong smack_malloc_used_tot;
 extern ubyte anim_slots[];
 extern struct Animation animations[2];
 

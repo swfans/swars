@@ -1,15 +1,15 @@
 /******************************************************************************/
-// Bullfrog Engine Emulation Library - for use to remake classic games like
-// Syndicate Wars, Magic Carpet or Dungeon Keeper.
+// Bullfrog Engine Smacker Playback Library - for use to remake classic games
+// like Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file bflib_fmvids.c
- *     Full Motion Video playback support.
+/** @file bfsmack.c
+ *     External interface of the smacker playback library.
  * @par Purpose:
- *     Implement FMV playback support for games.
+ *     Surfaces used for drawing on screen or compositing layers.
  * @par Comment:
- *     None.
+ *     Depends on the video support library, which is SDL in this implementation.
  * @author   Tomasz Lis
- * @date     19 Apr 2022 - 27 May 2022
+ * @date     12 Nov 2011 - 13 Jun 2024
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,11 +17,25 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bflib_fmvids.h"
+#include "bfsmack.h"
 
 #include "bfscreen.h"
 /******************************************************************************/
 //SmackDrawCallback smack_draw_callback = NULL;
+void *(*smack_malloc)(int);
+void (*smack_free)(void *);
+
+/******************************************************************************/
+
+void set_smack_malloc(void *(*cb)(int))
+{
+    smack_malloc = cb;
+}
+
+void set_smack_free(void (*cb)(void *ptr))
+{
+    smack_free = cb;
+}
 
 TbResult play_smk_direct(const char *fname, ulong smkflags, ushort plyflags, ushort mode)
 {
