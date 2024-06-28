@@ -243,7 +243,7 @@ GLOBAL_FUNC (ASM_DangerMusicFadeTick)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (DangerMusicFadeSwitch)
+GLOBAL_FUNC (ASM_DangerMusicFadeSwitch)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

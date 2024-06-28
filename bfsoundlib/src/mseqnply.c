@@ -164,7 +164,7 @@ void DangerMusicFadeTick(void *clientval)
     return;
 #endif
     if (!MusicInstalled || !MusicAble || !MusicActive
-      || !SongCurrentlyPlaying || AIL_sequence_status(SongHandle) == 2)
+      || !SongCurrentlyPlaying || AIL_sequence_status(SongHandle) == SNDSEQ_DONE)
     {
         AIL_release_timer_handle(DangerMusicFadeHandle);
         DangerMusicFadeActive = 0;
@@ -205,5 +205,40 @@ void DangerMusicFadeTick(void *clientval)
     }
 }
 
+void DangerMusicFadeSwitch(ubyte direction, ubyte freq)
+{
+#if 0
+    asm volatile ("call ASM_DangerMusicFadeSwitch\n"
+        : : "a" (direction),  "d" (freq));
+    return;
+#endif
+    if (DisableDangerMusic || DangerMusicAble
+      || MusicInstalled || MusicAble || MusicActive)
+        return;
+    if (SongCurrentlyPlaying
+      || AIL_sequence_status(SongHandle) != SNDSEQ_DONE
+      || CurrentDangerMusicFadeDirection != direction)
+        return;
+    if (DangerMusicFadeActive)
+        AIL_release_timer_handle(DangerMusicFadeHandle);
+
+    CurrentDangerMusicFadeDirection = direction;
+    DangerMusicVolumeChange = -DangerMusicVolumeChange;
+    DangerMusicFadeActive = 1;
+    if (freq <= 4 && freq != 0)
+    {
+        DangerMusicFadeRelease = 0;
+        DangerMusicFadeHandle = AIL_register_timer(DangerMusicFadeTick);
+        AIL_set_timer_frequency(DangerMusicFadeHandle, 30 * freq);
+        AIL_start_timer(DangerMusicFadeHandle);
+    }
+    else
+    {
+        DangerMusicFadeRelease = 0;
+        DangerMusicFadeHandle = AIL_register_timer(DangerMusicFadeTick);
+        AIL_set_timer_frequency(DangerMusicFadeHandle, 30);
+        AIL_start_timer(DangerMusicFadeHandle);
+    }
+}
 
 /******************************************************************************/
