@@ -40,14 +40,53 @@ extern struct SampleInfo *end_sample_id;
 
 TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
 {
+#if 0
     TbBool ret;
     asm volatile ("call ASM_IsSamplePlaying\n"
         : "=r" (ret) : "a" (tng_offs), "d" (smp_id), "b" (handle));
     return ret;
+#endif
+    SNDSAMPLE *p_sample;
+    struct SampleInfo *p_smpinf;
+
+    p_sample = (SNDSAMPLE *)handle;
+    if (!SoundInstalled)
+        return false;
+    if (!SoundAble)
+        return false;
+    if (!SoundActive)
+        return false;
+
+    if ((smp_id == 0) && (tng_offs == 0))
+    {
+        return AIL_sample_status(p_sample) == SNDSMP_PLAYING;
+    }
+    else if (smp_id == 0)
+    {
+        for (p_smpinf = sample_id; p_smpinf <= end_sample_id; p_smpinf++)
+        {
+            if (((ulong)tng_offs == p_smpinf->SourceID)
+              && AIL_sample_status(p_smpinf->SampleHandle) == SNDSMP_PLAYING)
+                return true;
+        }
+        return false;
+    }
+    else
+    {
+        for (p_smpinf = sample_id; p_smpinf <= end_sample_id; p_smpinf++)
+        {
+            if (((ulong)tng_offs == p_smpinf->SourceID)
+              && (smp_id == p_smpinf->SampleNumber)
+              && AIL_sample_status(p_smpinf->SampleHandle) == SNDSMP_PLAYING)
+                return true;
+        }
+        return false;
+    }
 }
 
 void ReleaseLoopedSample(ushort sourceId, ushort fx)
 {
+    // TODO the sourceId should be of long type
 #if 0
     asm volatile ("call ASM_ReleaseLoopedSample\n"
         : : "a" (sourceId),  "d" (fx));
@@ -59,7 +98,7 @@ void ReleaseLoopedSample(ushort sourceId, ushort fx)
 
     for (smpinfo = sample_id; smpinfo <= end_sample_id; smpinfo++)
     {
-        if (sourceId == smpinfo->SourceID && fx == smpinfo->SampleNumber) {
+        if ((ulong)sourceId == smpinfo->SourceID && fx == smpinfo->SampleNumber) {
             if (AIL_sample_status(smpinfo->SampleHandle) == SNDSMP_PLAYING)
                 AIL_set_sample_loop_count(smpinfo->SampleHandle, 1);
         }
