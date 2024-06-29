@@ -41,6 +41,8 @@ enum SampleFileTypes {
 
 extern uint8_t byte_15AA50[128];
 
+/******************************************************************************/
+
 void SS_build_amplitude_tables(SNDSAMPLE *s)
 {
     int hwfmt, smfmt;

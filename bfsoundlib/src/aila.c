@@ -76,6 +76,8 @@ uint32_t lastapitimerms = 0;
 
 static uint32_t highest_timer_delay = 0;
 
+/******************************************************************************/
+
 void AIL2OAL_API_lock(void)
 {
   ++AIL_lock_count;

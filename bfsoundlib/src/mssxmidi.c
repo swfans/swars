@@ -35,11 +35,6 @@
 #include "miscutil.h"
 #include "wildmidi_lib.h"
 /******************************************************************************/
-extern char GTL_prefix[128];
-extern char SoundDriverPath[144];
-
-extern MDI_DRIVER *MDI_first;
-extern uint32_t MDI_entry;
 const uint8_t *MDI_ptr;
 const uint8_t *MDI_event;
 uint32_t MDI_status, MDI_len;
@@ -49,8 +44,16 @@ int32_t MDI_i, MDI_j, MDI_n;
 int32_t MDI_q, MDI_t;
 int32_t MDI_sequence_done;
 
-extern int32_t MDI_locked;
 static uint32_t XMI_serve_entry = 0;
+
+extern char GTL_prefix[128];
+extern char SoundDriverPath[144];
+
+extern MDI_DRIVER *MDI_first;
+extern uint32_t MDI_entry;
+extern int32_t MDI_locked;
+
+/******************************************************************************/
 
 void AILXMIDI_end(void);
 

@@ -32,10 +32,13 @@
 #include "aildebug.h"
 #include "drv_oal.h"
 /******************************************************************************/
-extern size_t sound_free_buffer_count;
 
 static uint32_t SS_serve_entry = 0;
 static int32_t SS_serve_flags = 0;
+
+extern size_t sound_free_buffer_count;
+
+/******************************************************************************/
 
 /** Call device I/O verification function using current detection policy.
  */

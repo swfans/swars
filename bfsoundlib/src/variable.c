@@ -29,32 +29,32 @@
 #include "bfscd.h"
 /******************************************************************************/
 
-extern struct SampleInfo sample_id[32];
-extern struct SampleInfo *end_sample_id;
+struct SampleInfo sample_id[32];
+struct SampleInfo *end_sample_id;
+
+ushort NumberOfSamples = 0;
+struct DIG_DRIVER *SoundDriver = NULL;
+short Selected95WaveDevice = 0;
+
+TbBool MusicInstalled = false;
+TbBool MusicActive = true;
+
+ushort NumberOfSongs = 0;
+struct MDI_DRIVER *MusicDriver = NULL;
+struct SNDSEQUENCE *SongHandle = NULL;
+TbBool SoundActive = true;
+
+sbyte CDSpeed = 0;
 
 extern TbBool SoundInstalled;
 extern TbBool DisableLoadSounds;
 
-extern ushort NumberOfSamples;
-extern struct DIG_DRIVER *SoundDriver;
-
 extern int CurrentSoundMasterVolume; // = 127;
 extern int CurrentMusicMasterVolume; // = 127;
 
-extern TbBool MusicInstalled;
 extern TbBool MusicAble;
-extern TbBool MusicActive;
-
-extern ushort NumberOfSongs;
-extern struct MDI_DRIVER *MusicDriver;
-extern struct SNDSEQUENCE *SongHandle;
-
 extern TbBool SoundAble;
-extern TbBool SoundActive;
 extern TbBool StereoSound;
-
-extern sbyte CDSpeed;
-
 /******************************************************************************/
 
 ushort GetNumberOfSamples(void)
@@ -129,7 +129,7 @@ int GetSelected95MidiDevice(void)
 
 int GetSelected95WaveDevice(void)
 {
-    return 0;
+    return Selected95WaveDevice;
 }
 
 struct SampleInfo *GetFirstSampleInfoStructure(void)

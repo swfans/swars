@@ -34,6 +34,13 @@
 #include "rnc_1fm.h"
 /******************************************************************************/
 
+TbBool sample_queue_handle_initiated = false;
+TbBool sample_queue_handle_stopped = 1;
+SNDSAMPLE *sample_queue_handle = NULL;
+
+sbyte CurrentSoundBank = -1;
+long current_sample_queue_count = 0;
+
 extern TbBool SoundInstalled;
 extern TbBool DisableLoadSounds;
 
@@ -42,13 +49,7 @@ extern ushort SoundType;
 extern TbBool SoundActive;
 
 extern ushort NumberOfSamples;
-
-extern TbBool sample_queue_handle_initiated;
-extern TbBool sample_queue_handle_stopped;
-extern SNDSAMPLE *sample_queue_handle;
-
 extern char full_sound_data_path[224];
-extern ubyte CurrentSoundBank; // = -1;
 extern DIG_DRIVER *SoundDriver;
 
 extern void *SfxData;
@@ -58,7 +59,6 @@ extern void *EndSfxs;
 extern long largest_dat_size;
 extern long largest_tab_size;
 
-extern long current_sample_queue_count;
 /******************************************************************************/
 
 void StopSampleQueueList(void)
@@ -68,7 +68,7 @@ void StopSampleQueueList(void)
     if (!sample_queue_handle_initiated)
         return;
 
-    sample_queue_handle_stopped = 1;
+    sample_queue_handle_stopped = true;
     AIL_register_EOS_callback(sample_queue_handle, 0);
     AIL_end_sample(sample_queue_handle);
 

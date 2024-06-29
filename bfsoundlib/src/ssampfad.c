@@ -27,6 +27,12 @@
 #include "bfsound.h"
 #include "aildebug.h"
 /******************************************************************************/
+long sample_fade_handle = 0;
+
+TbBool volatile samples_currently_fading = false;
+TbBool volatile switch_off_sample_fade_timer = false;
+TbBool a_sample_is_fading = false;
+
 extern TbBool SoundInstalled;
 extern TbBool SoundAble;
 extern TbBool SoundActive;
@@ -34,12 +40,6 @@ extern ushort NumberOfSamples;
 
 extern struct SampleInfo sample_id[32];
 extern struct SampleInfo *end_sample_id;
-
-extern long sample_fade_handle;
-
-extern ubyte volatile samples_currently_fading;
-extern ubyte volatile switch_off_sample_fade_timer;
-extern ubyte a_sample_is_fading; // = 0;
 
 /******************************************************************************/
 

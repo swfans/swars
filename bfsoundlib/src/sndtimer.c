@@ -30,7 +30,7 @@
 #include "aildebug.h"
 /******************************************************************************/
 
-extern struct sound_timer_inf sound_timer[5];
+struct sound_timer_inf sound_timer[5];
 
 extern TbBool MusicInstalled;
 extern TbBool SoundInstalled;

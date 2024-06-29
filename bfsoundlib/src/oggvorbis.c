@@ -27,6 +27,8 @@
 #include "util.h"
 #include "snderr.h"
 
+/******************************************************************************/
+
 #define SOUND_MUSIC_BUFSIZE   16384
 
 #define check_al(source) check_al_line((source), __LINE__)

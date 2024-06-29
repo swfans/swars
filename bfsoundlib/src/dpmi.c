@@ -34,7 +34,6 @@
 uint16_t alloc_count = 0;
 #endif
 
-
 /******************************************************************************/
 
 void *AllocDOSmem(uint16_t *sel, long size)
