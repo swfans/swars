@@ -1723,7 +1723,7 @@ AWELoadPreset_:
 /*----------------------------------------------------------------*/
 /* void cbfadesample(unsigned long)
  */
-cbfadesample:
+ASM_cbfadesample:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1744,13 +1744,13 @@ cbfadesample:
 		add    $0x4,%esp
 		jmp    jump_1093cb
 	jump_1091bb:
-		mov    %cl,a_sample_is_fading
+		mov    %cl,EXPORT_SYMBOL(a_sample_is_fading)
 		mov    $EXPORT_SYMBOL(sample_id),%ebx
 		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_109375
 	jump_1091d2:
 		xor    %eax,%eax
-		mov    a_sample_is_fading,%al
+		mov    EXPORT_SYMBOL(a_sample_is_fading),%al
 		test   %eax,%eax
 		jne    jump_1093cb
 		movb   $0x1,EXPORT_SYMBOL(switch_off_sample_fade_timer)
@@ -1762,7 +1762,7 @@ cbfadesample:
 		pop    %ebx
 		ret
 	jump_1091f7:
-		movb   $0x1,a_sample_is_fading
+		movb   $0x1,EXPORT_SYMBOL(a_sample_is_fading)
 		mov    (%ebx),%esi
 		push   %esi
 		call   ac_AIL_sample_status
@@ -1836,7 +1836,7 @@ cbfadesample:
 		movb   $0x0,0x15(%ebx)
 		jmp    jump_10938a
 	jump_1092ca:
-		movb   $0x1,a_sample_is_fading
+		movb   $0x1,EXPORT_SYMBOL(a_sample_is_fading)
 		mov    (%ebx),%eax
 		push   %eax
 		call   ac_AIL_sample_status
@@ -1970,7 +1970,7 @@ func_1094e1:
 		xor    %bl,%bl
 		mov    %bl,EXPORT_SYMBOL(switch_off_sample_fade_timer)
 		mov    $0x1,%bh
-		push   $cbfadesample
+		push   $ac_cbfadesample
 		mov    %bh,EXPORT_SYMBOL(samples_currently_fading)
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
@@ -2400,7 +2400,7 @@ GLOBAL (sample_fade_handle)	/* 0x1E9568 */
  */
 GLOBAL (switch_off_sample_fade_timer)
 		.byte	0x0
-a_sample_is_fading:	/* 0x1E956D */
+GLOBAL (a_sample_is_fading)	/* 0x1E956D */
 		.byte	0x0
 /* unsigned char volatile samples_currently_fading
  */
