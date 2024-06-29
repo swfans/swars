@@ -143,6 +143,27 @@ void SetSampleVolume(long source_id, short smp_id, short volume)
     }
 }
 
+void SetSamplePan(long source_id, short smp_id, ushort pan)
+{
+    struct SampleInfo *p_smpinf;
+
+    if (!SoundInstalled || !SoundAble || !SoundActive)
+        return;
+
+    for (p_smpinf = sample_id; p_smpinf <= end_sample_id; p_smpinf++)
+    {
+        if ((ulong)source_id == p_smpinf->SourceID && smp_id == p_smpinf->SampleNumber
+          && AIL_sample_status(p_smpinf->SampleHandle) == SNDSMP_PLAYING)
+        {
+            if (pan != p_smpinf->SamplePan)
+            {
+                AIL_set_sample_pan(p_smpinf->SampleHandle, pan);
+                p_smpinf->SamplePan = pan;
+            }
+        }
+    }
+}
+
 void StopAllSamples(void)
 {
     struct SampleInfo *p_smpinf;

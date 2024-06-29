@@ -37,9 +37,9 @@ typedef void * TbSampleHandle;
 
 TbBool IsSamplePlaying(long source_id, short smp_id, TbSampleHandle handle);
 
-//int SetSamplePan();
+void SetSamplePan(long source_id, short smp_id, ushort pan);
 void SetSamplePitch(long source_id, short smp_id, short pitch);
-//int SetSampleVolume();
+void SetSampleVolume(long source_id, short smp_id, short volume);
 
 /** Releases sound sample which is playing in a loop.
  *

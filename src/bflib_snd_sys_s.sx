@@ -1120,7 +1120,7 @@ GLOBAL_FUNC (ASM_SetSampleVolume)	/* 0xf0a20 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSamplePan_)	/* 0xF0AB0 */
+GLOBAL_FUNC (ASM_SetSamplePan)	/* 0xF0AB0 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
