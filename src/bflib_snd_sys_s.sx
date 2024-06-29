@@ -1175,7 +1175,7 @@ GLOBAL_FUNC (ASM_SetSamplePan)	/* 0xF0AB0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (StopSample_)
+GLOBAL_FUNC (ASM_StopSample)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1226,7 +1226,7 @@ GLOBAL_FUNC (StopSample_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (PlaySampleFromAddress_)
+GLOBAL_FUNC (ASM_PlaySampleFromAddress)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
