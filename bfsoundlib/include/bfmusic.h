@@ -64,6 +64,9 @@ void StopMusic(void);
 
 void SetMusicVolume(int msec, ubyte volume);
 
+void SetMusicTempo(int tempo, int msec);
+void SetMusicTempoNormal(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

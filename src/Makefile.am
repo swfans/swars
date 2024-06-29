@@ -5,9 +5,6 @@ MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
 	bflib_basics.h \
-	bflib_fmvids.c \
-	bflib_fmvids.h \
-	bflib_fmvids_s.sx \
 	bflib_joyst.c \
 	bflib_joyst.h \
 	bflib_joyst_s.sx \
@@ -98,6 +95,11 @@ swars_SOURCES = \
 	../bfariadne/include/trstate.h \
 	../bfariadne/src/delaunay.c \
 	../bfariadne/include/delaunay.h \
+	../bfsmacklib/include/bfsmack.h \
+	../bfsmacklib/src/bfsmack.c \
+	../bfsmacklib/src/bfsmacklib_s.sx \
+	linksmk.h \
+	linksmk.c \
 	config.h \
 	bmbang.c \
 	bmbang.h \
@@ -257,6 +259,7 @@ swars_SOURCES = \
 swars_CPPFLAGS = \
   -I"$(top_srcdir)/bflibrary/include" \
   -I"$(top_srcdir)/bfsoundlib/include" \
+  -I"$(top_srcdir)/bfsmacklib/include" \
   -I"$(top_srcdir)/bfariadne/include"
 
 swars_WRAPPERS = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o

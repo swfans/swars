@@ -32,4 +32,23 @@ void rotate_object_axis(struct M33 *p_base, short xangle, short yangle, short za
         : : "a" (p_base), "d" (xangle), "b" (yangle), "c" (zangle));
 }
 
+void vec_cross_prod(struct M31 *vecr, struct M31 *vec1, struct M31 *vec2)
+{
+    asm volatile ("call ASM_vec_cross_prod\n"
+        : : "a" (vecr), "d" (vec1), "b" (vec2));
+}
+
+void object_vec_normalisation(struct M33 *vec, ubyte col)
+{
+    asm volatile ("call ASM_object_vec_normalisation\n"
+        : : "a" (vec), "d" (col));
+}
+
+void matrix_transform(struct M31 *p_result, struct M33 *p_trans, struct M31 *p_source)
+{
+    p_result->R[0] = p_trans->R[0][2] * p_source->R[2] + p_trans->R[0][0] * p_source->R[0] + p_source->R[1] * p_trans->R[0][1];
+    p_result->R[1] = p_trans->R[1][2] * p_source->R[2] + p_trans->R[1][0] * p_source->R[0] + p_source->R[1] * p_trans->R[1][1];
+    p_result->R[2] = p_trans->R[2][2] * p_source->R[2] + p_trans->R[2][1] * p_source->R[1] + p_source->R[0] * p_trans->R[2][0];
+}
+
 /******************************************************************************/

@@ -235,7 +235,7 @@ struct TngUVehicle
   short GotoY;
   short GotoZ;
   short VehicleAcceleration;
-  short LeisurePlace;
+  ushort LeisurePlace;
   short TargetDX;
   short TargetDY;
   short TargetDZ;
@@ -286,7 +286,7 @@ struct TngUEffect
   short GotoZ;
   short VehicleAcceleration;
   short MatrixIndex;
-  short LeisurePlace;
+  ushort LeisurePlace;
 };
 
 /** Person Draw Sprite Frame.

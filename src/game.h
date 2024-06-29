@@ -392,7 +392,7 @@ struct InGame {
     short SoundThing;
     ubyte fld_unkCB1;
     ubyte fld_unkCB2;
-    short fld_unkCB3;
+    short VisibleBillboardThing;
     short fld_unkCB5;
     short fld_unkCB7;
     /** Flags representing active human players, in both net and local games. */
@@ -490,7 +490,6 @@ extern void *engine_mem_alloc_ptr;
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
 
-extern ulong smack_malloc_used_tot;
 extern ubyte anim_slots[];
 extern struct Animation animations[2];
 
@@ -683,9 +682,9 @@ extern sbyte mo_weapon;
 
 extern ubyte selected_agent;
 
-extern ushort mouse_map_x;
-extern ushort mouse_map_y;
-extern ushort mouse_map_z;
+extern uint mouse_map_x;
+extern uint mouse_map_y;
+extern uint mouse_map_z;
 extern void *scratch_malloc_mem;
 
 extern struct ScreenPoint *hotspot_buffer;

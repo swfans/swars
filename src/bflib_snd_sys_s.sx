@@ -134,7 +134,7 @@ GLOBAL_FUNC (ASM_IsSamplePlaying)	/* 0xee750 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (DangerMusicFadeTick)
+GLOBAL_FUNC (ASM_DangerMusicFadeTick)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -153,7 +153,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_ef11b
-		cmpb   $0x0,data_1e5eac
+		cmpb   $0x0,EXPORT_SYMBOL(DangerMusicFadeRelease)
 		je     jump_ef06c
 		mov    EXPORT_SYMBOL(DangerMusicFadeHandle),%ecx
 		push   %ecx
@@ -172,7 +172,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		mov    EXPORT_SYMBOL(CurrentDangerMusicFadeDirection),%al
 		cmp    $0x2,%eax
 		jne    jump_ef097
-		movb   $0x1,data_1e5eac
+		movb   $0x1,EXPORT_SYMBOL(DangerMusicFadeRelease)
 		xor    %cl,%cl
 		mov    %cl,EXPORT_SYMBOL(DangerMusicFadeActive)
 		pop    %edi
@@ -187,7 +187,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		mov    EXPORT_SYMBOL(CurrentDangerMusicFadeDirection),%al
 		cmp    $0x1,%eax
 		jne    jump_ef0bf
-		movb   $0x1,data_1e5eac
+		movb   $0x1,EXPORT_SYMBOL(DangerMusicFadeRelease)
 		xor    %bl,%bl
 		mov    %bl,EXPORT_SYMBOL(DangerMusicFadeActive)
 		pop    %edi
@@ -208,7 +208,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		mov    %bl,%al
 		cmp    $0x10,%eax
 		jge    jump_ef146
-		cmpb   $0x0,EXPORT_SYMBOL(data_1e5edc)(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(DangerMusicVoiceMessages)(%eax)
 		je     jump_ef0db
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(DangerMusicVolume),%al
@@ -243,7 +243,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (DangerMusicFadeSwitch)
+GLOBAL_FUNC (ASM_DangerMusicFadeSwitch)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -292,8 +292,8 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		cmp    $0x1,%ebx
 		jl     jump_ef248
 		xor    %cl,%cl
-		push   $DangerMusicFadeTick
-		mov    %cl,data_1e5eac
+		push   $ac_DangerMusicFadeTick
+		mov    %cl,EXPORT_SYMBOL(DangerMusicFadeRelease)
 		call   ac_AIL_register_timer
 		mov    %eax,%edx
 		mov    %eax,EXPORT_SYMBOL(DangerMusicFadeHandle)
@@ -311,8 +311,8 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		jmp    jump_ef274
 	jump_ef248:
 		xor    %dh,%dh
-		push   $DangerMusicFadeTick
-		mov    %dh,data_1e5eac
+		push   $ac_DangerMusicFadeTick
+		mov    %dh,EXPORT_SYMBOL(DangerMusicFadeRelease)
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
 		push   $0x1e
@@ -334,7 +334,7 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSampleTempo)
+GLOBAL_FUNC (ASM_SetMusicTempo)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -365,7 +365,7 @@ GLOBAL_FUNC (SetSampleTempo)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSampleTempoNormal)
+GLOBAL_FUNC (ASM_SetMusicTempoNormal)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -450,7 +450,7 @@ GLOBAL_FUNC (ASM_ReleaseLoopedSample)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSamplePitch_)
+GLOBAL_FUNC (ASM_SetSamplePitch)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -517,7 +517,7 @@ GLOBAL_FUNC (SetSamplePitch_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
+GLOBAL_FUNC (ASM_SetMusicVolume) /* 0xee980 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -556,7 +556,7 @@ GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
 
 
 /*----------------------------------------------------------------*/
-cb_get_trigger_info:	/* 0x0F0340 */
+ASM_cb_get_trigger_info:	/* 0x0F0340 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -594,7 +594,7 @@ cb_get_trigger_info:	/* 0x0F0340 */
 		call   ac_AIL_send_channel_voice_message
 		mov    $0x1,%dh
 		add    $0x14,%esp
-		mov    %dh,EXPORT_SYMBOL(data_1e5edc)(%ebx)
+		mov    %dh,EXPORT_SYMBOL(DangerMusicVoiceMessages)(%ebx)
 	jump_f03ac:
 		cmpl   $0x1,0x1c(%esp)
 		jne    jump_f03ef
@@ -627,7 +627,7 @@ cb_get_trigger_info:	/* 0x0F0340 */
 /*----------------------------------------------------------------*/
 /* int fm_instrument_file_exists(char *fname)
  */
-fm_instrument_file_exists:
+GLOBAL_FUNC (ASM_fm_instrument_file_exists)
 /*----------------------------------------------------------------*/
 		push   %edx
 		xor    %edx,%edx
@@ -748,7 +748,7 @@ GLOBAL_FUNC (ASM_InitStreamedSound)
 
 
 /*----------------------------------------------------------------*/
-FreeStreamedSound_:
+GLOBAL_FUNC (ASM_FreeStreamedSound)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
@@ -760,7 +760,7 @@ FreeStreamedSound_:
 		call   ac_LbFileClose
 		mov    %ebx,EXPORT_SYMBOL(sample_file)
 	jump_1006df:
-		call   SwitchOffStreamedSound_
+		call   ac_SwitchOffStreamedSound
 		call   ac_free_buffers
 		xor    %ah,%ah
 		mov    %ah,EXPORT_SYMBOL(StreamedSoundAble)
@@ -770,7 +770,7 @@ FreeStreamedSound_:
 
 
 /*----------------------------------------------------------------*/
-SwitchOffStreamedSound_:
+GLOBAL_FUNC (ASM_SwitchOffStreamedSound)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -960,7 +960,7 @@ GLOBAL_FUNC(ASM_StopMusic)
 
 
 /*----------------------------------------------------------------*/
-FreeMusic_:
+GLOBAL_FUNC(ASM_FreeMusic)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1020,7 +1020,7 @@ FreeMusic_:
 
 
 /*----------------------------------------------------------------*/
-FreeSound_:
+GLOBAL_FUNC(ASM_FreeSound)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1058,7 +1058,7 @@ FreeSound_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSampleVolume_)	/* 0xf0a20 */
+GLOBAL_FUNC (ASM_SetSampleVolume)	/* 0xf0a20 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -1120,7 +1120,7 @@ GLOBAL_FUNC (SetSampleVolume_)	/* 0xf0a20 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSamplePan_)	/* 0xF0AB0 */
+GLOBAL_FUNC (ASM_SetSamplePan)	/* 0xF0AB0 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -2327,11 +2327,11 @@ GLOBAL (MusicInstallChoice)	/* 0x1E8C84 */
 MusicInstallChoice_str2:	/* 0x1e8d04 */
 		.fill   0x98
 
-data_1e5eac:	/* 0x1e5eac */
+GLOBAL (DangerMusicFadeRelease)	/* 0x1e5eac */
 		.byte	0x0
 		.align	4
 
-GLOBAL (data_1e5edc)	/* 0x1e5edc */
+GLOBAL (DangerMusicVoiceMessages)	/* 0x1e5edc */
 		.fill   0x10
 
 /* sound_timer_inf sound_timer[];

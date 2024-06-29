@@ -1356,7 +1356,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 		mov    %edi,-0x38(%ebp)
 		mov    %edi,-0x40(%ebp)
 	jump_138ac3:
-		lea    data_1e957c,%edi
+		lea    EXPORT_SYMBOL(byte_1E957C),%edi
 		jmp    jump_138b55
 	jump_138ace:
 		mov    -0x44(%ebp),%edi
@@ -1395,7 +1395,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 		setle  -0x48(%ebp)
 		mov    %di,-0x38(%ebp)
 	jump_138b38:
-		lea    data_1e957c,%edi
+		lea    EXPORT_SYMBOL(byte_1E957C),%edi
 	jump_138b3e:
 		mov    %eax,(%edi)
 		add    -0x24(%ebp),%eax
@@ -1507,7 +1507,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 		mov    %di,-0x38(%ebp)
 		mov    %edi,-0x40(%ebp)
 	jump_138c9b:
-		lea    data_1e957c,%edi
+		lea    EXPORT_SYMBOL(byte_1E957C),%edi
 		jmp    jump_138d2d
 	jump_138ca6:
 		mov    -0x44(%ebp),%edi
@@ -1546,7 +1546,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 		setle  -0x48(%ebp)
 		mov    %di,-0x38(%ebp)
 	jump_138d10:
-		lea    data_1e957c,%edi
+		lea    EXPORT_SYMBOL(byte_1E957C),%edi
 	jump_138d16:
 		mov    %eax,(%edi)
 		add    -0x24(%ebp),%eax
@@ -1641,7 +1641,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 		mov    %edi,-0x40(%ebp)
 		mov    %di,-0x30(%ebp)
 	jump_138e37:
-		lea    data_1e957c,%edi
+		lea    EXPORT_SYMBOL(byte_1E957C),%edi
 	jump_138e3d:
 		mov    %eax,(%edi)
 		add    -0x24(%ebp),%eax
@@ -1724,7 +1724,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 		mov    %edi,-0x40(%ebp)
 		mov    %di,-0x30(%ebp)
 	jump_138f40:
-		lea    data_1e957c,%edi
+		lea    EXPORT_SYMBOL(byte_1E957C),%edi
 	jump_138f46:
 		mov    %eax,(%edi)
 		add    -0x24(%ebp),%eax
@@ -1734,7 +1734,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 		decw   -0x30(%ebp)
 		jne    jump_138f46
 	jump_138f5a:
-		lea    data_1e957c,%esi
+		lea    EXPORT_SYMBOL(byte_1E957C),%esi
 		mov    -0x20(%ebp),%edx
 		mov    EXPORT_SYMBOL(lbDisplay)+44,%eax # lbDisplay.GraphicsWindowY
 		dec    %eax
@@ -1810,6 +1810,6 @@ GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 
 .data
 
-data_1e957c:
+GLOBAL (byte_1E957C)	/* 0x1E957C */
 		.fill   0xf00
 
