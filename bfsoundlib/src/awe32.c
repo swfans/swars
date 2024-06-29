@@ -99,6 +99,9 @@ void LoadAwe32Soundfont(const char *str)
 
     strncpy(CurrentAwe32SoundfontPrefix, str, sizeof(CurrentAwe32SoundfontPrefix));
     sprintf(locstr, "%s/%s.sbk", SoundDataPath, CurrentAwe32SoundfontPrefix);
+    sprintf(SoundProgressMessage, "Soundfont - loading \"%s\"\n", locstr);
+    SoundProgressLog(SoundProgressMessage);
+
     sbkHandle = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (sbkHandle == INVALID_FILE) {
         sprintf(SoundProgressMessage, "Soundfont - cannot open sound bank file\n");

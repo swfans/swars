@@ -27,6 +27,7 @@
 #include "aila.h"
 #include "ail.h"
 #include "aildebug.h"
+#include "awe32.h"
 #include "miscutil.h"
 #include "memfile.h"
 /******************************************************************************/
@@ -109,6 +110,24 @@ void AILA_shutdown(void)
     // removed DOS-specific calls, place 2
 }
 
+static void AIL2OAL_soundfont_sim(AIL_DRIVER *drvr, VDI_CALL *in, VDI_CALL *out)
+{
+    switch (in->CX)
+    {
+    case AWESF_GETTOTALRAM:
+        out->DX = (512*1024) >> 16; // 512k of ram
+        out->SI = 0;
+        out->AX = 0;
+        break;
+    case AWESF_DEFBANKSIZES:
+    case AWESF_FREEBANK:
+    case AWESF_LOADREQ:
+    case AWESF_STREAMSMPL:
+    case AWESF_SETPRESETS:
+        break;
+    }
+}
+
 int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out)
 {
@@ -145,7 +164,10 @@ int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
     case MDI_INSTALL_T_SET:
     case MDI_GET_T_STATUS:
     case MDI_PROT_UNPROT_T:
+        break;
     case MDI_VSE:
+        if ((in->CX >= AWESF_GETTOTALRAM) && (in->CX <= AWESF_SETPRESETS))
+            AIL2OAL_soundfont_sim(drvr, in, out);
         break;
     }
     return 0;
