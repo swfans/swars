@@ -32,32 +32,29 @@
 extern TbBool SoundInstalled;
 extern TbBool SoundAble;
 extern TbBool SoundActive;
+extern ulong SampleRate;
 
 extern struct SampleInfo sample_id[32];
 extern struct SampleInfo *end_sample_id;
 
 /******************************************************************************/
 
-TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
+TbBool IsSamplePlaying(long source_id, short smp_id, TbSampleHandle handle)
 {
 #if 0
     TbBool ret;
     asm volatile ("call ASM_IsSamplePlaying\n"
-        : "=r" (ret) : "a" (tng_offs), "d" (smp_id), "b" (handle));
+        : "=r" (ret) : "a" (source_id), "d" (smp_id), "b" (handle));
     return ret;
 #endif
     SNDSAMPLE *p_sample;
     struct SampleInfo *p_smpinf;
 
     p_sample = (SNDSAMPLE *)handle;
-    if (!SoundInstalled)
-        return false;
-    if (!SoundAble)
-        return false;
-    if (!SoundActive)
+    if (!SoundInstalled || !SoundAble || !SoundActive)
         return false;
 
-    if ((smp_id == 0) && (tng_offs == 0))
+    if ((smp_id == 0) && (source_id == 0))
     {
         return AIL_sample_status(p_sample) == SNDSMP_PLAYING;
     }
@@ -65,7 +62,7 @@ TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
     {
         for (p_smpinf = sample_id; p_smpinf <= end_sample_id; p_smpinf++)
         {
-            if (((ulong)tng_offs == p_smpinf->SourceID)
+            if (((ulong)source_id == p_smpinf->SourceID)
               && AIL_sample_status(p_smpinf->SampleHandle) == SNDSMP_PLAYING)
                 return true;
         }
@@ -75,7 +72,7 @@ TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
     {
         for (p_smpinf = sample_id; p_smpinf <= end_sample_id; p_smpinf++)
         {
-            if (((ulong)tng_offs == p_smpinf->SourceID)
+            if (((ulong)source_id == p_smpinf->SourceID)
               && (smp_id == p_smpinf->SampleNumber)
               && AIL_sample_status(p_smpinf->SampleHandle) == SNDSMP_PLAYING)
                 return true;
@@ -84,41 +81,62 @@ TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
     }
 }
 
-void ReleaseLoopedSample(ushort sourceId, ushort fx)
+void ReleaseLoopedSample(ushort source_id, short smp_id)
 {
-    // TODO the sourceId should be of long type
+    // TODO the source_id should be of long type
 #if 0
     asm volatile ("call ASM_ReleaseLoopedSample\n"
-        : : "a" (sourceId),  "d" (fx));
+        : : "a" (source_id),  "d" (smp_id));
 #endif
-    struct SampleInfo *smpinfo;
+    struct SampleInfo *p_smpinf;
 
     if (!SoundInstalled || !SoundAble || !SoundActive)
         return;
 
-    for (smpinfo = sample_id; smpinfo <= end_sample_id; smpinfo++)
+    for (p_smpinf = sample_id; p_smpinf <= end_sample_id; p_smpinf++)
     {
-        if ((ulong)sourceId == smpinfo->SourceID && fx == smpinfo->SampleNumber) {
-            if (AIL_sample_status(smpinfo->SampleHandle) == SNDSMP_PLAYING)
-                AIL_set_sample_loop_count(smpinfo->SampleHandle, 1);
+        if ((ulong)source_id == p_smpinf->SourceID && smp_id == p_smpinf->SampleNumber) {
+            if (AIL_sample_status(p_smpinf->SampleHandle) == SNDSMP_PLAYING)
+                AIL_set_sample_loop_count(p_smpinf->SampleHandle, 1);
+        }
+    }
+}
+
+void SetSamplePitch(long source_id, short smp_id, short pitch)
+{
+    struct SampleInfo *p_smpinf;
+
+    if (!SoundInstalled || !SoundAble || !SoundActive)
+        return;
+
+    for (p_smpinf = sample_id; p_smpinf <= end_sample_id; p_smpinf++)
+    {
+        if ((ulong)source_id == p_smpinf->SourceID && smp_id == p_smpinf->SampleNumber
+          && AIL_sample_status(p_smpinf->SampleHandle) == SNDSMP_PLAYING)
+        {
+            if (pitch > 0 && p_smpinf->SamplePitch != pitch) {
+                AIL_set_sample_playback_rate(p_smpinf->SampleHandle, pitch * SampleRate / 100);
+                p_smpinf->SamplePitch = pitch;
+            }
         }
     }
 }
 
 void StopAllSamples(void)
 {
-    struct SampleInfo *smpinfo;
+    struct SampleInfo *p_smpinf;
 
     if (!SoundInstalled || !SoundAble || !SoundActive)
         return;
+
     StopAllSampleFadeTimers();
-    for (smpinfo = sample_id; smpinfo <= end_sample_id; smpinfo++)
+    for (p_smpinf = sample_id; p_smpinf <= end_sample_id; p_smpinf++)
     {
-        AIL_end_sample(smpinfo->SampleHandle);
-        smpinfo->SampleNumber = 0;
-        smpinfo->SourceID = 0;
-        smpinfo->FadeState = 0;
-        smpinfo->FadeStopFlag = 0;
+        AIL_end_sample(p_smpinf->SampleHandle);
+        p_smpinf->SampleNumber = 0;
+        p_smpinf->SourceID = 0;
+        p_smpinf->FadeState = 0;
+        p_smpinf->FadeStopFlag = 0;
     }
     StopSampleQueueList();
 }

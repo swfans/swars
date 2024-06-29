@@ -450,7 +450,7 @@ GLOBAL_FUNC (ASM_ReleaseLoopedSample)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSamplePitch_)
+GLOBAL_FUNC (ASM_SetSamplePitch)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi

@@ -35,18 +35,18 @@ typedef void * TbSampleHandle;
 //int PlaySample();
 //int PlaySampleFromAddress();
 
-TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle);
+TbBool IsSamplePlaying(long source_id, short smp_id, TbSampleHandle handle);
 
 //int SetSamplePan();
-//int SetSamplePitch();
+void SetSamplePitch(long source_id, short smp_id, short pitch);
 //int SetSampleVolume();
 
 /** Releases sound sample which is playing in a loop.
  *
- * @param thingOffset Index of the related thing; note that it is unsigned;
+ * @param source_id Index of the related thing; note that it is unsigned;
  *        simple thing offsets should be just treated as unsigned here.
  */
-void ReleaseLoopedSample(ushort sourceId, ushort fx);
+void ReleaseLoopedSample(ushort source_id, short smp_id);
 
 //int StopSample();
 void StopAllSamples(void);
