@@ -2001,7 +2001,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		push   %ebp
 		cmpb   $0x0,EXPORT_SYMBOL(sample_queue_handle_stopped)
 		jne    jump_10964f
-		mov    current_sample_queue_count,%eax
+		mov    EXPORT_SYMBOL(current_sample_queue_count),%eax
 		push   %eax
 		mov    EXPORT_SYMBOL(sample_queue_handle),%edx
 		push   %edx
@@ -2009,7 +2009,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_10964f
-		cmpl   $0x8,current_sample_queue_count
+		cmpl   $0x8,EXPORT_SYMBOL(current_sample_queue_count)
 		jae    jump_10964f
 		mov    EXPORT_SYMBOL(sample_queue_handle),%ecx
 		push   %ecx
@@ -2021,7 +2021,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		call   ac_AIL_register_EOS_callback
 		add    $0x8,%esp
 		push   $0x1
-		mov    current_sample_queue_count,%eax
+		mov    EXPORT_SYMBOL(current_sample_queue_count),%eax
 		push   %eax
 		mov    EXPORT_SYMBOL(sample_queue_handle),%edi
 		push   %edi
@@ -2036,12 +2036,12 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		push   %eax
 		call   ac_AIL_set_sample_file
 		add    $0xc,%esp
-		mov    current_sample_queue_count,%eax
+		mov    EXPORT_SYMBOL(current_sample_queue_count),%eax
 		mov    EXPORT_SYMBOL(sample_queue_handle),%edx
-		mov    current_sample_queue_count,%ebx
+		mov    EXPORT_SYMBOL(current_sample_queue_count),%ebx
 		inc    %ebx
 		push   %edx
-		mov    %ebx,current_sample_queue_count
+		mov    %ebx,EXPORT_SYMBOL(current_sample_queue_count)
 		call   ac_AIL_start_sample
 		add    $0x4,%esp
 	jump_10964f:
@@ -2407,9 +2407,9 @@ GLOBAL (a_sample_is_fading)	/* 0x1E956D */
 GLOBAL (samples_currently_fading)	/* 0x2057DE */
 		.byte	0x0
 		.byte	0x0
-/* unsigned long volatile current_sample_queue_count;
+/* unsigned long volatile EXPORT_SYMBOL(current_sample_queue_count);
  */
-current_sample_queue_count:	/* 0x2057E0 */
+GLOBAL (current_sample_queue_count)	/* 0x2057E0 */
 		.long	0x0
 /* unsigned char sample_queue_handle_initiated
  */

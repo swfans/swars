@@ -49,6 +49,9 @@ struct BfSfxInfo { // sizeof=32
 #pragma pack()
 /******************************************************************************/
 
+void PlaySampleList(int sfx1, int sfx2, int sfx3, int sfx4,
+  int sfx5, int sfx6, int sfx7, int sfx8);
+
 void StopSampleQueueList(void);
 
 /******************************************************************************/
