@@ -48,7 +48,7 @@ long AWEGetTotalRAM(MDI_DRIVER *mdidrv)
         return -1;
 }
 
-int AWEDefMemMap(MDI_DRIVER *mdidrv, long *memMap, short part_cnt)
+int AWEDefMemMap(MDI_DRIVER *mdidrv, short part_cnt, long *memMap, uint16_t memMap_sel)
 {
     VDI_CALL regs;
 
@@ -78,7 +78,7 @@ int AWEDefMemMap(MDI_DRIVER *mdidrv, long *memMap, short part_cnt)
     return regs.AX;
 }
 
-SF_INFO *AWEGetSFInfo(MDI_DRIVER *mdidrv, uint8_t *hdr_data, short bank_no)
+SF_INFO *AWEGetSFInfo(MDI_DRIVER *mdidrv, short bank_no, uint8_t *hdr_data, uint16_t hdr_data_sel)
 {
     VDI_CALL regs;
 
@@ -118,7 +118,7 @@ SF_INFO *AWEGetSFInfo(MDI_DRIVER *mdidrv, uint8_t *hdr_data, short bank_no)
     return NULL;
 }
 
-int AWEStreamSample(MDI_DRIVER *mdidrv, uint8_t *smpl_data, short bank_no)
+int AWEStreamSample(MDI_DRIVER *mdidrv, short bank_no, uint8_t *smpl_data, uint16_t smpl_data_sel)
 {
     VDI_CALL regs;
 
@@ -149,7 +149,7 @@ int AWEStreamSample(MDI_DRIVER *mdidrv, uint8_t *smpl_data, short bank_no)
     return regs.AX;
 }
 
-int AWELoadPreset(MDI_DRIVER *mdidrv, uint8_t *preset_data, short bank_no)
+int AWELoadPreset(MDI_DRIVER *mdidrv, short bank_no, uint8_t *preset_data, uint16_t preset_data_sel)
 {
     VDI_CALL regs;
 

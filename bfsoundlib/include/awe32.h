@@ -82,40 +82,40 @@ long AWEGetTotalRAM(MDI_DRIVER *mdidrv);
  * @param memMap Array of partition sizes
  * @return Gives OK (0) or ERROR (-1)
  */
-int AWEDefMemMap(MDI_DRIVER *mdidrv, long *memMap, short part_cnt);
+int AWEDefMemMap(MDI_DRIVER *mdidrv, short part_cnt, long *memMap, uint16_t memMap_sel);
 
 /**
  * Uses header to retrieve pertinent info about a Sound Font.
  * Uses global variable "awe_data".
  *
  * @param mdidrv Pointer to MSS MIDI driver
- * @param hdr_sata Buffer containing the 1st 512 bytes of a Sound Font.
  * @param bank_no Bank which will receive Sound Font
+ * @param hdr_sata Buffer containing the 1st 512 bytes of a Sound Font.
  * @return Pointer to Sound Font Info or NULL on error
  */
-SF_INFO *AWEGetSFInfo(MDI_DRIVER *mdidrv, uint8_t *hdr_data, short bank_no);
+SF_INFO *AWEGetSFInfo(MDI_DRIVER *mdidrv, short bank_no, uint8_t *hdr_data, uint16_t hdr_data_sel);
 
 /**
  * Loads 16 bit mono PCM data into the RAM on the AWE32.
  * Call repeatedly until all data is streamed to the card.
  *
  * @param mdidrv Pointer to MSS MIDI driver
- * @param smpl_data Pointer to a buffer containing PCM sample data.
  * @param bank_no Bank which will receive Sound Font
+ * @param smpl_data Pointer to a buffer containing PCM sample data.
  * @return Gives OK (0) or ERROR (-1)
  */
-int AWEStreamSample(MDI_DRIVER *mdidrv, uint8_t *smpl_data, short bank_no);
+int AWEStreamSample(MDI_DRIVER *mdidrv, short bank_no, uint8_t *smpl_data, uint16_t smpl_data_sel);
 
 /**
  * Loads Sound Font preset data.
  * Buffer must not be freed until Sound Font is no longer needed.
  *
  * @param mdidrv Pointer to MSS MIDI driver
- * @param preset_data Pointer to preset data. Must exist within the 1st meg of memory.
  * @param bank_no Bank which will receive preset
+ * @param preset_data Pointer to preset data. Must exist within the 1st meg of memory.
  * @return Gives OK (0) or ERROR (-1)
  */
-int AWELoadPreset(MDI_DRIVER *mdidrv, uint8_t *preset_data, short bank_no);
+int AWELoadPreset(MDI_DRIVER *mdidrv, short bank_no, uint8_t *preset_data, uint16_t preset_data_sel);
 
 /** Release one or all of the banks in the AWE32 memory, free preset buffer.
  *

@@ -275,6 +275,11 @@ int InitMusicDriver(void)
     return 1;
 }
 
+/** Sets MusicType based on loaded driver and its parameters.
+ * "f" - FM Synthesis MIDI
+ * "g" - General MIDI
+ * "w" - Wave sound bank capable MIDI
+ */
 int DetermineMusicType(void)
 {
     if (strcasecmp(MusicInstallChoice.driver_name, "ADLIB.MDI") == 0) {
