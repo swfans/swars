@@ -30,6 +30,7 @@
 extern TbBool SoundInstalled;
 extern TbBool SoundAble;
 extern TbBool SoundActive;
+extern ushort NumberOfSamples;
 
 extern struct SampleInfo sample_id[32];
 extern struct SampleInfo *end_sample_id;
@@ -41,6 +42,8 @@ extern ubyte volatile switch_off_sample_fade_timer;
 extern ubyte a_sample_is_fading; // = 0;
 
 /******************************************************************************/
+
+struct SampleInfo *FindSampleInfoSrcSmpNotDone(long source_id, short smp_id);
 
 void cbfadesample()
 {
@@ -146,6 +149,58 @@ void cbfadesample()
     {
         switch_off_sample_fade_timer = 1;
         samples_currently_fading = 0;
+    }
+}
+
+void FadeSample(long source_id, short smp_id, ushort to_volume, ubyte step, ubyte stop)
+{
+    struct SampleInfo *p_smpinf;
+
+    if (!SoundInstalled || !SoundAble || !SoundActive)
+        return;
+
+    if (smp_id > NumberOfSamples)
+        return;
+
+    p_smpinf = FindSampleInfoSrcSmpNotDone(source_id, smp_id);
+
+    if (p_smpinf != NULL)
+    {
+        if (to_volume > 127)
+            to_volume = 127;
+        if (to_volume != p_smpinf->SampleVolume)
+        {
+            p_smpinf->FadeState = 0;
+            p_smpinf->FadeToVolume = to_volume;
+            p_smpinf->FadeStopFlag = stop;
+            p_smpinf->FadeState = (to_volume <= p_smpinf->SampleVolume) + 1;
+            switch ( step )
+            {
+            case 1:
+                p_smpinf->FadeStep = 1;
+                break;
+            case 2:
+                p_smpinf->FadeStep = 2;
+                break;
+            case 4:
+                p_smpinf->FadeStep = 4;
+                break;
+            case 5:
+                p_smpinf->FadeStep = 5;
+                break;
+            default:
+                p_smpinf->FadeStep = 3;
+                break;
+            }
+            if (!samples_currently_fading)
+            {
+                switch_off_sample_fade_timer = 0;
+                samples_currently_fading = 1;
+                sample_fade_handle = AIL_register_timer(cbfadesample);
+                AIL_set_timer_frequency(sample_fade_handle, 20);
+                AIL_start_timer(sample_fade_handle);
+            }
+        }
     }
 }
 

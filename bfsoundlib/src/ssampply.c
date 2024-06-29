@@ -96,7 +96,7 @@ static struct SampleInfo *FindSampleInfoAnyDone(void)
     return NULL;
 }
 
-static struct SampleInfo *FindSampleInfoSrcSmpNotDone(long source_id, short smp_id)
+struct SampleInfo *FindSampleInfoSrcSmpNotDone(long source_id, short smp_id)
 {
     struct SampleInfo *p_smpinf;
 
