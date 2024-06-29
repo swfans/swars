@@ -24,12 +24,20 @@
 #include <assert.h>
 
 #include "dpmi.h"
+#include "bfmemory.h"
+/******************************************************************************/
+#if defined(DOS)||defined(GO32)
+#else
+/** Count memory allocations.
+ * This is used mostly to create dummy DPMI selectors.
+ */
+uint16_t alloc_count = 0;
+#endif
+
+
 /******************************************************************************/
 
-
-/******************************************************************************/
-
-void *AllocDOSmem(long size)
+void *AllocDOSmem(uint16_t *sel, long size)
 {
 #if defined(DOS)||defined(GO32)
     DOS_Registers r;
@@ -40,26 +48,34 @@ void *AllocDOSmem(long size)
 
     if (r.r32.eflag) // Failed?
         return NULL;
-    return MK_FP(r.r32.edx, 0);
+    /* DPMI fuct return: AX = Initial real mode segment of allocated block,
+       DX = Selector for allocated block */
+    *sel = r.r16.dx;
+    return MK_FP(r.r32.eax, 0);
 #else
-    assert(!"not implemented");
-    return NULL;
+    void *ptr;
+
+    ptr = LbMemoryAllocLow(size);
+    if (ptr != NULL)
+        *sel = ++alloc_count;
+    return ptr;
 #endif
 }
 
-int FreeDOSmem(void *block, uint16_t seg)
+int FreeDOSmem(void *block, uint16_t sel)
 {
 #if defined(DOS)||defined(GO32)
     DOS_Registers r;
 
     r.r32.eax = 0x0101; // DPMI free DOS memory
-    r.r32.edx = FP_SEG(block); // selector to free
+    r.r32.edx = sel; // selector to free
     dos_int386(0x31, &r, &r);
 
     if (r.r32.eflag) // Failed?
         return -1;
 #else
-    assert(!"not implemented");
+    if (LbMemoryFree(block) == Lb_SUCCESS)
+        alloc_count--;
 #endif
     return 0;
 }

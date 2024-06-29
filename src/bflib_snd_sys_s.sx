@@ -1485,11 +1485,11 @@ AWEDefMemMap_:
 		mov    %edx,%esi
 		cmpl   $0x0,awe_data
 		jne    jump_110042
-		cmpw   $0x0,awe_data_seg
+		cmpw   $0x0,awe_data_sel
 		jne    jump_110042
 		mov    $0x4,%eax
 		call   ASM_AllocDOSmem
-		mov    %dx,awe_data_seg
+		mov    %dx,awe_data_sel
 		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_110042
@@ -1505,7 +1505,7 @@ AWEDefMemMap_:
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe_data_seg,%gs
+		mov    awe_data_sel,%gs
 		mov    %eax,%ebx
 		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
@@ -1544,11 +1544,11 @@ AWEGetSFInfo_:
 		mov    %edx,%esi
 		cmpl   $0x0,awe_data
 		jne    jump_1100ef
-		cmpw   $0x0,awe_data_seg
+		cmpw   $0x0,awe_data_sel
 		jne    jump_1100ef
 		mov    $0x4,%eax
 		call   ASM_AllocDOSmem
-		mov    %dx,awe_data_seg
+		mov    %dx,awe_data_sel
 		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_1100ef
@@ -1562,7 +1562,7 @@ AWEGetSFInfo_:
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe_data_seg,%gs
+		mov    awe_data_sel,%gs
 		mov    %eax,%ebx
 		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
@@ -1612,11 +1612,11 @@ AWEStreamSample_:
 		mov    %edx,%esi
 		cmpl   $0x0,awe_data
 		jne    jump_1101c2
-		cmpw   $0x0,awe_data_seg
+		cmpw   $0x0,awe_data_sel
 		jne    jump_1101c2
 		mov    $0x4,%eax
 		call   ASM_AllocDOSmem
-		mov    %dx,awe_data_seg
+		mov    %dx,awe_data_sel
 		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_1101c2
@@ -1632,7 +1632,7 @@ AWEStreamSample_:
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe_data_seg,%gs
+		mov    awe_data_sel,%gs
 		mov    %eax,%ebx
 		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
@@ -1671,11 +1671,11 @@ AWELoadPreset_:
 		mov    %edx,%esi
 		cmpl   $0x0,awe_data
 		jne    jump_110272
-		cmpw   $0x0,awe_data_seg
+		cmpw   $0x0,awe_data_sel
 		jne    jump_110272
 		mov    $0x4,%eax
 		call   ASM_AllocDOSmem
-		mov    %dx,awe_data_seg
+		mov    %dx,awe_data_sel
 		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_110272
@@ -1691,7 +1691,7 @@ AWELoadPreset_:
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe_data_seg,%gs
+		mov    awe_data_sel,%gs
 		mov    %eax,%ebx
 		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
@@ -2427,21 +2427,21 @@ GLOBAL (sbkHandle)	/* 0x1ED5F0 */
  */
 GLOBAL (awe_buffer)
 		.long	0x0
-GLOBAL (awe_buffer_seg)
+GLOBAL (awe_buffer_sel)
 		.short	0x0
 		.align	4
 /* unsigned char *awe_preset;
  */
 GLOBAL (awe_preset) /* 0x1ED5FC */
 		.long	0x0
-GLOBAL (awe_preset_seg)
+GLOBAL (awe_preset_sel)
 		.short	0x0
 		.align	4
 /* struct SF_DATA *awe_data;
  */
 GLOBAL (awe_data) /* 0x1ED604 */
 		.long	0x0
-GLOBAL (awe_data_seg)
+GLOBAL (awe_data_sel)
 		.short	0x0
 		.align	4
 

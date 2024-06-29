@@ -39,9 +39,9 @@ extern char CurrentAwe32SoundfontPrefix[12]; // = "Bullfrog";
 extern TbFileHandle sbkHandle; // = INVALID_FILE;
 
 extern uint8_t *awe_buffer;
-extern uint16_t awe_buffer_seg;
+extern uint16_t awe_buffer_sel;
 extern uint8_t *awe_preset;
-extern uint16_t awe_preset_seg;
+extern uint16_t awe_preset_sel;
 /******************************************************************************/
 
 void FreeAwe32Soundfont(void)
@@ -60,8 +60,8 @@ void FreeAwe32Soundfont(void)
     }
 
     AWEFreeMem(MusicDriver, 1);
-    FreeDOSmem(awe_buffer, awe_buffer_seg);
-    FreeDOSmem(awe_preset, awe_preset_seg);
+    FreeDOSmem(awe_buffer, awe_buffer_sel);
+    FreeDOSmem(awe_preset, awe_preset_sel);
     Awe32SoundfontLoaded = 0;
 }
 
@@ -101,10 +101,8 @@ void LoadAwe32Soundfont(const char *str)
     (void)fsize; // disable unused ver warning
 
 #if 0 // Awe32 sound bank not implemented
-    alloc = AllocDOSmem(512);
-    awe_buffer_seg = FP_SEG(alloc);
-    awe_buffer = FP_OFF(alloc);
-    if ((awe_buffer_seg == 0) && (awe_buffer == 0)) {
+    awe_buffer = AllocDOSmem(&awe_buffer_sel, 512);
+    if ((awe_buffer_sel == 0) && (awe_buffer == 0)) {
         LbFileClose(sbkHandle);
         return;
     }

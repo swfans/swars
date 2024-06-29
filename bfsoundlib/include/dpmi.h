@@ -30,18 +30,19 @@ extern "C" {
 /**
  * Allocates memory block in the first megabyte of RAM.
  *
- * @param size memory block size in bytes
+ * @param sel Returns DPMI selector of the new block (originally returned in DX reg).
+ * @param size Memory block size in bytes.
  * @return protected mode pointer to the allocated block, NULL if failed.
  */
-void *AllocDOSmem(long size);
+void *AllocDOSmem(uint16_t *sel, long size);
 
 /** Frees a memory block allocated by AllocDOSmem().
  *
  * @param block Protected mode pointer to memory block.
- * @param seg Segment of the block; for API compatibility, unused.
+ * @param sel DPMI selector of the block.
  * @return OK (0) or ERROR (-1)
  */
-int FreeDOSmem(void *block, uint16_t seg);
+int FreeDOSmem(void *block, uint16_t sel);
 
 /******************************************************************************/
 #ifdef __cplusplus
