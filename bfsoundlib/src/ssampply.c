@@ -122,6 +122,27 @@ void SetSamplePitch(long source_id, short smp_id, short pitch)
     }
 }
 
+void SetSampleVolume(long source_id, short smp_id, short volume)
+{
+    struct SampleInfo *p_smpinf;
+
+    if (!SoundInstalled || !SoundAble || !SoundActive)
+        return;
+
+    for (p_smpinf = sample_id; p_smpinf <= end_sample_id; p_smpinf++)
+    {
+        if ((ulong)source_id == p_smpinf->SourceID && smp_id == p_smpinf->SampleNumber
+          && AIL_sample_status(p_smpinf->SampleHandle) == SNDSMP_PLAYING)
+        {
+            if (volume <= 127 && volume != p_smpinf->SampleVolume)
+            {
+                AIL_set_sample_volume(p_smpinf->SampleHandle, volume);
+                p_smpinf->SampleVolume = volume;
+            }
+        }
+    }
+}
+
 void StopAllSamples(void)
 {
     struct SampleInfo *p_smpinf;
