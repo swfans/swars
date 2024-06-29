@@ -517,7 +517,7 @@ GLOBAL_FUNC (ASM_SetSamplePitch)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
+GLOBAL_FUNC (ASM_SetMusicVolume) /* 0xee980 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -556,7 +556,7 @@ GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
 
 
 /*----------------------------------------------------------------*/
-cb_get_trigger_info:	/* 0x0F0340 */
+ASM_cb_get_trigger_info:	/* 0x0F0340 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -627,7 +627,7 @@ cb_get_trigger_info:	/* 0x0F0340 */
 /*----------------------------------------------------------------*/
 /* int fm_instrument_file_exists(char *fname)
  */
-fm_instrument_file_exists:
+GLOBAL_FUNC (ASM_fm_instrument_file_exists)
 /*----------------------------------------------------------------*/
 		push   %edx
 		xor    %edx,%edx
@@ -748,7 +748,7 @@ GLOBAL_FUNC (ASM_InitStreamedSound)
 
 
 /*----------------------------------------------------------------*/
-FreeStreamedSound_:
+GLOBAL_FUNC (ASM_FreeStreamedSound)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
@@ -760,7 +760,7 @@ FreeStreamedSound_:
 		call   ac_LbFileClose
 		mov    %ebx,EXPORT_SYMBOL(sample_file)
 	jump_1006df:
-		call   SwitchOffStreamedSound_
+		call   ac_SwitchOffStreamedSound
 		call   ac_free_buffers
 		xor    %ah,%ah
 		mov    %ah,EXPORT_SYMBOL(StreamedSoundAble)
@@ -770,7 +770,7 @@ FreeStreamedSound_:
 
 
 /*----------------------------------------------------------------*/
-SwitchOffStreamedSound_:
+GLOBAL_FUNC (ASM_SwitchOffStreamedSound)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

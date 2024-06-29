@@ -79,9 +79,7 @@ void StartMusic(int songNo, ubyte volume)
 {
     int i;
 
-    if (!MusicInstalled || !MusicAble)
-        return;
-    if (!MusicActive)
+    if (!MusicInstalled || !MusicAble || !MusicActive)
         return;
     if (songNo > NumberOfSongs) {
         return;
@@ -141,8 +139,31 @@ void StartMusic(int songNo, ubyte volume)
 
 void StopMusic(void)
 {
+#if 0
     asm volatile ("call ASM_StopMusic\n"
         :  :  : "eax" );
+#endif
+    if (!MusicInstalled || !MusicAble || !MusicActive)
+        return;
+
+    if (SongCurrentlyPlaying == 0)
+        return;
+
+    if (DangerMusicFadeActive)
+        AIL_release_timer_handle(DangerMusicFadeHandle);
+
+    DangerMusicAble = 0;
+    DangerMusicFadeActive = 0;
+    CurrentDangerMusicFadeDirection = 1;
+    DangerMusicVolume = 0;
+    DangerMusicVolumeChange = -1;
+
+    if (AIL_sequence_status(SongHandle) != SNDSEQ_DONE)
+    {
+        AIL_stop_sequence(SongHandle);
+        AIL_end_sequence(SongHandle);
+    }
+    SongCurrentlyPlaying = 0;
 }
 
 void StopMusicIfActive(void)
