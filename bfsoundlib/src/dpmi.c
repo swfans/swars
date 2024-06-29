@@ -29,6 +29,24 @@
 
 /******************************************************************************/
 
+void *AllocDOSmem(long size)
+{
+#if defined(DOS)||defined(GO32)
+    DOS_Registers r;
+
+    r.r32.eax = 0x0100; // DPMI allocate DOS memory
+    r.r32.ebx = (size + 15) >> 4; // Number of paragraphs requested
+    dos_int386(0x31, &r, &r);
+
+    if (r.r32.eflag) // Failed?
+        return NULL;
+    return MK_FP(r.r32.edx, 0);
+#else
+    assert(!"not implemented");
+    return NULL;
+#endif
+}
+
 int FreeDOSmem(void *block, uint16_t seg)
 {
 #if defined(DOS)||defined(GO32)

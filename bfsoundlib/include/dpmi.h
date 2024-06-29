@@ -27,6 +27,14 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+/**
+ * Allocates memory block in the first megabyte of RAM.
+ *
+ * @param size memory block size in bytes
+ * @return protected mode pointer to the allocated block, NULL if failed.
+ */
+void *AllocDOSmem(long size);
+
 /** Frees a memory block allocated by AllocDOSmem().
  *
  * @param block Protected mode pointer to memory block.

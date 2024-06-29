@@ -102,8 +102,8 @@ void LoadAwe32Soundfont(const char *str)
 
 #if 0 // Awe32 sound bank not implemented
     alloc = AllocDOSmem(512);
-    awe_buffer_seg = alloc.seg;
-    awe_buffer = alloc.offs;
+    awe_buffer_seg = FP_SEG(alloc);
+    awe_buffer = FP_OFF(alloc);
     if ((awe_buffer_seg == 0) && (awe_buffer == 0)) {
         LbFileClose(sbkHandle);
         return;
