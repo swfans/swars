@@ -334,7 +334,7 @@ GLOBAL_FUNC (ASM_DangerMusicFadeSwitch)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSampleTempo)
+GLOBAL_FUNC (ASM_SetMusicTempo)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -365,7 +365,7 @@ GLOBAL_FUNC (SetSampleTempo)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSampleTempoNormal)
+GLOBAL_FUNC (ASM_SetMusicTempoNormal)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

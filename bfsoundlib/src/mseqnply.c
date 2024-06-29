@@ -241,4 +241,21 @@ void DangerMusicFadeSwitch(ubyte direction, ubyte freq)
     }
 }
 
+void SetMusicTempo(int tempo, int msec)
+{
+    if (!MusicInstalled || !MusicAble || !MusicActive)
+        return;
+    if (CurrentTempo == tempo)
+        return;
+    if (SongCurrentlyPlaying)
+    {
+        AIL_set_sequence_tempo(SongHandle, tempo, msec);
+        CurrentTempo = tempo;
+    }
+}
+
+void SetMusicTempoNormal(void)
+{
+    SetMusicTempo(100, 0);
+}
 /******************************************************************************/
