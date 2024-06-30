@@ -28,6 +28,7 @@
 #include "ailss.h"
 #include "aildebug.h"
 #include "ail.h"
+#include "memfile.h"
 #include "mssdig.h"
 #include "drv_oal.h"
 /******************************************************************************/
