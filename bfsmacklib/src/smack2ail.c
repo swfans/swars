@@ -134,6 +134,31 @@ uint32_t RADAPI DEFSMACKTIMERREAD(void)
 #endif
 }
 
+/** Default timer finish routine.
+ */
+void RADAPI DEFSMACKTIMERDONE(void)
+{
+}
+
+uint32_t RADAPI ac_DEFSMACKTIMERREAD(void);
+void RADAPI ac_DEFSMACKTIMERDONE(void);
+
+/** Default timer initialization routine.
+ */
+void RADAPI DEFSMACKTIMERSETUP(void)
+{
+    SmackTimerReadAddr = ac_DEFSMACKTIMERREAD;
+    SmackTimerDoneAddr = ac_DEFSMACKTIMERDONE;
+#if defined(DOS)||defined(GO32)
+    uint32_t tick = PEEKL(0x46C);
+    timeradjust = -tick;
+    // Setup 82C54 timer tick to count to 65536 (results in 18.2 IRQs per second)
+    outb(0x43, 0x34);
+    outb(0x40, 0);
+    outb(0x40, 0);
+#endif
+}
+
 /** Timer routine when linked to AIL; returns a timer value, in miliseconds.
  */
 uint32_t RADAPI MSSSMACKTIMERREAD(void)
@@ -150,7 +175,6 @@ void RADAPI ac_MSSSMACKTIMERSETUP(void);
 void RADAPI ac_MSSSMACKTIMERDONE(void);
 void RADAPI ac_MSSLOWSOUNDCHECK(void);
 void RADAPI ac_MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk);
-uint32_t RADAPI ac_DEFSMACKTIMERREAD(void);
 uint32_t RADAPI ac_MSSSMACKTIMERREAD(void);
 
 

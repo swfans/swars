@@ -10217,11 +10217,11 @@ smkmalloc_:
 
 
 /*----------------------------------------------------------------*/
-DEFSMACKTIMERSETUP:	/* 10f110 */
+GLOBAL_FUNC (ASM_DEFSMACKTIMERSETUP)	/* 10f110 */
 /*----------------------------------------------------------------*/
 		mov    $ac_DEFSMACKTIMERREAD,%edx
 		mov    $0x46c,%eax
-		mov    $DEFSMACKTIMERDONE,%ebx
+		mov    $ac_DEFSMACKTIMERDONE,%ebx
 		mov    %edx,SmackTimerReadAddr
 
 		/* XXX: mov    (%eax),%eax */
@@ -10250,13 +10250,13 @@ DEFSMACKTIMERSETUP:	/* 10f110 */
 
 
 /*----------------------------------------------------------------*/
-DEFSMACKTIMERDONE:	/* 0x10F150 */
+GLOBAL_FUNC (ASM_DEFSMACKTIMERDONE)	/* 0x10F150 */
 /*----------------------------------------------------------------*/
 		ret
 
 
 /*----------------------------------------------------------------*/
-ASM_DEFSMACKTIMERREAD:
+GLOBAL_FUNC (ASM_DEFSMACKTIMERREAD)
 /*----------------------------------------------------------------*/
 		mov    $0x46c,%eax
 		mov    _lasttimerread,%edx
@@ -10695,7 +10695,7 @@ data_159a00:
 GLOBAL (SmackTimerReadAddr)	/* 0x159780 */
 		.long	0x0
 GLOBAL (SmackTimerSetupAddr)
-		.long   DEFSMACKTIMERSETUP
+		.long   ac_DEFSMACKTIMERSETUP
 GLOBAL (SmackTimerDoneAddr)
 		.long	0x0
 
