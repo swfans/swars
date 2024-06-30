@@ -10219,7 +10219,7 @@ smkmalloc_:
 /*----------------------------------------------------------------*/
 DEFSMACKTIMERSETUP:	/* 10f110 */
 /*----------------------------------------------------------------*/
-		mov    $DEFSMACKTIMERREAD,%edx
+		mov    $ac_DEFSMACKTIMERREAD,%edx
 		mov    $0x46c,%eax
 		mov    $DEFSMACKTIMERDONE,%ebx
 		mov    %edx,SmackTimerReadAddr
@@ -10229,10 +10229,10 @@ DEFSMACKTIMERSETUP:	/* 10f110 */
 
 		mov    %ebx,EXPORT_SYMBOL(SmackTimerDoneAddr)
 		mov    %eax,%ecx
-		mov    %eax,_timeradjust
+		mov    %eax,EXPORT_SYMBOL(timeradjust)
 		neg    %ecx
 		xor    %ebx,%ebx
-		mov    %ecx,_timeradjust
+		mov    %ecx,EXPORT_SYMBOL(timeradjust)
 /* XXX: cut out */
 #if 0
 		mov    $0x34,%al
@@ -10256,7 +10256,7 @@ DEFSMACKTIMERDONE:	/* 0x10F150 */
 
 
 /*----------------------------------------------------------------*/
-DEFSMACKTIMERREAD:
+ASM_DEFSMACKTIMERREAD:
 /*----------------------------------------------------------------*/
 		mov    $0x46c,%eax
 		mov    _lasttimerread,%edx
@@ -10266,13 +10266,13 @@ DEFSMACKTIMERREAD:
 
 		cmp    %edx,%eax
 		jae    jump_10f181
-		mov    _timeradjust,%ebx
+		mov    EXPORT_SYMBOL(timeradjust),%ebx
 		sub    %eax,%edx
 		add    %edx,%ebx
-		mov    %ebx,_timeradjust
+		mov    %ebx,EXPORT_SYMBOL(timeradjust)
 	jump_10f181:
 		mov    $0x32,%ebx
-		mov    _timeradjust,%ecx
+		mov    EXPORT_SYMBOL(timeradjust),%ecx
 		mov    %eax,_lasttimerread
 		add    %ecx,%eax
 		mov    $0xaba,%ecx
@@ -10745,7 +10745,7 @@ data_1e56dc:
 		.fill   0x350
 GLOBAL (smack_draw_callback)	/* 0x1E5A2C */
 		.long	0x0
-_timeradjust:
+GLOBAL (timeradjust)
 		.long	0x0
 _lasttimerread:	/* 0x1ED5E4 */
 		.long	0x0

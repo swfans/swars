@@ -20,11 +20,14 @@
 #include "smack2ail.h"
 
 #include <stddef.h>
+#include <time.h>
 #include "bftime.h"
 /******************************************************************************/
 extern void *SmackMSSDigDriver;
 extern uint32_t MSSSpeed;
 extern uint32_t MSSTimerPeriod;
+
+extern uint32_t timeradjust;
 
 extern uint8_t RADAPI (*LowSoundOpenAddr)(uint8_t, SmackSndTrk *);
 extern void RADAPI (*LowSoundCloseAddr)(SmackSndTrk *);
@@ -48,6 +51,24 @@ void RADAPI MSSSMACKTIMERDONE(void);
 void RADAPI MSSLOWSOUNDCHECK(void);
 void RADAPI MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk);
 
+/** Default timer routine; returns a timer value, in miliseconds.
+ */
+uint32_t RADAPI DEFSMACKTIMERREAD(void)
+{
+#if defined(DOS)||defined(GO32)
+    uint32_t tick = PEEKL(0x46C);
+    if (tick < lasttimerread)
+        timeradjust += lasttimerread - tick;
+    lasttimerread = tick;
+    return 2746 * (unsigned long long)(timeradjust + tick) / 50;
+#else
+    clock_t tick = clock();
+    return 1000 * (unsigned long long)tick / CLOCKS_PER_SEC;
+#endif
+}
+
+/** Timer routine when linked to AIL; returns a timer value, in miliseconds.
+ */
 uint32_t RADAPI MSSSMACKTIMERREAD(void)
 {
     return LbTimerClock();
