@@ -32,6 +32,11 @@ extern "C" {
 
 /******************************************************************************/
 
+/** Link Smacker audio output to AIL library interface.
+ *
+ * @param speed Frequency of the timer sending buffers to AIL output.
+ * @param digdrv Digital Audio Driver instance from the AIL library.
+ */
 uint8_t RADAPI SMACKSOUNDUSEMSS(uint32_t speed, void *digdrv);
 
 /******************************************************************************/
