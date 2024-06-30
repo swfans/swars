@@ -233,7 +233,7 @@ Options:
 			if needs_ebp:
 				self.generate_epilogue ()
 			self.generate_ret (convention, len (args))
-		elif convention == 'C': # C=cdecl; standard c calling convention with all arguments on stack, S=stdcall
+		elif convention in 'CS': # C=cdecl; standard c calling convention with all arguments on stack, S=stdcall
 			self.generate_prologue ()
 			self.generate_store_registers ()
 			self.generate_align_push (len (args))
@@ -243,20 +243,6 @@ Options:
 			self.generate_printf_call (name, convention, args)
 			self.wrln ()
 			self.generate_call (name, len (args))
-			self.generate_align_pop ()
-			self.generate_restore_registers ()
-			self.generate_epilogue ()
-			self.generate_ret (convention, len (args))
-		elif convention == 'S': # S=stdcall, like cdecl but callee pops args from stack, and name has args size appended
-			self.generate_prologue ()
-			self.generate_store_registers ()
-			self.generate_align_push (len (args))
-			if len (args) > 0:
-				self.wrln ()
-				self.generate_push_arguments (convention, len (args))
-			self.generate_printf_call (name, convention, args)
-			self.wrln ()
-			self.generate_call ('%s@%d' % (name, len (args) * 4), len (args))
 			self.generate_align_pop ()
 			self.generate_restore_registers ()
 			self.generate_epilogue ()
