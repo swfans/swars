@@ -115,7 +115,7 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
 		mov    %eax,_msstimer
-		mov    _MSSSpeed,%ecx
+		mov    EXPORT_SYMBOL(MSSSpeed),%ecx
 		push   %ecx
 		mov    _msstimer,%esi
 		push   %esi
@@ -172,13 +172,13 @@ MSSSMACKTIMERREAD:
 		cmp    mss_i_count,%edx
 		jne    jump_fbe42
 		mov    $0x3e8,%ecx
-		mov    _MSSSpeed,%ebx
+		mov    EXPORT_SYMBOL(MSSSpeed),%ebx
 		mov    %edx,%eax
 		mul    %ecx
 		div    %ebx
 		mov    $0x1234dd,%ebx
 		mov    %eax,%edi
-		mov    _MSSTimerPeriod,%eax
+		mov    EXPORT_SYMBOL(MSSTimerPeriod),%eax
 		mov    $0x3e8,%ecx
 		sub    %esi,%eax
 		mul    %ecx
@@ -671,16 +671,16 @@ _lasttimer:
 		.fill   0x8
 /* Smacker fn ptrs
  */
-GLOBAL (_MSSTimerPeriod)
+GLOBAL (MSSTimerPeriod)
 		.long	0x0
-GLOBAL (_MSSSpeed)
+GLOBAL (MSSSpeed)
 		.fill   0x10
-GLOBAL (_LowSoundPurgeAddr)
+GLOBAL (LowSoundPurgeAddr)
 		.long	0x0
-GLOBAL (_LowSoundCheckAddr)	/* 1e86d4 */
+GLOBAL (LowSoundCheckAddr)	/* 1e86d4 */
 		.long	0x0
-GLOBAL (_LowSoundPlayedAddr)
+GLOBAL (LowSoundPlayedAddr)
 		.long	0x0
-GLOBAL (_LowSoundCloseAddr)
+GLOBAL (LowSoundCloseAddr)
 		.long	0x0
 

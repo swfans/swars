@@ -27,14 +27,19 @@ extern "C" {
 #endif
 
 /******************************************************************************/
+typedef struct { // sizeof=?
+    uint8_t field_0[128];
+} SmackSndTrk;
 
-typedef struct {
-    uint8_t Field_0[1196];
+typedef struct { // sizeof=1196
+    uint8_t field_0[1024];
+    SmackSndTrk *Unkn404PerTrack[7];
+    uint8_t field_420[144];
 } Smack;
 
 /******************************************************************************/
 
-#if defined(WIN32)
+#if defined(WIN32) && 0 // Disabled - `mkwrappers` expects cdecl on C side
 #  define RADAPI __stdcall
 #else
 #  define RADAPI

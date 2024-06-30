@@ -32,7 +32,7 @@ extern "C" {
 
 /******************************************************************************/
 
-uint8_t RADAPI SMACKSOUNDUSEMSS(uint32_t freq, void *digdrv);
+uint8_t RADAPI SMACKSOUNDUSEMSS(uint32_t speed, void *digdrv);
 
 /******************************************************************************/
 

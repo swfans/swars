@@ -19,19 +19,52 @@
 /******************************************************************************/
 #include "smack2ail.h"
 
+#include <stddef.h>
 /******************************************************************************/
+extern void *SmackMSSDigDriver;
+extern uint32_t MSSSpeed;
+extern uint32_t MSSTimerPeriod;
+
+extern uint8_t RADAPI (*LowSoundOpenAddr)(uint8_t, SmackSndTrk *);
+extern void RADAPI (*LowSoundCloseAddr)(SmackSndTrk *);
+extern uint32_t RADAPI (*LowSoundPlayedAddr)(SmackSndTrk *);
+extern void RADAPI (*LowSoundPurgeAddr)(SmackSndTrk *);
+extern void RADAPI (*LowSoundOffAddr)(SmackSndTrk *);
+extern void RADAPI (*SmackTimerSetupAddr)(void);
+extern uint32_t RADAPI (*SmackTimerReadAddr)(void);
+extern void RADAPI (*SmackTimerDoneAddr)(void);
+extern void RADAPI (*LowSoundCheckAddr)(void);
+extern void RADAPI (*LowSoundOnAddr)(void);
+extern void RADAPI (*LowSoundVolPanAddr)(uint32_t, uint32_t, SmackSndTrk *);
 
 /******************************************************************************/
+uint8_t RADAPI MSSLOWSOUNDOPEN(uint8_t flags, SmackSndTrk *sstrk);
+void RADAPI MSSLOWSOUNDCLOSE(SmackSndTrk *sstrk);
+uint32_t RADAPI MSSLOWSOUNDPLAYED(SmackSndTrk *sstrk);
+void RADAPI MSSLOWSOUNDPURGE(SmackSndTrk *sstrk);
+void RADAPI MSSSMACKTIMERSETUP(void);
+uint32_t RADAPI MSSSMACKTIMERREAD(void);
+void RADAPI MSSSMACKTIMERDONE(void);
+void RADAPI MSSLOWSOUNDCHECK(void);
+void RADAPI MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk);
 
-#if 0
-uint8_t RADAPI SMACKSOUNDUSEMSS(uint32_t freq, void *digdrv)
+uint8_t RADAPI SMACKSOUNDUSEMSS(uint32_t speed, void *digdrv)
 {
+#if 1
+    uint8_t ret;
+    asm volatile (
+      "push %2\n"
+      "push %1\n"
+      "call ASM_SMACKSOUNDUSEMSS\n"
+        : "=r" (ret) : "g" (speed), "g" (digdrv));
+    return ret;
+#endif
     if (SmackTimerReadAddr)
         return 0;
     SmackMSSDigDriver = digdrv;
-    if (freq < 200)
-        freq = 200;
-    MSSSpeed = freq;
+    if (speed < 200)
+        speed = 200;
+    MSSSpeed = speed;
     LowSoundOpenAddr = MSSLOWSOUNDOPEN;
     LowSoundCloseAddr = MSSLOWSOUNDCLOSE;
     LowSoundPlayedAddr = MSSLOWSOUNDPLAYED;
@@ -40,12 +73,11 @@ uint8_t RADAPI SMACKSOUNDUSEMSS(uint32_t freq, void *digdrv)
     SmackTimerSetupAddr = MSSSMACKTIMERSETUP;
     SmackTimerReadAddr = MSSSMACKTIMERREAD;
     SmackTimerDoneAddr = MSSSMACKTIMERDONE;
-    MSSTimerPeriod = 1193181 / freq;
+    MSSTimerPeriod = 1193181 / speed;
     LowSoundCheckAddr = MSSLOWSOUNDCHECK;
     LowSoundOnAddr = NULL;
     LowSoundVolPanAddr = MSSLOWSOUNDVOLPAN;
     return 1;
 }
-#endif
 
 /******************************************************************************/
