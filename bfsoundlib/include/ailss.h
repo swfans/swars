@@ -70,8 +70,7 @@ void AIL_process_VOC_block(SNDSAMPLE *s, int32_t play_flag);
 
 /** Create sample instance by parsing .WAV file.
  */
-void AIL_process_WAV_image(const AILSOUNDINFO *info, SNDSAMPLE *s);
-
+void AIL_process_WAV_image(const uint8_t *image, SNDSAMPLE *s);
 
 SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv);
 
