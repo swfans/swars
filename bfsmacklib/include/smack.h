@@ -27,15 +27,22 @@ extern "C" {
 #endif
 
 /******************************************************************************/
-typedef struct { // sizeof=?
-    uint8_t field_0[128];
-} SmackSndTrk;
+struct SNDSAMPLE;
+typedef struct SmackSndTrk SmackSndTrk;
+typedef struct Smack Smack;
 
-typedef struct { // sizeof=1196
+struct SmackSndTrk { // sizeof=?
+    uint32_t field_0[13];
+    SmackSndTrk *next;
+    struct SNDSAMPLE *smp;
+    uint8_t field_3C[68];
+};
+
+struct Smack { // sizeof=1196
     uint8_t field_0[1024];
     SmackSndTrk *Unkn404PerTrack[7];
     uint8_t field_420[144];
-} Smack;
+};
 
 /******************************************************************************/
 

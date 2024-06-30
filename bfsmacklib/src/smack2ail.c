@@ -22,6 +22,7 @@
 #include <stddef.h>
 #include <time.h>
 #include "bftime.h"
+#include "aildebug.h"
 /******************************************************************************/
 extern void *SmackMSSDigDriver;
 extern uint32_t MSSSpeed;
@@ -107,6 +108,7 @@ void RADAPI MSSLOWSOUNDCHECK(void)
 
 void RADAPI MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk)
 {
+#if 0
     asm volatile (
       "push %2\n"
       "push %1\n"
@@ -114,6 +116,11 @@ void RADAPI MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk)
       "call ASM_MSSLOWSOUNDVOLPAN\n"
         :  : "g" (pan), "g" (volume), "g" (sstrk));
     return;
+#endif
+    if (volume > 0x8000)
+        volume = 0x8000;
+    AIL_set_sample_volume(sstrk->smp, ((unsigned int)(1270 * (uint64_t)volume / 0x8000) + 5) / 10);
+    AIL_set_sample_pan(sstrk->smp, ((unsigned int)(1270 * (uint64_t)pan / 0x10000) + 5) / 10);
 }
 
 /** Default timer routine; returns a timer value, in miliseconds.
@@ -127,10 +134,10 @@ uint32_t RADAPI DEFSMACKTIMERREAD(void)
     if (tick < lasttimerread)
         timeradjust += lasttimerread - tick;
     lasttimerread = tick;
-    return 2746 * (unsigned long long)(timeradjust + tick) / 50;
+    return 2746 * (uint64_t)(timeradjust + tick) / 50;
 #else
     clock_t tick = clock();
-    return 1000 * (unsigned long long)tick / CLOCKS_PER_SEC;
+    return 1000 * (uint64_t)tick / CLOCKS_PER_SEC;
 #endif
 }
 
