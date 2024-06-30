@@ -156,7 +156,7 @@ uint32_t RADAPI ac_MSSSMACKTIMERREAD(void);
 
 uint8_t RADAPI SMACKSOUNDUSEMSS(uint32_t speed, void *digdrv)
 {
-#if 1
+#if 0
     uint8_t ret;
     asm volatile (
       "push %2\n"
@@ -171,18 +171,18 @@ uint8_t RADAPI SMACKSOUNDUSEMSS(uint32_t speed, void *digdrv)
     if (speed < 200)
         speed = 200;
     MSSSpeed = speed;
-    LowSoundOpenAddr = MSSLOWSOUNDOPEN;
-    LowSoundCloseAddr = MSSLOWSOUNDCLOSE;
-    LowSoundPlayedAddr = MSSLOWSOUNDPLAYED;
-    LowSoundPurgeAddr = MSSLOWSOUNDPURGE;
-    LowSoundOffAddr = MSSLOWSOUNDPURGE;
-    SmackTimerSetupAddr = MSSSMACKTIMERSETUP;
-    SmackTimerReadAddr = MSSSMACKTIMERREAD;
-    SmackTimerDoneAddr = MSSSMACKTIMERDONE;
+    LowSoundOpenAddr = ac_MSSLOWSOUNDOPEN;
+    LowSoundCloseAddr = ac_MSSLOWSOUNDCLOSE;
+    LowSoundPlayedAddr = ac_MSSLOWSOUNDPLAYED;
+    LowSoundPurgeAddr = ac_MSSLOWSOUNDPURGE;
+    LowSoundOffAddr = ac_MSSLOWSOUNDPURGE;
+    SmackTimerSetupAddr = ac_MSSSMACKTIMERSETUP;
+    SmackTimerReadAddr = ac_MSSSMACKTIMERREAD;
+    SmackTimerDoneAddr = ac_MSSSMACKTIMERDONE;
     MSSTimerPeriod = 1193181 / speed;
-    LowSoundCheckAddr = MSSLOWSOUNDCHECK;
+    LowSoundCheckAddr = ac_MSSLOWSOUNDCHECK;
     LowSoundOnAddr = NULL;
-    LowSoundVolPanAddr = MSSLOWSOUNDVOLPAN;
+    LowSoundVolPanAddr = ac_MSSLOWSOUNDVOLPAN;
     return 1;
 }
 
