@@ -95,6 +95,9 @@ swars_SOURCES = \
 	../bfariadne/include/delaunay.h \
 	../bfsmacklib/include/bfsmack.h \
 	../bfsmacklib/src/bfsmack.c \
+	../bfsmacklib/include/smack.h \
+	../bfsmacklib/include/smack2ail.h \
+	../bfsmacklib/src/smack2ail.c \
 	../bfsmacklib/src/bfsmacklib_s.sx \
 	linksmk.h \
 	linksmk.c \
