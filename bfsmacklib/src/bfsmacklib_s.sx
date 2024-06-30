@@ -7053,28 +7053,28 @@ GLOBAL_FUNC (ASM_SMACKSOUNDUSEMSS)
 		mov    $0x1234dd,%eax
 		xor    %edx,%edx
 		div    %ebx
-		mov    $MSSLOWSOUNDOPEN,%ecx
-		mov    $MSSLOWSOUNDCLOSE,%esi
-		mov    $MSSLOWSOUNDPLAYED,%edi
-		mov    $MSSLOWSOUNDPURGE,%ebp
+		mov    $ac_MSSLOWSOUNDOPEN,%ecx
+		mov    $ac_MSSLOWSOUNDCLOSE,%esi
+		mov    $ac_MSSLOWSOUNDPLAYED,%edi
+		mov    $ac_MSSLOWSOUNDPURGE,%ebp
 		mov    %ebx,EXPORT_SYMBOL(MSSSpeed)
 		mov    %ecx,EXPORT_SYMBOL(LowSoundOpenAddr)
 		mov    %esi,EXPORT_SYMBOL(LowSoundCloseAddr)
 		mov    %edi,EXPORT_SYMBOL(LowSoundPlayedAddr)
 		mov    %ebp,EXPORT_SYMBOL(LowSoundPurgeAddr)
 		mov    %ebp,EXPORT_SYMBOL(LowSoundOffAddr)
-		mov    $MSSSMACKTIMERSETUP,%ecx
+		mov    $ac_MSSSMACKTIMERSETUP,%ecx
 		mov    $ac_MSSSMACKTIMERREAD,%esi
-		mov    $MSSSMACKTIMERDONE,%edi
+		mov    $ac_MSSSMACKTIMERDONE,%edi
 		mov    %ecx,EXPORT_SYMBOL(SmackTimerSetupAddr)
 		mov    %esi,SmackTimerReadAddr
 		mov    %edi,EXPORT_SYMBOL(SmackTimerDoneAddr)
-		mov    $MSSLOWSOUNDCHECK,%ebx
+		mov    $ac_MSSLOWSOUNDCHECK,%ebx
 		mov    %eax,EXPORT_SYMBOL(MSSTimerPeriod)
 		xor    %edx,%edx
 		mov    $0x1,%al
 		mov    %ebx,EXPORT_SYMBOL(LowSoundCheckAddr)
-		mov    $MSSLOWSOUNDVOLPAN,%ebx
+		mov    $ac_MSSLOWSOUNDVOLPAN,%ebx
 		mov    %edx,EXPORT_SYMBOL(LowSoundOnAddr)
 		mov    %ebx,EXPORT_SYMBOL(LowSoundVolPanAddr)
 		pop    %ebp

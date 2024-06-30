@@ -42,20 +42,87 @@ extern void RADAPI (*LowSoundOnAddr)(void);
 extern void RADAPI (*LowSoundVolPanAddr)(uint32_t, uint32_t, SmackSndTrk *);
 
 /******************************************************************************/
-uint8_t RADAPI MSSLOWSOUNDOPEN(uint8_t flags, SmackSndTrk *sstrk);
-void RADAPI MSSLOWSOUNDCLOSE(SmackSndTrk *sstrk);
-uint32_t RADAPI MSSLOWSOUNDPLAYED(SmackSndTrk *sstrk);
-void RADAPI MSSLOWSOUNDPURGE(SmackSndTrk *sstrk);
-void RADAPI MSSSMACKTIMERSETUP(void);
-void RADAPI MSSSMACKTIMERDONE(void);
-void RADAPI MSSLOWSOUNDCHECK(void);
-void RADAPI MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk);
+uint8_t RADAPI MSSLOWSOUNDOPEN(uint8_t flags, SmackSndTrk *sstrk)
+{
+    uint8_t ret;
+    asm volatile (
+      "push %2\n"
+      "push %1\n"
+      "call ASM_MSSLOWSOUNDOPEN\n"
+        : "=r" (ret) : "g" (flags), "g" (sstrk));
+    return ret;
+}
+
+void RADAPI MSSLOWSOUNDCLOSE(SmackSndTrk *sstrk)
+{
+    asm volatile (
+      "push %0\n"
+      "call ASM_MSSLOWSOUNDCLOSE\n"
+        :  : "g" (sstrk));
+    return;
+}
+
+uint32_t RADAPI MSSLOWSOUNDPLAYED(SmackSndTrk *sstrk)
+{
+    uint32_t ret;
+    asm volatile (
+      "push %1\n"
+      "call ASM_MSSLOWSOUNDPLAYED\n"
+        : "=r" (ret) : "g" (sstrk));
+    return ret;
+}
+
+void RADAPI MSSLOWSOUNDPURGE(SmackSndTrk *sstrk)
+{
+    asm volatile (
+      "push %0\n"
+      "call ASM_MSSLOWSOUNDPURGE\n"
+        :  : "g" (sstrk));
+    return;
+}
+
+void RADAPI MSSSMACKTIMERSETUP(void)
+{
+    asm volatile (
+      "call ASM_MSSSMACKTIMERSETUP\n"
+        :  : );
+    return;
+}
+
+void RADAPI MSSSMACKTIMERDONE(void)
+{
+    asm volatile (
+      "call ASM_MSSSMACKTIMERDONE\n"
+        :  : );
+    return;
+}
+
+void RADAPI MSSLOWSOUNDCHECK(void)
+{
+    asm volatile (
+      "call ASM_MSSLOWSOUNDCHECK\n"
+        :  : );
+    return;
+}
+
+void RADAPI MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk)
+{
+    asm volatile (
+      "push %2\n"
+      "push %1\n"
+      "push %0\n"
+      "call ASM_MSSLOWSOUNDVOLPAN\n"
+        :  : "g" (pan), "g" (volume), "g" (sstrk));
+    return;
+}
 
 /** Default timer routine; returns a timer value, in miliseconds.
  */
 uint32_t RADAPI DEFSMACKTIMERREAD(void)
 {
 #if defined(DOS)||defined(GO32)
+    // Every 82C54 timer tick (18.2 per second) activates INT 08h,
+    // which increases this value by 1.
     uint32_t tick = PEEKL(0x46C);
     if (tick < lasttimerread)
         timeradjust += lasttimerread - tick;
@@ -73,6 +140,19 @@ uint32_t RADAPI MSSSMACKTIMERREAD(void)
 {
     return LbTimerClock();
 }
+
+/* define asm-to-c functions to set as callbacks */
+uint8_t RADAPI ac_MSSLOWSOUNDOPEN(uint8_t flags, SmackSndTrk *sstrk);
+void RADAPI ac_MSSLOWSOUNDCLOSE(SmackSndTrk *sstrk);
+uint32_t RADAPI ac_MSSLOWSOUNDPLAYED(SmackSndTrk *sstrk);
+void RADAPI ac_MSSLOWSOUNDPURGE(SmackSndTrk *sstrk);
+void RADAPI ac_MSSSMACKTIMERSETUP(void);
+void RADAPI ac_MSSSMACKTIMERDONE(void);
+void RADAPI ac_MSSLOWSOUNDCHECK(void);
+void RADAPI ac_MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk);
+uint32_t RADAPI ac_DEFSMACKTIMERREAD(void);
+uint32_t RADAPI ac_MSSSMACKTIMERREAD(void);
+
 
 uint8_t RADAPI SMACKSOUNDUSEMSS(uint32_t speed, void *digdrv)
 {

@@ -31,7 +31,7 @@
 .text
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDVOLPAN)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDVOLPAN)
 /*----------------------------------------------------------------*/
 		mov    0x8(%esp),%eax
 		cmp    $0x8000,%eax
@@ -71,7 +71,7 @@ GLOBAL_FUNC (MSSLOWSOUNDVOLPAN)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSSMACKTIMERDONE)
+GLOBAL_FUNC (ASM_MSSSMACKTIMERDONE)
 /*----------------------------------------------------------------*/
 		mov    _sndinit,%edx
 		dec    %edx
@@ -81,7 +81,7 @@ GLOBAL_FUNC (MSSSMACKTIMERDONE)
 		push   %ecx
 		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
-		push   $MSSSMACKTIMERSETUP
+		push   $ac_MSSSMACKTIMERSETUP
 		push   $ac_MSSSMACKTIMERREAD
 		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
@@ -94,7 +94,7 @@ GLOBAL_FUNC (MSSSMACKTIMERDONE)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSSMACKTIMERSETUP)
+GLOBAL_FUNC (ASM_MSSSMACKTIMERSETUP)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -103,7 +103,7 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 		mov    %edx,_sndinit
 		cmp    $0x1,%edx
 		jne    jump_fbe2e
-		push   $MSSSMACKTIMERSETUP
+		push   $ac_MSSSMACKTIMERSETUP
 		push   $ac_MSSSMACKTIMERREAD
 		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
@@ -153,7 +153,7 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 
 
 /*----------------------------------------------------------------*/
-ASM_MSSSMACKTIMERREAD:
+GLOBAL_FUNC (ASM_MSSSMACKTIMERREAD)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -209,7 +209,7 @@ _mss_int:	/* 0x0FBEB0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDCLOSE)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDCLOSE)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -263,7 +263,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCLOSE)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDPURGE)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDPURGE)
 /*----------------------------------------------------------------*/
 		push   %esi
 		mov    0x8(%esp),%esi
@@ -281,7 +281,7 @@ GLOBAL_FUNC (MSSLOWSOUNDPURGE)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDOPEN)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDOPEN)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -505,11 +505,11 @@ doinit_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDPLAYED)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDPLAYED)
 /*----------------------------------------------------------------*/
 		push   %esi
 		mov    0x8(%esp),%esi
-		call   MSSLOWSOUNDCHECK
+		call   ac_MSSLOWSOUNDCHECK
 		call   *EXPORT_SYMBOL(SmackTimerReadAddr)
 		mov    $0x3e8,%ebx
 		mov    %eax,%ecx
@@ -529,7 +529,7 @@ GLOBAL_FUNC (MSSLOWSOUNDPLAYED)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
+GLOBAL_FUNC (ASM_MSSLOWSOUNDCHECK)	/* 0xfc210 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
