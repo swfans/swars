@@ -39,9 +39,24 @@ enum SampleFileTypes {
     SMP_FTYP_ASI = 2,
 };
 
+static int32_t SS_use_locked;
+
 extern uint8_t byte_15AA50[128];
 
 /******************************************************************************/
+
+void AILSFILE_end(void);
+
+/** Lock function, doubling as start of locked code.
+ */
+void AILSFILE_start(void)
+{
+    if (SS_use_locked)
+        return;
+
+    AIL_VMM_lock_range(AILSFILE_start, AILSFILE_end);
+    SS_use_locked = 1;
+}
 
 void SS_build_amplitude_tables(SNDSAMPLE *s)
 {
@@ -855,4 +870,16 @@ void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count)
 
     s->loop_count = loop_count;
 }
+
+/** Unlock function, doubling as end of locked code.
+ */
+void AILSFILE_end(void)
+{
+    if (!SS_use_locked)
+        return;
+
+    AIL_VMM_unlock_range(AILSFILE_start, AILSFILE_end);
+    SS_use_locked = 0;
+}
+
 /******************************************************************************/
