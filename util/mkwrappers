@@ -112,7 +112,7 @@ Options:
 			self.generate_wrapper (func, convention, type, args)
 
 	def generate_push_arguments (self, convention, arg_count):
-		if convention in 'VC':
+		if convention in 'VCS':
 			for n in range (arg_count):
 				self.wrln ('\t\tpush\t0x%x(%%ebp)' \
 						   % ((arg_count - n + 1) * 4))
@@ -180,7 +180,10 @@ Options:
 		self.generate_align_pop (1)
 
 	def generate_ret (self, convention, arg_count):
-		if convention == 'W' and arg_count > 4:
+		if convention == 'S':
+			self.wrln ('\t\tret\t$0x%x' \
+					   % (arg_count * 4))
+		elif convention == 'W' and arg_count > 4:
 			self.wrln ('\t\tret\t$0x%x' \
 					   % ((arg_count - 4) * 4))
 		else:
@@ -230,7 +233,7 @@ Options:
 			if needs_ebp:
 				self.generate_epilogue ()
 			self.generate_ret (convention, len (args))
-		elif convention == 'C': # C=cdecl; standard c calling convention with all arguments on stack
+		elif convention == 'C': # C=cdecl; standard c calling convention with all arguments on stack, S=stdcall
 			self.generate_prologue ()
 			self.generate_store_registers ()
 			self.generate_align_push (len (args))
@@ -240,6 +243,20 @@ Options:
 			self.generate_printf_call (name, convention, args)
 			self.wrln ()
 			self.generate_call (name, len (args))
+			self.generate_align_pop ()
+			self.generate_restore_registers ()
+			self.generate_epilogue ()
+			self.generate_ret (convention, len (args))
+		elif convention == 'S': # S=stdcall, like cdecl but callee pops args from stack, and name has args size appended
+			self.generate_prologue ()
+			self.generate_store_registers ()
+			self.generate_align_push (len (args))
+			if len (args) > 0:
+				self.wrln ()
+				self.generate_push_arguments (convention, len (args))
+			self.generate_printf_call (name, convention, args)
+			self.wrln ()
+			self.generate_call ('%s@%d' % (name, len (args) * 4), len (args))
 			self.generate_align_pop ()
 			self.generate_restore_registers ()
 			self.generate_epilogue ()
