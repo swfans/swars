@@ -42,7 +42,16 @@ enum SampleFileTypes {
 
 static int32_t SS_use_locked;
 
-extern uint8_t byte_15AA50[128];
+static const uint8_t volume_pan_table[128] = {
+    0,   2,   4,   6,   8,  10,  12,  14,  16,  18,  20,  22,  24,  26,  28,  30,
+   32,  34,  36,  38,  40,  42,  44,  46,  48,  50,  52,  54,  56,  58,  60,  62,
+   64,  66,  68,  70,  72,  74,  76,  78,  80,  82,  84,  86,  88,  90,  92,  94,
+   96,  98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 128,
+  128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+  128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+  128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+  128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+};
 
 /******************************************************************************/
 
@@ -88,8 +97,8 @@ void SS_build_amplitude_tables(SNDSAMPLE *s)
 
         vscale0 = s->vol_scale[0];
         vscale1 = s->vol_scale[1];
-        vamp1 = byte_15AA50[s->pan];
-        vamp0 = byte_15AA50[127 - s->pan];
+        vamp1 = volume_pan_table[s->pan];
+        vamp0 = volume_pan_table[127 - s->pan];
 
         vscale0[0] = final_volume * vamp0 / 127;
         vscale1[0] = final_volume * vamp1 / 127;
@@ -145,8 +154,8 @@ void SS_build_amplitude_tables(SNDSAMPLE *s)
 
         vscale0 = s->vol_scale[0];
         vscale1 = s->vol_scale[1];
-        vamp1 = byte_15AA50[s->pan];
-        vamp0 = byte_15AA50[127 - s->pan];
+        vamp1 = volume_pan_table[s->pan];
+        vamp0 = volume_pan_table[127 - s->pan];
         if (s->flags & DIG_PCM_SIGN)
         {
             nxval = 0;

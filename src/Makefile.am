@@ -13,7 +13,6 @@ swars_SOURCES = \
 	bflib_render_gpoly_s.sx \
 	bflib_render_plin_s.sx \
 	bflib_render_drspr_s.sx \
-	bflib_sndlib_s.sx \
 	bflib_snd_mss_s.sx \
 	bflib_vidraw.c \
 	bflib_vidraw.h \
