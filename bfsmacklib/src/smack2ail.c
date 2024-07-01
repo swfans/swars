@@ -71,14 +71,32 @@ void RADAPI MSSLOWSOUNDCLOSE(SmackSndTrk *sstrk)
     return;
 }
 
+void RADAPI MSSLOWSOUNDCHECK(void)
+{
+    asm volatile (
+      "call ASM_MSSLOWSOUNDCHECK\n"
+        :  : );
+    return;
+}
+
 uint32_t RADAPI MSSLOWSOUNDPLAYED(SmackSndTrk *sstrk)
 {
+#if 0
     uint32_t ret;
     asm volatile (
       "push %1\n"
       "call ASM_MSSLOWSOUNDPLAYED\n"
         : "=r" (ret) : "g" (sstrk));
     return ret;
+#endif
+    uint32_t dt;
+
+    MSSLOWSOUNDCHECK();
+    dt = (SmackTimerReadAddr() - sstrk->field_6C)
+      * (uint64_t)sstrk->field_14 / 1000;
+    if (dt > sstrk->field_68)
+        dt = sstrk->field_68;
+    return sstrk->field_50 + dt;
 }
 
 void RADAPI MSSLOWSOUNDPURGE(SmackSndTrk *sstrk)
@@ -146,14 +164,6 @@ void RADAPI MSSSMACKTIMERSETUP(void)
     while (prev_i_count == mss_i_count) {
         LbWindowsControl();
     }
-}
-
-void RADAPI MSSLOWSOUNDCHECK(void)
-{
-    asm volatile (
-      "call ASM_MSSLOWSOUNDCHECK\n"
-        :  : );
-    return;
 }
 
 void RADAPI MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk)
