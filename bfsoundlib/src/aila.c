@@ -215,9 +215,22 @@ void AIL2OAL_API_set_timer_frequency(HSNDTIMER timer, uint32_t hertz)
 
 void AIL2OAL_set_PIT_divisor(uint32_t divsr)
 {
-    // removed DOS-specific calls, place 1
+#if defined(DOS)||defined(GO32)
+    unsigned int loc_eflags;
+    loc_eflags = __readeflags();
+    _disable(); // disable interrupts
+    // Start configure 82C54 timer
+    outb(0x43, 0x36);
+#endif
     AIL_PIT_divisor = divsr;
-    // removed DOS-specific calls, place 2
+#if defined(DOS)||defined(GO32)
+    // Continue configure 82C54 timer
+    outb(0x40, (divsr) & 0xFF);
+    outb(0x40, (divsr >> 8) & 0xFF);
+    // simplified DOS-specific calls
+    _enable(); // enable interrupts now
+    __writeeflags(loc_eflags);
+#endif
 }
 
 uint32_t AIL2OAL_API_interrupt_divisor(void)
