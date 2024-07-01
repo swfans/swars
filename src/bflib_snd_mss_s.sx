@@ -73,11 +73,11 @@ GLOBAL_FUNC (ASM_MSSLOWSOUNDVOLPAN)
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (ASM_MSSSMACKTIMERDONE)
 /*----------------------------------------------------------------*/
-		mov    _sndinit,%edx
+		mov    EXPORT_SYMBOL(sndinit),%edx
 		dec    %edx
-		mov    %edx,_sndinit
+		mov    %edx,EXPORT_SYMBOL(sndinit)
 		jne    jump_fbd8f
-		mov    _msstimer,%ecx
+		mov    EXPORT_SYMBOL(msstimer),%ecx
 		push   %ecx
 		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
@@ -86,7 +86,7 @@ GLOBAL_FUNC (ASM_MSSSMACKTIMERDONE)
 		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x4
-		push   $mss_i_count
+		push   $EXPORT_SYMBOL(mss_i_count)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 	jump_fbd8f:
@@ -98,9 +98,9 @@ GLOBAL_FUNC (ASM_MSSSMACKTIMERSETUP)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
-		mov    _sndinit,%edx
+		mov    EXPORT_SYMBOL(sndinit),%edx
 		inc    %edx
-		mov    %edx,_sndinit
+		mov    %edx,EXPORT_SYMBOL(sndinit)
 		cmp    $0x1,%edx
 		jne    jump_fbe2e
 		push   $ac_MSSSMACKTIMERSETUP
@@ -108,20 +108,20 @@ GLOBAL_FUNC (ASM_MSSSMACKTIMERSETUP)
 		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x4
-		push   $mss_i_count
+		push   $EXPORT_SYMBOL(mss_i_count)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $_mss_int
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
-		mov    %eax,_msstimer
+		mov    %eax,EXPORT_SYMBOL(msstimer)
 		mov    EXPORT_SYMBOL(MSSSpeed),%ecx
 		push   %ecx
-		mov    _msstimer,%esi
+		mov    EXPORT_SYMBOL(msstimer),%esi
 		push   %esi
 		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
-		mov    _msstimer,%edi
+		mov    EXPORT_SYMBOL(msstimer),%edi
 		push   %edi
 		call   ac_AIL_start_timer
 		add    $0x4,%esp
@@ -139,11 +139,11 @@ GLOBAL_FUNC (ASM_MSSSMACKTIMERSETUP)
 	jump_fbe15:
 		mov    %bh,%al
 		out    %al,$0x40
-		mov    mss_i_count,%eax
-		cmp    mss_i_count,%eax
+		mov    EXPORT_SYMBOL(mss_i_count),%eax
+		cmp    EXPORT_SYMBOL(mss_i_count),%eax
 		jne    jump_fbe2e
 	jump_fbe26:
-		cmp    mss_i_count,%eax
+		cmp    EXPORT_SYMBOL(mss_i_count),%eax
 		je     jump_fbe26
 #endif
 	jump_fbe2e:
@@ -158,7 +158,7 @@ GLOBAL_FUNC (ASM_MSSSMACKTIMERREAD)
 		push   %esi
 		push   %edi
 	jump_fbe42:
-		mov    mss_i_count,%edx
+		mov    EXPORT_SYMBOL(mss_i_count),%edx
 		xor    %al,%al
 		out    %al,$0x43
 		jmp    jump_fbe4e
@@ -169,7 +169,7 @@ GLOBAL_FUNC (ASM_MSSSMACKTIMERREAD)
 		xchg   %al,%ah
 		and    $0xffff,%eax
 		mov    %eax,%esi
-		cmp    mss_i_count,%edx
+		cmp    EXPORT_SYMBOL(mss_i_count),%edx
 		jne    jump_fbe42
 		mov    $0x3e8,%ecx
 		mov    EXPORT_SYMBOL(MSSSpeed),%ebx
@@ -203,8 +203,8 @@ GLOBAL_FUNC (ASM_MSSSMACKTIMERREAD)
 /*----------------------------------------------------------------*/
 _mss_int:	/* 0x0FBEB0 */
 /*----------------------------------------------------------------*/
-		mov    mss_i_count,%eax
-		incl   mss_i_count
+		mov    EXPORT_SYMBOL(mss_i_count),%eax
+		incl   EXPORT_SYMBOL(mss_i_count)
 		ret
 
 
@@ -660,12 +660,12 @@ GLOBAL (SmackMSSDigDriver)
 		.long	0x0
 MSSLiteInit:
 		.long	0x0
-mss_i_count:
+GLOBAL (mss_i_count)
 		.long	0x0
-_sndinit:	/* 0x1592dc */
+GLOBAL (sndinit)	/* 0x1592dc */
 		.long	0x0
 
-_msstimer:	/* 0x1e86b0 */
+GLOBAL (msstimer)	/* 0x1e86b0 */
 		.long	0x0
 _lasttimer:
 		.fill   0x8

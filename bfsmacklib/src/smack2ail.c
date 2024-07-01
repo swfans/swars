@@ -22,13 +22,18 @@
 #include <stddef.h>
 #include <time.h>
 #include "bftime.h"
+#include "bfwindows.h"
 #include "aildebug.h"
+#include "memfile.h"
 /******************************************************************************/
 extern void *SmackMSSDigDriver;
 extern uint32_t MSSSpeed;
 extern uint32_t MSSTimerPeriod;
 
 extern uint32_t timeradjust;
+extern uint32_t mss_i_count;
+extern uint32_t sndinit;
+extern uint32_t msstimer;
 
 extern uint8_t RADAPI (*LowSoundOpenAddr)(uint8_t, SmackSndTrk *);
 extern void RADAPI (*LowSoundCloseAddr)(SmackSndTrk *);
@@ -43,6 +48,9 @@ extern void RADAPI (*LowSoundOnAddr)(void);
 extern void RADAPI (*LowSoundVolPanAddr)(uint32_t, uint32_t, SmackSndTrk *);
 
 /******************************************************************************/
+void RADAPI MSSSMACKTIMERSETUP(void);
+
+
 uint8_t RADAPI MSSLOWSOUNDOPEN(uint8_t flags, SmackSndTrk *sstrk)
 {
     uint8_t ret;
@@ -82,20 +90,62 @@ void RADAPI MSSLOWSOUNDPURGE(SmackSndTrk *sstrk)
     return;
 }
 
-void RADAPI MSSSMACKTIMERSETUP(void)
+/** Timer routine when linked to AIL; returns a timer value, in miliseconds.
+ */
+uint32_t RADAPI MSSSMACKTIMERREAD(void)
 {
-    asm volatile (
-      "call ASM_MSSSMACKTIMERSETUP\n"
-        :  : );
-    return;
+    return LbTimerClock();
 }
 
 void RADAPI MSSSMACKTIMERDONE(void)
 {
+#if 0
     asm volatile (
       "call ASM_MSSSMACKTIMERDONE\n"
         :  : );
     return;
+#endif
+    if (--sndinit != 0)
+        return;
+    AIL_release_timer_handle(msstimer);
+    AIL_VMM_unlock_range(MSSSMACKTIMERREAD, MSSSMACKTIMERSETUP);
+    AIL_vmm_unlock(&mss_i_count, sizeof(mss_i_count));
+}
+
+void mss_int(void *clientval)
+{
+    mss_i_count++;
+}
+
+void RADAPI MSSSMACKTIMERSETUP(void)
+{
+#if 0
+    asm volatile (
+      "call ASM_MSSSMACKTIMERSETUP\n"
+        :  : );
+    return;
+#endif
+    if (++sndinit != 1)
+        return;
+    AIL_VMM_lock_range(MSSSMACKTIMERREAD, MSSSMACKTIMERSETUP);
+    AIL_vmm_lock(&mss_i_count, sizeof(mss_i_count));
+    msstimer = AIL_register_timer(mss_int);
+    AIL_set_timer_frequency(msstimer, MSSSpeed);
+    AIL_start_timer(msstimer);
+#if defined(DOS)||defined(GO32)
+    uint16_t divsr;
+    divsr = AIL_interrupt_divisor();
+    // Configure 82C54 timer
+    outb(0x43, 0x34);
+    outb(0x40, (divsr) & 0xFF);
+    outb(0x40, (divsr >> 8) & 0xFF);
+#endif
+    // Wait for the timers first tick
+    uint32_t volatile prev_i_count;
+    prev_i_count = mss_i_count;
+    while (prev_i_count == mss_i_count) {
+        LbWindowsControl();
+    }
 }
 
 void RADAPI MSSLOWSOUNDCHECK(void)
@@ -164,13 +214,6 @@ void RADAPI DEFSMACKTIMERSETUP(void)
     outb(0x40, 0);
     outb(0x40, 0);
 #endif
-}
-
-/** Timer routine when linked to AIL; returns a timer value, in miliseconds.
- */
-uint32_t RADAPI MSSSMACKTIMERREAD(void)
-{
-    return LbTimerClock();
 }
 
 /* define asm-to-c functions to set as callbacks */
