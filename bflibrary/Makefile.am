@@ -56,6 +56,24 @@ libbullfrog_a_SOURCES = \
   src/general/spr_ssta.c \
   src/general/sqroot.c
 
+if USE_SDL2
+libbullfrog_a_SOURCES += \
+  src/x86-win-sdl2/sdir.c \
+  src/x86-win-sdl2/sdrive.c \
+  src/x86-win-sdl2/sffind.c \
+  src/x86-win-sdl2/sfile.c \
+  src/x86-win-sdl2/skeybd.cpp \
+  src/x86-win-sdl2/slog.c \
+  src/x86-win-sdl2/smemory.c \
+  src/x86-win-sdl2/smouse.cpp \
+  src/x86-win-sdl2/spalette.c \
+  src/x86-win-sdl2/sscreen.c \
+  src/x86-win-sdl2/sscrsurf.c \
+  src/x86-win-sdl2/ssemphr.cpp \
+  src/x86-win-sdl2/stime.c \
+  src/x86-win-sdl2/svesa.c \
+  src/x86-win-sdl2/swindows.c
+else
 libbullfrog_a_SOURCES += \
   src/x86-win-sdl/sdir.c \
   src/x86-win-sdl/sdrive.c \
@@ -72,6 +90,7 @@ libbullfrog_a_SOURCES += \
   src/x86-win-sdl/stime.c \
   src/x86-win-sdl/svesa.c \
   src/x86-win-sdl/swindows.c
+endif
 
 libbullfrog_a_CPPFLAGS = \
   -I$(top_srcdir)/include -I$(builddir)/include

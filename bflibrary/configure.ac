@@ -90,10 +90,14 @@ AC_CHECK_FUNCS([getcwd memmove memset mkdir rmdir])
 # Flags
 
 CFLAGS="$CFLAGS $SDL_CFLAGS"
+CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS"
 
 CFLAGS="$CFLAGS $PNG_CFLAGS"
+CXXFLAGS="$CXXFLAGS $PNG_CFLAGS"
 LIBS="$LIBS $PNG_LIBS"
+
+AM_CONDITIONAL([USE_SDL2], [test "x$have_sdl2" == "xyes"])
 
 # Final commands
 
