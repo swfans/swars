@@ -13,7 +13,7 @@ m4_define([swars_version],
 
 AC_INIT([Syndicate Wars Port], [swars_version], [unavowed@vexillium.org], [swars])
 
-AC_CONFIG_SUBDIRS([bflibrary])
+AC_CONFIG_SUBDIRS([bflibrary bfsoundlib])
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
@@ -142,6 +142,13 @@ AC_SUBST(WILDMIDI_LIBS, -lWildMidi)
 AC_SUBST(WILDMIDI_CFLAGS, )
 AC_DEFINE(ENABLE_WILDMIDI, 1, [Define for wildmidi support])
 
+# libraries from within this project are bot built at this point
+AC_SUBST(BFLIBRARY_LIBS, -L\$\(top_builddir\)/bflibrary)
+AC_SUBST(BFLIBRARY_CFLAGS, -I\$\(top_srcdir\)/bflibrary/include)
+
+AC_SUBST(BFSOUNDLIB_LIBS, -L\$\(top_builddir\)/bfsoundlib)
+AC_SUBST(BFSOUNDLIB_CFLAGS, -I\$\(top_srcdir\)/bfsoundlib/include)
+
 # Arguments
 
 AC_ARG_ENABLE([debug],
@@ -229,6 +236,12 @@ LIBS="$LIBS $PNG_LIBS"
 
 CFLAGS="$CFLAGS $WILDMIDI_CFLAGS"
 LIBS="$LIBS $WILDMIDI_LIBS"
+
+CFLAGS="$CFLAGS $BFLIBRARY_CFLAGS"
+LIBS="$LIBS $BFLIBRARY_LIBS"
+
+CFLAGS="$CFLAGS $BFSOUNDLIB_CFLAGS"
+LIBS="$LIBS $BFSOUNDLIB_LIBS"
 
 
 AC_SUBST([MKWFLAGS])
