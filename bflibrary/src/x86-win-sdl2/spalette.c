@@ -87,7 +87,7 @@ TbResult LbPaletteSet(const ubyte *palette)
         }
     }
     lbDisplay.Palette = lbPalette;
-    // Set to screen buffer as well, if it is required
+    // Set to draw buffer as well, if it is required
     if ((lbHasSecondSurface) && (lbEngineBPP <= 8)) {
         if (SDL_SetColors(to_SDLSurf(lbDrawSurface),
             lbPaletteColors, 0, PALETTE_8b_COLORS) != 1) {
