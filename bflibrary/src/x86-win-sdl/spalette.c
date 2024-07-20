@@ -99,4 +99,32 @@ TbResult LbPaletteSet(const ubyte *palette)
     return ret;
 }
 
+/** @internal
+ * Restore lost screen surface palette, ie. due to focus switch.
+ *
+ * With SDL 1.2, it is possible to have the video switched to real 8-bit mode,
+ * without double buffering. In that case, minimizing the game or switching
+ * to other windows may cause the palette to be replaced, to make sure the
+ * other application is visible. The palette should then be restored after
+ * this app gains focus again.
+ */
+TbResult LbIPaletteRestoreLost(void)
+{
+    TbScreenModeInfo *mdinfo;
+    TbResult ret;
+
+    ret = Lb_SUCCESS;
+    mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
+    if (mdinfo->BitsPerPixel <= 8) {
+        //if (SDL_SetPalette(to_SDLSurf(lbDrawSurface), SDL_LOGPAL | SDL_PHYSPAL,
+        if (SDL_SetColors(to_SDLSurf(lbScreenSurface),
+            lbPaletteColors, 0, PALETTE_8b_COLORS) != 1) {
+            LOGERR("SetPalette to ScreenSurface failed: %s", SDL_GetError());
+            ret = Lb_FAIL;
+        }
+    }
+
+    return ret;
+}
+
 /******************************************************************************/
