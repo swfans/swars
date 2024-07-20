@@ -37,7 +37,7 @@ struct sound_timer_inf {
 /******************************************************************************/
 
 void InitAllBullfrogSoundTimers(void);
-ushort SetupBullfrogSoundTimer(ushort freq, void (*cb)());
+ushort SetupBullfrogSoundTimer(ushort freq, void (*cb)(void*));
 void ReleaseBullfrogSoundTimer(ushort st);
 
 /******************************************************************************/
