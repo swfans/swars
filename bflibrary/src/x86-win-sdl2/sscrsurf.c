@@ -51,7 +51,7 @@ TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h)
     }
     format = to_SDLSurf(lbDrawSurface)->format;
 
-    surf->surf_data = (OSSurfaceHandle)SDL_CreateRGBSurface(SDL_SRCCOLORKEY,
+    surf->surf_data = (OSSurfaceHandle)SDL_CreateRGBSurface(0,
       w, h, format->BitsPerPixel,
       format->Rmask, format->Gmask, format->Bmask, format->Amask);
 
@@ -85,6 +85,7 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
     // Convert TbRect to SDL rectangles
     SDL_Rect srcRect;
     SDL_Rect destRect;
+    Uint32 clkey;
 
     LbIScreenDrawSurfaceCheck();
 
@@ -112,13 +113,23 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
       //to access front buffer in SDL
     }
 
-    if ((blflags & SSBlt_FLAG4) != 0) {
+    if ((blflags & SSBlt_FLAG4) != 0)
+    {
+        if (to_SDLSurf(surf->surf_data)->format->BitsPerPixel == 8) {
+            // here we know we want to use a specific color index as key, no need for mapping
+            clkey = 255;
+        } else {
+            clkey = SDL_MapRGB(to_SDLSurf(surf->surf_data)->format, 0x0, 0xff, 0xff);
+        }
         // enable color key
-        SDL_SetColorKey(to_SDLSurf(surf->surf_data), SDL_SRCCOLORKEY, 255);
+        SDL_SetColorKey(to_SDLSurf(surf->surf_data), SDL_TRUE, clkey);
+        if (SDL_HasColorKey(to_SDLSurf(surf->surf_data)) == -1)
+            LOGWARN("DrawSurface refused to enable color key; no transparency.");
     }
-    else {
+    else
+    {
         // disable color key
-        SDL_SetColorKey(to_SDLSurf(surf->surf_data), 0, 255);
+        SDL_SetColorKey(to_SDLSurf(surf->surf_data), SDL_FALSE, 0);
     }
 
     if ((blflags & SSBlt_FLAG10) != 0) {

@@ -45,8 +45,6 @@ void LbRegisterStandardVideoModes(void);
 TbResult MEvent(const SDL_Event *ev);
 TbResult KEvent(const SDL_Event *ev);
 
-extern SDL_Color lbPaletteColors[];
-
 TbResult LbBaseInitialise(void)
 {
 #if 0
@@ -102,16 +100,16 @@ TbResult WEvent(const SDL_Event *ev)
 
     switch (ev->type)
     {
-    case SDL_ACTIVEEVENT:
-        if (ev->active.state & SDL_APPACTIVE) {
-            lbAppActive = (ev->active.gain != 0);
+    case SDL_WINDOWEVENT:
+        if ((ev->window.event == SDL_WINDOWEVENT_FOCUS_GAINED)
+          || (ev->window.event == SDL_WINDOWEVENT_FOCUS_LOST)) {
+            lbAppActive = (ev->window.event == SDL_WINDOWEVENT_FOCUS_GAINED);
             LOGNO("Active = %d",(int)lbAppActive);
             LbInputRestate();
         }
         if ((lbAppActive) && (lbDisplay.Palette != NULL)) {
-            // Switching windows in 8-bit modes often leads to palette loss
-            // Below is the faster version of LbPaletteSet(lbDisplay.Palette);
-            SDL_SetColors(lbDrawSurface,lbPaletteColors, 0, PALETTE_8b_COLORS);
+            // SDL2 is always double buffered and never loses palette, no need for refresh
+            //LbIPaletteRestoreLost();
         }
         return Lb_SUCCESS;
     case SDL_SYSWMEVENT:
@@ -147,7 +145,7 @@ static void LbI_ProcessEvent(const SDL_Event *ev)
         MEvent(ev);
         break;
 
-    case SDL_ACTIVEEVENT:
+    case SDL_WINDOWEVENT:
     case SDL_SYSWMEVENT:
         WEvent(ev);
         break;
@@ -159,12 +157,6 @@ static void LbI_ProcessEvent(const SDL_Event *ev)
     case SDL_JOYBUTTONUP:
         //TODO INPUT make joypad support
         //JEvent(ev);
-        break;
-
-    case SDL_VIDEORESIZE:
-        break;
-
-    case SDL_VIDEOEXPOSE:
         break;
 
     case SDL_QUIT:
