@@ -593,7 +593,7 @@ TbResult LbScreenUnlock(void)
 static TbResult LbIPhysicalScreenLock(void)
 {
     if (lbHasSecondSurface && SDL_MUSTLOCK(to_SDLSurf(lbScreenSurface))) {
-        if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
+        if (SDL_LockSurface(to_SDLSurf(lbScreenSurface)) < 0) {
             LOGERR("cannot lock screen surface: %s", SDL_GetError());
             return Lb_FAIL;
         }
@@ -625,7 +625,8 @@ TbResult LbScreenSetDoubleBuffering(TbBool state)
 
 TbBool LbScreenIsDoubleBufferred(void)
 {
-    return ((to_SDLSurf(lbScreenSurface)->flags & SDL_DOUBLEBUF) != 0);
+    // SDL2 always does double buffering
+    return true;
 }
 
 ulong LbScreenSetWScreenInVideo(ulong flag)
@@ -685,136 +686,6 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
     return (closestBPP != 0);
 }
 
-static void LbI_SDL_BlitScaled_to8bpp(long src_w, long src_h, ubyte *src_buf,
-  long dst_w, long dst_h, ubyte *dst_buf)
-{
-    /* denominator of a (source) pixel's fraction part */
-    const long denom_i = 2 * dst_h;
-    const long denom_j = 2 * dst_w;
-
-    /* number of whole units in each (source) step */
-    const long dsrc_i = 2 * src_h / denom_i;
-    const long dsrc_j = 2 * src_w / denom_j;
-
-    /* numerator of fractional part of each (source) step */
-    const long dsrc_num_i = (2 * src_h) - dsrc_i * denom_i;
-    const long dsrc_num_j = (2 * src_w) - dsrc_j * denom_j;
-
-    /* number of whole units in a (source) half-step */
-    const long halfdsrc_i = src_h / denom_i;
-    const long halfdsrc_j = src_w / denom_j;
-
-    long dst_offset = 0;
-    long src_offset = halfdsrc_i * src_w + halfdsrc_j;
-
-    /* start at fractional part of each (source) half-step */
-    long src_num_i =  src_h - halfdsrc_i * denom_i;
-    long src_num_j = src_w - halfdsrc_j * denom_j;
-
-    for (long i = 0; i != dst_h; ++i) {
-        if (src_num_i > denom_i) {
-            src_num_i -= denom_i;
-            src_offset += src_w;
-        }
-        for (long j = 0; j != dst_w; ++j) {
-            if (src_num_j > denom_j) {
-                src_num_j -= denom_j;
-                ++src_offset;
-            }
-            dst_buf[dst_offset] = src_buf[src_offset];
-            dst_offset++;
-            src_offset += dsrc_j;
-            src_num_j += dsrc_num_j;
-        }
-        src_offset += (dsrc_i - 1) * src_w;
-        src_num_i += dsrc_num_i;
-    }
-}
-
-static void LbI_SDL_BlitScaled_totcbpp(long src_w, long src_h, ubyte *src_buf,
-  SDL_Color *pal, long rshift, long gshift, long bshift,
-  long dst_w, long dst_h, long dst_bpp, ubyte *dst_buf)
-{
-    /* denominator of a (source) pixel's fraction part */
-    const long denom_i = 2 * dst_h;
-    const long denom_j = 2 * dst_w;
-
-    /* number of whole units in each (source) step */
-    const long dsrc_i = 2 * src_h / denom_i;
-    const long dsrc_j = 2 * src_w / denom_j;
-
-    /* numerator of fractional part of each (source) step */
-    const long dsrc_num_i = (2 * src_h) - dsrc_i * denom_i;
-    const long dsrc_num_j = (2 * src_w) - dsrc_j * denom_j;
-
-    /* number of whole units in a (source) half-step */
-    const long halfdsrc_i = src_h / denom_i;
-    const long halfdsrc_j = src_w / denom_j;
-
-    long dst_offset = 0;
-    long src_offset = halfdsrc_i * src_w + halfdsrc_j;
-
-    /* start at fractional part of each (source) half-step */
-    long src_num_i =  src_h - halfdsrc_i * denom_i;
-    long src_num_j = src_w - halfdsrc_j * denom_j;
-
-    for (long i = 0; i != dst_h; ++i) {
-        if (src_num_i > denom_i) {
-            src_num_i -= denom_i;
-            src_offset += src_w;
-        }
-        for (long j = 0; j != dst_w; ++j) {
-            SDL_Color c;
-            if (src_num_j > denom_j) {
-                src_num_j -= denom_j;
-                ++src_offset;
-            }
-            c = pal[src_buf[src_offset]];
-            *((long *)(dst_buf+dst_offset)) = (c.r << rshift) + (c.g << gshift) + (c.b << bshift);
-            dst_offset += dst_bpp;
-            src_offset += dsrc_j;
-            src_num_j += dsrc_num_j;
-        }
-        src_offset += (dsrc_i - 1) * src_w;
-        src_num_i += dsrc_num_i;
-    }
-}
-
-/** @internal
- * Provides simplified SDL_BlitScaled() functionality for SDL1.
- */
-int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst)
-{
-    long dst_bpp;
-
-    /* shortcircuit for 1:1 */
-    if (src->w == dst->w && src->h == dst->h)
-        return SDL_BlitSurface(src, NULL, dst, NULL);
-
-    if (src->format->BytesPerPixel != 1)
-        LOGERR("unsupported source bit length");
-
-    if (SDL_MUSTLOCK(src) && SDL_LockSurface(src) < 0)
-        LOGERR("cannot lock source surface: %s", SDL_GetError());
-
-    if (SDL_MUSTLOCK(dst) && SDL_LockSurface(dst) < 0)
-            LOGERR("cannot lock destination Surface: %s", SDL_GetError());
-
-    dst_bpp = dst->format->BytesPerPixel;
-    if (dst_bpp == 1)
-        LbI_SDL_BlitScaled_to8bpp(src->w, src->h, src->pixels,
-          dst->w, dst->h, dst->pixels);
-    else
-        LbI_SDL_BlitScaled_totcbpp(src->w, src->h, src->pixels,
-          src->format->palette->colors, dst->format->Rshift, dst->format->Gshift, dst->format->Bshift,
-          dst->w, dst->h, dst_bpp, dst->pixels);
-
-    if (SDL_MUSTLOCK(dst)) SDL_UnlockSurface(dst);
-    if (SDL_MUSTLOCK(src)) SDL_UnlockSurface(src);
-
-    return 0;
-}
-
 /** Check if the lbDrawSurface is linked to WScreen buffer; fix if neccessary.
  *
  * This call is required to handle WScreen pointer changes by the app side.
@@ -872,8 +743,8 @@ TbResult LbScreenSwap(void)
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
     {
-        blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
-                       to_SDLSurf(lbScreenSurface));
+        blresult = SDL_BlitScaled(to_SDLSurf(lbDrawSurface), NULL,
+          to_SDLSurf(lbScreenSurface), NULL);
         if (blresult < 0) {
             LOGERR("blit failed: %s", SDL_GetError());
             ret = Lb_FAIL;
@@ -881,8 +752,8 @@ TbResult LbScreenSwap(void)
     }
     // Flip the image displayed on Screen Surface
     if (ret == Lb_SUCCESS) {
-        // calls SDL_UpdateRect for entire screen if not double buffered
-        blresult = SDL_Flip(to_SDLSurf(lbScreenSurface));
+        // Copy the window surface to the screen
+        blresult = SDL_UpdateWindowSurface(lbWindow);
         if (blresult < 0) {
             // In some cases this situation seems to be quite common
             LOGERR("flip failed: %s", SDL_GetError());
@@ -908,8 +779,8 @@ TbResult LbScreenSwapClear(TbPixel colour)
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
     {
-        blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
-                                      to_SDLSurf(lbScreenSurface));
+        blresult = SDL_BlitScaled(to_SDLSurf(lbDrawSurface), NULL,
+          to_SDLSurf(lbScreenSurface), NULL);
         if (blresult < 0) {
             LOGERR("blit failed: %s", SDL_GetError());
             ret = Lb_FAIL;
@@ -917,8 +788,8 @@ TbResult LbScreenSwapClear(TbPixel colour)
     }
     // Flip the image displayed on Screen Surface
     if (ret == Lb_SUCCESS) {
-        // calls SDL_UpdateRect for entire screen if not double buffered
-        blresult = SDL_Flip(to_SDLSurf(lbScreenSurface));
+        // Copy the window surface to the screen
+        blresult = SDL_UpdateWindowSurface(lbWindow);
         if (blresult < 0) {
             // In some cases this situation seems to be quite common
             LOGERR("flip failed: %s", SDL_GetError());
@@ -962,8 +833,8 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
     {
         SDL_Rect clipRect = {destX, destY, width, height};
         SDL_SetClipRect(to_SDLSurf(lbScreenSurface), &clipRect);
-        blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
-                                      to_SDLSurf(lbScreenSurface));
+        blresult = SDL_BlitScaled(to_SDLSurf(lbDrawSurface), NULL,
+          to_SDLSurf(lbScreenSurface), NULL);
         SDL_SetClipRect(to_SDLSurf(lbScreenSurface), NULL);
         if (blresult < 0) {
             LOGERR("blit failed: %s", SDL_GetError());
@@ -972,8 +843,8 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
     }
     // Flip the image displayed on Screen Surface
     if (ret == Lb_SUCCESS) {
-        // calls SDL_UpdateRect for entire screen if not double buffered
-        blresult = SDL_Flip(to_SDLSurf(lbScreenSurface));
+        // Copy the window surface to the screen
+        blresult = SDL_UpdateWindowSurface(lbWindow);
         if (blresult < 0) {
             // In some cases this situation seems to be quite common
             LOGERR("flip failed: %s", SDL_GetError());
