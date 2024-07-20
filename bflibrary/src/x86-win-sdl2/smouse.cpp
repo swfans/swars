@@ -27,6 +27,7 @@
 #include "bfplanar.h"
 #include "privbflog.h"
 
+extern SDL_Window *lbWindow;
 
 extern "C" {
 
@@ -276,7 +277,7 @@ void MouseToScreen(struct TbPoint *pos)
       {
           mx = (clip.right - clip.left) / 2 + clip.left;
           my = (clip.bottom - clip.top) / 2 + clip.top;
-          SDL_WarpMouse(mx, my);
+          SDL_WarpMouseInWindow(lbWindow, mx, my);
       }
     } else
     {
@@ -312,8 +313,6 @@ static TbMouseAction MouseButtonActionsMapping(int eventType, const SDL_MouseBut
         case SDL_BUTTON_LEFT: return MActn_LBUTTONDOWN;
         case SDL_BUTTON_MIDDLE: return MActn_MBUTTONDOWN;
         case SDL_BUTTON_RIGHT: return MActn_RBUTTONDOWN;
-        case SDL_BUTTON_WHEELUP: return MActn_WHEELMOVEUP;
-        case SDL_BUTTON_WHEELDOWN: return MActn_WHEELMOVEDOWN;
         }
     }
     else if (eventType == SDL_MOUSEBUTTONUP) {
@@ -321,8 +320,6 @@ static TbMouseAction MouseButtonActionsMapping(int eventType, const SDL_MouseBut
         case SDL_BUTTON_LEFT: return MActn_LBUTTONUP;
         case SDL_BUTTON_MIDDLE: return MActn_MBUTTONUP;
         case SDL_BUTTON_RIGHT: return MActn_RBUTTONUP;
-        case SDL_BUTTON_WHEELUP: return MActn_NONE;
-        case SDL_BUTTON_WHEELDOWN: return MActn_NONE;
         }
     }
     LOGWARN("unidentified event, type %d button %d", eventType, (int)button->button);
@@ -359,6 +356,11 @@ TbResult MEvent(const SDL_Event *ev)
         pos.y = ev->button.y;
         ret = mouseControl(action, &pos);
         return ret;
+    case SDL_MOUSEWHEEL:
+        pos.x = 0;
+        pos.y = 0;
+        ret = mouseControl(ev->wheel.y > 0 ? MActn_WHEELMOVEUP : MActn_WHEELMOVEDOWN, &pos);
+        break;
     }
     return Lb_OK;
 }

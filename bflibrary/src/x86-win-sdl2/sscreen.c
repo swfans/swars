@@ -65,6 +65,11 @@ extern short lbIconIndex;
 extern ResourceMappingFunc userResourceMapping;
 extern SDL_Color lbPaletteColors[256];
 
+/** @internal
+ * Handle to the graphics window.
+ */
+SDL_Window *lbWindow = NULL;
+
 volatile TbBool lbScreenDirectAccessActive = false;
 
 /** @internal
@@ -173,8 +178,12 @@ TbResult LbScreenUpdateIcon(void)
     const char * rname;
 
     SDL_VERSION(&wmInfo.version);
-    if (SDL_GetWMInfo(&wmInfo) < 0) {
+    if (SDL_GetWindowWMInfo(lbWindow, &wmInfo) != SDL_TRUE) {
         LOGWARN("cannot set icon: get SDL window info failed: %s", SDL_GetError());
+        return Lb_FAIL;
+    }
+    if (wmInfo.subsystem != SDL_SYSWM_WINDOWS) {
+        LOGWARN("cannot set icon: unexpected window manager subsystem (%d)", (int)wmInfo.subsystem);
         return Lb_FAIL;
     }
 
@@ -186,8 +195,8 @@ TbResult LbScreenUpdateIcon(void)
         LOGWARN("cannot set icon: resource mapped to NULL");
         return Lb_FAIL;
     }
-    SendMessage(wmInfo.window, WM_SETICON, ICON_BIG,  (LPARAM)hIcon);
-    SendMessage(wmInfo.window, WM_SETICON, ICON_SMALL,(LPARAM)hIcon);
+    SendMessage(wmInfo.info.win.window, WM_SETICON, ICON_BIG,  (LPARAM)hIcon);
+    SendMessage(wmInfo.info.win.window, WM_SETICON, ICON_SMALL,(LPARAM)hIcon);
 
     return Lb_SUCCESS;
 }
@@ -201,18 +210,21 @@ TbResult LbScreenUpdateIcon(void)
     const char * rname;
 
     rname = userResourceMapping(lbIconIndex);
-    if (rname != NULL) {
-        image = SDL_LoadBMP(rname);
-    } else {
-        image = NULL;
+    if (rname == NULL) {
+        LOGWARN("cannot set icon: resource mapping failed");
+        return Lb_FAIL;
     }
+    image = SDL_LoadBMP(rname);
     if (image == NULL) {
         LOGWARN("cannot set icon: image load failed: %s", SDL_GetError());
         return Lb_FAIL;
     }
     colorkey = SDL_MapRGB(image->format, 255, 0, 255);
-    SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey);
-    SDL_WM_SetIcon(image, NULL);
+    if (SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey) < 0) {
+        LOGWARN("cannot set icon color key: %s", SDL_GetError());
+        return Lb_FAIL;
+    }
+    SDL_SetWindowIcon(lbWindow, image);
 
     return Lb_SUCCESS;
 }
@@ -298,7 +310,8 @@ TbResult LbIScreenDrawSurfaceCreate(TbBool set_palette)
 
     if ((lbEngineBPP == 8) && set_palette)
     {
-        if (SDL_SetColors(lbDrawSurface, lbPaletteColors, 0, PALETTE_8b_COLORS) != 1) {
+        if (SDL_SetPaletteColors(to_SDLSurf(lbDrawSurface)->format->palette,
+          lbPaletteColors, 0, PALETTE_8b_COLORS) < 0) {
             LOGERR("WScreen Surface SetPalette failed: %s", SDL_GetError());
             SDL_FreeSurface(to_SDLSurf(lbDrawSurface));
             lbDrawSurface = NULL;
