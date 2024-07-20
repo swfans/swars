@@ -77,7 +77,7 @@ void StopSampleQueueList(void)
         AIL_set_sample_user_data(sample_queue_handle, i, 0);
 }
 
-void cb_sample_queue_callback(SNDSAMPLE* sample)
+void cb_sample_queue_callback(SNDSAMPLE *sample)
 {
     struct BfSfxInfo *sfi;
     short sfxid;
