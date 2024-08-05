@@ -31,7 +31,7 @@
 .text
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDVOLPAN)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDVOLPAN)
 /*----------------------------------------------------------------*/
 		mov    0x8(%esp),%eax
 		cmp    $0x8000,%eax
@@ -71,22 +71,22 @@ GLOBAL_FUNC (MSSLOWSOUNDVOLPAN)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSSMACKTIMERDONE)
+GLOBAL_FUNC (ASM_MSSSMACKTIMERDONE)
 /*----------------------------------------------------------------*/
-		mov    _sndinit,%edx
+		mov    EXPORT_SYMBOL(sndinit),%edx
 		dec    %edx
-		mov    %edx,_sndinit
+		mov    %edx,EXPORT_SYMBOL(sndinit)
 		jne    jump_fbd8f
-		mov    _msstimer,%ecx
+		mov    EXPORT_SYMBOL(msstimer),%ecx
 		push   %ecx
 		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
-		push   $MSSSMACKTIMERSETUP
+		push   $ac_MSSSMACKTIMERSETUP
 		push   $ac_MSSSMACKTIMERREAD
 		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x4
-		push   $mss_i_count
+		push   $EXPORT_SYMBOL(mss_i_count)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 	jump_fbd8f:
@@ -94,34 +94,34 @@ GLOBAL_FUNC (MSSSMACKTIMERDONE)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSSMACKTIMERSETUP)
+GLOBAL_FUNC (ASM_MSSSMACKTIMERSETUP)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
-		mov    _sndinit,%edx
+		mov    EXPORT_SYMBOL(sndinit),%edx
 		inc    %edx
-		mov    %edx,_sndinit
+		mov    %edx,EXPORT_SYMBOL(sndinit)
 		cmp    $0x1,%edx
 		jne    jump_fbe2e
-		push   $MSSSMACKTIMERSETUP
+		push   $ac_MSSSMACKTIMERSETUP
 		push   $ac_MSSSMACKTIMERREAD
 		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x4
-		push   $mss_i_count
+		push   $EXPORT_SYMBOL(mss_i_count)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $_mss_int
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
-		mov    %eax,_msstimer
-		mov    _MSSSpeed,%ecx
+		mov    %eax,EXPORT_SYMBOL(msstimer)
+		mov    EXPORT_SYMBOL(MSSSpeed),%ecx
 		push   %ecx
-		mov    _msstimer,%esi
+		mov    EXPORT_SYMBOL(msstimer),%esi
 		push   %esi
 		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
-		mov    _msstimer,%edi
+		mov    EXPORT_SYMBOL(msstimer),%edi
 		push   %edi
 		call   ac_AIL_start_timer
 		add    $0x4,%esp
@@ -139,11 +139,11 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 	jump_fbe15:
 		mov    %bh,%al
 		out    %al,$0x40
-		mov    mss_i_count,%eax
-		cmp    mss_i_count,%eax
+		mov    EXPORT_SYMBOL(mss_i_count),%eax
+		cmp    EXPORT_SYMBOL(mss_i_count),%eax
 		jne    jump_fbe2e
 	jump_fbe26:
-		cmp    mss_i_count,%eax
+		cmp    EXPORT_SYMBOL(mss_i_count),%eax
 		je     jump_fbe26
 #endif
 	jump_fbe2e:
@@ -153,12 +153,12 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 
 
 /*----------------------------------------------------------------*/
-MSSSMACKTIMERREAD:
+GLOBAL_FUNC (ASM_MSSSMACKTIMERREAD)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
 	jump_fbe42:
-		mov    mss_i_count,%edx
+		mov    EXPORT_SYMBOL(mss_i_count),%edx
 		xor    %al,%al
 		out    %al,$0x43
 		jmp    jump_fbe4e
@@ -169,16 +169,16 @@ MSSSMACKTIMERREAD:
 		xchg   %al,%ah
 		and    $0xffff,%eax
 		mov    %eax,%esi
-		cmp    mss_i_count,%edx
+		cmp    EXPORT_SYMBOL(mss_i_count),%edx
 		jne    jump_fbe42
 		mov    $0x3e8,%ecx
-		mov    _MSSSpeed,%ebx
+		mov    EXPORT_SYMBOL(MSSSpeed),%ebx
 		mov    %edx,%eax
 		mul    %ecx
 		div    %ebx
 		mov    $0x1234dd,%ebx
 		mov    %eax,%edi
-		mov    _MSSTimerPeriod,%eax
+		mov    EXPORT_SYMBOL(MSSTimerPeriod),%eax
 		mov    $0x3e8,%ecx
 		sub    %esi,%eax
 		mul    %ecx
@@ -203,13 +203,13 @@ MSSSMACKTIMERREAD:
 /*----------------------------------------------------------------*/
 _mss_int:	/* 0x0FBEB0 */
 /*----------------------------------------------------------------*/
-		mov    mss_i_count,%eax
-		incl   mss_i_count
+		mov    EXPORT_SYMBOL(mss_i_count),%eax
+		incl   EXPORT_SYMBOL(mss_i_count)
 		ret
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDCLOSE)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDCLOSE)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -263,7 +263,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCLOSE)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDPURGE)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDPURGE)
 /*----------------------------------------------------------------*/
 		push   %esi
 		mov    0x8(%esp),%esi
@@ -281,7 +281,7 @@ GLOBAL_FUNC (MSSLOWSOUNDPURGE)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDOPEN)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDOPEN)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -505,11 +505,11 @@ doinit_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDPLAYED)
+GLOBAL_FUNC (ASM_MSSLOWSOUNDPLAYED)
 /*----------------------------------------------------------------*/
 		push   %esi
 		mov    0x8(%esp),%esi
-		call   MSSLOWSOUNDCHECK
+		call   ac_MSSLOWSOUNDCHECK
 		call   *EXPORT_SYMBOL(SmackTimerReadAddr)
 		mov    $0x3e8,%ebx
 		mov    %eax,%ecx
@@ -529,7 +529,7 @@ GLOBAL_FUNC (MSSLOWSOUNDPLAYED)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
+GLOBAL_FUNC (ASM_MSSLOWSOUNDCHECK)	/* 0xfc210 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -660,27 +660,27 @@ GLOBAL (SmackMSSDigDriver)
 		.long	0x0
 MSSLiteInit:
 		.long	0x0
-mss_i_count:
+GLOBAL (mss_i_count)
 		.long	0x0
-_sndinit:	/* 0x1592dc */
+GLOBAL (sndinit)	/* 0x1592dc */
 		.long	0x0
 
-_msstimer:	/* 0x1e86b0 */
+GLOBAL (msstimer)	/* 0x1e86b0 */
 		.long	0x0
 _lasttimer:
 		.fill   0x8
 /* Smacker fn ptrs
  */
-GLOBAL (_MSSTimerPeriod)
+GLOBAL (MSSTimerPeriod)
 		.long	0x0
-GLOBAL (_MSSSpeed)
+GLOBAL (MSSSpeed)
 		.fill   0x10
-GLOBAL (_LowSoundPurgeAddr)
+GLOBAL (LowSoundPurgeAddr)
 		.long	0x0
-GLOBAL (_LowSoundCheckAddr)	/* 1e86d4 */
+GLOBAL (LowSoundCheckAddr)	/* 1e86d4 */
 		.long	0x0
-GLOBAL (_LowSoundPlayedAddr)
+GLOBAL (LowSoundPlayedAddr)
 		.long	0x0
-GLOBAL (_LowSoundCloseAddr)
+GLOBAL (LowSoundCloseAddr)
 		.long	0x0
 

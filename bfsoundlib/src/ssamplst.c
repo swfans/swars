@@ -34,20 +34,23 @@
 #include "rnc_1fm.h"
 /******************************************************************************/
 
+TbBool sample_queue_handle_initiated = false;
+TbBool sample_queue_handle_stopped = 1;
+SNDSAMPLE *sample_queue_handle = NULL;
+
+sbyte CurrentSoundBank = -1;
+long current_sample_queue_count = 0;
+
 extern TbBool SoundInstalled;
 extern TbBool DisableLoadSounds;
 
 extern TbBool SoundAble;
 extern ushort SoundType;
+extern TbBool SoundActive;
 
 extern ushort NumberOfSamples;
-
-extern TbBool sample_queue_handle_initiated;
-extern TbBool sample_queue_handle_stopped;
-extern SNDSAMPLE *sample_queue_handle;
-
 extern char full_sound_data_path[224];
-extern ubyte CurrentSoundBank; // = -1;
+extern DIG_DRIVER *SoundDriver;
 
 extern void *SfxData;
 extern void *Sfx;
@@ -55,6 +58,7 @@ extern void *EndSfxs;
 
 extern long largest_dat_size;
 extern long largest_tab_size;
+
 /******************************************************************************/
 
 void StopSampleQueueList(void)
@@ -64,12 +68,58 @@ void StopSampleQueueList(void)
     if (!sample_queue_handle_initiated)
         return;
 
-    sample_queue_handle_stopped = 1;
+    sample_queue_handle_stopped = true;
     AIL_register_EOS_callback(sample_queue_handle, 0);
     AIL_end_sample(sample_queue_handle);
 
     for (i = 0; i < 8; i++)
         AIL_set_sample_user_data(sample_queue_handle, i, 0);
+}
+
+void cb_sample_queue_callback()
+{
+    struct BfSfxInfo *sfi;
+    short sfxid;
+
+    if (sample_queue_handle_stopped || current_sample_queue_count >= 8)
+        return;
+
+    sfxid = AIL_sample_user_data(sample_queue_handle, current_sample_queue_count);
+
+    if (sfxid == 0)
+        return;
+
+    AIL_init_sample(sample_queue_handle);
+    AIL_register_EOS_callback(sample_queue_handle, cb_sample_queue_callback);
+    sfi = &((struct BfSfxInfo *)Sfx)[sfxid];
+    AIL_set_sample_file(sample_queue_handle, sfi->DataBeg, 1);
+    current_sample_queue_count++;
+    AIL_start_sample(sample_queue_handle);
+}
+
+void PlaySampleList(int sfx1, int sfx2, int sfx3, int sfx4, int sfx5, int sfx6, int sfx7, int sfx8)
+{
+    if (!SoundInstalled || !SoundAble || !SoundActive)
+        return;
+
+    if ( !sample_queue_handle_initiated )
+    {
+        sample_queue_handle = AIL_allocate_sample_handle(SoundDriver);
+        sample_queue_handle_initiated = 1;
+    }
+    sample_queue_handle_stopped = 1;
+    AIL_end_sample(sample_queue_handle);
+    AIL_set_sample_user_data(sample_queue_handle, 0, sfx1);
+    AIL_set_sample_user_data(sample_queue_handle, 1, sfx2);
+    AIL_set_sample_user_data(sample_queue_handle, 2, sfx3);
+    AIL_set_sample_user_data(sample_queue_handle, 3, sfx4);
+    AIL_set_sample_user_data(sample_queue_handle, 4, sfx5);
+    AIL_set_sample_user_data(sample_queue_handle, 5, sfx6);
+    AIL_set_sample_user_data(sample_queue_handle, 6, sfx7);
+    AIL_set_sample_user_data(sample_queue_handle, 7, sfx8);
+    current_sample_queue_count = 0;
+    sample_queue_handle_stopped = 0;
+    cb_sample_queue_callback();
 }
 
 void format_sounds(void)

@@ -33,13 +33,10 @@
 #include "drv_oal.h"
 #include "msssys.h"
 #include "miscutil.h"
-#include "wildmidi_lib.h"
+#if ENABLE_WILDMIDI
+#  include "wildmidi_lib.h"
+#endif
 /******************************************************************************/
-extern char GTL_prefix[128];
-extern char SoundDriverPath[144];
-
-extern MDI_DRIVER *MDI_first;
-extern uint32_t MDI_entry;
 const uint8_t *MDI_ptr;
 const uint8_t *MDI_event;
 uint32_t MDI_status, MDI_len;
@@ -49,8 +46,16 @@ int32_t MDI_i, MDI_j, MDI_n;
 int32_t MDI_q, MDI_t;
 int32_t MDI_sequence_done;
 
-extern int32_t MDI_locked;
 static uint32_t XMI_serve_entry = 0;
+
+char GTL_prefix[128] = "SAMPLE";
+extern char SoundDriverPath[144];
+
+extern MDI_DRIVER *MDI_first;
+uint32_t MDI_entry = 0;
+int32_t MDI_use_locked = 0;
+
+/******************************************************************************/
 
 void AILXMIDI_end(void);
 
@@ -58,7 +63,7 @@ void AILXMIDI_end(void);
  */
 void AILXMIDI_start(void)
 {
-    if (MDI_locked)
+    if (MDI_use_locked)
         return;
     AIL_VMM_lock_range(AILXMIDI_start, AILXMIDI_end);
 
@@ -78,7 +83,7 @@ void AILXMIDI_start(void)
     AIL_vmm_lock(&MDI_ptr, sizeof(MDI_ptr));
     AIL_vmm_lock(&MDI_event, sizeof(MDI_event));
 
-    MDI_locked = 1;
+    MDI_use_locked = 1;
 }
 
 /** Initialize state table entries.
@@ -131,7 +136,9 @@ static void XMI_rewind_sequence(SNDSEQUENCE *seq)
     seq->EVNT_ptr = (uint8_t *)seq->EVNT + 8;
 
     wildpos = 0;
+#if ENABLE_WILDMIDI
     WildMidi_FastSeek(seq->ICA, &wildpos);
+#endif
 }
 
 /** Force transmission of any buffered MIDI traffic.
@@ -429,7 +436,9 @@ void XMI_destroy_MDI_driver(MDI_DRIVER *mdidrv)
 
     OPENAL_free_buffers(mdidrv->n_sequences);
 
+#if ENABLE_WILDMIDI
     WildMidi_Shutdown();
+#endif
 
     // Release memory resources
     AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
@@ -690,6 +699,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
 
     smp_rate = 22050;
 
+#if ENABLE_WILDMIDI
     i = WildMidi_Init("conf/midipats.cfg", smp_rate, WM_MO_ENHANCED_RESAMPLING);
     if (i < 0) {
         AIL_set_error("Cannot init music - invalid/missing WildMIDI config");
@@ -701,6 +711,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
         return NULL;
     }
     WildMidi_MasterVolume(100);
+#endif
 
     mdidrv->system_data[0] = smp_rate;
 
@@ -1539,9 +1550,11 @@ void AIL2OAL_API_release_sequence_handle(SNDSEQUENCE *seq)
     AIL_stop_sequence(seq);
     // Set 'free' flag
     seq->status = SNDSEQ_FREE;
+#if ENABLE_WILDMIDI
     // Release the WildMidi handle
     if (seq->ICA != NULL)
         WildMidi_Close(seq->ICA);
+#endif
     if (seq->FOR_ptrs[0] != NULL)
         AIL_MEM_free_lock(seq->FOR_ptrs[0], SOUND_MAX_BUFSIZE);
 }
@@ -1671,9 +1684,11 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
         return 0;
     }
 
+#if ENABLE_WILDMIDI
     // Release the previous WildMidi handle
     if (seq->ICA != NULL)
         WildMidi_Close(seq->ICA);
+#endif
 
     // Initialize sequence callback and state data
     seq->ICA = NULL;
@@ -1698,6 +1713,7 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     seq->tempo_error = 0;
 
     len = XMI_whole_size(start);
+#if ENABLE_WILDMIDI
     // The (otherwise unused) ICA pointer will be our WildMIDI handle
     seq->ICA = WildMidi_OpenBuffer(start, len);
     if (seq->ICA == NULL) {
@@ -1705,13 +1721,16 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
         AIL_set_error(WildMidi_GetError());
         return 0;
     }
+#endif
 
+#if ENABLE_WILDMIDI
     // Move to the selected sequence
     i = sequence_num;
     while (i > 0) {
         WildMidi_SongSeek(seq->ICA, 1);
         i--;
     }
+#endif
 
     // Reuse one of (otherwise unused) FOR_ptrs for sw synth buffer
     if (seq->FOR_ptrs[0] == NULL)
@@ -2282,7 +2301,7 @@ void AIL2OAL_API_send_channel_voice_message(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq
  */
 void AILXMIDI_end(void)
 {
-    if (!MDI_locked)
+    if (!MDI_use_locked)
         return;
     AIL_VMM_unlock_range(AILXMIDI_start, AILXMIDI_end);
 
@@ -2302,7 +2321,7 @@ void AILXMIDI_end(void)
     AIL_vmm_unlock(&MDI_ptr, sizeof(MDI_ptr));
     AIL_vmm_unlock(&MDI_event, sizeof(MDI_event));
 
-    MDI_locked = 0;
+    MDI_use_locked = 0;
 }
 
 /******************************************************************************/

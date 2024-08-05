@@ -26,8 +26,20 @@
 
 #include "awe32.h"
 #include "dpmi.h"
+#include "snderr.h"
 #include "bffile.h"
 /******************************************************************************/
+TbBool UseCurrentAwe32Soundfont = false;
+TbBool Awe32SoundfontLoaded = false;
+
+char CurrentAwe32SoundfontPrefix[12] = "Bullfrog";
+TbFileHandle sbkHandle = INVALID_FILE;
+
+uint8_t *awe_buffer = NULL;
+uint16_t awe_buffer_sel = 0;
+uint8_t *awe_preset = NULL;
+uint16_t awe_preset_sel = 0;
+
 extern TbBool MusicAble;
 extern TbBool MusicInstalled;
 extern char MusicType[6];
@@ -35,13 +47,6 @@ extern AIL_INI MusicInstallChoice;
 extern MDI_DRIVER *MusicDriver;
 extern char SoundDataPath[144];
 
-extern char CurrentAwe32SoundfontPrefix[12]; // = "Bullfrog";
-extern TbFileHandle sbkHandle; // = INVALID_FILE;
-
-extern uint8_t *awe_buffer;
-extern uint16_t awe_buffer_seg;
-extern uint8_t *awe_preset;
-extern uint16_t awe_preset_seg;
 /******************************************************************************/
 
 void FreeAwe32Soundfont(void)
@@ -60,15 +65,18 @@ void FreeAwe32Soundfont(void)
     }
 
     AWEFreeMem(MusicDriver, 1);
-    FreeDOSmem(awe_buffer, awe_buffer_seg);
-    FreeDOSmem(awe_preset, awe_preset_seg);
+    FreeDOSmem(awe_buffer, awe_buffer_sel);
+    FreeDOSmem(awe_preset, awe_preset_sel);
     Awe32SoundfontLoaded = 0;
 }
 
 void LoadAwe32Soundfont(const char *str)
 {
     char locstr[FILENAME_MAX];
-    long fsize;
+    long fsize, card_ram;
+    SF_INFO *info;
+    long *lmap;
+    int i;
 
     if (UseCurrentAwe32Soundfont) {
         Awe32SoundfontLoaded = 1;
@@ -78,9 +86,13 @@ void LoadAwe32Soundfont(const char *str)
         return;
     }
     if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0) {
+        sprintf(SoundProgressMessage, "Soundfont - incompatible MIDI driver\n");
+        SoundProgressLog(SoundProgressMessage);
         return;
     }
     if (strcasecmp(MusicType, "w") != 0) {
+        sprintf(SoundProgressMessage, "Soundfont - no wave sound bank capability\n");
+        SoundProgressLog(SoundProgressMessage);
         return;
     }
 
@@ -91,62 +103,112 @@ void LoadAwe32Soundfont(const char *str)
 
     strncpy(CurrentAwe32SoundfontPrefix, str, sizeof(CurrentAwe32SoundfontPrefix));
     sprintf(locstr, "%s/%s.sbk", SoundDataPath, CurrentAwe32SoundfontPrefix);
+    sprintf(SoundProgressMessage, "Soundfont - loading \"%s\"\n", locstr);
+    SoundProgressLog(SoundProgressMessage);
+
     sbkHandle = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (sbkHandle == INVALID_FILE) {
+        sprintf(SoundProgressMessage, "Soundfont - cannot open sound bank file\n");
+        SoundProgressLog(SoundProgressMessage);
         return;
     }
 
     fsize = LbFileLengthHandle(sbkHandle);
 
-    (void)fsize; // disable unused ver warning
-
-#if 0 // Awe32 sound bank not implemented
-    alloc = AllocDOSmem(512);
-    awe_buffer_seg = alloc.seg;
-    awe_buffer = alloc.offs;
-    if ((awe_buffer_seg == 0) && (awe_buffer == 0)) {
+    awe_buffer = AllocDOSmem(&awe_buffer_sel, 512);
+    if ((awe_buffer_sel == 0) && (awe_buffer == 0)) {
+        sprintf(SoundProgressMessage, "Soundfont - cannot alloc buffer\n");
+        SoundProgressLog(SoundProgressMessage);
         LbFileClose(sbkHandle);
         return;
     }
 
-    if (AWEGetTotalRAM(MusicDriver) == -1) {
+    /* Get total amount of RAM on the card */
+    card_ram = AWEGetTotalRAM(MusicDriver);
+    if (card_ram == -1) {
+        sprintf(SoundProgressMessage, "Soundfont - card refuses to tell its RAM\n");
+        SoundProgressLog(SoundProgressMessage);
         LbFileClose(sbkHandle);
         return;
     }
 
-    if (AWEDefMemMap(MusicDriver, 2, awe_buffer) == 0) {
+    /* Define storage for each sample bank */
+    lmap = (long *)awe_buffer;
+    lmap[0] = 0;      /* General MIDI bank (no RAM) */
+    lmap[1] = fsize;  /* SBK file */
+
+    if (AWEDefMemMap(MusicDriver, 2, lmap, awe_buffer_sel) == 0) {
+        sprintf(SoundProgressMessage, "Soundfont - setting sound banks map failed\n");
+        SoundProgressLog(SoundProgressMessage);
         LbFileClose(sbkHandle);
         return;
     }
 
+    /* Get Sound Font loading information */
     if (LbFileRead(sbkHandle, awe_buffer, 0x200) != 0x200) {
+        sprintf(SoundProgressMessage, "Soundfont - sound bank read info failed\n");
+        SoundProgressLog(SoundProgressMessage);
         LbFileClose(sbkHandle);
         return;
     }
 
-    if (AWEGetSFInfo(MusicDriver, 1, awe_buffer) == 0) {
+    info = AWEGetSFInfo(MusicDriver, 1, awe_buffer, awe_buffer_sel);
+    if (info == NULL) {
+        sprintf(SoundProgressMessage, "Soundfont - get font info failed\n");
+        SoundProgressLog(SoundProgressMessage);
         LbFileClose(sbkHandle);
         return;
     }
 
-    while (LbFileRead(sbkHandle, awe_buffer, 0x200) > 0)
+    /* Stream PCM data to on-board RAM */
+    LbFileSeek(sbkHandle, info->sample_seek, Lb_FILE_SEEK_BEGINNING);
+    for (i = 0; i < info->no_sample_packets; i++)
     {
-        if (AWEStreamSample(MusicDriver, 1, awe_buffer) == 0) {
+        sprintf(SoundProgressMessage, "Soundfont - Loading samples - %d packets\n", i + 1);
+        SoundProgressLog(SoundProgressMessage);
+        if (LbFileRead(sbkHandle, awe_buffer, 0x200) <= 0)
+        {
+            sprintf(SoundProgressMessage, "Soundfont - sound bank read samples failed\n");
+            SoundProgressLog(SoundProgressMessage);
+            LbFileClose(sbkHandle);
+            return;
+        }
+        if (AWEStreamSample(MusicDriver, 1, awe_buffer, awe_buffer_sel) == 0) {
+            sprintf(SoundProgressMessage, "Soundfont - load samples to card failed\n");
+            SoundProgressLog(SoundProgressMessage);
             LbFileClose(sbkHandle);
             return;
         }
     }
 
-    if (LbFileRead(sbkHandle, awe_preset, preset_len) != preset_len) {
+    /* Setup preset data */
+    sprintf(SoundProgressMessage, "Soundfont - Loading presets - %ld bytes\n", info->preset_read_size);
+    SoundProgressLog(SoundProgressMessage);
+
+    awe_preset = AllocDOSmem(&awe_preset_sel, info->preset_read_size);
+    if ((awe_preset_sel == 0) && (awe_preset == 0)) {
+        sprintf(SoundProgressMessage, "Soundfont - cannot alloc preset buffer\n");
+        SoundProgressLog(SoundProgressMessage);
         LbFileClose(sbkHandle);
         return;
     }
 
-    if (AWELoadPreset(MusicDriver, 1, awe_preset) != 0) {
-        LbFileClose(sbkHandle);
-        return;
+    LbFileSeek(sbkHandle, info->preset_seek, Lb_FILE_SEEK_BEGINNING);
+    {
+        if (LbFileRead(sbkHandle, awe_preset, info->preset_read_size) != info->preset_read_size)
+        {
+            sprintf(SoundProgressMessage, "Soundfont - sound bank read presets failed\n");
+            SoundProgressLog(SoundProgressMessage);
+            LbFileClose(sbkHandle);
+            return;
+        }
+        if (AWELoadPreset(MusicDriver, 1, awe_preset, awe_preset_sel) != 0) {
+            sprintf(SoundProgressMessage, "Soundfont - load presets to card failed\n");
+            SoundProgressLog(SoundProgressMessage);
+            LbFileClose(sbkHandle);
+            return;
+        }
     }
-#endif
 
     Awe32SoundfontLoaded = 1;
     LbFileClose(sbkHandle);

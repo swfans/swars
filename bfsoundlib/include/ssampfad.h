@@ -28,6 +28,9 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+void FadeSample(long source_id, short smp_id, ushort to_volume,
+  ubyte step, ubyte stop);
+
 void StopAllSampleFadeTimers(void);
 
 /******************************************************************************/

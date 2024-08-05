@@ -198,7 +198,8 @@ struct DisplayStruct { // sizeof=118
      * as mode in setting, or lower res when playing a movie. */
     ushort ScreenMode; // offset=100
 
-    /** VESA set-up flag, used only with VBE video modes. */
+    /** VESA set-up flag, set when screen is accessible in pages;
+     * used only with VBE video modes. */
     ubyte VesaIsSetUp; // offset=102
     /** Press mouse left button happened, Mouse coords recorded. */
     ubyte LeftButton; // offset=103

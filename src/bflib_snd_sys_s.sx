@@ -1175,7 +1175,7 @@ GLOBAL_FUNC (ASM_SetSamplePan)	/* 0xF0AB0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (StopSample_)
+GLOBAL_FUNC (ASM_StopSample)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1226,7 +1226,7 @@ GLOBAL_FUNC (StopSample_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (PlaySampleFromAddress_)
+GLOBAL_FUNC (ASM_PlaySampleFromAddress)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -1485,11 +1485,11 @@ AWEDefMemMap_:
 		mov    %edx,%esi
 		cmpl   $0x0,awe_data
 		jne    jump_110042
-		cmpw   $0x0,awe_data_seg
+		cmpw   $0x0,awe_data_sel
 		jne    jump_110042
 		mov    $0x4,%eax
 		call   ASM_AllocDOSmem
-		mov    %dx,awe_data_seg
+		mov    %dx,awe_data_sel
 		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_110042
@@ -1505,7 +1505,7 @@ AWEDefMemMap_:
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe_data_seg,%gs
+		mov    awe_data_sel,%gs
 		mov    %eax,%ebx
 		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
@@ -1544,11 +1544,11 @@ AWEGetSFInfo_:
 		mov    %edx,%esi
 		cmpl   $0x0,awe_data
 		jne    jump_1100ef
-		cmpw   $0x0,awe_data_seg
+		cmpw   $0x0,awe_data_sel
 		jne    jump_1100ef
 		mov    $0x4,%eax
 		call   ASM_AllocDOSmem
-		mov    %dx,awe_data_seg
+		mov    %dx,awe_data_sel
 		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_1100ef
@@ -1562,7 +1562,7 @@ AWEGetSFInfo_:
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe_data_seg,%gs
+		mov    awe_data_sel,%gs
 		mov    %eax,%ebx
 		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
@@ -1612,11 +1612,11 @@ AWEStreamSample_:
 		mov    %edx,%esi
 		cmpl   $0x0,awe_data
 		jne    jump_1101c2
-		cmpw   $0x0,awe_data_seg
+		cmpw   $0x0,awe_data_sel
 		jne    jump_1101c2
 		mov    $0x4,%eax
 		call   ASM_AllocDOSmem
-		mov    %dx,awe_data_seg
+		mov    %dx,awe_data_sel
 		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_1101c2
@@ -1632,7 +1632,7 @@ AWEStreamSample_:
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe_data_seg,%gs
+		mov    awe_data_sel,%gs
 		mov    %eax,%ebx
 		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
@@ -1671,11 +1671,11 @@ AWELoadPreset_:
 		mov    %edx,%esi
 		cmpl   $0x0,awe_data
 		jne    jump_110272
-		cmpw   $0x0,awe_data_seg
+		cmpw   $0x0,awe_data_sel
 		jne    jump_110272
 		mov    $0x4,%eax
 		call   ASM_AllocDOSmem
-		mov    %dx,awe_data_seg
+		mov    %dx,awe_data_sel
 		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_110272
@@ -1691,7 +1691,7 @@ AWELoadPreset_:
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe_data_seg,%gs
+		mov    awe_data_sel,%gs
 		mov    %eax,%ebx
 		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
@@ -1723,7 +1723,7 @@ AWELoadPreset_:
 /*----------------------------------------------------------------*/
 /* void cbfadesample(unsigned long)
  */
-cbfadesample:
+ASM_cbfadesample:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1744,13 +1744,13 @@ cbfadesample:
 		add    $0x4,%esp
 		jmp    jump_1093cb
 	jump_1091bb:
-		mov    %cl,a_sample_is_fading
+		mov    %cl,EXPORT_SYMBOL(a_sample_is_fading)
 		mov    $EXPORT_SYMBOL(sample_id),%ebx
 		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_109375
 	jump_1091d2:
 		xor    %eax,%eax
-		mov    a_sample_is_fading,%al
+		mov    EXPORT_SYMBOL(a_sample_is_fading),%al
 		test   %eax,%eax
 		jne    jump_1093cb
 		movb   $0x1,EXPORT_SYMBOL(switch_off_sample_fade_timer)
@@ -1762,7 +1762,7 @@ cbfadesample:
 		pop    %ebx
 		ret
 	jump_1091f7:
-		movb   $0x1,a_sample_is_fading
+		movb   $0x1,EXPORT_SYMBOL(a_sample_is_fading)
 		mov    (%ebx),%esi
 		push   %esi
 		call   ac_AIL_sample_status
@@ -1836,7 +1836,7 @@ cbfadesample:
 		movb   $0x0,0x15(%ebx)
 		jmp    jump_10938a
 	jump_1092ca:
-		movb   $0x1,a_sample_is_fading
+		movb   $0x1,EXPORT_SYMBOL(a_sample_is_fading)
 		mov    (%ebx),%eax
 		push   %eax
 		call   ac_AIL_sample_status
@@ -1970,7 +1970,7 @@ func_1094e1:
 		xor    %bl,%bl
 		mov    %bl,EXPORT_SYMBOL(switch_off_sample_fade_timer)
 		mov    $0x1,%bh
-		push   $cbfadesample
+		push   $ac_cbfadesample
 		mov    %bh,EXPORT_SYMBOL(samples_currently_fading)
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
@@ -2001,7 +2001,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		push   %ebp
 		cmpb   $0x0,EXPORT_SYMBOL(sample_queue_handle_stopped)
 		jne    jump_10964f
-		mov    current_sample_queue_count,%eax
+		mov    EXPORT_SYMBOL(current_sample_queue_count),%eax
 		push   %eax
 		mov    EXPORT_SYMBOL(sample_queue_handle),%edx
 		push   %edx
@@ -2009,7 +2009,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_10964f
-		cmpl   $0x8,current_sample_queue_count
+		cmpl   $0x8,EXPORT_SYMBOL(current_sample_queue_count)
 		jae    jump_10964f
 		mov    EXPORT_SYMBOL(sample_queue_handle),%ecx
 		push   %ecx
@@ -2021,7 +2021,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		call   ac_AIL_register_EOS_callback
 		add    $0x8,%esp
 		push   $0x1
-		mov    current_sample_queue_count,%eax
+		mov    EXPORT_SYMBOL(current_sample_queue_count),%eax
 		push   %eax
 		mov    EXPORT_SYMBOL(sample_queue_handle),%edi
 		push   %edi
@@ -2036,12 +2036,12 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		push   %eax
 		call   ac_AIL_set_sample_file
 		add    $0xc,%esp
-		mov    current_sample_queue_count,%eax
+		mov    EXPORT_SYMBOL(current_sample_queue_count),%eax
 		mov    EXPORT_SYMBOL(sample_queue_handle),%edx
-		mov    current_sample_queue_count,%ebx
+		mov    EXPORT_SYMBOL(current_sample_queue_count),%ebx
 		inc    %ebx
 		push   %edx
-		mov    %ebx,current_sample_queue_count
+		mov    %ebx,EXPORT_SYMBOL(current_sample_queue_count)
 		call   ac_AIL_start_sample
 		add    $0x4,%esp
 	jump_10964f:
@@ -2400,16 +2400,16 @@ GLOBAL (sample_fade_handle)	/* 0x1E9568 */
  */
 GLOBAL (switch_off_sample_fade_timer)
 		.byte	0x0
-a_sample_is_fading:	/* 0x1E956D */
+GLOBAL (a_sample_is_fading)	/* 0x1E956D */
 		.byte	0x0
 /* unsigned char volatile samples_currently_fading
  */
 GLOBAL (samples_currently_fading)	/* 0x2057DE */
 		.byte	0x0
 		.byte	0x0
-/* unsigned long volatile current_sample_queue_count;
+/* unsigned long volatile EXPORT_SYMBOL(current_sample_queue_count);
  */
-current_sample_queue_count:	/* 0x2057E0 */
+GLOBAL (current_sample_queue_count)	/* 0x2057E0 */
 		.long	0x0
 /* unsigned char sample_queue_handle_initiated
  */
@@ -2427,21 +2427,21 @@ GLOBAL (sbkHandle)	/* 0x1ED5F0 */
  */
 GLOBAL (awe_buffer)
 		.long	0x0
-GLOBAL (awe_buffer_seg)
+GLOBAL (awe_buffer_sel)
 		.short	0x0
 		.align	4
 /* unsigned char *awe_preset;
  */
 GLOBAL (awe_preset) /* 0x1ED5FC */
 		.long	0x0
-GLOBAL (awe_preset_seg)
+GLOBAL (awe_preset_sel)
 		.short	0x0
 		.align	4
 /* struct SF_DATA *awe_data;
  */
 GLOBAL (awe_data) /* 0x1ED604 */
 		.long	0x0
-GLOBAL (awe_data_seg)
+GLOBAL (awe_data_sel)
 		.short	0x0
 		.align	4
 

@@ -191,7 +191,7 @@ Next, proceed with the build steps; we will do that in a separate folder.
 
 ```
 mkdir -p release; cd release
-CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" ../configure
+PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --without-sdl2
 make V=1
 ```
 
@@ -204,7 +204,7 @@ In case you also want a debug build:
 
 ```
 mkdir -p debug; cd debug
-CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -g -O0 -Wall" CXXFLAGS="-m32 -g -O0 -Wall" LDFLAGS="-m32 -g -O0 -Wall" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" ../configure
+PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -g -O0 -Wall" CXXFLAGS="-m32 -g -O0 -Wall" LDFLAGS="-m32 -g -O0 -Wall" ../configure --without-sdl2
 make V=1
 ```
 
@@ -226,7 +226,7 @@ Some tests to verify the build are included in the project. To execute them:
 make V=1 check
 ```
 
-#### Build example - MSYS2 updated 2022-01 on Windows
+#### Build example - MSYS2 updated 2023-01 on Windows
 
 Using Minimal System and the MinGW toolchain available within, it is possible
 to build the executable using the same way as for UNIX systems, with bash and autotools.
@@ -275,12 +275,13 @@ autoreconf -ivf --include=/mingw32/share/aclocal/
 ```
 
 Next, proceed with the build steps; we will do that in a separate folder.
-Note how we are modifying PATH environment variable to make shell search for mingw32
-binaries before the default mingw64:
+Note how we are modifying PATH and PKG_CONFIG_PATH environment variables to make shell
+search for mingw32 binaries and pkg-config search for mingw32 packages before
+the default mingw64 ones:
 
 ```
 mkdir -p release; cd release
-PATH="/mingw32/bin:$PATH" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure
+PATH="/mingw32/bin:$PATH" PKG_CONFIG_PATH="/mingw32/lib/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --prefix=/mingw32 --without-sdl2
 PATH="/mingw32/bin:$PATH" make V=1
 ```
 

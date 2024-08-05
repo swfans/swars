@@ -28,6 +28,7 @@
 #include "ailss.h"
 #include "aildebug.h"
 #include "ail.h"
+#include "memfile.h"
 #include "mssdig.h"
 #include "drv_oal.h"
 /******************************************************************************/
@@ -39,7 +40,33 @@ enum SampleFileTypes {
     SMP_FTYP_ASI = 2,
 };
 
-extern uint8_t byte_15AA50[128];
+static int32_t SS_use_locked;
+
+static const uint8_t volume_pan_table[128] = {
+    0,   2,   4,   6,   8,  10,  12,  14,  16,  18,  20,  22,  24,  26,  28,  30,
+   32,  34,  36,  38,  40,  42,  44,  46,  48,  50,  52,  54,  56,  58,  60,  62,
+   64,  66,  68,  70,  72,  74,  76,  78,  80,  82,  84,  86,  88,  90,  92,  94,
+   96,  98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 128,
+  128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+  128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+  128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+  128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+};
+
+/******************************************************************************/
+
+void AILSFILE_end(void);
+
+/** Lock function, doubling as start of locked code.
+ */
+void AILSFILE_start(void)
+{
+    if (SS_use_locked)
+        return;
+
+    AIL_VMM_lock_range(AILSFILE_start, AILSFILE_end);
+    SS_use_locked = 1;
+}
 
 void SS_build_amplitude_tables(SNDSAMPLE *s)
 {
@@ -70,8 +97,8 @@ void SS_build_amplitude_tables(SNDSAMPLE *s)
 
         vscale0 = s->vol_scale[0];
         vscale1 = s->vol_scale[1];
-        vamp1 = byte_15AA50[s->pan];
-        vamp0 = byte_15AA50[127 - s->pan];
+        vamp1 = volume_pan_table[s->pan];
+        vamp0 = volume_pan_table[127 - s->pan];
 
         vscale0[0] = final_volume * vamp0 / 127;
         vscale1[0] = final_volume * vamp1 / 127;
@@ -127,8 +154,8 @@ void SS_build_amplitude_tables(SNDSAMPLE *s)
 
         vscale0 = s->vol_scale[0];
         vscale1 = s->vol_scale[1];
-        vamp1 = byte_15AA50[s->pan];
-        vamp0 = byte_15AA50[127 - s->pan];
+        vamp1 = volume_pan_table[s->pan];
+        vamp0 = volume_pan_table[127 - s->pan];
         if (s->flags & DIG_PCM_SIGN)
         {
             nxval = 0;
@@ -853,4 +880,16 @@ void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count)
 
     s->loop_count = loop_count;
 }
+
+/** Unlock function, doubling as end of locked code.
+ */
+void AILSFILE_end(void)
+{
+    if (!SS_use_locked)
+        return;
+
+    AIL_VMM_unlock_range(AILSFILE_start, AILSFILE_end);
+    SS_use_locked = 0;
+}
+
 /******************************************************************************/

@@ -580,7 +580,7 @@ TbResult LbScreenUnlock(void)
 static TbResult LbIPhysicalScreenLock(void)
 {
     if (lbHasSecondSurface && SDL_MUSTLOCK(to_SDLSurf(lbScreenSurface))) {
-        if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
+        if (SDL_LockSurface(to_SDLSurf(lbScreenSurface)) != 0) {
             LOGERR("cannot lock screen surface: %s", SDL_GetError());
             return Lb_FAIL;
         }

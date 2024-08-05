@@ -42,6 +42,8 @@ uint16_t AIL_debug;
 uint16_t AIL_sys_debug;
 uint32_t AIL_indent;
 
+/******************************************************************************/
+
 int32_t AIL_startup(void)
 {
     const char *logfname;

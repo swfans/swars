@@ -33,12 +33,12 @@
 .global EXPORT_SYMBOL(lbDisplay);
 .global EXPORT_SYMBOL(lbKeyOn);
 .global EXPORT_SYMBOL(SmackMSSDigDriver);
-.global EXPORT_SYMBOL(_MSSTimerPeriod);
-.global EXPORT_SYMBOL(_MSSSpeed);
-.global EXPORT_SYMBOL(_LowSoundPurgeAddr);
-.global EXPORT_SYMBOL(_LowSoundCheckAddr);
-.global EXPORT_SYMBOL(_LowSoundPlayedAddr);
-.global EXPORT_SYMBOL(_LowSoundCloseAddr);
+.global EXPORT_SYMBOL(MSSTimerPeriod);
+.global EXPORT_SYMBOL(MSSSpeed);
+.global EXPORT_SYMBOL(LowSoundPurgeAddr);
+.global EXPORT_SYMBOL(LowSoundCheckAddr);
+.global EXPORT_SYMBOL(LowSoundPlayedAddr);
+.global EXPORT_SYMBOL(LowSoundCloseAddr);
 
 
 /*----------------------------------------------------------------*/
@@ -6741,7 +6741,7 @@ GLOBAL_FUNC (ASM_play_smk_direct)
 		call   ac_GetSoundDriver
 		push   %eax
 		push   $0x0
-		call   SMACKSOUNDUSEMSS
+		call   ac_SMACKSOUNDUSEMSS
 		jmp    jump_eb1f5
 	jump_eb1f0:
 		orb    $0x1,0x4(%esp)
@@ -6921,7 +6921,7 @@ GLOBAL_FUNC (ASM_play_smk_via_buffer)
 		call   ac_GetSoundDriver
 		push   %eax
 		push   $0x0
-		call   SMACKSOUNDUSEMSS
+		call   ac_SMACKSOUNDUSEMSS
 		jmp    jump_eb3c5
 	jump_eb3c0:
 		orb    $0x1,0xc(%esp)
@@ -7036,7 +7036,7 @@ GLOBAL_FUNC (ASM_play_smk_via_buffer)
 
 
 /*----------------------------------------------------------------*/
-SMACKSOUNDUSEMSS:
+GLOBAL_FUNC (ASM_SMACKSOUNDUSEMSS)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -7053,30 +7053,30 @@ SMACKSOUNDUSEMSS:
 		mov    $0x1234dd,%eax
 		xor    %edx,%edx
 		div    %ebx
-		mov    $MSSLOWSOUNDOPEN,%ecx
-		mov    $MSSLOWSOUNDCLOSE,%esi
-		mov    $MSSLOWSOUNDPLAYED,%edi
-		mov    $MSSLOWSOUNDPURGE,%ebp
-		mov    %ebx,EXPORT_SYMBOL(_MSSSpeed)
-		mov    %ecx,_LowSoundOpenAddr
-		mov    %esi,EXPORT_SYMBOL(_LowSoundCloseAddr)
-		mov    %edi,EXPORT_SYMBOL(_LowSoundPlayedAddr)
-		mov    %ebp,EXPORT_SYMBOL(_LowSoundPurgeAddr)
-		mov    %ebp,_LowSoundOffAddr
-		mov    $MSSSMACKTIMERSETUP,%ecx
+		mov    $ac_MSSLOWSOUNDOPEN,%ecx
+		mov    $ac_MSSLOWSOUNDCLOSE,%esi
+		mov    $ac_MSSLOWSOUNDPLAYED,%edi
+		mov    $ac_MSSLOWSOUNDPURGE,%ebp
+		mov    %ebx,EXPORT_SYMBOL(MSSSpeed)
+		mov    %ecx,EXPORT_SYMBOL(LowSoundOpenAddr)
+		mov    %esi,EXPORT_SYMBOL(LowSoundCloseAddr)
+		mov    %edi,EXPORT_SYMBOL(LowSoundPlayedAddr)
+		mov    %ebp,EXPORT_SYMBOL(LowSoundPurgeAddr)
+		mov    %ebp,EXPORT_SYMBOL(LowSoundOffAddr)
+		mov    $ac_MSSSMACKTIMERSETUP,%ecx
 		mov    $ac_MSSSMACKTIMERREAD,%esi
-		mov    $MSSSMACKTIMERDONE,%edi
-		mov    %ecx,_SmackTimerSetupAddr
+		mov    $ac_MSSSMACKTIMERDONE,%edi
+		mov    %ecx,EXPORT_SYMBOL(SmackTimerSetupAddr)
 		mov    %esi,SmackTimerReadAddr
-		mov    %edi,_SmackTimerDoneAddr
-		mov    $MSSLOWSOUNDCHECK,%ebx
-		mov    %eax,EXPORT_SYMBOL(_MSSTimerPeriod)
+		mov    %edi,EXPORT_SYMBOL(SmackTimerDoneAddr)
+		mov    $ac_MSSLOWSOUNDCHECK,%ebx
+		mov    %eax,EXPORT_SYMBOL(MSSTimerPeriod)
 		xor    %edx,%edx
 		mov    $0x1,%al
-		mov    %ebx,EXPORT_SYMBOL(_LowSoundCheckAddr)
-		mov    $MSSLOWSOUNDVOLPAN,%ebx
-		mov    %edx,_LowSoundOnAddr
-		mov    %ebx,_LowSoundVolPanAddr
+		mov    %ebx,EXPORT_SYMBOL(LowSoundCheckAddr)
+		mov    $ac_MSSLOWSOUNDVOLPAN,%ebx
+		mov    %edx,EXPORT_SYMBOL(LowSoundOnAddr)
+		mov    %ebx,EXPORT_SYMBOL(LowSoundVolPanAddr)
 		pop    %ebp
 		pop    %edi
 		pop    %esi
@@ -7437,7 +7437,7 @@ SMACKWAIT:	/* 0x0FC3C0 */
 	jump_fc3d1:
 		cmpl   $0x0,_sounds
 		je     jump_fc3e0
-		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+		call   *EXPORT_SYMBOL(LowSoundCheckAddr)
 	jump_fc3e0:
 		mov    0x420(%esi),%ebx
 		cmp    $0xffffffff,%ebx
@@ -7455,7 +7455,7 @@ SMACKWAIT:	/* 0x0FC3C0 */
 		mov    %ebx,%eax
 		mov    0x404(%esi,%eax,4),%ebx
 		push   %ebx
-		call   *EXPORT_SYMBOL(_LowSoundPlayedAddr)
+		call   *EXPORT_SYMBOL(LowSoundPlayedAddr)
 		mov    0x420(%esi),%edx
 		mov    0x404(%esi,%edx,4),%edx
 		mov    0x20(%edx),%edx
@@ -7958,7 +7958,7 @@ SMACKNEXTFRAME:
 		je     jump_fd56c
 		cmpl   $0x0,_sounds
 		je     jump_fd4ed
-		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+		call   *EXPORT_SYMBOL(LowSoundCheckAddr)
 	jump_fd4ed:
 		mov    %esi,%eax
 		call   timeframe_
@@ -7989,7 +7989,7 @@ SMACKNEXTFRAME:
 		call   setuptheframe_
 		cmpl   $0x0,_sounds
 		je     jump_fd56c
-		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+		call   *EXPORT_SYMBOL(LowSoundCheckAddr)
 	jump_fd56c:
 		pop    %edi
 		pop    %esi
@@ -8138,7 +8138,7 @@ SMACKDOFRAME:	/* 0x0FD7A0 */
 	jump_fd859:
 		cmpl   $0x0,_sounds
 		je     jump_fd868
-		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+		call   *EXPORT_SYMBOL(LowSoundCheckAddr)
 	jump_fd868:
 		xor    %eax,%eax
 		mov    (%esp),%al
@@ -8174,7 +8174,7 @@ doskip_:
 		test   %edi,%edi
 		jne    jump_fd8e0
 		push   %eax
-		call   *EXPORT_SYMBOL(_LowSoundPlayedAddr)
+		call   *EXPORT_SYMBOL(LowSoundPlayedAddr)
 		mov    0x420(%esi),%edx
 		mov    0x404(%esi,%edx,4),%edx
 		mov    0x24(%edx),%edx
@@ -8268,7 +8268,7 @@ soundnext_:
 		jne    jump_fdb15
 		cmpl   $0x0,_sounds
 		je     jump_fd9dd
-		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+		call   *EXPORT_SYMBOL(LowSoundCheckAddr)
 	jump_fd9dd:
 		movzbl 0x10(%esp),%ebp
 		mov    0x8(%esp),%edi
@@ -8433,7 +8433,7 @@ SMACKCLOSE:
 		test   %ebx,%ebx
 		je     jump_fdb9f
 		push   %ebx
-		call   *EXPORT_SYMBOL(_LowSoundCloseAddr)
+		call   *EXPORT_SYMBOL(LowSoundCloseAddr)
 		mov    0x404(%esi),%eax
 		mov    (%eax),%edx
 		push   %edx
@@ -8516,7 +8516,7 @@ SMACKCLOSE:
 		rep stos %al,%es:(%edi)
 		push   %ebp
 		call   RADFREE
-		call   *_SmackTimerDoneAddr
+		call   *EXPORT_SYMBOL(SmackTimerDoneAddr)
 	jump_fdc6c:
 		pop    %ebp
 		pop    %edi
@@ -8533,7 +8533,7 @@ SMACKOPEN:
 		sub    $0x1c,%esp
 		xor    %edx,%edx
 		mov    %edx,0x18(%esp)
-		call   *_SmackTimerSetupAddr
+		call   *EXPORT_SYMBOL(SmackTimerSetupAddr)
 		call   *SmackTimerReadAddr
 		push   $0x4ac
 		xor    %ebp,%ebp
@@ -8542,7 +8542,7 @@ SMACKOPEN:
 		mov    %eax,%esi
 		test   %eax,%eax
 		jne    jump_fdefb
-		call   *_SmackTimerDoneAddr
+		call   *EXPORT_SYMBOL(SmackTimerDoneAddr)
 		xor    %eax,%eax
 		jmp    jump_fe6b4
 	jump_fdefb:
@@ -8614,7 +8614,7 @@ SMACKOPEN:
 	jump_fdfc0:
 		push   %esi
 		call   RADFREE
-		call   *_SmackTimerDoneAddr
+		call   *EXPORT_SYMBOL(SmackTimerDoneAddr)
 		xor    %eax,%eax
 		add    $0x1c,%esp
 		pop    %ebp
@@ -9219,7 +9219,7 @@ soundopen_:
 		sub    $0x14,%esp
 		mov    %eax,%esi
 		mov    %dl,0x10(%esp)
-		cmpl   $0x0,_LowSoundOpenAddr
+		cmpl   $0x0,EXPORT_SYMBOL(LowSoundOpenAddr)
 		jne    jump_fe70e
 		xor    %al,%al
 		jmp    jump_fe966
@@ -9385,7 +9385,7 @@ soundopen_:
 		push   %ebx
 		mov    0x384(%esi),%ecx
 		push   %ecx
-		call   *_LowSoundOpenAddr
+		call   *EXPORT_SYMBOL(LowSoundOpenAddr)
 		test   %al,%al
 		jne    jump_fe92e
 		mov    0x404(%edi),%eax
@@ -9761,7 +9761,7 @@ gotoframe_:
 		test   %esi,%esi
 		je     jump_feda2
 		push   %esi
-		call   *EXPORT_SYMBOL(_LowSoundPurgeAddr)
+		call   *EXPORT_SYMBOL(LowSoundPurgeAddr)
 		movl   $0x0,0x10(%esi)
 		mov    (%esi),%eax
 		movl   $0x0,0x28(%esi)
@@ -9994,7 +9994,7 @@ blockread_:
 		cmpl   $0x0,_sounds
 	jump_ff0cd:
 		je     jump_ff0d5
-		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+		call   *EXPORT_SYMBOL(LowSoundCheckAddr)
 	jump_ff0d5:
 		mov    0xc(%esp),%edi
 		cmp    $0x1000,%edi
@@ -10217,22 +10217,22 @@ smkmalloc_:
 
 
 /*----------------------------------------------------------------*/
-DEFSMACKTIMERSETUP:	/* 10f110 */
+GLOBAL_FUNC (ASM_DEFSMACKTIMERSETUP)	/* 10f110 */
 /*----------------------------------------------------------------*/
-		mov    $DEFSMACKTIMERREAD,%edx
+		mov    $ac_DEFSMACKTIMERREAD,%edx
 		mov    $0x46c,%eax
-		mov    $DEFSMACKTIMERDONE,%ebx
+		mov    $ac_DEFSMACKTIMERDONE,%ebx
 		mov    %edx,SmackTimerReadAddr
 
 		/* XXX: mov    (%eax),%eax */
 		call   ac_timer_get_18_2_hz_ticks
 
-		mov    %ebx,_SmackTimerDoneAddr
+		mov    %ebx,EXPORT_SYMBOL(SmackTimerDoneAddr)
 		mov    %eax,%ecx
-		mov    %eax,_timeradjust
+		mov    %eax,EXPORT_SYMBOL(timeradjust)
 		neg    %ecx
 		xor    %ebx,%ebx
-		mov    %ecx,_timeradjust
+		mov    %ecx,EXPORT_SYMBOL(timeradjust)
 /* XXX: cut out */
 #if 0
 		mov    $0x34,%al
@@ -10250,13 +10250,13 @@ DEFSMACKTIMERSETUP:	/* 10f110 */
 
 
 /*----------------------------------------------------------------*/
-DEFSMACKTIMERDONE:	/* 0x10F150 */
+GLOBAL_FUNC (ASM_DEFSMACKTIMERDONE)	/* 0x10F150 */
 /*----------------------------------------------------------------*/
 		ret
 
 
 /*----------------------------------------------------------------*/
-DEFSMACKTIMERREAD:
+GLOBAL_FUNC (ASM_DEFSMACKTIMERREAD)
 /*----------------------------------------------------------------*/
 		mov    $0x46c,%eax
 		mov    _lasttimerread,%edx
@@ -10266,13 +10266,13 @@ DEFSMACKTIMERREAD:
 
 		cmp    %edx,%eax
 		jae    jump_10f181
-		mov    _timeradjust,%ebx
+		mov    EXPORT_SYMBOL(timeradjust),%ebx
 		sub    %eax,%edx
 		add    %edx,%ebx
-		mov    %ebx,_timeradjust
+		mov    %ebx,EXPORT_SYMBOL(timeradjust)
 	jump_10f181:
 		mov    $0x32,%ebx
-		mov    _timeradjust,%ecx
+		mov    EXPORT_SYMBOL(timeradjust),%ecx
 		mov    %eax,_lasttimerread
 		add    %ecx,%eax
 		mov    $0xaba,%ecx
@@ -10694,14 +10694,14 @@ data_159a00:
 
 GLOBAL (SmackTimerReadAddr)	/* 0x159780 */
 		.long	0x0
-GLOBAL (_SmackTimerSetupAddr)
-		.long   DEFSMACKTIMERSETUP
-_SmackTimerDoneAddr:
+GLOBAL (SmackTimerSetupAddr)
+		.long   ac_DEFSMACKTIMERSETUP
+GLOBAL (SmackTimerDoneAddr)
 		.long	0x0
 
-_LowSoundOpenAddr:
+GLOBAL (LowSoundOpenAddr)
 		.long	0x0
-_LowSoundOffAddr:
+GLOBAL (LowSoundOffAddr)
 		.long	0x0
 
 _sounds:
@@ -10713,9 +10713,9 @@ _simspeed:
 		.long	0x0
 _forcerate:
 		.long	0x0
-_LowSoundOnAddr:	/* 0x1592F8 */
+GLOBAL (LowSoundOnAddr)	/* 0x1592F8 */
 		.long	0x0
-_LowSoundVolPanAddr:	/* 0x1592FC */
+GLOBAL (LowSoundVolPanAddr)	/* 0x1592FC */
 		.long	0x0
 
 data_159e00:
@@ -10745,7 +10745,7 @@ data_1e56dc:
 		.fill   0x350
 GLOBAL (smack_draw_callback)	/* 0x1E5A2C */
 		.long	0x0
-_timeradjust:
+GLOBAL (timeradjust)
 		.long	0x0
 _lasttimerread:	/* 0x1ED5E4 */
 		.long	0x0

@@ -251,7 +251,7 @@ TbResult LbMouseOnMove(struct TbPoint pos)
 
 void MouseToScreen(struct TbPoint *pos)
 {
-    // Static variables for storing last mouse coordinated; needed
+    // Static variables for storing last mouse coordinates; needed
     // because lbDisplay.MMouseX/MMouseY coords are scaled
     static long mx = 0;
     static long my = 0;

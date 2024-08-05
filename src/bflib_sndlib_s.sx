@@ -737,7 +737,7 @@ AILXMIDI_end_:
 .data
 
 
-GLOBAL (byte_15AA50)	/* 0x15AA50 */
+GLOBAL (volume_pan_table)	/* 0x15AA50 */
 		.ascii  "\x00\x02\x04\x06\x08\x0a\x0c\x0e"
 		.ascii  "\x10\x12\x14\x16\x18\x1a\x1c\x1e"
 		.ascii  " \"$&(*,.02468:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|"

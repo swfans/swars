@@ -42,35 +42,35 @@
 #include "oggvorbis.h"
 /******************************************************************************/
 
-extern TbBool AILStartupAlreadyInitiated;
-extern TbBool AutoScanForSoundHardware;
-extern char SoundDataPath[144];
-extern char SoundDriverPath[144];
+TbBool AILStartupAlreadyInitiated = false;
+TbBool AutoScanForSoundHardware = true;
+char SoundDataPath[144];
+char SoundDriverPath[144];
 
-extern AIL_INI SoundInstallChoice;
-extern char FullDIG_INIPath[144];
+AIL_INI SoundInstallChoice;
+char FullDIG_INIPath[144];
+TbBool SoundInstalled = false;
+TbBool SoundAble = true;
+ushort SoundType = 0;
+TbBool DisableLoadSounds = false;
+
+ulong MaxNumberOfSamples = 10;
+TbBool StereoSound = true;
+TbBool UseMultiMediaExtensions = false;
+long CurrentSoundMasterVolume = 127;
+TbBool ive_got_an_sb16 = false;
+
+AIL_INI MusicInstallChoice;
+char FullMDI_INIPath[144];
+TbBool MusicAble = true;
+TbBool DisableLoadMusic = false;
+TbBool DisableDangerMusic = false;
+
+long CurrentMusicMasterVolume = 127;
+
 extern DIG_DRIVER *SoundDriver;
-extern TbBool SoundInstalled;
-extern TbBool SoundAble;
-extern ushort SoundType;
-extern TbBool DisableLoadSounds;
-
-extern ulong MaxNumberOfSamples;
-extern TbBool StereoSound;
-extern TbBool UseMultiMediaExtensions;
-extern long CurrentSoundMasterVolume;
-extern TbBool ive_got_an_sb16;
-
-extern AIL_INI MusicInstallChoice;
-extern char FullMDI_INIPath[144];
 extern MDI_DRIVER *MusicDriver;
 extern TbBool MusicInstalled;
-extern TbBool MusicAble;
-extern TbBool DisableLoadMusic;
-extern TbBool DisableDangerMusic;
-
-extern long CurrentMusicMasterVolume;
-
 extern TbBool CDAble;
 extern TbBool StreamedSoundAble;
 

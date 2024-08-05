@@ -34,6 +34,16 @@
 #include "awe32.h"
 #include "snderr.h"
 /******************************************************************************/
+char MusicType[6];
+
+void *BfMusicData = NULL;
+struct BfMusicInfo *BfMusic = NULL;
+struct BfMusicInfo *BfEndMusic = NULL;
+int32_t music_allocated = 0;
+char full_music_data_path[144];
+struct MusicBankSizes music_bank_size_info;
+
+ushort SongCurrentlyPlaying = 0;
 
 extern TbBool AILStartupAlreadyInitiated;
 extern TbBool AutoScanForSoundHardware;
@@ -44,22 +54,14 @@ extern MDI_DRIVER *MusicDriver;
 extern TbBool MusicInstalled;
 extern TbBool MusicAble;
 extern TbBool MusicActive;
-extern char MusicType[6];
 
 extern long CurrentMusicMasterVolume;
 
 extern TbBool DisableLoadMusic;
-extern void *BfMusicData;
-extern struct BfMusicInfo *BfMusic;
-extern struct BfMusicInfo *BfEndMusic;
-extern int32_t music_allocated;
-extern char full_music_data_path[144];
-extern struct MusicBankSizes music_bank_size_info;
 
 extern TbBool SoundInstalled;
 extern char SoundDataPath[144];
 
-extern ushort SongCurrentlyPlaying;
 extern SNDSEQUENCE *SongHandle;
 
 /******************************************************************************/
@@ -275,6 +277,11 @@ int InitMusicDriver(void)
     return 1;
 }
 
+/** Sets MusicType based on loaded driver and its parameters.
+ * "f" - FM Synthesis MIDI
+ * "g" - General MIDI
+ * "w" - Wave sound bank capable MIDI
+ */
 int DetermineMusicType(void)
 {
     if (strcasecmp(MusicInstallChoice.driver_name, "ADLIB.MDI") == 0) {

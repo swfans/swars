@@ -27,6 +27,7 @@
 #include "aila.h"
 #include "ail.h"
 #include "aildebug.h"
+#include "awe32.h"
 #include "miscutil.h"
 #include "memfile.h"
 /******************************************************************************/
@@ -75,6 +76,8 @@ uint32_t lastapitimerms = 0;
 
 static uint32_t highest_timer_delay = 0;
 
+/******************************************************************************/
+
 void AIL2OAL_API_lock(void)
 {
   ++AIL_lock_count;
@@ -107,6 +110,24 @@ void AILA_shutdown(void)
     // removed DOS-specific calls, place 1
     AIL2OAL_set_PIT_divisor(0);
     // removed DOS-specific calls, place 2
+}
+
+static void AIL2OAL_soundfont_sim(AIL_DRIVER *drvr, VDI_CALL *in, VDI_CALL *out)
+{
+    switch (in->CX)
+    {
+    case AWESF_GETTOTALRAM:
+        out->DX = (512*1024) >> 16; // 512k of ram
+        out->SI = 0;
+        out->AX = 0;
+        break;
+    case AWESF_DEFBANKSIZES:
+    case AWESF_FREEBANK:
+    case AWESF_LOADREQ:
+    case AWESF_STREAMSMPL:
+    case AWESF_SETPRESETS:
+        break;
+    }
 }
 
 int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
@@ -145,7 +166,10 @@ int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
     case MDI_INSTALL_T_SET:
     case MDI_GET_T_STATUS:
     case MDI_PROT_UNPROT_T:
+        break;
     case MDI_VSE:
+        if ((in->CX >= AWESF_GETTOTALRAM) && (in->CX <= AWESF_SETPRESETS))
+            AIL2OAL_soundfont_sim(drvr, in, out);
         break;
     }
     return 0;
@@ -191,9 +215,22 @@ void AIL2OAL_API_set_timer_frequency(HSNDTIMER timer, uint32_t hertz)
 
 void AIL2OAL_set_PIT_divisor(uint32_t divsr)
 {
-    // removed DOS-specific calls, place 1
+#if defined(DOS)||defined(GO32)
+    unsigned int loc_eflags;
+    loc_eflags = __readeflags();
+    _disable(); // disable interrupts
+    // Start configure 82C54 timer
+    outb(0x43, 0x36);
+#endif
     AIL_PIT_divisor = divsr;
-    // removed DOS-specific calls, place 2
+#if defined(DOS)||defined(GO32)
+    // Continue configure 82C54 timer
+    outb(0x40, (divsr) & 0xFF);
+    outb(0x40, (divsr >> 8) & 0xFF);
+    // simplified DOS-specific calls
+    _enable(); // enable interrupts now
+    __writeeflags(loc_eflags);
+#endif
 }
 
 uint32_t AIL2OAL_API_interrupt_divisor(void)

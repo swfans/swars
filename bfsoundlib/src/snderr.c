@@ -27,8 +27,9 @@
 
 #include "bftypes.h"
 /******************************************************************************/
+char SoundProgressMessage[256];
 
-extern TbBool DebugAudio;
+TbBool DebugAudio = false;
 
 /******************************************************************************/
 

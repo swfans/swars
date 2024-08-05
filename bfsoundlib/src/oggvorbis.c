@@ -23,9 +23,12 @@
 #include <errno.h>
 
 #include "oggvorbis.h"
+#include "bfmemory.h"
+#include "bfmemut.h"
 #include "drv_oal.h"
-#include "util.h"
 #include "snderr.h"
+
+/******************************************************************************/
 
 #define SOUND_MUSIC_BUFSIZE   16384
 
@@ -59,23 +62,23 @@ static ALuint pop_free_buffer(OggVorbisStream *stream)
 }
 
 void
-ogg_vorbis_stream_free (OggVorbisStream *stream)
+ogg_vorbis_stream_free(OggVorbisStream *stream)
 {
-  OPENAL_stop_source_for_ogg_vorbis(stream);
-  OPENAL_unqueue_source_buffers(stream->source,
-    (SoundNameCallback) push_free_buffer, stream);
+    OPENAL_stop_source_for_ogg_vorbis(stream);
+    OPENAL_unqueue_source_buffers(stream->source,
+      (SoundNameCallback) push_free_buffer, stream);
 
-  OPENAL_free_buffers_for_ogg_vorbis(stream);
+    OPENAL_free_buffers_for_ogg_vorbis(stream);
 
-  OPENAL_free_source_for_ogg_vorbis(stream);
+    OPENAL_free_source_for_ogg_vorbis(stream);
 
-  if (stream->file_name != NULL)
+    if (stream->file_name != NULL)
     {
-      xfree (stream->file_name);
-      ov_clear (&stream->file);
+        LbMemoryFree(stream->file_name);
+        ov_clear(&stream->file);
     }
 
-  memset (stream, 0, sizeof (*stream));
+    memset(stream, 0, sizeof (*stream));
 }
 
 void
@@ -112,62 +115,66 @@ ogg_vorbis_stream_stop (OggVorbisStream *stream)
 }
 
 void
-ogg_vorbis_stream_clear (OggVorbisStream *stream)
+ogg_vorbis_stream_clear(OggVorbisStream *stream)
 {
-  if (stream->file_name == NULL)
-    return;
+    if (stream->file_name == NULL)
+        return;
 
-  ogg_vorbis_stream_stop (stream);
-  ov_clear (&stream->file);
-  xfree (stream->file_name);
-  stream->file_name = NULL;
+    ogg_vorbis_stream_stop (stream);
+    ov_clear (&stream->file);
+    LbMemoryFree(stream->file_name);
+    stream->file_name = NULL;
 }
 
 bool
-ogg_vorbis_stream_open (OggVorbisStream *stream, const char *fname)
+ogg_vorbis_stream_open(OggVorbisStream *stream, const char *fname)
 {
-  FILE *f = NULL;
-  vorbis_info *info;
+    FILE *f = NULL;
+    vorbis_info *info;
+    uint32_t sz;
 
-  ogg_vorbis_stream_clear (stream);
+    ogg_vorbis_stream_clear(stream);
 
-  f = fopen (fname, "rb");
-  if (f == NULL)
+    f = fopen (fname, "rb");
+    if (f == NULL)
     {
-      sprintf(SoundProgressMessage, "%s: Cannot fopen: %s", fname, strerror(errno));
-      SoundProgressLog(SoundProgressMessage);
-      return false;
+        sprintf(SoundProgressMessage, "%s: Cannot fopen: %s", fname, strerror(errno));
+        SoundProgressLog(SoundProgressMessage);
+        return false;
     }
 
-  if (ov_open_callbacks (f, &stream->file,
+    if (ov_open_callbacks (f, &stream->file,
                          NULL, 0, OV_CALLBACKS_DEFAULT) != 0)
     {
-      sprintf(SoundProgressMessage, "%s: Invalid Ogg/Vorbis stream.", fname);
-      SoundProgressLog(SoundProgressMessage);
-      goto err;
+        sprintf(SoundProgressMessage, "%s: Invalid Ogg/Vorbis stream.", fname);
+        SoundProgressLog(SoundProgressMessage);
+        goto err;
     }
 
-  f = NULL;
+    f = NULL;
 
-  info = ov_info (&stream->file, -1);
-  if (info == NULL)
+    info = ov_info (&stream->file, -1);
+    if (info == NULL)
     {
-      sprintf(SoundProgressMessage, "%s: Failed to read stream information.", fname);
-      SoundProgressLog(SoundProgressMessage);
-      goto err;
+        sprintf(SoundProgressMessage, "%s: Failed to read stream information.", fname);
+        SoundProgressLog(SoundProgressMessage);
+        goto err;
     }
 
-  stream->info            = *info;
-  stream->file_name = xstrdup (fname);
+    stream->info = *info;
+    sz = strlen(fname) + 1;
+    stream->file_name = LbMemoryAlloc(sz);
+    if (stream->file_name != NULL)
+        LbMemoryCopy(stream->file_name, fname, sz);
 
-  return true;
+    return true;
 err:
-  if (f != NULL)
-    fclose (f);
-  else
-    ov_clear (&stream->file);
+    if (f != NULL)
+        fclose (f);
+    else
+        ov_clear (&stream->file);
 
-  return false;
+    return false;
 }
 
 bool

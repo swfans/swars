@@ -28,6 +28,8 @@
 AILMEMALLOCCB MEM_alloc;
 AILMEMFREECB MEM_free;
 
+/******************************************************************************/
+
 void *AIL_MEM_use_malloc(AILMEMALLOCCB fn)
 {
     void *ret = MEM_alloc;

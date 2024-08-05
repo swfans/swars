@@ -45,51 +45,6 @@ strtocapwords(char *s)
     }
 }
 
-void *
-xmalloc (size_t size)
-{
-  void *ret;
-
-  ret = malloc (size);
-  assert (ret != NULL);
-
-  return ret;
-}
-
-void *
-xcalloc (size_t size)
-{
-  void *ret;
-
-  ret = calloc (1, size);
-  assert (ret != NULL);
-
-  return ret;
-}
-
-void
-xfree (void *ptr)
-{
-  if (ptr == NULL)
-    return;
-
-  free (ptr);
-}
-
-char *
-xstrdup (const char *str)
-{
-  char *ret;
-  size_t size;
-
-  size = strlen (str) + 1;
-
-  ret = xmalloc (size);
-  memcpy (ret, str, size);
-
-  return ret;
-}
-
 const char *
 extract_path_segment (const char *path, char *buffer, size_t size)
 {

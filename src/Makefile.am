@@ -13,72 +13,10 @@ swars_SOURCES = \
 	bflib_render_gpoly_s.sx \
 	bflib_render_plin_s.sx \
 	bflib_render_drspr_s.sx \
-	bflib_sndlib_s.sx \
 	bflib_snd_mss_s.sx \
-	bflib_snd_sys_s.sx \
 	bflib_vidraw.c \
 	bflib_vidraw.h \
 	bflib_vidraw_s.sx \
-	../bfsoundlib/include/ail.h \
-	../bfsoundlib/src/ail.c \
-	../bfsoundlib/include/ailss.h \
-	../bfsoundlib/src/ailss.c \
-	../bfsoundlib/src/ailvoc.c \
-	../bfsoundlib/src/ailwav.c \
-	../bfsoundlib/include/aila.h \
-	../bfsoundlib/src/aila.c \
-	../bfsoundlib/include/aildebug.h \
-	../bfsoundlib/src/aildebug.c \
-	../bfsoundlib/include/mssdig.h \
-	../bfsoundlib/src/mssdig.c \
-	../bfsoundlib/include/msssys.h \
-	../bfsoundlib/src/msssys.c \
-	../bfsoundlib/include/mssxmidi.h \
-	../bfsoundlib/src/mssxmidi.c \
-	../bfsoundlib/include/mssxdig.h \
-	../bfsoundlib/src/mssxdig.c \
-	../bfsoundlib/include/bfaudio.h \
-	../bfsoundlib/src/bfaudio.c \
-	../bfsoundlib/include/bfsvaribl.h \
-	../bfsoundlib/src/variable.c \
-	../bfsoundlib/src/dpmi.c \
-	../bfsoundlib/include/dpmi.h \
-	../bfsoundlib/src/sb16.c \
-	../bfsoundlib/include/sb16.h \
-	../bfsoundlib/src/awe32.c \
-	../bfsoundlib/src/awe32use.c \
-	../bfsoundlib/include/awe32.h \
-	../bfsoundlib/include/ssampfad.h \
-	../bfsoundlib/src/ssampfad.c \
-	../bfsoundlib/include/ssamplst.h \
-	../bfsoundlib/src/ssamplst.c \
-	../bfsoundlib/include/ssampply.h \
-	../bfsoundlib/src/ssampply.c \
-	../bfsoundlib/include/dllload.h \
-	../bfsoundlib/src/dllload.c \
-	../bfsoundlib/include/memfile.h \
-	../bfsoundlib/src/memfile.c \
-	../bfsoundlib/include/miscutil.h \
-	../bfsoundlib/src/miscutil.c \
-	../bfsoundlib/include/snderr.h \
-	../bfsoundlib/src/snderr.c \
-	../bfsoundlib/include/bfmusic.h \
-	../bfsoundlib/src/init_mus.c \
-	../bfsoundlib/src/mseqnply.c \
-	../bfsoundlib/src/mseqnfad.c \
-	../bfsoundlib/src/mseqnlst.c \
-	../bfsoundlib/include/bfsound.h \
-	../bfsoundlib/src/init_snd.c \
-	../bfsoundlib/include/bfscd.h \
-	../bfsoundlib/src/cd.c \
-	../bfsoundlib/include/streamfx.h \
-	../bfsoundlib/src/streamfx.c \
-	../bfsoundlib/include/sndtimer.h \
-	../bfsoundlib/src/sndtimer.c \
-	../bfsoundlib/include/drv_oal.h \
-	../bfsoundlib/src/drv_oal.c \
-	../bfsoundlib/include/oggvorbis.h \
-	../bfsoundlib/src/oggvorbis.c \
 	../bfsoundlib/src/ailssa.sx \
 	../bfariadne/include/trfringe.h \
 	../bfariadne/src/trfringe.c \
@@ -97,6 +35,9 @@ swars_SOURCES = \
 	../bfariadne/include/delaunay.h \
 	../bfsmacklib/include/bfsmack.h \
 	../bfsmacklib/src/bfsmack.c \
+	../bfsmacklib/include/smack.h \
+	../bfsmacklib/include/smack2ail.h \
+	../bfsmacklib/src/smack2ail.c \
 	../bfsmacklib/src/bfsmacklib_s.sx \
 	linksmk.h \
 	linksmk.c \
@@ -257,8 +198,6 @@ swars_SOURCES = \
 	wrcities.h
 
 swars_CPPFLAGS = \
-  -I"$(top_srcdir)/bflibrary/include" \
-  -I"$(top_srcdir)/bfsoundlib/include" \
   -I"$(top_srcdir)/bfsmacklib/include" \
   -I"$(top_srcdir)/bfariadne/include"
 
@@ -279,7 +218,8 @@ nodist_EXTRA_swars_SOURCES = dummy.cxx
 
 swars_LDADD = \
   $(swars_WRAPPERS) $(swars_RESRCS) \
-  -L$(builddir)/../bflibrary -lbullfrog
+  -lbullfrog \
+  -lbfsound
 
 $(swars_WRAPPERS:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<

@@ -29,7 +29,9 @@
 #include OPENAL_ALC_H
 #include OPENAL_AL_H
 #include "oggvorbis.h"
-#include "wildmidi_lib.h"
+#if ENABLE_WILDMIDI
+#  include "wildmidi_lib.h"
+#endif
 /******************************************************************************/
 /** We expect up to 64 SNDSAMPLEs and up to 3 SNDSEQUENCEs.
  */
@@ -523,6 +525,7 @@ queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
 
     while (buffers_used < SOUND_BUFFERS_PER_SRC)
     {
+#if ENABLE_WILDMIDI
         len = WildMidi_GetOutput(seq->ICA, data, SOUND_MAX_BUFSIZE);
         if (len < 0) {
             AIL_set_error("WildMidi GetOutput returned error");
@@ -577,6 +580,9 @@ queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
                 seq->EOS(seq);
             break;
         }
+#else
+        break;
+#endif
 
         buf = pop_free_buffer();
         alBufferData(buf, AL_FORMAT_STEREO16, data, len, smp_rate);

@@ -27,9 +27,4 @@ void strtocapwords(char *s);
 const char *extract_path_segment (const char *path,
 				  char *buffer, size_t size);
 
-void *xmalloc (size_t size);
-void *xcalloc (size_t size);
-void xfree (void *ptr);
-char *xstrdup (const char *str);
-
 #endif

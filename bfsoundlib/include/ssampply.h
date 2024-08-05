@@ -33,7 +33,10 @@ typedef void * TbSampleHandle;
 /******************************************************************************/
 
 //int PlaySample();
-//int PlaySampleFromAddress();
+
+struct SampleInfo *PlaySampleFromAddress(long source_id, short smp_id,
+  short volume, ushort pan, short pitch, sbyte loop_count,
+  ubyte a7, void *address);
 
 TbBool IsSamplePlaying(long source_id, short smp_id, TbSampleHandle handle);
 
@@ -48,7 +51,7 @@ void SetSampleVolume(long source_id, short smp_id, short volume);
  */
 void ReleaseLoopedSample(ushort source_id, short smp_id);
 
-//int StopSample();
+void StopSample(long source_id, short smp_id);
 void StopAllSamples(void);
 
 /******************************************************************************/
