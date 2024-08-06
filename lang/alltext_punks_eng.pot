@@ -174,26 +174,52 @@ msgstr ""
 
 #: mission.title:60
 msgctxt "mission title"
-msgid "Guns Guns Guns alt1"
+msgid "Guns Guns Guns"
 msgstr ""
 
 #: mission.brief.mail5.par2.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Raid Eurocorp armoury"
+"1. Gather unguided comrades"
 msgstr ""
 
 #: mission.brief.mail5.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"2. Kill all Eurocorp Agents"
+"2 Raid Eurocorp armoury"
+msgstr ""
+
+#: mission.brief.mail5.par4.c2
+msgctxt "mission brief email orders"
+msgid ""
+"3. Kill all Eurocorp Agents"
+msgstr ""
+
+#: mission.brief.mail5.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"4. Recover unguided bike"
 msgstr ""
 
 #: mission.brief.mail5.map20.level2:1
 msgctxt "mission brief tactical information"
+msgid "Unguided groups"
+msgstr ""
+
+#: mission.brief.mail5.map20.level2:2
+msgctxt "mission brief tactical information"
 msgid "Eurocorp Armoury"
 msgstr ""
 
+#: mission.brief.mail5.map20.level2:3
+msgctxt "mission brief tactical information"
+msgid "Infrastructure targets"
+msgstr ""
+
+#: mission.brief.mail5.map20.level2:4
+msgctxt "mission brief tactical information"
+msgid "Impounded unguided bike"
+msgstr ""
 
 #: mission.title:64
 msgctxt "mission title"
