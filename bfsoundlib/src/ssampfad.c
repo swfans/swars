@@ -45,7 +45,7 @@ extern struct SampleInfo *end_sample_id;
 
 struct SampleInfo *FindSampleInfoSrcSmpNotDone(long source_id, short smp_id);
 
-void cbfadesample()
+void cbfadesample(void *user_data)
 {
     struct SampleInfo *p_smpinf;
     int i;

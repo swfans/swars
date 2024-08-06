@@ -44,7 +44,7 @@ void InitAllBullfrogSoundTimers(void)
     LbMemorySet(&sound_timer, 0, 5 * sizeof(struct sound_timer_inf));
 }
 
-ushort SetupBullfrogSoundTimer(ushort freq, void (*cb)())
+ushort SetupBullfrogSoundTimer(ushort freq, void (*cb)(void*))
 {
     struct sound_timer_inf *stinf;
     ushort st;

@@ -53,25 +53,22 @@ int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
         only_fname = filename;
 
     for (i = 0; only_fname[i] != '\0'; i++)
-    {
-        locstr[i] = toupper(only_fname[i]);
-    }
     locstr[i] = '\0';
 
-    sprintf(locfname, "%s.IDX", wadfile);
+    sprintf(locfname, "%s.idx", wadfile);
     fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
         return -1;
     do {
         nread = LbFileRead(fh, &fentry, sizeof(struct WADIndexEntry));
-    } while ((strcmp(locstr, fentry.Filename) != 0) &&
+    } while ((strncasecmp(locstr, fentry.Filename, sizeof(fentry.Filename)) != 0) &&
       (nread == sizeof(struct WADIndexEntry)));
     LbFileClose(fh);
 
     if (nread != sizeof(struct WADIndexEntry))
         return -1;
 
-    sprintf(locfname, "%s.WAD", wadfile);
+    sprintf(locfname, "%s.wad", wadfile);
     fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
         return -1;

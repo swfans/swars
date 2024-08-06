@@ -79,7 +79,7 @@ sbyte AllocateMusicBankMemory(void)
         TbFileHandle fh;
         long pos;
 
-        sprintf(full_music_data_path, "%s/MUSIC.DAT", SoundDataPath);
+        sprintf(full_music_data_path, "%s/music.dat", SoundDataPath);
         fh = LbFileOpen(full_music_data_path, Lb_FILE_MODE_READ_ONLY);
         if (fh == INVALID_FILE)
             return -1;
