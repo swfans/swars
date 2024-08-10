@@ -308,6 +308,22 @@ TbResult LbIScreenDrawSurfaceCreate(TbBool set_palette)
     return Lb_SUCCESS;
 }
 
+static void LbIGetScreenModeDimensions(long *mdWidth, long *mdHeight, TbScreenModeInfo *mdinfo)
+{
+    long Width, Height;
+    long minD;
+
+    Width = mdinfo->Width;
+    Height = mdinfo->Height;
+    minD = min(Width, Height);
+    if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
+        Width = lbMinScreenSurfaceDimension * Width / minD;
+        Height = lbMinScreenSurfaceDimension * Height / minD;
+    }
+    *mdWidth = Width;
+    *mdHeight = Height;
+}
+
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
@@ -354,17 +370,9 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
             (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
         return Lb_FAIL;
     }
-    mdWidth = mdinfo->Width;
-    mdHeight = mdinfo->Height;
-    {
-        const long minD = min(mdWidth, mdHeight);
-        if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
-            mdWidth = lbScreenSurfaceDimensions.Width =
-                lbMinScreenSurfaceDimension * mdWidth / minD;
-            mdHeight = lbScreenSurfaceDimensions.Height =
-                lbMinScreenSurfaceDimension * mdHeight / minD;
-        }
-    }
+    LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
+    lbScreenSurfaceDimensions.Width = mdWidth;
+    lbScreenSurfaceDimensions.Height = mdHeight;
     LOGDBG("screen surface dimensions set to %ldx%ld", mdWidth, mdHeight);
 
     // No need for video buffer paging when using SDL
@@ -632,7 +640,9 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 {
     TbScreenModeInfo *mdinfo;
     ulong sdlFlags;
+    long mdWidth, mdHeight;
     int closestBPP;
+    TbBool firstSurfaceOk, secondSurfaceOk;
 
     mdinfo = LbScreenGetModeInfo(mode);
     sdlFlags = 0;
@@ -648,20 +658,18 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
     if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
         sdlFlags |= SDL_FULLSCREEN;
     }
+    // SDL screen size
+    LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
+    secondSurfaceOk = true;
+#if defined(BFLIB_WSCREEN_CONTROL)
+    if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
+        (mdWidth != mdinfo->Width) || (mdHeight != mdinfo->Height))
+#endif
     {
-        const long minD = min(mdinfo->Height, mdinfo->Width);
-        if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
-            TbBool was_second_surface_ok = false;
-            // FIXME: a second surface will be required; check?
-            SDL_Surface * draw_surface =
-                SDL_CreateRGBSurface(SDL_SWSURFACE,
-                    lbMinScreenSurfaceDimension * mdinfo->Width / minD,
-                    lbMinScreenSurfaceDimension * mdinfo->Height / minD,
-                    lbEngineBPP, 0, 0, 0, 0);
-            was_second_surface_ok = draw_surface != NULL;
-            SDL_FreeSurface(draw_surface);
-            return was_second_surface_ok;
-        }
+        SDL_Surface * draw_surface =
+            SDL_CreateRGBSurface(SDL_SWSURFACE, mdWidth, mdHeight, lbEngineBPP, 0, 0, 0, 0);
+        secondSurfaceOk = (draw_surface != NULL);
+        SDL_FreeSurface(draw_surface);
     }
 
     closestBPP = SDL_VideoModeOK(mdinfo->Width, mdinfo->Height,
@@ -669,7 +677,9 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 
     // Even if different colour depth is returned, as long as the value is
     // non-zero, SDL can simulate any bpp with additional internal surface
-    return (closestBPP != 0);
+    firstSurfaceOk = (closestBPP != 0);
+
+    return firstSurfaceOk && secondSurfaceOk;
 }
 
 static void LbI_SDL_BlitScaled_to8bpp(long src_w, long src_h, ubyte *src_buf,
