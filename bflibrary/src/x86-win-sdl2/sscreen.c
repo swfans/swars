@@ -430,10 +430,52 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // SDL video mode flags
     LbIGetSDLFlagsForMode(&sdlFlags, &sdlPxFormat, mdinfo);
 
+    // Note:
+    // We set the window's fullscreen state (either Window, Fullscreen, or Fake Fullscreen)
+    // We set the DisplayMode for real fullscreen mode
+    // We set the window size, and border for a window
     if (lbWindow != NULL)
     {
-        SDL_DestroyWindow(lbWindow);
-        lbWindow = NULL;
+        ulong current_fullscreen_flags;
+        ulong new_fullscreen_flags;
+
+        // SDL_WINDOW_FULLSCREEN_DESKTOP set includes SDL_WINDOW_FULLSCREEN flag
+        current_fullscreen_flags = SDL_GetWindowFlags(lbWindow) & SDL_WINDOW_FULLSCREEN_DESKTOP;
+        new_fullscreen_flags = sdlFlags & SDL_WINDOW_FULLSCREEN_DESKTOP;
+        // If the new mode is a real fullscreen mode, then set the new mode
+        if (new_fullscreen_flags == SDL_WINDOW_FULLSCREEN)
+        {
+            // this works in a modern setting (we get WxH at 32 bpp), but I'm not sure if this provides true 8-bit color mode (e.g. if we request 320x200x8 mode)
+            SDL_DisplayMode dm = { sdlPxFormat, mdWidth, mdHeight, 0, 0};
+            if (SDL_SetWindowDisplayMode(lbWindow, &dm) < 0) // set display mode for fullscreen
+            {
+                LOGERR("failed to set window displaymode for mode %d (%s): %s", (int)mode, mdinfo->Desc, SDL_GetError());
+                return Lb_FAIL;
+            }
+            // If we change to a fullscreen mode that is a higher res than the previous fullscreen mode (after having already changed
+            // to a normal window/fake fullscreen window at some point in the past), then the result is a small window in the
+            // top left of the screen, or potentially the buffer does not fill the whole mode's width/height (I don't know these things).
+            // The above seems to be this SDL issue: https://github.com/libsdl-org/SDL/issues/3869
+            // said issue was supposedly fixed in https://github.com/libsdl-org/SDL/pull/4392
+            // but that is either not the case, or said pull has been reverted (I cannot find evidence of it in the sdl2 codebase).
+            // The issue is fixed by running the following line (after SDL_SetWindowDisplayMode above):
+            SDL_SetWindowSize(lbWindow, mdinfo->Width, mdinfo->Height);
+        }
+        // If mode has changed between fullscreen/windowed/fake fullscreen, set the new mode
+        if (current_fullscreen_flags != new_fullscreen_flags)
+        {
+            if (SDL_SetWindowFullscreen(lbWindow, new_fullscreen_flags) < 0)
+            {
+                LOGERR("failed to set window fullscreen for mode %d (%s): %s", (int)mode, mdinfo->Desc, SDL_GetError());
+                return Lb_FAIL;
+            }
+        }
+        SDL_SetWindowBordered(lbWindow, (sdlFlags & SDL_WINDOW_BORDERLESS) ? SDL_FALSE : SDL_TRUE);
+        // if the new mode is windowed mode (including the special FILL ALL mode)
+        if (new_fullscreen_flags == 0)
+        {
+            SDL_SetWindowSize(lbWindow, mdWidth, mdHeight);
+        }
     }
 
     // Set SDL video mode and create window, if not created before
