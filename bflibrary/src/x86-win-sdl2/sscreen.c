@@ -430,16 +430,30 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // SDL video mode flags
     LbIGetSDLFlagsForMode(&sdlFlags, &sdlPxFormat, mdinfo);
 
-    // Set SDL video mode (also creates window).
-    lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdWidth, mdHeight,
-      mdinfo->BitsPerPixel, sdlFlags);
+    if (lbWindow != NULL)
+    {
+        SDL_DestroyWindow(lbWindow);
+        lbWindow = NULL;
+    }
 
-    if (lbScreenSurface == NULL) {
-        LOGERR("failed to initialize mode %d: %s", (int)mode, SDL_GetError());
+    // Set SDL video mode and create window, if not created before
+    if (lbWindow == NULL) {
+        lbWindow = SDL_CreateWindow(lbDrawAreaTitle, SDL_WINDOWPOS_UNDEFINED,
+          SDL_WINDOWPOS_UNDEFINED, mdWidth, mdHeight, sdlFlags);
+    }
+
+    if (lbWindow == NULL) {
+        LOGERR("failed to create window for mode %d: %s", (int)mode, SDL_GetError());
         return Lb_FAIL;
     }
 
-    SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
+    lbScreenSurface = lbDrawSurface = SDL_GetWindowSurface(lbWindow);
+
+    if (lbScreenSurface == NULL) {
+        LOGERR("failed to get window surface for mode %d: %s", (int)mode, SDL_GetError());
+        return Lb_FAIL;
+    }
+
     LbScreenUpdateIcon();
 
     // The graphics screen size is required for DrawSurface creation
