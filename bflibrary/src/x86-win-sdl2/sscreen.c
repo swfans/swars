@@ -337,6 +337,42 @@ static void LbIGetScreenModeDimensions(long *mdWidth, long *mdHeight, TbScreenMo
     *mdHeight = Height;
 }
 
+static void LbIGetSDLFlagsForMode(ulong *sdlFlags, ulong *sdlPxFormat, TbScreenModeInfo *mdinfo)
+{
+    ulong Flags, PxFormat;
+
+    Flags = 0;
+    switch (mdinfo->BitsPerPixel)
+    {
+    case 8:
+        PxFormat = SDL_PIXELFORMAT_INDEX8;
+        break;
+    case 15:
+        PxFormat = SDL_PIXELFORMAT_RGB555;
+        break;
+    case 16:
+        PxFormat = SDL_PIXELFORMAT_RGB565;
+        break;
+    case 24:
+        PxFormat = SDL_PIXELFORMAT_RGB24;
+        break;
+    case 32:
+        PxFormat = SDL_PIXELFORMAT_RGB888;
+        break;
+    default:
+        PxFormat = SDL_PIXELFORMAT_UNKNOWN;
+        break;
+    }
+    if (lbDoubleBufferingRequested) {
+        // SDL2 always does double buffering
+    }
+    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
+        Flags |= SDL_WINDOW_FULLSCREEN;
+    }
+    *sdlFlags = Flags;
+    *sdlPxFormat = PxFormat;
+}
+
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
@@ -345,7 +381,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     long mdWidth, mdHeight;
     const struct TbSprite *msspr;
     TbScreenModeInfo *mdinfo;
-    unsigned long sdlFlags;
+    ulong sdlFlags, sdlPxFormat;
 
     msspr = NULL;
     LbExeReferenceNumber();
@@ -392,20 +428,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     lbDisplay.VesaIsSetUp = false;
 
     // SDL video mode flags
-    sdlFlags = 0;
-    if (mdinfo->BitsPerPixel == lbEngineBPP) {
-        sdlFlags |= SDL_HWPALETTE;
-    }
-    if (lbDoubleBufferingRequested) {
-        // Only hardware surfaces can use double buffering
-        sdlFlags |= SDL_HWSURFACE;
-        sdlFlags |= SDL_DOUBLEBUF;
-    } else {
-        sdlFlags |= SDL_SWSURFACE;
-    }
-    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
-        sdlFlags |= SDL_FULLSCREEN;
-    }
+    LbIGetSDLFlagsForMode(&sdlFlags, &sdlPxFormat, mdinfo);
 
     // Set SDL video mode (also creates window).
     lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdWidth, mdHeight,
@@ -653,25 +676,14 @@ ulong LbScreenSetWScreenInVideo(ulong flag)
 TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 {
     TbScreenModeInfo *mdinfo;
-    ulong sdlFlags;
+    ulong sdlFlags, sdlPxFormat;
     long mdWidth, mdHeight;
     int closestBPP;
     TbBool firstSurfaceOk, secondSurfaceOk;
 
     mdinfo = LbScreenGetModeInfo(mode);
-    sdlFlags = 0;
-    if (mdinfo->BitsPerPixel == lbEngineBPP) {
-        sdlFlags |= SDL_HWPALETTE;
-    }
-    if (lbDoubleBufferingRequested) {
-        sdlFlags |= SDL_HWSURFACE;
-        sdlFlags |= SDL_DOUBLEBUF;
-    } else {
-        sdlFlags |= SDL_SWSURFACE;
-    }
-    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
-        sdlFlags |= SDL_FULLSCREEN;
-    }
+    // SDL video mode flags
+    LbIGetSDLFlagsForMode(&sdlFlags, &sdlPxFormat, mdinfo);
     // SDL screen size
     LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
     secondSurfaceOk = true;
