@@ -446,7 +446,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
         if (new_fullscreen_flags == SDL_WINDOW_FULLSCREEN)
         {
             // this works in a modern setting (we get WxH at 32 bpp), but I'm not sure if this provides true 8-bit color mode (e.g. if we request 320x200x8 mode)
-            SDL_DisplayMode dm = { sdlPxFormat, mdWidth, mdHeight, 0, 0};
+            SDL_DisplayMode dm = {sdlPxFormat, mdWidth, mdHeight, 0, 0};
             if (SDL_SetWindowDisplayMode(lbWindow, &dm) < 0) // set display mode for fullscreen
             {
                 LOGERR("failed to set window displaymode for mode %d (%s): %s", (int)mode, mdinfo->Desc, SDL_GetError());
@@ -506,7 +506,9 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // that is if BPP or dimensions do not match,
     // or if we need it due to no WScreen control
 #if defined(BFLIB_WSCREEN_CONTROL)
-    if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
+    // While we use mdinfo->BitsPerPixel to set sdlPxFormat, the value is not always used (not in fullscreen and not when first creating the window);
+    // To make sure we really have the BPP requested, we need to also compare lbScreenSurface->format for current BPP.
+    if ((mdinfo->BitsPerPixel != lbEngineBPP) || (lbScreenSurface->format->BitsPerPixel != mdinfo->BitsPerPixel) ||
         (mdWidth != width) || (mdHeight != height))
 #endif
     {
