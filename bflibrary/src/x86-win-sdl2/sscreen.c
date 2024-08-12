@@ -736,32 +736,65 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
     TbScreenModeInfo *mdinfo;
     ulong sdlFlags, sdlPxFormat;
     long mdWidth, mdHeight;
-    int closestBPP;
     TbBool firstSurfaceOk, secondSurfaceOk;
+    short display_id;
 
     mdinfo = LbScreenGetModeInfo(mode);
     // SDL video mode flags
     LbIGetSDLFlagsForMode(&sdlFlags, &sdlPxFormat, mdinfo);
     // SDL screen size
     LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
+
+    // There is currently no multi-display support - get the one where window is
+    if (lbWindow != NULL)
+        display_id = SDL_GetWindowDisplayIndex(lbWindow);
+    else
+        display_id = 0;
+
+    if (display_id < 0)
+        display_id = 0;
+
     secondSurfaceOk = true;
 #if defined(BFLIB_WSCREEN_CONTROL)
     if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
         (mdWidth != mdinfo->Width) || (mdHeight != mdinfo->Height))
 #endif
     {
-        SDL_Surface * draw_surface =
-            SDL_CreateRGBSurface(SDL_SWSURFACE, mdWidth, mdHeight, lbEngineBPP, 0, 0, 0, 0);
+        SDL_Surface * draw_surface;
+#if !defined(BFLIB_WSCREEN_CONTROL)
+        // If app has WScreen control, then we want to try create the surface
+        // around the WScreen buffer comming from the app
+        if (lbDisplay.WScreen != NULL)
+        {
+            draw_surface = SDL_CreateRGBSurfaceFrom(lbDisplay.WScreen,
+              mdinfo->Width, mdinfo->Height, lbEngineBPP, mdinfo->Width, 0, 0, 0, 0);
+        }
+        else
+#endif
+        {
+            draw_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+              mdinfo->Width, mdinfo->Height, lbEngineBPP, 0, 0, 0, 0);
+        }
+
         secondSurfaceOk = (draw_surface != NULL);
         SDL_FreeSurface(draw_surface);
     }
 
-    closestBPP = SDL_VideoModeOK(mdinfo->Width, mdinfo->Height,
-      mdinfo->BitsPerPixel, sdlFlags);
+    {
+        // See if the desired fullscreen mode is a valid mode for the current display
+        SDL_DisplayMode desired = {sdlPxFormat, mdWidth, mdHeight, 0, 0};
+        SDL_DisplayMode closest = desired;
 
-    // Even if different colour depth is returned, as long as the value is
-    // non-zero, SDL can simulate any bpp with additional internal surface
-    firstSurfaceOk = (closestBPP != 0);
+        firstSurfaceOk = true;
+        if (SDL_GetClosestDisplayMode(display_id, &desired, &closest) == NULL)
+        {
+            firstSurfaceOk = false; // all available fullscreen modes are too small for the desired mode to fit
+        }
+        if ((closest.w != desired.w) || (closest.h != desired.h) || (closest.format != desired.format))
+        {
+            firstSurfaceOk = false; // desired fullscreen mode is not available (but a "close" match is)
+        }
+    }
 
     return firstSurfaceOk && secondSurfaceOk;
 }
