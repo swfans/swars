@@ -780,6 +780,7 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
         SDL_FreeSurface(draw_surface);
     }
 
+    if (sdlFlags & SDL_WINDOW_FULLSCREEN)
     {
         // See if the desired fullscreen mode is a valid mode for the current display
         SDL_DisplayMode desired = {sdlPxFormat, mdWidth, mdHeight, 0, 0};
@@ -790,10 +791,29 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
         {
             firstSurfaceOk = false; // all available fullscreen modes are too small for the desired mode to fit
         }
-        if ((closest.w != desired.w) || (closest.h != desired.h) || (closest.format != desired.format))
+        if ((closest.w != desired.w) || (closest.h != desired.h))
         {
-            firstSurfaceOk = false; // desired fullscreen mode is not available (but a "close" match is)
+            firstSurfaceOk = false; // fullscreen mode with desired WxH is not available (but a "close" match is)
         }
+        // not comparing closest.format - we have small chances of getting exact format match to HW, and
+        // the format can be simulated by SDL anyway
+    }
+    else
+    {
+        // See if the desired windowed mode is a valid mode for the current display
+        SDL_DisplayMode desired = {sdlPxFormat, mdWidth, mdHeight, 0, 0};
+        SDL_DisplayMode desktop = desired;
+
+        firstSurfaceOk = true;
+        if (SDL_GetDesktopDisplayMode(display_id, &desktop) != 0)
+        {
+            firstSurfaceOk = false; // cannot query desktop mode for the display
+        }
+        if ((desktop.w < desired.w) || (desktop.h < desired.h))
+        {
+            firstSurfaceOk = false; // desktop is too small to fit the whole game window
+        }
+        // not comparing desktop.format - SDL will simulate the one we want regardless of current desktop
     }
 
     return firstSurfaceOk && secondSurfaceOk;
