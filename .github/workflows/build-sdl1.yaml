@@ -1,4 +1,4 @@
-name: Build
+name: Build-SDL1
 
 on:
   pull_request:
