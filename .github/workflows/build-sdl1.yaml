@@ -15,7 +15,7 @@ on:
 jobs:
   ubuntu-gcc:
     runs-on: ubuntu-20.04
-    name: "Linux Ubuntu"
+    name: "Linux Ubuntu SDL1"
     container:
       image: ubuntu:20.04
     env:
@@ -56,7 +56,7 @@ jobs:
           apt install -y \
             gcc-multilib g++-multilib lib32z1 python3 \
             vorbis-tools cdparanoia \
-            libsdl2-dev:i386 libopenal-dev:i386 \
+            libsdl1.2-dev:i386 libopenal-dev:i386 \
             libvorbis-dev:i386 libvorbisfile3:i386 \
             libogg-dev:i386 \
             libwildmidi-dev:i386
@@ -91,7 +91,7 @@ jobs:
           # Get version marking from C header
           PKG_VERSION=$(sed -n 's/^#define[ ]\+PACKAGE_VERSION "\([^"]\+\)"$/\1/p' src/config.h | head -n 1 | tr '.' '_')
           make V=1 DESTDIR=$PWD/pkg install
-          echo "PKG_NAME=swars-$PKG_VERSION-ubuntu-patch" >> $GITHUB_ENV
+          echo "PKG_NAME=swars-$PKG_VERSION-ubuntu-sdl1-patch" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -100,7 +100,7 @@ jobs:
           path: release/pkg/**
 
   windows-msys2:
-    name: "Windows MSYS2"
+    name: "Windows MSYS2 SDL1"
     runs-on: windows-latest
     defaults:
       run:
@@ -131,7 +131,7 @@ jobs:
               mingw-w64-i686-toolchain
               mingw-w64-i686-autotools
               mingw-w64-i686-libpng
-              mingw-w64-i686-SDL2
+              mingw-w64-i686-SDL
               mingw-w64-i686-openal
               mingw-w64-i686-libvorbis
               mingw-w64-i686-libogg
@@ -171,8 +171,8 @@ jobs:
           # Get version marking from C header
           PKG_VERSION=$(sed -n 's/^#define[ ]\+PACKAGE_VERSION "\([^"]\+\)"$/\1/p' src/config.h | head -n 1 | tr '.' '_')
           make V=1 DESTDIR=$PWD/pkg install
-          echo "PKG_NAME=swars-$PKG_VERSION-win32-patch" >> $GITHUB_ENV
-          echo "INSTLR_NAME=swars-$PKG_VERSION-win32-setup" >> $GITHUB_ENV
+          echo "PKG_NAME=swars-$PKG_VERSION-win32-sdl1-patch" >> $GITHUB_ENV
+          echo "INSTLR_NAME=swars-$PKG_VERSION-win32-sdl1-setup" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
