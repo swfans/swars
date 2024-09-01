@@ -170,7 +170,7 @@ TbResult LbScreenUpdateIcon(void)
     HICON hIcon;
     HINSTANCE lbhInstance;
     SDL_SysWMinfo wmInfo;
-    const char * rname;
+    const char *rname;
 
     SDL_VERSION(&wmInfo.version);
     if (SDL_GetWMInfo(&wmInfo) < 0) {
@@ -196,9 +196,9 @@ TbResult LbScreenUpdateIcon(void)
 
 TbResult LbScreenUpdateIcon(void)
 {
-    Uint32          colorkey;
-    SDL_Surface     *image;
-    const char * rname;
+    Uint32 clkey;
+    SDL_Surface *image;
+    const char *rname;
 
     rname = userResourceMapping(lbIconIndex);
     if (rname != NULL) {
@@ -210,8 +210,8 @@ TbResult LbScreenUpdateIcon(void)
         LOGWARN("cannot set icon: image load failed: %s", SDL_GetError());
         return Lb_FAIL;
     }
-    colorkey = SDL_MapRGB(image->format, 255, 0, 255);
-    SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey);
+    clkey = SDL_MapRGB(image->format, 255, 0, 255);
+    SDL_SetColorKey(image, SDL_SRCCOLORKEY, clkey);
     SDL_WM_SetIcon(image, NULL);
 
     return Lb_SUCCESS;
@@ -327,7 +327,7 @@ static void LbIGetScreenModeDimensions(long *mdWidth, long *mdHeight, TbScreenMo
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
-    SDL_Surface * prevScreenSurf;
+    SDL_Surface *prevScreenSurf;
     long hot_x, hot_y;
     long mdWidth, mdHeight;
     const struct TbSprite *msspr;
@@ -666,7 +666,7 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
         (mdWidth != mdinfo->Width) || (mdHeight != mdinfo->Height))
 #endif
     {
-        SDL_Surface * draw_surface =
+        SDL_Surface *draw_surface =
             SDL_CreateRGBSurface(SDL_SWSURFACE, mdWidth, mdHeight, lbEngineBPP, 0, 0, 0, 0);
         secondSurfaceOk = (draw_surface != NULL);
         SDL_FreeSurface(draw_surface);

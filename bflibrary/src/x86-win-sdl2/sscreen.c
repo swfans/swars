@@ -175,7 +175,7 @@ TbResult LbScreenUpdateIcon(void)
     HICON hIcon;
     HINSTANCE lbhInstance;
     SDL_SysWMinfo wmInfo;
-    const char * rname;
+    const char *rname;
 
     SDL_VERSION(&wmInfo.version);
     if (SDL_GetWindowWMInfo(lbWindow, &wmInfo) != SDL_TRUE) {
@@ -205,9 +205,9 @@ TbResult LbScreenUpdateIcon(void)
 
 TbResult LbScreenUpdateIcon(void)
 {
-    Uint32          colorkey;
-    SDL_Surface     *image;
-    const char * rname;
+    Uint32 clkey;
+    SDL_Surface *image;
+    const char *rname;
 
     rname = userResourceMapping(lbIconIndex);
     if (rname == NULL) {
@@ -219,8 +219,8 @@ TbResult LbScreenUpdateIcon(void)
         LOGWARN("cannot set icon: image load failed: %s", SDL_GetError());
         return Lb_FAIL;
     }
-    colorkey = SDL_MapRGB(image->format, 255, 0, 255);
-    if (SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey) < 0) {
+    clkey = SDL_MapRGB(image->format, 255, 0, 255);
+    if (SDL_SetColorKey(image, SDL_TRUE, clkey) < 0) {
         LOGWARN("cannot set icon color key: %s", SDL_GetError());
         return Lb_FAIL;
     }
@@ -376,7 +376,7 @@ static void LbIGetSDLFlagsForMode(ulong *sdlFlags, ulong *sdlPxFormat, TbScreenM
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
-    SDL_Surface * prevScreenSurf;
+    SDL_Surface *prevScreenSurf;
     long hot_x, hot_y;
     long mdWidth, mdHeight;
     const struct TbSprite *msspr;
@@ -760,7 +760,7 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
         (mdWidth != mdinfo->Width) || (mdHeight != mdinfo->Height))
 #endif
     {
-        SDL_Surface * draw_surface;
+        SDL_Surface *draw_surface;
 #if !defined(BFLIB_WSCREEN_CONTROL)
         // If app has WScreen control, then we want to try create the surface
         // around the WScreen buffer comming from the app
