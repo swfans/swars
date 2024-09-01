@@ -738,6 +738,7 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
     long mdWidth, mdHeight;
     TbBool firstSurfaceOk, secondSurfaceOk;
     short display_id;
+    const char *reason = NULL;
 
     mdinfo = LbScreenGetModeInfo(mode);
     // SDL video mode flags
@@ -768,12 +769,16 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
         {
             draw_surface = SDL_CreateRGBSurfaceFrom(lbDisplay.WScreen,
               mdinfo->Width, mdinfo->Height, lbEngineBPP, mdinfo->Width, 0, 0, 0, 0);
+            if (draw_surface == NULL)
+                reason = "cannot convert wscreen into second surface";
         }
         else
 #endif
         {
             draw_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
               mdinfo->Width, mdinfo->Height, lbEngineBPP, 0, 0, 0, 0);
+            if (draw_surface == NULL)
+                reason = "cannot make standalone second surface";
         }
 
         secondSurfaceOk = (draw_surface != NULL);
@@ -789,10 +794,17 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
         firstSurfaceOk = true;
         if (SDL_GetClosestDisplayMode(display_id, &desired, &closest) == NULL)
         {
+            reason = "no closest hw match";
             firstSurfaceOk = false; // all available fullscreen modes are too small for the desired mode to fit
         }
-        if ((closest.w != desired.w) || (closest.h != desired.h))
+        if ((desired.w == 640) && ((desired.h == 400) || (desired.h == 480)) &&
+          ((desired.format == SDL_PIXELFORMAT_INDEX8) || (desired.format == SDL_PIXELFORMAT_RGB24)))
         {
+            // The 640x400 and 640x480 must always be available, even if SDL will need to cheat to achieve that
+        }
+        else if ((closest.w != desired.w) || ((closest.h != desired.h) && (desired.h != 400)))
+        {
+            reason = "no exact resolution match";
             firstSurfaceOk = false; // fullscreen mode with desired WxH is not available (but a "close" match is)
         }
         // not comparing closest.format - we have small chances of getting exact format match to HW, and
@@ -807,14 +819,19 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
         firstSurfaceOk = true;
         if (SDL_GetDesktopDisplayMode(display_id, &desktop) != 0)
         {
+            reason = "cannot query display";
             firstSurfaceOk = false; // cannot query desktop mode for the display
         }
         if ((desktop.w < desired.w) || (desktop.h < desired.h))
         {
+            reason = "display too small";
             firstSurfaceOk = false; // desktop is too small to fit the whole game window
         }
         // not comparing desktop.format - SDL will simulate the one we want regardless of current desktop
     }
+
+    if (!firstSurfaceOk || !secondSurfaceOk)
+        LOGDBG("Mode %s unavailable - %s", mdinfo->Desc, reason);
 
     return firstSurfaceOk && secondSurfaceOk;
 }
