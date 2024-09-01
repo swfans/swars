@@ -183,7 +183,8 @@ TbResult LbScreenUpdateIcon(void)
         return Lb_FAIL;
     }
     if (wmInfo.subsystem != SDL_SYSWM_WINDOWS) {
-        LOGWARN("cannot set icon: unexpected window manager subsystem (%d)", (int)wmInfo.subsystem);
+        LOGWARN("cannot set icon: unexpected window manager subsystem (%d)",
+          (int)wmInfo.subsystem);
         return Lb_FAIL;
     }
 
@@ -422,7 +423,8 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
     lbScreenSurfaceDimensions.Width = mdWidth;
     lbScreenSurfaceDimensions.Height = mdHeight;
-    LOGDBG("screen surface dimensions set to %ldx%ld", mdWidth, mdHeight);
+    LOGDBG("screen surface dimensions set to %ldx%ld for mode %d (%s)",
+      mdWidth, mdHeight, (int)mode, mdinfo->Desc);
 
     // No need for video buffer paging when using SDL
     lbDisplay.VesaIsSetUp = false;
@@ -445,19 +447,22 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
         // If the new mode is a real fullscreen mode, then set the new mode
         if (new_fullscreen_flags == SDL_WINDOW_FULLSCREEN)
         {
-            // this works in a modern setting (we get WxH at 32 bpp), but I'm not sure if this provides true 8-bit color mode (e.g. if we request 320x200x8 mode)
+            // this works in a modern setting (we get WxH at 32 bpp), but
+            // unsure if this provides true 8-bit color mode (e.g. if we request 320x200x8 mode)
             SDL_DisplayMode dm = {sdlPxFormat, mdWidth, mdHeight, 0, 0};
             if (SDL_SetWindowDisplayMode(lbWindow, &dm) < 0) // set display mode for fullscreen
             {
                 LOGERR("failed to set window displaymode for mode %d (%s): %s", (int)mode, mdinfo->Desc, SDL_GetError());
                 return Lb_FAIL;
             }
-            // If we change to a fullscreen mode that is a higher res than the previous fullscreen mode (after having already changed
-            // to a normal window/fake fullscreen window at some point in the past), then the result is a small window in the
-            // top left of the screen, or potentially the buffer does not fill the whole mode's width/height (I don't know these things).
+            // If we change to a fullscreen mode that is a higher res than the
+            // previous fullscreen mode (after having already changed to a
+            // normal window/fake fullscreen window at some point in the past),
+            // then the result is a small window in the top left of the screen,
+            // or potentially the buffer does not fill the whole mode's width/height.
             // The above seems to be this SDL issue: https://github.com/libsdl-org/SDL/issues/3869
             // said issue was supposedly fixed in https://github.com/libsdl-org/SDL/pull/4392
-            // but that is either not the case, or said pull has been reverted (I cannot find evidence of it in the sdl2 codebase).
+            // but that patch does not seem to eliminate the issue seen here.
             // The issue is fixed by running the following line (after SDL_SetWindowDisplayMode above):
             SDL_SetWindowSize(lbWindow, mdinfo->Width, mdinfo->Height);
         }
@@ -506,9 +511,12 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // that is if BPP or dimensions do not match,
     // or if we need it due to no WScreen control
 #if defined(BFLIB_WSCREEN_CONTROL)
-    // While we use mdinfo->BitsPerPixel to set sdlPxFormat, the value is not always used (not in fullscreen and not when first creating the window);
-    // To make sure we really have the BPP requested, we need to also compare lbScreenSurface->format for current BPP.
-    if ((mdinfo->BitsPerPixel != lbEngineBPP) || (lbScreenSurface->format->BitsPerPixel != mdinfo->BitsPerPixel) ||
+    // While we use mdinfo->BitsPerPixel to set sdlPxFormat, the value is not
+    // always used (not in fullscreen and not when first creating the window);
+    // To make sure we really have the BPP requested, we need to also compare
+    // lbScreenSurface->format for current BPP.
+    if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
+        (to_SDLSurf(lbScreenSurface)->format->BitsPerPixel != mdinfo->BitsPerPixel) ||
         (mdWidth != width) || (mdHeight != height))
 #endif
     {
