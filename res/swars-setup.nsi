@@ -124,16 +124,15 @@ Section "Syndicate Wars Game" Section_0
   File "${BUILDENV_PKG_DIR}\libopenal-1.dll"
   File "${BUILDENV_PKG_DIR}\libpng16-16.dll"
   File "${BUILDENV_PKG_DIR}\zlib1.dll"
+  File "${BUILDENV_PKG_DIR}\SDL2.dll"
   File "${BUILDENV_PKG_DIR}\libogg-0.dll"
   File "${BUILDENV_PKG_DIR}\libvorbis-0.dll"
   File "${BUILDENV_PKG_DIR}\libvorbisfile-3.dll"
   File "${BUILDENV_PKG_DIR}\libWildMidi.dll"
-  IfFileExists "${BUILDENV_PKG_DIR}\SDL2.dll" 0 +2
-  	StrCpy $1 "SDL2.dll"
-    File "${BUILDENV_PKG_DIR}\$1"
-  IfFileExists "${BUILDENV_PKG_DIR}\SDL.dll" 0 +2
-    StrCpy $1 "SDL.dll"
-    File "${BUILDENV_PKG_DIR}\$1"
+  IfFileExists "${BUILDENV_PKG_DIR}\SDL2.dll" 0 +1
+  File /nonfatal "${BUILDENV_PKG_DIR}\SDL2.dll"
+  IfFileExists "${BUILDENV_PKG_DIR}\SDL2.dll" 0 +1
+  File /nonfatal "${BUILDENV_PKG_DIR}\SDL2.dll"
   SetOutPath $INSTDIR\conf
   File /r "${BUILDENV_PKG_DIR}\conf\"
   SetOutPath $INSTDIR\language
