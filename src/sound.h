@@ -34,7 +34,7 @@ void fill_ail_sample_ids(void);
 struct SNDSEQUENCE;
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type);
-void stop_sample_using_heap(struct SNDSEQUENCE *source, ulong sample_number);
+void stop_sample_using_heap(long source_id, ulong sample_number);
 void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type);
 
 void snd_unkn1_volume_all_samples(void);
