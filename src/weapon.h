@@ -161,6 +161,8 @@ ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person);
 void do_weapon_quantities_net_to_player(struct Thing *p_person);
 void do_weapon_quantities1(struct Thing *p_person);
 void do_weapon_quantities_proper1(struct Thing *p_person);
+
+void process_weapon(struct Thing *p_person);
 /******************************************************************************/
 #ifdef __cplusplus
 }

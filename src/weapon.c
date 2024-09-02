@@ -908,4 +908,10 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
     p_person->PTarget = p_target;
 }
 
+void process_weapon(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_weapon\n"
+        : : "a" (p_person));
+}
+
 /******************************************************************************/
