@@ -131,8 +131,8 @@ Section "Syndicate Wars Game" Section_0
   File "${BUILDENV_PKG_DIR}\libWildMidi.dll"
   IfFileExists "${BUILDENV_PKG_DIR}\SDL2.dll" 0 +1
   File /nonfatal "${BUILDENV_PKG_DIR}\SDL2.dll"
-  IfFileExists "${BUILDENV_PKG_DIR}\SDL2.dll" 0 +1
-  File /nonfatal "${BUILDENV_PKG_DIR}\SDL2.dll"
+  IfFileExists "${BUILDENV_PKG_DIR}\SDL.dll" 0 +1
+  File /nonfatal "${BUILDENV_PKG_DIR}\SDL.dll"
   SetOutPath $INSTDIR\conf
   File /r "${BUILDENV_PKG_DIR}\conf\"
   SetOutPath $INSTDIR\language
