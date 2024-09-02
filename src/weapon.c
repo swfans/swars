@@ -32,6 +32,7 @@
 #include "game_speed.h"
 #include "wadfile.h"
 #include "sound.h"
+#include "vehicle.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -687,6 +688,14 @@ void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_four
     }
 }
 
+int get_weapon_range(struct Thing *p_person)
+{
+    int ret;
+    asm volatile ("call ASM_get_weapon_range\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+}
+
 short current_weapon_range(struct Thing *p_person)
 {
 #if 0
@@ -910,6 +919,72 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
         }
     }
     p_person->PTarget = p_target;
+}
+
+short init_taser(struct Thing *p_person)
+{
+    short ret;
+    asm volatile ("call ASM_init_taser\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+}
+
+void init_rocket(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_rocket\n"
+        : : "a" (p_owner));
+}
+
+void init_razor_wire(struct Thing *p_person, ubyte flag)
+{
+    asm volatile ("call ASM_init_razor_wire\n"
+        : : "a" (p_person), "d" (flag));
+}
+
+void finalise_razor_wire(struct Thing *p_person)
+{
+    asm volatile ("call ASM_finalise_razor_wire\n"
+        : : "a" (p_person));
+}
+
+void update_razor_wire(struct Thing *p_person)
+{
+    asm volatile ("call ASM_update_razor_wire\n"
+        : : "a" (p_person));
+}
+
+void init_laser_beam(struct Thing *p_owner, ushort size, ubyte type)
+{
+    asm volatile ("call ASM_init_laser_beam\n"
+        : : "a" (p_owner), "d" (size), "b" (type));
+}
+
+void init_laser_guided(struct Thing *p_owner, ushort size)
+{
+    asm volatile ("call ASM_init_laser_guided\n"
+        : : "a" (p_owner), "d" (size));
+}
+
+void init_laser_elec(struct Thing *p_owner, ushort size)
+{
+    asm volatile ("call ASM_init_laser_elec\n"
+        : : "a" (p_owner), "d" (size));
+}
+
+void init_laser_q_sep(struct Thing *p_owner, ushort size)
+{
+    init_laser_guided(p_owner, size);
+    init_laser_guided(p_owner, size);
+    init_laser_guided(p_owner, size);
+    init_laser_guided(p_owner, size);
+    init_laser_guided(p_owner, size);
+    init_laser_beam(p_owner, size, 0x14u);
+}
+
+void init_fire_weapon(struct Thing *p_person)
+{
+    asm volatile ("call ASM_init_fire_weapon\n"
+        : : "a" (p_person));
 }
 
 int gun_out_anim(struct Thing *p_person, ubyte shoot_flag)
