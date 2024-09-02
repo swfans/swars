@@ -124,7 +124,6 @@ Section "Syndicate Wars Game" Section_0
   File "${BUILDENV_PKG_DIR}\libopenal-1.dll"
   File "${BUILDENV_PKG_DIR}\libpng16-16.dll"
   File "${BUILDENV_PKG_DIR}\zlib1.dll"
-  File "${BUILDENV_PKG_DIR}\SDL2.dll"
   File "${BUILDENV_PKG_DIR}\libogg-0.dll"
   File "${BUILDENV_PKG_DIR}\libvorbis-0.dll"
   File "${BUILDENV_PKG_DIR}\libvorbisfile-3.dll"
