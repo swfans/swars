@@ -56,9 +56,10 @@ jobs:
           apt install -y \
             gcc-multilib g++-multilib lib32z1 python3 \
             vorbis-tools cdparanoia \
-            libsdl1.2-dev:i386 libopenal-dev:i386 \
+            libsdl2-dev:i386 libopenal-dev:i386 \
             libvorbis-dev:i386 libvorbisfile3:i386 \
             libogg-dev:i386 \
+            libpng-dev:i386 \
             libwildmidi-dev:i386
 
           apt install -y \
@@ -131,7 +132,7 @@ jobs:
               mingw-w64-i686-toolchain
               mingw-w64-i686-autotools
               mingw-w64-i686-libpng
-              mingw-w64-i686-SDL
+              mingw-w64-i686-SDL2
               mingw-w64-i686-openal
               mingw-w64-i686-libvorbis
               mingw-w64-i686-libogg

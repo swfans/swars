@@ -175,7 +175,7 @@ TbResult LbScreenUpdateIcon(void)
     HICON hIcon;
     HINSTANCE lbhInstance;
     SDL_SysWMinfo wmInfo;
-    const char * rname;
+    const char *rname;
 
     SDL_VERSION(&wmInfo.version);
     if (SDL_GetWindowWMInfo(lbWindow, &wmInfo) != SDL_TRUE) {
@@ -183,7 +183,8 @@ TbResult LbScreenUpdateIcon(void)
         return Lb_FAIL;
     }
     if (wmInfo.subsystem != SDL_SYSWM_WINDOWS) {
-        LOGWARN("cannot set icon: unexpected window manager subsystem (%d)", (int)wmInfo.subsystem);
+        LOGWARN("cannot set icon: unexpected window manager subsystem (%d)",
+          (int)wmInfo.subsystem);
         return Lb_FAIL;
     }
 
@@ -205,9 +206,9 @@ TbResult LbScreenUpdateIcon(void)
 
 TbResult LbScreenUpdateIcon(void)
 {
-    Uint32          colorkey;
-    SDL_Surface     *image;
-    const char * rname;
+    Uint32 clkey;
+    SDL_Surface *image;
+    const char *rname;
 
     rname = userResourceMapping(lbIconIndex);
     if (rname == NULL) {
@@ -219,8 +220,8 @@ TbResult LbScreenUpdateIcon(void)
         LOGWARN("cannot set icon: image load failed: %s", SDL_GetError());
         return Lb_FAIL;
     }
-    colorkey = SDL_MapRGB(image->format, 255, 0, 255);
-    if (SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey) < 0) {
+    clkey = SDL_MapRGB(image->format, 255, 0, 255);
+    if (SDL_SetColorKey(image, SDL_TRUE, clkey) < 0) {
         LOGWARN("cannot set icon color key: %s", SDL_GetError());
         return Lb_FAIL;
     }
@@ -321,15 +322,67 @@ TbResult LbIScreenDrawSurfaceCreate(TbBool set_palette)
     return Lb_SUCCESS;
 }
 
+static void LbIGetScreenModeDimensions(long *mdWidth, long *mdHeight, TbScreenModeInfo *mdinfo)
+{
+    long Width, Height;
+    long minD;
+
+    Width = mdinfo->Width;
+    Height = mdinfo->Height;
+    minD = min(Width, Height);
+    if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
+        Width = lbMinScreenSurfaceDimension * Width / minD;
+        Height = lbMinScreenSurfaceDimension * Height / minD;
+    }
+    *mdWidth = Width;
+    *mdHeight = Height;
+}
+
+static void LbIGetSDLFlagsForMode(ulong *sdlFlags, ulong *sdlPxFormat, TbScreenModeInfo *mdinfo)
+{
+    ulong Flags, PxFormat;
+
+    Flags = 0;
+    switch (mdinfo->BitsPerPixel)
+    {
+    case 8:
+        PxFormat = SDL_PIXELFORMAT_INDEX8;
+        break;
+    case 15:
+        PxFormat = SDL_PIXELFORMAT_RGB555;
+        break;
+    case 16:
+        PxFormat = SDL_PIXELFORMAT_RGB565;
+        break;
+    case 24:
+        PxFormat = SDL_PIXELFORMAT_RGB24;
+        break;
+    case 32:
+        PxFormat = SDL_PIXELFORMAT_RGB888;
+        break;
+    default:
+        PxFormat = SDL_PIXELFORMAT_UNKNOWN;
+        break;
+    }
+    if (lbDoubleBufferingRequested) {
+        // SDL2 always does double buffering
+    }
+    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
+        Flags |= SDL_WINDOW_FULLSCREEN;
+    }
+    *sdlFlags = Flags;
+    *sdlPxFormat = PxFormat;
+}
+
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
-    SDL_Surface * prevScreenSurf;
+    SDL_Surface *prevScreenSurf;
     long hot_x, hot_y;
     long mdWidth, mdHeight;
     const struct TbSprite *msspr;
     TbScreenModeInfo *mdinfo;
-    unsigned long sdlFlags;
+    ulong sdlFlags, sdlPxFormat;
 
     msspr = NULL;
     LbExeReferenceNumber();
@@ -367,48 +420,87 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
             (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
         return Lb_FAIL;
     }
-    mdWidth = mdinfo->Width;
-    mdHeight = mdinfo->Height;
-    {
-        const long minD = min(mdWidth, mdHeight);
-        if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
-            mdWidth = lbScreenSurfaceDimensions.Width =
-                lbMinScreenSurfaceDimension * mdWidth / minD;
-            mdHeight = lbScreenSurfaceDimensions.Height =
-                lbMinScreenSurfaceDimension * mdHeight / minD;
-        }
-    }
-    LOGDBG("screen surface dimensions set to %ldx%ld", mdWidth, mdHeight);
+    LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
+    lbScreenSurfaceDimensions.Width = mdWidth;
+    lbScreenSurfaceDimensions.Height = mdHeight;
+    LOGDBG("screen surface dimensions set to %ldx%ld for mode %d (%s)",
+      mdWidth, mdHeight, (int)mode, mdinfo->Desc);
 
     // No need for video buffer paging when using SDL
     lbDisplay.VesaIsSetUp = false;
 
     // SDL video mode flags
-    sdlFlags = 0;
-    if (mdinfo->BitsPerPixel == lbEngineBPP) {
-        sdlFlags |= SDL_HWPALETTE;
-    }
-    if (lbDoubleBufferingRequested) {
-        // Only hardware surfaces can use double buffering
-        sdlFlags |= SDL_HWSURFACE;
-        sdlFlags |= SDL_DOUBLEBUF;
-    } else {
-        sdlFlags |= SDL_SWSURFACE;
-    }
-    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
-        sdlFlags |= SDL_FULLSCREEN;
+    LbIGetSDLFlagsForMode(&sdlFlags, &sdlPxFormat, mdinfo);
+
+    // Note:
+    // We set the window's fullscreen state (either Window, Fullscreen, or Fake Fullscreen)
+    // We set the DisplayMode for real fullscreen mode
+    // We set the window size, and border for a window
+    if (lbWindow != NULL)
+    {
+        ulong current_fullscreen_flags;
+        ulong new_fullscreen_flags;
+
+        // SDL_WINDOW_FULLSCREEN_DESKTOP set includes SDL_WINDOW_FULLSCREEN flag
+        current_fullscreen_flags = SDL_GetWindowFlags(lbWindow) & SDL_WINDOW_FULLSCREEN_DESKTOP;
+        new_fullscreen_flags = sdlFlags & SDL_WINDOW_FULLSCREEN_DESKTOP;
+        // If the new mode is a real fullscreen mode, then set the new mode
+        if (new_fullscreen_flags == SDL_WINDOW_FULLSCREEN)
+        {
+            // this works in a modern setting (we get WxH at 32 bpp), but
+            // unsure if this provides true 8-bit color mode (e.g. if we request 320x200x8 mode)
+            SDL_DisplayMode dm = {sdlPxFormat, mdWidth, mdHeight, 0, 0};
+            if (SDL_SetWindowDisplayMode(lbWindow, &dm) < 0) // set display mode for fullscreen
+            {
+                LOGERR("failed to set window displaymode for mode %d (%s): %s", (int)mode, mdinfo->Desc, SDL_GetError());
+                return Lb_FAIL;
+            }
+            // If we change to a fullscreen mode that is a higher res than the
+            // previous fullscreen mode (after having already changed to a
+            // normal window/fake fullscreen window at some point in the past),
+            // then the result is a small window in the top left of the screen,
+            // or potentially the buffer does not fill the whole mode's width/height.
+            // The above seems to be this SDL issue: https://github.com/libsdl-org/SDL/issues/3869
+            // said issue was supposedly fixed in https://github.com/libsdl-org/SDL/pull/4392
+            // but that patch does not seem to eliminate the issue seen here.
+            // The issue is fixed by running the following line (after SDL_SetWindowDisplayMode above):
+            SDL_SetWindowSize(lbWindow, mdinfo->Width, mdinfo->Height);
+        }
+        // If mode has changed between fullscreen/windowed/fake fullscreen, set the new mode
+        if (current_fullscreen_flags != new_fullscreen_flags)
+        {
+            if (SDL_SetWindowFullscreen(lbWindow, new_fullscreen_flags) < 0)
+            {
+                LOGERR("failed to set window fullscreen for mode %d (%s): %s", (int)mode, mdinfo->Desc, SDL_GetError());
+                return Lb_FAIL;
+            }
+        }
+        SDL_SetWindowBordered(lbWindow, (sdlFlags & SDL_WINDOW_BORDERLESS) ? SDL_FALSE : SDL_TRUE);
+        // if the new mode is windowed mode (including the special FILL ALL mode)
+        if (new_fullscreen_flags == 0)
+        {
+            SDL_SetWindowSize(lbWindow, mdWidth, mdHeight);
+        }
     }
 
-    // Set SDL video mode (also creates window).
-    lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdWidth, mdHeight,
-      mdinfo->BitsPerPixel, sdlFlags);
+    // Set SDL video mode and create window, if not created before
+    if (lbWindow == NULL) {
+        lbWindow = SDL_CreateWindow(lbDrawAreaTitle, SDL_WINDOWPOS_UNDEFINED,
+          SDL_WINDOWPOS_UNDEFINED, mdWidth, mdHeight, sdlFlags);
+    }
 
-    if (lbScreenSurface == NULL) {
-        LOGERR("failed to initialize mode %d: %s", (int)mode, SDL_GetError());
+    if (lbWindow == NULL) {
+        LOGERR("failed to create window for mode %d: %s", (int)mode, SDL_GetError());
         return Lb_FAIL;
     }
 
-    SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
+    lbScreenSurface = lbDrawSurface = SDL_GetWindowSurface(lbWindow);
+
+    if (lbScreenSurface == NULL) {
+        LOGERR("failed to get window surface for mode %d: %s", (int)mode, SDL_GetError());
+        return Lb_FAIL;
+    }
+
     LbScreenUpdateIcon();
 
     // The graphics screen size is required for DrawSurface creation
@@ -419,7 +511,12 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // that is if BPP or dimensions do not match,
     // or if we need it due to no WScreen control
 #if defined(BFLIB_WSCREEN_CONTROL)
+    // While we use mdinfo->BitsPerPixel to set sdlPxFormat, the value is not
+    // always used (not in fullscreen and not when first creating the window);
+    // To make sure we really have the BPP requested, we need to also compare
+    // lbScreenSurface->format for current BPP.
     if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
+        (to_SDLSurf(lbScreenSurface)->format->BitsPerPixel != mdinfo->BitsPerPixel) ||
         (mdWidth != width) || (mdHeight != height))
 #endif
     {
@@ -645,45 +742,237 @@ ulong LbScreenSetWScreenInVideo(ulong flag)
 TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 {
     TbScreenModeInfo *mdinfo;
-    ulong sdlFlags;
-    int closestBPP;
+    ulong sdlFlags, sdlPxFormat;
+    long mdWidth, mdHeight;
+    TbBool firstSurfaceOk, secondSurfaceOk;
+    short display_id;
+    const char *reason = NULL;
 
     mdinfo = LbScreenGetModeInfo(mode);
-    sdlFlags = 0;
-    if (mdinfo->BitsPerPixel == lbEngineBPP) {
-        sdlFlags |= SDL_HWPALETTE;
-    }
-    if (lbDoubleBufferingRequested) {
-        sdlFlags |= SDL_HWSURFACE;
-        sdlFlags |= SDL_DOUBLEBUF;
-    } else {
-        sdlFlags |= SDL_SWSURFACE;
-    }
-    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
-        sdlFlags |= SDL_FULLSCREEN;
-    }
+    // SDL video mode flags
+    LbIGetSDLFlagsForMode(&sdlFlags, &sdlPxFormat, mdinfo);
+    // SDL screen size
+    LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
+
+    // There is currently no multi-display support - get the one where window is
+    if (lbWindow != NULL)
+        display_id = SDL_GetWindowDisplayIndex(lbWindow);
+    else
+        display_id = 0;
+
+    if (display_id < 0)
+        display_id = 0;
+
+    secondSurfaceOk = true;
+#if defined(BFLIB_WSCREEN_CONTROL)
+    if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
+        (mdWidth != mdinfo->Width) || (mdHeight != mdinfo->Height))
+#endif
     {
-        const long minD = min(mdinfo->Height, mdinfo->Width);
-        if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
-            TbBool was_second_surface_ok = false;
-            // FIXME: a second surface will be required; check?
-            SDL_Surface * draw_surface =
-                SDL_CreateRGBSurface(SDL_SWSURFACE,
-                    lbMinScreenSurfaceDimension * mdinfo->Width / minD,
-                    lbMinScreenSurfaceDimension * mdinfo->Height / minD,
-                    lbEngineBPP, 0, 0, 0, 0);
-            was_second_surface_ok = draw_surface != NULL;
-            SDL_FreeSurface(draw_surface);
-            return was_second_surface_ok;
+        SDL_Surface *draw_surface;
+#if !defined(BFLIB_WSCREEN_CONTROL)
+        // If app has WScreen control, then we want to try create the surface
+        // around the WScreen buffer comming from the app
+        if (lbDisplay.WScreen != NULL)
+        {
+            draw_surface = SDL_CreateRGBSurfaceFrom(lbDisplay.WScreen,
+              mdinfo->Width, mdinfo->Height, lbEngineBPP, mdinfo->Width, 0, 0, 0, 0);
+            if (draw_surface == NULL)
+                reason = "cannot convert wscreen into second surface";
         }
+        else
+#endif
+        {
+            draw_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+              mdinfo->Width, mdinfo->Height, lbEngineBPP, 0, 0, 0, 0);
+            if (draw_surface == NULL)
+                reason = "cannot make standalone second surface";
+        }
+
+        secondSurfaceOk = (draw_surface != NULL);
+        SDL_FreeSurface(draw_surface);
     }
 
-    closestBPP = SDL_VideoModeOK(mdinfo->Width, mdinfo->Height,
-      mdinfo->BitsPerPixel, sdlFlags);
+    if (sdlFlags & SDL_WINDOW_FULLSCREEN)
+    {
+        // See if the desired fullscreen mode is a valid mode for the current display
+        SDL_DisplayMode desired = {sdlPxFormat, mdWidth, mdHeight, 0, 0};
+        SDL_DisplayMode closest = desired;
 
-    // Even if different colour depth is returned, as long as the value is
-    // non-zero, SDL can simulate any bpp with additional internal surface
-    return (closestBPP != 0);
+        firstSurfaceOk = true;
+        if (SDL_GetClosestDisplayMode(display_id, &desired, &closest) == NULL)
+        {
+            reason = "no closest hw match";
+            firstSurfaceOk = false; // all available fullscreen modes are too small for the desired mode to fit
+        }
+        if ((desired.w == 640) && ((desired.h == 400) || (desired.h == 480)) &&
+          ((desired.format == SDL_PIXELFORMAT_INDEX8) || (desired.format == SDL_PIXELFORMAT_RGB24)))
+        {
+            // The 640x400 and 640x480 must always be available, even if SDL will need to cheat to achieve that
+        }
+        else if ((closest.w != desired.w) || ((closest.h != desired.h) && (desired.h != 400)))
+        {
+            reason = "no exact resolution match";
+            firstSurfaceOk = false; // fullscreen mode with desired WxH is not available (but a "close" match is)
+        }
+        // not comparing closest.format - we have small chances of getting exact format match to HW, and
+        // the format can be simulated by SDL anyway
+    }
+    else
+    {
+        // See if the desired windowed mode is a valid mode for the current display
+        SDL_DisplayMode desired = {sdlPxFormat, mdWidth, mdHeight, 0, 0};
+        SDL_DisplayMode desktop = desired;
+
+        firstSurfaceOk = true;
+        if (SDL_GetDesktopDisplayMode(display_id, &desktop) != 0)
+        {
+            reason = "cannot query display";
+            firstSurfaceOk = false; // cannot query desktop mode for the display
+        }
+        if ((desktop.w < desired.w) || (desktop.h < desired.h))
+        {
+            reason = "display too small";
+            firstSurfaceOk = false; // desktop is too small to fit the whole game window
+        }
+        // not comparing desktop.format - SDL will simulate the one we want regardless of current desktop
+    }
+
+    if (!firstSurfaceOk || !secondSurfaceOk)
+        LOGDBG("Mode %s unavailable - %s", mdinfo->Desc, reason);
+
+    return firstSurfaceOk && secondSurfaceOk;
+}
+
+static void LbI_SDL_BlitScaled_to8bpp(long src_w, long src_h, ubyte *src_buf,
+  long dst_w, long dst_h, ubyte *dst_buf)
+{
+    // denominator of a (source) pixel's fraction part
+    const long denom_i = 2 * dst_h;
+    const long denom_j = 2 * dst_w;
+
+    // number of whole units in each (source) step
+    const long dsrc_i = 2 * src_h / denom_i;
+    const long dsrc_j = 2 * src_w / denom_j;
+
+    // numerator of fractional part of each (source) step
+    const long dsrc_num_i = (2 * src_h) - dsrc_i * denom_i;
+    const long dsrc_num_j = (2 * src_w) - dsrc_j * denom_j;
+
+    // number of whole units in a (source) half-step
+    const long halfdsrc_i = src_h / denom_i;
+    const long halfdsrc_j = src_w / denom_j;
+
+    long dst_offset = 0;
+    long src_offset = halfdsrc_i * src_w + halfdsrc_j;
+
+    // start at fractional part of each (source) half-step
+    long src_num_i =  src_h - halfdsrc_i * denom_i;
+    long src_num_j = src_w - halfdsrc_j * denom_j;
+
+    for (long i = 0; i != dst_h; ++i) {
+        if (src_num_i > denom_i) {
+            src_num_i -= denom_i;
+            src_offset += src_w;
+        }
+        for (long j = 0; j != dst_w; ++j) {
+            if (src_num_j > denom_j) {
+                src_num_j -= denom_j;
+                ++src_offset;
+            }
+            dst_buf[dst_offset] = src_buf[src_offset];
+            dst_offset++;
+            src_offset += dsrc_j;
+            src_num_j += dsrc_num_j;
+        }
+        src_offset += (dsrc_i - 1) * src_w;
+        src_num_i += dsrc_num_i;
+    }
+}
+
+static void LbI_SDL_BlitScaled_totcbpp(long src_w, long src_h, ubyte *src_buf,
+  SDL_Color *pal, long rshift, long gshift, long bshift,
+  long dst_w, long dst_h, long dst_bpp, ubyte *dst_buf)
+{
+    // denominator of a (source) pixel's fraction part
+    const long denom_i = 2 * dst_h;
+    const long denom_j = 2 * dst_w;
+
+    // number of whole units in each (source) step
+    const long dsrc_i = 2 * src_h / denom_i;
+    const long dsrc_j = 2 * src_w / denom_j;
+
+    // numerator of fractional part of each (source) step
+    const long dsrc_num_i = (2 * src_h) - dsrc_i * denom_i;
+    const long dsrc_num_j = (2 * src_w) - dsrc_j * denom_j;
+
+    // number of whole units in a (source) half-step
+    const long halfdsrc_i = src_h / denom_i;
+    const long halfdsrc_j = src_w / denom_j;
+
+    long dst_offset = 0;
+    long src_offset = halfdsrc_i * src_w + halfdsrc_j;
+
+    // start at fractional part of each (source) half-step
+    long src_num_i =  src_h - halfdsrc_i * denom_i;
+    long src_num_j = src_w - halfdsrc_j * denom_j;
+
+    for (long i = 0; i != dst_h; ++i) {
+        if (src_num_i > denom_i) {
+            src_num_i -= denom_i;
+            src_offset += src_w;
+        }
+        for (long j = 0; j != dst_w; ++j) {
+            SDL_Color c;
+            if (src_num_j > denom_j) {
+                src_num_j -= denom_j;
+                ++src_offset;
+            }
+            c = pal[src_buf[src_offset]];
+            *((long *)(dst_buf+dst_offset)) = (c.r << rshift) + (c.g << gshift) + (c.b << bshift);
+            dst_offset += dst_bpp;
+            src_offset += dsrc_j;
+            src_num_j += dsrc_num_j;
+        }
+        src_offset += (dsrc_i - 1) * src_w;
+        src_num_i += dsrc_num_i;
+    }
+}
+
+/** @internal
+ * Provides expanded SDL_BlitScaled() functionality with support of more format conversions.
+ */
+int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst)
+{
+    long dst_bpp;
+
+    // shortcircuit for 1:1
+    if (src->w == dst->w && src->h == dst->h)
+        return SDL_BlitSurface(src, NULL, dst, NULL);
+
+    // the standard DSL2 blitting is better, for formats it actually supports
+    if (src->format->BytesPerPixel != 1)
+        return SDL_BlitScaled(src, NULL, dst, NULL);
+
+    if (SDL_MUSTLOCK(src) && SDL_LockSurface(src) < 0)
+        LOGERR("cannot lock source surface: %s", SDL_GetError());
+
+    if (SDL_MUSTLOCK(dst) && SDL_LockSurface(dst) < 0)
+        LOGERR("cannot lock destination Surface: %s", SDL_GetError());
+
+    dst_bpp = dst->format->BytesPerPixel;
+    if (dst_bpp == 1)
+        LbI_SDL_BlitScaled_to8bpp(src->w, src->h, src->pixels,
+          dst->w, dst->h, dst->pixels);
+    else
+        LbI_SDL_BlitScaled_totcbpp(src->w, src->h, src->pixels,
+          src->format->palette->colors, dst->format->Rshift, dst->format->Gshift, dst->format->Bshift,
+          dst->w, dst->h, dst_bpp, dst->pixels);
+
+    if (SDL_MUSTLOCK(dst)) SDL_UnlockSurface(dst);
+    if (SDL_MUSTLOCK(src)) SDL_UnlockSurface(src);
+
+    return 0;
 }
 
 /** Check if the lbDrawSurface is linked to WScreen buffer; fix if neccessary.
@@ -743,8 +1032,8 @@ TbResult LbScreenSwap(void)
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
     {
-        blresult = SDL_BlitScaled(to_SDLSurf(lbDrawSurface), NULL,
-          to_SDLSurf(lbScreenSurface), NULL);
+        blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
+          to_SDLSurf(lbScreenSurface));
         if (blresult < 0) {
             LOGERR("blit failed: %s", SDL_GetError());
             ret = Lb_FAIL;
@@ -779,8 +1068,8 @@ TbResult LbScreenSwapClear(TbPixel colour)
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
     {
-        blresult = SDL_BlitScaled(to_SDLSurf(lbDrawSurface), NULL,
-          to_SDLSurf(lbScreenSurface), NULL);
+        blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
+          to_SDLSurf(lbScreenSurface));
         if (blresult < 0) {
             LOGERR("blit failed: %s", SDL_GetError());
             ret = Lb_FAIL;
@@ -833,8 +1122,8 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
     {
         SDL_Rect clipRect = {destX, destY, width, height};
         SDL_SetClipRect(to_SDLSurf(lbScreenSurface), &clipRect);
-        blresult = SDL_BlitScaled(to_SDLSurf(lbDrawSurface), NULL,
-          to_SDLSurf(lbScreenSurface), NULL);
+        blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
+          to_SDLSurf(lbScreenSurface));
         SDL_SetClipRect(to_SDLSurf(lbScreenSurface), NULL);
         if (blresult < 0) {
             LOGERR("blit failed: %s", SDL_GetError());

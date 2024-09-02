@@ -52,7 +52,6 @@ TbResult LbPaletteSet(const ubyte *palette)
     unsigned char * bufColors;
     SDL_Color * destColors;
     const unsigned char * srcColors;
-    TbScreenModeInfo *mdinfo;
     unsigned long i;
     TbResult ret;
 
@@ -77,8 +76,10 @@ TbResult LbPaletteSet(const ubyte *palette)
         srcColors += 3;
         bufColors += 3;
     }
-    mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
-    if (mdinfo->BitsPerPixel <= 8) {
+    // Check real surface forat rather than mode format - the SDL is allowed
+    // to loosly interpret the requested mode, so the screen surface data are
+    // the only believable source of screen properties
+    if (to_SDLSurf(lbScreenSurface)->format->BitsPerPixel <= 8) {
         if (SDL_SetPaletteColors(to_SDLSurf(lbScreenSurface)->format->palette,
             lbPaletteColors, 0, PALETTE_8b_COLORS) < 0) {
             LOGERR("SetPalette to ScreenSurface failed: %s", SDL_GetError());

@@ -170,7 +170,7 @@ TbResult LbScreenUpdateIcon(void)
     HICON hIcon;
     HINSTANCE lbhInstance;
     SDL_SysWMinfo wmInfo;
-    const char * rname;
+    const char *rname;
 
     SDL_VERSION(&wmInfo.version);
     if (SDL_GetWMInfo(&wmInfo) < 0) {
@@ -196,9 +196,9 @@ TbResult LbScreenUpdateIcon(void)
 
 TbResult LbScreenUpdateIcon(void)
 {
-    Uint32          colorkey;
-    SDL_Surface     *image;
-    const char * rname;
+    Uint32 clkey;
+    SDL_Surface *image;
+    const char *rname;
 
     rname = userResourceMapping(lbIconIndex);
     if (rname != NULL) {
@@ -210,8 +210,8 @@ TbResult LbScreenUpdateIcon(void)
         LOGWARN("cannot set icon: image load failed: %s", SDL_GetError());
         return Lb_FAIL;
     }
-    colorkey = SDL_MapRGB(image->format, 255, 0, 255);
-    SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey);
+    clkey = SDL_MapRGB(image->format, 255, 0, 255);
+    SDL_SetColorKey(image, SDL_SRCCOLORKEY, clkey);
     SDL_WM_SetIcon(image, NULL);
 
     return Lb_SUCCESS;
@@ -308,10 +308,26 @@ TbResult LbIScreenDrawSurfaceCreate(TbBool set_palette)
     return Lb_SUCCESS;
 }
 
+static void LbIGetScreenModeDimensions(long *mdWidth, long *mdHeight, TbScreenModeInfo *mdinfo)
+{
+    long Width, Height;
+    long minD;
+
+    Width = mdinfo->Width;
+    Height = mdinfo->Height;
+    minD = min(Width, Height);
+    if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
+        Width = lbMinScreenSurfaceDimension * Width / minD;
+        Height = lbMinScreenSurfaceDimension * Height / minD;
+    }
+    *mdWidth = Width;
+    *mdHeight = Height;
+}
+
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
-    SDL_Surface * prevScreenSurf;
+    SDL_Surface *prevScreenSurf;
     long hot_x, hot_y;
     long mdWidth, mdHeight;
     const struct TbSprite *msspr;
@@ -354,17 +370,9 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
             (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
         return Lb_FAIL;
     }
-    mdWidth = mdinfo->Width;
-    mdHeight = mdinfo->Height;
-    {
-        const long minD = min(mdWidth, mdHeight);
-        if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
-            mdWidth = lbScreenSurfaceDimensions.Width =
-                lbMinScreenSurfaceDimension * mdWidth / minD;
-            mdHeight = lbScreenSurfaceDimensions.Height =
-                lbMinScreenSurfaceDimension * mdHeight / minD;
-        }
-    }
+    LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
+    lbScreenSurfaceDimensions.Width = mdWidth;
+    lbScreenSurfaceDimensions.Height = mdHeight;
     LOGDBG("screen surface dimensions set to %ldx%ld", mdWidth, mdHeight);
 
     // No need for video buffer paging when using SDL
@@ -632,7 +640,9 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 {
     TbScreenModeInfo *mdinfo;
     ulong sdlFlags;
+    long mdWidth, mdHeight;
     int closestBPP;
+    TbBool firstSurfaceOk, secondSurfaceOk;
 
     mdinfo = LbScreenGetModeInfo(mode);
     sdlFlags = 0;
@@ -648,20 +658,18 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
     if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
         sdlFlags |= SDL_FULLSCREEN;
     }
+    // SDL screen size
+    LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
+    secondSurfaceOk = true;
+#if defined(BFLIB_WSCREEN_CONTROL)
+    if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
+        (mdWidth != mdinfo->Width) || (mdHeight != mdinfo->Height))
+#endif
     {
-        const long minD = min(mdinfo->Height, mdinfo->Width);
-        if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
-            TbBool was_second_surface_ok = false;
-            // FIXME: a second surface will be required; check?
-            SDL_Surface * draw_surface =
-                SDL_CreateRGBSurface(SDL_SWSURFACE,
-                    lbMinScreenSurfaceDimension * mdinfo->Width / minD,
-                    lbMinScreenSurfaceDimension * mdinfo->Height / minD,
-                    lbEngineBPP, 0, 0, 0, 0);
-            was_second_surface_ok = draw_surface != NULL;
-            SDL_FreeSurface(draw_surface);
-            return was_second_surface_ok;
-        }
+        SDL_Surface *draw_surface =
+            SDL_CreateRGBSurface(SDL_SWSURFACE, mdWidth, mdHeight, lbEngineBPP, 0, 0, 0, 0);
+        secondSurfaceOk = (draw_surface != NULL);
+        SDL_FreeSurface(draw_surface);
     }
 
     closestBPP = SDL_VideoModeOK(mdinfo->Width, mdinfo->Height,
@@ -669,32 +677,34 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 
     // Even if different colour depth is returned, as long as the value is
     // non-zero, SDL can simulate any bpp with additional internal surface
-    return (closestBPP != 0);
+    firstSurfaceOk = (closestBPP != 0);
+
+    return firstSurfaceOk && secondSurfaceOk;
 }
 
 static void LbI_SDL_BlitScaled_to8bpp(long src_w, long src_h, ubyte *src_buf,
   long dst_w, long dst_h, ubyte *dst_buf)
 {
-    /* denominator of a (source) pixel's fraction part */
+    // denominator of a (source) pixel's fraction part
     const long denom_i = 2 * dst_h;
     const long denom_j = 2 * dst_w;
 
-    /* number of whole units in each (source) step */
+    // number of whole units in each (source) step
     const long dsrc_i = 2 * src_h / denom_i;
     const long dsrc_j = 2 * src_w / denom_j;
 
-    /* numerator of fractional part of each (source) step */
+    // numerator of fractional part of each (source) step
     const long dsrc_num_i = (2 * src_h) - dsrc_i * denom_i;
     const long dsrc_num_j = (2 * src_w) - dsrc_j * denom_j;
 
-    /* number of whole units in a (source) half-step */
+    // number of whole units in a (source) half-step
     const long halfdsrc_i = src_h / denom_i;
     const long halfdsrc_j = src_w / denom_j;
 
     long dst_offset = 0;
     long src_offset = halfdsrc_i * src_w + halfdsrc_j;
 
-    /* start at fractional part of each (source) half-step */
+    // start at fractional part of each (source) half-step
     long src_num_i =  src_h - halfdsrc_i * denom_i;
     long src_num_j = src_w - halfdsrc_j * denom_j;
 
@@ -722,26 +732,26 @@ static void LbI_SDL_BlitScaled_totcbpp(long src_w, long src_h, ubyte *src_buf,
   SDL_Color *pal, long rshift, long gshift, long bshift,
   long dst_w, long dst_h, long dst_bpp, ubyte *dst_buf)
 {
-    /* denominator of a (source) pixel's fraction part */
+    // denominator of a (source) pixel's fraction part
     const long denom_i = 2 * dst_h;
     const long denom_j = 2 * dst_w;
 
-    /* number of whole units in each (source) step */
+    // number of whole units in each (source) step
     const long dsrc_i = 2 * src_h / denom_i;
     const long dsrc_j = 2 * src_w / denom_j;
 
-    /* numerator of fractional part of each (source) step */
+    // numerator of fractional part of each (source) step
     const long dsrc_num_i = (2 * src_h) - dsrc_i * denom_i;
     const long dsrc_num_j = (2 * src_w) - dsrc_j * denom_j;
 
-    /* number of whole units in a (source) half-step */
+    // number of whole units in a (source) half-step
     const long halfdsrc_i = src_h / denom_i;
     const long halfdsrc_j = src_w / denom_j;
 
     long dst_offset = 0;
     long src_offset = halfdsrc_i * src_w + halfdsrc_j;
 
-    /* start at fractional part of each (source) half-step */
+    // start at fractional part of each (source) half-step
     long src_num_i =  src_h - halfdsrc_i * denom_i;
     long src_num_j = src_w - halfdsrc_j * denom_j;
 
@@ -774,7 +784,7 @@ int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst)
 {
     long dst_bpp;
 
-    /* shortcircuit for 1:1 */
+    // shortcircuit for 1:1
     if (src->w == dst->w && src->h == dst->h)
         return SDL_BlitSurface(src, NULL, dst, NULL);
 
@@ -785,7 +795,7 @@ int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst)
         LOGERR("cannot lock source surface: %s", SDL_GetError());
 
     if (SDL_MUSTLOCK(dst) && SDL_LockSurface(dst) < 0)
-            LOGERR("cannot lock destination Surface: %s", SDL_GetError());
+        LOGERR("cannot lock destination surface: %s", SDL_GetError());
 
     dst_bpp = dst->format->BytesPerPixel;
     if (dst_bpp == 1)

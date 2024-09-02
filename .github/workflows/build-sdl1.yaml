@@ -1,0 +1,248 @@
+name: Build-SDL1
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        required: true
+        type: string
+
+jobs:
+  ubuntu-gcc:
+    runs-on: ubuntu-20.04
+    name: "Linux Ubuntu SDL1"
+    container:
+      image: ubuntu:20.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      TZ: Etc/UTC
+    steps:
+      - name: Install GIT
+        run: |
+          # install GIT, as without it checkout would use REST API
+          apt update
+          apt install -y \
+            git
+
+      - name: Checkout code at latest head
+        if: "${{ inputs.refToBuild == '' }}"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Checkout code at requested ref
+        if: "${{ inputs.refToBuild != '' }}"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.refToBuild }}
+          fetch-depth: 0
+
+      - name: Set ownership
+        run: |
+          # this is to fix GIT not liking owner of the checkout dir
+          chown -R $(id -u):$(id -g) $PWD
+
+      - name: Install dependencies
+        run: |
+          # add i386 dependencies
+          dpkg --add-architecture i386
+
+          apt update
+          apt install -y \
+            gcc-multilib g++-multilib lib32z1 python3 \
+            vorbis-tools cdparanoia \
+            libsdl1.2-dev:i386 libopenal-dev:i386 \
+            libvorbis-dev:i386 libvorbisfile3:i386 \
+            libogg-dev:i386 \
+            libwildmidi-dev:i386
+
+          apt install -y \
+            build-essential autoconf libtool make
+
+          apt install -y \
+            python3-polib
+
+      - name: Autoreconf
+        run: autoreconf -ivf
+
+      - name: Configure
+        env:
+          CFLAGS: "-m32"
+          CXXFLAGS: "-m32"
+          LDFLAGS: "-m32"
+          PKG_CONFIG_PATH: "/usr/lib/i386-linux-gnu/pkgconfig"
+        run: |
+          mkdir -p release; cd release
+          ../configure --prefix="/"
+
+      - name: Build executable
+        run: |
+          cd release
+          make V=1
+
+      - name: Copy for package
+        run: |
+          cd release
+          # Get version marking from C header
+          PKG_VERSION=$(sed -n 's/^#define[ ]\+PACKAGE_VERSION "\([^"]\+\)"$/\1/p' src/config.h | head -n 1 | tr '.' '_')
+          make V=1 DESTDIR=$PWD/pkg install
+          echo "PKG_NAME=swars-$PKG_VERSION-ubuntu-sdl1-patch" >> $GITHUB_ENV
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PKG_NAME }}
+          path: release/pkg/**
+
+  windows-msys2:
+    name: "Windows MSYS2 SDL1"
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout code at latest head
+        if: "${{ inputs.refToBuild == '' }}"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Checkout code at requested ref
+        if: "${{ inputs.refToBuild != '' }}"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.refToBuild }}
+          fetch-depth: 0
+
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW32
+          update: true
+          install: >-
+              git
+              unzip
+              mingw-w64-i686-python-pip
+              mingw-w64-i686-toolchain
+              mingw-w64-i686-autotools
+              mingw-w64-i686-libpng
+              mingw-w64-i686-SDL
+              mingw-w64-i686-openal
+              mingw-w64-i686-libvorbis
+              mingw-w64-i686-libogg
+
+      - name: Install python modules
+        run: |
+          python -m pip install polib
+
+      - name: Install WildMIDI
+        run: |
+          wget https://github.com/Mindwerks/wildmidi/releases/download/wildmidi-0.4.5/wildmidi-0.4.5-win32.zip
+          unzip wildmidi-0.4.5-win32.zip
+          cp wildmidi-0.4.5-win32/*.h /mingw32/include/
+          cp wildmidi-0.4.5-win32/*.a /mingw32/lib/
+          cp wildmidi-0.4.5-win32/*.dll /mingw32/bin/
+
+      - name: Autoreconf
+        run: autoreconf -ivf
+
+      - name: Configure
+        env:
+          CFLAGS: "-m32"
+          CXXFLAGS: "-m32"
+          LDFLAGS: "-m32"
+        run: |
+          mkdir -p release; cd release
+          ../configure --prefix="/"
+
+      - name: Build executable
+        run: |
+          cd release
+          make V=1
+
+      - name: Copy for package
+        run: |
+          cd release
+          # Get version marking from C header
+          PKG_VERSION=$(sed -n 's/^#define[ ]\+PACKAGE_VERSION "\([^"]\+\)"$/\1/p' src/config.h | head -n 1 | tr '.' '_')
+          make V=1 DESTDIR=$PWD/pkg install
+          echo "PKG_NAME=swars-$PKG_VERSION-win32-sdl1-patch" >> $GITHUB_ENV
+          echo "INSTLR_NAME=swars-$PKG_VERSION-win32-sdl1-setup" >> $GITHUB_ENV
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PKG_NAME }}
+          path: release/pkg/**
+
+      - name: Prepare for downloading from MEGA - wget
+        env:
+          DL_WORKSPACE: ${{ runner.workspace }}\dl
+        working-directory: ${{ runner.workspace }}
+        run: |
+          mkdir -p "${DL_WORKSPACE}"
+          wget -O "${DL_WORKSPACE}\\MEGAcmdSetup.exe" "https://mega.nz/MEGAcmdSetup.exe"
+
+      - name: Prepare for downloading from MEGA - install
+        working-directory: ${{ runner.workspace }}
+        shell: cmd
+        run: |
+          "${{ runner.workspace }}\dl\MEGAcmdSetup.exe" /S
+          echo %LOCALAPPDATA%\MEGAcmd>> %GITHUB_PATH%
+
+      - name: Download required NSIS plugins - wget
+        env:
+          DL_WORKSPACE: ${{ runner.workspace }}\dl
+        working-directory: ${{ runner.workspace }}
+        run: |
+          mkdir -p "${DL_WORKSPACE}"
+          wget -O "${DL_WORKSPACE}\\Inetc.zip" "https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip"
+          wget -O "${DL_WORKSPACE}\\NSISunzU.zip" "https://nsis.sourceforge.io/mediawiki/images/5/5a/NSISunzU.zip"
+          wget -O "${DL_WORKSPACE}\\Md5dll.zip" "https://nsis.sourceforge.io/mediawiki/images/d/d7/Md5dll.zip"
+
+      - name: Download installer utils
+        # Instead of the usual actions/download-artifact, we are downloading from Mega
+        env:
+          DL_WORKSPACE: ${{ github.workspace }}
+        # We are calling batch script here, so cmd is needed as shell
+        shell: cmd
+        run: |
+          mega-get "https://mega.nz/file/YYVGzByB#MmtXTAsuvFQ6TW6T62NxU2YCEHUVp_I_Z30miqjXtv4" "${{ env.DL_WORKSPACE }}"
+
+      - name: NSIS plugins unpack
+        env:
+          DL_WORKSPACE: ${{ runner.workspace }}\dl
+        run: |
+          mkdir -p release/nsis-plugins/x86-unicode
+          mkdir -p release/nsis-plugins/x86-ansi
+          cd release
+          unzip -uj -q "${DL_WORKSPACE}\\Inetc.zip" "Plugins/x86-unicode/INetC.dll" -d nsis-plugins/x86-unicode
+          unzip -uj -q "${DL_WORKSPACE}\\NSISunzU.zip" "NSISunzU/Plugin unicode/nsisunz.dll" -d nsis-plugins/x86-unicode
+          unzip -uj -q "${DL_WORKSPACE}\\Md5dll.zip" "md5dll/UNICODE/md5dll.dll" -d nsis-plugins/x86-unicode
+          unzip -uj -q "${DL_WORKSPACE}\\Inetc.zip" "Plugins/x86-ansi/INetC.dll" -d nsis-plugins/x86-ansi
+          unzip -uj -q "${DL_WORKSPACE}\\Md5dll.zip" "md5dll/ANSI/md5dll.dll" -d nsis-plugins/x86-ansi
+
+      - name: Installer utils unpack
+        run: |
+          mkdir -p release/util-nsis
+          cd release
+          unzip -q ../util-nsis.zip -d util-nsis
+          rm ../util-nsis.zip
+
+      - name: Build installer
+        uses: joncloud/makensis-action@v4
+        with:
+          additional-plugin-paths: "release/nsis-plugins"
+          script-file: "release/res/swars-setup.nsi"
+          arguments: "-V3"
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.INSTLR_NAME }}
+          path: release/res/swars-setup.exe

@@ -1054,4 +1054,23 @@ short check_for_other_people(int x, int y, int z, struct Thing *p_person)
     return ret;
 }
 
+void check_persons_target(struct Thing *p_person)
+{
+    asm volatile ("call ASM_check_persons_target\n"
+        : : "a" (p_person));
+}
+
+void check_persons_target2(struct Thing *p_person)
+{
+    asm volatile ("call ASM_check_persons_target2\n"
+        : : "a" (p_person));
+}
+
+void process_stamina(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_stamina\n"
+        : : "a" (p_person));
+}
+
+
 /******************************************************************************/

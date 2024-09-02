@@ -43,7 +43,7 @@ void LbScreenSurfaceInit(struct SSurface *surf)
 
 TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h)
 {
-    const SDL_PixelFormat * format;
+    const SDL_PixelFormat *format;
 
     if (lbDrawSurface == NULL) {
         LOGERR("DrawSurface pixel format must be known to create further surfaces.");
@@ -122,7 +122,9 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
             clkey = SDL_MapRGB(to_SDLSurf(surf->surf_data)->format, 0x0, 0xff, 0xff);
         }
         // enable color key
-        SDL_SetColorKey(to_SDLSurf(surf->surf_data), SDL_TRUE, clkey);
+        if (SDL_SetColorKey(to_SDLSurf(surf->surf_data), SDL_TRUE, clkey) < 0) {
+            LOGWARN("cannot set DrawSurface color key: %s", SDL_GetError());
+        }
         if (SDL_HasColorKey(to_SDLSurf(surf->surf_data)) == -1)
             LOGWARN("DrawSurface refused to enable color key; no transparency.");
     }
@@ -141,7 +143,7 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
     // SDL has a per-surface palette for 8 bit surfaces. But the engine assumes palette
     // to be required only for screen surface. To make off-screen surface working,
     // we must manually set the palette for it. So temporarily change palette.
-    SDL_Palette * paletteBackup = NULL;
+    SDL_Palette *paletteBackup = NULL;
     if (to_SDLSurf(surf->surf_data)->format->BitsPerPixel == 8) {
         paletteBackup = to_SDLSurf(surf->surf_data)->format->palette;
         to_SDLSurf(surf->surf_data)->format->palette = to_SDLSurf(lbDrawSurface)->format->palette;
