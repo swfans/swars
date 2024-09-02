@@ -128,9 +128,9 @@ Section "Syndicate Wars Game" Section_0
   File "${BUILDENV_PKG_DIR}\libvorbis-0.dll"
   File "${BUILDENV_PKG_DIR}\libvorbisfile-3.dll"
   File "${BUILDENV_PKG_DIR}\libWildMidi.dll"
-  IfFileExists "${BUILDENV_PKG_DIR}\SDL2.dll" 0 +2
+  IfFileExists "${BUILDENV_PKG_DIR}\SDL2.dll" 0 +1
   File "${BUILDENV_PKG_DIR}\SDL2.dll"
-  IfFileExists "${BUILDENV_PKG_DIR}\SDL.dll" 0 +2
+  IfFileExists "${BUILDENV_PKG_DIR}\SDL.dll" 0 +1
   File "${BUILDENV_PKG_DIR}\SDL.dll"
   SetOutPath $INSTDIR\conf
   File /r "${BUILDENV_PKG_DIR}\conf\"
