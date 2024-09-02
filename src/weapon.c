@@ -22,12 +22,16 @@
 #include "bfendian.h"
 #include "bffile.h"
 #include "bfini.h"
+#include "ssampply.h"
+
 #include "bigmap.h"
 #include "network.h"
 #include "thing.h"
 #include "player.h"
 #include "game.h"
+#include "game_speed.h"
 #include "wadfile.h"
+#include "sound.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -908,10 +912,54 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
     p_person->PTarget = p_target;
 }
 
+int gun_out_anim(struct Thing *p_person, ubyte shoot_flag)
+{
+    int ret;
+    asm volatile ("call ASM_gun_out_anim\n"
+        : "=r" (ret) : "a" (p_person), "d" (shoot_flag));
+    return ret;
+}
+
+ushort player_weapon_time(struct Thing *p_person)
+{
+    ushort ret;
+    asm volatile ("call ASM_player_weapon_time\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+}
+
+void process_vehicle_weapon(struct Thing *p_vehicle, struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_vehicle_weapon\n"
+        : : "a" (p_vehicle), "d" (p_person));
+}
+
+void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_mech_weapon\n"
+        : : "a" (p_vehicle), "d" (p_person));
+}
+
+short process_persuadertron(struct Thing *p_person, ubyte flag, ushort *energy_reqd)
+{
+    short ret;
+    asm volatile ("call ASM_process_persuadertron\n"
+        : "=r" (ret) : "a" (p_person), "d" (flag), "b" (energy_reqd));
+    return ret;
+}
+
+void get_soul(struct Thing *p_dead, struct Thing *p_person)
+{
+    asm volatile ("call ASM_get_soul\n"
+        : : "a" (p_dead), "d" (p_person));
+}
+
 void process_weapon(struct Thing *p_person)
 {
+#if 1
     asm volatile ("call ASM_process_weapon\n"
         : : "a" (p_person));
+#endif
 }
 
 /******************************************************************************/

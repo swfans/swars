@@ -188,6 +188,11 @@ TbBool person_carries_any_medikit(struct Thing *p_person);
 void set_person_stats_type(struct Thing *p_person, ushort type);
 void init_person_thing(struct Thing *p_person);
 void person_give_best_mods(struct Thing *p_person);
+short calc_person_speed(struct Thing *p_person);
+
+void check_persons_target(struct Thing *p_person);
+void check_persons_target2(struct Thing *p_person);
+void process_stamina(struct Thing *p_person);
 
 /** Switches AnimMode of a person without removing any shifts to current frame.
  */
