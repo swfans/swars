@@ -2182,7 +2182,7 @@ void build_laser11(struct Thing *p_thing)
     struct Thing *p_owntng;
     TbPixel colour;
 
-    if ((p_thing->Flag & 0x1000) != 0)
+    if ((p_thing->Flag & TngF_Unkn1000) != 0)
         colour = colour_lookup[4];
     else
         colour = colour_lookup[2];
@@ -2305,7 +2305,7 @@ void build_scale_effect(struct SimpleThing *p_sthing)
 
 void build_nuclear_bomb(struct SimpleThing *p_sthing)
 {
-    if (p_sthing->Radius <= 0 || ((p_sthing->Flag & 0x10000000) == 0))
+    if (p_sthing->Radius <= 0 || ((p_sthing->Flag & TngF_InVehicle) == 0))
         return;
 
     build_polygon_circle(
@@ -2345,7 +2345,7 @@ void build_vehicle(struct Thing *p_thing)
         check_mouse_overvehicle(p_thing, 4);
     if (p_thing->SubType == SubTT_VEH_MECH)
     {
-        if ((p_thing->Flag & 0x02) == 0)
+        if ((p_thing->Flag & TngF_Unkn0002) == 0)
             mech_unkn_func_03(p_thing);
         i = 0;
     }
@@ -2400,7 +2400,7 @@ void build_person(struct Thing *p_thing)
         frame = p_thing->Frame + nstart_ani[stframe_new] - nstart_ani[stframe_old];
         bri = p_thing->U.UPerson.Brightness;
     }
-    else if ((p_thing->Flag & 0x2000000) != 0)
+    else if ((p_thing->Flag & TngF_Unkn02000000) != 0)
     {
         return;
     }
@@ -4308,7 +4308,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
     if ((p_person->Flag2 & 0x1000000) != 0)
         delete_node(p_person);
     else
-        p_person->Flag2 &= ~0x20000000;
+        p_person->Flag2 &= ~0x020000000;
 
     if ((p_person->Flag & TngF_Unkn0002) == 0)
     {
