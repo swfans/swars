@@ -3549,38 +3549,6 @@ void teleport_current_agent(PlayerInfo *p_locplayer)
     add_node_thing(dcthing);
 }
 
-void person_resurrect(struct Thing *p_person)
-{
-    p_person->Flag &= ~TngF_Unkn0002;
-    p_person->Flag &= ~TngF_Unkn02000000;
-    p_person->State = PerSt_WAIT;
-    p_person->Health = p_person->U.UPerson.MaxHealth * 3 / 4;
-    set_person_anim_mode(p_person, 1);
-}
-
-void person_set_helath_to_max_limit(struct Thing *p_person)
-{
-    p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
-    p_person->Health = 2 * p_person->U.UPerson.MaxHealth; // double health - fill red bar
-}
-
-void person_set_energy_to_max_limit(struct Thing *p_person)
-{
-    p_person->U.UPerson.MaxEnergy = 32000;
-    p_person->U.UPerson.Energy = p_person->U.UPerson.MaxEnergy;
-}
-
-/** Artificially increases persuasion power of a person to allow parsuade anyone.
- */
-void person_set_persuade_power__to_allow_all(struct Thing *p_person)
-{
-    short max_required_pers_power;
-
-    max_required_pers_power = 20;
-    p_person->U.UPerson.PersuadePower = max(p_person->U.UPerson.PersuadePower,
-      max_required_pers_power);
-}
-
 void person_give_all_weapons(struct Thing *p_person)
 {
     ushort wtype;
