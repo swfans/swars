@@ -988,6 +988,34 @@ void init_fire_weapon(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void init_clone_disguise(struct Thing *p_person)
+{
+    if ((p_person->Flag2 & TgF2_Unkn00400000) != 0)
+        return;
+
+    p_person->U.UPerson.AnimMode = 0;
+    p_person->U.UPerson.OldSubType = p_person->SubType;
+    switch (LbRandomAnyShort() & 3)
+    {
+    case 0:
+        p_person->SubType = SubTT_PERS_BRIEFCASE_M;
+        break;
+    case 1:
+        p_person->SubType = SubTT_PERS_WHITE_BRUN_F;
+        break;
+    case 2:
+        p_person->SubType = SubTT_PERS_WHIT_BLOND_F;
+        break;
+    case 3:
+        p_person->SubType = SubTT_PERS_LETH_JACKT_M;
+        break;
+    default:
+        break;
+    }
+    reset_person_frame(p_person);
+    p_person->Flag2 |= TgF2_Unkn00400000;
+}
+
 int gun_out_anim(struct Thing *p_person, ubyte shoot_flag)
 {
     int ret;
@@ -1151,13 +1179,54 @@ void set_person_weapon_turn(struct Thing *p_person, short n_turn)
     }
 }
 
+void process_clone_disguise(struct Thing *p_person)
+{
+    struct WeaponDef *wdef;
+    short en_used;
+
+    if ((p_person->Flag2 & TgF2_Unkn00400000) == 0)
+        return;
+
+    wdef = &weapon_defs[WEP_CLONESHLD];
+    if (in_network_game)
+        en_used = wdef->EnergyUsed >> 1;
+    else
+        en_used = wdef->EnergyUsed;
+    p_person->U.UPerson.Energy -= en_used;
+
+    if (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->U.UPerson.Energy < 0))
+        p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+
+    if (p_person->U.UPerson.CurrentWeapon != WEP_CLONESHLD)
+    {
+        p_person->Flag2 &= ~TgF2_Unkn00400000;
+        p_person->SubType = p_person->U.UPerson.OldSubType;
+        reset_person_frame(p_person);
+    }
+}
+
+void process_automedkit(struct Thing *p_person)
+{
+    if (!weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, WEP_MEDI2))
+        return;
+    if (p_person->Health >= p_person->U.UPerson.MaxHealth / 8)
+        return;
+
+    //TODO for the comment below; plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+    //TODO for the comment below; plagent = p_person->U.UPerson.ComCur & 3;
+    p_person->Health = p_person->U.UPerson.MaxHealth;
+    //TODO replace NULL with &players[plyr]->FourPacks[plagent] pointer, when that has unified format
+    weapons_remove_one(&p_person->U.UPerson.WeaponsCarried, NULL, WEP_MEDI2);
+    play_dist_sample(p_person, 2, 0x7F, 0x40, 100, 0, 1);
+}
+
 void process_weapon(struct Thing *p_person)
 {
 #if 0
     asm volatile ("call ASM_process_weapon\n"
         : : "a" (p_person));
+    return;
 #endif
-    ubyte currWeapon;
     struct WeaponDef *wdef;
     short prevWepTurn, wepTurn;
     short reFireShift;
@@ -1181,6 +1250,7 @@ void process_weapon(struct Thing *p_person)
     if ((p_person->Flag & TngF_Unkn0800) != 0)
     {
         struct Thing *p_vehicle;
+        ubyte currWeapon;
 
         currWeapon = p_person->U.UPerson.CurrentWeapon;
         if (currWeapon != 0 && currWeapon != WEP_RAZORWIRE
@@ -1202,7 +1272,7 @@ void process_weapon(struct Thing *p_person)
         {
             if ((p_person->Flag & TngF_Unkn20000000) == 0)
                 check_persons_target(p_person);
-            if (p_person->U.UPerson.Target2)
+            if (p_person->U.UPerson.Target2 != 0)
             {
                 check_persons_target2(p_person);
             }
@@ -1233,7 +1303,7 @@ void process_weapon(struct Thing *p_person)
         p_target = p_owner->PTarget;
         if (p_target != NULL)
         {
-            if (p_target->State == PerSt_DEAD && (p_owner->Flag & (TngF_Unkn0400|TngF_Unkn0800)) != 0)
+            if ((p_target->State == PerSt_DEAD) && (p_owner->Flag & (TngF_Unkn0400|TngF_Unkn0800)) != 0)
             {
                 p_person->Flag |= TngF_Unkn0800;
                 p_person->PTarget = p_target;
@@ -1241,17 +1311,8 @@ void process_weapon(struct Thing *p_person)
             }
         }
     }
-    // Automatically use medikit
-    if (weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, WEP_MEDI2)
-        && (p_person->Health < p_person->U.UPerson.MaxHealth / 8))
-    {
-        //TODO for the comment below; plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-        //TODO for the comment below; plagent = p_person->U.UPerson.ComCur & 3;
-        p_person->Health = p_person->U.UPerson.MaxHealth;
-        //TODO replace NULL with &players[plyr]->FourPacks[plagent] pointer, when that has unified format
-        weapons_remove_one(&p_person->U.UPerson.WeaponsCarried, NULL, WEP_MEDI2);
-        play_dist_sample(p_person, 2, 0x7F, 0x40, 100, 0, 1);
-    }
+    process_automedkit(p_person);
+
     if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag2 & TgF2_Unkn0200) != 0))
     {
         ushort plagent;
@@ -1347,6 +1408,7 @@ void process_weapon(struct Thing *p_person)
             }
         }
     }
+
     if ((p_person->Flag & TngF_Unkn40000000) == 0)
     {
         ThingIdx targtng;
@@ -1400,53 +1462,14 @@ void process_weapon(struct Thing *p_person)
             init_taser(p_person);
             break;
         case WEP_CLONESHLD:
-            if ((p_person->Flag2 & TgF2_Unkn00400000) == 0)
-            {
-                p_person->U.UPerson.AnimMode = 0;
-                p_person->U.UPerson.OldSubType = p_person->SubType;
-                switch (LbRandomAnyShort() & 3)
-                {
-                case 0:
-                    p_person->SubType = SubTT_PERS_BRIEFCASE_M;
-                    break;
-                case 1:
-                    p_person->SubType = SubTT_PERS_WHITE_BRUN_F;
-                    break;
-                case 2:
-                    p_person->SubType = SubTT_PERS_WHIT_BLOND_F;
-                    break;
-                case 3:
-                    p_person->SubType = SubTT_PERS_LETH_JACKT_M;
-                    break;
-                default:
-                    break;
-                }
-                reset_person_frame(p_person);
-                p_person->Flag2 |= TgF2_Unkn00400000;
-            }
+            init_clone_disguise(p_person);
             break;
         default:
             break;
         }
 
-        if ((p_person->Flag2 & TgF2_Unkn00400000) != 0)
-        {
-            int i;
+        process_clone_disguise(p_person);
 
-            if (in_network_game)
-                i = (weapon_defs[30].EnergyUsed >> 1);
-            else
-                i = weapon_defs[30].EnergyUsed;
-            p_person->U.UPerson.Energy -= i;
-            if (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->U.UPerson.Energy < 0))
-                p_person->U.UPerson.CurrentWeapon = 0;
-            if (p_person->U.UPerson.CurrentWeapon != WEP_CLONESHLD)
-            {
-                p_person->Flag2 &= ~TgF2_Unkn00400000;
-                p_person->SubType = p_person->U.UPerson.OldSubType;
-                reset_person_frame(p_person);
-            }
-        }
         wepTurn = p_person->U.UPerson.WeaponTurn;
         if ((wepTurn == 0) || (wepTurn < wdef->ReFireDelay - 6))
             p_person->U.UPerson.FrameId.Version[4] = 0;
@@ -1606,9 +1629,9 @@ void process_weapon(struct Thing *p_person)
                     p_person->U.UPerson.WeaponTimer = 5;
                     reFireShift = 5 - i;
                 }
-                wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
                 process_weapon_recoil(p_person);
 
+                wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
                 switch (p_person->U.UPerson.CurrentWeapon)
                 {
                 case WEP_LASER:
