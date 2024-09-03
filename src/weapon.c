@@ -1220,6 +1220,37 @@ void process_automedkit(struct Thing *p_person)
     play_dist_sample(p_person, 2, 0x7F, 0x40, 100, 0, 1);
 }
 
+void low_energy_alarm_stop(void)
+{
+    if (IsSamplePlaying(0, 93, 0))
+        stop_sample_using_heap(0, 93);
+}
+
+void low_energy_alarm_play(void)
+{
+    if (!IsSamplePlaying(0, 93, 0))
+        play_sample_using_heap(0, 93, 127, 64, 100, -1, 3);
+}
+
+void process_energy_alarm(struct Thing *p_person)
+{
+    ThingIdx dcthing;
+
+    dcthing = players[local_player_no].DirectControl[0];
+    if (((p_person->Flag & TngF_Unkn1000) != 0) && (p_person->ThingOffset == dcthing))
+    {
+        if (p_person->U.UPerson.Energy >= 50)
+        {
+            if ((gameturn & 7) == 0)
+                low_energy_alarm_stop();
+        }
+        else
+        {
+            low_energy_alarm_play();
+        }
+    }
+}
+
 void process_weapon(struct Thing *p_person)
 {
 #if 0
@@ -1230,22 +1261,9 @@ void process_weapon(struct Thing *p_person)
     struct WeaponDef *wdef;
     short prevWepTurn, wepTurn;
     short reFireShift;
-    ThingIdx dcthing;
 
-    dcthing = players[local_player_no].DirectControl[0];
+    process_energy_alarm(p_person);
 
-    if (((p_person->Flag & TngF_Unkn1000) != 0) && (p_person->ThingOffset == dcthing))
-    {
-        if (p_person->U.UPerson.Energy >= 50)
-        {
-            if (((gameturn & 7) == 0) && IsSamplePlaying(0, 93, 0))
-                stop_sample_using_heap(0, 93);
-        }
-        else if (!IsSamplePlaying(0, 93, 0))
-        {
-            play_sample_using_heap(0, 93, 127, 64, 100, -1, 3);
-        }
-    }
     p_person->U.UPerson.Flag3 &= ~0x40;
     if ((p_person->Flag & TngF_Unkn0800) != 0)
     {
@@ -1363,7 +1381,6 @@ void process_weapon(struct Thing *p_person)
                 p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
                 reset_person_frame(p_person);
             }
-
             switch (p_person->U.UPerson.CurrentWeapon)
             {
             case WEP_UZI:
@@ -1470,6 +1487,7 @@ void process_weapon(struct Thing *p_person)
 
         process_clone_disguise(p_person);
 
+        wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
         wepTurn = p_person->U.UPerson.WeaponTurn;
         if ((wepTurn == 0) || (wepTurn < wdef->ReFireDelay - 6))
             p_person->U.UPerson.FrameId.Version[4] = 0;
