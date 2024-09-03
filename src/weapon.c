@@ -1032,7 +1032,7 @@ void get_soul(struct Thing *p_dead, struct Thing *p_person)
 
 void process_weapon_recoil(struct Thing *p_person)
 {
-    if (((p_person->Flag2 & 0x0800) == 0) &&
+    if (((p_person->Flag2 & TgF2_Unkn0800) == 0) &&
       ((p_person->Flag & (TngF_Unkn20000000|TngF_PlayerAgent)) == (TngF_Unkn20000000|TngF_PlayerAgent)))
     {
         PlayerInfo *p_player;
@@ -1091,7 +1091,7 @@ static void process_energy_recovery(struct Thing *p_person)
 {
     if (p_person->U.UPerson.Energy < p_person->U.UPerson.MaxEnergy)
     {
-        if ((p_person->Flag2 & 0x1000000) != 0)
+        if ((p_person->Flag2 & TgF2_Unkn01000000) != 0)
         {
             p_person->U.UPerson.Energy = p_person->U.UPerson.MaxEnergy;
         }
@@ -1136,7 +1136,7 @@ void set_person_weapon_turn(struct Thing *p_person, short n_turn)
     {
         p_person->U.UPerson.WeaponTurn = n_turn;
     }
-    else if ((p_person->Flag2 & 0x0800) == 0)
+    else if ((p_person->Flag2 & TgF2_Unkn0800) == 0)
     {
         PlayerInfo *p_player;
         ushort plyr, plagent;
@@ -1184,13 +1184,13 @@ void process_weapon(struct Thing *p_person)
 
         currWeapon = p_person->U.UPerson.CurrentWeapon;
         if (currWeapon != 0 && currWeapon != WEP_RAZORWIRE
-            && currWeapon != WEP_EXPLWIRE && (p_person->Flag2 & 0x80000) != 0)
+            && currWeapon != WEP_EXPLWIRE && (p_person->Flag2 & TgF2_Unkn00080000) != 0)
         {
             p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
             reset_person_frame(p_person);
             p_person->Timer1 = 48;
             p_person->StartTimer1 = 48;
-            p_person->Flag2 &= ~0x080000;
+            p_person->Flag2 &= ~TgF2_Unkn00080000;
             p_person->Speed = calc_person_speed(p_person);
         }
         p_vehicle = &things[p_person->U.UPerson.Vehicle];
@@ -1252,7 +1252,7 @@ void process_weapon(struct Thing *p_person)
         weapons_remove_one(&p_person->U.UPerson.WeaponsCarried, NULL, WEP_MEDI2);
         play_dist_sample(p_person, 2, 0x7F, 0x40, 100, 0, 1);
     }
-    if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag2 & 0x0200) != 0))
+    if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag2 & TgF2_Unkn0200) != 0))
     {
         ushort plagent;
 
@@ -1264,7 +1264,7 @@ void process_weapon(struct Thing *p_person)
             else
                 plagent = 0;
             ReleaseLoopedSample(p_person->ThingOffset, 80 + plagent);
-            p_person->Flag2 &= ~0x0200;
+            p_person->Flag2 &= ~TgF2_Unkn0200;
             break;
         case WEP_MINIGUN:
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
@@ -1274,7 +1274,7 @@ void process_weapon(struct Thing *p_person)
             ReleaseLoopedSample(p_person->ThingOffset, 84 + plagent);
             plagent = p_person->U.UPerson.ComCur & 3;
             play_dist_sample(p_person, 88 + plagent, 0x7F, 0x40, 100, 0, 1);
-            p_person->Flag2 &= ~0x0200;
+            p_person->Flag2 &= ~TgF2_Unkn0200;
             break;
         }
     }
@@ -1316,7 +1316,7 @@ void process_weapon(struct Thing *p_person)
                     else
                         plagent = 0;
                     ReleaseLoopedSample(p_person->ThingOffset, 80 + plagent);
-                    p_person->Flag2 &= ~0x0200;
+                    p_person->Flag2 &= ~TgF2_Unkn0200;
                 }
                 break;
             case WEP_MINIGUN:
@@ -1332,7 +1332,7 @@ void process_weapon(struct Thing *p_person)
                     ReleaseLoopedSample(p_person->ThingOffset, 84 + plagent);
                     plagent = p_person->U.UPerson.ComCur & 3;
                     play_dist_sample(p_person, 88 + plagent, 0x7F, 0x40, 100, 0, 1);
-                    p_person->Flag2 &= ~0x0200;
+                    p_person->Flag2 &= ~TgF2_Unkn0200;
                 }
                 break;
             case WEP_FLAMER:
@@ -1341,7 +1341,7 @@ void process_weapon(struct Thing *p_person)
                 {
                     stop_sample_using_heap(p_person->ThingOffset, 14);
                     play_dist_sample(p_person, 15, 0x7F, 0x40, 100, 0, 2);
-                    p_person->Flag2 &= ~0x0200;
+                    p_person->Flag2 &= ~TgF2_Unkn0200;
                 }
                 break;
             }
@@ -1357,7 +1357,7 @@ void process_weapon(struct Thing *p_person)
             struct Thing *p_vehicle;
 
             p_vehicle = &things[p_person->U.UPerson.Vehicle];
-            if ((p_vehicle->Flag2 & 0x02) != 0)
+            if ((p_vehicle->Flag2 & TgF2_Unkn0002) != 0)
                 return;
             switch (p_vehicle->SubType)
             {
@@ -1399,36 +1399,36 @@ void process_weapon(struct Thing *p_person)
             init_taser(p_person);
             break;
         case WEP_CLONESHLD:
-            if ((p_person->Flag2 & 0x400000) == 0)
+            if ((p_person->Flag2 & TgF2_Unkn00400000) == 0)
             {
                 p_person->U.UPerson.AnimMode = 0;
                 p_person->U.UPerson.OldSubType = p_person->SubType;
                 switch (LbRandomAnyShort() & 3)
                 {
                 case 0:
-                    p_person->SubType = PerSt_EXPLODE_EFFECT;
+                    p_person->SubType = SubTT_PERS_BRIEFCASE_M;
                     break;
                 case 1:
-                    p_person->SubType = PerSt_WAIT;
+                    p_person->SubType = SubTT_PERS_WHITE_BRUN_F;
                     break;
                 case 2:
-                    p_person->SubType = PerSt_DEAD;
+                    p_person->SubType = SubTT_PERS_WHIT_BLOND_F;
                     break;
                 case 3:
-                    p_person->SubType = PerSt_INIT_SAVE_VICTIM;
+                    p_person->SubType = SubTT_PERS_LETH_JACKT_M;
                     break;
                 default:
                     break;
                 }
                 reset_person_frame(p_person);
-                p_person->Flag2 |= 0x400000;
+                p_person->Flag2 |= TgF2_Unkn00400000;
             }
             break;
         default:
             break;
         }
 
-        if ((p_person->Flag2 & 0x400000) != 0)
+        if ((p_person->Flag2 & TgF2_Unkn00400000) != 0)
         {
             int i;
 
@@ -1441,7 +1441,7 @@ void process_weapon(struct Thing *p_person)
                 p_person->U.UPerson.CurrentWeapon = 0;
             if (p_person->U.UPerson.CurrentWeapon != WEP_CLONESHLD)
             {
-                p_person->Flag2 &= ~0x400000;
+                p_person->Flag2 &= ~TgF2_Unkn00400000;
                 p_person->SubType = p_person->U.UPerson.OldSubType;
                 reset_person_frame(p_person);
             }
@@ -1452,13 +1452,13 @@ void process_weapon(struct Thing *p_person)
         switch (p_person->U.UPerson.CurrentWeapon)
         {
         case WEP_EXPLWIRE:
-            if ((p_person->Flag2 & 0x01) == 0)
+            if ((p_person->Flag2 & TgF2_Unkn0001) == 0)
             {
                 if ((p_person->Flag & TngF_Unkn0800) != 0)
                     init_razor_wire(p_person, 1u);
             }
             else if (((p_person->Flag & TngF_Unkn0800) != 0)
-                || ((p_person->Flag2 & 0x04) != 0))
+                || ((p_person->Flag2 & TgF2_Unkn0004) != 0))
             {
                 update_razor_wire(p_person);
             }
@@ -1468,13 +1468,13 @@ void process_weapon(struct Thing *p_person)
             }
             break;
         case WEP_RAZORWIRE:
-            if ((p_person->Flag2 & 0x01) == 0)
+            if ((p_person->Flag2 & TgF2_Unkn0001) == 0)
             {
                 if ((p_person->Flag & TngF_Unkn0800) != 0)
                     init_razor_wire(p_person, 0);
             }
             else if (((p_person->Flag & TngF_Unkn0800) != 0)
-                || ((p_person->Flag2 & 0x04) != 0))
+                || ((p_person->Flag2 & TgF2_Unkn0004) != 0))
             {
                 update_razor_wire(p_person);
             }
@@ -1494,11 +1494,11 @@ void process_weapon(struct Thing *p_person)
                 if ((p_person->Flag & TngF_Unkn0800) != 0)
                 {
                     if ((p_person->U.UPerson.WeaponTurn == 0)
-                        && ((p_person->Flag2 & 0x400) == 0))
+                        && ((p_person->Flag2 & TgF2_Unkn0400) == 0))
                     {
                         play_dist_sample(p_person, 14, 0x7F, 0x40, 100, -1, 2);
                         play_dist_sample(p_person, 13, 0x7F, 0x40, 100, 0, 2);
-                        p_person->Flag2 |= 0x0200;
+                        p_person->Flag2 |= TgF2_Unkn0200;
                     }
                     init_fire_weapon(p_person);
                     p_person->U.UPerson.WeaponTurn = 5;
@@ -1629,7 +1629,7 @@ void process_weapon(struct Thing *p_person)
                     init_laser_elec(p_person, p_person->U.UPerson.WeaponTimer);
                     stop_sample_using_heap(p_person->ThingOffset, 7);
                     stop_sample_using_heap(p_person->ThingOffset, 52);
-                    if ((p_person->Flag2 & 0x1000000) == 0)
+                    if ((p_person->Flag2 & TgF2_Unkn01000000) == 0)
                         play_dist_sample(p_person, 6, 0x7F, 0x40, 100, 0, 3);
                     p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
                     break;

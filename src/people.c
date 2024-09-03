@@ -586,7 +586,7 @@ short calc_person_speed(struct Thing *p_person)
     if (p_person->Flag & TngF_Persuaded)
         speed += 250;
 
-    if (p_person->Flag2 & 0x80000)
+    if (p_person->Flag2 & TgF2_Unkn00080000)
         speed += 512;
 
     if (speed > PERSON_MAX_SPEED)
@@ -790,7 +790,7 @@ void remove_path(struct Thing *p_thing)
 {
     ushort path;
 
-    p_thing->Flag2 &= ~0x0040;
+    p_thing->Flag2 &= ~TgF2_Unkn0040;
     if (p_thing->U.UPerson.PathIndex != 0)
     {
         if (p_thing->Type == TT_PERSON)
@@ -925,7 +925,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
         pstat = &peep_type_stats[p_person->SubType];
         p_attacker->U.UPerson.PersuadePower += pstat->PersuadeWorth;
     }
-    if ((p_person->Flag2 & 0x0010) == 0)
+    if ((p_person->Flag2 & TgF2_Unkn0010) == 0)
     {
           p_person->StartFrame = 1059;
           p_person->Frame = nstart_ani[p_person->StartFrame + 1];

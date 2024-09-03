@@ -527,7 +527,7 @@ static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing 
 {
     int dx, dz, per_r_sq, veh_r_sq;
 
-    if ((p_person->Flag2 & 0x10) != 0)
+    if ((p_person->Flag2 & TgF2_Unkn0010) != 0)
         return false;
     if (p_person->State == PerSt_DEAD)
         return false;
@@ -802,13 +802,13 @@ void process_tank_turret(struct Thing *p_tank)
     // Despite being caused by the turret, we bind the sound samples to the vehicle part
     // of the tank. This is because turrets do not contain full position on map, so the
     // sound update would misplace the sound source if it was bound to the turret
-    if ((p_turret->Flag2 & 0x0200) != 0)
+    if ((p_turret->Flag2 & TgF2_Unkn0200) != 0)
     {
         if (dt_angle <= 1) {
             // Play rotation stop sample
             if (!IsSamplePlaying(p_tank->ThingOffset, 47, 0))
                 play_dist_sample(p_tank, 47, 127, 0x40u, 100, 0, 1);
-            p_turret->Flag2 &= ~0x0200;
+            p_turret->Flag2 &= ~TgF2_Unkn0200;
         }
     }
     else
@@ -818,7 +818,7 @@ void process_tank_turret(struct Thing *p_tank)
         if ((abs(dt_angle) >= LbFPMath_PI/75) && (p_tank->OldTarget < abs(angle) || p_tank->OldTarget > LbFPMath_PI)) {
             if (!IsSamplePlaying(p_tank->ThingOffset, 48, 0))
                 play_dist_sample(p_tank, 48, 127, 0x40u, 100, 0, 1);
-            p_turret->Flag2 |= 0x0200;
+            p_turret->Flag2 |= TgF2_Unkn0200;
         }
     }
 

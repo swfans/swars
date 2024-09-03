@@ -751,7 +751,7 @@ void draw_agent_grouping_bars(void)
         if (p_thing->Type != TT_PERSON) continue;
         dcthing = players[local_player_no].DirectControl[byte_153198-1];
         if ((p_thing->State != PerSt_PROTECT_PERSON) || (p_thing->GotoThingIndex != dcthing)) {
-            if (((p_thing->Flag2 & 0x10000000) == 0) || (p_thing->Owner != dcthing))
+            if (((p_thing->Flag2 & TgF2_Unkn10000000) == 0) || (p_thing->Owner != dcthing))
                 continue;
         }
         n++;
@@ -1136,7 +1136,7 @@ void draw_new_panel(void)
                         continue;
                 }
 
-                if ((p_agent->State == PerSt_PROTECT_PERSON) || (p_agent->Flag2 & 0x10000000))
+                if ((p_agent->State == PerSt_PROTECT_PERSON) || (p_agent->Flag2 & TgF2_Unkn10000000))
                     draw_new_panel_sprite_dark(panel->X, panel->Y, panel->Spr);
                 else
                     draw_new_panel_sprite_std(panel->X, panel->Y, panel->Spr);
@@ -1153,7 +1153,7 @@ void draw_new_panel(void)
         x = 0;
         dcthing = direct_control_thing_for_player(local_player_no);
         p_agent = &things[dcthing];
-        if ((p_agent->Flag & TngF_Unkn0002) == 0 && (p_agent->Flag2 & 0x800) == 0)
+        if ((p_agent->Flag & TngF_Unkn0002) == 0 && (p_agent->Flag2 & TgF2_Unkn0800) == 0)
         {
             ushort plagent;
 

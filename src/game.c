@@ -2334,7 +2334,7 @@ void build_vehicle(struct Thing *p_thing)
     PlayerInfo *p_locplayer;
     int i;
 
-    if (((p_thing->Flag2 & 0x1000000) != 0) && (byte_1C83E4 & 0x01) != 0)
+    if (((p_thing->Flag2 & TgF2_Unkn01000000) != 0) && (byte_1C83E4 & 0x01) != 0)
         return;
     if (p_thing->SubType == SubTT_VEH_SHUTTLE_POD)
         return;
@@ -4244,7 +4244,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
         p_person->U.UPerson.ComHead = p_cmd->Next;
     }
 
-    if (((p_person->Flag2 & 0x1000000) == 0)
+    if (((p_person->Flag2 & TgF2_Unkn01000000) == 0)
       && ((p_person->Flag & TngF_Unkn0002) == 0))
     {
         struct GroupAction *p_grpact;
@@ -4273,10 +4273,10 @@ void init_level_unknsub01_person(struct Thing *p_person)
         p_person->Flag |= TngF_Unkn0040;
     }
 
-    if ((p_person->Flag2 & 0x1000000) != 0)
+    if ((p_person->Flag2 & TgF2_Unkn01000000) != 0)
         delete_node(p_person);
     else
-        p_person->Flag2 &= ~0x020000000;
+        p_person->Flag2 &= ~TgF2_Unkn20000000;
 
     if ((p_person->Flag & TngF_Unkn0002) == 0)
     {
@@ -4295,7 +4295,7 @@ void init_level_unknsub01_building(struct Thing *p_buildng)
         p_buildng->PTarget = 0;
         p_buildng->U.UObject.EffectiveGroup = p_buildng->U.UObject.Group;
     }
-    if ((p_buildng->Flag2 & 0x1000000) != 0)
+    if ((p_buildng->Flag2 & TgF2_Unkn01000000) != 0)
     {
         delete_node(p_buildng);
     }
@@ -4303,7 +4303,7 @@ void init_level_unknsub01_building(struct Thing *p_buildng)
 
 void init_level_unknsub01_vehicle(struct Thing *p_vehicle)
 {
-    if ((p_vehicle->Flag2 & 0x1000000) != 0)
+    if ((p_vehicle->Flag2 & TgF2_Unkn01000000) != 0)
     {
         delete_node(p_vehicle);
     }
@@ -4710,7 +4710,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         if ((p_person->U.UPerson.ComHead != 0) &&
             (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_EXECUTE_COMS))
         {
-            p_person->Flag2 |= 0x0800;
+            p_person->Flag2 |= TgF2_Unkn0800;
             p_person->U.UPerson.ComCur = (plyr << 2) + plagent;
             if (ingame.GameMode == GamM_Unkn3)
                 do_weapon_quantities_proper1(p_person);
@@ -7782,7 +7782,7 @@ ubyte do_user_interface(void)
             p_agent = p_locplayer->MyAgent[n];
             if (p_agent->Type != TT_PERSON) continue;
 
-            if (person_can_accept_control(p_agent) && ((p_agent->Flag2 & 0x10) == 0))
+            if (person_can_accept_control(p_agent) && ((p_agent->Flag2 & TgF2_Unkn0010) == 0))
             {
                 lbKeyOn[kbkeys[gkey]] = 0;
                 if (p_locplayer->DoubleMode)
@@ -8379,7 +8379,7 @@ TbBool check_panel_input(short panel)
         case 1:
             // Select controlled agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent->Type != TT_PERSON) || ((p_agent->Flag & TngF_Unkn0002) != 0) || ((p_agent->Flag2 & 0x10) != 0))
+            if ((p_agent->Type != TT_PERSON) || ((p_agent->Flag & TngF_Unkn0002) != 0) || ((p_agent->Flag2 & TgF2_Unkn0010) != 0))
                 return 0;
             if (p_locplayer->DoubleMode) {
                 byte_153198 = p_panel->ID + 1;
