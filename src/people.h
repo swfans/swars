@@ -219,6 +219,10 @@ void switch_person_anim_mode(struct Thing *p_person, ubyte animode);
  */
 void set_person_anim_mode(struct Thing *p_person, ubyte animode);
 
+/** Sets new direction angle of a person, replacing the old frame number.
+ */
+void change_player_angle(struct Thing *p_person, ushort angle);
+
 /** Resets Frame number of a person, using its current properties.
  */
 void reset_person_frame(struct Thing *p_person);

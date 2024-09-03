@@ -724,6 +724,20 @@ void set_person_anim_mode(struct Thing *p_person, ubyte animode)
     reset_person_frame(p_person);
 }
 
+void change_player_angle(struct Thing *p_person, ushort angle)
+{
+    short person_anim, sframe;
+
+    if (angle == p_person->U.UPerson.Angle)
+        return;
+
+    p_person->U.UPerson.Angle = angle;
+    person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode] - 1;
+    // TODO why are we not updating p_person->StartFrame here?
+    sframe = person_anim - 1;
+    p_person->Frame = nstart_ani[sframe + 1 + p_person->U.UPerson.Angle];
+}
+
 void init_person_thing(struct Thing *p_person)
 {
     set_person_health_energy_shield_stamina_type(p_person, p_person->SubType);
@@ -928,7 +942,8 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
         group = p_person->U.UPerson.Group & 0x1F;
         group_actions[group].Persuaded++;
     }
-    if (!in_network_game && (p_attacker->Flag & TngF_PlayerAgent) && (p_attacker->U.UPerson.EffectiveGroup == ingame.MyGroup))
+    if (!in_network_game && (p_attacker->Flag & TngF_PlayerAgent) &&
+      (p_attacker->U.UPerson.EffectiveGroup == ingame.MyGroup))
     {
         short plagent;
 
