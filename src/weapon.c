@@ -1450,6 +1450,7 @@ void process_weapon(struct Thing *p_person)
                 break;
             }
         }
+
         switch (p_person->U.UPerson.CurrentWeapon)
         {
         case WEP_SOULGUN:
@@ -1608,7 +1609,7 @@ void process_weapon(struct Thing *p_person)
                 {
                     int resp_time;
 
-                    if ((p_person->Health < p_person->U.UPerson.MaxHealth >> 1
+                    if ((p_person->Health < (p_person->U.UPerson.MaxHealth >> 1)
                         || ((p_person->Flag & TngF_InVehicle) != 0)
                         || (p_person->ThingOffset & 3) != 0)
                         && ((p_person->Flag & TngF_PlayerAgent) == 0))
@@ -1624,7 +1625,7 @@ void process_weapon(struct Thing *p_person)
                     if (p_person->U.UPerson.WeaponTimer >= resp_time)
                     {
                         if ((p_person->Flag & TngF_Unkn1000) == 0)
-                            p_person->Flag &= TngF_Unkn0800;
+                            p_person->Flag &= ~TngF_Unkn0800;
                     }
                 }
                 if ((p_person->U.UPerson.CurrentWeapon == WEP_RAP) && (p_person->PTarget == NULL))
