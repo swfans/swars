@@ -714,6 +714,27 @@ static TbResult LbIPhysicalScreenUnlock(void)
     return Lb_SUCCESS;
 }
 
+/** @internal
+ * Restore lost screen surface, ie. due to focus switch.
+ *
+ * With SDL 2, the static reference users have is to window. Reference
+ * to screen surface is dynamic, as that structure is re-created on some
+ * window operations (like alt-tabbing from the application).
+ *
+ * Note that this call is not very taxing - if surface was not lost,
+ * then getting it is just accessing a pointer within the Window struct.
+ * This means it is not a problem to do the restore on every screen swap.
+ */
+TbResult LbIScreenSurfaceRestoreLost(void)
+{
+    lbScreenSurface = SDL_GetWindowSurface(lbWindow);
+    if (lbScreenSurface == NULL) {
+        LOGERR("surface restore failed: %s", SDL_GetError());
+        return Lb_FAIL;
+    }
+    return Lb_SUCCESS;
+}
+
 TbResult LbScreenSetDoubleBuffering(TbBool state)
 {
     lbDoubleBufferingRequested = state;
@@ -1023,6 +1044,7 @@ TbResult LbScreenSwap(void)
 
     LOGDBG("starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+    LbIScreenSurfaceRestoreLost();
     LbIScreenDrawSurfaceCheck();
 
     // Cursor needs to be drawn on WScreen pixels
@@ -1060,6 +1082,8 @@ TbResult LbScreenSwapClear(TbPixel colour)
 
     LOGDBG("starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+    LbIScreenSurfaceRestoreLost();
+    LbIScreenDrawSurfaceCheck();
 
     // Cursor needs to be drawn on WScreen pixels
     LbMouseOnBeginSwap();
@@ -1098,6 +1122,7 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
 
     LOGDBG("starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+    LbIScreenSurfaceRestoreLost();
     LbIScreenDrawSurfaceCheck();
 
     // First, copy the input buffer rect to our WScreen
