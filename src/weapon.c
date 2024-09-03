@@ -1374,7 +1374,8 @@ void process_weapon(struct Thing *p_person)
         switch (p_person->U.UPerson.CurrentWeapon)
         {
         case WEP_SOULGUN:
-            if (((gameturn + p_person->ThingOffset) & 7) == 0)
+            if ((p_person->Health < 2 * p_person->U.UPerson.MaxHealth) &&
+              (((gameturn + p_person->ThingOffset) & 7) == 0))
             {
                 targtng = process_persuadertron(p_person, 2u, &energy_rq);
                 if (targtng > 0)
@@ -1551,7 +1552,7 @@ void process_weapon(struct Thing *p_person)
                 if (p_person->U.UPerson.WeaponTimer == 14)
                 {
                     stop_sample_using_heap(p_person->ThingOffset, 7);
-                    play_dist_sample(p_person, 52, 0x7Fu, 0x40, 100, -1, 3);
+                    play_dist_sample(p_person, 52, 0x7F, 0x40, 100, -1, 3);
                 }
                 else
                 {
@@ -1575,7 +1576,7 @@ void process_weapon(struct Thing *p_person)
                     }
                     else
                     {
-                        resp_time = 4 * cybmod_brain_level(&p_person->U.UPerson.UMod) + 4;
+                        resp_time = 4 * (cybmod_brain_level(&p_person->U.UPerson.UMod) + 1);
                         if (resp_time > 15)
                             resp_time = 15;
                     }
