@@ -113,12 +113,6 @@ struct SampleInfo *FindSampleInfoSrcSmpNotDone(long source_id, short smp_id)
 
 TbBool IsSamplePlaying(long source_id, short smp_id, TbSampleHandle handle)
 {
-#if 0
-    TbBool ret;
-    asm volatile ("call ASM_IsSamplePlaying\n"
-        : "=r" (ret) : "a" (source_id), "d" (smp_id), "b" (handle));
-    return ret;
-#endif
     if (!SoundInstalled || !SoundAble || !SoundActive)
         return false;
 
@@ -196,10 +190,6 @@ struct SampleInfo *PlaySampleFromAddress(long source_id, short smp_id,
 void ReleaseLoopedSample(ushort source_id, short smp_id)
 {
     // TODO the source_id should be of long type
-#if 0
-    asm volatile ("call ASM_ReleaseLoopedSample\n"
-        : : "a" (source_id),  "d" (smp_id));
-#endif
     struct SampleInfo *p_smpinf;
 
     if (!SoundInstalled || !SoundAble || !SoundActive)

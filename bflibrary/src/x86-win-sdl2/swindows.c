@@ -44,6 +44,7 @@ TbIdleControl lbIdleHandlers[LB_IDLE_HANDLERS_MAX] = {0};
 void LbRegisterStandardVideoModes(void);
 TbResult MEvent(const SDL_Event *ev);
 TbResult KEvent(const SDL_Event *ev);
+TbResult LbIScreenSurfaceRestoreLost(void);
 
 TbResult LbBaseInitialise(void)
 {
@@ -107,6 +108,7 @@ TbResult WEvent(const SDL_Event *ev)
             LOGNO("Active = %d",(int)lbAppActive);
             LbInputRestate();
         }
+        LbIScreenSurfaceRestoreLost();
         if ((lbAppActive) && (lbDisplay.Palette != NULL)) {
             // SDL2 is always double buffered and never loses palette, no need for refresh
             //LbIPaletteRestoreLost();

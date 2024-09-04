@@ -51,7 +51,7 @@ void draw_target_person(struct Thing *p_person, uint radius)
     struct TbSprite *spr;
     struct TbSprite *aspr;
 
-    if ((p_person->Flag & 0x0002) != 0)
+    if ((p_person->Flag & TngF_Unkn0002) != 0)
         return;
 
     ep.X3d = PRCCOORD_TO_MAPCOORD(p_person->X) - engn_xc;

@@ -21,6 +21,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "ssamplst.h"
 #include "aildebug.h"
@@ -76,7 +77,7 @@ void StopSampleQueueList(void)
         AIL_set_sample_user_data(sample_queue_handle, i, 0);
 }
 
-void cb_sample_queue_callback()
+void cb_sample_queue_callback(SNDSAMPLE *s)
 {
     struct BfSfxInfo *sfi;
     short sfxid;
@@ -119,7 +120,7 @@ void PlaySampleList(int sfx1, int sfx2, int sfx3, int sfx4, int sfx5, int sfx6, 
     AIL_set_sample_user_data(sample_queue_handle, 7, sfx8);
     current_sample_queue_count = 0;
     sample_queue_handle_stopped = 0;
-    cb_sample_queue_callback();
+    cb_sample_queue_callback(sample_queue_handle);
 }
 
 void format_sounds(void)

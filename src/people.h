@@ -181,6 +181,7 @@ const char *person_type_name(ushort ptype);
 void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing);
 
 TbBool person_is_dead(ThingIdx thing);
+TbBool person_is_dead_or_dying(ThingIdx thing);
 
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 TbBool person_carries_any_medikit(struct Thing *p_person);
@@ -194,6 +195,23 @@ void check_persons_target(struct Thing *p_person);
 void check_persons_target2(struct Thing *p_person);
 void process_stamina(struct Thing *p_person);
 
+/** Bring killed person back to life.
+ */
+void person_resurrect(struct Thing *p_person);
+
+/** Artificially increases health and max health of a person to maximal reasonable value.
+ */
+void person_set_helath_to_max_limit(struct Thing *p_person);
+
+/** Artificially increases weapon energy and max energy of a person to maximal reasonable value.
+ */
+void person_set_energy_to_max_limit(struct Thing *p_person);
+
+/** Artificially increases persuasion power of a person to allow parsuade anyone.
+ */
+void person_set_persuade_power__to_allow_all(struct Thing *p_person);
+
+
 /** Switches AnimMode of a person without removing any shifts to current frame.
  */
 void switch_person_anim_mode(struct Thing *p_person, ubyte animode);
@@ -201,6 +219,10 @@ void switch_person_anim_mode(struct Thing *p_person, ubyte animode);
 /** Sets new AnimMode of a person, replacing the old frame number.
  */
 void set_person_anim_mode(struct Thing *p_person, ubyte animode);
+
+/** Sets new direction angle of a person, replacing the old frame number.
+ */
+void change_player_angle(struct Thing *p_person, ushort angle);
 
 /** Resets Frame number of a person, using its current properties.
  */

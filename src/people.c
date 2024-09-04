@@ -452,6 +452,23 @@ TbBool person_is_dead(ThingIdx thing)
     return (p_thing->State == PerSt_DEAD);
 }
 
+TbBool person_is_dead_or_dying(ThingIdx thing)
+{
+    struct Thing *p_thing;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+
+    if (p_thing->Type != TT_PERSON)
+        return false;
+
+    return (p_thing->State == PerSt_DEAD)
+      || (p_thing->State == PerSt_PERSON_BURNING)
+      || (p_thing->State == PerSt_DIEING);
+}
+
 ubyte person_mod_chest_level(struct Thing *p_person)
 {
     return cybmod_chest_level(&p_person->U.UPerson.UMod);
@@ -586,7 +603,7 @@ short calc_person_speed(struct Thing *p_person)
     if (p_person->Flag & TngF_Persuaded)
         speed += 250;
 
-    if (p_person->Flag2 & 0x80000)
+    if (p_person->Flag2 & TgF2_Unkn00080000)
         speed += 512;
 
     if (speed > PERSON_MAX_SPEED)
@@ -627,6 +644,36 @@ void set_person_health_energy_shield_stamina_type(struct Thing *p_person, ushort
         p_person->Health = 2 * PERSON_MAX_HEALTH_LIMIT;
         p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
     }
+}
+
+void person_resurrect(struct Thing *p_person)
+{
+    p_person->Flag &= ~TngF_Unkn0002;
+    p_person->Flag &= ~TngF_Unkn02000000;
+    p_person->State = PerSt_WAIT;
+    p_person->Health = p_person->U.UPerson.MaxHealth * 3 / 4;
+    set_person_anim_mode(p_person, 1);
+}
+
+void person_set_helath_to_max_limit(struct Thing *p_person)
+{
+    p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
+    p_person->Health = 2 * p_person->U.UPerson.MaxHealth; // double health - fill red bar
+}
+
+void person_set_energy_to_max_limit(struct Thing *p_person)
+{
+    p_person->U.UPerson.MaxEnergy = 32000;
+    p_person->U.UPerson.Energy = p_person->U.UPerson.MaxEnergy;
+}
+
+void person_set_persuade_power__to_allow_all(struct Thing *p_person)
+{
+    short max_required_pers_power;
+
+    max_required_pers_power = 20;
+    p_person->U.UPerson.PersuadePower = max(p_person->U.UPerson.PersuadePower,
+      max_required_pers_power);
 }
 
 ushort calc_person_radius_type(struct Thing *p_person, ushort stype)
@@ -694,6 +741,20 @@ void set_person_anim_mode(struct Thing *p_person, ubyte animode)
     reset_person_frame(p_person);
 }
 
+void change_player_angle(struct Thing *p_person, ushort angle)
+{
+    short person_anim, sframe;
+
+    if (angle == p_person->U.UPerson.Angle)
+        return;
+
+    p_person->U.UPerson.Angle = angle;
+    person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode] - 1;
+    // TODO why are we not updating p_person->StartFrame here?
+    sframe = person_anim - 1;
+    p_person->Frame = nstart_ani[sframe + 1 + p_person->U.UPerson.Angle];
+}
+
 void init_person_thing(struct Thing *p_person)
 {
     set_person_health_energy_shield_stamina_type(p_person, p_person->SubType);
@@ -746,7 +807,7 @@ void remove_path(struct Thing *p_thing)
 {
     ushort path;
 
-    p_thing->Flag2 &= ~0x0040;
+    p_thing->Flag2 &= ~TgF2_Unkn0040;
     if (p_thing->U.UPerson.PathIndex != 0)
     {
         if (p_thing->Type == TT_PERSON)
@@ -881,7 +942,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
         pstat = &peep_type_stats[p_person->SubType];
         p_attacker->U.UPerson.PersuadePower += pstat->PersuadeWorth;
     }
-    if ((p_person->Flag2 & 0x0010) == 0)
+    if ((p_person->Flag2 & TgF2_Unkn0010) == 0)
     {
           p_person->StartFrame = 1059;
           p_person->Frame = nstart_ani[p_person->StartFrame + 1];
@@ -898,7 +959,8 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
         group = p_person->U.UPerson.Group & 0x1F;
         group_actions[group].Persuaded++;
     }
-    if (!in_network_game && (p_attacker->Flag & TngF_PlayerAgent) && (p_attacker->U.UPerson.EffectiveGroup == ingame.MyGroup))
+    if (!in_network_game && (p_attacker->Flag & TngF_PlayerAgent) &&
+      (p_attacker->U.UPerson.EffectiveGroup == ingame.MyGroup))
     {
         short plagent;
 

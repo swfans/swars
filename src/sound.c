@@ -47,11 +47,11 @@ struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, u
     return ret;
 }
 
-void stop_sample_using_heap(struct SNDSEQUENCE *source, ulong sample_number)
+void stop_sample_using_heap(long source_id, ulong sample_number)
 {
     asm volatile (
       "call ASM_stop_sample_using_heap\n"
-        : : "a" (source), "d" (sample_number));
+        : : "a" (source_id), "d" (sample_number));
 }
 
 void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type)

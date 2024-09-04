@@ -154,14 +154,14 @@ void process_dome1(struct Thing *p_building)
         }
         break;
     case 7:
-        if ((p_building->Flag & 0x0080) != 0)
+        if ((p_building->Flag & TngF_Unkn0080) != 0)
             p_building->State = 4;
-        p_building->Flag &= ~(0x0080|0x0040);
+        p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
         break;
     case 8:
-        if ((p_building->Flag & 0x0040) != 0)
+        if ((p_building->Flag & TngF_Unkn0040) != 0)
             p_building->State = 1;
-        p_building->Flag &= ~(0x0080|0x0040);
+        p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
         break;
     default:
         p_building->SubState = 127;
@@ -289,9 +289,9 @@ void collapse_building_shuttle_loader(short x, short y, short z, struct Thing *p
         else
         {
             p_thing = &things[thing];
-            if ((p_thing->Flag & 0x0002) != 0)
+            if ((p_thing->Flag & TngF_Unkn0002) != 0)
                 break;
-            p_thing->Flag |= 0x0002;
+            p_thing->Flag |= TngF_Unkn0002;
             explode_thing_building(thing, x, y, z);
             p_thing->Type = TT_UNKN55;
         }
@@ -316,9 +316,9 @@ void collapse_building_shuttle_loader(short x, short y, short z, struct Thing *p
         else
         {
             p_thing = &things[thing];
-            if ((p_thing->Flag & 0x0002) != 0)
+            if ((p_thing->Flag & TngF_Unkn0002) != 0)
                 break;
-            p_thing->Flag |= 0x0002;
+            p_thing->Flag |= TngF_Unkn0002;
             explode_thing_building(thing, x, y, z);
             p_thing->Type = TT_UNKN55;
         }
@@ -355,7 +355,7 @@ void collapse_building_station(struct Thing *p_building)
                     p_thing = &things[thing];
                     if ((p_thing->Type == TT_BUILDING)
                       && (p_thing->SubType == SubTT_BLD_1C)
-                      && ((p_thing->Flag & 0x02) == 0))
+                      && ((p_thing->Flag & TngF_Unkn0002) == 0))
                     {
                         collapse_building(x << 8, 0, z << 8, p_thing);
                         break; // do not expect more than one building on a tile
@@ -420,7 +420,7 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
         break;
     }
 
-    if ((p_building->Flag & 0x0002) == 0)
+    if ((p_building->Flag & TngF_Unkn0002) == 0)
     {
         struct SingleObject *p_sobj;
 
@@ -439,7 +439,7 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
                 bang_new4(bang_x, 0, bang_z, 65);
             }
         }
-        p_building->Flag |= 0x0002;
+        p_building->Flag |= TngF_Unkn0002;
         explode_thing_building(thing, x, y, z);
         p_building->Type = TT_UNKN55;
     }
@@ -485,11 +485,11 @@ void process_building(struct Thing *p_building)
     asm volatile ("call ASM_process_building\n"
         : : "a" (p_building));
 #endif
-    if ((p_building->Flag & 0x040000) != 0)
+    if ((p_building->Flag & TngF_Unkn00040000) != 0)
     {
-        if ((p_building->Flag & 0x0002) != 0)
+        if ((p_building->Flag & TngF_Unkn0002) != 0)
         {
-            p_building->Flag &= ~0x040000;
+            p_building->Flag &= ~TngF_Unkn00040000;
             return;
         }
         collapse_building(p_building->X >> 8, p_building->Y >> 8, p_building->Z >> 8, p_building);
@@ -499,23 +499,23 @@ void process_building(struct Thing *p_building)
     switch (p_building->SubType)
     {
     case SubTT_BLD_SHUTLDR:
-        if ((p_building->Flag & 0x0002) == 0)
+        if ((p_building->Flag & TngF_Unkn0002) == 0)
         {
-            if ((p_building->U.UObject.PrevThing == 0) && ((p_building->Flag & 0x8000000) == 0)) {
+            if ((p_building->U.UObject.PrevThing == 0) && ((p_building->Flag & TngF_Unkn08000000) == 0)) {
                 process_shuttle_loader(p_building);
             }
-            if ((p_building->U.UObject.PrevThing == 0) && ((p_building->Flag & 0x8000000) != 0)
+            if ((p_building->U.UObject.PrevThing == 0) && ((p_building->Flag & TngF_Unkn08000000) != 0)
               && ((LbRandomAnyShort() & 3) == 0) && (((gameturn + p_building->ThingOffset) & 7) == 0)) {
                 create_a_pod(0, p_building, 0);
             }
         }
         break;
     case SubTT_BLD_DOME:
-        if ((p_building->Flag & 0x0002) == 0)
+        if ((p_building->Flag & TngF_Unkn0002) == 0)
             process_dome1(p_building);
         break;
     case SubTT_BLD_MGUN:
-        if ((p_building->Flag & 0x0002) == 0)
+        if ((p_building->Flag & TngF_Unkn0002) == 0)
             process_mounted_gun(p_building);
         break;
     case SubTT_BLD_GATE:

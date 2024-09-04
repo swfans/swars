@@ -235,7 +235,7 @@ static TbBool check_person_close_on_mapel(struct MyMapElement *p_mapel)
                 && (p_thing->State != PerSt_PERSON_BURNING)
                 && (p_thing->State != PerSt_DIEING)
                 //&& ((p_thing->Flag & TngF_InVehicle) == 0) -- people in vehicles should not be within the list
-                && ((p_thing->Flag2 & 0x10) == 0))
+                && ((p_thing->Flag2 & TgF2_Unkn0010) == 0))
                   return true;
               break;
           default:

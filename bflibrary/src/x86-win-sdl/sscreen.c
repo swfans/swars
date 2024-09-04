@@ -672,12 +672,28 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
         SDL_FreeSurface(draw_surface);
     }
 
-    closestBPP = SDL_VideoModeOK(mdinfo->Width, mdinfo->Height,
-      mdinfo->BitsPerPixel, sdlFlags);
+    closestBPP = SDL_VideoModeOK(mdWidth, mdHeight, mdinfo->BitsPerPixel, sdlFlags);
+
+    if ((closestBPP == 0) && (mdWidth == 640) && ((mdHeight == 400) || (mdHeight == 480)) &&
+      ((mdinfo->BitsPerPixel == 8) || (mdinfo->BitsPerPixel == 24)))
+    {
+        // The 640x400 and 640x480 must always be available, even if SDL will need to cheat to achieve that
+        closestBPP = 24;
+    }
 
     // Even if different colour depth is returned, as long as the value is
     // non-zero, SDL can simulate any bpp with additional internal surface
     firstSurfaceOk = (closestBPP != 0);
+
+    if (!firstSurfaceOk || !secondSurfaceOk)
+    {
+        const char *reason = NULL;
+        if (!firstSurfaceOk)
+            reason = "SDL says the mode is not OK";
+        if (!secondSurfaceOk)
+            reason = "cannot create second surface";
+        LOGDBG("Mode %s unavailable - %s", mdinfo->Desc, reason);
+    }
 
     return firstSurfaceOk && secondSurfaceOk;
 }

@@ -139,10 +139,6 @@ void StartMusic(int songNo, ubyte volume)
 
 void StopMusic(void)
 {
-#if 0
-    asm volatile ("call ASM_StopMusic\n"
-        :  :  : "eax" );
-#endif
     if (!MusicInstalled || !MusicAble || !MusicActive)
         return;
 
@@ -179,11 +175,6 @@ void StopMusicIfActive(void)
 
 void DangerMusicFadeTick(void *clientval)
 {
-#if 0
-    asm volatile ("call ASM_DangerMusicFadeTick\n"
-        : : "a" (clientval));
-    return;
-#endif
     if (!MusicInstalled || !MusicAble || !MusicActive
       || !SongCurrentlyPlaying || AIL_sequence_status(SongHandle) == SNDSEQ_DONE)
     {
@@ -228,11 +219,6 @@ void DangerMusicFadeTick(void *clientval)
 
 void DangerMusicFadeSwitch(ubyte direction, ubyte freq)
 {
-#if 0
-    asm volatile ("call ASM_DangerMusicFadeSwitch\n"
-        : : "a" (direction),  "d" (freq));
-    return;
-#endif
     if (DisableDangerMusic || DangerMusicAble
       || MusicInstalled || MusicAble || MusicActive)
         return;

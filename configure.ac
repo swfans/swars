@@ -170,6 +170,11 @@ AS_IF([test "x$have_sdl2" != "xyes"], [
   AC_DEFINE(ENABLE_SDL1, [1], [Define for SDL1 support])
 ])
 
+# Do not allow SDL to control machine emulation
+AS_IF([test "$have_windows" = "yes"], [
+  SDL_LIBS=`echo $SDL_LIBS | sed -e 's/\(^\|\s\)-mwindows\>//g'`
+])
+
 PKG_CHECK_MODULES([VORBISFILE], [vorbisfile >= 1.2.0], [], [
   AC_MSG_ERROR([vorbisfile >= 1.2.0 not found])
 ])
