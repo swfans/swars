@@ -452,6 +452,23 @@ TbBool person_is_dead(ThingIdx thing)
     return (p_thing->State == PerSt_DEAD);
 }
 
+TbBool person_is_dead_or_dying(ThingIdx thing)
+{
+    struct Thing *p_thing;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+
+    if (p_thing->Type != TT_PERSON)
+        return false;
+
+    return (p_thing->State == PerSt_DEAD)
+      || (p_thing->State == PerSt_PERSON_BURNING)
+      || (p_thing->State == PerSt_DIEING);
+}
+
 ubyte person_mod_chest_level(struct Thing *p_person)
 {
     return cybmod_chest_level(&p_person->U.UPerson.UMod);

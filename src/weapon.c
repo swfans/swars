@@ -82,6 +82,8 @@ struct TbNamedEnum weapon_names[33] = {0};
 
 short persuaded_person_weapons_sell_cost_permil = 0;
 
+short low_energy_alarm_level = 50;
+
 enum WeaponsConfigCmd {
     CCWep_WeaponsCount = 1,
     CCWep_Name,
@@ -1236,10 +1238,13 @@ void process_energy_alarm(struct Thing *p_person)
 {
     ThingIdx dcthing;
 
+    if ((p_person->Flag & TngF_Unkn1000) == 0)
+        return;
+
     dcthing = players[local_player_no].DirectControl[0];
-    if (((p_person->Flag & TngF_Unkn1000) != 0) && (p_person->ThingOffset == dcthing))
+    if (p_person->ThingOffset == dcthing)
     {
-        if (p_person->U.UPerson.Energy >= 50)
+        if (p_person->U.UPerson.Energy >= low_energy_alarm_level)
         {
             if ((gameturn & 7) == 0)
                 low_energy_alarm_stop();
