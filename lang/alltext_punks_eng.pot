@@ -84,7 +84,7 @@ msgstr ""
 #: mission.brief.mail19.par1.h mission.brief.mail21.par1.h
 #: mission.brief.mail19.par1.h mission.brief.mail23.par1.h
 #: mission.brief.mail23.par1.h mission.brief.mail25.par1.h
-#: mission.brief.mail23.par1.h mission.brief.mail27.par1.h
+#: mission.brief.mail26.par1.h mission.brief.mail27.par1.h
 #: mission.brief.mail27.par1.h mission.brief.mail30.par1.h
 msgctxt "mission brief email header"
 msgid "Mission Objectives:"
@@ -519,6 +519,55 @@ msgstr ""
 #: mission.brief.mail25.map26.level4:2
 msgctxt "mission brief tactical information"
 msgid "Safe Haven"
+msgstr ""
+
+#: mission.title:5
+msgctxt "mission title"
+msgid "Access Violation"
+msgstr ""
+
+#: mission.brief.mail26.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"1. Infiltrate Eurocorp Base via stealth"
+msgstr ""
+
+#: mission.brief.mail26.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"2. Acquire Clone Shield device"
+msgstr ""
+
+#: mission.brief.mail26.par4.c2
+msgctxt "mission brief email orders"
+msgid ""
+"3. Forcibly recover C3 research data from Eurocorp scientist"
+msgstr ""
+
+#: mission.brief.mail26.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"4. Eliminate remaining Eurocorp scientist"
+msgstr ""
+
+#: mission.brief.mail26.map79.level4:1
+msgctxt "mission brief tactical information"
+msgid "Guard patrol safe observation point"
+msgstr ""
+
+#: mission.brief.mail26.map79.level4:2
+msgctxt "mission brief tactical information"
+msgid "Clone Shield location"
+msgstr ""
+
+#: mission.brief.mail26.map79.level4:3
+msgctxt "mission brief tactical information"
+msgid "Scientist with data briefcase"
+msgstr ""
+
+#: mission.brief.mail26.map79.level4:4
+msgctxt "mission brief tactical information"
+msgid "Secondary Scientist target"
 msgstr ""
 
 #: mission.title:69
