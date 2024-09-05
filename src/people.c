@@ -23,7 +23,9 @@
 #include "bffile.h"
 #include "bfini.h"
 #include "bfutility.h"
+
 #include "bigmap.h"
+#include "command.h"
 #include "player.h"
 #include "game.h"
 #include "sound.h"
@@ -1134,6 +1136,21 @@ void process_stamina(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void person_init_command(struct Thing *p_person, ushort from)
+{
+    asm volatile ("call ASM_person_init_command\n"
+        : : "a" (p_person), "d" (from));
+}
+
+ubyte is_command_completed(struct Thing *p_person)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_is_command_completed\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+}
+
 int person_goto_person_nav(struct Thing *p_person)
 {
     int ret;
@@ -1271,6 +1288,74 @@ void person_go_plant_mine(struct Thing *p_person)
     {
         person_init_drop(p_person, p_person->U.UPerson.CurrentWeapon);
     }
+}
+
+void set_peep_comcur(struct Thing *p_person)
+{
+    asm volatile ("call ASM_set_peep_comcur\n"
+        : : "a" (p_person));
+}
+
+void person_find_next_state(struct Thing *p_person)
+{
+    short cmd;
+
+    if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) == 0))
+    {
+        p_person->State = PerSt_WAIT;
+        p_person->U.UPerson.ComTimer = 50;
+        return;
+    }
+
+    if (p_person->U.UPerson.ComCur == 0)
+    {
+        if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) != 0))
+        {
+            p_person->Flag2 &= ~0x0800;
+            ingame.Flags &= ~0x0100;
+            set_peep_comcur(p_person);
+        }
+        p_person->State = PerSt_WAIT;
+        p_person->U.UPerson.ComTimer = 50;
+        return;
+    }
+
+    if ((p_person->Flag & 0x0040) != 0)
+    {
+        p_person->Flag &= ~0x0040;
+        person_init_command(p_person, PCmd_GET_ITEM);
+        return;
+    }
+
+    if (!is_command_completed(p_person))
+        return;
+
+    if (p_person->U.UPerson.ComHead == 0)
+    {
+        p_person->State = PerSt_WAIT;
+        p_person->U.UPerson.ComTimer = 50;
+        return;
+    }
+
+    cmd = p_person->U.UPerson.ComCur;
+    cmd = game_commands[cmd].Next;
+    p_person->U.UPerson.ComCur = cmd;
+
+    // Repeat with new ComCur
+    if (p_person->U.UPerson.ComCur == 0)
+    {
+        if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) != 0))
+        {
+            p_person->Flag2 &= ~0x0800;
+            ingame.Flags &= ~0x0100;
+            set_peep_comcur(p_person);
+        }
+        p_person->State = PerSt_WAIT;
+        p_person->U.UPerson.ComTimer = 100;
+        return;
+    }
+
+    person_init_command(p_person, PCmd_USE_WEAPON);
 }
 
 void process_person(struct Thing *p_person)

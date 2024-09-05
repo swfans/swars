@@ -2218,10 +2218,4 @@ TbResult load_objectives_text(void)
     return Lb_SUCCESS;
 }
 
-void person_init_command(struct Thing *p_person, ushort from)
-{
-    asm volatile ("call ASM_person_init_command\n"
-        : : "a" (p_person), "d" (from));
-}
-
 /******************************************************************************/
