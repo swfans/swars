@@ -1134,6 +1134,75 @@ void process_stamina(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+int person_goto_person_nav(struct Thing *p_person)
+{
+    int ret;
+    asm volatile (
+      "call ASM_person_goto_person_nav\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+}
+
+void person_scare_person(struct Thing *p_person)
+{
+    struct Thing *p_target;
+
+    person_goto_person_nav(p_person);
+    if (p_person->State == PerSt_NONE)
+    {
+        int range;
+
+        p_person->State = PerSt_SCARE_PERSON;
+        range = get_weapon_range(p_person);
+        if (can_i_see_thing(p_person, p_person->PTarget, range, 0) > 0)
+        {
+            p_person->Flag |= 0x0800;
+            if ((p_person->Flag & 0x10000000) != 0)
+            {
+                struct Thing *p_vehicle;
+
+                p_vehicle = &things[p_person->U.UPerson.Vehicle];
+                p_vehicle->Flag |= 0x01000000;
+            }
+        }
+    }
+    p_target = p_person->PTarget;
+    if (p_target->State == PerSt_DEAD)
+    {
+        p_person->State = PerSt_NONE;
+    }
+}
+
+void person_block_person(struct Thing *p_person)
+{
+    struct Thing *p_target;
+
+    person_goto_person_nav(p_person);
+    if (p_person->State == PerSt_NONE)
+    {
+        int range;
+
+        p_person->State = PerSt_BLOCK_PERSON;
+        range = get_weapon_range(p_person);
+        if (can_i_see_thing(p_person, p_person->PTarget, range * range, 0) > 0)
+        {
+            p_person->Flag |= 0x0800;
+            if ((p_person->Flag & 0x10000000) != 0)
+            {
+                struct Thing *p_vehicle;
+
+                p_vehicle = &things[p_person->U.UPerson.Vehicle];
+                p_vehicle->Flag |= 0x01000000;
+            }
+        }
+    }
+    p_target = p_person->PTarget;
+    if (p_target->State == PerSt_DEAD)
+    {
+        p_person->State = PerSt_NONE;
+    }
+}
+
 void process_person(struct Thing *p_person)
 {
     asm volatile ("call ASM_process_person\n"
