@@ -1143,6 +1143,30 @@ int person_goto_person_nav(struct Thing *p_person)
     return ret;
 }
 
+void person_goto_point(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_goto_point\n"
+        : : "a" (p_person));
+}
+
+void person_goto_point_rel(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_goto_point_rel\n"
+        : : "a" (p_person));
+}
+
+void person_init_drop(struct Thing *p_person, ThingIdx item)
+{
+    asm volatile ("call ASM_person_init_drop\n"
+        : : "a" (p_person), "d" (item));
+}
+
+void person_init_drop_special(struct Thing *p_person, ThingIdx item)
+{
+    asm volatile ("call ASM_person_init_drop_special\n"
+        : : "a" (p_person), "d" (item));
+}
+
 void person_scare_person(struct Thing *p_person)
 {
     struct Thing *p_target;
@@ -1212,6 +1236,18 @@ void process_stationary_shot(struct Thing *p_person)
     }
 }
 
+void process_wait_train(struct Thing *p_person)
+{
+    if ((p_person->Flag & TngF_Unkn4000) != 0)
+    {
+        p_person->SubState = 25;
+    }
+    else if (p_person->SubState == 25)
+    {
+        p_person->State = PerSt_NONE;
+    }
+}
+
 void person_follow_person(struct Thing *p_person)
 {
     struct Thing *p_target;
@@ -1225,6 +1261,15 @@ void person_follow_person(struct Thing *p_person)
     if ((p_target->Flag & TngF_Unkn0002) != 0)
     {
         p_person->State = PerSt_NONE;
+    }
+}
+
+void person_go_plant_mine(struct Thing *p_person)
+{
+    person_goto_point(p_person);
+    if (p_person->State == PerSt_NONE)
+    {
+        person_init_drop(p_person, p_person->U.UPerson.CurrentWeapon);
     }
 }
 
