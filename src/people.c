@@ -1134,5 +1134,10 @@ void process_stamina(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void process_person(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_person\n"
+        : : "a" (p_person));
+}
 
 /******************************************************************************/
