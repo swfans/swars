@@ -68,24 +68,16 @@ msgid "Zealot Attack"
 msgstr ""
 
 #: mission.brief.mail1.par1.h mission.brief.mail2.par1.h
-#: mission.brief.mail1.par1.h mission.brief.mail3.par1.h
 #: mission.brief.mail3.par1.h mission.brief.mail4.par1.h
-#: mission.brief.mail3.par1.h mission.brief.mail5.par1.h
 #: mission.brief.mail5.par1.h mission.brief.mail6.par1.h
-#: mission.brief.mail5.par1.h mission.brief.mail7.par1.h
-#: mission.brief.mail5.par1.h mission.brief.mail8.par1.h
-#: mission.brief.mail7.par1.h mission.brief.mail12.par1.h
-#: mission.brief.mail13.par1.h mission.brief.mail13.par1.h
-#: mission.brief.mail13.par1.h mission.brief.mail14.par1.h
-#: mission.brief.mail13.par1.h mission.brief.mail15.par1.h
-#: mission.brief.mail15.par1.h mission.brief.mail17.par1.h
-#: mission.brief.mail19.par1.h mission.brief.mail18.par1.h
-#: mission.brief.mail19.par1.h mission.brief.mail19.par1.h
+#: mission.brief.mail7.par1.h mission.brief.mail8.par1.h
+#: mission.brief.mail12.par1.h mission.brief.mail13.par1.h
+#: mission.brief.mail14.par1.h mission.brief.mail15.par1.h
+#: mission.brief.mail17.par1.h mission.brief.mail18.par1.h
 #: mission.brief.mail19.par1.h mission.brief.mail21.par1.h
-#: mission.brief.mail19.par1.h mission.brief.mail23.par1.h
 #: mission.brief.mail23.par1.h mission.brief.mail25.par1.h
 #: mission.brief.mail26.par1.h mission.brief.mail27.par1.h
-#: mission.brief.mail27.par1.h mission.brief.mail30.par1.h
+#: mission.brief.mail30.par1.h
 msgctxt "mission brief email header"
 msgid "Mission Objectives:"
 msgstr ""
