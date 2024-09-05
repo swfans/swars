@@ -577,7 +577,7 @@ msgid ""
 "armoured convoy before it reaches its destination."
 msgstr ""
 
-#: mission.brief.mail5.map9.level1:1 mission.brief.mail16.map40.level1:2
+#: mission.brief.mail5.map9.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Singapore IML Link"
 msgstr ""
