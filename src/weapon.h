@@ -149,8 +149,16 @@ void sanitize_weapon_quantities(ulong *p_weapons,
 sbyte find_nth_weapon_held(ushort index, ubyte n);
 
 /** Returns range (in normal map coord points) of the person current weapon.
+ *
+ * Simply gets the value from weapon config, without adjustments.
  */
 short current_weapon_range(struct Thing *p_person);
+
+/** Returns range (in normal map coord points) of the person current weapon.
+ *
+ * Implements modifications for vehicle weapons and throwing weapons.
+ */
+int get_weapon_range(struct Thing *p_person);
 
 /** Returns whether the person current weapon requires some time to achieve target lock.
  */
