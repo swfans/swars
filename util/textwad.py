@@ -1221,6 +1221,8 @@ def textwad_create_from_po(lines, podict, txtfname):
             for place, num in e.occurrences:
                 fname = po_occurrence_to_fname(campgn, place, num)
                 if fname == txtfname:
+                    if (campgn,place,num,) in pomdict:
+                        print("{}: Doubled definition of {} {}{}".format(txtfname,campgn,place,num))
                     pomdict[ (campgn,place,num,) ] = e
     match = None
     if not match:
