@@ -26,8 +26,11 @@
 
 #include "bigmap.h"
 #include "command.h"
+#include "display.h"
 #include "player.h"
 #include "game.h"
+#include "game_speed.h"
+#include "scandraw.h"
 #include "sound.h"
 #include "thing.h"
 #include "weapon.h"
@@ -170,6 +173,12 @@ const struct TbNamedEnum people_conf_person_cmds[] = {
   {NULL,			0},
 };
 
+const ubyte follow_dist[4][4] = {
+  { 0, 3, 6, 9 },
+  { 3, 0, 6, 9 },
+  { 3, 6, 0, 9 },
+  { 3, 6, 9, 0 },
+};
 
 void read_people_conf_file(void)
 {
@@ -1184,6 +1193,12 @@ void person_init_drop_special(struct Thing *p_person, ThingIdx item)
         : : "a" (p_person), "d" (item));
 }
 
+void stop_looped_weapon_sample(struct Thing *p_person, short weapon)
+{
+    asm volatile ("call ASM_stop_looped_weapon_sample\n"
+        : : "a" (p_person), "d" (weapon));
+}
+
 void person_scare_person(struct Thing *p_person)
 {
     struct Thing *p_target;
@@ -1290,9 +1305,57 @@ void person_go_plant_mine(struct Thing *p_person)
     }
 }
 
+void process_knocked_out(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_knocked_out\n"
+        : : "a" (p_person));
+}
+
+void process_tasered_person(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_tasered_person\n"
+        : : "a" (p_person));
+}
+
+void person_intel(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_intel\n"
+        : : "a" (p_person));
+}
+
+void process_im_shoved(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_im_shoved\n"
+        : : "a" (p_person));
+}
+
+void process_protect_person(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_protect_person\n"
+        : : "a" (p_person));
+}
+
+void process_wander(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_wander\n"
+        : : "a" (p_person));
+}
+
+void process_wander_and_fly(struct Thing *p_person, struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_wander_and_fly\n"
+        : : "a" (p_person), "d" (p_vehicle));
+}
+
 void set_peep_comcur(struct Thing *p_person)
 {
     asm volatile ("call ASM_set_peep_comcur\n"
+        : : "a" (p_person));
+}
+
+void process_lighting_unkn1(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_lighting_unkn1\n"
         : : "a" (p_person));
 }
 
@@ -1358,10 +1421,19 @@ void person_find_next_state(struct Thing *p_person)
     person_init_command(p_person, PCmd_USE_WEAPON);
 }
 
+void make_peep_protect_peep(struct Thing *p_protector, struct Thing *p_leader)
+{
+    asm volatile ("call ASM_make_peep_protect_peep\n"
+        : : "a" (p_protector), "d" (p_leader));
+}
+
 void process_person(struct Thing *p_person)
 {
+#if 1
     asm volatile ("call ASM_process_person\n"
         : : "a" (p_person));
+    return;
+#endif
 }
 
 /******************************************************************************/
