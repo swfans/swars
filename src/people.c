@@ -1590,7 +1590,7 @@ void make_peep_protect_peep(struct Thing *p_protector, struct Thing *p_leader)
 
 void process_person(struct Thing *p_person)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_process_person\n"
         : : "a" (p_person));
     return;
