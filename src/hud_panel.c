@@ -30,6 +30,7 @@
 #include "game_speed.h"
 #include "game.h"
 #include "player.h"
+#include "scandraw.h"
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -174,12 +175,6 @@ void SCANNER_unkn_func_204(int a1, int a2, int a3)
 void SCANNER_unkn_func_205(void)
 {
     asm volatile ("call ASM_SCANNER_unkn_func_205\n"
-        :  :  : "eax" );
-}
-
-void SCANNER_draw_new_transparent(void)
-{
-    asm volatile ("call ASM_SCANNER_draw_new_transparent\n"
         :  :  : "eax" );
 }
 

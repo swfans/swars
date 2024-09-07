@@ -69,4 +69,10 @@ void func_711F4(short a1, short a2, short a3, short a4, ubyte colour)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (colour));
 }
 
+void SCANNER_draw_new_transparent(void)
+{
+    asm volatile ("call ASM_SCANNER_draw_new_transparent\n"
+        :  :  : "eax" );
+}
+
 /******************************************************************************/

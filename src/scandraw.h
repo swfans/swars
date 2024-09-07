@@ -35,6 +35,7 @@ void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ,
 void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour);
 void func_711F4(short a1, short a2, short a3, short a4, ubyte colour);
 
+void SCANNER_draw_new_transparent(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }
