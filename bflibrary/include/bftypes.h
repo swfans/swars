@@ -37,6 +37,13 @@ extern "C" {
 # define NULL 0
 #endif
 
+/** Short disk path max length - restrictive equivalent for FILENAME_MAX.
+ *
+ * Should be used for relative paths within the application folder, as
+ * long as the restriction was taken into account while placing files there.
+ */
+#define DISKPATH_SIZE    144
+
 typedef unsigned long ulong;
 typedef unsigned int uint;
 typedef unsigned short ushort;

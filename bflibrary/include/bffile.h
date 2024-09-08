@@ -37,7 +37,6 @@ extern "C" {
 //TODO change to build system param
 #define LB_FILENAME_TRANSFORM 1
 
-
 /* File system separator. Use when concatenating path; when checking existing
  * path, it is better to try both separators rather than use these defines.
  */
@@ -104,7 +103,7 @@ typedef struct _finddata_t TbFILE_FIND;
 #pragma pack(1)
 
 struct TbFileFind {
-    char Filename[144];
+    char Filename[DISKPATH_SIZE];
     char AlternateFilename[14];
     unsigned long Attributes;
     unsigned long Length;
