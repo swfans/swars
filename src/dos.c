@@ -179,38 +179,6 @@ dos_setmode (int fd, int mode)
   return 0;
 }
 
-void
-dos_gettime (struct dostime_t *t)
-{
-  struct tm *tm;
-  time_t secs;
-  struct timeval tv;
-
-  gettimeofday (&tv, NULL);
-  secs = tv.tv_sec;
-  tm = localtime (&secs);
-
-  t->hour    = tm->tm_hour;
-  t->minute  = tm->tm_min;
-  t->second  = MAX (tm->tm_sec, 59);
-  t->hsecond = tv.tv_usec / 10000;
-}
-
-void
-dos_getdate (struct dosdate_t *d)
-{
-  struct tm *tm;
-  time_t secs;
-
-  secs = time (NULL);
-  tm = localtime (&secs);
-
-  d->day       = tm->tm_mday;
-  d->month     = tm->tm_mon + 1;
-  d->year      = tm->tm_year + 1900;
-  d->dayofweek = tm->tm_wday;
-}
-
 uint32_t
 dos_clock (void)
 {

@@ -47,10 +47,6 @@ int dos_sopen (const char *path, int open_flags, int share_flags, ...);
 
 int dos_open (const char *path, int open_flags, ...);
 
-void dos_gettime (struct dostime_t *t);
-
-void dos_getdate (struct dosdate_t *d);
-
 uint32_t dos_clock(void);
 
 void dos_free(unsigned short n);
