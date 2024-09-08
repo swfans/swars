@@ -29,22 +29,18 @@
 #include <io.h>
 #endif
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 /******************************************************************************/
 // Buffer sizes
 // Disk path max length - restrictive equivalent for FILENAME_MAX
+#ifndef DISKPATH_SIZE
 #define DISKPATH_SIZE    144
+#endif
 #define LINEMSG_SIZE     160
-#define READ_BUFSIZE     256
-#define LOOPED_FILE_LEN 4096
-#define COMMAND_WORD_LEN  32
-
-// Max length of any processed string
-#define MAX_TEXT_LENGTH 4096
-// Smaller buffer, also widely used
-#define TEXT_BUFFER_LENGTH 2048
 
 /******************************************************************************/
 #ifdef __cplusplus
