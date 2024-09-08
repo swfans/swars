@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "bflib_basics.h"
 #include "bffile.h"
 #include "globals.h"
 #include "scanner.h"

@@ -20,7 +20,6 @@
 #include "poly.h"
 
 #include "globals.h"
-#include "bflib_basics.h"
 #include "swlog.h"
 
 /******************************************************************************/

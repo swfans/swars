@@ -12,7 +12,6 @@
 #include "bfutility.h"
 #include "poly.h"
 #include "util.h"
-#include "bflib_basics.h"
 #include "swlog.h"
 
 TbScreenMode screen_mode_game_hi = Lb_SCREEN_MODE_640_480_8;
