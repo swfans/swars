@@ -44,6 +44,26 @@ AS_IF([test "$lb_shadow_colour" = "yes"], [
         [Define to 1 if the bflibrary should define and use lbDisplay.ShadowColour property])
 ])
 
+AC_ARG_ENABLE([lb-mouse-wheel],
+    AS_HELP_STRING([--enable-lb-mouse-wheel],
+        [make the bflibrary maintain mouse wheel properties within lbDisplay]),
+    [lb_mouse_wheel=$enableval], [lb_mouse_wheel=no])
+
+AS_IF([test "$lb_mouse_wheel" = "yes"], [
+    AC_DEFINE([ENABLE_MOUSE_WHEEL], 1,
+        [Define to 1 if the bflibrary should maintain mouse wheel properties within lbDisplay])
+])
+
+AC_ARG_ENABLE([lb-mouse-move-ratio],
+    AS_HELP_STRING([--enable-lb-mouse-move-ratio],
+        [make the bflibrary support MouseMoveRatio properties within lbDisplay]),
+    [lb_mouse_move_ratio=$enableval], [lb_mouse_move_ratio=no])
+
+AS_IF([test "$lb_mouse_move_ratio" = "yes"], [
+    AC_DEFINE([ENABLE_MOUSE_MOVE_RATIO], 1,
+        [Define to 1 if the bflibrary should support MouseMoveRatio properties within lbDisplay])
+])
+
 # Checks for programs.
 
 AC_PROG_CC
