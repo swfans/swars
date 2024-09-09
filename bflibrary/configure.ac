@@ -34,6 +34,16 @@ AS_IF([test "$lb_wscreen_control" = "yes"], [
         [Define to 1 if the bflibrary should change value of lbDisplay.WScreen])
 ])
 
+AC_ARG_ENABLE([lb-shadow-colour],
+    AS_HELP_STRING([--enable-lb-shadow-colour],
+        [make the bflibrary define and use lbDisplay.ShadowColour property]),
+    [lb_shadow_colour=$enableval], [lb_shadow_colour=no])
+
+AS_IF([test "$lb_shadow_colour" = "yes"], [
+    AC_DEFINE([ENABLE_SHADOW_COLOUR], 1,
+        [Define to 1 if the bflibrary should define and use lbDisplay.ShadowColour property])
+])
+
 # Checks for programs.
 
 AC_PROG_CC

@@ -428,7 +428,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
 
     lbDisplay.DrawFlags = 0;
     lbDisplay.DrawColour = 0;
-#if defined(ENABLE_SHADOW_COLOUR)
+#if defined(LB_ENABLE_SHADOW_COLOUR)
     lbDisplay.ShadowColour = 0;
 #endif
     lbDisplay.PhysicalScreenWidth = mdinfo->Width;

@@ -236,7 +236,7 @@ struct DisplayStruct { // sizeof=118
     short MouseMoveRatioX;
     short MouseMoveRatioY;
 #endif
-#if defined(ENABLE_SHADOW_COLOUR)
+#if defined(LB_ENABLE_SHADOW_COLOUR)
     /** Colour index used for drawing shadow. */
     uchar ShadowColour;
 #endif
