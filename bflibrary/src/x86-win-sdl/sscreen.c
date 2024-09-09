@@ -273,7 +273,7 @@ void LbRegisterStandardVideoModes(void)
  */
 TbResult LbIScreenDrawSurfaceCreate(TbBool set_palette)
 {
-#if !defined(BFLIB_WSCREEN_CONTROL)
+#if !defined(LB_WSCREEN_CONTROL)
     // If app has WScreen control, then we want to try create the surface
     // around the WScreen buffer comming from the app
     if (lbDisplay.WScreen != NULL)
@@ -413,7 +413,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // Create secondary surface if necessary,
     // that is if BPP or dimensions do not match,
     // or if we need it due to no WScreen control
-#if defined(BFLIB_WSCREEN_CONTROL)
+#if defined(LB_WSCREEN_CONTROL)
     if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
         (mdWidth != width) || (mdHeight != height))
 #endif
@@ -436,7 +436,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     lbDisplay.ScreenMode = mode;
     lbDisplay.PhysicalScreen = NULL;
 
-#if defined(BFLIB_WSCREEN_CONTROL)
+#if defined(LB_WSCREEN_CONTROL)
     lbDisplay.WScreen = NULL;
     lbDisplay.GraphicsWindowPtr = NULL;
 #endif
@@ -529,7 +529,7 @@ TbResult LbScreenReset(void)
 
 TbBool LbScreenIsLocked(void)
 {
-#if defined(BFLIB_WSCREEN_CONTROL)
+#if defined(LB_WSCREEN_CONTROL)
     return (lbDisplay.WScreen != NULL) && (lbScreenInitialised)
       && (lbDrawSurface != NULL);
 #else
@@ -548,7 +548,7 @@ TbResult LbScreenLock(void)
     if (SDL_MUSTLOCK(to_SDLSurf(lbDrawSurface))) {
         if (SDL_LockSurface(to_SDLSurf(lbDrawSurface)) < 0) {
             LOGERR("cannot lock draw Surface: %s", SDL_GetError());
-#if defined(BFLIB_WSCREEN_CONTROL)
+#if defined(LB_WSCREEN_CONTROL)
             lbDisplay.GraphicsWindowPtr = NULL;
             lbDisplay.WScreen = NULL;
 #endif
@@ -556,7 +556,7 @@ TbResult LbScreenLock(void)
         }
     }
 
-#if defined(BFLIB_WSCREEN_CONTROL)
+#if defined(LB_WSCREEN_CONTROL)
     lbDisplay.WScreen = (ubyte *) to_SDLSurf(lbDrawSurface)->pixels;
     lbDisplay.GraphicsScreenWidth = to_SDLSurf(lbDrawSurface)->pitch;
     lbDisplay.GraphicsWindowPtr = &lbDisplay.WScreen[lbDisplay.GraphicsWindowX +
@@ -572,7 +572,7 @@ TbResult LbScreenUnlock(void)
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
-#if defined(BFLIB_WSCREEN_CONTROL)
+#if defined(LB_WSCREEN_CONTROL)
     lbDisplay.WScreen = NULL;
     lbDisplay.GraphicsWindowPtr = NULL;
 #endif
@@ -661,7 +661,7 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
     // SDL screen size
     LbIGetScreenModeDimensions(&mdWidth, &mdHeight, mdinfo);
     secondSurfaceOk = true;
-#if defined(BFLIB_WSCREEN_CONTROL)
+#if defined(LB_WSCREEN_CONTROL)
     if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
         (mdWidth != mdinfo->Width) || (mdHeight != mdinfo->Height))
 #endif
@@ -835,7 +835,7 @@ int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst)
  */
 TbResult LbIScreenDrawSurfaceCheck(void)
 {
-#if defined(BFLIB_WSCREEN_CONTROL)
+#if defined(LB_WSCREEN_CONTROL)
     return Lb_OK;
 #else
     OSSurfaceHandle oldDrawSurf;

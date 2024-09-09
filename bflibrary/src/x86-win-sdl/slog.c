@@ -137,7 +137,7 @@ void LbI_LogHeader(struct TbLog *log, FILE *file, ubyte header)
 #  else
         rel_kind = "standard";
 #  endif
-        fprintf(file, PACKAGE" ver "VERSION" (%s release)\n", rel_kind);
+        fprintf(file, LB_PACKAGE" ver "LB_VERSION" (%s release)\n", rel_kind);
         actn = "CREATED";
     } else
     {
