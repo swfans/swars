@@ -7,7 +7,8 @@ m4_define([bfsoundlib_version], [0.1.0.0])
 AC_INIT([bullfrog-sound-library], [bfsoundlib_version], [mefistotelis@gmail.com], [bfsoundlib])
 
 AC_CONFIG_SRCDIR([src/bfaudio.c])
-AC_CONFIG_HEADERS([include/bsndconf.h])
+AC_CONFIG_HEADERS([include/bsndprivconf.h])
+AX_PREFIX_CONFIG_H([include/bsndconf.h], [LBS])
 #AC_CONFIG_LINKS([include:include])
 AC_CONFIG_MACRO_DIRS([m4])
 

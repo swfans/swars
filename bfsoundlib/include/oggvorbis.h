@@ -23,7 +23,7 @@
 
 #include <stdbool.h>
 #include <vorbis/vorbisfile.h>
-#include OPENAL_AL_H
+#include LBS_OPENAL_AL_H
 
 #ifdef __cplusplus
 extern "C" {

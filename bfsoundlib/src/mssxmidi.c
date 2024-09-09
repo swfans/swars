@@ -33,7 +33,7 @@
 #include "drv_oal.h"
 #include "msssys.h"
 #include "miscutil.h"
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
 #  include "wildmidi_lib.h"
 #endif
 /******************************************************************************/
@@ -136,7 +136,7 @@ static void XMI_rewind_sequence(SNDSEQUENCE *seq)
     seq->EVNT_ptr = (uint8_t *)seq->EVNT + 8;
 
     wildpos = 0;
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
     WildMidi_FastSeek(seq->ICA, &wildpos);
 #endif
 }
@@ -436,7 +436,7 @@ void XMI_destroy_MDI_driver(MDI_DRIVER *mdidrv)
 
     OPENAL_free_buffers(mdidrv->n_sequences);
 
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
     WildMidi_Shutdown();
 #endif
 
@@ -699,7 +699,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
 
     smp_rate = 22050;
 
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
     i = WildMidi_Init("conf/midipats.cfg", smp_rate, WM_MO_ENHANCED_RESAMPLING);
     if (i < 0) {
         AIL_set_error("Cannot init music - invalid/missing WildMIDI config");
@@ -1550,7 +1550,7 @@ void AIL2OAL_API_release_sequence_handle(SNDSEQUENCE *seq)
     AIL_stop_sequence(seq);
     // Set 'free' flag
     seq->status = SNDSEQ_FREE;
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
     // Release the WildMidi handle
     if (seq->ICA != NULL)
         WildMidi_Close(seq->ICA);
@@ -1684,7 +1684,7 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
         return 0;
     }
 
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
     // Release the previous WildMidi handle
     if (seq->ICA != NULL)
         WildMidi_Close(seq->ICA);
@@ -1713,7 +1713,7 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     seq->tempo_error = 0;
 
     len = XMI_whole_size(start);
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
     // The (otherwise unused) ICA pointer will be our WildMIDI handle
     seq->ICA = WildMidi_OpenBuffer(start, len);
     if (seq->ICA == NULL) {
@@ -1723,7 +1723,7 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     }
 #endif
 
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
     // Move to the selected sequence
     i = sequence_num;
     while (i > 0) {
