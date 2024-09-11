@@ -29,8 +29,86 @@ extern "C" {
 
 #include "bfconfig.h"
 
-#ifdef LB_HAVE_STDINT_H
+#if defined(LB_HAVE_STDINT_H)
 # include <stdint.h>
+#elif defined(LB_HAVE_INTTYPES_H)
+# include <inttypes.h>
+#endif
+
+// Fixed size int types: autoconf should ensure that we either have the
+// intX_t/uintX_t types available in one of generic headers, or we have
+// lb_intX_t/lb_uintX_t defined directly by autoconf. With that in mind:
+
+#if !defined(INT8_MAX) && !defined(int8_t)
+# if defined(lb_int8_t)
+#  define int8_t lb_int8_t
+#  define INT8_MAX 0x7f
+# else
+#  error No definition of int8_t type
+# endif
+#endif
+
+#if !defined(UINT8_MAX) && !defined(uint8_t)
+# if defined(lb_uint8_t)
+#  define uint8_t lb_uint8_t
+#  define UINT8_MAX 0xff
+# else
+#  error No definition of uint8_t type
+# endif
+#endif
+
+#if !defined(INT16_MAX) && !defined(int16_t)
+# if defined(lb_int16_t)
+#  define int16_t lb_int16_t
+#  define INT16_MAX 0x7fff
+# else
+#  error No definition of int16_t type
+# endif
+#endif
+
+#if !defined(UINT16_MAX) && !defined(uint16_t)
+# if defined(lb_uint16_t)
+#  define uint16_t lb_uint16_t
+#  define UINT16_MAX 0xffff
+# else
+#  error No definition of uint16_t type
+# endif
+#endif
+
+#if !defined(INT32_MAX) && !defined(int32_t)
+# if defined(lb_int32_t)
+#  define int32_t lb_int32_t
+#  define INT32_MAX 0x7fffffff
+# else
+#  error No definition of int32_t type
+# endif
+#endif
+
+#if !defined(UINT32_MAX) && !defined(uint32_t)
+# if defined(lb_uint32_t)
+#  define uint32_t lb_uint32_t
+#  define UINT32_MAX 0xffffffff
+# else
+#  error No definition of uint32_t type
+# endif
+#endif
+
+#if !defined(INT64_MAX) && !defined(int64_t)
+# if defined(lb_int64_t)
+#  define int64_t lb_int64_t
+#  define INT64_MAX 0x7fffffffffffffff
+# else
+#  error No definition of int64_t type
+# endif
+#endif
+
+#if !defined(UINT64_MAX) && !defined(uint64_t)
+# if defined(lb_uint64_t)
+#  define uint64_t lb_uint64_t
+#  define UINT64_MAX 0xffffffffffffffff
+# else
+#  error No definition of uint64_t type
+# endif
 #endif
 
 #ifndef false
