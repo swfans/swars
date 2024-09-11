@@ -69,3 +69,11 @@ libbfsound_a_CPPFLAGS = \
 
 libbfsoundheadersdir = $(includedir)/bfsound
 libbfsoundheaders_HEADERS = $(wildcard $(srcdir)/include/*.h) $(builddir)/include/bsndconf.h
+
+# Libraries included with the project
+libbfsound_a_PROJECT_LIBS = ../lib/libbullfrog.a
+
+$(libbfsound_a_OBJECTS) $(lib_LIBRARIES): $(libbfsound_a_PROJECT_LIBS)
+
+../lib/libbullfrog.a: ../bflibrary/libbullfrog.a
+	$(MAKE) -C $(<D) DESTDIR="../" prefix="" install

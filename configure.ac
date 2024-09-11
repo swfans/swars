@@ -211,8 +211,8 @@ AC_SUBST(BFLIBRARY_LIBS, "-L\"\$(top_builddir)/lib\" -lbullfrog")
 # the 2nd include folder is just a temp workaround
 AC_SUBST(BFLIBRARY_CFLAGS, "-I\"\$(top_builddir)/include/bullfrog\"  -I\"\$(top_srcdir)/bflibrary/include\"")
 
-AC_SUBST(BFSOUNDLIB_LIBS, "-L\$(top_builddir)/bfsoundlib")
-AC_SUBST(BFSOUNDLIB_CFLAGS, "-I\$(top_srcdir)/bfsoundlib/include")
+AC_SUBST(BFSOUNDLIB_LIBS, "-L\"\$(top_builddir)/lib\" -lbfsound")
+AC_SUBST(BFSOUNDLIB_CFLAGS, "-I\"\$(top_builddir)/include/bfsound\"")
 
 # Variables
 
