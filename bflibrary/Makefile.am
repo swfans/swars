@@ -2,7 +2,63 @@ ACLOCAL_AMFLAGS = --install -I m4
 
 lib_LIBRARIES = libbullfrog.a
 
+libbullfrog_a_headers_src = \
+  include/bfanywnd.h \
+  include/bfbox.h \
+  include/bfbuffer.h \
+  include/bfcircle.h \
+  include/bfdata.h \
+  include/bfdir.h \
+  include/bfdos.h \
+  include/bfdrive.h \
+  include/bfendian.h \
+  include/bfexe_key.h \
+  include/bffile.h \
+  include/bffnuniq.h \
+  include/bffont.h \
+  include/bfgentab.h \
+  include/bfiff.h \
+  include/bfini.h \
+  include/bfkeybd.h \
+  include/bfline.h \
+  include/bflog.h \
+  include/bfmath.h \
+  include/bfmemory.h \
+  include/bfmemut.h \
+  include/bfmouse.h \
+  include/bfpalcrss.h \
+  include/bfpalette.h \
+  include/bfpixel.h \
+  include/bfplanar.h \
+  include/bfpng.h \
+  include/bfscrcopy.h \
+  include/bfscreen.h \
+  include/bfscrsurf.h \
+  include/bfsemphr.hpp \
+  include/bfsprite.h \
+  include/bfstrut.h \
+  include/bftext.h \
+  include/bftime.h \
+  include/bftypes.h \
+  include/bfutility.h \
+  include/bfwindows.h \
+  include/insprite.h \
+  include/insspr.h \
+  include/mshandler.hpp \
+  include/mspointer.hpp \
+  include/poly.h \
+  include/poly_trigp.h \
+  include/poly_trigr.h \
+  include/privbflog.h \
+  include/rnc_1fm.h \
+  include/rom.h \
+  include/svesa.h
+
+libbullfrog_a_headers_bld = \
+  include/bfconfig.h
+
 libbullfrog_a_SOURCES = \
+  $(libbullfrog_a_headers_src) \
   src/general/arctan.c \
   src/general/box_clip.c \
   src/general/ganywnd.c \
@@ -96,7 +152,9 @@ libbullfrog_a_CPPFLAGS = \
   -I$(top_srcdir)/include -I$(builddir)/include
 
 libbullfrogheadersdir = $(includedir)/bullfrog
-libbullfrogheaders_HEADERS = $(wildcard $(srcdir)/include/*.h) $(wildcard $(srcdir)/include/*.hpp) $(builddir)/include/bfconfig.h
+libbullfrogheaders_HEADERS = \
+  $(libbullfrog_a_headers_src:%=$(srcdir)/%) \
+  $(libbullfrog_a_headers_bld:%=$(builddir)/%)
 
 check_PROGRAMS = bflib_test_math bflib_test_memory bflib_test_poly
 

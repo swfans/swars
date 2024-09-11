@@ -2,73 +2,83 @@ ACLOCAL_AMFLAGS = --install -I m4
 
 lib_LIBRARIES = libbfsound.a
 
-libbfsound_a_SOURCES = \
+libbfsound_a_headers_src = \
   include/ail.h \
-  src/ail.c \
   include/aila.h \
-  src/aila.c \
   include/aildebug.h \
-  src/aildebug.c \
   include/ailss.h \
-  src/ailss.c \
-  src/ailvoc.c \
-  src/ailwav.c \
   include/bfaudio.h \
-  src/bfaudio.c \
+  include/bfdanger.h \
   include/bfmusic.h \
   include/bfsound.h \
   include/bfscd.h \
-  src/cd.c \
   include/dllload.h \
-  src/dllload.c \
   include/dpmi.h \
-  src/dpmi.c \
   include/drv_oal.h \
+  include/memfile.h \
+  include/miscutil.h \
+  include/mssal.h \
+  include/mssdig.h \
+  include/msssys.h \
+  include/mssxdig.h \
+  include/mssxmidi.h \
+  include/oggvorbis.h \
+  include/sb16.h \
+  include/awe32.h \
+  include/snderr.h \
+  include/sndtimer.h \
+  include/ssampfad.h \
+  include/ssamplst.h \
+  include/ssampply.h \
+  include/streamfx.h \
+  include/bfsvaribl.h
+
+libbfsound_a_headers_bld = \
+  include/bsndconf.h
+
+libbfsound_a_SOURCES = \
+  $(libbfsound_a_headers_src) \
+  src/ail.c \
+  src/aila.c \
+  src/aildebug.c \
+  src/ailss.c \
+  src/ailvoc.c \
+  src/ailwav.c \
+  src/bfaudio.c \
+  src/cd.c \
+  src/dllload.c \
+  src/dpmi.c \
   src/drv_oal.c \
   src/init_mus.c \
   src/init_snd.c \
-  include/memfile.h \
   src/memfile.c \
-  include/miscutil.h \
   src/miscutil.c \
   src/mseqnfad.c \
   src/mseqnlst.c \
   src/mseqnply.c \
-  include/mssdig.h \
   src/mssdig.c \
-  include/msssys.h \
   src/msssys.c \
-  include/mssxdig.h \
   src/mssxdig.c \
-  include/mssxmidi.h \
   src/mssxmidi.c \
-  include/oggvorbis.h \
   src/oggvorbis.c \
-  include/sb16.h \
   src/sb16.c \
-  include/awe32.h \
   src/awe32.c \
   src/awe32use.c \
-  include/snderr.h \
   src/snderr.c \
-  include/sndtimer.h \
   src/sndtimer.c \
-  include/ssampfad.h \
   src/ssampfad.c \
-  include/ssamplst.h \
   src/ssamplst.c \
-  include/ssampply.h \
   src/ssampply.c \
-  include/streamfx.h \
   src/streamfx.c \
-  include/bfsvaribl.h \
   src/variable.c
 
 libbfsound_a_CPPFLAGS = \
   -I"$(top_srcdir)/include" -I"$(builddir)/include"
 
 libbfsoundheadersdir = $(includedir)/bfsound
-libbfsoundheaders_HEADERS = $(wildcard $(srcdir)/include/*.h) $(builddir)/include/bsndconf.h
+libbfsoundheaders_HEADERS = \
+  $(libbfsound_a_headers_src:%=$(srcdir)/%) \
+  $(libbfsound_a_headers_bld:%=$(builddir)/%)
 
 # Libraries included with the project
 libbfsound_a_PROJECT_LIBS = ../lib/libbullfrog.a
