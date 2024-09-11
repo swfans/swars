@@ -5,7 +5,7 @@
 /** @file giff.c
  *     Implementation of Interchange File Format image format read/write.
  * @par Purpose:
- *     Unknown.
+ *     Ability to save and load images to/from screen buffers.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis

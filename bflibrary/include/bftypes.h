@@ -27,6 +27,12 @@ extern "C" {
 #include <stddef.h>
 #include <time.h>
 
+#include "bfconfig.h"
+
+#ifdef LB_HAVE_STDINT_H
+# include <stdint.h>
+#endif
+
 #ifndef false
 # define false 0
 #endif
