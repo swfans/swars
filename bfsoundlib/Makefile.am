@@ -67,4 +67,4 @@ libbfsound_a_SOURCES = \
 libbfsound_a_CPPFLAGS = \
   -I"$(top_srcdir)/include" -I"$(builddir)/include"
 
-include_HEADERS = $(wildcard include/*.h)
+include_HEADERS = $(wildcard $(srcdir)/include/*.h) $(builddir)/include/bsndconf.h
