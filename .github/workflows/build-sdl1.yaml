@@ -94,7 +94,7 @@ jobs:
           echo "PKG_NAME=swars-$PKG_VERSION-ubuntu-sdl1-patch" >> $GITHUB_ENV
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PKG_NAME }}
           path: release/pkg/**
@@ -175,7 +175,7 @@ jobs:
           echo "INSTLR_NAME=swars-$PKG_VERSION-win32-sdl1-setup" >> $GITHUB_ENV
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PKG_NAME }}
           path: release/pkg/**
@@ -242,7 +242,7 @@ jobs:
           arguments: "-V3"
 
       - name: Upload installer
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.INSTLR_NAME }}
           path: release/res/swars-setup.exe
