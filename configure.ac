@@ -209,7 +209,7 @@ AC_MSG_RESULT([$have_wildmidi])
 # libraries from within this project are only built after `make` is executed
 AC_SUBST(BFLIBRARY_LIBS, "-L\"\$(top_builddir)/lib\" -lbullfrog")
 # the 2nd include folder is just a temp workaround
-AC_SUBST(BFLIBRARY_CFLAGS, "-I\"\$(top_builddir)/include\"  -I\"\$(top_srcdir)/bflibrary/include\"")
+AC_SUBST(BFLIBRARY_CFLAGS, "-I\"\$(top_builddir)/include/bullfrog\"  -I\"\$(top_srcdir)/bflibrary/include\"")
 
 AC_SUBST(BFSOUNDLIB_LIBS, "-L\$(top_builddir)/bfsoundlib")
 AC_SUBST(BFSOUNDLIB_CFLAGS, "-I\$(top_srcdir)/bfsoundlib/include")

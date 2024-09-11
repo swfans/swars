@@ -95,7 +95,8 @@ endif
 libbullfrog_a_CPPFLAGS = \
   -I$(top_srcdir)/include -I$(builddir)/include
 
-include_HEADERS = $(wildcard $(srcdir)/include/*.h) $(wildcard $(srcdir)/include/*.hpp) $(builddir)/include/bfconfig.h
+libbullfrogheadersdir = $(includedir)/bullfrog
+libbullfrogheaders_HEADERS = $(wildcard $(srcdir)/include/*.h) $(wildcard $(srcdir)/include/*.hpp) $(builddir)/include/bfconfig.h
 
 check_PROGRAMS = bflib_test_math bflib_test_memory bflib_test_poly
 
