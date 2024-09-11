@@ -196,7 +196,7 @@ AS_IF([test "x$with_wildmidi" != "xno"],
 AC_MSG_CHECKING([whether to use WildMIDI library])
 AS_IF([test "x$have_wildmidi" == "xyes"], [
   AC_DEFINE(ENABLE_WILDMIDI, [1], [Define for wildmidi support])
-  AC_SUBST(WILDMIDI_LIBS, -lWildMidi)
+  AC_SUBST(WILDMIDI_LIBS, "-lWildMidi")
 ], [
   AC_SUBST(WILDMIDI_LIBS, )
   AS_IF([test "x$with_wildmidi" = "xyes"], [
@@ -206,12 +206,13 @@ AS_IF([test "x$have_wildmidi" == "xyes"], [
 AC_SUBST(WILDMIDI_CFLAGS, )
 AC_MSG_RESULT([$have_wildmidi])
 
-# libraries from within this project are not built at this point
-AC_SUBST(BFLIBRARY_LIBS, -L\$\(top_builddir\)/bflibrary)
-AC_SUBST(BFLIBRARY_CFLAGS, -I\$\(top_srcdir\)/bflibrary/include)
+# libraries from within this project are only built after `make` is executed
+AC_SUBST(BFLIBRARY_LIBS, "-L\"\$(top_builddir)/lib\" -lbullfrog")
+# the 2nd include folder is just a temp workaround
+AC_SUBST(BFLIBRARY_CFLAGS, "-I\"\$(top_builddir)/include\"  -I\"\$(top_srcdir)/bflibrary/include\"")
 
-AC_SUBST(BFSOUNDLIB_LIBS, -L\$\(top_builddir\)/bfsoundlib)
-AC_SUBST(BFSOUNDLIB_CFLAGS, -I\$\(top_srcdir\)/bfsoundlib/include)
+AC_SUBST(BFSOUNDLIB_LIBS, "-L\$(top_builddir)/bfsoundlib")
+AC_SUBST(BFSOUNDLIB_CFLAGS, "-I\$(top_srcdir)/bfsoundlib/include")
 
 # Variables
 
@@ -244,6 +245,14 @@ AS_IF([test "$need_underscore" = "yes"], [
 CFLAGS="$CFLAGS -Wall -Wextra -Wno-unused-parameter"
 CFLAGS="$CFLAGS -include \"\$(top_builddir)/src/config.h\""
 
+# Add configuration of libraries to flags; the order of libraries is important
+
+CFLAGS="$CFLAGS $BFLIBRARY_CFLAGS"
+LIBS="$LIBS $BFLIBRARY_LIBS"
+
+CFLAGS="$CFLAGS $BFSOUNDLIB_CFLAGS"
+LIBS="$LIBS $BFSOUNDLIB_LIBS"
+
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS"
 
@@ -258,12 +267,6 @@ LIBS="$LIBS $PNG_LIBS"
 
 CFLAGS="$CFLAGS $WILDMIDI_CFLAGS"
 LIBS="$LIBS $WILDMIDI_LIBS"
-
-CFLAGS="$CFLAGS $BFLIBRARY_CFLAGS"
-LIBS="$LIBS $BFLIBRARY_LIBS"
-
-CFLAGS="$CFLAGS $BFSOUNDLIB_CFLAGS"
-LIBS="$LIBS $BFSOUNDLIB_LIBS"
 
 
 AC_SUBST([MKWFLAGS])

@@ -215,10 +215,17 @@ endif
 # Pretending to contain c++ source so that Automake select c++ linker
 nodist_EXTRA_swars_SOURCES = dummy.cxx
 
+# Libraries included with the project
+swars_PROJECT_LIBS = ../lib/libbullfrog.a
+
+$(swars_OBJECTS) $(bin_PROGRAMS): $(swars_PROJECT_LIBS)
+
 swars_LDADD = \
   $(swars_WRAPPERS) $(swars_RESRCS) \
-  -lbullfrog \
   -lbfsound
+
+../lib/libbullfrog.a: ../bflibrary/libbullfrog.a
+	$(MAKE) -C $(<D) DESTDIR="$(top_builddir)" prefix="" install
 
 $(swars_WRAPPERS:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<
