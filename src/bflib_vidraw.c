@@ -57,6 +57,7 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
       "push %4\n"
       "call ASM_LbDrawTriangleFilled\n"
         :  : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (colour));
+    return;
 #endif
   struct TbSPoint *p_pt1;
   struct TbSPoint *p_pt2;

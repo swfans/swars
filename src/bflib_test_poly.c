@@ -31,8 +31,11 @@
 #include "bfpng.h"
 #include "bfgentab.h"
 #include "bfutility.h"
-//#include "bftstlog.h"
+#if 0 // only for stand-alone test binary
+#include "bftstlog.h"
+#else
 #include "swlog.h"
+#endif
 
 #include <SDL.h>
 
@@ -165,7 +168,7 @@ TbBool test_gpoly(void)
     TbPixel *ref_buffer;
     ulong picno;
 
-#if 0
+#if 0 // only for stand-alone test binary
     if (LbErrorLogSetup(NULL, "tst_gpoly.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
         LOGERR("execution log setup failed");
         return false;
