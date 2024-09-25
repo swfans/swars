@@ -29,7 +29,9 @@ extern "C" {
 /** Draw clipped triangle on graphics window at given 3 points, with colour.
  *
  * Graphics window needs to be set and locked. Coordinates are clipped if they
- * exceed the current graphics window.
+ * exceed the current graphics window. For the triangle to be visible, points
+ * need to be provided in clockwise order, which means the inequality need to
+ * be met: `(y3 - y2) * (x2 - x1) > (y2 - y1) * (x3 - x2)`.
  * This function honors DrawFlags.
  */
 void LbDrawTriangle(short x1, short y1, short x2, short y2, short x3, short y3,

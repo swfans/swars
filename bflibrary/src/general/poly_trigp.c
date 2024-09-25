@@ -667,11 +667,11 @@ int trig_ll_start(struct TrigLocalPrep *tlp, struct TrigLocalRend *tlr, const st
 
     tlp->var_78 = opt_a->Y;
     if (opt_a->Y < 0) {
-      tlr->var_24 = poly_screen;
-      tlp->var_8A = 1;
+        tlr->var_24 = poly_screen;
+        tlp->var_8A = 1;
     } else if (opt_a->Y < vec_window_height) {
-      tlr->var_24 = poly_screen + vec_screen_width * opt_a->Y;
-      tlp->var_8A = 0;
+        tlr->var_24 = poly_screen + vec_screen_width * opt_a->Y;
+        tlp->var_8A = 0;
     } else {
         LOGNO("height %ld exceeded by opt_a Y %ld", (long)vec_window_height, (long)opt_a->Y);
         return 0;
@@ -1271,12 +1271,12 @@ int trig_rl_start(struct TrigLocalPrep *tlp, struct TrigLocalRend *tlr, const st
 
     tlp->var_78 = opt_a->Y;
     if (opt_a->Y < 0) {
-      tlr->var_24 = poly_screen;
-      tlp->var_8A = 1;
+        tlr->var_24 = poly_screen;
+        tlp->var_8A = 1;
     } else if (opt_a->Y < vec_window_height) {
-      tlr->var_24 = poly_screen + vec_screen_width * opt_a->Y;
-      tlp->var_8A = 0;
-    } else  {
+        tlr->var_24 = poly_screen + vec_screen_width * opt_a->Y;
+        tlp->var_8A = 0;
+    } else {
         LOGNO("height %ld exceeded by opt_a Y %ld", (long)vec_window_height, (long)opt_a->Y);
         return 0;
     }
@@ -1611,6 +1611,7 @@ int trig_fb_start(struct TrigLocalPrep *tlp, struct TrigLocalRend *tlr, const st
         LOGNO("height %ld exceeded by opt_a Y %ld", (long)vec_window_height, (long)opt_a->Y);
         return 0;
     }
+
     tlp->var_8B = opt_c->Y > vec_window_height;
     dY = opt_c->Y - opt_a->Y;
     tlp->var_34 = dY;
@@ -1917,15 +1918,16 @@ int trig_ft_start(struct TrigLocalPrep *tlp, struct TrigLocalRend *tlr, const st
 
     tlp->var_78 = opt_a->Y;
     if (opt_a->Y < 0) {
-      tlr->var_24 = poly_screen;
-      tlp->var_8A = 1;
+        tlr->var_24 = poly_screen;
+        tlp->var_8A = 1;
     } else if (opt_a->Y < vec_window_height) {
-      tlr->var_24 = poly_screen + vec_screen_width * opt_a->Y;
-      tlp->var_8A = 0;
+        tlr->var_24 = poly_screen + vec_screen_width * opt_a->Y;
+        tlp->var_8A = 0;
     } else {
         LOGNO("height %ld exceeded by opt_a Y %ld", (long)vec_window_height, (long)opt_a->Y);
         return 0;
     }
+
     tlp->var_8B = opt_c->Y > vec_window_height;
     dY = opt_c->Y - opt_a->Y;
     tlp->var_34 = dY;

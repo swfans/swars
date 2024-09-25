@@ -53,12 +53,6 @@ int poly_line_UNUSED()
 // code at 0001:000e5adf
 }
 
-/** Triangle rendering function.
- *
- * @param point_a Coordinates and texture mapping of first point.
- * @param point_b Coordinates and texture mapping of second point.
- * @param point_c Coordinates and texture mapping of third point.
- */
 void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
   struct PolyPoint *point_c)
 {
