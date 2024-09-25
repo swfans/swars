@@ -22,7 +22,6 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfline.h"
-#include "bflib_vidraw.h"
 #include "bfpng.h"
 #include "triangls.h"
 #include "game.h"

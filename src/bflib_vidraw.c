@@ -17,6 +17,7 @@
  */
 /******************************************************************************/
 #include "bflib_vidraw.h"
+#include "bftringl.h"
 
 #include <stdlib.h>
 #include <string.h>

@@ -31,6 +31,7 @@
 #include "bfscrsurf.h"
 #include "bfscrcopy.h"
 #include "bfsmack.h"
+#include "bftringl.h"
 #include "linksmk.h"
 #include "bmbang.h"
 #include "svesa.h"
