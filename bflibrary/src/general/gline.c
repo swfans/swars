@@ -5,7 +5,7 @@
 /** @file gline.c
  *     Implementation of related functions.
  * @par Purpose:
- *     Unknown.
+ *     Drawing lines.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis

@@ -5,7 +5,7 @@
 /** @file gtrig.c
  *     Implementation of related functions.
  * @par Purpose:
- *     Unknown.
+ *     Math, trigonometry.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis

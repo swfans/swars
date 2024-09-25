@@ -39,6 +39,7 @@ libbullfrog_a_headers_src = \
   include/bfstrut.h \
   include/bftext.h \
   include/bftime.h \
+  include/bftringl.h \
   include/bftypes.h \
   include/bfutility.h \
   include/bfwindows.h \
@@ -92,6 +93,7 @@ libbullfrog_a_SOURCES = \
   src/general/gstrut.c \
   src/general/gtext.c \
   src/general/gtrig.c \
+  src/general/gtringl.c \
   src/general/gutility.c \
   src/general/hvline.c \
   src/general/mshandler.cpp \

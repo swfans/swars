@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file gspr_std.cpp
+/** @file gspr_std.c
  *     Implementation of drawing sprites on screen in one color.
  * @par Purpose:
  *     Draw sprites using given color for all non-transparent pixels.

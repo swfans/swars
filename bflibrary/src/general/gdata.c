@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file gdata.cpp
+/** @file gdata.c
  *     Reading/freeing of file lists.
  * @par Purpose:
  *     Allows to allocate memory and read multiple files at once.
