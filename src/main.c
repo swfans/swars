@@ -122,10 +122,8 @@ TbBool test_gpoly(void);
 static void tests_execute(void)
 {
     // TODO prpare tests
-#if 0
     if (!test_tringl())
         exit(51);
-#endif
     if (!test_gpoly())
         exit(51);
     exit(0);

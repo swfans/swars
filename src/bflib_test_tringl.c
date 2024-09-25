@@ -55,7 +55,7 @@ void test_tringl_draw_random_triangles(const ubyte *pal, short res_h)
 
     scale = 16 * res_h / 480;
 
-    for (i = 0; i < 5*40; i++)
+    for (i = 0; i < 7*40; i++)
     {
         struct TbPoint point_a, point_b, point_c;
         ushort rnd;
@@ -64,8 +64,26 @@ void test_tringl_draw_random_triangles(const ubyte *pal, short res_h)
         // Random colour
         colour = LbPaletteFindColour(pal, (rnd >> 0) & 0x3f,
           (rnd >> 5) & 0x3f, (rnd >> 10) & 0x3f);
+
+        // Random draw flags
+        lbDisplay.DrawFlags = 0;
+        switch ((rnd >> 6) & 3)
+        {
+        case 1:
+            lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+            break;
+        case 2:
+        case 3:
+            lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
+            break;
+        default:
+            break;
+        }
+        if (((rnd >> 4) & 3) == 0)
+            lbDisplay.DrawFlags |= Lb_SPRITE_OUTLINE;
+
         // Random positions - few big, more small
-        if (i < 5*2)
+        if (i < 7*2)
         {
             rnd = LbRandomAnyShort();
             point_a.x = ((rnd >> 0) & 1023) - (1023 - 640) / 2;
