@@ -3,7 +3,7 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file bflib_test_poly.c
- *     Test application for poly() function.
+ *     Test application for trig() function.
  * @par Purpose:
  *     Testing implementation of bflibrary routines.
  * @par Comment:
