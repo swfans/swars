@@ -27,6 +27,19 @@
 
 #define DRAW_RANGES_COUNT (MAX_SUPPORTED_SCREEN_HEIGHT * 6 / 5)
 
+enum TriangleCase {
+    TriCase_Unkn24 = 0,
+    TriCase_Unkn50,
+    TriCase_Unkn77,
+    TriCase_Unkn92,
+};
+
+enum RampType {
+    Ramp_Single = 0,
+    Ramp_SmoothLeft,
+    Ramp_SmoothRight,
+};
+
 struct TbSPoint {
   short x;
   short y;
@@ -202,8 +215,6 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
   struct TbSPoint *p_pt2;
   struct TbSPoint *p_pt3;
   int v12;
-  int blt1xval, blt2xval;
-  int blt1wval, blt2wval;
   int v20;
   int v24;
   ubyte v25;
@@ -228,13 +239,17 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
   int wnd_h;
   int v84;
   int v85, v89;
-  short blt1width, blt2width;
-  int blt1winc, blt2winc;
-  int blt1xinc, blt2xinc;
-  TbPixel *p_screen;
-  struct TbSPoint pt3;
-  struct TbSPoint pt2;
-  struct TbSPoint pt1;
+    enum TriangleCase tricase;
+    enum RampType ramp;
+    short blt1width, blt2width;
+    int blt1xval, blt2xval;
+    int blt1xinc, blt2xinc;
+    int blt1wval, blt2wval;
+    int blt1winc, blt2winc;
+    TbPixel *p_screen;
+    struct TbSPoint pt3;
+    struct TbSPoint pt2;
+    struct TbSPoint pt1;
 
     pt1.x = x1;
     pt2.x = x2;
@@ -254,7 +269,7 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
             p_pt1 = &pt1;
             p_pt2 = &pt2;
             p_pt3 = &pt3;
-            goto LABEL_92;
+            tricase = TriCase_Unkn92;
         }
         else
         {
@@ -263,7 +278,7 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
             p_pt1 = &pt3;
             p_pt2 = &pt1;
             p_pt3 = &pt2;
-            goto LABEL_77;
+            tricase = TriCase_Unkn77;
         }
     }
     else if (pt1.y <= pt2.y)
@@ -275,14 +290,14 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
             p_pt1 = &pt3;
             p_pt2 = &pt1;
             p_pt3 = &pt2;
-            goto LABEL_92;
+            tricase = TriCase_Unkn92;
         }
         else if (pt1.y >= pt3.y)
         {
             p_pt1 = &pt3;
             p_pt2 = &pt1;
             p_pt3 = &pt2;
-            goto LABEL_24;
+            tricase = TriCase_Unkn24;
         }
         else if (pt2.y == pt3.y)
         {
@@ -291,21 +306,21 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
             p_pt1 = &pt1;
             p_pt2 = &pt2;
             p_pt3 = &pt3;
-            goto LABEL_77;
+            tricase = TriCase_Unkn77;
         }
         else if (pt2.y <= pt3.y)
         {
             p_pt1 = &pt1;
             p_pt2 = &pt2;
             p_pt3 = &pt3;
-            goto LABEL_24;
+            tricase = TriCase_Unkn24;
         }
         else
         {
             p_pt1 = &pt1;
             p_pt2 = &pt2;
             p_pt3 = &pt3;
-            goto LABEL_50;
+            tricase = TriCase_Unkn50;
         }
     }
     else
@@ -317,14 +332,14 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
             p_pt1 = &pt2;
             p_pt2 = &pt3;
             p_pt3 = &pt1;
-            goto LABEL_77;
+            tricase = TriCase_Unkn77;
         }
         else if (pt1.y < pt3.y)
         {
             p_pt1 = &pt2;
             p_pt2 = &pt3;
             p_pt3 = &pt1;
-            goto LABEL_50;
+            tricase = TriCase_Unkn50;
         }
         else if (pt2.y == pt3.y)
         {
@@ -333,25 +348,27 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
             p_pt1 = &pt2;
             p_pt2 = &pt3;
             p_pt3 = &pt1;
-            goto LABEL_92;
+            tricase = TriCase_Unkn92;
         }
         else if (pt2.y < pt3.y)
         {
             p_pt1 = &pt2;
             p_pt2 = &pt3;
             p_pt3 = &pt1;
-            goto LABEL_24;
+            tricase = TriCase_Unkn24;
         }
         else
         {
             p_pt1 = &pt3;
             p_pt2 = &pt1;
             p_pt3 = &pt2;
-            goto LABEL_50;
+            tricase = TriCase_Unkn50;
         }
     }
 
-LABEL_50:
+    switch (tricase)
+    {
+    case TriCase_Unkn50:
         if (p_pt1->y < 0)
         {
             p_screen = lbDisplay.WScreen;
@@ -396,9 +413,6 @@ LABEL_50:
                 }
             }
             blt2xval = v85;
-            if (blt2skip)
-                blt2width = 0;
-            goto LABEL_71;
         }
         else
         {
@@ -421,9 +435,6 @@ LABEL_50:
                     wnd_h = lbDisplay.GraphicsWindowHeight;
                 }
                 blt1width = 0;
-                if (blt2skip)
-                    blt2width = 0;
-                goto LABEL_71;
             }
             else
             {
@@ -441,14 +452,14 @@ LABEL_50:
                     }
                 }
                 blt2xval = v85;
-                if (blt2skip)
-                    blt2width = 0;
-                goto LABEL_71;
             }
         }
+        if (blt2skip)
+            blt2width = 0;
+        ramp = Ramp_SmoothRight;
+        break;
 
-
-LABEL_77:
+    case TriCase_Unkn77:
         if (p_pt1->y < 0)
         {
             p_screen = lbDisplay.WScreen;
@@ -496,10 +507,10 @@ LABEL_77:
                 blt1width = lbDisplay.GraphicsWindowHeight;
             }
         }
-        goto LABEL_44;
+        ramp = Ramp_Single;
+        break;
 
-
-LABEL_24:
+    case TriCase_Unkn24:
         if (p_pt1->y < 0)
         {
             p_screen = lbDisplay.WScreen;
@@ -546,9 +557,6 @@ LABEL_24:
                 }
             }
             blt2wval = v84;
-            if (blt2skip)
-                blt2width = 0;
-            goto LABEL_43;
         }
         else
         {
@@ -569,9 +577,6 @@ LABEL_24:
                     wnd_h = lbDisplay.GraphicsWindowHeight;
                 }
                 blt1width = 0;
-                if (blt2skip)
-                    blt2width = 0;
-                goto LABEL_43;
             }
             else
             {
@@ -589,14 +594,14 @@ LABEL_24:
                     }
                 }
                 blt2wval = v84;
-                if (blt2skip)
-                    blt2width = 0;
-                goto LABEL_43;
             }
         }
+        if (blt2skip)
+            blt2width = 0;
+        ramp = Ramp_SmoothLeft;
+        break;
 
-
-LABEL_92:
+    case TriCase_Unkn92:
         if (p_pt1->y < 0)
         {
             p_screen = lbDisplay.WScreen;
@@ -642,27 +647,27 @@ LABEL_92:
                 blt1width = lbDisplay.GraphicsWindowHeight;
             }
         }
-        goto LABEL_44;
+        ramp = Ramp_Single;
+        break;
+    }
 
-
-LABEL_71:
-        LbI_RangeFillTwoRampsSmoothRight(byte_1E957C, blt1width, blt1xval,
-          blt1xinc, blt1wval, blt1winc, blt2width, blt2xval, blt2xinc);
-        goto LABEL_104;
-
-
-LABEL_43:
+    // Fill the ranges array with two areas
+    switch (ramp)
+    {
+    case Ramp_SmoothLeft:
         LbI_RangeFillTwoRampsSmoothLeft(byte_1E957C, blt1width, blt1xval,
           blt1xinc, blt1wval, blt1winc, blt2width, blt2wval, blt2winc);
-        goto LABEL_104;
-
-LABEL_44:
+        break;
+    case Ramp_SmoothRight:
+        LbI_RangeFillTwoRampsSmoothRight(byte_1E957C, blt1width, blt1xval,
+          blt1xinc, blt1wval, blt1winc, blt2width, blt2xval, blt2xinc);
+        break;
+    default:
         LbI_RangeFillSingleRamp(byte_1E957C, blt1width, blt1xval,
           blt1xinc, blt1wval, blt1winc);
-        goto LABEL_104;
-
-
-LABEL_104:
+        break;
+    }
+    // Draw on graphics buffer
     p_screen += lbDisplay.GraphicsWindowX + lbDisplay.GraphicsScreenWidth * (lbDisplay.GraphicsWindowY - 1);
     LbBlitSolidRanges(p_screen, byte_1E957C, wnd_h, colour);
 }
