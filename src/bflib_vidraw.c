@@ -23,13 +23,53 @@
 #include <string.h>
 #include "bfscreen.h"
 #include "bfline.h"
+#include "bfutility.h"
 /******************************************************************************/
 
-void LbDrawSlantBox(short X, short Y, ushort a3, ushort a4)
+extern ubyte byte_1DDC44[640];
+extern ubyte byte_1DDEC4;
+extern ubyte byte_1C4B7F;// = 0;
+extern ubyte byte_1C6DED;// = 0;
+extern ubyte byte_155189;// = 0xF7;
+
+void LbDrawSlantBox(short x, short y, ushort w, ushort h)
 {
+#if 0
     asm volatile (
       "call ASM_LbDrawSlantBox\n"
         :  : "a" (X), "d" (Y), "b" (a3), "c" (a4));
+    return;
+#endif
+    uint dx, dy;
+    ushort rnd;
+
+    if (!byte_1DDEC4 || byte_1C6DED)
+    {
+        for (dx = 0; dx < sizeof(byte_1DDC44); dx++)
+        {
+            byte_1DDC44[dx] = 0;
+            rnd = LbRandomAnyShort();
+            if ((rnd % 9) > 4) {
+                byte_1DDC44[dx] = byte_155189;
+            }
+        }
+        byte_1C6DED = 0;
+        byte_1DDEC4 = 1;
+    }
+
+    if (!byte_1C4B7F)
+    {
+        ubyte *out;
+        ubyte *inp;
+
+        for (dy = 1; dy < (uint)h - 1; dy++)
+        {
+            rnd = LbRandomAnyShort();
+            out = &lbDisplay.WScreen[x + 1 + (y + dy) * lbDisplay.GraphicsScreenWidth];
+            inp = &byte_1DDC44[rnd % (sizeof(byte_1DDC44) - w)];
+            memcpy(out, inp, w - 2);
+        }
+    }
 }
 
 /******************************************************************************/
