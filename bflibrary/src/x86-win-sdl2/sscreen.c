@@ -480,7 +480,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
         if (new_fullscreen_flags == 0)
         {
             SDL_SetWindowSize(lbWindow, mdWidth, mdHeight);
-            if (SDL_getenv("SDL_VIDEO_CENTERED")) && (strcmp((SDL_getenv("SDL_VIDEO_CENTERED")), "1") == 0)
+            if ((SDL_getenv("SDL_VIDEO_CENTERED")) && (strcmp((SDL_getenv("SDL_VIDEO_CENTERED")), "1") == 0))
             {
                 SDL_SetWindowPosition(lbWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
             }
