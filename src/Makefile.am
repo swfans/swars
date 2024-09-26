@@ -8,7 +8,6 @@ swars_SOURCES = \
 	bflib_joyst.h \
 	bflib_joyst_s.sx \
 	bflib_test_poly.c \
-	bflib_test_tringl.c \
 	bflib_render_gpoly.c \
 	bflib_render_gpoly_s.sx \
 	bflib_render_plin_s.sx \
