@@ -25,18 +25,91 @@
 #include "bfline.h"
 /******************************************************************************/
 
+#define DRAW_RANGES_COUNT (MAX_SUPPORTED_SCREEN_HEIGHT * 6 / 5)
+
 struct TbSPoint {
   short x;
   short y;
 };
 
-extern uchar byte_1E957C[0xf00];
+struct DrawRange { // sizeof = 8
+    long x;
+    long w;
+};
+
+extern struct DrawRange byte_1E957C[DRAW_RANGES_COUNT];
 
 void LbDrawTriangleOutline(short x1, short y1, short x2, short y2, short x3, short y3, TbPixel colour)
 {
     LbDrawLine(x1, y1, x2, y2, colour);
     LbDrawLine(x2, y2, x3, y3, colour);
     LbDrawLine(x3, y3, x1, y1, colour);
+}
+
+/** Blit given colour to given graphics window buffer, using a range to fill for each line.
+ *
+ * @param p_screen Output graphics window buffer.
+ * @param ranges Array of ranges to fill; contains X coords and widths, each shifted left by 16.
+ *
+ * This function honors transparency set within DrawFlags.
+ */
+static void LbBlitSolidRanges(TbPixel *p_screen, struct DrawRange *ranges, int range_num, TbPixel colour)
+{
+    struct DrawRange *rng;
+
+    rng = ranges;
+    for (; range_num > 0; range_num--, rng++)
+    {
+        ushort m;
+        int w, shift;
+        ubyte *p_map;
+        ubyte *o;
+
+        shift = rng->x >> 16;
+        w = rng->w >> 16;
+        p_screen += lbDisplay.GraphicsScreenWidth;
+        if (shift > 0)
+        {
+            if (w > lbDisplay.GraphicsWindowWidth)
+                w = lbDisplay.GraphicsWindowWidth;
+            w -= shift;
+            if (w <= 0)
+                continue;
+            o = &p_screen[shift];
+        }
+        else
+        {
+            if (w <= 0)
+                continue;
+            if (w > lbDisplay.GraphicsWindowWidth)
+                w = lbDisplay.GraphicsWindowWidth;
+            o = p_screen;
+        }
+        p_map = lbDisplay.GlassMap;
+        if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) != 0)
+        {
+            m = (colour << 8);
+            for (; w > 0; w--)
+            {
+                m = (m & 0xFF00) | (*o & 0xFF);
+                *o++ = p_map[m];
+            }
+        }
+        else if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR8) != 0)
+        {
+            m = colour;
+            for (; w > 0; w--)
+            {
+                m = (m & 0x00FF) | ((*o << 8) & 0xFF00);
+                *o++ = p_map[m];
+            }
+        }
+        else
+        {
+            m = colour;
+            memset(o, m, w);
+        }
+    }
 }
 
 // overflow flag of subtraction (x-y)
@@ -65,7 +138,7 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
   int v12;
   int oval0a, oval0b, oval1a, oval1b;
   int v20;
-  ubyte *o;
+  struct DrawRange *rng;
   int v24;
   ubyte v25;
   short v26;
@@ -73,7 +146,6 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
   int v38;
   short v39;
   int v55;
-  uchar *v58;
   ubyte v65;
   TbBool pt2y_overflow;
   char blt2skip;
@@ -98,98 +170,120 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
   struct TbSPoint pt2;
   struct TbSPoint pt1;
 
-  p_pt1 = &pt1;
-  p_pt2 = &pt2;
-  p_pt3 = &pt3;
-  pt1.x = x1;
-  pt2.x = x2;
-  pt3.x = x3;
-  pt1.y = y1;
-  pt2.y = y2;
-  pt3.y = y3;
+    pt1.x = x1;
+    pt2.x = x2;
+    pt3.x = x3;
+    pt1.y = y1;
+    pt2.y = y2;
+    pt3.y = y3;
 
-  if (pt1.y == pt2.y)
-  {
-    if (pt1.y == pt3.y)
-      return;
-    if (pt1.y - pt3.y < 0)
+    if (pt1.y == pt2.y)
     {
-      if (pt2.x <= pt1.x)
-        return;
-      goto LABEL_92;
+        if (pt1.y == pt3.y)
+            return;
+        if (pt1.y < pt3.y)
+        {
+            if (pt2.x <= pt1.x)
+                return;
+            p_pt1 = &pt1;
+            p_pt2 = &pt2;
+            p_pt3 = &pt3;
+            goto LABEL_92;
+        }
+        else
+        {
+            if (pt1.x <= pt2.x)
+                return;
+            p_pt1 = &pt3;
+            p_pt2 = &pt1;
+            p_pt3 = &pt2;
+            goto LABEL_77;
+        }
     }
-    if (pt1.x <= pt2.x)
-      return;
-    p_pt1 = &pt3;
-    p_pt2 = &pt1;
-    p_pt3 = &pt2;
-    goto LABEL_77;
-  }
-  if (pt1.y <= pt2.y)
-  {
-    if (pt1.y != y3 )
+    else if (pt1.y <= pt2.y)
     {
-      if (pt1.y - y3 >= 0)
-      {
-        p_pt1 = &pt3;
-        p_pt2 = &pt1;
-        p_pt3 = &pt2;
-        goto LABEL_24;
-      }
-      if (pt2.y != pt3.y)
-      {
-        if (pt2.y <= pt3.y)
-          goto LABEL_24;
-        goto LABEL_50;
-      }
-      if (pt2.x <= pt3.x)
-        return;
-      goto LABEL_77;
+        if (pt1.y == pt3.y)
+        {
+            if (pt1.x <= pt3.x)
+                return;
+            p_pt1 = &pt3;
+            p_pt2 = &pt1;
+            p_pt3 = &pt2;
+            goto LABEL_92;
+        }
+        else if (pt1.y >= pt3.y)
+        {
+            p_pt1 = &pt3;
+            p_pt2 = &pt1;
+            p_pt3 = &pt2;
+            goto LABEL_24;
+        }
+        else if (pt2.y == pt3.y)
+        {
+            if (pt2.x <= pt3.x)
+                return;
+            p_pt1 = &pt1;
+            p_pt2 = &pt2;
+            p_pt3 = &pt3;
+            goto LABEL_77;
+        }
+        else if (pt2.y <= pt3.y)
+        {
+            p_pt1 = &pt1;
+            p_pt2 = &pt2;
+            p_pt3 = &pt3;
+            goto LABEL_24;
+        }
+        else
+        {
+            p_pt1 = &pt1;
+            p_pt2 = &pt2;
+            p_pt3 = &pt3;
+            goto LABEL_50;
+        }
     }
-    if (pt1.x <= pt3.x)
-      return;
-    p_pt1 = &pt3;
-    p_pt2 = &pt1;
-    p_pt3 = &pt2;
-    goto LABEL_92;
-  }
-  if (pt1.y == pt3.y)
-  {
-    if (pt3.x <= pt1.x)
-      return;
-    p_pt1 = &pt2;
-    p_pt2 = &pt3;
-    p_pt3 = &pt1;
-    goto LABEL_77;
-  }
-  if (pt1.y - pt3.y < 0)
-  {
-    p_pt1 = &pt2;
-    p_pt2 = &pt3;
-    p_pt3 = &pt1;
-    goto LABEL_50;
-  }
-  if (pt2.y == pt3.y)
-  {
-    if (pt3.x <= pt2.x)
-      return;
-    p_pt1 = &pt2;
-    p_pt2 = &pt3;
-    p_pt3 = &pt1;
-    goto LABEL_92;
-  }
-  if (pt2.y - pt3.y < 0)
-  {
-    p_pt1 = &pt2;
-    p_pt2 = &pt3;
-    p_pt3 = &pt1;
-    goto LABEL_24;
-  }
-  p_pt1 = &pt3;
-  p_pt2 = &pt1;
-  p_pt3 = &pt2;
-  goto LABEL_50;
-
+    else
+    {
+        if (pt1.y == pt3.y)
+        {
+            if (pt3.x <= pt1.x)
+                return;
+            p_pt1 = &pt2;
+            p_pt2 = &pt3;
+            p_pt3 = &pt1;
+            goto LABEL_77;
+        }
+        else if (pt1.y < pt3.y)
+        {
+            p_pt1 = &pt2;
+            p_pt2 = &pt3;
+            p_pt3 = &pt1;
+            goto LABEL_50;
+        }
+        else if (pt2.y == pt3.y)
+        {
+            if (pt3.x <= pt2.x)
+                return;
+            p_pt1 = &pt2;
+            p_pt2 = &pt3;
+            p_pt3 = &pt1;
+            goto LABEL_92;
+        }
+        else if (pt2.y < pt3.y)
+        {
+            p_pt1 = &pt2;
+            p_pt2 = &pt3;
+            p_pt3 = &pt1;
+            goto LABEL_24;
+        }
+        else
+        {
+            p_pt1 = &pt3;
+            p_pt2 = &pt1;
+            p_pt3 = &pt2;
+            goto LABEL_50;
+        }
+    }
 
 LABEL_50:
         if (p_pt1->y < 0)
@@ -235,6 +329,7 @@ LABEL_50:
                     blt2width = v39;
                 }
             }
+            rng = byte_1E957C;
             goto LABEL_71;
         }
         else
@@ -257,7 +352,7 @@ LABEL_50:
                     blt2width = lbDisplay.GraphicsWindowHeight;
                     wnd_h = lbDisplay.GraphicsWindowHeight;
                 }
-                o = byte_1E957C;
+                rng = byte_1E957C;
                 goto LABEL_72;
             }
             else
@@ -275,6 +370,7 @@ LABEL_50:
                         blt2width = lbDisplay.GraphicsWindowHeight - blt1width;
                     }
                 }
+                rng = byte_1E957C;
                 goto LABEL_71;
             }
         }
@@ -328,14 +424,17 @@ LABEL_77:
                 blt1width = lbDisplay.GraphicsWindowHeight;
             }
         }
-        o = byte_1E957C;
+        rng = byte_1E957C;
+        blt2skip = true;
+
+        //TODO replace with goto, when sure which one to choose
         for (; blt1width > 0; blt1width--)
         {
-            *((ulong *)o + 0) = oval0a;
+            rng->x = oval0a;
             oval0a += oinc0a;
-            *((ulong *)o + 1) = oval1a;
+            rng->w = oval1a;
             oval1a += oinc1a;
-            o += 8;
+            rng++;
         }
         goto LABEL_104;
 
@@ -386,6 +485,7 @@ LABEL_24:
                     blt2width = v26;
                 }
             }
+            rng = byte_1E957C;
             goto LABEL_43;
         }
         else
@@ -406,7 +506,7 @@ LABEL_24:
                     blt2width = lbDisplay.GraphicsWindowHeight;
                     wnd_h = lbDisplay.GraphicsWindowHeight;
                 }
-                o = byte_1E957C;
+                rng = byte_1E957C;
                 goto LABEL_46;
             }
             else
@@ -424,6 +524,7 @@ LABEL_24:
                         blt2width = lbDisplay.GraphicsWindowHeight - blt1width;
                     }
                 }
+                rng = byte_1E957C;
                 goto LABEL_43;
             }
         }
@@ -467,7 +568,7 @@ LABEL_92:
             wnd_h += v78;
             if (wnd_h <= 0)
                 return;
-            oval0a += oinc0a * v55;
+            oval0a += v55 * oinc0a;
             oval1a += v55 * oinc1a;
             if (v70)
             {
@@ -475,28 +576,29 @@ LABEL_92:
                 blt1width = lbDisplay.GraphicsWindowHeight;
             }
         }
-        o = byte_1E957C;
+        rng = byte_1E957C;
+        blt2skip = true;
+
+        //TODO replace with goto, when sure which one to choose
         for (; blt1width > 0; blt1width--)
         {
-            *((ulong *)o + 0) = oval0a;
+            rng->x = oval0a;
             oval0a += oinc0a;
-            *((ulong *)o + 1) = oval1a;
+            rng->w = oval1a;
             oval1a += oinc1a;
-            o += 8;
+            rng++;
         }
         goto LABEL_104;
 
 
-
 LABEL_71:
-        o = byte_1E957C;
         for (; blt1width > 0; blt1width--)
         {
-            *((ulong *)o + 0) = oval0a;
+            rng->x = oval0a;
             oval0a += oinc0a;
-            *((ulong *)o + 1) = oval1a;
+            rng->w = oval1a;
             oval1a += oinc1a;
-            o += 8;
+            rng++;
         }
         oval0b = v85;
 LABEL_72:
@@ -504,25 +606,24 @@ LABEL_72:
         {
             for (; blt2width > 0; blt2width--)
             {
-                *((ulong *)o + 0) = oval0b;
+                rng->x = oval0b;
                 oval0b += oinc0b;
-                *((ulong *)o + 1) = oval1a;
+                rng->w = oval1a;
                 oval1a += oinc1a;
-                o += 8;
+                rng++;
             }
         }
         goto LABEL_104;
 
 
 LABEL_43:
-        o = byte_1E957C;
         for (; blt1width > 0; blt1width--)
         {
-            *((ulong *)o + 0) = oval0a;
+            rng->x = oval0a;
             oval0a += oinc0a;
-            *((ulong *)o + 1) = oval1a;
+            rng->w = oval1a;
             oval1a += oinc1a;
-            o += 8;
+            rng++;
         }
         oval1b = v84;
 LABEL_46:
@@ -530,70 +631,19 @@ LABEL_46:
         {
             for (; blt2width > 0; blt2width--)
             {
-                *((ulong *)o + 0) = oval0a;
+                rng->x = oval0a;
                 oval0a += oinc0a;
-                *((ulong *)o + 1) = oval1b;
+                rng->w = oval1b;
                 oval1b += oinc1b;
-                o += 8;
+                rng++;
             }
         }
         goto LABEL_104;
 
 
 LABEL_104:
-    v58 = byte_1E957C;
     p_screen += lbDisplay.GraphicsWindowX + lbDisplay.GraphicsScreenWidth * (lbDisplay.GraphicsWindowY - 1);
-    for (; wnd_h > 0; wnd_h--, v58 += 8)
-    {
-        ushort m;
-        int w, shift;
-        ubyte *p_map;
-
-        shift = *((ushort *)v58 + 1);
-        w = *((ushort *)v58 + 3);
-        p_screen += lbDisplay.GraphicsScreenWidth;
-        if ((shift & 0x8000) == 0)
-        {
-            if (w > lbDisplay.GraphicsWindowWidth)
-                w = lbDisplay.GraphicsWindowWidth;
-            w -= shift;
-            if (w <= 0)
-                continue;
-            o = &p_screen[shift];
-        }
-        else
-        {
-            if (w <= 0)
-                continue;
-            if (w > lbDisplay.GraphicsWindowWidth)
-                w = lbDisplay.GraphicsWindowWidth;
-            o = p_screen;
-        }
-        p_map = lbDisplay.GlassMap;
-        if ((lbDisplay.DrawFlags & 0x0004) != 0)
-        {
-            m = (colour << 8);
-            for (; w > 0; w--)
-            {
-                m = (m & 0xFF00) | (*o & 0xFF);
-                *o++ = p_map[m];
-            }
-        }
-        else if ((lbDisplay.DrawFlags & 0x0008) != 0)
-        {
-            m = colour;
-            for (; w > 0; w--)
-            {
-                m = (m & 0x00FF) | ((*o << 8) & 0xFF00);
-                *o++ = p_map[m];
-            }
-        }
-        else
-        {
-            m = colour;
-            memset(o, m, w);
-        }
-    }
+    LbBlitSolidRanges(p_screen, byte_1E957C, wnd_h, colour);
 }
 
 void LbDrawTriangle(short x1, short y1, short x2, short y2, short x3, short y3, TbPixel colour)
