@@ -125,13 +125,13 @@ static void LbBlitSolidRanges(TbPixel *p_screen, struct DrawRange *ranges, int r
     }
 }
 
-static void LbI_RangeFillSingleRamp(struct DrawRange *ranges, int blt1width,
+static void LbI_RangeFillSingleRamp(struct DrawRange *ranges, int blt1height,
   int blt1xval, int blt1xinc, int blt1wval, int blt1winc)
 {
     struct DrawRange *rng;
 
     rng = ranges;
-    for (; blt1width > 0; blt1width--)
+    for (; blt1height > 0; blt1height--)
     {
         rng->x = blt1xval;
         blt1xval += blt1xinc;
@@ -141,14 +141,14 @@ static void LbI_RangeFillSingleRamp(struct DrawRange *ranges, int blt1width,
     }
 }
 
-static void LbI_RangeFillTwoRampsSmoothLeft(struct DrawRange *ranges, int blt1width,
+static void LbI_RangeFillTwoRampsSmoothLeft(struct DrawRange *ranges, int blt1height,
   int blt1xval, int blt1xinc, int blt1wval, int blt1winc,
-  int blt2width, int blt2wval, int blt2winc)
+  int blt2height, int blt2wval, int blt2winc)
 {
     struct DrawRange *rng;
 
     rng = ranges;
-    for (; blt1width > 0; blt1width--)
+    for (; blt1height > 0; blt1height--)
     {
         rng->x = blt1xval;
         blt1xval += blt1xinc;
@@ -156,7 +156,7 @@ static void LbI_RangeFillTwoRampsSmoothLeft(struct DrawRange *ranges, int blt1wi
         blt1wval += blt1winc;
         rng++;
     }
-    for (; blt2width > 0; blt2width--)
+    for (; blt2height > 0; blt2height--)
     {
         rng->x = blt1xval;
         blt1xval += blt1xinc;
@@ -166,14 +166,14 @@ static void LbI_RangeFillTwoRampsSmoothLeft(struct DrawRange *ranges, int blt1wi
     }
 }
 
-static void LbI_RangeFillTwoRampsSmoothRight(struct DrawRange *ranges, int blt1width,
+static void LbI_RangeFillTwoRampsSmoothRight(struct DrawRange *ranges, int blt1height,
   int blt1xval, int blt1xinc, int blt1wval, int blt1winc,
-  int blt2width, int blt2xval, int blt2xinc)
+  int blt2height, int blt2xval, int blt2xinc)
 {
     struct DrawRange *rng;
 
     rng = ranges;
-    for (; blt1width > 0; blt1width--)
+    for (; blt1height > 0; blt1height--)
     {
         rng->x = blt1xval;
         blt1xval += blt1xinc;
@@ -181,7 +181,7 @@ static void LbI_RangeFillTwoRampsSmoothRight(struct DrawRange *ranges, int blt1w
         blt1wval += blt1winc;
         rng++;
     }
-    for (; blt2width > 0; blt2width--)
+    for (; blt2height > 0; blt2height--)
     {
         rng->x = blt2xval;
         blt2xval += blt2xinc;
@@ -223,25 +223,20 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
   int v38;
   short v39;
   int v55;
-  ubyte v65;
   TbBool pt2y_overflow;
   char blt2skip;
   TbBool pt3y_overflow;
-  ubyte v70;
   TbBool pt1y_underflow;
-  short v75;
   short v76;
-  short v77;
-  short v78;
   int v79;
   int v80;
   int v81;
-  int wnd_h;
+  int totaheight;
   int v84;
   int v85, v89;
     enum TriangleCase tricase;
     enum RampType ramp;
-    short blt1width, blt2width;
+    short blt1height, blt2height;
     int blt1xval, blt2xval;
     int blt1xinc, blt2xinc;
     int blt1wval, blt2wval;
@@ -366,285 +361,247 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
         }
     }
 
+    if (p_pt1->y < 0)
+    {
+        p_screen = lbDisplay.WScreen;
+        pt1y_underflow = 1;
+    }
+    else if (p_pt1->y < lbDisplay.GraphicsWindowHeight)
+    {
+        p_screen = &lbDisplay.WScreen[lbDisplay.GraphicsScreenWidth * p_pt1->y];
+        pt1y_underflow = 0;
+    }
+    else
+    {
+        return;
+    }
+
     switch (tricase)
     {
     case TriCase_Unkn50:
-        if (p_pt1->y < 0)
-        {
-            p_screen = lbDisplay.WScreen;
-            pt1y_underflow = 1;
-        }
-        else if (p_pt1->y < lbDisplay.GraphicsWindowHeight)
-        {
-            p_screen = &lbDisplay.WScreen[lbDisplay.GraphicsScreenWidth * p_pt1->y];
-            pt1y_underflow = 0;
-        }
-        else
-        {
-            return;
-        }
         v76 = p_pt1->y;
-        blt2skip = p_pt3->y > lbDisplay.GraphicsWindowHeight;
-        blt1width = p_pt3->y - p_pt1->y;
+        pt3y_overflow = p_pt3->y > lbDisplay.GraphicsWindowHeight;
         pt2y_overflow = p_pt2->y > lbDisplay.GraphicsWindowHeight;
-        wnd_h = p_pt2->y - p_pt1->y;
-        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / blt1width;
-        blt1winc = ((p_pt2->x - p_pt1->x) << 16) / wnd_h;
+        blt1height = p_pt3->y - p_pt1->y;
+        totaheight = p_pt2->y - p_pt1->y;
+        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / blt1height;
+        blt1winc = ((p_pt2->x - p_pt1->x) << 16) / totaheight;
         if (blt1winc <= blt1xinc)
             return;
-        blt2width = p_pt2->y - p_pt3->y;
-        blt2xinc = ((p_pt2->x - p_pt3->x) << 16) / blt2width;
+        blt2height = p_pt2->y - p_pt3->y;
+        blt2xinc = ((p_pt2->x - p_pt3->x) << 16) / blt2height;
         v85 = p_pt3->x << 16;
         blt1xval = p_pt1->x << 16;
         blt1wval = blt1xval;
         if (!pt1y_underflow)
         {
+            blt2skip = pt3y_overflow;
+            blt2xval = v85;
             if (pt2y_overflow)
             {
                 v38 = lbDisplay.GraphicsWindowHeight - v76;
-                wnd_h = v38;
+                totaheight = v38;
                 if (blt2skip) {
-                    blt1width = lbDisplay.GraphicsWindowHeight - v76;
+                    blt1height = lbDisplay.GraphicsWindowHeight - v76;
                 } else {
-                    v25 = __OFSUBW__(v38, blt1width);
-                    v39 = v38 - blt1width;
+                    v25 = __OFSUBW__(v38, blt1height);
+                    v39 = v38 - blt1height;
                     blt2skip = ((v39 < 0) ^ v25) | (v39 == 0);
-                    blt2width = v39;
+                    blt2height = v39;
                 }
             }
-            blt2xval = v85;
         }
         else
         {
             int v82;
 
             v35 = -v76;
-            wnd_h += v76;
-            if (wnd_h <= 0)
+            totaheight += v76;
+            if (totaheight <= 0)
                 return;
             v81 = -v76;
-            if (v35 - blt1width >= 0)
+            blt2skip = pt3y_overflow;
+            if (v35 - blt1height >= 0)
             {
-                v82 = v81 - blt1width;
-                blt2width -= v82;
+                v82 = v81 - blt1height;
+                blt2height -= v82;
                 blt2xval = blt2xinc * v82 + v85;
-                blt1wval += v82 * blt1winc + blt1width * blt1winc;
+                blt1wval += v82 * blt1winc + blt1height * blt1winc;
                 if (pt2y_overflow)
                 {
-                    blt2width = lbDisplay.GraphicsWindowHeight;
-                    wnd_h = lbDisplay.GraphicsWindowHeight;
+                    blt2height = lbDisplay.GraphicsWindowHeight;
+                    totaheight = lbDisplay.GraphicsWindowHeight;
                 }
-                blt1width = 0;
+                blt1height = 0;
             }
             else
             {
-                blt1width += v76;
-                blt1xval += blt1xinc * v81;
+                blt1height += v76;
+                blt1xval += v81 * blt1xinc;
                 blt1wval += v81 * blt1winc;
+                blt2xval = v85;
                 if (pt2y_overflow)
                 {
-                    wnd_h = lbDisplay.GraphicsWindowHeight;
+                    totaheight = lbDisplay.GraphicsWindowHeight;
                     if (blt2skip) {
-                        blt1width = lbDisplay.GraphicsWindowHeight;
+                        blt1height = lbDisplay.GraphicsWindowHeight;
                     } else {
-                        blt2skip = lbDisplay.GraphicsWindowHeight <= blt1width;
-                        blt2width = lbDisplay.GraphicsWindowHeight - blt1width;
+                        blt2skip = lbDisplay.GraphicsWindowHeight <= blt1height;
+                        blt2height = lbDisplay.GraphicsWindowHeight - blt1height;
                     }
                 }
-                blt2xval = v85;
             }
         }
         if (blt2skip)
-            blt2width = 0;
+            blt2height = 0;
         ramp = Ramp_SmoothRight;
         break;
 
     case TriCase_Unkn77:
-        if (p_pt1->y < 0)
-        {
-            p_screen = lbDisplay.WScreen;
-            pt1y_underflow = 1;
-        }
-        else if (p_pt1->y < lbDisplay.GraphicsWindowHeight)
-        {
-            p_screen = &lbDisplay.WScreen[lbDisplay.GraphicsScreenWidth * p_pt1->y];
-            pt1y_underflow = 0;
-        }
-        else
-        {
-            return;
-        }
-        v77 = p_pt1->y;
+        v76 = p_pt1->y;
         pt3y_overflow = p_pt3->y > lbDisplay.GraphicsWindowHeight;
-        blt1width = p_pt3->y - p_pt1->y;
-        wnd_h = blt1width;
-        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / blt1width;
-        blt1winc = ((p_pt2->x - p_pt1->x) << 16) / blt1width;
+        blt1height = p_pt3->y - p_pt1->y;
+        totaheight = blt1height;
+        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / blt1height;
+        blt1winc = ((p_pt2->x - p_pt1->x) << 16) / blt1height;
         blt1xval = p_pt1->x << 16;
         blt1wval = blt1xval;
         if (!pt1y_underflow)
         {
             if (pt3y_overflow)
             {
-                wnd_h = lbDisplay.GraphicsWindowHeight - v77;
-                blt1width = lbDisplay.GraphicsWindowHeight - v77;
+                blt1height = lbDisplay.GraphicsWindowHeight - v76;
+                totaheight = blt1height;
             }
         }
         else
         {
             int v46;
 
-            v46 = -v77;
-            blt1width += v77;
-            wnd_h += v77;
-            if (wnd_h <= 0)
+            v46 = -v76;
+            blt1height += v76;
+            totaheight += v76;
+            if (totaheight <= 0)
                 return;
             blt1xval += blt1xinc * v46;
             blt1wval += v46 * blt1winc;
             if (pt3y_overflow)
             {
-                wnd_h = lbDisplay.GraphicsWindowHeight;
-                blt1width = lbDisplay.GraphicsWindowHeight;
+                blt1height = lbDisplay.GraphicsWindowHeight;
+                totaheight = blt1height;
             }
         }
         ramp = Ramp_Single;
         break;
 
     case TriCase_Unkn24:
-        if (p_pt1->y < 0)
-        {
-            p_screen = lbDisplay.WScreen;
-            pt1y_underflow = 1;
-        }
-        else if (p_pt1->y < lbDisplay.GraphicsWindowHeight)
-        {
-            p_screen = &lbDisplay.WScreen[lbDisplay.GraphicsScreenWidth * p_pt1->y];
-            pt1y_underflow = 0;
-        }
-        else
-        {
-            return;
-        }
-        v75 = p_pt1->y;
+        v76 = p_pt1->y;
+        pt3y_overflow = p_pt3->y > lbDisplay.GraphicsWindowHeight;
         v12 = p_pt3->y;
-        v65 = p_pt3->y > lbDisplay.GraphicsWindowHeight;
         v89 = p_pt3->y - p_pt1->y;
-        wnd_h = v89;
+        totaheight = v89;
         blt2skip = p_pt2->y > lbDisplay.GraphicsWindowHeight;
-        blt1width = p_pt2->y - p_pt1->y;
+        blt1height = p_pt2->y - p_pt1->y;
+        v12 = p_pt2->y - p_pt1->y;
         blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / v89;
         blt1winc = ((p_pt2->x - p_pt1->x) << 16) / v12;
         if (blt1winc <= blt1xinc)
             return;
         blt2winc = ((p_pt3->x - p_pt2->x) << 16) / v12;
-        blt2width = p_pt3->y - p_pt2->y;
+        blt2height = p_pt3->y - p_pt2->y;
         v84 = p_pt2->x << 16;
         blt1xval = p_pt1->x << 16;
         blt1wval = blt1xval;
         if (!pt1y_underflow)
         {
-            if (v65)
+            blt2wval = v84;
+            if (pt3y_overflow)
             {
-                v24 = lbDisplay.GraphicsWindowHeight - v75;
-                wnd_h = v24;
+                v24 = lbDisplay.GraphicsWindowHeight - v76;
+                totaheight = v24;
                 if (blt2skip) {
-                    blt1width = v24;
+                    blt1height = v24;
                 } else {
-                    v25 = __OFSUBW__(v24, blt1width);
-                    v26 = v24 - blt1width;
+                    v25 = __OFSUBW__(v24, blt1height);
+                    v26 = v24 - blt1height;
                     blt2skip = ((v26 < 0) ^ v25) | (v26 == 0);
-                    blt2width = v26;
+                    blt2height = v26;
                 }
             }
-            blt2wval = v84;
         }
         else
         {
-            v20 = -v75;
-            wnd_h += v75;
-            if (wnd_h <= 0)
+            v20 = -v76;
+            totaheight += v76;
+            if (totaheight <= 0)
                 return;
-            v79 = -v75;
-            if (v20 - blt1width >= 0)
+            v79 = -v76;
+            if (v20 - blt1height >= 0)
             {
-                blt2width -= v79 - blt1width;
-                v80 = v79 - blt1width;
-                blt1xval += blt1xinc * v80 + blt1width * blt1xinc;
+                blt2height -= v79 - blt1height;
+                v80 = v79 - blt1height;
+                blt1xval += blt1xinc * v80 + blt1height * blt1xinc;
                 blt2wval = blt2winc * v80 + v84;
-                if (v65)
+                if (pt3y_overflow)
                 {
-                    blt2width = lbDisplay.GraphicsWindowHeight;
-                    wnd_h = lbDisplay.GraphicsWindowHeight;
+                    blt2height = lbDisplay.GraphicsWindowHeight;
+                    totaheight = blt2height;
                 }
-                blt1width = 0;
+                blt1height = 0;
             }
             else
             {
-                blt1width += v75;
+                blt1height += v76;
                 blt1xval += blt1xinc * v79;
                 blt1wval += v79 * blt1winc;
-                if (v65)
+                blt2wval = v84;
+                if (pt3y_overflow)
                 {
-                    wnd_h = lbDisplay.GraphicsWindowHeight;
+                    totaheight = lbDisplay.GraphicsWindowHeight;
                     if (blt2skip) {
-                        blt1width = lbDisplay.GraphicsWindowHeight;
+                        blt1height = lbDisplay.GraphicsWindowHeight;
                     } else {
-                        blt2skip = lbDisplay.GraphicsWindowHeight <= blt1width;
-                        blt2width = lbDisplay.GraphicsWindowHeight - blt1width;
+                        blt2skip = lbDisplay.GraphicsWindowHeight <= blt1height;
+                        blt2height = lbDisplay.GraphicsWindowHeight - blt1height;
                     }
                 }
-                blt2wval = v84;
             }
         }
         if (blt2skip)
-            blt2width = 0;
+            blt2height = 0;
         ramp = Ramp_SmoothLeft;
         break;
 
     case TriCase_Unkn92:
-        if (p_pt1->y < 0)
-        {
-            p_screen = lbDisplay.WScreen;
-            pt1y_underflow = 1;
-        }
-        else if (p_pt1->y < lbDisplay.GraphicsWindowHeight)
-        {
-            p_screen = &lbDisplay.WScreen[lbDisplay.GraphicsScreenWidth * p_pt1->y];
-            pt1y_underflow = 0;
-        }
-        else
-        {
-            return;
-        }
-        v78 = p_pt1->y;
-        v70 = p_pt3->y > lbDisplay.GraphicsWindowHeight;
-        blt1width = p_pt3->y - p_pt1->y;
-        wnd_h = blt1width;
-        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / blt1width;
-        blt1winc = ((p_pt3->x - p_pt2->x) << 16) / blt1width;
+        v76 = p_pt1->y;
+        pt3y_overflow = p_pt3->y > lbDisplay.GraphicsWindowHeight;
+        blt1height = p_pt3->y - p_pt1->y;
+        totaheight = blt1height;
+        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / blt1height;
+        blt1winc = ((p_pt3->x - p_pt2->x) << 16) / blt1height;
         blt1xval = p_pt1->x << 16;
         blt1wval = p_pt2->x << 16;
         if (!pt1y_underflow)
         {
-            if (v70)
+            if (pt3y_overflow)
             {
-                wnd_h = lbDisplay.GraphicsWindowHeight - v78;
-                blt1width = lbDisplay.GraphicsWindowHeight - v78;
+                blt1height = lbDisplay.GraphicsWindowHeight - v76;
+                totaheight = blt1height;
             }
         }
         else
         {
-            v55 = -v78;
-            blt1width += v78;
-            wnd_h += v78;
-            if (wnd_h <= 0)
+            v55 = -v76;
+            blt1height += v76;
+            totaheight += v76;
+            if (totaheight <= 0)
                 return;
             blt1xval += v55 * blt1xinc;
             blt1wval += v55 * blt1winc;
-            if (v70)
+            if (pt3y_overflow)
             {
-                wnd_h = lbDisplay.GraphicsWindowHeight;
-                blt1width = lbDisplay.GraphicsWindowHeight;
+                blt1height = lbDisplay.GraphicsWindowHeight;
+                totaheight = blt1height;
             }
         }
         ramp = Ramp_Single;
@@ -655,21 +612,21 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
     switch (ramp)
     {
     case Ramp_SmoothLeft:
-        LbI_RangeFillTwoRampsSmoothLeft(byte_1E957C, blt1width, blt1xval,
-          blt1xinc, blt1wval, blt1winc, blt2width, blt2wval, blt2winc);
+        LbI_RangeFillTwoRampsSmoothLeft(byte_1E957C, blt1height, blt1xval,
+          blt1xinc, blt1wval, blt1winc, blt2height, blt2wval, blt2winc);
         break;
     case Ramp_SmoothRight:
-        LbI_RangeFillTwoRampsSmoothRight(byte_1E957C, blt1width, blt1xval,
-          blt1xinc, blt1wval, blt1winc, blt2width, blt2xval, blt2xinc);
+        LbI_RangeFillTwoRampsSmoothRight(byte_1E957C, blt1height, blt1xval,
+          blt1xinc, blt1wval, blt1winc, blt2height, blt2xval, blt2xinc);
         break;
     default:
-        LbI_RangeFillSingleRamp(byte_1E957C, blt1width, blt1xval,
+        LbI_RangeFillSingleRamp(byte_1E957C, blt1height, blt1xval,
           blt1xinc, blt1wval, blt1winc);
         break;
     }
     // Draw on graphics buffer
     p_screen += lbDisplay.GraphicsWindowX + lbDisplay.GraphicsScreenWidth * (lbDisplay.GraphicsWindowY - 1);
-    LbBlitSolidRanges(p_screen, byte_1E957C, wnd_h, colour);
+    LbBlitSolidRanges(p_screen, byte_1E957C, totaheight, colour);
 }
 
 void LbDrawTriangle(short x1, short y1, short x2, short y2, short x3, short y3, TbPixel colour)
