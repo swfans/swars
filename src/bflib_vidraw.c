@@ -201,7 +201,6 @@ ubyte __OFSUBW__(short x, short y)
 
 void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, short y3, TbPixel colour)
 {
-    //TODO make sure to test whether this works exactly like original, especially for large triangles
 #if 0
     asm volatile (
       "push %6\n"
@@ -211,29 +210,14 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
         :  : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (colour));
     return;
 #endif
-  struct TbSPoint *p_pt1;
-  struct TbSPoint *p_pt2;
-  struct TbSPoint *p_pt3;
-  int v12;
-  int v20;
-  int v24;
-  ubyte v25;
-  short v26;
-  int v35;
-  int v38;
-  short v39;
-  int v55;
-  TbBool pt2y_overflow;
-  char blt2skip;
-  TbBool pt3y_overflow;
-  TbBool pt1y_underflow;
-  short v76;
-  int v79;
-  int v80;
-  int v81;
-  int totaheight;
-  int v84;
-  int v85, v89;
+    struct TbSPoint *p_pt1;
+    struct TbSPoint *p_pt2;
+    struct TbSPoint *p_pt3;
+    int dist_y32, dist_y31;
+    char blt2skip;
+    TbBool pt2y_overflow;
+    TbBool pt3y_overflow;
+    TbBool pt1y_underflow;
     enum TriangleCase tricase;
     enum RampType ramp;
     short blt1height, blt2height;
@@ -241,6 +225,7 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
     int blt1xinc, blt2xinc;
     int blt1wval, blt2wval;
     int blt1winc, blt2winc;
+    int totaheight;
     TbPixel *p_screen;
     struct TbSPoint pt3;
     struct TbSPoint pt2;
@@ -379,7 +364,6 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
     switch (tricase)
     {
     case TriCase_Unkn50:
-        v76 = p_pt1->y;
         pt3y_overflow = p_pt3->y > lbDisplay.GraphicsWindowHeight;
         pt2y_overflow = p_pt2->y > lbDisplay.GraphicsWindowHeight;
         blt1height = p_pt3->y - p_pt1->y;
@@ -390,43 +374,43 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
             return;
         blt2height = p_pt2->y - p_pt3->y;
         blt2xinc = ((p_pt2->x - p_pt3->x) << 16) / blt2height;
-        v85 = p_pt3->x << 16;
+        blt2xval = p_pt3->x << 16;
         blt1xval = p_pt1->x << 16;
         blt1wval = blt1xval;
         if (!pt1y_underflow)
         {
             blt2skip = pt3y_overflow;
-            blt2xval = v85;
             if (pt2y_overflow)
             {
-                v38 = lbDisplay.GraphicsWindowHeight - v76;
-                totaheight = v38;
+                short tmp1;
+                ubyte tmp1_overflow;
+
+                totaheight = lbDisplay.GraphicsWindowHeight - p_pt1->y;
                 if (blt2skip) {
-                    blt1height = lbDisplay.GraphicsWindowHeight - v76;
+                    blt1height = lbDisplay.GraphicsWindowHeight - p_pt1->y;
                 } else {
-                    v25 = __OFSUBW__(v38, blt1height);
-                    v39 = v38 - blt1height;
-                    blt2skip = ((v39 < 0) ^ v25) | (v39 == 0);
-                    blt2height = v39;
+                    tmp1_overflow = __OFSUBW__(totaheight, blt1height);
+                    tmp1 = totaheight - blt1height;
+                    blt2skip = ((tmp1 < 0) ^ tmp1_overflow) | (tmp1 == 0);
+                    blt2height = tmp1;
                 }
             }
         }
         else
         {
-            int v82;
+            int mcor_y1, dist_m1;
 
-            v35 = -v76;
-            totaheight += v76;
+            mcor_y1 = -p_pt1->y;
+            totaheight -= mcor_y1;
             if (totaheight <= 0)
                 return;
-            v81 = -v76;
             blt2skip = pt3y_overflow;
-            if (v35 - blt1height >= 0)
+            if (mcor_y1 - blt1height >= 0)
             {
-                v82 = v81 - blt1height;
-                blt2height -= v82;
-                blt2xval = blt2xinc * v82 + v85;
-                blt1wval += v82 * blt1winc + blt1height * blt1winc;
+                dist_m1 = mcor_y1 - blt1height;
+                blt2height -= dist_m1;
+                blt2xval += dist_m1 * blt2xinc;
+                blt1wval += dist_m1 * blt1winc + blt1height * blt1winc;
                 if (pt2y_overflow)
                 {
                     blt2height = lbDisplay.GraphicsWindowHeight;
@@ -436,10 +420,9 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
             }
             else
             {
-                blt1height += v76;
-                blt1xval += v81 * blt1xinc;
-                blt1wval += v81 * blt1winc;
-                blt2xval = v85;
+                blt1height -= mcor_y1;
+                blt1xval += mcor_y1 * blt1xinc;
+                blt1wval += mcor_y1 * blt1winc;
                 if (pt2y_overflow)
                 {
                     totaheight = lbDisplay.GraphicsWindowHeight;
@@ -458,7 +441,6 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
         break;
 
     case TriCase_Unkn77:
-        v76 = p_pt1->y;
         pt3y_overflow = p_pt3->y > lbDisplay.GraphicsWindowHeight;
         blt1height = p_pt3->y - p_pt1->y;
         totaheight = blt1height;
@@ -470,21 +452,21 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
         {
             if (pt3y_overflow)
             {
-                blt1height = lbDisplay.GraphicsWindowHeight - v76;
+                blt1height = lbDisplay.GraphicsWindowHeight - p_pt1->y;
                 totaheight = blt1height;
             }
         }
         else
         {
-            int v46;
+            int mcor_y1;
 
-            v46 = -v76;
-            blt1height += v76;
-            totaheight += v76;
+            mcor_y1 = -p_pt1->y;
+            blt1height -= mcor_y1;
+            totaheight -= mcor_y1;
             if (totaheight <= 0)
                 return;
-            blt1xval += blt1xinc * v46;
-            blt1wval += v46 * blt1winc;
+            blt1xval += blt1xinc * mcor_y1;
+            blt1wval += mcor_y1 * blt1winc;
             if (pt3y_overflow)
             {
                 blt1height = lbDisplay.GraphicsWindowHeight;
@@ -495,53 +477,53 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
         break;
 
     case TriCase_Unkn24:
-        v76 = p_pt1->y;
         pt3y_overflow = p_pt3->y > lbDisplay.GraphicsWindowHeight;
-        v12 = p_pt3->y;
-        v89 = p_pt3->y - p_pt1->y;
-        totaheight = v89;
+        dist_y31 = p_pt3->y - p_pt1->y;
+        totaheight = dist_y31;
         blt2skip = p_pt2->y > lbDisplay.GraphicsWindowHeight;
+        dist_y32 = p_pt3->y - p_pt2->y;
         blt1height = p_pt2->y - p_pt1->y;
-        v12 = p_pt2->y - p_pt1->y;
-        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / v89;
-        blt1winc = ((p_pt2->x - p_pt1->x) << 16) / v12;
+        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / dist_y31;
+        blt1winc = ((p_pt2->x - p_pt1->x) << 16) / blt1height;
         if (blt1winc <= blt1xinc)
             return;
-        blt2winc = ((p_pt3->x - p_pt2->x) << 16) / v12;
+        blt2winc = ((p_pt3->x - p_pt2->x) << 16) / dist_y32;
         blt2height = p_pt3->y - p_pt2->y;
-        v84 = p_pt2->x << 16;
+        blt2wval = p_pt2->x << 16;
         blt1xval = p_pt1->x << 16;
         blt1wval = blt1xval;
         if (!pt1y_underflow)
         {
-            blt2wval = v84;
             if (pt3y_overflow)
             {
-                v24 = lbDisplay.GraphicsWindowHeight - v76;
-                totaheight = v24;
+                short tmp1;
+                ubyte tmp1_overflow;
+
+                totaheight = lbDisplay.GraphicsWindowHeight - p_pt1->y;
                 if (blt2skip) {
-                    blt1height = v24;
+                    blt1height = totaheight;
                 } else {
-                    v25 = __OFSUBW__(v24, blt1height);
-                    v26 = v24 - blt1height;
-                    blt2skip = ((v26 < 0) ^ v25) | (v26 == 0);
-                    blt2height = v26;
+                    tmp1_overflow = __OFSUBW__(totaheight, blt1height);
+                    tmp1 = totaheight - blt1height;
+                    blt2skip = ((tmp1 < 0) ^ tmp1_overflow) | (tmp1 == 0);
+                    blt2height = tmp1;
                 }
             }
         }
         else
         {
-            v20 = -v76;
-            totaheight += v76;
+            int mcor_y1, dist_m1;
+
+            mcor_y1 = -p_pt1->y;
+            totaheight -= mcor_y1;
             if (totaheight <= 0)
                 return;
-            v79 = -v76;
-            if (v20 - blt1height >= 0)
+            if (mcor_y1 - blt1height >= 0)
             {
-                blt2height -= v79 - blt1height;
-                v80 = v79 - blt1height;
-                blt1xval += blt1xinc * v80 + blt1height * blt1xinc;
-                blt2wval = blt2winc * v80 + v84;
+                blt2height -= mcor_y1 - blt1height;
+                dist_m1 = mcor_y1 - blt1height;
+                blt1xval += blt1xinc * dist_m1 + blt1height * blt1xinc;
+                blt2wval += blt2winc * dist_m1;
                 if (pt3y_overflow)
                 {
                     blt2height = lbDisplay.GraphicsWindowHeight;
@@ -551,10 +533,9 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
             }
             else
             {
-                blt1height += v76;
-                blt1xval += blt1xinc * v79;
-                blt1wval += v79 * blt1winc;
-                blt2wval = v84;
+                blt1height += p_pt1->y;
+                blt1xval += blt1xinc * mcor_y1;
+                blt1wval += mcor_y1 * blt1winc;
                 if (pt3y_overflow)
                 {
                     totaheight = lbDisplay.GraphicsWindowHeight;
@@ -573,7 +554,6 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
         break;
 
     case TriCase_Unkn92:
-        v76 = p_pt1->y;
         pt3y_overflow = p_pt3->y > lbDisplay.GraphicsWindowHeight;
         blt1height = p_pt3->y - p_pt1->y;
         totaheight = blt1height;
@@ -585,19 +565,21 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
         {
             if (pt3y_overflow)
             {
-                blt1height = lbDisplay.GraphicsWindowHeight - v76;
+                blt1height = lbDisplay.GraphicsWindowHeight - p_pt1->y;
                 totaheight = blt1height;
             }
         }
         else
         {
-            v55 = -v76;
-            blt1height += v76;
-            totaheight += v76;
+            int mcor_y1;
+
+            mcor_y1 = -p_pt1->y;
+            blt1height -= mcor_y1;
+            totaheight -= mcor_y1;
             if (totaheight <= 0)
                 return;
-            blt1xval += v55 * blt1xinc;
-            blt1wval += v55 * blt1winc;
+            blt1xval += mcor_y1 * blt1xinc;
+            blt1wval += mcor_y1 * blt1winc;
             if (pt3y_overflow)
             {
                 blt1height = lbDisplay.GraphicsWindowHeight;
