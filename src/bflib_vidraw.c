@@ -112,6 +112,72 @@ static void LbBlitSolidRanges(TbPixel *p_screen, struct DrawRange *ranges, int r
     }
 }
 
+static void LbI_RangeFillSingleRamp(struct DrawRange *ranges, int blt1width,
+  int blt1xval, int blt1xinc, int blt1wval, int blt1winc)
+{
+    struct DrawRange *rng;
+
+    rng = ranges;
+    for (; blt1width > 0; blt1width--)
+    {
+        rng->x = blt1xval;
+        blt1xval += blt1xinc;
+        rng->w = blt1wval;
+        blt1wval += blt1winc;
+        rng++;
+    }
+}
+
+static void LbI_RangeFillTwoRampsSmoothLeft(struct DrawRange *ranges, int blt1width,
+  int blt1xval, int blt1xinc, int blt1wval, int blt1winc,
+  int blt2width, int blt2wval, int blt2winc)
+{
+    struct DrawRange *rng;
+
+    rng = ranges;
+    for (; blt1width > 0; blt1width--)
+    {
+        rng->x = blt1xval;
+        blt1xval += blt1xinc;
+        rng->w = blt1wval;
+        blt1wval += blt1winc;
+        rng++;
+    }
+    for (; blt2width > 0; blt2width--)
+    {
+        rng->x = blt1xval;
+        blt1xval += blt1xinc;
+        rng->w = blt2wval;
+        blt2wval += blt2winc;
+        rng++;
+    }
+}
+
+static void LbI_RangeFillTwoRampsSmoothRight(struct DrawRange *ranges, int blt1width,
+  int blt1xval, int blt1xinc, int blt1wval, int blt1winc,
+  int blt2width, int blt2xval, int blt2xinc)
+{
+    struct DrawRange *rng;
+
+    rng = ranges;
+    for (; blt1width > 0; blt1width--)
+    {
+        rng->x = blt1xval;
+        blt1xval += blt1xinc;
+        rng->w = blt1wval;
+        blt1wval += blt1winc;
+        rng++;
+    }
+    for (; blt2width > 0; blt2width--)
+    {
+        rng->x = blt2xval;
+        blt2xval += blt2xinc;
+        rng->w = blt1wval;
+        blt1wval += blt1winc;
+        rng++;
+    }
+}
+
 // overflow flag of subtraction (x-y)
 ubyte __OFSUBW__(short x, short y)
 {
@@ -136,9 +202,9 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
   struct TbSPoint *p_pt2;
   struct TbSPoint *p_pt3;
   int v12;
-  int oval0a, oval0b, oval1a, oval1b;
+  int blt1xval, blt2xval;
+  int blt1wval, blt2wval;
   int v20;
-  struct DrawRange *rng;
   int v24;
   ubyte v25;
   short v26;
@@ -163,8 +229,8 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
   int v84;
   int v85, v89;
   short blt1width, blt2width;
-  int oinc1a, oinc1b;
-  int oinc0a, oinc0b;
+  int blt1winc, blt2winc;
+  int blt1xinc, blt2xinc;
   TbPixel *p_screen;
   struct TbSPoint pt3;
   struct TbSPoint pt2;
@@ -305,15 +371,15 @@ LABEL_50:
         blt1width = p_pt3->y - p_pt1->y;
         pt2y_overflow = p_pt2->y > lbDisplay.GraphicsWindowHeight;
         wnd_h = p_pt2->y - p_pt1->y;
-        oinc0a = ((p_pt3->x - p_pt1->x) << 16) / blt1width;
-        oinc1a = ((p_pt2->x - p_pt1->x) << 16) / wnd_h;
-        if (oinc1a <= oinc0a)
+        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / blt1width;
+        blt1winc = ((p_pt2->x - p_pt1->x) << 16) / wnd_h;
+        if (blt1winc <= blt1xinc)
             return;
         blt2width = p_pt2->y - p_pt3->y;
-        oinc0b = ((p_pt2->x - p_pt3->x) << 16) / blt2width;
+        blt2xinc = ((p_pt2->x - p_pt3->x) << 16) / blt2width;
         v85 = p_pt3->x << 16;
-        oval0a = p_pt1->x << 16;
-        oval1a = oval0a;
+        blt1xval = p_pt1->x << 16;
+        blt1wval = blt1xval;
         if (!pt1y_underflow)
         {
             if (pt2y_overflow)
@@ -329,7 +395,9 @@ LABEL_50:
                     blt2width = v39;
                 }
             }
-            rng = byte_1E957C;
+            blt2xval = v85;
+            if (blt2skip)
+                blt2width = 0;
             goto LABEL_71;
         }
         else
@@ -345,21 +413,23 @@ LABEL_50:
             {
                 v82 = v81 - blt1width;
                 blt2width -= v82;
-                oval0b = oinc0b * v82 + v85;
-                oval1a += v82 * oinc1a + blt1width * oinc1a;
+                blt2xval = blt2xinc * v82 + v85;
+                blt1wval += v82 * blt1winc + blt1width * blt1winc;
                 if (pt2y_overflow)
                 {
                     blt2width = lbDisplay.GraphicsWindowHeight;
                     wnd_h = lbDisplay.GraphicsWindowHeight;
                 }
-                rng = byte_1E957C;
-                goto LABEL_72;
+                blt1width = 0;
+                if (blt2skip)
+                    blt2width = 0;
+                goto LABEL_71;
             }
             else
             {
                 blt1width += v76;
-                oval0a += oinc0a * v81;
-                oval1a += v81 * oinc1a;
+                blt1xval += blt1xinc * v81;
+                blt1wval += v81 * blt1winc;
                 if (pt2y_overflow)
                 {
                     wnd_h = lbDisplay.GraphicsWindowHeight;
@@ -370,7 +440,9 @@ LABEL_50:
                         blt2width = lbDisplay.GraphicsWindowHeight - blt1width;
                     }
                 }
-                rng = byte_1E957C;
+                blt2xval = v85;
+                if (blt2skip)
+                    blt2width = 0;
                 goto LABEL_71;
             }
         }
@@ -395,10 +467,10 @@ LABEL_77:
         pt3y_overflow = p_pt3->y > lbDisplay.GraphicsWindowHeight;
         blt1width = p_pt3->y - p_pt1->y;
         wnd_h = blt1width;
-        oinc0a = ((p_pt3->x - p_pt1->x) << 16) / blt1width;
-        oinc1a = ((p_pt2->x - p_pt1->x) << 16) / blt1width;
-        oval0a = p_pt1->x << 16;
-        oval1a = oval0a;
+        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / blt1width;
+        blt1winc = ((p_pt2->x - p_pt1->x) << 16) / blt1width;
+        blt1xval = p_pt1->x << 16;
+        blt1wval = blt1xval;
         if (!pt1y_underflow)
         {
             if (pt3y_overflow)
@@ -416,27 +488,15 @@ LABEL_77:
             wnd_h += v77;
             if (wnd_h <= 0)
                 return;
-            oval0a += oinc0a * v46;
-            oval1a += v46 * oinc1a;
+            blt1xval += blt1xinc * v46;
+            blt1wval += v46 * blt1winc;
             if (pt3y_overflow)
             {
                 wnd_h = lbDisplay.GraphicsWindowHeight;
                 blt1width = lbDisplay.GraphicsWindowHeight;
             }
         }
-        rng = byte_1E957C;
-        blt2skip = true;
-
-        //TODO replace with goto, when sure which one to choose
-        for (; blt1width > 0; blt1width--)
-        {
-            rng->x = oval0a;
-            oval0a += oinc0a;
-            rng->w = oval1a;
-            oval1a += oinc1a;
-            rng++;
-        }
-        goto LABEL_104;
+        goto LABEL_44;
 
 
 LABEL_24:
@@ -461,15 +521,15 @@ LABEL_24:
         wnd_h = v89;
         blt2skip = p_pt2->y > lbDisplay.GraphicsWindowHeight;
         blt1width = p_pt2->y - p_pt1->y;
-        oinc0a = ((p_pt3->x - p_pt1->x) << 16) / v89;
-        oinc1a = ((p_pt2->x - p_pt1->x) << 16) / v12;
-        if (oinc1a <= oinc0a)
+        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / v89;
+        blt1winc = ((p_pt2->x - p_pt1->x) << 16) / v12;
+        if (blt1winc <= blt1xinc)
             return;
-        oinc1b = ((p_pt3->x - p_pt2->x) << 16) / v12;
+        blt2winc = ((p_pt3->x - p_pt2->x) << 16) / v12;
         blt2width = p_pt3->y - p_pt2->y;
         v84 = p_pt2->x << 16;
-        oval0a = p_pt1->x << 16;
-        oval1a = oval0a;
+        blt1xval = p_pt1->x << 16;
+        blt1wval = blt1xval;
         if (!pt1y_underflow)
         {
             if (v65)
@@ -485,7 +545,9 @@ LABEL_24:
                     blt2width = v26;
                 }
             }
-            rng = byte_1E957C;
+            blt2wval = v84;
+            if (blt2skip)
+                blt2width = 0;
             goto LABEL_43;
         }
         else
@@ -499,21 +561,23 @@ LABEL_24:
             {
                 blt2width -= v79 - blt1width;
                 v80 = v79 - blt1width;
-                oval0a += oinc0a * v80 + blt1width * oinc0a;
-                oval1b = oinc1b * v80 + v84;
+                blt1xval += blt1xinc * v80 + blt1width * blt1xinc;
+                blt2wval = blt2winc * v80 + v84;
                 if (v65)
                 {
                     blt2width = lbDisplay.GraphicsWindowHeight;
                     wnd_h = lbDisplay.GraphicsWindowHeight;
                 }
-                rng = byte_1E957C;
-                goto LABEL_46;
+                blt1width = 0;
+                if (blt2skip)
+                    blt2width = 0;
+                goto LABEL_43;
             }
             else
             {
                 blt1width += v75;
-                oval0a += oinc0a * v79;
-                oval1a += v79 * oinc1a;
+                blt1xval += blt1xinc * v79;
+                blt1wval += v79 * blt1winc;
                 if (v65)
                 {
                     wnd_h = lbDisplay.GraphicsWindowHeight;
@@ -524,7 +588,9 @@ LABEL_24:
                         blt2width = lbDisplay.GraphicsWindowHeight - blt1width;
                     }
                 }
-                rng = byte_1E957C;
+                blt2wval = v84;
+                if (blt2skip)
+                    blt2width = 0;
                 goto LABEL_43;
             }
         }
@@ -549,10 +615,10 @@ LABEL_92:
         v70 = p_pt3->y > lbDisplay.GraphicsWindowHeight;
         blt1width = p_pt3->y - p_pt1->y;
         wnd_h = blt1width;
-        oinc0a = ((p_pt3->x - p_pt1->x) << 16) / blt1width;
-        oinc1a = ((p_pt3->x - p_pt2->x) << 16) / blt1width;
-        oval0a = p_pt1->x << 16;
-        oval1a = p_pt2->x << 16;
+        blt1xinc = ((p_pt3->x - p_pt1->x) << 16) / blt1width;
+        blt1winc = ((p_pt3->x - p_pt2->x) << 16) / blt1width;
+        blt1xval = p_pt1->x << 16;
+        blt1wval = p_pt2->x << 16;
         if (!pt1y_underflow)
         {
             if (v70)
@@ -568,76 +634,31 @@ LABEL_92:
             wnd_h += v78;
             if (wnd_h <= 0)
                 return;
-            oval0a += v55 * oinc0a;
-            oval1a += v55 * oinc1a;
+            blt1xval += v55 * blt1xinc;
+            blt1wval += v55 * blt1winc;
             if (v70)
             {
                 wnd_h = lbDisplay.GraphicsWindowHeight;
                 blt1width = lbDisplay.GraphicsWindowHeight;
             }
         }
-        rng = byte_1E957C;
-        blt2skip = true;
-
-        //TODO replace with goto, when sure which one to choose
-        for (; blt1width > 0; blt1width--)
-        {
-            rng->x = oval0a;
-            oval0a += oinc0a;
-            rng->w = oval1a;
-            oval1a += oinc1a;
-            rng++;
-        }
-        goto LABEL_104;
+        goto LABEL_44;
 
 
 LABEL_71:
-        for (; blt1width > 0; blt1width--)
-        {
-            rng->x = oval0a;
-            oval0a += oinc0a;
-            rng->w = oval1a;
-            oval1a += oinc1a;
-            rng++;
-        }
-        oval0b = v85;
-LABEL_72:
-        if (!blt2skip)
-        {
-            for (; blt2width > 0; blt2width--)
-            {
-                rng->x = oval0b;
-                oval0b += oinc0b;
-                rng->w = oval1a;
-                oval1a += oinc1a;
-                rng++;
-            }
-        }
+        LbI_RangeFillTwoRampsSmoothRight(byte_1E957C, blt1width, blt1xval,
+          blt1xinc, blt1wval, blt1winc, blt2width, blt2xval, blt2xinc);
         goto LABEL_104;
 
 
 LABEL_43:
-        for (; blt1width > 0; blt1width--)
-        {
-            rng->x = oval0a;
-            oval0a += oinc0a;
-            rng->w = oval1a;
-            oval1a += oinc1a;
-            rng++;
-        }
-        oval1b = v84;
-LABEL_46:
-        if (!blt2skip)
-        {
-            for (; blt2width > 0; blt2width--)
-            {
-                rng->x = oval0a;
-                oval0a += oinc0a;
-                rng->w = oval1b;
-                oval1b += oinc1b;
-                rng++;
-            }
-        }
+        LbI_RangeFillTwoRampsSmoothLeft(byte_1E957C, blt1width, blt1xval,
+          blt1xinc, blt1wval, blt1winc, blt2width, blt2wval, blt2winc);
+        goto LABEL_104;
+
+LABEL_44:
+        LbI_RangeFillSingleRamp(byte_1E957C, blt1width, blt1xval,
+          blt1xinc, blt1wval, blt1winc);
         goto LABEL_104;
 
 
