@@ -383,6 +383,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     const struct TbSprite *msspr;
     TbScreenModeInfo *mdinfo;
     ulong sdlFlags, sdlPxFormat;
+    int windowpos;
 
     msspr = NULL;
     LbExeReferenceNumber();
@@ -432,11 +433,8 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // SDL video mode flags
     LbIGetSDLFlagsForMode(&sdlFlags, &sdlPxFormat, mdinfo);
 
-    // Set window position
-    int windowpos;
+    // Set window position depending on SDL_VIDEO_CENTERED system variable
     windowpos = SDL_WINDOWPOS_UNDEFINED;
-
-    // Check for SDL_VIDEO_CENTERED system variable
     if (SDL_GetHintBoolean("SDL_VIDEO_CENTERED", SDL_FALSE))
         windowpos = SDL_WINDOWPOS_CENTERED;
 
