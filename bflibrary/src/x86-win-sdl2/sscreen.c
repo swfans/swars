@@ -480,6 +480,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
         if (new_fullscreen_flags == 0)
         {
             SDL_SetWindowSize(lbWindow, mdWidth, mdHeight);
+            SDL_SetWindowPosition(lbWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
         }
     }
 
