@@ -38,7 +38,7 @@
 .global EXPORT_SYMBOL(vec_window_width);
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (poly_line_)
+GLOBAL_FUNC (ASM_poly_line)
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp

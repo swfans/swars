@@ -24,6 +24,8 @@
 #include "bfscreen.h"
 #include "bfline.h"
 #include "bfutility.h"
+
+#include "engintrns.h"
 /******************************************************************************/
 
 extern ubyte byte_1DDC44[640];
@@ -72,4 +74,14 @@ void draw_noise_box(short x, short y, ushort w, ushort h)
     }
 }
 
+//TODO check if PolyPoint would be enough as the parameters here
+void poly_line(struct EnginePoint *point1, struct EnginePoint *point2)
+{
+#if 1
+    asm volatile (
+      "call ASM_poly_line\n"
+        :  : "a" (point1), "d" (point2));
+    return;
+#endif
+}
 /******************************************************************************/
