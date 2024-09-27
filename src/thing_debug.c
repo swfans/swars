@@ -48,7 +48,7 @@ TbBool thing_debug_selectable(short thing, short type, TbBool hidden)
         struct Thing *p_thing;
 
         p_thing = &things[thing];
-        if (hidden || (p_thing->Flag & 0x4000000) != 0)
+        if (hidden || (p_thing->Flag & TngF_Unkn04000000) != 0)
         {
             if ((type == 0) || (p_thing->Type == type))
                 return true;
@@ -62,7 +62,7 @@ TbBool thing_debug_selectable(short thing, short type, TbBool hidden)
         struct SimpleThing *p_sthing;
 
         p_sthing = &sthings[thing];
-        if (hidden || (p_sthing->Flag & 0x4000000) != 0)
+        if (hidden || (p_sthing->Flag & TngF_Unkn04000000) != 0)
         {
             if ((type == 0) || (p_sthing->Type == type))
                 return true;
@@ -104,7 +104,8 @@ short unused_func_201(short x, short y, short z, short type)
             if ((tile_z <= 0) && (tile_z >= 128))
                 continue;
             thing = game_my_big_map[128 * tile_z + tile_x].Child;
-            while (thing != 0)
+
+            while ((thing != 0) && (thing > -STHINGS_LIMIT) && (thing < THINGS_LIMIT))
             {
                 if (thing > 0)
                 {
