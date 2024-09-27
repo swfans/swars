@@ -28,6 +28,7 @@
 #include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
+#include "purpldrw.h"
 #include "display.h"
 #include "game.h"
 #include "keyboard.h"
@@ -124,12 +125,6 @@ ubyte brief_do_netscan_enhance(ubyte click)
     recount_city_credit_reward(selected_city_id);
     brief_citymap_readd_scanner_signals();
     return 1;
-}
-
-void draw_noise_box_purple_list(int x, int y, ulong width, ulong height)
-{
-    draw_box_purple_list(x, y, width, height, 0);
-    purple_draw_list[purple_draw_index - 1].Type = PuDT_NOISEBOX;
 }
 
 TbBool mouse_over_text_window_item(short tx_height, short margin, short start_shift, short n_lines)

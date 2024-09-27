@@ -37,6 +37,8 @@
 #include "keyboard.h"
 #include "network.h"
 #include "player.h"
+#include "purpldrw.h"
+#include "purpldrwlst.h"
 #include "research.h"
 #include "sound.h"
 #include "wrcities.h"

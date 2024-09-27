@@ -70,6 +70,8 @@
 #include "feresearch.h"
 #include "festorage.h"
 #include "feworld.h"
+#include "purpldrw.h"
+#include "purpldrwlst.h"
 #include "building.h"
 #include "campaign.h"
 #include "cybmod.h"
@@ -177,9 +179,6 @@ extern short word_1C6E08;
 extern short word_1C6E0A;
 
 extern long dword_1DDECC;
-
-extern struct ScreenPoint proj_origin;
-extern ubyte purple_joy_move;
 
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
@@ -5204,83 +5203,6 @@ void show_unkn3A_screen(int a1)
     // Empty
 }
 
-void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour)
-{
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_line_purple_list\n"
-        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (colour));
-}
-
-void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour)
-{
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_box_purple_list\n"
-        : : "a" (x), "d" (y), "b" (width), "c" (height), "g" (colour));
-}
-
-void draw_text_purple_list2(int x, int y, const char *text, ushort line)
-{
-    asm volatile (
-      "call ASM_draw_text_purple_list2\n"
-        : : "a" (x), "d" (y), "b" (text), "c" (line));
-}
-
-void draw_sprite_purple_list(int x, int y, struct TbSprite *sprite)
-{
-    asm volatile (
-      "call ASM_draw_sprite_purple_list\n"
-        : : "a" (x), "d" (y), "b" (sprite));
-}
-
-void draw_trig_purple_list(long x2, long y2, long x3, long y3)
-{
-    asm volatile (
-      "call ASM_draw_trig_purple_list\n"
-        : : "a" (x2), "d" (y2), "b" (x3), "c" (y3));
-}
-
-void copy_box_purple_list(long x, long y, ulong width, ulong height)
-{
-    asm volatile (
-      "call ASM_copy_box_purple_list\n"
-        : : "a" (x), "d" (y), "b" (width), "c" (height));
-}
-
-void draw_hotspot_purple_list(int x, int y)
-{
-    asm volatile (
-      "call ASM_draw_hotspot_purple_list\n"
-        : : "a" (x), "d" (y));
-}
-
-ubyte flashy_draw_purple_shape(struct ScreenShape *shape)
-{
-    ubyte ret;
-    asm volatile ("call ASM_flashy_draw_purple_shape\n"
-        : "=r" (ret) : "a" (shape));
-    return ret;
-}
-
-ubyte flashy_draw_purple_button(struct ScreenButton *button)
-{
-    ubyte ret;
-    asm volatile ("call ASM_flashy_draw_purple_button\n"
-        : "=r" (ret) : "a" (button));
-    return ret;
-}
-
-void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, TbPixel colour)
-{
-    asm volatile (
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_triangle_purple_list\n"
-        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (colour));
-}
-
 void show_game_engine(void)
 {
     short dcthing;
@@ -7105,14 +7027,6 @@ void local_to_worldr(int *dx, int *dy, int *dz)
         : : "a" (dx), "d" (dy), "b" (dz));
 }
 
-ushort my_draw_text(short x, short y, const char *text, ushort startline)
-{
-    ushort ret;
-    asm volatile ("call ASM_my_draw_text\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (text), "c" (startline));
-    return ret;
-}
-
 void do_scroll_map(void)
 {
     PlayerInfo *p_locplayer;
@@ -8686,12 +8600,6 @@ void init_net_players(void)
     }
 }
 
-void draw_flic_purple_list(void (*fn)())
-{
-    asm volatile ("call ASM_draw_flic_purple_list\n"
-        : : "a" (fn));
-}
-
 void update_mission_time(char a1)
 {
     asm volatile ("call ASM_update_mission_time\n"
@@ -9121,285 +9029,6 @@ void net_unkn_func_33(void)
     {
         network_players[i].Type = 17;
     }
-}
-
-void draw_purple_screen_hotspots(ushort hsnext)
-{
-    lbDisplay.DrawFlags = 0;
-    if (purple_joy_move)
-    {
-        if (!joy.DigitalY[0] && !joy.DigitalX[0])
-            purple_joy_move = 0;
-    }
-    else if (joy.DigitalY[0] == 1)
-    {
-        ulong hmin;
-        short imin, i;
-
-        hmin = 0x80000000;
-        imin = 0;
-        for (i = 0; i < hsnext; i++)
-        {
-            short ms_x, ms_y;
-            short shift_w, shift_h;
-
-            ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            shift_w = hotspot_buffer[i].X - ms_x;
-            shift_h = hotspot_buffer[i].Y - ms_y;
-            if ((shift_h > 0) && (shift_h > abs(shift_w)))
-            {
-                ulong hcur;
-                if (shift_h <= abs(shift_w))
-                    hcur = (shift_h >> 1) + abs(shift_w);
-                else
-                    hcur = shift_h + (abs(shift_w) >> 1);
-                if ((hcur < hmin) && (hcur != 0)) {
-                    hmin = hcur;
-                    imin = i;
-                }
-            }
-        }
-        if (hmin != 0x80000000)
-            LbMouseSetPosition(hotspot_buffer[imin].X, hotspot_buffer[imin].Y);
-        purple_joy_move = 1;
-    }
-    else if (joy.DigitalY[0] == -1)
-    {
-        ulong hmin;
-        short imin, i;
-
-        hmin = 0x80000000;
-        imin = 0;
-        for (i = 0; i < hsnext; i++)
-        {
-            short ms_x, ms_y;
-            short shift_w, shift_h;
-
-            ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            shift_w = hotspot_buffer[i].X - ms_x;
-            shift_h = ms_y - hotspot_buffer[i].Y;
-            if ((shift_h > 0) && (shift_h > abs(shift_w)))
-            {
-                ulong hcur;
-                if (shift_h <= abs(shift_w))
-                    hcur = (shift_h >> 1) + abs(shift_w);
-                else
-                    hcur = shift_h + (abs(shift_w) >> 1);
-                if ((hcur < hmin) && (hcur != 0)) {
-                    hmin = hcur;
-                    imin = i;
-                }
-            }
-        }
-        if (hmin != 0x80000000)
-            LbMouseSetPosition(hotspot_buffer[imin].X, hotspot_buffer[imin].Y);
-        purple_joy_move = 1;
-    }
-    else if (joy.DigitalX[0] == 1)
-    {
-        ulong hmin;
-        short imin, i;
-
-        hmin = 0x80000000;
-        imin = 0;
-        for (i = 0; i < hsnext; i++)
-        {
-            short ms_x, ms_y;
-            short shift_w, shift_h;
-
-            ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            shift_w = hotspot_buffer[i].X - ms_x;
-            shift_h = hotspot_buffer[i].Y - ms_y;
-            if ((shift_w > 0) && (shift_w > abs(shift_h)))
-            {
-                ulong hcur;
-                if (abs(shift_h) <= shift_w)
-                    hcur = shift_w + (abs(shift_h) >> 1);
-                else
-                    hcur = (shift_w >> 1) + abs(shift_h);
-                if ((hcur < hmin) && (hcur != 0)) {
-                    hmin = hcur;
-                    imin = i;
-                }
-            }
-        }
-        if (hmin != 0x80000000)
-            LbMouseSetPosition(hotspot_buffer[imin].X, hotspot_buffer[imin].Y);
-        purple_joy_move = 1;
-    }
-    else if (joy.DigitalX[0] == -1)
-    {
-        ulong hmin;
-        short imin, i;
-
-        hmin = 0x80000000;
-        imin = 0;
-        for (i = 0; i < hsnext; i++)
-        {
-            short ms_x, ms_y;
-            short shift_w, shift_h;
-
-            ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            shift_w = ms_x - hotspot_buffer[i].X;
-            shift_h = hotspot_buffer[i].Y - ms_y;
-            if ((shift_w > 0) && (shift_w > abs(shift_h)))
-            {
-                ulong hcur;
-                if (abs(shift_h) <= shift_w)
-                    hcur = shift_w + (abs(shift_h) >> 1);
-                else
-                    hcur = (shift_w >> 1) + abs(shift_h);
-                if ((hcur < hmin) && (hcur != 0)) {
-                    hmin = hcur;
-                    imin = i;
-                }
-            }
-        }
-        if (hmin != 0x80000000)
-            LbMouseSetPosition(hotspot_buffer[imin].X, hotspot_buffer[imin].Y);
-        purple_joy_move = 1;
-    }
-}
-
-void draw_purple_screen(void)
-{
-    struct PurpleDrawItem *pditem;
-    struct PolyPoint point_a;
-    struct PolyPoint point_c;
-    struct PolyPoint point_b;
-    ushort hsnext;
-
-    short x, y;
-    short w, h;
-    short shift_w, shift_h;
-
-    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
-        lbDisplay.GraphicsScreenHeight);
-    my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth,
-        lbDisplay.GraphicsScreenHeight);
-    hsnext = 0;
-    point_a.X = proj_origin.X;
-    point_a.Y = proj_origin.Y;
-    point_a.S = 0x200000;
-    point_c.S = 0x200000;
-    point_b.S = 0x8000;
-    vec_mode = 17;
-    for (pditem = purple_draw_list; pditem < &purple_draw_list[purple_draw_index]; pditem++)
-    {
-        lbDisplay.DrawFlags = pditem->Flags;
-
-        switch (pditem->Type)
-        {
-        case PuDT_BOX:
-            LbDrawBox(pditem->U.Box.X, pditem->U.Box.Y, pditem->U.Box.Width,
-                pditem->U.Box.Height, pditem->U.Box.Colour);
-            if ((lbDisplay.DrawFlags & 0x8000) != 0)
-            {
-                hotspot_buffer[hsnext].X = pditem->U.Box.X + (pditem->U.Box.Width >> 1);
-                hotspot_buffer[hsnext].Y = pditem->U.Box.Y + (pditem->U.Box.Height >> 1);
-                hsnext++;
-            }
-            break;
-        case PuDT_TEXT:
-            lbDisplay.DrawColour = pditem->U.Text.Colour;
-            lbFontPtr = pditem->U.Text.Font;
-            my_set_text_window(pditem->U.Text.WindowX, pditem->U.Text.WindowY,
-              pditem->U.Text.Width, pditem->U.Text.Height);
-            my_draw_text(pditem->U.Text.X, pditem->U.Text.Y,
-              pditem->U.Text.Text, pditem->U.Text.Line);
-            if ((lbDisplay.DrawFlags & 0x8000) != 0)
-            {
-                w = my_string_width(pditem->U.Text.Text);
-                if ((w >= pditem->U.Text.Width)
-                  || ((lbDisplay.DrawFlags & Lb_TEXT_HALIGN_CENTER)) != 0)
-                {
-                    x = pditem->U.Text.WindowX;
-                    shift_w = pditem->U.Text.Width >> 1;
-                }
-                else
-                {
-                    x = pditem->U.Text.X + pditem->U.Text.WindowX;
-                    shift_w = w >> 1;
-                }
-                shift_h = font_height('A') >> 1;
-                y = pditem->U.Text.Y + pditem->U.Text.WindowY;
-                hotspot_buffer[hsnext].X = x + shift_w;
-                hotspot_buffer[hsnext].Y = y + shift_h;
-                hsnext++;
-            }
-            break;
-        case PuDT_UNK03:
-            break;
-        case PuDT_COPYBOX:
-            x = pditem->U.Box.X;
-            y = pditem->U.Box.Y;
-            shift_w = pditem->U.Box.Width;
-            shift_h = pditem->U.Box.Height;
-            LbScreenCopyBox(lbDisplay.WScreen, back_buffer,
-                x, y, x, y, shift_w, shift_h);
-            break;
-        case PuDT_SPRITE:
-            lbDisplay.DrawColour = pditem->U.Box.Colour;
-            if ((lbDisplay.DrawFlags & Lb_TEXT_ONE_COLOR) != 0)
-                LbSpriteDrawOneColour(pditem->U.Sprite.X, pditem->U.Sprite.Y,
-                  pditem->U.Sprite.Sprite, lbDisplay.DrawColour);
-            else
-                LbSpriteDraw(pditem->U.Sprite.X, pditem->U.Sprite.Y,
-                  pditem->U.Sprite.Sprite);
-            if ((lbDisplay.DrawFlags & 0x8000) != 0)
-            {
-                w = pditem->U.Sprite.Sprite->SWidth;
-                h = pditem->U.Sprite.Sprite->SHeight;
-                hotspot_buffer[hsnext].X = pditem->U.Sprite.X + (w >> 1);
-                hotspot_buffer[hsnext].X = pditem->U.Sprite.Y + (h >> 1);
-                hsnext++;
-            }
-            break;
-        case PuDT_POTRIG:
-            vec_colour = pditem->U.Line.Colour;
-            point_c.X = pditem->U.Line.X1;
-            point_c.Y = pditem->U.Line.Y1;
-            point_b.X = pditem->U.Line.X2;
-            point_b.Y = pditem->U.Line.Y2;
-            if ((point_c.Y - point_b.Y) * (point_b.X - point_a.X)
-                - (point_b.Y - point_a.Y) * (point_c.X - point_b.X) > 0)
-                trig(&point_a, &point_b, &point_c);
-            else
-                trig(&point_a, &point_c, &point_b);
-            break;
-        case PuDT_FLIC:
-            pditem->U.Flic.Function();
-            break;
-        case PuDT_NOISEBOX:
-            draw_noise_box(pditem->U.Box.X, pditem->U.Box.Y, pditem->U.Box.Width, pditem->U.Box.Height);
-            break;
-        case PuDT_LINE:
-            LbDrawLine(pditem->U.Line.X1, pditem->U.Line.Y1,
-                pditem->U.Line.X2, pditem->U.Line.Y2, pditem->U.Line.Colour);
-            break;
-        case PuDT_HVLINE:
-            LbDrawHVLine(pditem->U.Line.X1, pditem->U.Line.Y1,
-                pditem->U.Line.X2, pditem->U.Line.Y2, pditem->U.Line.Colour);
-            break;
-        case PuDT_TRIANGLE:
-            LbDrawTriangle(pditem->U.Triangle.X1, pditem->U.Triangle.Y1,
-                pditem->U.Triangle.X2, pditem->U.Triangle.Y2,
-                pditem->U.Triangle.X3, pditem->U.Triangle.Y3, pditem->U.Triangle.Colour);
-            break;
-        case PuDT_HOTSPOT:
-            hotspot_buffer[hsnext].X = pditem->U.Hotspot.X;
-            hotspot_buffer[hsnext].Y = pditem->U.Hotspot.Y;
-            hsnext++;
-            break;
-        }
-    }
-    purple_draw_index = 0;
-
-    draw_purple_screen_hotspots(hsnext);
 }
 
 void show_menu_screen_st2(void)
