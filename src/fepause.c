@@ -38,6 +38,7 @@
 #include "guitext.h"
 #include "keyboard.h"
 #include "mouse.h"
+#include "mydraw.h"
 #include "sound.h"
 #include "swlog.h"
 /******************************************************************************/

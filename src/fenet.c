@@ -26,6 +26,8 @@
 #include "display.h"
 #include "femain.h"
 #include "game.h"
+#include "purpldrw.h"
+#include "purpldrwlst.h"
 #include "swlog.h"
 /******************************************************************************/
 

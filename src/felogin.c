@@ -30,6 +30,7 @@
 #include "feoptions.h"
 #include "game.h"
 #include "keyboard.h"
+#include "purpldrw.h"
 #include "sound.h"
 #include "util.h"
 #include "swlog.h"

@@ -30,15 +30,14 @@
 #include "display.h"
 #include "game_speed.h"
 #include "game.h"
+#include "purpldrw.h"
+#include "purpldrwlst.h"
 #include "keyboard.h"
 #include "network.h"
 #include "sound.h"
 #include "wrcities.h"
 #include "swlog.h"
 /******************************************************************************/
-//TODO move to its own gui projector file
-extern struct ScreenPoint proj_origin;
-
 extern struct ScreenTextBox world_city_info_box;
 extern struct ScreenButton world_info_ACCEPT_button;
 extern struct ScreenButton world_info_CANCEL_button;

@@ -141,6 +141,8 @@ swars_SOURCES = \
 	matrix.h \
 	mouse.c \
 	mouse.h \
+	mydraw.c \
+	mydraw.h \
 	netipx1.sx \
 	netser1.sx \
 	network.c \
@@ -156,6 +158,10 @@ swars_SOURCES = \
 	pepgroup.h \
 	player.c \
 	player.h \
+	purpldrw.c \
+	purpldrw.h \
+	purpldrwlst.c \
+	purpldrwlst.h \
 	radica1.sx \
 	radica2.sx \
 	radica3.sx \

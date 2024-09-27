@@ -28,6 +28,7 @@
 #include "game.h"
 #include "thing.h"
 #include "player.h"
+#include "purpldrw.h"
 #include "research.h"
 #include "swlog.h"
 /******************************************************************************/

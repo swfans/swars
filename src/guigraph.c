@@ -25,6 +25,8 @@
 #include "guiboxes.h"
 #include "display.h"
 #include "game.h"
+#include "purpldrw.h"
+#include "purpldrwlst.h"
 #include "swlog.h"
 /******************************************************************************/
 extern struct TbSprite *sprites_Icons0_0;

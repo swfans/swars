@@ -25,6 +25,7 @@
 #include "guigraph.h"
 #include "guitext.h"
 #include "cybmod.h"
+#include "purpldrw.h"
 #include "weapon.h"
 #include "research.h"
 #include "display.h"
