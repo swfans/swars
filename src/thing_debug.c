@@ -41,12 +41,111 @@ extern int dword_1DC7A4;
 extern short word_1DC7A0;
 extern short word_1DC7A2;
 
+TbBool thing_debug_selectable(short thing, short type, TbBool hidden)
+{
+    if (thing > 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        if (hidden || (p_thing->Flag & 0x4000000) != 0)
+        {
+            if ((type == 0) || (p_thing->Type == type))
+                return true;
+            if ((type == -1) && (p_thing->Type == TT_PERSON
+                || p_thing->Type == TT_VEHICLE))
+                return true;
+        }
+    }
+    else if (thing < 0)
+    {
+        struct SimpleThing *p_sthing;
+
+        p_sthing = &sthings[thing];
+        if (hidden || (p_sthing->Flag & 0x4000000) != 0)
+        {
+            if ((type == 0) || (p_sthing->Type == type))
+                return true;
+            if ((type == -1) && (p_sthing->Type == SmTT_DROPPED_ITEM))
+                return true;
+        }
+    }
+    return false;
+}
+
 short unused_func_201(short x, short y, short z, short type)
 {
+#if 0
     short ret;
     asm volatile ("call ASM_unused_func_201\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
     return ret;
+#endif
+    ulong sel_dist;
+    short sel_thing;
+    short shift_x, shift_z;
+
+    sel_thing = 0;
+    sel_dist = 0x7FFFFFFF;
+
+    for (shift_x = -8; shift_x < 11; shift_x++)
+    {
+        for (shift_z = -8; shift_z < 11; shift_z++)
+        {
+            ulong dist;
+            long dist_x, dist_z;
+            short tile_x, tile_z;
+            short thing;
+
+            tile_x = MAPCOORD_TO_TILE(x) + shift_x;
+            if ((tile_x <= 0) || (tile_x >= 128))
+                continue;
+            tile_z = MAPCOORD_TO_TILE(z) + shift_z;
+            if ((tile_z <= 0) && (tile_z >= 128))
+                continue;
+            thing = game_my_big_map[128 * tile_z + tile_x].Child;
+            while (thing != 0)
+            {
+                if (thing > 0)
+                {
+                    struct Thing *p_thing;
+
+                    p_thing = &things[thing];
+                    if (thing_debug_selectable(thing, type, false))
+                    {
+                        dist_x = x - PRCCOORD_TO_MAPCOORD(p_thing->X);
+                        dist_z = z - PRCCOORD_TO_MAPCOORD(p_thing->Z);
+                        dist = dist_x * dist_x + dist_z * dist_z;
+                        if (dist < sel_dist)
+                        {
+                            sel_dist = dist;
+                            sel_thing = thing;
+                        }
+                    }
+                    thing = p_thing->Next;
+                }
+                if (thing < 0)
+                {
+                    struct SimpleThing *p_sthing;
+
+                    p_sthing = &sthings[thing];
+                    if (thing_debug_selectable(thing, type, false))
+                    {
+                        dist_x = x - PRCCOORD_TO_MAPCOORD(p_sthing->X);
+                        dist_z = z - PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+                        dist = dist_x * dist_x + dist_z * dist_z;
+                        if (dist < sel_dist)
+                        {
+                            sel_dist = dist;
+                            sel_thing = thing;
+                        }
+                    }
+                    thing = p_sthing->Next;
+                }
+            }
+        }
+    }
+    return sel_thing;
 }
 
 int select_thing_for_debug(short x, short y, short z, short type)
