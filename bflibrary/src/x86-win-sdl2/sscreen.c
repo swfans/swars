@@ -383,6 +383,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     const struct TbSprite *msspr;
     TbScreenModeInfo *mdinfo;
     ulong sdlFlags, sdlPxFormat;
+    int windowpos;
 
     msspr = NULL;
     LbExeReferenceNumber();
@@ -432,6 +433,11 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // SDL video mode flags
     LbIGetSDLFlagsForMode(&sdlFlags, &sdlPxFormat, mdinfo);
 
+    // Set window position depending on SDL_VIDEO_CENTERED system variable
+    windowpos = SDL_WINDOWPOS_UNDEFINED;
+    if (SDL_GetHintBoolean("SDL_VIDEO_CENTERED", SDL_FALSE))
+        windowpos = SDL_WINDOWPOS_CENTERED;
+
     // Note:
     // We set the window's fullscreen state (either Window, Fullscreen, or Fake Fullscreen)
     // We set the DisplayMode for real fullscreen mode
@@ -480,13 +486,14 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
         if (new_fullscreen_flags == 0)
         {
             SDL_SetWindowSize(lbWindow, mdWidth, mdHeight);
+            if (windowpos != SDL_WINDOWPOS_UNDEFINED)
+                SDL_SetWindowPosition(lbWindow, windowpos, windowpos);
         }
     }
 
     // Set SDL video mode and create window, if not created before
     if (lbWindow == NULL) {
-        lbWindow = SDL_CreateWindow(lbDrawAreaTitle, SDL_WINDOWPOS_UNDEFINED,
-          SDL_WINDOWPOS_UNDEFINED, mdWidth, mdHeight, sdlFlags);
+        lbWindow = SDL_CreateWindow(lbDrawAreaTitle, windowpos, windowpos, mdWidth, mdHeight, sdlFlags);
     }
 
     if (lbWindow == NULL) {

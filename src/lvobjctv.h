@@ -30,6 +30,7 @@ extern "C" {
 
 #define MISSION_NETSCAN_OBV_COUNT 1000
 #define NETSCAN_OBJECTIVES_MAX_COUNT 10
+#define NETSCAN_OBJECTIVE_POINTS 5
 
 enum ObjectiveStatuses {
     ObvStatu_UNDECIDED = 0,
@@ -108,8 +109,8 @@ struct NetscanObjective { // sizeof = 20
   ubyte AnimNo;
   ushort CreditReward;
   ubyte TextLines;
-  ubyte X[5];
-  ubyte Z[5];
+  ubyte X[NETSCAN_OBJECTIVE_POINTS];
+  ubyte Z[NETSCAN_OBJECTIVE_POINTS];
   ubyte brobjfld_12;
   ubyte brobjfld_13;
 };

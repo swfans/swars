@@ -180,7 +180,6 @@ extern long dword_1DDECC;
 
 extern struct ScreenPoint proj_origin;
 extern ubyte purple_joy_move;
-extern ushort purple_draw_index;
 
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
@@ -9375,8 +9374,8 @@ void draw_purple_screen(void)
         case PuDT_FLIC:
             pditem->U.Flic.Function();
             break;
-        case PuDT_SLANTBOX:
-            LbDrawSlantBox(pditem->U.Box.X, pditem->U.Box.Y, pditem->U.Box.Width, pditem->U.Box.Height);
+        case PuDT_NOISEBOX:
+            draw_noise_box(pditem->U.Box.X, pditem->U.Box.Y, pditem->U.Box.Width, pditem->U.Box.Height);
             break;
         case PuDT_LINE:
             LbDrawLine(pditem->U.Line.X1, pditem->U.Line.Y1,
