@@ -18,6 +18,8 @@
 /******************************************************************************/
 #include "purpldrw.h"
 
+#include "bfscreen.h"
+
 #include "purpldrwlst.h"
 #include "guiboxes.h"
 #include "swlog.h"
@@ -25,10 +27,29 @@
 
 void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_draw_line_purple_list\n"
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (colour));
+    return;
+#endif
+    struct PurpleDrawItem *pditem;
+
+    pditem = &purple_draw_list[purple_draw_index];
+    purple_draw_index++;
+
+    pditem->U.Line.X1 = lbDisplay.GraphicsWindowX + x1;
+    pditem->U.Line.Y1 = lbDisplay.GraphicsWindowY + y1;
+    pditem->U.Line.X2 = lbDisplay.GraphicsWindowX + x2;
+    pditem->U.Line.Y2 = lbDisplay.GraphicsWindowY + y2;
+    pditem->U.Line.Colour = colour;
+    pditem->Flags = lbDisplay.DrawFlags;
+
+    if ((x1 == x2) || (y1 == y2))
+        pditem->Type = PuDT_HVLINE;
+    else
+        pditem->Type = PuDT_LINE;
 }
 
 void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour)
