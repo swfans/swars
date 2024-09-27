@@ -102,8 +102,6 @@ void SCANNER_set_zoom(int zoom);
  */
 void SCANNER_set_screen_box(short x, short y, short width, short height, short cutout);
 
-void add_blippoint_to_scanner(int x, int z, ubyte colour);
-
 TbBool mouse_move_over_scanner(void);
 void clear_all_scanner_signals(void);
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag);

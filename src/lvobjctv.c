@@ -1630,7 +1630,7 @@ void snprint_netscan_objctv(char *buf, ulong buflen, struct NetscanObjective *p_
         nparams++;
     }
 
-    for (i = 0; i < 5; i++)
+    for (i = 0; i < NETSCAN_OBJECTIVE_POINTS; i++)
     {
         if ((p_nsobv->X[i]|p_nsobv->Z[i]) != 0) {
             if (nparams) { sprintf(s, ", "); s += strlen(s); }

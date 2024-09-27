@@ -497,20 +497,39 @@ ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
 
 void clear_all_scanner_signals(void)
 {
-    int i;
+    int n;
 
     signal_count = 0;
-    for (i = 0; i < SCANNER_BIG_BLIP_COUNT; i++)
-        ingame.Scanner.BigBlip[i].Period = 0;
-    for (i = 0; i < SCANNER_ARC_COUNT; i++)
-        ingame.Scanner.Arc[i].Period = 0;
+    for (n = 0; n < SCANNER_BIG_BLIP_COUNT; n++)
+        ingame.Scanner.BigBlip[n].Period = 0;
+    for (n = 0; n < SCANNER_ARC_COUNT; n++)
+        ingame.Scanner.Arc[n].Period = 0;
 }
 
-void add_blippoint_to_scanner(int x, int z, ubyte colour)
+void fill_blippoint_scanner(int x, int z, ubyte colour, ushort n)
 {
-    SCANNER_init_blippoint(signal_count, x, z, colour);
-    ingame.Scanner.BigBlip[signal_count].Counter = 32;
-    signal_count++;
+    SCANNER_init_blippoint(n, x, z, colour);
+    ingame.Scanner.BigBlip[n].Counter = ingame.Scanner.BigBlip[n].Period;
+}
+
+ushort do_netscan_blippoint_scanner(struct NetscanObjective *p_nsobv, ushort next_signal)
+{
+    int i;
+    ushort n;
+
+    n = next_signal;
+    for (i = 0; i < NETSCAN_OBJECTIVE_POINTS; i++)
+    {
+        int x, z;
+
+        if ((p_nsobv->Z[i] == 0) && (p_nsobv->X[i] == 0))
+            continue;
+        x = p_nsobv->X[i] << 15;
+        z = p_nsobv->Z[i] << 15;
+        fill_blippoint_scanner(x, z, 87, n);
+        n++;
+    }
+    return n;
 }
 
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
@@ -586,9 +605,6 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
 
 void add_netscan_signal_to_scanner(struct NetscanObjective *p_nsobv, ubyte flag)
 {
-    int n, bn;
-    int z, x;
-
     if (flag)
         clear_all_scanner_signals();
 
@@ -600,17 +616,8 @@ void add_netscan_signal_to_scanner(struct NetscanObjective *p_nsobv, ubyte flag)
         return;
     }
 
-    bn = 0;
-    for (n = 0; n < 5; n++)
-    {
-        if ((p_nsobv->Z[n] == 0) && (p_nsobv->X[n] == 0))
-            continue;
-        x = p_nsobv->X[n] << 15;
-        z = p_nsobv->Z[n] << 15;
-        SCANNER_init_blippoint(bn, x, z, 87);
-        ingame.Scanner.BigBlip[bn].Counter = ingame.Scanner.BigBlip[bn].Period;
-        bn++;
-    }
+    // Netscan scanner only supports blippoints
+    signal_count = do_netscan_blippoint_scanner(p_nsobv, signal_count);
 }
 
 /******************************************************************************/

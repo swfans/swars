@@ -97,19 +97,12 @@ void reveal_netscan_objective(short nsobv)
     brief_netscan_box.Lines += p_nsobv->TextLines;
 }
 
-void brief_citymap_readd_scanner_signals(short nsobv)
+void brief_citymap_readd_scanner_signals(void)
 {
     struct NetscanObjective *p_nsobv;
-    short i;
 
-    p_nsobv = &netscan_objectives[nsobv];
-    clear_all_scanner_signals();
-    for (i = 0; i < 5; i++)
-    {
-        if (p_nsobv->Z[i] || p_nsobv->X[i]) {
-            add_blippoint_to_scanner(p_nsobv->X[i] << 15, p_nsobv->Z[i] << 15, 87);
-        }
-    }
+    p_nsobv = &netscan_objectives[selected_netscan_objective];
+    add_netscan_signal_to_scanner(p_nsobv, 1);
 }
 
 ubyte brief_do_netscan_enhance(ubyte click)
@@ -129,7 +122,7 @@ ubyte brief_do_netscan_enhance(ubyte click)
     reveal_netscan_objective(selected_netscan_objective);
     brief_netscan_box.Flags |= GBxFlg_Unkn0080;
     recount_city_credit_reward(selected_city_id);
-    brief_citymap_readd_scanner_signals(selected_netscan_objective);
+    brief_citymap_readd_scanner_signals();
     return 1;
 }
 
@@ -199,7 +192,7 @@ ubyte show_brief_netscan_box(struct ScreenTextBox *box)
                     if (mouse_over_text_window_item(tx_height, margin, start_shift, p_nsobv->TextLines))
                     {
                         selected_netscan_objective = nsobv;
-                        add_netscan_signal_to_scanner(p_nsobv, 1);
+                        brief_citymap_readd_scanner_signals();
                     }
                 }
                 if (selected_netscan_objective == nsobv)
@@ -456,7 +449,7 @@ ubyte show_citymap_box(struct ScreenBox *box)
             if (cities[selected_city_id].Info != 0)
             {
                 selected_netscan_objective = 0;
-                brief_citymap_readd_scanner_signals(selected_netscan_objective);
+                brief_citymap_readd_scanner_signals();
             }
             brief_state_city_selected = 1;
         }
