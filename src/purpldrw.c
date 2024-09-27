@@ -54,10 +54,25 @@ void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour)
 
 void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_draw_box_purple_list\n"
         : : "a" (x), "d" (y), "b" (width), "c" (height), "g" (colour));
+    return;
+#endif
+    struct PurpleDrawItem *pditem;
+
+    pditem = &purple_draw_list[purple_draw_index];
+    purple_draw_index++;
+
+    pditem->U.Box.X = lbDisplay.GraphicsWindowX + x;
+    pditem->U.Box.Y = lbDisplay.GraphicsWindowY + y;
+    pditem->U.Box.Width = width;
+    pditem->U.Box.Colour = colour;
+    pditem->U.Box.Height = height;
+    pditem->Flags = lbDisplay.DrawFlags;
+    pditem->Type = PuDT_BOX;
 }
 
 void draw_text_purple_list2(int x, int y, const char *text, ushort line)
@@ -123,8 +138,20 @@ void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, T
 
 void draw_flic_purple_list(void (*fn)())
 {
+#if 0
     asm volatile ("call ASM_draw_flic_purple_list\n"
         : : "a" (fn));
+    return;
+#endif
+    struct PurpleDrawItem *pditem;
+
+    pditem = &purple_draw_list[purple_draw_index];
+    purple_draw_index++;
+
+    pditem->U.Flic.Function = fn;
+    pditem->U.Flic.Colour = lbDisplay.DrawColour;
+    pditem->Flags = lbDisplay.DrawFlags;
+    pditem->Type = PuDT_FLIC;
 }
 
 void draw_noise_box_purple_list(int x, int y, ulong width, ulong height)
