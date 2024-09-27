@@ -163,7 +163,7 @@ enum PurpleDrawType {
   PuDT_SPRITE = 5,
   PuDT_POTRIG = 6, /* Textured triangle from projector origin point to given line */
   PuDT_FLIC = 7,
-  PuDT_SLANTBOX = 8,
+  PuDT_NOISEBOX = 8,
   PuDT_LINE = 9,
   PuDT_HVLINE = 10,
   PuDT_TRIANGLE = 11,
@@ -613,6 +613,8 @@ extern char *weapon_text;
 #define weapon_text_len 32768
 
 extern struct PurpleDrawItem *purple_draw_list;
+extern ushort purple_draw_index;
+
 extern ubyte *save_game_buffer;
 extern char save_active_desc[28];
 extern ubyte *unkn_buffer_05;

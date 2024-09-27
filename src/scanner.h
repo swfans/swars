@@ -32,6 +32,7 @@ extern "C" {
 #define SCANNER_ARC_COUNT 4
 
 struct Objective;
+struct NetscanObjective;
 
 struct BigBlip
 {
@@ -106,6 +107,7 @@ void add_blippoint_to_scanner(int x, int z, ubyte colour);
 TbBool mouse_move_over_scanner(void);
 void clear_all_scanner_signals(void);
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag);
+void add_netscan_signal_to_scanner(struct NetscanObjective *p_nsobv, ubyte flag);
 /******************************************************************************/
 #ifdef __cplusplus
 }

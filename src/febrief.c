@@ -133,12 +133,97 @@ ubyte brief_do_netscan_enhance(ubyte click)
     return 1;
 }
 
+void draw_noise_box_purple_list(int x, int y, ulong width, ulong height)
+{
+    draw_box_purple_list(x, y, width, height, 0);
+    purple_draw_list[purple_draw_index - 1].Type = PuDT_NOISEBOX;
+}
+
+TbBool mouse_over_text_window_item(short tx_height, short margin, short start_shift, short n_lines)
+{
+    short ln_height;
+    short lines_y1, lines_y2;
+
+    ln_height = tx_height + margin;
+    // Allow one pixel higher or lower
+    lines_y1 = text_window_y1 + start_shift - 1;
+    lines_y2 = lines_y1 + n_lines * ln_height - margin + 1;
+
+    return mouse_down_over_box_coords(text_window_x1, lines_y1, text_window_x2, lines_y2);
+}
+
 ubyte show_brief_netscan_box(struct ScreenTextBox *box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_brief_netscan_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#endif
+    int nlines;
+    short start_shift;
+    short nsobv;
+    short tx_height, ln_height;
+    short border, margin, scrollbar_width;
+    ubyte drawn = true;
+
+    border = 4;
+    margin = 4;
+    scrollbar_width = 12;
+    if (open_brief < 0)
+    {
+        draw_noise_box_purple_list(box->X, box->Y, box->Width, box->Height);
+        return 0;
+    }
+
+    my_set_text_window(box->X + border, box->ScrollWindowOffset + box->Y + border,
+      box->Width - 2 * border - scrollbar_width, box->ScrollWindowHeight);
+    lbFontPtr = small_med_font;
+    tx_height = font_height('A');
+    ln_height = tx_height + margin;
+    nlines = 0;
+    start_shift = border - ln_height * box->field_38;
+    lbDisplay.DrawColour = 87;
+    lbDisplay.DrawFlags = 0;
+    if (selected_city_id != -1)
+    {
+        for (nsobv = 0; nsobv < cities[selected_city_id].Info; nsobv++)
+        {
+            struct NetscanObjective *p_nsobv;
+
+            p_nsobv = &netscan_objectives[nsobv];
+            if (nlines + p_nsobv->TextLines >= box->field_38)
+            {
+                if (lbDisplay.LeftButton)
+                {
+                    if (mouse_over_text_window_item(tx_height, margin, start_shift, p_nsobv->TextLines))
+                    {
+                        selected_netscan_objective = nsobv;
+                        add_netscan_signal_to_scanner(p_nsobv, 1);
+                    }
+                }
+                if (selected_netscan_objective == nsobv)
+                    lbDisplay.DrawFlags |= 0x0040;
+                draw_text_purple_list2(0, start_shift, netscan_text + p_nsobv->TextOffset, 0);
+                lbDisplay.DrawFlags = 0;
+                start_shift += ln_height * p_nsobv->TextLines;
+                if (start_shift + tx_height >= text_window_y2 - text_window_y1)
+                    break;
+            }
+            nlines += p_nsobv->TextLines;
+        }
+        if (cities[selected_city_id].Info < netscan_objectives_count) {
+            //drawn = brief_NETSCAN_button.DrawFn(&brief_NETSCAN_button); -- incompatible calling convention
+            asm volatile ("call *%2\n"
+                : "=r" (drawn) : "a" (&brief_NETSCAN_button), "g" (brief_NETSCAN_button.DrawFn));
+        }
+    }
+    if (drawn) {
+        //brief_NETSCAN_COST_box.DrawFn(&brief_NETSCAN_COST_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+          : "=r" (drawn) : "a" (&brief_NETSCAN_COST_box), "g" (brief_NETSCAN_COST_box.DrawFn));
+    }
+    return 0;
 }
 
 void flic_netscan_open_anim(ubyte anim_no)

@@ -584,4 +584,33 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
     }
 }
 
+void add_netscan_signal_to_scanner(struct NetscanObjective *p_nsobv, ubyte flag)
+{
+    int n, bn;
+    int z, x;
+
+    if (flag)
+        clear_all_scanner_signals();
+
+    if (p_nsobv == NULL)
+        return;
+
+    if (signal_count >= SCANNER_BIG_BLIP_COUNT) {
+        LOGWARN("Scaner blips limit reached, blip discarded.");
+        return;
+    }
+
+    bn = 0;
+    for (n = 0; n < 5; n++)
+    {
+        if ((p_nsobv->Z[n] == 0) && (p_nsobv->X[n] == 0))
+            continue;
+        x = p_nsobv->X[n] << 15;
+        z = p_nsobv->Z[n] << 15;
+        SCANNER_init_blippoint(bn, x, z, 87);
+        ingame.Scanner.BigBlip[bn].Counter = ingame.Scanner.BigBlip[bn].Period;
+        bn++;
+    }
+}
+
 /******************************************************************************/

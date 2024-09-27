@@ -31,7 +31,7 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-void LbDrawSlantBox(short X, short Y, ushort a3, ushort a4);
+void draw_noise_box(short X, short Y, ushort a3, ushort a4);
 
 /******************************************************************************/
 #ifdef __cplusplus
