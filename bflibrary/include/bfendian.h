@@ -20,6 +20,8 @@
 #ifndef BFLIBRARY_BFENDIAN_H_
 #define BFLIBRARY_BFENDIAN_H_
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -88,6 +90,20 @@ void set_flag_dword(unsigned long *flags, unsigned long mask, short value);
  * @param i The integer which bits are to be counted.
  */
 int number_of_set_bits(unsigned long i);
+
+/**
+ * Bitwise shift left with rotation (wrapping the bits).
+ * @param n The value to be rotated.
+ * @param c Count of bits to roatate.
+ */
+u32 bw_rotl32(u32 n, ubyte c);
+
+/**
+ * Bitwise shift right with rotation (wrapping the bits).
+ * @param n The value to be rotated.
+ * @param c Count of bits to roatate.
+ */
+u32 bw_rotr32(u32 n, ubyte c);
 
 #ifdef __cplusplus
 };
