@@ -19,6 +19,7 @@
 #include "scandraw.h"
 
 #include "bfanywnd.h"
+#include "bfendian.h"
 #include "bfgentab.h"
 #include "bfline.h"
 #include "bfmath.h"
@@ -205,11 +206,11 @@ static void scanner_coords_line_clip(int *x1, int *y1, int *x2, int *y2, int sc_
 
         tmp = (factr * dist_x) & 0xFFFF0000;
         tmp |= ((factr * (s64)dist_x) >> 32) & 0xFFFF;
-        *x2 = _rotl(tmp, 16) + *x1;
+        *x2 = bw_rotl32(tmp, 16) + *x1;
 
         tmp = (factr * dist_z) & 0xFFFF0000;
         tmp |= ((factr * (s64)dist_z) >> 32) & 0xFFFF;
-        *y2 = _rotl(tmp, 16) + *y1;
+        *y2 = bw_rotl32(tmp, 16) + *y1;
     }
     else if (*x1 - sc_width > *y1)
     {
@@ -221,11 +222,11 @@ static void scanner_coords_line_clip(int *x1, int *y1, int *x2, int *y2, int sc_
 
         tmp = (factr * dist_x) & 0xFFFF0000;
         tmp |= ((factr * (s64)dist_x) >> 32) & 0xFFFF;
-        *x1 = _rotl(tmp, 16) + *x2;
+        *x1 = bw_rotl32(tmp, 16) + *x2;
 
         tmp = (factr * dist_z) & 0xFFFF0000;
         tmp |= ((factr * (s64)dist_z) >> 32) & 0xFFFF;
-        *y1 = _rotl(tmp, 16) + *y2;
+        *y1 = bw_rotl32(tmp, 16) + *y2;
     }
 }
 
@@ -237,26 +238,26 @@ static void map_coords_to_scanner(int *sc_x, int *sc_y, int sh_x, int sh_y, int 
 
     tmp = (sh_x * bsh_y) & 0xFFFF0000;
     tmp |= ((sh_x * (s64)bsh_y) >> 32) & 0xFFFF;
-    rval_xy = _rotl(tmp, 16);
+    rval_xy = bw_rotl32(tmp, 16);
 
     tmp = (sh_y * bsh_y) & 0xFFFF0000;
     tmp |= ((sh_y * (s64)bsh_y) >> 32) & 0xFFFF;
-    rval_yy = _rotl(tmp, 16);
+    rval_yy = bw_rotl32(tmp, 16);
 
     tmp = (sh_y * bsh_x) & 0xFFFF0000;
     tmp |= ((sh_y * (s64)bsh_x) >> 32) & 0xFFFF;
-    rval_yx = _rotl(tmp, 16);
+    rval_yx = bw_rotl32(tmp, 16);
 
     tmp = (sh_x * bsh_x) & 0xFFFF0000;
     tmp |= ((sh_x * (s64)bsh_x) >> 32) & 0xFFFF;
-    rval_xx = _rotl(tmp, 16);
+    rval_xx = bw_rotl32(tmp, 16);
 
     tmp = (sh_y * sh_y) & 0xFFFF0000;
     tmp |= ((sh_y * (s64)sh_y) >> 32) & 0xFFFF;
-    rval_div = _rotl(tmp, 16);
+    rval_div = bw_rotl32(tmp, 16);
     tmp = (sh_x * sh_x) & 0xFFFF0000;
     tmp |= ((sh_x * (s64)sh_x) >> 32) & 0xFFFF;
-    rval_div += _rotl(tmp, 16);
+    rval_div += bw_rotl32(tmp, 16);
 
     prec_y = ((rval_yx - (s64)rval_xy) << 16) / rval_div;
     prec_x = ((rval_xx + (s64)rval_yy) << 16) / rval_div;

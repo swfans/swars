@@ -6,6 +6,7 @@
 #include <sys/types.h>
 
 #include "bfdata.h"
+#include "bfendian.h"
 #include "bfsprite.h"
 #include "bfscreen.h"
 #include "bfkeybd.h"
@@ -1896,30 +1897,6 @@ short shpoint_compute_shade(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
     return shd;
 }
 
-/** Bitwise shift left with rotation (wrapping the bits).
- *
- * This is under consideration to be added to bfendian.
- */
-static inline uint bw_rotl(uint n, ubyte c)
-{
-    const uint mask = (CHAR_BIT*sizeof(n) - 1);  // assumes width is a power of 2
-
-    c &= mask;
-    return (n<<c) | (n>>( (-c)&mask ));
-}
-
-/** Bitwise shift right with rotation (wrapping the bits).
- *
- * This is under consideration to be added to bfendian.
- */
-static inline uint bw_rotr(uint n, ubyte c)
-{
-    const uint mask = (CHAR_BIT*sizeof(n) - 1);
-
-    c &= mask;
-    return (n>>c) | (n<<( (-c)&mask ));
-}
-
 int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int elcr_x, int elcr_z)
 {
     int elcr_y;
@@ -1941,7 +1918,7 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
         int wobble, dvfactor;
 
         elcr_y = 8 * p_mapel->Alt;
-        dvfactor = 140 + ((bw_rotl(0x5D3BA6C3, elcr_z >> 8) ^ bw_rotr(0xA7B4D8AC, elcr_x >> 8)) & 0x7F);
+        dvfactor = 140 + ((bw_rotl32(0x5D3BA6C3, elcr_z >> 8) ^ bw_rotr32(0xA7B4D8AC, elcr_x >> 8)) & 0x7F);
         wobble = (waft_table2[(gameturn + (elcr_x >> 7)) & 0x1F]
              + waft_table2[(gameturn + (elcr_z >> 7)) & 0x1F]
              + waft_table2[(32 * gameturn / dvfactor) & 0x1F]) >> 3;
