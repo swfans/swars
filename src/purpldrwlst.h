@@ -109,6 +109,8 @@ struct DIText { // sizeof=23
 
 struct DIFlic {
 	void (*Function)();
+	void *Param;
+	ubyte Colour;
 };
 
 struct DIHotspot {

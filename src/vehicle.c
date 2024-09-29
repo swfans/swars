@@ -180,13 +180,32 @@ const char *vehicle_type_name(ushort vtype)
 {
 #if 0
 // Enable when we have vehicle config file with names
-    struct PeepStatAdd *p_vhstata;
+    struct VehicleDef *p_vhdef;
 
-    p_vhstata = &peep_type_stats_a[ptype];
-    if (strlen(p_vhstata->Name) == 0)
+    p_vhdef = &vehicle_def[vtype];
+    if (strlen(p_vhdef->Name) == 0)
         return "OUTRNG_VEHICLE";
-    return p_vhstata->Name;
+    return p_vhdef->Name;
 #endif
+    switch (vtype)
+    {
+    case SubTT_VEH_TRAIN:
+        return "TRAIN";
+    case SubTT_VEH_GROUND:
+        return "VEH_GROUND";
+    case SubTT_VEH_SHUTTLE_POD:
+        return "SHUTTLE_POD";
+    case SubTT_VEH_FLYING:
+        return "VEH_FLYING";
+    case SubTT_VEH_TANK:
+        return "TANK";
+    case SubTT_VEH_SHIP:
+        return "SHIP";
+    case SubTT_VEH_MECH:
+        return "MECH";
+    default:
+        break;
+    }
     return "VEHICLE";
 }
 
@@ -483,9 +502,9 @@ static TbBool check_vehicle_col_with_veh(struct Thing *p_vehA, struct Thing *p_v
         return false;
 
     LOGSYNC("Stopping %s thing %d rqspeed %d due to %s thing %d rqspeed %d",
-      vehicle_type_name(p_vehA->Type), (int)p_vehA->ThingOffset,
+      vehicle_type_name(p_vehA->SubType), (int)p_vehA->ThingOffset,
       (int)p_vehA->U.UVehicle.ReqdSpeed,
-      vehicle_type_name(p_vehB->Type), (int)p_vehB->ThingOffset,
+      vehicle_type_name(p_vehB->SubType), (int)p_vehB->ThingOffset,
       (int)p_vehB->U.UVehicle.ReqdSpeed);
 
     p_vehA->SubState = 3;
@@ -511,9 +530,9 @@ static TbBool check_vehicle_col_same_mapel_with_veh(struct Thing *p_vehA, struct
         return false;
 
     LOGSYNC("Stopping %s thing %d rqspeed %d due to %s thing %d rqspeed %d",
-      vehicle_type_name(p_vehA->Type), (int)p_vehA->ThingOffset,
+      vehicle_type_name(p_vehA->SubType), (int)p_vehA->ThingOffset,
       (int)p_vehA->U.UVehicle.ReqdSpeed,
-      vehicle_type_name(p_vehB->Type), (int)p_vehB->ThingOffset,
+      vehicle_type_name(p_vehB->SubType), (int)p_vehB->ThingOffset,
       (int)p_vehB->U.UVehicle.ReqdSpeed);
 
     p_vehA->SubState = 3;
@@ -1039,7 +1058,7 @@ void process_train(struct Thing *p_vehicle)
         break;
     default:
         LOGERR("Shagged %s %d state %d",
-          vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+          vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,
           (int)p_vehicle->State);
         break;
     }
@@ -1184,7 +1203,7 @@ void process_veh_ground(struct Thing *p_vehicle)
         break;
     default:
         LOGERR("Unexpected %s %d state %d",
-          vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+          vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,
           (int)p_vehicle->State);
         break;
     }
