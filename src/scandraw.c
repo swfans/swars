@@ -51,6 +51,13 @@ struct scanstr3 {
     long v2;
 };
 
+struct NearestPos {
+    ulong dist;
+    short x;
+    short y;
+};
+
+
 extern long dword_155340[32];
 extern struct scanstr1 SCANNER_bbpoint[255];
 extern long dword_1DBB64[];
@@ -127,45 +134,147 @@ void SCANNER_process_arcpoints(void)
         :  :  : "eax" );
 }
 
-void SCANNER_draw_new_transparent_sub2(void)
+TbBool thing_visible_on_scanner(struct Thing *p_thing)
 {
-#if 1
-    asm volatile ("call ASM_SCANNER_draw_new_transparent_sub2\n"
-        :  :  : "eax" );
-    return;
-#endif
-    int dt_x, dt_y;
-    int sh_x, sh_y;
-    int range;
-    int pos_mx, pos_mz;
-    struct TbAnyWindow window_bkp;
-    int sc_width;
-    short bn;
+    TbBool ret;
 
+    if ((p_thing->Flag2 & 0x21000002) != 0)
+        return false;
+
+    switch (p_thing->Type)
+    {
+    case TT_VEHICLE:
+        ret = true;
+        break;
+    case TT_PERSON:
+        ret = true;
+        break;
+    case TT_MINE:
+        ret = (p_thing->SubType == 48);
+        break;
+    default:
+        ret = false;
+        break;
+    }
+    return ret;
+}
+
+TbBool thing_visible_on_scanner_this_turn(struct Thing *p_thing)
+{
+    TbBool ret;
+    if ((gameturn & 8) != 0)
+    {
+        switch (p_thing->Type)
+        {
+        case TT_PERSON:
+            ret = (p_thing->Flag & 0x10000000) == 0;
+            break;
+        default:
+            ret = true;
+            break;
+        }
+    } else
+    {
+        switch (p_thing->Type)
+        {
+        case TT_VEHICLE:
+            ret = p_thing->U.UVehicle.PassengerHead == 0;
+            break;
+        default:
+            ret = true;
+            break;
+        }
+    }
+    return ret;
+}
+
+static void scanner_coords_line_clip(int *x1, int *y1, int *x2, int *y2, int sc_width)
+{
     int dist_x, dist_z;
+    s64 magn;
+    int factr;
+    u32 tmp;
 
-    dt_x = (ingame.Scanner.X2 - ingame.Scanner.X1) >> 1;
-    dt_y = (ingame.Scanner.Y2 - ingame.Scanner.Y1) >> 1;
-    sh_y = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle]) >> 8;
-    sh_x = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle + 512]) >> 8;
-    if (dt_x >= dt_y)
-        range = (ingame.Scanner.Y2 - ingame.Scanner.Y1) >> 1;
-    else
-        range = (ingame.Scanner.X2 - ingame.Scanner.X1) >> 1;
-    range -= 5;
-    pos_mz = (ingame.Scanner.MZ << 16) + sh_x * dt_y - sh_y * dt_x;
-    pos_mx = (ingame.Scanner.MX << 16) - sh_x * dt_x - sh_y * dt_y;
+    if (*x2 - sc_width > *y2)
+    {
+        dist_x = *x2 - *x1;
+        dist_z = *y2 - *y1;
 
-    LbScreenStoreGraphicsWindow(&window_bkp);
-    LbScreenSetGraphicsWindow(ingame.Scanner.X1, ingame.Scanner.Y1,
-      ingame.Scanner.X2 - ingame.Scanner.X1 + 1,
-      ingame.Scanner.Y2 - ingame.Scanner.Y1 + 1);
+        magn = (*y1 - *x1 + (s64)sc_width) << 32;
+        factr = magn / ((dist_x - dist_z) << 16);
+
+        tmp = (factr * dist_x) & 0xFFFF0000;
+        tmp |= ((factr * (s64)dist_x) >> 32) & 0xFFFF;
+        *x2 = _rotl(tmp, 16) + *x1;
+
+        tmp = (factr * dist_z) & 0xFFFF0000;
+        tmp |= ((factr * (s64)dist_z) >> 32) & 0xFFFF;
+        *y2 = _rotl(tmp, 16) + *y1;
+    }
+    else if (*x1 - sc_width > *y1)
+    {
+        dist_x = *x1 - *x2;
+        dist_z = *y1 - *y2;
+
+        magn = (*y2 - *x2 + (s64)sc_width) << 32;
+        factr = magn / ((dist_x - dist_z) << 16);
+
+        tmp = (factr * dist_x) & 0xFFFF0000;
+        tmp |= ((factr * (s64)dist_x) >> 32) & 0xFFFF;
+        *x1 = _rotl(tmp, 16) + *x2;
+
+        tmp = (factr * dist_z) & 0xFFFF0000;
+        tmp |= ((factr * (s64)dist_z) >> 32) & 0xFFFF;
+        *y1 = _rotl(tmp, 16) + *y2;
+    }
+}
+
+static void map_coords_to_scanner(int *sc_x, int *sc_y, int sh_x, int sh_y, int bsh_x, int bsh_y)
+{
+    u32 tmp;
+    int rval_xy, rval_yy, rval_yx, rval_xx, rval_div;
+    long prec_x, prec_y;
+
+    tmp = (sh_x * bsh_y) & 0xFFFF0000;
+    tmp |= ((sh_x * (s64)bsh_y) >> 32) & 0xFFFF;
+    rval_xy = _rotl(tmp, 16);
+
+    tmp = (sh_y * bsh_y) & 0xFFFF0000;
+    tmp |= ((sh_y * (s64)bsh_y) >> 32) & 0xFFFF;
+    rval_yy = _rotl(tmp, 16);
+
+    tmp = (sh_y * bsh_x) & 0xFFFF0000;
+    tmp |= ((sh_y * (s64)bsh_x) >> 32) & 0xFFFF;
+    rval_yx = _rotl(tmp, 16);
+
+    tmp = (sh_x * bsh_x) & 0xFFFF0000;
+    tmp |= ((sh_x * (s64)bsh_x) >> 32) & 0xFFFF;
+    rval_xx = _rotl(tmp, 16);
+
+    tmp = (sh_y * sh_y) & 0xFFFF0000;
+    tmp |= ((sh_y * (s64)sh_y) >> 32) & 0xFFFF;
+    rval_div = _rotl(tmp, 16);
+    tmp = (sh_x * sh_x) & 0xFFFF0000;
+    tmp |= ((sh_x * (s64)sh_x) >> 32) & 0xFFFF;
+    rval_div += _rotl(tmp, 16);
+
+    prec_y = ((rval_yx - (s64)rval_xy) << 16) / rval_div;
+    prec_x = ((rval_xx + (s64)rval_yy) << 16) / rval_div;
+
+    *sc_y = prec_y >> 16;
+    *sc_x = prec_x >> 16;
+}
+
+void SCANNER_draw_blips(int pos_mx, int pos_mz, int sh_x, int sh_y)
+{
+    short bn;
+    int sc_width;
 
     sc_width = (ingame.Scanner.X2 - ingame.Scanner.X1) - 24;
 
     for (bn = 0; bn < SCANNER_BIG_BLIP_COUNT; bn++)
     {
-        int base_x, base_z;
+        int base_x, base_y;
         int px_x, px_y;
         int base_i, i;
         short gtr;
@@ -174,61 +283,30 @@ void SCANNER_draw_new_transparent_sub2(void)
             continue;
 
         {
-            int bsh_x, bsh_z;
-            u32 tmp;
-            int rval_xz, rval_yz, rval_yx, rval_xx, rval_div;
-            long prec_x, prec_z;
+            int bsh_x, bsh_y;
 
-            bsh_z = 2 * ingame.Scanner.BigBlip[bn].Z - pos_mz;
+            bsh_y = 2 * ingame.Scanner.BigBlip[bn].Z - pos_mz;
             bsh_x = 2 * ingame.Scanner.BigBlip[bn].X - pos_mx;
-
-            tmp = (sh_x * bsh_z) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)bsh_z) >> 32) & 0xFFFF;
-            rval_xz = _rotl(tmp, 16);
-
-            tmp = (sh_y * bsh_z) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)bsh_z) >> 32) & 0xFFFF;
-            rval_yz = _rotl(tmp, 16);
-
-            tmp = (sh_y * bsh_x) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)bsh_x) >> 32) & 0xFFFF;
-            rval_yx = _rotl(tmp, 16);
-
-            tmp = (sh_x * bsh_x) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)bsh_x) >> 32) & 0xFFFF;
-            rval_xx = _rotl(tmp, 16);
-
-            tmp = (sh_y * sh_y) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)sh_y) >> 32) & 0xFFFF;
-            rval_div = _rotl(tmp, 16);
-            tmp = (sh_x * sh_x) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)sh_x) >> 32) & 0xFFFF;
-            rval_div += _rotl(tmp, 16);
-
-            prec_z = ((rval_yx - (s64)rval_xz) << 16) / rval_div;
-            prec_x = ((rval_xx + (s64)rval_yz) << 16) / rval_div;
-
-            base_z = prec_z >> 16;
-            base_x = prec_x >> 16;
+            map_coords_to_scanner(&base_x, &base_y, sh_x, sh_y, bsh_x, bsh_y);
         }
 
         gtr = (gameturn - 0) & 0xF;
         px_x = base_x + dword_155340[2 * gtr + 0];
-        px_y = base_z + dword_155340[2 * gtr + 1];
+        px_y = base_y + dword_155340[2 * gtr + 1];
         if ((px_y >= 0) && (px_y + ingame.Scanner.Y1 <= ingame.Scanner.Y2)
           && (px_x >= 0) && (px_x <= SCANNER_width[px_y])) {
             LbDrawPixel(px_x, px_y, pixmap.fade_table[0x2000 + ingame.Scanner.BigBlip[bn].Colour]);
         }
         gtr = (gameturn - 1) & 0xF;
         px_x = base_x + dword_155340[2 * gtr + 0];
-        px_y = base_z + dword_155340[2 * gtr + 1];
+        px_y = base_y + dword_155340[2 * gtr + 1];
         if ( px_y >= 0 && px_y + ingame.Scanner.Y1 <= ingame.Scanner.Y2
           && px_x >= 0 && px_x <= SCANNER_width[px_y]) {
             LbDrawPixel(px_x, px_y, pixmap.fade_table[0x1800 + ingame.Scanner.BigBlip[bn].Colour]);
         }
         gtr = (gameturn - 2) & 0xF;
         px_x = base_x + dword_155340[2 * gtr + 0];
-        px_y = base_z + dword_155340[2 * gtr + 1];
+        px_y = base_y + dword_155340[2 * gtr + 1];
         if ( px_y >= 0 && px_y + ingame.Scanner.Y1 <= ingame.Scanner.Y2
           && px_x >= 0 && px_x <= SCANNER_width[px_y]) {
             LbDrawPixel(px_x, px_y, pixmap.fade_table[0x1000 + ingame.Scanner.BigBlip[bn].Colour]);
@@ -238,42 +316,15 @@ void SCANNER_draw_new_transparent_sub2(void)
 
         for (i = 0; i < 16; i++)
         {
-            int bsh_x, bsh_z;
-            u32 tmp;
-            int rval_xz, rval_yz, rval_yx, rval_xx, rval_div;
-            long prec_x, prec_z;
+            int bsh_x, bsh_y;
+            int sc_x, sc_y;
 
-            bsh_z = 2 * SCANNER_bbpoint[i].u - pos_mz;
+            bsh_y = 2 * SCANNER_bbpoint[i].u - pos_mz;
             bsh_x = 2 * SCANNER_bbpoint[i].v - pos_mx;
+            map_coords_to_scanner(&sc_x, &sc_y, sh_x, sh_y, bsh_x, bsh_y);
 
-            tmp = (sh_x * bsh_z) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)bsh_z) >> 32) & 0xFFFF;
-            rval_xz = _rotl(tmp, 16);
-
-            tmp = (sh_y * bsh_z) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)bsh_z) >> 32) & 0xFFFF;
-            rval_yz = _rotl(tmp, 16);
-
-            tmp = (sh_y * bsh_x) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)bsh_x) >> 32) & 0xFFFF;
-            rval_yx = _rotl(tmp, 16);
-
-            tmp = (sh_x * bsh_x) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)bsh_x) >> 32) & 0xFFFF;
-            rval_xx = _rotl(tmp, 16);
-
-            tmp = (sh_y * sh_y) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)sh_y) >> 32) & 0xFFFF;
-            rval_div = _rotl(tmp, 16);
-            tmp = (sh_x * sh_x) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)sh_x) >> 32) & 0xFFFF;
-            rval_div += _rotl(tmp, 16);
-
-            prec_z = ((rval_yx - (s64)rval_xz) << 16) / rval_div;
-            prec_x = ((rval_xx + (s64)rval_yz) << 16) / rval_div;
-
-            dword_1DBB6C[2 * (base_i + i) + 0] = prec_x >> 16;
-            dword_1DBB6C[2 * (base_i + i) + 1] = prec_z >> 16;
+            dword_1DBB6C[2 * (base_i + i) + 0] = sc_x;
+            dword_1DBB6C[2 * (base_i + i) + 1] = sc_y;
         }
 
         for (i = 0; i < 16; i++)
@@ -293,50 +344,23 @@ void SCANNER_draw_new_transparent_sub2(void)
 
             if ((x1 - sc_width <= y1) || (x2 - sc_width <= y2))
             {
-                s64 v131;
-                int v132;
                 ushort ft_idx;
-                u32 tmp;
 
-                if (x2 - sc_width > y2)
-                {
-                    dist_x = x2 - x1;
-                    dist_z = y2 - y1;
-
-                    v131 = (y1 - x1 + (s64)sc_width) << 32;
-                    v132 = v131 / ((dist_x - dist_z) << 16);
-
-                    tmp = (v132 * dist_x) & 0xFFFF0000;
-                    tmp |= ((v132 * (s64)dist_x) >> 32) & 0xFFFF;
-                    x2 = _rotl(tmp, 16) + x1;
-
-                    tmp = (v132 * dist_z) & 0xFFFF0000;
-                    tmp |= ((v132 * (s64)dist_z) >> 32) & 0xFFFF;
-                    y2 = _rotl(tmp, 16) + y1;
-                }
-                else if (x1 - sc_width > y1)
-                {
-                      dist_x = x1 - x2;
-                      dist_z = y1 - y2;
-
-                      v131 = (y2 - x2 + (s64)sc_width) << 32;
-                      v132 = v131 / ((dist_x - dist_z) << 16);
-
-                      tmp = (v132 * dist_x) & 0xFFFF0000;
-                      tmp |= ((v132 * (s64)dist_x) >> 32) & 0xFFFF;
-                      x1 = _rotl(tmp, 16) + x2;
-
-                      tmp = (v132 * dist_z) & 0xFFFF0000;
-                      tmp |= ((v132 * (s64)dist_z) >> 32) & 0xFFFF;
-                      y1 = y2 + _rotl(tmp, 16);
-                }
-
+                scanner_coords_line_clip(&x1, &y1, &x2, &y2, sc_width);
                 ft_idx = 512 * (31 - ingame.Scanner.BigBlip[bn].Counter)
                            + ingame.Scanner.BigBlip[bn].Colour;
                 LbDrawLine(x1, y1, x2, y2, pixmap.fade_table[ft_idx]);
             }
         }
     }
+}
+
+void SCANNER_draw_arcs(int pos_mx, int pos_mz, int sh_x, int sh_y)
+{
+    short bn;
+    int sc_width;
+
+    sc_width = (ingame.Scanner.X2 - ingame.Scanner.X1) - 24;
 
     if (!SCANNER_keep_arcs)
     {
@@ -351,7 +375,7 @@ void SCANNER_draw_new_transparent_sub2(void)
 
     for (bn = 0; bn < SCANNER_ARC_COUNT; bn++)
     {
-        int base_x, base_z;
+        int base_x, base_y;
         int base_i, i;
         int x1, y1, x2, y2;
 
@@ -359,142 +383,285 @@ void SCANNER_draw_new_transparent_sub2(void)
             continue;
 
         {
-            int bsh_x, bsh_z;
-            u32 tmp;
-            int rval_xz, rval_yz, rval_yx, rval_xx, rval_div;
-            long prec_x, prec_z;
+            int bsh_x, bsh_y;
 
-            bsh_z = 2 * SCANNER_arcpoint[bn].u1 - pos_mz;
+            bsh_y = 2 * SCANNER_arcpoint[bn].u1 - pos_mz;
             bsh_x = 2 * SCANNER_arcpoint[bn].v1 - pos_mx;
-
-            tmp = (sh_x * bsh_z) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)bsh_z) >> 32) & 0xFFFF;
-            rval_xz = _rotl(tmp, 16);
-
-            tmp = (sh_y * bsh_z) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)bsh_z) >> 32) & 0xFFFF;
-            rval_yz = _rotl(tmp, 16);
-
-            tmp = (sh_y * bsh_x) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)bsh_x) >> 32) & 0xFFFF;
-            rval_yx = _rotl(tmp, 16);
-
-            tmp = (sh_x * bsh_x) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)bsh_x) >> 32) & 0xFFFF;
-            rval_xx = _rotl(tmp, 16);
-
-            tmp = (sh_y * sh_y) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)sh_y) >> 32) & 0xFFFF;
-            rval_div = _rotl(tmp, 16);
-            tmp = (sh_x * sh_x) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)sh_x) >> 32) & 0xFFFF;
-            rval_div += _rotl(tmp, 16);
-
-            prec_z = ((rval_yx - (s64)rval_xz) << 16) / rval_div;
-            prec_x = ((rval_xx + (s64)rval_yz) << 16) / rval_div;
-
-            base_x = prec_x >> 16;
-            base_z = prec_z >> 16;
+            map_coords_to_scanner(&base_x, &base_y, sh_x, sh_y, bsh_x, bsh_y);
         }
 
         base_i = bn * 5;
 
         for (i = 1; i < 5; i++)
         {
-            int bsh_x, bsh_z;
+            int bsh_x, bsh_y;
             int ri;
-            u32 tmp;
-            int rval_xz, rval_yz, rval_yx, rval_xx, rval_div;
-            long prec_x, prec_z;
-            int ssb_x, ssb_z;
+            int ssb_x, ssb_y;
 
             ri = base_i + i;
 
-            bsh_z = 2 * SCANNER_arcpoint[ri].u1 - pos_mz;
+            bsh_y = 2 * SCANNER_arcpoint[ri].u1 - pos_mz;
             bsh_x = 2 * SCANNER_arcpoint[ri].v1 - pos_mx;
-
-            tmp = (sh_x * bsh_z) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)bsh_z) >> 32) & 0xFFFF;
-            rval_xz = _rotl(tmp, 16);
-
-            tmp = (sh_y * bsh_z) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)bsh_z) >> 32) & 0xFFFF;
-            rval_yz = _rotl(tmp, 16);
-
-            tmp = (sh_y * bsh_x) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)bsh_x) >> 32) & 0xFFFF;
-            rval_yx = _rotl(tmp, 16);
-
-            tmp = (sh_x * bsh_x) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)bsh_x) >> 32) & 0xFFFF;
-            rval_xx = _rotl(tmp, 16);
-
-            tmp = (sh_y * sh_y) & 0xFFFF0000;
-            tmp |= ((sh_y * (s64)sh_y) >> 32) & 0xFFFF;
-            rval_div = _rotl(tmp, 16);
-            tmp = (sh_x * sh_x) & 0xFFFF0000;
-            tmp |= ((sh_x * (s64)sh_x) >> 32) & 0xFFFF;
-            rval_div += _rotl(tmp, 16);
-
-            prec_z = ((rval_yx - (s64)rval_xz) << 16) / rval_div;
-            prec_x = ((rval_xx + (s64)rval_yz) << 16) / rval_div;
-
-            ssb_z = prec_z >> 16;
-            ssb_x = prec_x >> 16;
+            map_coords_to_scanner(&ssb_x, &ssb_y, sh_x, sh_y, bsh_x, bsh_y);
 
             x1 = base_x;
-            y1 = base_z;
+            y1 = base_y;
             x2 = ssb_x;
-            y2 = ssb_z;
+            y2 = ssb_y;
 
             if ((x1 - sc_width <= y1) || (x2 - sc_width <= y2))
             {
-                s64 v160;
-                int v161;
-                u32 tmp;
-
-                if (x2 - sc_width > y2)
-                {
-                    dist_x = x2 - x1;
-                    dist_z = y2 - y1;
-                    v160 = (y1 - x1 + (s64)sc_width) << 32;
-                    v161 = v160 / ((dist_x - dist_z) << 16);
-
-                    tmp = (v161 * dist_x) & 0xFFFF0000;
-                    tmp |= ((v161 * (s64)dist_x) >> 32) & 0xFFFF;
-                    x2 = _rotl(tmp, 16) + x1;
-
-                    tmp = (v161 * dist_z) & 0xFFFF0000;
-                    tmp |= ((v161 * (s64)dist_z) >> 32) & 0xFFFF;
-                    y2 = _rotl(tmp, 16) + y1;
-                }
-                else if (x1 - sc_width > y1)
-                {
-                    dist_x = x1 - x2;
-                    dist_z = y1 - y2;
-                    v160 = (y2 - x2 + (s64)sc_width) << 32;
-                    v161 = v160 / ((dist_x - dist_z) << 16);
-
-                    tmp = (v161 * dist_x) & 0xFFFF0000;
-                    tmp |= (((v160 / ((dist_x - dist_z) << 16)) * (s64)dist_x) >> 32) & 0xFFFF;
-                    x1 = _rotl(tmp, 16) + x2;
-
-                    tmp = (v161 * dist_z) & 0xFFFF0000;
-                    tmp |= ((v161 * (s64)dist_z) >> 32) & 0xFFFF;
-                    y1 = _rotl(tmp, 16) + y2;
-                }
+                scanner_coords_line_clip(&x1, &y1, &x2, &y2, sc_width);
                 LbDrawLine(x1, y1, x2, y2, ingame.Scanner.Arc[bn].ColourIsUnused);
             }
 
             base_x = ssb_x;
-            base_z = ssb_z;
+            base_y = ssb_y;
+        }
+    }
+}
+
+void SCANNER_check_nearest(struct Thing *p_thing, struct NearestPos *p_nearest, int base_x, int base_y, int pos_x1, int pos_y1)
+{
+    sbyte group_col;
+
+    if (scanner_blink)
+        return;
+
+    int dist_x, dist_y;
+    ulong dist;
+    int i;
+
+    group_col = 0;
+    for (i = 0; i < ingame.Scanner.GroupCount; ++i)
+    {
+        if (ingame.Scanner.Group[i] == p_thing->U.UObject.EffectiveGroup) {
+            group_col = ingame.Scanner.GroupCol[i];
+            break;
+        }
+    }
+    dist_x = ingame.Scanner.X1 + base_x - pos_x1;
+    dist_y = ingame.Scanner.Y1 + base_y - pos_y1;
+    dist = dist_x * dist_x + dist_y * dist_y;
+    if (group_col  && dist < p_nearest->dist)
+    {
+        p_nearest->x = dist_x;
+        p_nearest->y = dist_y;
+        p_nearest->dist = dist;
+    }
+}
+
+TbPixel SCANNER_thing_colour(struct Thing *p_thing)
+{
+    TbPixel col;
+
+    switch (p_thing->Type)
+    {
+    case TT_VEHICLE:
+        col = 1;
+        break;
+    case TT_PERSON:
+        if ((p_thing->Flag & 0x80000) != 0)
+            col = colour_lookup[5];
+        else if ( (p_thing->Flag & 0x2000) != 0 && p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD)
+            col = SCANNER_people_colours[4];
+        else
+            col = SCANNER_people_colours[p_thing->SubType];
+        break;
+    case TT_MINE:
+        col = 1;
+        break;
+    default:
+        col = 0;
+        break;
+    }
+    return col;
+}
+
+#define __CFSHL__(a, b)
+
+void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int pos_mx, int pos_mz, int sh_x, int sh_y, int pos_x1, int pos_y1)
+{
+    int base_x, base_y;
+    int x, y;
+    TbPixel col;
+
+    {
+        int tng_z, tng_x;
+        int bsh_x, bsh_y;
+
+        if ((p_thing->Type == TT_PERSON) && ((p_thing->Flag & 0x4000) != 0)) {
+            struct Thing *p_vehicle;
+
+            p_vehicle = &things[p_thing->U.UPerson.Vehicle];
+            tng_z = p_vehicle->Z;
+            tng_x = p_vehicle->X;
+        } else {
+            tng_z = p_thing->Z;
+            tng_x = p_thing->X;
+        }
+        tng_z = ((tng_z << 8) - (__CFSHL__(tng_z << 8 >> 31, 7) + (tng_z << 8 >> 31 << 7))) >> 7;
+        tng_x = ((tng_x << 8) - (__CFSHL__(tng_x << 8 >> 31, 7) + (tng_x << 8 >> 31 << 7))) >> 7;
+        bsh_y = tng_z - pos_mz;
+        bsh_x = tng_x - pos_mx;
+        map_coords_to_scanner(&base_x, &base_y, sh_x, sh_y, bsh_x, bsh_y);
+    }
+
+    SCANNER_check_nearest(p_thing, p_nearest, base_x, base_y, pos_x1, pos_y1);
+
+    if ((base_y < 0) || (ingame.Scanner.Y1 + base_y > ingame.Scanner.Y2)
+      || (base_x < 0) || (base_x > SCANNER_width[base_y]))
+    {
+        return;
+    }
+
+    col = SCANNER_thing_colour(p_thing);
+
+    if (col == 0)
+        return;
+
+    x = ingame.Scanner.X1 + base_x;
+    y = ingame.Scanner.Y1 + base_y;
+    if ((p_thing->Flag & 0x02) == 0)
+    {
+        if ( (p_thing->Flag & 0x2000) == 0 || (p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD))
+        {
+            LbDrawPixel(x, y, col);
+            if ((gameturn & 1) != 0)
+            {
+                LbDrawPixel(x - 1, y, col);
+                LbDrawPixel(x + 1, y, col);
+                LbDrawPixel(x, y + 1, col);
+                LbDrawPixel(x, y - 1, col);
+            }
+        }
+        else
+        {
+            if (in_network_game)
+                SCANNER_draw_mark_point5_blink3(x, y, byte_1C5C30[p_thing->U.UPerson.ComCur >> 2]);
+            else
+                SCANNER_draw_mark_point5_blink3(x, y, col);
+        }
+    }
+    if ((gameturn & 7) == 0)
+    {
+        int i;
+        TbPixel gcol;
+
+        gcol = 0;
+        for (i = 0; i < ingame.Scanner.GroupCount; i++)
+        {
+            if (ingame.Scanner.Group[i] == p_thing->U.UPerson.EffectiveGroup) {
+                gcol = ingame.Scanner.GroupCol[i];
+                break;
+            }
+        }
+        if (gcol != 0) {
+              SCANNER_draw_mark_point7(x, y, gcol);
+        }
+    }
+}
+
+void SCANNER_draw_sthing(struct SimpleThing *p_sthing, int pos_mx, int pos_mz, int sh_x, int sh_y)
+{
+    int base_x, base_y;
+    int x, y;
+    TbPixel col;
+
+    {
+        int tng_z, tng_x;
+        int bsh_x, bsh_y;
+
+        tng_z = p_sthing->Z;
+        tng_x = p_sthing->X;
+        tng_z = (((tng_z << 8) - (__CFSHL__(tng_z << 8 >> 31, 7) + (tng_z << 8 >> 31 << 7))) >> 7);
+        tng_x = (((tng_x << 8) - (__CFSHL__(tng_x << 8 >> 31, 7) + (tng_x << 8 >> 31 << 7))) >> 7);
+        bsh_y = tng_z - pos_mz;
+        bsh_x = tng_x - pos_mx;
+        map_coords_to_scanner(&base_x, &base_y, sh_x, sh_y, bsh_x, bsh_y);
+    }
+
+    x = ingame.Scanner.X1 + base_x;
+    y = ingame.Scanner.Y1 + base_y;
+
+    col = p_sthing->U.UEffect.VX ? colour_lookup[8] : colour_lookup[5];
+
+    if ((base_y >= 0) && (base_y <= ingame.Scanner.Y2 - ingame.Scanner.Y1)
+      && (base_x >= 0) && (base_x <= SCANNER_width[base_y]))
+    {
+        LbDrawPixel(x, y, col);
+    }
+}
+
+void SCANNER_draw_things_dots(int pos_mx, int pos_mz, int sh_x, int sh_y, int pos_x1, int pos_y1, int range)
+{
+    struct Thing *p_thing;
+    struct SimpleThing *p_sthing;
+    struct NearestPos nearest;
+    long limit;
+    short thing;
+
+    nearest.dist = 0x7FFFFFFF;
+    limit = things_used;
+    for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
+    {
+        if (--limit == -1)
+            break;
+        p_thing = &things[thing];
+
+        if (!thing_visible_on_scanner(p_thing))
+            continue;
+
+        if (thing_visible_on_scanner_this_turn(p_thing)) {
+            SCANNER_draw_thing(p_thing, &nearest, pos_mx, pos_mz, sh_x, sh_y, pos_x1, pos_y1);
         }
     }
 
-    LbScreenLoadGraphicsWindow(&window_bkp);
+    limit = sthings_used;
+    for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
+    {
+        if (--limit == -1)
+            break;
+        p_sthing = &sthings[thing];
 
-    //TODO add missing part
+        if (p_sthing->Type != SmTT_DROPPED_ITEM)
+            continue;
 
+        SCANNER_draw_sthing(p_sthing, pos_mx, pos_mz, sh_x, sh_y);
+    }
+
+    if (scanner_blink)
+    {
+        int x1, y1, x2, y2, len_x, len_y;
+
+        x1 = ((range * lbSinTable[ingame.Scanner.Angle]) >> 16) + pos_x1;
+        len_y = (range * lbSinTable[ingame.Scanner.Angle]) >> 19;
+        y1 = ((range * -lbSinTable[ingame.Scanner.Angle + 512]) >> 16) + pos_y1;
+        len_x = (range * -lbSinTable[ingame.Scanner.Angle + 512]) >> 19;
+        x2 = x1 - len_y;
+        y2 = y1 - len_x;
+        LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[1]);
+        LbDrawLine(x1, y1, x2 + len_x, y2 - len_y, colour_lookup[1]);
+    }
+    else if ((nearest.dist > range * range) && (nearest.dist != 0x7FFFFFFF))
+    {
+        int x1, y1, x2, y2, len_x, len_y;
+        long angle;
+
+        angle = arctan(nearest.x, nearest.y);
+        x1 = ((range * lbSinTable[angle]) >> 16) + pos_x1;
+        len_y = (range * lbSinTable[angle]) >> 19;
+        y1 = ((range * -lbSinTable[angle + 512]) >> 16) + pos_y1;
+        len_x = (range * -lbSinTable[angle + 512]) >> 19;
+        x2 = x1 - len_y;
+        y2 = y1 - len_x;
+        LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[1]);
+        LbDrawLine(x1, y1, x2 + len_x, y2 - len_y, colour_lookup[1]);
+    }
+}
+
+void SCANNER_draw_area_frame(void)
+{
     LbDrawLine(ingame.Scanner.X1 - 1, ingame.Scanner.Y1 - 1,
       ingame.Scanner.X1 - 1, ingame.Scanner.Y2 + 1, SCANNER_colour[4]);
     LbDrawLine(ingame.Scanner.X1 - 1, ingame.Scanner.Y1 - 1,
@@ -505,6 +672,53 @@ void SCANNER_draw_new_transparent_sub2(void)
       ingame.Scanner.X2 + 1, ingame.Scanner.Y1 + 24, SCANNER_colour[4]);
     LbDrawLine(ingame.Scanner.X2 + 1, ingame.Scanner.Y1 + 24,
       ingame.Scanner.X2 + 1, ingame.Scanner.Y2 + 1, SCANNER_colour[4]);
+}
+
+void SCANNER_draw_new_transparent_sub2(void)
+{
+#if 0
+    asm volatile ("call ASM_SCANNER_draw_new_transparent_sub2\n"
+        :  :  : "eax" );
+    return;
+#endif
+    int sh_x, sh_y;
+    int range;
+    int pos_mx, pos_mz;
+    int pos_x1, pos_y1;
+    struct TbAnyWindow window_bkp;
+
+    {
+        int dt_x, dt_y;
+
+        dt_x = (ingame.Scanner.X2 - ingame.Scanner.X1) >> 1;
+        dt_y = (ingame.Scanner.Y2 - ingame.Scanner.Y1) >> 1;
+        sh_y = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle]) >> 8;
+        sh_x = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle + 512]) >> 8;
+        pos_x1 = ingame.Scanner.X1 + dt_x;
+        pos_y1 = ingame.Scanner.Y1 + dt_y;
+        if (dt_x >= dt_y)
+            range = (ingame.Scanner.Y2 - ingame.Scanner.Y1) >> 1;
+        else
+            range = (ingame.Scanner.X2 - ingame.Scanner.X1) >> 1;
+        range -= 5;
+        pos_mz = (ingame.Scanner.MZ << 16) + sh_x * dt_y - sh_y * dt_x;
+        pos_mx = (ingame.Scanner.MX << 16) - sh_x * dt_x - sh_y * dt_y;
+    }
+
+    LbScreenStoreGraphicsWindow(&window_bkp);
+    LbScreenSetGraphicsWindow(ingame.Scanner.X1, ingame.Scanner.Y1,
+      ingame.Scanner.X2 - ingame.Scanner.X1 + 1,
+      ingame.Scanner.Y2 - ingame.Scanner.Y1 + 1);
+
+    SCANNER_draw_blips(pos_mx, pos_mz, sh_x, sh_y);
+
+    SCANNER_draw_arcs(pos_mx, pos_mz, sh_x, sh_y);
+
+    LbScreenLoadGraphicsWindow(&window_bkp);
+
+    SCANNER_draw_things_dots(pos_mx, pos_mz, sh_x, sh_y, pos_x1, pos_y1, range);
+
+    SCANNER_draw_area_frame();
 }
 
 void SCANNER_draw_new_transparent(void)
