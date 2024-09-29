@@ -135,6 +135,11 @@ typedef unsigned char uchar;
 typedef unsigned char ubyte;
 typedef signed char sbyte;
 
+typedef int32_t s32;
+typedef uint32_t u32;
+typedef int64_t s64;
+typedef uint64_t u64;
+
 enum TbErrorCode {
     Lb_FAIL                 = -1,
     Lb_OK                   =  0,
