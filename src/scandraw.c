@@ -256,7 +256,7 @@ void SCANNER_dnt_sub1_sub12(void)
         :  :  : "eax" );
 }
 
-void SCANNER_draw_new_transparent_line(int cu_x2, int cu_y2)
+void SCANNER_draw_new_transparent_map_line(int cu_x2, int cu_y2)
 {
     ushort flags1, flags2;
 
@@ -361,9 +361,6 @@ void SCANNER_draw_new_transparent_map(void)
     TbPixel *p_out;
     int cu_y;
 
-    SCANNER_process_special_input();
-    SCANNER_process_bbpoints();
-
     dt_x = (ingame.Scanner.X2 - ingame.Scanner.X1) >> 1;
     dt_y = (ingame.Scanner.Y2 - ingame.Scanner.Y1) >> 1;
     sh_y = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle]) >> 8;
@@ -392,7 +389,7 @@ void SCANNER_draw_new_transparent_map(void)
         SCANNER_dw074 = *p_width + 1;
         SCANNER_screenptr = p_out;
 
-        SCANNER_draw_new_transparent_line(cu_x2, cu_y2);
+        SCANNER_draw_new_transparent_map_line(cu_x2, cu_y2);
 
         p_width++;
         p_out += lbDisplay.PhysicalScreenWidth;
@@ -446,18 +443,129 @@ void func_711F4(short a1, short a2, short a3, short a4, ubyte colour)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (colour));
 }
 
+void SCANNER_draw_mark_point(int x, int y, ushort sz, TbPixel col, TbBool filled)
+{
+    int h;
+
+    switch (sz)
+    {
+    default:
+        break;
+    case 7:
+    case 8:
+        if (x > ingame.Scanner.X1 + 2)
+        {
+            if (y > ingame.Scanner.Y1)
+                LbDrawPixel(x - 3, y - 2, col);
+            LbDrawPixel(x - 3, y, col);
+            if (y < ingame.Scanner.Y2)
+                LbDrawPixel(x - 3, y + 2, col);
+        }
+        h = y - ingame.Scanner.Y1;
+        if (y < ingame.Scanner.Y2 - 2)
+        {
+            if (x > ingame.Scanner.X1)
+                LbDrawPixel(x - 2, y + 3, col);
+            LbDrawPixel(x, y + 3, col);
+            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h+3] + 0)
+                LbDrawPixel(x + 2, y + 3, col);
+        }
+        if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h] - 1)
+        {
+            if ((y > ingame.Scanner.Y1 + 1) && (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-2] - 2))
+                LbDrawPixel(x + 3, y - 2, col);
+            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h] - 1)
+                LbDrawPixel(x + 3, y,     col);
+        }
+        if ((y < ingame.Scanner.Y2) && x < (ingame.Scanner.X1 + ingame.Scanner.Width[h+2] - 1))
+        {
+            LbDrawPixel(x + 3, y + 2, col);
+        }
+        if (y > ingame.Scanner.Y1 + 2)
+        {
+            if (x > ingame.Scanner.X1)
+                LbDrawPixel(x - 2, y - 3, col);
+            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-3] + 1)
+                LbDrawPixel(x,     y - 3, col);
+            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-3] + 0)
+                LbDrawPixel(x + 2, y - 3, col);
+        }
+        if (!filled)
+            break;
+        //  fall through
+    case 6:
+    case 5:
+        if (x > ingame.Scanner.X1 + 1)
+        {
+            LbDrawPixel(x - 2, y - 1, col);
+            LbDrawPixel(x - 2, y,     col);
+            LbDrawPixel(x - 2, y + 1, col);
+        }
+        if (y < ingame.Scanner.Y2 - 2)
+        {
+            LbDrawPixel(x - 1, y + 2, col);
+            LbDrawPixel(x,     y + 2, col);
+            LbDrawPixel(x + 1, y + 2, col);
+        }
+        h = y - ingame.Scanner.Y1;
+        if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h])
+        {
+            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-1])
+                LbDrawPixel(x + 2, y - 1, col);
+            LbDrawPixel(x + 2, y, col);
+            LbDrawPixel(x + 2, y + 1, col);
+        }
+        if (y > ingame.Scanner.Y1 + 1)
+        {
+            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-2] + 2)
+                LbDrawPixel(x - 1, y - 2, col);
+            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-2] + 1)
+                LbDrawPixel(x,     y - 2, col);
+            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-2] + 0)
+                LbDrawPixel(x + 1, y - 2, col);
+        }
+        if (!filled)
+            break;
+        //  fall through
+    case 4:
+    case 3:
+        LbDrawPixel(x, y - 1, col);
+        LbDrawPixel(x, y + 1, col);
+        LbDrawPixel(x - 1, y, col);
+        LbDrawPixel(x + 1, y, col);
+        if (!filled)
+            break;
+        //  fall through
+    case 2:
+    case 1:
+        LbDrawPixel(x, y, col);
+        break;
+    case 0:
+        break;
+    }
+}
+
 void SCANNER_draw_mark_point5_blink3(int x, int y, TbPixel col)
 {
+#if 0
     asm volatile (
       "call ASM_SCANNER_draw_mark_point5_blink3\n"
         : : "a" (x), "d" (y), "b" (col));
+#endif
+    ushort frame;
+
+    frame = gameturn & 3;
+    SCANNER_draw_mark_point(x, y, 2 * frame + 1, col, false);
 }
 
 void SCANNER_draw_mark_point7(int x, int y, TbPixel col)
 {
+#if 0
     asm volatile (
       "call ASM_SCANNER_draw_mark_point7\n"
         : : "a" (x), "d" (y), "b" (col));
+#endif
+    SCANNER_draw_mark_point(x, y, 7, col, false);
 }
 
 void SCANNER_process_arcpoints(void)
@@ -465,6 +573,20 @@ void SCANNER_process_arcpoints(void)
     asm volatile (
       "call ASM_SCANNER_process_arcpoints\n"
         :  :  : "eax" );
+}
+
+void SCANNER_draw_orientation_arrow(int pos_x1, int pos_y1, int range, int angle)
+{
+        int x1, y1, x2, y2, len_x, len_y;
+
+        x1 = ((range * lbSinTable[angle]) >> 16) + pos_x1;
+        len_y = (range * lbSinTable[angle]) >> 19;
+        y1 = ((range * -lbSinTable[angle + 512]) >> 16) + pos_y1;
+        len_x = (range * -lbSinTable[angle + 512]) >> 19;
+        x2 = x1 - len_y;
+        y2 = y1 - len_x;
+        LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[1]);
+        LbDrawLine(x1, y1, x2 + len_x, y2 - len_y, colour_lookup[1]);
 }
 
 TbBool thing_visible_on_scanner(struct Thing *p_thing)
@@ -857,7 +979,7 @@ void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int
     y = ingame.Scanner.Y1 + base_y;
     if ((p_thing->Flag & 0x02) == 0)
     {
-        if ( (p_thing->Flag & 0x2000) == 0 || (p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD))
+        if (((p_thing->Flag & 0x2000) == 0) || (p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD))
         {
             LbDrawPixel(x, y, col);
             if ((gameturn & 1) != 0)
@@ -965,31 +1087,13 @@ void SCANNER_draw_things_dots(int pos_mx, int pos_mz, int sh_x, int sh_y, int po
 
     if (scanner_blink)
     {
-        int x1, y1, x2, y2, len_x, len_y;
-
-        x1 = ((range * lbSinTable[ingame.Scanner.Angle]) >> 16) + pos_x1;
-        len_y = (range * lbSinTable[ingame.Scanner.Angle]) >> 19;
-        y1 = ((range * -lbSinTable[ingame.Scanner.Angle + 512]) >> 16) + pos_y1;
-        len_x = (range * -lbSinTable[ingame.Scanner.Angle + 512]) >> 19;
-        x2 = x1 - len_y;
-        y2 = y1 - len_x;
-        LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[1]);
-        LbDrawLine(x1, y1, x2 + len_x, y2 - len_y, colour_lookup[1]);
+        SCANNER_draw_orientation_arrow(pos_x1, pos_y1, range, ingame.Scanner.Angle);
     }
     else if ((nearest.dist > range * range) && (nearest.dist != 0x7FFFFFFF))
     {
-        int x1, y1, x2, y2, len_x, len_y;
         long angle;
-
         angle = arctan(nearest.x, nearest.y);
-        x1 = ((range * lbSinTable[angle]) >> 16) + pos_x1;
-        len_y = (range * lbSinTable[angle]) >> 19;
-        y1 = ((range * -lbSinTable[angle + 512]) >> 16) + pos_y1;
-        len_x = (range * -lbSinTable[angle + 512]) >> 19;
-        x2 = x1 - len_y;
-        y2 = y1 - len_x;
-        LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[1]);
-        LbDrawLine(x1, y1, x2 + len_x, y2 - len_y, colour_lookup[1]);
+        SCANNER_draw_orientation_arrow(pos_x1, pos_y1, range, angle);
     }
 }
 
@@ -1007,10 +1111,10 @@ void SCANNER_draw_area_frame(void)
       ingame.Scanner.X2 + 1, ingame.Scanner.Y2 + 1, SCANNER_colour[4]);
 }
 
-void SCANNER_draw_new_transparent_signals(void)
+void SCANNER_draw_signals(void)
 {
 #if 0
-    asm volatile ("call ASM_SCANNER_draw_new_transparent_signals\n"
+    asm volatile ("call ASM_SCANNER_draw_signals\n"
         :  :  : "eax" );
     return;
 #endif
@@ -1054,8 +1158,10 @@ void SCANNER_draw_new_transparent_signals(void)
 
 void SCANNER_draw_new_transparent(void)
 {
+    SCANNER_process_special_input();
+    SCANNER_process_bbpoints();
     SCANNER_draw_new_transparent_map();
-    SCANNER_draw_new_transparent_signals();
+    SCANNER_draw_signals();
     SCANNER_draw_area_frame();
 }
 
