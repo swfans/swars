@@ -451,8 +451,8 @@ void SCANNER_draw_mark_point(int x, int y, ushort sz, TbPixel col, TbBool filled
     {
     default:
         break;
-    case 7:
     case 8:
+    case 7:
         if (x > ingame.Scanner.X1 + 2)
         {
             if (y > ingame.Scanner.Y1)
@@ -543,6 +543,14 @@ void SCANNER_draw_mark_point(int x, int y, ushort sz, TbPixel col, TbBool filled
     case 0:
         break;
     }
+}
+
+void SCANNER_draw_mark_point3_blink2_filled(int x, int y, TbPixel col)
+{
+    ushort frame;
+
+    frame = gameturn & 1;
+    SCANNER_draw_mark_point(x, y, 2 * frame + 1, col, true);
 }
 
 void SCANNER_draw_mark_point5_blink3(int x, int y, TbPixel col)
@@ -965,8 +973,7 @@ void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int
     SCANNER_check_nearest(p_thing, p_nearest, base_x, base_y, pos_x1, pos_y1);
 
     if ((base_y < 0) || (ingame.Scanner.Y1 + base_y > ingame.Scanner.Y2)
-      || (base_x < 0) || (base_x > SCANNER_width[base_y]))
-    {
+      || (base_x < 0) || (base_x > SCANNER_width[base_y])) {
         return;
     }
 
@@ -981,14 +988,7 @@ void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int
     {
         if (((p_thing->Flag & 0x2000) == 0) || (p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD))
         {
-            LbDrawPixel(x, y, col);
-            if ((gameturn & 1) != 0)
-            {
-                LbDrawPixel(x - 1, y, col);
-                LbDrawPixel(x + 1, y, col);
-                LbDrawPixel(x, y + 1, col);
-                LbDrawPixel(x, y - 1, col);
-            }
+            SCANNER_draw_mark_point3_blink2_filled(x, y, col);
         }
         else
         {
@@ -1039,13 +1039,14 @@ void SCANNER_draw_sthing(struct SimpleThing *p_sthing, int pos_mx, int pos_mz, i
     x = ingame.Scanner.X1 + base_x;
     y = ingame.Scanner.Y1 + base_y;
 
-    col = p_sthing->U.UEffect.VX ? colour_lookup[8] : colour_lookup[5];
+    col = p_sthing->U.UWeapon.WeaponType ? colour_lookup[8] : colour_lookup[5];
 
-    if ((base_y >= 0) && (base_y <= ingame.Scanner.Y2 - ingame.Scanner.Y1)
-      && (base_x >= 0) && (base_x <= SCANNER_width[base_y]))
-    {
-        LbDrawPixel(x, y, col);
+    if ((base_y < 0) || (base_y > ingame.Scanner.Y2 - ingame.Scanner.Y1)
+      || (base_x < 0) || (base_x > SCANNER_width[base_y])) {
+        return;
     }
+
+    SCANNER_draw_mark_point(x, y, 1, col, true);
 }
 
 void SCANNER_draw_things_dots(int pos_mx, int pos_mz, int sh_x, int sh_y, int pos_x1, int pos_y1, int range)
