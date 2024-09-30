@@ -25,6 +25,7 @@
 #include "bfline.h"
 #include "bfmath.h"
 #include "bfpixel.h"
+#include "bfplanar.h"
 
 #include "engintrns.h"
 #include "campaign.h"
@@ -69,6 +70,211 @@ const int scanner_keys[] = {
     9999,
 };
 
+/** Points for symmetric circle of size 15.
+ */
+const struct TbPoint circle_line_sz15[] = {
+    { 0,-7},
+    { 1,-7},
+    { 2,-7},
+    { 2,-6},
+    { 3,-6},
+    { 4,-6},
+    { 4,-5},
+    { 5,-5},
+    { 5,-4},
+    { 6,-4},
+    { 6,-3},
+    { 6,-2},
+    { 7,-2},
+    { 7,-1},
+    { 7, 0},
+    { 7, 1},
+    { 7, 2},
+    { 6, 2},
+    { 6, 3},
+    { 6, 4},
+    { 5, 4},
+    { 5, 5},
+    { 4, 5},
+    { 4, 6},
+    { 3, 6},
+    { 2, 6},
+    { 2, 7},
+    { 1, 7},
+    { 0, 7},
+    {-1, 7},
+    {-2, 7},
+    {-2, 6},
+    {-3, 6},
+    {-4, 6},
+    {-4, 5},
+    {-5, 5},
+    {-5, 4},
+    {-6, 4},
+    {-6, 3},
+    {-6, 2},
+    {-7, 2},
+    {-7, 1},
+    {-7, 0},
+    {-7,-1},
+    {-7,-2},
+    {-6,-2},
+    {-6,-3},
+    {-6,-4},
+    {-5,-4},
+    {-5,-5},
+    {-4,-5},
+    {-4,-6},
+    {-3,-6},
+    {-2,-6},
+    {-2,-7},
+    {-1,-7},
+};
+#define circle_line_sz15_count (sizeof(circle_line_sz15)/sizeof(circle_line_sz15[0]))
+
+/** Points for symmetric circle of size 13.
+ */
+const struct TbPoint circle_line_sz13[] = {
+    { 0,-6},
+    { 1,-6},
+    { 2,-5},
+    { 3,-5},
+    { 4,-4},
+    { 5,-3},
+    { 5,-2},
+    { 6,-1},
+    { 6, 0},
+    { 6, 1},
+    { 5, 2},
+    { 5, 3},
+    { 4, 4},
+    { 3, 5},
+    { 2, 5},
+    { 1, 6},
+    { 0, 6},
+    {-1, 6},
+    {-2, 5},
+    {-3, 5},
+    {-4, 4},
+    {-5, 3},
+    {-5, 2},
+    {-6, 1},
+    {-6, 0},
+    {-6,-1},
+    {-5,-2},
+    {-5,-3},
+    {-4,-4},
+    {-3,-5},
+    {-2,-5},
+    {-1,-6},
+};
+#define circle_line_sz13_count (sizeof(circle_line_sz13)/sizeof(circle_line_sz13[0]))
+
+/** Points for symmetric circle of size 11.
+ */
+const struct TbPoint circle_line_sz11[] = {
+    { 0,-5},
+    { 1,-5},
+    { 2,-4},
+    { 3,-4},
+    { 4,-3},
+    { 4,-2},
+    { 5,-1},
+    { 5, 0},
+    { 5, 1},
+    { 4, 2},
+    { 4, 3},
+    { 3, 4},
+    { 2, 4},
+    { 1, 5},
+    { 0,-5},
+    {-1,-5},
+    {-2,-4},
+    {-3,-4},
+    {-4,-3},
+    {-4,-2},
+    {-5,-1},
+    {-5, 0},
+    {-5, 1},
+    {-4, 2},
+    {-4, 3},
+    {-3, 4},
+    {-2, 4},
+    {-1, 5},
+};
+#define circle_line_sz11_count (sizeof(circle_line_sz11)/sizeof(circle_line_sz11[0]))
+
+/** Points for symmetric circle of size 9.
+ */
+const struct TbPoint circle_line_sz9[] = {
+    { 0,-4},
+    { 1,-4},
+    { 2,-3},
+    { 3,-3},
+    { 3,-2},
+    { 4,-1},
+    { 4, 0},
+    { 4, 1},
+    { 3, 2},
+    { 3, 3},
+    { 2, 3},
+    { 1, 4},
+    { 0, 4},
+    {-1, 4},
+    {-2, 3},
+    {-3, 3},
+    {-3, 2},
+    {-4, 1},
+    {-4, 0},
+    {-4,-1},
+    {-3,-2},
+    {-3,-3},
+    {-2,-3},
+    {-1,-4},
+};
+#define circle_line_sz9_count (sizeof(circle_line_sz9)/sizeof(circle_line_sz9[0]))
+
+/** Points for dotted symmetric circle of size above 7 but below 9.
+ */
+const struct TbPoint circle_dots_sz8[] = {
+    { 0,-3},
+    { 2,-3},
+    { 3,-2},
+    { 3, 0},
+    { 3, 2},
+    { 2, 3},
+    { 0, 3},
+    {-2, 3},
+    {-3, 2},
+    {-3, 0},
+    {-3,-2},
+    {-2,-3},
+};
+#define circle_dots_sz8_count (sizeof(circle_dots_sz8)/sizeof(circle_dots_sz8[0]))
+
+/** Points for symmetric circle of size 7.
+ */
+const struct TbPoint circle_line_sz7[] = {
+    { 0,-3},
+    { 1,-3},
+    { 2,-2},
+    { 3,-1},
+    { 3, 0},
+    { 3, 1},
+    { 2, 2},
+    { 1, 3},
+    { 0, 3},
+    {-1, 3},
+    {-2, 2},
+    {-3, 1},
+    {-3, 0},
+    {-3,-1},
+    {-2,-2},
+    {-1,-3},
+};
+#define circle_line_sz7_count (sizeof(circle_line_sz7)/sizeof(circle_line_sz7[0]))
+
+
 extern long scanner_next_key_no;
 
 extern long SCANNER_dw064;
@@ -84,7 +290,6 @@ extern ubyte SCANNER_bt085;
 extern ubyte SCANNER_brig;
 extern ubyte SCANNER_cont;
 
-extern long dword_155340[32];
 extern struct scanstr1 SCANNER_bbpoint[255];
 extern long dword_1DBB64[];
 extern long dword_1DBB6C[512];
@@ -443,7 +648,31 @@ void func_711F4(short a1, short a2, short a3, short a4, ubyte colour)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (colour));
 }
 
-void SCANNER_draw_mark_point(int x, int y, ushort sz, TbPixel col, TbBool filled)
+void SCANNER_draw_shape_from_points(int x, int y, const struct TbPoint *points, ushort count, TbPixel col)
+{
+    int i;
+
+    for (i = 0; i < count; i++)
+    {
+        int pt_x, pt_y;
+        int h;
+
+        pt_y = y + points[i].y;
+        if ((pt_y <= ingame.Scanner.Y1) || (pt_y >= ingame.Scanner.Y2))
+            continue;
+
+        h = y - ingame.Scanner.Y1;
+        pt_x = x + points[i].x;
+        if ((pt_x <= ingame.Scanner.X1) || (pt_x >= ingame.Scanner.X1 + ingame.Scanner.Width[h]))
+            continue;
+
+        LbDrawPixel(pt_x, pt_y, col);
+    }
+}
+
+/** Draw a symmetric circle of solid line, or filled disk.
+ */
+void SCANNER_draw_circle_line(int x, int y, ushort sz, TbPixel col, TbBool filled)
 {
     int h;
 
@@ -451,45 +680,33 @@ void SCANNER_draw_mark_point(int x, int y, ushort sz, TbPixel col, TbBool filled
     {
     default:
         break;
+    case 16:
+    case 15:
+        SCANNER_draw_shape_from_points(x, y, circle_line_sz15, circle_line_sz15_count, col);
+        if (!filled)
+            break;
+        //  fall through
+    case 14:
+    case 13:
+        SCANNER_draw_shape_from_points(x, y, circle_line_sz13, circle_line_sz13_count, col);
+        if (!filled)
+            break;
+        //  fall through
+    case 12:
+    case 11:
+        SCANNER_draw_shape_from_points(x, y, circle_line_sz11, circle_line_sz11_count, col);
+        if (!filled)
+            break;
+        //  fall through
+    case 10:
+    case 9:
+        SCANNER_draw_shape_from_points(x, y, circle_line_sz9, circle_line_sz9_count, col);
+        if (!filled)
+            break;
+        //  fall through
     case 8:
     case 7:
-        if (x > ingame.Scanner.X1 + 2)
-        {
-            if (y > ingame.Scanner.Y1)
-                LbDrawPixel(x - 3, y - 2, col);
-            LbDrawPixel(x - 3, y, col);
-            if (y < ingame.Scanner.Y2)
-                LbDrawPixel(x - 3, y + 2, col);
-        }
-        h = y - ingame.Scanner.Y1;
-        if (y < ingame.Scanner.Y2 - 2)
-        {
-            if (x > ingame.Scanner.X1)
-                LbDrawPixel(x - 2, y + 3, col);
-            LbDrawPixel(x, y + 3, col);
-            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h+3] + 0)
-                LbDrawPixel(x + 2, y + 3, col);
-        }
-        if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h] - 1)
-        {
-            if ((y > ingame.Scanner.Y1 + 1) && (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-2] - 2))
-                LbDrawPixel(x + 3, y - 2, col);
-            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h] - 1)
-                LbDrawPixel(x + 3, y,     col);
-        }
-        if ((y < ingame.Scanner.Y2) && x < (ingame.Scanner.X1 + ingame.Scanner.Width[h+2] - 1))
-        {
-            LbDrawPixel(x + 3, y + 2, col);
-        }
-        if (y > ingame.Scanner.Y1 + 2)
-        {
-            if (x > ingame.Scanner.X1)
-                LbDrawPixel(x - 2, y - 3, col);
-            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-3] + 1)
-                LbDrawPixel(x,     y - 3, col);
-            if (x < ingame.Scanner.X1 + ingame.Scanner.Width[h-3] + 0)
-                LbDrawPixel(x + 2, y - 3, col);
-        }
+        SCANNER_draw_shape_from_points(x, y, circle_line_sz7, circle_line_sz7_count, col);
         if (!filled)
             break;
         //  fall through
@@ -528,6 +745,11 @@ void SCANNER_draw_mark_point(int x, int y, ushort sz, TbPixel col, TbBool filled
             break;
         //  fall through
     case 4:
+        LbDrawPixel(x - 1, y - 1, col);
+        LbDrawPixel(x - 1, y + 1, col);
+        LbDrawPixel(x + 1, y - 1, col);
+        LbDrawPixel(x + 1, y + 1, col);
+        //  fall through
     case 3:
         LbDrawPixel(x, y - 1, col);
         LbDrawPixel(x, y + 1, col);
@@ -545,25 +767,56 @@ void SCANNER_draw_mark_point(int x, int y, ushort sz, TbPixel col, TbBool filled
     }
 }
 
+/** Draw a symmetric circle of dotted line, or filled disk.
+ *
+ * The dots drawn here are typically beyond ones drawn by SCANNER_draw_circle_line()
+ * for the same size of the circle. Except for sizes 6 and below, where both functions
+ * lead to identical output - hard to draw dotted circle that small.
+ */
+void SCANNER_draw_circle_dotted(int x, int y, ushort sz, TbPixel col, TbBool filled)
+{
+    switch (sz)
+    {
+    default:
+        break;
+    case 8:
+    case 7:
+        SCANNER_draw_shape_from_points(x, y, circle_dots_sz8, circle_dots_sz8_count, col);
+        if (!filled)
+            break;
+        //  fall through
+    case 6:
+    case 5:
+    case 4:
+    case 3:
+    case 2:
+    case 1:
+        SCANNER_draw_circle_line(x, y, sz, col, filled);
+        break;
+    case 0:
+        break;
+    }
+}
+
 void SCANNER_draw_mark_point3_blink2_filled(int x, int y, TbPixel col)
 {
     ushort frame;
 
     frame = gameturn & 1;
-    SCANNER_draw_mark_point(x, y, 2 * frame + 1, col, true);
+    SCANNER_draw_circle_line(x, y, 2 * frame + 1, col, true);
 }
 
-void SCANNER_draw_mark_point5_blink3(int x, int y, TbPixel col)
+void SCANNER_draw_mark_point7_blink4(int x, int y, TbPixel col)
 {
 #if 0
     asm volatile (
-      "call ASM_SCANNER_draw_mark_point5_blink3\n"
+      "call ASM_SCANNER_draw_mark_point7_blink4\n"
         : : "a" (x), "d" (y), "b" (col));
 #endif
     ushort frame;
 
     frame = gameturn & 3;
-    SCANNER_draw_mark_point(x, y, 2 * frame + 1, col, false);
+    SCANNER_draw_circle_dotted(x, y, 2 * frame + 1, col, false);
 }
 
 void SCANNER_draw_mark_point7(int x, int y, TbPixel col)
@@ -573,7 +826,7 @@ void SCANNER_draw_mark_point7(int x, int y, TbPixel col)
       "call ASM_SCANNER_draw_mark_point7\n"
         : : "a" (x), "d" (y), "b" (col));
 #endif
-    SCANNER_draw_mark_point(x, y, 7, col, false);
+    SCANNER_draw_circle_dotted(x, y, 7, col, false);
 }
 
 void SCANNER_process_arcpoints(void)
@@ -753,23 +1006,23 @@ void SCANNER_draw_blips(int pos_mx, int pos_mz, int sh_x, int sh_y)
             map_coords_to_scanner(&base_x, &base_y, sh_x, sh_y, bsh_x, bsh_y);
         }
 
-        gtr = (gameturn - 0) & 0xF;
-        px_x = base_x + dword_155340[2 * gtr + 0];
-        px_y = base_y + dword_155340[2 * gtr + 1];
+        gtr = (gameturn - 1) % circle_line_sz7_count;
+        px_x = base_x + circle_line_sz7[gtr].x;
+        px_y = base_y + circle_line_sz7[gtr].y;
         if ((px_y >= 0) && (px_y + ingame.Scanner.Y1 <= ingame.Scanner.Y2)
           && (px_x >= 0) && (px_x <= SCANNER_width[px_y])) {
             LbDrawPixel(px_x, px_y, pixmap.fade_table[0x2000 + ingame.Scanner.BigBlip[bn].Colour]);
         }
-        gtr = (gameturn - 1) & 0xF;
-        px_x = base_x + dword_155340[2 * gtr + 0];
-        px_y = base_y + dword_155340[2 * gtr + 1];
+        gtr = (gameturn - 2) % circle_line_sz7_count;
+        px_x = base_x + circle_line_sz7[gtr].x;
+        px_y = base_y + circle_line_sz7[gtr].y;
         if ( px_y >= 0 && px_y + ingame.Scanner.Y1 <= ingame.Scanner.Y2
           && px_x >= 0 && px_x <= SCANNER_width[px_y]) {
             LbDrawPixel(px_x, px_y, pixmap.fade_table[0x1800 + ingame.Scanner.BigBlip[bn].Colour]);
         }
-        gtr = (gameturn - 2) & 0xF;
-        px_x = base_x + dword_155340[2 * gtr + 0];
-        px_y = base_y + dword_155340[2 * gtr + 1];
+        gtr = (gameturn - 3) % circle_line_sz7_count;
+        px_x = base_x + circle_line_sz7[gtr].x;
+        px_y = base_y + circle_line_sz7[gtr].y;
         if ( px_y >= 0 && px_y + ingame.Scanner.Y1 <= ingame.Scanner.Y2
           && px_x >= 0 && px_x <= SCANNER_width[px_y]) {
             LbDrawPixel(px_x, px_y, pixmap.fade_table[0x1000 + ingame.Scanner.BigBlip[bn].Colour]);
@@ -993,9 +1246,9 @@ void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int
         else
         {
             if (in_network_game)
-                SCANNER_draw_mark_point5_blink3(x, y, byte_1C5C30[p_thing->U.UPerson.ComCur >> 2]);
+                SCANNER_draw_mark_point7_blink4(x, y, byte_1C5C30[p_thing->U.UPerson.ComCur >> 2]);
             else
-                SCANNER_draw_mark_point5_blink3(x, y, col);
+                SCANNER_draw_mark_point7_blink4(x, y, col);
         }
     }
     if ((gameturn & 7) == 0)
@@ -1046,7 +1299,7 @@ void SCANNER_draw_sthing(struct SimpleThing *p_sthing, int pos_mx, int pos_mz, i
         return;
     }
 
-    SCANNER_draw_mark_point(x, y, 1, col, true);
+    SCANNER_draw_circle_line(x, y, 1, col, true);
 }
 
 void SCANNER_draw_things_dots(int pos_mx, int pos_mz, int sh_x, int sh_y, int pos_x1, int pos_y1, int range)
