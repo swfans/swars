@@ -70,6 +70,36 @@ const int scanner_keys[] = {
     9999,
 };
 
+/** Points for dotted symmetric circle of size above 15 but below 17.
+ */
+const struct TbPoint circle_dots_sz16[] = {
+    { 1,-7},
+    { 3,-7},
+    { 5,-6},
+    { 6,-5},
+    { 7,-3},
+    { 7,-1},
+    { 7, 1},
+    { 7, 3},
+    { 6, 5},
+    { 5, 6},
+    { 3, 7},
+    { 1, 7},
+    {-1, 7},
+    {-3, 7},
+    {-5, 6},
+    {-6, 5},
+    {-7, 3},
+    {-7, 1},
+    {-7,-1},
+    {-7,-3},
+    {-6,-5},
+    {-5,-6},
+    {-3,-7},
+    {-1,-7},
+};
+#define circle_dots_sz16_count (sizeof(circle_dots_sz16)/sizeof(circle_dots_sz16[0]))
+
 /** Points for symmetric circle of size 15.
  */
 const struct TbPoint circle_line_sz15[] = {
@@ -132,6 +162,32 @@ const struct TbPoint circle_line_sz15[] = {
 };
 #define circle_line_sz15_count (sizeof(circle_line_sz15)/sizeof(circle_line_sz15[0]))
 
+/** Points for dotted symmetric circle of size above 13 but below 15.
+ */
+const struct TbPoint circle_dots_sz14[] = {
+    { 0,-6},
+    { 2,-6},
+    { 4,-5},
+    { 5,-4},
+    { 6,-2},
+    { 6, 0},
+    { 6, 2},
+    { 5, 4},
+    { 4, 5},
+    { 2, 6},
+    { 0, 6},
+    {-2, 6},
+    {-4, 5},
+    {-5, 4},
+    {-6, 2},
+    {-6, 0},
+    {-6,-2},
+    {-5,-4},
+    {-4,-5},
+    {-2,-6},
+};
+#define circle_dots_sz14_count (sizeof(circle_dots_sz14)/sizeof(circle_dots_sz14[0]))
+
 /** Points for symmetric circle of size 13.
  */
 const struct TbPoint circle_line_sz13[] = {
@@ -170,6 +226,28 @@ const struct TbPoint circle_line_sz13[] = {
 };
 #define circle_line_sz13_count (sizeof(circle_line_sz13)/sizeof(circle_line_sz13[0]))
 
+/** Points for dotted symmetric circle of size above 11 but below 13.
+ */
+const struct TbPoint circle_dots_sz12[] = {
+    { 0,-5},
+    { 2,-5},
+    { 4,-4},
+    { 5,-2},
+    { 5, 0},
+    { 5, 2},
+    { 4, 4},
+    { 2, 5},
+    { 0, 5},
+    {-2, 5},
+    {-4, 4},
+    {-5, 2},
+    {-5, 0},
+    {-5,-2},
+    {-4,-4},
+    {-2,-5},
+};
+#define circle_dots_sz12_count (sizeof(circle_dots_sz12)/sizeof(circle_dots_sz12[0]))
+
 /** Points for symmetric circle of size 11.
  */
 const struct TbPoint circle_line_sz11[] = {
@@ -203,6 +281,24 @@ const struct TbPoint circle_line_sz11[] = {
     {-1, 5},
 };
 #define circle_line_sz11_count (sizeof(circle_line_sz11)/sizeof(circle_line_sz11[0]))
+
+/** Points for dotted symmetric circle of size above 9 but below 11.
+ */
+const struct TbPoint circle_dots_sz10[] = {
+    { 1,-4},
+    { 3,-3},
+    { 4,-1},
+    { 4, 1},
+    { 3, 3},
+    { 1, 4},
+    {-1, 4},
+    {-3, 3},
+    {-4, 1},
+    {-4,-1},
+    {-3,-3},
+    {-1,-4},
+};
+#define circle_dots_sz10_count (sizeof(circle_dots_sz10)/sizeof(circle_dots_sz10[0]))
 
 /** Points for symmetric circle of size 9.
  */
@@ -670,6 +766,36 @@ void SCANNER_draw_shape_from_points(int x, int y, const struct TbPoint *points, 
     }
 }
 
+/** Draws a range of points from given array.
+ *
+ * This function assumes graphics window set to the scanner map area.
+ */
+void SCANNER_draw_shape_part_from_points(int x, int y, const struct TbPoint *points, ushort count, ushort frame, ushort part, TbPixel col)
+{
+    ushort i;
+
+    for (i = 0; i < part; i++)
+    {
+        int pt_x, pt_y;
+        int pt;
+        uint fade;
+
+        pt = (frame + count - i) % count;
+
+        pt_y = y + points[pt].y;
+        if ((pt_y <= 0) || (pt_y >= ingame.Scanner.Y2))
+            continue;
+
+        pt_x = x + points[pt].x;
+        if ((pt_x <= 0) || (pt_x >= SCANNER_width[pt_y]))
+            continue;
+
+        fade = 0x10 + 0x10 * (part - i - 1) / (part - 1);
+
+        LbDrawPixel(pt_x, pt_y, pixmap.fade_table[(fade << 8) + col]);
+    }
+}
+
 /** Draw a symmetric circle of solid line, or filled disk.
  */
 void SCANNER_draw_circle_line(int x, int y, ushort sz, TbPixel col, TbBool filled)
@@ -767,7 +893,7 @@ void SCANNER_draw_circle_line(int x, int y, ushort sz, TbPixel col, TbBool fille
     }
 }
 
-/** Draw a symmetric circle of dotted line, or filled disk.
+/** Draw a symmetric circle of dotted line, or partially filled disk.
  *
  * The dots drawn here are typically beyond ones drawn by SCANNER_draw_circle_line()
  * for the same size of the circle. Except for sizes 6 and below, where both functions
@@ -779,6 +905,30 @@ void SCANNER_draw_circle_dotted(int x, int y, ushort sz, TbPixel col, TbBool fil
     {
     default:
         break;
+    case 16:
+    case 15:
+        SCANNER_draw_shape_from_points(x, y, circle_dots_sz16, circle_dots_sz16_count, col);
+        if (!filled)
+            break;
+        //  fall through
+    case 14:
+    case 13:
+        SCANNER_draw_shape_from_points(x, y, circle_dots_sz14, circle_dots_sz14_count, col);
+        if (!filled)
+            break;
+        //  fall through
+    case 12:
+    case 11:
+        SCANNER_draw_shape_from_points(x, y, circle_dots_sz12, circle_dots_sz12_count, col);
+        if (!filled)
+            break;
+        //  fall through
+    case 10:
+    case 9:
+        SCANNER_draw_shape_from_points(x, y, circle_dots_sz10, circle_dots_sz10_count, col);
+        if (!filled)
+            break;
+        //  fall through
     case 8:
     case 7:
         SCANNER_draw_shape_from_points(x, y, circle_dots_sz8, circle_dots_sz8_count, col);
@@ -787,11 +937,19 @@ void SCANNER_draw_circle_dotted(int x, int y, ushort sz, TbPixel col, TbBool fil
         //  fall through
     case 6:
     case 5:
+        SCANNER_draw_circle_line(x, y, 5, col, false);
+        if (!filled)
+            break;
+        //  fall through
     case 4:
     case 3:
+        SCANNER_draw_circle_line(x, y, 3, col, false);
+        if (!filled)
+            break;
+        //  fall through
     case 2:
     case 1:
-        SCANNER_draw_circle_line(x, y, sz, col, filled);
+        SCANNER_draw_circle_line(x, y, 1, col, false);
         break;
     case 0:
         break;
@@ -827,6 +985,16 @@ void SCANNER_draw_mark_point7(int x, int y, TbPixel col)
         : : "a" (x), "d" (y), "b" (col));
 #endif
     SCANNER_draw_circle_dotted(x, y, 7, col, false);
+}
+
+void SCANNER_draw_circle_point7_flowing(int x, int y, TbPixel col)
+{
+        ushort frame, part;
+
+        frame = (gameturn - 1) % circle_line_sz7_count;
+        part = circle_line_sz7_count / 5;
+
+        SCANNER_draw_shape_part_from_points(x, y, circle_line_sz7, circle_line_sz7_count, frame, part, col);
 }
 
 void SCANNER_process_arcpoints(void)
@@ -991,9 +1159,7 @@ void SCANNER_draw_blips(int pos_mx, int pos_mz, int sh_x, int sh_y)
     for (bn = 0; bn < SCANNER_BIG_BLIP_COUNT; bn++)
     {
         int base_x, base_y;
-        int px_x, px_y;
         int base_i, i;
-        short gtr;
 
         if (ingame.Scanner.BigBlip[bn].Period == 0)
             continue;
@@ -1006,27 +1172,7 @@ void SCANNER_draw_blips(int pos_mx, int pos_mz, int sh_x, int sh_y)
             map_coords_to_scanner(&base_x, &base_y, sh_x, sh_y, bsh_x, bsh_y);
         }
 
-        gtr = (gameturn - 1) % circle_line_sz7_count;
-        px_x = base_x + circle_line_sz7[gtr].x;
-        px_y = base_y + circle_line_sz7[gtr].y;
-        if ((px_y >= 0) && (px_y + ingame.Scanner.Y1 <= ingame.Scanner.Y2)
-          && (px_x >= 0) && (px_x <= SCANNER_width[px_y])) {
-            LbDrawPixel(px_x, px_y, pixmap.fade_table[0x2000 + ingame.Scanner.BigBlip[bn].Colour]);
-        }
-        gtr = (gameturn - 2) % circle_line_sz7_count;
-        px_x = base_x + circle_line_sz7[gtr].x;
-        px_y = base_y + circle_line_sz7[gtr].y;
-        if ( px_y >= 0 && px_y + ingame.Scanner.Y1 <= ingame.Scanner.Y2
-          && px_x >= 0 && px_x <= SCANNER_width[px_y]) {
-            LbDrawPixel(px_x, px_y, pixmap.fade_table[0x1800 + ingame.Scanner.BigBlip[bn].Colour]);
-        }
-        gtr = (gameturn - 3) % circle_line_sz7_count;
-        px_x = base_x + circle_line_sz7[gtr].x;
-        px_y = base_y + circle_line_sz7[gtr].y;
-        if ( px_y >= 0 && px_y + ingame.Scanner.Y1 <= ingame.Scanner.Y2
-          && px_x >= 0 && px_x <= SCANNER_width[px_y]) {
-            LbDrawPixel(px_x, px_y, pixmap.fade_table[0x1000 + ingame.Scanner.BigBlip[bn].Colour]);
-        }
+        SCANNER_draw_circle_point7_flowing(base_x, base_y, ingame.Scanner.BigBlip[bn].Colour);
 
         base_i = bn * 16;
 
