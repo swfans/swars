@@ -956,6 +956,68 @@ void SCANNER_draw_circle_dotted(int x, int y, ushort sz, TbPixel col, TbBool fil
     }
 }
 
+/** Draw an arc (part of a circle) with solid, shaded line.
+ */
+void SCANNER_draw_circle_arc_line(int x, int y, ushort sz, short angle, short anpart, TbPixel col)
+{
+    const struct TbPoint *points;
+    ushort count, frame, part;
+
+    switch (sz)
+    {
+    default:
+    case 16:
+    case 15:
+        points = circle_line_sz15;
+        count = circle_line_sz15_count;
+        break;
+    case 14:
+    case 13:
+        points = circle_line_sz13;
+        count = circle_line_sz13_count;
+        break;
+    case 12:
+    case 11:
+        points = circle_line_sz11;
+        count = circle_line_sz11_count;
+        break;
+    case 10:
+    case 9:
+        points = circle_line_sz9;
+        count = circle_line_sz9_count;
+        break;
+    case 8:
+    case 7:
+        points = circle_line_sz7;
+        count = circle_line_sz7_count;
+        break;
+    case 6:
+    case 5:
+        points = NULL;
+        count = 12;
+        break;
+    case 4:
+    case 3:
+        points = NULL;
+        count = 4;
+        break;
+    case 2:
+    case 1:
+    case 0:
+        points = NULL;
+        count = 1;
+        break;
+    }
+
+    if (points == NULL)
+        return;
+
+    frame = count * angle / (2 * LbFPMath_PI);
+    part = count * anpart / (2 * LbFPMath_PI);
+
+    SCANNER_draw_shape_part_from_points(x, y, points, count, frame, part, col);
+}
+
 void SCANNER_draw_mark_point3_blink2_filled(int x, int y, TbPixel col)
 {
     ushort frame;
@@ -989,12 +1051,12 @@ void SCANNER_draw_mark_point7(int x, int y, TbPixel col)
 
 void SCANNER_draw_circle_point7_flowing(int x, int y, TbPixel col)
 {
-        ushort frame, part;
+        ushort angle, anpart;
 
-        frame = (gameturn - 1) % circle_line_sz7_count;
-        part = circle_line_sz7_count / 5;
+        angle = (gameturn - 1) * LbFPMath_PI / 8;
+        anpart = 2 * LbFPMath_PI / 5;
 
-        SCANNER_draw_shape_part_from_points(x, y, circle_line_sz7, circle_line_sz7_count, frame, part, col);
+        SCANNER_draw_circle_arc_line(x, y, 7, angle, anpart, col);
 }
 
 void SCANNER_process_arcpoints(void)
