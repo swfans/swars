@@ -76,11 +76,19 @@ extern long SCANNER_dw068;
 extern long SCANNER_dw06C;
 extern long SCANNER_dw070;
 extern long SCANNER_dw074;
+extern long SCANNER_dw07C;
+extern long SCANNER_dw080;
+
+extern ubyte SCANNER_bt084;
+extern ubyte SCANNER_bt085;
+extern ubyte SCANNER_brig;
+extern ubyte SCANNER_cont;
 
 extern long dword_155340[32];
 extern struct scanstr1 SCANNER_bbpoint[255];
 extern long dword_1DBB64[];
 extern long dword_1DBB6C[512];
+extern TbPixel *SCANNER_screenptr;
 extern ulong SCANNER_keep_arcs;
 extern ubyte SCANNER_colour[5];
 extern long scanner_blink; // = 1;
@@ -155,6 +163,238 @@ void SCANNER_dnt_SCANNER_dw070_update(ushort flags1)
     else
         mn_val = n1_cand;
     SCANNER_dw074 = mn_val;
+}
+
+void SCANNER_process_bbpoints(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_process_bbpoints\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub1(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub1\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub2(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub2\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub3(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub3\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub4(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub4\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub5(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub5\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub6(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub6\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub7(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub7\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub8(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub8\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub9(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub9\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub10(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub10\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub11(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub11\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_dnt_sub1_sub12(void)
+{
+    asm volatile (
+      "call ASM_SCANNER_dnt_sub1_sub12\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_draw_new_transparent_sub1(void)
+{
+#if 0
+    asm volatile ("call ASM_SCANNER_draw_new_transparent_sub1\n"
+        :  :  : "eax" );
+    return;
+#endif
+    int dt_x, dt_y;
+    int sh_x, sh_y;
+    int v21, v22, v23, v24;
+    long *p_width;
+    TbPixel *p_out;
+    int cu_y;
+
+    SCANNER_process_special_input();
+    SCANNER_process_bbpoints();
+
+    dt_x = (ingame.Scanner.X2 - ingame.Scanner.X1) >> 1;
+    dt_y = (ingame.Scanner.Y2 - ingame.Scanner.Y1) >> 1;
+    sh_y = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle]) >> 8;
+    sh_x = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle + 512]) >> 8;
+
+    SCANNER_dw07C = sh_y << 16;
+    SCANNER_dw080 = sh_x << 16;
+    SCANNER_bt084 = (sh_y >> 16);
+    SCANNER_bt085 = (sh_x >> 16);
+    SCANNER_brig = ingame.Scanner.Brightness;
+    SCANNER_cont = ingame.Scanner.Contrast;
+    SCANNER_dw064 = sh_y;
+    SCANNER_dw068 = sh_x;
+
+    v23 = (ingame.Scanner.MZ << 16) + sh_y * dt_x + sh_x * dt_y;
+    v24 = (ingame.Scanner.MX << 16) + sh_x * dt_x - sh_y * dt_y;
+    v21 = (ingame.Scanner.MZ << 16) + sh_x * dt_y - sh_y * dt_x;
+    v22 = (ingame.Scanner.MX << 16) - sh_x * dt_x - sh_y * dt_y;
+    p_width = SCANNER_width;
+    p_out = &lbDisplay.WScreen[ingame.Scanner.X1 + lbDisplay.PhysicalScreenWidth * ingame.Scanner.Y1];
+
+    for (cu_y = ingame.Scanner.Y1; cu_y <= ingame.Scanner.Y2; cu_y++)
+    {
+        ushort flags1, flags2;
+
+        SCANNER_dw06C = v21;
+        SCANNER_dw070 = v22;
+        SCANNER_dw074 = *p_width + 1;
+        SCANNER_screenptr = p_out;
+
+        flags1 = (0x01 * (v23 < 0))
+               | (0x02 * (v23 >= 0x1000000))
+               | (0x04 * (v24 < 0))
+               | (0x08 * (v24 >= 0x1000000));
+
+        while ( 2 )
+        {
+          int dt_val, pv_val, cu_val;
+
+          flags2 = (0x01 * (SCANNER_dw06C < 0))
+                 | (0x02 * (SCANNER_dw06C >= 0x1000000))
+                 | (0x04 * (SCANNER_dw070 < 0))
+                 | (0x08 * (SCANNER_dw070 >= 0x1000000));
+
+          if ((flags1 | flags2) == 0)
+          {
+              SCANNER_dnt_sub1_sub12();
+              break;
+          }
+          if ((flags1 & flags2) != 0)
+          {
+              SCANNER_dnt_sub1_sub1();
+              break;
+          }
+
+          switch (flags2)
+          {
+            case 0x00:
+              pv_val = SCANNER_dw074;
+              SCANNER_dnt_SCANNER_dw070_update(flags1);
+              cu_val = SCANNER_dw074;
+              dt_val = pv_val - cu_val;
+              if ((cu_val > 0) && (cu_val <= 400)) {
+                  SCANNER_dnt_sub1_sub2();
+              }
+              if ((dt_val > 0) && (dt_val <= 400)) {
+                  SCANNER_dw074 = dt_val;
+                  SCANNER_dnt_sub1_sub3();
+              }
+              break;
+            case 0x01:
+              SCANNER_dnt_sub1_sub4();
+              if (SCANNER_dw074)
+                continue;
+              break;
+            case 0x02:
+              SCANNER_dnt_sub1_sub5();
+              if (SCANNER_dw074)
+                continue;
+              break;
+            case 0x04:
+              SCANNER_dnt_sub1_sub6();
+              if (SCANNER_dw074)
+                continue;
+              break;
+            case 0x05:
+              SCANNER_dnt_sub1_sub8();
+              if (SCANNER_dw074)
+                continue;
+              break;
+            case 0x06:
+              SCANNER_dnt_sub1_sub9();
+              if (SCANNER_dw074)
+                continue;
+              break;
+            case 0x08:
+              SCANNER_dnt_sub1_sub7();
+              if (SCANNER_dw074)
+                continue;
+              break;
+            case 0x09:
+              SCANNER_dnt_sub1_sub10();
+              if (SCANNER_dw074)
+                continue;
+              break;
+            case 0x0A:
+              SCANNER_dnt_sub1_sub11();
+              if (SCANNER_dw074)
+                continue;
+              break;
+            default:
+              break;
+          }
+          break;
+        }
+        p_width++;
+        p_out += lbDisplay.PhysicalScreenWidth;
+        v22 += sh_y;
+        v21 -= sh_x;
+        v23 -= sh_x;
+        v24 += sh_y;
+    }
 }
 
 void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ, ubyte colour)
@@ -810,8 +1050,7 @@ void SCANNER_draw_new_transparent_sub2(void)
 
 void SCANNER_draw_new_transparent(void)
 {
-    asm volatile ("call ASM_SCANNER_draw_new_transparent_sub1\n"
-        :  :  : "eax" );
+    SCANNER_draw_new_transparent_sub1();
     SCANNER_draw_new_transparent_sub2();
 }
 
