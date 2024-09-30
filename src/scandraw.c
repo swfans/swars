@@ -21,6 +21,7 @@
 #include "bfanywnd.h"
 #include "bfendian.h"
 #include "bfgentab.h"
+#include "bfkeybd.h"
 #include "bfline.h"
 #include "bfmath.h"
 #include "bfpixel.h"
@@ -58,6 +59,23 @@ struct NearestPos {
     short y;
 };
 
+/** String of keycodes for special input.
+ * Cannot be of type TbKeyCode as contains plain numeric value as well.
+ */
+const int scanner_keys[] = {
+    KC_NUMPAD3, KC_DECIMAL, KC_NUMPAD1, KC_NUMPAD4,
+    KC_NUMPAD1, KC_NUMPAD5, KC_NUMPAD9, KC_NUMPAD2,
+    KC_NUMPAD6, KC_NUMPAD5, KC_NUMPAD3, KC_NUMPAD5,
+    9999,
+};
+
+extern long scanner_next_key_no;
+
+extern long SCANNER_dw064;
+extern long SCANNER_dw068;
+extern long SCANNER_dw06C;
+extern long SCANNER_dw070;
+extern long SCANNER_dw074;
 
 extern long dword_155340[32];
 extern struct scanstr1 SCANNER_bbpoint[255];
@@ -70,6 +88,74 @@ extern long scanner_blink; // = 1;
 extern struct scanstr3 SCANNER_arcpoint[20];
 extern TbPixel SCANNER_people_colours[15];
 extern ubyte byte_1C5C30[8];
+
+void SCANNER_process_special_input(void)
+{
+    ushort sckey, nxkey;
+
+    sckey = scanner_keys[scanner_next_key_no];
+    if (lbKeyOn[sckey])
+    {
+        lbKeyOn[sckey] = 0;
+        nxkey = scanner_keys[++scanner_next_key_no];
+        if (nxkey == 9999)
+        {
+            scanner_next_key_no = 0;
+            scanner_blink = scanner_blink ^ 1;
+        }
+    }
+}
+
+void SCANNER_dnt_SCANNER_dw070_update(ushort flags1)
+{
+    s64 nm_prec;
+    int nm_shft;
+    int pv_val, mn_val, mn_of2;
+    int n1_cand, n2_cand;
+
+    n1_cand = 0xFFFFFFF;
+    n2_cand = 0xFFFFFFF;
+
+    if ((flags1 & 0x01) != 0)
+    {
+        nm_prec = (s64)SCANNER_dw06C << 16;
+        nm_shft = -(nm_prec / SCANNER_dw064);
+        n2_cand = nm_shft >> 16;
+    }
+    else if ((flags1 & 0x02) != 0)
+    {
+        nm_prec = (0x1000000 - (s64)SCANNER_dw06C) << 16;
+        nm_shft = nm_prec / SCANNER_dw064;
+        n2_cand = nm_shft >> 16;
+    }
+
+    if ( (flags1 & 0x04) != 0 )
+    {
+        nm_prec = (s64)SCANNER_dw070 << 16;
+        nm_shft = -(nm_prec / SCANNER_dw068);
+        n1_cand = nm_shft >> 16;
+    }
+    else if ((flags1 & 0x08) != 0)
+    {
+        nm_prec = (0x1000000 - (s64)SCANNER_dw070) << 16;
+        nm_shft = nm_prec / SCANNER_dw068;
+        n1_cand = nm_shft >> 16;
+    }
+
+    // set SCANNER_dw074 = min(SCANNER_dw074, n2_cand, n1_cand);
+    pv_val = SCANNER_dw074;
+    if (n1_cand >= pv_val)
+        mn_of2 = pv_val;
+    else
+        mn_of2 = n1_cand;
+    if (mn_of2 > n2_cand)
+      mn_val = n2_cand;
+    else if (n1_cand >= pv_val)
+        mn_val = pv_val;
+    else
+        mn_val = n1_cand;
+    SCANNER_dw074 = mn_val;
+}
 
 void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ, ubyte colour)
 {
