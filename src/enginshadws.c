@@ -40,13 +40,15 @@ extern ubyte sprshadow_F370[24];
 extern ubyte sprshadow_F388[600];
 extern ubyte sprshadow_F5E0[24];
 extern ubyte sprshadow_F5F8[600];
-extern ubyte sprshadow_F850[512];
+extern sbyte sprshadow_F850[512];
 
-void draw_effect_object_face(ushort face)
+#include "game_speed.h"
+
+void draw_person_shadow(ushort face)
 {
-#if 1
+#if 0
     asm volatile (
-      "call ASM_draw_effect_object_face\n"
+      "call ASM_draw_person_shadow\n"
         : : "a" (face));
     return;
 #endif
@@ -90,8 +92,8 @@ void draw_effect_object_face(ushort face)
     point2.pp.V = point1.pp.V;
 
     k = p_thing->U.UPerson.Shadows[0] - (engn_anglexz >> 8);
-    ssh_x = (short)sprshadow_F850[2 * k + 1];
-    ssh_y = (short)-sprshadow_F850[2 * k + 0];
+    ssh_x = sprshadow_F850[2 * k + 1];
+    ssh_y = -sprshadow_F850[2 * k + 0];
     sh_y = (6 * ssh_y + 64) >> 7;
     sh_x = (6 * ssh_x + 64) >> 7; // We will reverse the sign later
     strng = p_thing->U.UPerson.Shadows[1];
@@ -283,11 +285,11 @@ void generate_shadows_for_multicolor_sprites(void)
         if (x > 127)
             x = 127;
         if (x < -128)
-            x = 128;
+            x = -128;
         if (y > 127)
             y = 127;
         if (y < -128)
-            y = 128;
+            y = -128;
 
         sprshadow_F850[2 * i + 0] = x;
         sprshadow_F850[2 * i + 1] = y;
