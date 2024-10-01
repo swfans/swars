@@ -142,4 +142,90 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     p_sp->field_4 = fctr_d;
 }
 
+void process_engine_unk1(void)
+{
+#if 0
+    asm volatile ("call ASM_process_engine_unk1\n"
+        :  :  : "eax" );
+    return;
+#endif
+    int angle;
+
+    dword_176D4C = 0;
+    dword_176D64 = -70;
+    dword_176D3C = vec_window_width / 2;
+    dword_176D40 = vec_window_height / 2;
+    engn_anglexz += dword_176D54;
+    dword_176D44 = 4 * (vec_window_width / 2) / 3;
+    angle = (engn_anglexz >> 5) & LbFPMath_AngleMask;
+    dword_176D0C = angle;
+    dword_176D14 = lbSinTable[angle + LbFPMath_PI/2];
+    dword_176D10 = lbSinTable[angle];
+    angle = dword_152EEC & LbFPMath_AngleMask;
+    dword_176D18 = lbSinTable[angle];
+    dword_176D1C = lbSinTable[angle + LbFPMath_PI/2];
+}
+
+void setup_engine_nullsub4(void)
+{
+}
+
+void calc_mouse_pos(void)
+{
+    asm volatile ("call ASM_calc_mouse_pos\n"
+        :  :  : "eax" );
+}
+
+void process_engine_unk2(void)
+{
+#if 0
+    asm volatile ("call ASM_process_engine_unk2\n"
+        :  :  : "eax" );
+    return;
+#endif
+    short msx, msy;
+    int offs_y;
+    int point_x, point_y;
+    int shift_x, shift_y;
+    int map_xc, map_yc;
+
+    if (ingame.DisplayMode == DpM_UNKN_32)
+      offs_y = overall_scale * engn_yc >> 8;
+    else
+      offs_y = 0;
+    msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+    {
+        point_y = (msy >> 1) - offs_y;
+        point_x = msx >> 1;
+    }
+    else
+    {
+        point_y = msy - offs_y;
+        point_x = msx;
+    }
+    if (dword_176D18 != 0)
+    {
+        int shift_a;
+
+        shift_x = ((point_x - dword_176D3C) << 11) / overall_scale;
+        shift_a = ((point_y - dword_176D40) << 11) / overall_scale;
+        shift_y = -((shift_a << 16) / dword_176D18);
+    }
+    else
+    {
+        shift_x = 0;
+        shift_y = 0;
+    }
+    map_xc =  ((dword_176D14 * shift_x - dword_176D10 * shift_y) >> 16);
+    map_yc = -((dword_176D10 * shift_x + dword_176D14 * shift_y) >> 16);
+    mouse_map_x = engn_xc + map_xc;
+    mouse_map_z = engn_zc + map_yc;
+    if (ingame.DisplayMode == DpM_UNKN_32)
+        calc_mouse_pos();
+    setup_engine_nullsub4();
+}
+
 /******************************************************************************/

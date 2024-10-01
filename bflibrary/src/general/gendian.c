@@ -20,7 +20,9 @@
 /******************************************************************************/
 #include "bfendian.h"
 
-unsigned long blong (unsigned char *p)
+#include <limits.h>
+
+unsigned long blong(unsigned char *p)
 {
     unsigned long n;
     n = p[0];
@@ -30,7 +32,7 @@ unsigned long blong (unsigned char *p)
     return n;
 }
 
-unsigned long llong (unsigned char *p)
+unsigned long llong(unsigned char *p)
 {
     unsigned long n;
     n = p[3];
@@ -40,7 +42,7 @@ unsigned long llong (unsigned char *p)
     return n;
 }
 
-unsigned long bword (unsigned char *p)
+unsigned long bword(unsigned char *p)
 {
     unsigned long n;
     n = p[0];
@@ -48,7 +50,7 @@ unsigned long bword (unsigned char *p)
     return n;
 }
 
-unsigned long lword (unsigned char *p)
+unsigned long lword(unsigned char *p)
 {
     unsigned long n;
     n = p[1];
@@ -104,5 +106,21 @@ int number_of_set_bits(unsigned long i)
     i *= 0x01010101; // horizontal sum of bytes
     // return just that top byte (after truncating to 32-bit even when int is wider)
     return  i >> 24;
+}
+
+u32 bw_rotl32(u32 n, ubyte c)
+{
+    const uint mask = (CHAR_BIT*sizeof(n) - 1);  // assumes width is a power of 2
+
+    c &= mask;
+    return (n<<c) | (n>>( (-c)&mask ));
+}
+
+u32 bw_rotr32(u32 n, ubyte c)
+{
+    const uint mask = (CHAR_BIT*sizeof(n) - 1);
+
+    c &= mask;
+    return (n>>c) | (n<<( (-c)&mask ));
 }
 /******************************************************************************/
