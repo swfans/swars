@@ -42,8 +42,6 @@ extern ubyte sprshadow_F5E0[24];
 extern ubyte sprshadow_F5F8[600];
 extern sbyte sprshadow_F850[512];
 
-#include "game_speed.h"
-
 void draw_person_shadow(ushort face)
 {
 #if 0
@@ -96,12 +94,14 @@ void draw_person_shadow(ushort face)
     ssh_y = -sprshadow_F850[2 * k + 0];
     sh_y = (6 * ssh_y + 64) >> 7;
     sh_x = (6 * ssh_x + 64) >> 7; // We will reverse the sign later
+    sh_x = (overall_scale * sh_x) >> 8;
+    sh_y = (overall_scale * sh_y) >> 8;
     strng = p_thing->U.UPerson.Shadows[1];
     if (strng > 128)
         strng = 128;
     vec_colour = (strng >> 3) + 16;
-    sc_a = (overall_scale * ((strng * sh_y) >> 6)) >> 8;
-    sc_b = (overall_scale * ((strng * sh_x) >> 6)) >> 8;
+    sc_a = (strng * sh_y) >> 6;
+    sc_b = (strng * sh_x) >> 6;
     sh_x = -sh_x;
 
     sspr = &game_sort_sprites[face];
