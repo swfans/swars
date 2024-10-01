@@ -1018,12 +1018,29 @@ void SCANNER_draw_circle_arc_line(int x, int y, ushort sz, short angle, short an
     SCANNER_draw_shape_part_from_points(x, y, points, count, frame, part, col);
 }
 
+ushort SCANNER_scale_size(short base_size)
+{
+    short sz;
+
+    sz = base_size * (900 - ingame.Scanner.Zoom * 2) / 500;
+    if (sz > 15)
+        sz = 15;
+    else if (sz < 1)
+        sz = 1;
+
+    return sz;
+}
+
 void SCANNER_draw_mark_point3_blink2_filled(int x, int y, TbPixel col)
 {
-    ushort frame;
+    ushort frame, sz;
 
     frame = gameturn & 1;
-    SCANNER_draw_circle_line(x, y, 2 * frame + 1, col, true);
+    sz = SCANNER_scale_size(2 * frame + 1);
+    if ((frame == 1) && (sz < 3))
+        sz = 3;
+
+    SCANNER_draw_circle_line(x, y, sz, col, true);
 }
 
 void SCANNER_draw_mark_point7_blink4(int x, int y, TbPixel col)
@@ -1033,10 +1050,16 @@ void SCANNER_draw_mark_point7_blink4(int x, int y, TbPixel col)
       "call ASM_SCANNER_draw_mark_point7_blink4\n"
         : : "a" (x), "d" (y), "b" (col));
 #endif
-    ushort frame;
+    ushort frame, sz;
 
     frame = gameturn & 3;
-    SCANNER_draw_circle_dotted(x, y, 2 * frame + 1, col, false);
+    sz = SCANNER_scale_size(2 * frame + 1);
+    if ((frame == 3) && (sz < 5))
+        sz = 5;
+    else if ((frame == 2) && (sz < 3))
+        sz = 3;
+
+    SCANNER_draw_circle_dotted(x, y, sz, col, false);
 }
 
 void SCANNER_draw_mark_point7(int x, int y, TbPixel col)
@@ -1046,17 +1069,26 @@ void SCANNER_draw_mark_point7(int x, int y, TbPixel col)
       "call ASM_SCANNER_draw_mark_point7\n"
         : : "a" (x), "d" (y), "b" (col));
 #endif
-    SCANNER_draw_circle_dotted(x, y, 7, col, false);
+    ushort sz;
+
+    sz = SCANNER_scale_size(7);
+    if (sz < 5)
+        sz = 5;
+
+    SCANNER_draw_circle_dotted(x, y, sz, col, false);
 }
 
 void SCANNER_draw_circle_point7_flowing(int x, int y, TbPixel col)
 {
-        ushort angle, anpart;
+    ushort angle, anpart, sz;
 
-        angle = (gameturn - 1) * LbFPMath_PI / 8;
-        anpart = 2 * LbFPMath_PI / 5;
+    angle = (gameturn - 1) * LbFPMath_PI / 8;
+    anpart = 2 * LbFPMath_PI / 5;
+    sz = SCANNER_scale_size(7);
+    if (sz < 5)
+        sz = 5;
 
-        SCANNER_draw_circle_arc_line(x, y, 7, angle, anpart, col);
+    SCANNER_draw_circle_arc_line(x, y, sz, angle, anpart, col);
 }
 
 void SCANNER_process_arcpoints(void)
