@@ -23,6 +23,7 @@
 #include "enginbckt.h"
 #include "enginpeff.h"
 #include "enginsngtxtr.h"
+#include "enginshadws.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -187,13 +188,6 @@ void draw_object_face4f(ushort a1)
     asm volatile (
       "call ASM_draw_object_face4f\n"
         : : "a" (a1));
-}
-
-void draw_effect_object_face(ushort face)
-{
-    asm volatile (
-      "call ASM_draw_effect_object_face\n"
-        : : "a" (face));
 }
 
 void draw_shrapnel(ushort shrap)
