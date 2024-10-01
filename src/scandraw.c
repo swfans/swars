@@ -370,6 +370,23 @@ const struct TbPoint circle_line_sz7[] = {
 };
 #define circle_line_sz7_count (sizeof(circle_line_sz7)/sizeof(circle_line_sz7[0]))
 
+/** Points for symmetric circle of size 5.
+ */
+const struct TbPoint circle_line_sz5[] = {
+    { 0,-2},
+    { 1,-2},
+    { 2,-1},
+    { 2, 0},
+    { 2, 1},
+    { 1, 2},
+    { 0, 2},
+    {-1, 2},
+    {-2, 1},
+    {-2, 0},
+    {-2,-1},
+    {-1,-2},
+};
+#define circle_line_sz5_count (sizeof(circle_line_sz5)/sizeof(circle_line_sz5[0]))
 
 extern long scanner_next_key_no;
 
@@ -838,6 +855,7 @@ void SCANNER_draw_circle_line(int x, int y, ushort sz, TbPixel col, TbBool fille
         //  fall through
     case 6:
     case 5:
+        // We could use circle_line_sz5, doing the draw directly is just an optimization
         if (x > ingame.Scanner.X1 + 1)
         {
             LbDrawPixel(x - 2, y - 1, col);
@@ -993,8 +1011,8 @@ void SCANNER_draw_circle_arc_line(int x, int y, ushort sz, short angle, short an
         break;
     case 6:
     case 5:
-        points = NULL;
-        count = 12;
+        points = circle_line_sz5;
+        count = circle_line_sz5_count;
         break;
     case 4:
     case 3:
@@ -1100,16 +1118,16 @@ void SCANNER_process_arcpoints(void)
 
 void SCANNER_draw_orientation_arrow(int pos_x1, int pos_y1, int range, int angle)
 {
-        int x1, y1, x2, y2, len_x, len_y;
+    int x1, y1, x2, y2, len_x, len_y;
 
-        x1 = ((range * lbSinTable[angle]) >> 16) + pos_x1;
-        len_y = (range * lbSinTable[angle]) >> 19;
-        y1 = ((range * -lbSinTable[angle + 512]) >> 16) + pos_y1;
-        len_x = (range * -lbSinTable[angle + 512]) >> 19;
-        x2 = x1 - len_y;
-        y2 = y1 - len_x;
-        LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[1]);
-        LbDrawLine(x1, y1, x2 + len_x, y2 - len_y, colour_lookup[1]);
+    x1 = ((range * lbSinTable[angle]) >> 16) + pos_x1;
+    len_y = (range * lbSinTable[angle]) >> 19;
+    y1 = ((range * -lbSinTable[angle + 512]) >> 16) + pos_y1;
+    len_x = (range * -lbSinTable[angle + 512]) >> 19;
+    x2 = x1 - len_y;
+    y2 = y1 - len_x;
+    LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[1]);
+    LbDrawLine(x1, y1, x2 + len_x, y2 - len_y, colour_lookup[1]);
 }
 
 TbBool thing_visible_on_scanner(struct Thing *p_thing)
