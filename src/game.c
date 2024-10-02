@@ -5071,18 +5071,29 @@ void show_unkn3A_screen(int a1)
     // Empty
 }
 
+void compute_scanner_zoom(void)
+{
+    short zoom, scmin, scmax;
+
+    if (ingame.Scanner.X2 > ingame.Scanner.X1)
+        zoom = 90 * 256 / (ingame.Scanner.X2 - ingame.Scanner.X1);
+    else
+        zoom = 90;
+    scmin = get_overall_scale_min();
+    scmax = get_overall_scale_max();
+    if (scmax > scmin)
+        zoom += 128 * (user_zoom_max - get_unscaled_zoom(overall_scale)) / (scmax - scmin);
+    SCANNER_set_zoom(zoom);
+}
+
 void show_game_engine(void)
 {
     short dcthing;
-    int zoom;
 
     dcthing = players[local_player_no].DirectControl[0];
     process_view_inputs(dcthing);// inlined call gengine_ctrl
 
-    zoom = 90 * 256 / (ingame.Scanner.X2 - ingame.Scanner.X1);
-    zoom += 128 * (user_zoom_max - get_unscaled_zoom(overall_scale)) / (get_overall_scale_max() - get_overall_scale_min());
-    SCANNER_set_zoom(zoom);
-
+    compute_scanner_zoom();
     process_engine_unk1();
     process_engine_unk2();
     process_engine_unk3();
