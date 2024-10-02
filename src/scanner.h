@@ -68,7 +68,7 @@ struct Scanner
   long Angle;
   long Contrast;
   long Brightness;
-  long Width[200]; // offset=ingame+0x034
+  long Width[500]; // offset=ingame+0x034; modified 200 -> 500
   struct BigBlip BigBlip[SCANNER_BIG_BLIP_COUNT];
   struct Arc Arc[SCANNER_ARC_COUNT];
   ubyte Group[SCANNER_GROUP_COUNT];
