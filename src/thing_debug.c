@@ -73,6 +73,46 @@ TbBool thing_debug_selectable(short thing, short type, TbBool hidden)
     return false;
 }
 
+void unused_func_203(short x, short y, short thing, ubyte colkp)
+{
+    short tng_x, tng_y, tng_z;
+
+    if (thing > 0) {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        tng_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
+        tng_y = PRCCOORD_TO_MAPCOORD(p_thing->Y);
+        tng_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    } else {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        tng_x = PRCCOORD_TO_MAPCOORD(p_sthing->X);
+        tng_y = PRCCOORD_TO_MAPCOORD(p_sthing->Y);
+        tng_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+    }
+    unkn_draw_transformed_point(
+      x >> (lbDisplay.GraphicsScreenHeight < 400),
+      y >> (lbDisplay.GraphicsScreenHeight < 400),
+      tng_x, 8 * tng_y, tng_z, colour_lookup[colkp]);
+}
+
+int unused_func_200(short x, short y, ushort group)
+{
+    int ret;
+    asm volatile ("call ASM_unused_func_200\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (group));
+    return ret;
+}
+
+void func_705bc(int a1, int a2, int a3, int a4, int a5, ubyte a6)
+{
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_705bc\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+}
+
 short unused_func_201(short x, short y, short z, short type)
 {
 #if 0
@@ -186,12 +226,147 @@ int select_thing_for_debug(short x, short y, short z, short type)
     return thing;
 }
 
-int unused_func_204(short a1, short a2, short a3, struct Thing *p_person)
+int unused_func_204(short x, short y, ushort cmd, struct Thing *p_person)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_unused_func_204\n"
-        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3), "c" (p_person));
+        : "=r" (ret) : "a" (x), "d" (y), "b" (cmd), "c" (p_person));
     return ret;
+#endif
+    struct Command *p_cmd;
+
+    p_cmd = &game_commands[cmd];
+    switch (p_cmd->Type)
+    {
+    case PCmd_GO_TO_PERSON:
+    case PCmd_FOLLOW_PERSON:
+    case PCmd_SUPPORT_PERSON:
+    case PCmd_PROTECT_PERSON:
+    case PCmd_USE_VEHICLE:
+    case PCmd_WAIT_P_V_DEAD:
+    case PCmd_UNTIL_P_V_DEAD:
+    case PCmd_UNTIL_OBJT_DESTROY:
+    case PCmd_PING_P_V:
+    case PCmd_WAIT_OBJT_DESTROY:
+    case PCmd_WAND_OBJT_DESTROY:
+        unused_func_203(x, y, p_cmd->OtherThing, 1u);
+        return 1;
+    case PCmd_KILL_PERSON:
+    case PCmd_CAMERA_TRACK:
+        unused_func_203(x, y, p_cmd->OtherThing, 2u);
+        return 1;
+    case PCmd_GO_TO_POINT:
+    case PCmd_GOTOPOINT_FACE:
+    case PCmd_RUN_TO_POINT:
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        return 1;
+    case PCmd_KILL_MEM_GROUP:
+    case PCmd_KILL_ALL_GROUP:
+    case PCmd_UNTRUCE_GROUP:
+      if ( (lbShift & 1) != 0 )
+          unused_func_200(x, y, p_cmd->OtherThing);
+      return 1;
+    case PCmd_BLOCK_PERSON:
+    case PCmd_SCARE_PERSON:
+        unused_func_203(x, y, p_cmd->OtherThing, 4u);
+        return 1;
+    case PCmd_PERSUADE_PERSON:
+    case PCmd_GET_ITEM:
+        unused_func_203(x, y, p_cmd->OtherThing, 5u);
+        return 1;
+    case PCmd_USE_WEAPON:
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        return 1;
+    case PCmd_CATCH_FERRY:
+    case PCmd_EXIT_FERRY:
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        if ((p_cmd->Flags & 0x10) != 0) {
+            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+        } else {
+            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        }
+        return 1;
+    case PCmd_PROTECT_MEM_G:
+    case PCmd_WAIT_ALL_G_DEAD:
+    case PCmd_WAND_ALL_G_DEAD:
+        if ((lbShift & 1) != 0)
+            unused_func_200(x, y, p_cmd->OtherThing);
+        return 1;
+    case PCmd_KILL_EVERYONE:
+    case PCmd_WITHIN_AREA:
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        if ((p_cmd->Flags & 0x10) != 0) {
+            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+        } else {
+            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        }
+        return 1;
+    case PCmd_WAIT_P_V_I_NEAR:
+    case PCmd_UNTIL_P_V_I_NEAR:
+        unused_func_203(x, y, p_cmd->OtherThing, 1u);
+        func_711F4(p_person->X >> 8, p_person->Y >> 8, p_person->Z >> 8, p_cmd->Arg1 << 6, 2u);
+        return 1;
+    case PCmd_UNTIL_MEM_G_NEAR:
+    case PCmd_UNTIL_ALL_G_NEAR:
+    case PCmd_WAIT_ALL_G_ARRIVE:
+    case PCmd_WAND_MEM_G_NEAR:
+        if ((lbShift & 1) != 0)
+            unused_func_200(x, y, p_cmd->OtherThing);
+        func_711F4(p_person->X >> 8, p_person->Y >> 8, p_person->Z >> 8, p_cmd->Arg1 << 6, 2u);
+        return 1;
+    case PCmd_UNTIL_P_V_I_ARRIVE:
+    case PCmd_WAIT_P_V_I_ARRIVE:
+    case PCmd_WAND_P_V_I_ARRIVE:
+        unused_func_203(x, y, p_cmd->OtherThing, 1u);
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        if ((p_cmd->Flags & 0x10) != 0) {
+            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+                p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+        } else {
+            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        }
+        return 1;
+    case PCmd_UNTIL_MEM_G_ARRIVE:
+    case PCmd_UNTIL_ALL_G_ARRIVE:
+    case PCmd_WAIT_MEM_G_ARRIVE:
+    case PCmd_WAND_MEM_G_ARRIVE:
+    case PCmd_WAND_ALL_G_ARRIVE:
+        if ((lbShift & 1) != 0)
+            unused_func_200(x, y, p_cmd->OtherThing);
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        if ((p_cmd->Flags & 0x10) != 0) {
+            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+        } else {
+            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        }
+        return 1;
+    default:
+        break;
+    }
+    return 0;
 }
 
 void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
