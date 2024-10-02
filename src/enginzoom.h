@@ -50,6 +50,7 @@ extern ushort render_area_b;
 void zoom_update(short zoom_min, short zoom_max);
 
 ushort get_scaled_zoom(ushort zoom);
+ushort get_unscaled_zoom(ushort szoom);
 int get_weapon_zoom_min(ushort wtype);
 
 short get_overall_scale_min(void);

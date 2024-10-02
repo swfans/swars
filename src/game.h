@@ -242,7 +242,7 @@ struct InGame {
     ubyte UseMultiMedia;
     ubyte AutoResearch;
     ubyte GameOver;
-    struct Scanner Scanner;
+    struct Scanner Scanner; // offset=0x0C
     long Credits;
     short fld_unkC4B;
     short fld_unkC4D;

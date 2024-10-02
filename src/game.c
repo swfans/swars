@@ -1400,15 +1400,6 @@ void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
 }
 
-void func_705bc(int a1, int a2, int a3, int a4, int a5, ubyte a6)
-{
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_func_705bc\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
-}
-
 void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text)
 {
 #if 0
@@ -5080,6 +5071,21 @@ void show_unkn3A_screen(int a1)
     // Empty
 }
 
+void compute_scanner_zoom(void)
+{
+    short zoom, scmin, scmax;
+
+    if (ingame.Scanner.X2 > ingame.Scanner.X1)
+        zoom = 90 * 256 / (ingame.Scanner.X2 - ingame.Scanner.X1);
+    else
+        zoom = 90;
+    scmin = get_overall_scale_min();
+    scmax = get_overall_scale_max();
+    if (scmax > scmin)
+        zoom += 128 * (user_zoom_max - get_unscaled_zoom(overall_scale)) / (scmax - scmin);
+    SCANNER_set_zoom(zoom);
+}
+
 void show_game_engine(void)
 {
     short dcthing;
@@ -5087,7 +5093,7 @@ void show_game_engine(void)
     dcthing = players[local_player_no].DirectControl[0];
     process_view_inputs(dcthing);// inlined call gengine_ctrl
 
-    SCANNER_set_zoom((900 - overall_scale) >> 1);
+    compute_scanner_zoom();
     process_engine_unk1();
     process_engine_unk2();
     process_engine_unk3();

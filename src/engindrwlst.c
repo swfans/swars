@@ -357,7 +357,7 @@ void draw_drawitem_2(ushort dihead)
           draw_object_face4f(itm->Offset);
           break;
       case 19:
-          draw_effect_object_face(itm->Offset);
+          draw_person_shadow(itm->Offset);
           break;
       case 20:
           draw_shrapnel(itm->Offset);

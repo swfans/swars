@@ -1036,11 +1036,13 @@ void SCANNER_draw_circle_arc_line(int x, int y, ushort sz, short angle, short an
     SCANNER_draw_shape_part_from_points(x, y, points, count, frame, part, col);
 }
 
+/** Scale size of dots and curves drawn on the scanner.
+ */
 ushort SCANNER_scale_size(short base_size)
 {
     short sz;
 
-    sz = base_size * (900 - ingame.Scanner.Zoom * 2) / 500;
+    sz = base_size * (450 - ingame.Scanner.Zoom) / 192;
     if (sz > 15)
         sz = 15;
     else if (sz < 1)

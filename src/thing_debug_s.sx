@@ -187,7 +187,7 @@ GLOBAL_FUNC(ASM_draw_unkn_func_07)	/* 0x426fc */
 
 
 /*----------------------------------------------------------------*/
-unused_func_200:	/* 0xb8860 */
+GLOBAL_FUNC(ASM_unused_func_200)	/* 0xb8860 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -587,7 +587,7 @@ unused_func_203:	/* 0xb8c0c */
 		ret
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_unused_func_204)	/* 0xba010 */
+GLOBAL_FUNC(ASM_person_command_dbg_point_to_target)	/* 0xba010 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -626,7 +626,7 @@ GLOBAL_FUNC(ASM_unused_func_204)	/* 0xba010 */
 		xor    %ebx,%ebx
 		sar    $0x10,%edx
 		mov    0x2(%esi),%bx
-		call   unused_func_200
+		call   ac_unused_func_200
 	jump_ba09c:
 		mov    $0x1,%eax
 		add    $0x30,%esp
@@ -934,7 +934,7 @@ GLOBAL_FUNC(ASM_unused_func_204)	/* 0xba010 */
 		xor    %ebx,%ebx
 		sar    $0x10,%edx
 		mov    0x2(%esi),%bx
-		call   unused_func_200
+		call   ac_unused_func_200
 	jump_ba41c:
 		mov    0x18(%esp),%ecx
 		mov    $0x2,%dh
@@ -999,7 +999,7 @@ GLOBAL_FUNC(ASM_unused_func_204)	/* 0xba010 */
 		xor    %ebx,%ebx
 		sar    $0x10,%edx
 		mov    0x2(%esi),%bx
-		call   unused_func_200
+		call   ac_unused_func_200
 		mov    $0x1,%eax
 		add    $0x30,%esp
 		pop    %ebp
@@ -1067,7 +1067,7 @@ GLOBAL_FUNC(ASM_unused_func_204)	/* 0xba010 */
 		xor    %ebx,%ebx
 		sar    $0x10,%edx
 		mov    0x2(%esi),%bx
-		call   unused_func_200
+		call   ac_unused_func_200
 	jump_ba588:
 		mov    0xe(%esi),%ax
 		xor    %ecx,%ecx
@@ -1577,7 +1577,7 @@ GLOBAL_FUNC(ASM_person_commands_debug_hud)	/* 0xba6e4 */
 		mov    0x52(%esp),%eax
 		mov    %ebp,%ecx
 		sar    $0x10,%eax
-		call   ac_unused_func_204
+		call   ac_person_command_dbg_point_to_target
 	jump_bab3e:
 		mov    %esp,%eax
 		movswl %di,%edx

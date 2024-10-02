@@ -96,6 +96,17 @@ ushort get_scaled_zoom(ushort zoom)
         return  h * zoom / 240;
 }
 
+ushort get_unscaled_zoom(ushort szoom)
+{
+    short h;
+
+    h = min(lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+    if (h < 400)
+        return szoom;
+    else
+        return  240 * szoom / h;
+}
+
 int get_weapon_zoom_min(ushort wtype)
 {
     struct WeaponDef *wdef;

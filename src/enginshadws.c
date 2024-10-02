@@ -40,13 +40,13 @@ extern ubyte sprshadow_F370[24];
 extern ubyte sprshadow_F388[600];
 extern ubyte sprshadow_F5E0[24];
 extern ubyte sprshadow_F5F8[600];
-extern ubyte sprshadow_F850[512];
+extern sbyte sprshadow_F850[512];
 
-void draw_effect_object_face(ushort face)
+void draw_person_shadow(ushort face)
 {
-#if 1
+#if 0
     asm volatile (
-      "call ASM_draw_effect_object_face\n"
+      "call ASM_draw_person_shadow\n"
         : : "a" (face));
     return;
 #endif
@@ -90,16 +90,18 @@ void draw_effect_object_face(ushort face)
     point2.pp.V = point1.pp.V;
 
     k = p_thing->U.UPerson.Shadows[0] - (engn_anglexz >> 8);
-    ssh_x = (short)sprshadow_F850[2 * k + 1];
-    ssh_y = (short)-sprshadow_F850[2 * k + 0];
+    ssh_x = sprshadow_F850[2 * k + 1];
+    ssh_y = -sprshadow_F850[2 * k + 0];
     sh_y = (6 * ssh_y + 64) >> 7;
     sh_x = (6 * ssh_x + 64) >> 7; // We will reverse the sign later
+    sh_x = (overall_scale * sh_x) >> 8;
+    sh_y = (overall_scale * sh_y) >> 8;
     strng = p_thing->U.UPerson.Shadows[1];
     if (strng > 128)
         strng = 128;
     vec_colour = (strng >> 3) + 16;
-    sc_a = (overall_scale * ((strng * sh_y) >> 6)) >> 8;
-    sc_b = (overall_scale * ((strng * sh_x) >> 6)) >> 8;
+    sc_a = (strng * sh_y) >> 6;
+    sc_b = (strng * sh_x) >> 6;
     sh_x = -sh_x;
 
     sspr = &game_sort_sprites[face];
@@ -172,40 +174,35 @@ void generate_shadows_for_multicolor_sprites(void)
         :  :  : "eax" );
     return;
 #endif
-    long bkpPhysScrHeight;
-    long bkpGrphScrHeight;
-    long bkpGrphWndwHeight;
-    int v20;
+    struct ScreenBufBkp bkp;
+    int shpak;
     short v23mw;
     short v23hw;
     int v25a;
     int i;
 
-    overall_scale = 256;
-    bkpPhysScrHeight = lbDisplay.PhysicalScreenHeight;
-    bkpGrphScrHeight = lbDisplay.GraphicsScreenHeight;
-    bkpGrphWndwHeight = lbDisplay.GraphicsWindowHeight;
-    lbDisplay.PhysicalScreenHeight = 256;
-    lbDisplay.GraphicsScreenHeight = 256;
-    lbDisplay.GraphicsWindowHeight = 256;
+    // TODO would be better to use some back buffer instead of normal screen buf
+    screen_switch_to_custom_buffer(&bkp, lbDisplay.WScreen,
+      lbDisplay.GraphicsScreenWidth, 256);
+    LbScreenClear(0);
 
-    memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenWidth << 8);
+    overall_scale = 256;
 
     v23hw = 0;
     v25a = 0;
     v23mw = 0;
-    for (v20 = 12; v20 > -1; v20--)
+    for (shpak = 12; shpak > -1; shpak--)
     {
         int base_idx;
         ushort spr;
 
-        base_idx = v20 * 8 * 6;
+        base_idx = shpak * 8 * 6;
         for (spr = 0; spr < 4; spr++)
         {
             ushort fr;
             ushort kk;
 
-            fr = nstart_ani[spr + word_154F4C[v20]];
+            fr = nstart_ani[spr + word_154F4C[shpak]];
             for (kk = 0; kk < 6; kk += 2)
             {
                 int idx;
@@ -283,19 +280,17 @@ void generate_shadows_for_multicolor_sprites(void)
         if (x > 127)
             x = 127;
         if (x < -128)
-            x = 128;
+            x = -128;
         if (y > 127)
             y = 127;
         if (y < -128)
-            y = 128;
+            y = -128;
 
         sprshadow_F850[2 * i + 0] = x;
         sprshadow_F850[2 * i + 1] = y;
     }
 
-    lbDisplay.PhysicalScreenHeight = bkpPhysScrHeight;
-    lbDisplay.GraphicsScreenHeight = bkpGrphScrHeight;
-    lbDisplay.GraphicsWindowHeight = bkpGrphWndwHeight;
+    screen_load_backup_buffer(&bkp);
 }
 
 /******************************************************************************/
