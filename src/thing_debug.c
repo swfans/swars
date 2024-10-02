@@ -226,11 +226,13 @@ int select_thing_for_debug(short x, short y, short z, short type)
     return thing;
 }
 
-int unused_func_204(short x, short y, ushort cmd, struct Thing *p_person)
+/** Make lines to target things or circles around target areas to visualize person command.
+ */
+int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thing *p_person)
 {
 #if 0
     int ret;
-    asm volatile ("call ASM_unused_func_204\n"
+    asm volatile ("call ASM_person_command_dbg_point_to_target\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (cmd), "c" (p_person));
     return ret;
 #endif
@@ -268,7 +270,7 @@ int unused_func_204(short x, short y, ushort cmd, struct Thing *p_person)
     case PCmd_KILL_MEM_GROUP:
     case PCmd_KILL_ALL_GROUP:
     case PCmd_UNTRUCE_GROUP:
-      if ( (lbShift & 1) != 0 )
+      if ((lbShift & KMod_SHIFT) != 0)
           unused_func_200(x, y, p_cmd->OtherThing);
       return 1;
     case PCmd_BLOCK_PERSON:
@@ -301,7 +303,7 @@ int unused_func_204(short x, short y, ushort cmd, struct Thing *p_person)
     case PCmd_PROTECT_MEM_G:
     case PCmd_WAIT_ALL_G_DEAD:
     case PCmd_WAND_ALL_G_DEAD:
-        if ((lbShift & 1) != 0)
+        if ((lbShift & KMod_SHIFT) != 0)
             unused_func_200(x, y, p_cmd->OtherThing);
         return 1;
     case PCmd_KILL_EVERYONE:
@@ -326,7 +328,7 @@ int unused_func_204(short x, short y, ushort cmd, struct Thing *p_person)
     case PCmd_UNTIL_ALL_G_NEAR:
     case PCmd_WAIT_ALL_G_ARRIVE:
     case PCmd_WAND_MEM_G_NEAR:
-        if ((lbShift & 1) != 0)
+        if ((lbShift & KMod_SHIFT) != 0)
             unused_func_200(x, y, p_cmd->OtherThing);
         func_711F4(p_person->X >> 8, p_person->Y >> 8, p_person->Z >> 8, p_cmd->Arg1 << 6, 2u);
         return 1;
@@ -350,7 +352,7 @@ int unused_func_204(short x, short y, ushort cmd, struct Thing *p_person)
     case PCmd_WAIT_MEM_G_ARRIVE:
     case PCmd_WAND_MEM_G_ARRIVE:
     case PCmd_WAND_ALL_G_ARRIVE:
-        if ((lbShift & 1) != 0)
+        if ((lbShift & KMod_SHIFT) != 0)
             unused_func_200(x, y, p_cmd->OtherThing);
         unkn_draw_transformed_point(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
@@ -366,6 +368,7 @@ int unused_func_204(short x, short y, ushort cmd, struct Thing *p_person)
     default:
         break;
     }
+    // TODO here we could add some general handling of simple commands, based on flags
     return 0;
 }
 
@@ -471,7 +474,7 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
             }
 #endif
             if (p_person != NULL)
-                unused_func_204(box_x + 8 - 20, cy + 5, cmd, p_person);
+                person_command_dbg_point_to_target(box_x + 8 - 20, cy + 5, cmd, p_person);
             if (person_command_to_text(locstr, cmd, 0))
                 draw_text(box_x + 8, cy, locstr, col2);
             else

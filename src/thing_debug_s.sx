@@ -587,7 +587,7 @@ unused_func_203:	/* 0xb8c0c */
 		ret
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_unused_func_204)	/* 0xba010 */
+GLOBAL_FUNC(ASM_person_command_dbg_point_to_target)	/* 0xba010 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -1577,7 +1577,7 @@ GLOBAL_FUNC(ASM_person_commands_debug_hud)	/* 0xba6e4 */
 		mov    0x52(%esp),%eax
 		mov    %ebp,%ecx
 		sar    $0x10,%eax
-		call   ac_unused_func_204
+		call   ac_person_command_dbg_point_to_target
 	jump_bab3e:
 		mov    %esp,%eax
 		movswl %di,%edx
