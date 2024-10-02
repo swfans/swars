@@ -174,40 +174,35 @@ void generate_shadows_for_multicolor_sprites(void)
         :  :  : "eax" );
     return;
 #endif
-    long bkpPhysScrHeight;
-    long bkpGrphScrHeight;
-    long bkpGrphWndwHeight;
-    int v20;
+    struct ScreenBufBkp bkp;
+    int shpak;
     short v23mw;
     short v23hw;
     int v25a;
     int i;
 
-    overall_scale = 256;
-    bkpPhysScrHeight = lbDisplay.PhysicalScreenHeight;
-    bkpGrphScrHeight = lbDisplay.GraphicsScreenHeight;
-    bkpGrphWndwHeight = lbDisplay.GraphicsWindowHeight;
-    lbDisplay.PhysicalScreenHeight = 256;
-    lbDisplay.GraphicsScreenHeight = 256;
-    lbDisplay.GraphicsWindowHeight = 256;
+    // TODO would be better to use some back buffer instead of normal screen buf
+    screen_switch_to_custom_buffer(&bkp, lbDisplay.WScreen,
+      lbDisplay.GraphicsScreenWidth, 256);
+    LbScreenClear(0);
 
-    memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenWidth << 8);
+    overall_scale = 256;
 
     v23hw = 0;
     v25a = 0;
     v23mw = 0;
-    for (v20 = 12; v20 > -1; v20--)
+    for (shpak = 12; shpak > -1; shpak--)
     {
         int base_idx;
         ushort spr;
 
-        base_idx = v20 * 8 * 6;
+        base_idx = shpak * 8 * 6;
         for (spr = 0; spr < 4; spr++)
         {
             ushort fr;
             ushort kk;
 
-            fr = nstart_ani[spr + word_154F4C[v20]];
+            fr = nstart_ani[spr + word_154F4C[shpak]];
             for (kk = 0; kk < 6; kk += 2)
             {
                 int idx;
@@ -295,9 +290,7 @@ void generate_shadows_for_multicolor_sprites(void)
         sprshadow_F850[2 * i + 1] = y;
     }
 
-    lbDisplay.PhysicalScreenHeight = bkpPhysScrHeight;
-    lbDisplay.GraphicsScreenHeight = bkpGrphScrHeight;
-    lbDisplay.GraphicsWindowHeight = bkpGrphWndwHeight;
+    screen_load_backup_buffer(&bkp);
 }
 
 /******************************************************************************/
