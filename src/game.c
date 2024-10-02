@@ -5074,11 +5074,15 @@ void show_unkn3A_screen(int a1)
 void show_game_engine(void)
 {
     short dcthing;
+    int zoom;
 
     dcthing = players[local_player_no].DirectControl[0];
     process_view_inputs(dcthing);// inlined call gengine_ctrl
 
-    SCANNER_set_zoom((900 - overall_scale) >> 1);
+    zoom = 90 * 256 / (ingame.Scanner.X2 - ingame.Scanner.X1);
+    zoom += 128 * (user_zoom_max - get_unscaled_zoom(overall_scale)) / (get_overall_scale_max() - get_overall_scale_min());
+    SCANNER_set_zoom(zoom);
+
     process_engine_unk1();
     process_engine_unk2();
     process_engine_unk3();
