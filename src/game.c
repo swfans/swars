@@ -5081,8 +5081,9 @@ void compute_scanner_zoom(void)
         zoom = 90;
     scmin = get_overall_scale_min();
     scmax = get_overall_scale_max();
-    if (scmax > scmin)
-        zoom += 128 * (user_zoom_max - get_unscaled_zoom(overall_scale)) / (scmax - scmin);
+    if (scmax <= scmin)
+        scmin = scmax - 1;
+    zoom += 128 * (user_zoom_max - get_unscaled_zoom(overall_scale)) / (scmax - scmin);
     SCANNER_set_zoom(zoom);
 }
 
