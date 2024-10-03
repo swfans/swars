@@ -75,12 +75,12 @@ void draw_noise_box(short x, short y, ushort w, ushort h)
 }
 
 //TODO add tests for this function
-void poly_line(struct PolyPoint *point1, struct PolyPoint *point2)
+void poly_line(struct PolyPoint *point_a, struct PolyPoint *point_b)
 {
 #if 0
     asm volatile (
       "call ASM_poly_line\n"
-        :  : "a" (point1), "d" (point2));
+        :  : "a" (point_a), "d" (point_b));
     return;
 #endif
     TbPixel *obuf;
@@ -89,10 +89,10 @@ void poly_line(struct PolyPoint *point1, struct PolyPoint *point2)
     short x1, y1;
     short dt_x;
 
-    x1 = point1->X;
-    y1 = point1->Y;
-    x2 = point2->X;
-    y2 = point2->Y;
+    x1 = point_a->X;
+    y1 = point_a->Y;
+    x2 = point_b->X;
+    y2 = point_b->Y;
 
     if (y1 < 0)
     {
@@ -103,10 +103,10 @@ void poly_line(struct PolyPoint *point1, struct PolyPoint *point2)
     }
     else if (y2 < 0)
     {
-        y2 = point1->Y;
-        y1 = point2->Y;
-        x1 = point2->X;
-        x2 = point1->X;
+        y2 = point_a->Y;
+        y1 = point_b->Y;
+        x1 = point_b->X;
+        x2 = point_a->X;
 
         if (y2 < 0)
             return;
@@ -155,10 +155,10 @@ void poly_line(struct PolyPoint *point1, struct PolyPoint *point2)
     {
         if (y2 >= vec_window_height)
             return;
-        y2 = point1->Y;
-        y1 = point2->Y;
-        x1 = point2->X;
-        x2 = point1->X;
+        y2 = point_a->Y;
+        y1 = point_b->Y;
+        x1 = point_b->X;
+        x2 = point_a->X;
     }
 
     if (y1 >= vec_window_height) {
