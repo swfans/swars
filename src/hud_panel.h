@@ -47,6 +47,11 @@ struct Thing;
 /******************************************************************************/
 extern struct GamePanel *game_panel;
 extern ubyte byte_153198;
+extern long scanner_unkn370;
+
+extern char player_unknCC9[8][128];
+extern ubyte player_unkn0C9[8];
+extern long scanner_unkn3CC;
 
 void draw_new_panel(void);
 

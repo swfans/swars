@@ -29,6 +29,8 @@
 #include "engintrns.h"
 #include "game_speed.h"
 #include "game.h"
+#include "lvobjctv.h"
+#include "mydraw.h"
 #include "player.h"
 #include "scandraw.h"
 #include "thing.h"
@@ -56,6 +58,113 @@ void update_dropped_item_under_agent_exists(struct Thing *p_agent)
         }
     }
 }
+
+void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
+{
+    int xwind_beg;
+    int xwind_end;
+    int xwind_start;
+    sbyte *inp;
+    ubyte *oline;
+    int opitch;
+    int h;
+    TbBool needs_window_bounding;
+
+    xwind_beg = lbDisplay.GraphicsWindowX;
+    xwind_end = lbDisplay.GraphicsWindowX + lbDisplay.GraphicsWindowWidth;
+    xwind_start = lbDisplay.GraphicsWindowX + x;
+    inp = (sbyte *)spr->Data;
+    opitch = lbDisplay.GraphicsScreenWidth;
+    oline = &lbDisplay.WScreen[opitch * (lbDisplay.GraphicsWindowY + y) + lbDisplay.GraphicsWindowX + x];
+    if (xwind_start < lbDisplay.GraphicsWindowX) {
+        if (xwind_start + 2 * spr->SWidth <= lbDisplay.GraphicsWindowX)
+            return;
+        needs_window_bounding = true;
+    } else {
+        if (xwind_start >= xwind_end)
+            return;
+        needs_window_bounding = (xwind_start + 2 * spr->SWidth > xwind_end);
+    }
+
+    if (!needs_window_bounding)
+    {
+        // Simplified and faster drawing when we do not have to check bounds
+        for (h = 0; h < spr->SHeight; h++)
+        {
+            ubyte *o;
+
+            o = oline;
+            while (*inp)
+            {
+                int ival;
+                int i;
+
+                ival = *inp;
+                if (ival < 0)
+                {
+                    inp++;
+                    o -= 2 * ival;
+                    continue;
+                }
+                inp += ival + 1;
+                for (i = 0; i < ival; i++)
+                {
+                    o[0] = col;
+                    o[opitch + 0] = col;
+                    o[1] = col;
+                    o[opitch + 1] = col;
+                    o += 2;
+                }
+            }
+            inp++;
+            oline += 2 * opitch;
+        }
+    }
+    else
+    {
+        for (h = 0; h < spr->SHeight; h++)
+        {
+            ubyte *o;
+            int xwind_curr;
+
+            o = oline;
+            xwind_curr = xwind_start;
+            while (*inp)
+            {
+                int ival;
+                int i;
+
+                ival = *inp;
+                if (ival < 0)
+                {
+                    inp++;
+                    o -= 2 * ival;
+                    xwind_curr -= 2 * ival;
+                    continue;
+                }
+                inp += ival + 1;
+                for (i = 0; i < ival; i++)
+                {
+                    if (xwind_curr >= xwind_beg && xwind_curr < xwind_end) {
+                        o[0] = col;
+                        o[opitch] = col;
+                    }
+                    xwind_curr++;
+                    o++;
+                    if (xwind_curr >= xwind_beg && xwind_curr < xwind_end) {
+                        o[0] = col;
+                        o[opitch] = col;
+                    }
+                    xwind_curr++;
+                    o++;
+                }
+            }
+            inp++;
+            oline += 2 * opitch;
+        }
+    }
+}
+
 
 void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
 {
@@ -165,11 +274,242 @@ void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
 }
 
+int SCANNER_text_draw(const char *text, int start_x)
+{
+    const ubyte *str;
+    struct TbSprite *spr;
+    int x;
+    ubyte sel_c1;
+    ubyte ch;
+    TbPixel col;
+
+    str = (const ubyte *)text;
+    sel_c1 = SCANNER_colour[0];
+    x = start_x;
+    if (lbDisplay.GraphicsScreenHeight >= 400)
+    {
+      while (*str != '\0')
+      {
+        if (*str == '\1') {
+          str++;
+          sel_c1 = *str;
+        } else {
+          ch = my_char_to_upper(*str);
+          col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
+          spr = &small_font[ch - 31];
+          SCANNER_unkn_func_200(spr, x, 2, col);
+          x += spr->SWidth + spr->SWidth;
+        }
+        str++;
+      }
+    }
+    else
+    {
+      while (*str != '\0')
+      {
+        if (*str == '\1') {
+          str++;
+          sel_c1 = *str;
+        } else {
+          ch = my_char_to_upper(*str);
+          col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
+          spr = &small_font[ch - 31];
+          LbSpriteDrawOneColour(x, 1, spr, col);
+          x += spr->SWidth;
+        }
+        str++;
+      }
+    }
+    return x;
+}
+
 void SCANNER_unkn_func_204(int a1, int a2, int a3)
 {
+#if 0
     asm volatile (
       "call ASM_SCANNER_unkn_func_204\n"
         : : "a" (a1), "d" (a2), "b" (a3));
+#endif
+    int v36;
+    int v48;
+    int end_pos;
+    struct TbAnyWindow bkpwnd;
+    int height;
+    int i;
+
+    height = lbDisplay.GraphicsScreenHeight >= 400 ? 18 : 9;
+    v48 = a2;
+    v36 = a3 + a1 - 1;
+    for (i = 0; i < height; i++)
+    {
+        SCANNER_unkn_func_203(a1, v48, v36, v48, SCANNER_colour[0],
+          ingame.Scanner.Brightness, ingame.Scanner.Contrast);
+        ++v48;
+    }
+
+    LbScreenStoreGraphicsWindow(&bkpwnd);
+    LbScreenSetGraphicsWindow(a1 + 1, a2, a3 - 2, height);
+
+    end_pos = SCANNER_text_draw(scroll_text, scanner_unkn3CC);
+
+    if ( in_network_game && players[local_player_no].PanelState[mouser] == 17 )
+    {
+      if ( end_pos < lbDisplay.PhysicalScreenWidth - (lbDisplay.PhysicalScreenWidth >> 2) )
+        scanner_unkn370 = -20;
+      if (end_pos > lbDisplay.PhysicalScreenWidth - 16)
+          scanner_unkn370 = 10;
+      if (scanner_unkn370 > 0)
+      {
+          scanner_unkn370--;
+          scanner_unkn3CC -= 2;
+      }
+      if (scanner_unkn370 < 0)
+      {
+          scanner_unkn370++;
+          scanner_unkn3CC += 2;
+          if (scanner_unkn3CC > 0)
+              scanner_unkn3CC = 0;
+      }
+    }
+    else
+    {
+        if (end_pos < 0)
+            scanner_unkn3CC = a3;
+        scanner_unkn3CC -= 4;
+    }
+
+    LbScreenLoadGraphicsWindow(&bkpwnd);
+
+    if (in_network_game)
+    {
+        char locstr[164];
+        int plyr;
+        int base_x;
+        int pos_x, pos_y;
+
+        if (lbDisplay.GraphicsScreenHeight >= 400) {
+            pos_y = 51;
+            base_x = 22;
+        } else {
+            pos_y = 25;
+            base_x = 11;
+        }
+
+        for (plyr = 0; plyr < 8; plyr++)
+        {
+            char *plname;
+            char *str;
+            int fd;
+            int base_shift;
+            TbPixel col2;
+
+            if (player_unkn0C9[plyr] == 0)
+                continue;
+
+            plname = unkn2_names[plyr * 16];
+            col2 = byte_1C5C30[plyr];
+            if (player_unknCC9[plyr][0] != '\0')
+            {
+                if (plname[0] != '\0')
+                    sprintf(locstr, "%s: %s", plname, player_unknCC9[plyr]);
+                else
+                    sprintf(locstr, "%s", player_unknCC9[plyr]);
+            }
+            else
+            {
+                sprintf(locstr, "%s said nothing.", plname);
+            }
+
+            str = locstr;
+            if (lbDisplay.GraphicsScreenHeight >= 400)
+            {
+                pos_x = base_x;
+                base_shift = -180;
+                while (*str != 0)
+                {
+                  if (*str == 32)
+                  {
+                      if (pos_x + 2 * font_word_length(str + 1) < lbDisplay.PhysicalScreenWidth - 16) {
+                          pos_x += 8;
+                      } else {
+                          pos_x = base_x;
+                          pos_y += 12;
+                      }
+                  }
+                  else
+                  {
+                      struct TbSprite *spr;
+                      ubyte ch;
+                      TbPixel col1;
+
+                      ch = my_char_to_upper(*str);
+                      spr = &small_font[ch - 31];
+                      fd = base_shift + 4 * player_unkn0C9[plyr];
+                      if (fd > 63)
+                          fd = 63 - (fd - 63);
+                      if (fd > 63)
+                          fd = 63;
+                      if (fd < 0)
+                          fd = 0;
+                      col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
+                      SCANNER_unkn_func_200(spr, pos_x + 1, pos_y + 1, col1);
+                      SCANNER_unkn_func_200(spr, pos_x, pos_y, col2);
+                      pos_x += spr->SWidth + spr->SWidth;
+                  }
+                  str++;
+                  base_shift++;
+                }
+                pos_y += 12;
+            }
+            else
+            {
+              pos_x = base_x;
+              if (*str != 0)
+              {
+                base_shift = -180;
+                while (*str != 0)
+                {
+                  if (*str == 32)
+                  {
+                      if (font_word_length(str + 1) + pos_x < lbDisplay.PhysicalScreenWidth - 8) {
+                          pos_x += 4;
+                      } else {
+                          pos_x = base_x;
+                          pos_y += 6;
+                      }
+                  }
+                  else
+                  {
+                      struct TbSprite *spr;
+                      ubyte ch;
+                      TbPixel col1;
+
+                      ch = my_char_to_upper(*str);
+                      spr = &small_font[ch - 31];
+                      fd = base_shift + 4 * (ubyte)player_unkn0C9[plyr];
+                      if (fd > 63)
+                          fd = 63 - (fd - 63);
+                      if (fd > 63)
+                          fd = 63;
+                      if (fd < 0)
+                          fd = 0;
+                      col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
+                      LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, spr, col1);
+                      LbSpriteDrawOneColour(pos_x, pos_y, spr, col2);
+                      pos_x += spr->SWidth;
+                  }
+                  str++;
+                  base_shift++;
+                }
+              }
+              pos_y += 6;
+            }
+
+            if ( !--player_unkn0C9[plyr] ) {
+                player_unknCC9[plyr][0] = '\0';
+            }
+        }
+    }
 }
 
 void SCANNER_unkn_func_205(void)

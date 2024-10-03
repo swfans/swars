@@ -408,12 +408,10 @@ extern long dword_1DBB64[];
 extern long dword_1DBB6C[512];
 extern TbPixel *SCANNER_screenptr;
 extern ulong SCANNER_keep_arcs;
-extern ubyte SCANNER_colour[5];
 extern long scanner_blink; // = 1;
 
 extern struct scanstr3 SCANNER_arcpoint[20];
 extern TbPixel SCANNER_people_colours[15];
-extern ubyte byte_1C5C30[8];
 
 void SCANNER_process_special_input(void)
 {
