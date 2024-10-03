@@ -35,6 +35,8 @@ extern ulong turn_last; // = 999;
 extern ulong SCANNER_keep_arcs;
 extern ulong dword_1DB1A0;
 
+ushort SCANNER_user_zoom_factor = 192;
+
 void SCANNER_set_zoom(int zoom)
 {
     if (zoom < 50)
