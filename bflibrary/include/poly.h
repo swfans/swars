@@ -111,10 +111,11 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
 void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b,
   struct PolyPoint *point_c);
 
+void poly_line(struct PolyPoint *point_a, struct PolyPoint *point_b);
+
 #if 0
 
 int render_table();
-int poly_line();
 #endif
 
 #ifdef __cplusplus
