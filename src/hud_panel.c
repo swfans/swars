@@ -59,6 +59,19 @@ void update_dropped_item_under_agent_exists(struct Thing *p_agent)
     }
 }
 
+int SCANNER_objective_info_height(void)
+{
+    int h;
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        return 9;
+    h = 18 * lbDisplay.GraphicsScreenHeight / 400;
+
+    h -= (h % 9);
+
+    return h;
+}
+
 void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
 {
     int xwind_beg;
@@ -323,39 +336,37 @@ int SCANNER_text_draw(const char *text, int start_x)
     return x;
 }
 
-void SCANNER_unkn_func_204(int a1, int a2, int a3)
+void SCANNER_draw_objective_info(int x, int y, int width)
 {
 #if 0
     asm volatile (
-      "call ASM_SCANNER_unkn_func_204\n"
-        : : "a" (a1), "d" (a2), "b" (a3));
+      "call ASM_SCANNER_draw_objective_info\n"
+        : : "a" (x), "d" (y), "b" (width));
 #endif
-    int v36;
     int v48;
     int end_pos;
     struct TbAnyWindow bkpwnd;
     int height;
     int i;
 
-    height = lbDisplay.GraphicsScreenHeight >= 400 ? 18 : 9;
-    v48 = a2;
-    v36 = a3 + a1 - 1;
+    height = SCANNER_objective_info_height();
+    v48 = y;
     for (i = 0; i < height; i++)
     {
-        SCANNER_unkn_func_203(a1, v48, v36, v48, SCANNER_colour[0],
+        SCANNER_unkn_func_203(x, v48, x + width - 1, v48, SCANNER_colour[0],
           ingame.Scanner.Brightness, ingame.Scanner.Contrast);
         ++v48;
     }
 
     LbScreenStoreGraphicsWindow(&bkpwnd);
-    LbScreenSetGraphicsWindow(a1 + 1, a2, a3 - 2, height);
+    LbScreenSetGraphicsWindow(x + 1, y, width - 2, height);
 
     end_pos = SCANNER_text_draw(scroll_text, scanner_unkn3CC);
 
     if ( in_network_game && players[local_player_no].PanelState[mouser] == 17 )
     {
       if ( end_pos < lbDisplay.PhysicalScreenWidth - (lbDisplay.PhysicalScreenWidth >> 2) )
-        scanner_unkn370 = -20;
+          scanner_unkn370 = -20;
       if (end_pos > lbDisplay.PhysicalScreenWidth - 16)
           scanner_unkn370 = 10;
       if (scanner_unkn370 > 0)
@@ -374,7 +385,7 @@ void SCANNER_unkn_func_204(int a1, int a2, int a3)
     else
     {
         if (end_pos < 0)
-            scanner_unkn3CC = a3;
+            scanner_unkn3CC = width;
         scanner_unkn3CC -= 4;
     }
 
@@ -464,11 +475,9 @@ void SCANNER_unkn_func_204(int a1, int a2, int a3)
             else
             {
               pos_x = base_x;
-              if (*str != 0)
+              base_shift = -180;
+              while (*str != 0)
               {
-                base_shift = -180;
-                while (*str != 0)
-                {
                   if (*str == 32)
                   {
                       if (font_word_length(str + 1) + pos_x < lbDisplay.PhysicalScreenWidth - 8) {
@@ -500,7 +509,6 @@ void SCANNER_unkn_func_204(int a1, int a2, int a3)
                   }
                   str++;
                   base_shift++;
-                }
               }
               pos_y += 6;
             }
@@ -1623,10 +1631,7 @@ void draw_new_panel(void)
         x = ingame.Scanner.X1 - 1;
         if (x < 0)
             x = 0;
-        if (lbDisplay.GraphicsScreenWidth >= 640)
-            y = lbDisplay.GraphicsScreenHeight - 18;
-        else
-            y = lbDisplay.GraphicsScreenHeight - 9;
+        y = lbDisplay.GraphicsScreenHeight - SCANNER_objective_info_height();
         if (in_network_game) {
             SCANNER_unkn_func_205();
             w = lbDisplay.PhysicalScreenWidth;
@@ -1634,7 +1639,7 @@ void draw_new_panel(void)
             // original width 67 low res, 132 high res
             w = ingame.Scanner.X2 - ingame.Scanner.X1 + 3;
         }
-        SCANNER_unkn_func_204(x, y, w);
+        SCANNER_draw_objective_info(x, y, w);
     }
 
     // Thermal vision button light

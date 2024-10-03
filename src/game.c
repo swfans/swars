@@ -3165,12 +3165,11 @@ void srm_scanner_size_update(void)
 
     width = lbDisplay.GraphicsScreenWidth * scanner_width_pct / 100;
     height = lbDisplay.GraphicsScreenHeight * scanner_height_pct / 100;
+    margin = SCANNER_objective_info_height() + 2;
     if (lbDisplay.GraphicsScreenWidth >= 640) {
-        margin = 20;
         width = width * 101 / 100;
         height = height * 99 / 100;
     } else {
-        margin = 11;
         // width without change
         height = height * 124 / 100;
     }
