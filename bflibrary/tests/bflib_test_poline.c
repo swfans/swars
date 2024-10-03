@@ -19,8 +19,6 @@
 /******************************************************************************/
 #include "poly.h"
 
-#define STANDALONE_TEST 0
-
 #include "../tests/helpers_screen.h"
 #include "../tests/mock_bfmouse.h"
 #include "../tests/mock_bfpalette.h"
@@ -34,11 +32,7 @@
 #include "bfpng.h"
 #include "bfgentab.h"
 #include "bfutility.h"
-#if STANDALONE_TEST
 #include "bftstlog.h"
-#else
-#include "swlog.h"
-#endif
 
 #include <SDL.h>
 
@@ -143,12 +137,10 @@ TbBool test_polyline(void)
     TbPixel *ref_buffer;
     ulong picno;
 
-#if STANDALONE_TEST
     if (LbErrorLogSetup(NULL, "tst_pline.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
         LOGERR("execution log setup failed");
         return false;
     }
-#endif
 
     if (MockBaseInitialise() != Lb_SUCCESS) {
         LOGERR("bullfrog Library initialization failed");
@@ -226,13 +218,11 @@ TbBool test_polyline(void)
     return true;
 }
 
-#if STANDALONE_TEST
 int main(int argc, char *argv[])
 {
     if (!test_polyline())
         exit(51);
     exit(0);
 }
-#endif
 
 /******************************************************************************/
