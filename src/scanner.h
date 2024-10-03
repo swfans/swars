@@ -81,6 +81,8 @@ struct Scanner
 /******************************************************************************/
 extern long *SCANNER_width;
 extern ubyte SCANNER_data[256][256];
+extern ushort SCANNER_base_zoom_factor;
+extern ushort SCANNER_user_zoom_factor;
 
 extern short waft_table2[32];
 extern short waft_table[32];

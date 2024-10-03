@@ -1063,17 +1063,19 @@ void SCANNER_draw_mark_point3_blink2_filled(int x, int y, TbPixel col)
     SCANNER_draw_circle_line(x, y, sz, col, true);
 }
 
-void SCANNER_draw_mark_point7_blink4(int x, int y, TbPixel col)
+void SCANNER_draw_mark_point5_blink4(int x, int y, TbPixel col)
 {
 #if 0
     asm volatile (
-      "call ASM_SCANNER_draw_mark_point7_blink4\n"
+      "call ASM_SCANNER_draw_mark_point5_blink4\n"
         : : "a" (x), "d" (y), "b" (col));
 #endif
     ushort frame, sz;
 
     frame = gameturn & 3;
-    sz = SCANNER_scale_size(2 * frame + 1);
+    if (frame == 0)
+        return;
+    sz = SCANNER_scale_size(2 * (frame - 1) + 1);
     if ((frame == 3) && (sz < 5))
         sz = 5;
     else if ((frame == 2) && (sz < 3))
@@ -1506,9 +1508,9 @@ void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int
         else
         {
             if (in_network_game)
-                SCANNER_draw_mark_point7_blink4(x, y, byte_1C5C30[p_thing->U.UPerson.ComCur >> 2]);
+                SCANNER_draw_mark_point5_blink4(x, y, byte_1C5C30[p_thing->U.UPerson.ComCur >> 2]);
             else
-                SCANNER_draw_mark_point7_blink4(x, y, col);
+                SCANNER_draw_mark_point5_blink4(x, y, col);
         }
     }
     if ((gameturn & 7) == 0)
