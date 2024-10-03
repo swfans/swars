@@ -35,12 +35,13 @@ extern ulong turn_last; // = 999;
 extern ulong SCANNER_keep_arcs;
 extern ulong dword_1DB1A0;
 
+ushort SCANNER_base_zoom_factor = 180;
 ushort SCANNER_user_zoom_factor = 192;
 
 void SCANNER_set_zoom(int zoom)
 {
-    if (zoom < 50)
-        ingame.Scanner.Zoom = 50;
+    if (zoom < 8)
+        ingame.Scanner.Zoom = 8;
     else if (zoom > 556)
         ingame.Scanner.Zoom = 556;
     else

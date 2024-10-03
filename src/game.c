@@ -5076,9 +5076,9 @@ void compute_scanner_zoom(void)
     short zoom, scmin, scmax;
 
     if (ingame.Scanner.X2 > ingame.Scanner.X1)
-        zoom = 90 * 256 / (ingame.Scanner.X2 - ingame.Scanner.X1);
+        zoom = SCANNER_base_zoom_factor * 128 / (ingame.Scanner.X2 - ingame.Scanner.X1);
     else
-        zoom = 90;
+        zoom = SCANNER_base_zoom_factor;
     scmin = get_overall_scale_min();
     scmax = get_overall_scale_max();
     if (scmax <= scmin)

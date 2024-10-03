@@ -41,10 +41,12 @@ const struct TbNamedEnum rules_conf_engine_cmnds[] = {
 };
 
 enum RulesScannerConfigCmd {
-    RScanrCmd_UserZoomFactor = 1,
+    RScanrCmd_BaseZoomFactor = 1,
+    RScanrCmd_UserZoomFactor = 2,
 };
 
 const struct TbNamedEnum rules_conf_scanner_cmnds[] = {
+  {"BaseZoomFactor",RScanrCmd_BaseZoomFactor},
   {"UserZoomFactor",RScanrCmd_UserZoomFactor},
   {NULL,			0},
 };
@@ -189,6 +191,15 @@ TbBool read_rules_file(void)
         // Now store the config item in correct place
         switch (cmd_num)
         {
+        case RScanrCmd_BaseZoomFactor:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            SCANNER_base_zoom_factor = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)SCANNER_base_zoom_factor);
+            break;
         case RScanrCmd_UserZoomFactor:
             i = LbIniValueGetLongInt(&parser, &k);
             if (i <= 0) {
