@@ -35,11 +35,12 @@
 TbBool debug_hud_things = false;
 
 extern ubyte execute_commands;
-extern struct Thing *p_track_thing;
-extern struct Thing *p_track2_thing;
-extern int dword_1DC7A4;
-extern short word_1DC7A0;
-extern short word_1DC7A2;
+
+struct Thing *p_track_thing = NULL;
+struct Thing *p_track2_thing = NULL;
+int dword_1DC7A4 = 0;
+short word_1DC7A0 = 0;
+short word_1DC7A2 = 0;
 
 TbBool thing_debug_selectable(short thing, short type, TbBool hidden)
 {
@@ -115,12 +116,6 @@ void func_705bc(int a1, int a2, int a3, int a4, int a5, ubyte a6)
 
 short unused_func_201(short x, short y, short z, short type)
 {
-#if 0
-    short ret;
-    asm volatile ("call ASM_unused_func_201\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
-    return ret;
-#endif
     ulong sel_dist;
     short sel_thing;
     short shift_x, shift_z;
@@ -191,12 +186,6 @@ short unused_func_201(short x, short y, short z, short type)
 
 int select_thing_for_debug(short x, short y, short z, short type)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_select_thing_for_debug\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
-    return ret;
-#endif
     ThingIdx thing;
     short alt;
     char locstr[52];
@@ -230,12 +219,6 @@ int select_thing_for_debug(short x, short y, short z, short type)
  */
 int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thing *p_person)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_person_command_dbg_point_to_target\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (cmd), "c" (p_person));
-    return ret;
-#endif
     struct Command *p_cmd;
 
     p_cmd = &game_commands[cmd];
@@ -383,16 +366,6 @@ void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
 // TODO separate get_person_commands_debug_hud_inputs() from the below
 void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyte col1, ubyte col2, ubyte col3)
 {
-#if 0
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_person_commands_debug_hud\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (person), "g" (col1), "g" (col2), "g" (col3));
-    return;
-#endif
     struct Thing *p_person;
     ushort cmds_count;
     short cmd, cmdhead;
@@ -496,11 +469,6 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
 
 void things_debug_hud(void)
 {
-#if 0
-    asm volatile ("call ASM_things_debug_hud\n"
-        :  :  : "eax" );
-    return;
-#endif
     ThingIdx thing;
     short path;
     short pasngr;
