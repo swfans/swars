@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "bfscreen.h"
 #include "bfline.h"
 #include "bfutility.h"
@@ -87,6 +88,7 @@ void poly_line(struct PolyPoint *point_a, struct PolyPoint *point_b)
     ushort i;
     short x2, y2;
     short x1, y1;
+    short chk_y;
     short dt_x;
 
     x1 = point_a->X;
@@ -98,6 +100,7 @@ void poly_line(struct PolyPoint *point_a, struct PolyPoint *point_b)
     {
         if (y2 < 0)
             return;
+        chk_y = y2;
         x1 += -y1 * (x2 - x1) / (y2 - y1);
         y1 = 0;
     }
@@ -110,6 +113,7 @@ void poly_line(struct PolyPoint *point_a, struct PolyPoint *point_b)
 
         if (y2 < 0)
             return;
+        chk_y = y2;
         x1 += -y1 * (x2 - x1) / (y2 - y1);
         y1 = 0;
     }
@@ -150,18 +154,20 @@ void poly_line(struct PolyPoint *point_a, struct PolyPoint *point_b)
     {
         if (y1 >= vec_window_height)
             return;
+        chk_y = y2;
     }
     else
     {
         if (y2 >= vec_window_height)
             return;
+        chk_y = y1;
         y2 = point_a->Y;
         y1 = point_b->Y;
         x1 = point_b->X;
         x2 = point_a->X;
     }
 
-    if (y1 >= vec_window_height) {
+    if (chk_y >= vec_window_height) {
         x2 = x1 + (vec_window_height - y1) * (x2 - x1) / (y2 - y1);
         y2 = vec_window_height - 1;
     }
@@ -252,37 +258,38 @@ void poly_line(struct PolyPoint *point_a, struct PolyPoint *point_b)
     }
 
     {
-        ushort v6;
-        ushort v7;
+        ushort dist_x, dist_y;
         short v9;
         short v10;
         short v11;
-        int dt_buf;
+        int dt_buf_x, dt_buf_y;
 
         obuf = vec_screen + vec_screen_width * y1 + x1;
-        v6 = dt_x * (x2 - x1);
-        v7 = y2 - y1;
-        if (v7 <= v6) {
-            dt_buf = vec_screen_width;
+        dist_x = dt_x * (x2 - x1);
+        dist_y = y2 - y1;
+        if (dist_y <= dist_x) {
+            dt_buf_x = dt_x;
+            dt_buf_y = vec_screen_width;
         } else {
-            v6 = y2 - y1;
-            v7 = dt_x * (x2 - x1);
-            dt_buf = dt_x;
-            dt_x = vec_screen_width;
+            dist_x = y2 - y1;
+            dist_y = dt_x * (x2 - x1);
+            dt_buf_x = vec_screen_width;
+            dt_buf_y = dt_x;
         }
-        v9 = 2 * v7;
-        v10 = 2 * v7 - v6;
-        v11 = 2 * (v7 - v6);
+        v9 = 2 * dist_y;
+        v10 = 2 * dist_y - dist_x;
+        v11 = 2 * (dist_y - dist_x);
         *obuf = vec_colour;
-        for (i = v6; i != 0; i--)
+        for (i = dist_x; i != 0; i--)
         {
-            obuf += dt_x;
+            obuf += dt_buf_x;
             if (v10 >= 0) {
-                obuf += dt_buf;
+                obuf += dt_buf_y;
                 v10 += v11;
             } else {
                 v10 += v9;
             }
+            assert(obuf < vec_screen + vec_screen_width * vec_window_height);
             *obuf = vec_colour;
         }
     }

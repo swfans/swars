@@ -27,6 +27,7 @@
 #include "../tests/mock_bfscreen.h"
 #include "../tests/mock_bfwindows.h"
 #include "bfmemory.h"
+#include "bfmemut.h"
 #include "bfpalette.h"
 #include "bfpalcrss.h"
 #include "bffile.h"
@@ -68,33 +69,10 @@ void test_polyline_draw_random_lines(const ubyte *pal, short res_h)
         // Random texture coords, but show one of 32x32 textures from start
         point_a.U = ((rnd >> 0) & 0x7) * 32;
         point_a.V = ((rnd >> 3) & 0x7) * 32;
-        switch ((rnd >> 6) & 3)
-        {
-        case 0:
-            point_b.U = point_a.U + 31;
-            point_b.V = point_a.V + 31;
-            point_c.U = point_a.U + 31;
-            point_c.V = point_a.V;
-            break;
-        case 1:
-            point_b.U = point_a.U + 31;
-            point_b.V = point_a.V + 31;
-            point_c.U = point_a.U;
-            point_c.V = point_a.V + 31;
-            break;
-        case 2:
-            point_b.U = point_a.U;
-            point_b.V = point_a.V + 31;
-            point_c.U = point_a.U + 31;
-            point_c.V = point_a.V + 31;
-            break;
-        case 3:
-            point_b.U = point_a.U + 31;
-            point_b.V = point_a.V;
-            point_c.U = point_a.U + 31;
-            point_c.V = point_a.V + 31;
-            break;
-        }
+        point_b.U = point_a.U + 31;
+        point_b.V = point_a.V + 31;
+        point_c.U = point_a.U + 31;
+        point_c.V = point_a.V;
         // Random lightness
         point_a.S = ((rnd >> 9) & 0x7F) << 15;
         point_b.S = ((rnd >> 6) & 0x7F) << 15;
@@ -193,15 +171,10 @@ TbBool test_polyline(void)
     MockScreenLock();
 
     texmap = LbMemoryAlloc(256*256*1);
-    generate_example_texture_map_xor_based(pal, texmap);
+    LbMemorySet(texmap, 0, 256*256*1);
 
     setup_vecs(lbDisplay.WScreen, texmap, lbDisplay.PhysicalScreenWidth,
         lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
-
-#if 0
-    LbPaletteDraw(320-256-8, 32, 16, 16, 0x01);
-    raw_to_wscreen(320+8, 32, 256, 256, texmap);
-#endif
 
     ref_buffer = malloc(mdinfo->Width * mdinfo->Height * (lbEngineBPP+7) / 8);
     if (ref_buffer == NULL) {
