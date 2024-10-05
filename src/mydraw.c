@@ -17,9 +17,37 @@
  */
 /******************************************************************************/
 #include "mydraw.h"
+#include "bfsprite.h"
 
+#include "display.h"
 #include "swlog.h"
 /******************************************************************************/
+
+ubyte my_char_to_upper(ubyte c)
+{
+    ubyte ret;
+    asm volatile ("call ASM_my_char_to_upper\n"
+        : "=r" (ret) : "a" (c));
+    return ret;
+}
+
+int font_word_length(const char *text)
+{
+    const ubyte *p;
+    int len;
+
+    len = 0;
+    for (p = (const ubyte *)text; *p != '\0'; p++)
+    {
+        struct TbSprite *spr;
+
+        if (*p == 32)
+            break;
+        spr = &small_font[*p - 31];
+        len += spr->SWidth;
+    }
+    return len;
+}
 
 ushort my_draw_text(short x, short y, const char *text, ushort startline)
 {

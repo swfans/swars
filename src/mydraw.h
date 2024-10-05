@@ -32,6 +32,8 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
+ubyte my_char_to_upper(ubyte c);
+int font_word_length(const char *text);
 ushort my_draw_text(short x, short y, const char *text, ushort startline);
 
 /******************************************************************************/

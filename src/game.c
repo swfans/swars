@@ -33,12 +33,13 @@
 #include "bfscrcopy.h"
 #include "bfsmack.h"
 #include "bftringl.h"
+#include "bfscd.h"
+
 #include "linksmk.h"
 #include "bmbang.h"
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_vidraw.h"
-#include "bfscd.h"
 #include "bflib_joyst.h"
 #include "ssampply.h"
 #include "matrix.h"
@@ -91,6 +92,7 @@
 #include "hud_target.h"
 #include "keyboard.h"
 #include "mouse.h"
+#include "mydraw.h"
 #include "network.h"
 #include "sound.h"
 #include "unix.h"
@@ -195,11 +197,6 @@ extern long nav_stats__ThisTurn;
 extern long gamep_unknval_14;
 extern long gamep_unknval_15;
 extern long gamep_unknval_16;
-
-extern ubyte player_unkn0C9[8];
-extern char player_unknCC9[8][128];
-extern long scanner_unkn370;
-extern long scanner_unkn3CC;
 
 extern ushort netgame_agent_pos_x[8][4];
 extern ushort netgame_agent_pos_y[8][4];
@@ -837,14 +834,6 @@ void screen_dark_curtain_down(void)
 {
     asm volatile ("call ASM_screen_dark_curtain_down\n"
         :  :  : "eax" );
-}
-
-ubyte my_char_to_upper(ubyte c)
-{
-    ubyte ret;
-    asm volatile ("call ASM_my_char_to_upper\n"
-        : "=r" (ret) : "a" (c));
-    return ret;
 }
 
 int load_outro_text(ubyte *buf)
@@ -1487,113 +1476,6 @@ void draw_number_transformed(int coord_x, int coord_y, int coord_z, int num)
         draw_text(ep.pp.X, ep.pp.Y, locstr, colour_lookup[3]);
     }
 }
-
-void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
-{
-    int xwind_beg;
-    int xwind_end;
-    int xwind_start;
-    sbyte *inp;
-    ubyte *oline;
-    int opitch;
-    int h;
-    TbBool needs_window_bounding;
-
-    xwind_beg = lbDisplay.GraphicsWindowX;
-    xwind_end = lbDisplay.GraphicsWindowX + lbDisplay.GraphicsWindowWidth;
-    xwind_start = lbDisplay.GraphicsWindowX + x;
-    inp = (sbyte *)spr->Data;
-    opitch = lbDisplay.GraphicsScreenWidth;
-    oline = &lbDisplay.WScreen[opitch * (lbDisplay.GraphicsWindowY + y) + lbDisplay.GraphicsWindowX + x];
-    if (xwind_start < lbDisplay.GraphicsWindowX) {
-        if (xwind_start + 2 * spr->SWidth <= lbDisplay.GraphicsWindowX)
-            return;
-        needs_window_bounding = true;
-    } else {
-        if (xwind_start >= xwind_end)
-            return;
-        needs_window_bounding = (xwind_start + 2 * spr->SWidth > xwind_end);
-    }
-
-    if (!needs_window_bounding)
-    {
-        // Simplified and faster drawing when we do not have to check bounds
-        for (h = 0; h < spr->SHeight; h++)
-        {
-            ubyte *o;
-
-            o = oline;
-            while (*inp)
-            {
-                int ival;
-                int i;
-
-                ival = *inp;
-                if (ival < 0)
-                {
-                    inp++;
-                    o -= 2 * ival;
-                    continue;
-                }
-                inp += ival + 1;
-                for (i = 0; i < ival; i++)
-                {
-                    o[0] = col;
-                    o[opitch + 0] = col;
-                    o[1] = col;
-                    o[opitch + 1] = col;
-                    o += 2;
-                }
-            }
-            inp++;
-            oline += 2 * opitch;
-        }
-    }
-    else
-    {
-        for (h = 0; h < spr->SHeight; h++)
-        {
-            ubyte *o;
-            int xwind_curr;
-
-            o = oline;
-            xwind_curr = xwind_start;
-            while (*inp)
-            {
-                int ival;
-                int i;
-
-                ival = *inp;
-                if (ival < 0)
-                {
-                    inp++;
-                    o -= 2 * ival;
-                    xwind_curr -= 2 * ival;
-                    continue;
-                }
-                inp += ival + 1;
-                for (i = 0; i < ival; i++)
-                {
-                    if (xwind_curr >= xwind_beg && xwind_curr < xwind_end) {
-                        o[0] = col;
-                        o[opitch] = col;
-                    }
-                    xwind_curr++;
-                    o++;
-                    if (xwind_curr >= xwind_beg && xwind_curr < xwind_end) {
-                        o[0] = col;
-                        o[opitch] = col;
-                    }
-                    xwind_curr++;
-                    o++;
-                }
-            }
-            inp++;
-            oline += 2 * opitch;
-        }
-    }
-}
-
 
 void LbSpriteDraw_2(int x, int y, struct TbSprite *spr)
 {
@@ -3283,12 +3165,11 @@ void srm_scanner_size_update(void)
 
     width = lbDisplay.GraphicsScreenWidth * scanner_width_pct / 100;
     height = lbDisplay.GraphicsScreenHeight * scanner_height_pct / 100;
+    margin = SCANNER_objective_info_height() + 2;
     if (lbDisplay.GraphicsScreenWidth >= 640) {
-        margin = 20;
         width = width * 101 / 100;
         height = height * 99 / 100;
     } else {
-        margin = 11;
         // width without change
         height = height * 124 / 100;
     }

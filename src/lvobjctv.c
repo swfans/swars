@@ -247,7 +247,6 @@ extern ulong dword_1C8460;
 extern ulong dword_1C8464;
 extern short draw_objectv_x;
 extern short draw_objectv_y;
-extern const char *scroll_text;
 
 char *objective_text[OBJECTIVE_TEXT_MAX];
 

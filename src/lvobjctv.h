@@ -122,6 +122,7 @@ extern ushort next_used_objective; // = 1;
 extern struct Objective *game_objectives;
 extern ushort next_objective;
 
+extern const char *scroll_text;
 extern ubyte byte_1C844F;
 
 extern struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
