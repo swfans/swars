@@ -341,6 +341,39 @@ int SCANNER_text_draw(const char *text, int start_x, int height)
     return x;
 }
 
+void SCANNER_move_objective_info(int width, int height, int end_pos)
+{
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    if ( in_network_game && p_locplayer->PanelState[mouser] == 17 )
+    {
+      if ( end_pos < lbDisplay.PhysicalScreenWidth - (lbDisplay.PhysicalScreenWidth >> 2) )
+          scanner_unkn370 = -20;
+      if (end_pos > lbDisplay.PhysicalScreenWidth - 16)
+          scanner_unkn370 = 10;
+      if (scanner_unkn370 > 0)
+      {
+          scanner_unkn370--;
+          scanner_unkn3CC -= 1 * height / 9;
+      }
+      if (scanner_unkn370 < 0)
+      {
+          scanner_unkn370++;
+          scanner_unkn3CC += 1 * height / 9;
+          if (scanner_unkn3CC > 0)
+              scanner_unkn3CC = 0;
+      }
+    }
+    else
+    {
+        if (end_pos < 0)
+            scanner_unkn3CC = width;
+        scanner_unkn3CC -= 2 * height / 9;
+    }
+}
+
+
 void SCANNER_draw_objective_info(int x, int y, int width)
 {
 #if 0
@@ -368,31 +401,7 @@ void SCANNER_draw_objective_info(int x, int y, int width)
 
     end_pos = SCANNER_text_draw(scroll_text, scanner_unkn3CC, height);
 
-    if ( in_network_game && players[local_player_no].PanelState[mouser] == 17 )
-    {
-      if ( end_pos < lbDisplay.PhysicalScreenWidth - (lbDisplay.PhysicalScreenWidth >> 2) )
-          scanner_unkn370 = -20;
-      if (end_pos > lbDisplay.PhysicalScreenWidth - 16)
-          scanner_unkn370 = 10;
-      if (scanner_unkn370 > 0)
-      {
-          scanner_unkn370--;
-          scanner_unkn3CC -= 2;
-      }
-      if (scanner_unkn370 < 0)
-      {
-          scanner_unkn370++;
-          scanner_unkn3CC += 2;
-          if (scanner_unkn3CC > 0)
-              scanner_unkn3CC = 0;
-      }
-    }
-    else
-    {
-        if (end_pos < 0)
-            scanner_unkn3CC = width;
-        scanner_unkn3CC -= 4;
-    }
+    SCANNER_move_objective_info(width, height, end_pos);
 
     LbScreenLoadGraphicsWindow(&bkpwnd);
 
