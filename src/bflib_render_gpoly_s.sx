@@ -90,7 +90,7 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 	jump_12840f:
 		mov    0x4(%eax),%ecx
 		cmp    0x4(%ebx),%ecx
-		je     ASM_draw_gpoly_end
+		je     draw_gpoly_end
 		mov    (%eax),%ecx
 		mov    0x4(%eax),%ebp
 		mov    %ecx,0x38(%esp)
@@ -217,8 +217,150 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 		mov    EXPORT_SYMBOL(gpoly_mode),%ecx
 		jmp    *jt_gpoly_sta(,%ecx,4)
 
+	jump_gpoly_sta_md03:
+		mov    %esp,%eax
+		call   ASM_gpoly_sta_md03
+		jmp    gpoly_sta_cont
 
-gpoly_sta_md27:
+	jump_gpoly_sta_md04:
+		mov    %esp,%eax
+		call   ASM_gpoly_sta_md04
+		jmp    gpoly_sta_cont
+
+	jump_gpoly_sta_md05:
+		mov    %esp,%eax
+		call   ASM_gpoly_sta_md05
+		jmp    gpoly_sta_cont
+
+	jump_gpoly_sta_md27:
+		mov    %esp,%eax
+		call   ASM_gpoly_sta_md27
+		jmp    gpoly_sta_cont
+
+	jump_gpoly_sta_md28:
+		mov    %esp,%eax
+		call   ASM_gpoly_sta_md28
+		jmp    gpoly_sta_cont
+
+	jump_gpoly_sta_nop:
+	gpoly_sta_cont:
+		mov    EXPORT_SYMBOL(gpoly_mode),%ecx
+		jmp    *jt_gpoly_stb(,%ecx,4)
+
+	jump_gpoly_stb_md05uni:
+		mov    %esp,%eax
+		call   ASM_gpoly_stb_md05uni
+		jmp    draw_gpoly_end
+
+	jump_gpoly_stb_md05p64:
+		mov    %esp,%eax
+		call   ASM_gpoly_stb_md05p64
+		jmp    draw_gpoly_end
+
+	jump_gpoly_stb_nop:
+	draw_gpoly_end:
+		add    $0x190,%esp
+		popa
+		ret
+
+
+jt_gpoly_stb:	/* 0x12b0c0 */
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop	/* 4 */
+		.long   jump_gpoly_stb_md05uni
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop	/* 8 */
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop	/* 12 */
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop	/* 16 */
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop	/* 20 */
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop	/* 24 */
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_md05p64
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+		.long   jump_gpoly_stb_nop
+
+jt_gpoly_sta:	/* 0x12b220 */
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_md03
+		.long   jump_gpoly_sta_md03
+		.long   jump_gpoly_sta_md04	/* 4 */
+		.long   jump_gpoly_sta_md05
+		.long   jump_gpoly_sta_md05
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_nop	/* 8 */
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_md03	/* 12 */
+		.long   jump_gpoly_sta_md03
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_md04	/* 16 */
+		.long   jump_gpoly_sta_md04
+		.long   jump_gpoly_sta_md03
+		.long   jump_gpoly_sta_md03
+		.long   jump_gpoly_sta_md05	/* 20 */
+		.long   jump_gpoly_sta_md05
+		.long   jump_gpoly_sta_md03
+		.long   jump_gpoly_sta_md03
+		.long   jump_gpoly_sta_md05	/* 24 */
+		.long   jump_gpoly_sta_md05
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_md27
+		.long   jump_gpoly_sta_md28
+		.long   jump_gpoly_sta_md27
+		.long   jump_gpoly_sta_md28
+		.long   jump_gpoly_sta_md27
+		.long   jump_gpoly_sta_md27
+		.long   jump_gpoly_sta_md27
+		.long   jump_gpoly_sta_md27
+		.long   jump_gpoly_sta_md28
+		.long   jump_gpoly_sta_md28
+		.long   jump_gpoly_sta_md27
+		.long   jump_gpoly_sta_md27
+		.long   jump_gpoly_sta_md28
+		.long   jump_gpoly_sta_md28
+		.long   jump_gpoly_sta_nop
+		.long   jump_gpoly_sta_nop
+
+
+
+GLOBAL_FUNC (ASM_gpoly_sta_md27)
+		pusha
+		mov    %esp,0x17c(%eax)
+		mov    %eax,%esp
+		/* end of added function header */
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -559,10 +701,17 @@ gpoly_sta_md27:
 		mov    %ecx,0x134(%esp)
 		mov    %edx,0x138(%esp)
 	gpoly_sta_md27_end:
-		jmp    gpoly_sta_cont
+		/* start of added function footer */
+		mov    0x17c(%esp),%esp
+		popa
+		ret
 
 
-gpoly_sta_md28:
+GLOBAL_FUNC (ASM_gpoly_sta_md28)
+		pusha
+		mov    %esp,0x17c(%eax)
+		mov    %eax,%esp
+		/* end of added function header */
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -988,10 +1137,17 @@ gpoly_sta_md28:
 		mov    0x138(%esp),%dl
 		mov    %edx,0x138(%esp)
 	gpoly_sta_md28_end:
-		jmp    gpoly_sta_cont
+		/* start of added function footer */
+		mov    0x17c(%esp),%esp
+		popa
+		ret
 
 
-gpoly_sta_md04:
+GLOBAL_FUNC (ASM_gpoly_sta_md04)
+		pusha
+		mov    %esp,0x17c(%eax)
+		mov    %eax,%esp
+		/* end of added function header */
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -1133,10 +1289,17 @@ gpoly_sta_md04:
 		mov    0x58(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x164(%esp)
-		jmp    gpoly_sta_cont
+		/* start of added function footer */
+		mov    0x17c(%esp),%esp
+		popa
+		ret
 
 
-gpoly_sta_md03:
+GLOBAL_FUNC (ASM_gpoly_sta_md03)
+		pusha
+		mov    %esp,0x17c(%eax)
+		mov    %eax,%esp
+		/* end of added function header */
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -1419,10 +1582,17 @@ gpoly_sta_md03:
 		mov    %ecx,0x134(%esp)
 		mov    %edx,0x138(%esp)
 	gpoly_sta_md03_end:
-		jmp    gpoly_sta_cont
+		/* start of added function footer */
+		mov    0x17c(%esp),%esp
+		popa
+		ret
 
 
-gpoly_sta_md05:
+GLOBAL_FUNC (ASM_gpoly_sta_md05)
+		pusha
+		mov    %esp,0x17c(%eax)
+		mov    %eax,%esp
+		/* end of added function header */
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -1788,14 +1958,17 @@ gpoly_sta_md05:
 		mov    0x138(%esp),%dl
 		mov    %edx,0x138(%esp)
 	gpoly_sta_md05_end:
-		jmp    gpoly_sta_cont
+		/* start of added function footer */
+		mov    0x17c(%esp),%esp
+		popa
+		ret
 
 
-gpoly_sta_cont:
-		mov    EXPORT_SYMBOL(gpoly_mode),%ecx
-		jmp    *jt_gpoly_stb(,%ecx,4)
-
-	gpoly_stb_md05:
+GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
+		pusha
+		mov    %esp,0x17c(%eax)
+		mov    %eax,%esp
+		/* end of added function header */
 		/* Invalid code was here */
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
@@ -1838,7 +2011,7 @@ gpoly_sta_cont:
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     ASM_draw_gpoly_end
+		jg     gpoly_stb_md05uni_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129a9d
@@ -2090,7 +2263,7 @@ gpoly_sta_cont:
 
 	jump_129de8:
 		decl   0x30(%esp)
-		je     ASM_draw_gpoly_end
+		je     gpoly_stb_md05uni_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -2120,7 +2293,7 @@ gpoly_sta_cont:
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    ASM_draw_gpoly_end
+		jle    gpoly_stb_md05uni_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_129d60
@@ -2140,7 +2313,7 @@ gpoly_sta_cont:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    ASM_draw_gpoly_end
+		jle    gpoly_stb_md05uni_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
@@ -2187,7 +2360,7 @@ gpoly_sta_cont:
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     ASM_draw_gpoly_end
+		jg     gpoly_stb_md05uni_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129fee
@@ -2505,7 +2678,7 @@ gpoly_sta_cont:
 
 	jump_12a468:
 		decl   0x30(%esp)
-		je     ASM_draw_gpoly_end
+		je     gpoly_stb_md05uni_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -2535,7 +2708,7 @@ gpoly_sta_cont:
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    ASM_draw_gpoly_end
+		jle    gpoly_stb_md05uni_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a3e0
@@ -2555,7 +2728,7 @@ gpoly_sta_cont:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    ASM_draw_gpoly_end
+		jle    gpoly_stb_md05uni_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
@@ -2563,7 +2736,18 @@ gpoly_sta_cont:
 		mov    0x13c(%esp),%esi
 		jmp    jump_12a266
 
-	gpoly_stb_md05p64:
+	gpoly_stb_md05uni_end:
+		/* start of added function footer */
+		mov    0x17c(%esp),%esp
+		popa
+		ret
+
+
+GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
+		pusha
+		mov    %esp,0x17c(%eax)
+		mov    %eax,%esp
+		/* end of added function header */
 		/* Invalid code was here */
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
@@ -2604,7 +2788,7 @@ gpoly_sta_cont:
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     ASM_draw_gpoly_end
+		jg     gpoly_stb_md05p64_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12a6f2
@@ -2836,7 +3020,7 @@ gpoly_sta_cont:
 		nop
 	jump_12a9d8:
 		decl   0x30(%esp)
-		je     ASM_draw_gpoly_end
+		je     gpoly_stb_md05p64_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -2863,7 +3047,7 @@ gpoly_sta_cont:
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    ASM_draw_gpoly_end
+		jle    gpoly_stb_md05p64_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a980
@@ -2882,7 +3066,7 @@ gpoly_sta_cont:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    ASM_draw_gpoly_end
+		jle    gpoly_stb_md05p64_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
@@ -2926,7 +3110,7 @@ gpoly_sta_cont:
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     ASM_draw_gpoly_end
+		jg     gpoly_stb_md05p64_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12abc3
@@ -3190,7 +3374,7 @@ gpoly_sta_cont:
 		nop
 	jump_drwe_af28:
 		decl   0x30(%esp)
-		je     ASM_draw_gpoly_end
+		je     gpoly_stb_md05p64_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -3217,7 +3401,7 @@ gpoly_sta_cont:
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    ASM_draw_gpoly_end
+		jle    gpoly_stb_md05p64_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_drwe_aed0
@@ -3236,7 +3420,7 @@ gpoly_sta_cont:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    ASM_draw_gpoly_end
+		jle    gpoly_stb_md05p64_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
@@ -3245,95 +3429,11 @@ gpoly_sta_cont:
 		jmp    jump_drwe_ad95
 
 
-jt_gpoly_stb:	/* 0x12b0c0 */
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end	/* 4 */
-		.long   gpoly_stb_md05
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end	/* 8 */
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end	/* 12 */
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end	/* 16 */
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end	/* 20 */
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end	/* 24 */
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   gpoly_stb_md05p64
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-		.long   ASM_draw_gpoly_end
-
-jt_gpoly_sta:	/* 0x12b220 */
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_md03
-		.long   gpoly_sta_md03
-		.long   gpoly_sta_md04	/* 4 */
-		.long   gpoly_sta_md05
-		.long   gpoly_sta_md05
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_cont	/* 8 */
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_md03	/* 12 */
-		.long   gpoly_sta_md03
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_md04	/* 16 */
-		.long   gpoly_sta_md04
-		.long   gpoly_sta_md03
-		.long   gpoly_sta_md03
-		.long   gpoly_sta_md05	/* 20 */
-		.long   gpoly_sta_md05
-		.long   gpoly_sta_md03
-		.long   gpoly_sta_md03
-		.long   gpoly_sta_md05	/* 24 */
-		.long   gpoly_sta_md05
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_md27
-		.long   gpoly_sta_md28
-		.long   gpoly_sta_md27
-		.long   gpoly_sta_md28
-		.long   gpoly_sta_md27
-		.long   gpoly_sta_md27
-		.long   gpoly_sta_md27
-		.long   gpoly_sta_md27
-		.long   gpoly_sta_md28
-		.long   gpoly_sta_md28
-		.long   gpoly_sta_md27
-		.long   gpoly_sta_md27
-		.long   gpoly_sta_md28
-		.long   gpoly_sta_md28
-		.long   gpoly_sta_cont
-		.long   gpoly_sta_cont
+	gpoly_stb_md05p64_end:
+		/* start of added function footer */
+		mov    0x17c(%esp),%esp
+		popa
+		ret
 
 
 jt_gpoly_drwa:
@@ -3407,10 +3507,4 @@ jt_gpoly_drwd:
 		.long   gpoly_drwd_13
 		.long   gpoly_drwd_14
 		.long   gpoly_drwd_15
-
-
-	ASM_draw_gpoly_end:
-		add    $0x190,%esp
-		popa
-		ret
 
