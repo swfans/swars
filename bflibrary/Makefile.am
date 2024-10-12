@@ -2,7 +2,64 @@ ACLOCAL_AMFLAGS = --install -I m4
 
 lib_LIBRARIES = libbullfrog.a
 
+libbullfrog_a_headers_src = \
+  include/bfanywnd.h \
+  include/bfbox.h \
+  include/bfbuffer.h \
+  include/bfcircle.h \
+  include/bfdata.h \
+  include/bfdir.h \
+  include/bfdos.h \
+  include/bfdrive.h \
+  include/bfendian.h \
+  include/bfexe_key.h \
+  include/bffile.h \
+  include/bffnuniq.h \
+  include/bffont.h \
+  include/bfgentab.h \
+  include/bfiff.h \
+  include/bfini.h \
+  include/bfkeybd.h \
+  include/bfline.h \
+  include/bflog.h \
+  include/bfmath.h \
+  include/bfmemory.h \
+  include/bfmemut.h \
+  include/bfmouse.h \
+  include/bfpalcrss.h \
+  include/bfpalette.h \
+  include/bfpixel.h \
+  include/bfplanar.h \
+  include/bfpng.h \
+  include/bfscrcopy.h \
+  include/bfscreen.h \
+  include/bfscrsurf.h \
+  include/bfsemphr.hpp \
+  include/bfsprite.h \
+  include/bfstrut.h \
+  include/bftext.h \
+  include/bftime.h \
+  include/bftringl.h \
+  include/bftypes.h \
+  include/bfutility.h \
+  include/bfwindows.h \
+  include/insprite.h \
+  include/insspr.h \
+  include/mshandler.hpp \
+  include/mspointer.hpp \
+  include/poly.h \
+  include/poly_trigp.h \
+  include/poly_trigr.h \
+  include/privbflog.h \
+  include/rnc_1fm.h \
+  include/rom.h \
+  include/svesa.h
+
+libbullfrog_a_headers_bld = \
+  include/bfconfig.h
+
 libbullfrog_a_SOURCES = \
+  $(libbullfrog_a_headers_src) \
   src/general/arctan.c \
   src/general/box_clip.c \
   src/general/ganywnd.c \
@@ -36,6 +93,7 @@ libbullfrog_a_SOURCES = \
   src/general/gstrut.c \
   src/general/gtext.c \
   src/general/gtrig.c \
+  src/general/gtringl.c \
   src/general/gutility.c \
   src/general/hvline.c \
   src/general/mshandler.cpp \
@@ -95,9 +153,12 @@ endif
 libbullfrog_a_CPPFLAGS = \
   -I$(top_srcdir)/include -I$(builddir)/include
 
-include_HEADERS = $(wildcard include/*.h) $(wildcard include/*.hpp)
+libbullfrogheadersdir = $(includedir)/bullfrog
+libbullfrogheaders_HEADERS = \
+  $(libbullfrog_a_headers_src:%=$(srcdir)/%) \
+  $(libbullfrog_a_headers_bld:%=$(builddir)/%)
 
-check_PROGRAMS = bflib_test_math bflib_test_memory bflib_test_poly
+check_PROGRAMS = bflib_test_math bflib_test_memory bflib_test_poline bflib_test_poly bflib_test_tringl
 
 bflib_test_math_SOURCES = \
   tests/bflib_test_math.c
@@ -124,6 +185,23 @@ nodist_EXTRA_bflib_test_memory_SOURCES = dummy.cxx
 bflib_test_memory_LDADD = \
   -L$(builddir) -lbullfrog
 
+bflib_test_poline_SOURCES = \
+  tests/mock_mouse.c \
+  tests/mock_palette.c \
+  tests/mock_screen.c \
+  tests/mock_windows.c \
+  tests/helpers_screen.c \
+  tests/bflib_test_poline.c
+
+bflib_test_poline_CPPFLAGS = \
+  -I$(top_srcdir)/include -I$(builddir)/include
+
+# Pretending to contain c++ source so that Automake select c++ linker
+nodist_EXTRA_bflib_test_poline_SOURCES = dummy.cxx
+
+bflib_test_poline_LDADD = \
+  -L$(builddir) -lbullfrog
+
 bflib_test_poly_SOURCES = \
   tests/mock_mouse.c \
   tests/mock_palette.c \
@@ -139,6 +217,23 @@ bflib_test_poly_CPPFLAGS = \
 nodist_EXTRA_bflib_test_poly_SOURCES = dummy.cxx
 
 bflib_test_poly_LDADD = \
+  -L$(builddir) -lbullfrog
+
+bflib_test_tringl_SOURCES = \
+  tests/mock_mouse.c \
+  tests/mock_palette.c \
+  tests/mock_screen.c \
+  tests/mock_windows.c \
+  tests/helpers_screen.c \
+  tests/bflib_test_tringl.c
+
+bflib_test_tringl_CPPFLAGS = \
+  -I$(top_srcdir)/include -I$(builddir)/include
+
+# Pretending to contain c++ source so that Automake select c++ linker
+nodist_EXTRA_bflib_test_tringl_SOURCES = dummy.cxx
+
+bflib_test_tringl_LDADD = \
   -L$(builddir) -lbullfrog
 
 TESTS = $(check_PROGRAMS)

@@ -26,10 +26,10 @@
 
 #include "drv_oal.h"
 #include "aildebug.h"
-#include OPENAL_ALC_H
-#include OPENAL_AL_H
+#include LBS_OPENAL_ALC_H
+#include LBS_OPENAL_AL_H
 #include "oggvorbis.h"
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
 #  include "wildmidi_lib.h"
 #endif
 /******************************************************************************/
@@ -525,7 +525,7 @@ queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
 
     while (buffers_used < SOUND_BUFFERS_PER_SRC)
     {
-#if ENABLE_WILDMIDI
+#if LBS_ENABLE_WILDMIDI
         len = WildMidi_GetOutput(seq->ICA, data, SOUND_MAX_BUFSIZE);
         if (len < 0) {
             AIL_set_error("WildMidi GetOutput returned error");

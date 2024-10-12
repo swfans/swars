@@ -35,10 +35,13 @@ extern ulong turn_last; // = 999;
 extern ulong SCANNER_keep_arcs;
 extern ulong dword_1DB1A0;
 
+ushort SCANNER_base_zoom_factor = 180;
+ushort SCANNER_user_zoom_factor = 192;
+
 void SCANNER_set_zoom(int zoom)
 {
-    if (zoom < 50)
-        ingame.Scanner.Zoom = 50;
+    if (zoom < 8)
+        ingame.Scanner.Zoom = 8;
     else if (zoom > 556)
         ingame.Scanner.Zoom = 556;
     else
@@ -497,20 +500,39 @@ ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
 
 void clear_all_scanner_signals(void)
 {
-    int i;
+    int n;
 
     signal_count = 0;
-    for (i = 0; i < SCANNER_BIG_BLIP_COUNT; i++)
-        ingame.Scanner.BigBlip[i].Period = 0;
-    for (i = 0; i < SCANNER_ARC_COUNT; i++)
-        ingame.Scanner.Arc[i].Period = 0;
+    for (n = 0; n < SCANNER_BIG_BLIP_COUNT; n++)
+        ingame.Scanner.BigBlip[n].Period = 0;
+    for (n = 0; n < SCANNER_ARC_COUNT; n++)
+        ingame.Scanner.Arc[n].Period = 0;
 }
 
-void add_blippoint_to_scanner(int x, int z, ubyte colour)
+void fill_blippoint_scanner(int x, int z, ubyte colour, ushort n)
 {
-    SCANNER_init_blippoint(signal_count, x, z, colour);
-    ingame.Scanner.BigBlip[signal_count].Counter = 32;
-    signal_count++;
+    SCANNER_init_blippoint(n, x, z, colour);
+    ingame.Scanner.BigBlip[n].Counter = ingame.Scanner.BigBlip[n].Period;
+}
+
+ushort do_netscan_blippoint_scanner(struct NetscanObjective *p_nsobv, ushort next_signal)
+{
+    int i;
+    ushort n;
+
+    n = next_signal;
+    for (i = 0; i < NETSCAN_OBJECTIVE_POINTS; i++)
+    {
+        int x, z;
+
+        if ((p_nsobv->Z[i] == 0) && (p_nsobv->X[i] == 0))
+            continue;
+        x = p_nsobv->X[i] << 15;
+        z = p_nsobv->Z[i] << 15;
+        fill_blippoint_scanner(x, z, 87, n);
+        n++;
+    }
+    return n;
 }
 
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
@@ -582,6 +604,23 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
     {
         signal_count = do_target_thing_scanner(p_objectv, signal_count);
     }
+}
+
+void add_netscan_signal_to_scanner(struct NetscanObjective *p_nsobv, ubyte flag)
+{
+    if (flag)
+        clear_all_scanner_signals();
+
+    if (p_nsobv == NULL)
+        return;
+
+    if (signal_count >= SCANNER_BIG_BLIP_COUNT) {
+        LOGWARN("Scaner blips limit reached, blip discarded.");
+        return;
+    }
+
+    // Netscan scanner only supports blippoints
+    signal_count = do_netscan_blippoint_scanner(p_nsobv, signal_count);
 }
 
 /******************************************************************************/

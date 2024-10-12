@@ -23,9 +23,14 @@
 #include "bffile.h"
 #include "bfini.h"
 #include "bfutility.h"
+
 #include "bigmap.h"
+#include "command.h"
+#include "display.h"
 #include "player.h"
 #include "game.h"
+#include "game_speed.h"
+#include "scandraw.h"
 #include "sound.h"
 #include "thing.h"
 #include "weapon.h"
@@ -168,6 +173,12 @@ const struct TbNamedEnum people_conf_person_cmds[] = {
   {NULL,			0},
 };
 
+const ubyte follow_dist[4][4] = {
+  { 0, 3, 6, 9 },
+  { 3, 0, 6, 9 },
+  { 3, 6, 0, 9 },
+  { 3, 6, 9, 0 },
+};
 
 void read_people_conf_file(void)
 {
@@ -1134,6 +1145,30 @@ void process_stamina(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void person_init_command(struct Thing *p_person, ushort from)
+{
+    asm volatile ("call ASM_person_init_command\n"
+        : : "a" (p_person), "d" (from));
+}
+
+ubyte conditional_command_state_true(ushort com, struct Thing *p_me, ubyte from)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_conditional_command_state_true\n"
+        : "=r" (ret) : "a" (com), "d" (p_me), "b" (from));
+    return ret;
+}
+
+ubyte is_command_completed(struct Thing *p_person)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_is_command_completed\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+}
+
 int person_goto_person_nav(struct Thing *p_person)
 {
     int ret;
@@ -1143,6 +1178,50 @@ int person_goto_person_nav(struct Thing *p_person)
     return ret;
 }
 
+void person_goto_point(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_goto_point\n"
+        : : "a" (p_person));
+}
+
+void person_goto_point_rel(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_goto_point_rel\n"
+        : : "a" (p_person));
+}
+
+void person_init_drop(struct Thing *p_person, ThingIdx item)
+{
+    asm volatile ("call ASM_person_init_drop\n"
+        : : "a" (p_person), "d" (item));
+}
+
+void person_init_drop_special(struct Thing *p_person, ThingIdx item)
+{
+    asm volatile ("call ASM_person_init_drop_special\n"
+        : : "a" (p_person), "d" (item));
+}
+
+void stop_looped_weapon_sample(struct Thing *p_person, short weapon)
+{
+    asm volatile ("call ASM_stop_looped_weapon_sample\n"
+        : : "a" (p_person), "d" (weapon));
+}
+
+ubyte person_attempt_to_leave_vehicle(struct Thing *p_thing)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_person_attempt_to_leave_vehicle\n"
+        : "=r" (ret) : "a" (p_thing));
+    return ret;
+}
+
+void person_attempt_to_leave_ferry(struct Thing *p_thing)
+{
+    asm volatile ("call ASM_person_attempt_to_leave_ferry\n"
+        : : "a" (p_thing));
+}
 void person_scare_person(struct Thing *p_person)
 {
     struct Thing *p_target;
@@ -1212,6 +1291,18 @@ void process_stationary_shot(struct Thing *p_person)
     }
 }
 
+void process_wait_train(struct Thing *p_person)
+{
+    if ((p_person->Flag & TngF_Unkn4000) != 0)
+    {
+        p_person->SubState = 25;
+    }
+    else if (p_person->SubState == 25)
+    {
+        p_person->State = PerSt_NONE;
+    }
+}
+
 void person_follow_person(struct Thing *p_person)
 {
     struct Thing *p_target;
@@ -1228,10 +1319,632 @@ void person_follow_person(struct Thing *p_person)
     }
 }
 
+void person_go_plant_mine(struct Thing *p_person)
+{
+    person_goto_point(p_person);
+    if (p_person->State == PerSt_NONE)
+    {
+        person_init_drop(p_person, p_person->U.UPerson.CurrentWeapon);
+    }
+}
+
+void process_knocked_out(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_knocked_out\n"
+        : : "a" (p_person));
+}
+
+void process_tasered_person(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_tasered_person\n"
+        : : "a" (p_person));
+}
+
+void person_intel(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_intel\n"
+        : : "a" (p_person));
+}
+
+void process_im_shoved(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_im_shoved\n"
+        : : "a" (p_person));
+}
+
+void process_protect_person(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_protect_person\n"
+        : : "a" (p_person));
+}
+
+void process_wander(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_wander\n"
+        : : "a" (p_person));
+}
+
+void person_recoil(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_recoil\n"
+        : : "a" (p_person));
+}
+
+void calc_lighting(struct Thing *p_person)
+{
+    asm volatile ("call ASM_calc_lighting\n"
+        : : "a" (p_person));
+}
+
+void process_persuaded(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_persuaded\n"
+        : : "a" (p_person));
+}
+
+void process_danger(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_danger\n"
+        : : "a" (p_person));
+}
+
+void person_kill_target2(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_kill_target2\n"
+        : : "a" (p_person));
+}
+
+void person_wait(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_wait\n"
+        : : "a" (p_person));
+}
+
+void person_pickup(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_pickup\n"
+        : : "a" (p_person));
+}
+
+void person_drop_item(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_drop_item\n"
+        : : "a" (p_person));
+}
+
+void person_dieing(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_dieing\n"
+        : : "a" (p_person));
+}
+
+void person_dead(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_dead\n"
+        : : "a" (p_person));
+}
+
+void person_kill_person(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_kill_person\n"
+        : : "a" (p_person));
+}
+
+void person_save_victim(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_save_victim\n"
+        : : "a" (p_person));
+}
+
+void person_get_item(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_get_item\n"
+        : : "a" (p_person));
+}
+
+void person_run_away(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_run_away\n"
+        : : "a" (p_person));
+}
+
+void person_burning(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_burning\n"
+        : : "a" (p_person));
+}
+
+void person_persuade_person(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_persuade_person\n"
+        : : "a" (p_person));
+}
+
+void process_support_person(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_support_person\n"
+        : : "a" (p_person));
+}
+
+void person_use_vehicle(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_use_vehicle\n"
+        : : "a" (p_person));
+}
+
+void person_wait_vehicle(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_wait_vehicle\n"
+        : : "a" (p_person));
+}
+
+void person_destroy_building(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_destroy_building\n"
+        : : "a" (p_person));
+}
+
+void person_catch_train(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_catch_train\n"
+        : : "a" (p_person));
+}
+
+void process_avoid_group(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_avoid_group\n"
+        : : "a" (p_person));
+}
+
+void person_being_persuaded(struct Thing *p_person)
+{
+    asm volatile ("call ASM_person_being_persuaded\n"
+        : : "a" (p_person));
+}
+
+void process_wander_and_fly(struct Thing *p_person, struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_process_wander_and_fly\n"
+        : : "a" (p_person), "d" (p_vehicle));
+}
+
+void set_peep_comcur(struct Thing *p_person)
+{
+    asm volatile ("call ASM_set_peep_comcur\n"
+        : : "a" (p_person));
+}
+
+void process_lighting_unkn1(struct Thing *p_person)
+{
+    asm volatile ("call ASM_process_lighting_unkn1\n"
+        : : "a" (p_person));
+}
+
+void person_find_next_state(struct Thing *p_person)
+{
+    short cmd;
+
+    if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) == 0))
+    {
+        p_person->State = PerSt_WAIT;
+        p_person->U.UPerson.ComTimer = 50;
+        return;
+    }
+
+    if (p_person->U.UPerson.ComCur == 0)
+    {
+        if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) != 0))
+        {
+            p_person->Flag2 &= ~0x0800;
+            ingame.Flags &= ~0x0100;
+            set_peep_comcur(p_person);
+        }
+        p_person->State = PerSt_WAIT;
+        p_person->U.UPerson.ComTimer = 50;
+        return;
+    }
+
+    if ((p_person->Flag & 0x0040) != 0)
+    {
+        p_person->Flag &= ~0x0040;
+        person_init_command(p_person, PCmd_GET_ITEM);
+        return;
+    }
+
+    if (!is_command_completed(p_person))
+        return;
+
+    if (p_person->U.UPerson.ComHead == 0)
+    {
+        p_person->State = PerSt_WAIT;
+        p_person->U.UPerson.ComTimer = 50;
+        return;
+    }
+
+    cmd = p_person->U.UPerson.ComCur;
+    cmd = game_commands[cmd].Next;
+    p_person->U.UPerson.ComCur = cmd;
+
+    // Repeat with new ComCur
+    if (p_person->U.UPerson.ComCur == 0)
+    {
+        if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) != 0))
+        {
+            p_person->Flag2 &= ~0x0800;
+            ingame.Flags &= ~0x0100;
+            set_peep_comcur(p_person);
+        }
+        p_person->State = PerSt_WAIT;
+        p_person->U.UPerson.ComTimer = 100;
+        return;
+    }
+
+    person_init_command(p_person, PCmd_USE_WEAPON);
+}
+
+void make_peep_protect_peep(struct Thing *p_protector, struct Thing *p_leader)
+{
+    asm volatile ("call ASM_make_peep_protect_peep\n"
+        : : "a" (p_protector), "d" (p_leader));
+}
+
 void process_person(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_process_person\n"
         : : "a" (p_person));
+    return;
+#endif
+    struct MyMapElement *p_mapel;
+    short state;
+
+    if ( (p_person->Flag & 0x2000) != 0 && (p_person->Flag2 & 0x10000000) != 0 )
+    {
+        state = p_person->State;
+        if ((state != PerSt_GET_ITEM) && (state != PerSt_DROP_ITEM) && (state != PerSt_PICKUP_ITEM)
+          && ((p_person->Flag & (0x40000000|0x0002)) == 0)
+          && ((p_person->Flag2 & (0x0010|0x0008)) == 0))
+        {
+            struct Thing *p_target;
+
+            p_person->GotoThingIndex = p_person->Owner;
+            p_target = &things[p_person->GotoThingIndex];
+            p_person->State = PerSt_PROTECT_PERSON;
+            p_person->U.UPerson.ComRange = follow_dist[p_target->U.UPerson.ComCur & 3][p_person->U.UPerson.ComCur & 3];
+            p_person->Flag2 &= ~0x10000000;
+        }
+    }
+    p_person->Flag2 &= ~0x8000;
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (p_person->Z >> 16) + (p_person->X >> 16)];
+    if (((p_person->Flag2 & 0x20000000) != 0) && (p_mapel->ColumnHead == 0))
+        p_person->Flag2 &= ~0x20000000;
+
+    if ( ((gameturn + p_person->ThingOffset) & 0x7F) == 0 )
+    {
+        p_person->U.UPerson.Flag3 &= ~0x0020;
+        if ((p_person->Flag2 & 0x020000) != 0)
+        {
+            p_person->U.UPerson.ComTimer = -1;
+            p_person->Flag2 &= ~0x020000;
+            remove_path(p_person);
+        }
+    }
+    if (((p_person->Flag2 & 0x8000000) != 0) && ((p_person->Flag & 0x2000) != 0))
+    {
+        state = p_person->State;
+        if ((state != PerSt_GET_ITEM) && (state != PerSt_PICKUP_ITEM))
+        {
+          make_peep_protect_peep(p_person, &things[p_person->Owner]);
+          func_711F4(p_person->X >> 8, p_person->Y >> 8, p_person->Z >> 8, 200, colour_lookup[1]);
+        }
+    }
+    if ((p_person->Flag2 & 0x0020) != 0)
+    {
+        return;
+    }
+    if ((p_person->Flag2 & 0x00100000) != 0)
+    {
+        process_tasered_person(p_person);
+        return;
+    }
+    if ((p_person->Flag2 & 0x0010) != 0)
+    {
+        process_knocked_out(p_person);
+        stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);
+        return;
+    }
+    if ((p_person->Flag2 & 0x0008) != 0)
+    {
+        p_person->U.UPerson.BumpCount--;
+        if (p_person->U.UPerson.BumpCount != 0)
+        {
+            if (((gameturn + p_person->ThingOffset) & 7) == 0)
+                person_intel(p_person);
+        }
+        else
+        {
+            ushort group;
+
+            group = p_person->U.UPerson.EffectiveGroup;
+            p_person->Flag2 &= ~0x0008;
+            if (group >= 128)
+              p_person->U.UPerson.EffectiveGroup = group + 128;
+            p_person->U.UPerson.Target2 = 0;
+            p_person->PTarget = NULL;
+            p_person->State = 0;
+            p_person->Flag |= 0x0040;
+            calc_person_speed(p_person);
+        }
+    }
+    else
+    {
+        ushort limit;
+        limit = 8;
+        if ((gameturn & 0x7FF) == 0)
+            p_person->U.UPerson.BumpCount = 0;
+        if ((p_person->Flag & 0x2000) != 0)
+            limit = 2;
+        if (p_person->U.UPerson.BumpCount > limit)
+        {
+            p_person->U.UPerson.BumpCount = 0;
+            p_person->Flag &= ~0x00020000;
+            if ((p_person->Flag & 0x080000) == 0)
+                p_person->Flag |= 0x0004;
+            remove_path(p_person);
+            p_person->U.UPerson.ComTimer = -1;
+        }
+    }
+    if ((gameturn & 3) == 0)
+    {
+        state = p_person->State;
+        if ((state != PerSt_WAIT) && (state != 0))
+        {
+            p_person->Flag &= ~0x09000000;
+        }
+    }
+    if ((p_person->U.UPerson.BumpMode != 0) && ((p_person->Flag & 0x0002) == 0))
+    {
+        if ((p_person->Flag2 & 0x0100) != 0)
+            p_person->U.UPerson.BumpMode = 0;
+        else
+            process_im_shoved(p_person);
+    }
+    if (((p_person->Flag & 0x40000000) == 0) || (((p_person->Flag & 0x0002) == 0)
+        && ((p_person->Flag & (0x80000|0x40000|0x10000|0x4000|0x0200)) != 0)))
+    {
+
+        if ((p_person->Flag & 0x4000) != 0)
+          return;
+        if ((p_person->Flag & 0x010000) != 0)
+        {
+          stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);
+          person_recoil(p_person);
+          calc_lighting(p_person);
+          process_weapon(p_person);
+          return;
+        }
+        if (((p_person->Flag & 0x080000) != 0) && ((p_person->Flag & 2) == 0))
+        {
+          process_persuaded(p_person);
+          calc_lighting(p_person);
+          process_weapon(p_person);
+          return;
+        }
+        if (((p_person->Flag & 0x40000) != 0) && ((p_person->Flag & (0x1000|0x0002)) == 0))
+        {
+          person_run_away(p_person);
+          calc_lighting(p_person);
+          return;
+        }
+
+        if ((p_person->Flag & 0x0200) != 0)
+        {
+          if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & 0x0800) == 0))
+          {
+              p_person->Flag &= ~0x0200;
+          }
+          process_weapon(p_person);
+          return;
+        }
+    }
+
+    if (((p_person->Flag & (0x10000000|0x40000000|0x00080000|0x4000)) == 0)
+      && (p_person->Flag2 & 0x0008) == 0
+      && ((gameturn + p_person->ThingOffset) & 3) == 0
+      && (p_person->Flag & 0x0002) == 0 )
+    {
+        ushort subType;
+
+        subType = p_person->SubType;
+        if (subType == SubTT_PERS_BRIEFCASE_M
+          || subType == SubTT_PERS_WHITE_BRUN_F
+          || subType == SubTT_PERS_WHIT_BLOND_F
+          || subType == SubTT_PERS_LETH_JACKT_M
+          || subType == SubTT_PERS_SCIENTIST)
+        {
+            process_danger(p_person);
+        }
+    }
+
+    if (((p_person->Flag & (0x40000000|0x2000)) == 0 || (p_person->Flag2 & 0x0800) != 0)
+      && ((gameturn + p_person->ThingOffset) & 7) == 0)
+    {
+        if (p_person->U.UPerson.ComHead != 0)
+        {
+          struct Command *p_cmd;
+          TbBool cond_met;
+          short cmd;
+
+          cmd = p_person->U.UPerson.ComCur;
+          p_cmd = &game_commands[cmd];
+          if (((p_cmd->Flags & 0x0002) != 0) && ((p_person->Flag & 0x0002) == 0))
+          {
+              cmd = p_cmd->Next;
+              cond_met = 0;
+              for (p_cmd = &game_commands[cmd]; (p_cmd->Flags & 0x0004) != 0;
+                p_cmd = &game_commands[p_cmd->Next])
+              {
+                  if (cmd == 0)
+                      break;
+                  if (conditional_command_state_true(cmd, p_person, 3))
+                      cond_met = 1;
+                  cmd = p_cmd->Next;
+              }
+              if (!cond_met)
+                  cmd = -1;
+              if (cmd >= 0)
+              {
+                  p_person->U.UPerson.ComCur = cmd;
+                  p_person->State = 0;
+                  person_init_command(p_person, PCmd_PROTECT_PERSON);
+              }
+          }
+        }
+    }
+
+    if ( (p_person->Flag & (0x40000000|0x0002)) != 0 )
+        p_person->Flag &= ~0x0800;
+    else
+        process_weapon(p_person);
+
+    if ((debug_hud_collision == 1) && (p_person->Y != 0))
+    {
+        char locstr[150];
+
+        sprintf(locstr, "%ld", (long)p_person->Y);
+        draw_text_transformed(p_person->X >> 8, p_person->Y, p_person->Z >> 8, locstr);
+    }
+
+    if ((p_person->U.UPerson.Target2 != 0) && ((p_person->Flag & (0x40000000|0x0002)) == 0))
+    {
+        person_kill_target2(p_person);
+        if (p_person->State == PerSt_PROTECT_PERSON)
+          process_protect_person(p_person);
+    }
+    else if ((p_person->Flag2 & 0x0008) != 0)
+    {
+        process_wander(p_person);
+        if (p_person->U.UPerson.Timer2 == 1)
+            p_person->Speed = 500 + (LbRandomAnyShort() % 700);
+    }
+    else
+    {
+        switch (p_person->State & 0x7FFF)
+        {
+        case PerSt_NONE:
+              person_find_next_state(p_person);
+              break;
+        case PerSt_GOTO_POINT:
+              person_goto_point(p_person);
+              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & 0x04) != 0) && ((p_person->Flag & 0x1000) == 0))
+              {
+                  struct Thing *p_target;
+
+                  p_target = &things[p_person->GotoThingIndex];
+                  p_person->State = PerSt_PROTECT_PERSON;
+                  p_person->U.UPerson.ComRange = follow_dist[p_target->U.UPerson.ComCur & 3][p_person->U.UPerson.ComCur & 3];
+              }
+              break;
+        case PerSt_WANDER:
+              process_wander(p_person);
+              break;
+        case PerSt_WAIT:
+              person_wait(p_person);
+              break;
+        case PerSt_PICKUP_ITEM:
+              person_pickup(p_person);
+              break;
+        case PerSt_DROP_ITEM:
+              person_drop_item(p_person);
+              break;
+        case PerSt_DIEING:
+              person_dieing(p_person);
+              break;
+        case PerSt_DEAD:
+              person_dead(p_person);
+              break;
+        case PerSt_INIT_SAVE_VICTIM:
+        case PerSt_SAVE_VICTIM:
+              person_save_victim(p_person);
+              break;
+        case PerSt_GOTO_PERSON:
+              person_goto_person_nav(p_person);
+              break;
+        case PerSt_KILL_PERSON:
+              person_kill_person(p_person);
+              break;
+        case PerSt_BLOCK_PERSON:
+              person_block_person(p_person);
+              break;
+        case PerSt_SCARE_PERSON:
+              person_scare_person(p_person);
+              break;
+        case PerSt_STATIONARY_SHOT:
+              process_stationary_shot(p_person);
+              break;
+        case PerSt_RECOIL_HIT:
+              person_recoil(p_person);
+              break;
+        case PerSt_GOTO_POINT_REL:
+              person_goto_point_rel(p_person);
+              break;
+        case PerSt_PERSON_BURNING:
+              person_burning(p_person);
+              break;
+        case PerSt_PERSUADE_PERSON:
+              person_persuade_person(p_person);
+              break;
+        case PerSt_FOLLOW_PERSON:
+              person_follow_person(p_person);
+              break;
+        case PerSt_SUPPORT_PERSON:
+              process_support_person(p_person);
+              break;
+        case PerSt_PROTECT_PERSON:
+              process_protect_person(p_person);
+              break;
+        case PerSt_GET_ITEM:
+              person_get_item(p_person);
+              break;
+        case PerSt_USE_VEHICLE:
+              person_use_vehicle(p_person);
+              break;
+        case PerSt_WAIT_VEHICLE:
+              person_wait_vehicle(p_person);
+              break;
+        case PerSt_CATCH_TRAIN:
+              person_catch_train(p_person);
+              break;
+        case PerSt_WAIT_TRAIN:
+              process_wait_train(p_person);
+              break;
+        case PerSt_DESTROY_BUILDING:
+              person_destroy_building(p_person);
+              break;
+        case PerSt_GO_PLANT_MINE:
+              person_go_plant_mine(p_person);
+              break;
+        case PerSt_WAIT_TO_EXIT_VEHICLE:
+              person_attempt_to_leave_vehicle(p_person);
+              break;
+        case PerSt_EXIT_FERRY:
+              person_attempt_to_leave_ferry(p_person);
+              break;
+        case PerSt_AVOID_GROUP:
+              process_avoid_group(p_person);
+              break;
+        case PerSt_UNUSED_3A:
+              person_init_command(p_person, PCmd_DROP_SPEC_ITEM);
+              break;
+        case PerSt_BEING_PERSUADED:
+              person_being_persuaded(p_person);
+              break;
+        default:
+              break;
+        }
+        calc_lighting(p_person);
+        process_lighting_unkn1(p_person);
+    }
 }
 
 /******************************************************************************/

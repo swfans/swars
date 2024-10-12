@@ -33,6 +33,8 @@
 #include "game.h"
 #include "keyboard.h"
 #include "player.h"
+#include "purpldrw.h"
+#include "purpldrwlst.h"
 #include "research.h"
 #include "weapon.h"
 #include "sound.h"

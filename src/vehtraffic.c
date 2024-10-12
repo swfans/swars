@@ -410,7 +410,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
             if ((p_tnode->Flags & TNdF_Unkn0040) != 0)
             {
                 LOGDBG("Stopping %s thing %d rqspeed %d due to TNode %d flags",
-                  vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+                  vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,
                   (int)p_vehicle->U.UVehicle.ReqdSpeed, (int)p_vehicle->U.UVehicle.TNode);
 
                 p_vehicle->U.UVehicle.ReqdSpeed = 0;
@@ -456,7 +456,7 @@ void process_vehicle_stop_for_pedestrians(struct Thing *p_vehicle)
             }
             if (p_vehicle->U.UVehicle.ZebraOldHealth == p_vehicle->Health) {
                 LOGDBG("Stopping %s thing %d rqspeed %d due to TNode %d near pedestrian",
-                  vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+                  vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,
                   (int)p_vehicle->U.UVehicle.ReqdSpeed, (int)p_vehicle->U.UVehicle.TNode);
 
                 p_vehicle->U.UVehicle.ReqdSpeed = 0;
@@ -556,7 +556,7 @@ void process_next_tnode(struct Thing *p_vehicle)
     tnode = p_vehicle->U.UVehicle.TNode;
     if (tnode == 0) {
         LOGERR("Crashing %s %d due to no TNode assigned",
-          vehicle_type_name(p_vehicle->Type), p_vehicle->ThingOffset);
+          vehicle_type_name(p_vehicle->SubType), p_vehicle->ThingOffset);
         start_crashing(p_vehicle);
         return;
     }
@@ -811,7 +811,7 @@ void process_next_tnode(struct Thing *p_vehicle)
                 p_vehicle->U.UVehicle.TNode = p_tnode->UTraffic.Link[lnk];
                 if (p_vehicle->U.UVehicle.TNode == 0) {
                     LOGERR("Crashing %s %d state %d.%d due to no next TNode in TNode %d link %d",
-                       vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+                       vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,
                        p_vehicle->State, p_vehicle->SubState, p_vehicle->U.UVehicle.Dummy4b, lnk);
                     start_crashing(p_vehicle);
                 }
@@ -864,7 +864,7 @@ void process_next_tnode(struct Thing *p_vehicle)
                 }
                 if (i >= 8) {
                     LOGERR("Crashing %s %d state %d.%d due to no random next TNode despite %d tries",
-                      vehicle_type_name(p_vehicle->Type), (int)p_vehicle->ThingOffset,
+                      vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,
                       p_vehicle->State, p_vehicle->SubState, i);
                     start_crashing(p_vehicle);
                     return;

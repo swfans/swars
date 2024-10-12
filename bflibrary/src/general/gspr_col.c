@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file gspr_col.cpp
+/** @file gspr_col.c
  *     Implementation of related functions.
  * @par Purpose:
  *     Unknown.

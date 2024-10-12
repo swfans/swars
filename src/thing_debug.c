@@ -35,28 +35,157 @@
 TbBool debug_hud_things = false;
 
 extern ubyte execute_commands;
-extern struct Thing *p_track_thing;
-extern struct Thing *p_track2_thing;
-extern int dword_1DC7A4;
-extern short word_1DC7A0;
-extern short word_1DC7A2;
+
+struct Thing *p_track_thing = NULL;
+struct Thing *p_track2_thing = NULL;
+int dword_1DC7A4 = 0;
+short word_1DC7A0 = 0;
+short word_1DC7A2 = 0;
+
+TbBool thing_debug_selectable(short thing, short type, TbBool hidden)
+{
+    if (thing > 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        if (hidden || (p_thing->Flag & TngF_Unkn04000000) != 0)
+        {
+            if ((type == 0) || (p_thing->Type == type))
+                return true;
+            if ((type == -1) && (p_thing->Type == TT_PERSON
+                || p_thing->Type == TT_VEHICLE))
+                return true;
+        }
+    }
+    else if (thing < 0)
+    {
+        struct SimpleThing *p_sthing;
+
+        p_sthing = &sthings[thing];
+        if (hidden || (p_sthing->Flag & TngF_Unkn04000000) != 0)
+        {
+            if ((type == 0) || (p_sthing->Type == type))
+                return true;
+            if ((type == -1) && (p_sthing->Type == SmTT_DROPPED_ITEM))
+                return true;
+        }
+    }
+    return false;
+}
+
+void unused_func_203(short x, short y, short thing, ubyte colkp)
+{
+    short tng_x, tng_y, tng_z;
+
+    if (thing > 0) {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        tng_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
+        tng_y = PRCCOORD_TO_MAPCOORD(p_thing->Y);
+        tng_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    } else {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        tng_x = PRCCOORD_TO_MAPCOORD(p_sthing->X);
+        tng_y = PRCCOORD_TO_MAPCOORD(p_sthing->Y);
+        tng_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+    }
+    unkn_draw_transformed_point(
+      x >> (lbDisplay.GraphicsScreenHeight < 400),
+      y >> (lbDisplay.GraphicsScreenHeight < 400),
+      tng_x, 8 * tng_y, tng_z, colour_lookup[colkp]);
+}
+
+int unused_func_200(short x, short y, ushort group)
+{
+    int ret;
+    asm volatile ("call ASM_unused_func_200\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (group));
+    return ret;
+}
+
+void func_705bc(int a1, int a2, int a3, int a4, int a5, ubyte a6)
+{
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_705bc\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+}
 
 short unused_func_201(short x, short y, short z, short type)
 {
-    short ret;
-    asm volatile ("call ASM_unused_func_201\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
-    return ret;
+    ulong sel_dist;
+    short sel_thing;
+    short shift_x, shift_z;
+
+    sel_thing = 0;
+    sel_dist = 0x7FFFFFFF;
+
+    for (shift_x = -8; shift_x < 11; shift_x++)
+    {
+        for (shift_z = -8; shift_z < 11; shift_z++)
+        {
+            ulong dist;
+            long dist_x, dist_z;
+            short tile_x, tile_z;
+            short thing;
+
+            tile_x = MAPCOORD_TO_TILE(x) + shift_x;
+            if ((tile_x <= 0) || (tile_x >= 128))
+                continue;
+            tile_z = MAPCOORD_TO_TILE(z) + shift_z;
+            if ((tile_z <= 0) && (tile_z >= 128))
+                continue;
+            thing = game_my_big_map[128 * tile_z + tile_x].Child;
+
+            while ((thing != 0) && (thing > -STHINGS_LIMIT) && (thing < THINGS_LIMIT))
+            {
+                if (thing > 0)
+                {
+                    struct Thing *p_thing;
+
+                    p_thing = &things[thing];
+                    if (thing_debug_selectable(thing, type, false))
+                    {
+                        dist_x = x - PRCCOORD_TO_MAPCOORD(p_thing->X);
+                        dist_z = z - PRCCOORD_TO_MAPCOORD(p_thing->Z);
+                        dist = dist_x * dist_x + dist_z * dist_z;
+                        if (dist < sel_dist)
+                        {
+                            sel_dist = dist;
+                            sel_thing = thing;
+                        }
+                    }
+                    thing = p_thing->Next;
+                }
+                if (thing < 0)
+                {
+                    struct SimpleThing *p_sthing;
+
+                    p_sthing = &sthings[thing];
+                    if (thing_debug_selectable(thing, type, false))
+                    {
+                        dist_x = x - PRCCOORD_TO_MAPCOORD(p_sthing->X);
+                        dist_z = z - PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+                        dist = dist_x * dist_x + dist_z * dist_z;
+                        if (dist < sel_dist)
+                        {
+                            sel_dist = dist;
+                            sel_thing = thing;
+                        }
+                    }
+                    thing = p_sthing->Next;
+                }
+            }
+        }
+    }
+    return sel_thing;
 }
 
 int select_thing_for_debug(short x, short y, short z, short type)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_select_thing_for_debug\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (type));
-    return ret;
-#endif
     ThingIdx thing;
     short alt;
     char locstr[52];
@@ -86,12 +215,144 @@ int select_thing_for_debug(short x, short y, short z, short type)
     return thing;
 }
 
-int unused_func_204(short a1, short a2, short a3, struct Thing *p_person)
+/** Make lines to target things or circles around target areas to visualize person command.
+ */
+int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thing *p_person)
 {
-    int ret;
-    asm volatile ("call ASM_unused_func_204\n"
-        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3), "c" (p_person));
-    return ret;
+    struct Command *p_cmd;
+
+    p_cmd = &game_commands[cmd];
+    switch (p_cmd->Type)
+    {
+    case PCmd_GO_TO_PERSON:
+    case PCmd_FOLLOW_PERSON:
+    case PCmd_SUPPORT_PERSON:
+    case PCmd_PROTECT_PERSON:
+    case PCmd_USE_VEHICLE:
+    case PCmd_WAIT_P_V_DEAD:
+    case PCmd_UNTIL_P_V_DEAD:
+    case PCmd_UNTIL_OBJT_DESTROY:
+    case PCmd_PING_P_V:
+    case PCmd_WAIT_OBJT_DESTROY:
+    case PCmd_WAND_OBJT_DESTROY:
+        unused_func_203(x, y, p_cmd->OtherThing, 1u);
+        return 1;
+    case PCmd_KILL_PERSON:
+    case PCmd_CAMERA_TRACK:
+        unused_func_203(x, y, p_cmd->OtherThing, 2u);
+        return 1;
+    case PCmd_GO_TO_POINT:
+    case PCmd_GOTOPOINT_FACE:
+    case PCmd_RUN_TO_POINT:
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        return 1;
+    case PCmd_KILL_MEM_GROUP:
+    case PCmd_KILL_ALL_GROUP:
+    case PCmd_UNTRUCE_GROUP:
+      if ((lbShift & KMod_SHIFT) != 0)
+          unused_func_200(x, y, p_cmd->OtherThing);
+      return 1;
+    case PCmd_BLOCK_PERSON:
+    case PCmd_SCARE_PERSON:
+        unused_func_203(x, y, p_cmd->OtherThing, 4u);
+        return 1;
+    case PCmd_PERSUADE_PERSON:
+    case PCmd_GET_ITEM:
+        unused_func_203(x, y, p_cmd->OtherThing, 5u);
+        return 1;
+    case PCmd_USE_WEAPON:
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        return 1;
+    case PCmd_CATCH_FERRY:
+    case PCmd_EXIT_FERRY:
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        if ((p_cmd->Flags & 0x10) != 0) {
+            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+        } else {
+            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        }
+        return 1;
+    case PCmd_PROTECT_MEM_G:
+    case PCmd_WAIT_ALL_G_DEAD:
+    case PCmd_WAND_ALL_G_DEAD:
+        if ((lbShift & KMod_SHIFT) != 0)
+            unused_func_200(x, y, p_cmd->OtherThing);
+        return 1;
+    case PCmd_KILL_EVERYONE:
+    case PCmd_WITHIN_AREA:
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        if ((p_cmd->Flags & 0x10) != 0) {
+            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+        } else {
+            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        }
+        return 1;
+    case PCmd_WAIT_P_V_I_NEAR:
+    case PCmd_UNTIL_P_V_I_NEAR:
+        unused_func_203(x, y, p_cmd->OtherThing, 1u);
+        func_711F4(p_person->X >> 8, p_person->Y >> 8, p_person->Z >> 8, p_cmd->Arg1 << 6, 2u);
+        return 1;
+    case PCmd_UNTIL_MEM_G_NEAR:
+    case PCmd_UNTIL_ALL_G_NEAR:
+    case PCmd_WAIT_ALL_G_ARRIVE:
+    case PCmd_WAND_MEM_G_NEAR:
+        if ((lbShift & KMod_SHIFT) != 0)
+            unused_func_200(x, y, p_cmd->OtherThing);
+        func_711F4(p_person->X >> 8, p_person->Y >> 8, p_person->Z >> 8, p_cmd->Arg1 << 6, 2u);
+        return 1;
+    case PCmd_UNTIL_P_V_I_ARRIVE:
+    case PCmd_WAIT_P_V_I_ARRIVE:
+    case PCmd_WAND_P_V_I_ARRIVE:
+        unused_func_203(x, y, p_cmd->OtherThing, 1u);
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        if ((p_cmd->Flags & 0x10) != 0) {
+            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+                p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+        } else {
+            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        }
+        return 1;
+    case PCmd_UNTIL_MEM_G_ARRIVE:
+    case PCmd_UNTIL_ALL_G_ARRIVE:
+    case PCmd_WAIT_MEM_G_ARRIVE:
+    case PCmd_WAND_MEM_G_ARRIVE:
+    case PCmd_WAND_ALL_G_ARRIVE:
+        if ((lbShift & KMod_SHIFT) != 0)
+            unused_func_200(x, y, p_cmd->OtherThing);
+        unkn_draw_transformed_point(
+          x >> (lbDisplay.GraphicsScreenHeight < 400),
+          y >> (lbDisplay.GraphicsScreenHeight < 400),
+          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[2]);
+        if ((p_cmd->Flags & 0x10) != 0) {
+            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+        } else {
+            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        }
+        return 1;
+    default:
+        break;
+    }
+    // TODO here we could add some general handling of simple commands, based on flags
+    return 0;
 }
 
 void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
@@ -105,16 +366,6 @@ void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
 // TODO separate get_person_commands_debug_hud_inputs() from the below
 void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyte col1, ubyte col2, ubyte col3)
 {
-#if 0
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_person_commands_debug_hud\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (person), "g" (col1), "g" (col2), "g" (col3));
-    return;
-#endif
     struct Thing *p_person;
     ushort cmds_count;
     short cmd, cmdhead;
@@ -196,7 +447,7 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
             }
 #endif
             if (p_person != NULL)
-                unused_func_204(box_x + 8 - 20, cy + 5, cmd, p_person);
+                person_command_dbg_point_to_target(box_x + 8 - 20, cy + 5, cmd, p_person);
             if (person_command_to_text(locstr, cmd, 0))
                 draw_text(box_x + 8, cy, locstr, col2);
             else
@@ -218,11 +469,6 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
 
 void things_debug_hud(void)
 {
-#if 0
-    asm volatile ("call ASM_things_debug_hud\n"
-        :  :  : "eax" );
-    return;
-#endif
     ThingIdx thing;
     short path;
     short pasngr;

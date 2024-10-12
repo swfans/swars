@@ -7,7 +7,8 @@ m4_define([bfsoundlib_version], [0.1.0.0])
 AC_INIT([bullfrog-sound-library], [bfsoundlib_version], [mefistotelis@gmail.com], [bfsoundlib])
 
 AC_CONFIG_SRCDIR([src/bfaudio.c])
-AC_CONFIG_HEADERS([include/bsndconf.h])
+AC_CONFIG_HEADERS([include/bsndprivconf.h])
+AX_PREFIX_CONFIG_H([include/bsndconf.h], [LBS])
 #AC_CONFIG_LINKS([include:include])
 AC_CONFIG_MACRO_DIRS([m4])
 
@@ -54,9 +55,9 @@ AS_IF([test "x$have_wildmidi" == "xyes"], [
 AC_SUBST(WILDMIDI_CFLAGS, )
 AC_MSG_RESULT([$have_wildmidi])
 
-# libraries from within this project are not built at this point
-AC_SUBST(BFLIBRARY_LIBS, -L\$\(top_builddir\)/../bflibrary)
-AC_SUBST(BFLIBRARY_CFLAGS, -I\$\(top_srcdir\)/../bflibrary/include)
+# libraries from within this project are only built after `make` is executed
+AC_SUBST(BFLIBRARY_LIBS, "-L\"\$(top_builddir)/../lib\" -lbullfrog")
+AC_SUBST(BFLIBRARY_CFLAGS, "-I\"\$(top_builddir)/../include/bullfrog\"")
 
 
 # Checks for header files.

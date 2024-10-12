@@ -32,6 +32,7 @@ extern "C" {
 #define SCANNER_ARC_COUNT 4
 
 struct Objective;
+struct NetscanObjective;
 
 struct BigBlip
 {
@@ -57,7 +58,7 @@ struct Arc
 
 struct Scanner
 {
-  long X1;
+  long X1; // offset=ingame+0x00C
   long Y1;
   long X2;
   long Y2;
@@ -67,7 +68,7 @@ struct Scanner
   long Angle;
   long Contrast;
   long Brightness;
-  long Width[200];
+  long Width[500]; // offset=ingame+0x034; modified 200 -> 500
   struct BigBlip BigBlip[SCANNER_BIG_BLIP_COUNT];
   struct Arc Arc[SCANNER_ARC_COUNT];
   ubyte Group[SCANNER_GROUP_COUNT];
@@ -80,6 +81,8 @@ struct Scanner
 /******************************************************************************/
 extern long *SCANNER_width;
 extern ubyte SCANNER_data[256][256];
+extern ushort SCANNER_base_zoom_factor;
+extern ushort SCANNER_user_zoom_factor;
 
 extern short waft_table2[32];
 extern short waft_table[32];
@@ -101,11 +104,10 @@ void SCANNER_set_zoom(int zoom);
  */
 void SCANNER_set_screen_box(short x, short y, short width, short height, short cutout);
 
-void add_blippoint_to_scanner(int x, int z, ubyte colour);
-
 TbBool mouse_move_over_scanner(void);
 void clear_all_scanner_signals(void);
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag);
+void add_netscan_signal_to_scanner(struct NetscanObjective *p_nsobv, ubyte flag);
 /******************************************************************************/
 #ifdef __cplusplus
 }

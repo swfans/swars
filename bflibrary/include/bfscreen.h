@@ -227,16 +227,16 @@ struct DisplayStruct { // sizeof=118
     /** Currently active colour palette.
      *  LbPaletteGet() should be used to retrieve a copy of the palette. */
     ubyte *Palette; // offset=114
-#if defined(ENABLE_MOUSE_WHEEL)
+#if defined(LB_ENABLE_MOUSE_WHEEL)
     short WheelPosition;
     ushort WheelMoveUp;
     ushort WheelMoveDown;
 #endif
-#if defined(ENABLE_MOUSE_MOVE_RATIO)
+#if defined(LB_ENABLE_MOUSE_MOVE_RATIO)
     short MouseMoveRatioX;
     short MouseMoveRatioY;
 #endif
-#if defined(ENABLE_SHADOW_COLOUR)
+#if defined(LB_ENABLE_SHADOW_COLOUR)
     /** Colour index used for drawing shadow. */
     uchar ShadowColour;
 #endif

@@ -24,6 +24,7 @@
 #include "enginzoom.h"
 #include "hud_target.h"
 #include "research.h"
+#include "scanner.h"
 #include "swlog.h"
 #include "weapon.h"
 /******************************************************************************/
@@ -36,6 +37,17 @@ enum RulesEngineConfigCmd {
 const struct TbNamedEnum rules_conf_engine_cmnds[] = {
   {"ZoomMin",		REnginCmd_ZoomMin},
   {"ZoomMax",		REnginCmd_ZoomMax},
+  {NULL,			0},
+};
+
+enum RulesScannerConfigCmd {
+    RScanrCmd_BaseZoomFactor = 1,
+    RScanrCmd_UserZoomFactor = 2,
+};
+
+const struct TbNamedEnum rules_conf_scanner_cmnds[] = {
+  {"BaseZoomFactor",RScanrCmd_BaseZoomFactor},
+  {"UserZoomFactor",RScanrCmd_UserZoomFactor},
   {NULL,			0},
 };
 
@@ -147,6 +159,55 @@ TbBool read_rules_file(void)
             }
             zoom_max = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)zoom_max);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+
+    // Parse the [scanner] section of loaded file
+    done = false;
+    if (LbIniFindSection(&parser, "scanner") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section.", "scanner");
+        done = true;
+    }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(rules_conf_scanner_cmnds,cmd_num)
+    while (!done)
+    {
+        int cmd_num;
+
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, rules_conf_scanner_cmnds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case RScanrCmd_BaseZoomFactor:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            SCANNER_base_zoom_factor = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)SCANNER_base_zoom_factor);
+            break;
+        case RScanrCmd_UserZoomFactor:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            SCANNER_user_zoom_factor = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)SCANNER_user_zoom_factor);
             break;
         case 0: // comment
             break;

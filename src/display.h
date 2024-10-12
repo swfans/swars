@@ -1,7 +1,6 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include <SDL.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include "bfscreen.h"

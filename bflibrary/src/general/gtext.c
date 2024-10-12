@@ -27,7 +27,7 @@
 #include "bfanywnd.h"
 #include "privbflog.h"
 
-#if defined(ENABLE_SHADOW_COLOUR)
+#if defined(LB_ENABLE_SHADOW_COLOUR)
 #  define SHADOW_COLOUR lbDisplay.ShadowColour
 #else
 #  define SHADOW_COLOUR 0x00

@@ -4,7 +4,6 @@ bindir = $(prefix)/$(PACKAGE)
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
-	bflib_basics.h \
 	bflib_joyst.c \
 	bflib_joyst.h \
 	bflib_joyst_s.sx \
@@ -75,6 +74,8 @@ swars_SOURCES = \
 	enginsngobjs.h \
 	enginsngtxtr.c \
 	enginsngtxtr.h \
+	enginshadws.c \
+	enginshadws.h \
 	enginpeff.c \
 	enginpeff.h \
 	engintrns.c \
@@ -142,6 +143,8 @@ swars_SOURCES = \
 	matrix.h \
 	mouse.c \
 	mouse.h \
+	mydraw.c \
+	mydraw.h \
 	netipx1.sx \
 	netser1.sx \
 	network.c \
@@ -157,6 +160,10 @@ swars_SOURCES = \
 	pepgroup.h \
 	player.c \
 	player.h \
+	purpldrw.c \
+	purpldrw.h \
+	purpldrwlst.c \
+	purpldrwlst.h \
 	radica1.sx \
 	radica2.sx \
 	radica3.sx \
@@ -216,10 +223,19 @@ endif
 # Pretending to contain c++ source so that Automake select c++ linker
 nodist_EXTRA_swars_SOURCES = dummy.cxx
 
+# Libraries included with the project
+swars_PROJECT_LIBS = ../lib/libbullfrog.a ../lib/libbfsound.a
+
+$(swars_OBJECTS) $(bin_PROGRAMS): $(swars_PROJECT_LIBS)
+
 swars_LDADD = \
-  $(swars_WRAPPERS) $(swars_RESRCS) \
-  -lbullfrog \
-  -lbfsound
+  $(swars_WRAPPERS) $(swars_RESRCS)
+
+../lib/libbullfrog.a: ../bflibrary/libbullfrog.a
+	$(MAKE) -C $(<D) DESTDIR="../" prefix="" install
+
+../lib/libbfsound.a: ../bfsoundlib/libbfsound.a
+	$(MAKE) -C $(<D) DESTDIR="../" prefix="" install
 
 $(swars_WRAPPERS:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<

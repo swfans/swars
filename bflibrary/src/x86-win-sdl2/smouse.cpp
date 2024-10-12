@@ -123,7 +123,7 @@ TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
 
     LOGSYNC("new ratio %ldx%ld", ratio_x, ratio_y);
 
-#if defined(ENABLE_MOUSE_MOVE_RATIO)
+#if defined(LB_ENABLE_MOUSE_MOVE_RATIO)
     lbDisplay.MouseMoveRatioX = ratio_x;
     lbDisplay.MouseMoveRatioY = ratio_y;
 #endif
@@ -264,7 +264,7 @@ void MouseToScreen(struct TbPoint *pos)
           return;
       orig.x = pos->x;
       orig.y = pos->y;
-#if defined(ENABLE_MOUSE_MOVE_RATIO)
+#if defined(LB_ENABLE_MOUSE_MOVE_RATIO)
       pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
       pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
 #endif
@@ -283,7 +283,7 @@ void MouseToScreen(struct TbPoint *pos)
     {
       orig.x = pos->x;
       orig.y = pos->y;
-#if defined(ENABLE_MOUSE_MOVE_RATIO)
+#if defined(LB_ENABLE_MOUSE_MOVE_RATIO)
       pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
       pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
 #endif

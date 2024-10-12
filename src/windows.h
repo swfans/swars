@@ -6,16 +6,6 @@
 #include <sys/time.h>
 #include <stdbool.h>
 
-#ifndef HAVE_GETTIMEOFDAY
-struct timezone
-{
-  int  tz_minuteswest;
-  int  tz_dsttime;
-};
-
-int gettimeofday (struct timeval *tp, struct timezone *tzp);
-#endif
-
 bool sys_get_user_path (char *buffer, size_t size);
 bool sys_get_data_path (char *buffer, size_t size);
 

@@ -530,7 +530,7 @@ GLOBAL_FUNC(ASM_LbCommExchange)	/* 0x0F9B18 */
 		movl   $0xffffffff,-0x1c(%ebp)
 		jmp    jump_f9c40
 	jump_f9b56:
-		mov    EXPORT_SYMBOL(data_1e2f54),%edx
+		mov    EXPORT_SYMBOL(NetworkServicePtr)+0x14,%edx	/* NetworkServicePtr.F.SessionExchange */
 		mov    $EXPORT_SYMBOL(byte_1E81E0),%eax
 		call   ASM_net_unkn_sub_332
 		mov    -0x18(%ebp),%eax

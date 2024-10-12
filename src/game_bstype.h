@@ -20,7 +20,7 @@
 #ifndef GAME_BSTYPE_H
 #define GAME_BSTYPE_H
 
-#include "bflib_basics.h"
+#include "bftypes.h"
 
 #ifdef __cplusplus
 extern "C" {

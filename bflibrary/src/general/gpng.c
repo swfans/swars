@@ -2,10 +2,10 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file giff.c
- *     Implementation of Interchange File Format image format read/write.
+/** @file gpng.c
+ *     Implementation of Portable Network Graphics image format read/write.
  * @par Purpose:
- *     Unknown.
+ *     Ability to save and load images to/from screen buffers.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -20,7 +20,6 @@
 #include "bfpng.h"
 
 #include <stdio.h>
-#include <stdint.h>
 #include <string.h>
 #include <errno.h>
 #include <png.h>

@@ -115,14 +115,14 @@ TbResult mouseControl(TbMouseAction action, struct TbPoint *pos)
         }
         break;
     case MActn_WHEELMOVEUP:
-#if defined(ENABLE_MOUSE_WHEEL)
+#if defined(LB_ENABLE_MOUSE_WHEEL)
         lbDisplay.WheelPosition--;
         lbDisplay.WheelMoveUp++;
         lbDisplay.WheelMoveDown = 0;
 #endif
         break;
     case MActn_WHEELMOVEDOWN:
-#if defined(ENABLE_MOUSE_WHEEL)
+#if defined(LB_ENABLE_MOUSE_WHEEL)
         lbDisplay.WheelPosition++;
         lbDisplay.WheelMoveUp = 0;
         lbDisplay.WheelMoveDown++;

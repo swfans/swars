@@ -36,6 +36,8 @@
 #include "keyboard.h"
 #include "game.h"
 #include "player.h"
+#include "purpldrw.h"
+#include "purpldrwlst.h"
 #include "research.h"
 #include "sound.h"
 #include "swlog.h"

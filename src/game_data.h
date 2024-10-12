@@ -19,7 +19,7 @@
 #ifndef GAME_DATA_H
 #define GAME_DATA_H
 
-#include "bflib_basics.h"
+#include "bftypes.h"
 
 #ifdef __cplusplus
 extern "C" {

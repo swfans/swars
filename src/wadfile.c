@@ -21,7 +21,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include "bflib_basics.h"
+#include "bftypes.h"
 #include "campaign.h"
 #include "game_data.h"
 #include "game.h"
@@ -38,7 +38,7 @@ TbFileHandle open_file_from_wad(const char *filename, const char *wadfile)
 
 int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
 {
-    char locfname[64];
+    char locfname[DISKPATH_SIZE];
     char locstr[64];
     struct WADIndexEntry fentry;
     const char *only_fname;

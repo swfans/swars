@@ -31,8 +31,6 @@
 .text
 
 .global EXPORT_SYMBOL(IPXHandler)
-.global EXPORT_SYMBOL(data_1e2f4c)
-.global EXPORT_SYMBOL(data_1e2f50)
 .global EXPORT_SYMBOL(NetTimeoutTicks)
 
 /*----------------------------------------------------------------*/
@@ -425,9 +423,9 @@ GLOBAL_FUNC(ASM_ipx_exchange_packets)	/* 0x0F5B4C */
 		mov    $0x31,%eax
 		call   ac_dos_int386x
 	jump_f5df1:
-		cmpl   $0x0,EXPORT_SYMBOL(data_1e2f54)
+		cmpl   $0x0,EXPORT_SYMBOL(NetworkServicePtr)+0x14	/* NetworkServicePtr.F.SessionExchange */
 		je     jump_f5e00
-		call   *EXPORT_SYMBOL(data_1e2f54)
+		call   *EXPORT_SYMBOL(NetworkServicePtr)+0x14	/* NetworkServicePtr.F.SessionExchange */
 	jump_f5e00:
 		cmpb   $0x0,0x88(%esp)
 		je     jump_f5cc9
@@ -710,9 +708,9 @@ ipx_get_players_packets_:	/* 0x0F5E2C */
 		jmp    jump_f6184
 	jump_f620b:
 		call   ac_ipx_update
-		cmpl   $0x0,EXPORT_SYMBOL(data_1e2f54)
+		cmpl   $0x0,EXPORT_SYMBOL(NetworkServicePtr)+0x14	/* NetworkServicePtr.F.SessionExchange */
 		je     jump_f621f
-		call   *EXPORT_SYMBOL(data_1e2f54)
+		call   *EXPORT_SYMBOL(NetworkServicePtr)+0x14	/* NetworkServicePtr.F.SessionExchange */
 	jump_f621f:
 		xor    %eax,%eax
 		mov    0xd2(%esp),%edx
@@ -1423,9 +1421,9 @@ GLOBAL_FUNC(ASM_ipx_stop_network)	/* 0x0F6CA4 */
 		movswl %dx,%eax
 		cmp    $0x8,%eax
 		jl     jump_f6ceb
-		cmpl   $0x0,EXPORT_SYMBOL(data_1e2f6c)
+		cmpl   $0x0,EXPORT_SYMBOL(NetworkServicePtr)+0x2c	/* NetworkServicePtr.F.netsvcfunc_unkn20 */
 		je     jump_f6d08
-		call   *EXPORT_SYMBOL(data_1e2f6c)
+		call   *EXPORT_SYMBOL(NetworkServicePtr)+0x2c	/* NetworkServicePtr.F.netsvcfunc_unkn20 */
 	jump_f6d08:
 		mov    %ebx,%eax
 		sub    %ecx,%eax
@@ -1516,9 +1514,9 @@ GLOBAL_FUNC(ASM_ipx_stop_network)	/* 0x0F6CA4 */
 		lea    -0x1(%eax),%edx
 		mov    %edx,EXPORT_SYMBOL(IPXPlayer)+0x26
 	jump_f6e2f:
-		cmpl   $0x0,EXPORT_SYMBOL(data_1e2f6c)
+		cmpl   $0x0,EXPORT_SYMBOL(NetworkServicePtr)+0x2c	/* NetworkServicePtr.F.netsvcfunc_unkn20 */
 		je     jump_f6e3e
-		call   *EXPORT_SYMBOL(data_1e2f6c)
+		call   *EXPORT_SYMBOL(NetworkServicePtr)+0x2c	/* NetworkServicePtr.F.netsvcfunc_unkn20 */
 	jump_f6e3e:
 		pop    %ebp
 		pop    %edi

@@ -20,6 +20,7 @@
 #define ENGINTRNS_H
 
 #include "bftypes.h"
+#include "bfmath.h"
 #include "poly.h"
 
 #ifdef __cplusplus
@@ -57,17 +58,28 @@ struct ShEnginePoint {
 
 #pragma pack()
 /******************************************************************************/
+extern long dword_152EEC;
+
+extern long dword_176D0C;
 extern long dword_176D10;
 extern long dword_176D14;
 extern long dword_176D18;
 extern long dword_176D1C;
 extern long dword_176D3C;
 extern long dword_176D40;
+extern long dword_176D44;
+extern long dword_176D4C;
+extern long dword_176D54;
+extern long dword_176D64;
 
 void transform_point(struct EnginePoint *p_ep);
 void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc);
 
 void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c);
+
+void process_engine_unk1(void);
+void process_engine_unk2(void);
+void setup_engine_nullsub4(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

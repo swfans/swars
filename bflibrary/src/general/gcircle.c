@@ -5,7 +5,7 @@
 /** @file gcircle.c
  *     Implementation of related functions.
  * @par Purpose:
- *     Unknown.
+ *     Drawing circles.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis

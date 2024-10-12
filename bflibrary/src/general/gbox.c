@@ -2,10 +2,10 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file gbox.cpp
+/** @file gbox.c
  *     Implementation of related functions.
  * @par Purpose:
- *     Unknown.
+ *     Drawing boxes.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis

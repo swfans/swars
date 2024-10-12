@@ -31,16 +31,7 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-/** Draw clipped triangle on graphics window at given 3 points, with colour.
- *
- * Graphics window needs to be set and locked. Coordinates are clipped if they
- * exceed the current graphics window.
- * This function honors DrawFlags.
- */
-void LbDrawTriangle(short x1, short y1, short x2, short y2, short x3, short y3,
-  TbPixel colour);
-
-void LbDrawSlantBox(short X, short Y, ushort a3, ushort a4);
+void draw_noise_box(short X, short Y, ushort a3, ushort a4);
 
 /******************************************************************************/
 #ifdef __cplusplus
