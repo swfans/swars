@@ -579,6 +579,17 @@ msgid ""
 "2. Destroy Building"
 msgstr ""
 
+#: mission.brief.mail27.map36.level4:1
+msgctxt "mission brief tactical information"
+msgid "Zealot cathedral location"
+msgstr ""
+
+#: mission.brief.mail27.map36.level4:2
+msgctxt "mission brief tactical information"
+msgid "Unguided reinforcements hiding in bar"
+msgstr ""
+
+
 #: mission.title:103
 msgctxt "mission title"
 msgid "A Tale of Two Cities"
