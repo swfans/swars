@@ -72,6 +72,7 @@ int SCANNER_objective_info_height(void)
     return h;
 }
 
+/* draws a sprite scaled to double size; remove pending */
 void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
 {
     int xwind_beg;
@@ -287,7 +288,7 @@ void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
 }
 
-int SCANNER_text_draw(const char *text, int start_x)
+int SCANNER_text_draw(const char *text, int start_x, int height)
 {
     const ubyte *str;
     struct TbSprite *spr;
@@ -301,6 +302,8 @@ int SCANNER_text_draw(const char *text, int start_x)
     x = start_x;
     if (lbDisplay.GraphicsScreenHeight >= 400)
     {
+      int chr_width, chr_height;
+
       while (*str != '\0')
       {
         if (*str == '\1') {
@@ -310,8 +313,10 @@ int SCANNER_text_draw(const char *text, int start_x)
           ch = my_char_to_upper(*str);
           col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
           spr = &small_font[ch - 31];
-          SCANNER_unkn_func_200(spr, x, 2, col);
-          x += spr->SWidth + spr->SWidth;
+          chr_width = spr->SWidth * height / 9;
+          chr_height = spr->SHeight * height / 9;
+          LbSpriteDrawScaledOneColour(x, 2, spr, chr_width, chr_height, col);
+          x += chr_width;
         }
         str++;
       }
@@ -335,6 +340,39 @@ int SCANNER_text_draw(const char *text, int start_x)
     }
     return x;
 }
+
+void SCANNER_move_objective_info(int width, int height, int end_pos)
+{
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    if ( in_network_game && p_locplayer->PanelState[mouser] == 17 )
+    {
+      if ( end_pos < lbDisplay.PhysicalScreenWidth - (lbDisplay.PhysicalScreenWidth >> 2) )
+          scanner_unkn370 = -20;
+      if (end_pos > lbDisplay.PhysicalScreenWidth - 16)
+          scanner_unkn370 = 10;
+      if (scanner_unkn370 > 0)
+      {
+          scanner_unkn370--;
+          scanner_unkn3CC -= 1 * height / 9;
+      }
+      if (scanner_unkn370 < 0)
+      {
+          scanner_unkn370++;
+          scanner_unkn3CC += 1 * height / 9;
+          if (scanner_unkn3CC > 0)
+              scanner_unkn3CC = 0;
+      }
+    }
+    else
+    {
+        if (end_pos < 0)
+            scanner_unkn3CC = width;
+        scanner_unkn3CC -= 2 * height / 9;
+    }
+}
+
 
 void SCANNER_draw_objective_info(int x, int y, int width)
 {
@@ -361,33 +399,9 @@ void SCANNER_draw_objective_info(int x, int y, int width)
     LbScreenStoreGraphicsWindow(&bkpwnd);
     LbScreenSetGraphicsWindow(x + 1, y, width - 2, height);
 
-    end_pos = SCANNER_text_draw(scroll_text, scanner_unkn3CC);
+    end_pos = SCANNER_text_draw(scroll_text, scanner_unkn3CC, height);
 
-    if ( in_network_game && players[local_player_no].PanelState[mouser] == 17 )
-    {
-      if ( end_pos < lbDisplay.PhysicalScreenWidth - (lbDisplay.PhysicalScreenWidth >> 2) )
-          scanner_unkn370 = -20;
-      if (end_pos > lbDisplay.PhysicalScreenWidth - 16)
-          scanner_unkn370 = 10;
-      if (scanner_unkn370 > 0)
-      {
-          scanner_unkn370--;
-          scanner_unkn3CC -= 2;
-      }
-      if (scanner_unkn370 < 0)
-      {
-          scanner_unkn370++;
-          scanner_unkn3CC += 2;
-          if (scanner_unkn3CC > 0)
-              scanner_unkn3CC = 0;
-      }
-    }
-    else
-    {
-        if (end_pos < 0)
-            scanner_unkn3CC = width;
-        scanner_unkn3CC -= 4;
-    }
+    SCANNER_move_objective_info(width, height, end_pos);
 
     LbScreenLoadGraphicsWindow(&bkpwnd);
 
@@ -1378,7 +1392,7 @@ void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
 }
 
 
-void draw_new_panel(void)
+void update_game_panel(void)
 {
     int i;
     PlayerInfo *p_locplayer;
@@ -1411,6 +1425,16 @@ void draw_new_panel(void)
                 game_panel[17].Spr = 105;
         }
     }
+}
+
+void draw_new_panel(void)
+{
+    int i;
+    PlayerInfo *p_locplayer;
+
+    update_game_panel();
+
+    p_locplayer = &players[local_player_no];
 
     for (i = 0; true; i++)
     {

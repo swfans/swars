@@ -23,6 +23,83 @@
 #include "swlog.h"
 
 /******************************************************************************/
+struct gpoly_state {
+    int var_1B0;
+    int var_1AC;
+    int var_1A8;
+    int var_1A4;
+    int var_1A0;
+    int var_19C;
+    int var_198;
+    int var_194;
+    int var_190;
+    int var_18C;
+    int var_188;
+    int var_184;
+    int var_180;
+    int var_17C;
+    int var_178;
+    int var_174;
+    int var_170;
+    int var_16C;
+    int var_168;
+    int var_164;
+    int var_160;
+    int var_15C;
+    int var_158;
+    int var_154;
+    int var_150;
+    int var_14C;
+    int var_148;
+    int var_144;
+    int var_140;
+    int var_13C;
+    int var_138;
+    int var_134;
+    int var_130;
+    int var_12C;
+    int var_128;
+    int var_124;
+    int var_120;
+    int var_11C;
+    int var_118;
+    int var_114;
+    int var_110;
+    int var_10C;
+    int var_108;
+    int var_104;
+    int var_100;
+    int var_0FC;
+    int var_0F8;
+    int var_0F4;
+    int var_0F0;
+    int var_0EC;
+    int var_0E8;
+    int var_0E4;
+    int var_0E0;
+    int var_0DC;
+    int var_0D8;
+    int var_0D4;
+    int var_0D0;
+    int var_0CC;
+    int var_0C8;
+    int var_0C4;
+    int var_0C0;
+    int var_0BC;
+    int var_0B8;
+    int var_0B4;
+    ubyte var_0B0[112];
+    int var_040;
+    int var_03C;
+    int var_038;
+    int var_034;
+    int var_030;
+    int var_02C;
+    int var_028;
+    int var_024;
+};
+
+
 const long gpoly_countdown[] = { 0,-15,-14,-13,-12,-11,-10, -9,  -8, -7, -6, -5, -4, -3, -2, -1 };
 
 const long gpoly_reptable[] = {
@@ -349,11 +426,212 @@ void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct 
     }
 }
 
+void gpoly_sta_md03(struct gpoly_state *st)
+{
+    asm volatile (
+      "call ASM_gpoly_sta_md03\n"
+        : : "a" (st));
+    return;
+}
+
+void gpoly_sta_md04(struct gpoly_state *st)
+{
+    asm volatile (
+      "call ASM_gpoly_sta_md04\n"
+        : : "a" (st));
+    return;
+}
+
+void gpoly_sta_md05(struct gpoly_state *st)
+{
+    asm volatile (
+      "call ASM_gpoly_sta_md05\n"
+        : : "a" (st));
+    return;
+}
+
+void gpoly_sta_md27(struct gpoly_state *st)
+{
+    asm volatile (
+      "call ASM_gpoly_sta_md27\n"
+        : : "a" (st));
+    return;
+}
+
+void gpoly_sta_md28(struct gpoly_state *st)
+{
+    asm volatile (
+      "call ASM_gpoly_sta_md28\n"
+        : : "a" (st));
+    return;
+}
+
+void gpoly_stb_md05uni(struct gpoly_state *st)
+{
+    asm volatile (
+      "call ASM_gpoly_stb_md05uni\n"
+        : : "a" (st));
+    return;
+}
+
+void gpoly_stb_md05p64(struct gpoly_state *st)
+{
+    asm volatile (
+      "call ASM_gpoly_stb_md05p64\n"
+        : : "a" (st));
+    return;
+}
+
 void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c)
 {
+#if 0
     asm volatile (
       "call ASM_draw_gpoly_\n"
         : : "a" (point_a), "d" (point_b), "b" (point_c));
+    return;
+#endif
+    int dist_ca_x, dist_ca_y;
+    struct gpoly_state st;
+
+    gpoly_mode = vec_mode;
+    st.var_040 = (point_c->X | point_b->X | point_a->X) < 0
+             || point_a->X > vec_window_width
+             || point_b->X > vec_window_width
+             || point_c->X > vec_window_width;
+    {
+        int min_y;
+        struct PolyPoint *tmp;
+
+        min_y = point_a->Y;
+        if (min_y > point_b->Y) {
+            min_y = point_b->Y;
+            tmp = point_a;
+            point_a = point_b;
+            point_b = tmp;
+        }
+        if (min_y > point_c->Y) {
+            tmp = point_a;
+            point_a = point_c;
+            point_c = tmp;
+        }
+        if (point_b->Y > point_c->Y) {
+            tmp = point_b;
+            point_b = point_c;
+            point_c = tmp;
+        }
+    }
+
+    if (point_a->Y == point_c->Y) {
+        return;
+    }
+
+    st.var_178 = point_a->X;
+    st.var_17C = point_a->Y;
+    st.var_174 = st.var_178 << 16;
+    st.var_160 = point_b->X;
+    st.var_164 = point_b->Y;
+    st.var_15C = st.var_160 << 16;
+    st.var_148 = point_c->X;
+    st.var_14C = point_c->Y;
+    st.var_144 = st.var_148 << 16;
+    st.var_170 = (point_a->S >> 16);
+    st.var_158 = (point_b->S >> 16);
+    st.var_140 = (point_c->S >> 16);
+    st.var_16C = (point_a->U >> 16);
+    st.var_168 = (point_a->V >> 16);
+    st.var_154 = (point_b->U >> 16);
+    st.var_150 = (point_b->V >> 16);
+    st.var_13C = (point_c->U >> 16);
+    st.var_138 = (point_c->V >> 16);
+
+    dist_ca_y = st.var_14C - st.var_17C;
+    if (dist_ca_y != 0)
+    {
+        int dist_ba_x, dist_ba_y;
+        int dist_cb_x, dist_cb_y;
+
+        dist_ca_x = st.var_148 - st.var_178;
+        if ((dist_ca_y & ~0x1Fu) != 0 || dist_ca_x < -32 || dist_ca_x > 31)
+            st.var_1B0 = (dist_ca_x << 16) / dist_ca_y;
+        else
+            st.var_1B0 = gpoly_divtable[dist_ca_y][32 + dist_ca_x];
+
+        dist_ba_y = st.var_164 - st.var_17C;
+        if (dist_ba_y != 0)
+        {
+            dist_ba_x = st.var_160 - st.var_178;
+            if ((dist_ba_y & ~0x1Fu) != 0 || dist_ba_x < -32 || dist_ba_x > 31)
+                st.var_1AC = (dist_ba_x << 16) / dist_ba_y;
+            else
+                st.var_1AC = gpoly_divtable[dist_ba_y][32 + dist_ba_x];
+        }
+
+        dist_cb_y = st.var_14C - st.var_164;
+        if (dist_cb_y != 0)
+        {
+            dist_cb_x = st.var_148 - st.var_160;
+            if ((dist_cb_y & ~0x1Fu) != 0 || dist_cb_x < -32 || dist_cb_x > 31)
+                st.var_1A8 = (dist_cb_x << 16) / dist_cb_y;
+            else
+                st.var_1A8 = gpoly_divtable[dist_cb_y][32 + dist_cb_x];
+        }
+    }
+    st.var_134 = (st.var_164 - st.var_17C) * st.var_1B0 + st.var_174 - st.var_15C;
+
+    switch (gpoly_mode)
+    {
+    case 2u:
+    case 3u:
+    case 0xCu:
+    case 0xDu:
+    case 0x12u:
+    case 0x13u:
+    case 0x16u:
+    case 0x17u:
+        gpoly_sta_md03(&st);
+        break;
+    case 4u:
+    case 0x10u:
+    case 0x11u:
+        gpoly_sta_md04(&st);
+        break;
+    case 5u:
+    case 6u:
+    case 0x14u:
+    case 0x15u:
+    case 0x18u:
+    case 0x19u:
+        gpoly_sta_md05(&st);
+        break;
+    case 0x1Bu:
+    case 0x1Du:
+    case 0x1Fu:
+    case 0x20u:
+    case 0x21u:
+    case 0x22u:
+    case 0x25u:
+    case 0x26u:
+        gpoly_sta_md27(&st);
+        break;
+    case 0x1Cu:
+    case 0x1Eu:
+    case 0x23u:
+    case 0x24u:
+    case 0x27u:
+    case 0x28u:
+        gpoly_sta_md28(&st);
+        break;
+    }
+
+    switch (gpoly_mode)
+    {
+    case 5:
+        gpoly_stb_md05uni(&st);
+        break;
+    case 27:
+        gpoly_stb_md05p64(&st);
+        break;
+    }
 }
 
 /******************************************************************************/
