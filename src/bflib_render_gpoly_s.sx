@@ -357,7 +357,7 @@ jt_gpoly_sta:	/* 0x12b220 */
 
 
 GLOBAL_FUNC (ASM_gpoly_mul_rot_1)
-		imul   %ebx
+		imul   %edx
 		shl    %eax
 		rcl    %edx
 		mov    %dx,%ax
@@ -370,26 +370,25 @@ GLOBAL_FUNC (ASM_gpoly_mul_rot_1)
 
 GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		pusha
-		mov    %esp,0x17c(%eax)
-		mov    %eax,%esp
-		/* end of added function header */
-		mov    0x50(%esp),%esi
-		mov    0x7c(%esp),%edi
+		mov    %eax,%esi
+		mov    0x50(%esi),%edx
+		mov    0x7c(%esi),%edi
 		or     %edi,%edi
-		sub    $0x0,%esi
-		add    $0x0,%esi
-		mov    0x38(%esp),%eax
-		sub    %eax,%esi
-		mov    0x68(%esp),%edi
+		sub    $0x0,%edx
+		add    $0x0,%edx
+		mov    0x38(%esi),%eax
+		sub    %eax,%edx
+
+		mov    0x68(%esi),%edi
 		sub    %eax,%edi
-		mov    0x34(%esp),%eax
-		mov    0x4c(%esp),%ebx
+		mov    0x34(%esi),%eax
+		mov    0x4c(%esi),%ebx
 		sub    %eax,%ebx
-		mov    0x64(%esp),%ecx
+		mov    0x64(%esi),%ecx
 		sub    %eax,%ecx
 		mov    %ecx,%eax
-		imul   %esi,%ecx
-		mov    0x7c(%esp),%ebp
+		imul   %edx,%ecx
+		mov    0x7c(%esi),%ebp
 		or     %ebp,%ebp
 		js     jump_sta_md27_8604
 		sub    %eax,%ecx
@@ -403,45 +402,53 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		mov    $0x7fffffff,%eax
 		idiv   %ebx
 		mov    %eax,%ebp
-		mov    0x34(%esp),%eax
-		mov    0x64(%esp),%esi
-		sub    %eax,%esi
-		mov    0x4c(%esp),%edi
+		mov    0x34(%esi),%eax
+		mov    0x64(%esi),%edi
 		sub    %eax,%edi
+		mov    %edi,0x178(%esi)
+		mov    0x4c(%esi),%edi
+		sub    %eax,%edi
+		mov    %edi,0x174(%esi)
 		mov    %ebp,%eax
-		mov    0x44(%esp),%edx
-		mov    0x74(%esp),%ebx
+		mov    0x44(%esi),%edx
+		mov    0x74(%esi),%ebx
 		sub    %edx,%ebx
-		mov    0x5c(%esp),%ecx
+		mov    0x5c(%esi),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    0x178(%esi),%edi
+		imul   %edi,%ecx
+		mov    0x174(%esi),%edi
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
-		call   ASM_gpoly_mul_rot_1
-		mov    %eax,0x100(%esp)
+		mov    %ebx,%edx
+		call   ac_gpoly_mul_rot_1
+		mov    %eax,0x100(%esi)
 		mov    %ebp,%eax
-		mov    0x48(%esp),%edx
-		mov    0x78(%esp),%ebx
+		mov    0x48(%esi),%edx
+		mov    0x78(%esi),%ebx
 		sub    %edx,%ebx
-		mov    0x60(%esp),%ecx
+		mov    0x60(%esi),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    0x178(%esi),%edi
+		imul   %edi,%ecx
+		mov    0x174(%esi),%edi
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
-		call   ASM_gpoly_mul_rot_1
-		mov    %eax,0x104(%esp)
+		mov    %ebx,%edx
+		call   ac_gpoly_mul_rot_1
+		mov    %eax,0x104(%esi)
 		jmp    jump_sta_md27_869a
 
 	jump_sta_md27_868a:
 		xor    %eax,%eax
-		mov    %eax,0x100(%esp)
-		mov    %eax,0x104(%esp)
+		mov    %eax,0x100(%esi)
+		mov    %eax,0x104(%esi)
 	jump_sta_md27_869a:
-		mov    0x7c(%esp),%esi
-		or     %esi,%esi
+		mov    0x7c(%esi),%ecx
+		or     %ecx,%ecx
 		js     jump_sta_md27_87e7
-		mov    0x4c(%esp),%ecx
-		sub    0x34(%esp),%ecx
+		mov    0x4c(%esi),%ecx
+		sub    0x34(%esi),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_sta_md27_86bf
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
@@ -453,8 +460,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		idiv   %ecx
 		mov    %eax,%ebx
 	jump_sta_md27_86cd:
-		mov    0x5c(%esp),%eax
-		sub    0x44(%esp),%eax
+		mov    0x5c(%esi),%eax
+		sub    0x44(%esi),%eax
 		shl    %eax
 		imul   %ebx
 		mov    %dx,%ax
@@ -462,9 +469,9 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		jns    jump_sta_md27_86e2
 		inc    %eax
 	jump_sta_md27_86e2:
-		mov    %eax,0x1c(%esp)
-		mov    0x60(%esp),%eax
-		sub    0x48(%esp),%eax
+		mov    %eax,0x1c(%esi)
+		mov    0x60(%esi),%eax
+		sub    0x48(%esi),%eax
 		shl    %eax
 		imul   %ebx
 		mov    %dx,%ax
@@ -472,9 +479,9 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		jns    jump_sta_md27_86fb
 		inc    %eax
 	jump_sta_md27_86fb:
-		mov    %eax,0x28(%esp)
-		mov    0x64(%esp),%ecx
-		sub    0x4c(%esp),%ecx
+		mov    %eax,0x28(%esi)
+		mov    0x64(%esi),%ecx
+		sub    0x4c(%esi),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_sta_md27_8718
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
@@ -486,8 +493,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		idiv   %ecx
 		mov    %eax,%ebx
 	jump_sta_md27_8726:
-		mov    0x74(%esp),%eax
-		sub    0x5c(%esp),%eax
+		mov    0x74(%esi),%eax
+		sub    0x5c(%esi),%eax
 		shl    %eax
 		imul   %ebx
 		mov    %dx,%ax
@@ -495,9 +502,9 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		jns    jump_sta_md27_873b
 		inc    %eax
 	jump_sta_md27_873b:
-		mov    %eax,0x18(%esp)
-		mov    0x78(%esp),%eax
-		sub    0x60(%esp),%eax
+		mov    %eax,0x18(%esi)
+		mov    0x78(%esi),%eax
+		sub    0x60(%esi),%eax
 		shl    %eax
 		imul   %ebx
 		mov    %dx,%ax
@@ -505,48 +512,48 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		jns    jump_sta_md27_8754
 		inc    %eax
 	jump_sta_md27_8754:
-		mov    %eax,0x24(%esp)
-		mov    0x4(%esp),%eax
-		mov    0x100(%esp),%ebx
+		mov    %eax,0x24(%esi)
+		mov    0x4(%esi),%eax
+		mov    0x100(%esi),%ebx
 		imul   %ebx
 		mov    %dx,%ax
 		rol    $0x10,%eax
-		sub    %eax,0x1c(%esp)
-		mov    0x4(%esp),%eax
-		mov    0x104(%esp),%ebx
+		sub    %eax,0x1c(%esi)
+		mov    0x4(%esi),%eax
+		mov    0x104(%esi),%ebx
 		imul   %ebx
 		mov    %dx,%ax
 		rol    $0x10,%eax
-		sub    %eax,0x28(%esp)
-		mov    0x4(%esp),%eax
-		mov    0x108(%esp),%ebx
+		sub    %eax,0x28(%esi)
+		mov    0x4(%esi),%eax
+		mov    0x108(%esi),%ebx
 		imul   %ebx
 		mov    %dx,%ax
 		rol    $0x10,%eax
-		sub    %eax,0xc(%esp)
-		mov    0x8(%esp),%eax
-		mov    0x100(%esp),%ebx
+		sub    %eax,0xc(%esi)
+		mov    0x8(%esi),%eax
+		mov    0x100(%esi),%ebx
 		imul   %ebx
 		mov    %dx,%ax
 		rol    $0x10,%eax
-		sub    %eax,0x18(%esp)
-		mov    0x8(%esp),%eax
-		mov    0x104(%esp),%ebx
+		sub    %eax,0x18(%esi)
+		mov    0x8(%esi),%eax
+		mov    0x104(%esi),%ebx
 		imul   %ebx
 		mov    %dx,%ax
 		rol    $0x10,%eax
-		sub    %eax,0x24(%esp)
-		mov    0x8(%esp),%eax
-		mov    0x108(%esp),%ebx
+		sub    %eax,0x24(%esi)
+		mov    0x8(%esi),%eax
+		mov    0x108(%esi),%ebx
 		imul   %ebx
 		mov    %dx,%ax
 		rol    $0x10,%eax
-		sub    %eax,0x10(%esp)
+		sub    %eax,0x10(%esi)
 		jmp    jump_sta_md27_8882
 
 	jump_sta_md27_87e7:
-		mov    0x64(%esp),%ecx
-		sub    0x34(%esp),%ecx
+		mov    0x64(%esi),%ecx
+		sub    0x34(%esi),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_sta_md27_8800
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
@@ -558,8 +565,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		idiv   %ecx
 		mov    %eax,%ebx
 	jump_sta_md27_880e:
-		mov    0x74(%esp),%eax
-		sub    0x44(%esp),%eax
+		mov    0x74(%esi),%eax
+		sub    0x44(%esi),%eax
 		shl    %eax
 		imul   %ebx
 		mov    %dx,%ax
@@ -567,9 +574,9 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		jns    jump_sta_md27_8823
 		inc    %eax
 	jump_sta_md27_8823:
-		mov    %eax,0x1c(%esp)
-		mov    0x78(%esp),%eax
-		sub    0x48(%esp),%eax
+		mov    %eax,0x1c(%esi)
+		mov    0x78(%esi),%eax
+		sub    0x48(%esi),%eax
 		shl    %eax
 		imul   %ebx
 		mov    %dx,%ax
@@ -577,130 +584,128 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		jns    jump_sta_md27_883c
 		inc    %eax
 	jump_sta_md27_883c:
-		mov    %eax,0x28(%esp)
-		mov    (%esp),%eax
-		mov    0x100(%esp),%ebx
+		mov    %eax,0x28(%esi)
+		mov    (%esi),%eax
+		mov    0x100(%esi),%ebx
 		imul   %ebx
 		mov    %dx,%ax
 		rol    $0x10,%eax
-		sub    %eax,0x1c(%esp)
-		mov    (%esp),%eax
-		mov    0x104(%esp),%ebx
+		sub    %eax,0x1c(%esi)
+		mov    (%esi),%eax
+		mov    0x104(%esi),%ebx
 		imul   %ebx
 		mov    %dx,%ax
 		rol    $0x10,%eax
-		sub    %eax,0x28(%esp)
-		mov    (%esp),%eax
-		mov    0x108(%esp),%ebx
+		sub    %eax,0x28(%esi)
+		mov    (%esi),%eax
+		mov    0x108(%esi),%ebx
 		imul   %ebx
 		mov    %dx,%ax
 		rol    $0x10,%eax
-		sub    %eax,0xc(%esp)
+		sub    %eax,0xc(%esi)
 	jump_sta_md27_8882:
-		mov    0x44(%esp),%eax
+		mov    0x44(%esi),%eax
 		shl    $0x10,%eax
-		add    0x100(%esp),%eax
-		mov    %eax,0x15c(%esp)
-		mov    0x48(%esp),%eax
+		add    0x100(%esi),%eax
+		mov    %eax,0x15c(%esi)
+		mov    0x48(%esi),%eax
 		shl    $0x10,%eax
-		add    0x104(%esp),%eax
-		mov    %eax,0x160(%esp)
-		mov    0x5c(%esp),%eax
+		add    0x104(%esi),%eax
+		mov    %eax,0x160(%esi)
+		mov    0x5c(%esi),%eax
 		shl    $0x10,%eax
-		add    0x100(%esp),%eax
-		mov    %eax,0x168(%esp)
-		mov    0x60(%esp),%eax
+		add    0x100(%esi),%eax
+		mov    %eax,0x168(%esi)
+		mov    0x60(%esi),%eax
 		shl    $0x10,%eax
-		add    0x104(%esp),%eax
-		mov    %eax,0x16c(%esp)
-		mov    0x100(%esp),%eax
+		add    0x104(%esi),%eax
+		mov    %eax,0x16c(%esi)
+		mov    0x100(%esi),%eax
 		mov    %eax,%edx
 		shl    $0x10,%eax
 		sar    $0x10,%edx
-		mov    %eax,0xf4(%esp)
-		mov    %edx,0xf8(%esp)
-		mov    0x104(%esp),%eax
+		mov    %eax,0xf4(%esi)
+		mov    %edx,0xf8(%esi)
+		mov    0x104(%esi),%eax
 		shl    $0x10,%eax
-		mov    0x104(%esp),%edx
+		mov    0x104(%esi),%edx
 		sar    $0x10,%edx
-		mov    0xf8(%esp),%al
+		mov    0xf8(%esi),%al
 		or     %al,%al
 		jns    jump_sta_md27_891a
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
 	jump_sta_md27_891a:
-		mov    %eax,0xf8(%esp)
-		mov    %edx,0xfc(%esp)
-		mov    0x1c(%esp),%eax
+		mov    %eax,0xf8(%esi)
+		mov    %edx,0xfc(%esi)
+		mov    0x1c(%esi),%eax
 		mov    %eax,%edx
 		shl    $0x10,%eax
 		sar    $0x10,%edx
-		mov    %eax,0x10c(%esp)
-		mov    %edx,0x110(%esp)
-		mov    0x28(%esp),%eax
+		mov    %eax,0x10c(%esi)
+		mov    %edx,0x110(%esi)
+		mov    0x28(%esi),%eax
 		shl    $0x10,%eax
-		mov    0x28(%esp),%edx
+		mov    0x28(%esi),%edx
 		sar    $0x10,%edx
-		mov    0x110(%esp),%al
+		mov    0x110(%esi),%al
 		or     %al,%al
 		jns    jump_sta_md27_8963
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
 	jump_sta_md27_8963:
-		mov    %eax,0x110(%esp)
-		mov    %edx,0x114(%esp)
-		mov    0x15c(%esp),%ecx
-		mov    0x160(%esp),%edx
+		mov    %eax,0x110(%esi)
+		mov    %edx,0x114(%esi)
+		mov    0x15c(%esi),%ecx
+		mov    0x160(%esi),%edx
 		mov    %ecx,%eax
 		shl    $0x10,%ecx
 		shr    $0x10,%eax
-		mov    %ecx,0x124(%esp)
+		mov    %ecx,0x124(%esi)
 		mov    %edx,%ecx
 		shl    $0x10,%ecx
 		shl    $0x8,%edx
 		shr    $0x18,%edx
 		shl    $0x8,%edx
 		mov    %al,%cl
-		mov    %ecx,0x128(%esp)
-		mov    %edx,0x12c(%esp)
-		mov    0x7c(%esp),%esi
-		or     %esi,%esi
+		mov    %ecx,0x128(%esi)
+		mov    %edx,0x12c(%esi)
+		mov    0x7c(%esi),%eax
+		or     %eax,%eax
 		js     gpoly_sta_md27_end
-		mov    0x18(%esp),%eax
+		mov    0x18(%esi),%eax
 		mov    %eax,%edx
 		shl    $0x10,%eax
 		sar    $0x10,%edx
-		mov    %eax,0x118(%esp)
-		mov    %edx,0x11c(%esp)
-		mov    0x24(%esp),%eax
+		mov    %eax,0x118(%esi)
+		mov    %edx,0x11c(%esi)
+		mov    0x24(%esi),%eax
 		shl    $0x10,%eax
-		mov    0x24(%esp),%edx
+		mov    0x24(%esi),%edx
 		sar    $0x10,%edx
-		mov    0x11c(%esp),%al
+		mov    0x11c(%esi),%al
 		or     %al,%al
 		jns    jump_sta_md27_89f3
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
 	jump_sta_md27_89f3:
-		mov    %eax,0x11c(%esp)
-		mov    %edx,0x120(%esp)
-		mov    0x168(%esp),%ecx
-		mov    0x16c(%esp),%edx
+		mov    %eax,0x11c(%esi)
+		mov    %edx,0x120(%esi)
+		mov    0x168(%esi),%ecx
+		mov    0x16c(%esi),%edx
 		mov    %ecx,%eax
 		shl    $0x10,%ecx
 		shr    $0x10,%eax
-		mov    %ecx,0x130(%esp)
+		mov    %ecx,0x130(%esi)
 		mov    %edx,%ecx
 		shl    $0x10,%ecx
 		shl    $0x8,%edx
 		shr    $0x18,%edx
 		shl    $0x8,%edx
 		mov    %al,%cl
-		mov    %ecx,0x134(%esp)
-		mov    %edx,0x138(%esp)
+		mov    %ecx,0x134(%esi)
+		mov    %edx,0x138(%esi)
 	gpoly_sta_md27_end:
-		/* start of added function footer */
-		mov    0x17c(%esp),%esp
 		popa
 		ret
 
@@ -754,6 +759,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md28)
 		imul   %esi,%ecx
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
+		mov    %ebx,%edx
 		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x108(%esp)
 		mov    %ebp,%eax
@@ -765,6 +771,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md28)
 		imul   %esi,%ecx
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
+		mov    %ebx,%edx
 		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x100(%esp)
 		mov    %ebp,%eax
@@ -776,6 +783,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md28)
 		imul   %esi,%ecx
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
+		mov    %ebx,%edx
 		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x104(%esp)
 		jmp    jump_sta_md28_8b4f
@@ -1169,6 +1177,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md04)
 		imul   %esi,%ecx
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
+		mov    %ebx,%edx
 		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x108(%esp)
 		jmp    jump_sta_md04_9076
@@ -1313,6 +1322,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md03)
 		imul   %esi,%ecx
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
+		mov    %ebx,%edx
 		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x100(%esp)
 		mov    %ebp,%eax
@@ -1324,6 +1334,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md03)
 		imul   %esi,%ecx
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
+		mov    %ebx,%edx
 		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x104(%esp)
 		jmp    jump_sta_md03_9238
@@ -1592,6 +1603,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md05)
 		imul   %esi,%ecx
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
+		mov    %ebx,%edx
 		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x108(%esp)
 		mov    %ebp,%eax
@@ -1603,6 +1615,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md05)
 		imul   %esi,%ecx
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
+		mov    %ebx,%edx
 		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x100(%esp)
 		mov    %ebp,%eax
@@ -1614,6 +1627,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md05)
 		imul   %esi,%ecx
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
+		mov    %ebx,%edx
 		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x104(%esp)
 		jmp    jump_sta_md05_9602

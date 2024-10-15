@@ -426,6 +426,15 @@ void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct 
     }
 }
 
+int gpoly_mul_rot_1(int a1, int a2)
+{
+    int ret;
+    asm volatile (
+      "call ASM_gpoly_mul_rot_1\n"
+        : "=r" (ret) : "a" (a1), "d" (a2));
+    return ret;
+}
+
 void gpoly_sta_md03(struct gpoly_state *st)
 {
     asm volatile (
