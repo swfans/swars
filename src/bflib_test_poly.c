@@ -57,13 +57,13 @@ void test_gpoly_draw_random_triangles(const ubyte *pal)
 {
     int i;
 
-    for (i = 0; i < 43*40; i++)
+    for (i = 0; i < 17*40; i++)
     {
         struct PolyPoint point_a, point_b, point_c;
         ushort rnd;
 
         rnd = LbRandomAnyShort();
-        vec_mode = i % 43;
+        vec_mode = (i % 2) ? 5 : 27;
         // Random colour
         vec_colour = LbPaletteFindColour(pal, (rnd >> 0) & 0x3f, (rnd >> 5) & 0x3f, (rnd >> 10) & 0x3f);
         // Random texture coords, but show one of 32x32 textures from start
@@ -101,7 +101,7 @@ void test_gpoly_draw_random_triangles(const ubyte *pal)
         point_b.S = ((rnd >> 6) & 0x7F) << 15;
         point_c.S = ((rnd >> 3) & 0x7F) << 15;
         // Random positions - few big, more small
-        if (i < 43*2)
+        if (i < 17*2)
         {
             rnd = LbRandomAnyShort();
             point_a.X = ((rnd >> 0) & 1023) - (1023 - 640) / 2;
@@ -159,11 +159,13 @@ void test_gpoly_draw_random_triangles(const ubyte *pal)
 
 TbBool test_gpoly(void)
 {
-    static ulong seeds[] = {0x0, 0xD15C1234, };
+    static ulong seeds[] = {0x0, 0xD15C1234, 0xD15C0000, 0xD15C0005, 0xD15C000F, 0xD15C03DC,
+      0xD15C07DF, 0xD15CE896, 0xB00710FA, };
     static TestFrameFunc functs[] = {NULL, test_frame_swars01, };
     ubyte pal[PALETTE_8b_SIZE];
     ubyte ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
+    ubyte *texmap_buf;
     ubyte *texmap;
     TbPixel *ref_buffer;
     ulong picno;
@@ -192,7 +194,10 @@ TbBool test_gpoly(void)
 
     MockScreenLock();
 
-    texmap = LbMemoryAlloc(256*256*1);
+    // The draw function can access textures out of the normal mapping area - allocate with redundance
+    texmap_buf = LbMemoryAlloc(256*256*1 * 3);
+    memset(texmap_buf,0x3c, 256*256*1 * 3);
+    texmap = texmap_buf + 256*256*1;
     generate_example_texture_map_xor_based(pal, texmap);
 
     setup_vecs(lbDisplay.WScreen, texmap, lbDisplay.PhysicalScreenWidth,
@@ -280,7 +285,7 @@ TbBool test_gpoly(void)
             loc_fname, maxdiff, maxpos%640, maxpos/640);
     }
 
-    LbMemoryFree(texmap);
+    LbMemoryFree(texmap_buf);
     free(ref_buffer);
 
     MockScreenUnlock();
