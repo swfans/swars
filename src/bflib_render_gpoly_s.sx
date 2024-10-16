@@ -794,8 +794,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md28)
 		mov    %eax,0x100(%esp)
 		mov    %eax,0x104(%esp)
 	jump_sta_md28_8b4f:
-		mov    0x7c(%esp),%esi
-		or     %esi,%esi
+		mov    0x7c(%esp),%ecx
+		or     %ecx,%ecx
 		js     jump_sta_md28_8cce
 		mov    0x4c(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -1075,8 +1075,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md28)
 		mov    %ecx,0x128(%esp)
 		mov    0x12c(%esp),%dl
 		mov    %edx,0x12c(%esp)
-		mov    0x7c(%esp),%esi
-		or     %esi,%esi
+		mov    0x7c(%esp),%eax
+		or     %eax,%eax
 		js     gpoly_sta_md28_end
 		mov    0x18(%esp),%eax
 		mov    %eax,%edx
@@ -1186,8 +1186,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md04)
 		xor    %eax,%eax
 		mov    %eax,0x108(%esp)
 	jump_sta_md04_9076:
-		mov    0x7c(%esp),%esi
-		or     %esi,%esi
+		mov    0x7c(%esp),%ecx
+		or     %ecx,%ecx
 		js     jump_sta_md04_9104
 		mov    0x4c(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -1344,8 +1344,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md03)
 		mov    %eax,0x100(%esp)
 		mov    %eax,0x104(%esp)
 	jump_sta_md03_9238:
-		mov    0x7c(%esp),%esi
-		or     %esi,%esi
+		mov    0x7c(%esp),%ecx
+		or     %ecx,%ecx
 		js     jump_sta_md03_92f8
 		mov    0x4c(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -1512,8 +1512,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md03)
 		mov    %al,%cl
 		mov    %ecx,0x128(%esp)
 		mov    %edx,0x12c(%esp)
-		mov    0x7c(%esp),%esi
-		or     %esi,%esi
+		mov    0x7c(%esp),%eax
+		or     %eax,%eax
 		js     gpoly_sta_md03_end
 		mov    0x18(%esp),%eax
 		mov    %eax,%edx
@@ -1638,8 +1638,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md05)
 		mov    %eax,0x100(%esp)
 		mov    %eax,0x104(%esp)
 	jump_sta_md05_9602:
-		mov    0x7c(%esp),%esi
-		or     %esi,%esi
+		mov    0x7c(%esp),%ecx
+		or     %ecx,%ecx
 		js     jump_sta_md05_96f4
 		mov    0x4c(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -1859,8 +1859,8 @@ GLOBAL_FUNC (ASM_gpoly_sta_md05)
 		mov    %ecx,0x128(%esp)
 		mov    0x12c(%esp),%dl
 		mov    %edx,0x12c(%esp)
-		mov    0x7c(%esp),%esi
-		or     %esi,%esi
+		mov    0x7c(%esp),%eax
+		or     %eax,%eax
 		js     gpoly_sta_md05_end
 		mov    0x18(%esp),%eax
 		mov    %eax,%edx
