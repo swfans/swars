@@ -731,6 +731,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md28)
 		sub    %eax,%ecx
 		mov    %ecx,%eax
 		imul   %esi,%ecx
+
 		mov    0x7c(%esp),%ebp
 		or     %ebp,%ebp
 		js     jump_sta_md28_8a7e
@@ -746,17 +747,22 @@ GLOBAL_FUNC (ASM_gpoly_sta_md28)
 		idiv   %ebx
 		mov    %eax,%ebp
 		mov    0x34(%esp),%eax
-		mov    0x64(%esp),%esi
-		sub    %eax,%esi
+		mov    0x64(%esp),%edi
+		sub    %eax,%edi
+		mov    0x178(%esp),%edi
 		mov    0x4c(%esp),%edi
 		sub    %eax,%edi
+		mov    0x174(%esp),%edi
+
 		mov    %ebp,%eax
 		mov    0x40(%esp),%edx
 		mov    0x70(%esp),%ebx
 		sub    %edx,%ebx
 		mov    0x58(%esp),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    0x178(%esp),%edi
+		imul   %edi,%ecx
+		mov    0x174(%esp),%edi
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
@@ -768,7 +774,9 @@ GLOBAL_FUNC (ASM_gpoly_sta_md28)
 		sub    %edx,%ebx
 		mov    0x5c(%esp),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    0x178(%esp),%edi
+		imul   %edi,%ecx
+		mov    0x174(%esp),%edi
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
@@ -780,7 +788,9 @@ GLOBAL_FUNC (ASM_gpoly_sta_md28)
 		sub    %edx,%ebx
 		mov    0x60(%esp),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    0x178(%esp),%edi
+		imul   %edi,%ecx
+		mov    0x174(%esp),%edi
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
@@ -1149,6 +1159,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md04)
 		sub    %eax,%ecx
 		mov    %ecx,%eax
 		imul   %esi,%ecx
+
 		mov    0x7c(%esp),%ebp
 		or     %ebp,%ebp
 		js     jump_sta_md04_9017
@@ -1164,17 +1175,21 @@ GLOBAL_FUNC (ASM_gpoly_sta_md04)
 		idiv   %ebx
 		mov    %eax,%ebp
 		mov    0x34(%esp),%eax
-		mov    0x64(%esp),%esi
-		sub    %eax,%esi
+		mov    0x64(%esp),%edi
+		sub    %eax,%edi
+		mov    %edi,0x178(%esp)
 		mov    0x4c(%esp),%edi
 		sub    %eax,%edi
+		mov    %edi,0x174(%esp)
 		mov    %ebp,%eax
 		mov    0x40(%esp),%edx
 		mov    0x70(%esp),%ebx
 		sub    %edx,%ebx
 		mov    0x58(%esp),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    0x178(%esp),%edi
+		imul   %edi,%ecx
+		mov    0x174(%esp),%edi
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
@@ -1309,17 +1324,21 @@ GLOBAL_FUNC (ASM_gpoly_sta_md03)
 		idiv   %ebx
 		mov    %eax,%ebp
 		mov    0x34(%esp),%eax
-		mov    0x64(%esp),%esi
-		sub    %eax,%esi
+		mov    0x64(%esp),%edi
+		sub    %eax,%edi
+		mov    0x178(%esp),%edi
 		mov    0x4c(%esp),%edi
 		sub    %eax,%edi
+		mov    0x174(%esp),%edi
 		mov    %ebp,%eax
 		mov    0x44(%esp),%edx
 		mov    0x74(%esp),%ebx
 		sub    %edx,%ebx
 		mov    0x5c(%esp),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    %edi,0x178(%esp)
+		imul   %edi,%ecx
+		mov    %edi,0x174(%esp)
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
@@ -1331,7 +1350,9 @@ GLOBAL_FUNC (ASM_gpoly_sta_md03)
 		sub    %edx,%ebx
 		mov    0x60(%esp),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    %edi,0x178(%esp)
+		imul   %edi,%ecx
+		mov    %edi,0x174(%esp)
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
@@ -1590,17 +1611,21 @@ GLOBAL_FUNC (ASM_gpoly_sta_md05)
 		idiv   %ebx
 		mov    %eax,%ebp
 		mov    0x34(%esp),%eax
-		mov    0x64(%esp),%esi
-		sub    %eax,%esi
+		mov    0x64(%esp),%edi
+		sub    %eax,%edi
+		mov    %edi,0x178(%esp)
 		mov    0x4c(%esp),%edi
 		sub    %eax,%edi
+		mov    %edi,0x174(%esp)
 		mov    %ebp,%eax
 		mov    0x40(%esp),%edx
 		mov    0x70(%esp),%ebx
 		sub    %edx,%ebx
 		mov    0x58(%esp),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    0x178(%esp),%edi
+		imul   %edi,%ecx
+		mov    0x174(%esp),%edi
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
@@ -1612,7 +1637,9 @@ GLOBAL_FUNC (ASM_gpoly_sta_md05)
 		sub    %edx,%ebx
 		mov    0x5c(%esp),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    0x178(%esp),%edi
+		imul   %edi,%ecx
+		mov    0x174(%esp),%edi
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
@@ -1624,7 +1651,9 @@ GLOBAL_FUNC (ASM_gpoly_sta_md05)
 		sub    %edx,%ebx
 		mov    0x60(%esp),%ecx
 		sub    %edx,%ecx
-		imul   %esi,%ecx
+		mov    0x178(%esp),%edi
+		imul   %edi,%ecx
+		mov    0x174(%esp),%edi
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
