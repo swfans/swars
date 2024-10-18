@@ -483,10 +483,68 @@ void gpoly_sta_md03(struct gpoly_state *st)
 
 void gpoly_sta_md04(struct gpoly_state *st)
 {
+#if 0
     asm volatile (
       "call ASM_gpoly_sta_md04\n"
         : : "a" (st));
     return;
+#endif
+    {
+        int dist_c1, dist_c2, dist_c3, dist_c4;
+        int fctr_a, fctr_d;
+
+        dist_c1 = st->var_160 - st->var_178;
+        dist_c2 = st->var_148 - st->var_178;
+        dist_c3 = st->var_164 - st->var_17C;
+        dist_c4 = st->var_14C - st->var_17C;
+        fctr_a = dist_c1 * dist_c4;
+        if (st->var_134 >= 0)
+            fctr_a = fctr_a - dist_c4 - dist_c4;
+        fctr_d = dist_c2 * dist_c3 - (dist_c4 + fctr_a);
+        if (fctr_d != 0)
+        {
+            st->var_038 = st->var_14C - st->var_17C;
+            st->var_03C = st->var_164 - st->var_17C;
+            st->var_0A8 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+              st->var_03C * (st->var_140 - st->var_170) - st->var_038 * (st->var_158 - st->var_170));
+        }
+        else
+        {
+            st->var_0A8 = 0;
+        }
+    }
+
+    if (st->var_134 < 0)
+    {
+        int dist_c5, mag_a1;
+
+        dist_c5 = st->var_14C - st->var_17C;
+        if ( dist_c5 > 255 )
+            mag_a1 = 0x7FFFFFFF / dist_c5;
+        else
+            mag_a1 = gpoly_reptable[dist_c5];
+        st->var_1A4 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_140 - st->var_170));
+    }
+    else
+    {
+        int dist_c5, mag_a1;
+
+        dist_c5 = st->var_164 - st->var_17C;
+        if (dist_c5 > 255)
+            mag_a1 = 0x7FFFFFFF / dist_c5;
+        else
+            mag_a1 = gpoly_reptable[dist_c5];
+        st->var_1A4 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_158 - st->var_170));
+
+        dist_c5 = st->var_14C - st->var_164;
+        if (dist_c5 > 255)
+            mag_a1 = 0x7FFFFFFF / dist_c5;
+        else
+            mag_a1 = gpoly_reptable[dist_c5];
+        st->var_1A0 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_140 - st->var_158));
+    }
+    st->var_058 = st->var_170 << 16;
+    st->var_04C = st->var_158 << 16;
 }
 
 void gpoly_sta_md05(struct gpoly_state *st)
