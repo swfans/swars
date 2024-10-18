@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = --install -I m4
+AUTOMAKE_OPTIONS = subdir-objects
 
 SUBDIRS = bflibrary bfsoundlib conf lang src util
 
