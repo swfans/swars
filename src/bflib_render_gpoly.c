@@ -665,10 +665,187 @@ void gpoly_sta_md27(struct gpoly_state *st)
 
 void gpoly_sta_md28(struct gpoly_state *st)
 {
+#if 0
     asm volatile (
       "call ASM_gpoly_sta_md28\n"
         : : "a" (st));
     return;
+#endif
+    {
+        int dist_c1, dist_c2, dist_c3, dist_c4;
+        int fctr_a, fctr_d;
+
+        dist_c1 = st->var_160 - st->var_178;
+        dist_c2 = st->var_148 - st->var_178;
+        dist_c3 = st->var_164 - st->var_17C;
+        dist_c4 = st->var_14C - st->var_17C;
+        fctr_a = dist_c1 * dist_c4;
+        if (st->var_134 >= 0)
+            fctr_a = fctr_a - dist_c4 - dist_c4;
+        fctr_d = dist_c2 * dist_c3 - (dist_c4 + fctr_a);
+        if (fctr_d != 0)
+        {
+            st->var_0A8 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+              st->var_03C * (st->var_140 - st->var_170) - st->var_038 * (st->var_158 - st->var_170));
+            st->var_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+              st->var_03C * (st->var_13C - st->var_16C) - st->var_038 * (st->var_154 - st->var_16C));
+            st->var_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+              st->var_03C * (st->var_138 - st->var_168) - st->var_038 * (st->var_150 - st->var_168));
+        }
+        else
+        {
+            st->var_0A8 = 0;
+            st->var_0B0 = 0;
+            st->var_0AC = 0;
+        }
+    }
+    if (st->var_134 < 0)
+    {
+        int dist_c5, mag_a1, tmp;
+
+        dist_c5 = st->var_14C - st->var_17C;
+        if (dist_c5 > 255)
+            mag_a1 = 0x7FFFFFFF / dist_c5;
+        else
+            mag_a1 = gpoly_reptable[dist_c5];
+        st->var_1A4 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_140 - st->var_170));
+        st->var_194 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_13C - st->var_16C));
+        st->var_188 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_138 - st->var_168));
+
+        tmp = ((st->var_0B0 * st->var_1B0) & 0xFFFF0000) | (((st->var_0B0 * (s64)st->var_1B0) >> 32) & 0xFFFF);
+        st->var_194 -= bw_rotl32(tmp, 16);
+        tmp = ((st->var_0AC * st->var_1B0) & 0xFFFF0000) | (((st->var_0AC * (s64)st->var_1B0) >> 32) & 0xFFFF);
+        st->var_188 -= bw_rotl32(tmp, 16);
+        tmp = ((st->var_0A8 * st->var_1B0) & 0xFFFF0000) | (((st->var_0A8 * (s64)st->var_1B0) >> 32) & 0xFFFF);
+        st->var_1A4 -= bw_rotl32(tmp, 16);
+    }
+    else
+    {
+        int dist_c5, mag_a1, tmp;
+
+        dist_c5 = st->var_164 - st->var_17C;
+        if (dist_c5 > 255)
+          mag_a1 = 0x7FFFFFFF / dist_c5;
+        else
+          mag_a1 = gpoly_reptable[dist_c5];
+        st->var_1A4 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_158 - st->var_170));
+        st->var_194 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_154 - st->var_16C));
+        st->var_188 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_150 - st->var_168));
+
+        dist_c5 = st->var_14C - st->var_164;
+        if (dist_c5 > 255)
+          mag_a1 = 0x7FFFFFFF / dist_c5;
+        else
+          mag_a1 = gpoly_reptable[dist_c5];
+        st->var_1A0 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_140 - st->var_158));
+        st->var_198 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_13C - st->var_154));
+        st->var_18C = gpoly_mul_rot_2(mag_a1, 2 * (st->var_138 - st->var_150));
+
+        tmp = ((st->var_0B0 * st->var_1AC) & 0xFFFF0000) | (((st->var_0B0 * (s64)st->var_1AC) >> 32) & 0xFFFF);
+        st->var_194 -= bw_rotl32(tmp, 16);
+        tmp = ((st->var_0AC * st->var_1AC) & 0xFFFF0000) | (((st->var_0AC * (s64)st->var_1AC) >> 32) & 0xFFFF);
+        st->var_188 -= bw_rotl32(tmp, 16);
+        tmp = ((st->var_0A8 * st->var_1AC) & 0xFFFF0000) | (((st->var_0A8 * (s64)st->var_1AC) >> 32) & 0xFFFF);
+        st->var_1A4 -= bw_rotl32(tmp, 16);
+        tmp = ((st->var_0B0 * st->var_1A8) & 0xFFFF0000) | (((st->var_0B0 * (s64)st->var_1A8) >> 32) & 0xFFFF);
+        st->var_198 -= bw_rotl32(tmp, 16);
+        tmp = ((st->var_0AC * st->var_1A8) & 0xFFFF0000) | (((st->var_0AC * (s64)st->var_1A8) >> 32) & 0xFFFF);
+        st->var_18C -= bw_rotl32(tmp, 16);
+        tmp = ((st->var_0A8 * st->var_1A8) & 0xFFFF0000) | (((st->var_0A8 * (s64)st->var_1A8) >> 32) & 0xFFFF);
+        st->var_1A0 -= bw_rotl32(tmp, 16);
+    }
+    st->var_058 = st->var_0A8 + (st->var_170 << 16);
+    st->var_054 = st->var_0B0 + (st->var_16C << 16);
+    st->var_050 = st->var_0AC + (st->var_168 << 16);
+    st->var_04C = st->var_0A8 + (st->var_158 << 16);
+    st->var_048 = st->var_0B0 + (st->var_154 << 16);
+    st->var_044 = st->var_0AC + (st->var_150 << 16);
+
+    {
+        bool mone;
+        int fctr_e, fctr_s;
+        unsigned int fctr_f;
+
+        fctr_e = st->var_0B0 >> 16;
+        fctr_f = ((st->var_0B0 << 16) & 0xFFFF0000) | ((st->var_0A8 >> 8) & 0xFFFF);
+        if ((fctr_f & 0x8000) != 0) {
+            mone = fctr_f < 0xFFFF;
+            fctr_f -= 0xFFFF;
+            fctr_e = (fctr_e & 0xFFFFFF00) | ((fctr_e - mone) & 0xFF);
+        }
+        st->var_0BC = fctr_f;
+        st->var_0B8 = fctr_e;
+
+        fctr_e = st->var_0AC >> 16;
+        fctr_f = ((st->var_0AC << 16) & 0xFFFFFF00) | (st->var_0B8 & 0xFF);
+        if ((fctr_f & 0x80) != 0) {
+            mone = fctr_f < 0x100;
+            fctr_f -= 0x100;
+            fctr_e = (fctr_e & 0xFFFFFF00) | ((fctr_e - mone) & 0xFF);
+        }
+        st->var_0B8 = fctr_f;
+        st->var_0B4 = fctr_e;
+
+        fctr_e = st->var_194 >> 16;
+        fctr_f = ((st->var_194 << 16) & 0xFFFF0000) | ((st->var_1A4 >> 8) & 0xFFFF);
+        if ((fctr_f & 0x8000) != 0) {
+            mone = fctr_f < 0x10000;
+            fctr_f -= 0x10000;
+            fctr_e = (fctr_e & 0xFFFFFF00) | ((fctr_e - mone) & 0xFF);
+        }
+        st->var_0A4 = fctr_f;
+        st->var_0A0 = fctr_e;
+
+        fctr_e = st->var_188 >> 16;
+        fctr_f = ((st->var_188 << 16) & 0xFFFFFF00) | (st->var_0A0 & 0xFF);
+        if ((fctr_f & 0x80) != 0) {
+            mone = fctr_f < 0x100;
+            fctr_f -= 0x100;
+            fctr_e = (fctr_e & 0xFFFFFF00) | ((fctr_e - mone) & 0xFF);
+        }
+        st->var_0A0 = fctr_f;
+        st->var_09C = fctr_e;
+
+        st->var_084 = (st->var_084 & 0xFFFFFF00) | (st->var_058 & 0xFF);
+        st->var_08C = ((st->var_054 << 16) & 0xFFFF0000) | ((st->var_058 >> 8) & 0xFFFF);
+        fctr_s = (unsigned int)(st->var_050 << 8) >> 24 << 8;
+        st->var_088 = ((st->var_050 << 16) & 0xFFFFFF00) | ((st->var_054 >> 16) & 0xFF);
+        st->var_084 = (fctr_s & 0xFFFFFF00) | (st->var_084 & 0xFF);
+    }
+
+    if (st->var_134 >= 0)
+    {
+        bool mone;
+        int fctr_e, fctr_s;
+        unsigned int fctr_f;
+
+        fctr_e = st->var_198 >> 16;
+        fctr_f = ((st->var_198 << 16) & 0xFFFF0000) | ((st->var_1A0 >> 8) & 0xFFFF);
+        if ((fctr_f & 0x8000) != 0) {
+            mone = fctr_f < 0x10000;
+            fctr_f -= 0x10000;
+            fctr_e = (fctr_e & 0xFFFFFF00) | ((fctr_e - mone) & 0xFF);
+        }
+        st->var_098 = fctr_f;
+        st->var_094 = fctr_e;
+
+        fctr_e = st->var_18C >> 16;
+        fctr_f = ((st->var_18C << 16) & 0xFFFFFF00) | (st->var_094 & 0xFF);
+        if ((fctr_f & 0x80) != 0) {
+            mone = fctr_f < 0x100;
+            fctr_f -= 0x100;
+            fctr_e = (fctr_e & 0xFFFFFF00) | ((fctr_e - mone) & 0xFF);
+        }
+        st->var_094 = fctr_f;
+        st->var_090 = fctr_e;
+
+        st->var_078 = (st->var_078 & 0xFFFFFF00) | (st->var_04C & 0xFF);
+        st->var_048 = ((st->var_048 << 16) & 0xFFFF0000) | ((st->var_04C >> 8) & 0xFFFF);
+        st->var_080 = st->var_048;
+        fctr_s = (unsigned int)(st->var_044 << 8) >> 24 << 8;
+        st->var_07C = ((st->var_044 << 16) & 0xFFFFFF00) | ((st->var_048 >> 16) & 0xFF);
+        st->var_078 = (fctr_s & 0xFFFFFF00) | (st->var_078 & 0xFF);
+    }
 }
 
 void gpoly_stb_md05uni(struct gpoly_state *st)
