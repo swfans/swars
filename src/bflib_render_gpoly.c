@@ -19,6 +19,8 @@
 /******************************************************************************/
 #include "poly.h"
 
+#include "bfendian.h"
+
 #include "globals.h"
 #include "swlog.h"
 
@@ -88,7 +90,34 @@ struct gpoly_state {
     int var_0BC;
     int var_0B8;
     int var_0B4;
-    ubyte var_0B0[112];
+    int var_0B0;
+    int var_0AC;
+    int var_0A8;
+    int var_0A4;
+    int var_0A0;
+    int var_09C;
+    int var_098;
+    int var_094;
+    int var_090;
+    int var_08C;
+    int var_088;
+    int var_084;
+    int var_080;
+    int var_07C;
+    int var_078;
+    int var_074;
+    int var_070;
+    int var_06C;
+    int var_068;
+    int var_064;
+    int var_060;
+    int var_05C;
+    int var_058;
+    int var_054;
+    int var_050;
+    int var_04C;
+    int var_048;
+    int var_044;
     int var_040;
     int var_03C;
     int var_038;
