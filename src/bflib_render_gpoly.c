@@ -475,10 +475,135 @@ int gpoly_mul_rot_2(int a1, int a2)
 
 void gpoly_sta_md03(struct gpoly_state *st)
 {
+#if 0
     asm volatile (
       "call ASM_gpoly_sta_md03\n"
         : : "a" (st));
     return;
+#endif
+    {
+        int dist_c1, dist_c2, dist_c3, dist_c4;
+        int fctr_a, fctr_d;
+
+        dist_c1 = st->var_160 - st->var_178;
+        dist_c2 = st->var_148 - st->var_178;
+        dist_c3 = st->var_164 - st->var_17C;
+        dist_c4 = st->var_14C - st->var_17C;
+        fctr_a = dist_c1 * dist_c4;
+        if (st->var_134 >= 0)
+            fctr_a = fctr_a - dist_c4 - dist_c4;
+        fctr_d = dist_c2 * dist_c3 - (dist_c4 + fctr_a);
+        if (fctr_d != 0)
+        {
+            st->var_038 = st->var_03C;
+            st->var_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+              st->var_03C * (st->var_13C - st->var_16C) - st->var_03C * (st->var_154 - st->var_16C));
+
+            st->var_038 = st->var_03C;
+            st->var_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+              st->var_03C * (st->var_138 - st->var_168) - st->var_03C * (st->var_150 - st->var_168));
+        }
+        else
+        {
+            st->var_0B0 = 0;
+            st->var_0AC = 0;
+        }
+    }
+    if (st->var_134 < 0)
+    {
+        int dist_c5, mag_a1;
+
+        dist_c5 = st->var_14C - st->var_17C;
+        if (dist_c5 > 255)
+            mag_a1 = 0x7FFFFFFF / dist_c5;
+        else
+            mag_a1 = gpoly_reptable[dist_c5];
+        st->var_194 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_13C - st->var_16C));
+        st->var_188 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_138 - st->var_168));
+    }
+    else
+    {
+        int dist_c5, mag_a1;
+
+        dist_c5 = st->var_164 - st->var_17C;
+        if (dist_c5 > 255)
+            mag_a1 = 0x7FFFFFFF / dist_c5;
+        else
+            mag_a1 = gpoly_reptable[dist_c5];
+        st->var_194 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_154 - st->var_16C));
+        st->var_188 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_150 - st->var_168));
+
+        dist_c5 = st->var_14C - st->var_164;
+        if (dist_c5 > 255)
+            mag_a1 = 0x7FFFFFFF / dist_c5;
+        else
+            mag_a1 = gpoly_reptable[dist_c5];
+        st->var_198 = gpoly_mul_rot_2(mag_a1, 2 * (st->var_13C - st->var_154));
+        st->var_18C = gpoly_mul_rot_2(mag_a1, 2 * (st->var_138 - st->var_150));
+    }
+
+    st->var_054 = st->var_16C << 16;
+    st->var_050 = st->var_168 << 16;
+    st->var_048 = st->var_154 << 16;
+    st->var_044 = st->var_150 << 16;
+    st->var_0BC = st->var_0B0 << 16;
+    st->var_0B8 = st->var_0B0 >> 16;
+
+    {
+        bool mone;
+        int fctr_e;
+        unsigned int fctr_f;
+
+        fctr_e = st->var_0AC >> 16;
+        fctr_f = ((st->var_0AC << 16) & 0xFFFFFF00) | ((st->var_0B8) & 0xFF);
+        if ((fctr_f & 0x80) != 0) {
+            mone = fctr_f < 0x100;
+            fctr_f -= 0x100;
+            fctr_e = ((fctr_e) & 0xFFFFFF00) | ((fctr_e - mone) & 0xFF);
+        }
+        st->var_0B8 = fctr_f;
+        st->var_0B4 = fctr_e;
+
+        st->var_0A4 = st->var_194 << 16;
+        st->var_0A0 = st->var_194 >> 16;
+
+        fctr_e = st->var_188 >> 16;
+        fctr_f = ((st->var_188 << 16) & 0xFFFFFF00) | ((st->var_0A0) & 0xFF);
+        if ((fctr_f & 0x80) != 0) {
+            mone = fctr_f < 0x100;
+            fctr_f -= 0x100;
+            fctr_e = ((fctr_e) & 0xFFFFFF00) | ((fctr_e - mone) & 0xFF);
+        }
+        st->var_0A0 = fctr_f;
+        st->var_09C = fctr_e;
+
+        st->var_08C = st->var_054 << 16;
+        st->var_088 = ((st->var_050 << 16) & 0xFFFFFF00) | ((st->var_054 >> 16) & 0xFF);
+        st->var_084 = (unsigned int)(st->var_050 << 8) >> 24 << 8;
+    }
+
+    if (st->var_134 >= 0)
+    {
+        bool mone;
+        int fctr_e;
+        unsigned int fctr_f;
+
+        st->var_098 = st->var_198 << 16;
+        st->var_094 = st->var_198 >> 16;
+        fctr_e = st->var_18C >> 16;
+        fctr_f = ((st->var_18C << 16) & 0xFFFFFF00) | (st->var_094 & 0xFF);
+        if ((fctr_f & 0x80) != 0) {
+          mone = fctr_f < 0x100;
+          fctr_f -= 0x100;
+          fctr_e = ((fctr_e) & 0xFFFFFF00) | ((fctr_e - mone) & 0xFF);
+        }
+        st->var_094 = fctr_f;
+        st->var_090 = fctr_e;
+
+        st->var_080 = st->var_048 << 16;
+        st->var_07C = ((st->var_044 << 16) & 0xFFFFFF00) | ((st->var_048 >> 16) & 0xFF);
+        st->var_078 = (unsigned int)(st->var_044 << 8) >> 24 << 8;
+    }
 }
 
 void gpoly_sta_md04(struct gpoly_state *st)
