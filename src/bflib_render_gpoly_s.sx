@@ -1879,9 +1879,10 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    0x128(%esp),%edx
 		mov    0x12c(%esp),%ebx
 		add    EXPORT_SYMBOL(vec_map),%ebx
-		mov    0x34(%esp),%esi
+		mov    0x34(%esp),%eax
+		mov    %eax,0x13c(%esp)
 		mov    EXPORT_SYMBOL(vec_screen_width),%edi
-		imul   %esi,%edi
+		imul   %eax,%edi
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
@@ -1895,14 +1896,14 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		sub    0x34(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0x38(%esp),%eax
-		mov    %esi,0x13c(%esp)
 		mov    0x3c(%esp),%eax
 		mov    %eax,%ebp
-		je     jump_129de8
-		mov    0x34(%esp),%esi
-		or     %esi,%esi
+		je     jump_129de0
+		mov    0x34(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    %ebp,%eax
 		js     jump_129d60
-		mov    0x13c(%esp),%esi
 		jmp    jump_129cf6
 
 	gpoly_drwa_00:
@@ -1910,7 +1911,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,(%edi)
@@ -1920,7 +1921,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x1(%edi)
@@ -1930,7 +1931,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x2(%edi)
@@ -1940,7 +1941,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x3(%edi)
@@ -1950,7 +1951,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x4(%edi)
@@ -1960,7 +1961,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x5(%edi)
@@ -1970,7 +1971,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x6(%edi)
@@ -1980,7 +1981,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x7(%edi)
@@ -1990,7 +1991,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x8(%edi)
@@ -2000,7 +2001,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x9(%edi)
@@ -2010,7 +2011,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xa(%edi)
@@ -2020,7 +2021,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xb(%edi)
@@ -2030,7 +2031,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xc(%edi)
@@ -2040,7 +2041,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xd(%edi)
@@ -2050,7 +2051,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xe(%edi)
@@ -2060,7 +2061,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xf(%edi)
@@ -2072,7 +2073,6 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    0xb4(%esp),%eax
 		mov    0xb8(%esp),%ebp
 		mov    0xbc(%esp),%edi
-		mov    0x13c(%esp),%esi
 		add    0x84(%esp),%eax
 		add    0x88(%esp),%ebp
 		mov    0xd0(%esp),%ecx
@@ -2084,7 +2084,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		adc    0xe8(%esp),%bh
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
-		je     jump_129de8
+		je     jump_129de0
 
 	jump_129cf6:
 		mov    %eax,0xb4(%esp)
@@ -2104,7 +2104,6 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		add    EXPORT_SYMBOL(gpoly_countdown)(,%eax,4),%edi
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
-		mov    0xf8(%esp),%esi
 		jmp    *jt_gpoly_drwa(,%eax,4)
 
 
@@ -2126,16 +2125,11 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
 		je     jump_129de0
-		inc    %esi
+		incl   0x178(%esp)
 		js     jump_129d60
-		mov    0x13c(%esp),%esi
 		jmp    jump_129cf6
 
 	jump_129de0:
-		mov    0x13c(%esp),%esi
-		nop
-
-	jump_129de8:
 		decl   0x30(%esp)
 		je     gpoly_stb_md05uni_end
 		mov    %eax,0xb4(%esp)
@@ -2166,12 +2160,12 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %eax,0xf0(%esp)
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
-		mov    0x54(%esp),%eax
 		jle    gpoly_stb_md05uni_end
-		mov    0x4c(%esp),%esi
-		or     %esi,%esi
+		mov    0x4c(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    0x54(%esp),%eax
 		js     jump_129d60
-		mov    0x50(%esp),%esi
 		jmp    jump_129cf6
 
 	jump_129eb0:
@@ -2186,13 +2180,12 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 	jump_129ed0:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
-		mov    0xb4(%esp),%eax
 		jle    gpoly_stb_md05uni_end
-		mov    %esi,0x13c(%esp)
-		mov    0x4c(%esp),%esi
-		or     %esi,%esi
+		mov    0x4c(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    0xb4(%esp),%eax
 		js     jump_129d60
-		mov    0x13c(%esp),%esi
 		jmp    jump_129cf6
 
 	jump_129f20:
@@ -2248,8 +2241,10 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    0x3c(%esp),%eax
 		mov    %eax,%ebp
 		je     jump_12a460
-		mov    0x34(%esp),%esi
-		or     %esi,%esi
+		mov    0x34(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    %ebp,%eax
 		js     jump_12a3e0
 		jmp    jump_12a266
 
@@ -2258,7 +2253,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,(%edi)
@@ -2268,7 +2263,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x1(%edi)
@@ -2278,7 +2273,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x2(%edi)
@@ -2288,7 +2283,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x3(%edi)
@@ -2298,7 +2293,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x4(%edi)
@@ -2308,7 +2303,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x5(%edi)
@@ -2318,7 +2313,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x6(%edi)
@@ -2328,7 +2323,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x7(%edi)
@@ -2338,7 +2333,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x8(%edi)
@@ -2348,7 +2343,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x9(%edi)
@@ -2358,7 +2353,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xa(%edi)
@@ -2368,7 +2363,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xb(%edi)
@@ -2378,7 +2373,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xc(%edi)
@@ -2388,7 +2383,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xd(%edi)
@@ -2398,7 +2393,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xe(%edi)
@@ -2408,7 +2403,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
-		adc    %esi,%edx
+		adc    0xf8(%esp),%edx
 		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xf(%edi)
@@ -2448,13 +2443,11 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %edi,0xbc(%esp)
 		sar    $0x10,%eax
 		js     jump_12a360
-		mov    0x13c(%esp),%esi
-		cmp    %esi,%eax
+		cmp    0x13c(%esp),%eax
 		jg     jump_12a300
 		jl     jump_12a330
 
 	jump_12a28e:
-		mov    %esi,0x13c(%esp)
 		mov    0xbc(%esp),%edi
 		mov    %ecx,0xd0(%esp)
 		mov    %ebx,0xcc(%esp)
@@ -2464,15 +2457,14 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		jg     jump_12a3d0
 
 	jump_12a2c0:
-		add    %esi,%edi
-		sub    %esi,%ebp
+		add    0x13c(%esp),%edi
+		sub    0x13c(%esp),%ebp
 		jle    jump_12a1d8
 		mov    %ebp,%eax
 		and    $0xf,%eax
 		add    EXPORT_SYMBOL(gpoly_countdown)(,%eax,4),%edi
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
-		mov    0xf8(%esp),%esi
 		jmp    *jt_gpoly_drwb(,%eax,4)
 
 
@@ -2481,10 +2473,8 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		adc    0xf4(%esp),%ecx
 		adc    0xf8(%esp),%edx
 		adc    0xfc(%esp),%bh
-		mov    0x13c(%esp),%esi
-		inc    %esi
-		mov    %esi,0x13c(%esp)
-		cmp    %esi,%eax
+		incl   0x13c(%esp)
+		cmp    0x13c(%esp),%eax
 		jle    jump_12a28e
 		jmp    jump_12a300
 
@@ -2493,14 +2483,14 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		sbb    0xf4(%esp),%ecx
 		sbb    0xf8(%esp),%edx
 		sbb    0xfc(%esp),%bh
-		dec    %esi
-		cmp    %esi,%eax
+		decl   0x13c(%esp)
+		cmp    0x13c(%esp),%eax
 		jge    jump_12a28e
 		jmp    jump_12a330
 
 	jump_12a360:
-		mov    0x13c(%esp),%esi
-		or     %esi,%esi
+		mov    0x13c(%esp),%eax
+		or     %eax,%eax
 		je     jump_12a28e
 		js     jump_12a370
 		jmp    jump_12a3a0
@@ -2510,7 +2500,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		adc    0xf4(%esp),%ecx
 		adc    0xf8(%esp),%edx
 		adc    0xfc(%esp),%bh
-		inc    %esi
+		incl   0x13c(%esp)
 		je     jump_12a28e
 		jmp    jump_12a370
 
@@ -2519,7 +2509,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		sbb    0xf4(%esp),%ecx
 		sbb    0xf8(%esp),%edx
 		sbb    0xfc(%esp),%bh
-		dec    %esi
+		decl   0x13c(%esp)
 		je     jump_12a28e
 		jmp    jump_12a3a0
 
@@ -2545,13 +2535,11 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
 		je     jump_12a460
-		inc    %esi
+		incl   0x178(%esp)
 		js     jump_12a3e0
 		jmp    jump_12a266
 
 	jump_12a460:
-		mov    0x13c(%esp),%esi
-		nop
 		decl   0x30(%esp)
 		je     gpoly_stb_md05uni_end
 		mov    %eax,0xb4(%esp)
@@ -2582,10 +2570,11 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %eax,0xf0(%esp)
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
-		mov    0x54(%esp),%eax
 		jle    gpoly_stb_md05uni_end
-		mov    0x4c(%esp),%esi
-		or     %esi,%esi
+		mov    0x4c(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    0x54(%esp),%eax
 		js     jump_12a3e0
 		jmp    jump_12a266
 
@@ -2601,11 +2590,11 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 	jump_12a550:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
-		mov    0xb4(%esp),%eax
 		jle    gpoly_stb_md05uni_end
-		mov    %esi,0x13c(%esp)
-		mov    0x4c(%esp),%esi
-		or     %esi,%esi
+		mov    0x4c(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    0xb4(%esp),%eax
 		js     jump_12a3e0
 		jmp    jump_12a266
 
