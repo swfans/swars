@@ -1894,7 +1894,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 	jump_129a9d:
 		sub    0x34(%esp),%eax
 		mov    %eax,0xf0(%esp)
-		mov    0x38(%esp),%esi
+		mov    0x38(%esp),%eax
 		mov    %esi,0x13c(%esp)
 		mov    0x3c(%esp),%eax
 		mov    %eax,%ebp
@@ -2228,9 +2228,9 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    0x128(%esp),%edx
 		mov    0x12c(%esp),%ebx
 		add    EXPORT_SYMBOL(vec_map),%ebx
-		mov    0x34(%esp),%esi
+		mov    0x34(%esp),%eax
 		mov    EXPORT_SYMBOL(vec_screen_width),%edi
-		imul   %esi,%edi
+		imul   %eax,%edi
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
@@ -2243,15 +2243,14 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 	jump_129fee:
 		sub    0x34(%esp),%eax
 		mov    %eax,0xf0(%esp)
-		mov    0x38(%esp),%esi
-		mov    %esi,0x13c(%esp)
+		mov    0x38(%esp),%eax
+		mov    %eax,0x13c(%esp)
 		mov    0x3c(%esp),%eax
 		mov    %eax,%ebp
-		je     jump_12a468
+		je     jump_12a460
 		mov    0x34(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a3e0
-		mov    0x13c(%esp),%esi
 		jmp    jump_12a266
 
 	gpoly_drwb_00:
@@ -2421,15 +2420,16 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    0xb4(%esp),%eax
 		mov    0xb8(%esp),%ebp
 		mov    0xbc(%esp),%edi
-		mov    0x13c(%esp),%esi
+		mov    0x13c(%esp),%ebx
 		sar    $0x10,%eax
-		sub    %eax,%esi
+		sub    %eax,%ebx
 		mov    0xb4(%esp),%eax
 		add    0x84(%esp),%eax
 		add    0x88(%esp),%ebp
 		mov    %eax,0xb4(%esp)
 		sar    $0x10,%eax
-		add    %eax,%esi
+		add    %eax,%ebx
+		mov    %ebx,0x13c(%esp)
 		mov    0xb4(%esp),%eax
 		mov    0xd0(%esp),%ecx
 		mov    0xcc(%esp),%ebx
@@ -2440,7 +2440,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		adc    0xe8(%esp),%bh
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
-		je     jump_12a468
+		je     jump_12a460
 
 	jump_12a266:
 		mov    %eax,0xb4(%esp)
@@ -2448,6 +2448,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %edi,0xbc(%esp)
 		sar    $0x10,%eax
 		js     jump_12a360
+		mov    0x13c(%esp),%esi
 		cmp    %esi,%eax
 		jg     jump_12a300
 		jl     jump_12a330
@@ -2480,7 +2481,9 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		adc    0xf4(%esp),%ecx
 		adc    0xf8(%esp),%edx
 		adc    0xfc(%esp),%bh
+		mov    0x13c(%esp),%esi
 		inc    %esi
+		mov    %esi,0x13c(%esp)
 		cmp    %esi,%eax
 		jle    jump_12a28e
 		jmp    jump_12a300
@@ -2496,6 +2499,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		jmp    jump_12a330
 
 	jump_12a360:
+		mov    0x13c(%esp),%esi
 		or     %esi,%esi
 		je     jump_12a28e
 		js     jump_12a370
@@ -2543,14 +2547,11 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		je     jump_12a460
 		inc    %esi
 		js     jump_12a3e0
-		mov    0x13c(%esp),%esi
 		jmp    jump_12a266
 
 	jump_12a460:
 		mov    0x13c(%esp),%esi
 		nop
-
-	jump_12a468:
 		decl   0x30(%esp)
 		je     gpoly_stb_md05uni_end
 		mov    %eax,0xb4(%esp)
@@ -2586,7 +2587,6 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a3e0
-		mov    0x50(%esp),%esi
 		jmp    jump_12a266
 
 	jump_12a530:
@@ -2607,7 +2607,6 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a3e0
-		mov    0x13c(%esp),%esi
 		jmp    jump_12a266
 
 	gpoly_stb_md05uni_end:
