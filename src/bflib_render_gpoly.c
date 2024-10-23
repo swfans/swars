@@ -20,6 +20,7 @@
 #include "poly.h"
 
 #include "bfendian.h"
+#include "bfgentab.h"
 
 #include "globals.h"
 #include "swlog.h"
@@ -73,7 +74,7 @@ struct gpoly_state {
     int var_100;
     int var_0FC;
     int var_0F8;
-    int var_0F4;
+    ubyte *var_0F4;
     int var_0F0;
     int var_0EC;
     int var_0E8;
@@ -453,6 +454,30 @@ void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct 
       trig(point_a, point_b, point_c);
       break;
     }
+}
+
+/**
+ * whether the addition (x+y) of two byte ints would use carry
+ */
+static inline ubyte __CFADDB__(sbyte x, sbyte y)
+{
+    return (ubyte)(x) > (ubyte)(x+y);
+}
+
+/**
+ * whether the addition (x+y) of two short ints would use carry
+ */
+static inline ubyte __CFADDS__(short x, short y)
+{
+    return (ushort)(x) > (ushort)(x+y);
+}
+
+/**
+ * whether the addition (x+y) of two long ints would use carry
+ */
+static inline ubyte __CFADDL__(long x, long y)
+{
+    return (ulong)(x) > (ulong)(x+y);
 }
 
 int gpoly_mul_rot_1(int a1, int a2)
@@ -1176,12 +1201,32 @@ void gpoly_sta_md28(struct gpoly_state *st)
     }
 }
 
-void gpoly_stb_md05uni(struct gpoly_state *st)
+void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
 {
+#if 1
     asm volatile (
-      "call ASM_gpoly_stb_md05uni\n"
+      "call ASM_gpoly_stb_md05uni_var040_nz\n"
         : : "a" (st));
     return;
+#endif
+}
+
+void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
+{
+#if 1
+    asm volatile (
+      "call ASM_gpoly_stb_md05uni_var040_zr\n"
+        : : "a" (st));
+    return;
+#endif
+}
+
+void gpoly_stb_md05uni(struct gpoly_state *st)
+{
+    if (st->var_040 != 0)
+        gpoly_stb_md05uni_var040_nz(st);
+    else
+        gpoly_stb_md05uni_var040_zr(st);
 }
 
 void gpoly_stb_md05p64(struct gpoly_state *st)

@@ -1839,13 +1839,24 @@ GLOBAL_FUNC (ASM_gpoly_sta_md05)
 
 
 GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
+		push   %ebx
+		/* Invalid code was here */
+		mov    0x170(%eax),%ebx
+		or     %ebx,%ebx
+		jne    jump_gpoly_stb_md05uni_nz
+        call   ASM_gpoly_stb_md05uni_var040_zr
+		jmp    jump_gpoly_stb_md05uni_end
+jump_gpoly_stb_md05uni_nz:
+        call   ASM_gpoly_stb_md05uni_var040_nz
+jump_gpoly_stb_md05uni_end:
+		pop    %ebx
+        ret
+
+
+GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_zr)
 		pusha
 		mov    %eax,%esi
 		/* end of added function header */
-		/* Invalid code was here */
-		mov    0x170(%esi),%eax
-		or     %eax,%eax
-		jne    jump_129f20
 		mov    EXPORT_SYMBOL(vec_screen_width),%ecx
 		mov    %ecx,0xac(%esi)
 		mov    $0x2,%ecx
@@ -1885,7 +1896,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esi),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     gpoly_stb_md05uni_end
+		jg     gpoly_stb_md05uni_var040_zr_end
 		mov    0x4c(%esi),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129a9d
@@ -2130,7 +2141,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 
 	jump_129de0:
 		decl   0x30(%esi)
-		je     gpoly_stb_md05uni_end
+		je     gpoly_stb_md05uni_var040_zr_end
 		mov    %eax,0xb4(%esi)
 		mov    0x7c(%esi),%eax
 		or     %eax,%eax
@@ -2159,7 +2170,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %eax,0xf0(%esi)
 		mov    0x50(%esi),%eax
 		mov    %eax,0x13c(%esi)
-		jle    gpoly_stb_md05uni_end
+		jle    gpoly_stb_md05uni_var040_zr_end
 		mov    0x4c(%esi),%eax
 		mov    %eax,0x178(%esi)
 		or     %eax,%eax
@@ -2179,7 +2190,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 	jump_129ed0:
 		sub    0x4c(%esi),%eax
 		mov    %eax,0xf0(%esi)
-		jle    gpoly_stb_md05uni_end
+		jle    gpoly_stb_md05uni_var040_zr_end
 		mov    0x4c(%esi),%eax
 		mov    %eax,0x178(%esi)
 		or     %eax,%eax
@@ -2187,7 +2198,15 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		js     jump_129d60
 		jmp    jump_129cf6
 
-	jump_129f20:
+	gpoly_stb_md05uni_var040_zr_end:
+		popa
+		ret
+
+
+GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_nz)	/* 0x129f20 */
+		pusha
+		mov    %eax,%esi
+		/* end of added function header */
 		mov    EXPORT_SYMBOL(vec_screen_width),%ecx
 		mov    %ecx,0xac(%esi)
 		mov    $0x2,%ecx
@@ -2226,7 +2245,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esi),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     gpoly_stb_md05uni_end
+		jg     gpoly_stb_md05uni_var040_nz_end
 		mov    0x4c(%esi),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129fee
@@ -2540,7 +2559,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 
 	jump_12a460:
 		decl   0x30(%esi)
-		je     gpoly_stb_md05uni_end
+		je     gpoly_stb_md05uni_var040_nz_end
 		mov    %eax,0xb4(%esi)
 		mov    0x7c(%esi),%eax
 		or     %eax,%eax
@@ -2569,7 +2588,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		mov    %eax,0xf0(%esi)
 		mov    0x50(%esi),%eax
 		mov    %eax,0x13c(%esi)
-		jle    gpoly_stb_md05uni_end
+		jle    gpoly_stb_md05uni_var040_nz_end
 		mov    0x4c(%esi),%eax
 		mov    %eax,0x178(%esi)
 		or     %eax,%eax
@@ -2589,7 +2608,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 	jump_12a550:
 		sub    0x4c(%esi),%eax
 		mov    %eax,0xf0(%esi)
-		jle    gpoly_stb_md05uni_end
+		jle    gpoly_stb_md05uni_var040_nz_end
 		mov    0x4c(%esi),%eax
 		mov    %eax,0x178(%esi)
 		or     %eax,%eax
@@ -2597,7 +2616,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni)
 		js     jump_12a3e0
 		jmp    jump_12a266
 
-	gpoly_stb_md05uni_end:
+	gpoly_stb_md05uni_var040_nz_end:
 		popa
 		ret
 
