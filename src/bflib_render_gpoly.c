@@ -1201,6 +1201,41 @@ void gpoly_sta_md28(struct gpoly_state *st)
     }
 }
 
+int gpoly_stb_drw_pixel(int a1bp, int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
+{
+    int ret;
+    int loc2d, loc3b, loc4c;
+
+    loc2d = *a2d;
+    loc3b = *a3b;
+    loc4c = *a4c;
+    asm volatile (
+      "push %%ebp\n"
+      "mov %%eax,%%ebp\n"
+      "call ASM_gpoly_stb_drw_pixel\n"
+      "pop %%ebp\n"
+        : "=a" (ret), "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "a" (a1bp), "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
+    *a2d = loc2d;
+    *a3b = loc3b;
+    *a4c = loc4c;
+    return ret;
+}
+
+void gpoly_stb_drw_incr1(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
+{
+    int loc2d, loc3b, loc4c;
+
+    loc2d = *a2d;
+    loc3b = *a3b;
+    loc4c = *a4c;
+    asm volatile (
+      "call ASM_gpoly_stb_drw_incr1\n"
+        : "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
+    *a2d = loc2d;
+    *a3b = loc3b;
+    *a4c = loc4c;
+}
+
 void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
 {
 #if 1
