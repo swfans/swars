@@ -81,6 +81,7 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 Page custom SelectionPage SelectionPageLeave
 Page custom GOGInstall GOGInstallLeave
 Page custom GOGInstallAdditional GOGInstallAdditionalLeave
+Page custom UpdateInstall UpdateInstallLeave
 Page custom LangNCdromPage LangNCdromLeave
 !define MUI_PAGE_CUSTOMFUNCTION_Pre SkipComponents
 !insertmacro MUI_PAGE_COMPONENTS 
