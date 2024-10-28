@@ -1204,10 +1204,11 @@ void gpoly_sta_md28(struct gpoly_state *st)
 int gpoly_stb_drw_pixel(int a1bp, int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
     int ret;
-    int loc2d, loc3b, loc4c;
+    int loc2d, loc4c;
+    ubyte *loc3b;
 
     loc2d = *a2d;
-    loc3b = *a3b;
+    loc3b = vec_map + *a3b;
     loc4c = *a4c;
     asm volatile (
       "push %%ebp\n"
@@ -1216,23 +1217,24 @@ int gpoly_stb_drw_pixel(int a1bp, int *a2d, int *a3b, int *a4c, struct gpoly_sta
       "pop %%ebp\n"
         : "=a" (ret), "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "a" (a1bp), "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
     *a2d = loc2d;
-    *a3b = loc3b;
+    *a3b = loc3b - vec_map;
     *a4c = loc4c;
-    return ret;
+    return ret & 0xFFFF;
 }
 
 void gpoly_stb_drw_incr1(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
-    int loc2d, loc3b, loc4c;
+    int loc2d, loc4c;
+    ubyte *loc3b;
 
     loc2d = *a2d;
-    loc3b = *a3b;
+    loc3b = vec_map + *a3b;
     loc4c = *a4c;
     asm volatile (
       "call ASM_gpoly_stb_drw_incr1\n"
         : "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
     *a2d = loc2d;
-    *a3b = loc3b;
+    *a3b = loc3b - vec_map;
     *a4c = loc4c;
 }
 
@@ -1248,12 +1250,160 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
 
 void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_gpoly_stb_md05uni_var040_zr\n"
         : : "a" (st));
     return;
 #endif
+    int loc_08C;
+    int loc_088;
+    int loc_0E4;
+    ubyte *out_ln;
+    int range_beg, range_end;
+    int height;
+
+    st->var_104 = vec_screen_width;
+    st->var_180 = 2;
+    st->var_060 = st->var_1A4;
+    st->var_0CC = st->var_0A4;
+    st->var_0C4 = st->var_0A0;
+    st->var_0C8 = st->var_09C;
+
+    if (st->var_134 < 0) {
+        st->var_12C = st->var_1B0;
+        st->var_128 = st->var_1AC;
+    } else {
+        st->var_12C = st->var_1AC;
+        st->var_128 = st->var_1B0;
+    }
+    loc_08C = st->var_08C;
+    loc_088 = st->var_088;
+    loc_0E4 = st->var_084;
+    st->var_074 = st->var_17C;
+    out_ln = &vec_screen[st->var_17C * vec_screen_width];
+    if (st->var_17C > vec_window_height)
+        return;
+
+    height = st->var_164;
+    if (height > vec_window_height)
+        height = vec_window_height;
+    st->var_0C0 = height - st->var_17C;
+
+    range_beg = st->var_174;
+    range_end = st->var_174;
+
+    if (st->var_0C0 == 0)
+        st->var_038 = 0;
+    else
+        st->var_038 = st->var_17C;
+
+    while (1)
+    {
+        while (st->var_038 < 0)
+        {
+            gpoly_stb_drw_incr1(&loc_088, &loc_0E4, &loc_08C, st);
+            st->var_0FC = range_beg;
+            st->var_074 -= st->var_0FC >> 16;
+            range_end += st->var_128;
+            st->var_0FC += st->var_12C;
+            st->var_074 += st->var_0FC >> 16;
+            range_beg = st->var_0FC;
+            out_ln += st->var_104;
+            st->var_0C0--;
+            if (st->var_0C0 == 0)
+                break;
+            st->var_038++;
+        }
+
+        while (st->var_0C0 != 0)
+        {
+            int range_beg_scr, range_end_scr;
+            int v21;
+
+            st->var_0FC = range_beg;
+            st->var_0F8 = range_end;
+            st->var_0F4 = out_ln;
+            st->var_0E0 = loc_08C;
+            st->var_0E4 = loc_0E4;
+            st->var_0D8 = loc_088;
+            range_beg_scr = range_beg >> 16;
+            range_end_scr = range_end >> 16;
+            v21 = range_end_scr - range_beg_scr;
+            if (v21 > 0)
+            {
+                ubyte *o;
+                int kk_max;
+                int loc_0BC;
+
+                kk_max = v21 & 0xF;
+                o = &st->var_0F4[range_beg_scr + gpoly_countdown[kk_max]];
+                st->var_0D4 = v21;
+                loc_0BC = st->var_0BC;
+                while ( 1 )
+                {
+                    int kk;
+
+                    for (kk = kk_max; kk > 0; kk--)
+                        o[16-kk] = pixmap.fade_table[gpoly_stb_drw_pixel(loc_0BC, &loc_088, &loc_0E4, &loc_08C, st)];
+                    if (kk_max != 0) {
+                        o += 16;
+                        st->var_0D4 -= 16;
+                        if (st->var_0D4 <= 0)
+                            break;
+                    }
+                    o[0] = pixmap.fade_table[gpoly_stb_drw_pixel(loc_0BC, &loc_088, &loc_0E4, &loc_08C, st)];
+                    kk_max = 15;
+                }
+            }
+            range_beg = st->var_12C + st->var_0FC;
+            range_end = st->var_128 + st->var_0F8;
+            loc_08C = st->var_0E0;
+            loc_0E4 = st->var_0E4;
+            loc_088 = st->var_0D8;
+            gpoly_stb_drw_incr1(&loc_088, &loc_0E4, &loc_08C, st);
+            out_ln = &st->var_0F4[st->var_104];
+            st->var_0C0--;
+        }
+
+        st->var_180--;
+        if (st->var_180 == 0)
+            break;
+
+        st->var_0FC = range_beg;
+        if (st->var_134 >= 0)
+        {
+            st->var_12C = st->var_1A8;
+            st->var_060 = st->var_1A0;
+            st->var_0CC = st->var_098;
+            st->var_0C4 = st->var_094;
+            st->var_0C8 = st->var_090;
+            loc_08C = st->var_080;
+            loc_088 = st->var_07C;
+            loc_0E4 = st->var_078;
+            st->var_074 = st->var_160;
+        }
+        else
+        {
+            st->var_128 = st->var_1A8;
+            range_end = st->var_15C;
+        }
+
+        height = st->var_14C;
+        if (height > vec_window_height)
+            height = vec_window_height;
+        st->var_0C0 = height - st->var_164;
+
+        if (st->var_0C0 <= 0)
+            break;
+
+        if (st->var_134 >= 0)
+            range_beg = st->var_15C;
+        else
+            range_beg = st->var_0FC;
+
+        st->var_038 = st->var_164;
+    }
 }
 
 void gpoly_stb_md05uni(struct gpoly_state *st)

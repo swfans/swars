@@ -1870,6 +1870,13 @@ GLOBAL_FUNC (ASM_gpoly_stb_drw_incr1)
 		adc    0xe8(%esi),%bh
 		ret
 
+GLOBAL_FUNC (ASM_gpoly_stb_drw_incr2)
+		add    0x108(%esi),%bl
+		adc    0xf4(%esi),%ecx
+		adc    0xf8(%esi),%edx
+		adc    0xfc(%esi),%bh
+		ret
+
 
 GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_zr)
 		pusha
@@ -2338,10 +2345,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_nz)	/* 0x129f20 */
 
 
 	jump_12a300:
-		add    0x108(%esi),%bl
-		adc    0xf4(%esi),%ecx
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_incr2
 		incl   0x13c(%esi)
 		cmp    0x13c(%esi),%eax
 		jle    jump_12a28e
@@ -2365,10 +2369,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_nz)	/* 0x129f20 */
 		jmp    jump_12a3a0
 
 	jump_12a370:
-		add    0x108(%esi),%bl
-		adc    0xf4(%esi),%ecx
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_incr2
 		incl   0x13c(%esi)
 		je     jump_12a28e
 		jmp    jump_12a370
