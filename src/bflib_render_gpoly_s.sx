@@ -2541,8 +2541,10 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_zr)
 		mov    0x3c(%esp),%eax
 		mov    %eax,%ebp
 		je     jump_12a9d0
-		mov    0x34(%esp),%esi
-		or     %esi,%esi
+		mov    0x34(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    %ebp,%eax
 		js     jump_12a980
 		jmp    jump_12a8c4
 
@@ -2745,7 +2747,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_zr)
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
 		je     jump_12a9d0
-		inc    %esi
+		incl   0x178(%esp)
 		js     jump_12a980
 		jmp    jump_12a8c4
 
@@ -2779,8 +2781,10 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_zr)
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
 		jle    gpoly_stb_md05p64_var040_zr_end
-		mov    0x4c(%esp),%esi
-		or     %esi,%esi
+		mov    0x4c(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    0x54(%esp),%eax
 		js     jump_12a980
 		jmp    jump_12a8c4
 
@@ -2797,8 +2801,10 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_zr)
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
 		jle    gpoly_stb_md05p64_var040_zr_end
-		mov    0x4c(%esp),%esi
-		or     %esi,%esi
+		mov    0x4c(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    0xb4(%esp),%eax
 		js     jump_12a980
 		jmp    jump_12a8c4
 
@@ -2862,8 +2868,10 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
 		mov    0x3c(%esp),%eax
 		mov    %eax,%ebp
 		je     jump_drwe_af20
-		mov    0x34(%esp),%esi
-		or     %esi,%esi
+		mov    0x34(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    %ebp,%eax
 		js     jump_drwe_aed0
 		jmp    jump_drwe_ad95
 
@@ -3100,7 +3108,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
 		je     jump_drwe_af20
-		inc    %esi
+		incl   0x178(%esp)
 		js     jump_drwe_aed0
 		jmp    jump_drwe_ad95
 
@@ -3134,8 +3142,10 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
 		jle    gpoly_stb_md05p64_var040_nz_end
-		mov    0x4c(%esp),%esi
-		or     %esi,%esi
+		mov    0x4c(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    0x54(%esp),%eax
 		js     jump_drwe_aed0
 		jmp    jump_drwe_ad95
 
@@ -3152,8 +3162,10 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
 		jle    gpoly_stb_md05p64_var040_nz_end
-		mov    0x4c(%esp),%esi
-		or     %esi,%esi
+		mov    0x4c(%esp),%eax
+		mov    %eax,0x178(%esp)
+		or     %eax,%eax
+		mov    0xb4(%esp),%eax
 		js     jump_drwe_aed0
 		jmp    jump_drwe_ad95
 
