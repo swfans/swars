@@ -1870,6 +1870,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_drw_incr1)
 		adc    0xe8(%esi),%bh
 		ret
 
+
 GLOBAL_FUNC (ASM_gpoly_stb_drw_incr2)
 		add    0x108(%esi),%bl
 		adc    0xf4(%esi),%ecx
@@ -2471,14 +2472,25 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_nz)	/* 0x129f20 */
 
 
 GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
+		push   %ebx
+		/* Invalid code was here */
+		mov    0x170(%eax),%ebx
+		or     %ebx,%ebx
+		jne    jump_gpoly_stb_md05p64_nz
+        call   ASM_gpoly_stb_md05p64_var040_zr
+		jmp    jump_gpoly_stb_md05p64_end
+jump_gpoly_stb_md05p64_nz:
+        call   ASM_gpoly_stb_md05p64_var040_nz
+jump_gpoly_stb_md05p64_end:
+		pop    %ebx
+        ret
+
+
+GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_zr)
 		pusha
 		mov    %esp,0x17c(%eax)
 		mov    %eax,%esp
 		/* end of added function header */
-		/* Invalid code was here */
-		mov    0x170(%esp),%eax
-		or     %eax,%eax
-		jne    jump_12ab00
 		mov    EXPORT_SYMBOL(vec_screen_width),%ecx
 		mov    %ecx,0xac(%esp)
 		mov    $0x2,%ecx
@@ -2509,13 +2521,13 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		mov    0x128(%esp),%edx
 		mov    0x12c(%esp),%ebx
 		add    EXPORT_SYMBOL(vec_map),%ebx
-		mov    0x34(%esp),%esi
+		mov    0x34(%esp),%eax
 		mov    EXPORT_SYMBOL(vec_screen_width),%edi
-		imul   %esi,%edi
+		imul   %eax,%edi
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     gpoly_stb_md05p64_end
+		jg     gpoly_stb_md05p64_var040_zr_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12a6f2
@@ -2747,7 +2759,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		nop
 	jump_12a9d8:
 		decl   0x30(%esp)
-		je     gpoly_stb_md05p64_end
+		je     gpoly_stb_md05p64_var040_zr_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -2774,7 +2786,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    gpoly_stb_md05p64_end
+		jle    gpoly_stb_md05p64_var040_zr_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a980
@@ -2793,7 +2805,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    gpoly_stb_md05p64_end
+		jle    gpoly_stb_md05p64_var040_zr_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
@@ -2801,7 +2813,18 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		mov    0x13c(%esp),%esi
 		jmp    jump_12a8c4
 
-	jump_12ab00:
+	gpoly_stb_md05p64_var040_zr_end:
+		/* start of added function footer */
+		mov    0x17c(%esp),%esp
+		popa
+		ret
+
+
+GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
+		pusha
+		mov    %esp,0x17c(%eax)
+		mov    %eax,%esp
+		/* end of added function header */
 		mov    EXPORT_SYMBOL(vec_screen_width),%ecx
 		mov    %ecx,0xac(%esp)
 		mov    $0x2,%ecx
@@ -2831,13 +2854,13 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		mov    0x128(%esp),%edx
 		mov    0x12c(%esp),%ebx
 		add    EXPORT_SYMBOL(vec_map),%ebx
-		mov    0x34(%esp),%esi
+		mov    0x34(%esp),%eax
 		mov    EXPORT_SYMBOL(vec_screen_width),%edi
-		imul   %esi,%edi
+		imul   %eax,%edi
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     gpoly_stb_md05p64_end
+		jg     gpoly_stb_md05p64_var040_nz_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12abc3
@@ -3101,7 +3124,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		nop
 	jump_drwe_af28:
 		decl   0x30(%esp)
-		je     gpoly_stb_md05p64_end
+		je     gpoly_stb_md05p64_var040_nz_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -3128,7 +3151,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    gpoly_stb_md05p64_end
+		jle    gpoly_stb_md05p64_var040_nz_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_drwe_aed0
@@ -3147,7 +3170,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    gpoly_stb_md05p64_end
+		jle    gpoly_stb_md05p64_var040_nz_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
@@ -3156,7 +3179,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64)
 		jmp    jump_drwe_ad95
 
 
-	gpoly_stb_md05p64_end:
+	gpoly_stb_md05p64_var040_nz_end:
 		/* start of added function footer */
 		mov    0x17c(%esp),%esp
 		popa
