@@ -1201,7 +1201,7 @@ void gpoly_sta_md28(struct gpoly_state *st)
     }
 }
 
-int gpoly_stb_drw_pixel(int a1bp, int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
+int gpoly_stb_drw_pixel(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
     int ret;
     int loc2d, loc4c;
@@ -1211,16 +1211,13 @@ int gpoly_stb_drw_pixel(int a1bp, int *a2d, int *a3b, int *a4c, struct gpoly_sta
     loc3b = vec_map + *a3b;
     loc4c = *a4c;
     asm volatile (
-      "push %%ebp\n"
-      "mov %%eax,%%ebp\n"
       "mov    %%ch,%%ah\n"
       "mov    %%dl,%%bl\n"
-      "add    %%ebp,%%ecx\n"
+      "add    0xf4(%%esi),%%ecx\n"
       "mov    (%%ebx),%%al\n"
       "adc    0xf8(%%esi),%%edx\n"
       "adc    0xfc(%%esi),%%bh\n"
-      "pop %%ebp\n"
-        : "=a" (ret), "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "a" (a1bp), "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
+        : "=a" (ret), "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
     *a2d = loc2d;
     *a3b = loc3b - vec_map;
     *a4c = loc4c;
@@ -1400,18 +1397,16 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
             {
                 ubyte *o;
                 int kk_max;
-                int loc_0BC;
 
                 kk_max = range_len & 0xF;
                 o = &st->var_0F4[st->var_074 + gpoly_countdown[kk_max]];
                 st->var_0D4 = range_len;
-                loc_0BC = st->var_0BC;
                 while ( 1 )
                 {
                     int kk;
 
                     for (kk = kk_max; kk > 0; kk--) {
-                        o[16-kk] = pixmap.fade_table[gpoly_stb_drw_pixel(loc_0BC, &loc_088, &loc_0E4, &loc_08C, st)];
+                        o[16-kk] = pixmap.fade_table[gpoly_stb_drw_pixel(&loc_088, &loc_0E4, &loc_08C, st)];
                     }
                     if (kk_max != 0) {
                         o += 16;
@@ -1419,7 +1414,7 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
                         if (st->var_0D4 <= 0)
                             break;
                     }
-                    o[0] = pixmap.fade_table[gpoly_stb_drw_pixel(loc_0BC, &loc_088, &loc_0E4, &loc_08C, st)];
+                    o[0] = pixmap.fade_table[gpoly_stb_drw_pixel(&loc_088, &loc_0E4, &loc_08C, st)];
                     kk_max = 15;
                 }
             }
@@ -1557,18 +1552,16 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
             {
                 ubyte *o;
                 int kk_max;
-                int loc_0BC;
 
                 kk_max = range_len & 0xF;
                 o = &st->var_0F4[range_beg_scr + gpoly_countdown[kk_max]];
                 st->var_0D4 = range_len;
-                loc_0BC = st->var_0BC;
                 while ( 1 )
                 {
                     int kk;
 
                     for (kk = kk_max; kk > 0; kk--) {
-                        o[16-kk] = pixmap.fade_table[gpoly_stb_drw_pixel(loc_0BC, &loc_088, &loc_0E4, &loc_08C, st)];
+                        o[16-kk] = pixmap.fade_table[gpoly_stb_drw_pixel(&loc_088, &loc_0E4, &loc_08C, st)];
                     }
                     if (kk_max != 0) {
                         o += 16;
@@ -1576,7 +1569,7 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
                         if (st->var_0D4 <= 0)
                             break;
                     }
-                    o[0] = pixmap.fade_table[gpoly_stb_drw_pixel(loc_0BC, &loc_088, &loc_0E4, &loc_08C, st)];
+                    o[0] = pixmap.fade_table[gpoly_stb_drw_pixel(&loc_088, &loc_0E4, &loc_08C, st)];
                     kk_max = 15;
                 }
             }
