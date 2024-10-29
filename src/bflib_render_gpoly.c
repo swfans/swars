@@ -1213,7 +1213,12 @@ int gpoly_stb_drw_pixel(int a1bp, int *a2d, int *a3b, int *a4c, struct gpoly_sta
     asm volatile (
       "push %%ebp\n"
       "mov %%eax,%%ebp\n"
-      "call ASM_gpoly_stb_drw_pixel\n"
+      "mov    %%ch,%%ah\n"
+      "mov    %%dl,%%bl\n"
+      "add    %%ebp,%%ecx\n"
+      "mov    (%%ebx),%%al\n"
+      "adc    0xf8(%%esi),%%edx\n"
+      "adc    0xfc(%%esi),%%bh\n"
       "pop %%ebp\n"
         : "=a" (ret), "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "a" (a1bp), "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
     *a2d = loc2d;
@@ -1231,7 +1236,10 @@ void gpoly_stb_drw_incr1(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     loc3b = vec_map + *a3b;
     loc4c = *a4c;
     asm volatile (
-      "call ASM_gpoly_stb_drw_incr1\n"
+      "add    0x150(%%esi),%%bl\n"
+      "adc    0xe4(%%esi),%%ecx\n"
+      "adc    0xec(%%esi),%%edx\n"
+      "adc    0xe8(%%esi),%%bh\n"
         : "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
     *a2d = loc2d;
     *a3b = loc3b - vec_map;
@@ -1247,7 +1255,10 @@ void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     loc3b = vec_map + *a3b;
     loc4c = *a4c;
     asm volatile (
-      "call ASM_gpoly_stb_drw_incr2\n"
+      "add    0x108(%%esi),%%bl\n"
+      "adc    0xf4(%%esi),%%ecx\n"
+      "adc    0xf8(%%esi),%%edx\n"
+      "adc    0xfc(%%esi),%%bh\n"
         : "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
     *a2d = loc2d;
     *a3b = loc3b - vec_map;
