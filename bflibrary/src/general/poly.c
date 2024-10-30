@@ -51,11 +51,6 @@ const long add_to_edi[] = {
   0,-15,-14,-13,-12,-11,-10, -9, -8, -7, -6, -5, -4, -3, -2, -1,
 };
 
-int poly_line_UNUSED()
-{
-// code at 0001:000e5adf
-}
-
 void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
   struct PolyPoint *point_c)
 {
