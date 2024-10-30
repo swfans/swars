@@ -1850,7 +1850,7 @@ jump_gpoly_stb_md05uni_nz:
         call   ASM_gpoly_stb_md05uni_var040_nz
 jump_gpoly_stb_md05uni_end:
 		pop    %ebx
-        ret
+		ret
 
 
 GLOBAL_FUNC (ASM_gpoly_stb_drw_pixel)
@@ -1863,7 +1863,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_drw_pixel)
 		ret
 
 
-GLOBAL_FUNC (ASM_gpoly_stb_drw_incr1)
+GLOBAL_FUNC (ASM_gpoly_stb_drw_incr1a)
 		add    0x150(%esi),%bl
 		adc    0xe4(%esi),%ecx
 		adc    0xec(%esi),%edx
@@ -2036,7 +2036,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_zr)
 		mov    0xcc(%esi),%ebx
 		mov    0xd8(%esi),%edx
 
-		call   ASM_gpoly_stb_drw_incr1
+		call   ASM_gpoly_stb_drw_incr1a
 		add    0xac(%esi),%edi
 		decl   0xf0(%esi)
 		je     jump_129de0
@@ -2063,7 +2063,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_zr)
 
 
 	jump_129d60:
-		call   ASM_gpoly_stb_drw_incr1
+		call   ASM_gpoly_stb_drw_incr1a
 		mov    %eax,0xb4(%esi)
 		sar    $0x10,%eax
 		sub    %eax,0x13c(%esi)
@@ -2309,7 +2309,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_nz)	/* 0x129f20 */
 		mov    0xd0(%esi),%ecx
 		mov    0xcc(%esi),%ebx
 		mov    0xd8(%esi),%edx
-		call   ASM_gpoly_stb_drw_incr1
+		call   ASM_gpoly_stb_drw_incr1a
 		add    0xac(%esi),%edi
 		decl   0xf0(%esi)
 		je     jump_12a460
@@ -2389,7 +2389,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05uni_var040_nz)	/* 0x129f20 */
 		jmp    jump_12a2c0
 
 	jump_12a3e0:
-		call   ASM_gpoly_stb_drw_incr1
+		call   ASM_gpoly_stb_drw_incr1a
 		mov    %eax,0xb4(%esi)
 		sar    $0x10,%eax
 		sub    %eax,0x13c(%esi)
@@ -2483,23 +2483,37 @@ jump_gpoly_stb_md05p64_nz:
         call   ASM_gpoly_stb_md05p64_var040_nz
 jump_gpoly_stb_md05p64_end:
 		pop    %ebx
-        ret
+		ret
 
 
 GLOBAL_FUNC (ASM_gpoly_stb_drw_pixel2)
 		mov    %dl,%bl
-		add    %ebp,%ecx
+		add    0xf4(%esi),%ecx
 		mov    (%ebx),%al
 		adc    0xf8(%esi),%edx
 		adc    0xfc(%esi),%bh
-        ret
+		ret
 
 
-GLOBAL_FUNC (ASM_gpoly_stb_drw_incr3)
+GLOBAL_FUNC (ASM_gpoly_stb_drw_incr1b)
 		add    0xe4(%esi),%ecx
 		adc    0xec(%esi),%edx
 		adc    0xe8(%esi),%bh
-        ret
+		ret
+
+
+GLOBAL_FUNC (ASM_gpoly_stb_drw_incr4)
+		add    0xf4(%esi),%ecx
+		adc    0xf8(%esi),%edx
+		adc    0xfc(%esi),%bh
+		ret
+
+
+GLOBAL_FUNC (ASM_gpoly_stb_drw_decr4)
+		sub    0xf4(%esi),%ecx
+		sbb    0xf8(%esi),%edx
+		sbb    0xfc(%esi),%bh
+		ret
 
 
 GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_zr)
@@ -2639,7 +2653,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_zr)
 		mov    0xd0(%esi),%ecx
 		mov    0xcc(%esi),%ebx
 		mov    0xd8(%esi),%edx
-		call   ASM_gpoly_stb_drw_incr3
+		call   ASM_gpoly_stb_drw_incr1b
 		add    0xac(%esi),%edi
 		decl   0xf0(%esi)
 		je     jump_12a9d0
@@ -2665,30 +2679,25 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_zr)
 		and    $0xf,%eax
 		add    EXPORT_SYMBOL(gpoly_countdown)(,%eax,4),%edi
 		mov    %ebp,0xdc(%esi)
-		mov    0xf4(%esi),%ebp
 		jmp    *jt_gpoly_drwc(,%eax,4)
 
 
 	jump_12a940:
-		add    0xf4(%esi),%ecx
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_incr4
 		incl   0x13c(%esi)
 		cmp    0x13c(%esi),%eax
 		jle    jump_12a8e6
 		jmp    jump_12a940
 
 	jump_12a960:
-		sub    0xf4(%esi),%ecx
-		sbb    0xf8(%esi),%edx
-		sbb    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_decr4
 		decl   0x13c(%esi)
 		cmp    0x13c(%esi),%eax
 		jge    jump_12a8e6
 		jmp    jump_12a960
 
 	jump_12a980:
-		call   ASM_gpoly_stb_drw_incr3
+		call   ASM_gpoly_stb_drw_incr1b
 		add    0x84(%esi),%eax
 		add    0x88(%esi),%ebp
 		add    0xac(%esi),%edi
@@ -2820,132 +2829,68 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
 		jmp    jump_drwe_ad95
 
 	gpoly_drwd_00:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,(%edi)
 
 
 	gpoly_drwd_15:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0x1(%edi)
 
 	gpoly_drwd_14:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0x2(%edi)
 
 	gpoly_drwd_13:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0x3(%edi)
 
 	gpoly_drwd_12:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0x4(%edi)
 
 	gpoly_drwd_11:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0x5(%edi)
 
 	gpoly_drwd_10:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0x6(%edi)
 
 	gpoly_drwd_09:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0x7(%edi)
 
 	gpoly_drwd_08:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0x8(%edi)
 
 	gpoly_drwd_07:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0x9(%edi)
 
 	gpoly_drwd_06:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0xa(%edi)
 
 	gpoly_drwd_05:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0xb(%edi)
 
 	gpoly_drwd_04:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0xc(%edi)
 
 	gpoly_drwd_03:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0xd(%edi)
 
 	gpoly_drwd_02:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0xe(%edi)
 
 	gpoly_drwd_01:
-		mov    %dl,%bl
-		add    %ebp,%ecx
-		mov    (%ebx),%al
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_pixel2
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
 		subl   $0x10,0xdc(%esi)
@@ -2960,7 +2905,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
 		mov    0xd0(%esi),%ecx
 		mov    0xcc(%esi),%ebx
 		mov    0xd8(%esi),%edx
-		call   ASM_gpoly_stb_drw_incr3
+		call   ASM_gpoly_stb_drw_incr1b
 		add    0xac(%esi),%edi
 		decl   0xf0(%esi)
 		je     jump_drwe_af20
@@ -2992,23 +2937,18 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
 		and    $0xf,%eax
 		add    EXPORT_SYMBOL(gpoly_countdown)(,%eax,4),%edi
 		mov    %ebp,0xdc(%esi)
-		mov    0xf4(%esi),%ebp
 		jmp    *jt_gpoly_drwd(,%eax,4)
 
 
 	jump_drwe_ae30:
-		add    0xf4(%esi),%ecx
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_incr4
 		incl   0x13c(%esi)
 		cmp    0x13c(%esi),%eax
 		jle    jump_drwe_adbd
 		jmp    jump_drwe_ae30
 
 	jump_drwe_ae50:
-		sub    0xf4(%esi),%ecx
-		sbb    0xf8(%esi),%edx
-		sbb    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_decr4
 		decl   0x13c(%esi)
 		cmp    0x13c(%esi),%eax
 		jge    jump_drwe_adbd
@@ -3022,17 +2962,13 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
 		jmp    jump_drwe_aea0
 
 	jump_drwe_ae80:
-		add    0xf4(%esi),%ecx
-		adc    0xf8(%esi),%edx
-		adc    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_incr4
 		incl   0x13c(%esi)
 		je     jump_drwe_adbd
 		jmp    jump_drwe_ae80
 
 	jump_drwe_aea0:
-		sub    0xf4(%esi),%ecx
-		sbb    0xf8(%esi),%edx
-		sbb    0xfc(%esi),%bh
+		call   ASM_gpoly_stb_drw_decr4
 		decl   0x13c(%esi)
 		je     jump_drwe_adbd
 		jmp    jump_drwe_aea0
@@ -3042,7 +2978,7 @@ GLOBAL_FUNC (ASM_gpoly_stb_md05p64_var040_nz)	/* 0x12ab00 */
 		jmp    jump_drwe_adef
 
 	jump_drwe_aed0:
-		call   ASM_gpoly_stb_drw_incr3
+		call   ASM_gpoly_stb_drw_incr1b
 		add    0x84(%esi),%eax
 		add    0x88(%esi),%ebp
 		add    0xac(%esi),%edi

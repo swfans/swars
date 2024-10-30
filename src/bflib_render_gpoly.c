@@ -1224,7 +1224,29 @@ int gpoly_stb_drw_pixel(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     return ret & 0xFFFF;
 }
 
-void gpoly_stb_drw_incr1(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
+int gpoly_stb_drw_pixel2(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
+{
+    int ret;
+    int loc2d, loc4c;
+    ubyte *loc3b;
+
+    loc2d = *a2d;
+    loc3b = vec_map + *a3b;
+    loc4c = *a4c;
+    asm volatile (
+      "mov    %%dl,%%bl\n"
+      "add    0xf4(%%esi),%%ecx\n"
+      "mov    (%%ebx),%%al\n"
+      "adc    0xf8(%%esi),%%edx\n"
+      "adc    0xfc(%%esi),%%bh\n"
+        : "=a" (ret), "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
+    *a2d = loc2d;
+    *a3b = loc3b - vec_map;
+    *a4c = loc4c;
+    return ret & 0xFF;
+}
+
+void gpoly_stb_drw_incr1a(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
     int loc2d, loc4c;
     ubyte *loc3b;
@@ -1235,6 +1257,24 @@ void gpoly_stb_drw_incr1(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     asm volatile (
       "add    0x150(%%esi),%%bl\n"
       "adc    0xe4(%%esi),%%ecx\n"
+      "adc    0xec(%%esi),%%edx\n"
+      "adc    0xe8(%%esi),%%bh\n"
+        : "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
+    *a2d = loc2d;
+    *a3b = loc3b - vec_map;
+    *a4c = loc4c;
+}
+
+void gpoly_stb_drw_incr1b(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
+{
+    int loc2d, loc4c;
+    ubyte *loc3b;
+
+    loc2d = *a2d;
+    loc3b = vec_map + *a3b;
+    loc4c = *a4c;
+    asm volatile (
+      "add    0xe4(%%esi),%%ecx\n"
       "adc    0xec(%%esi),%%edx\n"
       "adc    0xe8(%%esi),%%bh\n"
         : "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
@@ -1285,6 +1325,42 @@ void gpoly_stb_drw_incr3(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     loc_0E4h = (((uint)loc3b >> 8) & 0xFF) - (v25 + (st->var_0B4 & 0xFF));
     loc3b = (ubyte *)(((uint)vec_map & ~0xFFFF) | loc_0E4l | (loc_0E4h << 8));
 
+    *a2d = loc2d;
+    *a3b = loc3b - vec_map;
+    *a4c = loc4c;
+}
+
+void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
+{
+    int loc2d, loc4c;
+    ubyte *loc3b;
+
+    loc2d = *a2d;
+    loc3b = vec_map + *a3b;
+    loc4c = *a4c;
+    asm volatile (
+      "add    0xf4(%%esi),%%ecx\n"
+      "adc    0xf8(%%esi),%%edx\n"
+      "adc    0xfc(%%esi),%%bh\n"
+        : "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
+    *a2d = loc2d;
+    *a3b = loc3b - vec_map;
+    *a4c = loc4c;
+}
+
+void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
+{
+    int loc2d, loc4c;
+    ubyte *loc3b;
+
+    loc2d = *a2d;
+    loc3b = vec_map + *a3b;
+    loc4c = *a4c;
+    asm volatile (
+      "sub    0xf4(%%esi),%%ecx\n"
+      "sbb    0xf8(%%esi),%%edx\n"
+      "sbb    0xfc(%%esi),%%bh\n"
+        : "=d" (loc2d), "=b" (loc3b), "=c" (loc4c) : "d" (loc2d), "b" (loc3b), "c" (loc4c), "S" (st));
     *a2d = loc2d;
     *a3b = loc3b - vec_map;
     *a4c = loc4c;
@@ -1344,7 +1420,7 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
     {
         for (;st->var_038 < 0; st->var_038++)
         {
-            gpoly_stb_drw_incr1(&loc_088, &loc_0E4, &loc_08C, st);
+            gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
             st->var_0FC = range_beg;
             st->var_074 -= range_beg >> 16;
             range_end += st->var_128;
@@ -1426,7 +1502,7 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
             loc_08C = st->var_0E0;
             loc_0E4 = st->var_0E4;
             loc_088 = st->var_0D8;
-            gpoly_stb_drw_incr1(&loc_088, &loc_0E4, &loc_08C, st);
+            gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
             out_ln = &st->var_0F4[st->var_104];
         }
 
@@ -1521,7 +1597,7 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
     {
         for (;st->var_038 < 0; st->var_038++)
         {
-            gpoly_stb_drw_incr1(&loc_088, &loc_0E4, &loc_08C, st);
+            gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
             st->var_0FC = range_beg;
             st->var_074 -= st->var_0FC >> 16;
             range_end += st->var_128;
@@ -1578,7 +1654,7 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
             loc_08C = st->var_0E0;
             loc_0E4 = st->var_0E4;
             loc_088 = st->var_0D8;
-            gpoly_stb_drw_incr1(&loc_088, &loc_0E4, &loc_08C, st);
+            gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
             out_ln = &st->var_0F4[st->var_104];
         }
 
