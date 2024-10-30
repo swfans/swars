@@ -480,22 +480,54 @@ static inline ubyte __CFADDL__(long x, long y)
     return (ulong)(x) > (ulong)(x+y);
 }
 
+/**
+ * whether the subtraction (x-y) of two byte ints would use carry
+ */
+static inline ubyte __CFSUBB__(sbyte x, sbyte y)
+{
+    return (ubyte)(x) < (ubyte)(y);
+}
+
+/**
+ * whether the subtraction (x-y) of two long ints would use carry
+ */
+static inline ubyte __CFSUBL__(long x, long y)
+{
+    return (ulong)(x) < (ulong)(y);
+}
+
 int gpoly_mul_rot_1(int a1, int a2)
 {
+#if 1
     int ret;
     asm volatile (
-      "call ASM_gpoly_mul_rot_1\n"
+      "imul   %%edx\n"
+      "shl    %%eax\n"
+      "rcl    %%edx\n"
+      "mov    %%dx,%%ax\n"
+      "rol    $0x10,%%eax\n"
+      "jns    jump_gpoly_mul_rot_1_noinc\n"
+      "inc    %%eax\n"
+      "jump_gpoly_mul_rot_1_noinc:\n"
         : "=r" (ret) : "a" (a1), "d" (a2));
     return ret;
+#endif
 }
 
 int gpoly_mul_rot_2(int a1, int a2)
 {
+#if 1
     int ret;
     asm volatile (
-      "call ASM_gpoly_mul_rot_2\n"
+      "imul   %%edx\n"
+      "mov    %%dx,%%ax\n"
+      "rol    $0x10,%%eax\n"
+      "jns    jump_gpoly_mul_rot_2_noinc\n"
+      "inc    %%eax\n"
+      "jump_gpoly_mul_rot_2_noinc:\n"
         : "=r" (ret) : "a" (a1), "d" (a2));
     return ret;
+#endif
 }
 
 void gpoly_sta_md03(struct gpoly_state *st)
@@ -1203,6 +1235,7 @@ void gpoly_sta_md28(struct gpoly_state *st)
 
 int gpoly_stb_drw_pixel(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
+#if 1
     int ret;
     int loc2d, loc4c;
     ubyte *loc3b;
@@ -1222,10 +1255,12 @@ int gpoly_stb_drw_pixel(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a3b = loc3b - vec_map;
     *a4c = loc4c;
     return ret & 0xFFFF;
+#endif
 }
 
 int gpoly_stb_drw_pixel2(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
+#if 1
     int ret;
     int loc2d, loc4c;
     ubyte *loc3b;
@@ -1244,10 +1279,12 @@ int gpoly_stb_drw_pixel2(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a3b = loc3b - vec_map;
     *a4c = loc4c;
     return ret & 0xFF;
+#endif
 }
 
 void gpoly_stb_drw_incr1a(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
+#if 1
     int loc2d, loc4c;
     ubyte *loc3b;
 
@@ -1263,10 +1300,12 @@ void gpoly_stb_drw_incr1a(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a2d = loc2d;
     *a3b = loc3b - vec_map;
     *a4c = loc4c;
+#endif
 }
 
 void gpoly_stb_drw_incr1b(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
+#if 1
     int loc2d, loc4c;
     ubyte *loc3b;
 
@@ -1281,10 +1320,12 @@ void gpoly_stb_drw_incr1b(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a2d = loc2d;
     *a3b = loc3b - vec_map;
     *a4c = loc4c;
+#endif
 }
 
 void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
+#if 1
     int loc2d, loc4c;
     ubyte *loc3b;
 
@@ -1300,38 +1341,39 @@ void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a2d = loc2d;
     *a3b = loc3b - vec_map;
     *a4c = loc4c;
+#endif
 }
 
 void gpoly_stb_drw_incr3(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
-    int loc2d, loc4c;
-    ubyte *loc3b;
-    ubyte loc_0E4l, loc_0E4h;
-    ubyte v25;
-    uint v29, v30;
+    int a3b_bias;
+    ubyte a3b_l, a3b_h;
+    ubyte loc_carry;
+    int loc_4c, loc_2d, loc_3bh;
 
-    loc2d = *a2d;
-    loc3b = vec_map + *a3b;
-    loc4c = *a4c;
+    a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
 
-    v25 = ((uint)loc3b & 0xFF) < (st->var_0A8 & 0xFF);
-    loc_0E4l = ((uint)loc3b & 0xFF) - (st->var_0A8 & 0xFF);
-    v29 = v25 + st->var_0BC;
-    v25 = (uint)loc4c < v29;
-    loc4c = loc4c - v29;
-    v30 = v25 + st->var_0B8;
-    v25 = (uint)loc2d < v30;
-    loc2d = loc2d - v30;
-    loc_0E4h = (((uint)loc3b >> 8) & 0xFF) - (v25 + (st->var_0B4 & 0xFF));
-    loc3b = (ubyte *)(((uint)vec_map & ~0xFFFF) | loc_0E4l | (loc_0E4h << 8));
+    loc_carry = __CFSUBB__(a3b_bias, st->var_0A8);
+    a3b_l = a3b_bias - st->var_0A8;
+    loc_4c = *a4c - loc_carry;
 
-    *a2d = loc2d;
-    *a3b = loc3b - vec_map;
-    *a4c = loc4c;
+    loc_carry = __CFSUBL__(loc_4c, st->var_0BC);
+    *a4c = loc_4c - st->var_0BC;
+    loc_2d = *a2d - loc_carry;
+
+    loc_carry = __CFSUBL__(loc_2d, st->var_0B8);
+    *a2d = loc_2d - st->var_0B8;
+    loc_3bh = ((uint)a3b_bias >> 8) - loc_carry;
+
+    a3b_h = loc_3bh - st->var_0B4;
+    a3b_bias = (a3b_h << 8) | a3b_l;
+
+    *a3b = a3b_bias - ((intptr_t)vec_map & 0xFFFF);
 }
 
 void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
+#if 0
     int loc2d, loc4c;
     ubyte *loc3b;
 
@@ -1346,10 +1388,33 @@ void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a2d = loc2d;
     *a3b = loc3b - vec_map;
     *a4c = loc4c;
+#endif
+    ubyte a3b_h, a3b_l;
+    int a3b_bias;
+    ubyte loc_carry;
+    int loc_2d, loc_3bh;
+
+    a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
+
+    a3b_l = a3b_bias;
+
+    loc_carry = __CFADDL__(*a4c, st->var_0BC);
+    *a4c = *a4c + st->var_0BC;
+    loc_2d = *a2d + loc_carry;
+
+    loc_carry = __CFADDL__(loc_2d, st->var_0B8);
+    *a2d = loc_2d + st->var_0B8;
+    loc_3bh = ((uint)a3b_bias >> 8) + loc_carry;
+
+    a3b_h = loc_3bh + st->var_0B4;
+    a3b_bias = (a3b_h << 8) | a3b_l;
+
+    *a3b = a3b_bias - ((intptr_t)vec_map & 0xFFFF);
 }
 
 void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
+#if 0
     int loc2d, loc4c;
     ubyte *loc3b;
 
@@ -1364,6 +1429,28 @@ void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a2d = loc2d;
     *a3b = loc3b - vec_map;
     *a4c = loc4c;
+#endif
+    ubyte a3b_h, a3b_l;
+    int a3b_bias;
+    ubyte loc_carry;
+    int loc_2d, loc_3bh;
+
+    a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
+
+    a3b_l = a3b_bias;
+
+    loc_carry = __CFSUBL__(*a4c, st->var_0BC);
+    *a4c = *a4c - st->var_0BC;
+    loc_2d = *a2d - loc_carry;
+
+    loc_carry = __CFSUBL__(loc_2d, st->var_0B8);
+    *a2d = loc_2d - st->var_0B8;
+    loc_3bh = ((uint)a3b_bias >> 8) - loc_carry;
+
+    a3b_h = loc_3bh - st->var_0B4;
+    a3b_bias = (a3b_h << 8) | a3b_l;
+
+    *a3b = a3b_bias - ((intptr_t)vec_map & 0xFFFF);
 }
 
 void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
