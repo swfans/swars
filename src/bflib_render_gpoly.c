@@ -21,6 +21,7 @@
 
 #include "bfendian.h"
 #include "bfgentab.h"
+#include "poly_trigp.h"
 
 #include "globals.h"
 #include "swlog.h"
@@ -1256,10 +1257,10 @@ int gpoly_stb_drw_pixel(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a4c = loc4c;
     return ret & 0xFFFF;
 #endif
-    ubyte a3b_h, a3b_l;
     ubyte *a3b_ptr;
-    ubyte loc_carry;
     int loc_2d, loc_3bh;
+    ubyte a3b_h, a3b_l;
+    ubyte loc_carry;
     ubyte ret_h, ret_l;
 
     a3b_ptr = &vec_map[*a3b];
@@ -1359,10 +1360,10 @@ void gpoly_stb_drw_incr1a(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a4c = loc4c;
     return;
 #endif
-    ubyte a3b_h, a3b_l;
     int a3b_bias;
-    ubyte loc_carry;
     int loc_4c, loc_2d, loc_3bh;
+    ubyte a3b_h, a3b_l;
+    ubyte loc_carry;
 
     a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
 
@@ -1403,10 +1404,10 @@ void gpoly_stb_drw_incr1b(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a4c = loc4c;
     return;
 #endif
-    ubyte a3b_h, a3b_l;
     int a3b_bias;
-    ubyte loc_carry;
     int loc_2d, loc_3bh;
+    ubyte a3b_h, a3b_l;
+    ubyte loc_carry;
 
     a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
 
@@ -1474,9 +1475,9 @@ void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 void gpoly_stb_drw_incr3(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
     int a3b_bias;
+    int loc_4c, loc_2d, loc_3bh;
     ubyte a3b_l, a3b_h;
     ubyte loc_carry;
-    int loc_4c, loc_2d, loc_3bh;
 
     a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
 
@@ -1517,10 +1518,10 @@ void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a4c = loc4c;
     return;
 #endif
-    ubyte a3b_h, a3b_l;
     int a3b_bias;
-    ubyte loc_carry;
     int loc_2d, loc_3bh;
+    ubyte a3b_h, a3b_l;
+    ubyte loc_carry;
 
     a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
 
@@ -1559,10 +1560,10 @@ void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
     *a4c = loc4c;
     return;
 #endif
-    ubyte a3b_h, a3b_l;
     int a3b_bias;
-    ubyte loc_carry;
     int loc_2d, loc_3bh;
+    ubyte a3b_h, a3b_l;
+    ubyte loc_carry;
 
     a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
 
@@ -2257,6 +2258,100 @@ void gpoly_stb_md05p64(struct gpoly_state *st)
         gpoly_stb_md05p64_var040_zr(st);
 }
 
+ubyte gpoly_reorder_input_points(struct PolyPoint **opt_a,
+  struct PolyPoint **opt_b, struct PolyPoint **opt_c)
+{
+    int min_y;
+    struct PolyPoint *tmp;
+
+    min_y = (*opt_a)->Y;
+    if (min_y > (*opt_b)->Y) {
+        min_y = (*opt_b)->Y;
+        tmp = *opt_a;
+        *opt_a = *opt_b;
+        *opt_b = tmp;
+    }
+    if (min_y > (*opt_c)->Y) {
+        tmp = *opt_a;
+        *opt_a = *opt_c;
+        *opt_c = tmp;
+    }
+    if ((*opt_b)->Y > (*opt_c)->Y) {
+        tmp = *opt_b;
+        *opt_b = *opt_c;
+        *opt_c = tmp;
+    }
+
+    if ((*opt_a)->Y == (*opt_c)->Y)
+        return RendStart_NO;
+
+    return RendStart_LL;
+}
+
+void gpoly_init_state(struct gpoly_state *st, struct PolyPoint *point_a,
+  struct PolyPoint *point_b, struct PolyPoint *point_c)
+{
+    int dist_ca_x, dist_ca_y;
+
+    st->var_040 = (point_c->X | point_b->X | point_a->X) < 0
+             || point_a->X > vec_window_width
+             || point_b->X > vec_window_width
+             || point_c->X > vec_window_width;
+
+    st->var_178 = point_a->X;
+    st->var_17C = point_a->Y;
+    st->var_174 = st->var_178 << 16;
+    st->var_160 = point_b->X;
+    st->var_164 = point_b->Y;
+    st->var_15C = st->var_160 << 16;
+    st->var_148 = point_c->X;
+    st->var_14C = point_c->Y;
+    st->var_144 = st->var_148 << 16;
+    st->var_170 = (point_a->S >> 16);
+    st->var_158 = (point_b->S >> 16);
+    st->var_140 = (point_c->S >> 16);
+    st->var_16C = (point_a->U >> 16);
+    st->var_168 = (point_a->V >> 16);
+    st->var_154 = (point_b->U >> 16);
+    st->var_150 = (point_b->V >> 16);
+    st->var_13C = (point_c->U >> 16);
+    st->var_138 = (point_c->V >> 16);
+
+    dist_ca_y = st->var_14C - st->var_17C;
+    if (dist_ca_y != 0)
+    {
+        int dist_ba_x, dist_ba_y;
+        int dist_cb_x, dist_cb_y;
+
+        dist_ca_x = st->var_148 - st->var_178;
+        if ((dist_ca_y & ~0x1Fu) != 0 || dist_ca_x < -32 || dist_ca_x > 31)
+            st->var_1B0 = (dist_ca_x << 16) / dist_ca_y;
+        else
+            st->var_1B0 = gpoly_divtable[dist_ca_y][32 + dist_ca_x];
+
+        dist_ba_y = st->var_164 - st->var_17C;
+        if (dist_ba_y != 0)
+        {
+            dist_ba_x = st->var_160 - st->var_178;
+            if ((dist_ba_y & ~0x1Fu) != 0 || dist_ba_x < -32 || dist_ba_x > 31)
+                st->var_1AC = (dist_ba_x << 16) / dist_ba_y;
+            else
+                st->var_1AC = gpoly_divtable[dist_ba_y][32 + dist_ba_x];
+        }
+
+        dist_cb_y = st->var_14C - st->var_164;
+        if (dist_cb_y != 0)
+        {
+            dist_cb_x = st->var_148 - st->var_160;
+            if ((dist_cb_y & ~0x1Fu) != 0 || dist_cb_x < -32 || dist_cb_x > 31)
+                st->var_1A8 = (dist_cb_x << 16) / dist_cb_y;
+            else
+                st->var_1A8 = gpoly_divtable[dist_cb_y][32 + dist_cb_x];
+        }
+    }
+    st->var_134 = (st->var_164 - st->var_17C) * st->var_1B0 + st->var_174 - st->var_15C;
+}
+
 void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c)
 {
 #if 0
@@ -2265,117 +2360,40 @@ void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct Pol
         : : "a" (point_a), "d" (point_b), "b" (point_c));
     return;
 #endif
-    int dist_ca_x, dist_ca_y;
     struct gpoly_state st;
+    ubyte start_type;
 
     gpoly_mode = vec_mode;
-    st.var_040 = (point_c->X | point_b->X | point_a->X) < 0
-             || point_a->X > vec_window_width
-             || point_b->X > vec_window_width
-             || point_c->X > vec_window_width;
-    {
-        int min_y;
-        struct PolyPoint *tmp;
 
-        min_y = point_a->Y;
-        if (min_y > point_b->Y) {
-            min_y = point_b->Y;
-            tmp = point_a;
-            point_a = point_b;
-            point_b = tmp;
-        }
-        if (min_y > point_c->Y) {
-            tmp = point_a;
-            point_a = point_c;
-            point_c = tmp;
-        }
-        if (point_b->Y > point_c->Y) {
-            tmp = point_b;
-            point_b = point_c;
-            point_c = tmp;
-        }
-    }
-
-    if (point_a->Y == point_c->Y) {
+    start_type = gpoly_reorder_input_points(&point_a, &point_b, &point_c);
+    if (start_type == RendStart_NO)
         return;
-    }
 
-    st.var_178 = point_a->X;
-    st.var_17C = point_a->Y;
-    st.var_174 = st.var_178 << 16;
-    st.var_160 = point_b->X;
-    st.var_164 = point_b->Y;
-    st.var_15C = st.var_160 << 16;
-    st.var_148 = point_c->X;
-    st.var_14C = point_c->Y;
-    st.var_144 = st.var_148 << 16;
-    st.var_170 = (point_a->S >> 16);
-    st.var_158 = (point_b->S >> 16);
-    st.var_140 = (point_c->S >> 16);
-    st.var_16C = (point_a->U >> 16);
-    st.var_168 = (point_a->V >> 16);
-    st.var_154 = (point_b->U >> 16);
-    st.var_150 = (point_b->V >> 16);
-    st.var_13C = (point_c->U >> 16);
-    st.var_138 = (point_c->V >> 16);
-
-    dist_ca_y = st.var_14C - st.var_17C;
-    if (dist_ca_y != 0)
-    {
-        int dist_ba_x, dist_ba_y;
-        int dist_cb_x, dist_cb_y;
-
-        dist_ca_x = st.var_148 - st.var_178;
-        if ((dist_ca_y & ~0x1Fu) != 0 || dist_ca_x < -32 || dist_ca_x > 31)
-            st.var_1B0 = (dist_ca_x << 16) / dist_ca_y;
-        else
-            st.var_1B0 = gpoly_divtable[dist_ca_y][32 + dist_ca_x];
-
-        dist_ba_y = st.var_164 - st.var_17C;
-        if (dist_ba_y != 0)
-        {
-            dist_ba_x = st.var_160 - st.var_178;
-            if ((dist_ba_y & ~0x1Fu) != 0 || dist_ba_x < -32 || dist_ba_x > 31)
-                st.var_1AC = (dist_ba_x << 16) / dist_ba_y;
-            else
-                st.var_1AC = gpoly_divtable[dist_ba_y][32 + dist_ba_x];
-        }
-
-        dist_cb_y = st.var_14C - st.var_164;
-        if (dist_cb_y != 0)
-        {
-            dist_cb_x = st.var_148 - st.var_160;
-            if ((dist_cb_y & ~0x1Fu) != 0 || dist_cb_x < -32 || dist_cb_x > 31)
-                st.var_1A8 = (dist_cb_x << 16) / dist_cb_y;
-            else
-                st.var_1A8 = gpoly_divtable[dist_cb_y][32 + dist_cb_x];
-        }
-    }
-    st.var_134 = (st.var_164 - st.var_17C) * st.var_1B0 + st.var_174 - st.var_15C;
+    gpoly_init_state(&st, point_a, point_b, point_c);
 
     switch (gpoly_mode)
     {
-    case 2u:
-    case 3u:
-    case 0xCu:
-    case 0xDu:
-    case 0x12u:
-    case 0x13u:
-    case 0x16u:
-    case 0x17u:
+    case RendVec_mode02:
+    case RendVec_mode03:
+    case RendVec_mode12:
+    case RendVec_mode13:
+    case RendVec_mode18:
+    case RendVec_mode19:
+    case RendVec_mode22:
+    case RendVec_mode23:
         gpoly_sta_md03(&st);
         break;
-    case 4u:
-    case 0x10u:
-    case 0x11u:
+    case RendVec_mode04:
+    case RendVec_mode16:
+    case RendVec_mode17:
         gpoly_sta_md04(&st);
         break;
-    case 5u:
-    case 6u:
-    case 0x14u:
-    case 0x15u:
-    case 0x18u:
-    case 0x19u:
+    case RendVec_mode05:
+    case RendVec_mode06:
+    case RendVec_mode20:
+    case RendVec_mode21:
+    case RendVec_mode24:
+    case RendVec_mode25:
         gpoly_sta_md05(&st);
         break;
     case 0x1Bu:
@@ -2400,7 +2418,7 @@ void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct Pol
 
     switch (gpoly_mode)
     {
-    case 5:
+    case RendVec_mode05:
         gpoly_stb_md05uni(&st);
         break;
     case 27:
