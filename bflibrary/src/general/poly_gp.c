@@ -1307,13 +1307,13 @@ void gpoly_sta_md28(struct gpoly_state *st)
 
 void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
 {
-    int loc_08C;
-    int loc_088;
-    int loc_0E4;
+    int loc_0E4, loc_08C, loc_088;
+    int loc_0E0, loc_0DC, loc_0D8;
     ubyte *out_ln;
     int range_beg, range_end;
     int height;
     int loc_180, loc_104, loc_0FC, loc_0F8;
+    int loc_12C, loc_128;
     ubyte *loc_0F4;
     int loc_0D4, loc_0C0, loc_074;
 
@@ -1325,11 +1325,11 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
     st->var_0C8 = st->var_09C;
 
     if (st->var_134 < 0) {
-        st->var_12C = st->var_1B0;
-        st->var_128 = st->var_1AC;
+        loc_12C = st->var_1B0;
+        loc_128 = st->var_1AC;
     } else {
-        st->var_12C = st->var_1AC;
-        st->var_128 = st->var_1B0;
+        loc_12C = st->var_1AC;
+        loc_128 = st->var_1B0;
     }
     loc_08C = st->var_08C;
     loc_088 = st->var_088;
@@ -1359,8 +1359,8 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
             gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
             loc_0FC = range_beg;
             loc_074 -= range_beg >> 16;
-            range_end += st->var_128;
-            loc_0FC = st->var_12C + loc_0FC;
+            range_end += loc_128;
+            loc_0FC = loc_12C + loc_0FC;
             loc_074 += loc_0FC >> 16;
             range_beg = loc_0FC;
             out_ln += loc_104;
@@ -1396,9 +1396,9 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
                     gpoly_stb_drw_incr3(&loc_088, &loc_0E4, &loc_08C, st);
                 }
             }
-            st->var_0E0 = loc_08C;
-            st->var_0E4 = loc_0E4;
-            st->var_0D8 = loc_088;
+            loc_0E0 = loc_08C;
+            loc_0DC = loc_0E4;
+            loc_0D8 = loc_088;
 
             height = range_end >> 16;
             if (height > vec_window_width)
@@ -1430,14 +1430,14 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
                     kk_max = 15;
                 }
             }
-            range_end = st->var_128 + loc_0F8;
+            range_end = loc_128 + loc_0F8;
             loc_074 -= (loc_0FC >> 16);
-            loc_0FC += st->var_12C;
+            loc_0FC += loc_12C;
             loc_074 += (loc_0FC >> 16);
             range_beg = loc_0FC;
-            loc_08C = st->var_0E0;
-            loc_0E4 = st->var_0E4;
-            loc_088 = st->var_0D8;
+            loc_08C = loc_0E0;
+            loc_0E4 = loc_0DC;
+            loc_088 = loc_0D8;
             gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
             out_ln = &loc_0F4[loc_104];
         }
@@ -1449,7 +1449,7 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
         loc_0FC = range_beg;
         if (st->var_134 >= 0)
         {
-            st->var_12C = st->var_1A8;
+            loc_12C = st->var_1A8;
             st->var_060 = st->var_1A0;
             st->var_0CC = st->var_098;
             st->var_0C4 = st->var_094;
@@ -1462,7 +1462,7 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
         }
         else
         {
-            st->var_128 = st->var_1A8;
+            loc_128 = st->var_1A8;
             range_end = st->ptB_X_prc;
             range_beg = loc_0FC;
         }
@@ -1480,13 +1480,13 @@ void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st)
 
 void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
 {
-    int loc_08C;
-    int loc_088;
-    int loc_0E4;
+    int loc_0E4, loc_08C, loc_088;
+    int loc_0E0, loc_0DC, loc_0D8;
     ubyte *out_ln;
     int range_beg, range_end;
     int height;
     int loc_180, loc_104, loc_0FC, loc_0F8;
+    int loc_12C, loc_128;
     ubyte *loc_0F4;
     int loc_0D4, loc_0C0, loc_074;
 
@@ -1498,11 +1498,11 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
     st->var_0C8 = st->var_09C;
 
     if (st->var_134 < 0) {
-        st->var_12C = st->var_1B0;
-        st->var_128 = st->var_1AC;
+        loc_12C = st->var_1B0;
+        loc_128 = st->var_1AC;
     } else {
-        st->var_12C = st->var_1AC;
-        st->var_128 = st->var_1B0;
+        loc_12C = st->var_1AC;
+        loc_128 = st->var_1B0;
     }
     loc_08C = st->var_08C;
     loc_088 = st->var_088;
@@ -1532,8 +1532,8 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
             gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
             loc_0FC = range_beg;
             loc_074 -= loc_0FC >> 16;
-            range_end += st->var_128;
-            loc_0FC += st->var_12C;
+            range_end += loc_128;
+            loc_0FC += loc_12C;
             loc_074 += loc_0FC >> 16;
             range_beg = loc_0FC;
             out_ln += loc_104;
@@ -1550,9 +1550,9 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
             loc_0FC = range_beg;
             loc_0F8 = range_end;
             loc_0F4 = out_ln;
-            st->var_0E0 = loc_08C;
-            st->var_0E4 = loc_0E4;
-            st->var_0D8 = loc_088;
+            loc_0E0 = loc_08C;
+            loc_0DC = loc_0E4;
+            loc_0D8 = loc_088;
             range_beg_scr = range_beg >> 16;
             range_end_scr = range_end >> 16;
             range_len = range_end_scr - range_beg_scr;
@@ -1581,11 +1581,11 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
                     kk_max = 15;
                 }
             }
-            range_beg = st->var_12C + loc_0FC;
-            range_end = st->var_128 + loc_0F8;
-            loc_08C = st->var_0E0;
-            loc_0E4 = st->var_0E4;
-            loc_088 = st->var_0D8;
+            range_beg = loc_12C + loc_0FC;
+            range_end = loc_128 + loc_0F8;
+            loc_08C = loc_0E0;
+            loc_0E4 = loc_0DC;
+            loc_088 = loc_0D8;
             gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
             out_ln = &loc_0F4[loc_104];
         }
@@ -1597,7 +1597,7 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
         loc_0FC = range_beg;
         if (st->var_134 >= 0)
         {
-            st->var_12C = st->var_1A8;
+            loc_12C = st->var_1A8;
             st->var_060 = st->var_1A0;
             st->var_0CC = st->var_098;
             st->var_0C4 = st->var_094;
@@ -1610,7 +1610,7 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
         }
         else
         {
-            st->var_128 = st->var_1A8;
+            loc_128 = st->var_1A8;
             range_end = st->ptB_X_prc;
             range_beg = loc_0FC;
         }
@@ -1628,13 +1628,13 @@ void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st)
 
 void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
 {
-    int loc_08C;
-    int loc_088;
-    int loc_0E4;
+    int loc_0E4, loc_08C, loc_088;
+    int loc_0E0, loc_0DC, loc_0D8;
     ubyte *out_ln;
     int range_beg, range_end;
     int height;
     int loc_180, loc_104, loc_0FC, loc_0F8;
+    int loc_12C, loc_128;
     ubyte *loc_0F4;
     int loc_0D4, loc_0C0, loc_074;
 
@@ -1645,11 +1645,11 @@ void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
     st->var_0C8 = st->var_09C;
 
     if (st->var_134 < 0) {
-        st->var_12C = st->var_1B0;
-        st->var_128 = st->var_1AC;
+        loc_12C = st->var_1B0;
+        loc_128 = st->var_1AC;
     } else {
-        st->var_12C = st->var_1AC;
-        st->var_128 = st->var_1B0;
+        loc_12C = st->var_1AC;
+        loc_128 = st->var_1B0;
     }
     loc_08C = st->var_08C;
     loc_088 = st->var_088;
@@ -1682,8 +1682,8 @@ void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
         for (; st->var_038 < 0; st->var_038++)
         {
             gpoly_stb_drw_incr1b(&loc_088, &loc_0E4, &loc_08C, st);
-            range_beg += st->var_12C;
-            range_end += st->var_128;
+            range_beg += loc_12C;
+            range_end += loc_128;
             out_ln += loc_104;
             loc_0C0--;
             if (loc_0C0 == 0)
@@ -1713,9 +1713,9 @@ void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
                     gpoly_stb_drw_decr4(&loc_088, &loc_0E4, &loc_08C, st);
                 }
             }
-            st->var_0E0 = loc_08C;
-            st->var_0E4 = loc_0E4;
-            st->var_0D8 = loc_088;
+            loc_0E0 = loc_08C;
+            loc_0DC = loc_0E4;
+            loc_0D8 = loc_088;
             range_end_scr = range_end >> 16;
             if (range_end_scr > vec_window_width)
                 range_end_scr = vec_window_width;
@@ -1746,11 +1746,11 @@ void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
                     kk_max = 15;
                 }
             }
-            range_beg = st->var_12C + loc_0FC;
-            range_end = st->var_128 + loc_0F8;
-            loc_08C = st->var_0E0;
-            loc_0E4 = st->var_0E4;
-            loc_088 = st->var_0D8;
+            range_beg = loc_12C + loc_0FC;
+            range_end = loc_128 + loc_0F8;
+            loc_08C = loc_0E0;
+            loc_0E4 = loc_0DC;
+            loc_088 = loc_0D8;
             gpoly_stb_drw_incr1b(&loc_088, &loc_0E4, &loc_08C, st);
             out_ln = &loc_0F4[loc_104];
         }
@@ -1762,7 +1762,7 @@ void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
         loc_0FC = range_beg;
         if (st->var_134 >= 0)
         {
-            st->var_12C = st->var_1A8;
+            loc_12C = st->var_1A8;
             st->var_0CC = st->var_098;
             st->var_0C4 = st->var_094;
             st->var_0C8 = st->var_090;
@@ -1774,7 +1774,7 @@ void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
         }
         else
         {
-            st->var_128 = st->var_1A8;
+            loc_128 = st->var_1A8;
             range_end = st->ptB_X_prc;
             range_beg = loc_0FC;
         }
@@ -1792,13 +1792,13 @@ void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
 
 void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st)
 {
-    int loc_08C;
-    int loc_088;
-    int loc_0E4;
+    int loc_0E4, loc_08C, loc_088;
+    int loc_0E0, loc_0DC, loc_0D8;
     ubyte *out_ln;
     int range_beg, range_end;
     int height;
     int loc_180, loc_104, loc_0FC, loc_0F8;
+    int loc_12C, loc_128;
     ubyte *loc_0F4;
     int loc_0D4, loc_0C0, loc_074;
 
@@ -1809,11 +1809,11 @@ void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st)
     st->var_0C8 = st->var_09C;
 
     if (st->var_134 < 0) {
-        st->var_12C = st->var_1B0;
-        st->var_128 = st->var_1AC;
+        loc_12C = st->var_1B0;
+        loc_128 = st->var_1AC;
     } else {
-        st->var_12C = st->var_1AC;
-        st->var_128 = st->var_1B0;
+        loc_12C = st->var_1AC;
+        loc_128 = st->var_1B0;
     }
     loc_08C = st->var_08C;
     loc_088 = st->var_088;
@@ -1846,8 +1846,8 @@ void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st)
         for (; st->var_038 < 0; st->var_038++)
         {
             gpoly_stb_drw_incr1b(&loc_088, &loc_0E4, &loc_08C, st);
-            range_beg += st->var_12C;
-            range_end += st->var_128;
+            range_beg += loc_12C;
+            range_end += loc_128;
             out_ln += loc_104;
             loc_0C0--;
             if (loc_0C0 == 0)
@@ -1871,9 +1871,9 @@ void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st)
                     gpoly_stb_drw_decr4(&loc_088, &loc_0E4, &loc_08C, st);
                 }
             }
-            st->var_0E0 = loc_08C;
-            st->var_0E4 = loc_0E4;
-            st->var_0D8 = loc_088;
+            loc_0E0 = loc_08C;
+            loc_0DC = loc_0E4;
+            loc_0D8 = loc_088;
             range_end_scr = range_end >> 16;
             v19 = &loc_0F4[loc_074];
             range_len = range_end_scr - loc_074;
@@ -1902,11 +1902,11 @@ void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st)
                     kk_max = 15;
                 }
             }
-            range_beg = st->var_12C + loc_0FC;
-            range_end = st->var_128 + loc_0F8;
-            loc_08C = st->var_0E0;
-            loc_0E4 = st->var_0E4;
-            loc_088 = st->var_0D8;
+            range_beg = loc_12C + loc_0FC;
+            range_end = loc_128 + loc_0F8;
+            loc_08C = loc_0E0;
+            loc_0E4 = loc_0DC;
+            loc_088 = loc_0D8;
             gpoly_stb_drw_incr1b(&loc_088, &loc_0E4, &loc_08C, st);
             out_ln = &loc_0F4[loc_104];
         }
@@ -1918,7 +1918,7 @@ void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st)
         loc_0FC = range_beg;
         if (st->var_134 >= 0)
         {
-            st->var_12C = st->var_1A8;
+            loc_12C = st->var_1A8;
             st->var_0CC = st->var_098;
             st->var_0C4 = st->var_094;
             st->var_0C8 = st->var_090;
@@ -1930,7 +1930,7 @@ void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st)
         }
         else
         {
-            st->var_128 = st->var_1A8;
+            loc_128 = st->var_1A8;
             range_end = st->ptB_X_prc;
             range_beg = loc_0FC;
         }
