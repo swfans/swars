@@ -431,7 +431,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
-		call   ac_gpoly_mul_rot_1
+		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x100(%esi)
 		mov    %ebp,%eax
 		mov    0x48(%esi),%edx
@@ -445,7 +445,7 @@ GLOBAL_FUNC (ASM_gpoly_sta_md27)
 		imul   %edi,%ebx
 		sub    %ecx,%ebx
 		mov    %ebx,%edx
-		call   ac_gpoly_mul_rot_1
+		call   ASM_gpoly_mul_rot_1
 		mov    %eax,0x104(%esi)
 		jmp    jump_sta_md27_869a
 
