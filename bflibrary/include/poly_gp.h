@@ -79,14 +79,6 @@ struct gpoly_state {
     int var_07C;
     int var_078;
     int var_060;
-    int var_058;
-    int var_054;
-    int var_050;
-    int var_04C;
-    int var_048;
-    int var_044;
-    int var_03C;
-    int var_038;
 };
 
 #pragma pack()
