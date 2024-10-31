@@ -20,6 +20,7 @@
 #include <assert.h>
 #include "poly.h"
 
+#include "poly_gp.h"
 #include "poly_trigp.h"
 #include "poly_trigr.h"
 #include "bfgentab.h"
@@ -46,6 +47,9 @@ struct PolyPoint polyscans[POLY_SCANS_COUNT];
 
 TbPixel vec_colour = 112;
 ubyte vec_mode;
+
+// Static variables used only inside draw_gpoly().
+long gpoly_mode;
 
 const long add_to_edi[] = {
   0,-15,-14,-13,-12,-11,-10, -9, -8, -7, -6, -5, -4, -3, -2, -1,
@@ -212,6 +216,91 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
     }
 
     LOGNO("end");
+}
+
+void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c)
+{
+    struct gpoly_state st;
+    ubyte start_type;
+    TbBool cross_bound;
+
+    gpoly_mode = vec_mode;
+
+    cross_bound = (point_c->X | point_b->X | point_a->X) < 0
+             || point_a->X > vec_window_width
+             || point_b->X > vec_window_width
+             || point_c->X > vec_window_width;
+
+    LOGNO("Pa(%ld,%ld,%ld)", point_a->X, point_a->Y, point_a->S);
+    LOGNO("Pb(%ld,%ld,%ld)", point_b->X, point_b->Y, point_b->S);
+    LOGNO("Pc(%ld,%ld,%ld)", point_c->X, point_c->Y, point_c->S);
+
+    start_type = gpoly_reorder_input_points(&point_a, &point_b, &point_c);
+    if (start_type == RendStart_NO)
+        return;
+
+    gpoly_init_state(&st, point_a, point_b, point_c);
+
+    switch (gpoly_mode)
+    {
+    case RendVec_mode02:
+    case RendVec_mode03:
+    case RendVec_mode12:
+    case RendVec_mode13:
+    case RendVec_mode18:
+    case RendVec_mode19:
+    case RendVec_mode22:
+    case RendVec_mode23:
+        gpoly_sta_md03(&st);
+        break;
+    case RendVec_mode04:
+    case RendVec_mode16:
+    case RendVec_mode17:
+        gpoly_sta_md04(&st);
+        break;
+    case RendVec_mode05:
+    case RendVec_mode06:
+    case RendVec_mode20:
+    case RendVec_mode21:
+    case RendVec_mode24:
+    case RendVec_mode25:
+        gpoly_sta_md05(&st);
+        break;
+    case 27:
+    case 29:
+    case 31:
+    case 32:
+    case 33:
+    case 34:
+    case 37:
+    case 38:
+        gpoly_sta_md27(&st);
+        break;
+    case 28:
+    case 30:
+    case 35:
+    case 36:
+    case 39:
+    case 40:
+        gpoly_sta_md28(&st);
+        break;
+    }
+
+    switch (gpoly_mode)
+    {
+    case RendVec_mode05:
+        if (cross_bound)
+            gpoly_stb_md05uni_var040_nz(&st);
+        else
+            gpoly_stb_md05uni_var040_zr(&st);
+        break;
+    case 27:
+        if (cross_bound)
+            gpoly_stb_md05p64_var040_nz(&st);
+        else
+            gpoly_stb_md05p64_var040_zr(&st);
+        break;
+    }
 }
 
 void poly_line(struct PolyPoint *point_a, struct PolyPoint *point_b)
