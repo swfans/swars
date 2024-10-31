@@ -497,9 +497,30 @@ static inline ubyte __CFSUBL__(long x, long y)
     return (ulong)(x) < (ulong)(y);
 }
 
+/**
+ * rotate left unsigned long
+ */
+static inline ulong __ROL4__(ulong value, int count)
+{
+    const uint nbits = 4 * 8;
+
+    if (count > 0) {
+        count %= nbits;
+        ulong high = value >> (nbits - count);
+        value <<= count;
+        value |= high;
+    } else {
+        count = -count % nbits;
+        ulong low = value << (nbits - count);
+        value >>= count;
+        value |= low;
+    }
+    return value;
+}
+
 int gpoly_mul_rot_1(int a1, int a2)
 {
-#if 1
+#if 0
     int ret;
     asm volatile (
       "imul   %%edx\n"
@@ -513,11 +534,20 @@ int gpoly_mul_rot_1(int a1, int a2)
         : "=r" (ret) : "a" (a1), "d" (a2));
     return ret;
 #endif
+    s64 m;
+    int val;
+
+    m = (a2 * (s64)a1) << 1;
+    val = (m & 0xFFFF0000) | ((m >> 32) & 0xFFFF);
+    val = __ROL4__(val, 16);
+    if (m & 0x80000000)
+        val++;
+    return val;
 }
 
 int gpoly_mul_rot_2(int a1, int a2)
 {
-#if 1
+#if 0
     int ret;
     asm volatile (
       "imul   %%edx\n"
@@ -529,6 +559,15 @@ int gpoly_mul_rot_2(int a1, int a2)
         : "=r" (ret) : "a" (a1), "d" (a2));
     return ret;
 #endif
+    s64 m;
+    int val;
+
+    m = a2 * (s64)a1;
+    val = (m & 0xFFFF0000) | ((m >> 32) & 0xFFFF);
+    val = __ROL4__(val, 16);
+    if (m & 0x80000000)
+        val++;
+    return val;
 }
 
 void gpoly_sta_md03(struct gpoly_state *st)
