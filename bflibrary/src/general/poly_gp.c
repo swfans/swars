@@ -606,6 +606,7 @@ static void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, struct gpoly_state
 void gpoly_sta_md03(struct gpoly_state *st)
 {
     int loc_188, loc_18C, loc_194, loc_198;
+    int loc_0B0, loc_0AC;
 
     {
         int dist_c1, dist_c2, dist_c3, dist_c4;
@@ -625,15 +626,15 @@ void gpoly_sta_md03(struct gpoly_state *st)
             loc_038 = st->ptC_Y - st->ptA_Y;
             loc_03C = st->ptB_Y - st->ptA_Y;
 
-            st->var_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+            loc_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
               loc_03C * (st->ptC_U - st->ptA_U) - loc_038 * (st->ptB_U - st->ptA_U));
-            st->var_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+            loc_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
               loc_03C * (st->ptC_V - st->ptA_V) - loc_038 * (st->ptB_V - st->ptA_V));
         }
         else
         {
-            st->var_0B0 = 0;
-            st->var_0AC = 0;
+            loc_0B0 = 0;
+            loc_0AC = 0;
         }
     }
     if (st->var_134 < 0)
@@ -681,11 +682,11 @@ void gpoly_sta_md03(struct gpoly_state *st)
         int fctr_e;
         unsigned int fctr_f;
 
-        st->var_0BC = st->var_0B0 << 16;
-        st->var_0B8 = st->var_0B0 >> 16;
+        st->var_0BC = loc_0B0 << 16;
+        st->var_0B8 = loc_0B0 >> 16;
 
-        fctr_e = st->var_0AC >> 16;
-        fctr_f = ((st->var_0AC << 16) & 0xFFFFFF00) | ((st->var_0B8) & 0xFF);
+        fctr_e = loc_0AC >> 16;
+        fctr_f = ((loc_0AC << 16) & 0xFFFFFF00) | ((st->var_0B8) & 0xFF);
         if ((fctr_f & 0x80) != 0) {
             mone = fctr_f < 0x100;
             fctr_f -= 0x100;
@@ -799,6 +800,7 @@ void gpoly_sta_md04(struct gpoly_state *st)
 void gpoly_sta_md05(struct gpoly_state *st)
 {
     int loc_188, loc_18C, loc_194, loc_198;
+    int loc_0B0, loc_0AC;
 
     {
         int dist_c1, dist_c2, dist_c3, dist_c4;
@@ -820,16 +822,16 @@ void gpoly_sta_md05(struct gpoly_state *st)
 
             st->var_0A8 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
                             loc_03C * (st->ptC_S - st->ptA_S) - loc_038 * (st->ptB_S - st->ptA_S));
-            st->var_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+            loc_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
                             loc_03C * (st->ptC_U - st->ptA_U) - loc_038 * (st->ptB_U - st->ptA_U));
-            st->var_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+            loc_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
                             loc_03C * (st->ptC_V - st->ptA_V) - loc_038 * (st->ptB_V - st->ptA_V));
         }
         else
         {
             st->var_0A8 = 0;
-            st->var_0B0 = 0;
-            st->var_0AC = 0;
+            loc_0B0 = 0;
+            loc_0AC = 0;
         }
     }
     if (st->var_134 < 0)
@@ -882,8 +884,8 @@ void gpoly_sta_md05(struct gpoly_state *st)
         int fctr_e, fctr_s;
         unsigned int fctr_f;
 
-        fctr_e = st->var_0B0 >> 16;
-        fctr_f = ((st->var_0B0 << 16) & 0xFFFF0000) | ((st->var_0A8 >> 8) & 0xFFFF);
+        fctr_e = loc_0B0 >> 16;
+        fctr_f = ((loc_0B0 << 16) & 0xFFFF0000) | ((st->var_0A8 >> 8) & 0xFFFF);
         if ((fctr_f & 0x8000) != 0) {
             mone = fctr_f < 0xFFFF;
             fctr_f -= 0xFFFF;
@@ -892,8 +894,8 @@ void gpoly_sta_md05(struct gpoly_state *st)
         st->var_0BC = fctr_f;
         st->var_0B8 = fctr_e;
 
-        fctr_e = st->var_0AC >> 16;
-        fctr_f = ((st->var_0AC << 16) & 0xFFFFFF00) | (st->var_0B8 & 0xFF);
+        fctr_e = loc_0AC >> 16;
+        fctr_f = ((loc_0AC << 16) & 0xFFFFFF00) | (st->var_0B8 & 0xFF);
         if ((fctr_f & 0x80u) != 0) {
             mone = fctr_f < 0x100;
             fctr_f -= 0x100;
@@ -966,6 +968,7 @@ void gpoly_sta_md05(struct gpoly_state *st)
 void gpoly_sta_md27(struct gpoly_state *st)
 {
     int loc_188, loc_18C, loc_194, loc_198;
+    int loc_0B0, loc_0AC;
 
     {
         int dist_c1, dist_c2, dist_c3, dist_c4;
@@ -985,15 +988,15 @@ void gpoly_sta_md27(struct gpoly_state *st)
             loc_038 = st->ptC_Y - st->ptA_Y;
             loc_03C = st->ptB_Y - st->ptA_Y;
 
-            st->var_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+            loc_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
                           loc_03C * (st->ptC_U - st->ptA_U) - loc_038 * (st->ptB_U - st->ptA_U));
-            st->var_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+            loc_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
                           loc_03C * (st->ptC_V - st->ptA_V) - loc_038 * (st->ptB_V - st->ptA_V));
         }
         else
         {
-            st->var_0B0 = 0;
-            st->var_0AC = 0;
+            loc_0B0 = 0;
+            loc_0AC = 0;
         }
     }
 
@@ -1009,9 +1012,9 @@ void gpoly_sta_md27(struct gpoly_state *st)
         loc_194 = gpoly_mul_rot_2(mag_a1, 2 * (st->ptC_U - st->ptA_U));
         loc_188 = gpoly_mul_rot_2(mag_a1, 2 * (st->ptC_V - st->ptA_V));
 
-        tmp = ((st->var_0B0 * st->var_1B0) & 0xFFFF0000) | (((st->var_0B0 * (s64)st->var_1B0) >> 32) & 0xFFFF);
+        tmp = ((loc_0B0 * st->var_1B0) & 0xFFFF0000) | (((loc_0B0 * (s64)st->var_1B0) >> 32) & 0xFFFF);
         loc_194 -= bw_rotl32(tmp, 16);
-        tmp = ((st->var_0AC * st->var_1B0) & 0xFFFF0000) | (((st->var_0AC * (s64)st->var_1B0) >> 32) & 0xFFFF);
+        tmp = ((loc_0AC * st->var_1B0) & 0xFFFF0000) | (((loc_0AC * (s64)st->var_1B0) >> 32) & 0xFFFF);
         loc_188 -= bw_rotl32(tmp, 16);
         tmp = ((st->var_0A8 * st->var_1B0) & 0xFFFF0000) | (((st->var_0A8 * (s64)st->var_1B0) >> 32) & 0xFFFF);
         st->var_1A4 -= bw_rotl32(tmp, 16);
@@ -1036,15 +1039,15 @@ void gpoly_sta_md27(struct gpoly_state *st)
         loc_198 = gpoly_mul_rot_2(mag_a1, 2 * (st->ptC_U - st->ptB_U));
         loc_18C = gpoly_mul_rot_2(mag_a1, 2 * (st->ptC_V - st->ptB_V));
 
-        tmp = ((st->var_0B0 * st->var_1AC) & 0xFFFF0000) | (((st->var_0B0 * (s64)st->var_1AC) >> 32) & 0xFFFF);
+        tmp = ((loc_0B0 * st->var_1AC) & 0xFFFF0000) | (((loc_0B0 * (s64)st->var_1AC) >> 32) & 0xFFFF);
         loc_194 -= bw_rotl32(tmp, 16);
-        tmp = ((st->var_0AC * st->var_1AC) & 0xFFFF0000) | (((st->var_0AC * (s64)st->var_1AC) >> 32) & 0xFFFF);
+        tmp = ((loc_0AC * st->var_1AC) & 0xFFFF0000) | (((loc_0AC * (s64)st->var_1AC) >> 32) & 0xFFFF);
         loc_188 -= bw_rotl32(tmp, 16);
         tmp = ((st->var_0A8 * st->var_1AC) & 0xFFFF0000) | (((st->var_0A8 * (s64)st->var_1AC) >> 32) & 0xFFFF);
         st->var_1A4 -= bw_rotl32(tmp, 16);
-        tmp = ((st->var_0B0 * st->var_1A8) & 0xFFFF0000) | (((st->var_0B0 * (s64)st->var_1A8) >> 32) & 0xFFFF);
+        tmp = ((loc_0B0 * st->var_1A8) & 0xFFFF0000) | (((loc_0B0 * (s64)st->var_1A8) >> 32) & 0xFFFF);
         loc_198 -= bw_rotl32(tmp, 16);
-        tmp = ((st->var_0AC * st->var_1A8) & 0xFFFF0000) | (((st->var_0AC * (s64)st->var_1A8) >> 32) & 0xFFFF);
+        tmp = ((loc_0AC * st->var_1A8) & 0xFFFF0000) | (((loc_0AC * (s64)st->var_1A8) >> 32) & 0xFFFF);
         loc_18C -= bw_rotl32(tmp, 16);
         tmp = ((st->var_0A8 * st->var_1A8) & 0xFFFF0000) | (((st->var_0A8 * (s64)st->var_1A8) >> 32) & 0xFFFF);
         st->var_1A0 -= bw_rotl32(tmp, 16);
@@ -1052,20 +1055,20 @@ void gpoly_sta_md27(struct gpoly_state *st)
 
     int loc_054, loc_050, loc_048, loc_044;
 
-    loc_054 = st->var_0B0 + (st->ptA_U << 16);
-    loc_050 = st->var_0AC + (st->ptA_V << 16);
-    loc_048 = st->var_0B0 + (st->ptB_U << 16);
-    loc_044 = st->var_0AC + (st->ptB_V << 16);
+    loc_054 = loc_0B0 + (st->ptA_U << 16);
+    loc_050 = loc_0AC + (st->ptA_V << 16);
+    loc_048 = loc_0B0 + (st->ptB_U << 16);
+    loc_044 = loc_0AC + (st->ptB_V << 16);
 
     {
         TbBool mone;
         int fctr_e;
         unsigned int fctr_f;
 
-        st->var_0BC = st->var_0B0 << 16;
-        st->var_0B8 = st->var_0B0 >> 16;
-        fctr_e = st->var_0AC >> 16;
-        fctr_f = ((st->var_0AC << 16) & 0xFFFFFF00) | (st->var_0B8 & 0xFF);
+        st->var_0BC = loc_0B0 << 16;
+        st->var_0B8 = loc_0B0 >> 16;
+        fctr_e = loc_0AC >> 16;
+        fctr_f = ((loc_0AC << 16) & 0xFFFFFF00) | (st->var_0B8 & 0xFF);
         if ((fctr_f & 0x80) != 0) {
             mone = fctr_f < 0x100;
             fctr_f -= 0x100;
@@ -1119,6 +1122,7 @@ void gpoly_sta_md27(struct gpoly_state *st)
 void gpoly_sta_md28(struct gpoly_state *st)
 {
     int loc_188, loc_18C, loc_194, loc_198;
+    int loc_0B0, loc_0AC;
 
     {
         int dist_c1, dist_c2, dist_c3, dist_c4;
@@ -1140,16 +1144,16 @@ void gpoly_sta_md28(struct gpoly_state *st)
 
             st->var_0A8 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
               loc_03C * (st->ptC_S - st->ptA_S) - loc_038 * (st->ptB_S - st->ptA_S));
-            st->var_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+            loc_0B0 = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
               loc_03C * (st->ptC_U - st->ptA_U) - loc_038 * (st->ptB_U - st->ptA_U));
-            st->var_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
+            loc_0AC = gpoly_mul_rot_1(0x7FFFFFFF / fctr_d,
               loc_03C * (st->ptC_V - st->ptA_V) - loc_038 * (st->ptB_V - st->ptA_V));
         }
         else
         {
             st->var_0A8 = 0;
-            st->var_0B0 = 0;
-            st->var_0AC = 0;
+            loc_0B0 = 0;
+            loc_0AC = 0;
         }
     }
     if (st->var_134 < 0)
@@ -1165,9 +1169,9 @@ void gpoly_sta_md28(struct gpoly_state *st)
         loc_194 = gpoly_mul_rot_2(mag_a1, 2 * (st->ptC_U - st->ptA_U));
         loc_188 = gpoly_mul_rot_2(mag_a1, 2 * (st->ptC_V - st->ptA_V));
 
-        tmp = ((st->var_0B0 * st->var_1B0) & 0xFFFF0000) | (((st->var_0B0 * (s64)st->var_1B0) >> 32) & 0xFFFF);
+        tmp = ((loc_0B0 * st->var_1B0) & 0xFFFF0000) | (((loc_0B0 * (s64)st->var_1B0) >> 32) & 0xFFFF);
         loc_194 -= bw_rotl32(tmp, 16);
-        tmp = ((st->var_0AC * st->var_1B0) & 0xFFFF0000) | (((st->var_0AC * (s64)st->var_1B0) >> 32) & 0xFFFF);
+        tmp = ((loc_0AC * st->var_1B0) & 0xFFFF0000) | (((loc_0AC * (s64)st->var_1B0) >> 32) & 0xFFFF);
         loc_188 -= bw_rotl32(tmp, 16);
         tmp = ((st->var_0A8 * st->var_1B0) & 0xFFFF0000) | (((st->var_0A8 * (s64)st->var_1B0) >> 32) & 0xFFFF);
         st->var_1A4 -= bw_rotl32(tmp, 16);
@@ -1194,15 +1198,15 @@ void gpoly_sta_md28(struct gpoly_state *st)
         loc_198 = gpoly_mul_rot_2(mag_a1, 2 * (st->ptC_U - st->ptB_U));
         loc_18C = gpoly_mul_rot_2(mag_a1, 2 * (st->ptC_V - st->ptB_V));
 
-        tmp = ((st->var_0B0 * st->var_1AC) & 0xFFFF0000) | (((st->var_0B0 * (s64)st->var_1AC) >> 32) & 0xFFFF);
+        tmp = ((loc_0B0 * st->var_1AC) & 0xFFFF0000) | (((loc_0B0 * (s64)st->var_1AC) >> 32) & 0xFFFF);
         loc_194 -= bw_rotl32(tmp, 16);
-        tmp = ((st->var_0AC * st->var_1AC) & 0xFFFF0000) | (((st->var_0AC * (s64)st->var_1AC) >> 32) & 0xFFFF);
+        tmp = ((loc_0AC * st->var_1AC) & 0xFFFF0000) | (((loc_0AC * (s64)st->var_1AC) >> 32) & 0xFFFF);
         loc_188 -= bw_rotl32(tmp, 16);
         tmp = ((st->var_0A8 * st->var_1AC) & 0xFFFF0000) | (((st->var_0A8 * (s64)st->var_1AC) >> 32) & 0xFFFF);
         st->var_1A4 -= bw_rotl32(tmp, 16);
-        tmp = ((st->var_0B0 * st->var_1A8) & 0xFFFF0000) | (((st->var_0B0 * (s64)st->var_1A8) >> 32) & 0xFFFF);
+        tmp = ((loc_0B0 * st->var_1A8) & 0xFFFF0000) | (((loc_0B0 * (s64)st->var_1A8) >> 32) & 0xFFFF);
         loc_198 -= bw_rotl32(tmp, 16);
-        tmp = ((st->var_0AC * st->var_1A8) & 0xFFFF0000) | (((st->var_0AC * (s64)st->var_1A8) >> 32) & 0xFFFF);
+        tmp = ((loc_0AC * st->var_1A8) & 0xFFFF0000) | (((loc_0AC * (s64)st->var_1A8) >> 32) & 0xFFFF);
         loc_18C -= bw_rotl32(tmp, 16);
         tmp = ((st->var_0A8 * st->var_1A8) & 0xFFFF0000) | (((st->var_0A8 * (s64)st->var_1A8) >> 32) & 0xFFFF);
         st->var_1A0 -= bw_rotl32(tmp, 16);
@@ -1211,19 +1215,19 @@ void gpoly_sta_md28(struct gpoly_state *st)
     int loc_058, loc_054, loc_050, loc_04C, loc_048, loc_044;
 
     loc_058 = st->var_0A8 + (st->ptA_S << 16);
-    loc_054 = st->var_0B0 + (st->ptA_U << 16);
-    loc_050 = st->var_0AC + (st->ptA_V << 16);
+    loc_054 = loc_0B0 + (st->ptA_U << 16);
+    loc_050 = loc_0AC + (st->ptA_V << 16);
     loc_04C = st->var_0A8 + (st->ptB_S << 16);
-    loc_048 = st->var_0B0 + (st->ptB_U << 16);
-    loc_044 = st->var_0AC + (st->ptB_V << 16);
+    loc_048 = loc_0B0 + (st->ptB_U << 16);
+    loc_044 = loc_0AC + (st->ptB_V << 16);
 
     {
         TbBool mone;
         int fctr_e, fctr_s;
         unsigned int fctr_f;
 
-        fctr_e = st->var_0B0 >> 16;
-        fctr_f = ((st->var_0B0 << 16) & 0xFFFF0000) | ((st->var_0A8 >> 8) & 0xFFFF);
+        fctr_e = loc_0B0 >> 16;
+        fctr_f = ((loc_0B0 << 16) & 0xFFFF0000) | ((st->var_0A8 >> 8) & 0xFFFF);
         if ((fctr_f & 0x8000) != 0) {
             mone = fctr_f < 0xFFFF;
             fctr_f -= 0xFFFF;
@@ -1232,8 +1236,8 @@ void gpoly_sta_md28(struct gpoly_state *st)
         st->var_0BC = fctr_f;
         st->var_0B8 = fctr_e;
 
-        fctr_e = st->var_0AC >> 16;
-        fctr_f = ((st->var_0AC << 16) & 0xFFFFFF00) | (st->var_0B8 & 0xFF);
+        fctr_e = loc_0AC >> 16;
+        fctr_f = ((loc_0AC << 16) & 0xFFFFFF00) | (st->var_0B8 & 0xFF);
         if ((fctr_f & 0x80) != 0) {
             mone = fctr_f < 0x100;
             fctr_f -= 0x100;
@@ -1676,7 +1680,6 @@ void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
 
     ubyte *o;
     int range_beg_scr, range_end_scr;
-    ubyte *v19;
     int range_len;
 
     while (1)
@@ -1721,14 +1724,13 @@ void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st)
             range_end_scr = range_end >> 16;
             if (range_end_scr > vec_window_width)
                 range_end_scr = vec_window_width;
-            v19 = &loc_0F4[loc_074];
             range_len = range_end_scr - loc_074;
             if (range_len > 0)
             {
                 int kk_max;
 
                 kk_max = range_len & 0xF;
-                o = &v19[gpoly_countdown[kk_max]];
+                o = &loc_0F4[loc_074 + gpoly_countdown[kk_max]];
                 loc_0D4 = range_len;
 
                 while ( 1 )
@@ -1841,7 +1843,6 @@ void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st)
 
     ubyte *o;
     int range_beg_scr, range_end_scr;
-    ubyte *v19;
     int range_len;
 
     while (1)
@@ -1878,14 +1879,13 @@ void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st)
             loc_0DC = loc_0E4;
             loc_0D8 = loc_088;
             range_end_scr = range_end >> 16;
-            v19 = &loc_0F4[loc_074];
             range_len = range_end_scr - loc_074;
             if (range_len > 0)
             {
                 int kk_max;
 
                 kk_max = range_len & 0xF;
-                o = &v19[gpoly_countdown[kk_max]];
+                o = &loc_0F4[loc_074 + gpoly_countdown[kk_max]];
                 loc_0D4 = range_len;
 
                 while ( 1 )
@@ -2009,11 +2009,13 @@ void gpoly_init_state(struct gpoly_state *st, struct PolyPoint *point_a,
         int dist_ba_x, dist_ba_y;
         int dist_cb_x, dist_cb_y;
 
-        dist_ca_x = st->ptC_X - st->ptA_X;
-        if ((dist_ca_y & ~0x1Fu) != 0 || dist_ca_x < -32 || dist_ca_x > 31)
-            st->var_1B0 = (dist_ca_x << 16) / dist_ca_y;
-        else
-            st->var_1B0 = gpoly_divtable[dist_ca_y][32 + dist_ca_x];
+        {
+            dist_ca_x = st->ptC_X - st->ptA_X;
+            if ((dist_ca_y & ~0x1Fu) != 0 || dist_ca_x < -32 || dist_ca_x > 31)
+                st->var_1B0 = (dist_ca_x << 16) / dist_ca_y;
+            else
+                st->var_1B0 = gpoly_divtable[dist_ca_y][32 + dist_ca_x];
+        }
 
         dist_ba_y = st->ptB_Y - st->ptA_Y;
         if (dist_ba_y != 0)

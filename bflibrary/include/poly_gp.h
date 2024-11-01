@@ -59,8 +59,6 @@ struct gpoly_state {
     int var_0BC;
     int var_0B8;
     int var_0B4;
-    int var_0B0;
-    int var_0AC;
     int var_0A8;
     int var_0A4;
     int var_0A0;
