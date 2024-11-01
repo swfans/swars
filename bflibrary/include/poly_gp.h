@@ -32,8 +32,8 @@ struct gpoly_state {
     int var_1B0;
     int var_1AC;
     int var_1A8;
-    int var_1A4;
-    int var_1A0;
+    int incA_S;
+    int incB_S;
     int ptA_Y;
     int ptA_X;
     int ptA_X_prc;
@@ -72,7 +72,7 @@ struct gpoly_state {
     int var_080;
     int var_07C;
     int var_078;
-    int var_060;
+    int inc_S;
 };
 
 #pragma pack()
@@ -88,10 +88,25 @@ void gpoly_sta_md05(struct gpoly_state *st);
 void gpoly_sta_md27(struct gpoly_state *st);
 void gpoly_sta_md28(struct gpoly_state *st);
 
-void gpoly_stb_md05uni_var040_nz(struct gpoly_state *st);
-void gpoly_stb_md05uni_var040_zr(struct gpoly_state *st);
-void gpoly_stb_md05p64_var040_nz(struct gpoly_state *st);
-void gpoly_stb_md05p64_var040_zr(struct gpoly_state *st);
+/**
+ * Renders shaded gpoly triangle using given state, checking window bounds.
+ */
+void gpoly_rasterize_shaded_bound(struct gpoly_state *st);
+
+/**
+ * Renders shaded gpoly triangle using given state, without bounds check.
+ */
+void gpoly_rasterize_shaded_nobound(struct gpoly_state *st);
+
+/**
+ * Renders const brightness gpoly triangle using given state, checking window bounds.
+ */
+void gpoly_rasterize_noshade_bound(struct gpoly_state *st);
+
+/**
+ * Renders const brightness gpoly triangle using given state, without bounds check.
+ */
+void gpoly_rasterize_noshade_nobound(struct gpoly_state *st);
 
 
 #ifdef __cplusplus

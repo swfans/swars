@@ -222,11 +222,11 @@ void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct Pol
 {
     struct gpoly_state st;
     ubyte start_type;
-    TbBool cross_bound;
+    TbBool exceeds_window;
 
     gpoly_mode = vec_mode;
 
-    cross_bound = (point_c->X | point_b->X | point_a->X) < 0
+    exceeds_window = (point_c->X | point_b->X | point_a->X) < 0
              || point_a->X > vec_window_width
              || point_b->X > vec_window_width
              || point_c->X > vec_window_width;
@@ -289,16 +289,16 @@ void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct Pol
     switch (gpoly_mode)
     {
     case RendVec_mode05:
-        if (cross_bound)
-            gpoly_stb_md05uni_var040_nz(&st);
+        if (exceeds_window)
+            gpoly_rasterize_shaded_bound(&st);
         else
-            gpoly_stb_md05uni_var040_zr(&st);
+            gpoly_rasterize_shaded_nobound(&st);
         break;
     case 27:
-        if (cross_bound)
-            gpoly_stb_md05p64_var040_nz(&st);
+        if (exceeds_window)
+            gpoly_rasterize_noshade_bound(&st);
         else
-            gpoly_stb_md05p64_var040_zr(&st);
+            gpoly_rasterize_noshade_nobound(&st);
         break;
     }
 }
