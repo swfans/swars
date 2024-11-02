@@ -2666,9 +2666,9 @@ void func_218D3(void)
               p_floortl++;
               bckt += 5000 + bktalt;
                if ((p_mapel->Texture & 0x4000) != 0)
-                  ditype = 6;
+                  ditype = DrIT_Unkn6;
               else
-                  ditype = 4;
+                  ditype = DrIT_Unkn4;
               draw_item_add(ditype, word_152F00, bckt);
               p_sqlight = &p_sqlight[-render_area_a + 1];
               p_spcr += 2;

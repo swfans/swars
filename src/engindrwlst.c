@@ -19,6 +19,7 @@
 #include "engindrwlst.h"
 
 #include "bfkeybd.h"
+#include <assert.h>
 
 #include "display.h"
 #include "drawtext.h"
@@ -121,6 +122,11 @@ void draw_object_face1a(ushort face)
         point2.X = p_scrpoint->X + dword_176D00;
         point2.Y = p_scrpoint->Y + dword_176D04;
     }
+    if ((vec_mode == 2) || (vec_mode == 0))
+    {
+        point2.S = 0x200000;
+    }
+    else
     {
         ushort light, shade;
         short i;
@@ -422,6 +428,7 @@ void draw_screen_number(ushort a1)
     draw_text(2 * sspr->X,2 * sspr->Y, locstr, colour_lookup[2]);
 }
 
+// Special non-textured draw; used during nuclear explosions?
 void draw_drawitem_1(ushort dihead)
 {
     struct DrawItem *itm;
@@ -432,44 +439,44 @@ void draw_drawitem_1(ushort dihead)
       itm = &game_draw_list[iidx];
       switch (itm->Type)
       {
-      case 1:
-      case 10:
+      case DrIT_Unkn1:
+      case DrIT_Unkn10:
           draw_object_face1a(itm->Offset);
           break;
-      case 2:
-      case 8:
+      case DrIT_Unkn2:
+      case DrIT_Unkn8:
           break;
-      case 3:
+      case DrIT_Unkn3:
           draw_sort_sprite1a(itm->Offset);
           break;
-      case 4:
+      case DrIT_Unkn4:
           draw_floor_tile1a(itm->Offset);
           break;
-      case 5:
+      case DrIT_Unkn5:
           draw_ex_face(itm->Offset);
           break;
-      case 6:
+      case DrIT_Unkn6:
           draw_floor_tile1b(itm->Offset);
           break;
-      case 7:
+      case DrIT_Unkn7:
           draw_object_face1b(itm->Offset);
           break;
-      case 9:
+      case DrIT_Unkn9:
           draw_object_face4a(itm->Offset);
           break;
-      case 11:
+      case DrIT_Unkn11:
           draw_sort_line(&game_sort_lines[itm->Offset]);
           break;
-      case 12:
+      case DrIT_Unkn12:
           draw_object_face4b(itm->Offset);
           break;
-      case 13:
+      case DrIT_Unkn13:
           draw_sort_sprite1b(itm->Offset);
           break;
-      case 14:
+      case DrIT_Unkn14:
           draw_object_face4c(itm->Offset);
           break;
-      case 15:
+      case DrIT_Unkn15:
           draw_sort_sprite1c(itm->Offset);
           break;
       }
@@ -491,74 +498,74 @@ void draw_drawitem_2(ushort dihead)
       itm = &game_draw_list[iidx];
       switch (itm->Type)
       {
-      case 1:
-      case 10:
+      case DrIT_Unkn1:
+      case DrIT_Unkn10:
           draw_object_face1c(itm->Offset);
           break;
-      case 3:
+      case DrIT_Unkn3:
           draw_sort_sprite1a(itm->Offset);
           break;
-      case 4:
+      case DrIT_Unkn4:
           draw_floor_tile1a(itm->Offset);
           break;
-      case 5:
+      case DrIT_Unkn5:
           draw_ex_face(itm->Offset);
           break;
-      case 6:
+      case DrIT_Unkn6:
           draw_floor_tile1b(itm->Offset);
           break;
-      case 7:
+      case DrIT_Unkn7:
           draw_object_face1b(itm->Offset);
           break;
-      case 9:
+      case DrIT_Unkn9:
           draw_object_face4d(itm->Offset);
           break;
-      case 11:
+      case DrIT_Unkn11:
           draw_sort_line(&game_sort_lines[itm->Offset]);
           break;
-      case 12:
+      case DrIT_Unkn12:
           draw_object_face4b(itm->Offset);
           break;
-      case 13:
+      case DrIT_Unkn13:
           draw_sort_sprite1b(itm->Offset);
           break;
-      case 14:
+      case DrIT_Unkn14:
           draw_object_face4c(itm->Offset);
           break;
-      case 15:
+      case DrIT_Unkn15:
           draw_sort_sprite1c(itm->Offset);
           break;
-      case 16:
+      case DrIT_Unkn16:
           draw_object_face4g(itm->Offset);
           break;
-      case 17:
+      case DrIT_Unkn17:
           draw_object_face1e(itm->Offset);
           break;
-      case 18:
+      case DrIT_Unkn18:
           draw_object_face4f(itm->Offset);
           break;
-      case 19:
+      case DrIT_Unkn19:
           draw_person_shadow(itm->Offset);
           break;
-      case 20:
+      case DrIT_Unkn20:
           draw_shrapnel(itm->Offset);
           break;
-      case 21:
+      case DrIT_Unkn21:
           draw_phwoar(itm->Offset);
           break;
-      case 22:
+      case DrIT_Unkn22:
           draw_sort_sprite_tng(itm->Offset);
           break;
-      case 23:
+      case DrIT_Unkn23:
           draw_object_face4e(itm->Offset);
           break;
-      case 24:
+      case DrIT_Unkn24:
           draw_object_face1d(itm->Offset);
           break;
-      case 25:
+      case DrIT_Unkn25:
           draw_ssample_screen_point(itm->Offset);
           break;
-      case 26:
+      case DrIT_Unkn26:
           draw_screen_number(itm->Offset);
           break;
       default:

@@ -36,6 +36,36 @@ extern "C" {
 
 #pragma pack(1)
 
+enum DrawItemType {
+    DrIT_NONE = 0x0,
+    DrIT_Unkn1 = 0x1,
+    DrIT_Unkn2 = 0x2,
+    DrIT_Unkn3 = 0x3,
+    DrIT_Unkn4 = 0x4,
+    DrIT_Unkn5 = 0x5,
+    DrIT_Unkn6 = 0x6,
+    DrIT_Unkn7 = 0x7,
+    DrIT_Unkn8 = 0x8,
+    DrIT_Unkn9 = 0x9,
+    DrIT_Unkn10 = 0xA,
+    DrIT_Unkn11 = 0xB,
+    DrIT_Unkn12 = 0xC,
+    DrIT_Unkn13 = 0xD,
+    DrIT_Unkn14 = 0xE,
+    DrIT_Unkn15 = 0xF,
+    DrIT_Unkn16 = 0x10,
+    DrIT_Unkn17 = 0x11,
+    DrIT_Unkn18 = 0x12,
+    DrIT_Unkn19 = 0x13,
+    DrIT_Unkn20 = 0x14,
+    DrIT_Unkn21 = 0x15,
+    DrIT_Unkn22 = 0x16,
+    DrIT_Unkn23 = 0x17,
+    DrIT_Unkn24 = 0x18,
+    DrIT_Unkn25 = 0x19,
+    DrIT_Unkn26 = 0x1A,
+};
+
 #pragma pack()
 /******************************************************************************/
 
