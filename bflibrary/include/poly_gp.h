@@ -29,9 +29,9 @@ extern "C" {
 #pragma pack(1)
 
 struct gpoly_state {
-    int var_1B0;
-    int var_1AC;
-    int var_1A8;
+    int ratioCA_X2Y;
+    int ratioBA_X2Y;
+    int ratioCB_X2Y;
     int incA_S;
     int incB_S;
     int ptA_Y;
