@@ -31,7 +31,7 @@ LangString STR_CHOOSE_DRIVE 1033 "Choose the CD-ROM drive"
 LangString STR_CHOOSE_LANG 1033 "Choose the language"
 
 ; --------------------
-; VARIABLES: 11
+; VARIABLES: 12
 
 Var selected_lang_text
 Var selected_lang_abbr
@@ -40,6 +40,7 @@ Var selected_menu_shortcut
 Var selected_desk_shortcut
 Var selected_music
 Var gog_path
+Var update_path
 Var RadioSelected
 Var inst_src_root_dir
 Var levels_md5
@@ -80,6 +81,7 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 Page custom SelectionPage SelectionPageLeave
 Page custom GOGInstall GOGInstallLeave
 Page custom GOGInstallAdditional GOGInstallAdditionalLeave
+Page custom UpdateInstall UpdateInstallLeave
 Page custom LangNCdromPage LangNCdromLeave
 !define MUI_PAGE_CUSTOMFUNCTION_Pre SkipComponents
 !insertmacro MUI_PAGE_COMPONENTS 
@@ -133,7 +135,11 @@ Section "Syndicate Wars Game" Section_0
   IfFileExists "${BUILDENV_PKG_DIR}\SDL.dll" 0 +1
   File /nonfatal "${BUILDENV_PKG_DIR}\SDL.dll"
   SetOutPath $INSTDIR\conf
-  File /r "${BUILDENV_PKG_DIR}\conf\"
+  ${If} $RadioSelected == "UpdateInstall"
+	File /r /x "rules.ini" "${BUILDENV_PKG_DIR}\conf\"   ; If doing an udpdate install, do not copy over existing rules.ini
+  ${Else} 
+	File /r "${BUILDENV_PKG_DIR}\conf\"
+   ${EndIf}
   SetOutPath $INSTDIR\language
   File /r "${BUILDENV_PKG_DIR}\language\"
   WriteUninstaller $INSTDIR\Uninstall.exe
@@ -208,17 +214,22 @@ Function SelectionPage
   ${NSD_CreateRadioButton} 0 18u 100% 14u "Install from GOG files"
   Pop $2
   ${NSD_OnClick} $2 RadioClick
+  ${NSD_CreateRadioButton} 0 36u 100% 14u "Update an existing fan port install"
+  Pop $3
+  ${NSD_OnClick} $3 RadioClick
   nsDialogs::Show
   
 FunctionEnd
 
 Function RadioClick
-  pop $3
+ pop $4
 
-  ${If} $3 == $1
-    StrCpy $RadioSelected "Option 1"
-  ${ElseIf} $3 == $2
-    StrCpy $RadioSelected "Option 2"
+  ${If} $4 == $1
+    StrCpy $RadioSelected "CDInstall"
+  ${ElseIf} $4 == $2
+    StrCpy $RadioSelected "GOGInstall"
+  ${ElseIf} $4 == $3
+    StrCpy $RadioSelected "UpdateInstall"
   ${EndIf}
 FunctionEnd
 
@@ -231,7 +242,7 @@ FunctionEnd
 
 Function GOGInstall
 !insertmacro MUI_HEADER_TEXT "GOG Syndicate Wars Installation Location" "Please indicate where GOG installed the root Syndicate Wars folder on your computer"
-${If} $RadioSelected != "Option 2"
+${If} $RadioSelected != "GOGInstall"
    Abort
  ${EndIf}
 
@@ -277,7 +288,7 @@ FunctionEnd
 
 Function GOGInstallAdditional
   !insertmacro MUI_HEADER_TEXT "Additional Game Settings" "Please set your GOG version's language here"
-  ${If} $RadioSelected != "Option 2"
+  ${If} $RadioSelected != "GOGInstall"
       Abort
   ${EndIf}
   nsDialogs::Create /NOUNLOAD 1018
@@ -327,11 +338,11 @@ Function GOGInstallAdditionalLeave
     StrCpy $selected_desk_shortcut "1"
   ${EndIf}
 
-  ${If} $3 <> ${BST_CHECKED}
+  ${If} $4 <> ${BST_CHECKED}
     StrCpy $selected_menu_shortcut "0"
   ${EndIf}
   
-  ${If} $3 <> ${BST_UNCHECKED}
+  ${If} $4 <> ${BST_UNCHECKED}
     StrCpy $selected_menu_shortcut "1"
   ${EndIf}
 
@@ -342,15 +353,81 @@ Function GOGInstallAdditionalLeave
 
 FunctionEnd
 
+Function UpdateInstall
+!insertmacro MUI_HEADER_TEXT "Syndicate Wars Port Installation Location" "Please indicate where you previously installed the root Syndicate Wars port folder on your computer"
+${If} $RadioSelected != "UpdateInstall"
+   Abort
+ ${EndIf}
+
+SetRegView 32
+; Read the value from the registry key
+ReadRegStr $update_path HKLM "Software\Syndicate Wars\CurrentVersion" "InstallPath" 
+
+    ;Create a custom page
+    nsDialogs::Create 1018
+    Pop $0
+
+    ${NSD_CreateGroupBox} 5% 20u 90% 60% "Syndicate Wars existing install folder"
+    Pop $0
+
+        ${NSD_CreateDirRequest} 15% 35u 49% 12u $update_path
+        Pop $1
+
+        ${NSD_CreateBrowseButton} 65% 35u 20% 12u "Browse..."
+        Pop $0
+        ${NSD_OnClick} $0 BrowseButtonClicked
+  
+		${NSD_CreateLabel} 20u 54u 118u 12u "Additional install options:"
+    
+		${NSD_CreateCheckbox} 37u 65u 134u 15u "Create a shortcut on the desktop"
+		Pop $5
+
+		${NSD_CreateCheckbox} 37u 80u 160u 15u "Create an entry in the Start Menu"
+		Pop $6
+
+    
+  nsDialogs::Show
+FunctionEnd
+
+Function UpdateInstallLeave
+;MessageBox MB_ICONEXCLAMATION|MB_OK "install path is $update_path"
+${If} $update_path == ""
+        MessageBox MB_ICONEXCLAMATION|MB_OK "You must indicate your existing Syndicate Wars install path before proceeding."
+        Abort
+${EndIf}
+
+  ${NSD_GetState} $5 $3  ; Get state of Checkbox for desktop icon
+  ${NSD_GetState} $6 $4  ; Get state of Checkbox for startmenu entry
+
+  ${If} $3 <> ${BST_CHECKED}
+    StrCpy $selected_desk_shortcut "0"
+  ${EndIf}
+
+  ${If} $3 <> ${BST_UNCHECKED}
+    StrCpy $selected_desk_shortcut "1"
+  ${EndIf}
+
+  ${If} $4 <> ${BST_CHECKED}
+    StrCpy $selected_menu_shortcut "0"
+  ${EndIf}
+  
+  ${If} $4 <> ${BST_UNCHECKED}
+    StrCpy $selected_menu_shortcut "1"
+  ${EndIf}
+
+StrCpy $selected_music 1 ; Never try and rip music if we're doing an update
+StrCpy $INSTDIR $update_path
+FunctionEnd
+
 Function SkipComponents
-  ${If} $RadioSelected != "Option 1"
+  ${If} $RadioSelected != "CDInstall"
     Abort
   ${EndIf}
 FunctionEnd
 
 Function LangNCdromPage
   !insertmacro MUI_HEADER_TEXT "Additional Game Settings" "Please indicate which drive your Syndicate Wars CD is in, and which language you want to install from it"
-  ${If} $RadioSelected != "Option 1"
+  ${If} $RadioSelected != "CDInstall"
     Abort
   ${EndIf}
     nsDialogs::Create 1018
@@ -368,7 +445,7 @@ Function LangNCdromPage
 FunctionEnd
 
 Function LangNCdromLeave
-${If} $RadioSelected != "Option 1"
+${If} $RadioSelected != "CDInstall"
     Abort
 ${EndIf}
   !insertmacro INSTALLOPTIONS_READ $selected_lang_text "lang_n_cdrom.ini" "Field 2" State
@@ -427,7 +504,7 @@ FunctionEnd
 Function CopyGameFilesFromCD
   DetailPrint "Copying the game files..."
   ClearErrors
-  ${If} $RadioSelected == "Option 1"
+  ${If} $RadioSelected == "CDInstall"
     CreateDirectory $INSTDIR\data
     CopyFiles /SILENT $inst_src_root_dir\GAME\data\* $INSTDIR\data
     CreateDirectory $INSTDIR\qdata
@@ -450,8 +527,8 @@ Function CopyGameFilesFromCD
     CopyFiles /SILENT $inst_src_lang_dir\sound.dat $INSTDIR\sound
   ${EndIf}
  
-  ${If} $RadioSelected == "Option 2"
-    DetailPrint "$PLUGINSDIR"
+  ${If} $RadioSelected == "GOGInstall"
+    ;DetailPrint "$PLUGINSDIR"
     CreateDirectory $INSTDIR\data
     CopyFiles /SILENT $gog_path\SWARS\data\* $INSTDIR\data
     CreateDirectory $INSTDIR\qdata
@@ -1188,4 +1265,3 @@ DeleteRegKey HKLM "Software\Syndicate Wars"
 SetAutoClose false
 
 SectionEnd
-

@@ -48,6 +48,7 @@ libbullfrog_a_headers_src = \
   include/mshandler.hpp \
   include/mspointer.hpp \
   include/poly.h \
+  include/poly_gp.h \
   include/poly_trigp.h \
   include/poly_trigr.h \
   include/privbflog.h \
@@ -100,6 +101,7 @@ libbullfrog_a_SOURCES = \
   src/general/mspointer.cpp \
   src/general/pixel.c \
   src/general/poly.c \
+  src/general/poly_gp.c \
   src/general/poly_trigp.c \
   src/general/poly_trigr.c \
   src/general/rnc_1fm.c \
