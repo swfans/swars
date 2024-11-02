@@ -501,10 +501,10 @@ static void gpoly_stb_drw_incr1b(int *a2d, int *a3b, int *a4c, struct gpoly_stat
 
 static void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
-    ubyte a3b_h, a3b_l;
     int a3b_bias;
-    ubyte loc_carry;
     int loc_4c, loc_2d, loc_3bh;
+    ubyte a3b_h, a3b_l;
+    ubyte loc_carry;
 
     a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
 
@@ -530,7 +530,7 @@ static void gpoly_stb_drw_incr3(int *a2d, int *a3b, int *a4c, struct gpoly_state
 {
     int a3b_bias;
     int loc_4c, loc_2d, loc_3bh;
-    ubyte a3b_l, a3b_h;
+    ubyte a3b_h, a3b_l;
     ubyte loc_carry;
 
     a3b_bias = ((intptr_t)vec_map & 0xFFFF) + *a3b;
@@ -1314,13 +1314,13 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
     ubyte *out_ln;
     int range_beg, range_end;
     int height;
-    int loc_180, loc_104, loc_0FC, loc_0F8;
+    int loc_180, ln_len, loc_0FC, loc_0F8;
     int loc_12C, loc_128;
     ubyte *loc_0F4;
     int range_remain, loc_0C0;
     int curr_X, curr_Y;
 
-    loc_104 = vec_screen_width;
+    ln_len = vec_screen_width;
     loc_180 = 2;
     st->inc_S = st->incA_S;
     st->var_0CC = st->var_0A4;
@@ -1366,7 +1366,7 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
             loc_0FC = loc_12C + loc_0FC;
             curr_X += loc_0FC >> 16;
             range_beg = loc_0FC;
-            out_ln += loc_104;
+            out_ln += ln_len;
             loc_0C0--;
             if (loc_0C0 == 0)
                 break;
@@ -1442,7 +1442,7 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
             loc_0E4 = loc_0DC;
             loc_088 = loc_0D8;
             gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
-            out_ln = &loc_0F4[loc_104];
+            out_ln = &loc_0F4[ln_len];
         }
 
         loc_180--;
@@ -1488,13 +1488,13 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
     ubyte *out_ln;
     int range_beg, range_end;
     int height;
-    int loc_180, loc_104, loc_0FC, loc_0F8;
+    int loc_180, ln_len, loc_0FC, loc_0F8;
     int loc_12C, loc_128;
     ubyte *loc_0F4;
     int range_remain, loc_0C0;
     int curr_X, curr_Y;
 
-    loc_104 = vec_screen_width;
+    ln_len = vec_screen_width;
     loc_180 = 2;
     st->inc_S = st->incA_S;
     st->var_0CC = st->var_0A4;
@@ -1540,7 +1540,7 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
             loc_0FC += loc_12C;
             curr_X += loc_0FC >> 16;
             range_beg = loc_0FC;
-            out_ln += loc_104;
+            out_ln += ln_len;
             loc_0C0--;
             if (loc_0C0 == 0)
                 break;
@@ -1591,7 +1591,7 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
             loc_0E4 = loc_0DC;
             loc_088 = loc_0D8;
             gpoly_stb_drw_incr1a(&loc_088, &loc_0E4, &loc_08C, st);
-            out_ln = &loc_0F4[loc_104];
+            out_ln = &loc_0F4[ln_len];
         }
 
         loc_180--;
@@ -1637,13 +1637,13 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
     ubyte *out_ln;
     int range_beg, range_end;
     int height;
-    int loc_180, loc_104, loc_0FC, loc_0F8;
+    int loc_180, ln_len, loc_0FC, loc_0F8;
     int loc_12C, loc_128;
     ubyte *loc_0F4;
     int range_remain, loc_0C0;
     int curr_X, curr_Y;
 
-    loc_104 = vec_screen_width;
+    ln_len = vec_screen_width;
     loc_180 = 2;
     st->var_0CC = st->var_0A4;
     st->var_0C4 = st->var_0A0;
@@ -1688,7 +1688,7 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
             gpoly_stb_drw_incr1b(&loc_088, &loc_0E4, &loc_08C, st);
             range_beg += loc_12C;
             range_end += loc_128;
-            out_ln += loc_104;
+            out_ln += ln_len;
             loc_0C0--;
             if (loc_0C0 == 0)
               break;
@@ -1755,7 +1755,7 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
             loc_0E4 = loc_0DC;
             loc_088 = loc_0D8;
             gpoly_stb_drw_incr1b(&loc_088, &loc_0E4, &loc_08C, st);
-            out_ln = &loc_0F4[loc_104];
+            out_ln = &loc_0F4[ln_len];
         }
 
         loc_180--;
@@ -1800,13 +1800,13 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
     ubyte *out_ln;
     int range_beg, range_end;
     int height;
-    int loc_180, loc_104, loc_0FC, loc_0F8;
+    int loc_180, ln_len, loc_0FC, loc_0F8;
     int loc_12C, loc_128;
     ubyte *loc_0F4;
     int range_remain, loc_0C0;
     int curr_X, curr_Y;
 
-    loc_104 = vec_screen_width;
+    ln_len = vec_screen_width;
     loc_180 = 2;
     st->var_0CC = st->var_0A4;
     st->var_0C4 = st->var_0A0;
@@ -1851,7 +1851,7 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
             gpoly_stb_drw_incr1b(&loc_088, &loc_0E4, &loc_08C, st);
             range_beg += loc_12C;
             range_end += loc_128;
-            out_ln += loc_104;
+            out_ln += ln_len;
             loc_0C0--;
             if (loc_0C0 == 0)
                 break;
@@ -1910,7 +1910,7 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
             loc_0E4 = loc_0DC;
             loc_088 = loc_0D8;
             gpoly_stb_drw_incr1b(&loc_088, &loc_0E4, &loc_08C, st);
-            out_ln = &loc_0F4[loc_104];
+            out_ln = &loc_0F4[ln_len];
         }
 
         loc_180--;
