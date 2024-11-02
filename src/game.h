@@ -422,7 +422,6 @@ extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;
 extern ubyte *game_user_heap;
-extern struct SpecialPoint *game_screen_point_pool;
 extern struct UnknBezEdit *bezier_pts;
 extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;

@@ -34,6 +34,13 @@ struct DrawItem {
     ushort Child;
 };
 
+struct SpecialPoint {
+    short X;
+    short Y;
+    short Z;
+    short PadTo8;
+};
+
 struct SortSprite {
     short X;
     short Y;
@@ -60,6 +67,7 @@ struct SortLine {
 extern struct DrawItem *game_draw_list;
 extern struct SortSprite *game_sort_sprites;
 extern struct SortLine *game_sort_lines;
+extern struct SpecialPoint *game_screen_point_pool;
 
 extern struct DrawItem *p_current_draw_item;
 extern struct SortSprite *p_current_sort_sprite;

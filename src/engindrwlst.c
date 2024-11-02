@@ -18,12 +18,17 @@
 /******************************************************************************/
 #include "engindrwlst.h"
 
+#include "bfkeybd.h"
+
 #include "display.h"
 #include "drawtext.h"
 #include "enginbckt.h"
+#include "enginlights.h"
 #include "enginpeff.h"
+#include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "enginshadws.h"
+#include "engintrns.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -42,6 +47,10 @@ extern ushort tnext_sort_sprite;
 extern ushort tnext_special_face4;
 
 extern long dword_176CC4;
+extern long dword_176D00;
+extern long dword_176D04;
+
+extern ubyte byte_1C844E;
 
 void reset_drawlist(void)
 {
@@ -63,11 +72,183 @@ void reset_drawlist(void)
     p_current_draw_item = &game_draw_list[1];
 }
 
-void draw_object_face1a(ushort a1)
+int calculate_enginepoint_shade_1(struct PolyPoint *p_point, struct SingleObjectFace3 *p_face, ushort a3)
 {
+    int ret;
+    asm volatile (
+      "call ASM_calculate_enginepoint_shade_1\n"
+        : "=r" (ret) : "a" (p_point), "d" (p_face), "b" (a3));
+    return ret;
+}
+
+void draw_object_face1a(ushort face)
+{
+#if 0
     asm volatile (
       "call ASM_draw_object_face1a\n"
-        : : "a" (a1));
+        : : "a" (face));
+#endif
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+    struct PolyPoint point3;
+    struct SingleObjectFace3 *p_face;
+
+    p_face = &game_object_faces[face];
+    if (p_face->Texture != 0)
+    {
+        struct SingleTexture *p_stex;
+
+        p_stex = &game_face_textures[p_face->Texture];
+        vec_map = vec_tmap[p_stex->Page];
+        if ((p_face->GFlags & 0x02) != 0)
+            vec_map = scratch_buf1;
+        point2.U = p_stex->TMapX1 << 16;
+        point2.V = p_stex->TMapY1 << 16;
+        point1.U = p_stex->TMapX3 << 16;
+        point1.V = p_stex->TMapY3 << 16;
+        point3.U = p_stex->TMapX2 << 16;
+        point3.V = p_stex->TMapY2 << 16;
+    }
+    vec_colour = 64;
+    vec_mode = 4;
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        ushort light, shade;
+        short i;
+
+        light = p_face->Light0;
+        shade = p_face->Shade0 << 7;
+        for (i = 0; (i <= 100) && (light != 0); i++)
+        {
+            struct QuickLight *p_qlight;
+            short intens;
+
+            p_qlight = &game_quick_lights[light];
+            intens = game_full_lights[p_qlight->Light].Intensity;
+            light = p_qlight->NextQuick;
+            shade += intens * p_qlight->Ratio;
+        }
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point2.S = shade << 7;
+    }
+    point2.S = calculate_enginepoint_shade_1(&point2, p_face, 0);
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if ((vec_mode == 2) || (vec_mode == 0))
+    {
+        point1.S = 0x200000;
+    }
+    else
+    {
+        ushort light, shade;
+        short i;
+
+        light = p_face->Light2;
+        shade = p_face->Shade2 << 7;
+        for (i = 0; (i <= 100) && (light != 0); i++)
+        {
+            struct QuickLight *p_qlight;
+            short intens;
+
+            p_qlight = &game_quick_lights[light];
+            intens = p_qlight->Ratio * game_full_lights[p_qlight->Light].Intensity;
+            light = p_qlight->NextQuick;
+            shade += intens;
+        }
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point1.S = shade << 7;
+    }
+    point1.S = calculate_enginepoint_shade_1(&point1, p_face, 2);
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if ((vec_mode == 2) || (vec_mode == 0))
+    {
+        point3.S = 0x200000;
+    }
+    else
+    {
+        ushort light, shade;
+        short i;
+
+        light = p_face->Light1;
+        shade = p_face->Shade1 << 7;
+        for (i = 0; (i <= 100) && (light != 0); i++)
+        {
+            struct QuickLight *p_qlight;
+            short intens;
+
+            p_qlight = &game_quick_lights[light];
+            intens = game_full_lights[p_qlight->Light].Intensity;
+            light = p_qlight->NextQuick;
+            shade += intens * p_qlight->Ratio;
+        }
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point3.S = shade << 7;
+    }
+    point3.S = calculate_enginepoint_shade_1(&point3, p_face, 1u);
+
+    if (!byte_19EC6F)
+    {
+      point2.S = 0x200000;
+      point1.S = 0x200000;
+      point3.S = 0x200000;
+    }
+    dword_176D4C++;
+
+    if (game_perspective == 3)
+    {
+        vec_colour = colour_lookup[3];
+        if (!lbKeyOn[KC_RALT])
+        {
+            poly_line(&point2, &point3);
+            poly_line(&point1, &point3);
+            poly_line(&point2, &point1);
+        }
+    }
+    else
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point2, &point1, &point3);
+        if ((p_face->GFlags & 0x01) != 0)
+        {
+            if (vec_mode == 2)
+                vec_mode = 27;
+            draw_trigpoly(&point2, &point3, &point1);
+            dword_176D4C++;
+        }
+    }
+    if (byte_1C844E) {
+        swap_wscreen();
+    }
 }
 
 void draw_sort_sprite1a(ushort a1)
