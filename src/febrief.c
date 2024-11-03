@@ -30,6 +30,7 @@
 #include "guitext.h"
 #include "purpldrw.h"
 #include "display.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "keyboard.h"
 #include "lvobjctv.h"

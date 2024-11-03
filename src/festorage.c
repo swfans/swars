@@ -22,6 +22,7 @@
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/

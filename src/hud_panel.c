@@ -28,6 +28,7 @@
 #include "display.h"
 #include "engintrns.h"
 #include "game_speed.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "lvobjctv.h"
 #include "mydraw.h"

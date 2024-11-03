@@ -431,12 +431,6 @@ extern struct LevelMisc *game_level_miscs;
 extern long target_old_frameno;
 extern ushort word_176E38;
 
-extern struct TbSprite *pop1_sprites;
-
-extern struct TbSprite *unk2_sprites;
-
-extern struct TbSprite *m_sprites;
-
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
 extern ubyte linear_vec_pal[256];

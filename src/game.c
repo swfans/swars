@@ -57,6 +57,7 @@
 #include "engintrns.h"
 #include "enginzoom.h"
 #include "game_data.h"
+#include "game_sprts.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "femail.h"
@@ -126,36 +127,6 @@
 extern char *fadedat_fname;
 extern unsigned long unkn_buffer_04;
 char session_name[20] = "SWARA";
-
-extern ubyte *small_font_data;
-extern ubyte *small2_font_data;
-extern ubyte *small_med_font_data;
-extern ubyte *med_font_data;
-extern ubyte *med2_font_data;
-extern ubyte *big_font_data;
-
-extern ubyte *pointer_data;
-
-extern struct TbSprite *sprites_Icons0_0;
-extern struct TbSprite *sprites_Icons0_0_end;
-extern ubyte *sprites_Icons0_0_data;
-
-extern struct TbSprite *unk1_sprites;
-extern struct TbSprite *unk1_sprites_end;
-extern ubyte *unk1_sprites_data;
-
-extern struct TbSprite *unk3_sprites_end;
-extern ubyte *unk3_sprites_data;
-
-extern struct TbSprite *unk2_sprites_end;
-extern ubyte *unk2_sprites_data;
-
-extern struct TbSprite *pop1_sprites_end;
-extern ubyte *pop1_data;
-
-extern ubyte *m_spr_data;
-extern ubyte *m_spr_data_end;
-extern struct TbSprite *m_sprites_end;
 
 extern ulong stored_l3d_next_object[1];
 extern ulong stored_l3d_next_object_face[1];
@@ -3506,22 +3477,6 @@ int joy_func_067(struct DevInput *dinp, int a2)
     asm volatile ("call ASM_joy_func_067\n"
         : "=r" (ret) : "a" (dinp), "d" (a2));
     return ret;
-}
-
-void setup_mouse_pointers(void)
-{
-    struct TbSprite *spr;
-
-    LbSpriteSetup(pointer_sprites, pointer_sprites_end, pointer_data);
-    // Make mouse pointer sprite 1 an empty (zero size) sprite
-    spr = &pointer_sprites[1];
-    spr->SWidth = 0;
-    spr->SHeight = 0;
-}
-
-void reset_mouse_pointers(void)
-{
-    LbSpriteReset(pointer_sprites, pointer_sprites_end, pointer_data);
 }
 
 /** Sets up initially loaded multicolor sprites.

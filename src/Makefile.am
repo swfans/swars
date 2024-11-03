@@ -125,6 +125,8 @@ swars_SOURCES = \
 	game_data.h \
 	game_speed.c \
 	game_speed.h \
+	game_sprts.c \
+	game_sprts.h \
 	game.h \
 	globals.h \
 	hud_panel.c \
