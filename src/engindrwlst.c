@@ -55,6 +55,15 @@ extern ushort tnext_sort_sprite;
 extern ushort tnext_special_face4;
 
 extern long dword_176CC4;
+extern long unkn1_pos_x;
+extern long unkn1_pos_y;
+extern struct TbSprite *unkn1_spr;
+extern long dword_176CE0;
+extern long dword_176CE4;
+extern long dword_176CE8;
+extern long dword_176CEC;
+extern long dword_176CF0;
+extern long dword_176CF4;
 extern long dword_176D00;
 extern long dword_176D04;
 
@@ -86,58 +95,68 @@ void LbSpriteDraw_2(int x, int y, struct TbSprite *spr)
 
 void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scale, ushort alpha)
 {
+#if 0
+    asm volatile (
+      "push %4\n"
+      "call ASM_draw_unkn1_scaled_alpha_sprite\n"
+        : : "a" (fr), "d" (scr_x), "b" (scr_y), "c" (scale), "g" (alpha));
+    return;
+#endif
     struct Frame *p_frm;
     struct Element *p_el;
     int pos_x, pos_y;
     int swidth, sheight;
-    int el;
 
-    pos_x = 99999;
-    pos_y = 99999;
+    p_frm = &frame[fr];
     lbSpriteReMapPtr = &pixmap.fade_table[256 * alpha];
     //TODO would probably make more sense to set the ghost ptr somewhere during game setup
     render_ghost = &pixmap.ghost_table[0*PALETTE_8b_COLORS];
-    p_frm = &frame[fr];
 
-    for (el = p_frm->FirstElement; ; el = p_el->Next)
+    pos_x = 99999;
+    pos_y = 99999;
+    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
     {
-        p_el = &melement_ani[el];
-        if (p_el <= melement_ani)
-            break;
-        if (p_el->X >> 1 < pos_x)
+        if (pos_x > p_el->X >> 1)
             pos_x = p_el->X >> 1;
-        if (p_el->Y >> 1 < pos_y)
+        if (pos_y > p_el->Y >> 1)
             pos_y = p_el->Y >> 1;
     }
 
     swidth = p_frm->SWidth;
     sheight = p_frm->SHeight;
-    if ((swidth * scale >> 9 <= 1) || (sheight * scale >> 9 <= 1))
+    word_1A5834 = pos_x;
+    word_1A5836 = pos_y;
+    if ((scale * swidth) >> 9 <= 1)
+        return;
+    if ((scale * sheight) >> 9 <= 1)
         return;
 
-    LbSpriteSetScalingData(scr_x + (pos_x * scale >> 8), scr_y + (pos_y * scale >> 8),
-      swidth >> 1, sheight >> 1, swidth * scale >> 9, sheight * scale >> 9);
+    dword_176CF0 = (scale * swidth) >> 9;
+    dword_176CF4 = (scale * sheight) >> 9;
+    dword_176CE0 = scr_x + ((scale * pos_x) >> 8);
+    dword_176CE4 = scr_y + ((scale * pos_y) >> 8);
+    dword_176CE8 = swidth >> 1;
+    dword_176CEC = sheight >> 1;
+    SetAlphaScalingData(dword_176CE0, dword_176CE4, dword_176CE8, dword_176CEC, dword_176CF0, dword_176CF4);
 
-    for (el = p_frm->FirstElement; ; el = p_el->Next)
+    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
     {
-        struct TbSprite *spr;
-        int sscr_x, sscr_y;
+        struct TbSprite *p_spr;
 
-        p_el = &melement_ani[el];
-        if (p_el <= melement_ani)
-            break;
         if ((p_el->Flags & 0xFE00) != 0)
             continue;
-        spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
-        if (spr <= m_sprites)
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
+        if (p_spr <= m_sprites)
             continue;
 
         lbDisplay.DrawFlags = p_el->Flags & 0x0F;
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) == 0)
             lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
-        sscr_x = (p_el->X >> 1) - pos_x;
-        sscr_y = (p_el->Y >> 1) - pos_y;
-        LbSpriteDrawUsingScalingData(sscr_x, sscr_y, spr);
+
+        unkn1_pos_x = (p_el->X >> 1) - pos_x;
+        unkn1_pos_y = (p_el->Y >> 1) - pos_y;
+        unkn1_spr = p_spr;
+        DrawSpriteWthShadowUsingScalingData(unkn1_pos_x, unkn1_pos_y, p_spr);
     }
     lbDisplay.DrawFlags = 0;
 }
