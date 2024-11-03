@@ -98,6 +98,7 @@ void draw_object_face1a(ushort face)
     asm volatile (
       "call ASM_draw_object_face1a\n"
         : : "a" (face));
+    return;
 #endif
     struct PolyPoint point2;
     struct PolyPoint point1;
@@ -1047,60 +1048,165 @@ void draw_object_face4g(ushort face4)
     }
 }
 
-void draw_object_face1e(ushort a1)
+void draw_object_face1e(ushort face)
 {
+#if 0
     asm volatile (
       "call ASM_draw_object_face1e\n"
-        : : "a" (a1));
+        : : "a" (face));
+    return;
+#endif
+    struct SingleObjectFace3 *p_face;
+    struct PolyPoint point3;
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+
+    p_face = &game_object_faces[face];
+    vec_colour = p_face->ExCol;
+    vec_mode = 27;
+    vec_map = vec_tmap[4];
+    {
+        struct Normal *p_nrml;
+        sbyte texU, texV;
+
+        p_nrml = &game_normals[p_face->Shade0];
+        texU = p_nrml->LightRatio;
+        texV = p_nrml->LightRatio >> 8;
+        point1.U = (texU + 32) << 16;
+        point1.V = (texV + 128) << 16;
+    }
+    {
+        struct Normal *p_nrml;
+        sbyte texU, texV;
+
+        p_nrml = &game_normals[p_face->Shade2];
+        texU = p_nrml->LightRatio;
+        texV = p_nrml->LightRatio >> 8;
+        point2.U = (texU + 32) << 16;
+        point2.V = (texV + 128) << 16;
+    }
+    {
+        struct Normal *p_nrml;
+        sbyte texU, texV;
+
+        p_nrml = &game_normals[p_face->Shade1];
+        texU = p_nrml->LightRatio;
+        texV = p_nrml->LightRatio >> 8;
+        point3.U = (texU + 32) << 16;
+        point3.V = (texV + 128) << 16;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    dword_176D4C++;
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+
+    if ((p_face->GFlags & 0x01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point3, &point2);
+    }
 }
 
 void draw_object_face4f(ushort a1)
 {
+#if 1
     asm volatile (
       "call ASM_draw_object_face4f\n"
         : : "a" (a1));
+    return;
+#endif
 }
 
 void draw_shrapnel(ushort shrap)
 {
+#if 1
     asm volatile (
       "call ASM_draw_shrapnel\n"
         : : "a" (shrap));
+    return;
+#endif
 }
 
 void draw_phwoar(ushort ph)
 {
+#if 1
     asm volatile (
       "call ASM_draw_phwoar\n"
         : : "a" (ph));
+    return;
+#endif
 }
 
 void draw_sort_sprite_tng(short a1)
 {
+#if 1
     asm volatile (
       "call ASM_draw_sort_sprite_tng\n"
         : : "a" (a1));
+    return;
+#endif
 }
 
 void draw_object_face4e(ushort a1)
 {
+#if 1
     asm volatile (
       "call ASM_draw_object_face4e\n"
         : : "a" (a1));
+    return;
+#endif
 }
 
 void draw_object_face1d(ushort a1)
 {
+#if 1
     asm volatile (
       "call ASM_draw_object_face1d\n"
         : : "a" (a1));
+    return;
+#endif
 }
 
 void draw_ssample_screen_point(ushort a1)
 {
+#if 1
     asm volatile (
       "call ASM_draw_ssample_screen_point\n"
         : : "a" (a1));
+    return;
+#endif
 }
 
 void draw_screen_number(ushort sospr)
