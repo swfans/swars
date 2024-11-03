@@ -91,14 +91,60 @@ void setup_mouse_pointers(void);
 void reset_mouse_pointers(void);
 
 TbResult load_sprites_icons(ubyte **pp_buf, const char *dir);
+void setup_sprites_icons(void);
+void reset_sprites_icons(void);
+
 TbResult load_sprites_wicons(ubyte **pp_buf, const char *dir);
+void setup_sprites_wicons(void);
+void reset_sprites_wicons(void);
+
 TbResult load_sprites_panel(ubyte **pp_buf, const char *dir);
+void setup_sprites_panel(void);
+void reset_sprites_panel(void);
+
 TbResult load_sprites_mouse(ubyte **pp_buf, const char *dir);
-TbResult load_sprites_med_font(ubyte **pp_buf, const char *dir);
-TbResult load_sprites_big_font(ubyte **pp_buf, const char *dir);
+void setup_sprites_mouse(void);
+void reset_sprites_mouse(void);
+
+void setup_sprites_small_font(void);
+void reset_sprites_small_font(void);
+
 TbResult load_sprites_small_med_font(ubyte **pp_buf, const char *dir);
+void setup_sprites_small_med_font(void);
+void reset_sprites_small_med_font(void);
+
+TbResult load_sprites_med_font(ubyte **pp_buf, const char *dir);
+void setup_sprites_med_font(void);
+void reset_sprites_med_font(void);
+
 TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir);
+void setup_sprites_med2_font(void);
+void reset_sprites_med2_font(void);
+
+TbResult load_sprites_big_font(ubyte **pp_buf, const char *dir);
+void setup_sprites_big_font(void);
+void reset_sprites_big_font(void);
+
 TbResult load_sprites_small2_font(ubyte **pp_buf, const char *dir);
+void setup_sprites_small2_font(void);
+void reset_sprites_small2_font(void);
+
+/** Loads and sets up multicolor sprites for currently set TrenchcoatPreference.
+ */
+TbResult load_multicolor_sprites(const char *dir);
+
+/** Sets up initially loaded multicolor sprites.
+ * Use load_multicolor_sprites() for forther reloads.
+ */
+void setup_multicolor_sprites(void);
+void reset_multicolor_sprites(void);
+void debug_multicolor_sprite(int idx);
+
+/** Loads and sets up panel sprites for currently set PanelPermutation.
+ */
+TbResult load_pop_sprites(const char *dir);
+void setup_pop_sprites(void);
+void reset_pop_sprites(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

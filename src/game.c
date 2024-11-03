@@ -992,9 +992,10 @@ void load_outro_sprites(void)
     next_pos += next_len;
     med2_font_end = (struct TbSprite *)&data_buf[next_pos];
 
-    LbSpriteSetup(med_font, med_font_end, med_font_data);
-    LbSpriteSetup(med2_font, med2_font_end, med2_font_data);
-    LbSpriteSetup(big_font, big_font_end, big_font_data);
+    setup_sprites_med_font();
+    setup_sprites_med2_font();
+    setup_sprites_big_font();
+
 
     outtxt_ptr = &data_buf[next_pos];
     next_len = load_outro_text(outtxt_ptr);
@@ -3479,67 +3480,148 @@ int joy_func_067(struct DevInput *dinp, int a2)
     return ret;
 }
 
-/** Sets up initially loaded multicolor sprites.
- * Use load_multicolor_sprites() for forther reloads.
- */
-void setup_multicolor_sprites(void)
+TbResult load_mapout(ubyte **pp_buf, const char *dir)
 {
-    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
-}
-
-/** Loads and sets up multicolor sprites for currently set TrenchcoatPreference.
- */
-void load_multicolor_sprites(void)
-{
-    ulong sz;
-    char fname[100];
-
-    sprintf(fname, "data/mspr-%d.dat", ingame.TrenchcoatPreference);
-    LbFileLoadAt(fname, m_spr_data);
-    sprintf(fname, "data/mspr-%d.tab", ingame.TrenchcoatPreference);
-    sz = LbFileLoadAt(fname, m_sprites);
-    m_sprites_end = (struct TbSprite *)((ubyte *)m_sprites + sz);
-    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
-}
-
-void reset_multicolor_sprites(void)
-{
-    LbSpriteReset(m_sprites, m_sprites_end, m_spr_data);
-}
-
-void debug_multicolor_sprite(int idx)
-{
+    char locstr[52];
+    ubyte *p_buf;
+    long len;
     int i;
-    char strdata[100];
-    char *str;
-    struct TbSprite *spr;
-    unsigned char *ptr;
-    spr = &m_sprites[idx];
-    str = strdata;
-    sprintf(str, "spr %d width %d height %d ptr 0x%lx data",
-      idx, (int)spr->SWidth, (int)spr->SHeight, (ulong)spr->Data);
-    ptr = spr->Data;
-    for (i = 0; i < 10; i++)
+    TbResult ret;
+
+    p_buf = *pp_buf;
+    ret = Lb_OK;
+
+    for (i = 0; i < 6; i++)
     {
-        str = strdata + strlen(strdata);
-        sprintf(str, " %02x", (int)*ptr);
-        ptr++;
+        dword_1C529C[i] = (short *)p_buf;
+        sprintf(locstr, "%s/mapout%02d.dat", dir, i);
+        len = LbFileLoadAt(locstr, dword_1C529C[i]);
+        if (len == -1) {
+            LOGERR("Could not read file '%s'", locstr);
+            ret = Lb_FAIL;
+            len = 64;
+            LbMemorySet(p_buf, '\0', len);
+        }
+        p_buf += len;
     }
-    LOGDBG("m_sprites: %s", strdata);
+
+    landmap_2B4 = (short *)p_buf;
+    sprintf(locstr, "%s/mapinsid.dat", dir);
+    len = LbFileLoadAt(locstr, p_buf);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 64;
+        LbMemorySet(p_buf, '\0', len);
+    }
+    p_buf += len;
+
+    *pp_buf = p_buf;
+    return ret;
 }
 
-/** Loads and sets up panel sprites for currently set PanelPermutation.
- */
-void load_pop_sprites(void)
+TbResult init_read_all_sprite_files(void)
 {
-    char fname[DISKPATH_SIZE];
-    int file_len;
-    sprintf(fname, "data/pop%d-0.dat", -ingame.PanelPermutation - 1);
-    LbFileLoadAt(fname, pop1_data);
-    sprintf(fname, "data/pop%d-0.tab", -ingame.PanelPermutation - 1);
-    file_len = LbFileLoadAt(fname, pop1_sprites);
-    pop1_sprites_end = &pop1_sprites[file_len/sizeof(struct TbSprite)];
-    LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
+    PathInfo *pinfo;
+    ubyte *p_buf;
+    TbResult tret, ret;
+
+    pinfo = &game_dirs[DirPlace_Data];
+    p_buf = (ubyte *)&purple_draw_list[750];
+    tret = Lb_OK;
+
+    ret = load_sprites_icons(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_wicons(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_panel(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_mouse(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_med_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_big_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_small_med_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_med2_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_small2_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    dword_1C6DE4 = p_buf;
+    p_buf += 24480;
+    dword_1C6DE8 = p_buf;
+    p_buf += 24480;
+
+    ret = load_mapout(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    // TODO why adding this without remembering previous pointer?
+    p_buf += 41005;
+    back_buffer = p_buf;
+
+    setup_sprites_icons();
+    setup_sprites_wicons();
+    setup_sprites_panel();
+    setup_sprites_mouse();
+    setup_sprites_small_font();
+    setup_sprites_small2_font();
+    setup_sprites_small_med_font();
+    setup_sprites_med_font();
+    setup_sprites_med2_font();
+    setup_sprites_big_font();
+
+    if (tret == Lb_FAIL) {
+        LOGERR("Some files were not loaded successfully");
+        ingame.DisplayMode = DpM_UNKN_1;
+    }
+    return tret;
+}
+
+TbResult prep_multicolor_sprites(void)
+{
+    PathInfo *pinfo;
+    TbResult ret;
+
+    pinfo = &game_dirs[DirPlace_Data];
+    ret = load_multicolor_sprites(pinfo->directory);
+    setup_multicolor_sprites();
+    if (ret == Lb_FAIL) {
+        LOGERR("Some files were not loaded successfully");
+    }
+    return ret;
+}
+
+TbResult prep_pop_sprites(void)
+{
+    PathInfo *pinfo;
+    TbResult ret;
+
+    pinfo = &game_dirs[DirPlace_Data];
+    ret = load_pop_sprites(pinfo->directory);
+    setup_pop_sprites();
+    if (ret == Lb_FAIL) {
+        LOGERR("Some files were not loaded successfully");
+    }
+    return ret;
 }
 
 void setup_host(void)
@@ -3565,7 +3647,7 @@ void setup_host(void)
     ingame.TrenchcoatPreference = 0;
     setup_multicolor_sprites();
     ingame.PanelPermutation = -2;
-    load_pop_sprites();
+    prep_pop_sprites();
     game_panel = game_panel_lo;
     init_memory(mem_game);
 
@@ -4630,7 +4712,7 @@ void prep_single_mission(void)
     load_missions(background_type);
     load_objectives_text();
     init_game(0);
-    load_multicolor_sprites();
+    prep_multicolor_sprites();
     LbScreenClear(0);
     generate_shadows_for_multicolor_sprites();
     adjust_mission_engine_to_video_mode();
@@ -4830,7 +4912,7 @@ void game_setup(void)
     setup_color_lookups();
     init_things();
     debug_trace_setup(-2);
-    LbSpriteSetup(small_font, small_font_end, small_font_data);
+    setup_sprites_small_font();
     load_peep_type_stats();
     load_campaigns();
     players[local_player_no].MissionAgents = 0x0F;
@@ -5057,128 +5139,6 @@ void BAT_play(void)
 {
     asm volatile ("call ASM_BAT_play\n"
         :  :  : "eax" );
-}
-
-TbResult load_mapout(ubyte **pp_buf, const char *dir)
-{
-    char locstr[52];
-    ubyte *p_buf;
-    long len;
-    int i;
-    TbResult ret;
-
-    p_buf = *pp_buf;
-    ret = Lb_OK;
-
-    for (i = 0; i < 6; i++)
-    {
-        dword_1C529C[i] = (short *)p_buf;
-        sprintf(locstr, "%s/mapout%02d.dat", dir, i);
-        len = LbFileLoadAt(locstr, dword_1C529C[i]);
-        if (len == -1) {
-            LOGERR("Could not read file '%s'", locstr);
-            ret = Lb_FAIL;
-            len = 64;
-            LbMemorySet(p_buf, '\0', len);
-        }
-        p_buf += len;
-    }
-
-    landmap_2B4 = (short *)p_buf;
-    sprintf(locstr, "%s/mapinsid.dat", dir);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 64;
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
-
-    *pp_buf = p_buf;
-    return ret;
-}
-
-TbResult init_read_all_sprite_files(void)
-{
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_init_read_all_sprite_files\n"
-        : "=r" (ret) : );
-    return ret;
-#endif
-    PathInfo *pinfo;
-    ubyte *p_buf;
-    TbResult tret, ret;
-
-    pinfo = &game_dirs[DirPlace_Data];
-    p_buf = (ubyte *)&purple_draw_list[750];
-    tret = Lb_OK;
-
-    ret = load_sprites_icons(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_wicons(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_panel(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_mouse(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_med_font(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_big_font(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_small_med_font(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_med2_font(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_small2_font(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    dword_1C6DE4 = p_buf;
-    p_buf += 24480;
-    dword_1C6DE8 = p_buf;
-    p_buf += 24480;
-
-    ret = load_mapout(&p_buf, pinfo->directory);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    // TODO why adding this without remembering previous pointer?
-    p_buf += 41005;
-    back_buffer = p_buf;
-
-    LbSpriteSetup(sprites_Icons0_0, sprites_Icons0_0_end, sprites_Icons0_0_data);
-    LbSpriteSetup(unk1_sprites, unk1_sprites_end, unk1_sprites_data);
-    LbSpriteSetup(unk2_sprites, unk2_sprites_end, unk2_sprites_data);
-    LbSpriteSetup(unk3_sprites, unk3_sprites_end, unk3_sprites_data);
-    LbSpriteSetup(small_font, small_font_end, small_font_data);
-    LbSpriteSetup(small2_font, small2_font_end, small2_font_data);
-    LbSpriteSetup(small_med_font, small_med_font_end, small_med_font_data);
-    LbSpriteSetup(med_font, med_font_end, med_font_data);
-    LbSpriteSetup(med2_font, med2_font_end, med2_font_data);
-    LbSpriteSetup(big_font, big_font_end, big_font_data);
-
-    if (tret == Lb_FAIL) {
-        LOGERR("Some files were not loaded successfully");
-        ingame.DisplayMode = DpM_UNKN_1;
-    }
-    return tret;
 }
 
 ubyte change_panel_permutation(ubyte click)
@@ -7134,7 +7094,7 @@ ubyte do_user_interface(void)
         StopCD();
         if (++ingame.TrenchcoatPreference > 5)
             ingame.TrenchcoatPreference = 0;
-        load_multicolor_sprites();
+        prep_multicolor_sprites();
     }
 
     // adjust palette brightness
@@ -8867,7 +8827,7 @@ void show_load_and_prep_mission(void)
     // Set up remaining graphics data and controls
     if ( start_into_mission )
     {
-        load_multicolor_sprites();
+        prep_multicolor_sprites();
         LbScreenClear(0);
         generate_shadows_for_multicolor_sprites();
         adjust_mission_engine_to_video_mode();
