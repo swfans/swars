@@ -69,6 +69,8 @@ swars_SOURCES = \
 	enginpriobjs.h \
 	enginpritxtr.c \
 	enginpritxtr.h \
+	enginshrapn.c \
+	enginshrapn.h \
 	enginsngobjs.c \
 	enginsngobjs.h \
 	enginsngtxtr.c \

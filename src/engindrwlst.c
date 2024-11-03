@@ -30,6 +30,7 @@
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "enginshadws.h"
+#include "enginshrapn.h"
 #include "engintrns.h"
 #include "game_speed.h"
 #include "game.h"
@@ -1266,12 +1267,54 @@ void draw_object_face4f(ushort face4)
 
 void draw_shrapnel(ushort shrap)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_draw_shrapnel\n"
         : : "a" (shrap));
     return;
 #endif
+    struct Shrapnel *p_shrap;
+    struct PolyPoint point3;
+    struct PolyPoint point2;
+    struct PolyPoint point1;
+
+    p_shrap = &shrapnel[shrap];
+
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_shrap->PointOffset + 0];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_shrap->PointOffset + 1];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_shrap->PointOffset + 2];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+
+    vec_mode = 0;
+    vec_colour = colour_lookup[8];
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+    vec_colour = colour_lookup[9];
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point3, &point2);
+    }
 }
 
 void draw_phwoar(ushort ph)
