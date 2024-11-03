@@ -233,7 +233,7 @@ void draw_object_face1a(ushort face)
             shade = 0x7F00;
         point3.S = shade << 7;
     }
-    point3.S = calculate_enginepoint_shade_1(&point3, p_face, 1u);
+    point3.S = calculate_enginepoint_shade_1(&point3, p_face, 1);
 
     if (!byte_19EC6F)
     {
@@ -370,7 +370,8 @@ void draw_object_face1c(ushort face)
 #if 0
     asm volatile (
       "call ASM_draw_object_face1c\n"
-        : : "a" (a1));
+        : : "a" (face));
+    return;
 #endif
     struct PolyPoint point1;
     struct PolyPoint point2;
@@ -531,9 +532,9 @@ void draw_object_face1c(ushort face)
 
     if (!byte_19EC6F)
     {
-      point1.S = 0x200000;
-      point2.S = 0x200000;
-      point3.S = 0x200000;
+        point1.S = 0x200000;
+        point2.S = 0x200000;
+        point3.S = 0x200000;
     }
     dword_176D4C++;
 
@@ -579,11 +580,278 @@ void draw_object_face1c(ushort face)
     }
 }
 
-void draw_object_face4d(ushort a1)
+void draw_object_face4d(ushort face4)
 {
+#if 0
     asm volatile (
       "call ASM_draw_object_face4d\n"
-        : : "a" (a1));
+        : : "a" (face4));
+    return;
+#endif
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point3;
+    struct PolyPoint point4;
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+
+    p_face4 = &game_object_faces4[face4];
+    vec_colour = p_face4->ExCol;
+    vec_mode = p_face4->Flags;
+    if (p_face4->Texture != 0)
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = &game_textures[p_face4->Texture];
+        vec_map = vec_tmap[p_sftex->Page];
+        if (p_face4->GFlags != 0)
+        {
+            if ((p_face4->GFlags & 0x02) != 0) {
+                vec_map = scratch_buf1;
+            }
+            if ((p_face4->GFlags & 0x40) != 0) {
+                uint frame;
+                frame = gameturn + p_face4->Object;
+                if ((frame & 0x1FF) > 0x100 && !byte_153014[frame & 0x3F])
+                    vec_mode = 5;
+            }
+        }
+        if ((p_face4->GFlags & 0x20) != 0) {
+            point2.U = p_sftex->TMapX4 << 16;
+            point2.V = p_sftex->TMapY4 << 16;
+        } else {
+            point2.U = p_sftex->TMapX3 << 16;
+            point2.V = p_sftex->TMapY3 << 16;
+        }
+        point1.U = p_sftex->TMapX1 << 16;
+        point1.V = p_sftex->TMapY1 << 16;
+        point3.U = p_sftex->TMapX2 << 16;
+        point3.V = p_sftex->TMapY2 << 16;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if (vec_mode == 2)
+    {
+        point1.S = 0x200000;
+    }
+    else
+    {
+        ushort light, shade;
+        short i;
+
+        light = p_face4->Light0;
+        shade = p_face4->Shade0 << 7;
+        for (i = 0; (i <= 100) && (light != 0); i++)
+        {
+            struct QuickLight *p_qlight;
+            short intens;
+
+            p_qlight = &game_quick_lights[light];
+            intens = game_full_lights[p_qlight->Light].Intensity;
+            light = p_qlight->NextQuick;
+            shade += intens * p_qlight->Ratio;
+        }
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point1.S = shade << 7;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if (game_perspective == 7)
+    {
+        vec_mode = 7;
+        vec_colour = point1.S >> 16;
+    }
+    else
+    {
+        if (vec_mode == 2)
+        {
+            point2.S = 0x200000;
+        }
+        else
+        {
+            ushort light, shade;
+            short i;
+
+            light = p_face4->Light2;
+            shade = p_face4->Shade2 << 7;
+            for (i = 0; (i <= 100) && (light != 0); i++)
+            {
+                struct QuickLight *p_qlight;
+                short intens;
+
+                p_qlight = &game_quick_lights[light];
+                intens = game_full_lights[p_qlight->Light].Intensity;
+                light = p_qlight->NextQuick;
+                shade += intens * p_qlight->Ratio;
+            }
+            if (shade > 0x7E00)
+                shade = 0x7F00;
+            point2.S = shade << 7;
+        }
+
+        if (vec_mode == 2)
+        {
+            point3.S = 0x200000;
+        }
+        else
+        {
+            ushort light, shade;
+            short i;
+
+            light = p_face4->Light1;
+            shade = p_face4->Shade1 << 7;
+            for (i = 0; (i <= 100) && (light != 0); i++)
+            {
+                struct QuickLight *p_qlight;
+                short intens;
+
+                p_qlight = &game_quick_lights[light];
+                intens = game_full_lights[p_qlight->Light].Intensity;
+                light = p_qlight->NextQuick;
+                shade += intens * p_qlight->Ratio;
+            }
+            if (shade > 0x7E00)
+                shade = 0x7F00;
+            point3.S = shade << 7;
+        }
+
+        if (vec_mode == 2)
+        {
+            point4.S = 0x200000;
+        }
+        else
+        {
+            ushort light, shade;
+            short i;
+
+            light = p_face4->Light3;
+            shade = p_face4->Shade3 << 7;
+            for (i = 0; (i <= 100) && (light != 0); i++)
+            {
+                struct QuickLight *p_qlight;
+                short intens;
+
+                p_qlight = &game_quick_lights[light];
+                intens = game_full_lights[p_qlight->Light].Intensity;
+                light = p_qlight->NextQuick;
+                shade += intens * p_qlight->Ratio;
+            }
+            if (shade > 0x7E00)
+                shade = 0x7F00;
+            point4.S = shade << 7;
+        }
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[3]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point4.X = p_scrpoint->X + dword_176D00;
+        point4.Y = p_scrpoint->Y + dword_176D04;
+    }
+
+    if (!byte_19EC6F)
+    {
+        point1.S = 0x200000;
+        point2.S = 0x200000;
+        point3.S = 0x200000;
+        point4.S = 0x200000;
+    }
+    dword_176D4C++;
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+
+    if ((p_face4->GFlags & 0x01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point3, &point2);
+    }
+
+    if ((p_face4->GFlags & 0x04) != 0)
+    {
+        PlayerInfo *p_locplayer;
+
+        p_locplayer = &players[local_player_no];
+        if (p_locplayer->TargetType < 3) {
+            check_mouse_over_face(&point1, &point2, &point3, face4, 2);
+        }
+    }
+
+    if (p_face4->Texture != 0)
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = &game_textures[p_face4->Texture];
+        if ((p_face4->GFlags & 0x20) != 0) {
+            point4.U = p_sftex->TMapX3 << 16;
+            point4.V = p_sftex->TMapY3 << 16;
+            point2.U = p_sftex->TMapX4 << 16;
+            point2.V = p_sftex->TMapY4 << 16;
+        } else {
+            point4.U = p_sftex->TMapX4 << 16;
+            point4.V = p_sftex->TMapY4 << 16;
+            point2.U = p_sftex->TMapX3 << 16;
+            point2.V = p_sftex->TMapY3 << 16;
+        }
+        point3.U = p_sftex->TMapX2 << 16;
+        point3.V = p_sftex->TMapY2 << 16;
+    }
+    dword_176D4C++;
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point2);
+    }
+
+    if ((p_face4->GFlags & 0x01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point2, &point3);
+    }
+
+    if ((p_face4->GFlags & 0x04) != 0)
+    {
+        PlayerInfo *p_locplayer;
+
+        p_locplayer = &players[local_player_no];
+        if (p_locplayer->TargetType < 3) {
+            check_mouse_over_face(&point4, &point3, &point2, face4, 3);
+        }
+    }
 }
 
 void draw_object_face4g(ushort a1)
@@ -649,13 +917,14 @@ void draw_ssample_screen_point(ushort a1)
         : : "a" (a1));
 }
 
-void draw_screen_number(ushort a1)
+void draw_screen_number(ushort sospr)
 {
     char locstr[50];
-    struct SortSprite *sspr;
-    sspr = &game_sort_sprites[a1];
-    sprintf(locstr, "%d", (int)sspr->PThing);
-    draw_text(2 * sspr->X,2 * sspr->Y, locstr, colour_lookup[2]);
+    struct SortSprite *p_sospr;
+
+    p_sospr = &game_sort_sprites[sospr];
+    sprintf(locstr, "%d", (int)p_sospr->PThing);
+    draw_text(2 * p_sospr->X,2 * p_sospr->Y, locstr, colour_lookup[2]);
 }
 
 // Special non-textured draw; used during nuclear explosions?
