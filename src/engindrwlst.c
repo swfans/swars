@@ -56,6 +56,9 @@ extern long dword_176CC4;
 extern long dword_176D00;
 extern long dword_176D04;
 
+extern short word_1A5834;
+extern short word_1A5836;
+
 extern ubyte byte_1C844E;
 
 sbyte byte_153014[] = {
@@ -64,6 +67,20 @@ sbyte byte_153014[] = {
   0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 };
+
+void LbSpriteDraw_1(int x, int y, struct TbSprite *spr)
+{
+    asm volatile (
+      "call ASM_LbSpriteDraw_1\n"
+        : : "a" (x), "d" (y), "b" (spr));
+}
+
+void LbSpriteDraw_2(int x, int y, struct TbSprite *spr)
+{
+    asm volatile (
+      "call ASM_LbSpriteDraw_2\n"
+        : : "a" (x), "d" (y), "b" (spr));
+}
 
 void reset_drawlist(void)
 {
@@ -1320,12 +1337,50 @@ void draw_shrapnel(ushort shrap)
 
 void draw_phwoar(ushort ph)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_draw_phwoar\n"
         : : "a" (ph));
     return;
 #endif
+    struct Phwoar *p_phwoar;
+    struct Element *p_elem;
+    ushort el;
+    int point_x, point_y;
+
+    p_phwoar = &phwoar[ph];
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_phwoar->PointOffset];
+        point_x = p_scrpoint->X + dword_176D00;
+        point_y = p_scrpoint->Y + dword_176D04;
+    }
+
+    el = frame[p_phwoar->f].FirstElement;
+    for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
+    {
+        struct TbSprite *p_spr;
+
+        el = p_elem->Next;
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+        if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
+            continue;
+
+        lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+        if ((p_elem->Flags & 0xFE00) == 0)
+        {
+            if (lbDisplay.ScreenMode == 1)
+                LbSpriteDraw_1(point_x + (p_elem->X >> 1), point_y + (p_elem->Y >> 1), p_spr);
+            else
+                LbSpriteDraw_2(point_x + p_elem->X, point_y + p_elem->Y, p_spr);
+        }
+        if (word_1A5834 > p_elem->X >> 1)
+            word_1A5834 = p_elem->X >> 1;
+        if (word_1A5836 > p_elem->Y >> 1)
+            word_1A5836 = p_elem->Y >> 1;
+    }
+    lbDisplay.DrawFlags = 0;
 }
 
 void draw_sort_sprite_tng(short a1)

@@ -28,24 +28,44 @@ extern "C" {
 #pragma pack(1)
 
 struct Shrapnel {
-  int x;
-  int y;
-  int z;
-  sbyte vx;
-  sbyte vy;
-  sbyte vz;
-  ubyte yaw;
-  ubyte pitch;
-  sbyte vyaw;
-  sbyte vpitch;
-  ubyte type;
-  ushort PointOffset;
-  ushort child;
+    int x;
+    int y;
+    int z;
+    sbyte vx;
+    sbyte vy;
+    sbyte vz;
+    ubyte yaw;
+    ubyte pitch;
+    sbyte vyaw;
+    sbyte vpitch;
+    ubyte type;
+    ushort PointOffset;
+    ushort child;
+};
+
+struct Phwoar {
+    int x;
+    int y;
+    int z;
+    sbyte vx;
+    sbyte vy;
+    sbyte vz;
+    ubyte type;
+    ubyte rabbit;
+    ubyte gestation;
+    sbyte die;
+    ubyte vf;
+    ushort f;
+    ushort PointOffset;
+    ushort child;
+    ubyte fc;
+    ubyte shit;
 };
 
 #pragma pack()
 /******************************************************************************/
 extern struct Shrapnel shrapnel[512];
+extern struct Phwoar phwoar[1024];
 
 /******************************************************************************/
 #ifdef __cplusplus

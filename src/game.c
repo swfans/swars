@@ -1447,13 +1447,6 @@ void draw_number_transformed(int coord_x, int coord_y, int coord_z, int num)
     }
 }
 
-void LbSpriteDraw_2(int x, int y, struct TbSprite *spr)
-{
-    asm volatile (
-      "call ASM_LbSpriteDraw_2\n"
-        : : "a" (x), "d" (y), "b" (spr));
-}
-
 #define SUPER_QUICK_RADIUS 5
 void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
 {

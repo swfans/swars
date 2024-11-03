@@ -62,6 +62,8 @@ struct SortLine {
     ubyte Flags;
 };
 
+struct TbSprite;
+
 #pragma pack()
 /******************************************************************************/
 extern struct DrawItem *game_draw_list;
@@ -77,6 +79,9 @@ extern ubyte deep_radar_surface_col;
 extern ubyte deep_radar_line_col;
 
 extern ushort next_draw_item;
+
+void LbSpriteDraw_1(int x, int y, struct TbSprite *spr);
+void LbSpriteDraw_2(int x, int y, struct TbSprite *spr);
 
 void draw_drawitem_1(ushort dihead);
 void draw_drawitem_2(ushort dihead);
