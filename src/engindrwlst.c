@@ -854,11 +854,197 @@ void draw_object_face4d(ushort face4)
     }
 }
 
-void draw_object_face4g(ushort a1)
+void draw_object_face4g(ushort face4)
 {
+#if 0
     asm volatile (
       "call ASM_draw_object_face4g\n"
-        : : "a" (a1));
+        : : "a" (face4));
+    return;
+#endif
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point4;
+    struct PolyPoint point3;
+    struct PolyPoint point2;
+    struct PolyPoint point1;
+
+    p_face4 = &game_object_faces4[face4];
+    vec_colour = p_face4->ExCol;
+    vec_mode = p_face4->Flags;
+    if (p_face4->Texture != 0)
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = &game_textures[p_face4->Texture];
+        vec_map = vec_tmap[p_sftex->Page];
+        if ((p_face4->GFlags & 0x02) != 0)
+            vec_map = scratch_buf1;
+        if ((p_face4->GFlags & (0x40|0x02)) != 0)
+        {
+            uint frame;
+            frame = gameturn + 4 * p_face4->Object;
+            if ((frame & 0x0F) <= 7) {
+                vec_mode = 2;
+            } else {
+                vec_colour = 0;
+                vec_mode = 0;
+            }
+        }
+        if ((p_face4->GFlags & 0x20) != 0) {
+            point2.U = p_sftex->TMapX4 << 16;
+            point2.V = p_sftex->TMapY4 << 16;
+        } else {
+            point2.U = p_sftex->TMapX3 << 16;
+            point2.V = p_sftex->TMapY3 << 16;
+        }
+        point1.U = p_sftex->TMapX1 << 16;
+        point1.V = p_sftex->TMapY1 << 16;
+        point3.U = p_sftex->TMapX2 << 16;
+        point3.V = p_sftex->TMapY2 << 16;
+    }
+
+    if (ingame.draw_unknprop_01 == 0)
+        ingame.draw_unknprop_01 = face4;
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct Normal *p_nrml;
+        int shade;
+
+        p_nrml = &game_normals[p_face4->Shade0];
+        shade = p_nrml->LightRatio >> 16;
+        if (shade < 0)
+            shade = 0;
+        point1.S = shade << 14;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct Normal *p_nrml;
+        int shade;
+
+        p_nrml = &game_normals[p_face4->Shade2];
+        shade = p_nrml->LightRatio >> 16;
+        if (shade < 0)
+            shade = 0;
+        point2.S = shade << 14;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct Normal *p_nrml;
+        int shade;
+
+        p_nrml = &game_normals[p_face4->Shade1];
+        shade = p_nrml->LightRatio >> 16;
+        if (shade < 0)
+            shade = 0;
+        point3.S = shade << 14;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[3]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point4.X = p_scrpoint->X + dword_176D00;
+        point4.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct Normal *p_nrml;
+        int shade;
+
+        p_nrml = &game_normals[p_face4->Shade3];
+        shade = p_nrml->LightRatio >> 16;
+        if (shade < 0)
+            shade = 0;
+        point4.S = shade << 14;
+    }
+
+    {
+        ushort mag;
+        mag = (p_face4->WalkHeader + (p_face4->GFlags >> 2)) & 7;
+        if (mag != 0)
+        {
+            point1.S = (mag * point1.S) >> 3;
+            point2.S = (mag * point2.S) >> 3;
+            point3.S = (mag * point3.S) >> 3;
+            point4.S = (mag * point4.S) >> 3;
+        }
+    }
+    dword_176D4C++;
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+
+    if ((p_face4->GFlags & 0x01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point3, &point2);
+    }
+
+    if (p_face4->Texture != 0)
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = &game_textures[p_face4->Texture];
+        if ((p_face4->GFlags & 0x20) != 0) {
+            point4.U = p_sftex->TMapX3 << 16;
+            point4.V = p_sftex->TMapY3 << 16;
+            point2.U = p_sftex->TMapX4 << 16;
+            point2.V = p_sftex->TMapY4 << 16;
+        } else {
+            point4.U = p_sftex->TMapX4 << 16;
+            point4.V = p_sftex->TMapY4 << 16;
+            point2.U = p_sftex->TMapX3 << 16;
+            point2.V = p_sftex->TMapY3 << 16;
+        }
+        point3.U = p_sftex->TMapX2 << 16;
+        point3.V = p_sftex->TMapY2 << 16;
+    }
+    dword_176D4C++;
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point2);
+    }
+
+    if ((p_face4->GFlags & 0x01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point2, &point3);
+    }
 }
 
 void draw_object_face1e(ushort a1)
