@@ -500,8 +500,6 @@ extern char *weapon_text;
 extern ubyte *save_game_buffer;
 extern char save_active_desc[28];
 extern ubyte *unkn_buffer_05;
-extern ubyte *dword_1C6DE4;
-extern ubyte *dword_1C6DE8;
 extern ubyte scientists_lost;
 extern ulong new_mods_researched;
 extern ulong new_weapons_researched;

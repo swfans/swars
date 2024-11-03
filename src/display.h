@@ -24,7 +24,6 @@ extern TbScreenMode screen_mode_fmvid_hi;
 extern ubyte game_high_resolution;
 
 extern ubyte *back_buffer;
-extern struct TbSprite *unk3_sprites;
 extern TbPixel fade_unaffected_colours[];
 extern TbPixel colour_lookup[];
 

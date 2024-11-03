@@ -65,6 +65,7 @@ extern struct TbSprite *unk1_sprites;
 extern struct TbSprite *unk1_sprites_end;
 extern ubyte *unk1_sprites_data;
 
+extern struct TbSprite *unk3_sprites;
 extern struct TbSprite *unk3_sprites_end;
 extern ubyte *unk3_sprites_data;
 
@@ -81,11 +82,23 @@ extern struct TbSprite *m_sprites_end;
 extern ubyte *m_spr_data;
 extern ubyte *m_spr_data_end;
 
+extern ubyte *dword_1C6DE4;
+extern ubyte *dword_1C6DE8;
+
 /******************************************************************************/
 
 void setup_mouse_pointers(void);
 void reset_mouse_pointers(void);
 
+TbResult load_sprites_icons(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_wicons(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_panel(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_mouse(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_med_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_big_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_small_med_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_small2_font(ubyte **pp_buf, const char *dir);
 /******************************************************************************/
 #ifdef __cplusplus
 }
