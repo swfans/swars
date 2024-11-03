@@ -1294,14 +1294,100 @@ void draw_sort_sprite_tng(short a1)
 #endif
 }
 
-void draw_object_face4e(ushort a1)
+void draw_object_face4e(ushort face4)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_draw_object_face4e\n"
-        : : "a" (a1));
+        : : "a" (face4));
     return;
 #endif
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point4;
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+    struct PolyPoint point3;
+
+    p_face4 = &game_object_faces4[face4];
+    vec_colour = deep_radar_surface_col;
+    vec_mode = 15;
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[3]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point4.X = p_scrpoint->X + dword_176D00;
+        point4.Y = p_scrpoint->Y + dword_176D04;
+    }
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point2);
+    }
+
+    vec_colour = deep_radar_line_col;
+
+    poly_line(&point1, &point2);
+    poly_line(&point3, &point1);
+
+    if ((p_face4->GFlags & 0x04) != 0)
+    {
+        PlayerInfo *p_locplayer;
+
+        p_locplayer = &players[local_player_no];
+        if (p_locplayer->TargetType < 3) {
+            check_mouse_over_face(&point1, &point2, &point3, face4, 2);
+        }
+    }
+
+    poly_line(&point4, &point3);
+    poly_line(&point4, &point2);
+
+    if ((p_face4->GFlags & 0x04) != 0)
+    {
+        PlayerInfo *p_locplayer;
+
+        p_locplayer = &players[local_player_no];
+        if (p_locplayer->TargetType < 3) {
+            check_mouse_over_face(&point4, &point3, &point2, face4, 3);
+        }
+    }
 }
 
 void draw_object_face1d(ushort a1)

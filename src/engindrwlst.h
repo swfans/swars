@@ -73,6 +73,9 @@ extern struct DrawItem *p_current_draw_item;
 extern struct SortSprite *p_current_sort_sprite;
 extern struct SortLine *p_current_sort_line;
 
+extern ubyte deep_radar_surface_col;
+extern ubyte deep_radar_line_col;
+
 extern ushort next_draw_item;
 
 void draw_drawitem_1(ushort dihead);

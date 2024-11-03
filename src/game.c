@@ -46,6 +46,7 @@
 #include "dos.h"
 #include "drawtext.h"
 #include "enginbckt.h"
+#include "engindrwlst.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginpritxtr.h"
@@ -256,9 +257,6 @@ extern long dword_1DC888;
 extern long dword_1DC88C;
 extern long dword_1DC890;
 extern long dword_1DC894;
-
-extern ubyte deep_radar_surface_col;
-extern ubyte deep_radar_line_col;
 
 extern ubyte unkn_changing_color_1;
 extern ubyte unkn_changing_color_2;
