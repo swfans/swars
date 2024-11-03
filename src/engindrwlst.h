@@ -82,6 +82,9 @@ extern ushort next_draw_item;
 
 void LbSpriteDraw_1(int x, int y, struct TbSprite *spr);
 void LbSpriteDraw_2(int x, int y, struct TbSprite *spr);
+void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y,
+  ushort scale, ushort alpha);
+void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte csel);
 
 void draw_drawitem_1(ushort dihead);
 void draw_drawitem_2(ushort dihead);

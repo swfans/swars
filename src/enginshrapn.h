@@ -62,10 +62,28 @@ struct Phwoar {
     ubyte shit;
 };
 
+struct FireFlame { // sizeof=20
+    ubyte type;
+    ubyte count;
+    sbyte fvel;
+    sbyte fcount;
+    sbyte big;
+    sbyte dbig;
+    sbyte ddbig;
+    ubyte life;
+    ushort frame;
+    short x;
+    short y;
+    short z;
+    ushort PointOffset;
+    ushort next;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct Shrapnel shrapnel[512];
 extern struct Phwoar phwoar[1024];
+extern struct FireFlame FIRE_flame[512];
 
 /******************************************************************************/
 #ifdef __cplusplus
