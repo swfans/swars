@@ -442,11 +442,94 @@ void draw_sort_sprite1b(int a1)
         : : "a" (a1));
 }
 
-void draw_object_face4c(ushort a1)
+/**
+ * Draw a textured pole between two points, using remaining two point indexes as diameters at each end.
+ *
+ * @param face4 Index of SingleObjectFace4 instance.
+ */
+void draw_object_face4_pole(ushort face4)
 {
+#if 0
     asm volatile (
-      "call ASM_draw_object_face4c\n"
-        : : "a" (a1));
+      "call ASM_draw_object_face4_pole\n"
+        : : "a" (face4));
+    return;
+#endif
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point2;
+    struct PolyPoint point3;
+    struct PolyPoint point4;
+    struct PolyPoint point1;
+
+    p_face4 = &game_object_faces4[face4];
+    vec_colour = p_face4->ExCol;
+    vec_mode = p_face4->Flags;
+
+    if (p_face4->Texture != 0)
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = &game_textures[p_face4->Texture];
+        vec_map = vec_tmap[p_sftex->Page];
+        point3.U = p_sftex->TMapX1 << 16;
+        point3.V = p_sftex->TMapY1 << 16;
+        point2.U = p_sftex->TMapX2 << 16;
+        point2.V = p_sftex->TMapY2 << 16;
+        point1.U = p_sftex->TMapX3 << 16;
+        point1.V = p_sftex->TMapY3 << 16;
+        point4.U = p_sftex->TMapX4 << 16;
+        point4.V = p_sftex->TMapY4 << 16;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+        int shift_x;
+
+        p_point = &game_object_points[p_face4->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+
+        shift_x = (overall_scale * p_face4->PointNo[2]) >> 8;
+
+        point3.X = p_scrpoint->X - shift_x;
+        point3.Y = p_scrpoint->Y;
+
+        point2.X = p_scrpoint->X + shift_x;
+        point2.Y = p_scrpoint->Y;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+        int shift_x;
+
+        p_point = &game_object_points[p_face4->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+
+        shift_x = (overall_scale * p_face4->PointNo[3]) >> 8;
+
+        point1.X = p_scrpoint->X + shift_x;
+        point1.Y = p_scrpoint->Y;
+
+        point4.X = p_scrpoint->X - shift_x;
+        point4.Y = p_scrpoint->Y;
+    }
+
+    {
+        point3.S = 0x200000;
+        point2.S = 0x200000;
+        point1.S = 0x200000;
+        point4.S = 0x200000;
+    }
+
+    dword_176D4C++;
+    if (vec_mode == 2)
+        vec_mode = 27;
+    draw_trigpoly(&point1, &point2, &point3);
+
+    dword_176D4C++;
+    if (vec_mode == 2)
+        vec_mode = 27;
+    draw_trigpoly(&point4, &point1, &point3);
 }
 
 void draw_sort_sprite1c_sub(ushort a1, short a2, short a3, ubyte a4, ushort a5)
@@ -1799,7 +1882,7 @@ void draw_drawitem_1(ushort dihead)
           draw_sort_sprite1b(itm->Offset);
           break;
       case DrIT_Unkn14:
-          draw_object_face4c(itm->Offset);
+          draw_object_face4_pole(itm->Offset);
           break;
       case DrIT_Unkn15:
           draw_sort_sprite1c(itm->Offset);
@@ -1855,7 +1938,7 @@ void draw_drawitem_2(ushort dihead)
           draw_sort_sprite1b(itm->Offset);
           break;
       case DrIT_Unkn14:
-          draw_object_face4c(itm->Offset);
+          draw_object_face4_pole(itm->Offset);
           break;
       case DrIT_Unkn15:
           draw_sort_sprite1c(itm->Offset);
