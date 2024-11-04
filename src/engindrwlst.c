@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "engindrwlst.h"
 
+#include "bfbox.h"
 #include "bfkeybd.h"
 #include "bfgentab.h"
 #include "bfsprite.h"
@@ -38,6 +39,7 @@
 #include "game_sprts.h"
 #include "game.h"
 #include "player.h"
+#include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
 extern ushort next_screen_point;
@@ -455,11 +457,11 @@ void draw_sort_sprite1c_sub(ushort a1, short a2, short a3, ubyte a4, ushort a5)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
 }
 
-void draw_sort_sprite1c(ushort a1)
+void draw_sort_sprite1c(ushort sspr)
 {
-    struct SortSprite *sspr;
-    sspr = &game_sort_sprites[a1];
-    draw_sort_sprite1c_sub(sspr->Frame, sspr->X, sspr->Y, sspr->Brightness, sspr->Scale);
+    struct SortSprite *p_sspr;
+    p_sspr = &game_sort_sprites[sspr];
+    draw_sort_sprite1c_sub(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness, p_sspr->Scale);
 }
 
 void check_mouse_over_face(struct PolyPoint *pt1, struct PolyPoint *pt2,
@@ -1469,21 +1471,54 @@ void draw_phwoar(ushort ph)
     lbDisplay.DrawFlags = 0;
 }
 
-void draw_sort_sprite_tng(short a1)
-{
-#if 1
-    asm volatile (
-      "call ASM_draw_sort_sprite_tng\n"
-        : : "a" (a1));
-    return;
-#endif
-}
-
-void draw_object_face4e(ushort face4)
+void draw_sort_sprite_veh_health_bar(short sspr)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face4e\n"
+      "call ASM_draw_sort_sprite_veh_health_bar\n"
+        : : "a" (sspr));
+    return;
+#endif
+    struct SortSprite *p_sspr;
+    struct Thing *p_thing;
+    ushort max_health;
+    short health;
+    ushort range_x;
+    short level_x;
+    ushort h;
+
+    p_sspr = &game_sort_sprites[sspr];
+    p_thing = p_sspr->PThing;
+
+    max_health = p_thing->U.UVehicle.MaxHealth;
+    health = p_thing->Health;
+    if (max_health == 0)
+        max_health = 1;
+    if (health < 0)
+        health = 0;
+    else if (health > max_health)
+        health = max_health + 1;
+
+    range_x = (40 * overall_scale) >> 8;
+    if (ingame.PanelPermutation == -3)
+        h = 42;
+    else
+        h = 19;
+    LbDrawBox(p_sspr->X - (range_x >> 1), p_sspr->Y, range_x + 4, 6, h);
+
+    level_x = range_x * health / max_health;
+    if (ingame.PanelPermutation == -3)
+        h = 33;
+    else
+        h = 15;
+    LbDrawBox(p_sspr->X - (range_x >> 1) + 2, p_sspr->Y + 1, level_x, 4, h);
+}
+
+void draw_object_face4_deep_rdr(ushort face4)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_object_face4_deep_rdr\n"
         : : "a" (face4));
     return;
 #endif
@@ -1575,11 +1610,11 @@ void draw_object_face4e(ushort face4)
     }
 }
 
-void draw_object_face1d(ushort face)
+void draw_object_face3_deep_rdr(ushort face)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face1d\n"
+      "call ASM_draw_object_face3_deep_rdr\n"
         : : "a" (face));
     return;
 #endif
@@ -1664,7 +1699,7 @@ void draw_fire_flame(ushort flm)
     }
 }
 
-void draw_screen_number(ushort sospr)
+void draw_sort_sprite_number(ushort sospr)
 {
     char locstr[50];
     struct SortSprite *p_sospr;
@@ -1800,19 +1835,19 @@ void draw_drawitem_2(ushort dihead)
           draw_phwoar(itm->Offset);
           break;
       case DrIT_Unkn22:
-          draw_sort_sprite_tng(itm->Offset);
+          draw_sort_sprite_veh_health_bar(itm->Offset);
           break;
       case DrIT_Unkn23:
-          draw_object_face4e(itm->Offset);
+          draw_object_face4_deep_rdr(itm->Offset);
           break;
       case DrIT_Unkn24:
-          draw_object_face1d(itm->Offset);
+          draw_object_face3_deep_rdr(itm->Offset);
           break;
       case DrIT_Unkn25:
           draw_fire_flame(itm->Offset);
           break;
       case DrIT_Unkn26:
-          draw_screen_number(itm->Offset);
+          draw_sort_sprite_number(itm->Offset);
           break;
       default:
           break;
