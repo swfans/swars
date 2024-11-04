@@ -407,11 +407,139 @@ void draw_floor_tile1b(ushort a1)
         : : "a" (a1));
 }
 
-void draw_object_face1b(ushort a1)
+/**
+ * Draw triangular face with textured surface, version G.
+ * TODO: figure out how this version is unique.
+ *
+ * @param face Index of SingleObjectFace3 instance.
+ */
+void draw_object_face3g_textrd(ushort face)
 {
+#if 0
     asm volatile (
-      "call ASM_draw_object_face1b\n"
-        : : "a" (a1));
+      "call ASM_draw_object_face3g_textrd\n"
+        : : "a" (face));
+    return;
+#endif
+    struct SingleObjectFace3 *p_face;
+    struct PolyPoint point1;
+    struct PolyPoint point3;
+    struct PolyPoint point2;
+
+    p_face = &game_object_faces[face];
+    vec_colour = p_face->ExCol;
+    vec_mode = p_face->Flags;
+
+    if (p_face->Texture != 0)
+    {
+        struct SingleTexture *p_stex;
+
+        p_stex = &game_face_textures[p_face->Texture];
+        vec_map = vec_tmap[p_stex->Page];
+        if (p_face->GFlags != 0)
+        {
+          if ((p_face->GFlags & 0x02) != 0)
+              vec_map = scratch_buf1;
+          if (((p_face->GFlags & 0x40) != 0) && ((gameturn + p_face->Object) & 0x1Fu) > 0x10 )
+              vec_mode = 5;
+        }
+        point1.U = p_stex->TMapX1 << 16;
+        point1.V = p_stex->TMapY1 << 16;
+        point2.U = p_stex->TMapX3 << 16;
+        point2.V = p_stex->TMapY3 << 16;
+        point3.U = p_stex->TMapX2 << 16;
+        point3.V = p_stex->TMapY2 << 16;
+    }
+    else
+    {
+        vec_mode = 4;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct Normal *p_nrml;
+        int shade;
+
+        p_nrml = &game_normals[p_face->Shade0];
+        shade = p_nrml->LightRatio >> 16;
+        if (shade < 0)
+            shade = 0;
+        point1.S = shade << 14;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct Normal *p_nrml;
+        int shade;
+
+        p_nrml = &game_normals[p_face->Shade2];
+        shade = p_nrml->LightRatio >> 16;
+        if (shade < 0)
+            shade = 0;
+        point2.S = shade << 14;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct Normal *p_nrml;
+        int shade;
+
+        p_nrml = &game_normals[p_face->Shade1];
+        shade = p_nrml->LightRatio >> 16;
+        if (shade < 0)
+            shade = 0;
+        point3.S = shade << 14;
+    }
+
+    {
+        ushort mag;
+        mag = (p_face->WalkHeader + (p_face->GFlags >> 2)) & 7;
+        if (mag != 0)
+        {
+            point1.S = (mag * point1.S) >> 3;
+            point2.S = (mag * point2.S) >> 3;
+            point3.S = (mag * point3.S) >> 3;
+        }
+    }
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+        dword_176D4C++;
+    }
+
+    if ((p_face->GFlags & 0x01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point3, &point2);
+        dword_176D4C++;
+    }
 }
 
 void draw_object_face4a(ushort a1)
@@ -1867,7 +1995,7 @@ void draw_drawitem_1(ushort dihead)
           draw_floor_tile1b(itm->Offset);
           break;
       case DrIT_Unkn7:
-          draw_object_face1b(itm->Offset);
+          draw_object_face3g_textrd(itm->Offset);
           break;
       case DrIT_Unkn9:
           draw_object_face4a(itm->Offset);
@@ -1923,7 +2051,7 @@ void draw_drawitem_2(ushort dihead)
           draw_floor_tile1b(itm->Offset);
           break;
       case DrIT_Unkn7:
-          draw_object_face1b(itm->Offset);
+          draw_object_face3g_textrd(itm->Offset);
           break;
       case DrIT_Unkn9:
           draw_object_face4d_textrd(itm->Offset);
