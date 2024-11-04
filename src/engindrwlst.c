@@ -473,11 +473,16 @@ void check_mouse_over_face(struct PolyPoint *pt1, struct PolyPoint *pt2,
         : : "a" (pt1), "d" (pt2), "b" (pt3), "c" (face), "g" (type));
 }
 
-void draw_object_face1c(ushort face)
+/**
+ * Draw triangular face with textured surface.
+ *
+ * @param face Index of SingleObjectFace3 instance.
+ */
+void draw_object_face3_textrd(ushort face)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face1c\n"
+      "call ASM_draw_object_face3_textrd\n"
         : : "a" (face));
     return;
 #endif
@@ -688,11 +693,17 @@ void draw_object_face1c(ushort face)
     }
 }
 
-void draw_object_face4d(ushort face4)
+/**
+ * Draw rectangular face with textured surface, version D.
+ * TODO: figure out how this version is unique.
+ *
+ * @param face4 Index of SingleObjectFace4 instance.
+ */
+void draw_object_face4d_textrd(ushort face4)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face4d\n"
+      "call ASM_draw_object_face4d_textrd\n"
         : : "a" (face4));
     return;
 #endif
@@ -962,11 +973,17 @@ void draw_object_face4d(ushort face4)
     }
 }
 
-void draw_object_face4g(ushort face4)
+/**
+ * Draw rectangular face with textured surface, version G.
+ * TODO: figure out how this version is unique.
+ *
+ * @param face4 Index of SingleObjectFace4 instance.
+ */
+void draw_object_face4g_textrd(ushort face4)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face4g\n"
+      "call ASM_draw_object_face4g_textrd\n"
         : : "a" (face4));
     return;
 #endif
@@ -985,17 +1002,19 @@ void draw_object_face4g(ushort face4)
 
         p_sftex = &game_textures[p_face4->Texture];
         vec_map = vec_tmap[p_sftex->Page];
-        if ((p_face4->GFlags & 0x02) != 0)
-            vec_map = scratch_buf1;
-        if ((p_face4->GFlags & (0x40|0x02)) != 0)
         {
-            uint frame;
-            frame = gameturn + 4 * p_face4->Object;
-            if ((frame & 0x0F) <= 7) {
-                vec_mode = 2;
-            } else {
-                vec_colour = 0;
-                vec_mode = 0;
+            if ((p_face4->GFlags & 0x02) != 0)
+                vec_map = scratch_buf1;
+            if ((p_face4->GFlags & (0x40|0x02)) != 0)
+            {
+                uint frame;
+                frame = gameturn + 4 * p_face4->Object;
+                if ((frame & 0x0F) <= 7) {
+                    vec_mode = 2;
+                } else {
+                    vec_colour = 0;
+                    vec_mode = 0;
+                }
             }
         }
         if ((p_face4->GFlags & 0x20) != 0) {
@@ -1155,11 +1174,16 @@ void draw_object_face4g(ushort face4)
     }
 }
 
-void draw_object_face1e(ushort face)
+/**
+ * Draw triangular face with reflective (mirror) surface.
+ *
+ * @param face Index of SingleObjectFace3 instance.
+ */
+void draw_object_face3_reflect(ushort face)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face1e\n"
+      "call ASM_draw_object_face3_reflect\n"
         : : "a" (face));
     return;
 #endif
@@ -1246,11 +1270,16 @@ void draw_object_face1e(ushort face)
     }
 }
 
-void draw_object_face4f(ushort face4)
+/**
+ * Draw rectangular face with reflective (mirror) surface.
+ *
+ * @param face4 Index of SingleObjectFace4 instance.
+ */
+void draw_object_face4_reflect(ushort face4)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face4f\n"
+      "call ASM_draw_object_face4_reflect\n"
         : : "a" (face4));
     return;
 #endif
@@ -1371,6 +1400,11 @@ void draw_object_face4f(ushort face4)
     }
 }
 
+/**
+ * Draw shrapnel polygon.
+ *
+ * @param shrap Index of Shrapnel instance.
+ */
 void draw_shrapnel(ushort shrap)
 {
 #if 0
@@ -1423,6 +1457,11 @@ void draw_shrapnel(ushort shrap)
     }
 }
 
+/**
+ * Draw smoke cloud sprite.
+ *
+ * @param ph Index of Phwoar instance.
+ */
 void draw_phwoar(ushort ph)
 {
 #if 0
@@ -1471,6 +1510,11 @@ void draw_phwoar(ushort ph)
     lbDisplay.DrawFlags = 0;
 }
 
+/**
+ * Draw health bar of a vehicle.
+ *
+ * @param sspr Index of SortSprite instance which stores reference to the vehicle thing.
+ */
 void draw_sort_sprite_veh_health_bar(short sspr)
 {
 #if 0
@@ -1781,7 +1825,7 @@ void draw_drawitem_2(ushort dihead)
       {
       case DrIT_Unkn1:
       case DrIT_Unkn10:
-          draw_object_face1c(itm->Offset);
+          draw_object_face3_textrd(itm->Offset);
           break;
       case DrIT_Unkn3:
           draw_sort_sprite1a(itm->Offset);
@@ -1799,7 +1843,7 @@ void draw_drawitem_2(ushort dihead)
           draw_object_face1b(itm->Offset);
           break;
       case DrIT_Unkn9:
-          draw_object_face4d(itm->Offset);
+          draw_object_face4d_textrd(itm->Offset);
           break;
       case DrIT_Unkn11:
           draw_sort_line(&game_sort_lines[itm->Offset]);
@@ -1817,13 +1861,13 @@ void draw_drawitem_2(ushort dihead)
           draw_sort_sprite1c(itm->Offset);
           break;
       case DrIT_Unkn16:
-          draw_object_face4g(itm->Offset);
+          draw_object_face4g_textrd(itm->Offset);
           break;
       case DrIT_Unkn17:
-          draw_object_face1e(itm->Offset);
+          draw_object_face3_reflect(itm->Offset);
           break;
       case DrIT_Unkn18:
-          draw_object_face4f(itm->Offset);
+          draw_object_face4_reflect(itm->Offset);
           break;
       case DrIT_Unkn19:
           draw_person_shadow(itm->Offset);
