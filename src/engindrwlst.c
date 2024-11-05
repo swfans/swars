@@ -21,6 +21,7 @@
 #include "bfbox.h"
 #include "bfkeybd.h"
 #include "bfgentab.h"
+#include "bfline.h"
 #include "bfsprite.h"
 #include "insspr.h"
 #include <assert.h>
@@ -1002,11 +1003,60 @@ void draw_object_face4d_textrd_dk(ushort a1)
         : : "a" (a1));
 }
 
-void draw_sort_line(struct SortLine *sline)
+void draw_sort_line(struct SortLine *p_sline)
 {
+#if 0
     asm volatile (
       "call ASM_draw_sort_line\n"
-        : : "a" (sline));
+        : : "a" (p_sline));
+    return;
+#endif
+    ushort ftcor;
+    if ((p_sline->Flags & (0x01|0x02)) != 0)
+    {
+        int dist_x, dist_y;
+        int dtX, dtY;
+
+        dist_x = p_sline->X1 - p_sline->X2;
+        dist_y = p_sline->Y1 - p_sline->Y2;
+        if (dist_x < 0)
+            dist_x = -dist_x;
+        if (dist_y < 0)
+            dist_y = -dist_y;
+        if (dist_x <= dist_y) {
+          dtX = 1;
+          dtY = 0;
+        } else {
+          dtX = 0;
+          dtY = 1;
+        }
+
+        if ((p_sline->Flags & 0x02) != 0)
+            lbDisplay.DrawFlags = 0x0004;
+        ftcor = 256 * p_sline->Shade + p_sline->Col;
+        LbDrawLine(p_sline->X1, p_sline->Y1,
+          p_sline->X2, p_sline->Y2,
+          pixmap.fade_table[ftcor]);
+
+        lbDisplay.DrawFlags = 0x0004;
+        ftcor = 256 * 20 + p_sline->Col;
+        LbDrawLine(p_sline->X1 + dtX, p_sline->Y1 + dtY,
+          p_sline->X2 + dtX, p_sline->Y2 + dtY,
+          pixmap.fade_table[ftcor]);
+
+        ftcor = 256 * 20 + p_sline->Col;
+        LbDrawLine(p_sline->X1 - dtX, p_sline->Y1 - dtY,
+          p_sline->X2 - dtX, p_sline->Y2 - dtY,
+          pixmap.fade_table[ftcor]);
+        lbDisplay.DrawFlags = 0;
+    }
+    else
+    {
+        ftcor = 256 * p_sline->Shade + p_sline->Col;
+        LbDrawLine(p_sline->X1, p_sline->Y1,
+          p_sline->X2, p_sline->Y2,
+          pixmap.fade_table[ftcor]);
+    }
 }
 
 /**
@@ -1220,6 +1270,13 @@ void draw_sort_sprite1c(ushort sspr)
     struct SortSprite *p_sspr;
     p_sspr = &game_sort_sprites[sspr];
     draw_sort_sprite1c_sub(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness, p_sspr->Scale);
+}
+
+void draw_sort_line1a(ushort sln)
+{
+    struct SortLine *p_sline;
+    p_sline = &game_sort_lines[sln];
+    draw_sort_line(p_sline);
 }
 
 void check_mouse_over_face(struct PolyPoint *pt1, struct PolyPoint *pt2,
@@ -2546,7 +2603,7 @@ void draw_drawitem_1(ushort dihead)
           draw_object_face4d_textrd_dk(itm->Offset);
           break;
       case DrIT_Unkn11:
-          draw_sort_line(&game_sort_lines[itm->Offset]);
+          draw_sort_line1a(itm->Offset);
           break;
       case DrIT_Unkn12:
           draw_special_object_face4(itm->Offset);
@@ -2602,7 +2659,7 @@ void draw_drawitem_2(ushort dihead)
           draw_object_face4d_textrd(itm->Offset);
           break;
       case DrIT_Unkn11:
-          draw_sort_line(&game_sort_lines[itm->Offset]);
+          draw_sort_line1a(itm->Offset);
           break;
       case DrIT_Unkn12:
           draw_special_object_face4(itm->Offset);
