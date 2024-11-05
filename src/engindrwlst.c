@@ -1257,12 +1257,56 @@ void draw_object_face4_pole(ushort face4)
     draw_trigpoly(&point4, &point1, &point3);
 }
 
-void draw_sort_sprite1c_sub(ushort a1, short a2, short a3, ubyte a4, ushort a5)
+void draw_sort_sprite1c_sub(ushort frm, short x, short y, ubyte bright, ushort scale)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_draw_sort_sprite1c_sub\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
+        : : "a" (frm), "d" (x), "b" (y), "c" (bright), "g" (scale));
+    return;
+#endif
+    int sscale;
+    ubyte bri;
+
+    sscale = (scale * overall_scale) >> 8;
+
+    bri = bright;
+    if (bright < 10)
+        bri = 10;
+    if (bri > 48)
+        bri = 48;
+
+    if (sscale == 256 || sscale == 0 || sscale >= 0x1000)
+    {
+        struct Frame *p_frm;
+        struct Element *p_elem;
+
+        p_frm = &frame[frm];
+        for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+            if (p_spr <= m_sprites)
+                continue;
+
+            lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+            if ((p_elem->Flags & 0xFE00) == 0) {
+                LbSpriteDrawRemap(x + (p_elem->X >> 1), y + (p_elem->Y >> 1),
+                  p_spr, &pixmap.fade_table[256 * bri]);
+            }
+            if (word_1A5834 > p_elem->X >> 1)
+                word_1A5834 = p_elem->X >> 1;
+            if (word_1A5836 > p_elem->Y >> 1)
+                word_1A5836 = p_elem->Y >> 1;
+        }
+        lbDisplay.DrawFlags = 0;
+    }
+    else
+    {
+        draw_unkn1_scaled_alpha_sprite(frm, x, y, sscale, bri);
+    }
 }
 
 void draw_sort_sprite1c(ushort sspr)
