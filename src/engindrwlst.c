@@ -393,13 +393,6 @@ void draw_sort_sprite1a(ushort a1)
         : : "a" (a1));
 }
 
-void draw_floor_tile1a(ushort a1)
-{
-    asm volatile (
-      "call ASM_draw_floor_tile1a\n"
-        : : "a" (a1));
-}
-
 void draw_ex_face(ushort a1)
 {
     asm volatile (
@@ -664,6 +657,100 @@ void set_floor_tile_point_uv_map_b(struct PolyPoint *p_pt1, struct PolyPoint *p_
     }
 }
 
+void draw_floor_tile1a(ushort tl)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_floor_tile1a\n"
+        : : "a" (tl));
+    return;
+#endif
+    struct FloorTile *p_floortl;
+    struct PolyPoint point3;
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+    struct PolyPoint point4;
+    int dist;
+
+    p_floortl = &game_floor_tiles[tl];
+    vec_colour = p_floortl->Col;
+    vec_mode = p_floortl->Flags;
+    if ((p_floortl->Flags == 5) || (p_floortl->Flags == 21))
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = p_floortl->Texture;
+        if (byte_19EC6F) {
+            if (current_map == 11) // map011 Orbital Station
+              vec_mode = 6;
+        } else {
+            if (p_floortl->Flags == 5)
+                vec_mode = 2;
+            else
+                vec_mode = 19;
+        }
+        vec_map = vec_tmap[p_sftex->Page];
+        point2.U = p_sftex->TMapX1 << 16;
+        point2.V = p_sftex->TMapY1 << 16;
+        point3.U = p_sftex->TMapX3 << 16;
+        point3.V = p_sftex->TMapY3 << 16;
+        point1.U = p_sftex->TMapX4 << 16;
+        point1.V = p_sftex->TMapY4 << 16;
+        point4.U = p_sftex->TMapX2 << 16;
+        point4.V = p_sftex->TMapY2 << 16;
+    }
+    point1.X = p_floortl->X[0];
+    point1.Y = p_floortl->Y[0];
+    point1.S = p_floortl->Shade[0] << 7;
+    point2.X = p_floortl->X[3];
+    point2.Y = p_floortl->Y[3];
+    point2.S = p_floortl->Shade[3] << 7;
+    point3.X = p_floortl->X[1];
+    point3.Y = p_floortl->Y[1];
+    point3.S = p_floortl->Shade[1] << 7;
+    point4.X = p_floortl->X[2];
+    point4.Y = p_floortl->Y[2];
+    point4.S = p_floortl->Shade[2] << 7;
+
+    if (game_perspective == 7) {
+        vec_mode = 7;
+        vec_colour = point3.S >> 16;
+    }
+
+    dist = (point3.Y - point2.Y) * (point2.X - point1.X)
+       - (point3.X - point2.X) * (point2.Y - point1.Y);
+    if (dist > 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+
+    dist = (point2.X - point3.X) * (point4.Y - point2.Y)
+       - (point2.Y - point3.Y) * (point4.X - point2.X);
+    if (dist > 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point3, &point2, &point4);
+    }
+    dword_176D4C += 2;
+
+    // damage overlays
+    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
+    {
+        vec_map = vec_tmap[4];
+        vec_mode = 6;
+        set_floor_tile_point_uv_map_b(&point1, &point2, &point3, &point4, p_floortl->Page);
+        draw_trigpoly(&point1, &point2, &point3);
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point3, &point2, &point4);
+        dword_176D4C += 2;
+    }
+}
+
+
 void draw_floor_tile1b(ushort tl)
 {
 #if 0
@@ -743,6 +830,7 @@ void draw_floor_tile1b(ushort tl)
     }
     dword_176D4C += 2;
 
+    // damage overlays
     if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
     {
         vec_map = vec_tmap[4];
@@ -754,6 +842,7 @@ void draw_floor_tile1b(ushort tl)
         draw_trigpoly(&point4, &point3, &point1);
         dword_176D4C += 2;
     }
+    //TODO why the second time using the same page?
     if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
     {
         vec_map = vec_tmap[4];
