@@ -446,7 +446,7 @@ static ubyte face_is_blocking(ushort obj, short face, ushort colt)
     {
         struct SingleObjectFace4 *p_face;
         p_face = &game_object_faces4[-face];
-        if (p_face->GFlags & 0x10)
+        if ((p_face->GFlags & FGFlg_Unkn10) != 0)
             return THIN_PASS;
         return THIN_BLOCK;
     }
@@ -454,7 +454,7 @@ static ubyte face_is_blocking(ushort obj, short face, ushort colt)
     {
         struct SingleObjectFace3 *p_face;
         p_face = &game_object_faces[face];
-        if (p_face->GFlags & 0x10)
+        if ((p_face->GFlags & FGFlg_Unkn10) != 0)
             return THIN_PASS;
         return THIN_BLOCK;
     }
@@ -1179,7 +1179,7 @@ int add_walk_items_for_face_object(short face, short obj)
             struct SingleObjectFace3 *p_face;
             short ccor;
             p_face = &game_object_faces[cface];
-            if ((p_face->GFlags & 0x04) == 0) {
+            if ((p_face->GFlags & FGFlg_Unkn04) == 0) {
                 continue;
             }
             if (cface == face) {
@@ -1215,7 +1215,7 @@ int add_walk_items_for_face_object(short face, short obj)
                 continue;
             }
             p_face = &game_object_faces4[cface];
-            if ((p_face->GFlags & 0x04) == 0) {
+            if ((p_face->GFlags & FGFlg_Unkn04) == 0) {
                 continue;
             }
             if (game_normals[p_face->FaceNormal].NY == 0) {
@@ -1990,13 +1990,13 @@ TbBool face_is_blocking_walk(short face)
     {
         struct SingleObjectFace4 *p_face;
         p_face = &game_object_faces4[-face];
-        return ((p_face->GFlags & 0x04) == 0);
+        return ((p_face->GFlags & FGFlg_Unkn04) == 0);
     }
     else if (face > 0)
     {
         struct SingleObjectFace3 *p_face;
         p_face = &game_object_faces[face];
-        return ((p_face->GFlags & 0x04) == 0);
+        return ((p_face->GFlags & FGFlg_Unkn04) == 0);
     }
 
    return false;

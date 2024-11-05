@@ -231,7 +231,7 @@ void draw_object_face3_textrd_dk(ushort face)
         vec_map = vec_tmap[p_stex->Page];
         if (p_face->GFlags != 0)
         {
-            if ((p_face->GFlags & 0x02) != 0)
+            if ((p_face->GFlags & FGFlg_Unkn02) != 0)
                 vec_map = scratch_buf1;
         }
         point1.U = p_stex->TMapX1 << 16;
@@ -373,7 +373,7 @@ void draw_object_face3_textrd_dk(ushort face)
         if (vec_mode == 2)
             vec_mode = 27;
         draw_trigpoly(&point1, &point2, &point3);
-        if ((p_face->GFlags & 0x01) != 0)
+        if ((p_face->GFlags & FGFlg_Unkn01) != 0)
         {
             if (vec_mode == 2)
                 vec_mode = 27;
@@ -887,9 +887,9 @@ void draw_object_face3g_textrd(ushort face)
         vec_map = vec_tmap[p_stex->Page];
         if (p_face->GFlags != 0)
         {
-            if ((p_face->GFlags & 0x02) != 0)
+            if ((p_face->GFlags & FGFlg_Unkn02) != 0)
                 vec_map = scratch_buf1;
-            if ((p_face->GFlags & 0x40) != 0) {
+            if ((p_face->GFlags & FGFlg_Unkn40) != 0) {
                 uint frame;
                 frame = gameturn + p_face->Object;
                 if ((frame & 0x1F) > 0x10)
@@ -986,7 +986,7 @@ void draw_object_face3g_textrd(ushort face)
         dword_176D4C++;
     }
 
-    if ((p_face->GFlags & 0x01) != 0)
+    if ((p_face->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
@@ -1088,7 +1088,7 @@ void draw_special_object_face4(ushort face4)
             vec_mode = 27;
         draw_trigpoly(&point1, &point2, &point3);
     }
-    if ((p_face4->GFlags & 0x01) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
@@ -1101,7 +1101,7 @@ void draw_special_object_face4(ushort face4)
             vec_mode = 27;
         draw_trigpoly(&point1, &point3, &point4);
     }
-    if ((p_face4->GFlags & 0x01) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
@@ -1261,9 +1261,9 @@ void draw_object_face3_textrd(ushort face)
         vec_map = vec_tmap[p_stex->Page];
         if (p_face->GFlags != 0)
         {
-            if ((p_face->GFlags & 0x02) != 0)
+            if ((p_face->GFlags & FGFlg_Unkn02) != 0)
                 vec_map = scratch_buf1;
-            if ((p_face->GFlags & 0x40) != 0) {
+            if ((p_face->GFlags & FGFlg_Unkn40) != 0) {
                 uint frame;
                 frame = gameturn + p_face->Object;
                 if ((frame & 0x1FF) > 0x100 && !byte_153014[frame & 0x3F])
@@ -1427,7 +1427,7 @@ void draw_object_face3_textrd(ushort face)
         if (vec_mode == 2)
             vec_mode = 27;
         draw_trigpoly(&point1, &point2, &point3);
-        if ((p_face->GFlags & 0x01) != 0)
+        if ((p_face->GFlags & FGFlg_Unkn01) != 0)
         {
             if (vec_mode == 2)
                 vec_mode = 27;
@@ -1436,7 +1436,7 @@ void draw_object_face3_textrd(ushort face)
         }
     }
 
-    if ((p_face->GFlags & 0x04) != 0)
+    if ((p_face->GFlags & FGFlg_Unkn04) != 0)
     {
         PlayerInfo *p_locplayer;
 
@@ -1482,16 +1482,16 @@ void draw_object_face4d_textrd(ushort face4)
         vec_map = vec_tmap[p_sftex->Page];
         if (p_face4->GFlags != 0)
         {
-            if ((p_face4->GFlags & 0x02) != 0)
+            if ((p_face4->GFlags & FGFlg_Unkn02) != 0)
                 vec_map = scratch_buf1;
-            if ((p_face4->GFlags & 0x40) != 0) {
+            if ((p_face4->GFlags & FGFlg_Unkn40) != 0) {
                 uint frame;
                 frame = gameturn + p_face4->Object;
                 if ((frame & 0x1FF) > 0x100 && !byte_153014[frame & 0x3F])
                     vec_mode = 5;
             }
         }
-        if ((p_face4->GFlags & 0x20) != 0) {
+        if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
             point2.U = p_sftex->TMapX4 << 16;
             point2.V = p_sftex->TMapY4 << 16;
         } else {
@@ -1668,14 +1668,14 @@ void draw_object_face4d_textrd(ushort face4)
         draw_trigpoly(&point1, &point2, &point3);
     }
 
-    if ((p_face4->GFlags & 0x01) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
         draw_trigpoly(&point1, &point3, &point2);
     }
 
-    if ((p_face4->GFlags & 0x04) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
         PlayerInfo *p_locplayer;
 
@@ -1690,7 +1690,7 @@ void draw_object_face4d_textrd(ushort face4)
         struct SingleFloorTexture *p_sftex;
 
         p_sftex = &game_textures[p_face4->Texture];
-        if ((p_face4->GFlags & 0x20) != 0) {
+        if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
             point4.U = p_sftex->TMapX3 << 16;
             point4.V = p_sftex->TMapY3 << 16;
             point2.U = p_sftex->TMapX4 << 16;
@@ -1712,14 +1712,14 @@ void draw_object_face4d_textrd(ushort face4)
         draw_trigpoly(&point4, &point3, &point2);
     }
 
-    if ((p_face4->GFlags & 0x01) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
         draw_trigpoly(&point4, &point2, &point3);
     }
 
-    if ((p_face4->GFlags & 0x04) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
         PlayerInfo *p_locplayer;
 
@@ -1760,9 +1760,9 @@ void draw_object_face4g_textrd(ushort face4)
         p_sftex = &game_textures[p_face4->Texture];
         vec_map = vec_tmap[p_sftex->Page];
         {
-            if ((p_face4->GFlags & 0x02) != 0)
+            if ((p_face4->GFlags & FGFlg_Unkn02) != 0)
                 vec_map = scratch_buf1;
-            if ((p_face4->GFlags & (0x40|0x02)) != 0) {
+            if ((p_face4->GFlags & (FGFlg_Unkn40|FGFlg_Unkn02)) != 0) {
                 uint frame;
                 frame = gameturn + 4 * p_face4->Object;
                 if ((frame & 0x0F) <= 7) {
@@ -1773,7 +1773,7 @@ void draw_object_face4g_textrd(ushort face4)
                 }
             }
         }
-        if ((p_face4->GFlags & 0x20) != 0) {
+        if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
             point2.U = p_sftex->TMapX4 << 16;
             point2.V = p_sftex->TMapY4 << 16;
         } else {
@@ -1888,7 +1888,7 @@ void draw_object_face4g_textrd(ushort face4)
         draw_trigpoly(&point1, &point2, &point3);
     }
 
-    if ((p_face4->GFlags & 0x01) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
@@ -1900,7 +1900,7 @@ void draw_object_face4g_textrd(ushort face4)
         struct SingleFloorTexture *p_sftex;
 
         p_sftex = &game_textures[p_face4->Texture];
-        if ((p_face4->GFlags & 0x20) != 0) {
+        if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
             point4.U = p_sftex->TMapX3 << 16;
             point4.V = p_sftex->TMapY3 << 16;
             point2.U = p_sftex->TMapX4 << 16;
@@ -1922,7 +1922,7 @@ void draw_object_face4g_textrd(ushort face4)
         draw_trigpoly(&point4, &point3, &point2);
     }
 
-    if ((p_face4->GFlags & 0x01) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
@@ -2018,7 +2018,7 @@ void draw_object_face3_reflect(ushort face)
         draw_trigpoly(&point1, &point2, &point3);
     }
 
-    if ((p_face->GFlags & 0x01) != 0)
+    if ((p_face->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
@@ -2134,7 +2134,7 @@ void draw_object_face4_reflect(ushort face4)
         draw_trigpoly(&point1, &point2, &point3);
     }
 
-    if ((p_face4->GFlags & 0x01) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
@@ -2148,7 +2148,7 @@ void draw_object_face4_reflect(ushort face4)
         draw_trigpoly(&point4, &point3, &point2);
     }
 
-    if ((p_face4->GFlags & 0x01) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
     {
         if (vec_mode == 2)
             vec_mode = 27;
@@ -2386,7 +2386,7 @@ void draw_object_face4_deep_rdr(ushort face4)
     poly_line(&point1, &point2);
     poly_line(&point3, &point1);
 
-    if ((p_face4->GFlags & 0x04) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
         PlayerInfo *p_locplayer;
 
@@ -2399,7 +2399,7 @@ void draw_object_face4_deep_rdr(ushort face4)
     poly_line(&point4, &point3);
     poly_line(&point4, &point2);
 
-    if ((p_face4->GFlags & 0x04) != 0)
+    if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
         PlayerInfo *p_locplayer;
 
@@ -2462,7 +2462,7 @@ void draw_object_face3_deep_rdr(ushort face)
     vec_mode = 15;
     draw_trigpoly(&point1, &point2, &point3);
 
-    if ((p_face->GFlags & 0x04) != 0)
+    if ((p_face->GFlags & FGFlg_Unkn04) != 0)
     {
         PlayerInfo *p_locplayer;
 
