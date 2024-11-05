@@ -199,11 +199,18 @@ int calculate_enginepoint_shade_1(struct PolyPoint *p_point, struct SingleObject
     return ret;
 }
 
-void draw_object_face1a(ushort face)
+/**
+ * Draw triangular face with normally textured surface, but dark.
+ *
+ * The dark view is used to contrast with extremely intense light, like nuclear explosions.
+ *
+ * @param face Index of SingleObjectFace3 instance.
+ */
+void draw_object_face3_textrd_dk(ushort face)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face1a\n"
+      "call ASM_draw_object_face3_textrd_dk\n"
         : : "a" (face));
     return;
 #endif
@@ -438,10 +445,14 @@ void draw_object_face3g_textrd(ushort face)
         vec_map = vec_tmap[p_stex->Page];
         if (p_face->GFlags != 0)
         {
-          if ((p_face->GFlags & 0x02) != 0)
-              vec_map = scratch_buf1;
-          if (((p_face->GFlags & 0x40) != 0) && ((gameturn + p_face->Object) & 0x1Fu) > 0x10 )
-              vec_mode = 5;
+            if ((p_face->GFlags & 0x02) != 0)
+                vec_map = scratch_buf1;
+            if ((p_face->GFlags & 0x40) != 0) {
+                uint frame;
+                frame = gameturn + p_face->Object;
+                if ((frame & 0x1F) > 0x10)
+                    vec_mode = 5;
+            }
         }
         point1.U = p_stex->TMapX1 << 16;
         point1.V = p_stex->TMapY1 << 16;
@@ -542,10 +553,10 @@ void draw_object_face3g_textrd(ushort face)
     }
 }
 
-void draw_object_face4a(ushort a1)
+void draw_object_face4d_textrd_dk(ushort a1)
 {
     asm volatile (
-      "call ASM_draw_object_face4a\n"
+      "call ASM_draw_object_face4d_textrd_dk\n"
         : : "a" (a1));
 }
 
@@ -1029,9 +1040,8 @@ void draw_object_face4d_textrd(ushort face4)
         vec_map = vec_tmap[p_sftex->Page];
         if (p_face4->GFlags != 0)
         {
-            if ((p_face4->GFlags & 0x02) != 0) {
+            if ((p_face4->GFlags & 0x02) != 0)
                 vec_map = scratch_buf1;
-            }
             if ((p_face4->GFlags & 0x40) != 0) {
                 uint frame;
                 frame = gameturn + p_face4->Object;
@@ -1310,8 +1320,7 @@ void draw_object_face4g_textrd(ushort face4)
         {
             if ((p_face4->GFlags & 0x02) != 0)
                 vec_map = scratch_buf1;
-            if ((p_face4->GFlags & (0x40|0x02)) != 0)
-            {
+            if ((p_face4->GFlags & (0x40|0x02)) != 0) {
                 uint frame;
                 frame = gameturn + 4 * p_face4->Object;
                 if ((frame & 0x0F) <= 7) {
@@ -2071,7 +2080,7 @@ void draw_drawitem_1(ushort dihead)
       {
       case DrIT_Unkn1:
       case DrIT_Unkn10:
-          draw_object_face1a(itm->Offset);
+          draw_object_face3_textrd_dk(itm->Offset);
           break;
       case DrIT_Unkn2:
       case DrIT_Unkn8:
@@ -2092,7 +2101,7 @@ void draw_drawitem_1(ushort dihead)
           draw_object_face3g_textrd(itm->Offset);
           break;
       case DrIT_Unkn9:
-          draw_object_face4a(itm->Offset);
+          draw_object_face4d_textrd_dk(itm->Offset);
           break;
       case DrIT_Unkn11:
           draw_sort_line(&game_sort_lines[itm->Offset]);
