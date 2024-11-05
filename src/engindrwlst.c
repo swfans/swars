@@ -556,11 +556,105 @@ void draw_sort_line(struct SortLine *sline)
         : : "a" (sline));
 }
 
-void draw_object_face4b(ushort a1)
+/**
+ * Draw a textured beam stored as special object face, usually from energy weapon.
+ * What is special about these is that each SingleObjectFace4 instance stores
+ * SpecialPoint indexes rather than SinglePoint indexes.
+ *
+ * @param face4 Index of SingleObjectFace4 instance.
+ */
+void draw_special_object_face4(ushort face4)
 {
+#if 0
     asm volatile (
-      "call ASM_draw_object_face4b\n"
-        : : "a" (a1));
+      "call ASM_draw_special_object_face4\n"
+        : : "a" (face4));
+    return;
+#endif
+
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point4;
+    struct PolyPoint point2;
+    struct PolyPoint point1;
+    struct PolyPoint point3;
+
+    p_face4 = &game_special_object_faces4[face4];
+    vec_colour = p_face4->ExCol;
+    vec_mode = p_face4->Flags;
+
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[0]];
+        point2.X = p_scrpoint->X;
+        point2.Y = p_scrpoint->Y;
+        point2.S = p_face4->Shade0 << 15;
+    }
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[1]];
+        point1.X = p_scrpoint->X;
+        point1.Y = p_scrpoint->Y;
+        point1.S = p_face4->Shade1 << 15;
+    }
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[2]];
+        point3.X = p_scrpoint->X;
+        point3.Y = p_scrpoint->Y;
+        point3.S = p_face4->Shade2 << 15;
+    }
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[3]];
+        point4.X = p_scrpoint->X;
+        point4.Y = p_scrpoint->Y;
+        point4.S = p_face4->Shade3 << 15;
+    }
+
+    if ((p_face4->Flags == 10) || (p_face4->Flags == 9))
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = &game_textures[p_face4->Texture];
+        vec_map = vec_tmap[p_sftex->Page];
+        point2.U = p_sftex->TMapX1 << 16;
+        point2.V = p_sftex->TMapY1 << 16;
+        point1.U = p_sftex->TMapX2 << 16;
+        point1.V = p_sftex->TMapY2 << 16;
+        point3.U = p_sftex->TMapX3 << 16;
+        point3.V = p_sftex->TMapY3 << 16;
+        point4.U = p_sftex->TMapX4 << 16;
+        point4.V = p_sftex->TMapY4 << 16;
+    }
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+    if ((p_face4->GFlags & 0x01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point3, &point2, &point1);
+    }
+    dword_176D4C++;
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point3, &point4);
+    }
+    if ((p_face4->GFlags & 0x01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point1);
+    }
+    dword_176D4C++;
 }
 
 void draw_sort_sprite1b(int a1)
@@ -2004,7 +2098,7 @@ void draw_drawitem_1(ushort dihead)
           draw_sort_line(&game_sort_lines[itm->Offset]);
           break;
       case DrIT_Unkn12:
-          draw_object_face4b(itm->Offset);
+          draw_special_object_face4(itm->Offset);
           break;
       case DrIT_Unkn13:
           draw_sort_sprite1b(itm->Offset);
@@ -2060,7 +2154,7 @@ void draw_drawitem_2(ushort dihead)
           draw_sort_line(&game_sort_lines[itm->Offset]);
           break;
       case DrIT_Unkn12:
-          draw_object_face4b(itm->Offset);
+          draw_special_object_face4(itm->Offset);
           break;
       case DrIT_Unkn13:
           draw_sort_sprite1b(itm->Offset);
