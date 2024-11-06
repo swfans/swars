@@ -29,6 +29,7 @@
 #include "display.h"
 #include "drawtext.h"
 #include "enginbckt.h"
+#include "enginfexpl.h"
 #include "enginlights.h"
 #include "enginpeff.h"
 #include "enginsngobjs.h"
@@ -486,12 +487,113 @@ void draw_sort_sprite1a(ushort a1)
 
 void draw_ex_face(ushort exface)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_draw_ex_face\n"
         : : "a" (exface));
     return;
 #endif
+    struct ExplodeFace3 *p_exface;
+    struct PolyPoint point2;
+    struct PolyPoint point3;
+    struct PolyPoint point1;
+    struct PolyPoint point4;
+    struct SingleFloorTexture *p_sftex;
+    struct SingleTexture *p_stex;
+    struct SpecialPoint *p_scrpoint;
+
+    p_exface = &ex_faces[exface];
+    p_scrpoint = &game_screen_point_pool[p_exface->PointOffset];
+    vec_colour = p_exface->Col;
+    vec_mode = p_exface->Flags;
+
+    switch (p_exface->Type)
+    {
+    case 1:
+    case 3:
+    case 5:
+      p_stex = &game_face_textures[p_exface->Texture];
+      vec_map = vec_tmap[p_stex->Page];
+
+      point1.U = p_stex->TMapX1 << 16;
+      point1.V = p_stex->TMapY1 << 16;
+      point2.U = p_stex->TMapX3 << 16;
+      point2.V = p_stex->TMapY3 << 16;
+      point3.U = p_stex->TMapX2 << 16;
+      point3.V = p_stex->TMapY2 << 16;
+
+      point1.X = p_scrpoint[0].X;
+      point1.Y = p_scrpoint[0].Y;
+      point1.S = 0x100000;
+
+      point3.X = p_scrpoint[1].X;
+      point3.Y = p_scrpoint[1].Y;
+      point3.S = 0x100000;
+
+      point2.X = p_scrpoint[2].X;
+      point2.Y = p_scrpoint[2].Y;
+      point2.S = 0x100000;
+
+      if (vec_mode == 2)
+          vec_mode = 27;
+      draw_trigpoly(&point1, &point2, &point3);
+
+      if (vec_mode == 2)
+          vec_mode = 27;
+      draw_trigpoly(&point3, &point2, &point1);
+      dword_176D4C++;
+      break;
+    case 2:
+    case 4:
+    case 6:
+      p_sftex = &game_textures[p_exface->Texture];
+      vec_map = vec_tmap[p_sftex->Page];
+
+      point1.U = p_sftex->TMapX1 << 16;
+      point1.V = p_sftex->TMapY1 << 16;
+      point2.U = p_sftex->TMapX2 << 16;
+      point2.V = p_sftex->TMapY2 << 16;
+      point3.U = p_sftex->TMapX3 << 16;
+      point3.V = p_sftex->TMapY3 << 16;
+      point4.U = p_sftex->TMapX4 << 16;
+      point4.V = p_sftex->TMapY4 << 16;
+
+      point1.X = p_scrpoint[0].X;
+      point1.Y = p_scrpoint[0].Y;
+      point1.S = 0x100000;
+
+      point2.X = p_scrpoint[1].X;
+      point2.Y = p_scrpoint[1].Y;
+      point2.S = 0x100000;
+
+      point3.X = p_scrpoint[2].X;
+      point3.Y = p_scrpoint[2].Y;
+      point3.S = 0x100000;
+
+      point4.X = p_scrpoint[3].X;
+      point4.Y = p_scrpoint[3].Y;
+      point4.S = 0x100000;
+
+      if (vec_mode == 2)
+          vec_mode = 27;
+      draw_trigpoly(&point1, &point2, &point3);
+
+      if (vec_mode == 2)
+          vec_mode = 27;
+      draw_trigpoly(&point3, &point2, &point1);
+
+      if (vec_mode == 2)
+          vec_mode = 27;
+      draw_trigpoly(&point2, &point3, &point4);
+
+      if (vec_mode == 2)
+          vec_mode = 27;
+      draw_trigpoly(&point4, &point3, &point2);
+      dword_176D4C++;
+      break;
+    default:
+      break;
+    }
 }
 
 void set_floor_tile_point_uv_map_a(struct PolyPoint *p_pt1, struct PolyPoint *p_pt2, struct PolyPoint *p_pt3, struct PolyPoint *p_pt4, ubyte page)
