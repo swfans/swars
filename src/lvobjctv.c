@@ -612,7 +612,7 @@ void draw_objective(ushort objectv, ubyte flag)
             colk = dword_1C8460 & 7;
         else
             colk = 1;
-        draw_text(2 * draw_objectv_x, 2 * draw_objectv_y, locstr, colour_lookup[colk]);
+        draw_text(draw_objectv_x, draw_objectv_y, locstr, colour_lookup[colk]);
     }
 
     if (byte_1C844F) {

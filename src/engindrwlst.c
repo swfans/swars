@@ -1248,7 +1248,7 @@ void draw_sort_sprite1b(int sspr)
     word_1A5834 = 120;
     word_1A5836 = 120;
 
-    if (((p_thing->Flag2 & 0x2000) != 0) && (ingame.DisplayMode == 50))
+    if (((p_thing->Flag2 & TgF2_Unkn2000) != 0) && (ingame.DisplayMode == 50))
     {
         if ((ingame.Flags & 0x8000) != 0) {
             ushort fr;
@@ -1259,7 +1259,7 @@ void draw_sort_sprite1b(int sspr)
     else
     {
         ubyte *frv;
-        if (((p_thing->Flag2 & 0x80000) != 0) && (p_thing->SubType == 2))
+        if (((p_thing->Flag2 & TgF2_Unkn00080000) != 0) && (p_thing->SubType == 2))
             bright = 32;
         frv = p_thing->U.UPerson.FrameId.Version;
         draw_sorted_sprite1b(frv, p_sspr->Frame, p_sspr->X, p_sspr->Y, bright, p_sspr->Angle);
@@ -1314,15 +1314,23 @@ void draw_sort_sprite1b(int sspr)
 
     if (debug_hud_collision) {
         char locstr[152];
+        short dy;
         sprintf(locstr, "%d ", p_thing->U.UPerson.RecoilTimer);
-        draw_text(2 * (p_sspr->X), 2 * (p_sspr->Y - 37), locstr, colour_lookup[2]);
+        dy = (37 * overall_scale) >> 8;
+        draw_text(p_sspr->X, p_sspr->Y - dy, locstr, colour_lookup[2]);
     }
 
-    if ((p_thing->Flag2 & 0x1000000) != 0) {
-        draw_text(2 * (p_sspr->X - 2), 2 * (p_sspr->Y - 37), "E", colour_lookup[2]);
+    if ((p_thing->Flag2 & TgF2_Unkn01000000) != 0) {
+        short dx, dy;
+        dx = (2 * overall_scale) >> 8;
+        dy = (37 * overall_scale) >> 8;
+        draw_text(p_sspr->X - dx, p_sspr->Y - dy, "E", colour_lookup[2]);
     }
-    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & 0x20000000) != 0)) {
-        draw_text(2 * (p_sspr->X + 2), 2 * (p_sspr->Y - 37), "B", colour_lookup[2]);
+    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_Unkn20000000) != 0)) {
+        short dx, dy;
+        dx = (2 * overall_scale) >> 8;
+        dy = (37 * overall_scale) >> 8;
+        draw_text(p_sspr->X + dx, p_sspr->Y - dy, "B", colour_lookup[2]);
     }
 }
 
@@ -2759,14 +2767,14 @@ void draw_fire_flame(ushort flm)
     }
 }
 
-void draw_sort_sprite_number(ushort sospr)
+void draw_sort_sprite_number(ushort sspr)
 {
     char locstr[50];
-    struct SortSprite *p_sospr;
+    struct SortSprite *p_sspr;
 
-    p_sospr = &game_sort_sprites[sospr];
-    sprintf(locstr, "%d", (int)p_sospr->PThing);
-    draw_text(2 * p_sospr->X,2 * p_sospr->Y, locstr, colour_lookup[2]);
+    p_sspr = &game_sort_sprites[sspr];
+    sprintf(locstr, "%d", (int)p_sspr->PThing);
+    draw_text(p_sspr->X, p_sspr->Y, locstr, colour_lookup[2]);
 }
 
 // Special non-textured draw; used during nuclear explosions?
