@@ -70,6 +70,8 @@ extern long dword_176CF4;
 extern long dword_176D00;
 extern long dword_176D04;
 
+extern ushort shield_frm[4];
+
 extern short word_1A5834;
 extern short word_1A5836;
 
@@ -80,6 +82,17 @@ sbyte byte_153014[] = {
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
   0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+};
+
+ubyte byte_15399C[] = {
+  0, 1, 2, 0, 0,
+  0, 2, 1, 0, 0,
+  0, 1, 1, 0, 0,
+  1, 2, 0, 0, 0,
+  1, 1, 0, 0, 0,
+  2, 0, 1, 0, 0,
+  2, 0, 2, 0, 0,
+  2, 0, 2, 0, 0,
 };
 
 void LbSpriteDraw_1(int x, int y, struct TbSprite *spr)
@@ -385,6 +398,43 @@ void draw_object_face3_textrd_dk(ushort face)
     if (byte_1C844E) {
         swap_wscreen();
     }
+}
+
+void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
+  ubyte bri, ubyte angle)
+{
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_draw_sorted_sprite1b\n"
+        : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" (bri), "g" (angle));
+}
+
+ubyte check_mouse_overlap(ushort sspr)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_check_mouse_overlap\n"
+        : "=r" (ret) : "a" (sspr));
+    return ret;
+}
+
+ubyte check_mouse_overlap_corpse(ushort sspr)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_check_mouse_overlap_corpse\n"
+        : "=r" (ret) : "a" (sspr));
+    return ret;
+}
+
+ubyte check_mouse_over_unkn2(ushort sspr, struct Thing *p_thing)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_check_mouse_over_unkn2\n"
+        : "=r" (ret) : "a" (sspr), "d" (p_thing));
+    return ret;
 }
 
 void draw_sort_sprite1a(ushort a1)
@@ -1160,11 +1210,120 @@ void draw_special_object_face4(ushort face4)
     dword_176D4C++;
 }
 
-void draw_sort_sprite1b(int a1)
+void draw_sort_sprite1b(int sspr)
 {
+#if 0
     asm volatile (
       "call ASM_draw_sort_sprite1b\n"
-        : : "a" (a1));
+        : : "a" (sspr));
+    return;
+#endif
+    struct SortSprite *p_sspr;
+    struct Thing *p_thing;
+    short v18;
+    ubyte bright;
+
+    p_sspr = &game_sort_sprites[sspr];
+    p_thing = p_sspr->PThing;
+    if (p_sspr->Frame > 10000)
+        return;
+
+    v18 = 0;
+    bright = p_sspr->Brightness;
+    if ((p_thing->Flag & 0x02) == 0)
+    {
+        if ((p_thing->Flag & 0x200000) != 0)
+        {
+            v18 = 16;
+            bright += 16;
+            if (p_thing->U.UPerson.ShieldGlowTimer) {
+                bright += 16;
+                v18 = 32;
+            }
+        }
+    }
+    if ((p_thing->U.UPerson.AnimMode == 12) || ((ingame.Flags & 0x8000) != 0))
+        bright = 32;
+
+    word_1A5834 = 120;
+    word_1A5836 = 120;
+
+    if (((p_thing->Flag2 & 0x2000) != 0) && (ingame.DisplayMode == 50))
+    {
+        if ((ingame.Flags & 0x8000) != 0) {
+            ushort fr;
+            fr = nstart_ani[1066];
+            draw_sorted_sprite1a(fr, p_sspr->X, p_sspr->Y, 0x20);
+        }
+    }
+    else
+    {
+        ubyte *frv;
+        if (((p_thing->Flag2 & 0x80000) != 0) && (p_thing->SubType == 2))
+            bright = 32;
+        frv = p_thing->U.UPerson.FrameId.Version;
+        draw_sorted_sprite1b(frv, p_sspr->Frame, p_sspr->X, p_sspr->Y, bright, p_sspr->Angle);
+    }
+
+    if (p_thing->U.UPerson.EffectiveGroup != ingame.MyGroup)
+    {
+        PlayerInfo *p_locplayer;
+
+        p_locplayer = &players[local_player_no];
+        if ((p_thing->Flag & 0x02) != 0)
+        {
+            if (p_locplayer->TargetType < 1)
+                check_mouse_overlap_corpse(sspr);
+        }
+        else
+        {
+            if (p_locplayer->TargetType < 7)
+                check_mouse_overlap(sspr);
+        }
+    }
+
+    if (in_network_game)
+    {
+        struct Thing *p_owntng;
+
+        p_owntng = NULL;
+        if (((p_thing->Flag & 0x2000) != 0) && (p_thing->U.UPerson.ComCur >> 2 != local_player_no))
+        {
+            p_owntng = p_thing;
+        }
+        else if ((p_thing->Flag & 0x80000) != 0)
+        {
+            p_owntng = &things[p_thing->Owner];
+            if (((p_owntng->Flag & 0x2000) == 0) || (p_owntng->U.UPerson.ComCur >> 2 == local_player_no))
+                p_owntng = NULL;
+        }
+        if ((p_owntng != NULL) && (p_owntng->U.UPerson.CurrentWeapon != 30)) {
+            check_mouse_over_unkn2(sspr, p_owntng);
+        }
+    }
+
+    if (v18 != 0)
+    {
+        ubyte *frv;
+        ushort fr, k;
+        fr = shield_frm[p_thing->ThingOffset & 3];
+        k = ((gameturn + 16 * p_thing->ThingOffset) >> 2) & 7;
+        frv = byte_15399C + 5 * k;
+        draw_sorted_sprite1b(frv, fr, p_sspr->X, p_sspr->Y, v18, 0);
+    }
+
+    if (debug_hud_collision) {
+        char locstr[152];
+        sprintf(locstr, "%d ", p_thing->U.UPerson.RecoilTimer);
+        draw_text(2 * (p_sspr->X), 2 * (p_sspr->Y - 37), locstr, colour_lookup[2]);
+    }
+
+    if ((p_thing->Flag2 & 0x1000000) != 0) {
+        draw_text(2 * (p_sspr->X - 2), 2 * (p_sspr->Y - 37), "E", colour_lookup[2]);
+    }
+    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & 0x20000000) != 0)) {
+        draw_text(2 * (p_sspr->X + 2), 2 * (p_sspr->Y - 37), "B", colour_lookup[2]);
+    }
 }
 
 /**
