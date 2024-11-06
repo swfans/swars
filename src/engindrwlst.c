@@ -81,6 +81,8 @@ extern ushort shield_frm[4];
 extern short word_1A5834;
 extern short word_1A5836;
 
+extern long sprite_over_16x16;
+
 extern ubyte byte_1C844E;
 
 sbyte byte_153014[] = {
@@ -441,14 +443,79 @@ void draw_object_face3_textrd_dk(ushort face)
     }
 }
 
+void debug_check_unkn_sprite_size(const char *src_fname, int src_line)
+{
+    if (!sprite_over_16x16 && (m_sprites[1158].SWidth > 16 || m_sprites[1158].SHeight > 16))
+        sprite_over_16x16 = 1;
+}
+
+void draw_unkn2_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
+  ubyte bri)
+{
+#if 1
+    asm volatile (
+      "push %4\n"
+      "call ASM_draw_unkn2_scaled_alpha_sprite\n"
+        : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" ((uint)bri));
+    return;
+#endif
+}
+
+
 void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
   ubyte bri, ubyte angle)
 {
+#if 0
     asm volatile (
       "push %5\n"
       "push %4\n"
       "call ASM_draw_sorted_sprite1b\n"
         : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" (bri), "g" (angle));
+    return;
+#endif
+    debug_check_unkn_sprite_size("engine.c", 776);
+
+    if ((frv[4] != 0) && (angle > 1) && (angle < 7))
+        bri += 15;
+    if (bri < 10)
+        bri = 10;
+    if (bri > 60)
+        bri = 60;
+
+    if ((overall_scale == 256) || (overall_scale <= 0) || (overall_scale >= 4096))
+    {
+        struct Frame *p_frm;
+        struct Element *p_elem;
+
+        p_frm = &frame[frm];
+        for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+            if (p_spr <= m_sprites)
+                continue;
+            lbDisplay.DrawFlags = p_elem->Flags & 7;
+
+            if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
+            {
+                if (((p_elem->Flags >> 4) & 0x1F) == 4)
+                    LbSpriteDraw((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y, p_spr);
+                else
+                    LbSpriteDrawRemap((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y,
+                      p_spr, &pixmap.fade_table[256 * bri]);
+                if (word_1A5834 > p_elem->X >> 1)
+                    word_1A5834 = p_elem->X >> 1;
+                if (word_1A5836 > p_elem->Y >> 1)
+                    word_1A5836 = p_elem->Y >> 1;
+            }
+        }
+        lbDisplay.DrawFlags = 0;
+    }
+    else
+    {
+        draw_unkn2_scaled_alpha_sprite(frv, frm, x, y, bri);
+    }
 }
 
 ubyte check_mouse_overlap(ushort sspr)
