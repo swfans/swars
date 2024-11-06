@@ -473,7 +473,9 @@ void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
         : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" (bri), "g" (angle));
     return;
 #endif
-    debug_check_unkn_sprite_size("engine.c", 776);
+#if 0
+    debug_check_unkn_sprite_size(__FILE__, __LINE__);
+#endif
 
     if ((frv[4] != 0) && (angle > 1) && (angle < 7))
         bri += 15;
