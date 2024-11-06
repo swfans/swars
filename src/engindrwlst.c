@@ -484,11 +484,14 @@ void draw_sort_sprite1a(ushort a1)
         : : "a" (a1));
 }
 
-void draw_ex_face(ushort a1)
+void draw_ex_face(ushort exface)
 {
+#if 1
     asm volatile (
       "call ASM_draw_ex_face\n"
-        : : "a" (a1));
+        : : "a" (exface));
+    return;
+#endif
 }
 
 void set_floor_tile_point_uv_map_a(struct PolyPoint *p_pt1, struct PolyPoint *p_pt2, struct PolyPoint *p_pt3, struct PolyPoint *p_pt4, ubyte page)

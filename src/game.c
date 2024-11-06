@@ -47,6 +47,7 @@
 #include "drawtext.h"
 #include "enginbckt.h"
 #include "engindrwlst.h"
+#include "enginfexpl.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginpritxtr.h"
@@ -389,12 +390,6 @@ void load_prim_quad(void)
 void bang_init(void)
 {
     asm volatile ("call ASM_bang_init\n"
-        :  :  : "eax" );
-}
-
-void init_free_explode_faces(void)
-{
-    asm volatile ("call ASM_init_free_explode_faces\n"
         :  :  : "eax" );
 }
 

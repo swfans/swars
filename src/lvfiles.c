@@ -31,6 +31,7 @@
 #include "command.h"
 #include "display.h"
 #include "drawtext.h"
+#include "enginfexpl.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginsngobjs.h"

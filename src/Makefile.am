@@ -63,6 +63,8 @@ swars_SOURCES = \
 	enginbckt.h \
 	engindrwlst.c \
 	engindrwlst.h \
+	enginfexpl.c \
+	enginfexpl.h \
 	enginlights.c \
 	enginlights.h \
 	enginpriobjs.c \
