@@ -70,6 +70,11 @@ extern long dword_176CF4;
 extern long dword_176D00;
 extern long dword_176D04;
 
+extern long dword_19F4FC;
+extern long dword_19F500;
+extern long dword_19F504;
+extern long dword_19F508;
+
 extern ushort shield_frm[4];
 
 extern short word_1A5834;
@@ -204,13 +209,48 @@ void reset_drawlist(void)
     p_current_draw_item = &game_draw_list[1];
 }
 
-int calculate_enginepoint_shade_1(struct PolyPoint *p_point, struct SingleObjectFace3 *p_face, ushort a3)
+int calculate_enginepoint_shade_1(struct PolyPoint *p_pt1, struct SingleObjectFace3 *p_face, ushort pt2)
 {
+#if 1
     int ret;
     asm volatile (
       "call ASM_calculate_enginepoint_shade_1\n"
-        : "=r" (ret) : "a" (p_point), "d" (p_face), "b" (a3));
+        : "=r" (ret) : "a" (p_pt1), "d" (p_face), "b" (pt2));
     return ret;
+#endif
+}
+
+int calculate_enginepoint_shade_2(struct PolyPoint *p_pt1, struct SingleObjectFace4 *p_face4, ushort pt2)
+{
+#if 0
+    int ret;
+    asm volatile (
+      "call ASM_calculate_enginepoint_shade_2\n"
+        : "=r" (ret) : "a" (p_pt1), "d" (p_face4), "b" (pt2));
+    return ret;
+#endif
+    struct SinglePoint *p_pt2;
+    struct SingleObject *p_sobj;
+    int dist_x, dist_y, dist_z;
+    int distance;
+
+    p_pt2 = &game_object_points[p_face4->PointNo[pt2]];
+    p_sobj = &game_objects[p_face4->Object];
+
+    dist_x = dword_19F500 - p_pt2->X - p_sobj->MapX;
+    dist_y = dword_19F504 - p_pt2->Y - p_sobj->OffsetY;
+    dist_z = dword_19F508 - p_pt2->Z - p_sobj->MapZ;
+    distance = (dist_y * dist_y + dist_x * dist_x + dist_z * dist_z) >> 17;
+
+    if (distance != 0)
+        p_pt1->S += dword_19F4FC * (0x1000000 / distance);
+    else
+        p_pt1->S = 0x3F0000;
+
+    if (p_pt1->S > 0x3F0000)
+        p_pt1->S = 0x3F0000;
+
+    return p_pt1->S;
 }
 
 /**
@@ -450,7 +490,6 @@ void draw_ex_face(ushort a1)
       "call ASM_draw_ex_face\n"
         : : "a" (a1));
 }
-
 
 void set_floor_tile_point_uv_map_a(struct PolyPoint *p_pt1, struct PolyPoint *p_pt2, struct PolyPoint *p_pt3, struct PolyPoint *p_pt4, ubyte page)
 {
@@ -1046,11 +1085,233 @@ void draw_object_face3g_textrd(ushort face)
     }
 }
 
-void draw_object_face4d_textrd_dk(ushort a1)
+void draw_object_face4d_textrd_dk(ushort face4)
 {
+#if 0
     asm volatile (
       "call ASM_draw_object_face4d_textrd_dk\n"
-        : : "a" (a1));
+        : : "a" (face4));
+    return;
+#endif
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point4;
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+    struct PolyPoint point3;
+
+    p_face4 = &game_object_faces4[face4];
+    vec_mode = 4;
+    vec_colour = 64;
+
+    if (p_face4->Texture != 0)
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = &game_textures[p_face4->Texture];
+        vec_map = vec_tmap[p_sftex->Page];
+        if (p_face4->GFlags != 0)
+        {
+            if ((p_face4->GFlags & FGFlg_Unkn02) != 0)
+                vec_map = scratch_buf1;
+        }
+        point1.U = p_sftex->TMapX1 << 16;
+        point1.V = p_sftex->TMapY1 << 16;
+        point2.U = p_sftex->TMapX3 << 16;
+        point2.V = p_sftex->TMapY3 << 16;
+        point3.U = p_sftex->TMapX2 << 16;
+        point3.V = p_sftex->TMapY2 << 16;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if (vec_mode == 2)
+    {
+        point2.S = 0x200000;
+    }
+    else
+    {
+        ushort light, shade;
+        short i;
+
+        light = p_face4->Light0;
+        shade = p_face4->Shade0 << 7;
+        for (i = 0; (i <= 100) && (light != 0); i++)
+        {
+            struct QuickLight *p_qlight;
+            short intens;
+
+            p_qlight = &game_quick_lights[light];
+            intens = game_full_lights[p_qlight->Light].Intensity;
+            light = p_qlight->NextQuick;
+            shade += intens * p_qlight->Ratio;
+        }
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point1.S = shade << 7;
+    }
+    point1.S = calculate_enginepoint_shade_2(&point1, p_face4, 0);
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if (vec_mode == 2)
+    {
+        point2.S = 0x200000;
+    }
+    else
+    {
+        ushort light, shade;
+        short i;
+
+        light = p_face4->Light2;
+        shade = p_face4->Shade2 << 7;
+        for (i = 0; (i <= 100) && (light != 0); i++)
+        {
+            struct QuickLight *p_qlight;
+            short intens;
+
+            p_qlight = &game_quick_lights[light];
+            intens = game_full_lights[p_qlight->Light].Intensity;
+            light = p_qlight->NextQuick;
+            shade += intens * p_qlight->Ratio;
+        }
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point2.S = shade << 7;
+    }
+    point2.S = calculate_enginepoint_shade_2(&point2, p_face4, 2);
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if (vec_mode == 2)
+    {
+        point3.S = 0x200000;
+    }
+    else
+    {
+        ushort light, shade;
+        short i;
+
+        light = p_face4->Light1;
+        shade = p_face4->Shade1 << 7;
+        for (i = 0; (i <= 100) && (light != 0); i++)
+        {
+            struct QuickLight *p_qlight;
+            short intens;
+
+            p_qlight = &game_quick_lights[light];
+            intens = game_full_lights[p_qlight->Light].Intensity;
+            light = p_qlight->NextQuick;
+            shade += intens * p_qlight->Ratio;
+        }
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point3.S = shade << 7;
+    }
+    point3.S = calculate_enginepoint_shade_2(&point2, p_face4, 1); //TODO why point2? is that a coding mistake?
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[3]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point4.X = p_scrpoint->X + dword_176D00;
+        point4.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if (vec_mode == 2)
+    {
+        point4.S = 0x200000;
+    }
+    else
+    {
+        ushort light, shade;
+        short i;
+
+        light = p_face4->Light3;
+        shade = p_face4->Shade3 << 7;
+        for (i = 0; (i <= 100) && (light != 0); i++)
+        {
+            struct QuickLight *p_qlight;
+            short intens;
+
+            p_qlight = &game_quick_lights[light];
+            intens = game_full_lights[p_qlight->Light].Intensity;
+            light = p_qlight->NextQuick;
+            shade += intens * p_qlight->Ratio;
+        }
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point4.S = shade << 7;
+    }
+    point4.S = calculate_enginepoint_shade_2(&point4, p_face4, 3);
+
+    if (byte_19EC6F == 0)
+    {
+        point1.S = 0x200000;
+        point2.S = 0x200000;
+        point3.S = 0x200000;
+        point4.S = 0x200000;
+    }
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point3, &point2);
+    }
+    dword_176D4C++;
+
+    if (p_face4->Texture != 0)
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = &game_textures[p_face4->Texture];
+        point4.U = p_sftex->TMapX4 << 16;
+        point4.V = p_sftex->TMapY4 << 16;
+        point2.U = p_sftex->TMapX3 << 16;
+        point2.V = p_sftex->TMapY3 << 16;
+        point3.U = p_sftex->TMapX2 << 16;
+        point3.V = p_sftex->TMapY2 << 16;
+    }
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point2);
+    }
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point2, &point3);
+    }
+    dword_176D4C++;
 }
 
 void draw_sort_line(struct SortLine *p_sline)
@@ -1220,7 +1481,7 @@ void draw_sort_sprite1b(int sspr)
 #endif
     struct SortSprite *p_sspr;
     struct Thing *p_thing;
-    short v18;
+    short br_inc;
     ubyte bright;
 
     p_sspr = &game_sort_sprites[sspr];
@@ -1228,20 +1489,19 @@ void draw_sort_sprite1b(int sspr)
     if (p_sspr->Frame > 10000)
         return;
 
-    v18 = 0;
+    br_inc = 0;
     bright = p_sspr->Brightness;
     if ((p_thing->Flag & 0x02) == 0)
     {
         if ((p_thing->Flag & 0x200000) != 0)
         {
-            v18 = 16;
-            bright += 16;
+            br_inc += 16;
             if (p_thing->U.UPerson.ShieldGlowTimer) {
-                bright += 16;
-                v18 = 32;
+                br_inc += 16;
             }
         }
     }
+    bright += br_inc;
     if ((p_thing->U.UPerson.AnimMode == 12) || ((ingame.Flags & 0x8000) != 0))
         bright = 32;
 
@@ -1253,7 +1513,7 @@ void draw_sort_sprite1b(int sspr)
         if ((ingame.Flags & 0x8000) != 0) {
             ushort fr;
             fr = nstart_ani[1066];
-            draw_sorted_sprite1a(fr, p_sspr->X, p_sspr->Y, 0x20);
+            draw_sorted_sprite1a(fr, p_sspr->X, p_sspr->Y, 32);
         }
     }
     else
@@ -1302,18 +1562,18 @@ void draw_sort_sprite1b(int sspr)
         }
     }
 
-    if (v18 != 0)
+    if (br_inc != 0)
     {
         ubyte *frv;
         ushort fr, k;
         fr = shield_frm[p_thing->ThingOffset & 3];
         k = ((gameturn + 16 * p_thing->ThingOffset) >> 2) & 7;
         frv = byte_15399C + 5 * k;
-        draw_sorted_sprite1b(frv, fr, p_sspr->X, p_sspr->Y, v18, 0);
+        draw_sorted_sprite1b(frv, fr, p_sspr->X, p_sspr->Y, br_inc, 0);
     }
 
     if (debug_hud_collision) {
-        char locstr[152];
+        char locstr[32];
         short dy;
         sprintf(locstr, "%d ", p_thing->U.UPerson.RecoilTimer);
         dy = (37 * overall_scale) >> 8;
