@@ -460,6 +460,15 @@ ubyte check_mouse_overlap(ushort sspr)
     return ret;
 }
 
+ubyte check_mouse_overlap_item(ushort sspr)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_check_mouse_overlap_item\n"
+        : "=r" (ret) : "a" (sspr));
+    return ret;
+}
+
 ubyte check_mouse_overlap_corpse(ushort sspr)
 {
     ubyte ret;
@@ -478,11 +487,38 @@ ubyte check_mouse_over_unkn2(ushort sspr, struct Thing *p_thing)
     return ret;
 }
 
-void draw_sort_sprite1a(ushort a1)
+void draw_sort_sprite1a(ushort sspr)
 {
+#if 0
     asm volatile (
       "call ASM_draw_sort_sprite1a\n"
         : : "a" (a1));
+    return;
+#endif
+    struct SortSprite *p_sspr;
+    struct Thing *p_thing;
+    PlayerInfo *p_locplayer;
+
+    p_sspr = &game_sort_sprites[sspr];
+    p_thing = p_sspr->PThing;
+    p_locplayer = &players[local_player_no];
+
+    word_1A5834 = 120;
+    word_1A5836 = 120;
+    draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
+    p_thing = game_sort_sprites[sspr].PThing;
+
+    if ((p_locplayer->TargetType <= 5) && (p_thing->Type == SmTT_DROPPED_ITEM)) {
+        check_mouse_overlap_item(sspr);
+    }
+
+    if ((p_locplayer->TargetType < 6) && (p_thing->Type == TT_MINE))
+    {
+        if ((p_thing->SubType == 7) || (p_thing->SubType == 3))
+            check_mouse_overlap_item(sspr);
+        else if (p_thing->SubType == 48)
+            check_mouse_overlap(sspr);
+    }
 }
 
 void draw_ex_face(ushort exface)
