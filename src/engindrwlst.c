@@ -117,7 +117,7 @@ void LbSpriteDraw_2(int x, int y, struct TbSprite *spr)
         : : "a" (x), "d" (y), "b" (spr));
 }
 
-void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scale, ushort alpha)
+void draw_unkn1_scaled_alpha_sprite(ushort frm, int scr_x, int scr_y, ushort scale, ushort alpha)
 {
 #if 0
     asm volatile (
@@ -131,7 +131,7 @@ void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scal
     int pos_x, pos_y;
     int swidth, sheight;
 
-    p_frm = &frame[fr];
+    p_frm = &frame[frm];
     lbSpriteReMapPtr = &pixmap.fade_table[256 * alpha];
     //TODO would probably make more sense to set the ghost ptr somewhere during game setup
     render_ghost = &pixmap.ghost_table[0*PALETTE_8b_COLORS];
@@ -185,11 +185,157 @@ void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scal
     lbDisplay.DrawFlags = 0;
 }
 
-void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte csel)
+void draw_unkn2_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
+  ubyte bri)
 {
+#if 0
     asm volatile (
-      "call ASM_draw_sorted_sprite1a\n"
-        : : "a" (frm), "d" (x), "b" (y), "c" (csel));
+      "push %4\n"
+      "call ASM_draw_unkn2_scaled_alpha_sprite\n"
+        : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" ((uint)bri));
+    return;
+#endif
+    struct Frame *p_frm;
+    struct Element *p_elem;
+    int max_x, max_y;
+    int min_x, min_y;
+    int range_x, range_y;
+    TbBool really_draw;
+
+    really_draw = 0;
+    max_x = -99999;
+    max_y = -99999;
+    min_x = 99999;
+    min_y = 99999;
+    p_frm = &frame[frm];
+
+    for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
+    {
+        struct TbSprite *p_spr;
+
+        if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
+        {
+            int tmp;
+
+            really_draw = 1;
+            p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+            if (min_x > p_elem->X >> 1)
+                min_x = p_elem->X >> 1;
+            if (min_y > p_elem->Y >> 1)
+                min_y = p_elem->Y >> 1;
+            tmp = p_spr->SWidth + (p_elem->X >> 1);
+            if (max_x < tmp)
+                max_x = tmp;
+            tmp = p_spr->SHeight + (p_elem->Y >> 1);
+            if (max_y < tmp)
+                max_y = tmp;
+        }
+    }
+
+    if (!really_draw)
+        return;
+
+    lbSpriteReMapPtr = &pixmap.fade_table[256 * bri];
+    word_1A5834 = min_x;
+    word_1A5836 = min_y;
+
+    range_x = max_x - min_x;
+    range_y = max_y - min_y;
+    if ((range_x > 0) && (range_x <= 128) && (range_y > 0) && (range_y <= 128))
+    {
+        if ( (overall_scale * p_frm->SWidth) >> 9 > 1 && (overall_scale * p_frm->SHeight) >> 9 > 1 )
+        {
+            dword_176CE0 = ((min_x * overall_scale) >> 8) + x;
+            dword_176CE4 = ((min_y * overall_scale) >> 8) + y;
+            dword_176CE8 = range_x;
+            dword_176CEC = range_y;
+            dword_176CF0 = (range_x * overall_scale) >> 8;
+            dword_176CF4 = (range_y * overall_scale) >> 8;
+            SetAlphaScalingData(dword_176CE0, dword_176CE4, dword_176CE8, dword_176CEC, dword_176CF0, dword_176CF4);
+
+            for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
+            {
+                struct TbSprite *p_spr;
+
+                p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+                if (p_spr <= m_sprites)
+                    continue;
+
+                lbDisplay.DrawFlags = p_elem->Flags & 7;
+                if ((lbDisplay.DrawFlags & 0x0004) == 0)
+                    lbDisplay.DrawFlags |= 0x0008;
+
+                if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
+                {
+                    unkn1_pos_x = (p_elem->X >> 1) - min_x;
+                    unkn1_pos_y = (p_elem->Y >> 1) - min_y;
+                    unkn1_spr = p_spr;
+                    DrawSpriteWthShadowUsingScalingData(unkn1_pos_x, unkn1_pos_y, unkn1_spr);
+                }
+            }
+            lbDisplay.DrawFlags = 0;
+        }
+    }
+}
+
+
+void draw_unkn3_scaled_alpha_sprite(ushort frm, short x, short y, ubyte bri)
+{
+    struct Frame *p_frm;
+    struct Element *p_elem;
+
+    p_frm = &frame[frm];
+    for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
+    {
+        struct TbSprite *p_spr;
+
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+        if (p_spr <= m_sprites)
+            continue;
+
+        lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+        if ((p_elem->Flags & 0xFE00) == 0) {
+            LbSpriteDrawRemap((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y,
+              p_spr, &pixmap.fade_table[256 * bri]);
+        }
+        if (word_1A5834 > p_elem->X >> 1)
+            word_1A5834 = p_elem->X >> 1;
+        if (word_1A5836 > p_elem->Y >> 1)
+            word_1A5836 = p_elem->Y >> 1;
+    }
+    lbDisplay.DrawFlags = 0;
+}
+
+void draw_unkn4_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
+  ubyte bri)
+{
+    struct Frame *p_frm;
+    struct Element *p_elem;
+
+    p_frm = &frame[frm];
+    for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
+    {
+        struct TbSprite *p_spr;
+
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+        if (p_spr <= m_sprites)
+            continue;
+
+        lbDisplay.DrawFlags = p_elem->Flags & 7;
+        if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
+        {
+            if (((p_elem->Flags >> 4) & 0x1F) == 4)
+                LbSpriteDraw((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y, p_spr);
+            else
+                LbSpriteDrawRemap((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y,
+                  p_spr, &pixmap.fade_table[256 * bri]);
+            if (word_1A5834 > p_elem->X >> 1)
+                word_1A5834 = p_elem->X >> 1;
+            if (word_1A5836 > p_elem->Y >> 1)
+                word_1A5836 = p_elem->Y >> 1;
+        }
+    }
+    lbDisplay.DrawFlags = 0;
 }
 
 void reset_drawlist(void)
@@ -214,13 +360,35 @@ void reset_drawlist(void)
 
 int calculate_enginepoint_shade_1(struct PolyPoint *p_pt1, struct SingleObjectFace3 *p_face, ushort pt2)
 {
-#if 1
+#if 0
     int ret;
     asm volatile (
       "call ASM_calculate_enginepoint_shade_1\n"
         : "=r" (ret) : "a" (p_pt1), "d" (p_face), "b" (pt2));
     return ret;
 #endif
+    struct SinglePoint *p_pt2;
+    struct SingleObject *p_sobj;
+    int dist_x, dist_y, dist_z;
+    int distance;
+
+    p_pt2 = &game_object_points[p_face->PointNo[pt2]];
+    p_sobj = &game_objects[p_face->Object];
+
+    dist_x = dword_19F500 - p_pt2->X - p_sobj->MapX;
+    dist_y = dword_19F504 - p_pt2->Y - p_sobj->OffsetY;
+    dist_z = dword_19F508 - p_pt2->Z - p_sobj->MapZ;
+    distance = (dist_y * dist_y + dist_x * dist_x + dist_z * dist_z) >> 17;
+
+    if (distance != 0)
+        p_pt1->S += dword_19F4FC * (0x1000000 / distance);
+    else
+        p_pt1->S = 0x3F0000;
+
+    if (p_pt1->S > 0x3F0000)
+        p_pt1->S = 0x3F0000;
+
+    return p_pt1->S;
 }
 
 int calculate_enginepoint_shade_2(struct PolyPoint *p_pt1, struct SingleObjectFace4 *p_face4, ushort pt2)
@@ -449,100 +617,6 @@ void debug_check_unkn_sprite_size(const char *src_fname, int src_line)
         sprite_over_16x16 = 1;
 }
 
-void draw_unkn2_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
-  ubyte bri)
-{
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_unkn2_scaled_alpha_sprite\n"
-        : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" ((uint)bri));
-    return;
-#endif
-    struct Frame *p_frm;
-    struct Element *p_elem;
-    int max_x, max_y;
-    int min_x, min_y;
-    int range_x, range_y;
-    TbBool really_draw;
-
-    really_draw = 0;
-    max_x = -99999;
-    max_y = -99999;
-    min_x = 99999;
-    min_y = 99999;
-    p_frm = &frame[frm];
-
-    for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
-    {
-        struct TbSprite *p_spr;
-
-        if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
-        {
-            int tmp;
-
-            really_draw = 1;
-            p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
-            if (min_x > p_elem->X >> 1)
-                min_x = p_elem->X >> 1;
-            if (min_y > p_elem->Y >> 1)
-                min_y = p_elem->Y >> 1;
-            tmp = p_spr->SWidth + (p_elem->X >> 1);
-            if (max_x < tmp)
-                max_x = tmp;
-            tmp = p_spr->SHeight + (p_elem->Y >> 1);
-            if (max_y < tmp)
-                max_y = tmp;
-        }
-    }
-
-    if (!really_draw)
-        return;
-
-    lbSpriteReMapPtr = &pixmap.fade_table[256 * bri];
-    word_1A5834 = min_x;
-    word_1A5836 = min_y;
-
-    range_x = max_x - min_x;
-    range_y = max_y - min_y;
-    if ((range_x > 0) && (range_x <= 128) && (range_y > 0) && (range_y <= 128))
-    {
-        if ( (overall_scale * p_frm->SWidth) >> 9 > 1 && (overall_scale * p_frm->SHeight) >> 9 > 1 )
-        {
-            dword_176CE0 = ((min_x * overall_scale) >> 8) + x;
-            dword_176CE4 = ((min_y * overall_scale) >> 8) + y;
-            dword_176CE8 = range_x;
-            dword_176CEC = range_y;
-            dword_176CF0 = (range_x * overall_scale) >> 8;
-            dword_176CF4 = (range_y * overall_scale) >> 8;
-            SetAlphaScalingData(dword_176CE0, dword_176CE4, dword_176CE8, dword_176CEC, dword_176CF0, dword_176CF4);
-
-            for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
-            {
-                struct TbSprite *p_spr;
-
-                p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
-                if (p_spr <= m_sprites)
-                    continue;
-
-                lbDisplay.DrawFlags = p_elem->Flags & 7;
-                if ((lbDisplay.DrawFlags & 0x0004) == 0)
-                    lbDisplay.DrawFlags |= 0x0008;
-
-                if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
-                {
-                    unkn1_pos_x = (p_elem->X >> 1) - min_x;
-                    unkn1_pos_y = (p_elem->Y >> 1) - min_y;
-                    unkn1_spr = p_spr;
-                    DrawSpriteWthShadowUsingScalingData(unkn1_pos_x, unkn1_pos_y, unkn1_spr);
-                }
-            }
-            lbDisplay.DrawFlags = 0;
-        }
-    }
-}
-
-
 void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
   ubyte bri, ubyte angle)
 {
@@ -567,33 +641,7 @@ void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
 
     if ((overall_scale == 256) || (overall_scale <= 0) || (overall_scale >= 4096))
     {
-        struct Frame *p_frm;
-        struct Element *p_elem;
-
-        p_frm = &frame[frm];
-        for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
-        {
-            struct TbSprite *p_spr;
-
-            p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
-            if (p_spr <= m_sprites)
-                continue;
-            lbDisplay.DrawFlags = p_elem->Flags & 7;
-
-            if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
-            {
-                if (((p_elem->Flags >> 4) & 0x1F) == 4)
-                    LbSpriteDraw((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y, p_spr);
-                else
-                    LbSpriteDrawRemap((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y,
-                      p_spr, &pixmap.fade_table[256 * bri]);
-                if (word_1A5834 > p_elem->X >> 1)
-                    word_1A5834 = p_elem->X >> 1;
-                if (word_1A5836 > p_elem->Y >> 1)
-                    word_1A5836 = p_elem->Y >> 1;
-            }
-        }
-        lbDisplay.DrawFlags = 0;
+        draw_unkn4_scaled_alpha_sprite(frv, frm, x, y, bri);
     }
     else
     {
@@ -1984,6 +2032,34 @@ void draw_object_face4_pole(ushort face4)
     draw_trigpoly(&point4, &point1, &point3);
 }
 
+void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte bright)
+{
+#if 1
+    asm volatile (
+      "call ASM_draw_sorted_sprite1a\n"
+        : : "a" (frm), "d" (x), "b" (y), "c" (bright));
+    return;
+#endif
+    int sscale;
+    ubyte bri;
+
+    sscale = overall_scale;
+    bri = bright;
+    if (bri < 10)
+        bri = 10;
+    if (bri > 48)
+        bri = 48;
+
+    if ((sscale == 256) || (sscale <= 0) || (sscale >= 4096))
+    {
+        draw_unkn3_scaled_alpha_sprite(frm, x, y, bri);
+    }
+    else
+    {
+        draw_unkn1_scaled_alpha_sprite(frm, x, y, sscale, bri);
+    }
+}
+
 void draw_sort_sprite1c_sub(ushort frm, short x, short y, ubyte bright, ushort scale)
 {
 #if 0
@@ -1999,36 +2075,14 @@ void draw_sort_sprite1c_sub(ushort frm, short x, short y, ubyte bright, ushort s
     sscale = (scale * overall_scale) >> 8;
 
     bri = bright;
-    if (bright < 10)
+    if (bri < 10)
         bri = 10;
     if (bri > 48)
         bri = 48;
 
     if (sscale == 256 || sscale == 0 || sscale >= 0x1000)
     {
-        struct Frame *p_frm;
-        struct Element *p_elem;
-
-        p_frm = &frame[frm];
-        for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
-        {
-            struct TbSprite *p_spr;
-
-            p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
-            if (p_spr <= m_sprites)
-                continue;
-
-            lbDisplay.DrawFlags = p_elem->Flags & 0x07;
-            if ((p_elem->Flags & 0xFE00) == 0) {
-                LbSpriteDrawRemap(x + (p_elem->X >> 1), y + (p_elem->Y >> 1),
-                  p_spr, &pixmap.fade_table[256 * bri]);
-            }
-            if (word_1A5834 > p_elem->X >> 1)
-                word_1A5834 = p_elem->X >> 1;
-            if (word_1A5836 > p_elem->Y >> 1)
-                word_1A5836 = p_elem->Y >> 1;
-        }
-        lbDisplay.DrawFlags = 0;
+        draw_unkn3_scaled_alpha_sprite(frm, x, y, bri);
     }
     else
     {
