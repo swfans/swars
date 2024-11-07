@@ -452,13 +452,94 @@ void debug_check_unkn_sprite_size(const char *src_fname, int src_line)
 void draw_unkn2_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
   ubyte bri)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_draw_unkn2_scaled_alpha_sprite\n"
         : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" ((uint)bri));
     return;
 #endif
+    struct Frame *p_frm;
+    struct Element *p_elem;
+    int max_x, max_y;
+    int min_x, min_y;
+    int range_x, range_y;
+    TbBool really_draw;
+
+    really_draw = 0;
+    max_x = -99999;
+    max_y = -99999;
+    min_x = 99999;
+    min_y = 99999;
+    p_frm = &frame[frm];
+
+    for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
+    {
+        struct TbSprite *p_spr;
+
+        if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
+        {
+            int tmp;
+
+            really_draw = 1;
+            p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+            if (min_x > p_elem->X >> 1)
+                min_x = p_elem->X >> 1;
+            if (min_y > p_elem->Y >> 1)
+                min_y = p_elem->Y >> 1;
+            tmp = p_spr->SWidth + (p_elem->X >> 1);
+            if (max_x < tmp)
+                max_x = tmp;
+            tmp = p_spr->SHeight + (p_elem->Y >> 1);
+            if (max_y < tmp)
+                max_y = tmp;
+        }
+    }
+
+    if (!really_draw)
+        return;
+
+    lbSpriteReMapPtr = &pixmap.fade_table[256 * bri];
+    word_1A5834 = min_x;
+    word_1A5836 = min_y;
+
+    range_x = max_x - min_x;
+    range_y = max_y - min_y;
+    if ((range_x > 0) && (range_x <= 128) && (range_y > 0) && (range_y <= 128))
+    {
+        if ( (overall_scale * p_frm->SWidth) >> 9 > 1 && (overall_scale * p_frm->SHeight) >> 9 > 1 )
+        {
+            dword_176CE0 = ((min_x * overall_scale) >> 8) + x;
+            dword_176CE4 = ((min_y * overall_scale) >> 8) + y;
+            dword_176CE8 = range_x;
+            dword_176CEC = range_y;
+            dword_176CF0 = (range_x * overall_scale) >> 8;
+            dword_176CF4 = (range_y * overall_scale) >> 8;
+            SetAlphaScalingData(dword_176CE0, dword_176CE4, dword_176CE8, dword_176CEC, dword_176CF0, dword_176CF4);
+
+            for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani; p_elem = &melement_ani[p_elem->Next])
+            {
+                struct TbSprite *p_spr;
+
+                p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+                if (p_spr <= m_sprites)
+                    continue;
+
+                lbDisplay.DrawFlags = p_elem->Flags & 7;
+                if ((lbDisplay.DrawFlags & 0x0004) == 0)
+                    lbDisplay.DrawFlags |= 0x0008;
+
+                if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
+                {
+                    unkn1_pos_x = (p_elem->X >> 1) - min_x;
+                    unkn1_pos_y = (p_elem->Y >> 1) - min_y;
+                    unkn1_spr = p_spr;
+                    DrawSpriteWthShadowUsingScalingData(unkn1_pos_x, unkn1_pos_y, unkn1_spr);
+                }
+            }
+            lbDisplay.DrawFlags = 0;
+        }
+    }
 }
 
 
@@ -554,6 +635,15 @@ ubyte check_mouse_over_unkn2(ushort sspr, struct Thing *p_thing)
       "call ASM_check_mouse_over_unkn2\n"
         : "=r" (ret) : "a" (sspr), "d" (p_thing));
     return ret;
+}
+
+void check_mouse_over_face(struct PolyPoint *pt1, struct PolyPoint *pt2,
+  struct PolyPoint *pt3, int face, int type)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_check_mouse_over_face\n"
+        : : "a" (pt1), "d" (pt2), "b" (pt3), "c" (face), "g" (type));
 }
 
 void draw_sort_sprite1a(ushort sspr)
@@ -1958,15 +2048,6 @@ void draw_sort_line1a(ushort sln)
     struct SortLine *p_sline;
     p_sline = &game_sort_lines[sln];
     draw_sort_line(p_sline);
-}
-
-void check_mouse_over_face(struct PolyPoint *pt1, struct PolyPoint *pt2,
-  struct PolyPoint *pt3, int face, int type)
-{
-    asm volatile (
-      "push %4\n"
-      "call ASM_check_mouse_over_face\n"
-        : : "a" (pt1), "d" (pt2), "b" (pt3), "c" (face), "g" (type));
 }
 
 /**
