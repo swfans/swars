@@ -26,6 +26,7 @@
 #include "insspr.h"
 #include <assert.h>
 
+#include "bflib_render_drspr.h"
 #include "display.h"
 #include "drawtext.h"
 #include "enginbckt.h"
@@ -102,20 +103,6 @@ ubyte byte_15399C[] = {
   2, 0, 2, 0, 0,
   2, 0, 2, 0, 0,
 };
-
-void LbSpriteDraw_1(int x, int y, struct TbSprite *spr)
-{
-    asm volatile (
-      "call ASM_LbSpriteDraw_1\n"
-        : : "a" (x), "d" (y), "b" (spr));
-}
-
-void LbSpriteDraw_2(int x, int y, struct TbSprite *spr)
-{
-    asm volatile (
-      "call ASM_LbSpriteDraw_2\n"
-        : : "a" (x), "d" (y), "b" (spr));
-}
 
 void draw_unkn1_scaled_alpha_sprite(ushort frm, int scr_x, int scr_y, ushort scale, ushort alpha)
 {

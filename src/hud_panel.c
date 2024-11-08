@@ -24,6 +24,8 @@
 #include "bfscreen.h"
 #include "bfsprite.h"
 #include "bfutility.h"
+
+#include "bflib_render_drspr.h"
 #include "bigmap.h"
 #include "display.h"
 #include "engindrwlst.h"
