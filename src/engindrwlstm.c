@@ -26,10 +26,12 @@
 #include "engintrns.h"
 #include "game.h"
 #include "game_data.h"
+#include "game_speed.h"
 #include "swlog.h"
+#include "thing.h"
 /******************************************************************************/
 
-/** Adds a new draw item and retirns linked SortLine instance.
+/** Add a new draw item and return linked SortLine instance.
  *
  * @param ditype Draw item type, should be one of SortLine related types.
  * @param bckt Destination bucket for this draw item.
@@ -43,13 +45,36 @@ struct SortLine *draw_item_add_line(ubyte ditype, ushort bckt)
         return NULL;
 
     p_sline = p_current_sort_line;
-    if (!draw_item_add(DrIT_Unkn11, next_sort_line, bckt))
+    if (!draw_item_add(ditype, next_sort_line, bckt))
         return NULL;
 
     p_current_sort_line++;
     next_sort_line++;
 
     return p_sline;
+}
+
+/** Add a new draw item and return linked SortSprite instance.
+ *
+ * @param ditype Draw item type, should be one of SortSprite related types.
+ * @param bckt Destination bucket for this draw item.
+ * @return SortSprite instance to fill, or NULL if arrays exceeded.
+ */
+struct SortSprite *draw_item_add_sprite(ubyte ditype, ushort bckt)
+{
+    struct SortSprite *p_sspr;
+
+    if (next_sort_sprite >= mem_game[32].N)
+        return NULL;
+
+    p_sspr = p_current_sort_sprite;
+    if (!draw_item_add(ditype, next_sort_sprite, bckt))
+        return NULL;
+
+    p_current_sort_sprite++;
+    next_sort_sprite++;
+
+    return p_sspr;
 }
 
 void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
@@ -64,6 +89,7 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
         : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (len), "g" (col));
     return;
 #endif
+    struct SortLine *p_sline;
     int dt_x, dt_y, dt_z;
     int dist;
     int end_x, end_y, end_z;
@@ -73,7 +99,6 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
     int abs_scr_dy, abs_scr_dx;
     int bckt_shift;
     ubyte flags_A, flags_B;
-    struct SortLine *p_sline;
 
     dt_y = y2 - y1;
     dt_z = z2 - z1;
@@ -100,7 +125,7 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
     if (game_perspective == 5)
         scr_dx = ((0x4000 - pers5_range) * scr_dx) >> 14;
 
-    scr_x1 = scr_dx + dword_176D3C;
+    scr_x1 = dword_176D3C + scr_dx;
     if (scr_x1 < 0) {
         if (scr_x1 < -2000)
             scr_x1 = -2000;
@@ -184,12 +209,71 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
 
 void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity, struct Thing *p_thing)
 {
+#if 0
     asm volatile (
       "push %6\n"
       "push %5\n"
       "push %4\n"
       "call ASM_draw_e_graphic\n"
         : : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (radius), "g" (intensity), "g" (p_thing));
+    return;
+#endif
+    struct SortSprite *p_sspr;
+    int scr_dx, scr_dy, scr_z;
+    short scr_x, scr_y;
+    int fctr_xz, fctr_y;
+    int abs_scr_dy, abs_scr_dx;
+    int pers5_range;
+
+    if (current_map == 9) // map009 Singapore on-water map
+        y += waft_table[gameturn & 0x1F] >> 3;
+
+    fctr_y = 8 * y - 8 * engn_yc;
+    fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
+    pers5_range = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+    abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
+    abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
+
+    scr_dx = (overall_scale * abs_scr_dx) >> 11;
+    if (game_perspective == 5)
+        scr_dx = ((0x4000 - pers5_range) * scr_dx) >> 14;
+
+    scr_x = dword_176D3C + scr_dx;
+    if (scr_x < 0) {
+        if (scr_x < -2000)
+            scr_x = -2000;
+    } else if (scr_x >= vec_window_width) {
+        if (scr_x > 2000)
+            scr_x = 2000;
+    }
+
+    scr_dy = (overall_scale * abs_scr_dy) >> 11;
+    if (game_perspective == 5)
+        scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
+
+    scr_y = dword_176D40 - scr_dy;
+    if (scr_y < 0) {
+        if (scr_y < -2000)
+            scr_y = -2000;
+    } else if (scr_y >= vec_window_height) {
+        if (scr_y > 2000)
+            scr_y = 2000;
+    }
+
+    scr_z = pers5_range - radius;
+    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & 0x20000000) != 0))
+        scr_z = -10000;
+
+    p_sspr = draw_item_add_sprite(DrIT_Unkn3, scr_z + 5000);
+    if (p_sspr == NULL)
+        return;
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = scr_z;
+    p_sspr->Frame = frame;
+    p_sspr->Brightness = intensity;
+    p_sspr->PThing = p_thing;
 }
 
 void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int intensity, int scale)
