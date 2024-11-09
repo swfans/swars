@@ -29,6 +29,29 @@
 #include "swlog.h"
 /******************************************************************************/
 
+/** Adds a new draw item and retirns linked SortLine instance.
+ *
+ * @param ditype Draw item type, should be one of SortLine related types.
+ * @param bckt Destination bucket for this draw item.
+ * @return SortLine instance to fill, or NULL if arrays exceeded.
+ */
+struct SortLine *draw_item_add_line(ubyte ditype, ushort bckt)
+{
+    struct SortLine *p_sline;
+
+    if (next_sort_line >= mem_game[33].N)
+        return NULL;
+
+    p_sline = p_current_sort_line;
+    if (!draw_item_add(DrIT_Unkn11, next_sort_line, bckt))
+        return NULL;
+
+    p_current_sort_line++;
+    next_sort_line++;
+
+    return p_sline;
+}
+
 void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
 {
 #if 0
@@ -50,6 +73,7 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
     int abs_scr_dy, abs_scr_dx;
     int bckt_shift;
     ubyte flags_A, flags_B;
+    struct SortLine *p_sline;
 
     dt_y = y2 - y1;
     dt_z = z2 - z1;
@@ -142,24 +166,20 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
 
     flags_B |= 0x40;
 
-    if ((flags_B & flags_A & 0xF) == 0
-      && (next_sort_line < mem_game[33].N))
-    {
-        struct SortLine *p_sline;
+    if ((flags_B & flags_A & 0xF) != 0)
+        return;
 
-        p_sline = p_current_sort_line;
-        p_current_sort_line++;
-        p_sline->Shade = 32;
-        p_sline->Flags = 0;
-        p_sline->X1 = scr_x1;
-        p_sline->Y1 = scr_y1;
-        p_sline->X2 = scr_x2;
-        p_sline->Y2 = scr_y2;
-        p_sline->Col = col;
+    p_sline = draw_item_add_line(DrIT_Unkn11, bckt_shift + 5000);
+    if (p_sline == NULL)
+        return;
 
-        draw_item_add(DrIT_Unkn11, next_sort_line, bckt_shift + 5000);
-        next_sort_line++;
-    }
+    p_sline->Shade = 32;
+    p_sline->Flags = 0;
+    p_sline->X1 = scr_x1;
+    p_sline->Y1 = scr_y1;
+    p_sline->X2 = scr_x2;
+    p_sline->Y2 = scr_y2;
+    p_sline->Col = col;
 }
 
 void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity, struct Thing *p_thing)
