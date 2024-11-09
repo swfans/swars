@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "engindrwlstm.h"
 
+#include "bfendian.h"
 #include "bfmath.h"
 
 #include "display.h"
@@ -32,6 +33,9 @@
 #include "thing.h"
 /******************************************************************************/
 extern ubyte byte_176D49;
+
+extern long dword_176CAC;
+extern long dword_152E4C;
 
 ubyte byte_152EF0[] = {
    0, 10,  5, 10,  7,  7,  8, 10,
@@ -84,24 +88,25 @@ struct SortSprite *draw_item_add_sprite(ubyte ditype, ushort bckt)
     return p_sspr;
 }
 
-/** Add a new draw item and return linked SpecialPoint instance.
+/** Add a new draw item and return first of linked SpecialPoint instances.
  *
  * @param ditype Draw item type, should be one of SpecialPoint related types.
  * @param bckt Destination bucket for this draw item.
+ * @param npoints Amount of consecutive points to reserve.
  * @return SpecialPoint instance to fill, or NULL if arrays exceeded.
  */
-struct SpecialPoint *draw_item_add_point(ubyte ditype, ushort offset, ushort bckt)
+struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset, ushort bckt, ushort npoints)
 {
     struct SpecialPoint *p_scrpoint;
 
-    if (next_screen_point >= mem_game[30].N)
+    if (next_screen_point + npoints > mem_game[30].N)
         return NULL;
 
     p_scrpoint = &game_screen_point_pool[next_screen_point];
     if (!draw_item_add(ditype, offset, bckt))
         return NULL;
 
-    next_screen_point++;
+    next_screen_point += npoints;
 
     return p_scrpoint;
 }
@@ -358,7 +363,7 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
         if (scr_y > 2000)
             scr_y = 2000;
     }
-    scr_z = pers5_range - (unsigned __int16)radius - 100;
+    scr_z = pers5_range - radius - 100;
 
     p_sspr = draw_item_add_sprite(DrIT_Unkn15, scr_z + 5000);
     if (p_sspr == NULL)
@@ -537,7 +542,7 @@ void FIRE_draw_fire(struct SimpleThing *p_sthing)
         flags |= 0x40;
 
         p_flame->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_point(DrIT_Unkn25, flm, pers5_range + 5000 - 50);
+        p_scrpoint = draw_item_add_points(DrIT_Unkn25, flm, pers5_range + 5000 - 50, 1);
         if (p_scrpoint == NULL)
             break;
 
@@ -547,10 +552,94 @@ void FIRE_draw_fire(struct SimpleThing *p_sthing)
     }
 }
 
+void draw_bang_phwoar(struct SimpleThing *p_pow)
+{
+    struct Phwoar *p_phwoar;
+    ushort phw;
+
+    for (phw = p_pow->U.UBang.phwoar; phw != 0; phw = p_phwoar->child)
+    {
+        struct SpecialPoint *p_scrpoint;
+        int x, y, z;
+        int scr_dx, scr_dy;
+        int abs_scr_dy, abs_scr_dx;
+        int fctr_xz;
+        int pers5_range;
+        short scr_x, scr_y;
+        ubyte flags;
+
+        p_phwoar = &phwoar[phw];
+        x = (p_phwoar->x >> 8) - engn_xc;
+        z = (p_phwoar->z >> 8) - engn_zc;
+        y = (p_phwoar->y >> 5) - engn_yc - 8 * engn_yc;
+
+        fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
+        pers5_range = (dword_176D18 * y + dword_176D1C * fctr_xz) >> 16;
+        abs_scr_dy = (dword_176D1C * y - dword_176D18 * fctr_xz) >> 16;
+        abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
+
+        scr_dx = (overall_scale * abs_scr_dx) >> 11;
+        if (game_perspective == 5)
+            scr_dx = ((0x4000 - pers5_range) * scr_dx) >> 14;
+
+        scr_x = dword_176D3C + scr_dx;
+        if (scr_x < 0) {
+            if (scr_x < -2000)
+                scr_x = -2000;
+            flags |= 0x01;
+        } else if (scr_x >= vec_window_width) {
+            if (scr_x > 2000)
+                scr_x = 2000;
+            flags |= 0x02;
+        }
+
+        scr_dy = (overall_scale * abs_scr_dy) >> 11;
+        if (game_perspective == 5)
+            scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
+
+        scr_y = dword_176D40 - scr_dy;
+        if (scr_y < 0) {
+            if (scr_y < -2000)
+                scr_y = -2000;
+            flags |= 0x04;
+        } else if (scr_y >= vec_window_height) {
+            if (scr_y > 2000)
+                scr_y = 2000;
+            flags |= 0x08;
+        }
+
+        flags |= 0x40;
+
+        p_phwoar->PointOffset = next_screen_point;
+        p_scrpoint = draw_item_add_points(DrIT_Unkn21, phw, pers5_range + 5000 - 100, 1);
+        if (p_scrpoint == NULL)
+            break;
+
+        p_scrpoint->X = scr_x;
+        p_scrpoint->Y = scr_y;
+        p_scrpoint->Z = pers5_range;
+    }
+}
+
+void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour)
+{
+    asm volatile (
+      "push %8\n"
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_build_laser\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner), "g" (colour));
+}
+
 void draw_bang(struct SimpleThing *p_pow)
 {
+#if 1
     asm volatile ("call ASM_draw_bang\n"
         : : "a" (p_pow));
+    return;
+#endif
 }
 
 ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
