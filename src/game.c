@@ -46,7 +46,7 @@
 #include "dos.h"
 #include "drawtext.h"
 #include "enginbckt.h"
-#include "engindrwlst.h"
+#include "engindrwlstx.h"
 #include "enginfexpl.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"

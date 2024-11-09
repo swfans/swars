@@ -28,7 +28,6 @@
 #include "bflib_render_drspr.h"
 #include "bigmap.h"
 #include "display.h"
-#include "engindrwlst.h"
 #include "engintrns.h"
 #include "game_speed.h"
 #include "game_sprts.h"

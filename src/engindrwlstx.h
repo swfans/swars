@@ -1,10 +1,10 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file engindrwlst.h
- *     Header file for engindrwlst.c.
+/** @file engindrwlstx.h
+ *     Header file for engindrwlstx.c.
  * @par Purpose:
- *     Drawlists handling for the 3D engine.
+ *     Drawlists execution for the 3D engine.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
@@ -16,8 +16,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef ENGINDRWLST_H
-#define ENGINDRWLST_H
+#ifndef ENGINDRWLSTX_H
+#define ENGINDRWLSTX_H
 
 #include "bftypes.h"
 

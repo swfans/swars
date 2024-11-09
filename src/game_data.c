@@ -26,7 +26,7 @@
 #include "bfstrut.h"
 #include "campaign.h"
 #include "command.h"
-#include "engindrwlst.h"
+#include "engindrwlstx.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginpritxtr.h"

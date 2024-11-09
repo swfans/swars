@@ -1,10 +1,11 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file engindrwlst.c
- *     Drawlists handling for the 3D engine.
+/** @file engindrwlstx.c
+ *     Drawlists execution for the 3D engine.
  * @par Purpose:
- *     Implements functions for filling and using drawlists.
+ *     Implements functions for executing previously made drawlists,
+ *     meaning the actual drawing based on primitives in the list.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -16,7 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "engindrwlst.h"
+#include "engindrwlstx.h"
 
 #include "bfbox.h"
 #include "bfkeybd.h"

@@ -26,7 +26,7 @@
 
 #include "bigmap.h"
 #include "display.h"
-#include "engindrwlst.h"
+#include "engindrwlstx.h"
 #include "engintrns.h"
 #include "game_sprts.h"
 #include "game.h"

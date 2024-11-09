@@ -23,7 +23,7 @@
 
 #include "display.h"
 #include "engintrns.h"
-#include "engindrwlst.h"
+#include "engindrwlstx.h"
 #include "thing.h"
 #include "game.h"
 #include "swlog.h"
