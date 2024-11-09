@@ -23,6 +23,7 @@
 #include "display.h"
 #include "enginbckt.h"
 #include "engindrwlstx.h"
+#include "enginshrapn.h"
 #include "engintrns.h"
 #include "game.h"
 #include "game_data.h"
@@ -81,6 +82,28 @@ struct SortSprite *draw_item_add_sprite(ubyte ditype, ushort bckt)
     next_sort_sprite++;
 
     return p_sspr;
+}
+
+/** Add a new draw item and return linked SpecialPoint instance.
+ *
+ * @param ditype Draw item type, should be one of SpecialPoint related types.
+ * @param bckt Destination bucket for this draw item.
+ * @return SpecialPoint instance to fill, or NULL if arrays exceeded.
+ */
+struct SpecialPoint *draw_item_add_point(ubyte ditype, ushort offset, ushort bckt)
+{
+    struct SpecialPoint *p_scrpoint;
+
+    if (next_screen_point >= mem_game[30].N)
+        return NULL;
+
+    p_scrpoint = &game_screen_point_pool[next_screen_point];
+    if (!draw_item_add(ditype, offset, bckt))
+        return NULL;
+
+    next_screen_point++;
+
+    return p_scrpoint;
 }
 
 void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
@@ -448,8 +471,80 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
 
 void FIRE_draw_fire(struct SimpleThing *p_sthing)
 {
+#if 0
     asm volatile ("call ASM_FIRE_draw_fire\n"
         : : "a" (p_sthing));
+    return;
+#endif
+    struct FireFlame *p_flame;
+    ushort flm;
+
+    for (flm = p_sthing->U.UFire.flame; flm; flm = p_flame->next)
+    {
+        struct SpecialPoint *p_scrpoint;
+        int x, y, z;
+        int scr_dx, scr_dy;
+        int abs_scr_dy, abs_scr_dx;
+        int fctr_xz, fctr_y;
+        int pers5_range;
+        short scr_x, scr_y;
+        ubyte flags;
+
+        p_flame = &FIRE_flame[flm];
+        x = p_flame->x - engn_xc;
+        y = p_flame->y - engn_yc;
+        z = p_flame->z - engn_zc;
+
+        if (current_map == 9) // map009 Singapore on-water map
+            y += waft_table[gameturn & 0x1F];
+
+        fctr_y = y - 8 * engn_yc;
+        fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
+        pers5_range = (dword_176D18 * fctr_y + dword_176D1C * fctr_xz) >> 16;
+        abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
+        abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
+
+        scr_dx = (overall_scale * abs_scr_dx) >> 11;
+        if (game_perspective == 5)
+            scr_dx = (scr_dx * (0x4000 - pers5_range)) >> 14;
+
+        scr_x = dword_176D3C + scr_dx;
+        if (scr_x < 0) {
+            if (scr_x < -2000)
+                scr_x = -2000;
+            flags |= 0x01;
+        } else if (scr_x >= vec_window_width) {
+            if (scr_x > 2000)
+                scr_x = 2000;
+            flags |= 0x02;
+        }
+
+        scr_dy = (overall_scale * abs_scr_dy) >> 11;
+        if (game_perspective == 5)
+            scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
+
+        scr_y = dword_176D40 - scr_dy;
+        if (scr_y < 0) {
+            if (scr_y < -2000)
+                scr_y = -2000;
+            flags |= 0x04;
+        } else if (scr_y >= vec_window_height) {
+            if (scr_y > 2000)
+                scr_y = 2000;
+            flags |= 0x08;
+        }
+
+        flags |= 0x40;
+
+        p_flame->PointOffset = next_screen_point;
+        p_scrpoint = draw_item_add_point(DrIT_Unkn25, flm, pers5_range + 5000 - 50);
+        if (p_scrpoint == NULL)
+            break;
+
+        p_scrpoint->X = scr_x;
+        p_scrpoint->Y = scr_y;
+        p_scrpoint->Z = pers5_range;
+    }
 }
 
 void draw_bang(struct SimpleThing *p_pow)
