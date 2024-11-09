@@ -78,6 +78,13 @@ extern struct SortLine *p_current_sort_line;
 extern ubyte deep_radar_surface_col;
 extern ubyte deep_radar_line_col;
 
+extern ushort next_screen_point;
+extern ushort next_sort_sprite;
+extern ushort next_sort_line;
+
+extern ushort next_special_face;
+extern ushort next_special_face4;
+
 extern ushort next_draw_item;
 
 void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y,

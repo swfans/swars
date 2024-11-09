@@ -20,22 +20,31 @@
 
 #include "engindrwlstx.h"
 #include "enginpeff.h"
+#include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
 extern ushort buckets[BUCKETS_COUNT];
 
-void draw_item_add(ubyte ditype, ushort offset, ushort bckt)
+TbBool draw_item_add(ubyte ditype, ushort offset, ushort bckt)
 {
+    struct DrawItem *p_dritm;
+
     if (bckt < 1)
         bckt = 1;
-    if (bckt >= 10000)
-        bckt = 9997;
-    p_current_draw_item->Type = ditype; 
-    p_current_draw_item->Offset = offset;
-    p_current_draw_item->Child = buckets[bckt];
+    if (bckt >= BUCKETS_COUNT)
+        bckt = BUCKETS_COUNT-1;
+
+    if (next_draw_item >= mem_game[31].N - 1)
+        return false;
+
+    p_dritm = p_current_draw_item;
     p_current_draw_item++;
+    p_dritm->Type = ditype;
+    p_dritm->Offset = offset;
+    p_dritm->Child = buckets[bckt];
     buckets[bckt] = next_draw_item;
     next_draw_item++;
+    return true;
 }
 
 void draw_drawlist_1(void)

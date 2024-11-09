@@ -18,11 +18,20 @@
 /******************************************************************************/
 #include "engindrwlstm.h"
 
+#include "bfmath.h"
+
+#include "display.h"
+#include "enginbckt.h"
+#include "engindrwlstx.h"
+#include "engintrns.h"
+#include "game.h"
+#include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
 
 void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
 {
+#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
@@ -30,6 +39,127 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
       "push %4\n"
       "call ASM_draw_mapwho_vect_len\n"
         : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (len), "g" (col));
+    return;
+#endif
+    int dt_x, dt_y, dt_z;
+    int dist;
+    int end_x, end_y, end_z;
+    int scr_dx, scr_dy;
+    short scr_x1, scr_y1, scr_x2, scr_y2;
+    int fctr_y, fctr_xz, pers5_range;
+    int abs_scr_dy, abs_scr_dx;
+    int bckt_shift;
+    ubyte flags_A, flags_B;
+
+    dt_y = y2 - y1;
+    dt_z = z2 - z1;
+    dt_x = x2 - x1;
+
+    dist = LbSqrL(dt_z * dt_z + dt_x * dt_x + dt_y * dt_y);
+    if (dist == 0)
+        dist = 1;
+    end_y = y1 + dt_y * len / dist;
+    end_z = z1 + dt_z * len / dist;
+    end_x = x1 + dt_x * len / dist;
+
+    fctr_y = 8 * y1 - 8 * engn_yc;
+    fctr_xz = (dword_176D10 * x1 + dword_176D14 * z1) >> 16;
+    pers5_range = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+    abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
+    abs_scr_dx = (dword_176D14 * x1 - dword_176D10 * z1) >> 16;
+
+    flags_A = 0;
+    flags_B = 0;
+    bckt_shift = pers5_range;
+
+    scr_dx = (overall_scale * abs_scr_dx) >> 11;
+    if (game_perspective == 5)
+        scr_dx = ((0x4000 - pers5_range) * scr_dx) >> 14;
+
+    scr_x1 = scr_dx + dword_176D3C;
+    if (scr_x1 < 0) {
+        if (scr_x1 < -2000)
+            scr_x1 = -2000;
+        flags_A |= 0x01;
+    } else if (scr_x1 >= vec_window_width) {
+        if (scr_x1 > 2000)
+            scr_x1 = 2000;
+        flags_A |= 0x02;
+    }
+
+    scr_dy = (overall_scale * abs_scr_dy) >> 11;
+    if (game_perspective == 5)
+        scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
+
+    scr_y1 = dword_176D40 - scr_dy;
+    if (scr_y1 < 0) {
+        if (scr_y1 < -2000)
+            scr_y1 = -2000;
+        flags_A |= 0x04;
+    } else if (scr_y1 >= vec_window_height) {
+        if (scr_y1 > 2000)
+            scr_y1 = 2000;
+        flags_A |= 0x08;
+    }
+
+    flags_A |= 0x40;
+
+    fctr_y = 8 * end_y - 8 * engn_yc;
+    fctr_xz = (dword_176D10 * end_x + dword_176D14 * end_z) >> 16;
+    pers5_range = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+    abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
+    abs_scr_dx = (dword_176D14 * end_x - dword_176D10 * end_z) >> 16;
+
+    scr_dx = (overall_scale * abs_scr_dx) >> 11;
+    if (game_perspective == 5)
+        scr_dx = ((0x4000 - pers5_range) * scr_dx) >> 14;
+
+    scr_x2 = dword_176D3C + scr_dx;
+    if (scr_x2 < 0) {
+        if (scr_x2 < -2000)
+            scr_x2 = -2000;
+        flags_B |= 0x01;
+    } else if (scr_x2 >= vec_window_width) {
+        if (scr_x2 > 2000)
+            scr_x2 = 2000;
+        flags_B |= 0x02;
+    }
+
+    scr_dy = (overall_scale * abs_scr_dy) >> 11;
+    if (game_perspective == 5)
+        scr_dy = ((0x4000 - pers5_range) * scr_dy) >> 14;
+
+    scr_y2 = dword_176D40 - scr_dy;
+    if (scr_y2 < 0) {
+        if (scr_y2 < -2000)
+            scr_y2 = -2000;
+        flags_B |= 0x04;
+    } else if (scr_y2 >= vec_window_height) {
+        if (scr_y2 > 2000)
+            scr_y2 = 2000;
+        flags_B |= 0x08;
+    }
+
+    flags_B |= 0x40;
+
+    if ((flags_B & flags_A & 0xF) == 0
+      && (next_sort_line < mem_game[33].N))
+    {
+        struct SortLine *p_sline;
+
+        p_sline = p_current_sort_line;
+        p_current_sort_line++;
+        p_sline->Shade = 32;
+        p_sline->Flags = 0;
+        p_sline->X1 = scr_x1;
+        p_sline->Y1 = scr_y1;
+        p_sline->X2 = scr_x2;
+        p_sline->Y2 = scr_y2;
+        p_sline->Col = col;
+
+        draw_item_add(DrIT_Unkn11, next_sort_line, bckt_shift + 5000);
+        next_sort_line++;
+    }
 }
 
 void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity, struct Thing *p_thing)

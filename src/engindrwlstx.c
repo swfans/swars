@@ -46,13 +46,6 @@
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
-extern ushort next_screen_point;
-extern ushort next_sort_sprite;
-extern ushort next_sort_line;
-
-extern ushort next_special_face;
-extern ushort next_special_face4;
-
 extern ushort tnext_screen_point;
 extern ushort tnext_draw_item;
 extern ushort tnext_sort_sprite;
