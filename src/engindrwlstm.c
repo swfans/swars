@@ -696,8 +696,8 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
         fctr_y = y_msc - 8 * engn_yc;
         fctr_xz = (dword_176D10 * x_pcc + dword_176D14 * z_ms) >> 16;
         scr_z1 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
-        abs_scr_dy = ((dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16);
-        abs_scr_dx = ((dword_176D14 * x_pcc - dword_176D10 * z_ms) >> 16);
+        abs_scr_dx = (dword_176D14 * x_pcc - dword_176D10 * z_ms) >> 16;
+        abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
@@ -735,7 +735,7 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
         fctr_xz = (dword_176D14 * z + dword_176D10 * x_pcs) >> 16;
         scr_z2 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
         abs_scr_dx = (dword_176D14 * x_pcs - dword_176D10 * z) >> 16;
-        abs_scr_dy = ((dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16);
+        abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
@@ -773,7 +773,7 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
         fctr_xz = (dword_176D14 * z_ps + dword_176D10 * x_mmc) >> 16;
         scr_z3 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
         abs_scr_dx = (dword_176D14 * x_mmc - dword_176D10 * z_ps) >> 16;
-        abs_scr_dy = ((dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16);
+        abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
@@ -837,6 +837,12 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
     }
 }
 
+void draw_bang_wobble_line(struct SimpleThing *p_pow)
+{
+    asm volatile ("call ASM_draw_bang_wobble_line\n"
+        : : "a" (p_pow));
+}
+
 void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour)
 {
     asm volatile (
@@ -856,8 +862,31 @@ void draw_bang(struct SimpleThing *p_pow)
         : : "a" (p_pow));
     return;
 #endif
-    asm volatile ("call ASM_draw_bang_start\n"
-        : : "a" (p_pow));
+    if (p_pow->State != 0)
+    {
+        short st;
+        TbPixel col;
+        st = p_pow->State;
+        if (st < 100) {
+            col = colour_lookup[3];
+        } else {
+            st = -10;
+            col = colour_lookup[7];
+        }
+        build_laser(p_pow->X >> 8, p_pow->Y >> 8, p_pow->Z >> 8,
+          (p_pow->X >> 8), (p_pow->Y >> 8) + 400, p_pow->Z >> 8, st, 0, col);
+    }
+
+    dword_152E4C = bw_rotr32(dword_152E4C, 7) + 0x16365267;
+    {
+        short tmp;
+        tmp = (dword_152E4C & 0xFF);
+        if (tmp > 240)
+            dword_176CAC = tmp - 240;
+    }
+    dword_152E4C = bw_rotr32(dword_152E4C, 7) + 0x16365267;
+
+    draw_bang_wobble_line(p_pow);
     draw_bang_shrapnel(p_pow);
     draw_bang_phwoar(p_pow);
 }
