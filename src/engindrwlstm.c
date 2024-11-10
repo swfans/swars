@@ -837,10 +837,143 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
     }
 }
 
+void build_wobble_line(int x1, int y1, int z1,
+ int x2, int y2, int z2, struct SimpleThing *p_sthing, int itime)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_build_wobble_line\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (p_sthing), "g" (itime));
+}
+
+ushort shrapnel_get_child_type_not_3(struct Shrapnel *p_shraparnt)
+{
+    struct Shrapnel *p_shrapnel;
+    ushort shrap;
+
+    for (shrap = p_shraparnt->child; shrap != 0; shrap = p_shrapnel->child)
+    {
+        p_shrapnel = &shrapnel[shrap];
+
+        if (p_shrapnel->type != 3)
+            return shrap;
+    }
+    return 0;
+}
+
 void draw_bang_wobble_line(struct SimpleThing *p_pow)
 {
+#if 0
     asm volatile ("call ASM_draw_bang_wobble_line\n"
         : : "a" (p_pow));
+    return;
+#endif
+    struct Shrapnel *p_shrapnel1;
+    struct Shrapnel *p_shrapnel2;
+    int x, y, z;
+    int fctr_xz, fctr_y;
+    int scr_dx, scr_dy;
+    int abs_scr_dy, abs_scr_dx;
+    short scr_x1, scr_y1, scr_z1;
+    short scr_x2, scr_y2, scr_z2;
+    ushort shrap1, shrap2;
+
+    if (dword_176CAC == 0)
+        return;
+
+    if ((dword_152E4C & 0xFF) <= 208)
+        return;
+
+    dword_176CAC--;
+
+    shrap1 = p_pow->U.UBang.shrapnel;
+    if (shrap1 == 0)
+        return;
+    p_shrapnel1 = &shrapnel[shrap1];
+
+    shrap2 = shrapnel_get_child_type_not_3(p_shrapnel1);
+    if (shrap2 == 0)
+        return;
+    p_shrapnel2 = &shrapnel[shrap2];
+
+    {
+        x = (p_shrapnel1->x >> 8) - engn_xc;
+        z = (p_shrapnel1->z >> 8) - engn_zc;
+        y = (p_shrapnel1->y >> 5) - engn_yc;
+
+        fctr_y = y - 8 * engn_yc;
+        fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
+        scr_z1 = (dword_176D18 * fctr_y + dword_176D1C * fctr_xz) >> 16;
+        abs_scr_dy = (dword_176D1C * fctr_y - fctr_xz * dword_176D18) >> 16;
+        abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
+
+        scr_dx = (overall_scale * abs_scr_dx) >> 11;
+        if (game_perspective == 5)
+            scr_dx = (scr_dx * (0x4000 - scr_z1)) >> 14;
+
+        scr_x1 = dword_176D3C + scr_dx;
+        if (scr_x1 < 0) {
+            if (scr_x1 < -2000)
+                scr_x1 = -2000;
+        } else if (scr_x1 >= vec_window_width) {
+            if (scr_x1 > 2000)
+                scr_x1 = 2000;
+        }
+
+        scr_dy = (overall_scale * abs_scr_dy) >> 11;
+        if (game_perspective == 5)
+            scr_dy = (scr_dy * (0x4000 - scr_z1)) >> 14;
+
+        scr_y1 = dword_176D40 - scr_dy;
+        if (scr_y1 < 0) {
+            if (scr_y1 < -2000)
+                scr_y1 = -2000;
+        } else if (scr_y1 >= vec_window_height) {
+            if (scr_y1 > 2000)
+                scr_y1 = 2000;
+        }
+
+        x = (p_shrapnel2->x >> 8) - engn_xc;
+        z = (p_shrapnel2->z >> 8) - engn_zc;
+        y = (p_shrapnel2->y >> 5) - engn_yc;
+
+        fctr_y = y - 8 * engn_yc;
+        fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
+        scr_z2 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+        abs_scr_dy = (dword_176D1C * fctr_y - fctr_xz * dword_176D18) >> 16;
+        abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
+
+        scr_dx = (overall_scale * abs_scr_dx) >> 11;
+        if (game_perspective == 5)
+            scr_dx = (scr_dx * (0x4000 - scr_z2)) >> 14;
+
+        scr_x2 = dword_176D3C + scr_dx;
+        if (scr_x2 < 0) {
+            if (scr_x2 < -2000)
+                scr_x2 = -2000;
+        } else if (scr_x2 >= vec_window_width) {
+            if (scr_x2 > 2000)
+                scr_x2 = 2000;
+        }
+
+        scr_dy = (overall_scale * abs_scr_dy) >> 11;
+        if (game_perspective == 5)
+            scr_dy = (scr_dy * (0x4000 - scr_z2)) >> 14;
+
+        scr_y2 = dword_176D40 - scr_dy;
+        if (scr_y2 < 0) {
+            if (scr_y2 < -2000)
+                scr_y2 = -2000;
+        } else if (scr_y2 >= vec_window_height) {
+            if (scr_y2 > 2000)
+                scr_y2 = 2000;
+        }
+
+        build_wobble_line(scr_x1, scr_y1, scr_z1, scr_x2, scr_y2, scr_z2, 0, 10);
+    }
 }
 
 void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour)
