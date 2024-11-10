@@ -633,74 +633,75 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
         int scr_dx, scr_dy;
         int abs_scr_dy, abs_scr_dx;
         int fctr_xz, fctr_y;
-        int v80, v99, v65, v70, v71, v72, v73, v74;
+        int x_pcc, x_pcs, y_msc, y_mss, x_mmc, y_pps;
+        int z_ps, z_ms;
         short scr_x1, scr_y1, scr_z1;
         short scr_x2, scr_y2, scr_z2;
         short scr_x3, scr_y3, scr_z3;
         ushort bckt_shift;
         ubyte flags_A, flags_B, flags_C;
 
-
         p_shrapnel = &shrapnel[shrap];
         if ((p_shrapnel->type < 1) || (p_shrapnel->type > 3))
             continue;
 
         {
-            s64 tmpLL;
-            uint tmpU;
-            int fctr_A, fctr_B, fctr_C, fctr_D, fctr_E;
-            int cos_yaw, cos_pitch, sin_yaw, sin_pitch;
+            int cos_yaw, cos_pitch, sin_yaw, sin_pitch, tmp;
+            int sh_cc, sh_cs, sh_sc, sh_ss, sh_z;
             short shrap_yaw, shrap_pitch;
 
             shrap_yaw = 8 * p_shrapnel->yaw;
             shrap_pitch = 8 * p_shrapnel->pitch;
-            cos_yaw = lbSinTable[shrap_yaw + 512];
-            cos_pitch = lbSinTable[shrap_pitch + 512];
+            cos_yaw = lbSinTable[512 + shrap_yaw];
+            cos_pitch = lbSinTable[512 + shrap_pitch];
             sin_pitch = lbSinTable[shrap_pitch];
             sin_yaw = lbSinTable[shrap_yaw];
 
-            tmpLL = cos_pitch * cos_yaw;
-            tmpU = (tmpLL & 0xFFFF0000) | ((tmpLL >> 32) & 0xFFFF);
-            fctr_A = bw_rotl32(tmpU, 16) >> 10;
-            tmpLL = cos_pitch * sin_yaw;
-            tmpU = (tmpLL & 0xFFFF0000) | ((tmpLL >> 32) & 0xFFFF);
-            fctr_B = bw_rotl32(tmpU, 16) >> 10;
-            tmpLL = sin_pitch * cos_yaw;
-            tmpU = (tmpLL & 0xFFFF0000) | ((tmpLL >> 32) & 0xFFFF);
-            fctr_C = bw_rotl32(tmpU, 16) >> 10;
-            tmpLL = sin_pitch * sin_yaw;
-            tmpU = (tmpLL & 0xFFFF0000) | ((tmpLL >> 32) & 0xFFFF);
-            fctr_D = bw_rotl32(tmpU, 16) >> 10;
+            tmp = (cos_pitch * cos_yaw) & 0xFFFF0000;
+            tmp |= ((u64)(cos_pitch * (s64)cos_yaw) >> 32) & 0xFFFF;
+            sh_cc = (int)bw_rotl32(tmp, 16) >> 10;
 
-            fctr_E = sin_yaw >> 10;
+            tmp = (cos_pitch * sin_yaw) & 0xFFFF0000;
+            tmp |= ((u64)(cos_pitch * (s64)sin_yaw) >> 32) & 0xFFFF;
+            sh_cs = (int)bw_rotl32(tmp, 16) >> 10;
 
-            v80 = x + fctr_A;
-            v99 = x + fctr_B;
-            v65 = x - fctr_A - fctr_B;
-            v70 = z + fctr_E;
-            v71 = z - fctr_E;
-            v72 = y - fctr_C;
-            v73 = y - fctr_D;
-            v74 = y + fctr_C + fctr_D;
+            tmp = (sin_pitch * cos_yaw) & 0xFFFF0000;
+            tmp |= ((u64)(sin_pitch * (s64)cos_yaw) >> 32) & 0xFFFF;
+            sh_sc = (int)bw_rotl32(tmp, 16) >> 10;
+
+            tmp = (sin_pitch * sin_yaw) & 0xFFFF0000;
+            tmp |= ((u64)(sin_pitch * (s64)sin_yaw) >> 32) & 0xFFFF;
+            sh_ss = (int)bw_rotl32(tmp, 16) >> 10;
+
+            sh_z = sin_yaw >> 10;
+
+            x = (p_shrapnel->x >> 8) - engn_xc;
+            y = (p_shrapnel->y >> 5) - engn_yc;
+            z = (p_shrapnel->z >> 8) - engn_zc;
+
+            x_pcc = x + sh_cc;
+            y_msc = y - sh_sc;
+            x_pcs = x + sh_cs;
+            y_mss = y - sh_ss;
+            y_pps = y + sh_sc + sh_ss;
+            x_mmc = x - sh_cc - sh_cs;
+            z_ps = z + sh_z;
+            z_ms = z - sh_z;
         }
-
-        x = (p_shrapnel->x >> 8) - engn_xc;
-        y = (p_shrapnel->y >> 5) - engn_yc;
-        z = (p_shrapnel->z >> 8) - engn_zc;
 
         flags_C = 0;
         flags_B = 0;
         flags_A = 0;
 
-        fctr_y = v72 - 8 * engn_yc;
-        fctr_xz = (dword_176D10 * v80 + dword_176D14 * v71) >> 16;
+        fctr_y = y_msc - 8 * engn_yc;
+        fctr_xz = (dword_176D10 * x_pcc + dword_176D14 * z_ms) >> 16;
         scr_z1 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
-        abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
-        abs_scr_dx = (dword_176D14 * v80 - dword_176D10 * v71) >> 16;
+        abs_scr_dy = ((dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16);
+        abs_scr_dx = ((dword_176D14 * x_pcc - dword_176D10 * z_ms) >> 16);
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
-            scr_dx = (abs_scr_dx * (0x4000 - scr_z1)) >> 14;
+            scr_dx = (scr_dx * (0x4000 - scr_z1)) >> 14;
 
         scr_x1 = dword_176D3C + scr_dx;
         if (scr_x1 < 0) {
@@ -730,11 +731,11 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
 
         flags_A |= 0x40;
 
-        fctr_y = v73 - 8 * engn_yc;
-        abs_scr_dx = (dword_176D14 * v99 - dword_176D10 * z) >> 16;
-        fctr_xz = (dword_176D14 * z + dword_176D10 * v99) >> 16;
+        fctr_y = y_mss - 8 * engn_yc;
+        fctr_xz = (dword_176D14 * z + dword_176D10 * x_pcs) >> 16;
         scr_z2 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
-        abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
+        abs_scr_dx = (dword_176D14 * x_pcs - dword_176D10 * z) >> 16;
+        abs_scr_dy = ((dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16);
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
@@ -768,11 +769,11 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
 
         flags_B |= 0x40;
 
-        fctr_y = v74 - 8 * engn_yc;
-        abs_scr_dx = (dword_176D14 * v65 - dword_176D10 * v70) >> 16;
-        fctr_xz = (dword_176D14 * v70 + dword_176D10 * v65) >> 16;
+        fctr_y = y_pps - 8 * engn_yc;
+        fctr_xz = (dword_176D14 * z_ps + dword_176D10 * x_mmc) >> 16;
         scr_z3 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
-        abs_scr_dy = (dword_176D1C * fctr_y - fctr_xz * dword_176D18) >> 16;
+        abs_scr_dx = (dword_176D14 * x_mmc - dword_176D10 * z_ps) >> 16;
+        abs_scr_dy = ((dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16);
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
@@ -857,9 +858,7 @@ void draw_bang(struct SimpleThing *p_pow)
 #endif
     asm volatile ("call ASM_draw_bang_start\n"
         : : "a" (p_pow));
-    asm volatile ("call ASM_draw_bang_shrapnel\n"
-        : : "a" (p_pow));
-    /* draw_bang_shrapnel(p_pow); // this has issues */
+    draw_bang_shrapnel(p_pow);
     draw_bang_phwoar(p_pow);
 }
 
