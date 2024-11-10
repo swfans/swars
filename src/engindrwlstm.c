@@ -621,6 +621,221 @@ void draw_bang_phwoar(struct SimpleThing *p_pow)
     }
 }
 
+void draw_bang_shrapnel(struct SimpleThing *p_pow)
+{
+    struct Shrapnel *p_shrapnel;
+    ushort shrap;
+
+    for (shrap = p_pow->U.UBang.shrapnel; shrap != 0; shrap = p_shrapnel->child)
+    {
+        struct SpecialPoint *p_scrpoint;
+        int x, y, z;
+        int scr_dx, scr_dy;
+        int abs_scr_dy, abs_scr_dx;
+        int fctr_xz, fctr_y;
+        int v80, v99, v65, v70, v71, v72, v73, v74;
+        short scr_x1, scr_y1, scr_z1;
+        short scr_x2, scr_y2, scr_z2;
+        short scr_x3, scr_y3, scr_z3;
+        ushort bckt_shift;
+        ubyte flags_A, flags_B, flags_C;
+
+
+        p_shrapnel = &shrapnel[shrap];
+        if ((p_shrapnel->type < 1) || (p_shrapnel->type > 3))
+            continue;
+
+        {
+            s64 tmpLL;
+            uint tmpU;
+            int fctr_A, fctr_B, fctr_C, fctr_D, fctr_E;
+            int cos_yaw, cos_pitch, sin_yaw, sin_pitch;
+            short shrap_yaw, shrap_pitch;
+
+            shrap_yaw = 8 * p_shrapnel->yaw;
+            shrap_pitch = 8 * p_shrapnel->pitch;
+            cos_yaw = lbSinTable[shrap_yaw + 512];
+            cos_pitch = lbSinTable[shrap_pitch + 512];
+            sin_pitch = lbSinTable[shrap_pitch];
+            sin_yaw = lbSinTable[shrap_yaw];
+
+            tmpLL = cos_pitch * cos_yaw;
+            tmpU = (tmpLL & 0xFFFF0000) | ((tmpLL >> 32) & 0xFFFF);
+            fctr_A = bw_rotl32(tmpU, 16) >> 10;
+            tmpLL = cos_pitch * sin_yaw;
+            tmpU = (tmpLL & 0xFFFF0000) | ((tmpLL >> 32) & 0xFFFF);
+            fctr_B = bw_rotl32(tmpU, 16) >> 10;
+            tmpLL = sin_pitch * cos_yaw;
+            tmpU = (tmpLL & 0xFFFF0000) | ((tmpLL >> 32) & 0xFFFF);
+            fctr_C = bw_rotl32(tmpU, 16) >> 10;
+            tmpLL = sin_pitch * sin_yaw;
+            tmpU = (tmpLL & 0xFFFF0000) | ((tmpLL >> 32) & 0xFFFF);
+            fctr_D = bw_rotl32(tmpU, 16) >> 10;
+
+            fctr_E = sin_yaw >> 10;
+
+            v80 = x + fctr_A;
+            v99 = x + fctr_B;
+            v65 = x - fctr_A - fctr_B;
+            v70 = z + fctr_E;
+            v71 = z - fctr_E;
+            v72 = y - fctr_C;
+            v73 = y - fctr_D;
+            v74 = y + fctr_C + fctr_D;
+        }
+
+        x = (p_shrapnel->x >> 8) - engn_xc;
+        y = (p_shrapnel->y >> 5) - engn_yc;
+        z = (p_shrapnel->z >> 8) - engn_zc;
+
+        flags_C = 0;
+        flags_B = 0;
+        flags_A = 0;
+
+        fctr_y = v72 - 8 * engn_yc;
+        fctr_xz = (dword_176D10 * v80 + dword_176D14 * v71) >> 16;
+        scr_z1 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+        abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
+        abs_scr_dx = (dword_176D14 * v80 - dword_176D10 * v71) >> 16;
+
+        scr_dx = (overall_scale * abs_scr_dx) >> 11;
+        if (game_perspective == 5)
+            scr_dx = (abs_scr_dx * (0x4000 - scr_z1)) >> 14;
+
+        scr_x1 = dword_176D3C + scr_dx;
+        if (scr_x1 < 0) {
+            if (scr_x1 < -2000)
+                scr_x1 = -2000;
+            flags_A |= 0x01;
+        } else if (scr_x1 >= vec_window_width) {
+            if (scr_x1 > 2000)
+                scr_x1 = 2000;
+            flags_A |= 0x02;
+        }
+
+        scr_dy = (overall_scale * abs_scr_dy) >> 11;
+        if (game_perspective == 5)
+            scr_dy = (scr_dy * (0x4000 - scr_z1)) >> 14;
+
+        scr_y1 = dword_176D40 - scr_dy;
+        if (scr_y1 < 0) {
+            if (scr_y1 < -2000)
+                scr_y1 = -2000;
+            flags_A |= 0x04;
+        } else if (scr_y1 >= vec_window_height) {
+            if (scr_y1 > 2000)
+                scr_y1 = 2000;
+            flags_A |= 0x08;
+        }
+
+        flags_A |= 0x40;
+
+        fctr_y = v73 - 8 * engn_yc;
+        abs_scr_dx = (dword_176D14 * v99 - dword_176D10 * z) >> 16;
+        fctr_xz = (dword_176D14 * z + dword_176D10 * v99) >> 16;
+        scr_z2 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+        abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
+
+        scr_dx = (overall_scale * abs_scr_dx) >> 11;
+        if (game_perspective == 5)
+            scr_dx = (scr_dx * (0x4000 - scr_z2)) >> 14;
+
+        scr_x2 = dword_176D3C + scr_dx;
+        if (scr_x2 < 0) {
+            if (scr_x2 < -2000)
+                scr_x2 = -2000;
+            flags_B = 0x01;
+        } else if (scr_x2 >= vec_window_width) {
+            if (scr_x2 > 2000)
+                scr_x2 = 2000;
+            flags_B = 0x02;
+        }
+
+        scr_dy = (overall_scale * abs_scr_dy) >> 11;
+        if (game_perspective == 5)
+            scr_dy = (scr_dy * (0x4000 - scr_z2)) >> 14;
+
+        scr_y2 = dword_176D40 - scr_dy;
+        if (scr_y2 < 0) {
+            if (scr_y2 < -2000)
+                scr_y2 = -2000;
+            flags_B |= 0x04;
+        } else if (scr_y2 >= vec_window_height) {
+            if (scr_y2 > 2000)
+                scr_y2 = 2000;
+            flags_B |= 0x08;
+        }
+
+        flags_B |= 0x40;
+
+        fctr_y = v74 - 8 * engn_yc;
+        abs_scr_dx = (dword_176D14 * v65 - dword_176D10 * v70) >> 16;
+        fctr_xz = (dword_176D14 * v70 + dword_176D10 * v65) >> 16;
+        scr_z3 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+        abs_scr_dy = (dword_176D1C * fctr_y - fctr_xz * dword_176D18) >> 16;
+
+        scr_dx = (overall_scale * abs_scr_dx) >> 11;
+        if (game_perspective == 5)
+            scr_dx = ((0x4000 - scr_z3) * scr_dx) >> 14;
+
+        scr_x3 = dword_176D3C + scr_dx;
+        if (scr_x3 < 0) {
+            if (scr_x3 < -2000)
+                scr_x3 = -2000;
+            flags_C |= 0x01;
+        } else if (scr_x3 >= vec_window_width) {
+            if (scr_x3 > 2000)
+                scr_x3 = 2000;
+            flags_C |= 0x02;
+        }
+
+        scr_dy = (overall_scale * abs_scr_dy) >> 11;
+        if (game_perspective == 5)
+            scr_dy = (scr_dy * (0x4000 - scr_z3)) >> 14;
+
+        scr_y3 = dword_176D40 - scr_dy;
+        if (scr_y3 < 0) {
+            if (scr_y3 < -2000)
+                scr_y3 = -2000;
+            flags_C |= 0x04;
+        } else if (scr_y3 >= vec_window_height) {
+            if (scr_y3 > 2000)
+                scr_y3 = 2000;
+            flags_C |= 0x08;
+        }
+
+        flags_C |= 0x40;
+
+        if (((flags_B & flags_A & flags_C) & 0xF) != 0)
+            continue;
+
+        bckt_shift = scr_z2;
+        if (bckt_shift >= scr_z3)
+            bckt_shift = scr_z3;
+        if (bckt_shift > scr_z1)
+            bckt_shift = scr_z1;
+
+        p_shrapnel->PointOffset = next_screen_point;
+        p_scrpoint = draw_item_add_points(DrIT_Unkn20, shrap, bckt_shift + 5000, 3);
+        if (p_scrpoint == NULL)
+            break;
+
+        p_scrpoint->X = scr_x1;
+        p_scrpoint->Y = scr_y1;
+        p_scrpoint->Z = scr_z1;
+        p_scrpoint++;
+
+        p_scrpoint->X = scr_x2;
+        p_scrpoint->Y = scr_y2;
+        p_scrpoint->Z = scr_z2;
+        p_scrpoint++;
+
+        p_scrpoint->X = scr_x3;
+        p_scrpoint->Y = scr_y3;
+        p_scrpoint->Z = scr_z3;
+    }
+}
+
 void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour)
 {
     asm volatile (
@@ -636,7 +851,11 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
 void draw_bang(struct SimpleThing *p_pow)
 {
 #if 1
-    asm volatile ("call ASM_draw_bang\n"
+    asm volatile ("call ASM_draw_bang_start\n"
+        : : "a" (p_pow));
+    asm volatile ("call ASM_draw_bang_shrapnel\n"
+        : : "a" (p_pow));
+    asm volatile ("call ASM_draw_bang_phwoar\n"
         : : "a" (p_pow));
     return;
 #endif
