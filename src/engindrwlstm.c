@@ -850,15 +850,17 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
 
 void draw_bang(struct SimpleThing *p_pow)
 {
-#if 1
+#if 0
+    asm volatile ("call ASM_draw_bang\n"
+        : : "a" (p_pow));
+    return;
+#endif
     asm volatile ("call ASM_draw_bang_start\n"
         : : "a" (p_pow));
     asm volatile ("call ASM_draw_bang_shrapnel\n"
         : : "a" (p_pow));
-    asm volatile ("call ASM_draw_bang_phwoar\n"
-        : : "a" (p_pow));
-    return;
-#endif
+    /* draw_bang_shrapnel(p_pow); // this has issues */
+    draw_bang_phwoar(p_pow);
 }
 
 ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
