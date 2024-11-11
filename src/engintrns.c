@@ -19,6 +19,7 @@
 #include "engintrns.h"
 
 #include "display.h"
+#include "engindrwlstm.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/

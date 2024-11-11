@@ -23,7 +23,9 @@
 #include "bfkeybd.h"
 #include "bfaudio.h"
 #include "bfscd.h"
+
 #include "bflib_joyst.h"
+#include "engindrwlstm.h"
 #include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"

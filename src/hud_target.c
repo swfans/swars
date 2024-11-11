@@ -26,6 +26,7 @@
 
 #include "bigmap.h"
 #include "display.h"
+#include "engindrwlstm.h"
 #include "engindrwlstx.h"
 #include "engintrns.h"
 #include "game_sprts.h"
@@ -94,10 +95,10 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
     int h_total, h_cur, h_ext, w;
     TbPixel colour;
 
-    dx = 9 * overall_scale >> 8;
-    dy = 10 * (overall_scale) >> 8;
+    dx = (9 * overall_scale) >> 8;
+    dy = (10 * overall_scale) >> 8;
     h_total = -15 * (overall_scale) >> 8;
-    w = 2 * overall_scale >> 8;
+    w = (2 * overall_scale) >> 8;
 
     hp_per_px = p_thing->U.UPerson.MaxHealth / dy;
     if (hp_per_px == 0)
@@ -151,10 +152,10 @@ void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
     int h_total, h_cur, w;
     TbPixel colour;
 
-    dx = 15 * overall_scale >> 8;
-    dy = 10 * overall_scale >> 8;
-    h_total = -20 * overall_scale >> 8;
-    w = 2 * overall_scale >> 8;
+    dx = (15 * overall_scale) >> 8;
+    dy = (10 * overall_scale) >> 8;
+    h_total = -(20 * overall_scale) >> 8;
+    w = (2 * overall_scale) >> 8;
 
     sp_per_px = p_thing->U.UPerson.MaxShieldEnergy / dy;
     if (sp_per_px == 0)

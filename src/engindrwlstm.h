@@ -35,6 +35,8 @@ struct SingleFloorTexture;
 
 #pragma pack()
 /******************************************************************************/
+extern ubyte game_perspective;
+extern ushort overall_scale;
 
 void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col);
 void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity, struct Thing *p_thing);

@@ -27,6 +27,10 @@ extern ubyte *back_buffer;
 extern TbPixel fade_unaffected_colours[];
 extern TbPixel colour_lookup[];
 
+extern TbPixel colour_grey1;
+extern TbPixel colour_grey2;
+extern TbPixel colour_brown2;
+
 extern long engn_xc;
 extern long engn_yc;
 extern long engn_zc;

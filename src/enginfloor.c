@@ -1,14 +1,14 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file lvdraw3d.h
- *     Header file for lvdraw3d.c.
+/** @file enginfloor.c
+ *     Support for 3D map floor tiles.
  * @par Purpose:
- *     Routines for level and map drawing using 3D rendering.
+ *     Implement functions for handling map floor tiles.
  * @par Comment:
- *     Just a header file - #defines, typedefs, function prototypes etc.
+ *     None.
  * @author   Tomasz Lis
- * @date     24 Dec 2023 - 10 Nov 2024
+ * @date     13 Oct 2024 - 06 Nov 2024
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,30 +16,13 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef LVDRAW3D_H
-#define LVDRAW3D_H
+#include "enginfloor.h"
 
-#include "bftypes.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "bigmap.h"
+#include "display.h"
+#include "enginzoom.h"
+#include "swlog.h"
 /******************************************************************************/
-#pragma pack(1)
 
-
-#pragma pack()
-/******************************************************************************/
-extern ubyte byte_1C8444;
-
-void clear_super_quick_lights(void);
-void reset_super_quick_lights(void);
-
-void func_218D3(void);
-void func_2e440(void);
 
 /******************************************************************************/
-#ifdef __cplusplus
-}
-#endif
-#endif

@@ -191,20 +191,6 @@ struct BezierPt { // sizeof=28
     ushort field_2A;
 };
 
-struct FloorTile { // sizeof=39
-    short X[4];
-    short Y[4];
-    struct SingleFloorTexture *Texture;
-    ubyte V[4];
-    short Shade[4];
-    ubyte Col;
-    ubyte Flags;
-    ubyte Flags2;
-    ubyte Flags2b;
-    ubyte Page;
-    short Offset;
-};
-
 struct MissionStatus { // sizeof=40
     ulong CityDays;
     ulong CityHours;
@@ -362,7 +348,6 @@ extern ubyte byte_181189;
 extern ubyte cmdln_param_n;
 extern ubyte pktrec_mode;
 extern ushort packet_rec_no;
-extern ubyte game_perspective;
 extern ubyte exit_game;
 extern ubyte input_char;
 
@@ -420,7 +405,6 @@ extern struct ColColumn *game_col_columns;
 extern ushort next_col_column;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
-extern struct FloorTile *game_floor_tiles;
 extern ubyte *game_user_heap;
 extern struct UnknBezEdit *bezier_pts;
 extern ushort next_bezier_pt;
@@ -435,9 +419,6 @@ extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
 extern ubyte linear_vec_pal[256];
 extern ulong nsta_size;
-extern TbPixel colour_grey1;
-extern TbPixel colour_grey2;
-extern TbPixel colour_brown2;
 
 extern short *dword_1C529C[6];
 extern short *landmap_2B4;
@@ -466,7 +447,6 @@ extern char *outro_text_s;
 extern char *outro_text_z;
 extern long data_197150;
 extern long data_1dd91c;
-extern ushort overall_scale;
 extern ubyte unkn_flags_01;
 extern ushort palette_brightness;
 extern long outro_unkn01;
