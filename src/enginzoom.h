@@ -44,6 +44,8 @@ extern ubyte byte_176D49;
 extern ubyte byte_176D4A;
 extern ubyte byte_176D4B;
 
+extern ubyte byte_19EC7A;
+
 /** Minimum user zoom (when most area is visible). */
 extern short user_zoom_min;
 /** Maxumum user zoom (largest magnification). */

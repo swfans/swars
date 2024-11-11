@@ -35,8 +35,6 @@ extern long dword_176D84;
 extern long dword_176D88;
 extern long dword_176D8C;
 
-extern ubyte byte_19EC7A;
-
 short user_zoom_min = 127;
 short user_zoom_max = 260;
 

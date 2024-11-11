@@ -27,11 +27,13 @@
 #include "display.h"
 #include "enginbckt.h"
 #include "engindrwlstm.h"
+#include "engindrwlstx.h"
 #include "enginfloor.h"
 #include "enginlights.h"
 #include "enginsngtxtr.h"
 #include "engintrns.h"
 #include "enginzoom.h"
+#include "game.h"
 #include "game_speed.h"
 #include "player.h"
 #include "scanner.h"
@@ -40,6 +42,14 @@
 #include "tngcolisn.h"
 #include "tngobjdrw.h"
 /******************************************************************************/
+
+struct Range {
+    int beg;
+    int fin;
+};
+
+/******************************************************************************/
+
 extern short super_quick_light[(RENDER_AREA_MAX+1)*(RENDER_AREA_MAX+1)];
 extern short word_152F00;
 
@@ -145,14 +155,13 @@ ubyte lvdraw_fill_bound_points(struct TbPoint *bound_pts)
     return slt_zmin;
 }
 
-int func_2e440_fill_v115(int slt_zmin, int *v115, struct TbPoint *bound_pts)
+int lvdraw_fill_ranges_x(int slt_zmin, struct Range *ranges_x, struct TbPoint *bound_pts)
 {
-    ubyte slt;
-    int nx_pt, points_used;
+    int rn, ranges_used;
     int slt1_fcx, slt2_fcx;
     int slt1_incx, slt2_incx;
-    int slt1, slt2;
     int z_cur, z_max;
+    ubyte slt, slt1, slt2;
 
     z_max = bound_pts[0].y;
     for (slt = 1; slt < 4; slt++) {
@@ -165,7 +174,7 @@ int func_2e440_fill_v115(int slt_zmin, int *v115, struct TbPoint *bound_pts)
     slt1_fcx = slt2_fcx = 0;
     slt1_incx = slt2_incx = 0;
     z_cur = bound_pts[slt_zmin].y;
-    nx_pt = 0;
+    rn = 0;
     while (z_cur < z_max)
     {
         if (z_cur == bound_pts[slt1].y)
@@ -206,56 +215,87 @@ int func_2e440_fill_v115(int slt_zmin, int *v115, struct TbPoint *bound_pts)
             slt2_fcx = base_fcx + 0x10000;
         }
 
-        v115[2 * nx_pt + 2 + 0] = slt1_fcx >> 16 << 8;
-        v115[2 * nx_pt + 2 + 1] = slt2_fcx >> 16 << 8;
+        ranges_x[rn + 1].beg = slt1_fcx >> 16 << 8;
+        ranges_x[rn + 1].fin = slt2_fcx >> 16 << 8;
 
         z_cur++;
         slt2_fcx += slt2_incx;
         slt1_fcx += slt1_incx;
-        nx_pt++;
+        rn++;
     }
 
-    points_used = nx_pt;
-    nx_pt = 0;
+    ranges_used = rn;
+    for (rn = 0; rn < ranges_used; rn++)
     {
-      uint k;
-      for (k = 0; k < 2 * (uint)points_used; k += 2)
-      {
-          if (v115[k + 2 + 0] < 0)
-              v115[k + 2 + 0] = 0;
-          if (v115[k + 2 + 1] > 0x7F00)
-              v115[k + 2 + 1] = 0x7F00;
-          nx_pt++;
-      }
+        if (ranges_x[rn + 1].beg < 0)
+            ranges_x[rn + 1].beg = 0;
+        if (ranges_x[rn + 1].fin > 0x7F00)
+            ranges_x[rn + 1].fin = 0x7F00;
     }
 
-    return points_used;
+    return ranges_used;
 }
 
-void func_2e440_fill_v113(int v152, int *v113, int *v115)
+void filter_ranges_max_of_two(int ranges_len, struct Range *ranges_flt, struct Range *ranges_inp)
 {
-    int pt;
+    int rn;
 
-    v113[0] = v115[2 * 1 + 0];
-    v113[1] = v115[2 * 1 + 1] + 256;
+    ranges_flt[0].beg = ranges_inp[1].beg;
+    ranges_flt[0].fin = ranges_inp[1].fin + 256;
 
-    for (pt = 1; pt < v152; pt++)
+    for (rn = 1; rn < ranges_len; rn++)
     {
-        int x, z;
+        int x1, x2;
 
-        x = v115[2 * pt + 0];
-        if (x < v115[2 * pt + 2 + 0])
-            x = v115[2 * pt + 2 + 0];
-        v113[2 * pt + 0] = x;
+        x1 = ranges_inp[rn].beg;
+        if (x1 < ranges_inp[rn + 1].beg)
+            x1 = ranges_inp[rn + 1].beg;
+        ranges_flt[rn].beg = x1;
 
-        z = v115[2 * pt + 1] + 256;
-        if (z < v115[2 * pt + 2 + 1] + 256)
-            z = v115[2 * pt + 2 + 1] + 256;
-        v113[2 * pt + 1] = z;
+        x2 = ranges_inp[rn].fin + 256;
+        if (x2 < ranges_inp[rn + 1].fin + 256)
+            x2 = ranges_inp[rn + 1].fin + 256;
+        ranges_flt[rn].fin = x2;
     }
 
-    v113[2 * pt + 0] = v113[2 * pt - 2 + 0];
-    v113[2 * pt + 1] = v113[2 * pt - 2 + 1];
+    ranges_flt[rn].beg = ranges_flt[rn - 1].beg;
+    ranges_flt[rn].fin = ranges_flt[rn - 1].fin;
+}
+
+void lvdraw_do_objects(int prc_z_beg, uint ranges_x_len, struct Range *ranges_x)
+{
+    int prc_z;
+    int prc_x, prc_x_end;
+    uint rn;
+
+    prc_z = prc_z_beg;
+    for (rn = 0; rn < ranges_x_len; rn++)
+    {
+        prc_x = ranges_x[rn + 1].beg;
+        prc_x_end = ranges_x[rn + 1].fin;
+        for (; prc_x <= prc_x_end; prc_x += (1 << 8))
+        {
+            struct Thing *p_objtng;
+            struct MyMapElement *p_mapel;
+            ThingIdx objtng;
+            short tile_x, tile_z;
+
+            if ((prc_x <= 0) || (prc_x >= 0x8000) || (prc_z <= 0) || (prc_z >= 0x8000))
+                continue;
+
+            tile_z = prc_z >> 8;
+            tile_x = prc_x >> 8;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            objtng = game_col_vects_list[p_mapel->ColHead].Object;
+            if (objtng > 0)
+            {
+                p_objtng = &things[objtng];
+                if (p_objtng->U.UObject.DrawTurn != gameturn)
+                    draw_thing_object(p_objtng);
+            }
+        }
+        prc_z += (1 << 8);
+    }
 }
 
 void func_218D3(void)
@@ -494,45 +534,559 @@ void func_218D3(void)
     }
 }
 
-void func_2e440_sub5(int v151, int v152, int *v115)
+void lvdraw_compute_lights(int prc_z_beg, int *smrang_x, struct ShEnginePoint *p_unknarrD)
 {
-    int v25; // esi
-    unsigned int v26; // ebp
-    int v27; // edx
-    ubyte i; // cc
+    short v31;
+    short v32;
+    struct MyMapElement *p_mapel9;
+    struct ShEnginePoint *v35;
+    int v36;
+    int v37;
+    int v38;
+    int v39;
+    int v40;
+    int v41;
+    ushort qlght;
+    struct QuickLight *p_qlght1;
+    int v44;
+    ubyte Flags;
+    int v46;
+    int v118;
+    int v119;
+    int v120;
+    int v121;
+    int v122;
+    ubyte flags_A;
+    int v144;
+    int v150;
+    int v158;
+    int v159;
+    int v160;
+    int v172;
 
-    v25 = v151;
-    for (v26 = 0; (int)v26 < 2 * v152; v26 += 2)
+    v31 = engn_xc & 0xFF00;
+    word_19CC64 = v31 - (render_area_a << 7);
+    v32 = engn_zc & 0xFF00;
+    word_19CC66 = v32 - (render_area_b << 7);
+    v172 = prc_z_beg;
+    p_mapel9 = &game_my_big_map[128 * (prc_z_beg >> 8) + (smrang_x[0] >> 8)];
+    v35 = &p_unknarrD[2 * (smrang_x[0] >> 8)];
+    v159 = prc_z_beg >> 8;
+    v150 = smrang_x[2 * 0 + 0];
+    v36 = smrang_x[2 * 0 + 1];
+    v144 = prc_z_beg >> 7;
+    v37 = smrang_x[2 * 0 + 0];
+    v158 = 0;
+    while ( v37 <= v36 )
     {
-        v27 = v115[v26 + 2 + 0];
-        for ( i = v27 <= v115[v26 + 2 + 1]; i; i = v27 <= v115[v26 + 2 + 1] )
-        {
-          if ((v27 > 0) && (v27 < 0x8000) && (v25 > 0) && (v25 < 0x8000))
-          {
-            struct Thing *p_objtng;
-            struct MyMapElement *p_mapel;
-            ThingIdx objtng;
-            short tile_x, tile_z;
-            tile_z = v25 >> 8;
-            tile_x = v27 >> 8;
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            objtng = game_col_vects_list[p_mapel->ColHead].Object;
-            if (objtng > 0)
-            {
-              p_objtng = &things[objtng];
-              if (p_objtng->U.UObject.DrawTurn != gameturn)
-                draw_thing_object(p_objtng);
-            }
-          }
-          v27 += 256;
+      v120 = v150 - engn_xc;
+      if (game_perspective == 1)
+      {
+        v121 = 0;
+LABEL_55:
+        v35->field_9 = 0;
+        goto LABEL_56;
+      }
+      v121 = 8 * p_mapel9->Alt;
+      Flags = p_mapel9->Flags;
+      if ((Flags & 0x10) == 0)
+      {
+        if ((Flags & 0x40) != 0)
+          v121 += waft_table[gameturn & 0x1F];
+        goto LABEL_55;
+      }
+      v46 = ((*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)(v150 >> 7)) & 0x1F)) >> 16)
+           + (*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)v144) & 0x1F)) >> 16)
+           + (*(int *)(&deep_radar_surface_col + 2 * ((32 * gameturn
+                       / ((((ubyte)bw_rotl32(0x5D3BA6C3, v159) ^ (ubyte)bw_rotr32(0xA7B4D8AC, (sbyte)(v150 >> 8))) & 0x7Fu)
+                        + 140)) & 0x1F)) >> 16)) >> 3;
+      v121 += 8 * (short)v46;
+      v35->field_9 = ((ushort)v46 + 32) << 9;
+LABEL_56:
+      v121 -= 8 * engn_yc;
+      v160 = (dword_176D14 * v120 - dword_176D10 * (v172 - engn_zc)) >> 16;
+      v38 = (dword_176D10 * v120 + dword_176D14 * (v172 - engn_zc)) >> 16;
+      v122 = (dword_176D18 * v121 + dword_176D1C * v38) >> 16;
+      flags_A = 0;
+      v121 = (((dword_176D1C * v121 - v38 * dword_176D18) >> 16) * overall_scale) >> 8;
+      v120 = (overall_scale * v160) >> 8;
+      if ( v122 >= -500 )
+      {
+        v39 = ((1500 * ((overall_scale * v160) >> 8) / ((v122 >> 2) + 500)) >> 1) + dword_176D3C;
+        v118 = v39;
+        if (v39 < 0) {
+            if (v39 < -2000)
+                v118 = -2000;
+            flags_A = 0x01;
+        } else if (v39 >= vec_window_width) {
+            if (v39 > 2000)
+                v118 = 2000;
+            flags_A |= 0x02;
         }
-        v25 += 256;
+        v40 = dword_176D40 + (-(1500 * v121 / ((v122 >> 2) + 500)) >> 1);
+        v119 = v40;
+        if (v40 < 0) {
+            if (v119 < -2000)
+                v119 = -2000;
+            flags_A |= 0x04;
+        } else if (v40 >= vec_window_height) {
+            if (v119 > 2000)
+                v119 = 2000;
+            flags_A |= 0x08;
+        }
+        flags_A |= 0x40;
+        v122 /= (ushort)render_area_a / 20 + 1;
+      }
+      else
+      {
+        flags_A = 32;
+      }
+
+      v35->Flags = flags_A;
+      v35->X = v118;
+      v35->Y = v119;
+      v35->field_4 = v122;
+      v41 = ((ushort)p_mapel9->Ambient << 7) + v35->field_9 + 256;
+      for (qlght = p_mapel9->Shade; qlght; qlght = p_qlght1->NextQuick)
+      {
+          p_qlght1 = &game_quick_lights[qlght];
+          v44 = p_qlght1->Ratio * game_full_lights[p_qlght1->Light].Intensity;
+          v41 += v44;
+      }
+      if ( v122 > 3000 )
+      {
+        if ( 3512 - v122 > 0 )
+          v41 = ((3512 - v122) * v41) >> 9;
+        else
+          v41 = 0;
+      }
+      if (v41 > 0x7E00)
+        v41 = 0x7F00;
+      v35->Shade = v41;
+      v150 += 256;
+      v37 = v150;
+      v35 += 2;
+      v36 = smrang_x[v158/4 + 1];
+      ++p_mapel9;
+    }
+}
+
+void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, struct Range *ranges_x, struct ShEnginePoint *p_unknarrD)
+{
+    struct FloorTile *v34;
+    int v147;
+    int v148;
+    int v171;
+
+    v34 = game_floor_tiles + 1;
+    v171 = prc_z_beg;
+    v147 = prc_z_beg - 256;
+    for (v148 = 1; v148 < ranges_x_len; v148++)
+    {
+        struct ShEnginePoint *p_unknarrD1;
+        struct MyMapElement *p_mapel1;
+        int v47;
+        int v49;
+        int v51;
+        int v161;
+        int v162;
+
+        int v53;
+        int v54;
+        int v55;
+        int v56;
+        unsigned int v57;
+        int v58;
+        int v60;
+        int v61;
+        struct ShEnginePoint *v62;
+        int v63;
+        int v64;
+        struct ShEnginePoint *v65;
+        struct MyMapElement *p_mapel3;
+        int v67;
+        ushort n;
+        struct QuickLight *p_qlght4;
+        int v70;
+        int v71;
+        struct ShEnginePoint *v72;
+        int v73;
+        struct MyMapElement *p_mapel4;
+        int v75;
+        struct ShEnginePoint *v76;
+        int v77;
+        ushort ii;
+        struct QuickLight *p_qlght3;
+        int v80;
+        ubyte k;
+        int v81;
+        int v82;
+        struct MyMapElement *p_mapel5;
+        int v84;
+        struct ShEnginePoint *v85;
+        int v86;
+        ushort jj;
+        struct QuickLight *p_qlght2;
+        int v89;
+        int v90;
+        struct MyMapElement *p_mapel6;
+        struct MyMapElement *p_mapel8;
+        short v102;
+        int v104;
+        ubyte v105;
+        ubyte v106;
+        struct MyMapElement *p_mapel7;
+        ushort m;
+        struct QuickLight *p_qlght;
+        int v110;
+        int v111;
+
+        int v118;
+        int v119;
+        int v120;
+        int v121;
+        int v122;
+        ubyte flags_A;
+        struct ShEnginePoint *v149;
+        int v163;
+        int v164;
+        int v165;
+        int v167;
+        int v170;
+        struct MyMapElement *p_mapel2;
+        int v174;
+        ushort v175;
+
+        v47 = smrang_x[2 * v148 + 0] >> 8;
+        p_unknarrD1 = &p_unknarrD[2 * v47 + (v148 & 1)];
+        v161 = v171 >> 8;
+        v49 = smrang_x[2 * v148 + 0];
+        v162 = v171 >> 7;
+        p_mapel1 = &game_my_big_map[128 * (v171 >> 8) + v47];
+        v51 = smrang_x[2 * v148 + 1];
+        p_mapel2 = p_mapel1;
+        for (k = v49 <= v51; k; k = v49 <= v58)
+        {
+          v120 = v49 - engn_xc;
+          if (game_perspective == 1)
+          {
+            v121 = 0;
+            p_unknarrD1->field_9 = 0;
+          }
+          else if ((p_mapel2->Flags & 0x10) == 0)
+          {
+            v121 = 8 * p_mapel2->Alt;
+            if ((p_mapel2->Flags & 0x40) != 0)
+                v121 += waft_table[gameturn & 0x1F];
+            p_unknarrD1->field_9 = 0;
+          }
+          else
+          {
+            v121 = 8 * p_mapel2->Alt;
+            v60 = ((*(int *)(&deep_radar_surface_col + 2 * ((32 * gameturn
+                           / ((((ubyte)bw_rotl32(0x5D3BA6C3, v161) ^ (ubyte)bw_rotr32(0xA7B4D8AC, (sbyte)(v49 >> 8))) & 0x7Fu)
+                            + 140)) & 0x1F)) >> 16)
+               + (*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)(v49 >> 7)) & 0x1F)) >> 16)
+               + (*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)v162) & 0x1F)) >> 16)) >> 3;
+            v121 += 8 * (short)v60;
+            p_unknarrD1->field_9 = ((ushort)v60 + 32) << 9;
+          }
+          flags_A = 0;
+          v121 -= 8 * engn_yc;
+          v163 = (dword_176D14 * v120 - dword_176D10 * (v171 - engn_zc)) >> 16;
+          v53 = (dword_176D10 * v120 + dword_176D14 * (v171 - engn_zc)) >> 16;
+          v165 = dword_176D1C * v121;
+          v164 = (dword_176D1C * v121 - v53 * dword_176D18) >> 16;
+          v122 = (dword_176D1C * v53 + dword_176D18 * v121) >> 16;
+          v120 = (overall_scale * v163) >> 8;
+          v121 = (overall_scale * v164) >> 8;
+          if (v122 >= -500)
+          {
+            v165 = (v122 >> 2) + 500;
+            v54 = ((1500 * v120 / v165) >> 1) + dword_176D3C;
+            v118 = v54;
+            if (v54 < 0)
+            {
+                if (v54 < -2000)
+                    v118 = -2000;
+                flags_A |= 0x01;
+            }
+            else if (v54 >= vec_window_width)
+            {
+                if (v54 > 2000)
+                    v118 = 2000;
+                flags_A |= 0x02;
+            }
+
+            v165 = (v122 >> 2) + 500;
+            v55 = dword_176D40 + (-(1500 * v121 / v165) >> 1);
+            v119 = v55;
+            if (v55 < 0) {
+                if (v119 < -2000)
+                    v119 = -2000;
+                flags_A |= 0x04;
+            } else if (v55 >= vec_window_height) {
+                if (v119 > 2000)
+                    v119 = 2000;
+                flags_A |= 0x08;
+            }
+            flags_A |= 0x40;
+            v122 /= render_area_a / 20 + 1;
+          }
+          else
+          {
+            flags_A = 0x20;
+          }
+
+          p_unknarrD1->Flags = flags_A;
+          p_unknarrD1->X = v118;
+          p_unknarrD1->Y = v119;
+          p_unknarrD1->field_4 = v122;
+          p_unknarrD1->Shade = -1;
+          p_unknarrD1 += 2;
+          v56 = (int)p_mapel2;
+          v49 += 256;
+          v57 = 2 * v148;
+          v58 = smrang_x[v57 + 1];
+          p_mapel2 = (struct MyMapElement *)(v56 + 18);
+        }
+        v61 = 2 * (ranges_x[v148].beg >> 8);
+        v149 = &p_unknarrD[v61 + ((v148 + 1) & 1)];
+        v62 = &p_unknarrD[v61 + ((v148) & 1)];
+        v170 = ranges_x[v148].beg;
+        v167 = v147 >> 8 << 7;
+        v63 = ranges_x[v148].fin;
+        if ( v63 >= v170 )
+        {
+          do
+          {
+            v175 = 0;
+            if ( (ushort)word_152F00 > 0x464Eu )
+              break;
+            v105 = v62->Flags;
+            v106 = v149[2].Flags;
+            if ( ((v62[2].Flags | (ubyte)(v106 | v105 | v149->Flags)) & 0x20) != 0
+              || ((ubyte)(v106 & v105 & v149->Flags) & v62[2].Flags & 0xF) != 0
+              || v170 <= 0 || v170 >= 0x8000
+              || v171 <= 0 || v171 >= 0x8000 )
+            {
+              v62 += 2;
+              v149 += 2;
+            }
+            else
+            {
+              p_mapel7 = &game_my_big_map[v167 + (v170 >> 8)];
+              v34->X[0] = v149->X;
+              v34->Y[0] = v149->Y;
+              v174 = v149->field_4;
+              if (v149->Shade >= 0)
+              {
+                v34->Shade[0] = v149->Shade;
+              }
+              else
+              {
+                v64 = ((ushort)p_mapel7->Ambient << 7) + v149->field_9 + 256;
+                for ( m = p_mapel7->Shade; m; v64 += v110 )
+                {
+                  p_qlght = &game_quick_lights[m];
+                  v110 = p_qlght->Ratio * game_full_lights[p_qlght->Light].Intensity;
+                  m = p_qlght->NextQuick;
+                }
+                if (v149->field_4 > 3000)
+                {
+                  v111 = v149->field_4;
+                  if ( 3512 - v111 > 0 )
+                    v64 = ((3512 - v111) * v64) >> 9;
+                  else
+                    v64 = 0;
+                }
+                if (v64 > 0x7E00)
+                  v64 = 0x7F00;
+                v65 = v149;
+                v34->Shade[0] = v64;
+                v65->Shade = v64;
+              }
+              p_mapel7->ShadeR = v149->Shade >> 9;
+              v149 += 2;
+              v34->X[1] = v149->X;
+              v34->Y[1] = v149->Y;
+              p_mapel3 = p_mapel7 + 1;
+              if (v149->field_4 > v174)
+                  v174 = v149->field_4;
+              if (v149->Shade >= 0)
+              {
+                v34->Shade[1] = v149->Shade;
+              }
+              else
+              {
+                v67 = ((ushort)p_mapel3->Ambient << 7) + v149->field_9 + 256;
+                for ( n = p_mapel3->Shade; n; v67 += v70 )
+                {
+                  p_qlght4 = &game_quick_lights[n];
+                  v70 = p_qlght4->Ratio * game_full_lights[p_qlght4->Light].Intensity;
+                  n = p_qlght4->NextQuick;
+                }
+                if (v149->field_4 > 3000)
+                {
+                  v71 = v149->field_4;
+                  if ( 3512 - v71 > 0 )
+                    v67 = ((3512 - v71) * v67) >> 9;
+                  else
+                    v67 = 0;
+                }
+                if (v67 > 0x7E00)
+                  v67 = 0x7F00;
+                v72 = v149;
+                v34->Shade[1] = v67;
+                v72->Shade = v67;
+              }
+              p_mapel3->ShadeR = v149->Shade >> 9;
+              v34->X[2] = v62[2].X;
+              v73 = v174;
+              v34->Y[2] = v62[2].Y;
+              p_mapel4 = p_mapel3 + 128;
+              v75 = v62[2].field_4;
+              v76 = v62 + 2;
+              if (v75 > v73)
+                  v174 = v75;
+              if (v76->Shade >= 0)
+              {
+                v34->Shade[2] = v76->Shade;
+              }
+              else
+              {
+                v77 = ((ushort)p_mapel4->Ambient << 7) + v149->field_9 + 256;
+                for ( ii = p_mapel4->Shade; ii; v77 += v80 )
+                {
+                  p_qlght3 = &game_quick_lights[ii];
+                  v80 = p_qlght3->Ratio * game_full_lights[p_qlght3->Light].Intensity;
+                  ii = p_qlght3->NextQuick;
+                }
+                v81 = v76->field_4;
+                if ( v81 > 3000 )
+                {
+                  if ( 3512 - v81 > 0 )
+                    v77 = ((3512 - v81) * v77) >> 9;
+                  else
+                    v77 = 0;
+                }
+                if (v77 > 0x7E00)
+                    v77 = 0x7F00;
+                v34->Shade[2] = v77;
+                v76->Shade = v77;
+              }
+              p_mapel4->ShadeR = v76->Shade >> 9;
+              v34->X[3] = v76[-2].X;
+              v82 = v174;
+              v34->Y[3] = v76[-2].Y;
+              p_mapel5 = p_mapel4 - 1;
+              v84 = v76[-2].field_4;
+              v85 = v76 - 2;
+              if ( v84 > v82 )
+                  v174 = v84;
+              if (v85->Shade >= 0)
+              {
+                v34->Shade[3] = v85->Shade;
+              }
+              else
+              {
+                v86 = ((ushort)p_mapel5->Ambient << 7) + v149->field_9 + 256;
+                for ( jj = p_mapel5->Shade; jj; v86 += v89 )
+                {
+                  p_qlght2 = &game_quick_lights[jj];
+                  v89 = p_qlght2->Ratio * game_full_lights[p_qlght2->Light].Intensity;
+                  jj = p_qlght2->NextQuick;
+                }
+                v90 = v85->field_4;
+                if (v90 > 3000)
+                {
+                  if ( 3512 - v90 > 0 )
+                    v86 = ((3512 - v90) * v86) >> 9;
+                  else
+                    v86 = 0;
+                }
+                if (v86 > 0x7E00)
+                  v86 = 0x7F00;
+                v34->Shade[3] = v86;
+                v85->Shade = v86;
+              }
+              p_mapel5->ShadeR = v85->Shade >> 9;
+              p_mapel6 = &game_my_big_map[v167 + (v170 >> 8)];
+              if (p_mapel6->Texture != 0)
+              {
+                struct SingleFloorTexture *p_fltextr;
+                short fltextr;
+
+                fltextr = p_mapel6->Texture & 0x3FFF;
+                v34->Flags2 = 0;
+                p_fltextr = &game_textures[fltextr];
+                if ((p_mapel6->Texture & 0x8000) != 0)
+                {
+                  v34->Flags2 = 1;
+                  if (byte_1C8444)
+                  {
+                      uint tmp;
+                      if (p_mapel6->Alt <= 0)
+                        tmp = 15000 * overall_scale;
+                      else
+                        tmp = 500 * overall_scale;
+                      v175 = tmp >> 8;
+                  }
+                  else
+                  {
+                      if (p_mapel6->Alt <= 0)
+                        v175 = 2000;
+                      else
+                        v175 = 1000;
+                  }
+                }
+                v34->Texture = p_fltextr;
+                v34->Flags = (p_mapel6->Flags & 0x20) != 0 ? 21 : 5;
+                v34->Page = (int)(ushort)p_mapel6->ColumnHead >> 12;
+              }
+              else
+              {
+                v34->Flags = 4;
+                v34->Col = colour_grey2;
+              }
+              if ((p_mapel6->Flags & 0x01) != 0)
+              {
+                  v34->Shade[0] = 0x3F00;
+                  v34->Shade[1] = 0x3F00;
+                  v34->Shade[2] = 0x3F00;
+                  v34->Shade[3] = 0x3F00;
+              }
+              if ((p_mapel6->Flags & 0x08) != 0)
+                  v34->Flags2 |= 0x02;
+              p_mapel8 = game_my_big_map;
+              v174 += v175 + 5000;
+              v34->Flags2 = p_mapel6->Flags;
+              v34->Offset = p_mapel6 - p_mapel8;
+              v34->Flags2b = p_mapel6->Flags2;
+              ubyte ditype;
+              ditype = (p_mapel6->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
+              v102 = word_152F00;
+
+              if (!draw_item_add(ditype, v102, v174))
+                  break;
+
+              ++v34;
+              v62 = v85 + 2;
+              word_152F00 = v102 + 1;
+            }
+            v104 = ranges_x[v148].fin;
+            v170 += 256;
+          }
+          while ( v170 <= v104 );
+        }
+        v147 += 256;
+        v171 += 256;
     }
 }
 
 void func_2e440(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_func_2e440\n"
         :  :  : "eax" );
     return;
@@ -541,20 +1095,20 @@ void func_2e440(void)
     ubyte slt_zmin;
 
     struct ShEnginePoint loc_unknarrD[272];
-    int v113[2 * 159];
-    int v115[274];
+    struct Range smrang_x[160];
+    struct Range ranges_x[160];
     struct TbPoint bound_pts[4];
-    int v151, v152;
+    int prc_z_beg, ranges_x_len;
 
     word_152F00 = 1;
 
     slt_zmin = lvdraw_fill_bound_points(bound_pts);
 
-    v151 = bound_pts[slt_zmin].y << 8;
+    prc_z_beg = bound_pts[slt_zmin].y << 8;
 
-    v152 = func_2e440_fill_v115(slt_zmin, v115, bound_pts);
+    ranges_x_len = lvdraw_fill_ranges_x(slt_zmin, ranges_x, bound_pts);
 
-    func_2e440_fill_v113(v152, v113, v115);
+    filter_ranges_max_of_two(ranges_x_len, smrang_x, ranges_x);
 
     player_target_clear(local_player_no);
 
@@ -572,11 +1126,11 @@ void func_2e440(void)
     byte_176D49 = ((angXZ + 128) >> 8) & 0x7;
     byte_19EC7A = byte_176D48;
 
-    func_2e440_sub5(v151, v152, v115);
+    lvdraw_do_objects(prc_z_beg, ranges_x_len, ranges_x);
 
-    func_2e440_sub6(v151, v113, loc_unknarrD);
+    lvdraw_compute_lights(prc_z_beg, smrang_x, loc_unknarrD);
 
-    func_2e440_fill_drawlist(v151, v152, v113, v115, loc_unknarrD);
+    func_2e440_fill_drawlist(prc_z_beg, ranges_x_len, smrang_x, ranges_x, loc_unknarrD);
 
     vec_map = vec_tmap[1];
 
