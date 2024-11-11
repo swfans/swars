@@ -1,14 +1,14 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file lvdraw3d.h
- *     Header file for lvdraw3d.c.
+/** @file tngobjdrw.h
+ *     Header file for tngobjdrw.c.
  * @par Purpose:
- *     Routines for level and map drawing using 3D rendering.
+ *     Draws thing objects using drawlist.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
- * @date     24 Dec 2023 - 10 Nov 2024
+ * @date     04 Sep 2024 - 11 Nov 2024
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef LVDRAW3D_H
-#define LVDRAW3D_H
+#ifndef TNGOBJDRW_H
+#define TNGOBJDRW_H
 
 #include "bftypes.h"
 
@@ -27,18 +27,15 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct Thing;
 
 #pragma pack()
 /******************************************************************************/
-extern ubyte byte_1C8444;
 
-void clear_super_quick_lights(void);
-void reset_super_quick_lights(void);
+short draw_thing_object(struct Thing *p_thing);
 
-void func_218D3(void);
-void func_2e440(void);
+#define draw_sthing_object(p_sthing) draw_thing_object((struct Thing *)p_sthing)
 
-void draw_screen(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

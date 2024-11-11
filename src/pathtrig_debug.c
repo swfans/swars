@@ -23,11 +23,13 @@
 #include "bfmemut.h"
 #include "bfline.h"
 #include "bfpng.h"
-#include "triangls.h"
-#include "game.h"
-#include "display.h"
+
 #include "bigmap.h"
+#include "display.h"
 #include "enginsngobjs.h"
+#include "triangls.h"
+#include "tngcolisn.h"
+#include "game.h"
 #include "swlog.h"
 /******************************************************************************/
 

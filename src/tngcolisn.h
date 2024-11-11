@@ -1,14 +1,14 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file lvdraw3d.h
- *     Header file for lvdraw3d.c.
+/** @file tngcolisn.h
+ *     Header file for tngcolisn.c.
  * @par Purpose:
- *     Routines for level and map drawing using 3D rendering.
+ *     Thing collisions support.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
- * @date     24 Dec 2023 - 10 Nov 2024
+ * @date     04 Sep 2024 - 11 Nov 2024
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef LVDRAW3D_H
-#define LVDRAW3D_H
+#ifndef TNGCOLISN_H
+#define TNGCOLISN_H
 
 #include "bftypes.h"
 
@@ -27,18 +27,40 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct Thing;
+
+struct ColVect { // sizeof=14
+  short X1;
+  short Y1;
+  short Z1;
+  short X2;
+  short Y2;
+  short Z2;
+  short Face;
+};
+
+/** Collision vectors list.
+ *
+ * Contains a list of references to boundary vectors used for stepping
+ * between ground faces and object faces (buildings).
+ */
+struct ColVectList { // sizeof=6
+  ushort Vect; /**< Index of the ColVect with geometry vector. */
+  ushort NextColList; /**< Index of the next ColVectList entry in a chain list, top bit is passability. */
+  short Object; /**< Index of a Thing containing the object whose geometry has that vector. */
+};
 
 #pragma pack()
 /******************************************************************************/
-extern ubyte byte_1C8444;
+extern struct ColVectList *game_col_vects_list;
+extern ushort next_vects_list;
+extern struct ColVect *game_col_vects;
+extern ushort next_col_vect;
 
-void clear_super_quick_lights(void);
-void reset_super_quick_lights(void);
+void set_dome_col(struct Thing *p_building, ubyte flag);
 
-void func_218D3(void);
-void func_2e440(void);
+void draw_engine_unk3_last(short x, short z);
 
-void draw_screen(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

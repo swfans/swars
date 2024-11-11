@@ -29,6 +29,7 @@
 #include "game.h"
 #include "game_data.h"
 #include "thing.h"
+#include "tngcolisn.h"
 #include "triangls.h"
 #include "tringops.h"
 #include "trpoints.h"

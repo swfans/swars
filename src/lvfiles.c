@@ -45,6 +45,7 @@
 #include "building.h"
 #include "pepgroup.h"
 #include "thing.h"
+#include "tngcolisn.h"
 #include "vehicle.h"
 #include "vehtraffic.h"
 #include "swlog.h"

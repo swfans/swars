@@ -198,6 +198,10 @@ swars_SOURCES = \
 	thing.h \
 	thing_debug.c \
 	thing_debug_s.sx \
+	tngcolisn.c \
+	tngcolisn.h \
+	tngobjdrw.c \
+	tngobjdrw.h \
 	timer.c \
 	timer.h \
 	unix.c \

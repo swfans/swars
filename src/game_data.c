@@ -38,6 +38,7 @@
 #include "bigmap.h"
 #include "game.h"
 #include "swlog.h"
+#include "tngcolisn.h"
 #include "unix.h"
 #include "vehtraffic.h"
 #include "windows.h"

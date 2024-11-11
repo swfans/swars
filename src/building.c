@@ -29,6 +29,7 @@
 #include "matrix.h"
 #include "sound.h"
 #include "thing.h"
+#include "tngcolisn.h"
 #include "vehtraffic.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -44,34 +45,6 @@ struct Thing *create_building_thing(int x, int y, int z, ushort obj, ushort nobj
       "call ASM_create_building_thing\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (obj), "g" (nobj), "g" (a6));
     return ret;
-}
-
-void set_dome_col(struct Thing *p_building, ubyte flag)
-{
-    struct ColVectList *p_cvlist;
-    ushort vl_beg, vl_end;
-    ushort  vl;
-
-    // The thing data contains properties with range of ColVectList
-    // which can switch the passability
-    vl_beg = p_building->U.UObject.BuildStartVect;
-    vl_end = vl_beg + p_building->U.UObject.BuildNumbVect;
-    if (flag)
-    {
-        for (vl = vl_beg; vl < vl_end; vl++)
-        {
-            p_cvlist = &game_col_vects_list[vl];
-            p_cvlist->NextColList |= 0x8000;
-        }
-    }
-    else
-    {
-        for (vl = vl_beg; vl < vl_end; vl++)
-        {
-            p_cvlist = &game_col_vects_list[vl];
-            p_cvlist->NextColList &= ~0x8000;
-        }
-    }
 }
 
 void do_dome_rotate1(struct Thing *p_building)

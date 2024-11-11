@@ -156,27 +156,6 @@ enum MissionFMVPlay {
 
 struct Thing;
 
-struct ColVect { // sizeof=14
-  short X1;
-  short Y1;
-  short Z1;
-  short X2;
-  short Y2;
-  short Z2;
-  short Face;
-};
-
-/** Collision vectors list.
- *
- * Contains a list of references to boundary vectors used for stepping
- * between ground faces and object faces (buildings).
- */
-struct ColVectList { // sizeof=6
-  ushort Vect; /**< Index of the ColVect with geometry vector. */
-  ushort NextColList; /**< Index of the next ColVectList entry in a chain list, top bit is passability. */
-  short Object; /**< Index of a Thing containing the object whose geometry has that vector. */
-};
-
 struct ColColumn { // sizeof=16
     uint QBits[4];
 };
@@ -379,10 +358,6 @@ extern ubyte byte_1810E6[40];
 extern ubyte byte_18110E[40];
 
 extern ushort word_1531E0;
-extern struct ColVectList *game_col_vects_list;
-extern ushort next_vects_list;
-extern struct ColVect *game_col_vects;
-extern ushort next_col_vect;
 
 /** Header linking a face to a list of walk items.
  *
@@ -599,8 +574,9 @@ void campaign_new_game_prepare(void);
 
 void process_sound_heap(void);
 void update_danger_music(ubyte a1);
-void draw_text_transformed_at_ground(int a1, int a2, const char *text);
-void draw_text_transformed(int coord_x, int coord_y, int coord_z, const char *text);
+
+void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign);
+int mech_unkn_func_03(struct Thing *p_thing);
 
 void draw_new_panel(void);
 

@@ -33,10 +33,12 @@
 #include "engintrns.h"
 #include "enginzoom.h"
 #include "game_speed.h"
+#include "player.h"
 #include "scanner.h"
 #include "swlog.h"
-#include "player.h"
 #include "thing.h"
+#include "tngcolisn.h"
+#include "tngobjdrw.h"
 /******************************************************************************/
 extern short super_quick_light[(RENDER_AREA_MAX+1)*(RENDER_AREA_MAX+1)];
 extern short word_152F00;
@@ -49,6 +51,7 @@ extern long dword_176CC0;
 
 extern short word_19CC64;
 extern short word_19CC66;
+extern long dword_19F4F8;
 
 
 int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int elcr_x, int elcr_z)
@@ -140,6 +143,119 @@ ubyte lvdraw_fill_bound_points(struct TbPoint *bound_pts)
     }
 
     return slt_zmin;
+}
+
+int func_2e440_fill_v115(int slt_zmin, int *v115, struct TbPoint *bound_pts)
+{
+    ubyte slt;
+    int nx_pt, points_used;
+    int slt1_fcx, slt2_fcx;
+    int slt1_incx, slt2_incx;
+    int slt1, slt2;
+    int z_cur, z_max;
+
+    z_max = bound_pts[0].y;
+    for (slt = 1; slt < 4; slt++) {
+        if (z_max < bound_pts[slt].y)
+            z_max = bound_pts[slt].y;
+    }
+
+    slt2 = slt_zmin;
+    slt1 = slt_zmin;
+    slt1_fcx = slt2_fcx = 0;
+    slt1_incx = slt2_incx = 0;
+    z_cur = bound_pts[slt_zmin].y;
+    nx_pt = 0;
+    while (z_cur < z_max)
+    {
+        if (z_cur == bound_pts[slt1].y)
+        {
+            int dt_z;
+            int base_fcx;
+            int x_cur;
+
+            while (z_cur == bound_pts[slt1].y)
+            {
+              int x_tmp;
+              x_tmp = bound_pts[slt1].x;
+              slt1 = (slt1 + 1) & 3;
+              base_fcx = x_tmp << 16;
+            }
+            x_cur = bound_pts[slt1].x;
+            dt_z = bound_pts[slt1].y - z_cur;
+            slt1_incx = ((x_cur << 16) - base_fcx) / dt_z;
+            slt1_fcx = slt1_fcx + 0x10000;
+        }
+
+        if (z_cur == bound_pts[slt2].y)
+        {
+            int dt_z;
+            int base_fcx;
+            int x_cur;
+
+            while (z_cur == bound_pts[slt2].y)
+            {
+              int x_tmp;
+              x_tmp = bound_pts[slt2].x;
+              slt2 = (slt2 - 1) & 3;
+              base_fcx = x_tmp << 16;
+            }
+            x_cur = bound_pts[slt2].x;
+            dt_z = bound_pts[slt2].y - z_cur;
+            slt2_incx = ((x_cur << 16) - base_fcx) / dt_z;
+            slt2_fcx = base_fcx + 0x10000;
+        }
+
+        v115[2 * nx_pt + 2 + 0] = slt1_fcx >> 16 << 8;
+        v115[2 * nx_pt + 2 + 1] = slt2_fcx >> 16 << 8;
+
+        z_cur++;
+        slt2_fcx += slt2_incx;
+        slt1_fcx += slt1_incx;
+        nx_pt++;
+    }
+
+    points_used = nx_pt;
+    nx_pt = 0;
+    {
+      uint k;
+      for (k = 0; k < 2 * (uint)points_used; k += 2)
+      {
+          if (v115[k + 2 + 0] < 0)
+              v115[k + 2 + 0] = 0;
+          if (v115[k + 2 + 1] > 0x7F00)
+              v115[k + 2 + 1] = 0x7F00;
+          nx_pt++;
+      }
+    }
+
+    return points_used;
+}
+
+void func_2e440_fill_v113(int v152, int *v113, int *v115)
+{
+    int pt;
+
+    v113[0] = v115[2 * 1 + 0];
+    v113[1] = v115[2 * 1 + 1] + 256;
+
+    for (pt = 1; pt < v152; pt++)
+    {
+        int x, z;
+
+        x = v115[2 * pt + 0];
+        if (x < v115[2 * pt + 2 + 0])
+            x = v115[2 * pt + 2 + 0];
+        v113[2 * pt + 0] = x;
+
+        z = v115[2 * pt + 1] + 256;
+        if (z < v115[2 * pt + 2 + 1] + 256)
+            z = v115[2 * pt + 2 + 1] + 256;
+        v113[2 * pt + 1] = z;
+    }
+
+    v113[2 * pt + 0] = v113[2 * pt - 2 + 0];
+    v113[2 * pt + 1] = v113[2 * pt - 2 + 1];
 }
 
 void func_218D3(void)
@@ -378,12 +494,93 @@ void func_218D3(void)
     }
 }
 
+void func_2e440_sub5(int v151, int v152, int *v115)
+{
+    int v25; // esi
+    unsigned int v26; // ebp
+    int v27; // edx
+    ubyte i; // cc
+
+    v25 = v151;
+    for (v26 = 0; (int)v26 < 2 * v152; v26 += 2)
+    {
+        v27 = v115[v26 + 2 + 0];
+        for ( i = v27 <= v115[v26 + 2 + 1]; i; i = v27 <= v115[v26 + 2 + 1] )
+        {
+          if ((v27 > 0) && (v27 < 0x8000) && (v25 > 0) && (v25 < 0x8000))
+          {
+            struct Thing *p_objtng;
+            struct MyMapElement *p_mapel;
+            ThingIdx objtng;
+            short tile_x, tile_z;
+            tile_z = v25 >> 8;
+            tile_x = v27 >> 8;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            objtng = game_col_vects_list[p_mapel->ColHead].Object;
+            if (objtng > 0)
+            {
+              p_objtng = &things[objtng];
+              if (p_objtng->U.UObject.DrawTurn != gameturn)
+                draw_thing_object(p_objtng);
+            }
+          }
+          v27 += 256;
+        }
+        v25 += 256;
+    }
+}
+
 void func_2e440(void)
 {
 #if 1
     asm volatile ("call ASM_func_2e440\n"
         :  :  : "eax" );
     return;
+#else
+    int angXZ;
+    ubyte slt_zmin;
+
+    struct ShEnginePoint loc_unknarrD[272];
+    int v113[2 * 159];
+    int v115[274];
+    struct TbPoint bound_pts[4];
+    int v151, v152;
+
+    word_152F00 = 1;
+
+    slt_zmin = lvdraw_fill_bound_points(bound_pts);
+
+    v151 = bound_pts[slt_zmin].y << 8;
+
+    v152 = func_2e440_fill_v115(slt_zmin, v115, bound_pts);
+
+    func_2e440_fill_v113(v152, v113, v115);
+
+    player_target_clear(local_player_no);
+
+    if ((ingame.Flags & 0x01) != 0)
+    {
+        dword_176CC0 += fifties_per_gameturn;
+        if (dword_176CC0 > 80) {
+            dword_176CC0 = 0;
+            xdo_next_frame(1);
+        }
+    }
+    angXZ = (engn_anglexz >> 5) & 0x7FF;
+    byte_176D4B = ((angXZ + 64) >> 7) & 0xF;
+    byte_176D48 = ((angXZ + 256) >> 9) & 0x3;
+    byte_176D49 = ((angXZ + 128) >> 8) & 0x7;
+    byte_19EC7A = byte_176D48;
+
+    func_2e440_sub5(v151, v152, v115);
+
+    func_2e440_sub6(v151, v113, loc_unknarrD);
+
+    func_2e440_fill_drawlist(v151, v152, v113, v115, loc_unknarrD);
+
+    vec_map = vec_tmap[1];
+
+    draw_screen();
 #endif
 }
 
@@ -471,6 +668,26 @@ void clear_super_quick_lights(void)
 void reset_super_quick_lights(void)
 {
     word_152F00 = 1;
+}
+
+void draw_screen(void)
+{
+    if (dword_19F4F8)
+    {
+        draw_drawlist_1();
+    }
+    else
+    {
+        draw_drawlist_2();
+    }
+#if 0
+    //TODO Setting first palette colour was often used as debug helper; to be removed
+    __outbyte(0x3C8u, 0);
+    __outbyte(0x3C9u, byte_1C83E0);
+    __outbyte(0x3C9u, 0);
+    __outbyte(0x3C9u, 0);
+#endif
+    reset_drawlist();
 }
 
 /******************************************************************************/
