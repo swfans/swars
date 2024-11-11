@@ -1070,12 +1070,6 @@ void draw_explode(void)
         :  :  : "eax" );
 }
 
-void func_2e440(void)
-{
-    asm volatile ("call ASM_func_2e440\n"
-        :  :  : "eax" );
-}
-
 void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
 {
     asm volatile (

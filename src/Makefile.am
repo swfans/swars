@@ -143,6 +143,8 @@ swars_SOURCES = \
 	joy_modul2.sx \
 	keyboard.c \
 	keyboard.h \
+	lvdraw3d.c \
+	lvdraw3d.h \
 	lvobjctv.c \
 	lvobjctv.h \
 	lvfiles.c \

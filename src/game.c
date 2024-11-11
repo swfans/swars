@@ -84,6 +84,7 @@
 #include "cybmod.h"
 #include "pathtrig.h"
 #include "pepgroup.h"
+#include "lvdraw3d.h"
 #include "lvobjctv.h"
 #include "lvfiles.h"
 #include "bigmap.h"
