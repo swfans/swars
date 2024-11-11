@@ -91,6 +91,8 @@ void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y,
   ushort scale, ushort alpha);
 void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte csel);
 
+uint cummulate_shade_from_quick_lights(ushort light_first);
+
 void draw_drawitem_1(ushort dihead);
 void draw_drawitem_2(ushort dihead);
 

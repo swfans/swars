@@ -534,7 +534,7 @@ void func_218D3(void)
     }
 }
 
-void lvdraw_compute_lights(int prc_z_beg, int *smrang_x, struct ShEnginePoint *p_unknarrD)
+void lvdraw_compute_lights(int prc_z_beg, int ranges_len, struct Range *smrang_x, struct ShEnginePoint *p_unknarrD)
 {
     short v31;
     short v32;
@@ -543,20 +543,10 @@ void lvdraw_compute_lights(int prc_z_beg, int *smrang_x, struct ShEnginePoint *p
     int v36;
     int v37;
     int v38;
-    int v39;
-    int v40;
-    int v41;
-    ushort qlght;
-    struct QuickLight *p_qlght1;
-    int v44;
-    ubyte Flags;
     int v46;
-    int v118;
-    int v119;
     int v120;
     int v121;
     int v122;
-    ubyte flags_A;
     int v144;
     int v150;
     int v158;
@@ -569,105 +559,108 @@ void lvdraw_compute_lights(int prc_z_beg, int *smrang_x, struct ShEnginePoint *p
     v32 = engn_zc & 0xFF00;
     word_19CC66 = v32 - (render_area_b << 7);
     v172 = prc_z_beg;
-    p_mapel9 = &game_my_big_map[128 * (prc_z_beg >> 8) + (smrang_x[0] >> 8)];
-    v35 = &p_unknarrD[2 * (smrang_x[0] >> 8)];
+    p_mapel9 = &game_my_big_map[128 * (prc_z_beg >> 8) + (smrang_x[0].beg >> 8)];
+    v35 = &p_unknarrD[2 * (smrang_x[0].beg >> 8)];
     v159 = prc_z_beg >> 8;
-    v150 = smrang_x[2 * 0 + 0];
-    v36 = smrang_x[2 * 0 + 1];
+    v150 = smrang_x[0].beg;
+    v36 = smrang_x[0].fin;
     v144 = prc_z_beg >> 7;
-    v37 = smrang_x[2 * 0 + 0];
+    v37 = smrang_x[0].beg;
     v158 = 0;
     while ( v37 <= v36 )
     {
-      v120 = v150 - engn_xc;
-      if (game_perspective == 1)
-      {
-        v121 = 0;
-LABEL_55:
-        v35->field_9 = 0;
-        goto LABEL_56;
-      }
-      v121 = 8 * p_mapel9->Alt;
-      Flags = p_mapel9->Flags;
-      if ((Flags & 0x10) == 0)
-      {
-        if ((Flags & 0x40) != 0)
-          v121 += waft_table[gameturn & 0x1F];
-        goto LABEL_55;
-      }
-      v46 = ((*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)(v150 >> 7)) & 0x1F)) >> 16)
-           + (*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)v144) & 0x1F)) >> 16)
-           + (*(int *)(&deep_radar_surface_col + 2 * ((32 * gameturn
-                       / ((((ubyte)bw_rotl32(0x5D3BA6C3, v159) ^ (ubyte)bw_rotr32(0xA7B4D8AC, (sbyte)(v150 >> 8))) & 0x7Fu)
-                        + 140)) & 0x1F)) >> 16)) >> 3;
-      v121 += 8 * (short)v46;
-      v35->field_9 = ((ushort)v46 + 32) << 9;
-LABEL_56:
-      v121 -= 8 * engn_yc;
-      v160 = (dword_176D14 * v120 - dword_176D10 * (v172 - engn_zc)) >> 16;
-      v38 = (dword_176D10 * v120 + dword_176D14 * (v172 - engn_zc)) >> 16;
-      v122 = (dword_176D18 * v121 + dword_176D1C * v38) >> 16;
-      flags_A = 0;
-      v121 = (((dword_176D1C * v121 - v38 * dword_176D18) >> 16) * overall_scale) >> 8;
-      v120 = (overall_scale * v160) >> 8;
-      if ( v122 >= -500 )
-      {
-        v39 = ((1500 * ((overall_scale * v160) >> 8) / ((v122 >> 2) + 500)) >> 1) + dword_176D3C;
-        v118 = v39;
-        if (v39 < 0) {
-            if (v39 < -2000)
-                v118 = -2000;
-            flags_A = 0x01;
-        } else if (v39 >= vec_window_width) {
-            if (v39 > 2000)
-                v118 = 2000;
-            flags_A |= 0x02;
-        }
-        v40 = dword_176D40 + (-(1500 * v121 / ((v122 >> 2) + 500)) >> 1);
-        v119 = v40;
-        if (v40 < 0) {
-            if (v119 < -2000)
-                v119 = -2000;
-            flags_A |= 0x04;
-        } else if (v40 >= vec_window_height) {
-            if (v119 > 2000)
-                v119 = 2000;
-            flags_A |= 0x08;
-        }
-        flags_A |= 0x40;
-        v122 /= (ushort)render_area_a / 20 + 1;
-      }
-      else
-      {
-        flags_A = 32;
-      }
+        int scr_x, scr_y;
+        uint shade;
+        ubyte flags;
 
-      v35->Flags = flags_A;
-      v35->X = v118;
-      v35->Y = v119;
-      v35->field_4 = v122;
-      v41 = ((ushort)p_mapel9->Ambient << 7) + v35->field_9 + 256;
-      for (qlght = p_mapel9->Shade; qlght; qlght = p_qlght1->NextQuick)
-      {
-          p_qlght1 = &game_quick_lights[qlght];
-          v44 = p_qlght1->Ratio * game_full_lights[p_qlght1->Light].Intensity;
-          v41 += v44;
-      }
-      if ( v122 > 3000 )
-      {
-        if ( 3512 - v122 > 0 )
-          v41 = ((3512 - v122) * v41) >> 9;
+        v120 = v150 - engn_xc;
+        if (game_perspective == 1)
+        {
+            v121 = 0;
+            v35->field_9 = 0;
+        }
+        else if ((p_mapel9->Flags & 0x10) == 0)
+        {
+            v121 = 8 * p_mapel9->Alt;
+            if ((p_mapel9->Flags & 0x40) != 0)
+                v121 += waft_table[gameturn & 0x1F];
+            v35->field_9 = 0;
+        }
         else
-          v41 = 0;
-      }
-      if (v41 > 0x7E00)
-        v41 = 0x7F00;
-      v35->Shade = v41;
-      v150 += 256;
-      v37 = v150;
-      v35 += 2;
-      v36 = smrang_x[v158/4 + 1];
-      ++p_mapel9;
+        {
+            v121 = 8 * p_mapel9->Alt;
+            v46 = ((*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)(v150 >> 7)) & 0x1F)) >> 16)
+             + (*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)v144) & 0x1F)) >> 16)
+             + (*(int *)(&deep_radar_surface_col + 2 * ((32 * gameturn
+                         / ((((ubyte)bw_rotl32(0x5D3BA6C3, v159) ^ (ubyte)bw_rotr32(0xA7B4D8AC, (sbyte)(v150 >> 8))) & 0x7Fu)
+                          + 140)) & 0x1F)) >> 16)) >> 3;
+            v121 += 8 * (short)v46;
+            v35->field_9 = ((ushort)v46 + 32) << 9;
+        }
+        v121 -= 8 * engn_yc;
+        v160 = (dword_176D14 * v120 - dword_176D10 * (v172 - engn_zc)) >> 16;
+        v38 = (dword_176D10 * v120 + dword_176D14 * (v172 - engn_zc)) >> 16;
+        v122 = (dword_176D18 * v121 + dword_176D1C * v38) >> 16;
+        v121 = (((dword_176D1C * v121 - v38 * dword_176D18) >> 16) * overall_scale) >> 8;
+        v120 = (overall_scale * v160) >> 8;
+
+        flags = 0;
+        if (v122 >= -500)
+        {
+            int scr_dx, scr_dy;
+
+            scr_dx = (1500 * ((overall_scale * v160) >> 8) / ((v122 >> 2) + 500)) >> 1;
+            scr_x = dword_176D3C + scr_dx;
+            if (scr_x < 0) {
+                if (scr_x < -2000)
+                    scr_x = -2000;
+                flags = 0x01;
+            } else if (scr_x >= vec_window_width) {
+                if (scr_x > 2000)
+                    scr_x = 2000;
+                flags |= 0x02;
+            }
+            scr_dy = -(1500 * v121 / ((v122 >> 2) + 500)) >> 1;
+            scr_y = dword_176D40 + scr_dy;
+            if (scr_y < 0) {
+                if (scr_y < -2000)
+                    scr_y = -2000;
+                flags |= 0x04;
+            } else if (scr_y >= vec_window_height) {
+                if (scr_y > 2000)
+                    scr_y = 2000;
+                flags |= 0x08;
+            }
+            flags |= 0x40;
+            v122 /= (ushort)render_area_a / 20 + 1;
+        }
+        else
+        {
+            flags = 0x20;
+        }
+
+        shade = ((ushort)p_mapel9->Ambient << 7) + v35->field_9 + 256;
+        shade += cummulate_shade_from_quick_lights(p_mapel9->Shade);
+        if (v122 > 3000) {
+          if (3512 - v122 > 0)
+              shade = ((3512 - v122) * shade) >> 9;
+          else
+              shade = 0;
+        }
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+
+        v35->Flags = flags;
+        v35->X = scr_x;
+        v35->Y = scr_y;
+        v35->field_4 = v122;
+        v35->Shade = shade;
+
+        v150 += 256;
+        v35 += 2;
+        v37 = v150;
+        v36 = smrang_x[v158/8].fin;
+        ++p_mapel9;
     }
 }
 
@@ -1128,9 +1121,9 @@ void func_2e440(void)
 
     lvdraw_do_objects(prc_z_beg, ranges_x_len, ranges_x);
 
-    lvdraw_compute_lights(prc_z_beg, smrang_x, loc_unknarrD);
+    lvdraw_compute_lights(prc_z_beg, ranges_x_len, smrang_x, loc_unknarrD);
 
-    func_2e440_fill_drawlist(prc_z_beg, ranges_x_len, smrang_x, ranges_x, loc_unknarrD);
+    func_2e440_fill_drawlist(prc_z_beg, ranges_x_len, (int *)smrang_x, ranges_x, loc_unknarrD);
 
     vec_map = vec_tmap[1];
 

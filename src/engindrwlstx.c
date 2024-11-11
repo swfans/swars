@@ -407,6 +407,26 @@ int calculate_enginepoint_shade_2(struct PolyPoint *p_pt1, struct SingleObjectFa
     return p_pt1->S;
 }
 
+uint cummulate_shade_from_quick_lights(ushort light_first)
+{
+        struct QuickLight *p_qlight;
+        ushort light;
+        uint shade;
+        short i;
+
+        shade = 0;
+        for (light = light_first, i = 0; (light != 0) && (i <= 100); light = p_qlight->NextQuick, i++)
+        {
+            short intens;
+
+            p_qlight = &game_quick_lights[light];
+            intens = game_full_lights[p_qlight->Light].Intensity;
+            shade += intens * p_qlight->Ratio;
+        }
+        return shade;
+}
+
+
 /**
  * Draw triangular face with normally textured surface, but dark.
  *
@@ -465,21 +485,10 @@ void draw_object_face3_textrd_dk(ushort face)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        uint shade;
 
-        light = p_face->Light0;
         shade = p_face->Shade0 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face->Light0);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point1.S = shade << 7;
