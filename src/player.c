@@ -218,4 +218,13 @@ short direct_control_thing_for_player(short plyr)
     return dcthing;
 }
 
+void player_target_clear(short plyr)
+{
+    PlayerInfo *p_player;
+
+    p_player = &players[plyr];
+    p_player->Target = 0;
+    p_player->TargetType = 0;
+}
+
 /******************************************************************************/

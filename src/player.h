@@ -131,6 +131,7 @@ void remove_agent(ubyte cryo_no);
 void add_agent(ulong weapons, ushort mods);
 
 short direct_control_thing_for_player(short plyr);
+void player_target_clear(short plyr);
 /******************************************************************************/
 #ifdef __cplusplus
 }

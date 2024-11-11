@@ -2699,9 +2699,7 @@ void process_engine_unk3(void)
     get_engine_inputs();
 
     word_152F00 = 1;
-    p_locplayer = &players[local_player_no];
-    p_locplayer->Target = 0;
-    p_locplayer->TargetType = 0;
+    player_target_clear(local_player_no);
     dword_1DC880 = mech_unkn_tile_x1;
     dword_1DC884 = mech_unkn_tile_y1;
     dword_1DC888 = mech_unkn_tile_x2;
@@ -4098,10 +4096,9 @@ void init_level(void)
             p_player->PanelItem[mouser] = 0;
             p_player->PanelState[mouser] = 0;
         }
-        p_player->TargetType = 0;
         p_player->GotoFace = 0;
-        p_player->Target = 0;
         p_player->field_102 = 0;
+        player_target_clear(plyr_no);
     }
 
     set_default_brightness();
