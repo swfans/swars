@@ -50,9 +50,9 @@ struct Range {
 };
 
 /******************************************************************************/
-
+#define SUPER_QUICK_LIGHTS_MAX (RENDER_AREA_MAX+1)*(RENDER_AREA_MAX+1)
 extern short super_quick_light[(RENDER_AREA_MAX+1)*(RENDER_AREA_MAX+1)];
-extern short word_152F00;
+extern short next_super_quick_light;
 
 extern long dword_152E50;
 extern long dword_152E54;
@@ -343,7 +343,7 @@ void func_218D3(void)
 #endif
     struct ShEnginePoint loc_unknarrD[(RENDER_AREA_MAX+1)*4];
     int shift_a, shift_b;
-    int elcr_z, elpv_z;
+    int elcr_z, elpv_z; // Coord Z for current and previous map element
     struct FloorTile *p_floortl;
     short *p_sqlight;
 
@@ -420,7 +420,7 @@ void func_218D3(void)
           int dpthalt;
 
           dpthalt = 0;
-          if (word_152F00 > 17998) {
+          if (next_super_quick_light > SUPER_QUICK_LIGHTS_MAX - 3) {
             break;
           }
           p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
@@ -519,17 +519,17 @@ void func_218D3(void)
                   ditype = DrIT_Unkn6;
               else
                   ditype = DrIT_Unkn4;
-              draw_item_add(ditype, word_152F00, depth + 5000 + dpthalt);
+              draw_item_add(ditype, next_super_quick_light, depth + 5000 + dpthalt);
               p_sqlight = &p_sqlight[-render_area_a + 1];
               p_spcr += 2;
-              ++word_152F00;
+              ++next_super_quick_light;
             }
             shift_a++;
             elcr_x += 256;
         }
         shift_b++;
-        elpv_z += 256;
-        elcr_z += 256;
+        elpv_z += TILE_TO_MAPCOORD(1, 0);
+        elcr_z += TILE_TO_MAPCOORD(1, 0);
     }
 }
 
@@ -537,8 +537,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
 {
     struct ShEnginePoint loc_unknarrD[(RENDER_AREA_MAX+1)*4];
     struct FloorTile *p_floortl;
-    int v147;
-    int elcr_z;
+    int elcr_z, elpv_z; // Coord Z for current and previous map element
     int rn;
 
     word_19CC64 = (engn_xc & 0xFF00) - (render_area_a << 7);
@@ -546,7 +545,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
 
     p_floortl = &game_floor_tiles[1];
     elcr_z = prc_z_beg;
-    v147 = prc_z_beg - 256;
+    elpv_z = prc_z_beg - 256;
 
     rn = 0;
     { // Separate first row from the rest as it has no previous
@@ -580,14 +579,11 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
         struct MyMapElement *p_mapel1;
         int v47;
         int elcr_x;
-        int v51;
 
         int v58;
         int v61;
         struct ShEnginePoint *v62;
-        int v63;
         struct ShEnginePoint *v76;
-        ubyte k;
         struct ShEnginePoint *v85;
         struct MyMapElement *p_mapel6;
         short v102;
@@ -607,10 +603,10 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
         v47 = smrang_x[rn].beg >> 8;
         p_spcr = &loc_unknarrD[2 * v47 + (rn & 1)];
         elcr_x = smrang_x[rn].beg;
-        p_mapel1 = &game_my_big_map[128 * (elcr_z >> 8) + v47];
-        v51 = smrang_x[rn].fin;
+        p_mapel1 = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + v47];
+        v58 = smrang_x[rn].fin;
         p_mapel2 = p_mapel1;
-        for (k = elcr_x <= v51; k; k = elcr_x <= v58)
+        while (elcr_x <= v58)
         {
             elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel2, elcr_x, elcr_z, 8);
             transform_shpoint_fpv(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
@@ -618,21 +614,18 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
 
             p_spcr += 2;
             elcr_x += 256;
-            v58 = smrang_x[rn].fin;
             p_mapel2++;
         }
         v61 = 2 * (ranges_x[rn].beg >> 8);
         v149 = &loc_unknarrD[v61 + ((rn + 1) & 1)];
         v62 = &loc_unknarrD[v61 + ((rn) & 1)];
         v170 = ranges_x[rn].beg;
-        v63 = ranges_x[rn].fin;
-        v167 = v147 >> 8 << 7;
-        if ( v63 >= v170 )
+        v167 = elpv_z >> 8 << 7;
+        v104 = ranges_x[rn].fin;
+        while (v170 <= v104)
         {
-          do
-          {
             dpthalt = 0;
-            if ( (ushort)word_152F00 > 0x464Eu )
+            if (next_super_quick_light > SUPER_QUICK_LIGHTS_MAX - 3)
               break;
             v105 = v62->Flags;
             v106 = v149[2].Flags;
@@ -715,7 +708,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
 
               ubyte ditype;
               ditype = (p_mapel6->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
-              v102 = word_152F00;
+              v102 = next_super_quick_light;
 
               if (!draw_item_add(ditype, v102, depth + 5000 + dpthalt))
                   break;
@@ -726,15 +719,12 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
 
               p_floortl++;
               v62 = v85 + 2;
-              word_152F00 = v102 + 1;
+              next_super_quick_light = v102 + 1;
             }
-            v104 = ranges_x[rn].fin;
             v170 += 256;
-          }
-          while ( v170 <= v104 );
         }
-        v147 += 256;
-        elcr_z += 256;
+        elpv_z += TILE_TO_MAPCOORD(1, 0);
+        elcr_z += TILE_TO_MAPCOORD(1, 0);
     }
 }
 
@@ -753,7 +743,7 @@ void func_2e440(void)
     struct TbPoint bound_pts[4];
     int prc_z_beg, ranges_x_len;
 
-    word_152F00 = 1;
+    next_super_quick_light = 1;
 
     slt_zmin = lvdraw_fill_bound_points(bound_pts);
 
@@ -871,7 +861,7 @@ void clear_super_quick_lights(void)
 
 void reset_super_quick_lights(void)
 {
-    word_152F00 = 1;
+    next_super_quick_light = 1;
 }
 
 void draw_screen(void)
