@@ -19,6 +19,7 @@
 #include "lvdraw3d.h"
 
 #include <assert.h>
+#include <limits.h>
 #include "bfendian.h"
 #include "bfmath.h"
 #include "bfplanar.h"
@@ -307,6 +308,18 @@ void lvdraw_do_objects(int prc_z_beg, uint ranges_x_len, struct Range *ranges_x)
     }
 }
 
+void fill_floor_tile_pos_and_shade(struct FloorTile *p_floortl, struct MyMapElement *p_mapel,
+  ubyte pt, short *p_sqlight, struct ShEnginePoint *p_sp)
+{
+    p_floortl->X[pt] = p_sp->X;
+    p_floortl->Y[pt] = p_sp->Y;
+    if (p_sp->Shade < 0) {
+        p_sp->Shade = shpoint_compute_shade(p_sp, p_mapel, p_sqlight);
+    }
+    p_floortl->Shade[pt] = p_sp->Shade;
+    p_mapel->ShadeR = p_sp->Shade >> 9;
+}
+
 void func_218D3(void)
 {
 #if 0
@@ -337,7 +350,7 @@ void func_218D3(void)
         p_spcr = &loc_unknarrD[shift_b & 1];
         shift_a = 0;
         elcr_x = word_19CC64;
-        p_mapel = &game_my_big_map[(elcr_x >> 8) + (elcr_z >> 8 << 7)];
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (elcr_x >> 8)];
 
         while (shift_a < render_area_a + 1)
         {
@@ -350,7 +363,7 @@ void func_218D3(void)
             p_spcr += 2;
             p_mapel++;
             shift_a++;
-            elcr_x += 256;
+            elcr_x += (1 << 8);
         }
     }
 
@@ -366,7 +379,7 @@ void func_218D3(void)
         p_spcr = &loc_unknarrD[shift_b & 1];
         shift_a = 0;
         elcr_x = word_19CC64;
-        p_mapel = &game_my_big_map[(elcr_x >> 8) + (elcr_z >> 8 << 7)];
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (elcr_x >> 8)];
 
         while (shift_a < render_area_a + 1)
         {
@@ -396,7 +409,7 @@ void func_218D3(void)
           if (word_152F00 > 17998) {
             break;
           }
-          p_mapel = &game_my_big_map[(elpv_z >> 8 << 7) + (elcr_x >> 8)];
+          p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
           if (((p_spcr[2].Flags | p_spnx[2].Flags | p_spcr->Flags | p_spnx->Flags) & 0x20) != 0
             || ((p_spnx[2].Flags & p_spcr->Flags & p_spnx->Flags & p_spcr[2].Flags) & 0x0F) != 0
             || elcr_x <= 0 || elcr_x >= 0x8000
@@ -409,62 +422,35 @@ void func_218D3(void)
           }
           else
           {
-              struct MyMapElement *p_mapelXnx;
-              struct MyMapElement *p_mapelXZnx;
-              struct MyMapElement *p_mapelZnx;
               int bckt;
               ubyte ditype;
 
-              p_floortl->X[0] = p_spnx->X;
-              p_floortl->Y[0] = p_spnx->Y;
-              bckt = p_spnx->field_4;
-              if (p_spnx->Shade < 0) {
-                  p_spnx->Shade = shpoint_compute_shade(p_spnx, p_mapel, p_sqlight);
-              }
-              p_floortl->Shade[0] = p_spnx->Shade;
-              p_mapel->ShadeR = p_spnx->Shade >> 9;
+              bckt = INT_MIN;
 
-              p_mapelXnx = p_mapel + 1;
-              p_spnx += 2;
-              p_sqlight += 1;
-              p_floortl->X[1] = p_spnx->X;
-              p_floortl->Y[1] = p_spnx->Y;
               if (bckt < p_spnx->field_4)
                   bckt = p_spnx->field_4;
-              if (p_spnx->Shade < 0) {
-                  p_spnx->Shade = shpoint_compute_shade(p_spnx, p_mapelXnx, p_sqlight);
-              }
-              p_floortl->Shade[1] = p_spnx->Shade;
-              p_mapelXnx->ShadeR = p_spnx->Shade >> 9;
+              fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
+
+              p_spnx += 2;
+              p_sqlight += 1;
+              if (bckt < p_spnx->field_4)
+                  bckt = p_spnx->field_4;
+              fill_floor_tile_pos_and_shade(p_floortl, p_mapel + 1, 1, p_sqlight, p_spnx);
 
               p_spcr += 2;
-              p_mapelXZnx = p_mapel + 128 + 1;
               p_sqlight += render_area_a;
-              p_floortl->X[2] = p_spcr->X;
-              p_floortl->Y[2] = p_spcr->Y;
               if (bckt < p_spcr->field_4)
                   bckt = p_spcr->field_4;
-              if (p_spcr->Shade < 0) {
-                  p_spcr->Shade = shpoint_compute_shade(p_spnx, p_mapelXZnx, p_sqlight);
-              }
-              p_floortl->Shade[2] = p_spcr->Shade;
-              p_mapelXZnx->ShadeR = p_spcr->Shade >> 9;
+              fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH + 1, 2, p_sqlight, p_spcr);
 
-              p_sqlight--;
               p_spcr -= 2;
-              p_mapelZnx = p_mapel + 128;
-              p_floortl->X[3] = p_spcr->X;
-              p_floortl->Y[3] = p_spcr->Y;
+              p_sqlight -= 1;
               if (bckt < p_spcr->field_4)
                   bckt = p_spcr->field_4;
-              if (p_spcr->Shade < 0) {
-                  p_spcr->Shade = shpoint_compute_shade(p_spnx, p_mapelZnx, p_sqlight);
-              }
-              p_floortl->Shade[3] = p_spcr->Shade;
-              p_mapelZnx->ShadeR = p_spcr->Shade >> 9;
+              fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH, 3, p_sqlight, p_spcr);
 
-              p_mapel = &game_my_big_map[(elpv_z >> 8 << 7) + (elcr_x >> 8)];
-              if (p_mapel->Texture)
+              p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
+              if (p_mapel->Texture != 0)
               {
                   struct SingleFloorTexture *p_fltextr;
                   p_floortl->Flags2 = 0;
@@ -534,48 +520,48 @@ void func_218D3(void)
     }
 }
 
-void lvdraw_compute_lights(int prc_z_beg, int ranges_len, struct Range *smrang_x, struct ShEnginePoint *p_unknarrD)
+void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smrang_x, struct Range *ranges_x)
 {
+    struct ShEnginePoint loc_unknarrD[(RENDER_AREA_MAX+1)*4];
+    struct FloorTile *p_floortl;
+    int v147;
     int elcr_z;
+    int rn;
 
     word_19CC64 = (engn_xc & 0xFF00) - (render_area_a << 7);
     word_19CC66 = (engn_zc & 0xFF00) - (render_area_b << 7);
 
+    p_floortl = &game_floor_tiles[1];
     elcr_z = prc_z_beg;
+    v147 = prc_z_beg - 256;
 
+    rn = 0;
     { // Separate first row from the rest as it has no previous
+        struct MyMapElement *p_mapel;
+        struct ShEnginePoint *p_spcr;
         int elcr_x, elcr_x_end;
 
-        elcr_x = smrang_x[0].beg;
-        elcr_x_end = smrang_x[0].fin;
+        elcr_x = smrang_x[rn].beg;
+        elcr_x_end = smrang_x[rn].fin;
 
-        for (; elcr_x <= elcr_x_end; elcr_x += (1 << 8))
+        p_spcr = &loc_unknarrD[2 * (elcr_x >> 8)];
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (elcr_x >> 8)];
+
+        while (elcr_x <= elcr_x_end)
         {
-            struct MyMapElement *p_mapel;
-            struct ShEnginePoint *p_spcr;
             int elcr_y;
-
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (elcr_x >> 8)];
-            p_spcr = &p_unknarrD[2 * (elcr_x >> 8)];
 
             elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 8);
             transform_shpoint_fpv(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
             p_spcr->Shade = shpoint_compute_shade_fading(p_spcr, p_mapel, p_spcr->field_4);
+
+            p_spcr += 2;
+            p_mapel++;
+            elcr_x += (1 << 8);
         }
     }
-}
 
-void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, struct Range *ranges_x, struct ShEnginePoint *p_unknarrD)
-{
-    struct FloorTile *p_floortl;
-    int v147;
-    int v148;
-    int elcr_z;
-
-    p_floortl = game_floor_tiles + 1;
-    elcr_z = prc_z_beg;
-    v147 = prc_z_beg - 256;
-    for (v148 = 1; v148 < ranges_x_len; v148++)
+    for (rn = 1; rn < ranges_x_len; rn++)
     {
         struct ShEnginePoint *p_spcr;
         struct MyMapElement *p_mapel1;
@@ -583,7 +569,6 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
         int elcr_x;
         int v51;
 
-        unsigned int v57;
         int v58;
         int v61;
         struct ShEnginePoint *v62;
@@ -613,11 +598,11 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
         int v174;
         ushort v175;
 
-        v47 = smrang_x[2 * v148 + 0] >> 8;
-        p_spcr = &p_unknarrD[2 * v47 + (v148 & 1)];
-        elcr_x = smrang_x[2 * v148 + 0];
+        v47 = smrang_x[rn].beg >> 8;
+        p_spcr = &loc_unknarrD[2 * v47 + (rn & 1)];
+        elcr_x = smrang_x[rn].beg;
         p_mapel1 = &game_my_big_map[128 * (elcr_z >> 8) + v47];
-        v51 = smrang_x[2 * v148 + 1];
+        v51 = smrang_x[rn].fin;
         p_mapel2 = p_mapel1;
         for (k = elcr_x <= v51; k; k = elcr_x <= v58)
         {
@@ -627,15 +612,14 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
 
             p_spcr += 2;
             elcr_x += 256;
-            v57 = 2 * v148;
-            v58 = smrang_x[v57 + 1];
+            v58 = smrang_x[rn].fin;
             p_mapel2++;
         }
-        v61 = 2 * (ranges_x[v148].beg >> 8);
-        v149 = &p_unknarrD[v61 + ((v148 + 1) & 1)];
-        v62 = &p_unknarrD[v61 + ((v148) & 1)];
-        v170 = ranges_x[v148].beg;
-        v63 = ranges_x[v148].fin;
+        v61 = 2 * (ranges_x[rn].beg >> 8);
+        v149 = &loc_unknarrD[v61 + ((rn + 1) & 1)];
+        v62 = &loc_unknarrD[v61 + ((rn) & 1)];
+        v170 = ranges_x[rn].beg;
+        v63 = ranges_x[rn].fin;
         v167 = v147 >> 8 << 7;
         if ( v63 >= v170 )
         {
@@ -770,7 +754,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
               v62 = v85 + 2;
               word_152F00 = v102 + 1;
             }
-            v104 = ranges_x[v148].fin;
+            v104 = ranges_x[rn].fin;
             v170 += 256;
           }
           while ( v170 <= v104 );
@@ -790,7 +774,6 @@ void func_2e440(void)
     int angXZ;
     ubyte slt_zmin;
 
-    struct ShEnginePoint loc_unknarrD[272];
     struct Range smrang_x[160];
     struct Range ranges_x[160];
     struct TbPoint bound_pts[4];
@@ -824,9 +807,7 @@ void func_2e440(void)
 
     lvdraw_do_objects(prc_z_beg, ranges_x_len, ranges_x);
 
-    lvdraw_compute_lights(prc_z_beg, ranges_x_len, smrang_x, loc_unknarrD);
-
-    func_2e440_fill_drawlist(prc_z_beg, ranges_x_len, (int *)smrang_x, ranges_x, loc_unknarrD);
+    func_2e440_fill_drawlist(prc_z_beg, ranges_x_len, smrang_x, ranges_x);
 
     vec_map = vec_tmap[1];
 

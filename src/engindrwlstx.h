@@ -67,25 +67,25 @@ struct TbSprite;
 #pragma pack()
 /******************************************************************************/
 extern struct DrawItem *game_draw_list;
-extern struct SortSprite *game_sort_sprites;
-extern struct SortLine *game_sort_lines;
-extern struct SpecialPoint *game_screen_point_pool;
-
 extern struct DrawItem *p_current_draw_item;
+extern ushort next_draw_item;
+
+extern struct SpecialPoint *game_screen_point_pool;
+extern ushort next_screen_point;
+
+extern struct SortSprite *game_sort_sprites;
 extern struct SortSprite *p_current_sort_sprite;
+extern ushort next_sort_sprite;
+
+extern struct SortLine *game_sort_lines;
 extern struct SortLine *p_current_sort_line;
+extern ushort next_sort_line;
 
 extern ubyte deep_radar_surface_col;
 extern ubyte deep_radar_line_col;
 
-extern ushort next_screen_point;
-extern ushort next_sort_sprite;
-extern ushort next_sort_line;
-
 extern ushort next_special_face;
 extern ushort next_special_face4;
-
-extern ushort next_draw_item;
 
 void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y,
   ushort scale, ushort alpha);
