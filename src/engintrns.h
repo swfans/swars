@@ -50,7 +50,8 @@ struct EnginePoint {
 struct ShEnginePoint {
     short X;
     short Y;
-    int field_4;
+    /** Depth at which the object is on screen */
+    int Depth;
     ubyte Flags;
     /** Shade value from atmosphere reflection */
     short ReflShade;

@@ -86,7 +86,7 @@ void transform_point(struct EnginePoint *p_ep)
 
 void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
 {
-    int fctr_a, fctr_b, fctr_c, fctr_d;
+    int fctr_a, fctr_b, fctr_c, scr_d;
     int scr_shx, scr_shy, sca_x, sca_y;
     int scr_x, scr_y;
     ubyte flg;
@@ -94,13 +94,13 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     fctr_a = (dword_176D14 * dxc - dword_176D10 * dzc) >> 16;
     fctr_b = (dword_176D10 * dxc + dword_176D14 * dzc) >> 16;
     fctr_c = (dword_176D1C * dyc - dword_176D18 * fctr_b) >> 16;
-    fctr_d = (dword_176D18 * dyc + dword_176D1C * fctr_b) >> 16;
+    scr_d = (dword_176D18 * dyc + dword_176D1C * fctr_b) >> 16;
     sca_x = overall_scale * fctr_a;
     sca_y = overall_scale * fctr_c;
     flg = 0;
 
     if (game_perspective == 5)
-        scr_shx = (sca_x >> 11) * (0x4000 - fctr_d) >> 14;
+        scr_shx = (sca_x >> 11) * (0x4000 - scr_d) >> 14;
     else
         scr_shx = sca_x >> 11;
 
@@ -119,7 +119,7 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     }
 
     if (game_perspective == 5)
-        scr_shy = (sca_y >> 11) * (0x4000 - fctr_d) >> 14;
+        scr_shy = (sca_y >> 11) * (0x4000 - scr_d) >> 14;
     else
         scr_shy = sca_y >> 11;
 
@@ -142,12 +142,12 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     p_sp->Flags = flg;
     p_sp->X = scr_x;
     p_sp->Y = scr_y;
-    p_sp->field_4 = fctr_d;
+    p_sp->Depth = scr_d;
 }
 
 void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
 {
-    int fctr_a, fctr_b, fctr_c, fctr_d;
+    int fctr_a, fctr_b, fctr_c, scr_d;
     int scr_shx, scr_shy, sca_x, sca_y;
     int scr_x, scr_y;
     ubyte flg;
@@ -155,19 +155,19 @@ void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc
     fctr_a = (dword_176D14 * dxc - dword_176D10 * dzc) >> 16;
     fctr_b = (dword_176D10 * dxc + dword_176D14 * dzc) >> 16;
     fctr_c = (dword_176D1C * dyc - dword_176D18 * fctr_b) >> 16;
-    fctr_d = (dword_176D18 * dyc + dword_176D1C * fctr_b) >> 16;
+    scr_d = (dword_176D18 * dyc + dword_176D1C * fctr_b) >> 16;
     sca_x = overall_scale * fctr_a;
     sca_y = overall_scale * fctr_c;
     flg = 0;
 
-    if (fctr_d >= -500)
+    if (scr_d >= -500)
     {
         int dvfactor;
-        dvfactor = (fctr_d >> 2) + 500;
+        dvfactor = (scr_d >> 2) + 500;
         scr_shx = (1500 * sca_x / dvfactor) >> 9;
         scr_shy = -(1500 * sca_y / dvfactor) >> 9;
         flg |= 0x40;
-        fctr_d /= render_area_a / 20 + 1;
+        scr_d /= render_area_a / 20 + 1;
     }
     else
     {
@@ -207,7 +207,7 @@ void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc
     p_sp->Flags = flg;
     p_sp->X = scr_x;
     p_sp->Y = scr_y;
-    p_sp->field_4 = fctr_d;
+    p_sp->Depth = scr_d;
 }
 
 void process_engine_unk1(void)

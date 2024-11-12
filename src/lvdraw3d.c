@@ -327,8 +327,8 @@ void fill_floor_tile_pos_and_shade_fading(struct FloorTile *p_floortl, struct My
     p_floortl->Y[pt] = p_dsp->Y;
     if (p_dsp->Shade < 0) {
         //TODO why do we use p_ssp->ReflShade instead of using only one ShEnginePoint (the p_dsp)?
-        // is field_9 unset in the other ShEnginePoint?
-        p_dsp->Shade = shpoint_compute_shade_fading(p_ssp, p_mapel, p_dsp->field_4);
+        // is ReflShade unset in the other ShEnginePoint?
+        p_dsp->Shade = shpoint_compute_shade_fading(p_ssp, p_mapel, p_dsp->Depth);
     }
     p_floortl->Shade[pt] = p_dsp->Shade;
     p_mapel->ShadeR = p_dsp->Shade >> 9;
@@ -441,26 +441,26 @@ void func_218D3(void)
 
               depth = INT_MIN;
 
-              if (depth < p_spnx->field_4)
-                  depth = p_spnx->field_4;
+              if (depth < p_spnx->Depth)
+                  depth = p_spnx->Depth;
               fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
 
               p_spnx += 2;
               p_sqlight += 1;
-              if (depth < p_spnx->field_4)
-                  depth = p_spnx->field_4;
+              if (depth < p_spnx->Depth)
+                  depth = p_spnx->Depth;
               fill_floor_tile_pos_and_shade(p_floortl, p_mapel + 1, 1, p_sqlight, p_spnx);
 
               p_spcr += 2;
               p_sqlight += render_area_a;
-              if (depth < p_spcr->field_4)
-                  depth = p_spcr->field_4;
+              if (depth < p_spcr->Depth)
+                  depth = p_spcr->Depth;
               fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH + 1, 2, p_sqlight, p_spcr);
 
               p_spcr -= 2;
               p_sqlight -= 1;
-              if (depth < p_spcr->field_4)
-                  depth = p_spcr->field_4;
+              if (depth < p_spcr->Depth)
+                  depth = p_spcr->Depth;
               fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH, 3, p_sqlight, p_spcr);
 
               p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
@@ -566,7 +566,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
 
             elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 8);
             transform_shpoint_fpv(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
-            p_spcr->Shade = shpoint_compute_shade_fading(p_spcr, p_mapel, p_spcr->field_4);
+            p_spcr->Shade = shpoint_compute_shade_fading(p_spcr, p_mapel, p_spcr->Depth);
 
             p_spcr += 2;
             p_mapel++;
@@ -647,22 +647,22 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
             {
               p_mapel7 = &game_my_big_map[v167 + (v170 >> 8)];
 
-              depth = v149->field_4;
+              depth = v149->Depth;
               fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel7, v149, 0, v149);
 
               v149 += 2;
-              if (depth < v149->field_4)
-                  depth = v149->field_4;
+              if (depth < v149->Depth)
+                  depth = v149->Depth;
               fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel7 + 1, v149, 1, v149);
 
               v76 = v62 + 2;
-              if (depth < v76->field_4)
-                  depth = v76->field_4;
+              if (depth < v76->Depth)
+                  depth = v76->Depth;
               fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel7 + 128 + 1, v76, 2, v149);
 
               v85 = v76 - 2;
-              if (depth < v85->field_4)
-                  depth = v85->field_4;
+              if (depth < v85->Depth)
+                  depth = v85->Depth;
               fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel7 + 128, v85, 3, v149);
 
               p_mapel6 = &game_my_big_map[v167 + (v170 >> 8)];
