@@ -28,6 +28,7 @@ extern "C" {
 
 #pragma pack(1)
 
+struct FloorTile;
 struct Thing;
 struct SimpleThing;
 struct SingleObject;
@@ -53,6 +54,10 @@ void draw_explode(void);
 
 void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2);
 void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour);
+
+// Lowest level functions, to be used only if previous ones really do not match
+
+struct FloorTile *draw_item_add_floor_tile(ubyte ditype, ushort bckt);
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -1510,7 +1510,7 @@ void process_engine_unk3(void)
 
     get_engine_inputs();
 
-    reset_super_quick_lights();
+    reset_draw_floor_tiles();
     player_target_clear(local_player_no);
     dword_1DC880 = mech_unkn_tile_x1;
     dword_1DC884 = mech_unkn_tile_y1;

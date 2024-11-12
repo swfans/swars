@@ -46,6 +46,7 @@ struct FloorTile { // sizeof=39
 #pragma pack()
 /******************************************************************************/
 extern struct FloorTile *game_floor_tiles;
+extern short next_floor_tile;
 
 /******************************************************************************/
 #ifdef __cplusplus

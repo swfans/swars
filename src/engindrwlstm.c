@@ -24,6 +24,7 @@
 #include "display.h"
 #include "enginbckt.h"
 #include "engindrwlstx.h"
+#include "enginfloor.h"
 #include "enginshrapn.h"
 #include "engintrns.h"
 #include "game.h"
@@ -109,6 +110,28 @@ struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset, ushort bc
     next_screen_point += npoints;
 
     return p_scrpoint;
+}
+
+/** Add a new draw item and return linked FloorTile instance.
+ *
+ * @param ditype Draw item type, should be one of FloorTile related types.
+ * @param bckt Destination bucket for this draw item.
+ * @return FloorTile instance to fill, or NULL if arrays exceeded.
+ */
+struct FloorTile *draw_item_add_floor_tile(ubyte ditype, ushort bckt)
+{
+    struct FloorTile *p_floortl;
+
+    if (next_floor_tile >= mem_game[26].N)
+        return NULL;
+
+    p_floortl = &game_floor_tiles[next_floor_tile];
+    if (!draw_item_add(ditype, next_floor_tile, bckt))
+        return NULL;
+
+    next_floor_tile++;
+
+    return p_floortl;
 }
 
 void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)

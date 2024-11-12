@@ -1094,7 +1094,7 @@ void draw_floor_tile1a(ushort tl)
         p_sftex = p_floortl->Texture;
         if (byte_19EC6F) {
             if (current_map == 11) // map011 Orbital Station
-              vec_mode = 6;
+                vec_mode = 6;
         } else {
             if (p_floortl->Flags == 5)
                 vec_mode = 2;
@@ -1181,7 +1181,7 @@ void draw_floor_tile1b(ushort tl)
     p_floortl = &game_floor_tiles[tl];
     vec_colour = p_floortl->Col;
     vec_mode = p_floortl->Flags;
-    if (p_floortl->Flags == 5 || p_floortl->Flags == 21)
+    if ((p_floortl->Flags == 5) || (p_floortl->Flags == 21))
     {
         struct SingleFloorTexture *p_sftex;
 
