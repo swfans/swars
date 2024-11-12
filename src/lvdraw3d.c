@@ -64,7 +64,7 @@ extern short word_19CC66;
 extern long dword_19F4F8;
 
 
-int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int elcr_x, int elcr_z)
+int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int elcr_x, int elcr_z, int mag)
 {
     int elcr_y;
 
@@ -89,32 +89,41 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
         wobble = (waft_table2[(gameturn + (elcr_x >> 7)) & 0x1F]
              + waft_table2[(gameturn + (elcr_z >> 7)) & 0x1F]
              + waft_table2[(32 * gameturn / dvfactor) & 0x1F]) >> 3;
-        elcr_y += 4 * wobble;
+        elcr_y += mag * wobble;
         p_sp->field_9 = (wobble + 32) << 9;
     }
     return elcr_y;
 }
 
+/** Compute shade value for drawing given map element.
+ */
 short shpoint_compute_shade(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, short *p_sqlight)
 {
     int shd;
-    ushort qlght, n;
 
-    shd = (p_mapel->Ambient << 7) + (p_sp->field_9) + 256 + (*p_sqlight << 8);
-    qlght = p_mapel->Shade;
-    n = 0;
-    while (qlght != 0)
-    {
-        struct QuickLight *p_qlght;
-        n++;
-        if (n >= 100)
-            break;
-        p_qlght = &game_quick_lights[qlght];
-        shd += p_qlght->Ratio * game_full_lights[p_qlght->Light].Intensity;
-        qlght = p_qlght->NextQuick;
+    shd = (p_mapel->Ambient << 7) + p_sp->field_9 + 256 + (*p_sqlight << 8);
+    shd += cummulate_shade_from_quick_lights(p_mapel->Shade);
+    if (shd > 0x7E00)
+        shd = 0x7F00;
+    return shd;
+}
+
+/** Compute shade value for map element, fading to black beyond some range.
+ */
+short shpoint_compute_shade_fading(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int dist)
+{
+    int shd;
+
+    shd = (p_mapel->Ambient << 7) + p_sp->field_9 + 256;
+    shd += cummulate_shade_from_quick_lights(p_mapel->Shade);
+    if (dist > 3000) {
+        if (3512 - dist > 0)
+            shd = ((3512 - dist) * shd) >> 9;
+        else
+            shd = 0;
     }
-    if (shd > 32256)
-        shd = 32512;
+    if (shd > 0x7E00)
+        shd = 0x7F00;
     return shd;
 }
 
@@ -317,6 +326,7 @@ void func_218D3(void)
         word_19CC66 = 0;
     p_floortl = &game_floor_tiles[1];
     p_sqlight = super_quick_light;
+
     elcr_z = word_19CC66;
     shift_b = 0;
     { // Separate first row from the rest as it has no previous
@@ -334,7 +344,7 @@ void func_218D3(void)
             int dxc, dyc, dzc;
             int elcr_y;
 
-            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z);
+            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 4);
             dxc = elcr_x - engn_xc;
             dzc = elcr_z - engn_zc;
             dyc = elcr_y - 8 * engn_yc;
@@ -368,7 +378,7 @@ void func_218D3(void)
             int dxc, dyc, dzc;
             int elcr_y;
 
-            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z);
+            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 4);
             dxc = elcr_x - engn_xc;
             dzc = elcr_z - engn_zc;
             dyc = elcr_y - 8 * engn_yc;
@@ -502,10 +512,10 @@ void func_218D3(void)
               }
               if ((p_mapel->Flags & 0x01) != 0)
               {
-                  p_floortl->Shade[0] = 16128;
-                  p_floortl->Shade[1] = 16128;
-                  p_floortl->Shade[2] = 16128;
-                  p_floortl->Shade[3] = 16128;
+                  p_floortl->Shade[0] = 0x3F00;
+                  p_floortl->Shade[1] = 0x3F00;
+                  p_floortl->Shade[2] = 0x3F00;
+                  p_floortl->Shade[3] = 0x3F00;
               }
               if ((p_mapel->Flags & 0x08) != 0)
                   p_floortl->Flags2 |= 0x02;
@@ -536,19 +546,14 @@ void func_218D3(void)
 
 void lvdraw_compute_lights(int prc_z_beg, int ranges_len, struct Range *smrang_x, struct ShEnginePoint *p_unknarrD)
 {
-    int prc_z;
-    int v144;
-    int v159;
+    int elcr_z;
 
     word_19CC64 = (engn_xc & 0xFF00) - (render_area_a << 7);
     word_19CC66 = (engn_zc & 0xFF00) - (render_area_b << 7);
 
-    prc_z = prc_z_beg;
+    elcr_z = prc_z_beg;
 
-    v159 = prc_z >> 8;
-    v144 = prc_z >> 7;
-    // TODO why this isn't going through all ranges? What does it do?
-    {
+    { // Separate first row from the rest as it has no previous
         int prc_x, prc_x_end;
 
         prc_x = smrang_x[0].beg;
@@ -557,50 +562,26 @@ void lvdraw_compute_lights(int prc_z_beg, int ranges_len, struct Range *smrang_x
         for (; prc_x <= prc_x_end; prc_x += (1 << 8))
         {
             struct MyMapElement *p_mapel;
-            struct ShEnginePoint *p_unkitmD;
+            struct ShEnginePoint *p_spcr;
             int scr_dx, scr_dy, abs_scr_dx, abs_scr_dy;
             int scr_x, scr_y;
             uint shade;
             ubyte flags;
-            int v121;
+            int elcr_y;
             int prc_dx;
             int v38;
-            int v46;
             int v122;
 
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (prc_z >> 8) + (prc_x >> 8)];
-            p_unkitmD = &p_unknarrD[2 * (prc_x >> 8)];
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (prc_x >> 8)];
+            p_spcr = &p_unknarrD[2 * (prc_x >> 8)];
             prc_dx = prc_x - engn_xc;
+            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, prc_x, elcr_z, 8);
+            elcr_y -= 8 * engn_yc;
 
-            if (game_perspective == 1)
-            {
-                v121 = 0;
-                p_unkitmD->field_9 = 0;
-            }
-            else if ((p_mapel->Flags & 0x10) == 0)
-            {
-                v121 = 8 * p_mapel->Alt;
-                if ((p_mapel->Flags & 0x40) != 0)
-                    v121 += waft_table[gameturn & 0x1F];
-                p_unkitmD->field_9 = 0;
-            }
-            else
-            {
-                v121 = 8 * p_mapel->Alt;
-                v46 = ((*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)(prc_x >> 7)) & 0x1F)) >> 16)
-                 + (*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)v144) & 0x1F)) >> 16)
-                 + (*(int *)(&deep_radar_surface_col + 2 * ((32 * gameturn
-                             / ((((ubyte)bw_rotl32(0x5D3BA6C3, v159) ^ (ubyte)bw_rotr32(0xA7B4D8AC, (sbyte)(prc_x >> 8))) & 0x7Fu)
-                              + 140)) & 0x1F)) >> 16)) >> 3;
-                v121 += 8 * (short)v46;
-                p_unkitmD->field_9 = ((ushort)v46 + 32) << 9;
-            }
-            v121 -= 8 * engn_yc;
-
-            abs_scr_dx = (dword_176D14 * prc_dx - dword_176D10 * (prc_z - engn_zc)) >> 16;
-            v38 = (dword_176D10 * prc_dx + dword_176D14 * (prc_z - engn_zc)) >> 16;
-            v122 = (dword_176D18 * v121 + dword_176D1C * v38) >> 16;
-            abs_scr_dy = (dword_176D1C * v121 - v38 * dword_176D18) >> 16;
+            abs_scr_dx = (dword_176D14 * prc_dx - dword_176D10 * (elcr_z - engn_zc)) >> 16;
+            v38 = (dword_176D10 * prc_dx + dword_176D14 * (elcr_z - engn_zc)) >> 16;
+            v122 = (dword_176D18 * elcr_y + dword_176D1C * v38) >> 16;
+            abs_scr_dy = (dword_176D1C * elcr_y - v38 * dword_176D18) >> 16;
             scr_dx = (overall_scale * abs_scr_dx) >> 8;
             scr_dy = (overall_scale * abs_scr_dy) >> 8;
 
@@ -640,34 +621,25 @@ void lvdraw_compute_lights(int prc_z_beg, int ranges_len, struct Range *smrang_x
                 flags = 0x20;
             }
 
-            shade = ((ushort)p_mapel->Ambient << 7) + p_unkitmD->field_9 + 256;
-            shade += cummulate_shade_from_quick_lights(p_mapel->Shade);
-            if (v122 > 3000) {
-              if (3512 - v122 > 0)
-                  shade = ((3512 - v122) * shade) >> 9;
-              else
-                  shade = 0;
-            }
-            if (shade > 0x7E00)
-                shade = 0x7F00;
+            shade = shpoint_compute_shade_fading(p_spcr, p_mapel, v122);
 
-            p_unkitmD->Flags = flags;
-            p_unkitmD->X = scr_x;
-            p_unkitmD->Y = scr_y;
-            p_unkitmD->field_4 = v122;
-            p_unkitmD->Shade = shade;
+            p_spcr->Flags = flags;
+            p_spcr->X = scr_x;
+            p_spcr->Y = scr_y;
+            p_spcr->field_4 = v122;
+            p_spcr->Shade = shade;
         }
     }
 }
 
 void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, struct Range *ranges_x, struct ShEnginePoint *p_unknarrD)
 {
-    struct FloorTile *v34;
+    struct FloorTile *p_floortl;
     int v147;
     int v148;
     int v171;
 
-    v34 = game_floor_tiles + 1;
+    p_floortl = game_floor_tiles + 1;
     v171 = prc_z_beg;
     v147 = prc_z_beg - 256;
     for (v148 = 1; v148 < ranges_x_len; v148++)
@@ -719,7 +691,6 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
         int v89;
         int v90;
         struct MyMapElement *p_mapel6;
-        struct MyMapElement *p_mapel8;
         short v102;
         int v104;
         ubyte v105;
@@ -865,12 +836,12 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
             else
             {
               p_mapel7 = &game_my_big_map[v167 + (v170 >> 8)];
-              v34->X[0] = v149->X;
-              v34->Y[0] = v149->Y;
+              p_floortl->X[0] = v149->X;
+              p_floortl->Y[0] = v149->Y;
               v174 = v149->field_4;
               if (v149->Shade >= 0)
               {
-                v34->Shade[0] = v149->Shade;
+                p_floortl->Shade[0] = v149->Shade;
               }
               else
               {
@@ -892,19 +863,19 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
                 if (v64 > 0x7E00)
                   v64 = 0x7F00;
                 v65 = v149;
-                v34->Shade[0] = v64;
+                p_floortl->Shade[0] = v64;
                 v65->Shade = v64;
               }
               p_mapel7->ShadeR = v149->Shade >> 9;
               v149 += 2;
-              v34->X[1] = v149->X;
-              v34->Y[1] = v149->Y;
+              p_floortl->X[1] = v149->X;
+              p_floortl->Y[1] = v149->Y;
               p_mapel3 = p_mapel7 + 1;
               if (v149->field_4 > v174)
                   v174 = v149->field_4;
               if (v149->Shade >= 0)
               {
-                v34->Shade[1] = v149->Shade;
+                p_floortl->Shade[1] = v149->Shade;
               }
               else
               {
@@ -926,13 +897,13 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
                 if (v67 > 0x7E00)
                   v67 = 0x7F00;
                 v72 = v149;
-                v34->Shade[1] = v67;
+                p_floortl->Shade[1] = v67;
                 v72->Shade = v67;
               }
               p_mapel3->ShadeR = v149->Shade >> 9;
-              v34->X[2] = v62[2].X;
+              p_floortl->X[2] = v62[2].X;
               v73 = v174;
-              v34->Y[2] = v62[2].Y;
+              p_floortl->Y[2] = v62[2].Y;
               p_mapel4 = p_mapel3 + 128;
               v75 = v62[2].field_4;
               v76 = v62 + 2;
@@ -940,7 +911,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
                   v174 = v75;
               if (v76->Shade >= 0)
               {
-                v34->Shade[2] = v76->Shade;
+                p_floortl->Shade[2] = v76->Shade;
               }
               else
               {
@@ -961,13 +932,13 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
                 }
                 if (v77 > 0x7E00)
                     v77 = 0x7F00;
-                v34->Shade[2] = v77;
+                p_floortl->Shade[2] = v77;
                 v76->Shade = v77;
               }
               p_mapel4->ShadeR = v76->Shade >> 9;
-              v34->X[3] = v76[-2].X;
+              p_floortl->X[3] = v76[-2].X;
               v82 = v174;
-              v34->Y[3] = v76[-2].Y;
+              p_floortl->Y[3] = v76[-2].Y;
               p_mapel5 = p_mapel4 - 1;
               v84 = v76[-2].field_4;
               v85 = v76 - 2;
@@ -975,7 +946,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
                   v174 = v84;
               if (v85->Shade >= 0)
               {
-                v34->Shade[3] = v85->Shade;
+                p_floortl->Shade[3] = v85->Shade;
               }
               else
               {
@@ -996,7 +967,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
                 }
                 if (v86 > 0x7E00)
                   v86 = 0x7F00;
-                v34->Shade[3] = v86;
+                p_floortl->Shade[3] = v86;
                 v85->Shade = v86;
               }
               p_mapel5->ShadeR = v85->Shade >> 9;
@@ -1007,11 +978,11 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
                 short fltextr;
 
                 fltextr = p_mapel6->Texture & 0x3FFF;
-                v34->Flags2 = 0;
+                p_floortl->Flags2 = 0;
                 p_fltextr = &game_textures[fltextr];
                 if ((p_mapel6->Texture & 0x8000) != 0)
                 {
-                  v34->Flags2 = 1;
+                  p_floortl->Flags2 = 1;
                   if (byte_1C8444)
                   {
                       uint tmp;
@@ -1029,29 +1000,26 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
                         v175 = 1000;
                   }
                 }
-                v34->Texture = p_fltextr;
-                v34->Flags = (p_mapel6->Flags & 0x20) != 0 ? 21 : 5;
-                v34->Page = (int)(ushort)p_mapel6->ColumnHead >> 12;
+                p_floortl->Texture = p_fltextr;
+                p_floortl->Flags = (p_mapel6->Flags & 0x20) != 0 ? 21 : 5;
+                p_floortl->Page = (int)(ushort)p_mapel6->ColumnHead >> 12;
               }
               else
               {
-                v34->Flags = 4;
-                v34->Col = colour_grey2;
+                p_floortl->Flags = 4;
+                p_floortl->Col = colour_grey2;
               }
               if ((p_mapel6->Flags & 0x01) != 0)
               {
-                  v34->Shade[0] = 0x3F00;
-                  v34->Shade[1] = 0x3F00;
-                  v34->Shade[2] = 0x3F00;
-                  v34->Shade[3] = 0x3F00;
+                  p_floortl->Shade[0] = 0x3F00;
+                  p_floortl->Shade[1] = 0x3F00;
+                  p_floortl->Shade[2] = 0x3F00;
+                  p_floortl->Shade[3] = 0x3F00;
               }
               if ((p_mapel6->Flags & 0x08) != 0)
-                  v34->Flags2 |= 0x02;
-              p_mapel8 = game_my_big_map;
+                  p_floortl->Flags2 |= 0x02;
+
               v174 += v175 + 5000;
-              v34->Flags2 = p_mapel6->Flags;
-              v34->Offset = p_mapel6 - p_mapel8;
-              v34->Flags2b = p_mapel6->Flags2;
               ubyte ditype;
               ditype = (p_mapel6->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
               v102 = word_152F00;
@@ -1059,7 +1027,11 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
               if (!draw_item_add(ditype, v102, v174))
                   break;
 
-              ++v34;
+              p_floortl->Flags2 = p_mapel6->Flags;
+              p_floortl->Offset = p_mapel6 - game_my_big_map;
+              p_floortl->Flags2b = p_mapel6->Flags2;
+
+              p_floortl++;
               v62 = v85 + 2;
               word_152F00 = v102 + 1;
             }
@@ -1079,7 +1051,7 @@ void func_2e440(void)
     asm volatile ("call ASM_func_2e440\n"
         :  :  : "eax" );
     return;
-#else
+#endif
     int angXZ;
     ubyte slt_zmin;
 
@@ -1124,7 +1096,6 @@ void func_2e440(void)
     vec_map = vec_tmap[1];
 
     draw_screen();
-#endif
 }
 
 #define SUPER_QUICK_RADIUS 5
