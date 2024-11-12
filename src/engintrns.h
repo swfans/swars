@@ -74,6 +74,7 @@ extern long dword_176D64;
 
 void transform_point(struct EnginePoint *p_ep);
 void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc);
+void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc);
 
 void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c);
 

@@ -185,9 +185,6 @@ extern short word_1552F8;
 
 extern long dword_176CBC;
 
-extern long dword_176D10;
-extern long dword_176D14;
-
 extern short word_1774E8[2 * 150];
 extern ushort shield_frm[4];
 
