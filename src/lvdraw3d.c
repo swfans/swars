@@ -536,131 +536,127 @@ void func_218D3(void)
 
 void lvdraw_compute_lights(int prc_z_beg, int ranges_len, struct Range *smrang_x, struct ShEnginePoint *p_unknarrD)
 {
-    short v31;
-    short v32;
-    struct MyMapElement *p_mapel9;
-    struct ShEnginePoint *v35;
-    int v36;
-    int v37;
-    int v38;
-    int v46;
-    int v120;
-    int v121;
-    int v122;
+    int prc_z;
     int v144;
-    int v150;
-    int v158;
     int v159;
-    int v160;
-    int v172;
 
-    v31 = engn_xc & 0xFF00;
-    word_19CC64 = v31 - (render_area_a << 7);
-    v32 = engn_zc & 0xFF00;
-    word_19CC66 = v32 - (render_area_b << 7);
-    v172 = prc_z_beg;
-    p_mapel9 = &game_my_big_map[128 * (prc_z_beg >> 8) + (smrang_x[0].beg >> 8)];
-    v35 = &p_unknarrD[2 * (smrang_x[0].beg >> 8)];
-    v159 = prc_z_beg >> 8;
-    v150 = smrang_x[0].beg;
-    v36 = smrang_x[0].fin;
-    v144 = prc_z_beg >> 7;
-    v37 = smrang_x[0].beg;
-    v158 = 0;
-    while ( v37 <= v36 )
+    word_19CC64 = (engn_xc & 0xFF00) - (render_area_a << 7);
+    word_19CC66 = (engn_zc & 0xFF00) - (render_area_b << 7);
+
+    prc_z = prc_z_beg;
+
+    v159 = prc_z >> 8;
+    v144 = prc_z >> 7;
+    // TODO why this isn't going through all ranges? What does it do?
     {
-        int scr_x, scr_y;
-        uint shade;
-        ubyte flags;
+        int prc_x, prc_x_end;
 
-        v120 = v150 - engn_xc;
-        if (game_perspective == 1)
-        {
-            v121 = 0;
-            v35->field_9 = 0;
-        }
-        else if ((p_mapel9->Flags & 0x10) == 0)
-        {
-            v121 = 8 * p_mapel9->Alt;
-            if ((p_mapel9->Flags & 0x40) != 0)
-                v121 += waft_table[gameturn & 0x1F];
-            v35->field_9 = 0;
-        }
-        else
-        {
-            v121 = 8 * p_mapel9->Alt;
-            v46 = ((*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)(v150 >> 7)) & 0x1F)) >> 16)
-             + (*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)v144) & 0x1F)) >> 16)
-             + (*(int *)(&deep_radar_surface_col + 2 * ((32 * gameturn
-                         / ((((ubyte)bw_rotl32(0x5D3BA6C3, v159) ^ (ubyte)bw_rotr32(0xA7B4D8AC, (sbyte)(v150 >> 8))) & 0x7Fu)
-                          + 140)) & 0x1F)) >> 16)) >> 3;
-            v121 += 8 * (short)v46;
-            v35->field_9 = ((ushort)v46 + 32) << 9;
-        }
-        v121 -= 8 * engn_yc;
-        v160 = (dword_176D14 * v120 - dword_176D10 * (v172 - engn_zc)) >> 16;
-        v38 = (dword_176D10 * v120 + dword_176D14 * (v172 - engn_zc)) >> 16;
-        v122 = (dword_176D18 * v121 + dword_176D1C * v38) >> 16;
-        v121 = (((dword_176D1C * v121 - v38 * dword_176D18) >> 16) * overall_scale) >> 8;
-        v120 = (overall_scale * v160) >> 8;
+        prc_x = smrang_x[0].beg;
+        prc_x_end = smrang_x[0].fin;
 
-        flags = 0;
-        if (v122 >= -500)
+        for (; prc_x <= prc_x_end; prc_x += (1 << 8))
         {
-            int scr_dx, scr_dy;
+            struct MyMapElement *p_mapel;
+            struct ShEnginePoint *p_unkitmD;
+            int scr_dx, scr_dy, abs_scr_dx, abs_scr_dy;
+            int scr_x, scr_y;
+            uint shade;
+            ubyte flags;
+            int v121;
+            int prc_dx;
+            int v38;
+            int v46;
+            int v122;
 
-            scr_dx = (1500 * ((overall_scale * v160) >> 8) / ((v122 >> 2) + 500)) >> 1;
-            scr_x = dword_176D3C + scr_dx;
-            if (scr_x < 0) {
-                if (scr_x < -2000)
-                    scr_x = -2000;
-                flags = 0x01;
-            } else if (scr_x >= vec_window_width) {
-                if (scr_x > 2000)
-                    scr_x = 2000;
-                flags |= 0x02;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (prc_z >> 8) + (prc_x >> 8)];
+            p_unkitmD = &p_unknarrD[2 * (prc_x >> 8)];
+            prc_dx = prc_x - engn_xc;
+
+            if (game_perspective == 1)
+            {
+                v121 = 0;
+                p_unkitmD->field_9 = 0;
             }
-            scr_dy = -(1500 * v121 / ((v122 >> 2) + 500)) >> 1;
-            scr_y = dword_176D40 + scr_dy;
-            if (scr_y < 0) {
-                if (scr_y < -2000)
-                    scr_y = -2000;
-                flags |= 0x04;
-            } else if (scr_y >= vec_window_height) {
-                if (scr_y > 2000)
-                    scr_y = 2000;
-                flags |= 0x08;
+            else if ((p_mapel->Flags & 0x10) == 0)
+            {
+                v121 = 8 * p_mapel->Alt;
+                if ((p_mapel->Flags & 0x40) != 0)
+                    v121 += waft_table[gameturn & 0x1F];
+                p_unkitmD->field_9 = 0;
             }
-            flags |= 0x40;
-            v122 /= (ushort)render_area_a / 20 + 1;
-        }
-        else
-        {
-            flags = 0x20;
-        }
+            else
+            {
+                v121 = 8 * p_mapel->Alt;
+                v46 = ((*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)(prc_x >> 7)) & 0x1F)) >> 16)
+                 + (*(int *)(&deep_radar_surface_col + 2 * (((ubyte)gameturn + (ubyte)v144) & 0x1F)) >> 16)
+                 + (*(int *)(&deep_radar_surface_col + 2 * ((32 * gameturn
+                             / ((((ubyte)bw_rotl32(0x5D3BA6C3, v159) ^ (ubyte)bw_rotr32(0xA7B4D8AC, (sbyte)(prc_x >> 8))) & 0x7Fu)
+                              + 140)) & 0x1F)) >> 16)) >> 3;
+                v121 += 8 * (short)v46;
+                p_unkitmD->field_9 = ((ushort)v46 + 32) << 9;
+            }
+            v121 -= 8 * engn_yc;
 
-        shade = ((ushort)p_mapel9->Ambient << 7) + v35->field_9 + 256;
-        shade += cummulate_shade_from_quick_lights(p_mapel9->Shade);
-        if (v122 > 3000) {
-          if (3512 - v122 > 0)
-              shade = ((3512 - v122) * shade) >> 9;
-          else
-              shade = 0;
+            abs_scr_dx = (dword_176D14 * prc_dx - dword_176D10 * (prc_z - engn_zc)) >> 16;
+            v38 = (dword_176D10 * prc_dx + dword_176D14 * (prc_z - engn_zc)) >> 16;
+            v122 = (dword_176D18 * v121 + dword_176D1C * v38) >> 16;
+            abs_scr_dy = (dword_176D1C * v121 - v38 * dword_176D18) >> 16;
+            scr_dx = (overall_scale * abs_scr_dx) >> 8;
+            scr_dy = (overall_scale * abs_scr_dy) >> 8;
+
+            flags = 0;
+            if (v122 >= -500)
+            {
+                scr_dx = (1500 * scr_dx / ((v122 >> 2) + 500)) >> 1;
+                scr_x = dword_176D3C + scr_dx;
+                if (scr_x < 0) {
+                    if (scr_x < -2000)
+                        scr_x = -2000;
+                    flags = 0x01;
+                } else if (scr_x >= vec_window_width) {
+                    if (scr_x > 2000)
+                        scr_x = 2000;
+                    flags |= 0x02;
+                }
+
+                scr_dy = -(1500 * scr_dy / ((v122 >> 2) + 500)) >> 1;
+                scr_y = dword_176D40 + scr_dy;
+                if (scr_y < 0) {
+                    if (scr_y < -2000)
+                        scr_y = -2000;
+                    flags |= 0x04;
+                } else if (scr_y >= vec_window_height) {
+                    if (scr_y > 2000)
+                        scr_y = 2000;
+                    flags |= 0x08;
+                }
+                flags |= 0x40;
+                v122 /= (ushort)render_area_a / 20 + 1;
+            }
+            else
+            {
+                scr_y = dword_176D40 + scr_dy;
+                scr_x = dword_176D3C + scr_dx;
+                flags = 0x20;
+            }
+
+            shade = ((ushort)p_mapel->Ambient << 7) + p_unkitmD->field_9 + 256;
+            shade += cummulate_shade_from_quick_lights(p_mapel->Shade);
+            if (v122 > 3000) {
+              if (3512 - v122 > 0)
+                  shade = ((3512 - v122) * shade) >> 9;
+              else
+                  shade = 0;
+            }
+            if (shade > 0x7E00)
+                shade = 0x7F00;
+
+            p_unkitmD->Flags = flags;
+            p_unkitmD->X = scr_x;
+            p_unkitmD->Y = scr_y;
+            p_unkitmD->field_4 = v122;
+            p_unkitmD->Shade = shade;
         }
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-
-        v35->Flags = flags;
-        v35->X = scr_x;
-        v35->Y = scr_y;
-        v35->field_4 = v122;
-        v35->Shade = shade;
-
-        v150 += 256;
-        v35 += 2;
-        v37 = v150;
-        v36 = smrang_x[v158/8].fin;
-        ++p_mapel9;
     }
 }
 
