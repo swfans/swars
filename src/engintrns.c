@@ -24,6 +24,8 @@
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
+#define SCREEN_POINT_COORD_MIN -2000
+#define SCREEN_POINT_COORD_MAX 2000
 
 void transform_point(struct EnginePoint *p_ep)
 {
@@ -52,15 +54,15 @@ void transform_point(struct EnginePoint *p_ep)
     p_ep->pp.X = dword_176D3C + scr_shx;
     if (p_ep->pp.X < 0)
     {
+        if (p_ep->pp.X < SCREEN_POINT_COORD_MIN)
+            p_ep->pp.X = SCREEN_POINT_COORD_MIN;
         p_ep->Flags |= 0x01;
-        if (p_ep->pp.X < -2000)
-            p_ep->pp.X = -2000;
     }
     else if (p_ep->pp.X >= vec_window_width)
     {
+        if (p_ep->pp.X > SCREEN_POINT_COORD_MAX)
+            p_ep->pp.X = SCREEN_POINT_COORD_MAX;
         p_ep->Flags |= 0x02;
-        if (p_ep->pp.X > 2000)
-            p_ep->pp.X = 2000;
     }
 
     if (game_perspective == 5)
@@ -71,15 +73,15 @@ void transform_point(struct EnginePoint *p_ep)
     p_ep->pp.Y = dword_176D40 - scr_shy;
     if (p_ep->pp.Y < 0)
     {
+        if (p_ep->pp.Y < SCREEN_POINT_COORD_MIN)
+            p_ep->pp.Y = SCREEN_POINT_COORD_MIN;
         p_ep->Flags |= 0x04;
-        if (p_ep->pp.Y < -2000)
-            p_ep->pp.Y = -2000;
     }
     else if (p_ep->pp.Y >= vec_window_height)
     {
+        if (p_ep->pp.Y > SCREEN_POINT_COORD_MAX)
+            p_ep->pp.Y = SCREEN_POINT_COORD_MAX;
         p_ep->Flags |= 0x08;
-        if (p_ep->pp.Y > 2000)
-            p_ep->pp.Y = 2000;
     }
     p_ep->Flags |= 0x40;
 }
@@ -107,14 +109,14 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     scr_x = dword_176D3C + scr_shx;
     if (scr_x < 0)
     {
-        if (scr_x < -2000)
-            scr_x = -2000;
+        if (scr_x < SCREEN_POINT_COORD_MIN)
+            scr_x = SCREEN_POINT_COORD_MIN;
         flg |= 0x01;
     }
     else if (scr_x >= vec_window_width)
     {
-        if (scr_x > 2000)
-            scr_x = 2000;
+        if (scr_x > SCREEN_POINT_COORD_MAX)
+            scr_x = SCREEN_POINT_COORD_MAX;
         flg |= 0x02;
     }
 
@@ -126,14 +128,14 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     scr_y = dword_176D40 - scr_shy;
     if (scr_y < 0)
     {
-        if (scr_y < -2000)
-            scr_y = -2000;
+        if (scr_y < SCREEN_POINT_COORD_MIN)
+            scr_y = SCREEN_POINT_COORD_MIN;
         flg |= 0x04;
     }
     else if (scr_y >= vec_window_height)
     {
-        if (scr_y > 2000)
-            scr_y = 2000;
+        if (scr_y > SCREEN_POINT_COORD_MAX)
+            scr_y = SCREEN_POINT_COORD_MAX;
         flg |= 0x08;
     }
 
@@ -179,28 +181,28 @@ void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc
     scr_x = dword_176D3C + scr_shx;
     if (scr_x < 0)
     {
-        if (scr_x < -2000)
-            scr_x = -2000;
+        if (scr_x < SCREEN_POINT_COORD_MIN)
+            scr_x = SCREEN_POINT_COORD_MIN;
         flg |= 0x01;
     }
     else if (scr_x >= vec_window_width)
     {
-        if (scr_x > 2000)
-            scr_x = 2000;
+        if (scr_x > SCREEN_POINT_COORD_MAX)
+            scr_x = SCREEN_POINT_COORD_MAX;
         flg |= 0x02;
     }
 
     scr_y = dword_176D40 + scr_shy;
     if (scr_y < 0)
     {
-        if (scr_y < -2000)
-            scr_y = -2000;
+        if (scr_y < SCREEN_POINT_COORD_MIN)
+            scr_y = SCREEN_POINT_COORD_MIN;
         flg |= 0x04;
     }
     else if (scr_y >= vec_window_height)
     {
-        if (scr_y > 2000)
-            scr_y = 2000;
+        if (scr_y > SCREEN_POINT_COORD_MAX)
+            scr_y = SCREEN_POINT_COORD_MAX;
         flg |= 0x08;
     }
 

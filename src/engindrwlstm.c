@@ -123,16 +123,14 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
         : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (len), "g" (col));
     return;
 #endif
+    struct ShEnginePoint sp1, sp2;
     struct SortLine *p_sline;
     int dt_x, dt_y, dt_z;
     int dist;
     int end_x, end_y, end_z;
     int scr_dx, scr_dy;
-    short scr_x1, scr_y1, scr_x2, scr_y2;
     int fctr_y, fctr_xz, pers5_range;
     int abs_scr_dy, abs_scr_dx;
-    int bckt_shift;
-    ubyte flags_A, flags_B;
 
     dt_y = y2 - y1;
     dt_z = z2 - z1;
@@ -145,47 +143,51 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
     end_z = z1 + dt_z * len / dist;
     end_x = x1 + dt_x * len / dist;
 
+#if 0
+    transform_shpoint(&sp1, x1, 8 * y1 - 8 * engn_yc, z1);
+    transform_shpoint(&sp2, end_x, 8 * end_y - 8 * engn_yc, end_z);
+#else
     fctr_y = 8 * y1 - 8 * engn_yc;
     fctr_xz = (dword_176D10 * x1 + dword_176D14 * z1) >> 16;
-    pers5_range = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
-    abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
     abs_scr_dx = (dword_176D14 * x1 - dword_176D10 * z1) >> 16;
+    abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
+    pers5_range = (dword_176D18 * fctr_y + dword_176D1C * fctr_xz) >> 16;
 
-    flags_A = 0;
-    flags_B = 0;
-    bckt_shift = pers5_range;
+    sp1.Flags = 0;
+    sp2.Flags = 0;
+    sp1.Depth = pers5_range;
 
     scr_dx = (overall_scale * abs_scr_dx) >> 11;
     if (game_perspective == 5)
         scr_dx = ((0x4000 - pers5_range) * scr_dx) >> 14;
 
-    scr_x1 = dword_176D3C + scr_dx;
-    if (scr_x1 < 0) {
-        if (scr_x1 < -2000)
-            scr_x1 = -2000;
-        flags_A |= 0x01;
-    } else if (scr_x1 >= vec_window_width) {
-        if (scr_x1 > 2000)
-            scr_x1 = 2000;
-        flags_A |= 0x02;
+    sp1.X = dword_176D3C + scr_dx;
+    if (sp1.X < 0) {
+        if (sp1.X < -2000)
+            sp1.X = -2000;
+        sp1.Flags |= 0x01;
+    } else if (sp1.X >= vec_window_width) {
+        if (sp1.X > 2000)
+            sp1.X = 2000;
+        sp1.Flags |= 0x02;
     }
 
     scr_dy = (overall_scale * abs_scr_dy) >> 11;
     if (game_perspective == 5)
         scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
 
-    scr_y1 = dword_176D40 - scr_dy;
-    if (scr_y1 < 0) {
-        if (scr_y1 < -2000)
-            scr_y1 = -2000;
-        flags_A |= 0x04;
-    } else if (scr_y1 >= vec_window_height) {
-        if (scr_y1 > 2000)
-            scr_y1 = 2000;
-        flags_A |= 0x08;
+    sp1.Y = dword_176D40 - scr_dy;
+    if (sp1.Y < 0) {
+        if (sp1.Y < -2000)
+            sp1.Y = -2000;
+        sp1.Flags |= 0x04;
+    } else if (sp1.Y >= vec_window_height) {
+        if (sp1.Y > 2000)
+            sp1.Y = 2000;
+        sp1.Flags |= 0x08;
     }
 
-    flags_A |= 0x40;
+    sp1.Flags |= 0x40;
 
     fctr_y = 8 * end_y - 8 * engn_yc;
     fctr_xz = (dword_176D10 * end_x + dword_176D14 * end_z) >> 16;
@@ -197,47 +199,48 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
     if (game_perspective == 5)
         scr_dx = ((0x4000 - pers5_range) * scr_dx) >> 14;
 
-    scr_x2 = dword_176D3C + scr_dx;
-    if (scr_x2 < 0) {
-        if (scr_x2 < -2000)
-            scr_x2 = -2000;
-        flags_B |= 0x01;
-    } else if (scr_x2 >= vec_window_width) {
-        if (scr_x2 > 2000)
-            scr_x2 = 2000;
-        flags_B |= 0x02;
+    sp2.X = dword_176D3C + scr_dx;
+    if (sp2.X < 0) {
+        if (sp2.X < -2000)
+            sp2.X = -2000;
+        sp2.Flags |= 0x01;
+    } else if (sp2.X >= vec_window_width) {
+        if (sp2.X > 2000)
+            sp2.X = 2000;
+        sp2.Flags |= 0x02;
     }
 
     scr_dy = (overall_scale * abs_scr_dy) >> 11;
     if (game_perspective == 5)
         scr_dy = ((0x4000 - pers5_range) * scr_dy) >> 14;
 
-    scr_y2 = dword_176D40 - scr_dy;
-    if (scr_y2 < 0) {
-        if (scr_y2 < -2000)
-            scr_y2 = -2000;
-        flags_B |= 0x04;
-    } else if (scr_y2 >= vec_window_height) {
-        if (scr_y2 > 2000)
-            scr_y2 = 2000;
-        flags_B |= 0x08;
+    sp2.Y = dword_176D40 - scr_dy;
+    if (sp2.Y < 0) {
+        if (sp2.Y < -2000)
+            sp2.Y = -2000;
+        sp2.Flags |= 0x04;
+    } else if (sp2.Y >= vec_window_height) {
+        if (sp2.Y > 2000)
+            sp2.Y = 2000;
+        sp2.Flags |= 0x08;
     }
 
-    flags_B |= 0x40;
+    sp2.Flags |= 0x40;
+#endif
 
-    if ((flags_B & flags_A & 0xF) != 0)
+    if ((sp2.Flags & sp1.Flags & 0xF) != 0)
         return;
 
-    p_sline = draw_item_add_line(DrIT_Unkn11, bckt_shift + 5000);
+    p_sline = draw_item_add_line(DrIT_Unkn11, sp1.Depth + 5000);
     if (p_sline == NULL)
         return;
 
     p_sline->Shade = 32;
     p_sline->Flags = 0;
-    p_sline->X1 = scr_x1;
-    p_sline->Y1 = scr_y1;
-    p_sline->X2 = scr_x2;
-    p_sline->Y2 = scr_y2;
+    p_sline->X1 = sp1.X;
+    p_sline->Y1 = sp1.Y;
+    p_sline->X2 = sp2.X;
+    p_sline->Y2 = sp2.Y;
     p_sline->Col = col;
 }
 
@@ -252,49 +255,49 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
         : : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (radius), "g" (intensity), "g" (p_thing));
     return;
 #endif
+    struct ShEnginePoint sp;
     struct SortSprite *p_sspr;
+    int scr_z;
     int scr_dx, scr_dy;
-    short scr_x, scr_y, scr_z;
     int fctr_xz, fctr_y;
     int abs_scr_dy, abs_scr_dx;
-    int pers5_range;
 
     if (current_map == 9) // map009 Singapore on-water map
         y += waft_table[gameturn & 0x1F] >> 3;
 
     fctr_y = 8 * y - 8 * engn_yc;
     fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
-    pers5_range = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+    sp.Depth = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
     abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
     abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
 
     scr_dx = (overall_scale * abs_scr_dx) >> 11;
     if (game_perspective == 5)
-        scr_dx = ((0x4000 - pers5_range) * scr_dx) >> 14;
+        scr_dx = ((0x4000 - sp.Depth) * scr_dx) >> 14;
 
-    scr_x = dword_176D3C + scr_dx;
-    if (scr_x < 0) {
-        if (scr_x < -2000)
-            scr_x = -2000;
-    } else if (scr_x >= vec_window_width) {
-        if (scr_x > 2000)
-            scr_x = 2000;
+    sp.X = dword_176D3C + scr_dx;
+    if (sp.X < 0) {
+        if (sp.X < -2000)
+            sp.X = -2000;
+    } else if (sp.X >= vec_window_width) {
+        if (sp.X > 2000)
+            sp.X = 2000;
     }
 
     scr_dy = (overall_scale * abs_scr_dy) >> 11;
     if (game_perspective == 5)
-        scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
+        scr_dy = (scr_dy * (0x4000 - sp.Depth)) >> 14;
 
-    scr_y = dword_176D40 - scr_dy;
-    if (scr_y < 0) {
-        if (scr_y < -2000)
-            scr_y = -2000;
-    } else if (scr_y >= vec_window_height) {
-        if (scr_y > 2000)
-            scr_y = 2000;
+    sp.Y = dword_176D40 - scr_dy;
+    if (sp.Y < 0) {
+        if (sp.Y < -2000)
+            sp.Y = -2000;
+    } else if (sp.Y >= vec_window_height) {
+        if (sp.Y > 2000)
+            sp.Y = 2000;
     }
 
-    scr_z = pers5_range - radius;
+    scr_z = sp.Depth - radius;
     if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & 0x20000000) != 0))
         scr_z = -10000;
 
@@ -302,8 +305,8 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
     if (p_sspr == NULL)
         return;
 
-    p_sspr->X = scr_x;
-    p_sspr->Y = scr_y;
+    p_sspr->X = sp.X;
+    p_sspr->Y = sp.Y;
     p_sspr->Z = scr_z;
     p_sspr->Frame = frame;
     p_sspr->Brightness = intensity;
@@ -322,55 +325,55 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
         : : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (radius), "g" (intensity), "g" (scale));
     return;
 #endif
+    struct ShEnginePoint sp;
     struct SortSprite *p_sspr;
+    int scr_z;
     int scr_dx, scr_dy;
-    short scr_x, scr_y, scr_z;
     int fctr_xz, fctr_y;
     int abs_scr_dy, abs_scr_dx;
-    int pers5_range;
 
     if (current_map == 9) // map009 Singapore on-water map
         y += waft_table[gameturn & 0x1F] >> 3;
 
     fctr_y = 8 * y - 8 * engn_yc;
     fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
-    pers5_range = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+    sp.Depth = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
     abs_scr_dy = (dword_176D1C * fctr_y - fctr_xz * dword_176D18) >> 16;
     abs_scr_dx = (x * dword_176D14 - z * dword_176D10) >> 16;
 
     scr_dx = (overall_scale * abs_scr_dx) >> 11;
     if (game_perspective == 5)
-        scr_dx = (scr_dx * (0x4000 - pers5_range)) >> 14;
+        scr_dx = (scr_dx * (0x4000 - sp.Depth)) >> 14;
 
-    scr_x = scr_dx + dword_176D3C;
-    if (scr_x < 0) {
-        if (scr_x < -2000)
-            scr_x = -2000;
-    } else if (scr_x >= vec_window_width) {
-        if (scr_x > 2000)
-            scr_x = 2000;
+    sp.X = scr_dx + dword_176D3C;
+    if (sp.X < 0) {
+        if (sp.X < -2000)
+            sp.X = -2000;
+    } else if (sp.X >= vec_window_width) {
+        if (sp.X > 2000)
+            sp.X = 2000;
     }
 
     scr_dy = (overall_scale * abs_scr_dy) >> 11;
     if (game_perspective == 5)
-        scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
+        scr_dy = (scr_dy * (0x4000 - sp.Depth)) >> 14;
 
-    scr_y = dword_176D40 - scr_dy;
-    if (scr_y < 0) {
-        if (scr_y < -2000)
-            scr_y = -2000;
-    } else if (scr_y >= vec_window_height) {
-        if (scr_y > 2000)
-            scr_y = 2000;
+    sp.Y = dword_176D40 - scr_dy;
+    if (sp.Y < 0) {
+        if (sp.Y < -2000)
+            sp.Y = -2000;
+    } else if (sp.Y >= vec_window_height) {
+        if (sp.Y > 2000)
+            sp.Y = 2000;
     }
-    scr_z = pers5_range - radius - 100;
+    scr_z = sp.Depth - radius - 100;
 
     p_sspr = draw_item_add_sprite(DrIT_Unkn15, scr_z + 5000);
     if (p_sspr == NULL)
         return;
 
-    p_sspr->X = scr_x;
-    p_sspr->Y = scr_y;
+    p_sspr->X = sp.X;
+    p_sspr->Y = sp.Y;
     p_sspr->Z = scr_z;
     p_sspr->Frame = frame;
     p_sspr->Brightness = intensity;
@@ -389,12 +392,11 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
         : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (frame), "g" (radius), "g" (intensity));
     return;
 #endif
+    struct ShEnginePoint sp;
     struct SortSprite *p_sspr;
     int scr_dx, scr_dy;
-    short scr_x, scr_y;
     int fctr_xz, fctr_y;
     int abs_scr_dy, abs_scr_dx;
-    int pers5_range;
     int bckt_shift;
     ubyte bri;
 
@@ -405,37 +407,37 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
 
     fctr_y = 8 * y - 8 * engn_yc;
     fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
-    pers5_range = (dword_176D18 * fctr_y + dword_176D1C * fctr_xz) >> 16;
+    sp.Depth = (dword_176D18 * fctr_y + dword_176D1C * fctr_xz) >> 16;
     abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
     abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
 
     scr_dx = (overall_scale * abs_scr_dx) >> 11;
     if (game_perspective == 5)
-        scr_dx = (scr_dx * (0x4000 - pers5_range)) >> 14;
+        scr_dx = (scr_dx * (0x4000 - sp.Depth)) >> 14;
 
-    scr_x = dword_176D3C + scr_dx;
-    if (scr_x < 0) {
-        if (scr_x < -2000)
-            scr_x = -2000;
-    } else if (scr_x >= vec_window_width) {
-        if (scr_x > 2000)
-            scr_x = 2000;
+    sp.X = dword_176D3C + scr_dx;
+    if (sp.X < 0) {
+        if (sp.X < -2000)
+            sp.X = -2000;
+    } else if (sp.X >= vec_window_width) {
+        if (sp.X > 2000)
+            sp.X = 2000;
     }
 
     scr_dy = (overall_scale * abs_scr_dy) >> 11;
     if (game_perspective == 5)
-        scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
+        scr_dy = (scr_dy * (0x4000 - sp.Depth)) >> 14;
 
-    scr_y = dword_176D40 - scr_dy;
-    if (scr_y < 0) {
-        if (scr_y < -2000)
-            scr_y = -2000;
-    } else if (scr_y >= vec_window_height) {
-        if (scr_y > 2000)
-            scr_y = 2000;
+    sp.Y = dword_176D40 - scr_dy;
+    if (sp.Y < 0) {
+        if (sp.Y < -2000)
+            sp.Y = -2000;
+    } else if (sp.Y >= vec_window_height) {
+        if (sp.Y > 2000)
+            sp.Y = 2000;
     }
 
-    bckt_shift = pers5_range - radius;
+    bckt_shift = sp.Depth - radius;
     if (ingame.DisplayMode == 50)
     {
         if ((p_thing->Flag2 & 0x20000000) != 0) {
@@ -454,8 +456,8 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     if (p_sspr == NULL)
         return;
 
-    p_sspr->X = scr_x;
-    p_sspr->Y = scr_y;
+    p_sspr->X = sp.X;
+    p_sspr->Y = sp.Y;
     p_sspr->Z = 0;
     p_sspr->Frame = frame;
     p_sspr->PThing = p_thing;
@@ -469,8 +471,8 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     if (p_sspr == NULL)
         return;
 
-    p_sspr->X = scr_x;
-    p_sspr->Y = scr_y;
+    p_sspr->X = sp.X;
+    p_sspr->Y = sp.Y;
     p_sspr->PThing = p_thing;
 }
 
@@ -486,14 +488,12 @@ void FIRE_draw_fire(struct SimpleThing *p_sthing)
 
     for (flm = p_sthing->U.UFire.flame; flm; flm = p_flame->next)
     {
+        struct ShEnginePoint sp;
         struct SpecialPoint *p_scrpoint;
         int x, y, z;
         int scr_dx, scr_dy;
         int abs_scr_dy, abs_scr_dx;
         int fctr_xz, fctr_y;
-        int pers5_range;
-        short scr_x, scr_y;
-        ubyte flags;
 
         p_flame = &FIRE_flame[flm];
         x = p_flame->x - engn_xc;
@@ -505,50 +505,51 @@ void FIRE_draw_fire(struct SimpleThing *p_sthing)
 
         fctr_y = y - 8 * engn_yc;
         fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
-        pers5_range = (dword_176D18 * fctr_y + dword_176D1C * fctr_xz) >> 16;
+        sp.Depth = (dword_176D18 * fctr_y + dword_176D1C * fctr_xz) >> 16;
         abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
         abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
+        sp.Flags = 0;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
-            scr_dx = (scr_dx * (0x4000 - pers5_range)) >> 14;
+            scr_dx = (scr_dx * (0x4000 - sp.Depth)) >> 14;
 
-        scr_x = dword_176D3C + scr_dx;
-        if (scr_x < 0) {
-            if (scr_x < -2000)
-                scr_x = -2000;
-            flags |= 0x01;
-        } else if (scr_x >= vec_window_width) {
-            if (scr_x > 2000)
-                scr_x = 2000;
-            flags |= 0x02;
+        sp.X = dword_176D3C + scr_dx;
+        if (sp.X < 0) {
+            if (sp.X < -2000)
+                sp.X = -2000;
+            sp.Flags |= 0x01;
+        } else if (sp.X >= vec_window_width) {
+            if (sp.X > 2000)
+                sp.X = 2000;
+            sp.Flags |= 0x02;
         }
 
         scr_dy = (overall_scale * abs_scr_dy) >> 11;
         if (game_perspective == 5)
-            scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
+            scr_dy = (scr_dy * (0x4000 - sp.Depth)) >> 14;
 
-        scr_y = dword_176D40 - scr_dy;
-        if (scr_y < 0) {
-            if (scr_y < -2000)
-                scr_y = -2000;
-            flags |= 0x04;
-        } else if (scr_y >= vec_window_height) {
-            if (scr_y > 2000)
-                scr_y = 2000;
-            flags |= 0x08;
+        sp.Y = dword_176D40 - scr_dy;
+        if (sp.Y < 0) {
+            if (sp.Y < -2000)
+                sp.Y = -2000;
+            sp.Flags |= 0x04;
+        } else if (sp.Y >= vec_window_height) {
+            if (sp.Y > 2000)
+                sp.Y = 2000;
+            sp.Flags |= 0x08;
         }
 
-        flags |= 0x40;
+        sp.Flags |= 0x40;
 
         p_flame->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_points(DrIT_Unkn25, flm, pers5_range + 5000 - 50, 1);
+        p_scrpoint = draw_item_add_points(DrIT_Unkn25, flm, sp.Depth + 5000 - 50, 1);
         if (p_scrpoint == NULL)
             break;
 
-        p_scrpoint->X = scr_x;
-        p_scrpoint->Y = scr_y;
-        p_scrpoint->Z = pers5_range;
+        p_scrpoint->X = sp.X;
+        p_scrpoint->Y = sp.Y;
+        p_scrpoint->Z = sp.Depth;
     }
 }
 
@@ -559,14 +560,12 @@ void draw_bang_phwoar(struct SimpleThing *p_pow)
 
     for (phw = p_pow->U.UBang.phwoar; phw != 0; phw = p_phwoar->child)
     {
+        struct ShEnginePoint sp;
         struct SpecialPoint *p_scrpoint;
         int x, y, z;
         int scr_dx, scr_dy;
         int abs_scr_dy, abs_scr_dx;
         int fctr_xz;
-        int pers5_range;
-        short scr_x, scr_y;
-        ubyte flags;
 
         p_phwoar = &phwoar[phw];
         x = (p_phwoar->x >> 8) - engn_xc;
@@ -574,50 +573,51 @@ void draw_bang_phwoar(struct SimpleThing *p_pow)
         y = (p_phwoar->y >> 5) - engn_yc - 8 * engn_yc;
 
         fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
-        pers5_range = (dword_176D18 * y + dword_176D1C * fctr_xz) >> 16;
+        sp.Depth = (dword_176D18 * y + dword_176D1C * fctr_xz) >> 16;
         abs_scr_dy = (dword_176D1C * y - dword_176D18 * fctr_xz) >> 16;
         abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
+        sp.Flags = 0;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
-            scr_dx = ((0x4000 - pers5_range) * scr_dx) >> 14;
+            scr_dx = ((0x4000 - sp.Depth) * scr_dx) >> 14;
 
-        scr_x = dword_176D3C + scr_dx;
-        if (scr_x < 0) {
-            if (scr_x < -2000)
-                scr_x = -2000;
-            flags |= 0x01;
-        } else if (scr_x >= vec_window_width) {
-            if (scr_x > 2000)
-                scr_x = 2000;
-            flags |= 0x02;
+        sp.X = dword_176D3C + scr_dx;
+        if (sp.X < 0) {
+            if (sp.X < -2000)
+                sp.X = -2000;
+            sp.Flags |= 0x01;
+        } else if (sp.X >= vec_window_width) {
+            if (sp.X > 2000)
+                sp.X = 2000;
+            sp.Flags |= 0x02;
         }
 
         scr_dy = (overall_scale * abs_scr_dy) >> 11;
         if (game_perspective == 5)
-            scr_dy = (scr_dy * (0x4000 - pers5_range)) >> 14;
+            scr_dy = (scr_dy * (0x4000 - sp.Depth)) >> 14;
 
-        scr_y = dword_176D40 - scr_dy;
-        if (scr_y < 0) {
-            if (scr_y < -2000)
-                scr_y = -2000;
-            flags |= 0x04;
-        } else if (scr_y >= vec_window_height) {
-            if (scr_y > 2000)
-                scr_y = 2000;
-            flags |= 0x08;
+        sp.Y = dword_176D40 - scr_dy;
+        if (sp.Y < 0) {
+            if (sp.Y < -2000)
+                sp.Y = -2000;
+            sp.Flags |= 0x04;
+        } else if (sp.Y >= vec_window_height) {
+            if (sp.Y > 2000)
+                sp.Y = 2000;
+            sp.Flags |= 0x08;
         }
 
-        flags |= 0x40;
+        sp.Flags |= 0x40;
 
         p_phwoar->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_points(DrIT_Unkn21, phw, pers5_range + 5000 - 100, 1);
+        p_scrpoint = draw_item_add_points(DrIT_Unkn21, phw, sp.Depth + 5000 - 100, 1);
         if (p_scrpoint == NULL)
             break;
 
-        p_scrpoint->X = scr_x;
-        p_scrpoint->Y = scr_y;
-        p_scrpoint->Z = pers5_range;
+        p_scrpoint->X = sp.X;
+        p_scrpoint->Y = sp.Y;
+        p_scrpoint->Z = sp.Depth;
     }
 }
 
@@ -628,6 +628,7 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
 
     for (shrap = p_pow->U.UBang.shrapnel; shrap != 0; shrap = p_shrapnel->child)
     {
+        struct ShEnginePoint sp1, sp2, sp3;
         struct SpecialPoint *p_scrpoint;
         int x, y, z;
         int scr_dx, scr_dy;
@@ -635,11 +636,7 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
         int fctr_xz, fctr_y;
         int x_pcc, x_pcs, y_msc, y_mss, x_mmc, y_pps;
         int z_ps, z_ms;
-        short scr_x1, scr_y1, scr_z1;
-        short scr_x2, scr_y2, scr_z2;
-        short scr_x3, scr_y3, scr_z3;
         ushort bckt_shift;
-        ubyte flags_A, flags_B, flags_C;
 
         p_shrapnel = &shrapnel[shrap];
         if ((p_shrapnel->type < 1) || (p_shrapnel->type > 3))
@@ -689,151 +686,151 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
             z_ms = z - sh_z;
         }
 
-        flags_C = 0;
-        flags_B = 0;
-        flags_A = 0;
+        sp3.Flags = 0;
+        sp2.Flags = 0;
+        sp1.Flags = 0;
 
         fctr_y = y_msc - 8 * engn_yc;
         fctr_xz = (dword_176D10 * x_pcc + dword_176D14 * z_ms) >> 16;
-        scr_z1 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+        sp1.Depth = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
         abs_scr_dx = (dword_176D14 * x_pcc - dword_176D10 * z_ms) >> 16;
         abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
-            scr_dx = (scr_dx * (0x4000 - scr_z1)) >> 14;
+            scr_dx = (scr_dx * (0x4000 - sp1.Depth)) >> 14;
 
-        scr_x1 = dword_176D3C + scr_dx;
-        if (scr_x1 < 0) {
-            if (scr_x1 < -2000)
-                scr_x1 = -2000;
-            flags_A |= 0x01;
-        } else if (scr_x1 >= vec_window_width) {
-            if (scr_x1 > 2000)
-                scr_x1 = 2000;
-            flags_A |= 0x02;
+        sp1.X = dword_176D3C + scr_dx;
+        if (sp1.X < 0) {
+            if (sp1.X < -2000)
+                sp1.X = -2000;
+            sp1.Flags |= 0x01;
+        } else if (sp1.X >= vec_window_width) {
+            if (sp1.X > 2000)
+                sp1.X = 2000;
+            sp1.Flags |= 0x02;
         }
 
         scr_dy = (overall_scale * abs_scr_dy) >> 11;
         if (game_perspective == 5)
-            scr_dy = (scr_dy * (0x4000 - scr_z1)) >> 14;
+            scr_dy = (scr_dy * (0x4000 - sp1.Depth)) >> 14;
 
-        scr_y1 = dword_176D40 - scr_dy;
-        if (scr_y1 < 0) {
-            if (scr_y1 < -2000)
-                scr_y1 = -2000;
-            flags_A |= 0x04;
-        } else if (scr_y1 >= vec_window_height) {
-            if (scr_y1 > 2000)
-                scr_y1 = 2000;
-            flags_A |= 0x08;
+        sp1.Y = dword_176D40 - scr_dy;
+        if (sp1.Y < 0) {
+            if (sp1.Y < -2000)
+                sp1.Y = -2000;
+            sp1.Flags |= 0x04;
+        } else if (sp1.Y >= vec_window_height) {
+            if (sp1.Y > 2000)
+                sp1.Y = 2000;
+            sp1.Flags |= 0x08;
         }
 
-        flags_A |= 0x40;
+        sp1.Flags |= 0x40;
 
         fctr_y = y_mss - 8 * engn_yc;
         fctr_xz = (dword_176D14 * z + dword_176D10 * x_pcs) >> 16;
-        scr_z2 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+        sp2.Depth = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
         abs_scr_dx = (dword_176D14 * x_pcs - dword_176D10 * z) >> 16;
         abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
-            scr_dx = (scr_dx * (0x4000 - scr_z2)) >> 14;
+            scr_dx = (scr_dx * (0x4000 - sp2.Depth)) >> 14;
 
-        scr_x2 = dword_176D3C + scr_dx;
-        if (scr_x2 < 0) {
-            if (scr_x2 < -2000)
-                scr_x2 = -2000;
-            flags_B = 0x01;
-        } else if (scr_x2 >= vec_window_width) {
-            if (scr_x2 > 2000)
-                scr_x2 = 2000;
-            flags_B = 0x02;
+        sp2.X = dword_176D3C + scr_dx;
+        if (sp2.X < 0) {
+            if (sp2.X < -2000)
+                sp2.X = -2000;
+            sp2.Flags = 0x01;
+        } else if (sp2.X >= vec_window_width) {
+            if (sp2.X > 2000)
+                sp2.X = 2000;
+            sp2.Flags = 0x02;
         }
 
         scr_dy = (overall_scale * abs_scr_dy) >> 11;
         if (game_perspective == 5)
-            scr_dy = (scr_dy * (0x4000 - scr_z2)) >> 14;
+            scr_dy = (scr_dy * (0x4000 - sp2.Depth)) >> 14;
 
-        scr_y2 = dword_176D40 - scr_dy;
-        if (scr_y2 < 0) {
-            if (scr_y2 < -2000)
-                scr_y2 = -2000;
-            flags_B |= 0x04;
-        } else if (scr_y2 >= vec_window_height) {
-            if (scr_y2 > 2000)
-                scr_y2 = 2000;
-            flags_B |= 0x08;
+        sp2.Y = dword_176D40 - scr_dy;
+        if (sp2.Y < 0) {
+            if (sp2.Y < -2000)
+                sp2.Y = -2000;
+            sp2.Flags |= 0x04;
+        } else if (sp2.Y >= vec_window_height) {
+            if (sp2.Y > 2000)
+                sp2.Y = 2000;
+            sp2.Flags |= 0x08;
         }
 
-        flags_B |= 0x40;
+        sp2.Flags |= 0x40;
 
         fctr_y = y_pps - 8 * engn_yc;
         fctr_xz = (dword_176D14 * z_ps + dword_176D10 * x_mmc) >> 16;
-        scr_z3 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+        sp3.Depth = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
         abs_scr_dx = (dword_176D14 * x_mmc - dword_176D10 * z_ps) >> 16;
         abs_scr_dy = (dword_176D1C * fctr_y - dword_176D18 * fctr_xz) >> 16;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
-            scr_dx = ((0x4000 - scr_z3) * scr_dx) >> 14;
+            scr_dx = ((0x4000 - sp3.Depth) * scr_dx) >> 14;
 
-        scr_x3 = dword_176D3C + scr_dx;
-        if (scr_x3 < 0) {
-            if (scr_x3 < -2000)
-                scr_x3 = -2000;
-            flags_C |= 0x01;
-        } else if (scr_x3 >= vec_window_width) {
-            if (scr_x3 > 2000)
-                scr_x3 = 2000;
-            flags_C |= 0x02;
+        sp3.X = dword_176D3C + scr_dx;
+        if (sp3.X < 0) {
+            if (sp3.X < -2000)
+                sp3.X = -2000;
+            sp3.Flags |= 0x01;
+        } else if (sp3.X >= vec_window_width) {
+            if (sp3.X > 2000)
+                sp3.X = 2000;
+            sp3.Flags |= 0x02;
         }
 
         scr_dy = (overall_scale * abs_scr_dy) >> 11;
         if (game_perspective == 5)
-            scr_dy = (scr_dy * (0x4000 - scr_z3)) >> 14;
+            scr_dy = (scr_dy * (0x4000 - sp3.Depth)) >> 14;
 
-        scr_y3 = dword_176D40 - scr_dy;
-        if (scr_y3 < 0) {
-            if (scr_y3 < -2000)
-                scr_y3 = -2000;
-            flags_C |= 0x04;
-        } else if (scr_y3 >= vec_window_height) {
-            if (scr_y3 > 2000)
-                scr_y3 = 2000;
-            flags_C |= 0x08;
+        sp3.Y = dword_176D40 - scr_dy;
+        if (sp3.Y < 0) {
+            if (sp3.Y < -2000)
+                sp3.Y = -2000;
+            sp3.Flags |= 0x04;
+        } else if (sp3.Y >= vec_window_height) {
+            if (sp3.Y > 2000)
+                sp3.Y = 2000;
+            sp3.Flags |= 0x08;
         }
 
-        flags_C |= 0x40;
+        sp3.Flags |= 0x40;
 
-        if (((flags_B & flags_A & flags_C) & 0xF) != 0)
+        if (((sp2.Flags & sp1.Flags & sp3.Flags) & 0xF) != 0)
             continue;
 
-        bckt_shift = scr_z2;
-        if (bckt_shift >= scr_z3)
-            bckt_shift = scr_z3;
-        if (bckt_shift > scr_z1)
-            bckt_shift = scr_z1;
+        bckt_shift = sp2.Depth;
+        if (bckt_shift >= sp3.Depth)
+            bckt_shift = sp3.Depth;
+        if (bckt_shift > sp1.Depth)
+            bckt_shift = sp1.Depth;
 
         p_shrapnel->PointOffset = next_screen_point;
         p_scrpoint = draw_item_add_points(DrIT_Unkn20, shrap, bckt_shift + 5000, 3);
         if (p_scrpoint == NULL)
             break;
 
-        p_scrpoint->X = scr_x1;
-        p_scrpoint->Y = scr_y1;
-        p_scrpoint->Z = scr_z1;
+        p_scrpoint->X = sp1.X;
+        p_scrpoint->Y = sp1.Y;
+        p_scrpoint->Z = sp1.Depth;
         p_scrpoint++;
 
-        p_scrpoint->X = scr_x2;
-        p_scrpoint->Y = scr_y2;
-        p_scrpoint->Z = scr_z2;
+        p_scrpoint->X = sp2.X;
+        p_scrpoint->Y = sp2.Y;
+        p_scrpoint->Z = sp2.Depth;
         p_scrpoint++;
 
-        p_scrpoint->X = scr_x3;
-        p_scrpoint->Y = scr_y3;
-        p_scrpoint->Z = scr_z3;
+        p_scrpoint->X = sp3.X;
+        p_scrpoint->Y = sp3.Y;
+        p_scrpoint->Z = sp3.Depth;
     }
 }
 
@@ -877,8 +874,6 @@ void draw_bang_wobble_line(struct SimpleThing *p_pow)
     int fctr_xz, fctr_y;
     int scr_dx, scr_dy;
     int abs_scr_dy, abs_scr_dx;
-    short scr_x1, scr_y1, scr_z1;
-    short scr_x2, scr_y2, scr_z2;
     ushort shrap1, shrap2;
 
     if (dword_176CAC == 0)
@@ -900,40 +895,42 @@ void draw_bang_wobble_line(struct SimpleThing *p_pow)
     p_shrapnel2 = &shrapnel[shrap2];
 
     {
+        struct ShEnginePoint sp1, sp2;
+
         x = (p_shrapnel1->x >> 8) - engn_xc;
         z = (p_shrapnel1->z >> 8) - engn_zc;
         y = (p_shrapnel1->y >> 5) - engn_yc;
 
         fctr_y = y - 8 * engn_yc;
         fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
-        scr_z1 = (dword_176D18 * fctr_y + dword_176D1C * fctr_xz) >> 16;
+        sp1.Depth = (dword_176D18 * fctr_y + dword_176D1C * fctr_xz) >> 16;
         abs_scr_dy = (dword_176D1C * fctr_y - fctr_xz * dword_176D18) >> 16;
         abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
-            scr_dx = (scr_dx * (0x4000 - scr_z1)) >> 14;
+            scr_dx = (scr_dx * (0x4000 - sp1.Depth)) >> 14;
 
-        scr_x1 = dword_176D3C + scr_dx;
-        if (scr_x1 < 0) {
-            if (scr_x1 < -2000)
-                scr_x1 = -2000;
-        } else if (scr_x1 >= vec_window_width) {
-            if (scr_x1 > 2000)
-                scr_x1 = 2000;
+        sp1.X = dword_176D3C + scr_dx;
+        if (sp1.X < 0) {
+            if (sp1.X < -2000)
+                sp1.X = -2000;
+        } else if (sp1.X >= vec_window_width) {
+            if (sp1.X > 2000)
+                sp1.X = 2000;
         }
 
         scr_dy = (overall_scale * abs_scr_dy) >> 11;
         if (game_perspective == 5)
-            scr_dy = (scr_dy * (0x4000 - scr_z1)) >> 14;
+            scr_dy = (scr_dy * (0x4000 - sp1.Depth)) >> 14;
 
-        scr_y1 = dword_176D40 - scr_dy;
-        if (scr_y1 < 0) {
-            if (scr_y1 < -2000)
-                scr_y1 = -2000;
-        } else if (scr_y1 >= vec_window_height) {
-            if (scr_y1 > 2000)
-                scr_y1 = 2000;
+        sp1.Y = dword_176D40 - scr_dy;
+        if (sp1.Y < 0) {
+            if (sp1.Y < -2000)
+                sp1.Y = -2000;
+        } else if (sp1.Y >= vec_window_height) {
+            if (sp1.Y > 2000)
+                sp1.Y = 2000;
         }
 
         x = (p_shrapnel2->x >> 8) - engn_xc;
@@ -942,37 +939,37 @@ void draw_bang_wobble_line(struct SimpleThing *p_pow)
 
         fctr_y = y - 8 * engn_yc;
         fctr_xz = (dword_176D10 * x + dword_176D14 * z) >> 16;
-        scr_z2 = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
+        sp2.Depth = (dword_176D1C * fctr_xz + dword_176D18 * fctr_y) >> 16;
         abs_scr_dy = (dword_176D1C * fctr_y - fctr_xz * dword_176D18) >> 16;
         abs_scr_dx = (dword_176D14 * x - dword_176D10 * z) >> 16;
 
         scr_dx = (overall_scale * abs_scr_dx) >> 11;
         if (game_perspective == 5)
-            scr_dx = (scr_dx * (0x4000 - scr_z2)) >> 14;
+            scr_dx = (scr_dx * (0x4000 - sp2.Depth)) >> 14;
 
-        scr_x2 = dword_176D3C + scr_dx;
-        if (scr_x2 < 0) {
-            if (scr_x2 < -2000)
-                scr_x2 = -2000;
-        } else if (scr_x2 >= vec_window_width) {
-            if (scr_x2 > 2000)
-                scr_x2 = 2000;
+        sp2.X = dword_176D3C + scr_dx;
+        if (sp2.X < 0) {
+            if (sp2.X < -2000)
+                sp2.X = -2000;
+        } else if (sp2.X >= vec_window_width) {
+            if (sp2.X > 2000)
+                sp2.X = 2000;
         }
 
         scr_dy = (overall_scale * abs_scr_dy) >> 11;
         if (game_perspective == 5)
-            scr_dy = (scr_dy * (0x4000 - scr_z2)) >> 14;
+            scr_dy = (scr_dy * (0x4000 - sp2.Depth)) >> 14;
 
-        scr_y2 = dword_176D40 - scr_dy;
-        if (scr_y2 < 0) {
-            if (scr_y2 < -2000)
-                scr_y2 = -2000;
-        } else if (scr_y2 >= vec_window_height) {
-            if (scr_y2 > 2000)
-                scr_y2 = 2000;
+        sp2.Y = dword_176D40 - scr_dy;
+        if (sp2.Y < 0) {
+            if (sp2.Y < -2000)
+                sp2.Y = -2000;
+        } else if (sp2.Y >= vec_window_height) {
+            if (sp2.Y > 2000)
+                sp2.Y = 2000;
         }
 
-        build_wobble_line(scr_x1, scr_y1, scr_z1, scr_x2, scr_y2, scr_z2, 0, 10);
+        build_wobble_line(sp1.X, sp1.Y, sp1.Depth, sp2.X, sp2.Y, sp2.Depth, 0, 10);
     }
 }
 
