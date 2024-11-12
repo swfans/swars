@@ -510,21 +510,10 @@ void draw_object_face3_textrd_dk(ushort face)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face->Light2;
         shade = p_face->Shade2 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = p_qlight->Ratio * game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face->Light2);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point2.S = shade << 7;
@@ -546,21 +535,10 @@ void draw_object_face3_textrd_dk(ushort face)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face->Light1;
         shade = p_face->Shade1 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face->Light1);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point3.S = shade << 7;
@@ -1477,21 +1455,10 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light0;
         shade = p_face4->Shade0 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light0);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point1.S = shade << 7;
@@ -1513,21 +1480,10 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light2;
         shade = p_face4->Shade2 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light2);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point2.S = shade << 7;
@@ -1549,21 +1505,10 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light1;
         shade = p_face4->Shade1 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light1);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point3.S = shade << 7;
@@ -1585,21 +1530,10 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light3;
         shade = p_face4->Shade3 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light3);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point4.S = shade << 7;
@@ -2158,21 +2092,10 @@ void draw_object_face3_textrd(ushort face)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face->Light0;
         shade = p_face->Shade0 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face->Light0);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point1.S = shade << 7;
@@ -2200,21 +2123,10 @@ void draw_object_face3_textrd(ushort face)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face->Light2;
             shade = p_face->Shade2 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face->Light2);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point2.S = shade << 7;
@@ -2235,21 +2147,10 @@ void draw_object_face3_textrd(ushort face)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face->Light1;
             shade = p_face->Shade1 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face->Light1);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point3.S = shade << 7;
@@ -2384,21 +2285,10 @@ void draw_object_face4d_textrd(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light0;
         shade = p_face4->Shade0 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light0);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point1.S = shade << 7;
@@ -2426,21 +2316,10 @@ void draw_object_face4d_textrd(ushort face4)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face4->Light2;
             shade = p_face4->Shade2 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face4->Light2);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point2.S = shade << 7;
@@ -2452,21 +2331,10 @@ void draw_object_face4d_textrd(ushort face4)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face4->Light1;
             shade = p_face4->Shade1 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face4->Light1);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point3.S = shade << 7;
@@ -2478,21 +2346,10 @@ void draw_object_face4d_textrd(ushort face4)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face4->Light3;
             shade = p_face4->Shade3 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face4->Light3);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point4.S = shade << 7;

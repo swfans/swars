@@ -72,14 +72,14 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
     if (game_perspective == 1)
     {
         elcr_y = 0;
-        p_sp->field_9 = 0;
+        p_sp->ReflShade = 0;
     }
     else if ((p_mapel->Flags & 0x10) == 0)
     {
         elcr_y = 8 * p_mapel->Alt;
         if ((p_mapel->Flags & 0x40) != 0)
             elcr_y += waft_table[gameturn & 0x1F];
-        p_sp->field_9 = 0;
+        p_sp->ReflShade = 0;
     }
     else
     {
@@ -91,7 +91,7 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
              + waft_table2[(gameturn + (elcr_z >> 7)) & 0x1F]
              + waft_table2[(32 * gameturn / dvfactor) & 0x1F]) >> 3;
         elcr_y += mag * wobble;
-        p_sp->field_9 = (wobble + 32) << 9;
+        p_sp->ReflShade = (wobble + 32) << 9;
     }
     return elcr_y;
 }
@@ -102,7 +102,7 @@ short shpoint_compute_shade(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
 {
     int shd;
 
-    shd = (p_mapel->Ambient << 7) + p_sp->field_9 + 256 + (*p_sqlight << 8);
+    shd = (p_mapel->Ambient << 7) + p_sp->ReflShade + 256 + (*p_sqlight << 8);
     shd += cummulate_shade_from_quick_lights(p_mapel->Shade);
     if (shd > 0x7E00)
         shd = 0x7F00;
@@ -115,7 +115,7 @@ short shpoint_compute_shade_fading(struct ShEnginePoint *p_sp, struct MyMapEleme
 {
     int shd;
 
-    shd = (p_mapel->Ambient << 7) + p_sp->field_9 + 256;
+    shd = (p_mapel->Ambient << 7) + p_sp->ReflShade + 256;
     shd += cummulate_shade_from_quick_lights(p_mapel->Shade);
     if (dist > 3000) {
         if (3512 - dist > 0)
@@ -320,6 +320,20 @@ void fill_floor_tile_pos_and_shade(struct FloorTile *p_floortl, struct MyMapElem
     p_mapel->ShadeR = p_sp->Shade >> 9;
 }
 
+void fill_floor_tile_pos_and_shade_fading(struct FloorTile *p_floortl, struct MyMapElement *p_mapel,
+  struct ShEnginePoint *p_dsp, ubyte pt, struct ShEnginePoint *p_ssp)
+{
+    p_floortl->X[pt] = p_dsp->X;
+    p_floortl->Y[pt] = p_dsp->Y;
+    if (p_dsp->Shade < 0) {
+        //TODO why do we use p_ssp->ReflShade instead of using only one ShEnginePoint (the p_dsp)?
+        // is field_9 unset in the other ShEnginePoint?
+        p_dsp->Shade = shpoint_compute_shade_fading(p_ssp, p_mapel, p_dsp->field_4);
+    }
+    p_floortl->Shade[pt] = p_dsp->Shade;
+    p_mapel->ShadeR = p_dsp->Shade >> 9;
+}
+
 void func_218D3(void)
 {
 #if 0
@@ -403,9 +417,9 @@ void func_218D3(void)
         elcr_x = word_19CC64;
         while (shift_a < render_area_a)
         {
-          int bktalt;
+          int dpthalt;
 
-          bktalt = 0;
+          dpthalt = 0;
           if (word_152F00 > 17998) {
             break;
           }
@@ -422,31 +436,31 @@ void func_218D3(void)
           }
           else
           {
-              int bckt;
+              int depth;
               ubyte ditype;
 
-              bckt = INT_MIN;
+              depth = INT_MIN;
 
-              if (bckt < p_spnx->field_4)
-                  bckt = p_spnx->field_4;
+              if (depth < p_spnx->field_4)
+                  depth = p_spnx->field_4;
               fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
 
               p_spnx += 2;
               p_sqlight += 1;
-              if (bckt < p_spnx->field_4)
-                  bckt = p_spnx->field_4;
+              if (depth < p_spnx->field_4)
+                  depth = p_spnx->field_4;
               fill_floor_tile_pos_and_shade(p_floortl, p_mapel + 1, 1, p_sqlight, p_spnx);
 
               p_spcr += 2;
               p_sqlight += render_area_a;
-              if (bckt < p_spcr->field_4)
-                  bckt = p_spcr->field_4;
+              if (depth < p_spcr->field_4)
+                  depth = p_spcr->field_4;
               fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH + 1, 2, p_sqlight, p_spcr);
 
               p_spcr -= 2;
               p_sqlight -= 1;
-              if (bckt < p_spcr->field_4)
-                  bckt = p_spcr->field_4;
+              if (depth < p_spcr->field_4)
+                  depth = p_spcr->field_4;
               fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH, 3, p_sqlight, p_spcr);
 
               p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
@@ -465,14 +479,14 @@ void func_218D3(void)
                             alt = 15000 * overall_scale;
                           else
                             alt = 500 * overall_scale;
-                          bktalt = alt >> 8;
+                          dpthalt = alt >> 8;
                       }
                       else
                       {
                           if (p_mapel->Alt <= 0)
-                            bktalt = 3500;
+                            dpthalt = 3500;
                           else
-                            bktalt = 2500;
+                            dpthalt = 2500;
                       }
                   }
                   p_floortl->Texture = p_fltextr;
@@ -495,18 +509,17 @@ void func_218D3(void)
               }
               if ((p_mapel->Flags & 0x08) != 0)
                   p_floortl->Flags2 |= 0x02;
-              bktalt += 200;
+              dpthalt += 200;
               p_floortl->Flags2 = p_mapel->Flags;
               p_floortl->Offset = p_mapel - game_my_big_map;
               p_floortl->Flags2b = p_mapel->Flags2;
               p_floortl->Page = p_mapel->ColumnHead >> 12;
               p_floortl++;
-              bckt += 5000 + bktalt;
                if ((p_mapel->Texture & 0x4000) != 0)
                   ditype = DrIT_Unkn6;
               else
                   ditype = DrIT_Unkn4;
-              draw_item_add(ditype, word_152F00, bckt);
+              draw_item_add(ditype, word_152F00, depth + 5000 + dpthalt);
               p_sqlight = &p_sqlight[-render_area_a + 1];
               p_spcr += 2;
               ++word_152F00;
@@ -573,15 +586,8 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
         int v61;
         struct ShEnginePoint *v62;
         int v63;
-        struct MyMapElement *p_mapel3;
-        int v73;
-        struct MyMapElement *p_mapel4;
-        int v75;
         struct ShEnginePoint *v76;
         ubyte k;
-        int v82;
-        struct MyMapElement *p_mapel5;
-        int v84;
         struct ShEnginePoint *v85;
         struct MyMapElement *p_mapel6;
         short v102;
@@ -595,8 +601,8 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
         int v167;
         int v170;
         struct MyMapElement *p_mapel2;
-        int v174;
-        ushort v175;
+        int depth;
+        ushort dpthalt;
 
         v47 = smrang_x[rn].beg >> 8;
         p_spcr = &loc_unknarrD[2 * v47 + (rn & 1)];
@@ -625,7 +631,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
         {
           do
           {
-            v175 = 0;
+            dpthalt = 0;
             if ( (ushort)word_152F00 > 0x464Eu )
               break;
             v105 = v62->Flags;
@@ -640,55 +646,24 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
             else
             {
               p_mapel7 = &game_my_big_map[v167 + (v170 >> 8)];
-              p_floortl->X[0] = v149->X;
-              p_floortl->Y[0] = v149->Y;
-              v174 = v149->field_4;
-              if (v149->Shade < 0)
-              {
-                v149->Shade = shpoint_compute_shade_fading(v149, p_mapel7, v149->field_4);
-              }
-              p_floortl->Shade[0] = v149->Shade;
-              p_mapel7->ShadeR = v149->Shade >> 9;
+
+              depth = v149->field_4;
+              fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel7, v149, 0, v149);
+
               v149 += 2;
-              p_floortl->X[1] = v149->X;
-              p_floortl->Y[1] = v149->Y;
-              p_mapel3 = p_mapel7 + 1;
-              if (v149->field_4 > v174)
-                  v174 = v149->field_4;
-              if (v149->Shade < 0)
-              {
-                v149->Shade = shpoint_compute_shade_fading(v149, p_mapel3, v149->field_4);
-              }
-              p_floortl->Shade[1] = v149->Shade;
-              p_mapel3->ShadeR = v149->Shade >> 9;
-              p_floortl->X[2] = v62[2].X;
-              v73 = v174;
-              p_floortl->Y[2] = v62[2].Y;
-              p_mapel4 = p_mapel3 + 128;
-              v75 = v62[2].field_4;
+              if (depth < v149->field_4)
+                  depth = v149->field_4;
+              fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel7 + 1, v149, 1, v149);
+
               v76 = v62 + 2;
-              if (v75 > v73)
-                  v174 = v75;
-              if (v76->Shade < 0)
-              {
-                v76->Shade = shpoint_compute_shade_fading(v149, p_mapel4, v76->field_4);
-              }
-              p_floortl->Shade[2] = v76->Shade;
-              p_mapel4->ShadeR = v76->Shade >> 9;
-              p_floortl->X[3] = v76[-2].X;
-              v82 = v174;
-              p_floortl->Y[3] = v76[-2].Y;
-              p_mapel5 = p_mapel4 - 1;
-              v84 = v76[-2].field_4;
+              if (depth < v76->field_4)
+                  depth = v76->field_4;
+              fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel7 + 128 + 1, v76, 2, v149);
+
               v85 = v76 - 2;
-              if ( v84 > v82 )
-                  v174 = v84;
-              if (v85->Shade < 0)
-              {
-                v85->Shade = shpoint_compute_shade_fading(v149, p_mapel5, v85->field_4);
-              }
-              p_floortl->Shade[3] = v85->Shade;
-              p_mapel5->ShadeR = v85->Shade >> 9;
+              if (depth < v85->field_4)
+                  depth = v85->field_4;
+              fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel7 + 128, v85, 3, v149);
 
               p_mapel6 = &game_my_big_map[v167 + (v170 >> 8)];
               if (p_mapel6->Texture != 0)
@@ -709,14 +684,14 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
                             tmp = 15000 * overall_scale;
                         else
                             tmp = 500 * overall_scale;
-                        v175 = tmp >> 8;
+                        dpthalt = tmp >> 8;
                     }
                     else
                     {
                         if (p_mapel6->Alt <= 0)
-                            v175 = 2000;
+                            dpthalt = 2000;
                         else
-                            v175 = 1000;
+                            dpthalt = 1000;
                     }
                   }
                   p_floortl->Texture = p_fltextr;
@@ -738,12 +713,11 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
               if ((p_mapel6->Flags & 0x08) != 0)
                   p_floortl->Flags2 |= 0x02;
 
-              v174 += v175 + 5000;
               ubyte ditype;
               ditype = (p_mapel6->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
               v102 = word_152F00;
 
-              if (!draw_item_add(ditype, v102, v174))
+              if (!draw_item_add(ditype, v102, depth + 5000 + dpthalt))
                   break;
 
               p_floortl->Flags2 = p_mapel6->Flags;

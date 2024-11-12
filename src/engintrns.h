@@ -52,7 +52,9 @@ struct ShEnginePoint {
     short Y;
     int field_4;
     ubyte Flags;
-    short field_9;
+    /** Shade value from atmosphere reflection */
+    short ReflShade;
+    /** Shade value from lights */
     short Shade;
 };
 
