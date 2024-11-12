@@ -48,6 +48,8 @@
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
+#define MAX_LIGHTS_AFFECTING_FACE 100
+
 extern ushort tnext_screen_point;
 extern ushort tnext_draw_item;
 extern ushort tnext_sort_sprite;
@@ -415,10 +417,12 @@ uint cummulate_shade_from_quick_lights(ushort light_first)
         short i;
 
         shade = 0;
-        for (light = light_first, i = 0; (light != 0) && (i <= 100); light = p_qlight->NextQuick, i++)
+        for (light = light_first, i = 0; light != 0; light = p_qlight->NextQuick, i++)
         {
             short intens;
 
+            if (i > MAX_LIGHTS_AFFECTING_FACE)
+                break;
             p_qlight = &game_quick_lights[light];
             intens = game_full_lights[p_qlight->Light].Intensity;
             shade += intens * p_qlight->Ratio;
