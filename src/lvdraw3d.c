@@ -583,50 +583,27 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
         int elcr_x;
         int v51;
 
-        int v56;
         unsigned int v57;
         int v58;
         int v61;
         struct ShEnginePoint *v62;
         int v63;
-        int v64;
-        struct ShEnginePoint *v65;
         struct MyMapElement *p_mapel3;
-        int v67;
-        ushort n;
-        struct QuickLight *p_qlght4;
-        int v70;
-        int v71;
-        struct ShEnginePoint *v72;
         int v73;
         struct MyMapElement *p_mapel4;
         int v75;
         struct ShEnginePoint *v76;
-        int v77;
-        ushort ii;
-        struct QuickLight *p_qlght3;
-        int v80;
         ubyte k;
-        int v81;
         int v82;
         struct MyMapElement *p_mapel5;
         int v84;
         struct ShEnginePoint *v85;
-        int v86;
-        ushort jj;
-        struct QuickLight *p_qlght2;
-        int v89;
-        int v90;
         struct MyMapElement *p_mapel6;
         short v102;
         int v104;
         ubyte v105;
         ubyte v106;
         struct MyMapElement *p_mapel7;
-        ushort m;
-        struct QuickLight *p_qlght;
-        int v110;
-        int v111;
 
         int elcr_y;
         struct ShEnginePoint *v149;
@@ -644,23 +621,22 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
         p_mapel2 = p_mapel1;
         for (k = elcr_x <= v51; k; k = elcr_x <= v58)
         {
-          elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel2, elcr_x, elcr_z, 8);
-          transform_shpoint_fpv(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
-          p_spcr->Shade = -1;
+            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel2, elcr_x, elcr_z, 8);
+            transform_shpoint_fpv(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
+            p_spcr->Shade = -1;
 
-          p_spcr += 2;
-          v56 = (int)p_mapel2;
-          elcr_x += 256;
-          v57 = 2 * v148;
-          v58 = smrang_x[v57 + 1];
-          p_mapel2 = (struct MyMapElement *)(v56 + 18);
+            p_spcr += 2;
+            elcr_x += 256;
+            v57 = 2 * v148;
+            v58 = smrang_x[v57 + 1];
+            p_mapel2++;
         }
         v61 = 2 * (ranges_x[v148].beg >> 8);
         v149 = &p_unknarrD[v61 + ((v148 + 1) & 1)];
         v62 = &p_unknarrD[v61 + ((v148) & 1)];
         v170 = ranges_x[v148].beg;
-        v167 = v147 >> 8 << 7;
         v63 = ranges_x[v148].fin;
+        v167 = v147 >> 8 << 7;
         if ( v63 >= v170 )
         {
           do
@@ -672,8 +648,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
             v106 = v149[2].Flags;
             if ( ((v62[2].Flags | (ubyte)(v106 | v105 | v149->Flags)) & 0x20) != 0
               || ((ubyte)(v106 & v105 & v149->Flags) & v62[2].Flags & 0xF) != 0
-              || v170 <= 0 || v170 >= 0x8000
-              || elcr_z <= 0 || elcr_z >= 0x8000 )
+              || (v170 <= 0) || (v170 >= 0x8000) || (elcr_z <= 0) || (elcr_z >= 0x8000))
             {
               v62 += 2;
               v149 += 2;
@@ -684,33 +659,11 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
               p_floortl->X[0] = v149->X;
               p_floortl->Y[0] = v149->Y;
               v174 = v149->field_4;
-              if (v149->Shade >= 0)
+              if (v149->Shade < 0)
               {
-                p_floortl->Shade[0] = v149->Shade;
+                v149->Shade = shpoint_compute_shade_fading(v149, p_mapel7, v149->field_4);
               }
-              else
-              {
-                v64 = ((ushort)p_mapel7->Ambient << 7) + v149->field_9 + 256;
-                for ( m = p_mapel7->Shade; m; v64 += v110 )
-                {
-                  p_qlght = &game_quick_lights[m];
-                  v110 = p_qlght->Ratio * game_full_lights[p_qlght->Light].Intensity;
-                  m = p_qlght->NextQuick;
-                }
-                if (v149->field_4 > 3000)
-                {
-                  v111 = v149->field_4;
-                  if ( 3512 - v111 > 0 )
-                    v64 = ((3512 - v111) * v64) >> 9;
-                  else
-                    v64 = 0;
-                }
-                if (v64 > 0x7E00)
-                  v64 = 0x7F00;
-                v65 = v149;
-                p_floortl->Shade[0] = v64;
-                v65->Shade = v64;
-              }
+              p_floortl->Shade[0] = v149->Shade;
               p_mapel7->ShadeR = v149->Shade >> 9;
               v149 += 2;
               p_floortl->X[1] = v149->X;
@@ -718,33 +671,11 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
               p_mapel3 = p_mapel7 + 1;
               if (v149->field_4 > v174)
                   v174 = v149->field_4;
-              if (v149->Shade >= 0)
+              if (v149->Shade < 0)
               {
-                p_floortl->Shade[1] = v149->Shade;
+                v149->Shade = shpoint_compute_shade_fading(v149, p_mapel3, v149->field_4);
               }
-              else
-              {
-                v67 = ((ushort)p_mapel3->Ambient << 7) + v149->field_9 + 256;
-                for ( n = p_mapel3->Shade; n; v67 += v70 )
-                {
-                  p_qlght4 = &game_quick_lights[n];
-                  v70 = p_qlght4->Ratio * game_full_lights[p_qlght4->Light].Intensity;
-                  n = p_qlght4->NextQuick;
-                }
-                if (v149->field_4 > 3000)
-                {
-                  v71 = v149->field_4;
-                  if ( 3512 - v71 > 0 )
-                    v67 = ((3512 - v71) * v67) >> 9;
-                  else
-                    v67 = 0;
-                }
-                if (v67 > 0x7E00)
-                  v67 = 0x7F00;
-                v72 = v149;
-                p_floortl->Shade[1] = v67;
-                v72->Shade = v67;
-              }
+              p_floortl->Shade[1] = v149->Shade;
               p_mapel3->ShadeR = v149->Shade >> 9;
               p_floortl->X[2] = v62[2].X;
               v73 = v174;
@@ -754,32 +685,11 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
               v76 = v62 + 2;
               if (v75 > v73)
                   v174 = v75;
-              if (v76->Shade >= 0)
+              if (v76->Shade < 0)
               {
-                p_floortl->Shade[2] = v76->Shade;
+                v76->Shade = shpoint_compute_shade_fading(v149, p_mapel4, v76->field_4);
               }
-              else
-              {
-                v77 = ((ushort)p_mapel4->Ambient << 7) + v149->field_9 + 256;
-                for ( ii = p_mapel4->Shade; ii; v77 += v80 )
-                {
-                  p_qlght3 = &game_quick_lights[ii];
-                  v80 = p_qlght3->Ratio * game_full_lights[p_qlght3->Light].Intensity;
-                  ii = p_qlght3->NextQuick;
-                }
-                v81 = v76->field_4;
-                if ( v81 > 3000 )
-                {
-                  if ( 3512 - v81 > 0 )
-                    v77 = ((3512 - v81) * v77) >> 9;
-                  else
-                    v77 = 0;
-                }
-                if (v77 > 0x7E00)
-                    v77 = 0x7F00;
-                p_floortl->Shade[2] = v77;
-                v76->Shade = v77;
-              }
+              p_floortl->Shade[2] = v76->Shade;
               p_mapel4->ShadeR = v76->Shade >> 9;
               p_floortl->X[3] = v76[-2].X;
               v82 = v174;
@@ -789,70 +699,50 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
               v85 = v76 - 2;
               if ( v84 > v82 )
                   v174 = v84;
-              if (v85->Shade >= 0)
+              if (v85->Shade < 0)
               {
-                p_floortl->Shade[3] = v85->Shade;
+                v85->Shade = shpoint_compute_shade_fading(v149, p_mapel5, v85->field_4);
               }
-              else
-              {
-                v86 = ((ushort)p_mapel5->Ambient << 7) + v149->field_9 + 256;
-                for ( jj = p_mapel5->Shade; jj; v86 += v89 )
-                {
-                  p_qlght2 = &game_quick_lights[jj];
-                  v89 = p_qlght2->Ratio * game_full_lights[p_qlght2->Light].Intensity;
-                  jj = p_qlght2->NextQuick;
-                }
-                v90 = v85->field_4;
-                if (v90 > 3000)
-                {
-                  if ( 3512 - v90 > 0 )
-                    v86 = ((3512 - v90) * v86) >> 9;
-                  else
-                    v86 = 0;
-                }
-                if (v86 > 0x7E00)
-                  v86 = 0x7F00;
-                p_floortl->Shade[3] = v86;
-                v85->Shade = v86;
-              }
+              p_floortl->Shade[3] = v85->Shade;
               p_mapel5->ShadeR = v85->Shade >> 9;
+
               p_mapel6 = &game_my_big_map[v167 + (v170 >> 8)];
               if (p_mapel6->Texture != 0)
               {
-                struct SingleFloorTexture *p_fltextr;
-                short fltextr;
+                  struct SingleFloorTexture *p_fltextr;
+                  short fltextr;
 
-                fltextr = p_mapel6->Texture & 0x3FFF;
-                p_floortl->Flags2 = 0;
-                p_fltextr = &game_textures[fltextr];
-                if ((p_mapel6->Texture & 0x8000) != 0)
-                {
-                  p_floortl->Flags2 = 1;
-                  if (byte_1C8444)
+                  fltextr = p_mapel6->Texture & 0x3FFF;
+                  p_floortl->Flags2 = 0;
+                  p_fltextr = &game_textures[fltextr];
+                  if ((p_mapel6->Texture & 0x8000) != 0)
                   {
-                      uint tmp;
-                      if (p_mapel6->Alt <= 0)
-                        tmp = 15000 * overall_scale;
-                      else
-                        tmp = 500 * overall_scale;
-                      v175 = tmp >> 8;
+                    p_floortl->Flags2 = 1;
+                    if (byte_1C8444)
+                    {
+                        uint tmp;
+                        if (p_mapel6->Alt <= 0)
+                            tmp = 15000 * overall_scale;
+                        else
+                            tmp = 500 * overall_scale;
+                        v175 = tmp >> 8;
+                    }
+                    else
+                    {
+                        if (p_mapel6->Alt <= 0)
+                            v175 = 2000;
+                        else
+                            v175 = 1000;
+                    }
                   }
-                  else
-                  {
-                      if (p_mapel6->Alt <= 0)
-                        v175 = 2000;
-                      else
-                        v175 = 1000;
-                  }
-                }
-                p_floortl->Texture = p_fltextr;
-                p_floortl->Flags = (p_mapel6->Flags & 0x20) != 0 ? 21 : 5;
-                p_floortl->Page = (int)(ushort)p_mapel6->ColumnHead >> 12;
+                  p_floortl->Texture = p_fltextr;
+                  p_floortl->Flags = (p_mapel6->Flags & 0x20) != 0 ? 21 : 5;
+                  p_floortl->Page = (int)(ushort)p_mapel6->ColumnHead >> 12;
               }
               else
               {
-                p_floortl->Flags = 4;
-                p_floortl->Col = colour_grey2;
+                  p_floortl->Flags = 4;
+                  p_floortl->Col = colour_grey2;
               }
               if ((p_mapel6->Flags & 0x01) != 0)
               {
@@ -873,8 +763,8 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, int *smrang_x, st
                   break;
 
               p_floortl->Flags2 = p_mapel6->Flags;
-              p_floortl->Offset = p_mapel6 - game_my_big_map;
               p_floortl->Flags2b = p_mapel6->Flags2;
+              p_floortl->Offset = p_mapel6 - game_my_big_map;
 
               p_floortl++;
               v62 = v85 + 2;
