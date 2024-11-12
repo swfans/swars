@@ -33,6 +33,7 @@
 #include "campaign.h"
 #include "display.h"
 #include "game_data.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "guiboxes.h"
 #include "guitext.h"

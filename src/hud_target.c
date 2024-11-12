@@ -23,9 +23,13 @@
 #include "bfgentab.h"
 #include "bfsprite.h"
 #include "insspr.h"
+
 #include "bigmap.h"
 #include "display.h"
+#include "engindrwlstm.h"
+#include "engindrwlstx.h"
 #include "engintrns.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "thing.h"
 #include "weapon.h"
@@ -91,10 +95,10 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
     int h_total, h_cur, h_ext, w;
     TbPixel colour;
 
-    dx = 9 * overall_scale >> 8;
-    dy = 10 * (overall_scale) >> 8;
+    dx = (9 * overall_scale) >> 8;
+    dy = (10 * overall_scale) >> 8;
     h_total = -15 * (overall_scale) >> 8;
-    w = 2 * overall_scale >> 8;
+    w = (2 * overall_scale) >> 8;
 
     hp_per_px = p_thing->U.UPerson.MaxHealth / dy;
     if (hp_per_px == 0)
@@ -148,10 +152,10 @@ void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
     int h_total, h_cur, w;
     TbPixel colour;
 
-    dx = 15 * overall_scale >> 8;
-    dy = 10 * overall_scale >> 8;
-    h_total = -20 * overall_scale >> 8;
-    w = 2 * overall_scale >> 8;
+    dx = (15 * overall_scale) >> 8;
+    dy = (10 * overall_scale) >> 8;
+    h_total = -(20 * overall_scale) >> 8;
+    w = (2 * overall_scale) >> 8;
 
     sp_per_px = p_thing->U.UPerson.MaxShieldEnergy / dy;
     if (sp_per_px == 0)
@@ -198,64 +202,6 @@ void draw_unkn1_standard_sprite(ushort fr, int scr_x, int scr_y)
         sscr_y = scr_y + (p_el->Y >> 1);
         sscr_x = scr_x + (p_el->X >> 1);
         LbSpriteDraw(sscr_x, sscr_y, spr);
-    }
-    lbDisplay.DrawFlags = 0;
-}
-
-void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y, ushort scale, ushort alpha)
-{
-    struct Frame *p_frm;
-    struct Element *p_el;
-    int pos_x, pos_y;
-    int swidth, sheight;
-    int el;
-
-    pos_x = 99999;
-    pos_y = 99999;
-    lbSpriteReMapPtr = &pixmap.fade_table[256 * alpha];
-    //TODO would probably make more sense to set the ghost ptr somewhere during game setup
-    render_ghost = &pixmap.ghost_table[0*PALETTE_8b_COLORS];
-    p_frm = &frame[fr];
-
-    for (el = p_frm->FirstElement; ; el = p_el->Next)
-    {
-        p_el = &melement_ani[el];
-        if (p_el <= melement_ani)
-            break;
-        if (p_el->X >> 1 < pos_x)
-            pos_x = p_el->X >> 1;
-        if (p_el->Y >> 1 < pos_y)
-            pos_y = p_el->Y >> 1;
-    }
-
-    swidth = p_frm->SWidth;
-    sheight = p_frm->SHeight;
-    if ((swidth * scale >> 9 <= 1) || (sheight * scale >> 9 <= 1))
-        return;
-
-    LbSpriteSetScalingData(scr_x + (pos_x * scale >> 8), scr_y + (pos_y * scale >> 8),
-      swidth >> 1, sheight >> 1, swidth * scale >> 9, sheight * scale >> 9);
-
-    for (el = p_frm->FirstElement; ; el = p_el->Next)
-    {
-        struct TbSprite *spr;
-        int sscr_x, sscr_y;
-
-        p_el = &melement_ani[el];
-        if (p_el <= melement_ani)
-            break;
-        if ((p_el->Flags & 0xFE00) != 0)
-            continue;
-        spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
-        if (spr <= m_sprites)
-            continue;
-
-        lbDisplay.DrawFlags = p_el->Flags & 0x0F;
-        if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) == 0)
-            lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
-        sscr_x = (p_el->X >> 1) - pos_x;
-        sscr_y = (p_el->Y >> 1) - pos_y;
-        LbSpriteDrawUsingScalingData(sscr_x, sscr_y, spr);
     }
     lbDisplay.DrawFlags = 0;
 }

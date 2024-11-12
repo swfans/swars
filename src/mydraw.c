@@ -20,6 +20,7 @@
 #include "bfsprite.h"
 
 #include "display.h"
+#include "game_sprts.h"
 #include "swlog.h"
 /******************************************************************************/
 

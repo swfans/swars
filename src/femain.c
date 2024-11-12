@@ -33,6 +33,7 @@
 #include "guiboxes.h"
 #include "guitext.h"
 #include "game_speed.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "keyboard.h"
 #include "network.h"

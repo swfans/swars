@@ -27,6 +27,17 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum FaceGFlags {
+    FGFlg_Unkn01     = 0x01,
+    FGFlg_Unkn02     = 0x02,
+    FGFlg_Unkn04     = 0x04,
+    FGFlg_Unkn08     = 0x08,
+    FGFlg_Unkn10     = 0x10,
+    FGFlg_Unkn20     = 0x20,
+    FGFlg_Unkn40     = 0x40,
+    FGFlg_Unkn80     = 0x80,
+};
+
 struct SingleObjectFace3 { // sizeof=32
     short PointNo[3];
     ushort Texture;

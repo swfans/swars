@@ -19,6 +19,8 @@
 #include "engintrns.h"
 
 #include "display.h"
+#include "engindrwlstm.h"
+#include "enginzoom.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -105,15 +107,15 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     scr_x = dword_176D3C + scr_shx;
     if (scr_x < 0)
     {
-        flg |= 0x01;
         if (scr_x < -2000)
             scr_x = -2000;
+        flg |= 0x01;
     }
     else if (scr_x >= vec_window_width)
     {
-        flg |= 0x02;
         if (scr_x > 2000)
             scr_x = 2000;
+        flg |= 0x02;
     }
 
     if (game_perspective == 5)
@@ -124,18 +126,84 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     scr_y = dword_176D40 - scr_shy;
     if (scr_y < 0)
     {
-        flg |= 0x04;
         if (scr_y < -2000)
             scr_y = -2000;
+        flg |= 0x04;
     }
     else if (scr_y >= vec_window_height)
     {
-        flg |= 0x08;
         if (scr_y > 2000)
             scr_y = 2000;
+        flg |= 0x08;
     }
 
     flg |= 0x40;
+
+    p_sp->Flags = flg;
+    p_sp->X = scr_x;
+    p_sp->Y = scr_y;
+    p_sp->field_4 = fctr_d;
+}
+
+void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
+{
+    int fctr_a, fctr_b, fctr_c, fctr_d;
+    int scr_shx, scr_shy, sca_x, sca_y;
+    int scr_x, scr_y;
+    ubyte flg;
+
+    fctr_a = (dword_176D14 * dxc - dword_176D10 * dzc) >> 16;
+    fctr_b = (dword_176D10 * dxc + dword_176D14 * dzc) >> 16;
+    fctr_c = (dword_176D1C * dyc - dword_176D18 * fctr_b) >> 16;
+    fctr_d = (dword_176D18 * dyc + dword_176D1C * fctr_b) >> 16;
+    sca_x = overall_scale * fctr_a;
+    sca_y = overall_scale * fctr_c;
+    flg = 0;
+
+    if (fctr_d >= -500)
+    {
+        int dvfactor;
+        dvfactor = (fctr_d >> 2) + 500;
+        scr_shx = (1500 * sca_x / dvfactor) >> 9;
+        scr_shy = -(1500 * sca_y / dvfactor) >> 9;
+        flg |= 0x40;
+        fctr_d /= render_area_a / 20 + 1;
+    }
+    else
+    {
+        scr_shx = sca_x >> 8;
+        scr_shy = sca_y >> 8;
+        flg |= 0x20;
+    }
+
+    scr_x = dword_176D3C + scr_shx;
+    if (scr_x < 0)
+    {
+        if (scr_x < -2000)
+            scr_x = -2000;
+        flg |= 0x01;
+    }
+    else if (scr_x >= vec_window_width)
+    {
+        if (scr_x > 2000)
+            scr_x = 2000;
+        flg |= 0x02;
+    }
+
+    scr_y = dword_176D40 + scr_shy;
+    if (scr_y < 0)
+    {
+        if (scr_y < -2000)
+            scr_y = -2000;
+        flg |= 0x04;
+    }
+    else if (scr_y >= vec_window_height)
+    {
+        if (scr_y > 2000)
+            scr_y = 2000;
+        flg |= 0x08;
+    }
+
     p_sp->Flags = flg;
     p_sp->X = scr_x;
     p_sp->Y = scr_y;

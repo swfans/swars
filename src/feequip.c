@@ -30,6 +30,7 @@
 #include "display.h"
 #include "campaign.h"
 #include "cybmod.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "keyboard.h"
 #include "player.h"

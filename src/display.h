@@ -24,29 +24,17 @@ extern TbScreenMode screen_mode_fmvid_hi;
 extern ubyte game_high_resolution;
 
 extern ubyte *back_buffer;
-extern struct TbSprite *unk3_sprites;
 extern TbPixel fade_unaffected_colours[];
 extern TbPixel colour_lookup[];
+
+extern TbPixel colour_grey1;
+extern TbPixel colour_grey2;
+extern TbPixel colour_brown2;
 
 extern long engn_xc;
 extern long engn_yc;
 extern long engn_zc;
 extern long engn_anglexz;
-
-extern struct TbSprite *pointer_sprites;
-extern struct TbSprite *pointer_sprites_end;
-extern struct TbSprite *small_font;
-extern struct TbSprite *small_font_end;
-extern struct TbSprite *small2_font;
-extern struct TbSprite *small2_font_end;
-extern struct TbSprite *small_med_font;
-extern struct TbSprite *small_med_font_end;
-extern struct TbSprite *med_font;
-extern struct TbSprite *med_font_end;
-extern struct TbSprite *med2_font;
-extern struct TbSprite *med2_font_end;
-extern struct TbSprite *big_font;
-extern struct TbSprite *big_font_end;
 
 // TODO move engine texture atlas to separate file
 extern ubyte *vec_tmap[18];

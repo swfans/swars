@@ -27,6 +27,7 @@
 #include "bigmap.h"
 #include "command.h"
 #include "display.h"
+#include "drawtext.h"
 #include "player.h"
 #include "game.h"
 #include "game_speed.h"
