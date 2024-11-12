@@ -272,29 +272,29 @@ void filter_ranges_max_of_two(int ranges_len, struct Range *ranges_flt, struct R
     ranges_flt[rn].fin = ranges_flt[rn - 1].fin;
 }
 
-void lvdraw_do_objects(int prc_z_beg, uint ranges_x_len, struct Range *ranges_x)
+void lvdraw_do_objects(int cor_z_beg, uint ranges_x_len, struct Range *ranges_x)
 {
-    int prc_z;
-    int prc_x, prc_x_end;
+    int cor_z;
+    int cor_x, cor_x_end;
     uint rn;
 
-    prc_z = prc_z_beg;
+    cor_z = cor_z_beg;
     for (rn = 0; rn < ranges_x_len; rn++)
     {
-        prc_x = ranges_x[rn + 1].beg;
-        prc_x_end = ranges_x[rn + 1].fin;
-        for (; prc_x <= prc_x_end; prc_x += (1 << 8))
+        cor_x = ranges_x[rn + 1].beg;
+        cor_x_end = ranges_x[rn + 1].fin;
+        for (; cor_x <= cor_x_end; cor_x += (1 << 8))
         {
             struct Thing *p_objtng;
             struct MyMapElement *p_mapel;
             ThingIdx objtng;
             short tile_x, tile_z;
 
-            if ((prc_x <= 0) || (prc_x >= 0x8000) || (prc_z <= 0) || (prc_z >= 0x8000))
+            if ((cor_x <= 0) || (cor_x >= 0x8000) || (cor_z <= 0) || (cor_z >= 0x8000))
                 continue;
 
-            tile_z = prc_z >> 8;
-            tile_x = prc_x >> 8;
+            tile_z = cor_z >> 8;
+            tile_x = cor_x >> 8;
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
             objtng = game_col_vects_list[p_mapel->ColHead].Object;
             if (objtng > 0)
@@ -304,7 +304,7 @@ void lvdraw_do_objects(int prc_z_beg, uint ranges_x_len, struct Range *ranges_x)
                     draw_thing_object(p_objtng);
             }
         }
-        prc_z += (1 << 8);
+        cor_z += (1 << 8);
     }
 }
 
@@ -382,7 +382,7 @@ void func_218D3(void)
     }
 
     elpv_z = elcr_z;
-    elcr_z += 256;
+    elcr_z += TILE_TO_MAPCOORD(1, 0);
     shift_b++;
     while (shift_b < render_area_b && elcr_z < 0x8000)
     {
@@ -532,7 +532,7 @@ void func_218D3(void)
     }
 }
 
-void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smrang_x, struct Range *ranges_x)
+void func_2e440_fill_drawlist(int cor_z_beg, int ranges_x_len, struct Range *smrang_x, struct Range *ranges_x)
 {
     struct ShEnginePoint loc_unknarrD[(RENDER_AREA_MAX+1)*4];
     struct FloorTile *p_floortl;
@@ -543,8 +543,8 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
     word_19CC66 = (engn_zc & 0xFF00) - (render_area_b << 7);
 
     p_floortl = &game_floor_tiles[1];
-    elcr_z = prc_z_beg;
-    elpv_z = prc_z_beg - TILE_TO_MAPCOORD(1, 0);
+    elcr_z = cor_z_beg;
+    elpv_z = cor_z_beg - TILE_TO_MAPCOORD(1, 0);
 
     rn = 0;
     { // Separate first row from the rest as it has no previous
@@ -597,12 +597,10 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
         p_spcr = &loc_unknarrD[2 * (elcr_x >> 8) + ((rn) & 1)];
         while (elcr_x <= ranges_x[rn].fin)
         {
+            struct MyMapElement *p_mapel;
+            struct ShEnginePoint *p_spad;
             int depth, dpthalt;
             ubyte ditype;
-
-            struct ShEnginePoint *v76;
-            struct ShEnginePoint *v85;
-            struct MyMapElement *p_mapel;
 
             dpthalt = 0;
             if (next_super_quick_light > SUPER_QUICK_LIGHTS_MAX - 3) {
@@ -631,15 +629,15 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
                 depth = p_spnx->Depth;
             fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 1, p_spnx, 1, p_spnx);
 
-            v76 = p_spcr + 2;
-            if (depth < v76->Depth)
-                depth = v76->Depth;
-            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 128 + 1, v76, 2, p_spnx);
+            p_spad = p_spcr + 2;
+            if (depth < p_spad->Depth)
+                depth = p_spad->Depth;
+            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 128 + 1, p_spad, 2, p_spnx);
 
-            v85 = v76 - 2;
-            if (depth < v85->Depth)
-                depth = v85->Depth;
-            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 128, v85, 3, p_spnx);
+            p_spad = p_spcr;
+            if (depth < p_spad->Depth)
+                depth = p_spad->Depth;
+            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 128, p_spad, 3, p_spnx);
 
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
             if (p_mapel->Texture != 0)
@@ -699,7 +697,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
             next_super_quick_light++;
 
             p_floortl++;
-            p_spcr = v85 + 2;
+            p_spcr = p_spad + 2;
             elcr_x += TILE_TO_MAPCOORD(1, 0);
         }
         elpv_z += TILE_TO_MAPCOORD(1, 0);
@@ -720,13 +718,13 @@ void func_2e440(void)
     struct Range smrang_x[160];
     struct Range ranges_x[160];
     struct TbPoint bound_pts[4];
-    int prc_z_beg, ranges_x_len;
+    int cor_z_beg, ranges_x_len;
 
     next_super_quick_light = 1;
 
     slt_zmin = lvdraw_fill_bound_points(bound_pts);
 
-    prc_z_beg = bound_pts[slt_zmin].y << 8;
+    cor_z_beg = bound_pts[slt_zmin].y << 8;
 
     ranges_x_len = lvdraw_fill_ranges_x(slt_zmin, ranges_x, bound_pts);
 
@@ -748,9 +746,9 @@ void func_2e440(void)
     byte_176D49 = ((angXZ + 128) >> 8) & 0x7;
     byte_19EC7A = byte_176D48;
 
-    lvdraw_do_objects(prc_z_beg, ranges_x_len, ranges_x);
+    lvdraw_do_objects(cor_z_beg, ranges_x_len, ranges_x);
 
-    func_2e440_fill_drawlist(prc_z_beg, ranges_x_len, smrang_x, ranges_x);
+    func_2e440_fill_drawlist(cor_z_beg, ranges_x_len, smrang_x, ranges_x);
 
     vec_map = vec_tmap[1];
 
