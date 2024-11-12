@@ -416,113 +416,113 @@ void func_218D3(void)
         elcr_x = word_19CC64;
         while (shift_a < render_area_a)
         {
-          int dpthalt;
+            int dpthalt;
 
-          dpthalt = 0;
-          if (next_super_quick_light > SUPER_QUICK_LIGHTS_MAX - 3) {
-              break;
-          }
-          p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
+            dpthalt = 0;
+            if (next_super_quick_light > SUPER_QUICK_LIGHTS_MAX - 3) {
+                break;
+            }
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
 
-          if (((p_spcr[2].Flags | p_spnx[2].Flags | p_spcr->Flags | p_spnx->Flags) & 0x20) != 0
-            || ((p_spnx[2].Flags & p_spcr->Flags & p_spnx->Flags & p_spcr[2].Flags) & 0x0F) != 0
-            || (elcr_x <= 0) || (elcr_x >= 0x8000) || (elcr_z <= 0) || (elcr_z >= 0x8000)
-            || ((game_perspective != 2) && ((p_mapel->Flags & 0x80) != 0)))
-          {
-              p_sqlight++;
-              p_spcr += 2;
-              p_spnx += 2;
-          }
-          else
-          {
-              int depth;
-              ubyte ditype;
+            if (((p_spcr[2].Flags | p_spnx[2].Flags | p_spcr->Flags | p_spnx->Flags) & 0x20) != 0
+              || ((p_spnx[2].Flags & p_spcr->Flags & p_spnx->Flags & p_spcr[2].Flags) & 0x0F) != 0
+              || (elcr_x <= 0) || (elcr_x >= 0x8000) || (elcr_z <= 0) || (elcr_z >= 0x8000)
+              || ((game_perspective != 2) && ((p_mapel->Flags & 0x80) != 0)))
+            {
+                p_sqlight++;
+                p_spcr += 2;
+                p_spnx += 2;
+            }
+            else
+            {
+                int depth;
+                ubyte ditype;
 
-              depth = INT_MIN;
+                depth = INT_MIN;
 
-              if (depth < p_spnx->Depth)
-                  depth = p_spnx->Depth;
-              fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
+                if (depth < p_spnx->Depth)
+                    depth = p_spnx->Depth;
+                fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
 
-              p_spnx += 2;
-              p_sqlight += 1;
-              if (depth < p_spnx->Depth)
-                  depth = p_spnx->Depth;
-              fill_floor_tile_pos_and_shade(p_floortl, p_mapel + 1, 1, p_sqlight, p_spnx);
+                p_spnx += 2;
+                p_sqlight += 1;
+                if (depth < p_spnx->Depth)
+                    depth = p_spnx->Depth;
+                fill_floor_tile_pos_and_shade(p_floortl, p_mapel + 1, 1, p_sqlight, p_spnx);
 
-              p_spcr += 2;
-              p_sqlight += render_area_a;
-              if (depth < p_spcr->Depth)
-                  depth = p_spcr->Depth;
-              fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH + 1, 2, p_sqlight, p_spcr);
+                p_spcr += 2;
+                p_sqlight += render_area_a;
+                if (depth < p_spcr->Depth)
+                    depth = p_spcr->Depth;
+                fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH + 1, 2, p_sqlight, p_spcr);
 
-              p_spcr -= 2;
-              p_sqlight -= 1;
-              if (depth < p_spcr->Depth)
-                  depth = p_spcr->Depth;
-              fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH, 3, p_sqlight, p_spcr);
+                p_spcr -= 2;
+                p_sqlight -= 1;
+                if (depth < p_spcr->Depth)
+                    depth = p_spcr->Depth;
+                fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH, 3, p_sqlight, p_spcr);
 
-              p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
-              if (p_mapel->Texture != 0)
-              {
-                  struct SingleFloorTexture *p_fltextr;
-                  p_floortl->Flags2 = 0;
-                  p_fltextr = &game_textures[p_mapel->Texture & 0x3FFF];
-                  if ((p_mapel->Texture & 0x8000) != 0)
-                  {
-                      p_floortl->Flags2 = 1;
-                      if (byte_1C8444)
-                      {
-                          int alt;
-                          if (p_mapel->Alt <= 0)
-                            alt = 15000 * overall_scale;
-                          else
-                            alt = 500 * overall_scale;
-                          dpthalt = alt >> 8;
-                      }
-                      else
-                      {
-                          if (p_mapel->Alt <= 0)
-                            dpthalt = 3500;
-                          else
-                            dpthalt = 2500;
-                      }
-                  }
-                  p_floortl->Texture = p_fltextr;
-                  if ((p_mapel->Flags & 0x20) != 0)
-                      p_floortl->Flags = 0x10|0x04|0x01;
-                  else
-                      p_floortl->Flags = 0x04|0x01;
-              }
-              else
-              {
-                  p_floortl->Flags = 0x04;
-                  p_floortl->Col = colour_grey2;
-              }
-              if ((p_mapel->Flags & 0x01) != 0)
-              {
-                  p_floortl->Shade[0] = 0x3F00;
-                  p_floortl->Shade[1] = 0x3F00;
-                  p_floortl->Shade[2] = 0x3F00;
-                  p_floortl->Shade[3] = 0x3F00;
-              }
-              if ((p_mapel->Flags & 0x08) != 0)
-                  p_floortl->Flags2 |= 0x02;
-              dpthalt += 200;
-              p_floortl->Flags2 = p_mapel->Flags;
-              p_floortl->Offset = p_mapel - game_my_big_map;
-              p_floortl->Flags2b = p_mapel->Flags2;
-              p_floortl->Page = p_mapel->ColumnHead >> 12;
-              p_floortl++;
-               if ((p_mapel->Texture & 0x4000) != 0)
-                  ditype = DrIT_Unkn6;
-              else
-                  ditype = DrIT_Unkn4;
-              draw_item_add(ditype, next_super_quick_light, depth + 5000 + dpthalt);
+                p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
+                if (p_mapel->Texture != 0)
+                {
+                    struct SingleFloorTexture *p_fltextr;
+                    p_floortl->Flags2 = 0;
+                    p_fltextr = &game_textures[p_mapel->Texture & 0x3FFF];
+                    if ((p_mapel->Texture & 0x8000) != 0)
+                    {
+                        p_floortl->Flags2 = 1;
+                        if (byte_1C8444)
+                        {
+                            int alt;
+                            if (p_mapel->Alt <= 0)
+                              alt = 15000 * overall_scale;
+                            else
+                              alt = 500 * overall_scale;
+                            dpthalt = alt >> 8;
+                        }
+                        else
+                        {
+                            if (p_mapel->Alt <= 0)
+                              dpthalt = 3500;
+                            else
+                              dpthalt = 2500;
+                        }
+                    }
+                    p_floortl->Texture = p_fltextr;
+                    if ((p_mapel->Flags & 0x20) != 0)
+                        p_floortl->Flags = 0x10|0x04|0x01;
+                    else
+                        p_floortl->Flags = 0x04|0x01;
+                }
+                else
+                {
+                    p_floortl->Flags = 0x04;
+                    p_floortl->Col = colour_grey2;
+                }
+                dpthalt += 200;
 
-              p_sqlight += -render_area_a + 1;
-              p_spcr += 2;
-              ++next_super_quick_light;
+                if ((p_mapel->Flags & 0x01) != 0)
+                {
+                    p_floortl->Shade[0] = 0x3F00;
+                    p_floortl->Shade[1] = 0x3F00;
+                    p_floortl->Shade[2] = 0x3F00;
+                    p_floortl->Shade[3] = 0x3F00;
+                }
+
+                p_floortl->Flags2 = p_mapel->Flags;
+                p_floortl->Flags2b = p_mapel->Flags2;
+                if ((p_mapel->Flags & 0x08) != 0)
+                    p_floortl->Flags2 |= 0x02;
+                p_floortl->Offset = p_mapel - game_my_big_map;
+                p_floortl->Page = p_mapel->ColumnHead >> 12;
+
+                ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
+                draw_item_add(ditype, next_super_quick_light, depth + 5000 + dpthalt);
+                next_super_quick_light++;
+
+                p_floortl++;
+                p_sqlight += -render_area_a + 1;
+                p_spcr += 2;
             }
             shift_a++;
             elcr_x += TILE_TO_MAPCOORD(1, 0);
@@ -572,28 +572,25 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
 
     for (rn = 1; rn < ranges_x_len; rn++)
     {
-        struct MyMapElement *p_mapel1;
+        struct MyMapElement *p_mapel;
         struct ShEnginePoint *p_spcr;
         struct ShEnginePoint *p_spnx;
         int elcr_x;
 
-        struct MyMapElement *p_mapel2;
-
         elcr_x = smrang_x[rn].beg;
         p_spcr = &loc_unknarrD[2 * (elcr_x >> 8) + (rn & 1)];
-        p_mapel1 = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (elcr_x >> 8)];
-        p_mapel2 = p_mapel1;
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (elcr_x >> 8)];
         while (elcr_x <= smrang_x[rn].fin)
         {
             int elcr_y;
 
-            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel2, elcr_x, elcr_z, 8);
+            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 8);
             transform_shpoint_fpv(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
             p_spcr->Shade = -1;
 
             p_spcr += 2;
             elcr_x += TILE_TO_MAPCOORD(1, 0);
-            p_mapel2++;
+            p_mapel++;
         }
 
         elcr_x = ranges_x[rn].beg;
@@ -605,7 +602,7 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
 
             struct ShEnginePoint *v76;
             struct ShEnginePoint *v85;
-            struct MyMapElement *p_mapel6;
+            struct MyMapElement *p_mapel;
             ubyte v105;
             ubyte v106;
             struct MyMapElement *p_mapel7;
@@ -648,22 +645,22 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
                     depth = v85->Depth;
                 fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel7 + 128, v85, 3, p_spnx);
 
-                p_mapel6 = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
-                if (p_mapel6->Texture != 0)
+                p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elpv_z >> 8) + (elcr_x >> 8)];
+                if (p_mapel->Texture != 0)
                 {
                     struct SingleFloorTexture *p_fltextr;
                     short fltextr;
 
-                    fltextr = p_mapel6->Texture & 0x3FFF;
+                    fltextr = p_mapel->Texture & 0x3FFF;
                     p_floortl->Flags2 = 0;
                     p_fltextr = &game_textures[fltextr];
-                    if ((p_mapel6->Texture & 0x8000) != 0)
+                    if ((p_mapel->Texture & 0x8000) != 0)
                     {
                       p_floortl->Flags2 = 1;
                       if (byte_1C8444)
                       {
                           uint tmp;
-                          if (p_mapel6->Alt <= 0)
+                          if (p_mapel->Alt <= 0)
                               tmp = 15000 * overall_scale;
                           else
                               tmp = 500 * overall_scale;
@@ -671,43 +668,42 @@ void func_2e440_fill_drawlist(int prc_z_beg, int ranges_x_len, struct Range *smr
                       }
                       else
                       {
-                          if (p_mapel6->Alt <= 0)
+                          if (p_mapel->Alt <= 0)
                               dpthalt = 2000;
                           else
                               dpthalt = 1000;
                       }
                     }
                     p_floortl->Texture = p_fltextr;
-                    p_floortl->Flags = (p_mapel6->Flags & 0x20) != 0 ? 21 : 5;
-                    p_floortl->Page = (int)(ushort)p_mapel6->ColumnHead >> 12;
+                    p_floortl->Flags = (p_mapel->Flags & 0x20) != 0 ? 21 : 5;
+                    p_floortl->Page = (int)(ushort)p_mapel->ColumnHead >> 12;
                 }
                 else
                 {
                     p_floortl->Flags = 4;
                     p_floortl->Col = colour_grey2;
                 }
-                if ((p_mapel6->Flags & 0x01) != 0)
+
+                if ((p_mapel->Flags & 0x01) != 0)
                 {
                     p_floortl->Shade[0] = 0x3F00;
                     p_floortl->Shade[1] = 0x3F00;
                     p_floortl->Shade[2] = 0x3F00;
                     p_floortl->Shade[3] = 0x3F00;
                 }
-                if ((p_mapel6->Flags & 0x08) != 0)
+
+                p_floortl->Flags2 = p_mapel->Flags;
+                p_floortl->Flags2b = p_mapel->Flags2;
+                if ((p_mapel->Flags & 0x08) != 0)
                     p_floortl->Flags2 |= 0x02;
+                p_floortl->Offset = p_mapel - game_my_big_map;
 
-                p_floortl->Flags2 = p_mapel6->Flags;
-                p_floortl->Flags2b = p_mapel6->Flags2;
-                p_floortl->Offset = p_mapel6 - game_my_big_map;
-
-                ditype = (p_mapel6->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
-
-                if (!draw_item_add(ditype, next_super_quick_light, depth + 5000 + dpthalt))
-                    break;
+                ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
+                draw_item_add(ditype, next_super_quick_light, depth + 5000 + dpthalt);
+                next_super_quick_light++;
 
                 p_floortl++;
                 p_spcr = v85 + 2;
-                next_super_quick_light++;
             }
             elcr_x += TILE_TO_MAPCOORD(1, 0);
         }
