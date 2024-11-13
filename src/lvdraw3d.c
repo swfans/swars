@@ -472,14 +472,9 @@ void func_218D3(void)
             dpthalt += 200;
 
             ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
-            if (next_floor_tile >= 18000) // mem_game[26].N
+            p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
+            if (p_floortl == NULL)
                 break;
-            //TODO change to using: p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
-            p_floortl = &game_floor_tiles[next_floor_tile];
-
-            if (!draw_item_add(ditype, next_floor_tile, depth + 5000 + dpthalt))
-                break;
-            next_floor_tile++;
 
             fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
 
@@ -656,14 +651,9 @@ void func_2e440_fill_drawlist(int cor_z_beg, int ranges_x_len, struct Range *smr
             }
 
             ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
-            if (next_floor_tile >= 18000) // mem_game[26].N
+            p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
+            if (p_floortl == NULL)
                 break;
-            //TODO change to using: p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
-            p_floortl = &game_floor_tiles[next_floor_tile];
-
-            if (!draw_item_add(ditype, next_floor_tile, depth + 5000 + dpthalt))
-                break;
-            next_floor_tile++;
 
             fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel, p_spnx, 0, p_spnx);
 
