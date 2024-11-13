@@ -435,35 +435,16 @@ void func_218D3(void)
                 continue;
             }
 
-            ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
-            if (next_floor_tile >= 18000) // mem_game[26].N
-                break;
-            //TODO change to using: p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
-            p_floortl = &game_floor_tiles[next_floor_tile];
-
             depth = INT_MIN;
 
-            if (depth < p_spnx->Depth)
-                depth = p_spnx->Depth;
-            fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
-
-            p_spnx += 2;
-            p_sqlight += 1;
-            if (depth < p_spnx->Depth)
-                depth = p_spnx->Depth;
-            fill_floor_tile_pos_and_shade(p_floortl, p_mapel + 1, 1, p_sqlight, p_spnx);
-
-            p_spcr += 2;
-            p_sqlight += render_area_a;
-            if (depth < p_spcr->Depth)
-                depth = p_spcr->Depth;
-            fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH + 1, 2, p_sqlight, p_spcr);
-
-            p_spcr -= 2;
-            p_sqlight -= 1;
-            if (depth < p_spcr->Depth)
-                depth = p_spcr->Depth;
-            fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH, 3, p_sqlight, p_spcr);
+            if (depth < p_spnx[0].Depth)
+                depth = p_spnx[0].Depth;
+            if (depth < p_spnx[2].Depth)
+                depth = p_spnx[2].Depth;
+            if (depth < p_spcr[2].Depth)
+                depth = p_spcr[2].Depth;
+            if (depth < p_spcr[0].Depth)
+                depth = p_spcr[0].Depth;
 
             floor_flags2 = 0;
 
@@ -490,9 +471,29 @@ void func_218D3(void)
             }
             dpthalt += 200;
 
+            ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
+            if (next_floor_tile >= 18000) // mem_game[26].N
+                break;
+            //TODO change to using: p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
+            p_floortl = &game_floor_tiles[next_floor_tile];
+
             if (!draw_item_add(ditype, next_floor_tile, depth + 5000 + dpthalt))
                 break;
             next_floor_tile++;
+
+            fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
+
+            p_spnx += 2;
+            p_sqlight += 1;
+            fill_floor_tile_pos_and_shade(p_floortl, p_mapel + 1, 1, p_sqlight, p_spnx);
+
+            p_spcr += 2;
+            p_sqlight += render_area_a;
+            fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH + 1, 2, p_sqlight, p_spcr);
+
+            p_spcr -= 2;
+            p_sqlight -= 1;
+            fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH, 3, p_sqlight, p_spcr);
 
             if (p_mapel->Texture != 0)
             {
@@ -500,13 +501,13 @@ void func_218D3(void)
                 p_fltextr = &game_textures[p_mapel->Texture & 0x3FFF];
                 p_floortl->Texture = p_fltextr;
                 if ((p_mapel->Flags & 0x20) != 0)
-                    p_floortl->Flags = 21;
+                    p_floortl->Flags = RendVec_mode21;
                 else
-                    p_floortl->Flags = 5;
+                    p_floortl->Flags = RendVec_mode05;
             }
             else
             {
-                p_floortl->Flags = 4;
+                p_floortl->Flags = RendVec_mode04;
                 p_floortl->Col = colour_grey2;
             }
 
@@ -619,32 +620,16 @@ void func_2e440_fill_drawlist(int cor_z_beg, int ranges_x_len, struct Range *smr
                 continue;
             }
 
-            ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
-            if (next_floor_tile >= 18000) // mem_game[26].N
-                break;
-            //TODO change to using: p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
-            p_floortl = &game_floor_tiles[next_floor_tile];
-
             depth = INT_MIN;
 
-            if (depth < p_spnx->Depth)
-                depth = p_spnx->Depth;
-            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel, p_spnx, 0, p_spnx);
-
-            p_spnx += 2;
-            if (depth < p_spnx->Depth)
-                depth = p_spnx->Depth;
-            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 1, p_spnx, 1, p_spnx);
-
-            p_spad = p_spcr + 2;
-            if (depth < p_spad->Depth)
-                depth = p_spad->Depth;
-            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 128 + 1, p_spad, 2, p_spnx);
-
-            p_spad = p_spcr;
-            if (depth < p_spad->Depth)
-                depth = p_spad->Depth;
-            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 128, p_spad, 3, p_spnx);
+            if (depth < p_spnx[0].Depth)
+                depth = p_spnx[0].Depth;
+            if (depth < p_spnx[2].Depth)
+                depth = p_spnx[2].Depth;
+            if (depth < p_spcr[2].Depth)
+                depth = p_spcr[2].Depth;
+            if (depth < p_spcr[0].Depth)
+                depth = p_spcr[0].Depth;
 
             floor_flags2 = 0;
 
@@ -670,21 +655,41 @@ void func_2e440_fill_drawlist(int cor_z_beg, int ranges_x_len, struct Range *smr
                 }
             }
 
+            ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
+            if (next_floor_tile >= 18000) // mem_game[26].N
+                break;
+            //TODO change to using: p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
+            p_floortl = &game_floor_tiles[next_floor_tile];
+
             if (!draw_item_add(ditype, next_floor_tile, depth + 5000 + dpthalt))
                 break;
             next_floor_tile++;
+
+            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel, p_spnx, 0, p_spnx);
+
+            p_spnx += 2;
+            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 1, p_spnx, 1, p_spnx);
+
+            p_spad = p_spcr + 2;
+            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 128 + 1, p_spad, 2, p_spnx);
+
+            p_spad = p_spcr;
+            fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel + 128, p_spad, 3, p_spnx);
 
             if (p_mapel->Texture != 0)
             {
                 struct SingleFloorTexture *p_fltextr;
                 p_fltextr = &game_textures[p_mapel->Texture & 0x3FFF];
                 p_floortl->Texture = p_fltextr;
-                p_floortl->Flags = (p_mapel->Flags & 0x20) != 0 ? 21 : 5;
+                if ((p_mapel->Flags & 0x20) != 0)
+                    p_floortl->Flags = RendVec_mode21;
+                else
+                    p_floortl->Flags = RendVec_mode05;
                 p_floortl->Page = (int)(ushort)p_mapel->ColumnHead >> 12;
             }
             else
             {
-                p_floortl->Flags = 4;
+                p_floortl->Flags = RendVec_mode04;
                 p_floortl->Col = colour_grey2;
             }
 
