@@ -333,10 +333,10 @@ void fill_floor_tile_pos_and_shade_fading(struct FloorTile *p_floortl, struct My
     p_mapel->ShadeR = p_dsp->Shade >> 9;
 }
 
-void func_218D3(void)
+void lvdraw_do_floor(void)
 {
 #if 0
-    asm volatile ("call ASM_func_218D3\n"
+    asm volatile ("call ASM_lvdraw_do_floor\n"
         :  :  : "eax" );
     return;
 #endif
@@ -532,7 +532,7 @@ void func_218D3(void)
     }
 }
 
-void func_2e440_fill_drawlist(int cor_z_beg, int ranges_x_len, struct Range *smrang_x, struct Range *ranges_x)
+void lvdraw_do_floor_flyby(int cor_z_beg, int ranges_x_len, struct Range *smrang_x, struct Range *ranges_x)
 {
     struct ShEnginePoint loc_unknarrD[(RENDER_AREA_MAX+1)*4];
     int elcr_z, elpv_z; // Coord Z for current and previous map element
@@ -748,7 +748,7 @@ void func_2e440(void)
 
     lvdraw_do_objects(cor_z_beg, ranges_x_len, ranges_x);
 
-    func_2e440_fill_drawlist(cor_z_beg, ranges_x_len, smrang_x, ranges_x);
+    lvdraw_do_floor_flyby(cor_z_beg, ranges_x_len, smrang_x, ranges_x);
 
     vec_map = vec_tmap[1];
 

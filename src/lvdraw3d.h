@@ -35,7 +35,7 @@ extern ubyte byte_1C8444;
 void clear_super_quick_lights(void);
 void reset_draw_floor_tiles(void);
 
-void func_218D3(void);
+void lvdraw_do_floor(void);
 void func_2e440(void);
 
 void draw_screen(void);

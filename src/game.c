@@ -1555,7 +1555,7 @@ void process_engine_unk3(void)
         if (game_perspective == 6) {
             draw_background_stars();
         } else {
-            func_218D3();
+            lvdraw_do_floor();
         }
     }
 
