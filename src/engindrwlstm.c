@@ -23,6 +23,7 @@
 #include "bfmath.h"
 #include "bfutility.h"
 
+#include "bigmap.h"
 #include "display.h"
 #include "enginbckt.h"
 #include "engindrwlstx.h"
@@ -659,62 +660,48 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
         : "=r" (ret) : "a" (offset_x), "d" (offset_y), "b" (offset_z), "c" (point_object), "g" (p_thing));
     return ret;
 #endif
-    int i;
-    int v213, v215, bckt_max;
+    int i, bckt_max;
+    ushort faceWH, faceGF;
 
     bckt_max = 0;
 
-    v215 = 0;
-    if ((p_thing->Type == TT_UNKN35) || (p_thing->SubType == SubTT_VEH_TRAIN))
-        goto LABEL_25;
+    faceGF = 0;
+    if ((p_thing->Type != TT_UNKN35) && (p_thing->SubType != SubTT_VEH_TRAIN))
+    {
+        short pos_x, pos_z;
+        ushort darken;
 
-    if (p_thing->X >= 0x80000)
-    {
-        if (p_thing->X <= 0x780000)
-            goto LABEL_14;
-        v215 = (0x800000 - p_thing->X) >> 15;
-    }
-    else
-    {
-        v215 = p_thing->X >> 15;
-    }
-    if (v215 > 7)
-        v215 = 7;
-    if (v215 <= 0)
-        v215 = 1;
-    v215 *= 4;
+        pos_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
+        pos_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
 
-LABEL_14:
+        darken = 9;
+        if (pos_x < TILE_TO_MAPCOORD(8, 0))
+            darken = min(darken, pos_x >> 7);
+        else if (pos_x > TILE_TO_MAPCOORD(MAP_TILE_WIDTH - 8, 0))
+            darken = min(darken, (MAP_COORD_WIDTH - pos_x) >> 7);
+        else if (pos_z < TILE_TO_MAPCOORD(8, 0))
+            darken = min(darken, pos_z >> 7);
+        else if (pos_z > TILE_TO_MAPCOORD(MAP_TILE_HEIGHT - 8, 0))
+            darken = min(darken, (MAP_COORD_HEIGHT - pos_z) >> 7);
 
-    if (p_thing->Z >= 0x80000)
-    {
-      if (p_thing->Z <= 0x780000)
-        goto LABEL_25;
-      v215 = (0x800000 - p_thing->Z) >> 15;
-      if (v215 > 7)
-        v215 = 7;
-      if (v215 <= 0)
-        v215 = 1;
+        if (darken < 9)
+        {
+            if (darken > 7)
+                darken = 7;
+            if (darken <= 0)
+                darken = 1;
+            faceGF |= (darken << 2);
+        }
     }
-    else
-    {
-      v215 = p_thing->Z >> 15;
-      if (v215 > 7)
-        v215 = 7;
-      if (v215 <= 0)
-        v215 = 1;
-    }
-    v215 *= 4;
-LABEL_25:
 
     if ((p_thing->Flag & 0x01000000) != 0)
     {
-      p_thing->Flag &= ~0x01000000;
-      v213 = 11 - (gameturn & 3);
+        p_thing->Flag &= ~0x01000000;
+        faceWH = 11 - (gameturn & 3);
     }
     else
     {
-      v213 = 0;
+      faceWH = 0;
     }
 
     if (current_map == 9) // map009 Singapore on-water map
@@ -765,9 +752,9 @@ LABEL_25:
             break;
 
         p_face = &game_object_faces[face];
-        p_face->WalkHeader = v213;
         p_face->GFlags &= ~0x1C;
-        p_face->GFlags |= v215;
+        p_face->GFlags |= faceGF;
+        p_face->WalkHeader = faceWH;
 
         transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
           p_thing->U.UPerson.ComCur, p_face->PointNo[0]);
@@ -814,18 +801,14 @@ LABEL_25:
         struct ShEnginePoint sp1, sp2, sp3, sp4;
         struct SingleObjectFace4 *p_face4;
         int depth_max, bckt;
-        ubyte v65, v66, v67;
 
         if (next_screen_point > mem_game[30].N - 5)
             break;
 
         p_face4 = &game_object_faces4[face_beg + i];
-        v65 = p_face4->GFlags & 0xE3;
-        v66 = v215;
-        p_face4->GFlags = v65;
-        v67 = v66 | v65;
-        p_face4->WalkHeader = v213;
-        p_face4->GFlags = v67;
+        p_face4->GFlags &= ~0x1C;
+        p_face4->GFlags |= faceGF;
+        p_face4->WalkHeader = faceWH;
 
         transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
           p_thing->U.UPerson.ComCur, p_face4->PointNo[0]);
@@ -869,6 +852,7 @@ LABEL_25:
         }
     }
 
+    // Plasma jumps when a vehicle got influenced by explosion or is crashing
     if ((p_thing->Type == TT_VEHICLE) && (p_thing->State == VehSt_UNKN_45 ||
       (p_thing->U.UVehicle.WorkPlace & VWPFlg_Unkn0080) != 0))
     {
