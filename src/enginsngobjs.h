@@ -157,7 +157,7 @@ struct SingleObject { // sizeof=36
   ushort NextObject;
   ushort StartFace4;
   ushort NumbFaces4;
-  ushort ZScale;
+  short ThingNo;
   short OffsetX;
   short OffsetY;
   short OffsetZ;

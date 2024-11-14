@@ -61,7 +61,7 @@ extern ushort prim_unknprop01;
 
 void read_primveh_obj(const char *fname, int a2);
 
-void func_6031c(short tx, short tz, short a3, short ty);
+void sub_6031C(short tx, short tz, short a3, short ty);
 /******************************************************************************/
 #ifdef __cplusplus
 }

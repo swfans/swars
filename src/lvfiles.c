@@ -248,7 +248,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 byte_1C83D1 = 0;
 
                 n = next_normal;
-                func_6031c(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),
+                sub_6031C(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),
                   -prim_unknprop01 - p_thing->StartFrame, PRCCOORD_TO_MAPCOORD(p_thing->Y));
                 k = next_normal;
                 unkn_object_shift_03(next_object - 1);
@@ -256,7 +256,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 
                 k = p_thing - things;
                 p_thing->U.UVehicle.Object = next_object - 1;
-                game_objects[next_object - 1].ZScale = k;
+                game_objects[next_object - 1].ThingNo = k;
                 VNAV_unkn_func_207(p_thing);
                 k = p_thing->U.UVehicle.MatrixIndex;
                 angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
