@@ -1214,7 +1214,7 @@ void draw_floor_tile1b(ushort tl)
         point1.U = p_sftex->TMapX4 << 16;
         point1.V = p_sftex->TMapY4 << 16;
         point4.U = p_sftex->TMapX2 << 16;
-        point4.V = p_sftex->TMapY1 << 16;
+        point4.V = p_sftex->TMapY2 << 16;
     }
     point1.X = p_floortl->X[0];
     point1.Y = p_floortl->Y[0];
