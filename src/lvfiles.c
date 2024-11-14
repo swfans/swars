@@ -258,15 +258,26 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 p_thing->U.UVehicle.Object = next_object - 1;
                 game_objects[next_object - 1].ThingNo = k;
                 VNAV_unkn_func_207(p_thing);
-                k = p_thing->U.UVehicle.MatrixIndex;
-                angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
-                p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
+                {
+                    k = p_thing->U.UVehicle.MatrixIndex;
+                    angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
+                    p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
+                }
 
                 veh_add(p_thing, p_thing->StartFrame);
-                k = p_thing->U.UVehicle.MatrixIndex;
-                angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
-                p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
-                if (p_thing->SubType == SubTT_VEH_MECH)
+
+                if (p_thing->SubType == SubTT_VEH_TANK)
+                {
+                    if (p_thing->U.UVehicle.SubThing != 0)
+                    {
+                        struct Thing *p_mgun;
+                        p_mgun = &things[p_thing->U.UVehicle.SubThing];
+                        k = p_mgun->U.UVehicle.MatrixIndex;
+                        angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
+                        p_mgun->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
+                    }
+                }
+                else if (p_thing->SubType == SubTT_VEH_MECH)
                 {
                     if (!mech_initialized)
                     {
