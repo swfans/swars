@@ -720,7 +720,7 @@ void func_2e440(void)
     struct TbPoint bound_pts[4];
     int cor_z_beg, ranges_x_len;
 
-    next_floor_tile = 1;
+    reset_drawlist();
 
     slt_zmin = lvdraw_fill_bound_points(bound_pts);
 
@@ -834,11 +834,6 @@ void clear_super_quick_lights(void)
         p_sqlight = &super_quick_light[i];
         *p_sqlight = 0;
     }
-}
-
-void reset_draw_floor_tiles(void)
-{
-    next_floor_tile = 1;
 }
 
 void draw_screen(void)

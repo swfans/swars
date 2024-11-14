@@ -33,7 +33,6 @@ extern "C" {
 extern ubyte byte_1C8444;
 
 void clear_super_quick_lights(void);
-void reset_draw_floor_tiles(void);
 
 void lvdraw_do_floor(void);
 void func_2e440(void);

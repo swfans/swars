@@ -327,20 +327,30 @@ void reset_drawlist(void)
 {
     tnext_screen_point = next_screen_point;
     next_screen_point = 0;
+
     next_sort_line = 0;
+    p_current_sort_line = &game_sort_lines[next_sort_line];
+
     tnext_draw_item = next_draw_item;
     next_draw_item = 1;
-    next_special_face = 1;
+    p_current_draw_item = &game_draw_list[next_draw_item];
+
     tnext_sort_sprite = next_sort_sprite;
     next_sort_sprite = 0;
+    p_current_sort_sprite = &game_sort_sprites[next_sort_sprite];
+
+    next_special_face = 1;
+
     tnext_special_face4 = next_special_face4;
     next_special_face4 = 1;
+
     ingame.NextRocket = 0;
+
     tnext_floor_texture = next_floor_texture;
+
+    next_floor_tile = 1;
+
     dword_176CC4 = 0;
-    p_current_sort_line = game_sort_lines;
-    p_current_sort_sprite = game_sort_sprites;
-    p_current_draw_item = &game_draw_list[1];
 }
 
 int calculate_enginepoint_shade_1(struct PolyPoint *p_pt1, struct SingleObjectFace3 *p_face, ushort pt2)

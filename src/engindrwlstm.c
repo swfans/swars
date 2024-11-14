@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "engindrwlstm.h"
 
+#include <assert.h>
 #include "bfendian.h"
 #include "bfmath.h"
 #include "bfutility.h"
@@ -868,33 +869,34 @@ LABEL_25:
         }
     }
 
-    if (p_thing->Type == TT_VEHICLE && (p_thing->State == VehSt_UNKN_45 || (p_thing->U.UPerson.Shadows[3] & 0x80u) != 0))
+    if ((p_thing->Type == TT_VEHICLE) && (p_thing->State == VehSt_UNKN_45 ||
+      (p_thing->U.UVehicle.WorkPlace & VWPFlg_Unkn0080) != 0))
     {
-        int v115, v116, v117, v118;
-        int v119, v120, v122, v123;
+        if ((LbRandomPosShort() & 0xFF) > 0xE0)
+            dword_176CB0 = (LbRandomPosShort() & 0xFF) - 0xD0;
 
-        if ( (LbRandomPosShort() & 0xFF) > 0xE0u )
-            dword_176CB0 = (LbRandomPosShort() & 0xFF) - 208;
-
-        if (dword_176CB0 && (LbRandomPosShort() & 0xFF) > 0x90u)
+        if (dword_176CB0 && (LbRandomPosShort() & 0xFF) > 0x90)
         {
-            v116 = point_object->EndPoint - point_object->StartPoint;
-            --dword_176CB0;
-            v117 = v116 - 4;
-            for (v115 = 0; v115 < 10; v115++)
-            {
-              struct SpecialPoint *p_sppoint07;
-              struct SpecialPoint *p_sppoint08;
+            int points_num, rnd_range;
 
-              v118 = (ushort)LbRandomPosShort() % v117;
-              v119 = next_screen_point - ((ushort)LbRandomPosShort() % v117 + 1);
-              p_sppoint07 = &game_screen_point_pool[v119];
-              v123 = p_sppoint07->Z - 1024;
-              v122 = p_sppoint07->Y;
-              v120 = p_sppoint07->X;
-              p_sppoint08 = &game_screen_point_pool[next_screen_point - (v118 + 1)];
-              build_wobble_line(p_sppoint08->X, p_sppoint08->Y, p_sppoint08->Z - 1024,
-                v120, v122, v123, 0, 10);
+            points_num = point_object->EndPoint - point_object->StartPoint;
+            dword_176CB0--;
+            rnd_range = points_num - 4;
+            assert(rnd_range < next_screen_point);
+
+            for (i = 0; i < 10; i++)
+            {
+              struct SpecialPoint *p_specpt2;
+              struct SpecialPoint *p_specpt1;
+              int pt1, pt2;
+
+              pt1 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
+              pt2 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
+              p_specpt2 = &game_screen_point_pool[pt2];
+              p_specpt1 = &game_screen_point_pool[pt1];
+
+              build_wobble_line(p_specpt1->X, p_specpt1->Y, p_specpt1->Z - 1024,
+                p_specpt2->X, p_specpt2->Y, p_specpt2->Z - 1024, 0, 10);
             }
         }
     }

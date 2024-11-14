@@ -1510,7 +1510,7 @@ void process_engine_unk3(void)
 
     get_engine_inputs();
 
-    reset_draw_floor_tiles();
+    reset_drawlist();
     player_target_clear(local_player_no);
     dword_1DC880 = mech_unkn_tile_x1;
     dword_1DC884 = mech_unkn_tile_y1;
@@ -7925,6 +7925,7 @@ void game_process(void)
 {
     debug_multicolor_sprite(193);
     LOGDBG("WSCREEN 0x%lx", (ulong)lbDisplay.WScreen);
+
     while ( !exit_game )
     {
         process_sound_heap();
