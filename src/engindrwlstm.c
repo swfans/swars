@@ -20,22 +20,28 @@
 
 #include "bfendian.h"
 #include "bfmath.h"
+#include "bfutility.h"
 
 #include "display.h"
 #include "enginbckt.h"
 #include "engindrwlstx.h"
 #include "enginfloor.h"
+#include "enginsngobjs.h"
 #include "enginshrapn.h"
 #include "engintrns.h"
 #include "game.h"
 #include "game_data.h"
 #include "game_speed.h"
+#include "matrix.h"
 #include "swlog.h"
 #include "thing.h"
+#include "vehicle.h"
 /******************************************************************************/
 extern ubyte byte_176D49;
 
 extern long dword_176CAC;
+extern long dword_176CB0;
+extern long dword_176D68;
 extern long dword_152E4C;
 
 ubyte byte_152EF0[] = {
@@ -602,14 +608,297 @@ void draw_bang(struct SimpleThing *p_pow)
     draw_bang_phwoar(p_pow);
 }
 
+static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp, int offset_x, int offset_y, int offset_z, ushort mat, ushort pt)
+{
+    struct SinglePoint *p_snpoint;
+    struct SpecialPoint *p_specpt;
+
+    p_snpoint = &game_object_points[pt];
+    if ((p_snpoint->Flags & 0x40) != 0) // has sub-item alocated in `PointOffset`
+    {
+        p_specpt = &game_screen_point_pool[p_snpoint->PointOffset];
+        p_sp->X = p_specpt->X;
+        p_sp->Y = p_specpt->Y;
+        p_sp->Depth = p_specpt->Z;
+        p_sp->Flags = p_snpoint->Flags;
+    }
+    else
+    {
+        struct M31 vec_inp, vec_rot;
+        int dxc, dyc, dzc;
+
+        vec_inp.R[0] = 2 * p_snpoint->X;
+        vec_inp.R[1] = 2 * p_snpoint->Y;
+        vec_inp.R[2] = 2 * p_snpoint->Z;
+        matrix_transform(&vec_rot, &local_mats[mat], &vec_inp);
+
+        dxc = offset_x + (vec_rot.R[0] >> 15);
+        dyc = offset_y + (vec_rot.R[1] >> 15);
+        dzc = offset_z + (vec_rot.R[2] >> 15);
+        transform_shpoint(p_sp, dxc, dyc - 8 * engn_yc, dzc);
+
+        p_specpt = &game_screen_point_pool[next_screen_point];
+        p_specpt->X = p_sp->X;
+        p_specpt->Y = p_sp->Y;
+        p_specpt->Z = p_sp->Depth;
+
+        p_snpoint->PointOffset = next_screen_point;
+        p_snpoint->Flags = p_sp->Flags;
+        next_screen_point++;
+    }
+}
+
 ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
 {
+#if 0
     ushort ret;
     asm volatile (
       "push %5\n"
       "call ASM_draw_rot_object\n"
         : "=r" (ret) : "a" (offset_x), "d" (offset_y), "b" (offset_z), "c" (point_object), "g" (p_thing));
     return ret;
+#endif
+    int i;
+    int v213, v215, bckt_max;
+
+    bckt_max = 0;
+
+    v215 = 0;
+    if ((p_thing->Type == TT_UNKN35) || (p_thing->SubType == SubTT_VEH_TRAIN))
+        goto LABEL_25;
+
+    if (p_thing->X >= 0x80000)
+    {
+        if (p_thing->X <= 0x780000)
+            goto LABEL_14;
+        v215 = (0x800000 - p_thing->X) >> 15;
+    }
+    else
+    {
+        v215 = p_thing->X >> 15;
+    }
+    if (v215 > 7)
+        v215 = 7;
+    if (v215 <= 0)
+        v215 = 1;
+    v215 *= 4;
+
+LABEL_14:
+
+    if (p_thing->Z >= 0x80000)
+    {
+      if (p_thing->Z <= 0x780000)
+        goto LABEL_25;
+      v215 = (0x800000 - p_thing->Z) >> 15;
+      if (v215 > 7)
+        v215 = 7;
+      if (v215 <= 0)
+        v215 = 1;
+    }
+    else
+    {
+      v215 = p_thing->Z >> 15;
+      if (v215 > 7)
+        v215 = 7;
+      if (v215 <= 0)
+        v215 = 1;
+    }
+    v215 *= 4;
+LABEL_25:
+
+    if ((p_thing->Flag & 0x01000000) != 0)
+    {
+      p_thing->Flag &= ~0x01000000;
+      v213 = 11 - (gameturn & 3);
+    }
+    else
+    {
+      v213 = 0;
+    }
+
+    if (current_map == 9) // map009 Singapore on-water map
+        offset_y += waft_table[gameturn & 0x1F];
+
+    for (i = point_object->StartPoint; i < point_object->EndPoint; i++)
+    {
+        struct SinglePoint *p_snpoint;
+
+        p_snpoint = &game_object_points[i];
+        p_snpoint->Flags = 0;
+    }
+
+    for (i = point_object->OffsetX; i < point_object->OffsetY; i++)
+    {
+        struct M31 vec_nx, vec_rot;
+        struct Normal *p_nrml;
+        int fctr_p, fctr_s, fctr_o, fctr_r;
+
+        p_nrml = &game_normals[i];
+        vec_nx = *(struct M31 *)&p_nrml->NX;
+        matrix_transform(&vec_rot, &local_mats[p_thing->U.UPerson.ComCur], &vec_nx);
+
+        fctr_o = dword_176D14 * (vec_rot.R[0] >> 14) - dword_176D10 * (vec_rot.R[2] >> 14);
+        fctr_p = (dword_176D14 * (vec_rot.R[2] >> 14) + dword_176D10 * (vec_rot.R[0] >> 14)) >> 16;
+        fctr_r = dword_176D1C * (vec_rot.R[1] >> 14) - dword_176D18 * fctr_p;
+        fctr_s = (dword_176D18 * (vec_rot.R[1] >> 14) + dword_176D1C * fctr_p) >> 16;
+
+        p_nrml->LightRatio = 0;
+        p_nrml->LightRatio |= ((fctr_o >> 19) & 0xFF);
+        p_nrml->LightRatio |= (((fctr_r >> 19) & 0xFF) << 8);
+        p_nrml->LightRatio |= ((fctr_s & 0xFFFF) << 16);
+    }
+
+    int face_beg, face;
+    short faces_num;
+
+    faces_num = point_object->NumbFaces;
+    face_beg = point_object->StartFace;
+    face = face_beg;
+    for (i = 0; i < faces_num; i++, face++)
+    {
+        struct ShEnginePoint sp1, sp2, sp3;
+        struct SingleObjectFace3 *p_face;
+        int depth_max, bckt;
+
+        if (next_screen_point > mem_game[30].N - 5)
+            break;
+
+        p_face = &game_object_faces[face];
+        p_face->WalkHeader = v213;
+        p_face->GFlags &= ~0x1C;
+        p_face->GFlags |= v215;
+
+        transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
+          p_thing->U.UPerson.ComCur, p_face->PointNo[0]);
+
+        transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
+          p_thing->U.UPerson.ComCur, p_face->PointNo[2]);
+
+        transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
+          p_thing->U.UPerson.ComCur, p_face->PointNo[1]);
+
+        depth_max = SHRT_MIN;
+        if (depth_max < sp1.Depth)
+            depth_max = sp1.Depth;
+        if (depth_max < sp2.Depth)
+            depth_max = sp2.Depth;
+        if (depth_max < sp3.Depth)
+            depth_max = sp3.Depth;
+
+        if ((sp1.Flags & sp2.Flags & sp3.Flags & 0xF) != 0)
+            continue;
+        if ((p_face->GFlags & 0x01) == 0) {
+            if  ((sp3.Y - sp2.Y) * (sp2.X - sp1.X) -
+              (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
+                continue;
+        }
+
+        ubyte ditype;
+        dword_176D68++;
+        if ((p_face->GFlags & 0x80u) == 0)
+            ditype = 7;
+        else
+            ditype = 17;
+        bckt = depth_max + 4750;
+        if ((int)(ushort)bckt_max < bckt)
+           bckt_max = bckt;
+        draw_item_add(ditype, face, bckt);
+    }
+
+    faces_num = point_object->NumbFaces4;
+    face_beg = point_object->StartFace4;
+    face = face_beg;
+    for (i = 0; i < faces_num; i++, face++)
+    {
+        struct ShEnginePoint sp1, sp2, sp3, sp4;
+        struct SingleObjectFace4 *p_face4;
+        int depth_max, bckt;
+        ubyte v65, v66, v67;
+
+        if (next_screen_point > mem_game[30].N - 5)
+            break;
+
+        p_face4 = &game_object_faces4[face_beg + i];
+        v65 = p_face4->GFlags & 0xE3;
+        v66 = v215;
+        p_face4->GFlags = v65;
+        v67 = v66 | v65;
+        p_face4->WalkHeader = v213;
+        p_face4->GFlags = v67;
+
+        transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
+          p_thing->U.UPerson.ComCur, p_face4->PointNo[0]);
+
+        transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
+          p_thing->U.UPerson.ComCur, p_face4->PointNo[2]);
+
+        transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
+          p_thing->U.UPerson.ComCur, p_face4->PointNo[1]);
+
+        transform_rot_object_shpoint(&sp4, offset_x, offset_y, offset_z,
+          p_thing->U.UPerson.ComCur, p_face4->PointNo[3]);
+
+        depth_max = SHRT_MIN;
+        if (depth_max < sp1.Depth)
+            depth_max = sp1.Depth;
+        if (depth_max < sp2.Depth)
+            depth_max = sp2.Depth;
+        if (depth_max < sp3.Depth)
+            depth_max = sp3.Depth;
+        if (depth_max < sp4.Depth)
+            depth_max = sp4.Depth;
+
+        if ((sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags & 0xF) == 0)
+        {
+          if ( (p_face4->GFlags & 1) == 1
+            || ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) - (sp2.Y - sp1.Y) * (sp3.X - sp2.X) > 0) )
+          {
+              ubyte ditype;
+              if ((p_face4->GFlags & 0x80u) == 0)
+                ditype = DrIT_Unkn16;
+              else
+                ditype = DrIT_Unkn18;
+              bckt = depth_max + 4750;
+              if ((int)(ushort)bckt_max < bckt)
+                  bckt_max = bckt;
+              ++dword_176D68;
+
+              draw_item_add(ditype, face, bckt);
+          }
+        }
+    }
+
+    if (p_thing->Type == TT_VEHICLE && (p_thing->State == VehSt_UNKN_45 || (p_thing->U.UPerson.Shadows[3] & 0x80u) != 0))
+    {
+        int v115, v116, v117, v118;
+        int v119, v120, v122, v123;
+
+        if ( (LbRandomPosShort() & 0xFF) > 0xE0u )
+            dword_176CB0 = (LbRandomPosShort() & 0xFF) - 208;
+
+        if (dword_176CB0 && (LbRandomPosShort() & 0xFF) > 0x90u)
+        {
+            v116 = point_object->EndPoint - point_object->StartPoint;
+            --dword_176CB0;
+            v117 = v116 - 4;
+            for (v115 = 0; v115 < 10; v115++)
+            {
+              struct SpecialPoint *p_sppoint07;
+              struct SpecialPoint *p_sppoint08;
+
+              v118 = (ushort)LbRandomPosShort() % v117;
+              v119 = next_screen_point - ((ushort)LbRandomPosShort() % v117 + 1);
+              p_sppoint07 = &game_screen_point_pool[v119];
+              v123 = p_sppoint07->Z - 1024;
+              v122 = p_sppoint07->Y;
+              v120 = p_sppoint07->X;
+              p_sppoint08 = &game_screen_point_pool[next_screen_point - (v118 + 1)];
+              build_wobble_line(p_sppoint08->X, p_sppoint08->Y, p_sppoint08->Z - 1024,
+                v120, v122, v123, 0, 10);
+            }
+        }
+    }
+    return bckt_max;
 }
 
 ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
