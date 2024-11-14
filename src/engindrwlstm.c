@@ -671,8 +671,9 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
         short pos_x, pos_z;
         ushort darken;
 
-        pos_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
-        pos_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+        // Cannot get absolute map position from p_thing as it might be relative; so get it from the offset
+        pos_x = engn_xc + offset_x;
+        pos_z = engn_zc + offset_z;
 
         darken = 9;
         if (pos_x < TILE_TO_MAPCOORD(8, 0))
@@ -723,7 +724,7 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
 
         p_nrml = &game_normals[i];
         vec_nx = *(struct M31 *)&p_nrml->NX;
-        matrix_transform(&vec_rot, &local_mats[p_thing->U.UPerson.ComCur], &vec_nx);
+        matrix_transform(&vec_rot, &local_mats[p_thing->U.UVehicle.MatrixIndex], &vec_nx);
 
         fctr_o = dword_176D14 * (vec_rot.R[0] >> 14) - dword_176D10 * (vec_rot.R[2] >> 14);
         fctr_p = (dword_176D14 * (vec_rot.R[2] >> 14) + dword_176D10 * (vec_rot.R[0] >> 14)) >> 16;
@@ -757,13 +758,13 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
         p_face->WalkHeader = faceWH;
 
         transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
-          p_thing->U.UPerson.ComCur, p_face->PointNo[0]);
+          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[0]);
 
         transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
-          p_thing->U.UPerson.ComCur, p_face->PointNo[2]);
+          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[2]);
 
         transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
-          p_thing->U.UPerson.ComCur, p_face->PointNo[1]);
+          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[1]);
 
         depth_max = SHRT_MIN;
         if (depth_max < sp1.Depth)
@@ -811,16 +812,16 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
         p_face4->WalkHeader = faceWH;
 
         transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
-          p_thing->U.UPerson.ComCur, p_face4->PointNo[0]);
+          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[0]);
 
         transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
-          p_thing->U.UPerson.ComCur, p_face4->PointNo[2]);
+          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[2]);
 
         transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
-          p_thing->U.UPerson.ComCur, p_face4->PointNo[1]);
+          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[1]);
 
         transform_rot_object_shpoint(&sp4, offset_x, offset_y, offset_z,
-          p_thing->U.UPerson.ComCur, p_face4->PointNo[3]);
+          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[3]);
 
         depth_max = SHRT_MIN;
         if (depth_max < sp1.Depth)

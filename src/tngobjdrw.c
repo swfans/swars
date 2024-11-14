@@ -60,9 +60,9 @@ void process_child_object(struct Thing *p_vehicle)
     gear.R[2] = p_vehicle->Z >> 8;
 
     p_mgun = &things[p_vehicle->U.UVehicle.SubThing];
-    vec2.R[0] = p_mgun->X >> 8;
+    vec2.R[0] = PRCCOORD_TO_MAPCOORD(p_mgun->X);
     vec2.R[1] = p_mgun->Y >> 4;
-    vec2.R[2] = p_mgun->Z >> 8;
+    vec2.R[2] = PRCCOORD_TO_MAPCOORD(p_mgun->Z);
 
     m = &local_mats[p_vehicle->U.UVehicle.MatrixIndex];
     matrix_transform(&vec1, m, &vec2);
@@ -112,7 +112,7 @@ void build_vehicle(struct Thing *p_thing)
     if (p_thing->Health < p_thing->U.UVehicle.MaxHealth)
         draw_vehicle_health(p_thing);
 
-    if (p_thing->U.UVehicle.SubThing && (p_thing->SubType == SubTT_VEH_TANK))
+    if ((p_thing->U.UVehicle.SubThing != 0) && (p_thing->SubType == SubTT_VEH_TANK))
         process_child_object(p_thing);
 
     if (p_thing->U.UVehicle.RecoilTimer != 0) {
