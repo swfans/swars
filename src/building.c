@@ -494,7 +494,7 @@ void process_building(struct Thing *p_building)
     case SubTT_BLD_GATE:
         process_gate1(p_building);
         break;
-    case SubTT_BLD_36:
+    case SubTT_BLD_WIND_ROTOR:
         process_bld36(p_building);
         break;
     default:

@@ -962,7 +962,7 @@ void load_map_dat_pc_handle(TbFileHandle fh)
             }
             switch (loc_thing.SubType)
             {
-            case SubTT_BLD_36:
+            case SubTT_BLD_WIND_ROTOR:
             case SubTT_BLD_37:
                 LbFileRead(fh, &loc_mat, sizeof(struct M33));
                 new_thing_building_clone(&loc_thing, &loc_mat, shut_h);
@@ -1166,7 +1166,7 @@ void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
         }
         switch (p_clthing->SubType)
         {
-        case SubTT_BLD_36:
+        case SubTT_BLD_WIND_ROTOR:
         case SubTT_BLD_37:
             new_thing_building_clone(p_clthing, (struct M33 *)mad_ptr, shut_h);
             mad_ptr += sizeof(struct M33);

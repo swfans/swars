@@ -661,6 +661,8 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
     return ret;
 #endif
     int i, bckt_max;
+    int face_beg, face;
+    short faces_num;
     ushort faceWH, faceGF;
 
     bckt_max = 0;
@@ -737,11 +739,9 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
         p_nrml->LightRatio |= ((fctr_s & 0xFFFF) << 16);
     }
 
-    int face_beg, face;
-    short faces_num;
-
     faces_num = point_object->NumbFaces;
     face_beg = point_object->StartFace;
+
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
@@ -788,14 +788,15 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
             ditype = 7;
         else
             ditype = 17;
-        bckt = depth_max + 4750;
-        if ((int)(ushort)bckt_max < bckt)
+        bckt = depth_max + 5000 - 250;
+        if (bckt_max < bckt)
            bckt_max = bckt;
         draw_item_add(ditype, face, bckt);
     }
 
     faces_num = point_object->NumbFaces4;
     face_beg = point_object->StartFace4;
+
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
@@ -806,7 +807,7 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
         if (next_screen_point > mem_game[30].N - 5)
             break;
 
-        p_face4 = &game_object_faces4[face_beg + i];
+        p_face4 = &game_object_faces4[face];
         p_face4->GFlags &= ~0x1C;
         p_face4->GFlags |= faceGF;
         p_face4->WalkHeader = faceWH;
@@ -833,24 +834,26 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
         if (depth_max < sp4.Depth)
             depth_max = sp4.Depth;
 
-        if ((sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags & 0xF) == 0)
-        {
-          if ( (p_face4->GFlags & 1) == 1
-            || ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) - (sp2.Y - sp1.Y) * (sp3.X - sp2.X) > 0) )
-          {
-              ubyte ditype;
-              if ((p_face4->GFlags & 0x80u) == 0)
-                ditype = DrIT_Unkn16;
-              else
-                ditype = DrIT_Unkn18;
-              bckt = depth_max + 4750;
-              if ((int)(ushort)bckt_max < bckt)
-                  bckt_max = bckt;
-              ++dword_176D68;
+        if ((sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags & 0xF) != 0)
+            continue;
 
-              draw_item_add(ditype, face, bckt);
-          }
+        if ((p_face4->GFlags & 0x01) == 0) {
+            if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
+              (sp2.Y - sp1.Y) * (sp3.X - sp2.X) <= 0)
+                continue;
         }
+
+        ubyte ditype;
+        if ((p_face4->GFlags & 0x80u) == 0)
+            ditype = DrIT_Unkn16;
+        else
+            ditype = DrIT_Unkn18;
+        bckt = depth_max + 5000 - 250;
+        if (bckt_max < bckt)
+            bckt_max = bckt;
+        dword_176D68++;
+
+        draw_item_add(ditype, face, bckt);
     }
 
     // Plasma jumps when a vehicle got influenced by explosion or is crashing
@@ -890,12 +893,160 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
 
 ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
 {
+#if 1
     ushort ret;
     asm volatile (
       "push %5\n"
       "call ASM_draw_rot_object2\n"
         : "=r" (ret) : "a" (offset_x), "d" (offset_y), "b" (offset_z), "c" (point_object), "g" (p_thing));
     return ret;
+#endif
+    int i, bckt_max;
+    int face_beg, face;
+    short faces_num;
+
+    bckt_max = 0;
+
+    faces_num = point_object->NumbFaces;
+    face_beg = point_object->StartFace;
+
+    face = face_beg;
+    for (i = 0; i < faces_num; i++, face++)
+    {
+        struct SingleObjectFace3 *p_face;
+        struct SinglePoint *p_snpoint;
+
+        p_face = &game_object_faces[face];
+
+        p_snpoint = &game_object_points[p_face->PointNo[0]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face->PointNo[1]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face->PointNo[2]];
+        p_snpoint->Flags = 0;
+    }
+
+    face = face_beg;
+    for (i = 0; i < faces_num; i++, face++)
+    {
+        struct ShEnginePoint sp1, sp2, sp3;
+        struct SingleObjectFace3 *p_face;
+        int depth_max, bckt;
+
+        if (next_screen_point > mem_game[30].N - 5)
+            break;
+
+        p_face = &game_object_faces[face];
+
+        transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
+          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[0]);
+
+        transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
+          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[2]);
+
+        transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
+          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[1]);
+
+        depth_max = SHRT_MIN;
+        if (depth_max < sp1.Depth)
+            depth_max = sp1.Depth;
+        if (depth_max < sp2.Depth)
+            depth_max = sp2.Depth;
+        if (depth_max < sp3.Depth)
+            depth_max = sp3.Depth;
+
+        if ((sp1.Flags & sp2.Flags & sp3.Flags & 0xF) != 0)
+            continue;
+        if ((p_face->GFlags & 0x01) == 0) {
+            if  ((sp3.Y - sp2.Y) * (sp2.X - sp1.X) -
+              (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
+                continue;
+        }
+
+        ubyte ditype;
+        dword_176D68++;
+        ditype = 1;
+        bckt = depth_max + 5000 - 150;
+        if (bckt_max < bckt)
+           bckt_max = bckt;
+        draw_item_add(ditype, face, bckt);
+    }
+
+    faces_num = point_object->NumbFaces4;
+    face_beg = point_object->StartFace4;
+
+    face = face_beg;
+    for (i = 0; i < faces_num; i++, face++)
+    {
+        struct SingleObjectFace4 *p_face4;
+        struct SinglePoint *p_snpoint;
+
+        p_face4 = &game_object_faces4[face];
+
+        p_snpoint = &game_object_points[p_face4->PointNo[0]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face4->PointNo[1]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face4->PointNo[2]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face4->PointNo[3]];
+        p_snpoint->Flags = 0;
+    }
+
+    face = face_beg;
+    for (i = 0; i < faces_num; i++, face++)
+    {
+        struct ShEnginePoint sp1, sp2, sp3, sp4;
+        struct SingleObjectFace4 *p_face4;
+        int depth_max, bckt;
+
+        if (next_screen_point > mem_game[30].N - 5)
+            break;
+
+        p_face4 = &game_object_faces4[face];
+
+        transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
+          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[0]);
+
+        transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
+          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[2]);
+
+        transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
+          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[1]);
+
+        transform_rot_object_shpoint(&sp4, offset_x, offset_y, offset_z,
+          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[3]);
+
+        depth_max = SHRT_MIN;
+        if (depth_max < sp1.Depth)
+            depth_max = sp1.Depth;
+        if (depth_max < sp2.Depth)
+            depth_max = sp2.Depth;
+        if (depth_max < sp3.Depth)
+            depth_max = sp3.Depth;
+        if (depth_max < sp4.Depth)
+            depth_max = sp4.Depth;
+
+        if ((sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags & 0xF) != 0)
+            continue;
+
+        if ((p_face4->GFlags & 0x01) == 0) {
+            if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
+              (sp2.Y - sp1.Y) * (sp3.X - sp2.X) <= 0)
+                continue;
+        }
+
+        ubyte ditype;
+        ditype = DrIT_Unkn9;
+        bckt = depth_max + 5000 - 250;
+        if (bckt_max < bckt)
+            bckt_max = bckt;
+        dword_176D68++;
+
+        draw_item_add(ditype, face, bckt);
+    }
+
+    return bckt_max;
 }
 
 ushort draw_object(int x, int y, int z, struct SingleObject *point_object)

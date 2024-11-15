@@ -82,7 +82,7 @@ enum SubTypeBuilding {
   SubTT_BLD_33 = 0x33,
   SubTT_BLD_34 = 0x34,
   SubTT_BLD_35 = 0x35,
-  SubTT_BLD_36 = 0x36,
+  SubTT_BLD_WIND_ROTOR = 0x36,
   SubTT_BLD_37 = 0x37,
   SubTT_BLD_38 = 0x38,
   SubTT_BLD_39 = 0x39,

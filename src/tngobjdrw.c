@@ -237,7 +237,7 @@ void build_building(struct Thing *p_thing)
         ingame.Flags |= 0x040000;
     }
 
-    if (p_thing->SubType == SubTT_BLD_36)
+    if (p_thing->SubType == SubTT_BLD_WIND_ROTOR)
     {
         p_sobj = &game_objects[p_thing->U.UObject.Object];
         draw_rot_object2(
