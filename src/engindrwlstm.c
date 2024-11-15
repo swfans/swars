@@ -777,7 +777,7 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
         if ((sp1.Flags & sp2.Flags & sp3.Flags & 0xF) != 0)
             continue;
         if ((p_face->GFlags & 0x01) == 0) {
-            if  ((sp3.Y - sp2.Y) * (sp2.X - sp1.X) -
+            if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
               (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
                 continue;
         }
@@ -790,7 +790,7 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
             ditype = 17;
         bckt = depth_max + 5000 - 250;
         if (bckt_max < bckt)
-           bckt_max = bckt;
+            bckt_max = bckt;
         draw_item_add(ditype, face, bckt);
     }
 
@@ -839,7 +839,7 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
 
         if ((p_face4->GFlags & 0x01) == 0) {
             if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
-              (sp2.Y - sp1.Y) * (sp3.X - sp2.X) <= 0)
+              (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
                 continue;
         }
 
@@ -893,7 +893,7 @@ ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleOb
 
 ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
 {
-#if 1
+#if 0
     ushort ret;
     asm volatile (
       "push %5\n"
@@ -939,13 +939,13 @@ ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleO
         p_face = &game_object_faces[face];
 
         transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[0]);
+          p_thing->U.UObject.MatrixIndex, p_face->PointNo[0]);
 
         transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[2]);
+          p_thing->U.UObject.MatrixIndex, p_face->PointNo[2]);
 
         transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[1]);
+          p_thing->U.UObject.MatrixIndex, p_face->PointNo[1]);
 
         depth_max = SHRT_MIN;
         if (depth_max < sp1.Depth)
@@ -958,7 +958,7 @@ ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleO
         if ((sp1.Flags & sp2.Flags & sp3.Flags & 0xF) != 0)
             continue;
         if ((p_face->GFlags & 0x01) == 0) {
-            if  ((sp3.Y - sp2.Y) * (sp2.X - sp1.X) -
+            if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
               (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
                 continue;
         }
@@ -1006,16 +1006,16 @@ ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleO
         p_face4 = &game_object_faces4[face];
 
         transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[0]);
+          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[0]);
 
         transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[2]);
+          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[2]);
 
         transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[1]);
+          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[1]);
 
         transform_rot_object_shpoint(&sp4, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[3]);
+          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[3]);
 
         depth_max = SHRT_MIN;
         if (depth_max < sp1.Depth)
@@ -1032,7 +1032,7 @@ ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleO
 
         if ((p_face4->GFlags & 0x01) == 0) {
             if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
-              (sp2.Y - sp1.Y) * (sp3.X - sp2.X) <= 0)
+              (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
                 continue;
         }
 
