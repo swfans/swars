@@ -10,6 +10,8 @@ swars_SOURCES = \
 	bflib_test_poly.c \
 	bflib_render_gpoly.c \
 	bflib_render_plin_s.sx \
+	bflib_render_drspr.c \
+	bflib_render_drspr.h \
 	bflib_render_drspr_s.sx \
 	bflib_snd_mss_s.sx \
 	bflib_vidraw.c \
@@ -61,14 +63,22 @@ swars_SOURCES = \
 	drawtext.h \
 	enginbckt.c \
 	enginbckt.h \
-	engindrwlst.c \
-	engindrwlst.h \
+	engindrwlstm.c \
+	engindrwlstm.h \
+	engindrwlstx.c \
+	engindrwlstx.h \
+	enginfexpl.c \
+	enginfexpl.h \
+	enginfloor.c \
+	enginfloor.h \
 	enginlights.c \
 	enginlights.h \
 	enginpriobjs.c \
 	enginpriobjs.h \
 	enginpritxtr.c \
 	enginpritxtr.h \
+	enginshrapn.c \
+	enginshrapn.h \
 	enginsngobjs.c \
 	enginsngobjs.h \
 	enginsngtxtr.c \
@@ -123,6 +133,8 @@ swars_SOURCES = \
 	game_data.h \
 	game_speed.c \
 	game_speed.h \
+	game_sprts.c \
+	game_sprts.h \
 	game.h \
 	globals.h \
 	hud_panel.c \
@@ -133,6 +145,8 @@ swars_SOURCES = \
 	joy_modul2.sx \
 	keyboard.c \
 	keyboard.h \
+	lvdraw3d.c \
+	lvdraw3d.h \
 	lvobjctv.c \
 	lvobjctv.h \
 	lvfiles.c \
@@ -184,6 +198,10 @@ swars_SOURCES = \
 	thing.h \
 	thing_debug.c \
 	thing_debug_s.sx \
+	tngcolisn.c \
+	tngcolisn.h \
+	tngobjdrw.c \
+	tngobjdrw.h \
 	timer.c \
 	timer.h \
 	unix.c \

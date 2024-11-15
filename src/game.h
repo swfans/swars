@@ -156,27 +156,6 @@ enum MissionFMVPlay {
 
 struct Thing;
 
-struct ColVect { // sizeof=14
-  short X1;
-  short Y1;
-  short Z1;
-  short X2;
-  short Y2;
-  short Z2;
-  short Face;
-};
-
-/** Collision vectors list.
- *
- * Contains a list of references to boundary vectors used for stepping
- * between ground faces and object faces (buildings).
- */
-struct ColVectList { // sizeof=6
-  ushort Vect; /**< Index of the ColVect with geometry vector. */
-  ushort NextColList; /**< Index of the next ColVectList entry in a chain list, top bit is passability. */
-  short Object; /**< Index of a Thing containing the object whose geometry has that vector. */
-};
-
 struct ColColumn { // sizeof=16
     uint QBits[4];
 };
@@ -189,20 +168,6 @@ struct WalkHeader { // sizeof=4
 struct BezierPt { // sizeof=28
     ubyte field_0[26];
     ushort field_2A;
-};
-
-struct FloorTile { // sizeof=39
-    short X[4];
-    short Y[4];
-    struct SingleFloorTexture *Texture;
-    ubyte V[4];
-    short Shade[4];
-    ubyte Col;
-    ubyte Flags;
-    ubyte Flags2;
-    ubyte Flags2b;
-    ubyte Page;
-    short Offset;
 };
 
 struct MissionStatus { // sizeof=40
@@ -362,7 +327,6 @@ extern ubyte byte_181189;
 extern ubyte cmdln_param_n;
 extern ubyte pktrec_mode;
 extern ushort packet_rec_no;
-extern ubyte game_perspective;
 extern ubyte exit_game;
 extern ubyte input_char;
 
@@ -394,10 +358,6 @@ extern ubyte byte_1810E6[40];
 extern ubyte byte_18110E[40];
 
 extern ushort word_1531E0;
-extern struct ColVectList *game_col_vects_list;
-extern ushort next_vects_list;
-extern struct ColVect *game_col_vects;
-extern ushort next_col_vect;
 
 /** Header linking a face to a list of walk items.
  *
@@ -420,9 +380,7 @@ extern struct ColColumn *game_col_columns;
 extern ushort next_col_column;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
-extern struct FloorTile *game_floor_tiles;
 extern ubyte *game_user_heap;
-extern struct SpecialPoint *game_screen_point_pool;
 extern struct UnknBezEdit *bezier_pts;
 extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;
@@ -432,19 +390,10 @@ extern struct LevelMisc *game_level_miscs;
 extern long target_old_frameno;
 extern ushort word_176E38;
 
-extern struct TbSprite *pop1_sprites;
-
-extern struct TbSprite *unk2_sprites;
-
-extern struct TbSprite *m_sprites;
-
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
 extern ubyte linear_vec_pal[256];
 extern ulong nsta_size;
-extern TbPixel colour_grey1;
-extern TbPixel colour_grey2;
-extern TbPixel colour_brown2;
 
 extern short *dword_1C529C[6];
 extern short *landmap_2B4;
@@ -473,7 +422,6 @@ extern char *outro_text_s;
 extern char *outro_text_z;
 extern long data_197150;
 extern long data_1dd91c;
-extern ushort overall_scale;
 extern ubyte unkn_flags_01;
 extern ushort palette_brightness;
 extern long outro_unkn01;
@@ -507,8 +455,6 @@ extern char *weapon_text;
 extern ubyte *save_game_buffer;
 extern char save_active_desc[28];
 extern ubyte *unkn_buffer_05;
-extern ubyte *dword_1C6DE4;
-extern ubyte *dword_1C6DE8;
 extern ubyte scientists_lost;
 extern ulong new_mods_researched;
 extern ulong new_weapons_researched;
@@ -606,8 +552,6 @@ void game_transform_path (const char *file_name, char *result);
 const char *game_get_data_path (void);
 const char *game_get_user_path (void);
 
-void load_multicolor_sprites(void);
-
 void read_conf_file(void);
 void game_setup(void);
 void game_process(void);
@@ -630,15 +574,15 @@ void campaign_new_game_prepare(void);
 
 void process_sound_heap(void);
 void update_danger_music(ubyte a1);
-void draw_text_transformed_at_ground(int a1, int a2, const char *text);
-void draw_text_transformed(int coord_x, int coord_y, int coord_z, const char *text);
+
+void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign);
+int mech_unkn_func_03(struct Thing *p_thing);
 
 void draw_new_panel(void);
 
 void update_map_thing_and_traffic_refs(void);
 void unkn_lights_processing(void);
 void bang_set_detail(int a1);
-void init_free_explode_faces(void);
 int sub_73C64(char *a1, ubyte a2);
 void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);

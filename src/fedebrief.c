@@ -25,6 +25,7 @@
 #include "display.h"
 #include "guiboxes.h"
 #include "guitext.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "thing.h"
 #include "player.h"

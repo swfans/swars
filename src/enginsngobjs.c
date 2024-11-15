@@ -51,7 +51,7 @@ void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface,
     // Unsure
     p_objface->UnknTringl = p_oldobjface->UnkOFField_2A;
     // Remove the effect of faces using scratch_buf1 (screen in pre-alpha) as texture
-    p_objface->GFlags &= ~0x02;
+    p_objface->GFlags &= ~FGFlg_Unkn02;
 }
 
 void refresh_old_object_face4_format(struct SingleObjectFace4 *p_objface4,
@@ -203,18 +203,18 @@ void update_object_faces_flags(void)
         struct SingleObjectFace3 *p_face;
 
         p_face = &game_object_faces[face];
-        p_face->GFlags |= 0x04;
+        p_face->GFlags |= FGFlg_Unkn04;
         if (compute_face_is_blocking_walk(face))
-            p_face->GFlags &= ~0x04;
+            p_face->GFlags &= ~FGFlg_Unkn04;
     }
     for (face = 1; face < next_object_face4; face++)
     {
         struct SingleObjectFace4 *p_face;
 
         p_face = &game_object_faces4[face];
-        p_face->GFlags |= 0x04;
+        p_face->GFlags |= FGFlg_Unkn04;
         if (compute_face_is_blocking_walk(-face))
-            p_face->GFlags &= ~0x04;
+            p_face->GFlags &= ~FGFlg_Unkn04;
     }
 }
 

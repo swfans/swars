@@ -918,7 +918,7 @@ ThingIdx new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, 
         p_thing->U.UMGun.RecoilTimer = 0;
         p_thing->Health = p_thing->U.UMGun.MaxHealth;
     }
-    else if (styp >= SubTT_BLD_36 && styp <= SubTT_BLD_37)
+    else if (styp >= SubTT_BLD_WIND_ROTOR && styp <= SubTT_BLD_37)
     {
         p_thing->U.UObject.MatrixIndex = next_local_mat;
         next_local_mat++;

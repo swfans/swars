@@ -34,6 +34,13 @@ extern "C" {
 
 void draw_text(short x, short y, const char *text, ubyte colour);
 
+void draw_text_transformed(int coord_x, int coord_y, int coord_z, const char *text);
+void draw_number_transformed(int coord_x, int coord_y, int coord_z, int num);
+
+void draw_line_transformed_at_ground(int x1, int y1, int x2, int y2, TbPixel colour);
+void draw_number_transformed_at_ground(int coord_x, int coord_z, int num);
+void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

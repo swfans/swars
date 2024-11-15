@@ -39,6 +39,13 @@ extern "C" {
 
 #pragma pack()
 /******************************************************************************/
+extern ubyte byte_176D48;
+extern ubyte byte_176D49;
+extern ubyte byte_176D4A;
+extern ubyte byte_176D4B;
+
+extern ubyte byte_19EC7A;
+
 /** Minimum user zoom (when most area is visible). */
 extern short user_zoom_min;
 /** Maxumum user zoom (largest magnification). */
@@ -58,6 +65,9 @@ short get_overall_scale_max(void);
 
 short get_render_area_for_zoom(short zoom);
 short bound_render_area(short rarea);
+
+void camera_setup_view(int *p_pos_beg_x, int *p_pos_beg_z,
+  int *p_rend_beg_x, int *p_rend_beg_z, int *p_tlcount_x, int *p_tlcount_z);
 
 /******************************************************************************/
 #ifdef __cplusplus

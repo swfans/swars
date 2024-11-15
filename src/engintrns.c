@@ -19,9 +19,13 @@
 #include "engintrns.h"
 
 #include "display.h"
+#include "engindrwlstm.h"
+#include "enginzoom.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
+#define SCREEN_POINT_COORD_MIN -2000
+#define SCREEN_POINT_COORD_MAX 2000
 
 void transform_point(struct EnginePoint *p_ep)
 {
@@ -50,15 +54,15 @@ void transform_point(struct EnginePoint *p_ep)
     p_ep->pp.X = dword_176D3C + scr_shx;
     if (p_ep->pp.X < 0)
     {
+        if (p_ep->pp.X < SCREEN_POINT_COORD_MIN)
+            p_ep->pp.X = SCREEN_POINT_COORD_MIN;
         p_ep->Flags |= 0x01;
-        if (p_ep->pp.X < -2000)
-            p_ep->pp.X = -2000;
     }
     else if (p_ep->pp.X >= vec_window_width)
     {
+        if (p_ep->pp.X > SCREEN_POINT_COORD_MAX)
+            p_ep->pp.X = SCREEN_POINT_COORD_MAX;
         p_ep->Flags |= 0x02;
-        if (p_ep->pp.X > 2000)
-            p_ep->pp.X = 2000;
     }
 
     if (game_perspective == 5)
@@ -69,22 +73,22 @@ void transform_point(struct EnginePoint *p_ep)
     p_ep->pp.Y = dword_176D40 - scr_shy;
     if (p_ep->pp.Y < 0)
     {
+        if (p_ep->pp.Y < SCREEN_POINT_COORD_MIN)
+            p_ep->pp.Y = SCREEN_POINT_COORD_MIN;
         p_ep->Flags |= 0x04;
-        if (p_ep->pp.Y < -2000)
-            p_ep->pp.Y = -2000;
     }
     else if (p_ep->pp.Y >= vec_window_height)
     {
+        if (p_ep->pp.Y > SCREEN_POINT_COORD_MAX)
+            p_ep->pp.Y = SCREEN_POINT_COORD_MAX;
         p_ep->Flags |= 0x08;
-        if (p_ep->pp.Y > 2000)
-            p_ep->pp.Y = 2000;
     }
     p_ep->Flags |= 0x40;
 }
 
 void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
 {
-    int fctr_a, fctr_b, fctr_c, fctr_d;
+    int fctr_a, fctr_b, fctr_c, scr_d;
     int scr_shx, scr_shy, sca_x, sca_y;
     int scr_x, scr_y;
     ubyte flg;
@@ -92,54 +96,120 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     fctr_a = (dword_176D14 * dxc - dword_176D10 * dzc) >> 16;
     fctr_b = (dword_176D10 * dxc + dword_176D14 * dzc) >> 16;
     fctr_c = (dword_176D1C * dyc - dword_176D18 * fctr_b) >> 16;
-    fctr_d = (dword_176D18 * dyc + dword_176D1C * fctr_b) >> 16;
+    scr_d = (dword_176D18 * dyc + dword_176D1C * fctr_b) >> 16;
     sca_x = overall_scale * fctr_a;
     sca_y = overall_scale * fctr_c;
     flg = 0;
 
     if (game_perspective == 5)
-        scr_shx = (sca_x >> 11) * (0x4000 - fctr_d) >> 14;
+        scr_shx = (sca_x >> 11) * (0x4000 - scr_d) >> 14;
     else
         scr_shx = sca_x >> 11;
 
     scr_x = dword_176D3C + scr_shx;
     if (scr_x < 0)
     {
+        if (scr_x < SCREEN_POINT_COORD_MIN)
+            scr_x = SCREEN_POINT_COORD_MIN;
         flg |= 0x01;
-        if (scr_x < -2000)
-            scr_x = -2000;
     }
     else if (scr_x >= vec_window_width)
     {
+        if (scr_x > SCREEN_POINT_COORD_MAX)
+            scr_x = SCREEN_POINT_COORD_MAX;
         flg |= 0x02;
-        if (scr_x > 2000)
-            scr_x = 2000;
     }
 
     if (game_perspective == 5)
-        scr_shy = (sca_y >> 11) * (0x4000 - fctr_d) >> 14;
+        scr_shy = (sca_y >> 11) * (0x4000 - scr_d) >> 14;
     else
         scr_shy = sca_y >> 11;
 
     scr_y = dword_176D40 - scr_shy;
     if (scr_y < 0)
     {
+        if (scr_y < SCREEN_POINT_COORD_MIN)
+            scr_y = SCREEN_POINT_COORD_MIN;
         flg |= 0x04;
-        if (scr_y < -2000)
-            scr_y = -2000;
     }
     else if (scr_y >= vec_window_height)
     {
+        if (scr_y > SCREEN_POINT_COORD_MAX)
+            scr_y = SCREEN_POINT_COORD_MAX;
         flg |= 0x08;
-        if (scr_y > 2000)
-            scr_y = 2000;
     }
 
     flg |= 0x40;
+
     p_sp->Flags = flg;
     p_sp->X = scr_x;
     p_sp->Y = scr_y;
-    p_sp->field_4 = fctr_d;
+    p_sp->Depth = scr_d;
+}
+
+void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
+{
+    int fctr_a, fctr_b, fctr_c, scr_d;
+    int scr_shx, scr_shy, sca_x, sca_y;
+    int scr_x, scr_y;
+    ubyte flg;
+
+    fctr_a = (dword_176D14 * dxc - dword_176D10 * dzc) >> 16;
+    fctr_b = (dword_176D10 * dxc + dword_176D14 * dzc) >> 16;
+    fctr_c = (dword_176D1C * dyc - dword_176D18 * fctr_b) >> 16;
+    scr_d = (dword_176D18 * dyc + dword_176D1C * fctr_b) >> 16;
+    sca_x = overall_scale * fctr_a;
+    sca_y = overall_scale * fctr_c;
+    flg = 0;
+
+    if (scr_d >= -500)
+    {
+        int dvfactor;
+        dvfactor = (scr_d >> 2) + 500;
+        scr_shx = (1500 * sca_x / dvfactor) >> 9;
+        scr_shy = -(1500 * sca_y / dvfactor) >> 9;
+        flg |= 0x40;
+        scr_d /= render_area_a / 20 + 1;
+    }
+    else
+    {
+        scr_shx = sca_x >> 8;
+        scr_shy = sca_y >> 8;
+        flg |= 0x20;
+    }
+
+    scr_x = dword_176D3C + scr_shx;
+    if (scr_x < 0)
+    {
+        if (scr_x < SCREEN_POINT_COORD_MIN)
+            scr_x = SCREEN_POINT_COORD_MIN;
+        flg |= 0x01;
+    }
+    else if (scr_x >= vec_window_width)
+    {
+        if (scr_x > SCREEN_POINT_COORD_MAX)
+            scr_x = SCREEN_POINT_COORD_MAX;
+        flg |= 0x02;
+    }
+
+    scr_y = dword_176D40 + scr_shy;
+    if (scr_y < 0)
+    {
+        if (scr_y < SCREEN_POINT_COORD_MIN)
+            scr_y = SCREEN_POINT_COORD_MIN;
+        flg |= 0x04;
+    }
+    else if (scr_y >= vec_window_height)
+    {
+        if (scr_y > SCREEN_POINT_COORD_MAX)
+            scr_y = SCREEN_POINT_COORD_MAX;
+        flg |= 0x08;
+    }
+
+    p_sp->Flags = flg;
+    p_sp->X = scr_x;
+    p_sp->Y = scr_y;
+    p_sp->Depth = scr_d;
 }
 
 void process_engine_unk1(void)

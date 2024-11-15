@@ -23,7 +23,8 @@
 
 #include "display.h"
 #include "engintrns.h"
-#include "engindrwlst.h"
+#include "engindrwlstm.h"
+#include "engindrwlstx.h"
 #include "thing.h"
 #include "game.h"
 #include "swlog.h"
@@ -129,13 +130,6 @@ void draw_person_shadow(ushort face)
     if (vec_mode == 2)
         vec_mode = 27;
     draw_trigpoly(&point2.pp, &point1.pp, &point3.pp);
-}
-
-void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte csel)
-{
-    asm volatile (
-      "call ASM_draw_sorted_sprite1a\n"
-        : : "a" (frm), "d" (x), "b" (y), "c" (csel));
 }
 
 void copy_from_screen_ani(ubyte *buf)

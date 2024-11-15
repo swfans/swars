@@ -34,6 +34,7 @@
 #include "guiboxes.h"
 #include "guitext.h"
 #include "keyboard.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "player.h"
 #include "purpldrw.h"

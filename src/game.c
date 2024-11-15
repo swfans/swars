@@ -46,6 +46,10 @@
 #include "dos.h"
 #include "drawtext.h"
 #include "enginbckt.h"
+#include "engindrwlstm.h"
+#include "engindrwlstx.h"
+#include "enginfexpl.h"
+#include "enginfloor.h"
 #include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginpritxtr.h"
@@ -56,6 +60,7 @@
 #include "engintrns.h"
 #include "enginzoom.h"
 #include "game_data.h"
+#include "game_sprts.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "femail.h"
@@ -80,6 +85,7 @@
 #include "cybmod.h"
 #include "pathtrig.h"
 #include "pepgroup.h"
+#include "lvdraw3d.h"
 #include "lvobjctv.h"
 #include "lvfiles.h"
 #include "bigmap.h"
@@ -99,11 +105,13 @@
 #include "util.h"
 #include "windows.h"
 #include "command.h"
-#include "research.h"
-#include "thing.h"
-#include "packet.h"
 #include "player.h"
+#include "research.h"
 #include "rules.h"
+#include "thing.h"
+#include "tngcolisn.h"
+#include "tngobjdrw.h"
+#include "packet.h"
 #include "vehicle.h"
 #include "wadfile.h"
 #include "weapon.h"
@@ -126,36 +134,6 @@ extern char *fadedat_fname;
 extern unsigned long unkn_buffer_04;
 char session_name[20] = "SWARA";
 
-extern ubyte *small_font_data;
-extern ubyte *small2_font_data;
-extern ubyte *small_med_font_data;
-extern ubyte *med_font_data;
-extern ubyte *med2_font_data;
-extern ubyte *big_font_data;
-
-extern ubyte *pointer_data;
-
-extern struct TbSprite *sprites_Icons0_0;
-extern struct TbSprite *sprites_Icons0_0_end;
-extern ubyte *sprites_Icons0_0_data;
-
-extern struct TbSprite *unk1_sprites;
-extern struct TbSprite *unk1_sprites_end;
-extern ubyte *unk1_sprites_data;
-
-extern struct TbSprite *unk3_sprites_end;
-extern ubyte *unk3_sprites_data;
-
-extern struct TbSprite *unk2_sprites_end;
-extern ubyte *unk2_sprites_data;
-
-extern struct TbSprite *pop1_sprites_end;
-extern ubyte *pop1_data;
-
-extern ubyte *m_spr_data;
-extern ubyte *m_spr_data_end;
-extern struct TbSprite *m_sprites_end;
-
 extern ulong stored_l3d_next_object[1];
 extern ulong stored_l3d_next_object_face[1];
 extern ulong stored_l3d_next_object_face4[1];
@@ -171,8 +149,6 @@ extern unsigned short unkn2_pos_x;
 extern unsigned short unkn2_pos_y;
 extern unsigned short unkn2_pos_z;
 extern int data_1c8428;
-extern ubyte byte_1C83E4;
-extern ubyte byte_1C8444;
 extern const char *primvehobj_fname;
 extern unsigned char textwalk_data[640];
 
@@ -186,8 +162,6 @@ extern long dword_1DDECC;
 
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
-
-extern long dword_19F4F8;
 
 extern ubyte execute_commands;
 extern long gamep_unknval_10;
@@ -208,33 +182,11 @@ extern long dword_155018;
 extern short last_map_for_lights_func_11;
 
 extern short word_1552F8;
-extern short word_152F00;
 
 extern long dword_176CBC;
 
-extern long dword_176D10;
-extern long dword_176D14;
-
-extern long dword_176D70;
-extern long dword_176D74;
-extern long dword_176D78;
-extern long dword_176D7C;
-extern long dword_176D80;
-extern long dword_176D84;
-extern long dword_176D88;
-extern long dword_176D8C;
-
-extern ubyte byte_176D48;
-extern ubyte byte_176D49;
-extern ubyte byte_176D4A;
-extern ubyte byte_176D4B;
-
 extern short word_1774E8[2 * 150];
 extern ushort shield_frm[4];
-
-extern short word_19CC64;
-extern short word_19CC66;
-extern ubyte byte_19EC7A;
 
 extern ushort word_1A7330[1000];
 extern ubyte byte_1A7B00[1000];
@@ -257,16 +209,11 @@ extern long dword_1DC88C;
 extern long dword_1DC890;
 extern long dword_1DC894;
 
-extern ubyte deep_radar_surface_col;
-extern ubyte deep_radar_line_col;
-
 extern ubyte unkn_changing_color_1;
 extern ubyte unkn_changing_color_2;
 extern ulong unkn_changing_color_counter1;
 
 extern short brightness;
-
-extern short super_quick_light[(RENDER_AREA_MAX+1)*(RENDER_AREA_MAX+1)];
 
 //TODO this is not an extern only because I was unable to locate it in asm
 ushort next_bezier_pt = 1;
@@ -420,12 +367,6 @@ void load_prim_quad(void)
 void bang_init(void)
 {
     asm volatile ("call ASM_bang_init\n"
-        :  :  : "eax" );
-}
-
-void init_free_explode_faces(void)
-{
-    asm volatile ("call ASM_init_free_explode_faces\n"
         :  :  : "eax" );
 }
 
@@ -1023,9 +964,10 @@ void load_outro_sprites(void)
     next_pos += next_len;
     med2_font_end = (struct TbSprite *)&data_buf[next_pos];
 
-    LbSpriteSetup(med_font, med_font_end, med_font_data);
-    LbSpriteSetup(med2_font, med2_font_end, med2_font_data);
-    LbSpriteSetup(big_font, big_font_end, big_font_data);
+    setup_sprites_med_font();
+    setup_sprites_med2_font();
+    setup_sprites_big_font();
+
 
     outtxt_ptr = &data_buf[next_pos];
     next_len = load_outro_text(outtxt_ptr);
@@ -1389,333 +1331,10 @@ void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
 }
 
-void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text)
-{
-#if 0
-    asm volatile (
-      "call ASM_draw_text_transformed_at_ground\n"
-        : : "a" (coord_x), "d" (coord_z), "b" (text));
-    return;
-#endif
-    struct EnginePoint ep;
-    short w, h;
-
-    w = lbDisplay.GraphicsScreenWidth;
-    h = lbDisplay.GraphicsScreenHeight;
-    ep.X3d = coord_x - engn_xc;
-    ep.Z3d = coord_z - engn_zc;
-    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
-    ep.Flags = 0;
-    transform_point(&ep);
-    if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
-    {
-        draw_text(ep.pp.X, ep.pp.Y, text, colour_lookup[2]);
-    }
-}
-
-void draw_number_transformed_at_ground(int coord_x, int coord_z, int num)
-{
-    char locstr[52];
-    struct EnginePoint ep;
-    short w, h;
-
-    w = lbDisplay.GraphicsScreenWidth;
-    h = lbDisplay.GraphicsScreenHeight;
-    ep.X3d = coord_x - engn_xc;
-    ep.Z3d = coord_z - engn_zc;
-    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
-    ep.Flags = 0;
-    transform_point(&ep);
-    if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
-    {
-        sprintf(locstr, "%d", num);
-        draw_text(ep.pp.X, ep.pp.Y, locstr, colour_lookup[2]);
-    }
-}
-
-void draw_text_transformed(int coord_x, int coord_y, int coord_z, const char *text)
-{
-#if 0
-    asm volatile (
-      "call ASM_draw_text_transformed\n"
-        : : "a" (coord_x), "d" (coord_y), "b" (coord_z), "c" (text));
-    return;
-#endif
-    struct EnginePoint ep;
-    short w, h;
-
-    w = lbDisplay.GraphicsScreenWidth;
-    h = lbDisplay.GraphicsScreenHeight;
-    ep.X3d = coord_x - engn_xc;
-    ep.Z3d = coord_z - engn_zc;
-    ep.Y3d = coord_y - engn_yc;
-    ep.Flags = 0;
-    transform_point(&ep);
-    if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
-    {
-        draw_text(ep.pp.X, ep.pp.Y, text, colour_lookup[3]);
-    }
-}
-
-void draw_number_transformed(int coord_x, int coord_y, int coord_z, int num)
-{
-    char locstr[52];
-    struct EnginePoint ep;
-    short w, h;
-
-    w = lbDisplay.GraphicsScreenWidth;
-    h = lbDisplay.GraphicsScreenHeight;
-    ep.X3d = coord_x - engn_xc;
-    ep.Z3d = coord_z - engn_zc;
-    ep.Y3d = coord_y - engn_yc;
-    ep.Flags = 0;
-    transform_point(&ep);
-    if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
-    {
-        sprintf(locstr, "%d", num);
-        draw_text(ep.pp.X, ep.pp.Y, locstr, colour_lookup[3]);
-    }
-}
-
-void LbSpriteDraw_2(int x, int y, struct TbSprite *spr)
-{
-    asm volatile (
-      "call ASM_LbSpriteDraw_2\n"
-        : : "a" (x), "d" (y), "b" (spr));
-}
-
-#define SUPER_QUICK_RADIUS 5
-void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
-{
-    short tile_x_beg, tile_x_end;
-    short tile_z_beg, tile_z_end;
-    short tile_x, tile_z;
-    int mapcor_x, mapcor_z;
-    short ratile_x_beg, ratile_z_beg;
-    short ratile_x, ratile_z;
-
-    tile_z_beg = MAPCOORD_TO_TILE(lz) - SUPER_QUICK_RADIUS/2;
-    tile_x_beg = MAPCOORD_TO_TILE(lx) - SUPER_QUICK_RADIUS/2;
-    if (tile_z_beg <= -SUPER_QUICK_RADIUS || tile_z_beg >= MAP_TILE_HEIGHT)
-        return;
-    if (tile_x_beg <= -SUPER_QUICK_RADIUS || tile_x_beg >= MAP_TILE_WIDTH)
-        return;
-
-    mapcor_z = TILE_TO_MAPCOORD(render_area_b,0) / 2;
-    mapcor_x = TILE_TO_MAPCOORD(render_area_a,0) / 2;
-    if ((lz <= engn_zc - mapcor_z) || (lz >= engn_zc + mapcor_z))
-        return;
-    if ((lx <= engn_xc - mapcor_x) || (lx >= engn_xc + mapcor_x))
-        return;
-
-    ratile_z_beg = (render_area_b >> 1) - MAPCOORD_TO_TILE(engn_zc);
-    if (ratile_z_beg > 0) // required to avoid shifting light to terrain near map border
-        ratile_z_beg = 0;
-    ratile_z_beg += tile_z_beg;
-    ratile_x_beg = (render_area_a >> 1) - MAPCOORD_TO_TILE(engn_xc);
-    ratile_x_beg += tile_x_beg;
-    tile_x_end = tile_x_beg + SUPER_QUICK_RADIUS;
-    tile_z_end = tile_z_beg + SUPER_QUICK_RADIUS;
-
-    for (tile_z = tile_z_beg, ratile_z = ratile_z_beg; tile_z < tile_z_end; tile_z++, ratile_z++)
-    {
-        mapcor_z = TILE_TO_MAPCOORD(tile_z,0);
-        for (tile_x = tile_x_beg, ratile_x = ratile_x_beg; tile_x < tile_x_end; tile_x++, ratile_x++)
-        {
-            short *p_sqlight;
-            int f, dist;
-            short intensity;
-
-            mapcor_x = TILE_TO_MAPCOORD(tile_x,0);
-
-            if (ratile_x < 0 || ratile_x >= render_area_a)
-                continue;
-            if (ratile_z < 0 || ratile_z >= render_area_b)
-                continue;
-            if (tile_x < 0 || tile_x >= MAP_TILE_WIDTH)
-                continue;
-            if (tile_z < 0 || tile_z >= MAP_TILE_HEIGHT)
-                continue;
-
-            p_sqlight = &super_quick_light[ratile_x + render_area_a * ratile_z];
-
-            dist = (mapcor_x - lx) * (mapcor_x - lx)
-                + (mapcor_z - lz) * (mapcor_z - lz);
-            if (dist > 0)
-              f = 1088608 / dist;
-            else
-              f = 32;
-            intensity = b * f >> 5;
-            if (intensity > 32)
-                intensity = 32;
-            *p_sqlight += intensity;
-        }
-    }
-}
-
-void draw_line_transformed_at_ground(int x1, int y1, int x2, int y2, TbPixel colour)
-{
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_line_transformed_at_ground\n"
-        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (colour));
-}
-
-void draw_unkn1_bar(ushort cv)
-{
-#if 0
-    asm volatile (
-      "call ASM_draw_unkn1_bar\n"
-        : : "a" (cv));
-#endif
-    short scr_x, scr_y;
-    struct EnginePoint ep1;
-    struct EnginePoint ep2;
-    char locstr[8];
-
-    ep1.X3d = game_col_vects[cv].X1 - engn_xc;
-    ep1.Z3d = game_col_vects[cv].Z1 - engn_zc;
-    ep1.Y3d = game_col_vects[cv].Y1;
-    ep1.Flags = 0;
-    transform_point(&ep1);
-    ep2.X3d = game_col_vects[cv].X2 - engn_xc;
-    ep2.Z3d = game_col_vects[cv].Z2 - engn_zc;
-    ep2.Y3d = game_col_vects[cv].Y2;
-    ep2.Flags = 0;
-    transform_point(&ep2);
-    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour_lookup[1]);
-    scr_x = ep2.pp.X + ep1.pp.X;
-    scr_y = ep2.pp.Y + ep1.pp.Y;
-    sprintf(locstr, "%d", cv);
-    draw_text(scr_x, scr_y, locstr, colour_lookup[7]);
-}
-
-void draw_engine_unk3_last(short x, short z)
-{
-#if 0
-    asm volatile (
-      "call ASM_draw_engine_unk3_last\n"
-        : : "a" (x), "d" (z));
-#endif
-    int x_beg, x_end;
-    int z_beg, z_end;
-    int cx, cz;
-
-    x_beg = (x >> 8) - (render_area_a >> 1);
-    x_end = (x >> 8) + (render_area_a >> 1);
-    z_beg = (z >> 8) - (render_area_b >> 1);
-    z_end = (z >> 8) + (render_area_b >> 1);
-    for (cx = x_beg; cx < x_end; cx++)
-    {
-        for (cz = z_beg; cz < z_end; cz++)
-        {
-          struct MyMapElement *p_mapel;
-          short vl;
-
-          if (cx < 0 || cx > 127 || cz < 0 || cz > 127)
-              continue;
-          p_mapel = &game_my_big_map[cx + (cz << 7)];
-
-          vl = p_mapel->ColHead;
-          while ( vl )
-          {
-              struct ColVectList *p_cvlist;
-              short cor_x, cor_y;
-              uint mapel;
-
-              mapel = (p_mapel - game_my_big_map);
-              cor_y = (mapel / 128) << 8;
-              cor_x = (mapel % 128) << 8;
-              draw_line_transformed_at_ground(cor_x, cor_y, cor_x + 256, cor_y, 0x63u);
-              draw_line_transformed_at_ground(cor_x + 256, cor_y, cor_x + 256, cor_y + 256, 0x63u);
-              draw_line_transformed_at_ground(cor_x, cor_y + 256, cor_x + 256, cor_y + 256, 0x63u);
-              draw_line_transformed_at_ground(cor_x, cor_y + 256, cor_x, cor_y, 0x63u);
-
-              p_cvlist = &game_col_vects_list[vl];
-              draw_unkn1_bar(p_cvlist->Vect);
-              vl = p_cvlist->NextColList & 0x7FFF;
-              cor_x += 128;
-              cor_y += 128;
-
-              p_cvlist = &game_col_vects_list[vl];
-              draw_number_transformed_at_ground(cor_x, cor_y, p_cvlist->Object);
-            }
-        }
-    }
-}
-
 void draw_engine_net_text(void)
 {
     asm volatile ("call ASM_draw_engine_net_text\n"
         :  :  : "eax" );
-}
-
-void draw_explode(void)
-{
-    asm volatile ("call ASM_draw_explode\n"
-        :  :  : "eax" );
-}
-
-short shpoint_compute_shade(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, short *p_sqlight)
-{
-    int shd;
-    ushort qlght, n;
-
-    shd = (p_mapel->Ambient << 7) + (p_sp->field_9) + 256 + (*p_sqlight << 8);
-    qlght = p_mapel->Shade;
-    n = 0;
-    while (qlght != 0)
-    {
-        struct QuickLight *p_qlght;
-        n++;
-        if (n >= 100)
-            break;
-        p_qlght = &game_quick_lights[qlght];
-        shd += p_qlght->Ratio * game_full_lights[p_qlght->Light].Intensity;
-        qlght = p_qlght->NextQuick;
-    }
-    if (shd > 32256)
-        shd = 32512;
-    return shd;
-}
-
-int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int elcr_x, int elcr_z)
-{
-    int elcr_y;
-
-    if (game_perspective == 1)
-    {
-        elcr_y = 0;
-        p_sp->field_9 = 0;
-    }
-    else if ((p_mapel->Flags & 0x10) == 0)
-    {
-        elcr_y = 8 * p_mapel->Alt;
-        if ((p_mapel->Flags & 0x40) != 0)
-            elcr_y += waft_table[gameturn & 0x1F];
-        p_sp->field_9 = 0;
-    }
-    else
-    {
-        int wobble, dvfactor;
-
-        elcr_y = 8 * p_mapel->Alt;
-        dvfactor = 140 + ((bw_rotl32(0x5D3BA6C3, elcr_z >> 8) ^ bw_rotr32(0xA7B4D8AC, elcr_x >> 8)) & 0x7F);
-        wobble = (waft_table2[(gameturn + (elcr_x >> 7)) & 0x1F]
-             + waft_table2[(gameturn + (elcr_z >> 7)) & 0x1F]
-             + waft_table2[(32 * gameturn / dvfactor) & 0x1F]) >> 3;
-        elcr_y += 4 * wobble;
-        p_sp->field_9 = (wobble + 32) << 9;
-    }
-    return elcr_y;
-}
-
-ushort draw_object(int x, int y, int z, struct SingleObject *point_object)
-{
-    ushort ret;
-    asm volatile ("call ASM_draw_object\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (point_object));
-    return ret;
 }
 
 void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign)
@@ -1730,957 +1349,6 @@ int mech_unkn_func_03(struct Thing *p_thing)
     asm volatile ("call ASM_mech_unkn_func_03\n"
         : "=r" (ret) : "a" (p_thing));
     return ret;
-}
-
-ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
-{
-    ushort ret;
-    asm volatile (
-      "push %5\n"
-      "call ASM_draw_rot_object\n"
-        : "=r" (ret) : "a" (offset_x), "d" (offset_y), "b" (offset_z), "c" (point_object), "g" (p_thing));
-    return ret;
-}
-
-ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
-{
-    ushort ret;
-    asm volatile (
-      "push %5\n"
-      "call ASM_draw_rot_object2\n"
-        : "=r" (ret) : "a" (offset_x), "d" (offset_y), "b" (offset_z), "c" (point_object), "g" (p_thing));
-    return ret;
-}
-
-void draw_vehicle_shadow(ushort veh, ushort sort)
-{
-    asm volatile ("call ASM_draw_vehicle_shadow\n"
-        : : "a" (veh), "d" (sort));
-}
-
-void draw_vehicle_health(struct Thing *p_thing)
-{
-    asm volatile ("call ASM_draw_vehicle_health\n"
-        : : "a" (p_thing));
-}
-
-void process_child_object(struct Thing *p_vehicle)
-{
-#if 0
-    asm volatile ("call ASM_process_child_object\n"
-        : : "a" (p_vehicle));
-#endif
-    struct SingleObject *p_sobj;
-    struct Thing *p_mgun;
-    struct M33 *m;
-    struct M31 vec1;
-    struct M31 vec2;
-    struct M31 gear;
-
-    gear.R[0] = p_vehicle->X >> 8;
-    gear.R[1] = p_vehicle->Y >> 5;
-    gear.R[2] = p_vehicle->Z >> 8;
-
-    p_mgun = &things[p_vehicle->U.UVehicle.SubThing];
-    vec2.R[0] = p_mgun->X >> 8;
-    vec2.R[1] = p_mgun->Y >> 4;
-    vec2.R[2] = p_mgun->Z >> 8;
-
-    m = &local_mats[p_vehicle->U.UVehicle.MatrixIndex];
-    matrix_transform(&vec1, m, &vec2);
-
-    p_sobj = &game_objects[p_mgun->U.UMGun.Object];
-    draw_rot_object(
-      gear.R[0] + (vec1.R[0] >> 15) - engn_xc,
-      gear.R[1] + (vec1.R[1] >> 15),
-      gear.R[2] + (vec1.R[2] >> 15) - engn_zc,
-      p_sobj, p_mgun);
-}
-
-void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
-{
-    asm volatile (
-      "push %9\n"
-      "push %8\n"
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_build_polygon_circle\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (r1), "g" (r2), "g" (flag), "g" (p_tex), "g" (col), "g" (bright1), "g" (bright2));
-}
-
-void do_car_glare(struct Thing *p_car)
-{
-    asm volatile ("call ASM_do_car_glare\n"
-        : : "a" (p_car));
-}
-
-void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity)
-{
-    asm volatile (
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_pers_e_graphic\n"
-        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (frame), "g" (radius), "g" (intensity));
-}
-
-void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity, struct Thing *p_thing)
-{
-    asm volatile (
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_e_graphic\n"
-        : : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (radius), "g" (intensity), "g" (p_thing));
-}
-
-void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int intensity, int scale)
-{
-    asm volatile (
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_e_graphic_scale\n"
-        : : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (radius), "g" (intensity), "g" (scale));
-}
-
-struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
-{
-    struct SingleObjectFace4 *ret;
-    asm volatile (
-      "call ASM_build_glare\n"
-        : "=r" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (r1));
-    return ret;
-}
-
-void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour)
-{
-    asm volatile (
-      "push %8\n"
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_build_laser\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner), "g" (colour));
-}
-
-void build_laser_guided_piece(struct Thing *p_laser)
-{
-    asm volatile ("call ASM_build_laser_guided_piece\n"
-        : : "a" (p_laser));
-}
-
-void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
-{
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_mapwho_vect_len\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (len), "g" (col));
-}
-
-void build_electricity(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
-{
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_build_electricity\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner));
-}
-
-void build_electricity_strand(struct SimpleThing *p_sthing, ubyte itime)
-{
-    asm volatile (
-      "call ASM_build_electricity_strand\n"
-        : : "a" (p_sthing), "d" (itime));
-}
-
-void build_razor_wire_strand(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
-{
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_build_razor_wire_strand\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner));
-}
-
-void build_laser_beam(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
-{
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_build_laser_beam\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner));
-}
-
-void build_laser_beam_q(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
-{
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_build_laser_beam_q\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner));
-}
-
-void build_laser11(struct Thing *p_thing)
-{
-    struct Thing *p_owntng;
-    TbPixel colour;
-
-    if ((p_thing->Flag & TngF_Unkn1000) != 0)
-        colour = colour_lookup[4];
-    else
-        colour = colour_lookup[2];
-    p_owntng = &things[p_thing->Owner];
-    build_laser(
-      PRCCOORD_TO_MAPCOORD(p_owntng->X),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Z),
-      p_thing->VX, p_thing->VY, p_thing->VZ,
-      p_thing->Timer1, p_owntng, colour);
-}
-
-void build_grenade(struct Thing *p_thing)
-{
-    struct MyMapElement *p_mapel;
-    ushort frame;
-
-    frame = p_thing->Frame;
-    p_mapel = &game_my_big_map[128 * (p_thing->Z >> 16) + (p_thing->X >> 16)];
-
-    draw_e_graphic(
-      PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
-      PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-      frame, p_thing->Radius, p_mapel->ShadeR, p_thing);
-}
-
-void build_static(struct SimpleThing *p_sthing)
-{
-    struct MyMapElement *p_mapel;
-    ushort frame;
-
-    frame = p_sthing->Frame;
-    if (frame == nstart_ani[1008])
-        return;
-    p_mapel = &game_my_big_map[128 * (p_sthing->Z >> 16) + (p_sthing->X >> 16)];
-
-    draw_e_graphic(
-      PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
-      frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
-}
-
-void build_dropped_item(struct SimpleThing *p_sthing)
-{
-    struct MyMapElement *p_mapel;
-    ushort frame;
-
-    frame = p_sthing->Frame;
-    p_mapel = &game_my_big_map[128 * (p_sthing->Z >> 16) + (p_sthing->X >> 16)];
-
-    draw_e_graphic(
-      PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
-      frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
-}
-
-void build_spark(struct SimpleThing *p_sthing)
-{
-    draw_mapwho_vect_len(
-      PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
-      p_sthing->U.UEffect.OX - engn_xc,
-      p_sthing->U.UEffect.OY,
-      p_sthing->U.UEffect.OZ - engn_zc,
-      8, p_sthing->Object & 0xFF);
-}
-
-void build_unkn18(struct Thing *p_thing)
-{
-    draw_e_graphic(
-      PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
-      PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-      nstart_ani[900], p_thing->Radius, 63, p_thing);
-}
-
-void build_laser_elec(struct Thing *p_thing)
-{
-    struct Thing *p_owntng;
-
-    p_owntng = &things[p_thing->Owner];
-    if (p_thing->State != 0)
-    {
-        build_electricity(
-          PRCCOORD_TO_MAPCOORD(p_owntng->X),
-          PRCCOORD_TO_MAPCOORD(p_owntng->Y),
-          PRCCOORD_TO_MAPCOORD(p_owntng->Z),
-          p_thing->VX, p_thing->VY, p_thing->VZ,
-          100 + p_thing->Timer1, p_owntng);
-    }
-    else
-    {
-        int i;
-
-        for (i = 0; i < p_thing->SubType >> 1; i++)
-            build_electricity(
-              PRCCOORD_TO_MAPCOORD(p_owntng->X),
-              PRCCOORD_TO_MAPCOORD(p_owntng->Y),
-              PRCCOORD_TO_MAPCOORD(p_owntng->Z),
-              p_thing->VX, p_thing->VY, p_thing->VZ,
-              p_thing->Timer1, p_owntng);
-    }
-}
-
-void build_scale_effect(struct SimpleThing *p_sthing)
-{
-    ushort frame;
-
-    frame = p_sthing->Frame;
-    draw_e_graphic_scale(
-      PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
-      frame, p_sthing->Radius, 32, p_sthing->Object);
-}
-
-void build_nuclear_bomb(struct SimpleThing *p_sthing)
-{
-    if (p_sthing->Radius <= 0 || ((p_sthing->Flag & TngF_InVehicle) == 0))
-        return;
-
-    build_polygon_circle(
-      PRCCOORD_TO_MAPCOORD(p_sthing->X),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Z),
-      p_sthing->Radius, 20, 15,
-      game_textures, colour_lookup[1], 32, 96);
-}
-
-void build_laser29(struct Thing *p_thing)
-{
-    struct Thing *p_owntng;
-
-    p_owntng = &things[p_thing->Owner];
-    build_laser_beam(
-      PRCCOORD_TO_MAPCOORD(p_owntng->X),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Z),
-      p_thing->VX, p_thing->VY, p_thing->VZ,
-      p_thing->Timer1, p_owntng);
-}
-
-void build_vehicle(struct Thing *p_thing)
-{
-    PlayerInfo *p_locplayer;
-    int i;
-
-    if (((p_thing->Flag2 & TgF2_Unkn01000000) != 0) && (byte_1C83E4 & 0x01) != 0)
-        return;
-    if (p_thing->SubType == SubTT_VEH_SHUTTLE_POD)
-        return;
-
-    p_locplayer = &players[local_player_no];
-
-    if (p_locplayer->TargetType < 4)
-        check_mouse_overvehicle(p_thing, 4);
-    if (p_thing->SubType == SubTT_VEH_MECH)
-    {
-        if ((p_thing->Flag & TngF_Unkn0002) == 0)
-            mech_unkn_func_03(p_thing);
-        i = 0;
-    }
-    else
-    {
-        struct SingleObject *p_sobj;
-
-        p_sobj = &game_objects[p_thing->U.UVehicle.Object];
-        i = draw_rot_object(
-             PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-             p_thing->Y >> 5,
-             PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-             p_sobj, p_thing);
-    }
-    if (p_thing->SubType != SubTT_VEH_TRAIN)
-        draw_vehicle_shadow(p_thing->ThingOffset, i);
-
-    if (p_thing->Health < p_thing->U.UVehicle.MaxHealth)
-        draw_vehicle_health(p_thing);
-
-    if (p_thing->U.UVehicle.SubThing && (p_thing->SubType == SubTT_VEH_TANK))
-        process_child_object(p_thing);
-
-    if (p_thing->U.UVehicle.RecoilTimer != 0) {
-        build_polygon_circle(
-          PRCCOORD_TO_MAPCOORD(p_thing->X),
-          PRCCOORD_TO_MAPCOORD(p_thing->Y) + 10,
-          PRCCOORD_TO_MAPCOORD(p_thing->Z),
-          3 * p_thing->U.UVehicle.RecoilTimer + 15, 30, 15,
-          game_textures, colour_lookup[4], 16,
-           16 * ((6 - p_thing->U.UVehicle.RecoilTimer) & 0x0F));
-    }
-
-    do_car_glare(p_thing);
-}
-
-void build_person(struct Thing *p_thing)
-{
-    ushort frame, bri;
-
-    if (p_thing->State == PerSt_BEING_PERSUADED)
-    {
-        frame = p_thing->Frame;
-        bri = 32;
-    }
-    else if (p_thing->U.UPerson.AnimMode == 20)
-    {
-        ushort stframe_old, stframe_new;
-
-        stframe_old = p_thing->StartFrame + 1 + p_thing->U.UPerson.Angle;
-        stframe_new = p_thing->StartFrame + 1 + ((3 * p_thing->U.UPerson.Angle >> 1) + 12 - byte_176D4A) % 12;
-        frame = p_thing->Frame + nstart_ani[stframe_new] - nstart_ani[stframe_old];
-        bri = p_thing->U.UPerson.Brightness;
-    }
-    else if ((p_thing->Flag & TngF_Unkn02000000) != 0)
-    {
-        return;
-    }
-    else if (p_thing->StartFrame == 1066)
-    {
-        frame = p_thing->Frame;
-        bri = p_thing->U.UPerson.Brightness;
-    }
-    else
-    {
-        ushort stframe_old, stframe_new;
-
-        stframe_old = p_thing->StartFrame + 1 + p_thing->U.UPerson.Angle;
-        stframe_new = p_thing->StartFrame + 1 + ((p_thing->U.UObject.Angle + 8 - byte_176D49) & 7);
-        frame = p_thing->Frame + nstart_ani[stframe_new] - nstart_ani[stframe_old];
-        bri = p_thing->U.UPerson.Brightness;
-    }
-
-    draw_pers_e_graphic(p_thing,
-      PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
-      PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-      frame, p_thing->Radius, bri);
-}
-
-void build_rocket(struct Thing *p_thing)
-{
-    struct SingleObject *p_sobj;
-    struct M33 *m;
-    struct M31 vec1, vec2, vec3;
-    ushort obj;
-
-    build_glare(PRCCOORD_TO_MAPCOORD(p_thing->X), p_thing->Y >> 5,
-      PRCCOORD_TO_MAPCOORD(p_thing->Z), 64);
-
-    p_thing->U.UObject.MatrixIndex = next_local_mat + 1;
-    m = &local_mats[p_thing->U.UObject.MatrixIndex];
-    m->R[0][2] = -64 * p_thing->VX;
-    m->R[1][2] = -512 * p_thing->VY;
-    m->R[2][2] = -64 * p_thing->VZ;
-    m->R[0][1] = 0;
-    m->R[1][1] = 0x4000;
-    m->R[2][1] = 0;
-    vec2.R[0] = m->R[0][2];
-    vec2.R[1] = m->R[1][2];
-    vec2.R[2] = m->R[2][2];
-    vec1.R[0] = m->R[0][1];
-    vec1.R[1] = m->R[1][1];
-    vec1.R[2] = m->R[2][1];
-    vec_cross_prod(&vec3, &vec1, &vec2);
-    m->R[0][0] = vec3.R[0] >> 14;
-    m->R[1][0] = vec3.R[1] >> 14;
-    m->R[2][0] = vec3.R[2] >> 14;
-    object_vec_normalisation(m, 0);
-
-    obj = ingame.Rocket1[ingame.NextRocket++];
-    p_sobj = &game_objects[obj];
-
-    draw_rot_object(
-      PRCCOORD_TO_MAPCOORD(p_thing->X) + (p_thing->VX >> 1) - engn_xc,
-      (p_thing->Y >> 5) + 30,
-      PRCCOORD_TO_MAPCOORD(p_thing->Z) + (p_thing->VZ >> 1) - engn_zc,
-      p_sobj, p_thing);
-}
-
-void build_building(struct Thing *p_thing)
-{
-    struct SingleObject *p_sobj;
-
-    if ((ingame.DisplayMode == DpM_UNKN_32) && (lbKeyOn[KC_B]))
-        return;
-    if (gameturn == p_thing->U.UObject.DrawTurn)
-        return;
-    p_thing->U.UObject.DrawTurn = gameturn;
-
-    if (p_thing->SubType == SubTT_BLD_BILLBOARD)
-    {
-        ingame.VisibleBillboardThing = p_thing->ThingOffset;
-        ingame.Flags |= 0x040000;
-    }
-
-    if (p_thing->SubType == SubTT_BLD_36)
-    {
-        p_sobj = &game_objects[p_thing->U.UObject.Object];
-        draw_rot_object2(
-          PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-          PRCCOORD_TO_MAPCOORD(p_thing->Y),
-          PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-          p_sobj, p_thing);
-    }
-    else if (p_thing->SubType != SubTT_BLD_MGUN)
-    {
-        ushort beg_obj, end_obj;
-        ushort obj;
-
-        beg_obj = p_thing->U.UObject.Object;
-        end_obj = beg_obj + p_thing->U.UObject.NumbObjects;
-        for (obj = beg_obj; obj < end_obj; obj++) {
-            p_sobj = &game_objects[obj];
-            draw_object(0, 0, 0, p_sobj);
-        }
-    }
-    else
-    {
-        PlayerInfo *p_locplayer;
-
-        p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < 2)
-            check_mouse_overvehicle(p_thing, 2);
-        p_sobj = &game_objects[p_thing->U.UObject.Object];
-        draw_rot_object2(
-          PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-          p_thing->Y >> 5,
-          PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-          p_sobj, p_thing);
-        if (p_thing->Health < p_thing->U.UMGun.MaxHealth)
-            draw_vehicle_health(p_thing);
-    }
-}
-
-void build_soul(struct SimpleThing *p_sthing)
-{
-    build_glare(PRCCOORD_TO_MAPCOORD(p_sthing->X), p_sthing->Y >> 5,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Z), 32);
-}
-
-void build_laser38(struct Thing *p_thing)
-{
-    struct Thing *p_owntng;
-
-    p_owntng = &things[p_thing->Owner];
-    build_laser_beam_q(
-      PRCCOORD_TO_MAPCOORD(p_owntng->X),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Z),
-      p_thing->VX, p_thing->VY, p_thing->VZ,
-      p_thing->Timer1, p_owntng);
-}
-
-void build_razor_wire(struct Thing *p_thing)
-{
-    PlayerInfo *p_locplayer;
-    struct Thing *p_dcthing;
-    ushort mask;
-
-    mask = 0x7F;
-    if (p_thing->U.UEffect.LeisurePlace == (gameturn & 0xFFFF))
-        return;
-
-    p_locplayer = &players[local_player_no];
-    p_dcthing = &things[p_locplayer->DirectControl[0]];
-
-    p_thing->U.UEffect.LeisurePlace = (gameturn & 0xFFFF);
-    if (p_thing->SubType != 0)
-        mask = 0x1F;
-    if ((p_thing->U.UEffect.Group != p_dcthing->U.UPerson.EffectiveGroup)
-      && ((gameturn & mask) != 0))
-        return;
-
-    build_razor_wire_strand(
-      PRCCOORD_TO_MAPCOORD(p_thing->X),
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
-      PRCCOORD_TO_MAPCOORD(p_thing->Z),
-      p_thing->VX, p_thing->VY, p_thing->VZ,
-      p_thing->Timer1, p_thing);
-}
-
-void draw_bang(struct SimpleThing *p_pow)
-{
-    asm volatile ("call ASM_draw_bang\n"
-        : : "a" (p_pow));
-}
-
-void build_time_pod(struct SimpleThing *p_sthing)
-{
-    asm volatile ("call ASM_build_time_pod\n"
-        : : "a" (p_sthing));
-}
-
-void build_stasis_pod(struct SimpleThing *p_sthing)
-{
-    asm volatile ("call ASM_build_stasis_pod\n"
-        : : "a" (p_sthing));
-}
-
-void FIRE_draw_fire(struct SimpleThing *p_sthing)
-{
-    asm volatile ("call ASM_FIRE_draw_fire\n"
-        : : "a" (p_sthing));
-}
-
-short draw_thing_object(struct Thing *p_thing)
-{
-#if 0
-    short ret;
-    asm volatile ("call ASM_draw_thing_object\n"
-        : "=r" (ret) : "a" (p_thing));
-    return ret;
-#endif
-    struct SimpleThing *p_sthing;
-
-    p_sthing = (struct SimpleThing *)p_thing;
-    if (p_sthing < &sthings[-1500])
-        return -9999;
-    if (p_thing > &things[1000])
-        return -9999;
-
-    switch (p_thing->Type)
-    {
-    case TT_VEHICLE:
-        build_vehicle(p_thing);
-        break;
-    case TT_PERSON:
-    case TT_UNKN4:
-        build_person(p_thing);
-        break;
-    case SmTT_STATIC:
-        build_static(p_sthing);
-        break;
-    case TT_ROCKET:
-        build_rocket(p_thing);
-        break;
-    case TT_BUILDING:
-        build_building(p_thing);
-        break;
-    case TT_LASER11:
-        build_laser11(p_thing);
-        break;
-    case TT_LASER_GUIDED:
-        build_laser_guided_piece(p_thing);
-        break;
-    case TT_MINE:
-    case TT_GRENADE:
-        build_grenade(p_thing);
-        break;
-    case SmTT_DROPPED_ITEM:
-        build_dropped_item(p_sthing);
-        break;
-    case SmTT_SPARK:
-        build_spark(p_sthing);
-        break;
-    case TT_UNKN18:
-        build_unkn18(p_thing);
-        break;
-    case TT_LASER_ELEC:
-        build_laser_elec(p_thing);
-        break;
-    case SmTT_SCALE_EFFECT:
-        build_scale_effect(p_sthing);
-        break;
-    case SmTT_NUCLEAR_BOMB:
-        build_nuclear_bomb(p_sthing);
-        break;
-    case SmTT_ELECTRIC_STRAND:
-        build_electricity_strand(p_sthing, 0);
-        break;
-    case TT_RAZOR_WIRE:
-        build_razor_wire(p_thing);
-        break;
-    case TT_LASER29:
-        build_laser29(p_thing);
-        break;
-    case SmTT_TIME_POD:
-        build_time_pod(p_sthing);
-        break;
-    case SmTT_STASIS_POD:
-        build_stasis_pod(p_sthing);
-        break;
-    case SmTT_SOUL:
-        build_soul(p_sthing);
-        break;
-    case TT_LASER38:
-        build_laser38(p_thing);
-        break;
-    case SmTT_BANG:
-        draw_bang(p_sthing);
-        break;
-    case SmTT_FIRE:
-        FIRE_draw_fire(p_sthing);
-        break;
-    default:
-        break;
-    }
-    return p_thing->Next;
-}
-
-#define draw_sthing_object(p_sthing) draw_thing_object((struct Thing *)p_sthing)
-
-void func_218D3(void)
-{
-#if 0
-    asm volatile ("call ASM_func_218D3\n"
-        :  :  : "eax" );
-    return;
-#endif
-    struct ShEnginePoint loc_unknarrD[(RENDER_AREA_MAX+1)*4];
-    int shift_a, shift_b;
-    int elcr_z, elpv_z;
-    struct FloorTile *p_floortl;
-    short *p_sqlight;
-
-    word_19CC64 = (engn_xc & 0xFF00) - (render_area_a << 7);
-    word_19CC66 = (engn_zc & 0xFF00) - (render_area_b << 7);
-    if (word_19CC66 < 0)
-        word_19CC66 = 0;
-    p_floortl = &game_floor_tiles[1];
-    p_sqlight = super_quick_light;
-    elcr_z = word_19CC66;
-    shift_b = 0;
-    { // Separate first row from the rest as it has no previous
-        struct MyMapElement *p_mapel;
-        struct ShEnginePoint *p_spcr;
-        int elcr_x;
-
-        p_spcr = &loc_unknarrD[shift_b & 1];
-        shift_a = 0;
-        elcr_x = word_19CC64;
-        p_mapel = &game_my_big_map[(elcr_x >> 8) + (elcr_z >> 8 << 7)];
-
-        while (shift_a < render_area_a + 1)
-        {
-            int dxc, dyc, dzc;
-            int elcr_y;
-
-            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z);
-            dxc = elcr_x - engn_xc;
-            dzc = elcr_z - engn_zc;
-            dyc = elcr_y - 8 * engn_yc;
-
-            transform_shpoint(p_spcr, dxc, dyc, dzc);
-            p_spcr->Shade = shpoint_compute_shade(p_spcr, p_mapel, p_sqlight);
-
-            p_spcr += 2;
-            p_mapel++;
-            shift_a++;
-            elcr_x += 256;
-        }
-    }
-
-    elpv_z = elcr_z;
-    elcr_z += 256;
-    shift_b++;
-    while (shift_b < render_area_b && elcr_z < 0x8000)
-    {
-        struct MyMapElement *p_mapel;
-        struct ShEnginePoint *p_spcr;
-        int elcr_x;
-
-        p_spcr = &loc_unknarrD[shift_b & 1];
-        shift_a = 0;
-        elcr_x = word_19CC64;
-        p_mapel = &game_my_big_map[(elcr_x >> 8) + (elcr_z >> 8 << 7)];
-
-        while (shift_a < render_area_a + 1)
-        {
-            int dxc, dyc, dzc;
-            int elcr_y;
-
-            elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z);
-            dxc = elcr_x - engn_xc;
-            dzc = elcr_z - engn_zc;
-            dyc = elcr_y - 8 * engn_yc;
-
-            transform_shpoint(p_spcr, dxc, dyc, dzc);
-            p_spcr->Shade = -1;
-
-            p_spcr += 2;
-            p_mapel++;
-            shift_a++;
-            elcr_x += 256;
-        }
-
-        struct ShEnginePoint *p_spnx;
-
-        p_spnx = &loc_unknarrD[(shift_b + 1) & 1];
-        p_spcr = &loc_unknarrD[shift_b & 1];
-        shift_a = 0;
-        elcr_x = word_19CC64;
-        while (shift_a < render_area_a)
-        {
-          int bktalt;
-
-          bktalt = 0;
-          if (word_152F00 > 17998) {
-            break;
-          }
-          p_mapel = &game_my_big_map[(elpv_z >> 8 << 7) + (elcr_x >> 8)];
-          if (((p_spcr[2].Flags | p_spnx[2].Flags | p_spcr->Flags | p_spnx->Flags) & 0x20) != 0
-            || ((p_spnx[2].Flags & p_spcr->Flags & p_spnx->Flags & p_spcr[2].Flags) & 0x0F) != 0
-            || elcr_x <= 0 || elcr_x >= 0x8000
-            || elcr_z <= 0 || elcr_z >= 0x8000
-            || ((game_perspective != 2) && ((p_mapel->Flags & 0x80) != 0)))
-          {
-              p_sqlight++;
-              p_spcr += 2;
-              p_spnx += 2;
-          }
-          else
-          {
-              struct MyMapElement *p_mapelXnx;
-              struct MyMapElement *p_mapelXZnx;
-              struct MyMapElement *p_mapelZnx;
-              int bckt;
-              ubyte ditype;
-
-              p_floortl->X[0] = p_spnx->X;
-              p_floortl->Y[0] = p_spnx->Y;
-              bckt = p_spnx->field_4;
-              if (p_spnx->Shade < 0) {
-                  p_spnx->Shade = shpoint_compute_shade(p_spnx, p_mapel, p_sqlight);
-              }
-              p_floortl->Shade[0] = p_spnx->Shade;
-              p_mapel->ShadeR = p_spnx->Shade >> 9;
-
-              p_mapelXnx = p_mapel + 1;
-              p_spnx += 2;
-              p_sqlight += 1;
-              p_floortl->X[1] = p_spnx->X;
-              p_floortl->Y[1] = p_spnx->Y;
-              if (bckt < p_spnx->field_4)
-                  bckt = p_spnx->field_4;
-              if (p_spnx->Shade < 0) {
-                  p_spnx->Shade = shpoint_compute_shade(p_spnx, p_mapelXnx, p_sqlight);
-              }
-              p_floortl->Shade[1] = p_spnx->Shade;
-              p_mapelXnx->ShadeR = p_spnx->Shade >> 9;
-
-              p_spcr += 2;
-              p_mapelXZnx = p_mapel + 128 + 1;
-              p_sqlight += render_area_a;
-              p_floortl->X[2] = p_spcr->X;
-              p_floortl->Y[2] = p_spcr->Y;
-              if (bckt < p_spcr->field_4)
-                  bckt = p_spcr->field_4;
-              if (p_spcr->Shade < 0) {
-                  p_spcr->Shade = shpoint_compute_shade(p_spnx, p_mapelXZnx, p_sqlight);
-              }
-              p_floortl->Shade[2] = p_spcr->Shade;
-              p_mapelXZnx->ShadeR = p_spcr->Shade >> 9;
-
-              p_sqlight--;
-              p_spcr -= 2;
-              p_mapelZnx = p_mapel + 128;
-              p_floortl->X[3] = p_spcr->X;
-              p_floortl->Y[3] = p_spcr->Y;
-              if (bckt < p_spcr->field_4)
-                  bckt = p_spcr->field_4;
-              if (p_spcr->Shade < 0) {
-                  p_spcr->Shade = shpoint_compute_shade(p_spnx, p_mapelZnx, p_sqlight);
-              }
-              p_floortl->Shade[3] = p_spcr->Shade;
-              p_mapelZnx->ShadeR = p_spcr->Shade >> 9;
-
-              p_mapel = &game_my_big_map[(elpv_z >> 8 << 7) + (elcr_x >> 8)];
-              if (p_mapel->Texture)
-              {
-                  struct SingleFloorTexture *p_fltextr;
-                  p_floortl->Flags2 = 0;
-                  p_fltextr = &game_textures[p_mapel->Texture & 0x3FFF];
-                  if (((p_mapel->Texture >> 8) & 0x80) != 0)
-                  {
-                      p_floortl->Flags2 = 1;
-                      if (byte_1C8444)
-                      {
-                          int alt;
-                          if (p_mapel->Alt <= 0)
-                            alt = 15000 * overall_scale;
-                          else
-                            alt = 500 * overall_scale;
-                          bktalt = alt >> 8;
-                      }
-                      else
-                      {
-                          if (p_mapel->Alt <= 0)
-                            bktalt = 3500;
-                          else
-                            bktalt = 2500;
-                      }
-                  }
-                  p_floortl->Texture = p_fltextr;
-                  if ((p_mapel->Flags & 0x20) != 0)
-                      p_floortl->Flags = 0x10|0x04|0x01;
-                  else
-                      p_floortl->Flags = 0x04|0x01;
-              }
-              else
-              {
-                  p_floortl->Flags = 0x04;
-                  p_floortl->Col = colour_grey2;
-              }
-              if ((p_mapel->Flags & 0x01) != 0)
-              {
-                  p_floortl->Shade[0] = 16128;
-                  p_floortl->Shade[1] = 16128;
-                  p_floortl->Shade[2] = 16128;
-                  p_floortl->Shade[3] = 16128;
-              }
-              if ((p_mapel->Flags & 0x08) != 0)
-                  p_floortl->Flags2 |= 0x02;
-              bktalt += 200;
-              p_floortl->Flags2 = p_mapel->Flags;
-              p_floortl->Offset = p_mapel - game_my_big_map;
-              p_floortl->Flags2b = p_mapel->Flags2;
-              p_floortl->Page = p_mapel->ColumnHead >> 12;
-              p_floortl++;
-              bckt += 5000 + bktalt;
-               if ((p_mapel->Texture & 0x4000) != 0)
-                  ditype = 6;
-              else
-                  ditype = 4;
-              draw_item_add(ditype, word_152F00, bckt);
-              p_sqlight = &p_sqlight[-render_area_a + 1];
-              p_spcr += 2;
-              ++word_152F00;
-            }
-            shift_a++;
-            elcr_x += 256;
-        }
-        shift_b++;
-        elpv_z += 256;
-        elcr_z += 256;
-    }
 }
 
 void func_13A78(void)
@@ -2831,26 +1499,6 @@ TbBool get_engine_inputs(void)
     return false;
 }
 
-void draw_screen(void)
-{
-    if (dword_19F4F8)
-    {
-        draw_drawlist_1();
-    }
-    else
-    {
-        draw_drawlist_2();
-    }
-#if 0
-    //TODO Setting first palette colour was often used as debug helper; to be removed
-    __outbyte(0x3C8u, 0);
-    __outbyte(0x3C9u, byte_1C83E0);
-    __outbyte(0x3C9u, 0);
-    __outbyte(0x3C9u, 0);
-#endif
-    reset_drawlist();
-}
-
 void process_engine_unk3(void)
 {
 #if 0
@@ -2862,10 +1510,8 @@ void process_engine_unk3(void)
 
     get_engine_inputs();
 
-    word_152F00 = 1;
-    p_locplayer = &players[local_player_no];
-    p_locplayer->Target = 0;
-    p_locplayer->TargetType = 0;
+    reset_drawlist();
+    player_target_clear(local_player_no);
     dword_1DC880 = mech_unkn_tile_x1;
     dword_1DC884 = mech_unkn_tile_y1;
     dword_1DC888 = mech_unkn_tile_x2;
@@ -2891,43 +1537,11 @@ void process_engine_unk3(void)
         }
     }
 
-    int angXZ;
-    int rend_beg_x, rend_beg_z, tlreach_x, tlreach_z;
+    int rend_beg_x, rend_beg_z;
     int pos_beg_x, pos_beg_z;
     int tlcount_x, tlcount_z;
 
-    angXZ = (engn_anglexz >> 5) & 0x7FF;
-    byte_176D48 = ((angXZ + 256) >> 9) & 3;
-    byte_176D49 = ((angXZ + 128) >> 8) & 7;
-    byte_176D4A = ((angXZ + 85) / 170) % 12;
-    byte_176D4B = ((angXZ + 64) >> 7) & 0xF;
-    byte_19EC7A = ((angXZ + 256) >> 9) & 3;
-    rend_beg_x = (engn_xc & 0xFF00) + (render_area_a << 7);
-    rend_beg_z = (engn_zc & 0xFF00) - (render_area_b << 7);
-    tlreach_x = ((-lbSinTable[angXZ]) >> 12) + ((-lbSinTable[angXZ]) >> 13);
-    if (tlreach_x <= 0) {
-        tlcount_x = render_area_a - tlreach_x;
-        pos_beg_x = rend_beg_x;
-    } else {
-        tlcount_x = render_area_a + tlreach_x;
-        pos_beg_x = rend_beg_x + (tlreach_x << 8);
-    }
-    tlreach_z = (lbSinTable[angXZ + 512] >> 12) + (lbSinTable[angXZ + 512] >> 13);
-    if (tlreach_z <= 0) {
-        tlcount_z = render_area_b - tlreach_z;
-        pos_beg_z = rend_beg_z;
-    } else {
-        tlcount_z = render_area_b + tlreach_z;
-        pos_beg_z = rend_beg_z - (tlreach_z << 8);
-    }
-    dword_176D80 = (rend_beg_x >> 8) + 50;
-    dword_176D84 = (rend_beg_z >> 8) + 50;
-    dword_176D70 = (pos_beg_x >> 8) + 50;
-    dword_176D74 = (pos_beg_z >> 8) + 50;
-    dword_176D88 = dword_176D80 - render_area_a;
-    dword_176D8C = dword_176D84 + render_area_b;
-    dword_176D78 = dword_176D70 - tlcount_x;
-    dword_176D7C = dword_176D74 + tlcount_z;
+    camera_setup_view(&pos_beg_x, &pos_beg_z, &rend_beg_x, &rend_beg_z, &tlcount_x, &tlcount_z);
 
     if ((ingame.Flags & GamF_RenderScene) != 0)
     {
@@ -2941,19 +1555,13 @@ void process_engine_unk3(void)
         if (game_perspective == 6) {
             draw_background_stars();
         } else {
-            func_218D3();
+            lvdraw_do_floor();
         }
     }
 
     if (word_1552F8 != 36 && !byte_1C8444)
     {
-        int i;
-        for (i = 0; i < render_area_a * (render_area_b + 1); i++)
-        {
-            short *p_sqlight;
-            p_sqlight = &super_quick_light[i];
-            *p_sqlight = 0;
-        }
+        clear_super_quick_lights();
     }
     vec_map = vec_tmap[1];
     p_locplayer = &players[local_player_no];
@@ -2977,12 +1585,6 @@ void process_engine_unk3(void)
 void process_sound_heap(void)
 {
     asm volatile ("call ASM_process_sound_heap\n"
-        :  :  : "eax" );
-}
-
-void func_2e440(void)
-{
-    asm volatile ("call ASM_func_2e440\n"
         :  :  : "eax" );
 }
 
@@ -3510,83 +2112,148 @@ int joy_func_067(struct DevInput *dinp, int a2)
     return ret;
 }
 
-void setup_mouse_pointers(void)
+TbResult load_mapout(ubyte **pp_buf, const char *dir)
 {
-    struct TbSprite *spr;
-
-    LbSpriteSetup(pointer_sprites, pointer_sprites_end, pointer_data);
-    // Make mouse pointer sprite 1 an empty (zero size) sprite
-    spr = &pointer_sprites[1];
-    spr->SWidth = 0;
-    spr->SHeight = 0;
-}
-
-void reset_mouse_pointers(void)
-{
-    LbSpriteReset(pointer_sprites, pointer_sprites_end, pointer_data);
-}
-
-/** Sets up initially loaded multicolor sprites.
- * Use load_multicolor_sprites() for forther reloads.
- */
-void setup_multicolor_sprites(void)
-{
-    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
-}
-
-/** Loads and sets up multicolor sprites for currently set TrenchcoatPreference.
- */
-void load_multicolor_sprites(void)
-{
-    ulong sz;
-    char fname[100];
-
-    sprintf(fname, "data/mspr-%d.dat", ingame.TrenchcoatPreference);
-    LbFileLoadAt(fname, m_spr_data);
-    sprintf(fname, "data/mspr-%d.tab", ingame.TrenchcoatPreference);
-    sz = LbFileLoadAt(fname, m_sprites);
-    m_sprites_end = (struct TbSprite *)((ubyte *)m_sprites + sz);
-    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
-}
-
-void reset_multicolor_sprites(void)
-{
-    LbSpriteReset(m_sprites, m_sprites_end, m_spr_data);
-}
-
-void debug_multicolor_sprite(int idx)
-{
+    char locstr[52];
+    ubyte *p_buf;
+    long len;
     int i;
-    char strdata[100];
-    char *str;
-    struct TbSprite *spr;
-    unsigned char *ptr;
-    spr = &m_sprites[idx];
-    str = strdata;
-    sprintf(str, "spr %d width %d height %d ptr 0x%lx data",
-      idx, (int)spr->SWidth, (int)spr->SHeight, (ulong)spr->Data);
-    ptr = spr->Data;
-    for (i = 0; i < 10; i++)
+    TbResult ret;
+
+    p_buf = *pp_buf;
+    ret = Lb_OK;
+
+    for (i = 0; i < 6; i++)
     {
-        str = strdata + strlen(strdata);
-        sprintf(str, " %02x", (int)*ptr);
-        ptr++;
+        dword_1C529C[i] = (short *)p_buf;
+        sprintf(locstr, "%s/mapout%02d.dat", dir, i);
+        len = LbFileLoadAt(locstr, dword_1C529C[i]);
+        if (len == -1) {
+            LOGERR("Could not read file '%s'", locstr);
+            ret = Lb_FAIL;
+            len = 64;
+            LbMemorySet(p_buf, '\0', len);
+        }
+        p_buf += len;
     }
-    LOGDBG("m_sprites: %s", strdata);
+
+    landmap_2B4 = (short *)p_buf;
+    sprintf(locstr, "%s/mapinsid.dat", dir);
+    len = LbFileLoadAt(locstr, p_buf);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 64;
+        LbMemorySet(p_buf, '\0', len);
+    }
+    p_buf += len;
+
+    *pp_buf = p_buf;
+    return ret;
 }
 
-/** Loads and sets up panel sprites for currently set PanelPermutation.
- */
-void load_pop_sprites(void)
+TbResult init_read_all_sprite_files(void)
 {
-    char fname[DISKPATH_SIZE];
-    int file_len;
-    sprintf(fname, "data/pop%d-0.dat", -ingame.PanelPermutation - 1);
-    LbFileLoadAt(fname, pop1_data);
-    sprintf(fname, "data/pop%d-0.tab", -ingame.PanelPermutation - 1);
-    file_len = LbFileLoadAt(fname, pop1_sprites);
-    pop1_sprites_end = &pop1_sprites[file_len/sizeof(struct TbSprite)];
-    LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
+    PathInfo *pinfo;
+    ubyte *p_buf;
+    TbResult tret, ret;
+
+    pinfo = &game_dirs[DirPlace_Data];
+    p_buf = (ubyte *)&purple_draw_list[750];
+    tret = Lb_OK;
+
+    ret = load_sprites_icons(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_wicons(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_panel(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_mouse(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_med_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_big_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_small_med_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_med2_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    ret = load_sprites_small2_font(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    dword_1C6DE4 = p_buf;
+    p_buf += 24480;
+    dword_1C6DE8 = p_buf;
+    p_buf += 24480;
+
+    ret = load_mapout(&p_buf, pinfo->directory);
+    if (tret == Lb_OK)
+        tret = ret;
+
+    // TODO why adding this without remembering previous pointer?
+    p_buf += 41005;
+    back_buffer = p_buf;
+
+    setup_sprites_icons();
+    setup_sprites_wicons();
+    setup_sprites_panel();
+    setup_sprites_mouse();
+    setup_sprites_small_font();
+    setup_sprites_small2_font();
+    setup_sprites_small_med_font();
+    setup_sprites_med_font();
+    setup_sprites_med2_font();
+    setup_sprites_big_font();
+
+    if (tret == Lb_FAIL) {
+        LOGERR("Some files were not loaded successfully");
+        ingame.DisplayMode = DpM_UNKN_1;
+    }
+    return tret;
+}
+
+TbResult prep_multicolor_sprites(void)
+{
+    PathInfo *pinfo;
+    TbResult ret;
+
+    pinfo = &game_dirs[DirPlace_Data];
+    ret = load_multicolor_sprites(pinfo->directory);
+    setup_multicolor_sprites();
+    if (ret == Lb_FAIL) {
+        LOGERR("Some files were not loaded successfully");
+    }
+    return ret;
+}
+
+TbResult prep_pop_sprites(void)
+{
+    PathInfo *pinfo;
+    TbResult ret;
+
+    pinfo = &game_dirs[DirPlace_Data];
+    ret = load_pop_sprites(pinfo->directory);
+    setup_pop_sprites();
+    if (ret == Lb_FAIL) {
+        LOGERR("Some files were not loaded successfully");
+    }
+    return ret;
 }
 
 void setup_host(void)
@@ -3612,7 +2279,7 @@ void setup_host(void)
     ingame.TrenchcoatPreference = 0;
     setup_multicolor_sprites();
     ingame.PanelPermutation = -2;
-    load_pop_sprites();
+    prep_pop_sprites();
     game_panel = game_panel_lo;
     init_memory(mem_game);
 
@@ -4203,10 +2870,9 @@ void init_level(void)
             p_player->PanelItem[mouser] = 0;
             p_player->PanelState[mouser] = 0;
         }
-        p_player->TargetType = 0;
         p_player->GotoFace = 0;
-        p_player->Target = 0;
         p_player->field_102 = 0;
+        player_target_clear(plyr_no);
     }
 
     set_default_brightness();
@@ -4677,7 +3343,7 @@ void prep_single_mission(void)
     load_missions(background_type);
     load_objectives_text();
     init_game(0);
-    load_multicolor_sprites();
+    prep_multicolor_sprites();
     LbScreenClear(0);
     generate_shadows_for_multicolor_sprites();
     adjust_mission_engine_to_video_mode();
@@ -4877,7 +3543,7 @@ void game_setup(void)
     setup_color_lookups();
     init_things();
     debug_trace_setup(-2);
-    LbSpriteSetup(small_font, small_font_end, small_font_data);
+    setup_sprites_small_font();
     load_peep_type_stats();
     load_campaigns();
     players[local_player_no].MissionAgents = 0x0F;
@@ -5104,247 +3770,6 @@ void BAT_play(void)
 {
     asm volatile ("call ASM_BAT_play\n"
         :  :  : "eax" );
-}
-
-TbResult init_read_all_sprite_files(void)
-{
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_init_read_all_sprite_files\n"
-        : "=r" (ret) : );
-    return ret;
-#endif
-    char locstr[52];
-    PathInfo *pinfo;
-    ubyte *bufptr;
-    TbResult ret;
-    long len;
-    int i;
-
-    pinfo = &game_dirs[DirPlace_Data];
-    bufptr = (ubyte *)&purple_draw_list[750];
-    ret = Lb_OK;
-
-    sprites_Icons0_0_data = bufptr;
-    sprintf(locstr, "%s/icons0-0.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    bufptr += len;
-    sprites_Icons0_0 = (struct TbSprite *)bufptr;
-    sprintf(locstr, "%s/icons0-0.tab", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 32 * sizeof(struct TbSprite);
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-    sprites_Icons0_0_end = (struct TbSprite *)bufptr;
-
-    unk1_sprites_data = bufptr;
-    sprintf(locstr, "%s/w-icons.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    bufptr += len;
-    unk1_sprites = (struct TbSprite *)bufptr;
-    sprintf(locstr, "%s/w-icons.tab", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 32 * sizeof(struct TbSprite);
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-    unk1_sprites_end = (struct TbSprite *)bufptr;
-
-    unk2_sprites_data = bufptr;
-    sprintf(locstr, "%s/panel0-0.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    bufptr += len;
-    unk2_sprites = (struct TbSprite *)bufptr;
-    sprintf(locstr, "%s/panel0-0.tab", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 32 * sizeof(struct TbSprite);
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-    unk2_sprites_end = (struct TbSprite *)bufptr;
-
-    unk3_sprites_data = bufptr;
-    sprintf(locstr, "%s/mouse-0.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    bufptr += len;
-    unk3_sprites = (struct TbSprite *)bufptr;
-    sprintf(locstr, "%s/mouse-0.tab", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 32 * sizeof(struct TbSprite);
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-    unk3_sprites_end = (struct TbSprite *)bufptr;
-
-    med_font_data = bufptr;
-    sprintf(locstr, "%s/font0-1.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    bufptr += len;
-    med_font = (struct TbSprite *)bufptr;
-    sprintf(locstr, "%s/font0-1.tab", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-    med_font_end = (struct TbSprite *)bufptr;
-
-    big_font_data = bufptr;
-    sprintf(locstr, "%s/font0-2.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    bufptr += len;
-    big_font = (struct TbSprite *)bufptr;
-    sprintf(locstr, "%s/font0-2.tab", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-    big_font_end = (struct TbSprite *)bufptr;
-
-    small_med_font_data = bufptr;
-    sprintf(locstr, "%s/font0-3.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    bufptr += len;
-    small_med_font = (struct TbSprite *)bufptr;
-    sprintf(locstr, "%s/font0-3.tab", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-    small_med_font_end = (struct TbSprite *)bufptr;
-
-    med2_font_data = bufptr;
-    sprintf(locstr, "%s/font0-4.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    bufptr += len;
-    med2_font = (struct TbSprite *)bufptr;
-    sprintf(locstr, "%s/font0-4.tab", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-    med2_font_end = (struct TbSprite *)bufptr;
-
-    small2_font_data = bufptr;
-    sprintf(locstr, "%s/font0-5.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    bufptr += len;
-    small2_font = (struct TbSprite *)bufptr;
-    sprintf(locstr, "%s/font0-5.tab", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-    small2_font_end = (struct TbSprite *)bufptr;
-
-    dword_1C6DE4 = bufptr;
-    bufptr += 24480;
-    dword_1C6DE8 = bufptr;
-    bufptr += 24480;
-
-    for (i = 0; i < 6; i++)
-    {
-        dword_1C529C[i] = (short *)bufptr;
-        sprintf(locstr, "%s/mapout%02d.dat", pinfo->directory, i);
-        len = LbFileLoadAt(locstr, dword_1C529C[i]);
-        if (len == -1) {
-            LOGERR("Could not read file '%s'", locstr);
-            ret = Lb_FAIL;
-            len = 64;
-            LbMemorySet(bufptr, '\0', len);
-        }
-        bufptr += len;
-    }
-
-    landmap_2B4 = (short *)bufptr;
-    sprintf(locstr, "%s/mapinsid.dat", pinfo->directory);
-    len = LbFileLoadAt(locstr, bufptr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 64;
-        LbMemorySet(bufptr, '\0', len);
-    }
-    bufptr += len;
-
-    // TODO why adding this without remembering previous pointer?
-    bufptr += 41005;
-    back_buffer = bufptr;
-
-    LbSpriteSetup(sprites_Icons0_0, sprites_Icons0_0_end, sprites_Icons0_0_data);
-    LbSpriteSetup(unk1_sprites, unk1_sprites_end, unk1_sprites_data);
-    LbSpriteSetup(unk2_sprites, unk2_sprites_end, unk2_sprites_data);
-    LbSpriteSetup(unk3_sprites, unk3_sprites_end, unk3_sprites_data);
-    LbSpriteSetup(small_font, small_font_end, small_font_data);
-    LbSpriteSetup(small2_font, small2_font_end, small2_font_data);
-    LbSpriteSetup(small_med_font, small_med_font_end, small_med_font_data);
-    LbSpriteSetup(med_font, med_font_end, med_font_data);
-    LbSpriteSetup(med2_font, med2_font_end, med2_font_data);
-    LbSpriteSetup(big_font, big_font_end, big_font_data);
-
-    if (ret == Lb_FAIL) {
-        LOGERR("Some files were not loaded successfully");
-        ingame.DisplayMode = DpM_UNKN_1;
-    }
-    return ret;
 }
 
 ubyte change_panel_permutation(ubyte click)
@@ -7300,7 +5725,7 @@ ubyte do_user_interface(void)
         StopCD();
         if (++ingame.TrenchcoatPreference > 5)
             ingame.TrenchcoatPreference = 0;
-        load_multicolor_sprites();
+        prep_multicolor_sprites();
     }
 
     // adjust palette brightness
@@ -9033,7 +7458,7 @@ void show_load_and_prep_mission(void)
     // Set up remaining graphics data and controls
     if ( start_into_mission )
     {
-        load_multicolor_sprites();
+        prep_multicolor_sprites();
         LbScreenClear(0);
         generate_shadows_for_multicolor_sprites();
         adjust_mission_engine_to_video_mode();
@@ -9500,6 +7925,7 @@ void game_process(void)
 {
     debug_multicolor_sprite(193);
     LOGDBG("WSCREEN 0x%lx", (ulong)lbDisplay.WScreen);
+
     while ( !exit_game )
     {
         process_sound_heap();

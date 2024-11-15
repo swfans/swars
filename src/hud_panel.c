@@ -24,10 +24,13 @@
 #include "bfscreen.h"
 #include "bfsprite.h"
 #include "bfutility.h"
+
+#include "bflib_render_drspr.h"
 #include "bigmap.h"
 #include "display.h"
 #include "engintrns.h"
 #include "game_speed.h"
+#include "game_sprts.h"
 #include "game.h"
 #include "lvobjctv.h"
 #include "mydraw.h"
@@ -538,13 +541,6 @@ void SCANNER_unkn_func_205(void)
 {
     asm volatile ("call ASM_SCANNER_unkn_func_205\n"
         :  :  : "eax" );
-}
-
-void LbSpriteDraw_1(int x, int y, struct TbSprite *spr)
-{
-    asm volatile (
-      "call ASM_LbSpriteDraw_1\n"
-        : : "a" (x), "d" (y), "b" (spr));
 }
 
 /**
