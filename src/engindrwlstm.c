@@ -1336,6 +1336,7 @@ void draw_explode(void)
 
 void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
 {
+#if 0
     asm volatile (
       "push %9\n"
       "push %8\n"
@@ -1345,6 +1346,111 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, stru
       "push %4\n"
       "call ASM_build_polygon_circle\n"
         : : "a" (x1), "d" (y1), "b" (z1), "c" (r1), "g" (r2), "g" (flag), "g" (p_tex), "g" (col), "g" (bright1), "g" (bright2));
-}
+#endif
+    int pp_X, pp_Y;
+    int bckt;
+    int scrad1;
+    int cur_x, cur_y;
+    int pt3, pt4;
+    short angle, dt_angle, angle_detail;
 
+    {
+        struct EnginePoint ep;
+        ep.X3d = x1 - engn_xc;
+        ep.Z3d = z1 - engn_zc;
+        ep.Y3d = 8 * y1 - (engn_yc >> 3);
+        ep.Flags = 0;
+        transform_point(&ep);
+
+        pp_X = ep.pp.X;
+        pp_Y = ep.pp.Y;
+        bckt = ep.Z3d - 16 * r1 + 5000;
+    }
+
+    scrad1 = (overall_scale * r1) >> 8;
+    if ((pp_X + scrad1 < 0) || (pp_X - scrad1 > vec_window_width))
+        return;
+    if ((pp_Y + scrad1 < 0) || (pp_Y - scrad1 > vec_window_height))
+        return;
+
+    if (scrad1 > 150)
+        angle_detail = 16;
+    else if (scrad1 > 50)
+        angle_detail = 32;
+    else if (scrad1 > 10)
+        angle_detail = 64;
+    else
+        angle_detail = 128;
+
+    pt3 = next_screen_point;
+    cur_x = pp_X + scrad1;
+    cur_y = pp_Y;
+    {
+        struct SpecialPoint *p_specpt3;
+        p_specpt3 = &game_screen_point_pool[pt3];
+        p_specpt3->X = pp_X;
+        p_specpt3->Y = pp_Y;
+    }
+
+    pt4 = pt3 + 1;
+    dt_angle = 2 * angle_detail;
+    angle = dt_angle;
+    while (angle <= 2048)
+    {
+        struct SingleObjectFace4 *p_face4;
+        struct SpecialPoint *p_specpt1;
+        struct SpecialPoint *p_specpt2;
+        struct SpecialPoint *p_specpt4;
+        int nxt_x, nxt_y;
+        int sin_angl, half_angl, cos_angl;
+        int hlf_y, hlf_x;
+        ushort face;
+
+        cos_angl = lbSinTable[(angle & 0x7FF) + 512];
+        sin_angl = lbSinTable[angle & 0x7FF];
+        half_angl = (angle - angle_detail) & 0x7FF;
+        hlf_x = pp_X + ((scrad1 * lbSinTable[half_angl + 512]) >> 16);
+        hlf_y = pp_Y + ((scrad1 * lbSinTable[half_angl]) >> 16);
+        nxt_x = pp_X + ((scrad1 * cos_angl) >> 16);
+        nxt_y = pp_Y + ((scrad1 * sin_angl) >> 16);
+
+        face = next_special_face4;
+        if (face > mem_game[25].N - 1)
+            break;
+        next_special_face4++;
+
+        p_face4 = &game_special_object_faces4[face];
+        p_face4->Flags = 17;
+        p_face4->PointNo[0] = pt4 + 2;
+        p_face4->PointNo[1] = pt4 + 1;
+        p_face4->PointNo[2] = pt3;
+        p_face4->PointNo[3] = pt4;
+        p_face4->Shade0 = bright1;
+        p_face4->Shade1 = bright1;
+        p_face4->Shade3 = bright1;
+        p_face4->Shade2 = bright2;
+        p_face4->GFlags = 0;
+        p_face4->ExCol = col;
+
+        p_specpt1 = &game_screen_point_pool[pt4 + 2];
+        p_specpt2 = &game_screen_point_pool[pt4 + 1];
+        p_specpt4 = &game_screen_point_pool[pt4];
+
+        p_specpt4->X = cur_x;
+        p_specpt4->Y = cur_y;
+        p_specpt2->X = hlf_x;
+        p_specpt2->Y = hlf_y;
+        p_specpt1->X = nxt_x;
+        p_specpt1->Y = nxt_y;
+
+        pt4 += 3;
+
+        draw_item_add(DrIT_Unkn12, face, bckt);
+
+        cur_x = nxt_x;
+        cur_y = nxt_y;
+        angle += dt_angle;
+    }
+  next_screen_point = pt4;
+}
 /******************************************************************************/
