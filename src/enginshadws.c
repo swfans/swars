@@ -29,9 +29,10 @@
 #include "engindrwlstx.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
-#include "thing.h"
 #include "game.h"
+#include "game_data.h"
 #include "matrix.h"
+#include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
 struct ShadowTexture {
@@ -272,9 +273,14 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     transform_shpoint(&sp4, scr4_x, scr4_y - 8 * engn_yc, scr4_z);
 
     face = next_special_face4;
-    next_special_face4++;
+    if (face >= mem_game[25].N)
+        return;
 
     pt = next_screen_point;
+    if (pt + 4 >= mem_game[30].N)
+        return;
+
+    next_special_face4++;
     next_screen_point += 4;
 
     p_face4 = &game_special_object_faces4[face];

@@ -62,6 +62,8 @@ struct ExplodeFace3 { // sizeof=46
 extern struct ExplodeFace3 ex_faces[1024];
 
 void init_free_explode_faces(void);
+void draw_explode(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

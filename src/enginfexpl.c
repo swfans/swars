@@ -20,11 +20,28 @@
 
 #include "swlog.h"
 /******************************************************************************/
+extern ulong next_ex_face;
 
 void init_free_explode_faces(void)
 {
     asm volatile ("call ASM_init_free_explode_faces\n"
         :  :  : "eax" );
+}
+
+void animate_explode(void)
+{
+    asm volatile ("call ASM_animate_explode\n"
+        :  :  : "eax" );
+}
+
+
+void draw_explode(void)
+{
+#if 1
+    asm volatile ("call ASM_draw_explode\n"
+        :  :  : "eax" );
+    return;
+#endif
 }
 
 /******************************************************************************/

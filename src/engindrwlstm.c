@@ -1346,12 +1346,6 @@ void draw_vehicle_health(struct Thing *p_thing)
     p_sspr->PThing = p_thing;
 }
 
-void draw_explode(void)
-{
-    asm volatile ("call ASM_draw_explode\n"
-        :  :  : "eax" );
-}
-
 void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
 {
 #if 0
@@ -1364,6 +1358,7 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, stru
       "push %4\n"
       "call ASM_build_polygon_circle\n"
         : : "a" (x1), "d" (y1), "b" (z1), "c" (r1), "g" (r2), "g" (flag), "g" (p_tex), "g" (col), "g" (bright1), "g" (bright2));
+    return;
 #endif
     int pp_X, pp_Y;
     int bckt;
@@ -1433,7 +1428,7 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, stru
         nxt_y = pp_Y + ((scrad1 * sin_angl) >> 16);
 
         face = next_special_face4;
-        if (face > mem_game[25].N - 1)
+        if (face >= mem_game[25].N)
             break;
         next_special_face4++;
 
