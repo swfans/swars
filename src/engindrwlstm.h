@@ -49,7 +49,6 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
 short draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing);
 short draw_object(int x, int y, int z, struct SingleObject *point_object);
 void draw_vehicle_health(struct Thing *p_thing);
-void draw_vehicle_shadow(ushort veh, ushort sort);
 void draw_explode(void);
 
 void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2);

@@ -21,14 +21,64 @@
 #include <string.h>
 #include "bfmath.h"
 
+#include "bigmap.h"
 #include "display.h"
+#include "enginbckt.h"
 #include "engintrns.h"
 #include "engindrwlstm.h"
 #include "engindrwlstx.h"
+#include "enginsngobjs.h"
+#include "enginsngtxtr.h"
 #include "thing.h"
 #include "game.h"
+#include "matrix.h"
 #include "swlog.h"
 /******************************************************************************/
+struct ShadowTexture {
+    ushort Width;
+    ushort Length;
+    ubyte X1;
+    ubyte Y1;
+    ubyte X2;
+    ubyte Y2;
+};
+
+struct ShadowTexture shadowtexture[] = {
+  {300, 450,   0, 230,  20, 254},
+  {420, 700,  21, 225,  42, 254},
+  {150, 700, 143, 227, 151, 254},
+  {460, 850,  43, 226,  66, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {500, 800,  67, 236,  84, 254},
+  {550, 900, 152, 226, 173, 254},
+  {500, 800,  67, 236,  84, 254},
+  {500, 800, 121, 228, 142, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {500, 800,  85, 232,  94, 254},
+  {500, 800,  85, 232,  94, 254},
+  {400, 700,  67, 236,  84, 254},
+  {500, 800,  95, 226, 120, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {700, 900,  67, 236,  84, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {300, 450,   0, 230,  20, 254},
+  {420, 700,  21, 225,  42, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {500, 800,  95, 226, 120, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+};
 
 extern const ubyte byte_154F2C[32];
 extern const ushort word_154F4C[14];
@@ -42,6 +92,15 @@ extern ubyte sprshadow_F388[600];
 extern ubyte sprshadow_F5E0[24];
 extern ubyte sprshadow_F5F8[600];
 extern sbyte sprshadow_F850[512];
+
+int alt_at_point_under_height(int x, int z, int h)
+{
+    int ret;
+    asm volatile (
+      "call ASM_alt_at_point_under_height\n"
+        : "=r" (ret) : "a" (x), "d" (z), "b" (h));
+    return ret;
+}
 
 void draw_person_shadow(ushort face)
 {
@@ -130,6 +189,15 @@ void draw_person_shadow(ushort face)
     if (vec_mode == 2)
         vec_mode = 27;
     draw_trigpoly(&point2.pp, &point1.pp, &point3.pp);
+}
+
+void draw_vehicle_shadow(ushort veh, ushort sort)
+{
+#if 1
+    asm volatile ("call ASM_draw_vehicle_shadow\n"
+        : : "a" (veh), "d" (sort));
+    return;
+#endif
 }
 
 void copy_from_screen_ani(ubyte *buf)

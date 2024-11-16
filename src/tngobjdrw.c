@@ -24,6 +24,7 @@
 #include "building.h"
 #include "display.h"
 #include "engindrwlstm.h"
+#include "enginshadws.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "enginzoom.h"

@@ -1346,12 +1346,6 @@ void draw_vehicle_health(struct Thing *p_thing)
     p_sspr->PThing = p_thing;
 }
 
-void draw_vehicle_shadow(ushort veh, ushort sort)
-{
-    asm volatile ("call ASM_draw_vehicle_shadow\n"
-        : : "a" (veh), "d" (sort));
-}
-
 void draw_explode(void)
 {
     asm volatile ("call ASM_draw_explode\n"
