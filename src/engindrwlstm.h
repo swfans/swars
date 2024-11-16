@@ -45,9 +45,9 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
 void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity);
 void FIRE_draw_fire(struct SimpleThing *p_sthing);
 void draw_bang(struct SimpleThing *p_pow);
-ushort draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing);
-ushort draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing);
-ushort draw_object(int x, int y, int z, struct SingleObject *point_object);
+short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing);
+short draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing);
+short draw_object(int x, int y, int z, struct SingleObject *point_object);
 void draw_vehicle_health(struct Thing *p_thing);
 void draw_vehicle_shadow(ushort veh, ushort sort);
 void draw_explode(void);

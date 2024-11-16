@@ -101,10 +101,9 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
     sca_y = overall_scale * fctr_c;
     flg = 0;
 
+    scr_shx = sca_x >> 11;
     if (game_perspective == 5)
-        scr_shx = (sca_x >> 11) * (0x4000 - scr_d) >> 14;
-    else
-        scr_shx = sca_x >> 11;
+        scr_shx = scr_shx * (0x4000 - scr_d) >> 14;
 
     scr_x = dword_176D3C + scr_shx;
     if (scr_x < 0)
@@ -120,10 +119,9 @@ void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc)
         flg |= 0x02;
     }
 
+    scr_shy = sca_y >> 11;
     if (game_perspective == 5)
-        scr_shy = (sca_y >> 11) * (0x4000 - scr_d) >> 14;
-    else
-        scr_shy = sca_y >> 11;
+        scr_shy = scr_shy * (0x4000 - scr_d) >> 14;
 
     scr_y = dword_176D40 - scr_shy;
     if (scr_y < 0)
@@ -210,6 +208,36 @@ void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc
     p_sp->X = scr_x;
     p_sp->Y = scr_y;
     p_sp->Depth = scr_d;
+}
+
+int transform_shpoint_y(int dxc, int dyc, int dzc)
+{
+    int fctr_b, fctr_c, scr_d;
+    int scr_shy, sca_y;
+    int scr_y;
+
+    fctr_b = (dword_176D10 * dxc + dword_176D14 * dzc) >> 16;
+    fctr_c = (dword_176D1C * dyc - dword_176D18 * fctr_b) >> 16;
+    scr_d = (dword_176D18 * dyc + dword_176D1C * fctr_b) >> 16;
+    sca_y = overall_scale * fctr_c;
+
+    scr_shy = sca_y >> 11;
+    if (game_perspective == 5)
+        scr_shy = scr_shy * (0x4000 - scr_d) >> 14;
+
+    scr_y = dword_176D40 - scr_shy;
+    if (scr_y < 0)
+    {
+        if (scr_y < SCREEN_POINT_COORD_MIN)
+            scr_y = SCREEN_POINT_COORD_MIN;
+    }
+    else if (scr_y >= vec_window_height)
+    {
+        if (scr_y > SCREEN_POINT_COORD_MAX)
+            scr_y = SCREEN_POINT_COORD_MAX;
+    }
+
+    return scr_y;
 }
 
 void process_engine_unk1(void)

@@ -398,7 +398,7 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
         struct SingleObject *p_sobj;
 
         p_sobj = &game_objects[p_building->U.UObject.Object];
-        if (((p_sobj->field_1C[1] & 0x01) == 0) || current_map == 9)// // map009 Singapore on-water map
+        if (((p_sobj->field_1C & 0x0100) == 0) || current_map == 9) // map009 Singapore on-water map
         {
             quick_crater(p_building->X >> 16, p_building->Z >> 16, 3);
             for (i = 0; i < 32; i++)
