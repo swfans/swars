@@ -1318,8 +1318,32 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
 
 void draw_vehicle_health(struct Thing *p_thing)
 {
+#if 0
     asm volatile ("call ASM_draw_vehicle_health\n"
         : : "a" (p_thing));
+    return;
+#endif
+    struct ShEnginePoint sp;
+    int x, y, z;
+    struct SortSprite *p_sspr;
+    int bckt;
+    int scr_z;
+
+    x = (p_thing->X >> 8) - engn_xc;
+    y = (p_thing->Y >> 5) - engn_yc;
+    z = (p_thing->Z >> 8) - engn_zc;
+    transform_shpoint(&sp, x, y - 8 * engn_yc, z);
+
+    scr_z = sp.Depth - 2 * p_thing->Radius;
+    bckt = scr_z + 5000;
+    p_sspr = draw_item_add_sprite(DrIT_Unkn22, bckt);
+    if (p_sspr == NULL)
+        return;
+
+    p_sspr->X = sp.X;
+    p_sspr->Z = scr_z;
+    p_sspr->Y = sp.Y + 20;
+    p_sspr->PThing = p_thing;
 }
 
 void draw_vehicle_shadow(ushort veh, ushort sort)
