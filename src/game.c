@@ -1333,8 +1333,32 @@ void draw_engine_net_text(void)
 
 void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign)
 {
+#if 0
     asm volatile ("call ASM_check_mouse_overvehicle\n"
         : : "a" (p_thing), "d" (target_assign));
+    return;
+#endif
+    struct ShEnginePoint sp;
+    int cor_x, cor_y, cor_z;
+    int ms_dx, ms_dy, tng_dim;
+
+    cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc;
+    cor_y = (p_thing->Y >> 5) - engn_yc;
+    cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc;
+
+    transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    ms_dx = lbDisplay.MMouseX - sp.X;
+    ms_dy = lbDisplay.MMouseY - sp.Y;
+    tng_dim = ((p_thing->Radius >> 3) * overall_scale) >> 8;
+
+    if (ms_dy * ms_dy + ms_dx * ms_dx < tng_dim * tng_dim)
+    {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+        p_locplayer->Target = p_thing->ThingOffset;
+        p_locplayer->TargetType = target_assign;
+    }
 }
 
 int mech_unkn_func_03(struct Thing *p_thing)
