@@ -28,6 +28,8 @@
 #include <assert.h>
 
 #include "bflib_render_drspr.h"
+
+#include "bigmap.h"
 #include "display.h"
 #include "drawtext.h"
 #include "enginbckt.h"
@@ -3318,20 +3320,20 @@ void number_player(struct Thing *p_person, ubyte n)
             tng_cor_y = p_person->Y;
             tng_cor_z = p_person->Z;
         }
-        cor_x = (tng_cor_x >> 8) - engn_xc;
+        cor_x = PRCCOORD_TO_MAPCOORD(tng_cor_x) - engn_xc;
         cor_y = (tng_cor_y >> 5) - (engn_yc >> 3);
-        cor_z = (tng_cor_z >> 8) - engn_zc;
+        cor_z = PRCCOORD_TO_MAPCOORD(tng_cor_z) - engn_zc;
     }
     {
         int cor_lr, cor_sm;
         if (abs(cor_x) <= abs(cor_z)) {
             cor_sm = abs(cor_x);
-            cor_lr = cor_z;
+            cor_lr = abs(cor_z);
         } else {
             cor_sm = abs(cor_z);
-            cor_lr = cor_x;
+            cor_lr = abs(cor_x);
         }
-        if (abs(cor_lr) + (cor_sm >> 1) > 4608)
+        if (cor_lr + (cor_sm >> 1) > TILE_TO_MAPCOORD(18,0))
             return;
     }
 

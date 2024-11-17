@@ -52,8 +52,8 @@ void draw_target_person(struct Thing *p_person, uint radius)
     return;
 #endif
     struct EnginePoint ep;
-    struct TbSprite *spr;
-    struct TbSprite *aspr;
+    struct TbSprite *p_bspr;
+    struct TbSprite *p_aspr;
 
     if ((p_person->Flag & TngF_Unkn0002) != 0)
         return;
@@ -65,22 +65,73 @@ void draw_target_person(struct Thing *p_person, uint radius)
     ep.Flags = 0;
     transform_point(&ep);
 
-    aspr = &pop1_sprites[84];
-    spr = &pop1_sprites[78];
-    LbSpriteDraw(ep.pp.X - radius - aspr->SWidth, ep.pp.Y - radius - aspr->SHeight, spr);
-    spr = &pop1_sprites[79];
-    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y - radius - aspr->SHeight, spr);
-    spr = &pop1_sprites[81];
-    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y + radius, spr);
-    aspr = &pop1_sprites[87];
-    spr = &pop1_sprites[80];
-    LbSpriteDraw(ep.pp.X - radius - aspr->SWidth, ep.pp.Y + radius, spr);
+    p_aspr = &pop1_sprites[84];
+    p_bspr = &pop1_sprites[78];
+    LbSpriteDraw(ep.pp.X - radius - p_aspr->SWidth, ep.pp.Y - radius - p_aspr->SHeight, p_bspr);
+    p_bspr = &pop1_sprites[79];
+    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y - radius - p_aspr->SHeight, p_bspr);
+    p_bspr = &pop1_sprites[81];
+    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y + radius, p_bspr);
+    p_aspr = &pop1_sprites[87];
+    p_bspr = &pop1_sprites[80];
+    LbSpriteDraw(ep.pp.X - radius - p_aspr->SWidth, ep.pp.Y + radius, p_bspr);
 }
 
 void draw_target_vehicle(struct Thing *p_vehicle)
 {
+#if 0
     asm volatile ("call ASM_draw_target_vehicle\n"
         : : "a" (p_vehicle));
+    return;
+#endif
+    struct ShEnginePoint sp;
+    struct TbSprite *p_bspr;
+    struct TbSprite *p_aspr;
+    int cor_x, cor_y, cor_z;
+    int scr_x, scr_y, r;
+
+    cor_x = (p_vehicle->X >> 8) - engn_xc;
+    cor_z = (p_vehicle->Z >> 8) - engn_zc;
+    cor_y = 8 * (p_vehicle->Y >> 8) - engn_yc;
+
+    {
+        int cor_lr, cor_sm;
+        if (abs(cor_x) <= abs(cor_z)) {
+            cor_sm = abs(cor_x);
+            cor_lr = abs(cor_z);
+        } else {
+            cor_sm = abs(cor_z);
+            cor_lr = abs(cor_x);
+        }
+        if (cor_lr + (cor_sm >> 1) > TILE_TO_MAPCOORD(20,0))
+            return;
+    }
+
+    transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    r = p_vehicle->Radius >> 4;
+
+    p_aspr = &pop1_sprites[84];
+    p_bspr = &pop1_sprites[85];
+
+    scr_x = sp.X - r - p_aspr->SWidth;
+    scr_y = sp.Y - r - p_aspr->SHeight;
+    LbSpriteDraw(scr_x, scr_y, p_aspr);
+
+    scr_x = sp.X + r;
+    scr_y = sp.Y - r - p_aspr->SHeight;
+    LbSpriteDraw(scr_x, scr_y, p_bspr);
+
+    p_aspr = &pop1_sprites[87];
+    p_bspr = &pop1_sprites[86];
+
+    scr_x = sp.X + r;
+    scr_y = sp.Y + r;
+    LbSpriteDraw(scr_x, scr_y, p_aspr);
+
+    scr_x = sp.X - r - p_aspr->SWidth;
+    scr_y = sp.Y + r;
+    LbSpriteDraw(scr_x, scr_y, p_bspr);
 }
 
 void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
