@@ -2995,7 +2995,7 @@ void draw_phwoar(ushort ph)
         lbDisplay.DrawFlags = p_elem->Flags & 0x07;
         if ((p_elem->Flags & 0xFE00) == 0)
         {
-            if (lbDisplay.ScreenMode == 1)
+            if (lbDisplay.GraphicsScreenHeight < 400)
                 LbSpriteDraw_1(point_x + (p_elem->X >> 1), point_y + (p_elem->Y >> 1), p_spr);
             else
                 LbSpriteDraw_2(point_x + p_elem->X, point_y + p_elem->Y, p_spr);
@@ -3266,7 +3266,7 @@ void number_player(struct Thing *p_person, ubyte n)
     ushort ani_mdsh, ani_base;
     ushort frm;
 
-    if (lbDisplay.ScreenMode == 1)
+    if (lbDisplay.GraphicsScreenHeight < 400)
         ani_mdsh = 0;
     else
         ani_mdsh = 4;

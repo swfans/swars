@@ -329,8 +329,8 @@ ubyte input_citymap_scanner(struct ScreenBox *box)
     {
         short ms_x, ms_y;
         lbDisplay.RightButton = 0;
-        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+        ms_x = (lbDisplay.GraphicsScreenHeight < 400) ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+        ms_y = (lbDisplay.GraphicsScreenHeight < 400) ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
         word_1C47E6 = ms_x;
         word_1C47E8 = ms_y;
         ret = 1;

@@ -136,8 +136,8 @@ TbBool mouse_down_over_unkn1(short x, short y, short width, short height)
 {
     short ms_x, ms_y;
 
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    ms_y = (lbDisplay.GraphicsScreenHeight < 400) ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    ms_x = (lbDisplay.GraphicsScreenHeight < 400) ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
     if ((ms_y >= y) && (ms_y <= y + height))
     {
         short sum_min, sum_max;
