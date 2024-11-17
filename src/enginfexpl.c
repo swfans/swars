@@ -59,7 +59,7 @@ void draw_explode(void)
     if (dont_bother_with_explode_faces)
         return;
 
-    for (exface = 1; exface < 0x400; exface++)
+    for (exface = 1; exface < EXPLODE_FACES_COUNT; exface++)
     {
         struct ShEnginePoint sp1, sp2, sp3, sp4;
         struct ExplodeFace3 *p_exface;
