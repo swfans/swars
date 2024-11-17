@@ -699,6 +699,7 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
         if ((scr_x > 0) && (scr_x >> 8 < lbDisplay.GraphicsScreenWidth)
           && (scr_y > 0) && (scr_y >> 8 < lbDisplay.GraphicsScreenHeight))
         {
+          struct SortLine *p_sline;
           int cor_x2, cor_y2;
           int cor_x1, cor_y1;
           int bckt;
@@ -707,26 +708,22 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
           if ((itime < 0) || (colour == colour_lookup[3]))
               bckt -= 400;
 
-          if (next_sort_line < mem_game[33].N)
-          {
-              struct SortLine *p_sline;
-              p_sline = p_current_sort_line;
-              p_sline->X1 = (scr_x + thick_x) >> 8;
-              p_sline->Y1 = (scr_y + thick_y) >> 8;
-              p_sline->X2 = (scr_x + scr_dx - thick_x) >> 8;
-              p_sline->Y2 = (scr_y + scr_dy - thick_y) >> 8;
-              p_sline->Shade = 32;
-              p_sline->Flags = 0;
-              p_sline->Col = colour;
-
-              draw_item_add(DrIT_Unkn11, next_sort_line, bckt);
-              next_sort_line++;
-              p_current_sort_line++;
-          }
           cor_x1 = (scr_x + thick_x) >> 8;
           cor_y1 = (scr_y + thick_y) >> 8;
           cor_x2 = (scr_x + scr_dx - thick_x) >> 8;
           cor_y2 = (scr_y + scr_dy - thick_y) >> 8;
+
+          p_sline = draw_item_add_line(DrIT_Unkn11, bckt);
+          if (p_sline != NULL)
+          {
+              p_sline->X1 = cor_x1;
+              p_sline->Y1 = cor_y1;
+              p_sline->X2 = cor_x2;
+              p_sline->Y2 = cor_y2;
+              p_sline->Shade = 32;
+              p_sline->Flags = 0;
+              p_sline->Col = colour;
+          }
 
           if (itime > 10) {
               build_polygon_slice(cor_x1, cor_y1, cor_x2, cor_y2,
