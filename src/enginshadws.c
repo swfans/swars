@@ -208,10 +208,10 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     struct SingleFloorTexture *p_sftex;
     struct SpecialPoint *p_specpt;
     int shd_w, shd_l;
-    short scr1_x, scr1_y, scr1_z;
-    short scr2_x, scr2_y, scr2_z;
-    short scr3_x, scr3_y, scr3_z;
-    short scr4_x, scr4_y, scr4_z;
+    short cor1_x, cor1_y, cor1_z;
+    short cor2_x, cor2_y, cor2_z;
+    short cor3_x, cor3_y, cor3_z;
+    short cor4_x, cor4_y, cor4_z;
     ushort face, pt;
     short sftex;
     short bckt;
@@ -228,49 +228,49 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     vec_inp.R[2] = -shd_l;
     vec_inp.R[1] = 0;
     matrix_transform(&vec_rot, &local_mats[p_vehicle->U.UVehicle.MatrixIndex], &vec_inp);
-    scr1_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
-    scr1_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+    cor1_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
+    cor1_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
 
     vec_inp.R[1] = 0;
     vec_inp.R[0] = shd_w;
     vec_inp.R[2] = -shd_l;
     matrix_transform(&vec_rot, &local_mats[p_vehicle->U.UVehicle.MatrixIndex], &vec_inp);
-    scr2_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
-    scr2_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+    cor2_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
+    cor2_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
 
     vec_inp.R[0] = p_shtextr->Width;
     vec_inp.R[1] = 0;
     vec_inp.R[2] = shd_l;
     matrix_transform(&vec_rot, &local_mats[p_vehicle->U.UVehicle.MatrixIndex], &vec_inp);
-    scr3_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
-    scr3_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+    cor3_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
+    cor3_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
 
     vec_inp.R[0] = -p_shtextr->Width;
     vec_inp.R[1] = 0;
     vec_inp.R[2] = shd_l;
     matrix_transform(&vec_rot, &local_mats[p_vehicle->U.UVehicle.MatrixIndex], &vec_inp);
-    scr4_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
-    scr4_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+    cor4_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
+    cor4_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
 
     if (p_vehicle->SubType == 40) {
-        scr1_y = alt_at_point_under_height(engn_xc + scr1_x, engn_zc + scr1_z, p_vehicle->Y) >> 8;
-        scr2_y = alt_at_point_under_height(engn_xc + scr2_x, engn_zc + scr2_z, p_vehicle->Y) >> 8;
-        scr3_y = alt_at_point_under_height(engn_xc + scr3_x, engn_zc + scr3_z, p_vehicle->Y) >> 8;
-        scr4_y = alt_at_point_under_height(engn_xc + scr4_x, engn_zc + scr4_z, p_vehicle->Y) >> 8;
+        cor1_y = alt_at_point_under_height(engn_xc + cor1_x, engn_zc + cor1_z, p_vehicle->Y) >> 8;
+        cor2_y = alt_at_point_under_height(engn_xc + cor2_x, engn_zc + cor2_z, p_vehicle->Y) >> 8;
+        cor3_y = alt_at_point_under_height(engn_xc + cor3_x, engn_zc + cor3_z, p_vehicle->Y) >> 8;
+        cor4_y = alt_at_point_under_height(engn_xc + cor4_x, engn_zc + cor4_z, p_vehicle->Y) >> 8;
     } else {
-        scr1_y = alt_at_point(engn_xc + scr1_x, engn_zc + scr1_z) >> 5;
-        scr2_y = alt_at_point(engn_xc + scr2_x, engn_zc + scr2_z) >> 5;
-        scr3_y = alt_at_point(engn_xc + scr3_x, engn_zc + scr3_z) >> 5;
-        scr4_y = alt_at_point(engn_xc + scr4_x, engn_zc + scr4_z) >> 5;
+        cor1_y = alt_at_point(engn_xc + cor1_x, engn_zc + cor1_z) >> 5;
+        cor2_y = alt_at_point(engn_xc + cor2_x, engn_zc + cor2_z) >> 5;
+        cor3_y = alt_at_point(engn_xc + cor3_x, engn_zc + cor3_z) >> 5;
+        cor4_y = alt_at_point(engn_xc + cor4_x, engn_zc + cor4_z) >> 5;
     }
 
-    transform_shpoint(&sp1, scr1_x, scr1_y - 8 * engn_yc, scr1_z);
+    transform_shpoint(&sp1, cor1_x, cor1_y - 8 * engn_yc, cor1_z);
 
-    transform_shpoint(&sp2, scr2_x, scr2_y - 8 * engn_yc, scr2_z);
+    transform_shpoint(&sp2, cor2_x, cor2_y - 8 * engn_yc, cor2_z);
 
-    transform_shpoint(&sp3, scr3_x, scr3_y - 8 * engn_yc, scr3_z);
+    transform_shpoint(&sp3, cor3_x, cor3_y - 8 * engn_yc, cor3_z);
 
-    transform_shpoint(&sp4, scr4_x, scr4_y - 8 * engn_yc, scr4_z);
+    transform_shpoint(&sp4, cor4_x, cor4_y - 8 * engn_yc, cor4_z);
 
     face = next_special_face4;
     if (face >= mem_game[25].N)

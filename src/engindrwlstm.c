@@ -45,7 +45,6 @@ extern ubyte byte_176D49;
 
 extern long dword_176CAC;
 extern long dword_176CB0;
-extern long dword_176D68;
 extern long dword_152E4C;
 
 ubyte byte_152EF0[] = {
