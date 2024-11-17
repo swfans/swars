@@ -156,7 +156,7 @@ struct FloorTile *draw_item_add_floor_tile(ubyte ditype, ushort bckt)
 
 ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
 {
-#if 1
+#if 0
     ushort ret;
     asm volatile (
       "push %7\n"
@@ -166,6 +166,34 @@ ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
         : "=r" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (col));
     return ret;
 #endif
+    struct ShEnginePoint sp1, sp2;
+    struct SortLine *p_sline;
+    int bckt;
+    ushort sline;
+
+    transform_shpoint(&sp1, x1, 8 * y1 - 8 * engn_yc, z1);
+
+    transform_shpoint(&sp2, x2, 8 * y2 - 8 * engn_yc, z2);
+
+    if ((sp2.Flags & sp1.Flags & 0xF) != 0)
+        return 0;
+
+    bckt = sp1.Depth + 5000;
+
+    sline = next_sort_line;
+    p_sline = draw_item_add_line(DrIT_Unkn11, bckt);
+    if (p_sline == NULL)
+        return 0;
+
+    p_sline->Shade = 32;
+    p_sline->Flags = 0;
+    p_sline->X1 = sp1.X;
+    p_sline->Y1 = sp1.Y;
+    p_sline->X2 = sp2.X;
+    p_sline->Y2 = sp2.Y;
+    p_sline->Col = col;
+
+    return sline;
 }
 
 void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
