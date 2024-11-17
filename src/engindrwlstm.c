@@ -545,10 +545,11 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
     }
 }
 
-void build_polygon_slice(short x1, short y1, short x2, short y2,
-  int w1, int w2, int col, short sort_key, ushort flag)
+struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, short y2,
+  int w1, int w2, int col, int sort_key, int flag) // short sort_key, ushort flag)
 {
-#if 1
+#if 0
+    struct SingleObjectFace4 *ret;
     asm volatile (
       "push %8\n"
       "push %7\n"
@@ -556,8 +557,8 @@ void build_polygon_slice(short x1, short y1, short x2, short y2,
       "push %5\n"
       "push %4\n"
       "call ASM_build_polygon_slice\n"
-        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (w1), "g" (w2), "g" (col), "g" (sort_key), "g" (flag));
-    return;
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (w1), "g" (w2), "g" (col), "g" (sort_key), "g" (flag));
+    return ret;
 #endif
     struct SingleObjectFace4 *p_face4;
     struct SpecialPoint *p_specpt;
@@ -578,7 +579,7 @@ void build_polygon_slice(short x1, short y1, short x2, short y2,
     dy = y2 - y1;
     length = LbSqrL(16 * (dx * dx + dy * dy));
     if (length == 0)
-        return;
+        return NULL;
     norm_dy = (dy << 10) / length;
     norm_dx = (dx << 10) / length;
     if (norm_dy < 0) {
@@ -608,13 +609,13 @@ void build_polygon_slice(short x1, short y1, short x2, short y2,
     }
 
     pt = next_screen_point;
-    if (next_screen_point > mem_game[30].N - 5)
-        return;
+    if (pt > mem_game[30].N - 5)
+        return NULL;
     next_screen_point += 4;
 
     face = next_special_face4;
     if (face > mem_game[25].N - 1)
-        return;
+        return NULL;
     next_special_face4++;
 
     p_face4 = &game_special_object_faces4[face];
@@ -655,6 +656,7 @@ void build_polygon_slice(short x1, short y1, short x2, short y2,
     word_1AA5F4 = x2 + scal_dy2;
 
     draw_item_add(DrIT_Unkn12, face, sort_key);
+    return p_face4;
 }
 
 void build_wobble_line(int x1, int y1, int z1,
