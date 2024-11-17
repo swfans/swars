@@ -58,6 +58,11 @@ extern long dword_152E4C;
 
 extern struct BulStart bul_starts[4000];
 
+extern short word_1AA5F4;
+extern short word_1AA5F6;
+extern short word_1AA5F8;
+extern short word_1AA5FA;
+
 ubyte byte_152EF0[] = {
    0, 10,  5, 10,  7,  7,  8, 10,
   10, 10,  5,  7,  5,  7,  7,  0,
@@ -541,8 +546,9 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
 }
 
 void build_polygon_slice(short x1, short y1, short x2, short y2,
-  int w1, int w2, int col, int sort_key, int flag)
+  int w1, int w2, int col, short sort_key, ushort flag)
 {
+#if 1
     asm volatile (
       "push %8\n"
       "push %7\n"
@@ -551,6 +557,104 @@ void build_polygon_slice(short x1, short y1, short x2, short y2,
       "push %4\n"
       "call ASM_build_polygon_slice\n"
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (w1), "g" (w2), "g" (col), "g" (sort_key), "g" (flag));
+    return;
+#endif
+    struct SingleObjectFace4 *p_face4;
+    struct SpecialPoint *p_specpt;
+    int dx, dy;
+    int norm_dx, norm_dy;
+    int prop_dx1, prop_dy1;
+    int prop_dx2, prop_dy2;
+    int scal_dx1, scal_dy1;
+    int scal_dx2, scal_dy2;
+    int length;
+    ushort face;
+    ushort pt;
+    TbBool neg_x, neg_y;
+
+    neg_y = 0;
+    neg_x = 0;
+    dx = x1 - x2;
+    dy = y2 - y1;
+    length = LbSqrL(16 * (dx * dx + dy * dy));
+    if (length == 0)
+        return;
+    norm_dy = (dy << 10) / length;
+    norm_dx = (dx << 10) / length;
+    if (norm_dy < 0) {
+        norm_dy = -norm_dy;
+        neg_y = 1;
+    }
+    if (norm_dx < 0) {
+        norm_dx = -norm_dx;
+        neg_x = 1;
+    }
+
+    prop_dy1 = (norm_dy * w1 + 128) >> 8;
+    prop_dx1 = (norm_dx * w1 + 128) >> 8;
+    prop_dy2 = (norm_dy * w2 + 128) >> 8;
+    prop_dx2 = (norm_dx * w2 + 128) >> 8;
+    scal_dy1 = (overall_scale * prop_dy1 + 128) >> 8;
+    scal_dx1 = (overall_scale * prop_dx1 + 128) >> 8;
+    scal_dy2 = (overall_scale * prop_dy2 + 128) >> 8;
+    scal_dx2 = (overall_scale * prop_dx2 + 128) >> 8;
+    if (neg_y) {
+        scal_dy1 = -scal_dy1;
+        scal_dy2 = -scal_dy2;
+    }
+    if (neg_x) {
+        scal_dx1 = -scal_dx1;
+        scal_dx2 = -scal_dx2;
+    }
+
+    pt = next_screen_point;
+    if (next_screen_point > mem_game[30].N - 5)
+        return;
+    next_screen_point += 4;
+
+    face = next_special_face4;
+    if (face > mem_game[25].N - 1)
+        return;
+    next_special_face4++;
+
+    p_face4 = &game_special_object_faces4[face];
+    p_face4->PointNo[1] = pt + 1;
+    p_face4->PointNo[2] = pt + 2;
+    p_face4->PointNo[3] = pt + 3;
+    p_face4->PointNo[0] = pt + 0;
+    p_face4->ExCol = col;
+    p_face4->Flags = 15;
+
+    if (flag == 0)
+    {
+        word_1AA5F4 = x1 + scal_dy1;
+        word_1AA5F6 = y1 + scal_dx1;
+        word_1AA5F8 = x1 - scal_dy1;
+        word_1AA5FA = y1 - scal_dx1;
+    }
+
+    p_specpt = &game_screen_point_pool[pt + 0];
+    p_specpt->X = word_1AA5F4;
+    p_specpt->Y = word_1AA5F6;
+
+    p_specpt = &game_screen_point_pool[pt + 1];
+    p_specpt->X = word_1AA5F8;
+    p_specpt->Y = word_1AA5FA;
+
+    p_specpt = &game_screen_point_pool[pt + 2];
+    p_specpt->X = x2 + scal_dy2;
+    p_specpt->Y = y2 + scal_dx2;
+
+    p_specpt = &game_screen_point_pool[pt + 3];
+    p_specpt->X = x2 - scal_dy2;
+    p_specpt->Y = y2 - scal_dx2;
+
+    word_1AA5F6 = y2 + scal_dx2;
+    word_1AA5F8 = x2 - scal_dy2;
+    word_1AA5FA = y2 - scal_dx2;
+    word_1AA5F4 = x2 + scal_dy2;
+
+    draw_item_add(DrIT_Unkn12, face, sort_key);
 }
 
 void build_wobble_line(int x1, int y1, int z1,
@@ -842,6 +946,7 @@ static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp, int offset_
     {
         struct M31 vec_inp, vec_rot;
         int dxc, dyc, dzc;
+        ushort pt;
 
         vec_inp.R[0] = 2 * p_snpoint->X;
         vec_inp.R[1] = 2 * p_snpoint->Y;
@@ -853,12 +958,13 @@ static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp, int offset_
         dzc = offset_z + (vec_rot.R[2] >> 15);
         transform_shpoint(p_sp, dxc, dyc - 8 * engn_yc, dzc);
 
-        p_specpt = &game_screen_point_pool[next_screen_point];
+        pt = next_screen_point;
+        p_specpt = &game_screen_point_pool[pt];
         p_specpt->X = p_sp->X;
         p_specpt->Y = p_sp->Y;
         p_specpt->Z = p_sp->Depth;
 
-        p_snpoint->PointOffset = next_screen_point;
+        p_snpoint->PointOffset = pt;
         p_snpoint->Flags = p_sp->Flags;
         next_screen_point++;
     }
