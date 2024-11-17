@@ -154,6 +154,20 @@ struct FloorTile *draw_item_add_floor_tile(ubyte ditype, ushort bckt)
     return p_floortl;
 }
 
+ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
+{
+#if 1
+    ushort ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_draw_mapwho_vect\n"
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (col));
+    return ret;
+#endif
+}
+
 void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
 {
 #if 0
