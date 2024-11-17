@@ -56,7 +56,7 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
 
 // Lowest level functions, to be used only if previous ones really do not match
 
-struct FloorTile *draw_item_add_floor_tile(ubyte ditype, ushort bckt);
+struct FloorTile *draw_item_add_floor_tile(ubyte ditype, short bckt);
 
 /******************************************************************************/
 #ifdef __cplusplus

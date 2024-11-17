@@ -69,7 +69,7 @@ ubyte byte_152EF0[] = {
  * @param bckt Destination bucket for this draw item.
  * @return SortLine instance to fill, or NULL if arrays exceeded.
  */
-struct SortLine *draw_item_add_line(ubyte ditype, ushort bckt)
+struct SortLine *draw_item_add_line(ubyte ditype, short bckt)
 {
     struct SortLine *p_sline;
 
@@ -92,7 +92,7 @@ struct SortLine *draw_item_add_line(ubyte ditype, ushort bckt)
  * @param bckt Destination bucket for this draw item.
  * @return SortSprite instance to fill, or NULL if arrays exceeded.
  */
-struct SortSprite *draw_item_add_sprite(ubyte ditype, ushort bckt)
+struct SortSprite *draw_item_add_sprite(ubyte ditype, short bckt)
 {
     struct SortSprite *p_sspr;
 
@@ -116,7 +116,7 @@ struct SortSprite *draw_item_add_sprite(ubyte ditype, ushort bckt)
  * @param npoints Amount of consecutive points to reserve.
  * @return SpecialPoint instance to fill, or NULL if arrays exceeded.
  */
-struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset, ushort bckt, ushort npoints)
+struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset, short bckt, ushort npoints)
 {
     struct SpecialPoint *p_scrpoint;
 
@@ -138,7 +138,7 @@ struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset, ushort bc
  * @param bckt Destination bucket for this draw item.
  * @return FloorTile instance to fill, or NULL if arrays exceeded.
  */
-struct FloorTile *draw_item_add_floor_tile(ubyte ditype, ushort bckt)
+struct FloorTile *draw_item_add_floor_tile(ubyte ditype, short bckt)
 {
     struct FloorTile *p_floortl;
 
@@ -456,7 +456,7 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
         int x, y, z;
         int x_pcc, x_pcs, y_msc, y_mss, x_mmc, y_pps;
         int z_ps, z_ms;
-        ushort bckt_shift;
+        short bckt_shift;
 
         p_shrapnel = &shrapnel[shrap];
         if ((p_shrapnel->type < 1) || (p_shrapnel->type > 3))
