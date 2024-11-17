@@ -24,8 +24,8 @@
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
-#define SCREEN_POINT_COORD_MIN -2000
-#define SCREEN_POINT_COORD_MAX 2000
+#define SCREEN_POINT_COORD_MIN (-MAX_SUPPORTED_SCREEN_WIDTH)
+#define SCREEN_POINT_COORD_MAX (2 * MAX_SUPPORTED_SCREEN_WIDTH)
 
 void transform_point(struct EnginePoint *p_ep)
 {
