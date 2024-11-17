@@ -96,6 +96,9 @@ uint cummulate_shade_from_quick_lights(ushort light_first);
 void draw_drawitem_1(ushort dihead);
 void draw_drawitem_2(ushort dihead);
 
+// Drawing outside of the drawlist
+void number_player(struct Thing *p_person, ubyte n);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

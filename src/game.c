@@ -1228,12 +1228,6 @@ void show_goto_point(uint flag)
     return;
 }
 
-void number_player(struct Thing *p_person, ubyte n)
-{
-    asm volatile ("call ASM_number_player\n"
-        : : "a" (p_person), "d" (n));
-}
-
 void draw_hud(int dcthing)
 {
 #if 0

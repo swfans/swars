@@ -70,6 +70,8 @@ extern long dword_176CF4;
 extern long dword_176D00;
 extern long dword_176D04;
 
+extern ubyte byte_176D49;
+
 extern long dword_19F4FC;
 extern long dword_19F500;
 extern long dword_19F504;
@@ -83,6 +85,8 @@ extern short word_1A5836;
 extern long sprite_over_16x16;
 
 extern ubyte byte_1C844E;
+
+extern ubyte byte_1DB2E9;
 
 sbyte byte_153014[] = {
   1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -3243,6 +3247,127 @@ void draw_sort_sprite_number(ushort sspr)
     p_sspr = &game_sort_sprites[sspr];
     sprintf(locstr, "%d", (int)p_sspr->PThing);
     draw_text(p_sspr->X, p_sspr->Y, locstr, colour_lookup[2]);
+}
+
+void number_player(struct Thing *p_person, ubyte n)
+{
+#if 0
+    asm volatile ("call ASM_number_player\n"
+        : : "a" (p_person), "d" (n));
+    return;
+#endif
+    struct ShEnginePoint sp;
+    struct Frame *p_frm;
+    struct Element *p_el;
+    int cor_x, cor_y, cor_z;
+    int shift_x, shift_y;
+    ushort ani_mdsh, ani_base;
+    ushort frm;
+
+    if (lbDisplay.ScreenMode == 1)
+        ani_mdsh = 0;
+    else
+        ani_mdsh = 4;
+    if (byte_1DB2E9 == 1)
+        ani_base = 1528;
+    else
+        ani_base = 1520;
+
+    frm = nstart_ani[ani_base + ani_mdsh + n];
+    {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+        if (!p_locplayer->DoubleMode)
+        {
+            if ((p_person->ThingOffset != (ThingIdx)p_locplayer->DirectControl[0]) || ((gameturn & 4) != 0))
+            {
+                frm = frame[frm].Next;
+            }
+            else
+            {
+                ushort i;
+                for (i = 0; i <= (gameturn & 3); i++)
+                    frm = frame[frm].Next;
+            }
+        }
+    }
+
+    if ((p_person->Flag2 & 0x02) != 0)
+        return;
+
+    {
+        int tng_cor_x, tng_cor_y, tng_cor_z;
+
+        if (((p_person->Flag & 0x10000000) != 0) && things[p_person->U.UPerson.Vehicle].SubType == 29)
+        {
+            tng_cor_x = p_person->X;
+            tng_cor_y = p_person->Y;
+            tng_cor_z = p_person->Z;
+        }
+        else if ((p_person->Flag & 0x4000) != 0)
+        {
+            struct Thing *p_vehicle;
+            p_vehicle = &things[p_person->U.UPerson.Vehicle];
+            tng_cor_x = p_vehicle->X;
+            tng_cor_y = p_vehicle->Y;
+            tng_cor_z = p_vehicle->Z;
+        }
+        else
+        {
+            tng_cor_x = p_person->X;
+            tng_cor_y = p_person->Y;
+            tng_cor_z = p_person->Z;
+        }
+        cor_x = (tng_cor_x >> 8) - engn_xc;
+        cor_y = (tng_cor_y >> 5) - (engn_yc >> 3);
+        cor_z = (tng_cor_z >> 8) - engn_zc;
+    }
+    {
+        int cor_lr, cor_sm;
+        if (abs(cor_x) <= abs(cor_z)) {
+            cor_sm = abs(cor_x);
+            cor_lr = cor_z;
+        } else {
+            cor_sm = abs(cor_z);
+            cor_lr = cor_x;
+        }
+        if (abs(cor_lr) + (cor_sm >> 1) > 4608)
+            return;
+    }
+
+    transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    if ((p_person->Flag & 0x10000000) != 0)
+    {
+        shift_x = 0;
+        sp.X += 7 * n - 14;
+    }
+    else
+    {
+        shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + 512] >> 14;
+        if ((p_person->Flag2 & 0x80000) == 0)
+            shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + 512] >> 15;
+    }
+    shift_y = 0;
+
+    p_frm = &frame[frm];
+    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
+    {
+        struct TbSprite *p_spr;
+        short x, y;
+
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
+        if (p_spr <= m_sprites)
+           continue;
+
+        lbDisplay.DrawFlags = p_el->Flags & 7;
+        if ((p_el->Flags & 0xFE00) != 0)
+            continue;
+
+        x = sp.X + ((overall_scale * (p_el->X + shift_x)) >> 9);
+        y = sp.Y + ((overall_scale * (p_el->Y + shift_y)) >> 9);
+        LbSpriteDraw(x, y, p_spr);
+    }
 }
 
 // Special non-textured draw; used during nuclear explosions?
