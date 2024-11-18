@@ -270,7 +270,7 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
     scr_z = sp.Depth - radius;
-    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & 0x20000000) != 0))
+    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_Unkn20000000) != 0))
         scr_z = -10000;
 
     p_sspr = draw_item_add_sprite(DrIT_Unkn3, scr_z + 5000);
@@ -347,7 +347,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     bckt_shift = sp.Depth - radius;
     if (ingame.DisplayMode == 50)
     {
-        if ((p_thing->Flag2 & 0x20000000) != 0) {
+        if ((p_thing->Flag2 & TgF2_Unkn20000000) != 0) {
             if ((p_thing->Flag & TngF_Unkn0002) != 0)
                 return;
             bckt_shift -= 1000000;
@@ -355,7 +355,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     }
     else
     {
-        if ((p_thing->Flag2 & 0x20000000) != 0)
+        if ((p_thing->Flag2 & TgF2_Unkn20000000) != 0)
             bckt_shift = -10000;
     }
 
@@ -371,7 +371,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     p_sspr->Brightness = bri;
     p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
 
-    if ((p_thing->Flag2 & 0x20000000) != 0 || p_thing->U.UPerson.OnFace || (p_thing->SubType == SubTT_PERS_MECH_SPIDER))
+    if (((p_thing->Flag2 & TgF2_Unkn20000000) != 0) || p_thing->U.UPerson.OnFace || (p_thing->SubType == SubTT_PERS_MECH_SPIDER))
         return;
 
     p_sspr = draw_item_add_sprite(DrIT_Unkn19, bckt_shift + 5000 - 200);

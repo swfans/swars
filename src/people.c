@@ -612,10 +612,10 @@ short calc_person_speed(struct Thing *p_person)
     if (p_person->U.UPerson.CurrentWeapon == WEP_FLAMER)
         speed >>= 1;
 
-    if (p_person->Flag & TngF_Persuaded)
+    if ((p_person->Flag & TngF_Persuaded) != 0)
         speed += 250;
 
-    if (p_person->Flag2 & TgF2_Unkn00080000)
+    if ((p_person->Flag2 & TgF2_Unkn00080000) != 0)
         speed += 512;
 
     if (speed > PERSON_MAX_SPEED)
@@ -1525,7 +1525,7 @@ void person_find_next_state(struct Thing *p_person)
 {
     short cmd;
 
-    if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & 0x0800) == 0))
+    if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & TgF2_Unkn0800) == 0))
     {
         p_person->State = PerSt_WAIT;
         p_person->U.UPerson.ComTimer = 50;
@@ -1534,9 +1534,9 @@ void person_find_next_state(struct Thing *p_person)
 
     if (p_person->U.UPerson.ComCur == 0)
     {
-        if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & 0x0800) != 0))
+        if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & TgF2_Unkn0800) != 0))
         {
-            p_person->Flag2 &= ~0x0800;
+            p_person->Flag2 &= ~TgF2_Unkn0800;
             ingame.Flags &= ~0x0100;
             set_peep_comcur(p_person);
         }
@@ -1547,7 +1547,7 @@ void person_find_next_state(struct Thing *p_person)
 
     if ((p_person->Flag & TngF_Unkn0040) != 0)
     {
-        p_person->Flag &= ~0x0040;
+        p_person->Flag &= ~TngF_Unkn0040;
         person_init_command(p_person, PCmd_GET_ITEM);
         return;
     }
@@ -1569,9 +1569,9 @@ void person_find_next_state(struct Thing *p_person)
     // Repeat with new ComCur
     if (p_person->U.UPerson.ComCur == 0)
     {
-        if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & 0x0800) != 0))
+        if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & TgF2_Unkn0800) != 0))
         {
-            p_person->Flag2 &= ~0x0800;
+            p_person->Flag2 &= ~TgF2_Unkn0800;
             ingame.Flags &= ~0x0100;
             set_peep_comcur(p_person);
         }
@@ -1599,12 +1599,12 @@ void process_person(struct Thing *p_person)
     struct MyMapElement *p_mapel;
     short state;
 
-    if ( (p_person->Flag & TngF_PlayerAgent) != 0 && (p_person->Flag2 & 0x10000000) != 0 )
+    if ( (p_person->Flag & TngF_PlayerAgent) != 0 && (p_person->Flag2 & TgF2_Unkn10000000) != 0 )
     {
         state = p_person->State;
         if ((state != PerSt_GET_ITEM) && (state != PerSt_DROP_ITEM) && (state != PerSt_PICKUP_ITEM)
-          && ((p_person->Flag & (0x40000000|0x0002)) == 0)
-          && ((p_person->Flag2 & (0x0010|0x0008)) == 0))
+          && ((p_person->Flag & (TngF_Unkn40000000|TngF_Unkn0002)) == 0)
+          && ((p_person->Flag2 & (TgF2_Unkn0010|TgF2_Unkn0008)) == 0))
         {
             struct Thing *p_target;
 
@@ -1612,25 +1612,25 @@ void process_person(struct Thing *p_person)
             p_target = &things[p_person->GotoThingIndex];
             p_person->State = PerSt_PROTECT_PERSON;
             p_person->U.UPerson.ComRange = follow_dist[p_target->U.UPerson.ComCur & 3][p_person->U.UPerson.ComCur & 3];
-            p_person->Flag2 &= ~0x10000000;
+            p_person->Flag2 &= ~TgF2_Unkn10000000;
         }
     }
-    p_person->Flag2 &= ~0x8000;
+    p_person->Flag2 &= ~TgF2_Unkn8000;
     p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (p_person->Z >> 16) + (p_person->X >> 16)];
-    if (((p_person->Flag2 & 0x20000000) != 0) && (p_mapel->ColumnHead == 0))
-        p_person->Flag2 &= ~0x20000000;
+    if (((p_person->Flag2 & TgF2_Unkn20000000) != 0) && (p_mapel->ColumnHead == 0))
+        p_person->Flag2 &= ~TgF2_Unkn20000000;
 
     if ( ((gameturn + p_person->ThingOffset) & 0x7F) == 0 )
     {
         p_person->U.UPerson.Flag3 &= ~0x0020;
-        if ((p_person->Flag2 & 0x020000) != 0)
+        if ((p_person->Flag2 & TgF2_Unkn00020000) != 0)
         {
             p_person->U.UPerson.ComTimer = -1;
-            p_person->Flag2 &= ~0x020000;
+            p_person->Flag2 &= ~TgF2_Unkn00020000;
             remove_path(p_person);
         }
     }
-    if (((p_person->Flag2 & 0x8000000) != 0) && ((p_person->Flag & TngF_PlayerAgent) != 0))
+    if (((p_person->Flag2 & TgF2_Unkn08000000) != 0) && ((p_person->Flag & TngF_PlayerAgent) != 0))
     {
         state = p_person->State;
         if ((state != PerSt_GET_ITEM) && (state != PerSt_PICKUP_ITEM))
@@ -1639,22 +1639,22 @@ void process_person(struct Thing *p_person)
           func_711F4(p_person->X >> 8, p_person->Y >> 8, p_person->Z >> 8, 200, colour_lookup[1]);
         }
     }
-    if ((p_person->Flag2 & 0x0020) != 0)
+    if ((p_person->Flag2 & TgF2_Unkn0020) != 0)
     {
         return;
     }
-    if ((p_person->Flag2 & 0x00100000) != 0)
+    if ((p_person->Flag2 & TgF2_Unkn00100000) != 0)
     {
         process_tasered_person(p_person);
         return;
     }
-    if ((p_person->Flag2 & 0x0010) != 0)
+    if ((p_person->Flag2 & TgF2_Unkn0010) != 0)
     {
         process_knocked_out(p_person);
         stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);
         return;
     }
-    if ((p_person->Flag2 & 0x0008) != 0)
+    if ((p_person->Flag2 & TgF2_Unkn0008) != 0)
     {
         p_person->U.UPerson.BumpCount--;
         if (p_person->U.UPerson.BumpCount != 0)
@@ -1667,13 +1667,13 @@ void process_person(struct Thing *p_person)
             ushort group;
 
             group = p_person->U.UPerson.EffectiveGroup;
-            p_person->Flag2 &= ~0x0008;
+            p_person->Flag2 &= ~TgF2_Unkn0008;
             if (group >= 128)
               p_person->U.UPerson.EffectiveGroup = group + 128;
             p_person->U.UPerson.Target2 = 0;
             p_person->PTarget = NULL;
             p_person->State = 0;
-            p_person->Flag |= 0x0040;
+            p_person->Flag |= TngF_Unkn0040;
             calc_person_speed(p_person);
         }
     }
@@ -1706,7 +1706,7 @@ void process_person(struct Thing *p_person)
     }
     if ((p_person->U.UPerson.BumpMode != 0) && ((p_person->Flag & TngF_Unkn0002) == 0))
     {
-        if ((p_person->Flag2 & 0x0100) != 0)
+        if ((p_person->Flag2 & TgF2_Unkn0100) != 0)
             p_person->U.UPerson.BumpMode = 0;
         else
             process_im_shoved(p_person);
@@ -1751,7 +1751,7 @@ void process_person(struct Thing *p_person)
     }
 
     if (((p_person->Flag & (TngF_InVehicle|TngF_Unkn40000000|TngF_Persuaded|TngF_Unkn4000)) == 0)
-      && (p_person->Flag2 & 0x0008) == 0
+      && ((p_person->Flag2 & TgF2_Unkn0008) == 0)
       && ((gameturn + p_person->ThingOffset) & 3) == 0
       && (p_person->Flag & TngF_Unkn0002) == 0)
     {
@@ -1768,7 +1768,7 @@ void process_person(struct Thing *p_person)
         }
     }
 
-    if (((p_person->Flag & (0x40000000|0x2000)) == 0 || (p_person->Flag2 & 0x0800) != 0)
+    if (((p_person->Flag & (TngF_Unkn40000000|TngF_PlayerAgent)) == 0 || (p_person->Flag2 & TgF2_Unkn0800) != 0)
       && ((gameturn + p_person->ThingOffset) & 7) == 0)
     {
         if (p_person->U.UPerson.ComHead != 0)
@@ -1804,8 +1804,8 @@ void process_person(struct Thing *p_person)
         }
     }
 
-    if ( (p_person->Flag & (0x40000000|0x0002)) != 0 )
-        p_person->Flag &= ~0x0800;
+    if ((p_person->Flag & (TngF_Unkn40000000|TngF_Unkn0002)) != 0)
+        p_person->Flag &= ~TngF_Unkn0800;
     else
         process_weapon(p_person);
 
@@ -1817,13 +1817,13 @@ void process_person(struct Thing *p_person)
         draw_text_transformed(p_person->X >> 8, p_person->Y, p_person->Z >> 8, locstr);
     }
 
-    if ((p_person->U.UPerson.Target2 != 0) && ((p_person->Flag & (0x40000000|0x0002)) == 0))
+    if ((p_person->U.UPerson.Target2 != 0) && ((p_person->Flag & (TngF_Unkn40000000|TngF_Unkn0002)) == 0))
     {
         person_kill_target2(p_person);
         if (p_person->State == PerSt_PROTECT_PERSON)
           process_protect_person(p_person);
     }
-    else if ((p_person->Flag2 & 0x0008) != 0)
+    else if ((p_person->Flag2 & TgF2_Unkn0008) != 0)
     {
         process_wander(p_person);
         if (p_person->U.UPerson.Timer2 == 1)
