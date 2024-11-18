@@ -1623,8 +1623,8 @@ void process_person(struct Thing *p_person)
     }
     p_person->Flag2 &= ~TgF2_Unkn8000;
     p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (p_person->Z >> 16) + (p_person->X >> 16)];
-    if (((p_person->Flag2 & TgF2_Unkn20000000) != 0) && (p_mapel->ColumnHead == 0))
-        p_person->Flag2 &= ~TgF2_Unkn20000000;
+    if (((p_person->Flag2 & TgF2_InsideBuilding) != 0) && (p_mapel->ColumnHead == 0))
+        p_person->Flag2 &= ~TgF2_InsideBuilding;
 
     if ( ((gameturn + p_person->ThingOffset) & 0x7F) == 0 )
     {

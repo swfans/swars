@@ -74,7 +74,7 @@ ubyte byte_152EF0[] = {
  * @param bckt Destination bucket for this draw item.
  * @return SortLine instance to fill, or NULL if arrays exceeded.
  */
-struct SortLine *draw_item_add_line(ubyte ditype, short bckt)
+struct SortLine *draw_item_add_line(ubyte ditype, int bckt)
 {
     struct SortLine *p_sline;
 
@@ -97,7 +97,7 @@ struct SortLine *draw_item_add_line(ubyte ditype, short bckt)
  * @param bckt Destination bucket for this draw item.
  * @return SortSprite instance to fill, or NULL if arrays exceeded.
  */
-struct SortSprite *draw_item_add_sprite(ubyte ditype, short bckt)
+struct SortSprite *draw_item_add_sprite(ubyte ditype, int bckt)
 {
     struct SortSprite *p_sspr;
 
@@ -121,7 +121,7 @@ struct SortSprite *draw_item_add_sprite(ubyte ditype, short bckt)
  * @param npoints Amount of consecutive points to reserve.
  * @return SpecialPoint instance to fill, or NULL if arrays exceeded.
  */
-struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset, short bckt, ushort npoints)
+struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset, int bckt, ushort npoints)
 {
     struct SpecialPoint *p_scrpoint;
 
@@ -143,7 +143,7 @@ struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset, short bck
  * @param bckt Destination bucket for this draw item.
  * @return FloorTile instance to fill, or NULL if arrays exceeded.
  */
-struct FloorTile *draw_item_add_floor_tile(ubyte ditype, short bckt)
+struct FloorTile *draw_item_add_floor_tile(ubyte ditype, int bckt)
 {
     struct FloorTile *p_floortl;
 
@@ -262,24 +262,24 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
 #endif
     struct ShEnginePoint sp;
     struct SortSprite *p_sspr;
-    int scr_z;
+    int scr_depth;
 
     if (current_map == 9) // map009 Singapore on-water map
         y += waft_table[gameturn & 0x1F] >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
-    scr_z = sp.Depth - radius;
-    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_Unkn20000000) != 0))
-        scr_z = -10000;
+    scr_depth = sp.Depth - radius;
+    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0))
+        scr_depth = 10000;
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn3, scr_z + 5000);
+    p_sspr = draw_item_add_sprite(DrIT_Unkn3, scr_depth + 5000);
     if (p_sspr == NULL)
         return;
 
     p_sspr->X = sp.X;
     p_sspr->Y = sp.Y;
-    p_sspr->Z = scr_z;
+    p_sspr->Z = scr_depth;
     p_sspr->Frame = frame;
     p_sspr->Brightness = intensity;
     p_sspr->Scale = 256;
@@ -299,22 +299,22 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
 #endif
     struct ShEnginePoint sp;
     struct SortSprite *p_sspr;
-    int scr_z;
+    int scr_depth;
 
     if (current_map == 9) // map009 Singapore on-water map
         y += waft_table[gameturn & 0x1F] >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
-    scr_z = sp.Depth - radius - 100;
+    scr_depth = sp.Depth - radius - 100;
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn15, scr_z + 5000);
+    p_sspr = draw_item_add_sprite(DrIT_Unkn15, scr_depth + 5000);
     if (p_sspr == NULL)
         return;
 
     p_sspr->X = sp.X;
     p_sspr->Y = sp.Y;
-    p_sspr->Z = scr_z;
+    p_sspr->Z = scr_depth;
     p_sspr->Frame = frame;
     p_sspr->Brightness = intensity;
     p_sspr->Scale = scale;
@@ -334,7 +334,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
 #endif
     struct ShEnginePoint sp;
     struct SortSprite *p_sspr;
-    int bckt_shift;
+    int scr_depth;
     ubyte bri;
 
     bri = byte_152EF0[p_thing->SubType] + intensity;
@@ -344,22 +344,22 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
-    bckt_shift = sp.Depth - radius;
+    scr_depth = sp.Depth - radius;
     if (ingame.DisplayMode == 50)
     {
-        if ((p_thing->Flag2 & TgF2_Unkn20000000) != 0) {
+        if ((p_thing->Flag2 & TgF2_InsideBuilding) != 0) {
             if ((p_thing->Flag & TngF_Destroyed) != 0)
                 return;
-            bckt_shift -= 1000000;
+            scr_depth += 10000;
         }
     }
     else
     {
-        if ((p_thing->Flag2 & TgF2_Unkn20000000) != 0)
-            bckt_shift = -10000;
+        if ((p_thing->Flag2 & TgF2_InsideBuilding) != 0)
+            scr_depth = 10000;
     }
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn13, bckt_shift + 5000);
+    p_sspr = draw_item_add_sprite(DrIT_Unkn13, scr_depth + 5000);
     if (p_sspr == NULL)
         return;
 
@@ -371,10 +371,10 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     p_sspr->Brightness = bri;
     p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
 
-    if (((p_thing->Flag2 & TgF2_Unkn20000000) != 0) || p_thing->U.UPerson.OnFace || (p_thing->SubType == SubTT_PERS_MECH_SPIDER))
+    if (((p_thing->Flag2 & TgF2_InsideBuilding) != 0) || p_thing->U.UPerson.OnFace || (p_thing->SubType == SubTT_PERS_MECH_SPIDER))
         return;
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn19, bckt_shift + 5000 - 200);
+    p_sspr = draw_item_add_sprite(DrIT_Unkn19, scr_depth + 5000 - 200);
     if (p_sspr == NULL)
         return;
 
@@ -461,7 +461,7 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
         int x, y, z;
         int x_pcc, x_pcs, y_msc, y_mss, x_mmc, y_pps;
         int z_ps, z_ms;
-        short bckt_shift;
+        int scr_depth;
 
         p_shrapnel = &shrapnel[shrap];
         if ((p_shrapnel->type < 1) || (p_shrapnel->type > 3))
@@ -518,14 +518,14 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
         if (((sp2.Flags & sp1.Flags & sp3.Flags) & 0xF) != 0)
             continue;
 
-        bckt_shift = sp2.Depth;
-        if (bckt_shift >= sp3.Depth)
-            bckt_shift = sp3.Depth;
-        if (bckt_shift > sp1.Depth)
-            bckt_shift = sp1.Depth;
+        scr_depth = sp2.Depth;
+        if (scr_depth >= sp3.Depth)
+            scr_depth = sp3.Depth;
+        if (scr_depth > sp1.Depth)
+            scr_depth = sp1.Depth;
 
         p_shrapnel->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_points(DrIT_Unkn20, shrap, bckt_shift + 5000, 3);
+        p_scrpoint = draw_item_add_points(DrIT_Unkn20, shrap, scr_depth + 5000, 3);
         if (p_scrpoint == NULL)
             break;
 
@@ -1647,22 +1647,22 @@ void draw_vehicle_health(struct Thing *p_thing)
     int x, y, z;
     struct SortSprite *p_sspr;
     int bckt;
-    int scr_z;
+    int scr_depth;
 
     x = (p_thing->X >> 8) - engn_xc;
     y = (p_thing->Y >> 5) - engn_yc;
     z = (p_thing->Z >> 8) - engn_zc;
     transform_shpoint(&sp, x, y - 8 * engn_yc, z);
 
-    scr_z = sp.Depth - 2 * p_thing->Radius;
-    bckt = scr_z + 5000;
+    scr_depth = sp.Depth - 2 * p_thing->Radius;
+    bckt = scr_depth + 5000;
     p_sspr = draw_item_add_sprite(DrIT_Unkn22, bckt);
     if (p_sspr == NULL)
         return;
 
     p_sspr->X = sp.X;
-    p_sspr->Z = scr_z;
     p_sspr->Y = sp.Y + 20;
+    p_sspr->Z = scr_depth;
     p_sspr->PThing = p_thing;
 }
 

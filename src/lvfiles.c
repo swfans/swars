@@ -210,7 +210,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     // Causes invisible NPCs when non-zero
                     p_thing->Flag2 = 0;
                 p_thing->U.UPerson.Flag3 = 0;
-                p_thing->Flag2 &= (TgF2_Unkn20000000|TgF2_Unkn01000000);
+                p_thing->Flag2 &= (TgF2_InsideBuilding|TgF2_Unkn01000000);
                 if ((p_thing->Flag & TngF_Unkn02000000) != 0)
                 {
                     p_thing->ThingOffset = p_thing - things;

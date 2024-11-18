@@ -1880,7 +1880,7 @@ void draw_sort_sprite1b(int sspr)
         dy = (37 * overall_scale) >> 8;
         draw_text(p_sspr->X - dx, p_sspr->Y - dy, "E", colour_lookup[2]);
     }
-    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_Unkn20000000) != 0)) {
+    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0)) {
         short dx, dy;
         dx = (2 * overall_scale) >> 8;
         dy = (37 * overall_scale) >> 8;

@@ -69,7 +69,7 @@ enum DrawItemType {
 #pragma pack()
 /******************************************************************************/
 
-TbBool draw_item_add(ubyte ditype, ushort offset, short bckt);
+TbBool draw_item_add(ubyte ditype, ushort offset, int bckt);
 
 void draw_drawlist_1(void);
 void draw_drawlist_2(void);

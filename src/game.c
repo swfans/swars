@@ -2717,7 +2717,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
     if ((p_person->Flag2 & TgF2_Unkn01000000) != 0)
         delete_node(p_person);
     else
-        p_person->Flag2 &= ~TgF2_Unkn20000000;
+        p_person->Flag2 &= ~TgF2_InsideBuilding;
 
     if ((p_person->Flag & TngF_Destroyed) == 0)
     {
