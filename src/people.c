@@ -660,7 +660,7 @@ void set_person_health_energy_shield_stamina_type(struct Thing *p_person, ushort
 
 void person_resurrect(struct Thing *p_person)
 {
-    p_person->Flag &= ~TngF_Unkn0002;
+    p_person->Flag &= ~TngF_Destroyed;
     p_person->Flag &= ~TngF_Unkn02000000;
     p_person->State = PerSt_WAIT;
     p_person->Health = p_person->U.UPerson.MaxHealth * 3 / 4;
@@ -776,7 +776,7 @@ void init_person_thing(struct Thing *p_person)
     if (current_level != 0)
         p_person->U.UPerson.CurrentWeapon = 0;
 
-    if ((p_person->Flag & TngF_Unkn0002) != 0)
+    if ((p_person->Flag & TngF_Destroyed) != 0)
     {
         p_person->U.UPerson.AnimMode = 20;
         p_person->State = PerSt_DEAD;
@@ -1288,7 +1288,7 @@ void process_stationary_shot(struct Thing *p_person)
     if (p_person->U.UPerson.WeaponTurn == 0)
     {
         if ((p_person->Flag & TngF_Unkn0800) == 0)
-            p_person->Flag &= ~TngF_Unkn0200;
+            p_person->Flag &= ~TngF_StationrSht;
     }
 }
 
@@ -1314,7 +1314,7 @@ void person_follow_person(struct Thing *p_person)
         p_person->State = PerSt_FOLLOW_PERSON;
     }
     p_target = &things[p_person->GotoThingIndex];
-    if ((p_target->Flag & TngF_Unkn0002) != 0)
+    if ((p_target->Flag & TngF_Destroyed) != 0)
     {
         p_person->State = PerSt_NONE;
     }
@@ -1603,7 +1603,7 @@ void process_person(struct Thing *p_person)
     {
         state = p_person->State;
         if ((state != PerSt_GET_ITEM) && (state != PerSt_DROP_ITEM) && (state != PerSt_PICKUP_ITEM)
-          && ((p_person->Flag & (TngF_Unkn40000000|TngF_Unkn0002)) == 0)
+          && ((p_person->Flag & (TngF_Unkn40000000|TngF_Destroyed)) == 0)
           && ((p_person->Flag2 & (TgF2_Unkn0010|TgF2_Unkn0008)) == 0))
         {
             struct Thing *p_target;
@@ -1704,20 +1704,20 @@ void process_person(struct Thing *p_person)
             p_person->Flag &= ~TngF_Unkn01000000;
         }
     }
-    if ((p_person->U.UPerson.BumpMode != 0) && ((p_person->Flag & TngF_Unkn0002) == 0))
+    if ((p_person->U.UPerson.BumpMode != 0) && ((p_person->Flag & TngF_Destroyed) == 0))
     {
         if ((p_person->Flag2 & TgF2_Unkn0100) != 0)
             p_person->U.UPerson.BumpMode = 0;
         else
             process_im_shoved(p_person);
     }
-    if (((p_person->Flag & TngF_Unkn40000000) == 0) || (((p_person->Flag & TngF_Unkn0002) == 0)
-        && ((p_person->Flag & (TngF_Persuaded|TngF_Unkn00040000|TngF_Unkn00010000|TngF_Unkn4000|TngF_Unkn0200)) != 0)))
+    if (((p_person->Flag & TngF_Unkn40000000) == 0) || (((p_person->Flag & TngF_Destroyed) == 0)
+        && ((p_person->Flag & (TngF_Persuaded|TngF_Unkn00040000|TngF_WepRecoil|TngF_Unkn4000|TngF_StationrSht)) != 0)))
     {
 
         if ((p_person->Flag & TngF_Unkn4000) != 0)
           return;
-        if ((p_person->Flag & TngF_Unkn00010000) != 0)
+        if ((p_person->Flag & TngF_WepRecoil) != 0)
         {
           stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);
           person_recoil(p_person);
@@ -1725,25 +1725,25 @@ void process_person(struct Thing *p_person)
           process_weapon(p_person);
           return;
         }
-        if (((p_person->Flag & TngF_Persuaded) != 0) && ((p_person->Flag & TngF_Unkn0002) == 0))
+        if (((p_person->Flag & TngF_Persuaded) != 0) && ((p_person->Flag & TngF_Destroyed) == 0))
         {
           process_persuaded(p_person);
           calc_lighting(p_person);
           process_weapon(p_person);
           return;
         }
-        if (((p_person->Flag & TngF_Unkn00040000) != 0) && ((p_person->Flag & (TngF_Unkn1000|TngF_Unkn0002)) == 0))
+        if (((p_person->Flag & TngF_Unkn00040000) != 0) && ((p_person->Flag & (TngF_Unkn1000|TngF_Destroyed)) == 0))
         {
           person_run_away(p_person);
           calc_lighting(p_person);
           return;
         }
 
-        if ((p_person->Flag & TngF_Unkn0200) != 0)
+        if ((p_person->Flag & TngF_StationrSht) != 0)
         {
           if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & TngF_Unkn0800) == 0))
           {
-              p_person->Flag &= ~TngF_Unkn0200;
+              p_person->Flag &= ~TngF_StationrSht;
           }
           process_weapon(p_person);
           return;
@@ -1753,7 +1753,7 @@ void process_person(struct Thing *p_person)
     if (((p_person->Flag & (TngF_InVehicle|TngF_Unkn40000000|TngF_Persuaded|TngF_Unkn4000)) == 0)
       && ((p_person->Flag2 & TgF2_Unkn0008) == 0)
       && ((gameturn + p_person->ThingOffset) & 3) == 0
-      && (p_person->Flag & TngF_Unkn0002) == 0)
+      && (p_person->Flag & TngF_Destroyed) == 0)
     {
         ushort subType;
 
@@ -1779,7 +1779,7 @@ void process_person(struct Thing *p_person)
 
           cmd = p_person->U.UPerson.ComCur;
           p_cmd = &game_commands[cmd];
-          if (((p_cmd->Flags & 0x0002) != 0) && ((p_person->Flag & TngF_Unkn0002) == 0))
+          if (((p_cmd->Flags & 0x0002) != 0) && ((p_person->Flag & TngF_Destroyed) == 0))
           {
               cmd = p_cmd->Next;
               cond_met = 0;
@@ -1804,7 +1804,7 @@ void process_person(struct Thing *p_person)
         }
     }
 
-    if ((p_person->Flag & (TngF_Unkn40000000|TngF_Unkn0002)) != 0)
+    if ((p_person->Flag & (TngF_Unkn40000000|TngF_Destroyed)) != 0)
         p_person->Flag &= ~TngF_Unkn0800;
     else
         process_weapon(p_person);
@@ -1817,7 +1817,7 @@ void process_person(struct Thing *p_person)
         draw_text_transformed(p_person->X >> 8, p_person->Y, p_person->Z >> 8, locstr);
     }
 
-    if ((p_person->U.UPerson.Target2 != 0) && ((p_person->Flag & (TngF_Unkn40000000|TngF_Unkn0002)) == 0))
+    if ((p_person->U.UPerson.Target2 != 0) && ((p_person->Flag & (TngF_Unkn40000000|TngF_Destroyed)) == 0))
     {
         person_kill_target2(p_person);
         if (p_person->State == PerSt_PROTECT_PERSON)

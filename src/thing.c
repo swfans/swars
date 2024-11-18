@@ -213,11 +213,11 @@ TbBool thing_is_destroyed(ThingIdx thing)
     } else if (thing > 0) {
         struct Thing *p_thing;
         p_thing = &things[thing];
-        return ((p_thing->Flag & TngF_Unkn0002) != 0);
+        return ((p_thing->Flag & TngF_Destroyed) != 0);
     } else {
         struct SimpleThing *p_sthing;
         p_sthing = &sthings[thing];
-        return ((p_sthing->Flag & TngF_Unkn0002) != 0);
+        return ((p_sthing->Flag & TngF_Destroyed) != 0);
     }
 }
 

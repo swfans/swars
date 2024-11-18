@@ -1067,7 +1067,7 @@ TbBool func_1caf8(void)
         {
             ushort curwep;
             p_agent = p_locplayer->MyAgent[nagent];
-            if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Unkn0002) != 0) {
+            if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Destroyed) != 0) {
                 cur_weapons[nagent] = 0;
                 continue;
             }
@@ -1474,7 +1474,7 @@ void draw_new_panel(void)
                 if (panel->ID >= playable_agents)
                     continue;
                 p_agent = p_locplayer->MyAgent[panel->ID];
-                if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Unkn0002))
+                if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Destroyed))
                     continue;
                 draw_new_panel_sprite_std(panel->X, panel->Y, panel->Spr);
             }
@@ -1486,7 +1486,7 @@ void draw_new_panel(void)
                 if (panel->ID >= playable_agents)
                     continue;
                 p_agent = p_locplayer->MyAgent[panel->ID];
-                if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Unkn0002))
+                if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Destroyed))
                     continue;
 
                 if (panel->Type == 5) {
@@ -1516,7 +1516,7 @@ void draw_new_panel(void)
         x = 0;
         dcthing = direct_control_thing_for_player(local_player_no);
         p_agent = &things[dcthing];
-        if ((p_agent->Flag & TngF_Unkn0002) == 0 && (p_agent->Flag2 & TgF2_Unkn0800) == 0)
+        if ((p_agent->Flag & TngF_Destroyed) == 0 && (p_agent->Flag2 & TgF2_Unkn0800) == 0)
         {
             ushort plagent;
 
@@ -1607,7 +1607,7 @@ void draw_new_panel(void)
             LOGERR("Agent %d unexpected flags", i);
             return;
         }
-        if ((p_agent->Flag & TngF_Unkn0002) == 0)
+        if ((p_agent->Flag & TngF_Destroyed) == 0)
         {
             x = 79 * i + 27;
             // Draw health level

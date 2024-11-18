@@ -1497,7 +1497,7 @@ void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int
 
     x = ingame.Scanner.X1 + base_x;
     y = ingame.Scanner.Y1 + base_y;
-    if ((p_thing->Flag & TngF_Unkn0002) == 0)
+    if ((p_thing->Flag & TngF_Destroyed) == 0)
     {
         if (((p_thing->Flag & TngF_PlayerAgent) == 0) || (p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD))
         {

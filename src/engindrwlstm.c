@@ -348,7 +348,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     if (ingame.DisplayMode == 50)
     {
         if ((p_thing->Flag2 & TgF2_Unkn20000000) != 0) {
-            if ((p_thing->Flag & TngF_Unkn0002) != 0)
+            if ((p_thing->Flag & TngF_Destroyed) != 0)
                 return;
             bckt_shift -= 1000000;
         }

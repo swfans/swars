@@ -475,7 +475,7 @@ void update_danger_music(ubyte a1)
             {
                 p_agent = players[local_player_no].MyAgent[i];
                 if (p_agent->Type != TT_PERSON) continue;
-                if (((p_agent->Flag & TngF_Unkn0002) == 0) &&
+                if (((p_agent->Flag & TngF_Destroyed) == 0) &&
                   (p_agent->Health < p_agent->U.UPerson.MaxHealth / 2)) {
                     dword_1DDECC = -100;
                     hurt_agents++;
@@ -1964,7 +1964,7 @@ void resurrect_any_dead_agents(PlayerInfo *p_locplayer)
         p_agent = p_locplayer->MyAgent[i];
         if (p_agent->Type != TT_PERSON)
             continue;
-        if ((p_agent->Flag & TngF_Unkn0002) != 0)
+        if ((p_agent->Flag & TngF_Destroyed) != 0)
             person_resurrect(p_agent);
     }
 }
@@ -2678,7 +2678,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
     }
 
     if (((p_person->Flag2 & TgF2_Unkn01000000) == 0)
-      && ((p_person->Flag & TngF_Unkn0002) == 0))
+      && ((p_person->Flag & TngF_Destroyed) == 0))
     {
         struct GroupAction *p_grpact;
 
@@ -2694,7 +2694,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
     p_person->U.UPerson.WeaponsCarried |= (1 << (WEP_ENERGYSHLD-1));
     p_person->OldTarget = 0;
 
-    if ((p_person->Flag & TngF_Unkn0002) != 0) {
+    if ((p_person->Flag & TngF_Destroyed) != 0) {
         p_person->State = PerSt_DEAD;
     } else {
         p_person->State = PerSt_NONE;
@@ -2711,7 +2711,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
     else
         p_person->Flag2 &= ~TgF2_Unkn20000000;
 
-    if ((p_person->Flag & TngF_Unkn0002) == 0)
+    if ((p_person->Flag & TngF_Destroyed) == 0)
     {
         if (p_person->U.UPerson.CurrentWeapon != 0)
             switch_person_anim_mode(p_person, 1);
@@ -3090,7 +3090,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         {
             if (in_network_game && p_player->DoubleMode) {
                 p_person->State = PerSt_DEAD;
-                p_person->Flag |= TngF_Unkn02000000 | TngF_Unkn0002;
+                p_person->Flag |= TngF_Unkn02000000 | TngF_Destroyed;
             }
             p_player->DirectControl[plagent] = 0;
         }
@@ -5645,7 +5645,7 @@ void update_agent_move_direction_deltas(struct SpecialUserInput *p_usrinp)
 
 TbBool person_can_accept_control(struct Thing *p_person)
 {
-    return (p_person->State != PerSt_PERSON_BURNING) && ((p_person->Flag & TngF_Unkn0002) == 0);
+    return (p_person->State != PerSt_PERSON_BURNING) && ((p_person->Flag & TngF_Destroyed) == 0);
 }
 
 ubyte do_user_interface(void)
@@ -6074,7 +6074,7 @@ TbBool panel_active_based_on_target(short panel)
     if (p_agent->Type != TT_PERSON)
         return false;
 
-    return ((p_agent->Flag & TngF_Unkn0002) == 0);
+    return ((p_agent->Flag & TngF_Destroyed) == 0);
 }
 
 TbBool mouse_move_over_panel(short panel)
@@ -6501,7 +6501,7 @@ TbBool check_panel_input(short panel)
         case 1:
             // Select controlled agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent->Type != TT_PERSON) || ((p_agent->Flag & TngF_Unkn0002) != 0) || ((p_agent->Flag2 & TgF2_Unkn0010) != 0))
+            if ((p_agent->Type != TT_PERSON) || ((p_agent->Flag & TngF_Destroyed) != 0) || ((p_agent->Flag2 & TgF2_Unkn0010) != 0))
                 return 0;
             if (p_locplayer->DoubleMode) {
                 byte_153198 = p_panel->ID + 1;
@@ -6553,7 +6553,7 @@ TbBool check_panel_input(short panel)
             if (p_locplayer->DoubleMode)
                 break;
             dcthing = p_locplayer->DirectControl[mouser];
-            if ((things[dcthing].Flag & TngF_Unkn0002) != 0)
+            if ((things[dcthing].Flag & TngF_Destroyed) != 0)
                 break;
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if (p_agent->Type != TT_PERSON)
@@ -6666,7 +6666,7 @@ TbBool check_panel_input(short panel)
             if (!p_locplayer->DoubleMode)
             {
                 p_agent = p_locplayer->MyAgent[p_panel->ID];
-                if ((p_agent->Type == TT_PERSON) && ((p_agent->Flag & TngF_Unkn0002) == 0))
+                if ((p_agent->Type == TT_PERSON) && ((p_agent->Flag & TngF_Destroyed) == 0))
                 {
                     ushort dcthing;
 

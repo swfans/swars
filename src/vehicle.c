@@ -660,7 +660,7 @@ static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing 
         return false;
     if (p_person->State == PerSt_DEAD)
         return false;
-    if ((p_person->Flag & TngF_Unkn0002) != 0)
+    if ((p_person->Flag & TngF_Destroyed) != 0)
         return false;
     if (p_person->State == PerSt_PERSON_BURNING)
         return false;
@@ -1122,9 +1122,9 @@ void process_train(struct Thing *p_vehicle)
         assert(p_vehicle->SubType == SubTT_VEH_TRAIN); // only trains have stations
         assert(p_vehicle->U.UVehicle.TNode > 0); // trains stations have positive indexes
         p_station = &things[p_vehicle->U.UVehicle.TNode];
-        if ((p_station->Type != TT_BUILDING) || (p_station->Flag & TngF_Unkn0002) != 0)
+        if ((p_station->Type != TT_BUILDING) || (p_station->Flag & TngF_Destroyed) != 0)
         {
-            p_vehicle->Flag |= TngF_Unkn0002;
+            p_vehicle->Flag |= TngF_Destroyed;
             start_crashing(p_vehicle);
             p_vehicle->U.UVehicle.ReqdSpeed = 0;
             return;
@@ -1319,7 +1319,7 @@ void process_veh_ground(struct Thing *p_vehicle)
     }
 
     if ((p_vehicle->SubType != SubTT_VEH_FLYING)
-     && ((p_vehicle->Flag & TngF_Unkn0002) == 0)) {
+     && ((p_vehicle->Flag & TngF_Destroyed) == 0)) {
         set_vehicle_alt(p_vehicle);
     }
 }
@@ -1343,7 +1343,7 @@ void process_vehicle(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
     return;
 #endif
-    if ((p_vehicle->Flag & TngF_Unkn0002) == 0)
+    if ((p_vehicle->Flag & TngF_Destroyed) == 0)
         p_vehicle->OldTarget = 0;
     if (p_vehicle->U.UVehicle.RecoilTimer > 0)
         p_vehicle->U.UVehicle.RecoilTimer--;

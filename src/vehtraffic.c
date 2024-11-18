@@ -296,7 +296,7 @@ void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
         short nxstatn;
 
         p_station = &things[statn];
-        if ((p_station->Flag & TngF_Unkn0002) != 0)
+        if ((p_station->Flag & TngF_Destroyed) != 0)
         {
             LOGERR("Crashing vehicle %d due to destroyed station %d",
               p_vehicle->ThingOffset, statn);

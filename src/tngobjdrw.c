@@ -92,7 +92,7 @@ void build_vehicle(struct Thing *p_thing)
         check_mouse_overvehicle(p_thing, 4);
     if (p_thing->SubType == SubTT_VEH_MECH)
     {
-        if ((p_thing->Flag & TngF_Unkn0002) == 0)
+        if ((p_thing->Flag & TngF_Destroyed) == 0)
             mech_unkn_func_03(p_thing);
         i = 0;
     }

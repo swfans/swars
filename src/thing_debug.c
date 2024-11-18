@@ -637,11 +637,11 @@ void things_debug_hud(void)
 
         if (p_track_thing->Flag & TngF_Unkn00040000)
             draw_text(30, 90, "Da", colour_lookup[1]);
-        if (p_track_thing->Flag & TngF_Unkn00010000)
+        if (p_track_thing->Flag & TngF_WepRecoil)
             draw_text(50, 90, "Re", colour_lookup[1]);
         if (p_track_thing->Flag & TngF_Unkn00020000)
             draw_text(70, 90, "Si", colour_lookup[1]);
-        if (p_track_thing->Flag & TngF_Unkn0002)
+        if (p_track_thing->Flag & TngF_Destroyed)
             draw_text(90, 90, "De", colour_lookup[1]);
         if (p_track_thing->Flag & TngF_Unkn0400)
             draw_text(110, 90, "Ch", colour_lookup[1]);
@@ -649,7 +649,7 @@ void things_debug_hud(void)
             draw_text(130, 90, "CI", colour_lookup[1]);
         if (p_track_thing->Flag & TngF_Unkn20000000)
             draw_text(150, 90, "SAP", colour_lookup[1]);
-        if (p_track_thing->Flag & TngF_Unkn0200)
+        if (p_track_thing->Flag & TngF_StationrSht)
             draw_text(190, 90, "Sta", colour_lookup[2]);
         if (p_track_thing->Flag & TngF_Unkn0800)
             draw_text(260, 90, "TRIG", colour_lookup[1]);

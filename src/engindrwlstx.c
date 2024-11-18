@@ -1785,7 +1785,7 @@ void draw_sort_sprite1b(int sspr)
 
     br_inc = 0;
     bright = p_sspr->Brightness;
-    if ((p_thing->Flag & TngF_Unkn0002) == 0)
+    if ((p_thing->Flag & TngF_Destroyed) == 0)
     {
         if ((p_thing->Flag & TngF_Unkn00200000) != 0)
         {
@@ -1824,7 +1824,7 @@ void draw_sort_sprite1b(int sspr)
         PlayerInfo *p_locplayer;
 
         p_locplayer = &players[local_player_no];
-        if ((p_thing->Flag & TngF_Unkn0002) != 0)
+        if ((p_thing->Flag & TngF_Destroyed) != 0)
         {
             if (p_locplayer->TargetType < 1)
                 check_mouse_overlap_corpse(sspr);

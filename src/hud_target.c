@@ -55,7 +55,7 @@ void draw_target_person(struct Thing *p_person, uint radius)
     struct TbSprite *p_bspr;
     struct TbSprite *p_aspr;
 
-    if ((p_person->Flag & TngF_Unkn0002) != 0)
+    if ((p_person->Flag & TngF_Destroyed) != 0)
         return;
 
     ep.X3d = PRCCOORD_TO_MAPCOORD(p_person->X) - engn_xc;
@@ -298,7 +298,7 @@ void draw_hud_target2(short dcthing, short target)
     {
         struct Thing *p_dctarget;
         p_dctarget = p_dcthing->PTarget;
-        if ((p_dctarget != NULL) && ((p_dctarget->Flag & TngF_Unkn0002) == 0))
+        if ((p_dctarget != NULL) && ((p_dctarget->Flag & TngF_Destroyed) == 0))
         {
             int sz;
 
