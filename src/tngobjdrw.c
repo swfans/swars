@@ -217,6 +217,9 @@ void build_rocket(struct Thing *p_thing)
     m->R[2][0] = vec3.R[2] >> 14;
     object_vec_normalisation(m, 0);
 
+    if (ingame.NextRocket >= WEP_ROCKETS_FIRED_LIMIT)
+        return;
+
     obj = ingame.Rocket1[ingame.NextRocket++];
     p_sobj = &game_objects[obj];
 

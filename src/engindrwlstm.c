@@ -1166,7 +1166,7 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
         }
 
         ubyte ditype;
-        if ((p_face4->GFlags & 0x80u) == 0)
+        if ((p_face4->GFlags & 0x80) == 0)
             ditype = DrIT_Unkn16;
         else
             ditype = DrIT_Unkn18;

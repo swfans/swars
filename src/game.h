@@ -16,6 +16,8 @@ extern "C" {
 
 #pragma pack(1)
 
+#define WEP_ROCKETS_FIRED_LIMIT 15
+
 enum GameModes {
     GamM_None        = 0,
     GamM_Unkn1       = 1,
@@ -217,7 +219,7 @@ struct InGame {
     ushort fld_unkC57;
     short fld_unkC59;
     short draw_unknprop_01;
-    short Rocket1[15];
+    short Rocket1[WEP_ROCKETS_FIRED_LIMIT];
     short NextRocket;
     short TrainMode;
     short MyGroup;
