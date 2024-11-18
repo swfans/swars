@@ -1785,9 +1785,9 @@ void draw_sort_sprite1b(int sspr)
 
     br_inc = 0;
     bright = p_sspr->Brightness;
-    if ((p_thing->Flag & 0x02) == 0)
+    if ((p_thing->Flag & TngF_Unkn0002) == 0)
     {
-        if ((p_thing->Flag & 0x200000) != 0)
+        if ((p_thing->Flag & TngF_Unkn00200000) != 0)
         {
             br_inc += 16;
             if (p_thing->U.UPerson.ShieldGlowTimer) {
@@ -1824,7 +1824,7 @@ void draw_sort_sprite1b(int sspr)
         PlayerInfo *p_locplayer;
 
         p_locplayer = &players[local_player_no];
-        if ((p_thing->Flag & 0x02) != 0)
+        if ((p_thing->Flag & TngF_Unkn0002) != 0)
         {
             if (p_locplayer->TargetType < 1)
                 check_mouse_overlap_corpse(sspr);
@@ -1841,14 +1841,14 @@ void draw_sort_sprite1b(int sspr)
         struct Thing *p_owntng;
 
         p_owntng = NULL;
-        if (((p_thing->Flag & 0x2000) != 0) && (p_thing->U.UPerson.ComCur >> 2 != local_player_no))
+        if (((p_thing->Flag & TngF_PlayerAgent) != 0) && (p_thing->U.UPerson.ComCur >> 2 != local_player_no))
         {
             p_owntng = p_thing;
         }
-        else if ((p_thing->Flag & 0x80000) != 0)
+        else if ((p_thing->Flag & TngF_Persuaded) != 0)
         {
             p_owntng = &things[p_thing->Owner];
-            if (((p_owntng->Flag & 0x2000) == 0) || (p_owntng->U.UPerson.ComCur >> 2 == local_player_no))
+            if (((p_owntng->Flag & TngF_PlayerAgent) == 0) || (p_owntng->U.UPerson.ComCur >> 2 == local_player_no))
                 p_owntng = NULL;
         }
         if ((p_owntng != NULL) && (p_owntng->U.UPerson.CurrentWeapon != 30)) {
@@ -3300,13 +3300,13 @@ void number_player(struct Thing *p_person, ubyte n)
     {
         int tng_cor_x, tng_cor_y, tng_cor_z;
 
-        if (((p_person->Flag & 0x10000000) != 0) && things[p_person->U.UPerson.Vehicle].SubType == 29)
+        if (((p_person->Flag & TngF_InVehicle) != 0) && things[p_person->U.UPerson.Vehicle].SubType == 29)
         {
             tng_cor_x = p_person->X;
             tng_cor_y = p_person->Y;
             tng_cor_z = p_person->Z;
         }
-        else if ((p_person->Flag & 0x4000) != 0)
+        else if ((p_person->Flag & TngF_Unkn4000) != 0)
         {
             struct Thing *p_vehicle;
             p_vehicle = &things[p_person->U.UPerson.Vehicle];
@@ -3339,7 +3339,7 @@ void number_player(struct Thing *p_person, ubyte n)
 
     transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
 
-    if ((p_person->Flag & 0x10000000) != 0)
+    if ((p_person->Flag & TngF_InVehicle) != 0)
     {
         shift_x = 0;
         sp.X += 7 * n - 14;

@@ -1525,7 +1525,7 @@ void person_find_next_state(struct Thing *p_person)
 {
     short cmd;
 
-    if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) == 0))
+    if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & 0x0800) == 0))
     {
         p_person->State = PerSt_WAIT;
         p_person->U.UPerson.ComTimer = 50;
@@ -1534,7 +1534,7 @@ void person_find_next_state(struct Thing *p_person)
 
     if (p_person->U.UPerson.ComCur == 0)
     {
-        if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) != 0))
+        if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & 0x0800) != 0))
         {
             p_person->Flag2 &= ~0x0800;
             ingame.Flags &= ~0x0100;
@@ -1545,7 +1545,7 @@ void person_find_next_state(struct Thing *p_person)
         return;
     }
 
-    if ((p_person->Flag & 0x0040) != 0)
+    if ((p_person->Flag & TngF_Unkn0040) != 0)
     {
         p_person->Flag &= ~0x0040;
         person_init_command(p_person, PCmd_GET_ITEM);
@@ -1569,7 +1569,7 @@ void person_find_next_state(struct Thing *p_person)
     // Repeat with new ComCur
     if (p_person->U.UPerson.ComCur == 0)
     {
-        if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) != 0))
+        if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & 0x0800) != 0))
         {
             p_person->Flag2 &= ~0x0800;
             ingame.Flags &= ~0x0100;
@@ -1599,7 +1599,7 @@ void process_person(struct Thing *p_person)
     struct MyMapElement *p_mapel;
     short state;
 
-    if ( (p_person->Flag & 0x2000) != 0 && (p_person->Flag2 & 0x10000000) != 0 )
+    if ( (p_person->Flag & TngF_PlayerAgent) != 0 && (p_person->Flag2 & 0x10000000) != 0 )
     {
         state = p_person->State;
         if ((state != PerSt_GET_ITEM) && (state != PerSt_DROP_ITEM) && (state != PerSt_PICKUP_ITEM)
@@ -1630,7 +1630,7 @@ void process_person(struct Thing *p_person)
             remove_path(p_person);
         }
     }
-    if (((p_person->Flag2 & 0x8000000) != 0) && ((p_person->Flag & 0x2000) != 0))
+    if (((p_person->Flag2 & 0x8000000) != 0) && ((p_person->Flag & TngF_PlayerAgent) != 0))
     {
         state = p_person->State;
         if ((state != PerSt_GET_ITEM) && (state != PerSt_PICKUP_ITEM))
@@ -1683,14 +1683,14 @@ void process_person(struct Thing *p_person)
         limit = 8;
         if ((gameturn & 0x7FF) == 0)
             p_person->U.UPerson.BumpCount = 0;
-        if ((p_person->Flag & 0x2000) != 0)
+        if ((p_person->Flag & TngF_PlayerAgent) != 0)
             limit = 2;
         if (p_person->U.UPerson.BumpCount > limit)
         {
             p_person->U.UPerson.BumpCount = 0;
-            p_person->Flag &= ~0x00020000;
-            if ((p_person->Flag & 0x080000) == 0)
-                p_person->Flag |= 0x0004;
+            p_person->Flag &= ~TngF_Unkn00020000;
+            if ((p_person->Flag & TngF_Persuaded) == 0)
+                p_person->Flag |= TngF_Unkn0004;
             remove_path(p_person);
             p_person->U.UPerson.ComTimer = -1;
         }
@@ -1700,23 +1700,24 @@ void process_person(struct Thing *p_person)
         state = p_person->State;
         if ((state != PerSt_WAIT) && (state != 0))
         {
-            p_person->Flag &= ~0x09000000;
+            p_person->Flag &= ~TngF_Unkn08000000;
+            p_person->Flag &= ~TngF_Unkn01000000;
         }
     }
-    if ((p_person->U.UPerson.BumpMode != 0) && ((p_person->Flag & 0x0002) == 0))
+    if ((p_person->U.UPerson.BumpMode != 0) && ((p_person->Flag & TngF_Unkn0002) == 0))
     {
         if ((p_person->Flag2 & 0x0100) != 0)
             p_person->U.UPerson.BumpMode = 0;
         else
             process_im_shoved(p_person);
     }
-    if (((p_person->Flag & 0x40000000) == 0) || (((p_person->Flag & 0x0002) == 0)
-        && ((p_person->Flag & (0x80000|0x40000|0x10000|0x4000|0x0200)) != 0)))
+    if (((p_person->Flag & TngF_Unkn40000000) == 0) || (((p_person->Flag & TngF_Unkn0002) == 0)
+        && ((p_person->Flag & (TngF_Persuaded|TngF_Unkn00040000|TngF_Unkn00010000|TngF_Unkn4000|TngF_Unkn0200)) != 0)))
     {
 
-        if ((p_person->Flag & 0x4000) != 0)
+        if ((p_person->Flag & TngF_Unkn4000) != 0)
           return;
-        if ((p_person->Flag & 0x010000) != 0)
+        if ((p_person->Flag & TngF_Unkn00010000) != 0)
         {
           stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);
           person_recoil(p_person);
@@ -1724,35 +1725,35 @@ void process_person(struct Thing *p_person)
           process_weapon(p_person);
           return;
         }
-        if (((p_person->Flag & 0x080000) != 0) && ((p_person->Flag & 2) == 0))
+        if (((p_person->Flag & TngF_Persuaded) != 0) && ((p_person->Flag & TngF_Unkn0002) == 0))
         {
           process_persuaded(p_person);
           calc_lighting(p_person);
           process_weapon(p_person);
           return;
         }
-        if (((p_person->Flag & 0x40000) != 0) && ((p_person->Flag & (0x1000|0x0002)) == 0))
+        if (((p_person->Flag & TngF_Unkn00040000) != 0) && ((p_person->Flag & (TngF_Unkn1000|TngF_Unkn0002)) == 0))
         {
           person_run_away(p_person);
           calc_lighting(p_person);
           return;
         }
 
-        if ((p_person->Flag & 0x0200) != 0)
+        if ((p_person->Flag & TngF_Unkn0200) != 0)
         {
-          if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & 0x0800) == 0))
+          if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & TngF_Unkn0800) == 0))
           {
-              p_person->Flag &= ~0x0200;
+              p_person->Flag &= ~TngF_Unkn0200;
           }
           process_weapon(p_person);
           return;
         }
     }
 
-    if (((p_person->Flag & (0x10000000|0x40000000|0x00080000|0x4000)) == 0)
+    if (((p_person->Flag & (TngF_InVehicle|TngF_Unkn40000000|TngF_Persuaded|TngF_Unkn4000)) == 0)
       && (p_person->Flag2 & 0x0008) == 0
       && ((gameturn + p_person->ThingOffset) & 3) == 0
-      && (p_person->Flag & 0x0002) == 0 )
+      && (p_person->Flag & TngF_Unkn0002) == 0)
     {
         ushort subType;
 
@@ -1778,7 +1779,7 @@ void process_person(struct Thing *p_person)
 
           cmd = p_person->U.UPerson.ComCur;
           p_cmd = &game_commands[cmd];
-          if (((p_cmd->Flags & 0x0002) != 0) && ((p_person->Flag & 0x0002) == 0))
+          if (((p_cmd->Flags & 0x0002) != 0) && ((p_person->Flag & TngF_Unkn0002) == 0))
           {
               cmd = p_cmd->Next;
               cond_met = 0;
@@ -1837,7 +1838,7 @@ void process_person(struct Thing *p_person)
               break;
         case PerSt_GOTO_POINT:
               person_goto_point(p_person);
-              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & 0x04) != 0) && ((p_person->Flag & 0x1000) == 0))
+              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & 0x04) != 0) && ((p_person->Flag & TngF_Unkn1000) == 0))
               {
                   struct Thing *p_target;
 

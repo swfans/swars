@@ -348,7 +348,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     if (ingame.DisplayMode == 50)
     {
         if ((p_thing->Flag2 & 0x20000000) != 0) {
-            if ((p_thing->Flag & 0x02) != 0)
+            if ((p_thing->Flag & TngF_Unkn0002) != 0)
                 return;
             bckt_shift -= 1000000;
         }
@@ -1019,9 +1019,9 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
         }
     }
 
-    if ((p_thing->Flag & 0x01000000) != 0)
+    if ((p_thing->Flag & TngF_Unkn01000000) != 0)
     {
-        p_thing->Flag &= ~0x01000000;
+        p_thing->Flag &= ~TngF_Unkn01000000;
         faceWH = 11 - (gameturn & 3);
     }
     else
