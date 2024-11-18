@@ -931,6 +931,7 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
 TbBool person_command_to_text(char *out, ushort cmd, ubyte a3);
 
 void things_debug_hud(void);
+void navi_onscreen_debug(TbBool a1);
 
 TbBool thing_is_destroyed(ThingIdx thing);
 
@@ -990,6 +991,7 @@ ThingIdx search_things_for_uniqueid(short index, ubyte flag);
 
 struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop);
 
+void shield_frames_init(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

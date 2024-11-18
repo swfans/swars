@@ -69,6 +69,13 @@ void fill_ail_sample_ids(void)
         :  :  : "eax" );
 }
 
+void monitor_all_samples(void)
+{
+    asm volatile ("call ASM_monitor_all_samples\n"
+        :  :  : "eax" );
+    return;
+}
+
 void snd_unkn1_volume_all_samples(void)
 {
     asm volatile ("call ASM_snd_unkn1_volume_all_samples\n"

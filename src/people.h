@@ -240,6 +240,8 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
 
 struct Thing *new_sim_person(int x, int y, int z, ubyte subtype);
 
+void people_intel(ubyte flag);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

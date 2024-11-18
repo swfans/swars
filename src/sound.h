@@ -30,6 +30,7 @@ extern short startscr_midivol;
 extern short startscr_cdvolume;
 
 void fill_ail_sample_ids(void);
+void monitor_all_samples(void);
 
 struct SNDSEQUENCE;
 

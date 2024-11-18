@@ -163,7 +163,6 @@ extern long dword_1DDECC;
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
-extern ubyte execute_commands;
 extern long gamep_unknval_10;
 extern long gamep_unknval_11;
 extern long gamep_unknval_12;
@@ -186,7 +185,6 @@ extern short word_1552F8;
 extern long dword_176CBC;
 
 extern short word_1774E8[2 * 150];
-extern ushort shield_frm[4];
 
 extern ushort word_1A7330[1000];
 extern ubyte byte_1A7B00[1000];
@@ -535,6 +533,23 @@ void cover_screen_rect_with_raw_file(short x, short y, ushort w, ushort h, const
     LbScreenLock();
 }
 
+void ingame_palette_load(int pal_id)
+{
+    char locstr[DISKPATH_SIZE];
+
+    sprintf(locstr, "qdata/pal%d.dat", pal_id);
+    LbFileLoadAt(locstr, display_palette);
+}
+
+void ingame_palette_reload(void)
+{
+    if ((ingame.Flags & 0x8000) != 0) {
+        ingame_palette_load(3);
+    } else {
+        ingame_palette_load(ingame.PalType);
+    }
+}
+
 void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
 {
     const char *fname;
@@ -707,8 +722,7 @@ void play_smacker(ushort vid_type)
             LbScreenClear(0);
             cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, p_campgn->OutroBkFn);
 
-            sprintf(fname, "qdata/pal%d.dat", 0);
-            LbFileLoadAt(fname, display_palette);
+            ingame_palette_load(0);
             LbScreenWaitVbi();
             LbPaletteSet(display_palette);
             swap_wscreen();
@@ -2549,12 +2563,6 @@ void map_lights_update(void)
         :  :  : "eax" );
 }
 
-void people_intel(ubyte flag)
-{
-    asm volatile ("call ASM_people_intel\n"
-        : : "a" (flag));
-}
-
 void func_74934(void)
 {
     asm volatile ("call ASM_func_74934\n"
@@ -2898,10 +2906,7 @@ void init_level(void)
     if (!in_network_game)
         ingame.InNetGame_UNSURE = 1;
     word_1531DA = 1;
-    shield_frm[0] = nstart_ani[984];
-    shield_frm[1] = frame[frame[shield_frm[0]].Next].Next;
-    shield_frm[2] = frame[frame[shield_frm[1]].Next].Next;
-    shield_frm[3] = frame[frame[shield_frm[2]].Next].Next;
+    shield_frames_init();
     ingame.fld_unkCB7 = 0;
     ingame.fld_unkC59 = 0;
     ingame.FlameCount = 0;
@@ -6570,11 +6575,9 @@ TbBool check_panel_input(short panel)
                     dcthing = p_locplayer->DirectControl[mouser];
                     if (things[dcthing].U.UPerson.Energy > 100)
                     {
-                        char locstr[52];
-                        sprintf(locstr, "qdata/pal%d.dat", 3);
                         ingame.Flags |= GamF_Unkn8000;
                         play_sample_using_heap(0, 35, 127, 64, 100, 0, 1);
-                        LbFileLoadAt(locstr, display_palette);
+                        ingame_palette_reload();
                     }
                 }
                 else

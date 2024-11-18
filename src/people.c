@@ -1589,6 +1589,12 @@ void make_peep_protect_peep(struct Thing *p_protector, struct Thing *p_leader)
         : : "a" (p_protector), "d" (p_leader));
 }
 
+void people_intel(ubyte flag)
+{
+    asm volatile ("call ASM_people_intel\n"
+        : : "a" (flag));
+}
+
 void process_person(struct Thing *p_person)
 {
 #if 0

@@ -42,6 +42,8 @@ int dword_1DC7A4 = 0;
 short word_1DC7A0 = 0;
 short word_1DC7A2 = 0;
 
+extern ushort word_1DC8CE;
+
 TbBool thing_debug_selectable(short thing, short type, TbBool hidden)
 {
     if (thing > 0)
@@ -213,6 +215,38 @@ int select_thing_for_debug(short x, short y, short z, short type)
         draw_text_transformed_at_ground(p_sthing->X >> 8, p_sthing->Z >> 8, locstr);
     }
     return thing;
+}
+
+void count_fnavs(TbBool a1)
+{
+    asm volatile (
+      "call ASM_count_fnavs\n"
+        : : "a" (a1));
+}
+
+void navi_onscreen_debug(TbBool a1)
+{
+    if (!a1)
+    {
+        word_1DC8CE++;
+        return;
+    }
+    if ((ingame.Flags & 0x0200) != 0)
+    {
+        ushort i;
+        int y;
+
+        for (i = 0; i < word_1DC8CE; i++)
+        {
+            y = 340 - 12 * i;
+            if (lbDisplay.GraphicsScreenHeight < 400)
+                LbDrawBox(290, y >> 1, 25, 5, colour_lookup[4]);
+            else
+                LbDrawBox(580, y, 50, 10, colour_lookup[4]);
+        }
+    }
+    word_1DC8CE = 0;
+    count_fnavs(1);
 }
 
 /** Make lines to target things or circles around target areas to visualize person command.

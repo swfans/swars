@@ -18,17 +18,44 @@
 /******************************************************************************/
 #include "thing.h"
 
+#include "bfbox.h"
 #include "bfutility.h"
 #include "bfmemut.h"
+#include "bfscreen.h"
+
+#include "building.h"
+#include "display.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
-#include "building.h"
+#include "game.h"
+#include "game_speed.h"
 #include "matrix.h"
+#include "pepgroup.h"
+#include "player.h"
+#include "sound.h"
 #include "vehicle.h"
 #include "bigmap.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
+#pragma pack(1)
+
+struct UnkFLight { // sizeof=0x0A
+    short unfulgt_0;
+    short unfulgt_2;
+    short unfulgt_4;
+    short unfulgt_6;
+    ubyte unfulgt_8;
+    ubyte unfulgt_9;
+};
+
+#pragma pack()
+/******************************************************************************/
+
+extern ushort shield_frm[4];
+
+extern ushort next_unkn_full_light;
+extern struct UnkFLight unkn_full_lights[50];
 
 /** Radiuses of Things of type STATIC.
  */
@@ -118,10 +145,165 @@ void init_things(void)
         :  :  : "eax" );
 }
 
+void shield_frames_init(void)
+{
+    shield_frm[0] = nstart_ani[984];
+    shield_frm[1] = frame[frame[shield_frm[0]].Next].Next;
+    shield_frm[2] = frame[frame[shield_frm[1]].Next].Next;
+    shield_frm[3] = frame[frame[shield_frm[2]].Next].Next;
+}
+
+void shield_frames_cycle(void)
+{
+    ushort i;
+
+    for (i = 0; i < 4; i++)
+    {
+        shield_frm[i] = frame[shield_frm[i]].Next;
+    }
+}
+
+int process_things_mines_explode(int affected_max)
+{
+    int ret;
+    asm volatile ("call ASM_process_things_mines_explode\n"
+        : "=r" (ret) : "a" (affected_max));
+    return ret;
+}
+
+void process_things_unkn_sub2(int tech_lv, int got_many)
+{
+    asm volatile (
+      "call ASM_process_things_unkn_sub2\n"
+        : : "a" (tech_lv), "d" (got_many));
+}
+
+int process_things_bang(int affected_max)
+{
+    int ret;
+    asm volatile ("call ASM_process_things_bang\n"
+        : "=r" (ret) : "a" (affected_max));
+    return ret;
+}
+
+void unkn_update_lights(void)
+{
+    asm volatile ("call ASM_unkn_update_lights\n"
+        :  :  : "eax" );
+    return;
+}
+
+void quick_light_unkn_func_04(short a1, int a2, short a3, short a4)
+{
+    asm volatile (
+      "call ASM_quick_light_unkn_func_04\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
+    return;
+}
+
 void process_things(void)
 {
+#if 1
     asm volatile ("call ASM_process_things\n"
         :  :  : "eax" );
+    return;
+#endif
+    int i;
+    ushort plyr;
+
+    for (plyr = 0; plyr < 8; plyr++)
+    {
+        PlayerInfo *p_player;
+        struct Thing *p_dcthing;
+        ThingIdx dcthing;
+
+        p_player = &players[plyr];
+        dcthing = p_player->DirectControl[0];
+        p_dcthing = &things[dcthing];
+        if (((1 << plyr) & ingame.InNetGame_UNSURE) != 0
+          && (p_dcthing->Flag & 0x1000) == 0)
+        {
+#if 0
+            for (i = 0; i < playable_agents; i++)
+              ;
+#endif
+            p_dcthing->Flag |= 0x1000;
+        }
+    }
+#if 0
+    if ( lbKeyOn[KC_N] )
+      lbKeyOn[KC_N] = 0;
+#endif
+
+    if (in_network_game)
+    {
+        if (ingame.fld_unkCB7 > 150)
+            process_things_mines_explode((rand() & 0x1F) + 2);
+        if ((unkn_flags_08 & 0x10) != 0 && (gameturn & 0xF) == 0)
+            process_things_unkn_sub2(login_control__TechLevel, ingame.fld_unkCB7 > 100);
+        if (things_used > 900)
+            process_things_bang(16);
+        else if ( things_used > 700 || ((gameturn & 0xF) == 0))
+            process_things_bang(1);
+    }
+
+    if ((gameturn & 0x1F) == 0)
+    {
+        for (i = 0; i < PEOPLE_GROUPS_COUNT+1; i++) {
+            group_actions[i].Storming &= ~0x4000;
+        }
+    }
+
+    shield_frames_cycle();
+
+    if ((ingame.Flags & 0x8000) != 0)
+    {
+        PlayerInfo *p_locplayer;
+        struct Thing *p_dcthing;
+        ThingIdx dcthing;
+
+        p_locplayer = &players[local_player_no];
+        dcthing = p_locplayer->DirectControl[mouser];
+        p_dcthing = &things[dcthing];
+
+        p_dcthing->U.UPerson.Energy -= 3;
+        if (p_dcthing->U.UPerson.Energy <= 0)
+        {
+            ingame.Flags &= ~0x8000;
+            ingame_palette_reload();
+        }
+    }
+#if 0
+    merged_noop_unkn1(gameturn);
+#endif
+    build_same_type_headers();
+    ingame.fld_unkC4B = 0;
+    ingame.fld_unkC4D = 0;
+    animate_textures();
+    unkn_update_lights();
+
+    for (i = 1; i < next_unkn_full_light; i++)
+    {
+        struct UnkFLight *p_ufl;
+        p_ufl = &unkn_full_lights[i];
+        quick_light_unkn_func_04(p_ufl->unfulgt_2, p_ufl->unfulgt_4, p_ufl->unfulgt_6, p_ufl->unfulgt_0);
+    }
+    next_unkn_full_light = 1;
+
+    if (!execute_commands)
+        return;
+    if ((ingame.Flags & GamF_StopThings) == 0)
+        return;
+    monitor_all_samples();
+
+    if (!in_network_game && !pktrec_mode && (ingame.Flags & GamF_Unkn0004) != 0 && ((gameturn & 0xF) != 0))
+        return;
+
+    //TODO add missing part
+
+    if (execute_commands)
+        people_intel(0);
+    navi_onscreen_debug(1);
 }
 
 const char *thing_type_name(ubyte tngtype, ubyte subtype)

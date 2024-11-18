@@ -542,6 +542,8 @@ extern ushort text_window_y1;
 extern ushort text_window_x2;
 extern ushort text_window_y2;
 
+extern ubyte execute_commands;
+
 // To be replaced by LbArcTanAngle()
 short arctan(int dx, int dz);
 
@@ -588,6 +590,8 @@ void bang_set_detail(int a1);
 int sub_73C64(char *a1, ubyte a2);
 void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
+
+void ingame_palette_reload(void);
 
 #ifdef __cplusplus
 };
