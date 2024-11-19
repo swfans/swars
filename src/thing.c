@@ -429,9 +429,9 @@ void process_thing(struct Thing *p_thing, ThingIdx thing)
         process_shield(p_thing);
         process_person(p_thing);
         if ((p_thing->Flag & 0x0800) != 0)
-            p_thing->Flag2 |= 0x0400;
+            p_thing->Flag2 |= TgF2_Unkn0400;
         else
-            p_thing->Flag2 &= ~0x0400;
+            p_thing->Flag2 &= ~TgF2_Unkn0400;
         break;
     case TT_ROCKET:
         process_rocket(p_thing);

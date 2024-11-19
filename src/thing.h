@@ -152,7 +152,15 @@ enum ThingFlags2 {
     TgF2_Unkn00200000 = 0x00200000,
     TgF2_Unkn00400000 = 0x00400000,
     TgF2_Unkn00800000 = 0x00800000,
-    TgF2_Unkn01000000 = 0x01000000,
+    /** The thing is added to map content lists and is visible.
+     *
+     * If not set, the thing is invisible and on-map things cannot affect it.
+     * Non-existent thing can still execute commands though, working as
+     * invisible helper for creating level mechanics.
+     * The flag can be controlled by CMD_PING_EXIST, spawning and despawning
+     * the thing on the map.
+     */
+    TgF2_ExistsOnMap = 0x01000000,
     TgF2_Unkn02000000 = 0x02000000,
     TgF2_Unkn04000000 = 0x04000000,
     TgF2_Unkn08000000 = 0x08000000,

@@ -1136,7 +1136,7 @@ TbBool thing_visible_on_scanner(struct Thing *p_thing)
 {
     TbBool ret;
 
-    if ((p_thing->Flag2 & (TgF2_Unkn01000000|TgF2_InsideBuilding|TgF2_Unkn0002)) != 0)
+    if ((p_thing->Flag2 & (TgF2_ExistsOnMap|TgF2_InsideBuilding|TgF2_Unkn0002)) != 0)
         return false;
 
     switch (p_thing->Type)

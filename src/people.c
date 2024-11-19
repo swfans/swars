@@ -1626,7 +1626,7 @@ void process_person(struct Thing *p_person)
     if (((p_person->Flag2 & TgF2_InsideBuilding) != 0) && (p_mapel->ColumnHead == 0))
         p_person->Flag2 &= ~TgF2_InsideBuilding;
 
-    if ( ((gameturn + p_person->ThingOffset) & 0x7F) == 0 )
+    if ( ((gameturn + p_person->ThingOffset) & 0x7F) == 0)
     {
         p_person->U.UPerson.Flag3 &= ~0x0020;
         if ((p_person->Flag2 & TgF2_Unkn00020000) != 0)

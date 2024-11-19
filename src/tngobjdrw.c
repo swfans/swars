@@ -81,7 +81,7 @@ void build_vehicle(struct Thing *p_thing)
     PlayerInfo *p_locplayer;
     int i;
 
-    if (((p_thing->Flag2 & TgF2_Unkn01000000) != 0) && (byte_1C83E4 & 0x01) != 0)
+    if (((p_thing->Flag2 & TgF2_ExistsOnMap) != 0) && (byte_1C83E4 & 0x01) != 0)
         return;
     if (p_thing->SubType == SubTT_VEH_SHUTTLE_POD)
         return;
