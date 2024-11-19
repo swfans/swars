@@ -342,6 +342,14 @@ void FIRE_process_flame(struct SimpleThing *p_sthing)
         : : "a" (p_sthing));
 }
 
+void FIRE_end_flame(struct SimpleThing *p_sthing, ThingIdx thing)
+{
+    ReleaseLoopedSample(thing, 16);
+    play_dist_ssample(p_sthing, 0x17, 0x7F, 0x40, 100, 0, 3);
+    remove_sthing(thing);
+    delete_snode(p_sthing);
+}
+
 void process_spark(struct SimpleThing *p_sthing)
 {
     asm volatile (
@@ -377,13 +385,13 @@ void process_smoke_generator(struct SimpleThing *p_sthing)
         : : "a" (p_sthing));
 }
 
-void process_thing_checksum(ThingIdx thing, struct Thing *p_thing)
+void process_thing_checksum(struct Thing *p_thing, ThingIdx thing)
 {
     ingame.fld_unkC4B += thing;
     ingame.fld_unkC4B += p_thing->Y + p_thing->X + p_thing->Type + p_thing->State;
 }
 
-TbBool process_thing_unkflag02000000(ThingIdx thing, struct Thing *p_thing)
+TbBool process_thing_unkflag02000000(struct Thing *p_thing, ThingIdx thing)
 {
     if (((p_thing->Flag2 & TgF2_Unkn02000000) != 0) && ((gameturn + thing) & 3) != 0) {
         return true;
@@ -409,7 +417,7 @@ TbBool process_thing_unkflag0002(struct Thing *p_thing)
     return false;
 }
 
-void process_thing(ThingIdx thing, struct Thing *p_thing)
+void process_thing(struct Thing *p_thing, ThingIdx thing)
 {
     switch (p_thing->Type)
     {
@@ -464,7 +472,7 @@ void process_thing(ThingIdx thing, struct Thing *p_thing)
     }
 }
 
-void process_sthing_checksum(ThingIdx thing, struct SimpleThing *p_sthing)
+void process_sthing_checksum(struct SimpleThing *p_sthing, ThingIdx thing)
 {
     ingame.fld_unkC4B += p_sthing->Y + p_sthing->X + p_sthing->Type + p_sthing->State;
 }
@@ -478,11 +486,11 @@ void process_carried_item(struct SimpleThing *p_item)
     p_item->X = p_owner->X;
     p_item->Y = p_owner->Y;
     p_item->Z = p_owner->Z;
-    if (p_owner->State != 13)
-        return;
-    item = p_item->ThingOffset;
-    p_item->Type = 25;
-    add_node_sthing(item);
+    if (p_owner->State == PerSt_DEAD) {
+        item = p_item->ThingOffset;
+        p_item->Type = SmTT_DROPPED_ITEM;
+        add_node_sthing(item);
+    }
 }
 
 void process_temp_light(struct SimpleThing *p_sthing)
@@ -499,7 +507,8 @@ void process_temp_light(struct SimpleThing *p_sthing)
         rng = p_sthing->U.ULight.RangeBright;
         bri += (ushort)LbRandomAnyShort() % rng;
     }
-    apply_full_light(p_sthing->X >> 8, p_sthing->Y >> 8, p_sthing->Z >> 8, bri, 0);
+    apply_full_light(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_MAPCOORD(p_sthing->Z), bri, 0);
 }
 
 void process_static(struct SimpleThing *p_sthing)
@@ -526,7 +535,31 @@ void process_static(struct SimpleThing *p_sthing)
     }
 }
 
-void process_sthing(ThingIdx thing, struct SimpleThing *p_sthing)
+void process_sfx(struct SimpleThing *p_sthing)
+{
+    switch (p_sthing->State)
+    {
+    case 1:
+        if (!dont_bother_with_explode_faces)
+            break;
+        stop_sample_using_heap(p_sthing->ThingOffset, 0x2E);
+        play_dist_ssample(p_sthing, 0x2F, 0x7F, 0x40, 100, 0, 3);
+        p_sthing->State = 2;
+        p_sthing->Timer1 = 100;
+        break;
+    default:
+        p_sthing->Timer1--;
+        if (p_sthing->Timer1 >= 0)
+            break;
+        remove_sthing(p_sthing->ThingOffset);
+        if (p_sthing->State != 2)
+            break;
+        ingame.SoundThing = 0;
+        break;
+    }
+}
+
+void process_sthing(struct SimpleThing *p_sthing, ThingIdx thing)
 {
     switch (p_sthing->Type)
     {
@@ -557,32 +590,14 @@ void process_sthing(ThingIdx thing, struct SimpleThing *p_sthing)
         }
         break;
     case SmTT_FIRE:
-        if (p_sthing->U.UEffect.VX != 0) {
+        if (p_sthing->U.UFire.flame != 0) {
             FIRE_process_flame(p_sthing);
         } else {
-            ReleaseLoopedSample(thing, 16);
-            play_dist_ssample(p_sthing, 0x17, 0x7F, 0x40, 100, 0, 3);
-            remove_sthing(thing);
-            delete_snode(p_sthing);
+            FIRE_end_flame(p_sthing, thing);
         }
         break;
     case SmTT_SFX:
-        if (p_sthing->State == 1) {
-            if (!dont_bother_with_explode_faces)
-                break;
-            stop_sample_using_heap(p_sthing->ThingOffset, 0x2E);
-            play_dist_ssample(p_sthing, 0x2F, 0x7F, 0x40, 100, 0, 3);
-            p_sthing->State = 2;
-            p_sthing->Timer1 = 100;
-        } else {
-            p_sthing->Timer1--;
-            if ( p_sthing->Timer1 >= 0 )
-                break;
-            remove_sthing(p_sthing->ThingOffset);
-            if (p_sthing->State != 2)
-                break;
-            ingame.SoundThing = 0;
-        }
+        process_sfx(p_sthing);
         break;
     case SmTT_TEMP_LIGHT:
         process_temp_light(p_sthing);
@@ -606,7 +621,7 @@ void process_sthing(ThingIdx thing, struct SimpleThing *p_sthing)
         process_smoke_generator(p_sthing);
         break;
     case SmTT_DROPPED_ITEM:
-        if (p_sthing->SubType == 13 || p_sthing->SubType == 12) {
+        if (p_sthing->SubType == WEP_EXPLMINE || p_sthing->SubType == WEP_ELEMINE) {
             process_mine(p_sthing);
         } else {
             if (!in_network_game || p_sthing->U.UWeapon.WeaponType == 31)
@@ -724,15 +739,15 @@ void process_things(void)
             p_thing = &things[thing];
             nxthing = p_thing->LinkChild;
 
-            process_thing_checksum(thing, p_thing);
+            process_thing_checksum(p_thing, thing);
 
-            if (process_thing_unkflag02000000(thing, p_thing))
+            if (process_thing_unkflag02000000(p_thing, thing))
                 continue;
 
             if (process_thing_unkflag0002(p_thing))
                 continue;
 
-            process_thing(thing, p_thing);
+            process_thing(p_thing, thing);
         }
     }
 
@@ -751,9 +766,9 @@ void process_things(void)
             p_sthing = &sthings[thing];
             nxthing = p_sthing->LinkChild;
 
-            process_sthing_checksum(thing, p_sthing);
+            process_sthing_checksum(p_sthing, thing);
 
-            process_sthing(thing, p_sthing);
+            process_sthing(p_sthing, thing);
         }
     }
 
