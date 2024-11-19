@@ -57,7 +57,7 @@ struct GroupAction {
   short Dead;
   short Alive;
   short Persuaded;
-  short Storming;
+  ushort Storming;
 };
 
 #pragma pack()

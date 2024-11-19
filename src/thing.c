@@ -487,17 +487,17 @@ void process_carried_item(struct SimpleThing *p_item)
 
 void process_temp_light(struct SimpleThing *p_sthing)
 {
-    int bri, dvdr;
+    int bri, rng;
 
     p_sthing->Timer1--;
     if (p_sthing->Timer1 < 0) {
         remove_sthing(p_sthing->ThingOffset);
         return;
     }
-    bri = p_sthing->U.UEffect.VX;
-    if (p_sthing->U.UEffect.VY != 0) {
-        dvdr = p_sthing->U.UEffect.VY;
-        bri += (ushort)LbRandomAnyShort() % dvdr;
+    bri = p_sthing->U.ULight.MinBright;
+    if (p_sthing->U.ULight.RangeBright != 0) {
+        rng = p_sthing->U.ULight.RangeBright;
+        bri += (ushort)LbRandomAnyShort() % rng;
     }
     apply_full_light(p_sthing->X >> 8, p_sthing->Y >> 8, p_sthing->Z >> 8, bri, 0);
 }
@@ -621,7 +621,7 @@ void process_sthing(ThingIdx thing, struct SimpleThing *p_sthing)
 
 void process_things(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_process_things\n"
         :  :  : "eax" );
     return;
@@ -713,15 +713,16 @@ void process_things(void)
     {
         struct Thing *p_thing;
         int remain;
-        ThingIdx thing;
+        ThingIdx thing, nxthing;
 
         remain = things_used;
-        for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
+        for (thing = things_used_head; thing > 0; thing = nxthing)
         {
             if (--remain == -1) {
                 break;
             }
             p_thing = &things[thing];
+            nxthing = p_thing->LinkChild;
 
             process_thing_checksum(thing, p_thing);
 
@@ -739,15 +740,16 @@ void process_things(void)
     {
         struct SimpleThing *p_sthing;
         int remain;
-        ThingIdx thing;
+        ThingIdx thing, nxthing;
 
         remain = sthings_used;
-        for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
+        for (thing = sthings_used_head; thing < 0; thing = nxthing)
         {
             if (--remain == -1) {
                 break;
             }
             p_sthing = &sthings[thing];
+            nxthing = p_sthing->LinkChild;
 
             process_sthing_checksum(thing, p_sthing);
 
