@@ -201,6 +201,75 @@ void quick_light_unkn_func_04(short a1, int a2, short a3, short a4)
     return;
 }
 
+void process_shield(struct Thing *p_thing)
+{
+    asm volatile (
+      "call ASM_process_shield\n"
+        : : "a" (p_thing));
+}
+
+void process_rocket(struct Thing *p_rocket)
+{
+    asm volatile (
+      "call ASM_process_rocket\n"
+        : : "a" (p_rocket));
+}
+
+void process_laser_guided(struct Thing *p_laser)
+{
+    asm volatile (
+      "call ASM_process_laser_guided\n"
+        : : "a" (p_laser));
+}
+
+void process_mine(struct SimpleThing *p_mine)
+{
+    asm volatile (
+      "call ASM_process_mine\n"
+        : : "a" (p_mine));
+}
+
+void process_grenade(struct Thing *p_grenade)
+{
+    asm volatile (
+      "call ASM_process_grenade\n"
+        : : "a" (p_grenade));
+}
+
+void process_laser_elec(struct Thing *p_elec)
+{
+    asm volatile (
+      "call ASM_process_laser_elec\n"
+        : : "a" (p_elec));
+}
+
+void process_laser_unkn28(struct Thing *p_thing)
+{
+  ;
+}
+
+void process_air_strike(struct Thing *p_thing)
+{
+    asm volatile (
+      "call ASM_process_air_strike\n"
+        : : "a" (p_thing));
+}
+
+void process_unkn35(struct Thing *p_thing)
+{
+    asm volatile (
+      "call ASM_process_unkn35\n"
+        : : "a" (p_thing));
+}
+
+void process_laser(struct Thing *p_laser)
+{
+    asm volatile (
+      "call ASM_process_laser\n"
+        : : "a" (p_laser));
+}
+
+
 void process_things(void)
 {
 #if 1
@@ -278,7 +347,6 @@ void process_things(void)
 #endif
     build_same_type_headers();
     ingame.fld_unkC4B = 0;
-    ingame.fld_unkC4D = 0;
     animate_textures();
     unkn_update_lights();
 
@@ -299,7 +367,94 @@ void process_things(void)
     if (!in_network_game && !pktrec_mode && (ingame.Flags & GamF_Unkn0004) != 0 && ((gameturn & 0xF) != 0))
         return;
 
+    struct Thing *p_thing;
+    int remain;
+    ThingIdx thing;
+
+    remain = things_used;
+    for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
+    {
+        if (--remain == -1) {
+            break;
+        }
+        ingame.fld_unkC4B += thing;
+        p_thing = &things[thing];
+        ingame.fld_unkC4B += p_thing->Y + p_thing->X + p_thing->Type + p_thing->State;
+
+        if (((p_thing->Flag2 & 0x2000000) != 0) && ((gameturn + thing) & 3) != 0) {
+            continue;
+        }
+
+        p_thing->Flag2 &= ~0x02000000;
+        if ((p_thing->Flag2 & 0x0002) != 0)
+        {
+            if ((gameturn & 3) != 0)
+                continue;
+            p_thing->U.UObject.NumbObjects--;
+            if (p_thing->U.UPerson.SpecialTimer >= 0)
+                continue;
+            if ((p_thing->Flag & 0x10000000) == 0)
+                add_node_thing(p_thing->ThingOffset);
+            p_thing->Flag2 &= ~0x0002;
+            continue;
+        }
+
+        switch (p_thing->Type)
+        {
+        case TT_VEHICLE:
+            process_vehicle(p_thing);
+            break;
+        case TT_PERSON:
+        case TT_UNKN4:
+            process_shield(p_thing);
+            process_person(p_thing);
+            if ((p_thing->Flag & 0x0800) != 0)
+                p_thing->Flag2 |= 0x0400;
+            else
+                p_thing->Flag2 &= ~0x0400;
+            break;
+        case TT_ROCKET:
+            process_rocket(p_thing);
+            break;
+        case TT_BUILDING:
+            process_building(p_thing);
+            break;
+        case TT_LASER_GUIDED:
+            process_laser_guided(p_thing);
+            break;
+        case TT_MINE:
+            process_mine((struct SimpleThing *)p_thing);
+            break;
+        case TT_GRENADE:
+            process_grenade(p_thing);
+            break;
+        case TT_LASER_ELEC:
+            process_laser_elec(p_thing);
+            break;
+        case TT_RAZOR_WIRE:
+            process_laser_unkn28(p_thing);
+            break;
+        case TT_AIR_STRIKE:
+            process_air_strike(p_thing);
+            break;
+        case TT_UNKN35:
+            if (p_thing->State == 13)
+                process_unkn35(p_thing);
+            break;
+        case TT_LASER11:
+        case TT_LASER29:
+        case TT_LASER38: // on PSX, laser type=38 has additional light effect
+            process_laser(p_thing);
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (execute_commands)
+    {
     //TODO add missing part
+    }
 
     if (execute_commands)
         people_intel(0);

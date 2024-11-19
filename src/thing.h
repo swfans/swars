@@ -349,7 +349,7 @@ struct TngUPerson
    * Unless it's a player-controlled agent, then this is the player index and MyAgent index.
    */
   ushort ComCur;
-  char SpecialTimer;
+  sbyte SpecialTimer;
   ubyte Angle;
   short WeaponTurn;
   ubyte Brightness;

@@ -106,6 +106,8 @@ struct Thing *create_building_thing(int x, int y, int z, ushort a4, ushort a5, u
 
 void collapse_building(short x, short y, short z, struct Thing *p_building);
 
+void process_building(struct Thing *p_building);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
