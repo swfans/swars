@@ -5909,7 +5909,7 @@ ubyte do_user_interface(void)
             p_agent = p_locplayer->MyAgent[n];
             if (p_agent->Type != TT_PERSON) continue;
 
-            if (person_can_accept_control(p_agent) && ((p_agent->Flag2 & TgF2_Unkn0010) == 0))
+            if (person_can_accept_control(p_agent) && ((p_agent->Flag2 & TgF2_KnockedOut) == 0))
             {
                 lbKeyOn[kbkeys[gkey]] = 0;
                 if (p_locplayer->DoubleMode)
@@ -6506,7 +6506,7 @@ TbBool check_panel_input(short panel)
         case 1:
             // Select controlled agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent->Type != TT_PERSON) || ((p_agent->Flag & TngF_Destroyed) != 0) || ((p_agent->Flag2 & TgF2_Unkn0010) != 0))
+            if ((p_agent->Type != TT_PERSON) || ((p_agent->Flag & TngF_Destroyed) != 0) || ((p_agent->Flag2 & TgF2_KnockedOut) != 0))
                 return 0;
             if (p_locplayer->DoubleMode) {
                 byte_153198 = p_panel->ID + 1;

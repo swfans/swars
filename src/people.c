@@ -954,7 +954,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
         pstat = &peep_type_stats[p_person->SubType];
         p_attacker->U.UPerson.PersuadePower += pstat->PersuadeWorth;
     }
-    if ((p_person->Flag2 & TgF2_Unkn0010) == 0)
+    if ((p_person->Flag2 & TgF2_KnockedOut) == 0)
     {
           p_person->StartFrame = 1059;
           p_person->Frame = nstart_ani[p_person->StartFrame + 1];
@@ -1610,7 +1610,7 @@ void process_person(struct Thing *p_person)
         state = p_person->State;
         if ((state != PerSt_GET_ITEM) && (state != PerSt_DROP_ITEM) && (state != PerSt_PICKUP_ITEM)
           && ((p_person->Flag & (TngF_Unkn40000000|TngF_Destroyed)) == 0)
-          && ((p_person->Flag2 & (TgF2_Unkn0010|TgF2_Unkn0008)) == 0))
+          && ((p_person->Flag2 & (TgF2_KnockedOut|TgF2_Unkn0008)) == 0))
         {
             struct Thing *p_target;
 
@@ -1654,7 +1654,7 @@ void process_person(struct Thing *p_person)
         process_tasered_person(p_person);
         return;
     }
-    if ((p_person->Flag2 & TgF2_Unkn0010) != 0)
+    if ((p_person->Flag2 & TgF2_KnockedOut) != 0)
     {
         process_knocked_out(p_person);
         stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);

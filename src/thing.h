@@ -132,7 +132,7 @@ enum ThingFlags2 {
     TgF2_Unkn0002     = 0x0002,
     TgF2_Unkn0004     = 0x0004,
     TgF2_Unkn0008     = 0x0008,
-    TgF2_Unkn0010     = 0x0010,
+    TgF2_KnockedOut   = 0x0010,
     TgF2_Unkn0020     = 0x0020,
     TgF2_Unkn0040     = 0x0040,
     TgF2_Unkn0080     = 0x0080,

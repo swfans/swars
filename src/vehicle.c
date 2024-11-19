@@ -656,7 +656,7 @@ static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing 
 {
     int dx, dz, per_r_sq, veh_r_sq;
 
-    if ((p_person->Flag2 & TgF2_Unkn0010) != 0)
+    if ((p_person->Flag2 & TgF2_KnockedOut) != 0)
         return false;
     if (p_person->State == PerSt_DEAD)
         return false;
