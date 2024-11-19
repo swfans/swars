@@ -163,6 +163,27 @@ void shield_frames_cycle(void)
     }
 }
 
+void quick_light_unkn_func_04(short a1, int a2, short a3, short a4)
+{
+    asm volatile (
+      "call ASM_quick_light_unkn_func_04\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
+    return;
+}
+
+void unkn_full_update_lights(void)
+{
+    ushort i;
+
+    for (i = 1; i < next_unkn_full_light; i++)
+    {
+        struct UnkFLight *p_ufl;
+        p_ufl = &unkn_full_lights[i];
+        quick_light_unkn_func_04(p_ufl->unfulgt_2, p_ufl->unfulgt_4, p_ufl->unfulgt_6, p_ufl->unfulgt_0);
+    }
+    next_unkn_full_light = 1;
+}
+
 int process_things_mines_explode(int affected_max)
 {
     int ret;
@@ -190,14 +211,6 @@ void unkn_update_lights(void)
 {
     asm volatile ("call ASM_unkn_update_lights\n"
         :  :  : "eax" );
-    return;
-}
-
-void quick_light_unkn_func_04(short a1, int a2, short a3, short a4)
-{
-    asm volatile (
-      "call ASM_quick_light_unkn_func_04\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
     return;
 }
 
@@ -269,6 +282,126 @@ void process_laser(struct Thing *p_laser)
         : : "a" (p_laser));
 }
 
+void process_thing_checksum(ThingIdx thing, struct Thing *p_thing)
+{
+    ingame.fld_unkC4B += thing;
+    ingame.fld_unkC4B += p_thing->Y + p_thing->X + p_thing->Type + p_thing->State;
+}
+
+TbBool process_thing_unkflag02000000(ThingIdx thing, struct Thing *p_thing)
+{
+    if (((p_thing->Flag2 & TgF2_Unkn02000000) != 0) && ((gameturn + thing) & 3) != 0) {
+        return true;
+    }
+    p_thing->Flag2 &= ~TgF2_Unkn02000000;
+    return false;
+}
+
+TbBool process_thing_unkflag0002(struct Thing *p_thing)
+{
+    if ((p_thing->Flag2 & TgF2_Unkn0002) != 0)
+    {
+        if ((gameturn & 3) != 0)
+            return true;
+        p_thing->U.UPerson.SpecialTimer--;
+        if (p_thing->U.UPerson.SpecialTimer >= 0)
+            return true;
+        if ((p_thing->Flag & 0x10000000) == 0)
+            add_node_thing(p_thing->ThingOffset);
+        p_thing->Flag2 &= ~TgF2_Unkn0002;
+        return true;
+    }
+    return false;
+}
+
+void process_thing(struct Thing *p_thing)
+{
+    switch (p_thing->Type)
+    {
+    case TT_VEHICLE:
+        process_vehicle(p_thing);
+        break;
+    case TT_PERSON:
+    case TT_UNKN4:
+        process_shield(p_thing);
+        process_person(p_thing);
+        if ((p_thing->Flag & 0x0800) != 0)
+            p_thing->Flag2 |= 0x0400;
+        else
+            p_thing->Flag2 &= ~0x0400;
+        break;
+    case TT_ROCKET:
+        process_rocket(p_thing);
+        break;
+    case TT_BUILDING:
+        process_building(p_thing);
+        break;
+    case TT_LASER_GUIDED:
+        process_laser_guided(p_thing);
+        break;
+    case TT_MINE:
+        process_mine((struct SimpleThing *)p_thing);
+        break;
+    case TT_GRENADE:
+        process_grenade(p_thing);
+        break;
+    case TT_LASER_ELEC:
+        process_laser_elec(p_thing);
+        break;
+    case TT_RAZOR_WIRE:
+        process_laser_unkn28(p_thing);
+        break;
+    case TT_AIR_STRIKE:
+        process_air_strike(p_thing);
+        break;
+    case TT_UNKN35:
+        if (p_thing->State != 13)
+            break;
+        process_unkn35(p_thing);
+        break;
+    case TT_LASER11:
+    case TT_LASER29:
+    case TT_LASER38: // on PSX, laser type=38 has additional light effect
+        process_laser(p_thing);
+        break;
+    default:
+        break;
+    }
+}
+
+void process_sthing_checksum(ThingIdx thing, struct SimpleThing *p_sthing)
+{
+    ingame.fld_unkC4B += p_sthing->Y + p_sthing->X + p_sthing->Type + p_sthing->State;
+}
+
+void process_carried_item(struct SimpleThing *p_item)
+{
+    ThingIdx item;
+    struct Thing *p_owner;
+
+    p_owner = &things[p_item->U.UWeapon.Owner];
+    p_item->X = p_owner->X;
+    p_item->Y = p_owner->Y;
+    p_item->Z = p_owner->Z;
+    if (p_owner->State != 13)
+        return;
+    item = p_item->ThingOffset;
+    p_item->Type = 25;
+    add_node_sthing(item);
+}
+
+void process_sthing(struct SimpleThing *p_sthing)
+{
+    switch (p_sthing->Type)
+    {
+    case SmTT_CARRIED_ITEM:
+        process_carried_item(p_sthing);
+        break;
+    //TODO add missing part
+    default:
+        break;
+    }
+}
 
 void process_things(void)
 {
@@ -349,14 +482,7 @@ void process_things(void)
     ingame.fld_unkC4B = 0;
     animate_textures();
     unkn_update_lights();
-
-    for (i = 1; i < next_unkn_full_light; i++)
-    {
-        struct UnkFLight *p_ufl;
-        p_ufl = &unkn_full_lights[i];
-        quick_light_unkn_func_04(p_ufl->unfulgt_2, p_ufl->unfulgt_4, p_ufl->unfulgt_6, p_ufl->unfulgt_0);
-    }
-    next_unkn_full_light = 1;
+    unkn_full_update_lights();
 
     if (!execute_commands)
         return;
@@ -367,97 +493,56 @@ void process_things(void)
     if (!in_network_game && !pktrec_mode && (ingame.Flags & GamF_Unkn0004) != 0 && ((gameturn & 0xF) != 0))
         return;
 
-    struct Thing *p_thing;
-    int remain;
-    ThingIdx thing;
-
-    remain = things_used;
-    for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
+    if (execute_commands)
     {
-        if (--remain == -1) {
-            break;
-        }
-        ingame.fld_unkC4B += thing;
-        p_thing = &things[thing];
-        ingame.fld_unkC4B += p_thing->Y + p_thing->X + p_thing->Type + p_thing->State;
+        struct Thing *p_thing;
+        int remain;
+        ThingIdx thing;
 
-        if (((p_thing->Flag2 & 0x2000000) != 0) && ((gameturn + thing) & 3) != 0) {
-            continue;
-        }
-
-        p_thing->Flag2 &= ~0x02000000;
-        if ((p_thing->Flag2 & 0x0002) != 0)
+        remain = things_used;
+        for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
         {
-            if ((gameturn & 3) != 0)
-                continue;
-            p_thing->U.UObject.NumbObjects--;
-            if (p_thing->U.UPerson.SpecialTimer >= 0)
-                continue;
-            if ((p_thing->Flag & 0x10000000) == 0)
-                add_node_thing(p_thing->ThingOffset);
-            p_thing->Flag2 &= ~0x0002;
-            continue;
-        }
+            if (--remain == -1) {
+                break;
+            }
+            p_thing = &things[thing];
 
-        switch (p_thing->Type)
-        {
-        case TT_VEHICLE:
-            process_vehicle(p_thing);
-            break;
-        case TT_PERSON:
-        case TT_UNKN4:
-            process_shield(p_thing);
-            process_person(p_thing);
-            if ((p_thing->Flag & 0x0800) != 0)
-                p_thing->Flag2 |= 0x0400;
-            else
-                p_thing->Flag2 &= ~0x0400;
-            break;
-        case TT_ROCKET:
-            process_rocket(p_thing);
-            break;
-        case TT_BUILDING:
-            process_building(p_thing);
-            break;
-        case TT_LASER_GUIDED:
-            process_laser_guided(p_thing);
-            break;
-        case TT_MINE:
-            process_mine((struct SimpleThing *)p_thing);
-            break;
-        case TT_GRENADE:
-            process_grenade(p_thing);
-            break;
-        case TT_LASER_ELEC:
-            process_laser_elec(p_thing);
-            break;
-        case TT_RAZOR_WIRE:
-            process_laser_unkn28(p_thing);
-            break;
-        case TT_AIR_STRIKE:
-            process_air_strike(p_thing);
-            break;
-        case TT_UNKN35:
-            if (p_thing->State == 13)
-                process_unkn35(p_thing);
-            break;
-        case TT_LASER11:
-        case TT_LASER29:
-        case TT_LASER38: // on PSX, laser type=38 has additional light effect
-            process_laser(p_thing);
-            break;
-        default:
-            break;
+            process_thing_checksum(thing, p_thing);
+
+            if (process_thing_unkflag02000000(thing, p_thing))
+                continue;
+
+            if (process_thing_unkflag0002(p_thing))
+                continue;
+
+            process_thing(p_thing);
         }
     }
 
     if (execute_commands)
     {
-    //TODO add missing part
+        struct SimpleThing *p_sthing;
+        int remain;
+        ThingIdx thing;
+
+        remain = sthings_used;
+        for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
+        {
+            if (--remain == -1) {
+                break;
+            }
+            p_sthing = &sthings[thing];
+
+            process_sthing_checksum(thing, p_sthing);
+
+            process_sthing(p_sthing);
+        }
     }
 
     if (execute_commands)
+    {
         people_intel(0);
+    }
     navi_onscreen_debug(1);
 }
 
