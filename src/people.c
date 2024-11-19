@@ -1537,7 +1537,7 @@ void person_find_next_state(struct Thing *p_person)
         if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & TgF2_Unkn0800) != 0))
         {
             p_person->Flag2 &= ~TgF2_Unkn0800;
-            ingame.Flags &= ~0x0100;
+            ingame.Flags &= ~GamF_Unkn0100;
             set_peep_comcur(p_person);
         }
         p_person->State = PerSt_WAIT;
@@ -1572,7 +1572,7 @@ void person_find_next_state(struct Thing *p_person)
         if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & TgF2_Unkn0800) != 0))
         {
             p_person->Flag2 &= ~TgF2_Unkn0800;
-            ingame.Flags &= ~0x0100;
+            ingame.Flags &= ~GamF_Unkn0100;
             set_peep_comcur(p_person);
         }
         p_person->State = PerSt_WAIT;

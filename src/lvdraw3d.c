@@ -732,7 +732,7 @@ void func_2e440(void)
 
     player_target_clear(local_player_no);
 
-    if ((ingame.Flags & 0x01) != 0)
+    if ((ingame.Flags & GamF_BillboardMovies) != 0)
     {
         dword_176CC0 += fifties_per_gameturn;
         if (dword_176CC0 > 80) {

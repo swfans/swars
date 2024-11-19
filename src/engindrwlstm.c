@@ -1400,7 +1400,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
 
     struct ShEnginePoint sp1, sp2, sp3;
 
-    if (((ingame.Flags & 0x400) != 0) && (current_map != 11)) // map011 Orbital Station
+    if (((ingame.Flags & GamF_DeepRadar) != 0) && (current_map != 11)) // map011 Orbital Station
     {
         int scr_y;
 

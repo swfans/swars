@@ -689,7 +689,7 @@ void process_things(void)
 
     shield_frames_cycle();
 
-    if ((ingame.Flags & 0x8000) != 0)
+    if ((ingame.Flags & GamF_Unkn8000) != 0)
     {
         PlayerInfo *p_locplayer;
         struct Thing *p_dcthing;
@@ -702,7 +702,7 @@ void process_things(void)
         p_dcthing->U.UPerson.Energy -= 3;
         if (p_dcthing->U.UPerson.Energy <= 0)
         {
-            ingame.Flags &= ~0x8000;
+            ingame.Flags &= ~GamF_Unkn8000;
             ingame_palette_reload();
         }
     }

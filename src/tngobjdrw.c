@@ -243,7 +243,7 @@ void build_building(struct Thing *p_thing)
     if (p_thing->SubType == SubTT_BLD_BILLBOARD)
     {
         ingame.VisibleBillboardThing = p_thing->ThingOffset;
-        ingame.Flags |= 0x040000;
+        ingame.Flags |= GamF_Unkn00040000;
     }
 
     if (p_thing->SubType == SubTT_BLD_WIND_ROTOR)

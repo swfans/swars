@@ -231,7 +231,7 @@ void navi_onscreen_debug(TbBool a1)
         word_1DC8CE++;
         return;
     }
-    if ((ingame.Flags & 0x0200) != 0)
+    if ((ingame.Flags & GamF_Unkn0200) != 0)
     {
         ushort i;
         int y;

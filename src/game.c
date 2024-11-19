@@ -543,7 +543,7 @@ void ingame_palette_load(int pal_id)
 
 void ingame_palette_reload(void)
 {
-    if ((ingame.Flags & 0x8000) != 0) {
+    if ((ingame.Flags & GamF_Unkn8000) != 0) {
         ingame_palette_load(3);
     } else {
         ingame_palette_load(ingame.PalType);

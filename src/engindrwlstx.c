@@ -1796,7 +1796,7 @@ void draw_sort_sprite1b(int sspr)
         }
     }
     bright += br_inc;
-    if ((p_thing->U.UPerson.AnimMode == 12) || ((ingame.Flags & 0x8000) != 0))
+    if ((p_thing->U.UPerson.AnimMode == 12) || ((ingame.Flags & GamF_Unkn8000) != 0))
         bright = 32;
 
     word_1A5834 = 120;
@@ -1804,7 +1804,7 @@ void draw_sort_sprite1b(int sspr)
 
     if (((p_thing->Flag2 & TgF2_Unkn2000) != 0) && (ingame.DisplayMode == 50))
     {
-        if ((ingame.Flags & 0x8000) != 0) {
+        if ((ingame.Flags & GamF_Unkn8000) != 0) {
             ushort fr;
             fr = nstart_ani[1066];
             draw_sorted_sprite1a(fr, p_sspr->X, p_sspr->Y, 32);
