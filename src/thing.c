@@ -22,9 +22,11 @@
 #include "bfutility.h"
 #include "bfmemut.h"
 #include "bfscreen.h"
+#include "ssampply.h"
 
 #include "building.h"
 #include "display.h"
+#include "enginfexpl.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "game.h"
@@ -184,6 +186,15 @@ void unkn_full_update_lights(void)
     next_unkn_full_light = 1;
 }
 
+void apply_full_light(short lx, short lz, ushort b, ushort intens, ushort lid)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_apply_full_light\n"
+        : : "a" (lx), "d" (lz), "b" (b), "c" (intens), "g" (lid));
+    return;
+}
+
 int process_things_mines_explode(int affected_max)
 {
     int ret;
@@ -282,6 +293,90 @@ void process_laser(struct Thing *p_laser)
         : : "a" (p_laser));
 }
 
+void process_electric_strand(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_electric_strand\n"
+        : : "a" (p_sthing));
+}
+
+void process_canister(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_canister\n"
+        : : "a" (p_sthing));
+}
+
+void process_stasis_pod(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_stasis_pod\n"
+        : : "a" (p_sthing));
+}
+
+void process_time_pod(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_time_pod\n"
+        : : "a" (p_sthing));
+}
+
+void process_soul(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_soul\n"
+        : : "a" (p_sthing));
+}
+
+void process_bang(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_bang\n"
+        : : "a" (p_sthing));
+}
+
+void FIRE_process_flame(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_FIRE_process_flame\n"
+        : : "a" (p_sthing));
+}
+
+void process_spark(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_spark\n"
+        : : "a" (p_sthing));
+}
+
+void process_intelligent_door(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_intelligent_door\n"
+        : : "a" (p_sthing));
+}
+
+void process_scale_effect(struct SimpleThing *p_sthing, ThingIdx thing)
+{
+    asm volatile (
+      "call ASM_process_scale_effect\n"
+        : : "a" (p_sthing), "d" (thing));
+}
+
+void process_nuclear_bomb(struct SimpleThing *p_sthing, ThingIdx thing_item)
+{
+    asm volatile (
+      "call ASM_process_nuclear_bomb\n"
+        : : "a" (p_sthing), "d" (thing_item));
+}
+
+void process_smoke_generator(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_smoke_generator\n"
+        : : "a" (p_sthing));
+}
+
 void process_thing_checksum(ThingIdx thing, struct Thing *p_thing)
 {
     ingame.fld_unkC4B += thing;
@@ -314,7 +409,7 @@ TbBool process_thing_unkflag0002(struct Thing *p_thing)
     return false;
 }
 
-void process_thing(struct Thing *p_thing)
+void process_thing(ThingIdx thing, struct Thing *p_thing)
 {
     switch (p_thing->Type)
     {
@@ -390,14 +485,135 @@ void process_carried_item(struct SimpleThing *p_item)
     add_node_sthing(item);
 }
 
-void process_sthing(struct SimpleThing *p_sthing)
+void process_temp_light(struct SimpleThing *p_sthing)
+{
+    int bri, dvdr;
+
+    p_sthing->Timer1--;
+    if (p_sthing->Timer1 < 0) {
+        remove_sthing(p_sthing->ThingOffset);
+        return;
+    }
+    bri = p_sthing->U.UEffect.VX;
+    if (p_sthing->U.UEffect.VY != 0) {
+        dvdr = p_sthing->U.UEffect.VY;
+        bri += (ushort)LbRandomAnyShort() % dvdr;
+    }
+    apply_full_light(p_sthing->X >> 8, p_sthing->Y >> 8, p_sthing->Z >> 8, bri, 0);
+}
+
+void process_static(struct SimpleThing *p_sthing)
+{
+    switch (p_sthing->State)
+    {
+    case 36:
+        play_dist_ssample(p_sthing, 0x1D, 0x7F, 0x40, 100, 0, 2);
+        p_sthing->Timer1--;
+        if (p_sthing->Timer1 != 0)
+            break;
+        p_sthing->State = 13;
+        p_sthing->Frame = nstart_ani[p_sthing->StartFrame];
+        stop_sample_using_heap(p_sthing->ThingOffset, 0x1Du);
+        break;
+    case 12:
+        p_sthing->Timer1--;
+        if (p_sthing->Timer1 != 0)
+            break;
+        p_sthing->State = 13;
+        p_sthing->Frame = nstart_ani[p_sthing->StartFrame];
+       stop_sample_using_heap(p_sthing->ThingOffset, 0x1Du);
+        break;
+    }
+}
+
+void process_sthing(ThingIdx thing, struct SimpleThing *p_sthing)
 {
     switch (p_sthing->Type)
     {
     case SmTT_CARRIED_ITEM:
         process_carried_item(p_sthing);
         break;
-    //TODO add missing part
+    case SmTT_ELECTRIC_STRAND:
+        process_electric_strand(p_sthing);
+        break;
+    case SmTT_CANISTER:
+        process_canister(p_sthing);
+        break;
+    case SmTT_STASIS_POD:
+        process_stasis_pod(p_sthing);
+        break;
+    case SmTT_TIME_POD:
+        process_time_pod(p_sthing);
+        break;
+    case SmTT_SOUL:
+        process_soul(p_sthing);
+        break;
+    case SmTT_BANG:
+        if ((p_sthing->U.UEffect.VY != 0) || (p_sthing->U.UEffect.VX != 0)) {
+            process_bang(p_sthing);
+        } else {
+            remove_sthing(thing);
+            delete_snode(p_sthing);
+        }
+        break;
+    case SmTT_FIRE:
+        if (p_sthing->U.UEffect.VX != 0) {
+            FIRE_process_flame(p_sthing);
+        } else {
+            ReleaseLoopedSample(thing, 16);
+            play_dist_ssample(p_sthing, 0x17, 0x7F, 0x40, 100, 0, 3);
+            remove_sthing(thing);
+            delete_snode(p_sthing);
+        }
+        break;
+    case SmTT_SFX:
+        if (p_sthing->State == 1) {
+            if (!dont_bother_with_explode_faces)
+                break;
+            stop_sample_using_heap(p_sthing->ThingOffset, 0x2E);
+            play_dist_ssample(p_sthing, 0x2F, 0x7F, 0x40, 100, 0, 3);
+            p_sthing->State = 2;
+            p_sthing->Timer1 = 100;
+        } else {
+            p_sthing->Timer1--;
+            if ( p_sthing->Timer1 >= 0 )
+                break;
+            remove_sthing(p_sthing->ThingOffset);
+            if (p_sthing->State != 2)
+                break;
+            ingame.SoundThing = 0;
+        }
+        break;
+    case SmTT_TEMP_LIGHT:
+        process_temp_light(p_sthing);
+        break;
+    case SmTT_SPARK:
+        process_spark(p_sthing);
+        break;
+    case SmTT_STATIC:
+        process_static(p_sthing);
+        break;
+    case SmTT_INTELLIG_DOOR:
+        process_intelligent_door(p_sthing);
+        break;
+    case SmTT_SCALE_EFFECT:
+        process_scale_effect(p_sthing, thing);
+        break;
+    case SmTT_NUCLEAR_BOMB:
+        process_nuclear_bomb(p_sthing, thing);
+        break;
+    case SmTT_SMOKE_GENERATOR:
+        process_smoke_generator(p_sthing);
+        break;
+    case SmTT_DROPPED_ITEM:
+        if (p_sthing->SubType == 13 || p_sthing->SubType == 12) {
+            process_mine(p_sthing);
+        } else {
+            if (!in_network_game || p_sthing->U.UWeapon.WeaponType == 31)
+                break;
+            p_sthing->U.UWeapon.Ammo++;
+        }
+        break;
     default:
         break;
     }
@@ -515,7 +731,7 @@ void process_things(void)
             if (process_thing_unkflag0002(p_thing))
                 continue;
 
-            process_thing(p_thing);
+            process_thing(thing, p_thing);
         }
     }
 
@@ -535,7 +751,7 @@ void process_things(void)
 
             process_sthing_checksum(thing, p_sthing);
 
-            process_sthing(p_sthing);
+            process_sthing(thing, p_sthing);
         }
     }
 
@@ -648,6 +864,14 @@ TbResult delete_node(struct Thing *p_thing)
     TbResult ret;
     asm volatile ("call ASM_delete_node\n"
         : "=r" (ret) : "a" (p_thing));
+    return ret;
+}
+
+TbResult delete_snode(struct SimpleThing *p_sthing)
+{
+    TbResult ret;
+    asm volatile ("call ASM_delete_snode\n"
+        : "=r" (ret) : "a" (p_sthing));
     return ret;
 }
 

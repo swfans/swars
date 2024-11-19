@@ -29,7 +29,6 @@
 #include "swlog.h"
 /******************************************************************************/
 extern ulong next_ex_face;
-extern ulong dont_bother_with_explode_faces;
 
 void init_free_explode_faces(void)
 {

@@ -62,6 +62,7 @@ struct ExplodeFace3 { // sizeof=46
 #pragma pack()
 /******************************************************************************/
 extern struct ExplodeFace3 ex_faces[EXPLODE_FACES_COUNT];
+extern ulong dont_bother_with_explode_faces;
 
 void init_free_explode_faces(void);
 void draw_explode(void);

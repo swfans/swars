@@ -939,6 +939,10 @@ TbBool thing_is_destroyed(ThingIdx thing);
  */
 TbResult delete_node(struct Thing *p_thing);
 
+/** Delete the simple thing from `mapwho` chain.
+ */
+TbResult delete_snode(struct SimpleThing *p_sthing);
+
 void add_node_thing(ThingIdx new_thing);
 short get_new_thing(void);
 void remove_thing(short tngno);
