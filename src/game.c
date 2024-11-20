@@ -160,8 +160,6 @@ extern short word_1C6E0A;
 
 extern long dword_1DDECC;
 
-extern struct GamePanel game_panel_hi[];
-extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
 extern long gamep_unknval_10;
@@ -1773,50 +1771,6 @@ void init_outro(void)
     StopAllSamples();
     reset_heaps();
     setup_heaps(2);
-}
-
-TbResult prep_pop_sprites(short detail)
-{
-    PathInfo *pinfo;
-    short colorno;
-    TbResult ret;
-
-    pinfo = &game_dirs[DirPlace_Data];
-    colorno = -ingame.PanelPermutation - 1;
-    ret = load_pop_sprites(pinfo->directory, colorno, detail);
-    setup_pop_sprites();
-    if (ret == Lb_FAIL) {
-        LOGERR("Some files were not loaded successfully");
-    }
-    return ret;
-}
-
-void load_pop_sprites_lo(void)
-{
-#if 0
-    asm volatile ("call ASM_load_pop_sprites_lo\n"
-        :  :  : "eax" );
-#endif
-    prep_pop_sprites(0);
-    game_panel = game_panel_lo;
-}
-
-void load_pop_sprites_hi(void)
-{
-#if 0
-    asm volatile ("call ASM_load_pop_sprites_hi\n"
-        :  :  : "eax" );
-#endif
-    prep_pop_sprites(1);
-    game_panel = game_panel_hi;
-}
-
-void load_pop_sprites_for_current_mode(void)
-{
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        load_pop_sprites_lo();
-    else
-        load_pop_sprites_hi();
 }
 
 void srm_scanner_set_size_at_bottom_left(short margin, short width, short height)
@@ -6071,99 +6025,6 @@ ubyte do_user_interface(void)
     return 0;
 }
 
-/** Returns if a game panel is active, considering the target which it controls.
- */
-TbBool panel_active_based_on_target(short panel)
-{
-    struct GamePanel *p_panel;
-    PlayerInfo *p_locplayer;
-    struct Thing *p_agent;
-
-    p_panel = &game_panel[panel];
-
-    if (p_panel->Type == 8 || p_panel->Type == 10)
-        return true;
-
-    if (p_panel->ID >= playable_agents)
-        return true;
-
-    p_locplayer = &players[local_player_no];
-    p_agent = p_locplayer->MyAgent[p_panel->ID];
-
-    if (p_agent->Type != TT_PERSON)
-        return false;
-
-    return ((p_agent->Flag & TngF_Destroyed) == 0);
-}
-
-TbBool mouse_move_over_panel(short panel)
-{
-    struct GamePanel *p_panel;
-    short x, y, w, h;
-    short ms_x, ms_y;
-
-    p_panel = &game_panel[panel];
-
-    x = p_panel->X;
-    y = p_panel->Y;
-    if (p_panel->Width == 0 && p_panel->Height == 0)
-    {
-        struct TbSprite *spr;
-        spr = &pop1_sprites[p_panel->Spr];
-        w = lbDisplay.GraphicsScreenHeight < 400 ? 2 * spr->SWidth : spr->SWidth;
-        h = lbDisplay.GraphicsScreenHeight < 400 ? 2 * spr->SHeight : spr->SHeight;
-    } else {
-        w = 2 * p_panel->Width;
-        h = 2 * p_panel->Height;
-    }
-
-    if (!panel_active_based_on_target(panel))
-        return false;
-
-    if (p_panel->ID >= playable_agents)
-        return false;
-
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-    return in_box(ms_x, ms_y, x, y, w, h);
-}
-
-TbBool mouse_over_infrared_slant_box(short panel)
-{
-    struct GamePanel *p_panel;
-    short x, y;
-    short ms_x, ms_y;
-    short delta_x, delta_y;
-
-    p_panel = &game_panel[panel];
-
-    x = p_panel->X;
-    y = lbDisplay.GraphicsScreenHeight < 400 ? (p_panel->Y + 44) : (p_panel->Y + 48);
-
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-    delta_x = (ms_x - x);
-    delta_y = (ms_y - y);
-
-    return (ms_y > y) && (delta_x + 22 - delta_y < 22);
-}
-
-short mouse_move_position_over_horizonal_bar(short x, short w)
-{
-    short ms_x;
-
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    return (ms_x - x);
-}
-
-short mouse_down_position_over_horizonal_bar(short x, short w)
-{
-    short ms_x;
-
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-    return (ms_x - x);
-}
-
 TbBool check_scanner_input(void)
 {
     int map_x, map_y, map_z;
@@ -6326,158 +6187,23 @@ short process_panel_state(void)
 
     if ((pnsta >= 1) && (pnsta < 1 + 4))
     {
-        struct Packet *p_pckt;
-        short agent, pnitm;
-
-        p_pckt = &packets[local_player_no];
-        pnitm = p_locplayer->PanelItem[mouser];
-        agent = (pnsta - 1) % 4;
-
-        if (lbDisplay.RightButton)
-        {
-            // Right click while holding left weapon drop
-            struct Thing *p_agent;
-
-            lbDisplay.RightButton = 0;
-            p_agent = p_locplayer->MyAgent[agent];
-            if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
-            {
-                p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
-                my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
-                p_locplayer->PanelState[mouser] = 0;
-                return 1;
-            }
-        }
-        if (!lbDisplay.MLeftButton)
-        {
-            struct Thing *p_agent;
-
-            p_agent = p_locplayer->MyAgent[agent];
-            if (lbDisplay.MRightButton)
-            {
-                // Hold left, hold right, release left weapon drop
-                lbDisplay.RightButton = 0;
-                if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
-                {
-                    p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
-                    my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
-                    p_locplayer->PanelState[mouser] = 0;
-                    return 1;
-                }
-            }
-
-            { // no mouse action required
-                if ((p_agent != NULL) && (pnitm != 0))
-                {
-                    my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, p_agent->ThingOffset, pnitm, 0, 0);
-                    p_locplayer->PanelState[mouser] = 0;
-                    lbDisplay.RightButton = 0;
-                    lbDisplay.LeftButton = 0;
-                    p_locplayer->UserInput[mouser].ControlMode &= ~(0x4000|0x8000);
-                    return 1;
-                }
-            }
-            p_locplayer->PanelState[mouser] = 0;
-        }
+        if (process_panel_state_one_agent_weapon(mouser, (pnsta - 1) % 4))
+            return 1;
     }
     else if ((pnsta >= 5) && (pnsta < 5 + 4))
     {
-        struct Packet *p_pckt;
-        short agent, pnitm;
-
-        p_pckt = &packets[local_player_no];
-        pnitm = p_locplayer->PanelItem[mouser];
-        agent = (pnsta - 5) % 4;
-
-        if (lbDisplay.LeftButton)
-        {
-            // Left click while holding right weapon drop
-            struct Thing *p_agent;
-
-            lbDisplay.LeftButton = 0;
-            p_agent = p_locplayer->MyAgent[agent];
-            if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
-            {
-                p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
-                my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
-                p_locplayer->PanelState[mouser] = 0;
-                return 1;
-            }
-        }
-        if (!lbDisplay.MRightButton)
-        {
-            struct Thing *p_agent;
-
-            p_agent = p_locplayer->MyAgent[agent];
-            if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
-            {
-                my_build_packet(p_pckt, PAct_31, p_agent->ThingOffset, pnitm, 0, 0);
-                p_locplayer->PanelState[mouser] = 0;
-                lbDisplay.RightButton = 0;
-                lbDisplay.LeftButton = 0;
-                p_locplayer->UserInput[mouser].ControlMode &= ~(0x4000|0x8000);
-                return 1;
-            }
-            p_locplayer->PanelState[mouser] = 0;
-        }
+        if (process_panel_state_all_agents_weapon(mouser, (pnsta - 5) % 4))
+            return 1;
     }
     else if ((pnsta >= 9) && (pnsta < 9 + 4))
     {
-        struct Packet *p_pckt;
-        short panel;
-        short agent;
-
-        p_pckt = &packets[local_player_no];
-        agent = (pnsta - 9) % 4;
-        panel = pnsta - 5;
-
-        if (lbDisplay.MLeftButton)
-        {
-            // Left button hold mood control
-            struct Thing *p_agent;
-            struct GamePanel *p_panel;
-            short i;
-
-            p_agent = p_locplayer->MyAgent[agent];
-            p_panel = &game_panel[panel];
-            i = 2 * mouse_move_position_over_horizonal_bar(p_panel->X, p_panel->Width) - 88;
-            if (i < -88) i = -88;
-            if (i > 88) i = 88;
-
-            if ((p_agent->Type == TT_PERSON) && (can_control))
-                build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
+        if (process_panel_state_one_agent_mood(mouser, pnsta - 5, (pnsta - 9) % 4, can_control))
             return 1;
-        }
-        p_locplayer->PanelState[mouser] = 0;
     }
     else if ((pnsta >= 13) && (pnsta < 13 + 4))
     {
-        struct Packet *p_pckt;
-        short panel;
-        short agent;
-
-        p_pckt = &packets[local_player_no];
-        agent = (pnsta - 13) % 4;
-        panel = pnsta - 9;
-        if (lbDisplay.MRightButton)
-        {
-            // Right button hold mood control
-            struct Thing *p_agent;
-            struct GamePanel *p_panel;
-            short i;
-
-            p_agent = p_locplayer->MyAgent[agent];
-            p_panel = &game_panel[panel];
-            i = 2 * mouse_move_position_over_horizonal_bar(p_panel->X, p_panel->Width) - 88;
-            if (i < -88) i = -88;
-            if (i > 88) i = 88;
-
-            if ((p_agent->Type == TT_PERSON) && (can_control))
-                build_packet(p_pckt, PAct_34, p_agent->ThingOffset, i, 0, 0);
+        if (process_panel_state_all_agents_mood(mouser, pnsta - 9, (pnsta - 13) % 4, can_control))
             return 1;
-        }
-        p_locplayer->UserInput[mouser].ControlMode &= ~0xC000;
-        p_locplayer->PanelState[mouser] = 0;
     }
     else if (pnsta == 17)
     {
@@ -6536,7 +6262,7 @@ TbBool check_panel_input(short panel)
             if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
-                i = 2 * (mouse_down_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
+                i = 2 * (mouse_down_position_horizonal_over_bar_coords(p_panel->X, p_panel->Width)) - 88;
                 if (panel_active_based_on_target(panel))
                     my_build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
                 p_locplayer->PanelState[mouser] = p_panel->ID + 9;
@@ -6632,7 +6358,7 @@ TbBool check_panel_input(short panel)
             if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
-                i = 2 * (mouse_down_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
+                i = 2 * (mouse_down_position_horizonal_over_bar_coords(p_panel->X, p_panel->Width)) - 88;
                 if (panel_active_based_on_target(panel))
                     my_build_packet(p_pckt, PAct_34, p_agent->ThingOffset, i, 0, 0);
                 p_locplayer->PanelState[mouser] = p_panel->ID + 13;

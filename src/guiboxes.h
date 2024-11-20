@@ -223,6 +223,9 @@ TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_
 
 TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, TbBool a5);
 
+short mouse_move_position_horizonal_over_bar_coords(short x, short w);
+short mouse_down_position_horizonal_over_bar_coords(short x, short w);
+
 /** Returns if given position is over given box (incl. borders).
  */
 #define is_over_box(x, y, box) is_over_box_base(x, y, (struct ScreenBoxBase *)box)
@@ -250,8 +253,8 @@ TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box);
 
 /** Returns X coord of current mouse move position relative to given box.
  */
-#define mouse_move_x_coord_over_box(box) mouse_move_x_coord_over_box_base((struct ScreenBoxBase *)box)
-short mouse_move_x_coord_over_box_base(struct ScreenBoxBase *box);
+#define mouse_move_position_horizonal_over_box(box) mouse_move_position_horizonal_over_box_base((struct ScreenBoxBase *)box)
+short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *box);
 
 /** Returns Y coord of current mouse move position relative to given box.
  */

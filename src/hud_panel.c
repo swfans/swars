@@ -29,11 +29,14 @@
 #include "bigmap.h"
 #include "display.h"
 #include "engintrns.h"
+#include "game_data.h"
 #include "game_speed.h"
 #include "game_sprts.h"
 #include "game.h"
+#include "guiboxes.h"
 #include "lvobjctv.h"
 #include "mydraw.h"
+#include "packet.h"
 #include "player.h"
 #include "scandraw.h"
 #include "thing.h"
@@ -42,6 +45,95 @@
 extern ubyte byte_1CAB64[];
 extern ubyte byte_1DB088[];
 extern long dword_1DC36C;
+
+struct GamePanel game_panel_lo[] = {
+    {  0,  0,  1, 75, 16, 1, 1, 0, 1},
+    {146,  0,  3, 81, 14, 2, 1, 1, 1},
+    {304,  0,  4, 81, 14, 3, 1, 2, 1},
+    {462,  0,  5, 81, 14, 4, 1, 3, 1},
+    { 44, 10,  0, 44,  5, 1, 1, 0, 2},
+    {202, 10,  0, 44,  5, 2, 1, 1, 2},
+    {360, 10,  0, 44,  5, 3, 1, 2, 2},
+    {518, 10,  0, 44,  5, 4, 1, 3, 2},
+    { 30, 24, 95,  0,  0, 1, 1, 0, 6},
+    {188, 24, 95,  0,  0, 2, 1, 1, 6},
+    {346, 24, 95,  0,  0, 3, 1, 2, 6},
+    {504, 24, 95,  0,  0, 4, 1, 3, 6},
+    { 58, 24, 12,  0,  0, 1, 1, 0, 5},
+    {216, 24, 12,  0,  0, 2, 1, 1, 5},
+    {374, 24, 12,  0,  0, 3, 1, 2, 5},
+    {532, 24, 12,  0,  0, 4, 1, 3, 5},
+    {  0, 38, 10,  0,  0, 4, 1, 0, 8},
+    {  0,178, 11,  0,  0, 4, 1, 0, 10},
+    { -1, -1, -1,  0,  0, 4, 1, 0, 0},
+};
+
+struct GamePanel game_panel_hi[] = {
+    {  0,  0,  1, 75, 16, 1, 1, 0, 1},
+    {145,  0,  3, 81, 14, 2, 1, 1, 1},
+    {302,  0,  4, 81, 14, 3, 1, 2, 1},
+    {459,  0,  5, 81, 14, 4, 1, 3, 1},
+    { 44, 10,  0, 44,  5, 1, 1, 0, 2},
+    {202, 10,  0, 44,  5, 2, 1, 1, 2},
+    {360, 10,  0, 44,  5, 3, 1, 2, 2},
+    {518, 10,  0, 44,  5, 4, 1, 3, 2},
+    { 30, 25, 95,  0,  0, 1, 1, 0, 6},
+    {187, 25, 95,  0,  0, 2, 1, 1, 6},
+    {344, 25, 95,  0,  0, 3, 1, 2, 6},
+    {501, 25, 95,  0,  0, 4, 1, 3, 6},
+    { 57, 25, 12,  0,  0, 1, 1, 0, 5},
+    {214, 25, 12,  0,  0, 2, 1, 1, 5},
+    {371, 25, 12,  0,  0, 3, 1, 2, 5},
+    {528, 25, 12,  0,  0, 4, 1, 3, 5},
+    {  0, 37, 10,  0,  0, 4, 1, 0, 8},
+    {  0,191,105,  0,  0, 4, 1, 0, 8},
+    {  0,267, 11,  0,  0, 4, 1, 0, 10},
+    { -1, -1, -1,  0,  0, 4, 1, 0, 0},
+};
+
+TbResult prep_pop_sprites(short detail)
+{
+    PathInfo *pinfo;
+    short colorno;
+    TbResult ret;
+
+    pinfo = &game_dirs[DirPlace_Data];
+    colorno = -ingame.PanelPermutation - 1;
+    ret = load_pop_sprites(pinfo->directory, colorno, detail);
+    setup_pop_sprites();
+    if (ret == Lb_FAIL) {
+        LOGERR("Some files were not loaded successfully");
+    }
+    return ret;
+}
+
+void load_pop_sprites_lo(void)
+{
+#if 0
+    asm volatile ("call ASM_load_pop_sprites_lo\n"
+        :  :  : "eax" );
+#endif
+    prep_pop_sprites(0);
+    game_panel = game_panel_lo;
+}
+
+void load_pop_sprites_hi(void)
+{
+#if 0
+    asm volatile ("call ASM_load_pop_sprites_hi\n"
+        :  :  : "eax" );
+#endif
+    prep_pop_sprites(1);
+    game_panel = game_panel_hi;
+}
+
+void load_pop_sprites_for_current_mode(void)
+{
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        load_pop_sprites_lo();
+    else
+        load_pop_sprites_hi();
+}
 
 //TODO not the best location for agent state update
 void update_dropped_item_under_agent_exists(struct Thing *p_agent)
@@ -1388,6 +1480,61 @@ void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
 }
 
 
+TbBool panel_active_based_on_target(short panel)
+{
+    struct GamePanel *p_panel;
+    PlayerInfo *p_locplayer;
+    struct Thing *p_agent;
+
+    p_panel = &game_panel[panel];
+
+    if (p_panel->Type == 8 || p_panel->Type == 10)
+        return true;
+
+    if (p_panel->ID >= playable_agents)
+        return true;
+
+    p_locplayer = &players[local_player_no];
+    p_agent = p_locplayer->MyAgent[p_panel->ID];
+
+    if (p_agent->Type != TT_PERSON)
+        return false;
+
+    return ((p_agent->Flag & TngF_Destroyed) == 0);
+}
+
+TbBool mouse_move_over_panel(short panel)
+{
+    struct GamePanel *p_panel;
+    short x, y, w, h;
+    short ms_x, ms_y;
+
+    p_panel = &game_panel[panel];
+
+    x = p_panel->X;
+    y = p_panel->Y;
+    if (p_panel->Width == 0 && p_panel->Height == 0)
+    {
+        struct TbSprite *spr;
+        spr = &pop1_sprites[p_panel->Spr];
+        w = lbDisplay.GraphicsScreenHeight < 400 ? 2 * spr->SWidth : spr->SWidth;
+        h = lbDisplay.GraphicsScreenHeight < 400 ? 2 * spr->SHeight : spr->SHeight;
+    } else {
+        w = 2 * p_panel->Width;
+        h = 2 * p_panel->Height;
+    }
+
+    if (!panel_active_based_on_target(panel))
+        return false;
+
+    if (p_panel->ID >= playable_agents)
+        return false;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    return in_box(ms_x, ms_y, x, y, w, h);
+}
+
 void update_game_panel(void)
 {
     int i;
@@ -1421,6 +1568,39 @@ void update_game_panel(void)
                 game_panel[17].Spr = 105;
         }
     }
+}
+
+TbBool mouse_over_infrared_slant_box(short panel)
+{
+    struct GamePanel *p_panel;
+    short x, y;
+    short ms_x, ms_y;
+    short delta_x, delta_y;
+
+    p_panel = &game_panel[panel];
+
+    x = p_panel->X;
+    y = lbDisplay.GraphicsScreenHeight < 400 ? (p_panel->Y + 44) : (p_panel->Y + 48);
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    delta_x = (ms_x - x);
+    delta_y = (ms_y - y);
+
+    return (ms_y > y) && (delta_x + 22 - delta_y < 22);
+}
+
+short panel_mouse_move_mood_value(short panel)
+{
+    struct GamePanel *p_panel;
+    short i;
+
+    p_panel = &game_panel[panel];
+    i = 2 * mouse_move_position_horizonal_over_bar_coords(p_panel->X, p_panel->Width) - 88;
+    if (i < -88) i = -88;
+    if (i > 88) i = 88;
+
+    return i;
 }
 
 void draw_new_panel(void)
@@ -1670,6 +1850,163 @@ void draw_new_panel(void)
             x += 89;
         draw_new_panel_sprite_std(4, x, 91);
     }
+}
+
+TbBool process_panel_state_one_agent_weapon(ushort pnno, ushort agent)
+{
+    PlayerInfo *p_locplayer;
+    struct Packet *p_pckt;
+    short pnitm;
+
+    p_locplayer = &players[local_player_no];
+    p_pckt = &packets[local_player_no];
+    pnitm = p_locplayer->PanelItem[pnno];
+
+    if (lbDisplay.RightButton)
+    {
+        // Right click while holding left weapon drop
+        struct Thing *p_agent;
+
+        lbDisplay.RightButton = 0;
+        p_agent = p_locplayer->MyAgent[agent];
+        if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
+        {
+            p_locplayer->UserInput[pnno].ControlMode |= 0x4000;
+            my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
+            p_locplayer->PanelState[pnno] = 0;
+            return true;
+        }
+    }
+    if (!lbDisplay.MLeftButton)
+    {
+        struct Thing *p_agent;
+
+        p_agent = p_locplayer->MyAgent[agent];
+        if (lbDisplay.MRightButton)
+        {
+            // Hold left, hold right, release left weapon drop
+            lbDisplay.RightButton = 0;
+            if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
+            {
+                p_locplayer->UserInput[pnno].ControlMode |= 0x4000;
+                my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
+                p_locplayer->PanelState[pnno] = 0;
+                return true;
+            }
+        }
+
+        // release button while in weapon selection mode
+        {
+            if ((p_agent != NULL) && (pnitm != 0))
+            {
+                my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, p_agent->ThingOffset, pnitm, 0, 0);
+                p_locplayer->PanelState[pnno] = 0;
+                lbDisplay.RightButton = 0;
+                lbDisplay.LeftButton = 0;
+                p_locplayer->UserInput[pnno].ControlMode &= ~(0x4000|0x8000);
+                return true;
+            }
+        }
+        p_locplayer->PanelState[pnno] = 0;
+    }
+    return false;
+}
+
+TbBool process_panel_state_all_agents_weapon(ushort pnno, ushort agent)
+{
+    PlayerInfo *p_locplayer;
+    struct Packet *p_pckt;
+    short pnitm;
+
+    p_locplayer = &players[local_player_no];
+    p_pckt = &packets[local_player_no];
+    pnitm = p_locplayer->PanelItem[pnno];
+
+    if (lbDisplay.LeftButton)
+    {
+        // Left click while holding right weapon drop
+        struct Thing *p_agent;
+
+        lbDisplay.LeftButton = 0;
+        p_agent = p_locplayer->MyAgent[agent];
+        if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
+        {
+            p_locplayer->UserInput[pnno].ControlMode |= 0x8000;
+            my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
+            p_locplayer->PanelState[pnno] = 0;
+            return true;
+        }
+    }
+    if (!lbDisplay.MRightButton)
+    {
+        struct Thing *p_agent;
+
+        p_agent = p_locplayer->MyAgent[agent];
+        // release button while in weapon selection mode
+        if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
+        {
+            my_build_packet(p_pckt, PAct_31, p_agent->ThingOffset, pnitm, 0, 0);
+            p_locplayer->PanelState[pnno] = 0;
+            lbDisplay.RightButton = 0;
+            lbDisplay.LeftButton = 0;
+            p_locplayer->UserInput[pnno].ControlMode &= ~(0x4000|0x8000);
+            return true;
+        }
+        p_locplayer->PanelState[pnno] = 0;
+    }
+    return false;
+}
+
+TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel, ushort agent, TbBool can_control)
+{
+    PlayerInfo *p_locplayer;
+    struct Packet *p_pckt;
+
+    p_locplayer = &players[local_player_no];
+    p_pckt = &packets[local_player_no];
+
+    if (lbDisplay.MLeftButton)
+    {
+        // Left button hold mood control
+        struct Thing *p_agent;
+        short mood;
+
+        p_agent = p_locplayer->MyAgent[agent];
+        mood = panel_mouse_move_mood_value(main_panel);
+
+        if ((p_agent->Type == TT_PERSON) && (can_control))
+            build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, mood, 0, 0);
+        return true;
+    }
+    p_locplayer->PanelState[pnno] = 0;
+    return false;
+}
+
+TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel, ushort agent, TbBool can_control)
+{
+    PlayerInfo *p_locplayer;
+    struct Packet *p_pckt;
+
+    p_locplayer = &players[local_player_no];
+    p_pckt = &packets[local_player_no];
+
+    if (lbDisplay.MRightButton)
+    {
+        // Right button hold mood control
+        struct Thing *p_agent;
+        short mood;
+
+        p_agent = p_locplayer->MyAgent[agent];
+        mood = panel_mouse_move_mood_value(main_panel);
+
+        if ((p_agent->Type == TT_PERSON) && (can_control))
+            build_packet(p_pckt, PAct_34, p_agent->ThingOffset, mood, 0, 0);
+        return true;
+    }
+    p_locplayer->UserInput[pnno].ControlMode &= ~0xC000;
+    p_locplayer->PanelState[pnno] = 0;
+
+    return false;
 }
 
 /******************************************************************************/

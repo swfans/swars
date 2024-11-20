@@ -128,7 +128,7 @@ TbBool input_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
 
             lbDisplay.LeftButton = 0;
             delta_y = mouse_move_y_coord_over_box(box) - 14;
-            delta_x = mouse_move_x_coord_over_box(box) - 9;
+            delta_x = mouse_move_position_horizonal_over_box(box) - 9;
             (*target_ptr) = delta_y + delta_x;
             if ((*target_ptr) < 0)
                 *target_ptr = 0;

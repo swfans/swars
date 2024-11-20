@@ -57,6 +57,25 @@ int SCANNER_objective_info_height(void);
 
 void draw_new_panel(void);
 
+void load_pop_sprites_for_current_mode(void);
+
+/** Returns if a game panel is active, considering the target which it controls.
+ */
+TbBool panel_active_based_on_target(short panel);
+
+/** Returns if current mouse move position is over the given game panel.
+ */
+TbBool mouse_move_over_panel(short panel);
+
+TbBool mouse_over_infrared_slant_box(short panel);
+
+TbBool process_panel_state_one_agent_weapon(ushort pnno, ushort agent);
+TbBool process_panel_state_all_agents_weapon(ushort pnno, ushort agent);
+TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel,
+  ushort agent, TbBool can_control);
+TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel,
+  ushort agent, TbBool can_control);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
