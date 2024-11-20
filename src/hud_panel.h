@@ -77,6 +77,7 @@ TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel,
   ushort agent, TbBool can_control);
 
 TbBool process_panel_state(void);
+TbBool check_panel_button(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

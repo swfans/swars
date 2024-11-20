@@ -244,3 +244,9 @@ ulong my_string_width(const char *text)
         : "=r" (ret) : "a" (text));
     return ret;
 }
+
+void change_brightness(short val)
+{
+    asm volatile ("call ASM_change_brightness\n"
+        : : "a" (val));
+}
