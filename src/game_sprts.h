@@ -140,9 +140,10 @@ void setup_multicolor_sprites(void);
 void reset_multicolor_sprites(void);
 void debug_multicolor_sprite(int idx);
 
-/** Loads and sets up panel sprites for currently set PanelPermutation.
+/** Loads and sets up panel sprites for given color flavour and detail level.
+ * Requires the sprite buffers to be already allocated.
  */
-TbResult load_pop_sprites(const char *dir);
+TbResult load_pop_sprites(const char *dir, ushort colorno, ushort detail);
 void setup_pop_sprites(void);
 void reset_pop_sprites(void);
 /******************************************************************************/

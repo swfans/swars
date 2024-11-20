@@ -235,6 +235,12 @@ const char *misc_text[] = {
   "REF:",
 };
 
+/** List of sprites, palettes and animations required to be loaded for the game engine.
+ *
+ * For files with several variants, it is ought to load the largest - the other
+ * files will be stored in the same buffer upon switch, so the buffer allocated
+ * here must fit all the variants.
+ */
 struct TbLoadFiles unk02_load_files[] =
 {
   { "*VESA",			(void **)&lbVesaData,		(void **)NULL,LB_VESA_DATA_SIZE, 1, 0 },
@@ -1769,21 +1775,29 @@ void init_outro(void)
     setup_heaps(2);
 }
 
+TbResult prep_pop_sprites(short detail)
+{
+    PathInfo *pinfo;
+    short colorno;
+    TbResult ret;
+
+    pinfo = &game_dirs[DirPlace_Data];
+    colorno = -ingame.PanelPermutation - 1;
+    ret = load_pop_sprites(pinfo->directory, colorno, detail);
+    setup_pop_sprites();
+    if (ret == Lb_FAIL) {
+        LOGERR("Some files were not loaded successfully");
+    }
+    return ret;
+}
+
 void load_pop_sprites_lo(void)
 {
 #if 0
     asm volatile ("call ASM_load_pop_sprites_lo\n"
         :  :  : "eax" );
 #endif
-    char locstr[52];
-    int fsize;
-
-    sprintf(locstr, "data/pop%d-0.dat", -ingame.PanelPermutation - 1);
-    LbFileLoadAt(locstr, pop1_data);
-    sprintf(locstr, "data/pop%d-0.tab", -ingame.PanelPermutation - 1);
-    fsize = LbFileLoadAt(locstr, pop1_sprites);
-    pop1_sprites_end = (struct TbSprite *)((char *)pop1_sprites + fsize);
-    LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
+    prep_pop_sprites(0);
     game_panel = game_panel_lo;
 }
 
@@ -1793,16 +1807,16 @@ void load_pop_sprites_hi(void)
     asm volatile ("call ASM_load_pop_sprites_hi\n"
         :  :  : "eax" );
 #endif
-    char locstr[52];
-    int fsize;
-
-    sprintf(locstr, "data/pop%d-1.dat", -ingame.PanelPermutation - 1);
-    LbFileLoadAt(locstr, pop1_data);
-    sprintf(locstr, "data/pop%d-1.tab", -ingame.PanelPermutation - 1);
-    fsize = LbFileLoadAt(locstr, pop1_sprites);
-    pop1_sprites_end = (struct TbSprite *)((ubyte *)pop1_sprites + fsize);
-    LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
+    prep_pop_sprites(1);
     game_panel = game_panel_hi;
+}
+
+void load_pop_sprites_for_current_mode(void)
+{
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        load_pop_sprites_lo();
+    else
+        load_pop_sprites_hi();
 }
 
 void srm_scanner_set_size_at_bottom_left(short margin, short width, short height)
@@ -1864,14 +1878,7 @@ void adjust_mission_engine_to_video_mode(void)
     game_high_resolution = (lbDisplay.ScreenMode == screen_mode_game_hi);
     // Set scale 15% over the min, to create a nice pan effect
     overall_scale = (get_overall_scale_min() * 295) >> 8;
-    if (lbDisplay.GraphicsScreenHeight >= 400)
-    {
-        load_pop_sprites_hi();
-    }
-    else
-    {
-        load_pop_sprites_lo();
-    }
+    load_pop_sprites_for_current_mode();
     render_area_a = render_area_b = \
       get_render_area_for_zoom(user_zoom_min);
     srm_scanner_size_update();
@@ -2299,20 +2306,6 @@ TbResult prep_multicolor_sprites(void)
     return ret;
 }
 
-TbResult prep_pop_sprites(void)
-{
-    PathInfo *pinfo;
-    TbResult ret;
-
-    pinfo = &game_dirs[DirPlace_Data];
-    ret = load_pop_sprites(pinfo->directory);
-    setup_pop_sprites();
-    if (ret == Lb_FAIL) {
-        LOGERR("Some files were not loaded successfully");
-    }
-    return ret;
-}
-
 void setup_host(void)
 {
     BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
@@ -2336,8 +2329,7 @@ void setup_host(void)
     ingame.TrenchcoatPreference = 0;
     setup_multicolor_sprites();
     ingame.PanelPermutation = -2;
-    prep_pop_sprites();
-    game_panel = game_panel_lo;
+    load_pop_sprites_for_current_mode();
     init_memory(mem_game);
 
     init_syndwars();
@@ -5760,10 +5752,7 @@ ubyte do_user_interface(void)
             SCANNER_set_colour(2);
             SCANNER_fill_in();
         }
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            load_pop_sprites_lo();
-        else
-            load_pop_sprites_hi();
+        load_pop_sprites_for_current_mode();
     }
 
     // change agents colours

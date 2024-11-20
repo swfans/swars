@@ -505,7 +505,7 @@ void debug_multicolor_sprite(int idx)
     LOGDBG("m_sprites: %s", strdata);
 }
 
-TbResult load_pop_sprites(const char *dir)
+TbResult load_pop_sprites(const char *dir, ushort colorno, ushort detail)
 {
     char locstr[DISKPATH_SIZE];
     long len;
@@ -513,13 +513,13 @@ TbResult load_pop_sprites(const char *dir)
 
     ret = Lb_OK;
 
-    sprintf(locstr, "%s/pop%d-0.dat", dir, -ingame.PanelPermutation - 1);
+    sprintf(locstr, "%s/pop%hu-%hu.dat", dir, colorno, detail);
     len = LbFileLoadAt(locstr, pop1_data);
     if (len == -1) {
         ret = Lb_FAIL;
         len = 0;
     }
-    sprintf(locstr, "%s/pop%d-0.tab", dir, -ingame.PanelPermutation - 1);
+    sprintf(locstr, "%s/pop%hu-%hu.tab", dir, colorno, detail);
     len = LbFileLoadAt(locstr, pop1_sprites);
     if (len == -1) {
         ret = Lb_FAIL;
