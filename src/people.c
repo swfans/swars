@@ -541,9 +541,9 @@ TbBool person_carries_any_medikit(struct Thing *p_person)
     return person_carries_weapon(p_person, WEP_MEDI2) || person_carries_weapon(p_person, WEP_MEDI1);
 }
 
-TbBool person_can_accept_control(struct Thing *p_person)
+TbBool person_can_accept_control(ThingIdx person)
 {
-    return (p_person->State != PerSt_PERSON_BURNING) && ((p_person->Flag & TngF_Destroyed) == 0);
+    return !person_is_dead_or_dying(person) && !thing_is_destroyed(person);
 }
 
 void person_give_best_mods(struct Thing *p_person)

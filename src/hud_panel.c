@@ -659,7 +659,7 @@ TbBool check_scanner_input(void)
             short dcthing;
 
             dcthing = p_locplayer->DirectControl[mouser];
-            can_control = person_can_accept_control(&things[dcthing]);
+            can_control = person_can_accept_control(dcthing);
             p_usrinp = &p_locplayer->UserInput[mouser];
             p_pckt = &packets[local_player_no];
 
@@ -698,7 +698,7 @@ TbBool check_scanner_input(void)
             short cwep;
 
             dcthing = p_locplayer->DirectControl[mouser];
-            can_control = person_can_accept_control(&things[dcthing]);
+            can_control = person_can_accept_control(dcthing);
             p_usrinp = &p_locplayer->UserInput[mouser];
 
             lbDisplay.RightButton = 0;
@@ -2106,7 +2106,7 @@ TbBool process_panel_state_all_agents_weapon(ushort pnno, ushort agent)
  * @param agent Agent index whose panel is currenly under mouse.
  * @param can_control Whether the agent currently under mouse can receive control commands.
  */
-TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel, ushort agent, TbBool can_control)
+TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel, ushort agent)
 {
     PlayerInfo *p_locplayer;
     struct Packet *p_pckt;
@@ -2118,10 +2118,14 @@ TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel, ushort
     {
         // Left button hold mood control
         struct Thing *p_agent;
+        short dcthing;
         short mood;
+        TbBool can_control;
 
         p_agent = p_locplayer->MyAgent[agent];
         mood = panel_mouse_move_mood_value(main_panel);
+        dcthing = p_locplayer->DirectControl[pnno];
+        can_control = person_can_accept_control(dcthing);
 
         if ((p_agent->Type == TT_PERSON) && (can_control))
             build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, mood, 0, 0);
@@ -2131,7 +2135,7 @@ TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel, ushort
     return false;
 }
 
-TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel, ushort agent, TbBool can_control)
+TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel, ushort agent)
 {
     PlayerInfo *p_locplayer;
     struct Packet *p_pckt;
@@ -2143,13 +2147,17 @@ TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel, ushor
     {
         // Right button hold mood control
         struct Thing *p_agent;
+        short dcthing;
         short mood;
+        TbBool can_control;
 
         p_agent = p_locplayer->MyAgent[agent];
         mood = panel_mouse_move_mood_value(main_panel);
+        dcthing = p_locplayer->DirectControl[pnno];
+        can_control = person_can_accept_control(dcthing);
 
         if ((p_agent->Type == TT_PERSON) && (can_control))
-            build_packet(p_pckt, PAct_34, p_agent->ThingOffset, mood, 0, 0);
+            build_packet(p_pckt, PAct_SET_ALL_MOOD, p_agent->ThingOffset, mood, 0, 0);
         return true;
     }
     p_locplayer->UserInput[pnno].ControlMode &= ~0xC000;
@@ -2161,13 +2169,9 @@ TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel, ushor
 TbBool process_panel_state(void)
 {
     PlayerInfo *p_locplayer;
-    TbBool can_control;
-    short dcthing;
     ubyte pnsta;
 
     p_locplayer = &players[local_player_no];
-    dcthing = p_locplayer->DirectControl[mouser];
-    can_control = person_can_accept_control(&things[dcthing]);
     pnsta = p_locplayer->PanelState[mouser];
 
     if ((ingame.Flags & GamF_Unkn00100000) != 0)
@@ -2192,12 +2196,12 @@ TbBool process_panel_state(void)
     }
     else if ((pnsta >= 9) && (pnsta < 9 + 4))
     {
-        if (process_panel_state_one_agent_mood(mouser, pnsta - 5, (pnsta - 9) % 4, can_control))
+        if (process_panel_state_one_agent_mood(mouser, pnsta - 5, (pnsta - 9) % 4))
             return 1;
     }
     else if ((pnsta >= 13) && (pnsta < 13 + 4))
     {
-        if (process_panel_state_all_agents_mood(mouser, pnsta - 9, (pnsta - 13) % 4, can_control))
+        if (process_panel_state_all_agents_mood(mouser, pnsta - 9, (pnsta - 13) % 4))
             return 1;
     }
     else if (pnsta == 17)
@@ -2270,7 +2274,7 @@ TbBool check_panel_input(short panel)
         case 5:
             // Weapon selection for single agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD) && person_can_accept_control(p_agent))
+            if ((p_agent->Type == TT_PERSON) && person_can_accept_control(p_agent->ThingOffset))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
                 p_locplayer->PanelState[mouser] = p_panel->ID + 1;
@@ -2355,7 +2359,7 @@ TbBool check_panel_input(short panel)
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
                 i = 2 * (mouse_down_position_horizonal_over_bar_coords(p_panel->X, p_panel->Width)) - 88;
                 if (panel_active_based_on_target(panel))
-                    my_build_packet(p_pckt, PAct_34, p_agent->ThingOffset, i, 0, 0);
+                    my_build_packet(p_pckt, PAct_SET_ALL_MOOD, p_agent->ThingOffset, i, 0, 0);
                 p_locplayer->PanelState[mouser] = p_panel->ID + 13;
                 if (!IsSamplePlaying(0, 21, 0))
                     play_sample_using_heap(0, 21, 127, 64, 100, -1, 1u);
@@ -2366,7 +2370,7 @@ TbBool check_panel_input(short panel)
         case 5:
             // Weapon selection for all grouped agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent->Type == TT_PERSON) && person_can_accept_control(p_agent))
+            if ((p_agent->Type == TT_PERSON) && person_can_accept_control(p_agent->ThingOffset))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
                 p_locplayer->PanelState[mouser] = p_panel->ID + 5;

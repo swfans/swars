@@ -69,13 +69,6 @@ TbBool mouse_move_over_panel(short panel);
 
 TbBool mouse_over_infrared_slant_box(short panel);
 
-TbBool process_panel_state_one_agent_weapon(ushort pnno, ushort agent);
-TbBool process_panel_state_all_agents_weapon(ushort pnno, ushort agent);
-TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel,
-  ushort agent, TbBool can_control);
-TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel,
-  ushort agent, TbBool can_control);
-
 TbBool process_panel_state(void);
 TbBool check_panel_button(void);
 

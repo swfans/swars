@@ -5866,7 +5866,7 @@ ubyte do_user_interface(void)
             p_agent = p_locplayer->MyAgent[n];
             if (p_agent->Type != TT_PERSON) continue;
 
-            if (person_can_accept_control(p_agent) && ((p_agent->Flag2 & TgF2_KnockedOut) == 0))
+            if (person_can_accept_control(p_agent->ThingOffset) && ((p_agent->Flag2 & TgF2_KnockedOut) == 0))
             {
                 lbKeyOn[kbkeys[gkey]] = 0;
                 if (p_locplayer->DoubleMode)
@@ -5930,7 +5930,6 @@ ubyte do_user_interface(void)
     }
 
     struct SpecialUserInput *p_usrinp;
-    struct Thing *p_agent;
     short ctlmode;
 
     if (p_locplayer->DoubleMode)
@@ -5950,7 +5949,7 @@ ubyte do_user_interface(void)
             else if (ctlmode < 1)
             {
                 dcthing = p_locplayer->DirectControl[n];
-                if (person_can_accept_control(&things[dcthing])  && !weapon_select_input())
+                if (person_can_accept_control(dcthing) && !weapon_select_input())
                 {
                     do_user_input_bits_direction_clear(p_usrinp);
                     do_user_input_bits_direction_from_kbd(p_usrinp);
@@ -5960,7 +5959,7 @@ ubyte do_user_interface(void)
             else
             {
                 dcthing = p_locplayer->DirectControl[n];
-                if (!person_can_accept_control(&things[dcthing]))
+                if (!person_can_accept_control(dcthing))
                     return 0;
 
                 do_user_input_bits_direction_clear(p_usrinp);
@@ -5996,8 +5995,7 @@ ubyte do_user_interface(void)
             return 1;
 
         dcthing = p_locplayer->DirectControl[0];
-        p_agent = &things[dcthing];
-        if (person_can_accept_control(p_agent))
+        if (person_can_accept_control(dcthing))
         {
             do_user_input_bits_actions_from_joy_and_kbd(p_usrinp);
 

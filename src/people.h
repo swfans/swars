@@ -186,7 +186,7 @@ TbBool person_is_dead_or_dying(ThingIdx thing);
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 TbBool person_carries_any_medikit(struct Thing *p_person);
 
-TbBool person_can_accept_control(struct Thing *p_person);
+TbBool person_can_accept_control(ThingIdx person);
 
 void set_person_stats_type(struct Thing *p_person, ushort type);
 void init_person_thing(struct Thing *p_person);
