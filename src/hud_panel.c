@@ -24,6 +24,7 @@
 #include "bfscreen.h"
 #include "bfsprite.h"
 #include "bfutility.h"
+#include "ssampply.h"
 
 #include "bflib_render_drspr.h"
 #include "bigmap.h"
@@ -34,11 +35,13 @@
 #include "game_sprts.h"
 #include "game.h"
 #include "guiboxes.h"
+#include "keyboard.h"
 #include "lvobjctv.h"
 #include "mydraw.h"
 #include "packet.h"
 #include "player.h"
 #include "scandraw.h"
+#include "sound.h"
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -1957,6 +1960,13 @@ TbBool process_panel_state_all_agents_weapon(ushort pnno, ushort agent)
     return false;
 }
 
+/** Process panel in regard to a previously enter mood alteration state.
+ *
+ * @param pnno Per-agent panel slot index which started the state.
+ * @param main_panel Index of the main panel linked to the current state.
+ * @param agent Agent index whose panel is currenly under mouse.
+ * @param can_control Whether the agent currently under mouse can receive control commands.
+ */
 TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel, ushort agent, TbBool can_control)
 {
     PlayerInfo *p_locplayer;
@@ -2009,4 +2019,63 @@ TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel, ushor
     return false;
 }
 
+TbBool process_panel_state(void)
+{
+    PlayerInfo *p_locplayer;
+    TbBool can_control;
+    short dcthing;
+    ubyte pnsta;
+
+    p_locplayer = &players[local_player_no];
+    dcthing = p_locplayer->DirectControl[mouser];
+    can_control = person_can_accept_control(&things[dcthing]);
+    pnsta = p_locplayer->PanelState[mouser];
+
+    if ((ingame.Flags & GamF_Unkn00100000) != 0)
+    {
+        if ((pnsta < 9) || (pnsta > 16))
+        {
+            while (IsSamplePlaying(0, 21, 0))
+                stop_sample_using_heap(0, 21);
+            ingame.Flags &= ~GamF_Unkn00100000;
+        }
+    }
+
+    if ((pnsta >= 1) && (pnsta < 1 + 4))
+    {
+        if (process_panel_state_one_agent_weapon(mouser, (pnsta - 1) % 4))
+            return 1;
+    }
+    else if ((pnsta >= 5) && (pnsta < 5 + 4))
+    {
+        if (process_panel_state_all_agents_weapon(mouser, (pnsta - 5) % 4))
+            return 1;
+    }
+    else if ((pnsta >= 9) && (pnsta < 9 + 4))
+    {
+        if (process_panel_state_one_agent_mood(mouser, pnsta - 5, (pnsta - 9) % 4, can_control))
+            return 1;
+    }
+    else if ((pnsta >= 13) && (pnsta < 13 + 4))
+    {
+        if (process_panel_state_all_agents_mood(mouser, pnsta - 9, (pnsta - 13) % 4, can_control))
+            return 1;
+    }
+    else if (pnsta == 17)
+    {
+        struct Packet *p_pckt;
+        ushort i;
+
+        p_pckt = &packets[local_player_no];
+        i = next_buffered_key();
+        if (i != 0)
+        {
+            if (lbShift & 1)
+                i |= 0x0100;
+            my_build_packet(p_pckt, PAct_37, i, 0, 0, 0);
+            return 1;
+        }
+    }
+    return 0;
+}
 /******************************************************************************/

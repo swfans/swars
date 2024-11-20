@@ -76,6 +76,8 @@ TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel,
 TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel,
   ushort agent, TbBool can_control);
 
+TbBool process_panel_state(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
