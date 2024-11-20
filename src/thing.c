@@ -267,9 +267,9 @@ void process_laser_elec(struct Thing *p_elec)
         : : "a" (p_elec));
 }
 
-void process_laser_unkn28(struct Thing *p_thing)
+void process_razor_wire(struct Thing *p_thing)
 {
-  ;
+    ;
 }
 
 void process_air_strike(struct Thing *p_thing)
@@ -335,6 +335,12 @@ void process_bang(struct SimpleThing *p_sthing)
         : : "a" (p_sthing));
 }
 
+void finish_bang(struct SimpleThing *p_sthing, ThingIdx thing)
+{
+    remove_sthing(thing);
+    delete_snode(p_sthing);
+}
+
 void FIRE_process_flame(struct SimpleThing *p_sthing)
 {
     asm volatile (
@@ -342,7 +348,7 @@ void FIRE_process_flame(struct SimpleThing *p_sthing)
         : : "a" (p_sthing));
 }
 
-void FIRE_end_flame(struct SimpleThing *p_sthing, ThingIdx thing)
+void FIRE_finish_flame(struct SimpleThing *p_sthing, ThingIdx thing)
 {
     ReleaseLoopedSample(thing, 16);
     play_dist_ssample(p_sthing, 0x17, 0x7F, 0x40, 100, 0, 3);
@@ -451,8 +457,8 @@ void process_thing(struct Thing *p_thing, ThingIdx thing)
     case TT_LASER_ELEC:
         process_laser_elec(p_thing);
         break;
-    case TT_RAZOR_WIRE:
-        process_laser_unkn28(p_thing);
+    case TT_RAZOR_WIRE: // exploding wire it a subtype of razor wire
+        process_razor_wire(p_thing);
         break;
     case TT_AIR_STRIKE:
         process_air_strike(p_thing);
@@ -585,15 +591,14 @@ void process_sthing(struct SimpleThing *p_sthing, ThingIdx thing)
         if ((p_sthing->U.UEffect.VY != 0) || (p_sthing->U.UEffect.VX != 0)) {
             process_bang(p_sthing);
         } else {
-            remove_sthing(thing);
-            delete_snode(p_sthing);
+            finish_bang(p_sthing, thing);
         }
         break;
     case SmTT_FIRE:
         if (p_sthing->U.UFire.flame != 0) {
             FIRE_process_flame(p_sthing);
         } else {
-            FIRE_end_flame(p_sthing, thing);
+            FIRE_finish_flame(p_sthing, thing);
         }
         break;
     case SmTT_SFX:

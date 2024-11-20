@@ -160,6 +160,7 @@ extern short word_1C6E0A;
 
 extern long dword_1DDECC;
 
+extern struct GamePanel game_panel_hi[];
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
@@ -1770,14 +1771,38 @@ void init_outro(void)
 
 void load_pop_sprites_lo(void)
 {
+#if 0
     asm volatile ("call ASM_load_pop_sprites_lo\n"
         :  :  : "eax" );
+#endif
+    char locstr[52];
+    int fsize;
+
+    sprintf(locstr, "data/pop%d-0.dat", -ingame.PanelPermutation - 1);
+    LbFileLoadAt(locstr, pop1_data);
+    sprintf(locstr, "data/pop%d-0.tab", -ingame.PanelPermutation - 1);
+    fsize = LbFileLoadAt(locstr, pop1_sprites);
+    pop1_sprites_end = (struct TbSprite *)((char *)pop1_sprites + fsize);
+    LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
+    game_panel = game_panel_lo;
 }
 
 void load_pop_sprites_hi(void)
 {
+#if 0
     asm volatile ("call ASM_load_pop_sprites_hi\n"
         :  :  : "eax" );
+#endif
+    char locstr[52];
+    int fsize;
+
+    sprintf(locstr, "data/pop%d-1.dat", -ingame.PanelPermutation - 1);
+    LbFileLoadAt(locstr, pop1_data);
+    sprintf(locstr, "data/pop%d-1.tab", -ingame.PanelPermutation - 1);
+    fsize = LbFileLoadAt(locstr, pop1_sprites);
+    pop1_sprites_end = (struct TbSprite *)((ubyte *)pop1_sprites + fsize);
+    LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
+    game_panel = game_panel_hi;
 }
 
 void srm_scanner_set_size_at_bottom_left(short margin, short width, short height)
