@@ -531,6 +531,32 @@ TbResult load_pop_sprites(const char *dir, ushort colorno, ushort detail)
     return ret;
 }
 
+TbResult load_prealp_pop_sprites(const char *dir, ushort colorno, ushort detail)
+{
+    char locstr[DISKPATH_SIZE];
+    long len;
+    TbResult ret;
+
+    ret = Lb_OK;
+
+    sprintf(locstr, "%s/panel%hu-%hu.dat", dir, colorno, detail);
+    len = LbFileLoadAt(locstr, pop1_data);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    sprintf(locstr, "%s/panel%hu-%hu.tab", dir, colorno, detail);
+    len = LbFileLoadAt(locstr, pop1_sprites);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 128 * sizeof(struct TbSprite);
+        LbMemorySet(pop1_sprites, '\0', len);
+    }
+    pop1_sprites_end = &pop1_sprites[len/sizeof(struct TbSprite)];
+
+    return ret;
+}
+
 void setup_pop_sprites(void)
 {
     LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);

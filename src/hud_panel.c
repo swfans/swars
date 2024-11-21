@@ -147,10 +147,15 @@ TbResult prep_pop_sprites(short detail)
 
     pinfo = &game_dirs[DirPlace_Data];
     if (ingame.PanelPermutation >= 0)
+    {
         colorno = ingame.PanelPermutation;
+        ret = load_prealp_pop_sprites(pinfo->directory, colorno, detail);
+    }
     else
+    {
         colorno = -ingame.PanelPermutation - 1;
-    ret = load_pop_sprites(pinfo->directory, colorno, detail);
+        ret = load_pop_sprites(pinfo->directory, colorno, detail);
+    }
     setup_pop_sprites();
     if (ret == Lb_FAIL) {
         LOGERR("Some files were not loaded successfully");

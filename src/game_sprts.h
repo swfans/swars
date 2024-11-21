@@ -144,6 +144,7 @@ void debug_multicolor_sprite(int idx);
  * Requires the sprite buffers to be already allocated.
  */
 TbResult load_pop_sprites(const char *dir, ushort colorno, ushort detail);
+TbResult load_prealp_pop_sprites(const char *dir, ushort colorno, ushort detail);
 void setup_pop_sprites(void);
 void reset_pop_sprites(void);
 /******************************************************************************/
