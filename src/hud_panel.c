@@ -139,6 +139,13 @@ struct GamePanel game_panel_prealp_hi[] = {
     { -1, -1, -1,  0,  0, 4, 1, 0, 0},
 };
 
+short panel_agent_number_sprite_shift[] =
+  { 4,  8,  4, 10};
+short panel_prealp_agent_number_sprite_shift_hi[] =
+  {14,  9, 10, 16};
+short panel_prealp_agent_number_sprite_shift_lo[] =
+  {13,  9,  7, 12};
+
 TbResult prep_pop_sprites(short detail)
 {
     PathInfo *pinfo;
@@ -2018,42 +2025,16 @@ void draw_new_panel(void)
             ushort plagent;
 
             plagent = p_agent->U.UPerson.ComCur & 3;
-            if (ingame.PanelPermutation >= 0)
-            {
-                switch (plagent)
-                {
-                case 0:
-                  x = game_panel[0].X + 14;
-                  break;
-                case 1:
-                  x = game_panel[1].X + 9;
-                  break;
-                case 2:
-                  x = game_panel[2].X + 10;
-                  break;
-                case 3:
-                  x = game_panel[3].X + 16;
-                  break;
+            if (ingame.PanelPermutation >= 0) {
+                if (lbDisplay.GraphicsScreenHeight < 400) {
+                    x = game_panel[0 + plagent].X + panel_prealp_agent_number_sprite_shift_lo[plagent];
+                    y = 3;
+                } else {
+                    x = game_panel[0 + plagent].X + panel_prealp_agent_number_sprite_shift_hi[plagent];
+                    y = 4;
                 }
-                y = 4;
-            }
-            else
-            {
-                switch (plagent)
-                {
-                case 0:
-                  x = game_panel[0].X + 4;
-                  break;
-                case 1:
-                  x = game_panel[1].X + 8;
-                  break;
-                case 2:
-                  x = game_panel[2].X + 4;
-                  break;
-                case 3:
-                  x = game_panel[3].X + 10;
-                  break;
-                }
+            } else {
+                x = game_panel[0 + plagent].X + panel_agent_number_sprite_shift[plagent];
             }
             draw_new_panel_sprite_std(x, y, 6 + plagent);
         }
@@ -2162,11 +2143,15 @@ void draw_new_panel(void)
 
     // Thermal vision button light
     if ((ingame.Flags & GamF_Unkn8000) != 0) {
-        int x;
-        x = 238;
-        if (lbDisplay.GraphicsScreenHeight >= 400)
-            x += 89;
-        draw_new_panel_sprite_std(4, x, 91);
+        short x, y;
+        if (lbDisplay.GraphicsScreenHeight < 400) {
+            x = game_panel[17].X + 4;
+            y = game_panel[17].Y + 60;
+        } else {
+            x = game_panel[18].X + 4;
+            y = game_panel[18].Y + 60;
+        }
+        draw_new_panel_sprite_std(x, y, 91);
     }
 }
 
