@@ -2005,11 +2005,12 @@ void draw_new_panel(void)
 
     if (gameturn & 4)
     {
-        int x;
+        short x, y;
         short dcthing;
         struct Thing *p_agent;
 
         x = 0;
+        y = 2;
         dcthing = direct_control_thing_for_player(local_player_no);
         p_agent = &things[dcthing];
         if ((p_agent->Flag & TngF_Destroyed) == 0 && (p_agent->Flag2 & TgF2_Unkn0800) == 0)
@@ -2017,43 +2018,44 @@ void draw_new_panel(void)
             ushort plagent;
 
             plagent = p_agent->U.UPerson.ComCur & 3;
-            if (lbDisplay.GraphicsScreenHeight < 400)
+            if (ingame.PanelPermutation >= 0)
             {
                 switch (plagent)
                 {
                 case 0:
-                  x = 4;
+                  x = game_panel[0].X + 14;
                   break;
                 case 1:
-                  x = 154;
+                  x = game_panel[1].X + 9;
                   break;
                 case 2:
-                  x = 308;
+                  x = game_panel[2].X + 10;
                   break;
                 case 3:
-                  x = 472;
+                  x = game_panel[3].X + 16;
                   break;
                 }
+                y = 4;
             }
             else
             {
                 switch (plagent)
                 {
                 case 0:
-                  x = 4;
+                  x = game_panel[0].X + 4;
                   break;
                 case 1:
-                  x = 153;
+                  x = game_panel[1].X + 8;
                   break;
                 case 2:
-                  x = 306;
+                  x = game_panel[2].X + 4;
                   break;
                 case 3:
-                  x = 469;
+                  x = game_panel[3].X + 10;
                   break;
                 }
             }
-            draw_new_panel_sprite_std(x, 2, 6 + plagent);
+            draw_new_panel_sprite_std(x, y, 6 + plagent);
         }
     }
     lbDisplay.DrawFlags = 0;
