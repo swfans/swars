@@ -111,6 +111,34 @@ struct GamePanel game_panel_hi[] = {
     { -1, -1, -1,  0,  0, 4, 1, 0, 0},
 };
 
+struct GamePanel game_panel_prealp_hi[] = {
+    // Per-agent main panel frame
+    {  0,  0,  1, 75, 16, 1, 1, 0, 1},
+    {145,  0,  3, 81, 14, 2, 1, 1, 1},
+    {302,  0,  4, 81, 14, 3, 1, 2, 1},
+    {459,  0,  5, 81, 14, 4, 1, 3, 1},
+    // Per-agent mood bar
+    { 44, 10,  0, 44,  5, 1, 1, 0, 2},
+    {202, 10,  0, 44,  5, 2, 1, 1, 2},
+    {360, 10,  0, 44,  5, 3, 1, 2, 2},
+    {518, 10,  0, 44,  5, 4, 1, 3, 2},
+    // Per-agent medikit button
+    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    // Per-agent current weapon frame
+    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    // Left-side indicators
+    {  0, 37, 10,  0,  0, 4, 1, 0, 8},
+    {  0,191,105,  0,  0, 4, 1, 0, 8},
+    {  0,267, 11,  0,  0, 4, 1, 0, 10},
+    { -1, -1, -1,  0,  0, 4, 1, 0, 0},
+};
+
 TbResult prep_pop_sprites(short detail)
 {
     PathInfo *pinfo;
@@ -137,7 +165,10 @@ void load_pop_sprites_lo(void)
         :  :  : "eax" );
 #endif
     prep_pop_sprites(0);
-    game_panel = game_panel_lo;
+    if (ingame.PanelPermutation >= 0)
+        game_panel = game_panel_prealp_hi;
+    else
+        game_panel = game_panel_lo;
 }
 
 void load_pop_sprites_hi(void)
@@ -147,7 +178,10 @@ void load_pop_sprites_hi(void)
         :  :  : "eax" );
 #endif
     prep_pop_sprites(1);
-    game_panel = game_panel_hi;
+    if (ingame.PanelPermutation >= 0)
+        game_panel = game_panel_prealp_hi;
+    else
+        game_panel = game_panel_hi;
 }
 
 void load_pop_sprites_for_current_mode(void)
@@ -852,7 +886,7 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
  * @param py
  * @param spr_id
  */
-void draw_new_panel_sprite_old(int px, int py, ulong spr_id)
+void draw_new_panel_sprite_prealp(int px, int py, ulong spr_id)
 {
     struct TbSprite *spr;
     int x, y;
@@ -1064,7 +1098,7 @@ void draw_agent_current_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
     if (!recharging || (gameturn & 1))
     {
         if (ready)
-            draw_new_panel_sprite_old(cx + 8, cy + 8, 14);
+            draw_new_panel_sprite_prealp(cx + 8, cy + 8, 14);
 
         if (!suborinate) {
             draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype, ready));
@@ -1082,7 +1116,7 @@ void draw_agent_current_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
     draw_fourpack_items(cx, cy + 4, plagent, weptype);
 }
 
-void draw_agent_carried_weapon_single_list(PlayerInfo *p_locplayer, ushort plagent, short slot, TbBool ready, short weptype, short cx, short cy)
+void draw_agent_carried_weapon_prealp_list(PlayerInfo *p_locplayer, ushort plagent, short slot, TbBool ready, short weptype, short cx, short cy)
 {
     TbBool wep_highlight;
     TbBool recharging;
@@ -1137,7 +1171,7 @@ TbBool panel_mouse_over_weapon(short box_x, short box_y, short box_w, short box_
     return false;
 }
 
-TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong weapons_carried, short current_weapon)
+TbBool draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong weapons_carried, short current_weapon)
 {
     ushort nshown;
     int weptype;
@@ -1180,7 +1214,7 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
                 ret = true;
             }
 
-            draw_agent_carried_weapon_single_list(p_locplayer, plagent, nshown, (weptype == current_weapon), weptype, 30 - 8, cy - 4);
+            draw_agent_carried_weapon_prealp_list(p_locplayer, plagent, nshown, (weptype == current_weapon), weptype, 30 - 8, cy - 4);
 
             cy += 28;
             ++nchecked;
@@ -1411,7 +1445,7 @@ TbBool func_1caf8(void)
     {
         ushort plagent;
         plagent = p_agent->U.UPerson.ComCur & 3;
-        ret = draw_weapons_list_single(p_locplayer, plagent,
+        ret = draw_weapons_list_prealp(p_locplayer, plagent,
             p_agent->U.UPerson.WeaponsCarried, p_agent->U.UPerson.CurrentWeapon);
     }
     else
