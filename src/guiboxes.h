@@ -206,6 +206,11 @@ TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box
  */
 TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
 
+
+/** Returns if given position is over given box with size (incl. borders).
+ */
+TbBool over_box(short x, short y, short box_x, short box_y, short box_w, short box_h);
+
 /** Returns if given position is over given box with coords (incl. borders).
  */
 TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
