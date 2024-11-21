@@ -548,7 +548,7 @@ void ingame_palette_load(int pal_id)
 
 void ingame_palette_reload(void)
 {
-    if ((ingame.Flags & GamF_Unkn8000) != 0) {
+    if ((ingame.Flags & GamF_ThermalView) != 0) {
         ingame_palette_load(3);
     } else {
         ingame_palette_load(ingame.PalType);
@@ -7243,7 +7243,7 @@ void game_process(void)
         debug_trace_turn_bound(gameturn + 100);
         load_packet();
         if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
-          ((ingame.Flags & GamF_Unkn8000) != 0) )
+          ((ingame.Flags & GamF_ThermalView) != 0) )
             LbPaletteSet(display_palette);
         active_flags_general_unkn01 = ingame.Flags;
         if ((ingame.DisplayMode == DpM_UNKN_32)

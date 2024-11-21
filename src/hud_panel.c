@@ -90,10 +90,10 @@ struct GamePanel game_panel_hi[] = {
     {302,  0,  4, 81, 14, 3, 1, 2, 1},
     {459,  0,  5, 81, 14, 4, 1, 3, 1},
     // Per-agent mood bar
-    { 44, 10,  0, 44,  5, 1, 1, 0, 2},
+    { 45, 10,  0, 44,  5, 1, 1, 0, 2},
     {202, 10,  0, 44,  5, 2, 1, 1, 2},
-    {360, 10,  0, 44,  5, 3, 1, 2, 2},
-    {518, 10,  0, 44,  5, 4, 1, 3, 2},
+    {359, 10,  0, 44,  5, 3, 1, 2, 2},
+    {516, 10,  0, 44,  5, 4, 1, 3, 2},
     // Per-agent medikit button
     { 30, 25, 95,  0,  0, 1, 1, 0, 6},
     {187, 25, 95,  0,  0, 2, 1, 1, 6},
@@ -1555,7 +1555,7 @@ void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
 }
 
-void draw_shield_level(short x, short y, ushort w, ushort h)
+void draw_transparent_skewed_bar(short x, short y, ushort w, ushort h)
 {
     ubyte m;
     long waftx, wafty;
@@ -1565,17 +1565,17 @@ void draw_shield_level(short x, short y, ushort w, ushort h)
     struct EnginePoint point1;
     struct EnginePoint point3;
 
-    m = 1;
+    m = 0;
     if (lbDisplay.GraphicsScreenHeight < 400)
-        m = 0;
-    point1.pp.X = x << m;
-    point1.pp.Y = y << m;
-    point4.pp.X = (x + w) << m;
-    point4.pp.Y = y << m;
-    point2.pp.Y = (y + h) << m;
-    point2.pp.X = (x + w - 3) << m;
-    point3.pp.Y = (y + h) << m;
-    point3.pp.X = (x - 3) << m;
+        m = 1;
+    point1.pp.X = x >> m;
+    point1.pp.Y = y >> m;
+    point4.pp.X = (x + w) >> m;
+    point4.pp.Y = y >> m;
+    point2.pp.Y = (y + h) >> m;
+    point2.pp.X = (x + w - 3) >> m;
+    point3.pp.Y = (y + h) >> m;
+    point3.pp.X = (x - 3) >> m;
 
     // The shield bar is animated, even if it's not possible to see
     waftx = waft_table[(gameturn >> 3) & 31];
@@ -1604,48 +1604,57 @@ void draw_shield_level(short x, short y, ushort w, ushort h)
     draw_trigpoly(&point4.pp, &point2.pp, &point3.pp);
 }
 
-void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte a8)
+void draw_solid_skewed_bar(short x, short y, ushort w, ushort h, ubyte col)
 {
-    short cw, ch;
-
-    if ((lv <= 0) || (lvmax == 0))
-        return;
-
-    cw = w * lv / lvmax;
-    if (a8)
-    {
-        draw_shield_level(x, y, cw, h);
-    }
-    else if (lbDisplay.GraphicsScreenHeight < 400)
+    if (lbDisplay.GraphicsScreenHeight < 400)
     {
         short cx, cy;
+        short ch;
         cx = x;
         cy = y;
-        for (ch = h; ch > 0; ch--)
+        for (ch = h; ch > 0; ch-=2)
         {
             if (lbDisplay.GraphicsScreenHeight < 400)
-                LbDrawLine(2 * cx >> 1, 2 * cy >> 1, 2 * (cx + cw) >> 1, 2 * cy >> 1, col);
+                LbDrawLine(cx >> 1, cy >> 1, (cx + w) >> 1, cy >> 1, col);
             else
-                LbDrawLine(2 * cx, 2 * cy, 2 * (cx + cw), 2 * cy, col);
-            --cx;
-            ++cy;
+                LbDrawLine(cx, cy, (cx + w), cy, col);
+            cx -= 2;
+            cy += 2;
         }
     }
     else
     {
         short cx, cy;
-        cx = 2 * x;
-        cy = 2 * y;
-        cw *= 2;
-        for (ch = 2 * h; ch > 0; ch--)
+        short ch;
+        cx = x;
+        cy = y;
+        for (ch = h; ch > 0; ch--)
         {
             if (lbDisplay.GraphicsScreenHeight < 400)
-                LbDrawLine(cx >> 1, cy >> 1, (cx + cw) >> 1, cy >> 1, col);
+                LbDrawLine(cx >> 1, cy >> 1, (cx + w) >> 1, cy >> 1, col);
             else
-                LbDrawLine(cx, cy, cx + cw, cy, col);
+                LbDrawLine(cx, cy, cx + w, cy, col);
             --cx;
             ++cy;
         }
+    }
+}
+
+void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte transp)
+{
+    short cw;
+
+    if ((lv <= 0) || (lvmax == 0))
+        return;
+
+    cw = w * lv / lvmax;
+    if (transp)
+    {
+        draw_transparent_skewed_bar(x, y, cw, h);
+    }
+    else
+    {
+        draw_solid_skewed_bar(x, y, cw, h, col);
     }
 }
 
@@ -1717,21 +1726,21 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
         cur_x = cent_x;
         cur_y = y;
 
-        for (i = h; i > 0; i--)
+        for (i = h; i > 0; i -= 2)
         {
-            SCANNER_unkn_func_203(2 * cur_x >> 1, 2 * cur_y >> 1,
-                2 * (cur_x + (value >> 2)) >> 1, 2 * cur_y >> 1,
+            SCANNER_unkn_func_203(cur_x >> 1, cur_y >> 1,
+                (cur_x + (value >> 2)) >> 1, cur_y >> 1,
                 col, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-            cur_x--;
-            cur_y++;
+            cur_x -= 2;
+            cur_y += 2;
         }
     }
     else
     {
-        cur_x = 2 * cent_x;
-        cur_y = 2 * y;
+        cur_x = cent_x;
+        cur_y = y;
 
-        for (i = 2 * h; i > 0; i--)
+        for (i = h; i > 0; i--)
         {
             SCANNER_unkn_func_203(cur_x, cur_y, cur_x + (value >> 1), cur_y,
                 col, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
@@ -1753,17 +1762,17 @@ void draw_mood_limits(short x, short y, short w, short h, short value, short max
     col = colour_lookup[1];
     scaled_val = (w * value / maxval) >> 1;
 
-    curr_x = 2 * (x + (w >> 1) - scaled_val);
+    curr_x = x + (w >> 1) - scaled_val;
     if (lbDisplay.GraphicsScreenHeight < 400)
-        LbDrawLine(curr_x >> 1, 2 * y >> 1, (curr_x - 4) >> 1, 2 * (y + h) >> 1, col);
+        LbDrawLine(curr_x >> 1, y >> 1, (curr_x - 4) >> 1, (y + h) >> 1, col);
     else
-        LbDrawLine(curr_x, 2 * y, curr_x - 4, 2 * (y + h), col);
+        LbDrawLine(curr_x, y, curr_x - 4, (y + h), col);
 
-    curr_x = 2 * (x + (w >> 1) + scaled_val);
+    curr_x = x + (w >> 1) + scaled_val;
     if (lbDisplay.GraphicsScreenHeight < 400)
-        LbDrawLine(curr_x >> 1, 2 * y >> 1, (curr_x - 4) >> 1, 2 * (y + h) >> 1, col);
+        LbDrawLine(curr_x >> 1, y >> 1, (curr_x - 4) >> 1, (y + h) >> 1, col);
     else
-        LbDrawLine(curr_x, 2 * y, curr_x - 4, 2 * (y + h), col);
+        LbDrawLine(curr_x, y, curr_x - 4, (y + h), col);
 }
 
 void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
@@ -1926,6 +1935,43 @@ short panel_mouse_move_mood_value(short panel)
     return i;
 }
 
+/** Thermal vision button light.
+ */
+void draw_panel_thermal_button(void)
+{
+    if ((ingame.Flags & GamF_ThermalView) != 0)
+    {
+        short x, y;
+        if (lbDisplay.GraphicsScreenHeight < 400) {
+            x = game_panel[17].X + 4;
+            y = game_panel[17].Y + 60;
+        } else {
+            x = game_panel[18].X + 4;
+            y = game_panel[18].Y + 60;
+        }
+        draw_new_panel_sprite_std(x, y, 91);
+    }
+}
+
+/** Objective text, or net players list.
+ */
+void draw_panel_objective_info(void)
+{
+    int x, y, w;
+    x = ingame.Scanner.X1 - 1;
+    if (x < 0)
+        x = 0;
+    y = lbDisplay.GraphicsScreenHeight - SCANNER_objective_info_height();
+    if (in_network_game) {
+        SCANNER_unkn_func_205();
+        w = lbDisplay.PhysicalScreenWidth;
+    } else {
+        // original width 67 low res, 132 high res
+        w = ingame.Scanner.X2 - ingame.Scanner.X1 + 3;
+    }
+    SCANNER_draw_objective_info(x, y, w);
+}
+
 void draw_new_panel(void)
 {
     int i;
@@ -2079,7 +2125,7 @@ void draw_new_panel(void)
     for (i = 0; i < playable_agents; i++)
     {
         struct Thing *p_agent;
-        int lv, lvmax, x, w;
+        int lv, lvmax;
 
         p_agent = p_locplayer->MyAgent[i];
         if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_PlayerAgent) == 0) {
@@ -2088,34 +2134,48 @@ void draw_new_panel(void)
         }
         if ((p_agent->Flag & TngF_Destroyed) == 0)
         {
-            x = 79 * i + 27;
+            ushort plagent;
+            short x, y, w, h;
+
+            plagent = p_agent->U.UPerson.ComCur & 3;
+            // The X of health bar in anchored to mood panel
+            x = game_panel[4 + plagent].X + 8;
+            y = game_panel[0 + plagent].Y + 4;
+            w = 2 * game_panel[4 + plagent].Width;
+            h = 4;
             // Draw health level
             lv = p_agent->Health;
             lvmax = p_agent->U.UPerson.MaxHealth;
             if (lv <= lvmax) { // Normal health amount
-                draw_health_level(x, 2, 44, 2, lv, lvmax, colour_lookup[1], 0);
+                draw_health_level(x, y, w, h, lv, lvmax, colour_lookup[1], 0);
             } else { // Health reinforced beyond max is drawn in red
-                draw_health_level(x, 2, 44, 2, lvmax, lvmax, colour_lookup[1], 0);
-                draw_health_level(x, 2, 44, 2, lv - lvmax, lvmax, colour_lookup[2], 0);
+                draw_health_level(x, y, w, h, lvmax, lvmax, colour_lookup[1], 0);
+                draw_health_level(x, y, w, h, lv - lvmax, lvmax, colour_lookup[2], 0);
             }
             // Draw shield level over health
             lv = p_agent->U.UPerson.ShieldEnergy;
-            draw_health_level(x, 2, 44, 2, lv, 0x400, colour_lookup[1], 1);
+            draw_health_level(x, y, w, h, lv, 0x400, colour_lookup[1], 1);
+
             // Draw drug level aka mood (or just a red line if no drugs)
-            w = game_panel[4+i].Width;
-            x = game_panel[4+i].X >> 1;
-            draw_mood_level(x, 6, w, 3, p_agent->U.UPerson.Mood);
+            x = game_panel[4 + plagent].X;
+            y = game_panel[4 + plagent].Y + 2;
+            w = 2 * game_panel[4 + plagent].Width;
+            h = 6;
+            draw_mood_level(x, y, w, h, p_agent->U.UPerson.Mood);
             // Draw stamina level which caps the mood level
+            h = 4;
             lv = p_agent->U.UPerson.Stamina;
             lvmax = p_agent->U.UPerson.MaxStamina;
-            draw_mood_limits(x, 6, w, 2, lv, lvmax);
+            draw_mood_limits(x, y, w, h, lv, lvmax);
+
             if (lbDisplay.GraphicsScreenHeight < 400)
-                x = 158 * i + 54;
+                x = game_panel[0 + plagent].X + 2 * game_panel[0 + plagent].Width - 16;
             else
-                x = 157 * i + 54;
+                x = game_panel[0 + plagent].X + 2 * game_panel[0 + plagent].Width - 17;
+            y = game_panel[0 + plagent].Y + 18;
             lv = p_agent->U.UPerson.Energy;
             lvmax = p_agent->U.UPerson.MaxEnergy;
-            draw_energy_bar(x + 80, 18, lv, lvmax);
+            draw_energy_bar(x, y, lv, lvmax);
         }
     }
 
@@ -2124,35 +2184,9 @@ void draw_new_panel(void)
     ingame.Scanner.Angle = 2047 - ((engn_anglexz >> 5) & 0x7FF);
     SCANNER_draw_new_transparent();
 
-    // Objective text, or net players list
-    {
-        int x, y, w;
-        x = ingame.Scanner.X1 - 1;
-        if (x < 0)
-            x = 0;
-        y = lbDisplay.GraphicsScreenHeight - SCANNER_objective_info_height();
-        if (in_network_game) {
-            SCANNER_unkn_func_205();
-            w = lbDisplay.PhysicalScreenWidth;
-        } else {
-            // original width 67 low res, 132 high res
-            w = ingame.Scanner.X2 - ingame.Scanner.X1 + 3;
-        }
-        SCANNER_draw_objective_info(x, y, w);
-    }
+    draw_panel_objective_info();
 
-    // Thermal vision button light
-    if ((ingame.Flags & GamF_Unkn8000) != 0) {
-        short x, y;
-        if (lbDisplay.GraphicsScreenHeight < 400) {
-            x = game_panel[17].X + 4;
-            y = game_panel[17].Y + 60;
-        } else {
-            x = game_panel[18].X + 4;
-            y = game_panel[18].Y + 60;
-        }
-        draw_new_panel_sprite_std(x, y, 91);
-    }
+    draw_panel_thermal_button();
 }
 
 TbBool process_panel_state_one_agent_weapon(ushort agent)
@@ -2346,24 +2380,24 @@ TbBool process_panel_state(void)
         }
     }
 
-    if ((pnsta >= 1) && (pnsta < 1 + 4))
+    if ((pnsta >= PANEL_STATE_WEP_SEL_ONE) && (pnsta < PANEL_STATE_WEP_SEL_ONE + 4))
     {
-        if (process_panel_state_one_agent_weapon((pnsta - 1) % 4))
+        if (process_panel_state_one_agent_weapon((pnsta - PANEL_STATE_WEP_SEL_ONE) % 4))
             return 1;
     }
-    else if ((pnsta >= 5) && (pnsta < 5 + 4))
+    else if ((pnsta >= PANEL_STATE_WEP_SEL_GRP) && (pnsta < PANEL_STATE_WEP_SEL_GRP + 4))
     {
-        if (process_panel_state_all_agents_weapon((pnsta - 5) % 4))
+        if (process_panel_state_all_agents_weapon((pnsta - PANEL_STATE_WEP_SEL_GRP) % 4))
             return 1;
     }
-    else if ((pnsta >= 9) && (pnsta < 9 + 4))
+    else if ((pnsta >= PANEL_STATE_MOOD_SET_ONE) && (pnsta < PANEL_STATE_MOOD_SET_ONE + 4))
     {
-        if (process_panel_state_one_agent_mood(pnsta - 5, (pnsta - 9) % 4))
+        if (process_panel_state_one_agent_mood(pnsta - 5, (pnsta - PANEL_STATE_MOOD_SET_ONE) % 4))
             return 1;
     }
-    else if ((pnsta >= 13) && (pnsta < 13 + 4))
+    else if ((pnsta >= PANEL_STATE_MOOD_SET_GRP) && (pnsta < PANEL_STATE_MOOD_SET_GRP + 4))
     {
-        if (process_panel_state_all_agents_mood(pnsta - 9, (pnsta - 13) % 4))
+        if (process_panel_state_all_agents_mood(pnsta - 9, (pnsta - PANEL_STATE_MOOD_SET_GRP) % 4))
             return 1;
     }
     else if (pnsta == 17)
@@ -2470,20 +2504,20 @@ TbBool check_panel_input(short panel)
         case 10:
             if (mouse_over_infrared_slant_box(panel))
             {
-                // Toggle infrared view
-                if ((ingame.Flags & GamF_Unkn8000) == 0)
+                // Toggle thermal view
+                if ((ingame.Flags & GamF_ThermalView) == 0)
                 {
                     dcthing = p_locplayer->DirectControl[mouser];
                     if (things[dcthing].U.UPerson.Energy > 100)
                     {
-                        ingame.Flags |= GamF_Unkn8000;
+                        ingame.Flags |= GamF_ThermalView;
                         play_sample_using_heap(0, 35, 127, 64, 100, 0, 1);
                         ingame_palette_reload();
                     }
                 }
                 else
                 {
-                    ingame.Flags &= ~GamF_Unkn8000;
+                    ingame.Flags &= ~GamF_ThermalView;
                     change_brightness(0);
                 }
             }

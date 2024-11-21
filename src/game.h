@@ -41,7 +41,7 @@ enum GameFlags {
     GamF_Unkn1000     = 0x1000,
     GamF_HUDPanel     = 0x2000,
     GamF_Unkn4000     = 0x4000,
-    GamF_Unkn8000     = 0x8000,
+    GamF_ThermalView  = 0x8000,
     GamF_Unkn00010000 = 0x00010000,
     GamF_Unkn00020000 = 0x00020000,
     GamF_Unkn00040000 = 0x00040000,
