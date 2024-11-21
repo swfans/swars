@@ -50,6 +50,12 @@ extern ubyte byte_1CAB64[];
 extern ubyte byte_1DB088[];
 extern long dword_1DC36C;
 
+/** Over which agent weapon the cursor is currently placed.
+ *
+ * Used just for the graphical detail of highliting current weapon when mouse over.
+ */
+sbyte agent_with_cursor_over_weapon = -1;
+
 struct GamePanel game_panel_lo[] = {
     {  0,  0,  1, 75, 16, 1, 1, 0, 1},
     {146,  0,  3, 81, 14, 2, 1, 1, 1},
@@ -102,7 +108,10 @@ TbResult prep_pop_sprites(short detail)
     TbResult ret;
 
     pinfo = &game_dirs[DirPlace_Data];
-    colorno = -ingame.PanelPermutation - 1;
+    if (ingame.PanelPermutation >= 0)
+        colorno = ingame.PanelPermutation;
+    else
+        colorno = -ingame.PanelPermutation - 1;
     ret = load_pop_sprites(pinfo->directory, colorno, detail);
     setup_pop_sprites();
     if (ret == Lb_FAIL) {
@@ -954,19 +963,18 @@ int count_weapons_in_flags(int *p_ncarr_below, int *p_ncarr_above, ulong weapons
     ncarr_below = 0;
     wepflags = weapons_carried;
 
-    for (nweptype = 0; nweptype < WEP_TYPES_COUNT; nweptype++)
+    for (nweptype = 1; nweptype < WEP_TYPES_COUNT; nweptype++, wepflags >>= 1)
     {
-        if (!wepflags)
+        if (wepflags == 0)
             break;
         if (wepflags & 1)
         {
             ncarried++;
-            if (nweptype + 1 > current_weapon)
+            if (nweptype > current_weapon)
                 ncarr_above++;
-            if (nweptype + 1 < current_weapon)
+            if (nweptype < current_weapon)
                 ncarr_below++;
         }
-        wepflags >>= 1;
     }
 
     *p_ncarr_below = ncarr_below;
@@ -988,13 +996,13 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
 
     ret = false;
     ncarried = count_weapons_in_flags(&ncarr_below, &ncarr_above, weapons_carried, current_weapon);
+    // Show at least 4 weapons below the currently selected
     if (ncarried <= 6)
         ncarr_below = 0;
     else if (ncarr_below <= 4)
         ncarr_below = 0;
     else
         ncarr_below -= 4;
-
     nshown = 0;
     wepflags = weapons_carried;
     cy = 36;
@@ -1003,15 +1011,20 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
     {
         if (wepflags == 0)
             break;
-        if (wepflags & 1)
+        if ((wepflags & 1) == 0)
+            continue;
+        if (nshown >= ncarr_below)
         {
-            if (ncarr_below > nshown)
+            if (!lbDisplay.MRightButton)
             {
-                nshown++;
-                if (nchecked == 6)
-                    break;
-                continue;
+                short msy, msx;
+
+                msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+                msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
+                if (in_box(msx, msy, 22, cy, 76, 22))
+                    p_locplayer->PanelItem[mouser] = weptype;
             }
+
             lbDisplay.DrawFlags = 0;
 
             if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1))
@@ -1022,36 +1035,84 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
                     draw_new_panel_sprite_std(22, cy, 12);
             }
 
-            if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1))
+            if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1)) {
                 draw_new_panel_sprite_std(30, cy + 4, weapon_sprite_index(weptype, false));
-            if (weptype == current_weapon)
-            {
+            }
+            if (weptype == current_weapon) {
                 lbDisplay.DrawFlags = 0;
                 draw_new_panel_sprite_std(30, cy + 4, weapon_sprite_index(weptype, true));
             }
-            if (!lbDisplay.MRightButton)
+            if (p_locplayer->PanelItem[mouser] == weptype)
             {
-                short msy, msx;
-
-                msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
-                msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
-                if (in_box(msx, msy, 22, cy, 76, 22))
-                {
-                    lbDisplay.DrawFlags = 0;
-                    ret = true;
-                    p_locplayer->PanelItem[mouser] = weptype;
-                    draw_new_panel_sprite_std(22, cy, 90);
-                }
+                lbDisplay.DrawFlags = 0;
+                draw_new_panel_sprite_std(22, cy, 90);
+                ret = true;
             }
             draw_fourpack_items(22, cy, plagent, weptype);
             cy += 28;
             ++nchecked;
-            ++nshown;
-            if (nchecked == 6)
-                break;
         }
+        nshown++;
+        if (nchecked == 6)
+            break;
     }
     return ret;
+}
+
+TbBool panel_update_highlighted_weapon(PlayerInfo *p_locplayer, short nagent)
+{
+    struct Thing *p_agent;
+    ushort curwep, prevwep;
+    short cx, cy;
+    short msx, msy;
+    TbBool wep_highlight;
+
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        cy = 28;
+        cx = 158 * nagent + 66;
+    } else {
+        cy = 29;
+        cx = 157 * nagent + 65;
+    }
+    p_agent = p_locplayer->MyAgent[nagent];
+    // Protect from damaged / unfinished levels
+    if (p_agent->Type != TT_PERSON)
+        return false;
+
+    curwep = p_agent->U.UPerson.CurrentWeapon;
+    prevwep = p_locplayer->PrevWeapon[nagent];
+    if (!curwep && !prevwep) {
+        prevwep = find_nth_weapon_held(p_agent->ThingOffset, 1);
+        p_locplayer->PrevWeapon[nagent] = prevwep;
+    }
+
+    if ((curwep == 0) && (prevwep == 0)) {
+        return false;
+    }
+
+    wep_highlight = false;
+    if (!lbDisplay.MRightButton) {
+        msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
+        msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+        if (in_box(msx, msy, cx - 4, cy - 4, 76, 24))
+            wep_highlight = true;
+    }
+    {
+        msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        if (in_box(msx, msy, cx - 4, cy - 4, 76, 24))
+            wep_highlight = true;
+    }
+
+    if (wep_highlight)
+    {
+        if (curwep)
+            p_locplayer->PanelItem[mouser] = curwep;
+        else
+            p_locplayer->PanelItem[mouser] = prevwep;
+    }
+
+    return wep_highlight;
 }
 
 short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
@@ -1068,45 +1129,21 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
         cx = 157 * nagent + 65;
     }
     p_agent = p_locplayer->MyAgent[nagent];
+
     // Protect from damaged / unfinished levels
     if (p_agent->Type != TT_PERSON)
         return 0;
 
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_locplayer->PrevWeapon[nagent];
-    if (!curwep && !prevwep) {
-        prevwep = find_nth_weapon_held(p_agent->ThingOffset, 1);
-        p_locplayer->PrevWeapon[nagent] = prevwep;
-    }
 
-    // Highlight button border on mouse over
-    if (curwep || prevwep)
+    // Additional border highlight around button on mouse over
+    if ((curwep != 0) && (curwep == p_locplayer->PanelItem[mouser]) &&
+      (agent_with_cursor_over_weapon == nagent))
     {
-        TbBool wep_highlight;
-        short msx, msy;
-        wep_highlight = false;
-        if (!lbDisplay.MRightButton) {
-            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
-            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
-            if (in_box(msx, msy, cx - 4, cy - 4, 76, 24))
-                wep_highlight = true;
-        }
-        {
-            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if (in_box(msx, msy, cx - 4, cy - 4, 76, 24))
-                wep_highlight = true;
-        }
-        if (wep_highlight)
-        {
-            if (curwep)
-                p_locplayer->PanelItem[mouser] = curwep;
-            else
-                p_locplayer->PanelItem[mouser] = prevwep;
-            draw_new_panel_sprite_std(cx - 8, cy - 4, 90);
-        }
+        draw_new_panel_sprite_std(cx - 8, cy - 4, 90);
     }
-    if (curwep) // Active weapon - draw lighted weapon shape
+    if (curwep != 0) // Active weapon - draw lighted weapon shape
     {
         if (!p_locplayer->WepDelays[nagent][curwep] || (gameturn & 1))
         {
@@ -1297,6 +1334,13 @@ TbBool func_1caf8(void)
     }
     else
     {
+        agent_with_cursor_over_weapon = -1;
+        for (nagent = 0; nagent < playable_agents; nagent++)
+        {
+            if (panel_update_highlighted_weapon(p_locplayer, nagent))
+                agent_with_cursor_over_weapon = nagent;
+        }
+
         for (nagent = 0; nagent < playable_agents; nagent++)
         {
             ushort curwep;
@@ -1994,7 +2038,7 @@ void draw_new_panel(void)
     }
 }
 
-TbBool process_panel_state_one_agent_weapon(ushort pnno, ushort agent)
+TbBool process_panel_state_one_agent_weapon(ushort agent)
 {
     PlayerInfo *p_locplayer;
     struct Packet *p_pckt;
@@ -2002,7 +2046,7 @@ TbBool process_panel_state_one_agent_weapon(ushort pnno, ushort agent)
 
     p_locplayer = &players[local_player_no];
     p_pckt = &packets[local_player_no];
-    pnitm = p_locplayer->PanelItem[pnno];
+    pnitm = p_locplayer->PanelItem[mouser];
 
     if (lbDisplay.RightButton)
     {
@@ -2011,11 +2055,12 @@ TbBool process_panel_state_one_agent_weapon(ushort pnno, ushort agent)
 
         lbDisplay.RightButton = 0;
         p_agent = p_locplayer->MyAgent[agent];
+
         if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
         {
-            p_locplayer->UserInput[pnno].ControlMode |= 0x4000;
+            p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
             my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
-            p_locplayer->PanelState[pnno] = 0;
+            p_locplayer->PanelState[mouser] = 0;
             return true;
         }
     }
@@ -2024,15 +2069,16 @@ TbBool process_panel_state_one_agent_weapon(ushort pnno, ushort agent)
         struct Thing *p_agent;
 
         p_agent = p_locplayer->MyAgent[agent];
+
         if (lbDisplay.MRightButton)
         {
             // Hold left, hold right, release left weapon drop
             lbDisplay.RightButton = 0;
             if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
             {
-                p_locplayer->UserInput[pnno].ControlMode |= 0x4000;
+                p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
                 my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
-                p_locplayer->PanelState[pnno] = 0;
+                p_locplayer->PanelState[mouser] = 0;
                 return true;
             }
         }
@@ -2042,19 +2088,19 @@ TbBool process_panel_state_one_agent_weapon(ushort pnno, ushort agent)
             if ((p_agent != NULL) && (pnitm != 0))
             {
                 my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, p_agent->ThingOffset, pnitm, 0, 0);
-                p_locplayer->PanelState[pnno] = 0;
+                p_locplayer->PanelState[mouser] = 0;
                 lbDisplay.RightButton = 0;
                 lbDisplay.LeftButton = 0;
-                p_locplayer->UserInput[pnno].ControlMode &= ~(0x4000|0x8000);
+                p_locplayer->UserInput[mouser].ControlMode &= ~(0x4000|0x8000);
                 return true;
             }
         }
-        p_locplayer->PanelState[pnno] = 0;
+        p_locplayer->PanelState[mouser] = 0;
     }
     return false;
 }
 
-TbBool process_panel_state_all_agents_weapon(ushort pnno, ushort agent)
+TbBool process_panel_state_all_agents_weapon(ushort agent)
 {
     PlayerInfo *p_locplayer;
     struct Packet *p_pckt;
@@ -2062,7 +2108,7 @@ TbBool process_panel_state_all_agents_weapon(ushort pnno, ushort agent)
 
     p_locplayer = &players[local_player_no];
     p_pckt = &packets[local_player_no];
-    pnitm = p_locplayer->PanelItem[pnno];
+    pnitm = p_locplayer->PanelItem[mouser];
 
     if (lbDisplay.LeftButton)
     {
@@ -2073,9 +2119,9 @@ TbBool process_panel_state_all_agents_weapon(ushort pnno, ushort agent)
         p_agent = p_locplayer->MyAgent[agent];
         if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
         {
-            p_locplayer->UserInput[pnno].ControlMode |= 0x8000;
+            p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
             my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
-            p_locplayer->PanelState[pnno] = 0;
+            p_locplayer->PanelState[mouser] = 0;
             return true;
         }
     }
@@ -2088,25 +2134,24 @@ TbBool process_panel_state_all_agents_weapon(ushort pnno, ushort agent)
         if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
         {
             my_build_packet(p_pckt, PAct_31, p_agent->ThingOffset, pnitm, 0, 0);
-            p_locplayer->PanelState[pnno] = 0;
+            p_locplayer->PanelState[mouser] = 0;
             lbDisplay.RightButton = 0;
             lbDisplay.LeftButton = 0;
-            p_locplayer->UserInput[pnno].ControlMode &= ~(0x4000|0x8000);
+            p_locplayer->UserInput[mouser].ControlMode &= ~(0x4000|0x8000);
             return true;
         }
-        p_locplayer->PanelState[pnno] = 0;
+        p_locplayer->PanelState[mouser] = 0;
     }
     return false;
 }
 
 /** Process panel in regard to a previously enter mood alteration state.
  *
- * @param pnno Per-agent panel slot index which started the state.
  * @param main_panel Index of the main panel linked to the current state.
  * @param agent Agent index whose panel is currenly under mouse.
  * @param can_control Whether the agent currently under mouse can receive control commands.
  */
-TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel, ushort agent)
+TbBool process_panel_state_one_agent_mood(ushort main_panel, ushort agent)
 {
     PlayerInfo *p_locplayer;
     struct Packet *p_pckt;
@@ -2124,18 +2169,18 @@ TbBool process_panel_state_one_agent_mood(ushort pnno, ushort main_panel, ushort
 
         p_agent = p_locplayer->MyAgent[agent];
         mood = panel_mouse_move_mood_value(main_panel);
-        dcthing = p_locplayer->DirectControl[pnno];
+        dcthing = p_locplayer->DirectControl[mouser];
         can_control = person_can_accept_control(dcthing);
 
         if ((p_agent->Type == TT_PERSON) && (can_control))
             build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, mood, 0, 0);
         return true;
     }
-    p_locplayer->PanelState[pnno] = 0;
+    p_locplayer->PanelState[mouser] = 0;
     return false;
 }
 
-TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel, ushort agent)
+TbBool process_panel_state_all_agents_mood(ushort main_panel, ushort agent)
 {
     PlayerInfo *p_locplayer;
     struct Packet *p_pckt;
@@ -2153,15 +2198,15 @@ TbBool process_panel_state_all_agents_mood(ushort pnno, ushort main_panel, ushor
 
         p_agent = p_locplayer->MyAgent[agent];
         mood = panel_mouse_move_mood_value(main_panel);
-        dcthing = p_locplayer->DirectControl[pnno];
+        dcthing = p_locplayer->DirectControl[mouser];
         can_control = person_can_accept_control(dcthing);
 
         if ((p_agent->Type == TT_PERSON) && (can_control))
             build_packet(p_pckt, PAct_SET_ALL_MOOD, p_agent->ThingOffset, mood, 0, 0);
         return true;
     }
-    p_locplayer->UserInput[pnno].ControlMode &= ~0xC000;
-    p_locplayer->PanelState[pnno] = 0;
+    p_locplayer->UserInput[mouser].ControlMode &= ~0xC000;
+    p_locplayer->PanelState[mouser] = 0;
 
     return false;
 }
@@ -2186,22 +2231,22 @@ TbBool process_panel_state(void)
 
     if ((pnsta >= 1) && (pnsta < 1 + 4))
     {
-        if (process_panel_state_one_agent_weapon(mouser, (pnsta - 1) % 4))
+        if (process_panel_state_one_agent_weapon((pnsta - 1) % 4))
             return 1;
     }
     else if ((pnsta >= 5) && (pnsta < 5 + 4))
     {
-        if (process_panel_state_all_agents_weapon(mouser, (pnsta - 5) % 4))
+        if (process_panel_state_all_agents_weapon((pnsta - 5) % 4))
             return 1;
     }
     else if ((pnsta >= 9) && (pnsta < 9 + 4))
     {
-        if (process_panel_state_one_agent_mood(mouser, pnsta - 5, (pnsta - 9) % 4))
+        if (process_panel_state_one_agent_mood(pnsta - 5, (pnsta - 9) % 4))
             return 1;
     }
     else if ((pnsta >= 13) && (pnsta < 13 + 4))
     {
-        if (process_panel_state_all_agents_mood(mouser, pnsta - 9, (pnsta - 13) % 4))
+        if (process_panel_state_all_agents_mood(pnsta - 9, (pnsta - 13) % 4))
             return 1;
     }
     else if (pnsta == 17)
@@ -2261,7 +2306,7 @@ TbBool check_panel_input(short panel)
             if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
-                i = 2 * (mouse_down_position_horizonal_over_bar_coords(p_panel->X, p_panel->Width)) - 88;
+                i = panel_mouse_move_mood_value(panel);
                 if (panel_active_based_on_target(panel))
                     my_build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
                 p_locplayer->PanelState[mouser] = p_panel->ID + 9;
@@ -2357,7 +2402,7 @@ TbBool check_panel_input(short panel)
             if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
-                i = 2 * (mouse_down_position_horizonal_over_bar_coords(p_panel->X, p_panel->Width)) - 88;
+                i = panel_mouse_move_mood_value(panel);
                 if (panel_active_based_on_target(panel))
                     my_build_packet(p_pckt, PAct_SET_ALL_MOOD, p_agent->ThingOffset, i, 0, 0);
                 p_locplayer->PanelState[mouser] = p_panel->ID + 13;
