@@ -114,14 +114,14 @@ struct GamePanel game_panel_hi[] = {
 struct GamePanel game_panel_prealp_hi[] = {
     // Per-agent main panel frame
     {  0,  0,  1, 75, 16, 1, 1, 0, 1},
-    {145,  0,  3, 81, 14, 2, 1, 1, 1},
-    {302,  0,  4, 81, 14, 3, 1, 2, 1},
-    {459,  0,  5, 81, 14, 4, 1, 3, 1},
+    {145,  0,  3, 82, 14, 2, 1, 1, 1},
+    {302,  0,  4, 82, 14, 3, 1, 2, 1},
+    {459,  0,  5, 82, 14, 4, 1, 3, 1},
     // Per-agent mood bar
-    { 44, 10,  0, 44,  5, 1, 1, 0, 2},
-    {202, 10,  0, 44,  5, 2, 1, 1, 2},
-    {360, 10,  0, 44,  5, 3, 1, 2, 2},
-    {518, 10,  0, 44,  5, 4, 1, 3, 2},
+    { 44, 12,  0, 44,  5, 1, 1, 0, 2},
+    {202, 12,  0, 44,  5, 2, 1, 1, 2},
+    {360, 12,  0, 44,  5, 3, 1, 2, 2},
+    {518, 12,  0, 44,  5, 4, 1, 3, 2},
     // Per-agent medikit button
     {  0,  0,  0,  0,  0, 4, 1, 0, 0},
     {  0,  0,  0,  0,  0, 4, 1, 0, 0},
@@ -2142,7 +2142,10 @@ void draw_new_panel(void)
             x = game_panel[4 + plagent].X + 8;
             y = game_panel[0 + plagent].Y + 4;
             w = 2 * game_panel[4 + plagent].Width;
-            h = 4;
+            if (ingame.PanelPermutation >= 0)
+                h = 6;
+            else
+                h = 4;
             // Draw health level
             lv = p_agent->Health;
             lvmax = p_agent->U.UPerson.MaxHealth;
