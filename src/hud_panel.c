@@ -992,6 +992,135 @@ int count_weapons_in_flags(int *p_ncarr_below, int *p_ncarr_above, ulong weapons
     return ncarried;
 }
 
+void draw_agent_carried_weapon(PlayerInfo *p_locplayer, ushort plagent, short slot, TbBool ready, short weptype, short cx, short cy)
+{
+    TbBool wep_highlight;
+    TbBool recharging;
+
+    recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
+
+    wep_highlight = false;
+    if ((weptype == p_locplayer->PanelItem[mouser]) && (agent_with_cursor_over_weapon == plagent))
+        wep_highlight = true;
+
+    lbDisplay.DrawFlags = 0;
+    if (!recharging || (gameturn & 1))
+    {
+        if (slot == 1) // First weapon on list entry starts its sprite a bit earlier
+            draw_new_panel_sprite_std(cx - 16, cy - 4, 13);
+        else
+            draw_new_panel_sprite_std(cx, cy, 94);
+
+        draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype, ready));
+    }
+
+    if (wep_highlight)
+    {
+        lbDisplay.DrawFlags = 0;
+        if (slot == 1) // The first on list longer sprite has its own highlight
+            draw_new_panel_sprite_std(cx - 16, cy - 4, 92);
+        else
+            draw_new_panel_sprite_std(cx, cy, 93);
+    }
+
+    draw_fourpack_items(cx, cy + 4, plagent, weptype);
+}
+
+void draw_agent_current_weapon(PlayerInfo *p_locplayer, ushort plagent, short slot, TbBool suborinate, TbBool ready, short weptype, short cx, short cy)
+{
+    TbBool wep_highlight;
+    TbBool recharging;
+
+    recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
+
+    wep_highlight = false;
+    if ((weptype == p_locplayer->PanelItem[mouser]) && (agent_with_cursor_over_weapon == plagent))
+        wep_highlight = true;
+
+    // Additional border highlight around button on mouse over
+    if (wep_highlight)
+    {
+        draw_new_panel_sprite_std(cx - 8, cy - 4, 90);
+    }
+
+    if (!recharging || (gameturn & 1))
+    {
+        struct TbSprite *spr;
+        if ((ingame.PanelPermutation == -1) && ready)
+        {
+            spr = &pop1_sprites[14];
+            if (lbDisplay.GraphicsScreenHeight < 400)
+                SCANNER_unkn_func_202(spr, (cx) >> 1, (cy) >> 1,
+                    ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+            else
+                SCANNER_unkn_func_202(spr, cx, cy,
+                    ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+        }
+        if (!suborinate) {
+            draw_new_panel_sprite_std(cx, cy, weapon_sprite_index(weptype, ready));
+        } else {
+            draw_new_panel_sprite_dark(cx, cy, weapon_sprite_index(weptype, ready));
+        }
+    }
+
+    draw_fourpack_items(cx - 8, cy - 4, plagent, weptype);
+}
+
+void draw_agent_carried_weapon_single_list(PlayerInfo *p_locplayer, ushort plagent, short slot, TbBool ready, short weptype, short cx, short cy)
+{
+    TbBool wep_highlight;
+    TbBool recharging;
+
+    recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
+
+    wep_highlight = false;
+    if ((weptype == p_locplayer->PanelItem[mouser]) && (agent_with_cursor_over_weapon == plagent))
+        wep_highlight = true;
+
+    lbDisplay.DrawFlags = 0;
+    if (!recharging || (gameturn & 1))
+    {
+        if (slot == 6)
+            draw_new_panel_sprite_std(cx - 8, cy, 13);
+        else
+            draw_new_panel_sprite_std(cx - 8, cy, 12);
+
+        draw_new_panel_sprite_std(cx, cy + 4, weapon_sprite_index(weptype, false));
+    }
+    if (ready) {
+        lbDisplay.DrawFlags = 0;
+        draw_new_panel_sprite_std(cx, cy + 4, weapon_sprite_index(weptype, true));
+    }
+    if (wep_highlight)
+    {
+        lbDisplay.DrawFlags = 0;
+        draw_new_panel_sprite_std(cx - 8, cy, 90);
+    }
+    draw_fourpack_items(cx - 8, cy, plagent, weptype);
+}
+
+TbBool panel_mouse_over_weapon(short box_x, short box_y, short box_w, short box_h, int panstate, short box_no)
+{
+    short msx, msy;
+
+    if ((panstate >= PANEL_STATE_WEP_SEL_GRP) && (panstate < PANEL_STATE_WEP_SEL_GRP + 4))
+    {
+        if (!lbDisplay.MRightButton) {
+            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
+            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+            if (over_box(msx, msy, box_x, box_y, box_w, box_h))
+                return true;
+        }
+    }
+    {
+        msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        if (over_box(msx, msy, box_x, box_y, box_w, box_h))
+            return true;
+    }
+    return false;
+}
+
 TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong weapons_carried, short current_weapon)
 {
     ushort nshown;
@@ -1025,40 +1154,18 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
             continue;
         if (nshown >= ncarr_below)
         {
-            if (!lbDisplay.MRightButton)
+            TbBool wep_highlight;
+            wep_highlight = panel_mouse_over_weapon(30 - 4, cy - 4, 76, 24, PANEL_STATE_WEP_SEL_GRP + plagent, 0);
+
+            if (wep_highlight)
             {
-                short msy, msx;
-
-                msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
-                msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
-                if (in_box(msx, msy, 22, cy, 76, 22))
-                    p_locplayer->PanelItem[mouser] = weptype;
-            }
-
-            lbDisplay.DrawFlags = 0;
-
-            if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1))
-            {
-                if (nshown == 6)
-                    draw_new_panel_sprite_std(22, cy, 13);
-                else
-                    draw_new_panel_sprite_std(22, cy, 12);
-            }
-
-            if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1)) {
-                draw_new_panel_sprite_std(30, cy + 4, weapon_sprite_index(weptype, false));
-            }
-            if (weptype == current_weapon) {
-                lbDisplay.DrawFlags = 0;
-                draw_new_panel_sprite_std(30, cy + 4, weapon_sprite_index(weptype, true));
-            }
-            if (p_locplayer->PanelItem[mouser] == weptype)
-            {
-                lbDisplay.DrawFlags = 0;
-                draw_new_panel_sprite_std(22, cy, 90);
+                p_locplayer->PanelItem[mouser] = weptype;
+                agent_with_cursor_over_weapon = plagent;
                 ret = true;
             }
-            draw_fourpack_items(22, cy, plagent, weptype);
+
+            draw_agent_carried_weapon_single_list(p_locplayer, plagent, nshown, (weptype == current_weapon), weptype, 30, cy);
+
             cy += 28;
             ++nchecked;
         }
@@ -1067,25 +1174,6 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
             break;
     }
     return ret;
-}
-
-TbBool panel_mouse_over_weapon(short box_x, short box_y, short box_w, short box_h, int panstate, short box_no)
-{
-    short msx, msy;
-
-    if ((panstate >= PANEL_STATE_WEP_SEL_GRP) && (panstate < PANEL_STATE_WEP_SEL_GRP + 4) && (!lbDisplay.MRightButton)) {
-        msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
-        msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
-        if (over_box(msx, msy, box_x, box_y, box_w, box_h))
-            return true;
-    }
-    {
-        msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        if (over_box(msx, msy, box_x, box_y, box_w, box_h))
-            return true;
-    }
-    return false;
 }
 
 TbBool panel_update_weapon_current(PlayerInfo *p_locplayer, short nagent)
@@ -1140,6 +1228,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
     struct Thing *p_agent;
     ushort curwep, prevwep;
     short cx, cy;
+    TbBool suborinate;
 
     if (lbDisplay.GraphicsScreenHeight < 400) {
         cy = 28;
@@ -1157,52 +1246,16 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_locplayer->PrevWeapon[nagent];
 
-    // Additional border highlight around button on mouse over
-    if ((curwep != 0) && (curwep == p_locplayer->PanelItem[mouser]) &&
-      (agent_with_cursor_over_weapon == nagent))
+    suborinate = (p_agent->State == PerSt_PROTECT_PERSON);
+    if (curwep != 0) // Is ready/drawn weapon - draw lighted weapon shape
     {
-        draw_new_panel_sprite_std(cx - 8, cy - 4, 90);
+        draw_agent_current_weapon(p_locplayer, nagent, 0, suborinate, true, curwep, cx, cy);
     }
-    if (curwep != 0) // Active weapon - draw lighted weapon shape
+    else if (prevwep != 0) // Weapon is carried but hidden - draw with dark weapon shape
     {
-        if (!p_locplayer->WepDelays[nagent][curwep] || (gameturn & 1))
-        {
-            if (p_agent->State == PerSt_PROTECT_PERSON)
-            {
-                struct TbSprite *spr;
-                if (ingame.PanelPermutation == -1)
-                {
-                    spr = &pop1_sprites[14];
-                    if (lbDisplay.GraphicsScreenHeight < 400)
-                        SCANNER_unkn_func_202(spr, cx >> 1, cy >> 1,
-                            ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-                    else
-                        SCANNER_unkn_func_202(spr, cx, cy,
-                            ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-                }
-                draw_new_panel_sprite_dark(cx, cy, weapon_sprite_index(curwep, true));
-            }
-            else
-            {
-                struct TbSprite *spr;
-                if (ingame.PanelPermutation == -1)
-                {
-                    spr = &pop1_sprites[14];
-                    if (lbDisplay.GraphicsScreenHeight < 400)
-                        SCANNER_unkn_func_202(spr, cx >> 1, cy >> 1,
-                            ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-                    else
-                        SCANNER_unkn_func_202(spr, cx, cy,
-                            ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-                }
-                draw_new_panel_sprite_std(cx, cy, weapon_sprite_index(curwep, true));
-            }
-            draw_fourpack_items(cx - 8, cy - 4, nagent, curwep);
-        }
-    }
-    else
-    { // Weapon is hidden - draw with dark weapon shape
         curwep = prevwep;
+        draw_agent_current_weapon(p_locplayer, nagent, 0, suborinate, false, curwep, cx, cy);
+/*
         if (curwep && (!p_locplayer->WepDelays[nagent][curwep] || (gameturn & 1)))
         {
             if (p_agent->State == PerSt_PROTECT_PERSON)
@@ -1210,46 +1263,9 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
             else
                 draw_new_panel_sprite_std(cx, cy, weapon_sprite_index(curwep, false));
             draw_fourpack_items(cx - 8, cy - 4, nagent, curwep);
-        }
+        }*/
     }
     return curwep;
-}
-
-void draw_agent_weapon(PlayerInfo *p_locplayer, ushort plagent, short slot, short weptype, short cx, short cy)
-{
-    TbBool wep_highlight;
-    TbBool recharging;
-
-    recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
-
-    lbDisplay.DrawFlags = 0;
-    if (!recharging || (gameturn & 1))
-    {
-        if (slot == 1) // First weapon on list entry starts its sprite a bit earlier
-            draw_new_panel_sprite_std(cx - 16, cy - 4, 13);
-        else
-            draw_new_panel_sprite_std(cx, cy, 94);
-    }
-
-    if (!recharging || (gameturn & 1))
-    {
-        draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype, false));
-    }
-
-    wep_highlight = false;
-    if ((weptype == p_locplayer->PanelItem[mouser]) && (agent_with_cursor_over_weapon == plagent))
-        wep_highlight = true;
-
-    if (wep_highlight)
-    {
-        lbDisplay.DrawFlags = 0;
-        if (slot == 1) // The first on list longer sprite has its own highlight
-            draw_new_panel_sprite_std(cx - 16, cy - 4, 92);
-        else
-            draw_new_panel_sprite_std(cx, cy, 93);
-    }
-
-    draw_fourpack_items(cx, cy + 4, plagent, weptype);
 }
 
 /** Updates a list of weapons below current weapon panel.
@@ -1342,7 +1358,7 @@ void draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_agent
 
         if (wep_visible)
         {
-            draw_agent_weapon(p_locplayer, plagent, nshown + 1, weptype, cx, cy);
+            draw_agent_carried_weapon(p_locplayer, plagent, nshown + 1, false, weptype, cx, cy);
 
             cy += 28;
             nshown++;
