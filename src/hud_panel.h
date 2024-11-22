@@ -32,6 +32,7 @@ extern "C" {
 #define PANEL_STATE_WEP_SEL_GRP   5
 #define PANEL_STATE_MOOD_SET_ONE  9
 #define PANEL_STATE_MOOD_SET_GRP 13
+#define PANEL_STATE_SEND_MESSAGE 17
 
 struct GamePanel
 {

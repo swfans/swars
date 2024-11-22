@@ -56,87 +56,101 @@ extern long dword_1DC36C;
  */
 sbyte agent_with_mouse_over_weapon = -1;
 
+enum PanelType {
+    PanT_NONE = 0,
+    PanT_UNKN01,
+    PanT_UNKN02,
+    PanT_UNKN03,
+    PanT_UNKN04,
+    PanT_UNKN05,
+    PanT_UNKN06,
+    PanT_UNKN07,
+    PanT_UNKN08,
+    PanT_UNKN09,
+    PanT_UNKN10,
+};
+
 struct GamePanel game_panel_lo[] = {
     // Per-agent main panel frame
-    {  0,  0,  1, 75, 16, 1, 1, 0, 1},
-    {146,  0,  3, 81, 14, 2, 1, 1, 1},
-    {304,  0,  4, 81, 14, 3, 1, 2, 1},
-    {462,  0,  5, 81, 14, 4, 1, 3, 1},
+    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_UNKN01},
+    {146,  0,  3, 81, 14, 2, 1, 1, PanT_UNKN01},
+    {304,  0,  4, 81, 14, 3, 1, 2, PanT_UNKN01},
+    {462,  0,  5, 81, 14, 4, 1, 3, PanT_UNKN01},
     // Per-agent mood bar
-    { 44, 10,  0, 44,  5, 1, 1, 0, 2},
-    {202, 10,  0, 44,  5, 2, 1, 1, 2},
-    {360, 10,  0, 44,  5, 3, 1, 2, 2},
-    {518, 10,  0, 44,  5, 4, 1, 3, 2},
+    { 44, 10,  0, 44,  5, 1, 1, 0, PanT_UNKN02},
+    {202, 10,  0, 44,  5, 2, 1, 1, PanT_UNKN02},
+    {360, 10,  0, 44,  5, 3, 1, 2, PanT_UNKN02},
+    {518, 10,  0, 44,  5, 4, 1, 3, PanT_UNKN02},
     // Per-agent medikit button
-    { 30, 24, 95,  0,  0, 1, 1, 0, 6},
-    {188, 24, 95,  0,  0, 2, 1, 1, 6},
-    {346, 24, 95,  0,  0, 3, 1, 2, 6},
-    {504, 24, 95,  0,  0, 4, 1, 3, 6},
+    { 30, 24, 95,  0,  0, 1, 1, 0, PanT_UNKN06},
+    {188, 24, 95,  0,  0, 2, 1, 1, PanT_UNKN06},
+    {346, 24, 95,  0,  0, 3, 1, 2, PanT_UNKN06},
+    {504, 24, 95,  0,  0, 4, 1, 3, PanT_UNKN06},
     // Per-agent current weapon frame
-    { 58, 24, 12,  0,  0, 1, 1, 0, 5},
-    {216, 24, 12,  0,  0, 2, 1, 1, 5},
-    {374, 24, 12,  0,  0, 3, 1, 2, 5},
-    {532, 24, 12,  0,  0, 4, 1, 3, 5},
+    { 58, 24, 12,  0,  0, 1, 1, 0, PanT_UNKN05},
+    {216, 24, 12,  0,  0, 2, 1, 1, PanT_UNKN05},
+    {374, 24, 12,  0,  0, 3, 1, 2, PanT_UNKN05},
+    {532, 24, 12,  0,  0, 4, 1, 3, PanT_UNKN05},
     // Left-side indicators
-    {  0, 38, 10,  0,  0, 4, 1, 0, 8},
-    {  0,178, 11,  0,  0, 4, 1, 0, 10},
-    { -1, -1, -1,  0,  0, 4, 1, 0, 0},
+    {  0, 38, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0,178, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
+    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
 };
 
 struct GamePanel game_panel_hi[] = {
     // Per-agent main panel frame
-    {  0,  0,  1, 75, 16, 1, 1, 0, 1},
-    {145,  0,  3, 81, 14, 2, 1, 1, 1},
-    {302,  0,  4, 81, 14, 3, 1, 2, 1},
-    {459,  0,  5, 81, 14, 4, 1, 3, 1},
+    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_UNKN01},
+    {145,  0,  3, 81, 14, 2, 1, 1, PanT_UNKN01},
+    {302,  0,  4, 81, 14, 3, 1, 2, PanT_UNKN01},
+    {459,  0,  5, 81, 14, 4, 1, 3, PanT_UNKN01},
     // Per-agent mood bar
-    { 45, 10,  0, 44,  5, 1, 1, 0, 2},
-    {202, 10,  0, 44,  5, 2, 1, 1, 2},
-    {359, 10,  0, 44,  5, 3, 1, 2, 2},
-    {516, 10,  0, 44,  5, 4, 1, 3, 2},
+    { 45, 10,  0, 44,  5, 1, 1, 0, PanT_UNKN02},
+    {202, 10,  0, 44,  5, 2, 1, 1, PanT_UNKN02},
+    {359, 10,  0, 44,  5, 3, 1, 2, PanT_UNKN02},
+    {516, 10,  0, 44,  5, 4, 1, 3, PanT_UNKN02},
     // Per-agent medikit button
-    { 30, 25, 95,  0,  0, 1, 1, 0, 6},
-    {187, 25, 95,  0,  0, 2, 1, 1, 6},
-    {344, 25, 95,  0,  0, 3, 1, 2, 6},
-    {501, 25, 95,  0,  0, 4, 1, 3, 6},
+    { 30, 25, 95,  0,  0, 1, 1, 0, PanT_UNKN06},
+    {187, 25, 95,  0,  0, 2, 1, 1, PanT_UNKN06},
+    {344, 25, 95,  0,  0, 3, 1, 2, PanT_UNKN06},
+    {501, 25, 95,  0,  0, 4, 1, 3, PanT_UNKN06},
     // Per-agent current weapon frame
-    { 57, 25, 12,  0,  0, 1, 1, 0, 5},
-    {214, 25, 12,  0,  0, 2, 1, 1, 5},
-    {371, 25, 12,  0,  0, 3, 1, 2, 5},
-    {528, 25, 12,  0,  0, 4, 1, 3, 5},
+    { 57, 25, 12,  0,  0, 1, 1, 0, PanT_UNKN05},
+    {214, 25, 12,  0,  0, 2, 1, 1, PanT_UNKN05},
+    {371, 25, 12,  0,  0, 3, 1, 2, PanT_UNKN05},
+    {528, 25, 12,  0,  0, 4, 1, 3, PanT_UNKN05},
     // Left-side indicators
-    {  0, 37, 10,  0,  0, 4, 1, 0, 8},
-    {  0,191,105,  0,  0, 4, 1, 0, 8},
-    {  0,267, 11,  0,  0, 4, 1, 0, 10},
-    { -1, -1, -1,  0,  0, 4, 1, 0, 0},
+    {  0, 37, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0,191,105,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0,267, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
+    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
 };
 
 struct GamePanel game_panel_prealp_hi[] = {
     // Per-agent main panel frame
-    {  0,  0,  1, 75, 16, 1, 1, 0, 1},
-    {145,  0,  3, 82, 14, 2, 1, 1, 1},
-    {302,  0,  4, 82, 14, 3, 1, 2, 1},
-    {459,  0,  5, 82, 14, 4, 1, 3, 1},
+    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_UNKN01},
+    {145,  0,  3, 82, 14, 2, 1, 1, PanT_UNKN01},
+    {302,  0,  4, 82, 14, 3, 1, 2, PanT_UNKN01},
+    {459,  0,  5, 82, 14, 4, 1, 3, PanT_UNKN01},
     // Per-agent mood bar
-    { 44, 12,  0, 44,  5, 1, 1, 0, 2},
-    {202, 12,  0, 44,  5, 2, 1, 1, 2},
-    {360, 12,  0, 44,  5, 3, 1, 2, 2},
-    {518, 12,  0, 44,  5, 4, 1, 3, 2},
+    { 44, 12,  0, 44,  5, 1, 1, 0, PanT_UNKN02},
+    {202, 12,  0, 44,  5, 2, 1, 1, PanT_UNKN02},
+    {360, 12,  0, 44,  5, 3, 1, 2, PanT_UNKN02},
+    {518, 12,  0, 44,  5, 4, 1, 3, PanT_UNKN02},
     // Per-agent medikit button
-    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
-    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
-    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
-    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
     // Per-agent current weapon frame
-    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
-    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
-    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
-    {  0,  0,  0,  0,  0, 4, 1, 0, 0},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
     // Left-side indicators
-    {  0, 37, 10,  0,  0, 4, 1, 0, 8},
-    {  0,191,105,  0,  0, 4, 1, 0, 8},
-    {  0,267, 11,  0,  0, 4, 1, 0, 10},
-    { -1, -1, -1,  0,  0, 4, 1, 0, 0},
+    {  0, 37, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0,191,105,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0,267, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
+    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
 };
 
 short panel_agent_number_sprite_shift[] =
@@ -510,7 +524,7 @@ void SCANNER_move_objective_info(int width, int height, int end_pos)
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
-    if ( in_network_game && p_locplayer->PanelState[mouser] == 17 )
+    if (in_network_game && p_locplayer->PanelState[mouser] == PANEL_STATE_SEND_MESSAGE)
     {
       if ( end_pos < lbDisplay.PhysicalScreenWidth - (lbDisplay.PhysicalScreenWidth >> 2) )
           scanner_unkn370 = -20;
@@ -1872,7 +1886,7 @@ TbBool panel_active_based_on_target(short panel)
 
     p_panel = &game_panel[panel];
 
-    if (p_panel->Type == 8 || p_panel->Type == 10)
+    if (p_panel->Type == PanT_UNKN08 || p_panel->Type == PanT_UNKN10)
         return true;
 
     if (p_panel->ID >= playable_agents)
@@ -1891,7 +1905,6 @@ TbBool mouse_move_over_panel(short panel)
 {
     struct GamePanel *p_panel;
     short x, y, w, h;
-    short ms_x, ms_y;
 
     p_panel = &game_panel[panel];
 
@@ -1911,12 +1924,11 @@ TbBool mouse_move_over_panel(short panel)
     if (!panel_active_based_on_target(panel))
         return false;
 
+    // We are only interested in panels for control of agents
     if (p_panel->ID >= playable_agents)
         return false;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-    return in_box(ms_x, ms_y, x, y, w, h);
+    return mouse_move_over_box_coords(x, y, x + w, y + h);
 }
 
 void update_game_panel(void)
@@ -2044,7 +2056,7 @@ void draw_new_panel(void)
           continue;
         lbDisplay.DrawFlags = 0;
 
-        if ( panel->Type != 1 && panel->Type != 6 && panel->Type != 5 )
+        if (panel->Type != PanT_UNKN01 && panel->Type != PanT_UNKN06 && panel->Type != PanT_UNKN05)
         {
             draw_new_panel_sprite_std(panel->X, panel->Y, panel->Spr);
         }
@@ -2053,7 +2065,7 @@ void draw_new_panel(void)
             TbBool is_visible;
 
             is_visible = true;
-            if (panel->Type == 5 && panel->ID < playable_agents)
+            if (panel->Type == PanT_UNKN05 && panel->ID < playable_agents)
             {
                 struct Thing *p_agent;
                 ubyte weapon;
@@ -2090,7 +2102,7 @@ void draw_new_panel(void)
                 if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Destroyed))
                     continue;
 
-                if (panel->Type == 5) {
+                if (panel->Type == PanT_UNKN05) {
                     ubyte weapon;
 
                     weapon = p_agent->U.UPerson.CurrentWeapon;
@@ -2427,7 +2439,7 @@ TbBool process_panel_state(void)
 
     if ((ingame.Flags & GamF_Unkn00100000) != 0)
     {
-        if ((pnsta < 9) || (pnsta > 16))
+        if ((pnsta < PANEL_STATE_WEP_SEL_GRP + 4) || (pnsta >= PANEL_STATE_SEND_MESSAGE))
         {
             while (IsSamplePlaying(0, 21, 0))
                 stop_sample_using_heap(0, 21);
@@ -2455,7 +2467,7 @@ TbBool process_panel_state(void)
         if (process_panel_state_grp_agents_mood(pnsta - 9, (pnsta - PANEL_STATE_MOOD_SET_GRP) % 4))
             return 1;
     }
-    else if (pnsta == 17)
+    else if (pnsta == PANEL_STATE_SEND_MESSAGE)
     {
         struct Packet *p_pckt;
         ushort i;
@@ -2493,7 +2505,7 @@ TbBool check_panel_input(short panel)
 
         switch (p_panel->Type)
         {
-        case 1:
+        case PanT_UNKN01:
             // Select controlled agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type != TT_PERSON) || ((p_agent->Flag & TngF_Destroyed) != 0) || ((p_agent->Flag2 & TgF2_KnockedOut) != 0))
@@ -2506,7 +2518,7 @@ TbBool check_panel_input(short panel)
                 p_locplayer->UserInput[0].ControlMode |= 0x8000;
             }
             return 1;
-        case 2:
+        case PanT_UNKN02:
             // Change mood / drugs level
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
@@ -2522,7 +2534,7 @@ TbBool check_panel_input(short panel)
                 return 1;
             }
             break;
-        case 5:
+        case PanT_UNKN05:
             // Weapon selection for single agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && person_can_accept_control(p_agent->ThingOffset))
@@ -2532,7 +2544,7 @@ TbBool check_panel_input(short panel)
                 return 1;
             }
             break;
-        case 6:
+        case PanT_UNKN06:
             // Use medikit
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
@@ -2541,7 +2553,7 @@ TbBool check_panel_input(short panel)
                 return 1;
             }
             break;
-        case 8:
+        case PanT_UNKN08:
             // Enable supershield
             if (p_locplayer->DoubleMode && byte_153198 - 1 != mouser)
                 break;
@@ -2556,7 +2568,7 @@ TbBool check_panel_input(short panel)
             build_packet(p_pckt, PAct_SHIELD_TOGGLE, dcthing, p_agent->ThingOffset, 0, 0);
             p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
             return 1;
-        case 10:
+        case PanT_UNKN10:
             if (mouse_over_infrared_slant_box(panel))
             {
                 // Toggle thermal view
@@ -2602,7 +2614,7 @@ TbBool check_panel_input(short panel)
 
         switch (p_panel->Type)
         {
-        case 2:
+        case PanT_UNKN02:
             // Change mood / drugs level
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
@@ -2618,7 +2630,7 @@ TbBool check_panel_input(short panel)
                 return 1;
             }
             break;
-        case 5:
+        case PanT_UNKN05:
             // Weapon selection for all grouped agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && person_can_accept_control(p_agent->ThingOffset))
@@ -2628,7 +2640,7 @@ TbBool check_panel_input(short panel)
                 return 1;
             }
             break;
-        case 10:
+        case PanT_UNKN10:
             // Switch grouping fully on or fully off
             p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
             if (panel_active_based_on_target(panel))
@@ -2654,7 +2666,7 @@ TbBool check_panel_input(short panel)
 
         switch (p_panel->Type)
         {
-        case 1:
+        case PanT_UNKN01:
             // Center view on the selected agent
             if (!p_locplayer->DoubleMode)
             {
