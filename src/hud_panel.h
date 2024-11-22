@@ -28,6 +28,7 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define PANEL_STATE_NORMAL        0
 #define PANEL_STATE_WEP_SEL_ONE   1
 #define PANEL_STATE_WEP_SEL_GRP   5
 #define PANEL_STATE_MOOD_SET_ONE  9
