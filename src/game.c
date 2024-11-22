@@ -2185,7 +2185,7 @@ TbResult init_read_all_sprite_files(void)
     if (tret == Lb_OK)
         tret = ret;
 
-    ret = load_sprites_mouse(&p_buf, pinfo->directory);
+    ret = load_sprites_fe_mouse_pointers(&p_buf, pinfo->directory, 0, 0);
     if (tret == Lb_OK)
         tret = ret;
 
@@ -2225,7 +2225,7 @@ TbResult init_read_all_sprite_files(void)
     setup_sprites_icons();
     setup_sprites_wicons();
     setup_sprites_panel();
-    setup_sprites_mouse();
+    setup_sprites_fe_mouse_pointers();
     setup_sprites_small_font();
     setup_sprites_small2_font();
     setup_sprites_small_med_font();
