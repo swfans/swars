@@ -1377,7 +1377,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
 
     p_agent = p_locplayer->MyAgent[nagent];
     // Protect from damaged / unfinished levels
-    if (p_agent->Type != TT_PERSON)
+    if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Destroyed) != 0)
         return 0;
 
     if (lbDisplay.GraphicsScreenHeight < 400) {
