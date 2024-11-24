@@ -33,38 +33,102 @@
 
 /******************************************************************************/
 
-
-TbResult load_sprites_mouse_pointers(
-  const char *dir, ushort styleno, ushort detail)
+static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_spr, ubyte **pp_spr_end,
+  const char *dir, const char *name, ushort styleno, ushort detail, ushort min_sprites)
 {
     char locstr[DISKPATH_SIZE];
     long len;
-    int min_sprites;
     TbResult ret;
 
-    min_sprites = 10;
     ret = Lb_OK;
 
-    sprintf(locstr, "%s/pointers.dat", dir);
-    len = LbFileLoadAt(locstr, pointer_data);
+    sprintf(locstr, "%s/%s%hu-%hu.dat", dir, name, styleno, detail);
+    len = LbFileLoadAt(locstr, p_dat);
     if (len == -1) {
         ret = Lb_FAIL;
         len = 0;
     }
-    sprintf(locstr, "%s/pointers.tab", dir);
-    len = LbFileLoadAt(locstr, pointer_sprites);
+    sprintf(locstr, "%s/%s%hu-%hu.tab", dir, name, styleno, detail);
+    len = LbFileLoadAt(locstr, p_spr);
     if (len == -1) {
         ret = Lb_FAIL;
         len = min_sprites * sizeof(struct TbSprite);
-        LbMemorySet(pointer_sprites, '\0', len);
+        LbMemorySet(p_spr, '\0', len);
     }
     else if (len < min_sprites * (long)sizeof(struct TbSprite)) {
         long exlen;
         exlen = min_sprites * sizeof(struct TbSprite) - len;
-        LbMemorySet((ubyte *)pointer_sprites + len, '\0', exlen);
+        LbMemorySet(p_spr + len, '\0', exlen);
         len += exlen;
     }
-    pointer_sprites_end = &pointer_sprites[len/sizeof(struct TbSprite)];
+    *pp_spr_end = &p_spr[len];
+
+    return ret;
+}
+
+static inline TbResult load_sprites_old(ubyte *p_dat, ubyte *p_spr, ubyte **pp_spr_end,
+  const char *dir, const char *name, ushort min_sprites)
+{
+    char locstr[DISKPATH_SIZE];
+    long len;
+    TbResult ret;
+
+    ret = Lb_OK;
+
+    sprintf(locstr, "%s/%s.dat", dir, name);
+    len = LbFileLoadAt(locstr, p_dat);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 0;
+    }
+    sprintf(locstr, "%s/%s.tab", dir, name);
+    len = LbFileLoadAt(locstr, p_spr);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = min_sprites * sizeof(struct TbSprite);
+        LbMemorySet(p_spr, '\0', len);
+    }
+    else if (len < min_sprites * (long)sizeof(struct TbSprite)) {
+        long exlen;
+        exlen = min_sprites * sizeof(struct TbSprite) - len;
+        LbMemorySet(p_spr + len, '\0', exlen);
+        len += exlen;
+    }
+    *pp_spr_end = &p_spr[len];
+
+    return ret;
+}
+
+TbResult load_sprites_mouse_pointers(
+  const char *dir, ushort styleno, ushort detail)
+{
+    TbResult ret;
+    ushort min_sprites;
+
+    min_sprites = 10;
+    switch (detail)
+    {
+    default:
+        ret = load_sprites_with_detail(pointer_data, (ubyte *)pointer_sprites,
+          (ubyte **)&pointer_sprites_end, dir, "pointr", styleno, detail, min_sprites);
+        if (ret != Lb_FAIL)
+            break;
+        // fall through
+    case 1:
+        ret = load_sprites_with_detail(pointer_data, (ubyte *)pointer_sprites,
+          (ubyte **)&pointer_sprites_end, dir, "pointr", styleno, 1, min_sprites);
+        if (ret != Lb_FAIL)
+            break;
+        // fall through
+    case 0:
+        ret = load_sprites_with_detail(pointer_data, (ubyte *)pointer_sprites,
+          (ubyte **)&pointer_sprites_end, dir, "pointr", styleno, 0, min_sprites);
+        if (ret != Lb_FAIL)
+            break;
+        ret = load_sprites_old(pointer_data, (ubyte *)pointer_sprites,
+          (ubyte **)&pointer_sprites_end, dir, "pointers", min_sprites);
+        break;
+    }
 
     return ret;
 }

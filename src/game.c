@@ -1827,6 +1827,7 @@ void adjust_mission_engine_to_video_mode(void)
     // Set scale 15% over the min, to create a nice pan effect
     overall_scale = (get_overall_scale_min() * 295) >> 8;
     load_pop_sprites_for_current_mode();
+    load_mouse_pointers_sprites_for_current_mode();
     render_area_a = render_area_b = \
       get_render_area_for_zoom(user_zoom_min);
     srm_scanner_size_update();
@@ -2278,6 +2279,7 @@ void setup_host(void)
     setup_multicolor_sprites();
     ingame.PanelPermutation = -2;
     load_pop_sprites_for_current_mode();
+    load_mouse_pointers_sprites_for_current_mode();
     init_memory(mem_game);
 
     init_syndwars();
