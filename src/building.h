@@ -82,7 +82,7 @@ enum SubTypeBuilding {
   SubTT_BLD_33 = 0x33,
   SubTT_BLD_34 = 0x34,
   SubTT_BLD_35 = 0x35,
-  SubTT_BLD_36 = 0x36,
+  SubTT_BLD_WIND_ROTOR = 0x36,
   SubTT_BLD_37 = 0x37,
   SubTT_BLD_38 = 0x38,
   SubTT_BLD_39 = 0x39,
@@ -105,6 +105,8 @@ enum SubTypeBuilding {
 struct Thing *create_building_thing(int x, int y, int z, ushort a4, ushort a5, ushort a6);
 
 void collapse_building(short x, short y, short z, struct Thing *p_building);
+
+void process_building(struct Thing *p_building);
 
 /******************************************************************************/
 #ifdef __cplusplus

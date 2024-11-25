@@ -20,10 +20,15 @@
 
 #include <assert.h>
 #include "bfmath.h"
+#include "bfmemut.h"
 #include "bfutility.h"
 #include "ssampply.h"
+
 #include "bigmap.h"
 #include "bmbang.h"
+#include "enginpriobjs.h"
+#include "enginsngobjs.h"
+#include "enginsngtxtr.h"
 #include "game.h"
 #include "game_speed.h"
 #include "matrix.h"
@@ -257,10 +262,115 @@ void mech_unkn_func_09(ThingIdx thing)
         : : "a" (thing));
 }
 
-void veh_add(struct Thing *p_thing, short frame)
+void veh_add(struct Thing *p_vehicle, short frame)
 {
+#if 0
     asm volatile ("call ASM_veh_add\n"
-        : : "a" (p_thing), "d" (frame));
+        : : "a" (p_vehicle), "d" (frame));
+    return;
+#endif
+    struct Thing *p_mgun;
+    struct SingleObject *p_snobj;
+    short coord_x, coord_y, coord_z;
+    short mgun;
+    ushort obj;
+    ushort mat;
+
+    switch (frame)
+    {
+    case 18:
+        mgun = get_new_thing();
+        p_vehicle->U.UVehicle.SubThing = mgun;
+        p_vehicle->SubType = SubTT_VEH_TANK;
+
+        p_mgun = &things[mgun];
+        p_mgun->U.UMGun.NextThing = 0;
+        p_mgun->U.UVehicle.SubThing = 0;
+        mat = next_local_mat;
+        next_local_mat++;
+        LbMemoryCopy(&local_mats[mat], &local_mats[p_vehicle->U.UVehicle.MatrixIndex], sizeof(struct M33));
+        p_mgun->U.UMGun.MatrixIndex = mat;
+        p_mgun->StartFrame = frame;
+
+        coord_x = (p_vehicle->X >> 8);
+        coord_y = (p_vehicle->Y >> 8);
+        coord_z = (p_vehicle->Z >> 8);
+        byte_1C83D1 = 0;
+        sub_6031C(coord_x, coord_z, -19 - prim_unknprop01, coord_y + 20);
+        p_mgun->X = 0;
+        p_mgun->Y = 0x2800;
+        p_mgun->Z = 0;
+        obj = next_object - 1;
+        unkn_object_shift_03(obj);
+        p_mgun->Type = TT_UNKN33;
+        p_mgun->U.UMGun.Object = obj;
+        p_snobj = &game_objects[obj];
+        p_snobj->ThingNo = p_mgun - things;
+        break;
+    case 26:
+        mgun = get_new_thing();
+        p_vehicle->U.UVehicle.SubThing = mgun;
+        p_vehicle->SubType = SubTT_VEH_TANK;
+
+        p_mgun = &things[mgun];
+        p_mgun->U.UMGun.NextThing = 0;
+        p_mgun->U.UVehicle.SubThing = 0;
+        mat = next_local_mat;
+        next_local_mat++;
+        LbMemoryCopy(&local_mats[mat], &local_mats[p_vehicle->U.UVehicle.MatrixIndex], sizeof(struct M33));
+        p_mgun->U.UMGun.MatrixIndex = mat;
+        p_mgun->StartFrame = frame;
+
+        coord_x = (p_vehicle->X >> 8);
+        coord_y = (p_vehicle->Y >> 8);
+        coord_z = (p_vehicle->Z >> 8);
+        byte_1C83D1 = 0;
+        sub_6031C(coord_x, coord_z, -27 - prim_unknprop01, coord_y + 20);
+        p_mgun->X = 0;
+        p_mgun->Y = 0x1E00;
+        p_mgun->Z = 0;
+        obj = next_object - 1;
+        unkn_object_shift_03(obj);
+        p_mgun->Type = TT_UNKN33;
+        p_mgun->U.UMGun.Object = obj;
+        p_snobj = &game_objects[obj];
+        p_snobj->ThingNo = p_mgun - things;
+        break;
+    case 29:
+        mgun = get_new_thing();
+        p_vehicle->U.UVehicle.SubThing = mgun;
+        p_vehicle->SubType = SubTT_VEH_TANK;
+
+        p_mgun = &things[mgun];
+        p_mgun->U.UMGun.NextThing = 0;
+        p_mgun->U.UVehicle.SubThing = 0;
+        mat = next_local_mat;
+        next_local_mat++;
+        LbMemoryCopy(&local_mats[mat], &local_mats[p_vehicle->U.UVehicle.MatrixIndex], sizeof(struct M33));
+        p_mgun->U.UMGun.MatrixIndex = mat;
+        p_mgun->StartFrame = frame;
+
+        byte_1C83D1 = 0;
+        coord_x = (p_vehicle->X >> 8);
+        coord_y = (p_vehicle->Y >> 8);
+        coord_z = (p_vehicle->Z >> 8);
+        sub_6031C(coord_x, coord_z, -30 - prim_unknprop01, coord_y + 20);
+        p_mgun->X = 0;
+        p_mgun->Y = 0x1E00;
+        p_mgun->Z = 0;
+        obj = next_object - 1;
+        unkn_object_shift_03(obj);
+        p_mgun->Type = TT_UNKN33;
+        p_mgun->U.UMGun.Object = obj;
+        p_snobj = &game_objects[obj];
+        p_snobj->ThingNo = p_mgun - things;
+        break;
+    default:
+        p_vehicle->U.UVehicle.SubThing = 0;
+        break;
+    }
+    p_vehicle->U.UVehicle.WobbleZP = 0;
+    p_vehicle->U.UVehicle.WobbleZV = 0;
 }
 
 ushort veh_passenger_count(struct Thing *p_veh)
@@ -546,11 +656,11 @@ static TbBool check_vehicle_col_with_pers(struct Thing *p_vehicle, struct Thing 
 {
     int dx, dz, per_r_sq, veh_r_sq;
 
-    if ((p_person->Flag2 & TgF2_Unkn0010) != 0)
+    if ((p_person->Flag2 & TgF2_KnockedOut) != 0)
         return false;
     if (p_person->State == PerSt_DEAD)
         return false;
-    if ((p_person->Flag & TngF_Unkn0002) != 0)
+    if ((p_person->Flag & TngF_Destroyed) != 0)
         return false;
     if (p_person->State == PerSt_PERSON_BURNING)
         return false;
@@ -1012,9 +1122,9 @@ void process_train(struct Thing *p_vehicle)
         assert(p_vehicle->SubType == SubTT_VEH_TRAIN); // only trains have stations
         assert(p_vehicle->U.UVehicle.TNode > 0); // trains stations have positive indexes
         p_station = &things[p_vehicle->U.UVehicle.TNode];
-        if ((p_station->Type != TT_BUILDING) || (p_station->Flag & TngF_Unkn0002) != 0)
+        if ((p_station->Type != TT_BUILDING) || (p_station->Flag & TngF_Destroyed) != 0)
         {
-            p_vehicle->Flag |= TngF_Unkn0002;
+            p_vehicle->Flag |= TngF_Destroyed;
             start_crashing(p_vehicle);
             p_vehicle->U.UVehicle.ReqdSpeed = 0;
             return;
@@ -1209,7 +1319,7 @@ void process_veh_ground(struct Thing *p_vehicle)
     }
 
     if ((p_vehicle->SubType != SubTT_VEH_FLYING)
-     && ((p_vehicle->Flag & TngF_Unkn0002) == 0)) {
+     && ((p_vehicle->Flag & TngF_Destroyed) == 0)) {
         set_vehicle_alt(p_vehicle);
     }
 }
@@ -1233,7 +1343,7 @@ void process_vehicle(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
     return;
 #endif
-    if ((p_vehicle->Flag & TngF_Unkn0002) == 0)
+    if ((p_vehicle->Flag & TngF_Destroyed) == 0)
         p_vehicle->OldTarget = 0;
     if (p_vehicle->U.UVehicle.RecoilTimer > 0)
         p_vehicle->U.UVehicle.RecoilTimer--;

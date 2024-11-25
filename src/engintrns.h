@@ -50,9 +50,12 @@ struct EnginePoint {
 struct ShEnginePoint {
     short X;
     short Y;
-    int field_4;
+    /** Depth at which the object is on screen */
+    int Depth;
     ubyte Flags;
-    short field_9;
+    /** Shade value from atmosphere reflection */
+    short ReflShade;
+    /** Shade value from lights */
     short Shade;
 };
 
@@ -75,6 +78,12 @@ extern long dword_176D64;
 void transform_point(struct EnginePoint *p_ep);
 void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc);
 void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc);
+
+/** Like transform_shpoint(), but only Y coord is returned.
+ *
+ * If you need both coords, transforming them at the same time is much faster.
+ */
+int transform_shpoint_y(int dxc, int dyc, int dzc);
 
 void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c);
 

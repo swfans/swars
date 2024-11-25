@@ -25,7 +25,7 @@
 /******************************************************************************/
 extern ushort buckets[BUCKETS_COUNT];
 
-TbBool draw_item_add(ubyte ditype, ushort offset, ushort bckt)
+TbBool draw_item_add(ubyte ditype, ushort offset, int bckt)
 {
     struct DrawItem *p_dritm;
 

@@ -186,6 +186,8 @@ TbBool person_is_dead_or_dying(ThingIdx thing);
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 TbBool person_carries_any_medikit(struct Thing *p_person);
 
+TbBool person_can_accept_control(ThingIdx person);
+
 void set_person_stats_type(struct Thing *p_person, ushort type);
 void init_person_thing(struct Thing *p_person);
 void person_give_best_mods(struct Thing *p_person);
@@ -239,6 +241,8 @@ TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);
 
 struct Thing *new_sim_person(int x, int y, int z, ubyte subtype);
+
+void people_intel(ubyte flag);
 
 /******************************************************************************/
 #ifdef __cplusplus

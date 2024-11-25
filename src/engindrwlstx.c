@@ -28,6 +28,8 @@
 #include <assert.h>
 
 #include "bflib_render_drspr.h"
+
+#include "bigmap.h"
 #include "display.h"
 #include "drawtext.h"
 #include "enginbckt.h"
@@ -48,6 +50,8 @@
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
+#define MAX_LIGHTS_AFFECTING_FACE 100
+
 extern ushort tnext_screen_point;
 extern ushort tnext_draw_item;
 extern ushort tnext_sort_sprite;
@@ -68,6 +72,8 @@ extern long dword_176CF4;
 extern long dword_176D00;
 extern long dword_176D04;
 
+extern ubyte byte_176D49;
+
 extern long dword_19F4FC;
 extern long dword_19F500;
 extern long dword_19F504;
@@ -81,6 +87,8 @@ extern short word_1A5836;
 extern long sprite_over_16x16;
 
 extern ubyte byte_1C844E;
+
+extern ubyte byte_1DB2E9;
 
 sbyte byte_153014[] = {
   1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -325,20 +333,30 @@ void reset_drawlist(void)
 {
     tnext_screen_point = next_screen_point;
     next_screen_point = 0;
+
     next_sort_line = 0;
+    p_current_sort_line = &game_sort_lines[next_sort_line];
+
     tnext_draw_item = next_draw_item;
     next_draw_item = 1;
-    next_special_face = 1;
+    p_current_draw_item = &game_draw_list[next_draw_item];
+
     tnext_sort_sprite = next_sort_sprite;
     next_sort_sprite = 0;
+    p_current_sort_sprite = &game_sort_sprites[next_sort_sprite];
+
+    next_special_face = 1;
+
     tnext_special_face4 = next_special_face4;
     next_special_face4 = 1;
+
     ingame.NextRocket = 0;
+
     tnext_floor_texture = next_floor_texture;
+
+    next_floor_tile = 1;
+
     dword_176CC4 = 0;
-    p_current_sort_line = game_sort_lines;
-    p_current_sort_sprite = game_sort_sprites;
-    p_current_draw_item = &game_draw_list[1];
 }
 
 int calculate_enginepoint_shade_1(struct PolyPoint *p_pt1, struct SingleObjectFace3 *p_face, ushort pt2)
@@ -415,10 +433,12 @@ uint cummulate_shade_from_quick_lights(ushort light_first)
         short i;
 
         shade = 0;
-        for (light = light_first, i = 0; (light != 0) && (i <= 100); light = p_qlight->NextQuick, i++)
+        for (light = light_first, i = 0; light != 0; light = p_qlight->NextQuick, i++)
         {
             short intens;
 
+            if (i > MAX_LIGHTS_AFFECTING_FACE)
+                break;
             p_qlight = &game_quick_lights[light];
             intens = game_full_lights[p_qlight->Light].Intensity;
             shade += intens * p_qlight->Ratio;
@@ -510,21 +530,10 @@ void draw_object_face3_textrd_dk(ushort face)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face->Light2;
         shade = p_face->Shade2 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = p_qlight->Ratio * game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face->Light2);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point2.S = shade << 7;
@@ -546,21 +555,10 @@ void draw_object_face3_textrd_dk(ushort face)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face->Light1;
         shade = p_face->Shade1 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face->Light1);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point3.S = shade << 7;
@@ -1112,7 +1110,7 @@ void draw_floor_tile1a(ushort tl)
         p_sftex = p_floortl->Texture;
         if (byte_19EC6F) {
             if (current_map == 11) // map011 Orbital Station
-              vec_mode = 6;
+                vec_mode = 6;
         } else {
             if (p_floortl->Flags == 5)
                 vec_mode = 2;
@@ -1199,7 +1197,7 @@ void draw_floor_tile1b(ushort tl)
     p_floortl = &game_floor_tiles[tl];
     vec_colour = p_floortl->Col;
     vec_mode = p_floortl->Flags;
-    if (p_floortl->Flags == 5 || p_floortl->Flags == 21)
+    if ((p_floortl->Flags == 5) || (p_floortl->Flags == 21))
     {
         struct SingleFloorTexture *p_sftex;
 
@@ -1222,7 +1220,7 @@ void draw_floor_tile1b(ushort tl)
         point1.U = p_sftex->TMapX4 << 16;
         point1.V = p_sftex->TMapY4 << 16;
         point4.U = p_sftex->TMapX2 << 16;
-        point4.V = p_sftex->TMapY1 << 16;
+        point4.V = p_sftex->TMapY2 << 16;
     }
     point1.X = p_floortl->X[0];
     point1.Y = p_floortl->Y[0];
@@ -1477,21 +1475,10 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light0;
         shade = p_face4->Shade0 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light0);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point1.S = shade << 7;
@@ -1513,21 +1500,10 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light2;
         shade = p_face4->Shade2 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light2);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point2.S = shade << 7;
@@ -1549,21 +1525,10 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light1;
         shade = p_face4->Shade1 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light1);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point3.S = shade << 7;
@@ -1585,21 +1550,10 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light3;
         shade = p_face4->Shade3 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light3);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point4.S = shade << 7;
@@ -1831,9 +1785,9 @@ void draw_sort_sprite1b(int sspr)
 
     br_inc = 0;
     bright = p_sspr->Brightness;
-    if ((p_thing->Flag & 0x02) == 0)
+    if ((p_thing->Flag & TngF_Destroyed) == 0)
     {
-        if ((p_thing->Flag & 0x200000) != 0)
+        if ((p_thing->Flag & TngF_Unkn00200000) != 0)
         {
             br_inc += 16;
             if (p_thing->U.UPerson.ShieldGlowTimer) {
@@ -1842,7 +1796,7 @@ void draw_sort_sprite1b(int sspr)
         }
     }
     bright += br_inc;
-    if ((p_thing->U.UPerson.AnimMode == 12) || ((ingame.Flags & 0x8000) != 0))
+    if ((p_thing->U.UPerson.AnimMode == 12) || ((ingame.Flags & GamF_ThermalView) != 0))
         bright = 32;
 
     word_1A5834 = 120;
@@ -1850,7 +1804,7 @@ void draw_sort_sprite1b(int sspr)
 
     if (((p_thing->Flag2 & TgF2_Unkn2000) != 0) && (ingame.DisplayMode == 50))
     {
-        if ((ingame.Flags & 0x8000) != 0) {
+        if ((ingame.Flags & GamF_ThermalView) != 0) {
             ushort fr;
             fr = nstart_ani[1066];
             draw_sorted_sprite1a(fr, p_sspr->X, p_sspr->Y, 32);
@@ -1870,7 +1824,7 @@ void draw_sort_sprite1b(int sspr)
         PlayerInfo *p_locplayer;
 
         p_locplayer = &players[local_player_no];
-        if ((p_thing->Flag & 0x02) != 0)
+        if ((p_thing->Flag & TngF_Destroyed) != 0)
         {
             if (p_locplayer->TargetType < 1)
                 check_mouse_overlap_corpse(sspr);
@@ -1887,14 +1841,14 @@ void draw_sort_sprite1b(int sspr)
         struct Thing *p_owntng;
 
         p_owntng = NULL;
-        if (((p_thing->Flag & 0x2000) != 0) && (p_thing->U.UPerson.ComCur >> 2 != local_player_no))
+        if (((p_thing->Flag & TngF_PlayerAgent) != 0) && (p_thing->U.UPerson.ComCur >> 2 != local_player_no))
         {
             p_owntng = p_thing;
         }
-        else if ((p_thing->Flag & 0x80000) != 0)
+        else if ((p_thing->Flag & TngF_Persuaded) != 0)
         {
             p_owntng = &things[p_thing->Owner];
-            if (((p_owntng->Flag & 0x2000) == 0) || (p_owntng->U.UPerson.ComCur >> 2 == local_player_no))
+            if (((p_owntng->Flag & TngF_PlayerAgent) == 0) || (p_owntng->U.UPerson.ComCur >> 2 == local_player_no))
                 p_owntng = NULL;
         }
         if ((p_owntng != NULL) && (p_owntng->U.UPerson.CurrentWeapon != 30)) {
@@ -1920,13 +1874,13 @@ void draw_sort_sprite1b(int sspr)
         draw_text(p_sspr->X, p_sspr->Y - dy, locstr, colour_lookup[2]);
     }
 
-    if ((p_thing->Flag2 & TgF2_Unkn01000000) != 0) {
+    if ((p_thing->Flag2 & TgF2_ExistsOnMap) != 0) {
         short dx, dy;
         dx = (2 * overall_scale) >> 8;
         dy = (37 * overall_scale) >> 8;
         draw_text(p_sspr->X - dx, p_sspr->Y - dy, "E", colour_lookup[2]);
     }
-    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_Unkn20000000) != 0)) {
+    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0)) {
         short dx, dy;
         dx = (2 * overall_scale) >> 8;
         dy = (37 * overall_scale) >> 8;
@@ -2158,21 +2112,10 @@ void draw_object_face3_textrd(ushort face)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face->Light0;
         shade = p_face->Shade0 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face->Light0);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point1.S = shade << 7;
@@ -2200,21 +2143,10 @@ void draw_object_face3_textrd(ushort face)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face->Light2;
             shade = p_face->Shade2 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face->Light2);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point2.S = shade << 7;
@@ -2235,21 +2167,10 @@ void draw_object_face3_textrd(ushort face)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face->Light1;
             shade = p_face->Shade1 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face->Light1);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point3.S = shade << 7;
@@ -2384,21 +2305,10 @@ void draw_object_face4d_textrd(ushort face4)
     }
     else
     {
-        ushort light, shade;
-        short i;
+        ushort shade;
 
-        light = p_face4->Light0;
         shade = p_face4->Shade0 << 7;
-        for (i = 0; (i <= 100) && (light != 0); i++)
-        {
-            struct QuickLight *p_qlight;
-            short intens;
-
-            p_qlight = &game_quick_lights[light];
-            intens = game_full_lights[p_qlight->Light].Intensity;
-            light = p_qlight->NextQuick;
-            shade += intens * p_qlight->Ratio;
-        }
+        shade += cummulate_shade_from_quick_lights(p_face4->Light0);
         if (shade > 0x7E00)
             shade = 0x7F00;
         point1.S = shade << 7;
@@ -2426,21 +2336,10 @@ void draw_object_face4d_textrd(ushort face4)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face4->Light2;
             shade = p_face4->Shade2 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face4->Light2);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point2.S = shade << 7;
@@ -2452,21 +2351,10 @@ void draw_object_face4d_textrd(ushort face4)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face4->Light1;
             shade = p_face4->Shade1 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face4->Light1);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point3.S = shade << 7;
@@ -2478,21 +2366,10 @@ void draw_object_face4d_textrd(ushort face4)
         }
         else
         {
-            ushort light, shade;
-            short i;
+            ushort shade;
 
-            light = p_face4->Light3;
             shade = p_face4->Shade3 << 7;
-            for (i = 0; (i <= 100) && (light != 0); i++)
-            {
-                struct QuickLight *p_qlight;
-                short intens;
-
-                p_qlight = &game_quick_lights[light];
-                intens = game_full_lights[p_qlight->Light].Intensity;
-                light = p_qlight->NextQuick;
-                shade += intens * p_qlight->Ratio;
-            }
+            shade += cummulate_shade_from_quick_lights(p_face4->Light3);
             if (shade > 0x7E00)
                 shade = 0x7F00;
             point4.S = shade << 7;
@@ -3118,7 +2995,7 @@ void draw_phwoar(ushort ph)
         lbDisplay.DrawFlags = p_elem->Flags & 0x07;
         if ((p_elem->Flags & 0xFE00) == 0)
         {
-            if (lbDisplay.ScreenMode == 1)
+            if (lbDisplay.GraphicsScreenHeight < 400)
                 LbSpriteDraw_1(point_x + (p_elem->X >> 1), point_y + (p_elem->Y >> 1), p_spr);
             else
                 LbSpriteDraw_2(point_x + p_elem->X, point_y + p_elem->Y, p_spr);
@@ -3372,6 +3249,127 @@ void draw_sort_sprite_number(ushort sspr)
     p_sspr = &game_sort_sprites[sspr];
     sprintf(locstr, "%d", (int)p_sspr->PThing);
     draw_text(p_sspr->X, p_sspr->Y, locstr, colour_lookup[2]);
+}
+
+void number_player(struct Thing *p_person, ubyte n)
+{
+#if 0
+    asm volatile ("call ASM_number_player\n"
+        : : "a" (p_person), "d" (n));
+    return;
+#endif
+    struct ShEnginePoint sp;
+    struct Frame *p_frm;
+    struct Element *p_el;
+    int cor_x, cor_y, cor_z;
+    int shift_x, shift_y;
+    ushort ani_mdsh, ani_base;
+    ushort frm;
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        ani_mdsh = 0;
+    else
+        ani_mdsh = 4;
+    if (byte_1DB2E9 == 1)
+        ani_base = 1528;
+    else
+        ani_base = 1520;
+
+    frm = nstart_ani[ani_base + ani_mdsh + n];
+    {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+        if (!p_locplayer->DoubleMode)
+        {
+            if ((p_person->ThingOffset != (ThingIdx)p_locplayer->DirectControl[0]) || ((gameturn & 4) != 0))
+            {
+                frm = frame[frm].Next;
+            }
+            else
+            {
+                ushort i;
+                for (i = 0; i <= (gameturn & 3); i++)
+                    frm = frame[frm].Next;
+            }
+        }
+    }
+
+    if ((p_person->Flag2 & TgF2_Unkn0002) != 0)
+        return;
+
+    {
+        int tng_cor_x, tng_cor_y, tng_cor_z;
+
+        if (((p_person->Flag & TngF_InVehicle) != 0) && things[p_person->U.UPerson.Vehicle].SubType == 29)
+        {
+            tng_cor_x = p_person->X;
+            tng_cor_y = p_person->Y;
+            tng_cor_z = p_person->Z;
+        }
+        else if ((p_person->Flag & TngF_Unkn4000) != 0)
+        {
+            struct Thing *p_vehicle;
+            p_vehicle = &things[p_person->U.UPerson.Vehicle];
+            tng_cor_x = p_vehicle->X;
+            tng_cor_y = p_vehicle->Y;
+            tng_cor_z = p_vehicle->Z;
+        }
+        else
+        {
+            tng_cor_x = p_person->X;
+            tng_cor_y = p_person->Y;
+            tng_cor_z = p_person->Z;
+        }
+        cor_x = PRCCOORD_TO_MAPCOORD(tng_cor_x) - engn_xc;
+        cor_y = (tng_cor_y >> 5) - (engn_yc >> 3);
+        cor_z = PRCCOORD_TO_MAPCOORD(tng_cor_z) - engn_zc;
+    }
+    {
+        int cor_lr, cor_sm;
+        if (abs(cor_x) <= abs(cor_z)) {
+            cor_sm = abs(cor_x);
+            cor_lr = abs(cor_z);
+        } else {
+            cor_sm = abs(cor_z);
+            cor_lr = abs(cor_x);
+        }
+        if (cor_lr + (cor_sm >> 1) > TILE_TO_MAPCOORD(18,0))
+            return;
+    }
+
+    transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    if ((p_person->Flag & TngF_InVehicle) != 0)
+    {
+        shift_x = 0;
+        sp.X += 7 * n - 14;
+    }
+    else
+    {
+        shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + 512] >> 14;
+        if ((p_person->Flag2 & TgF2_Unkn00080000) == 0)
+            shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + 512] >> 15;
+    }
+    shift_y = 0;
+
+    p_frm = &frame[frm];
+    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
+    {
+        struct TbSprite *p_spr;
+        short x, y;
+
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
+        if (p_spr <= m_sprites)
+           continue;
+
+        lbDisplay.DrawFlags = p_el->Flags & 7;
+        if ((p_el->Flags & 0xFE00) != 0)
+            continue;
+
+        x = sp.X + ((overall_scale * (p_el->X + shift_x)) >> 9);
+        y = sp.Y + ((overall_scale * (p_el->Y + shift_y)) >> 9);
+        LbSpriteDraw(x, y, p_spr);
+    }
 }
 
 // Special non-textured draw; used during nuclear explosions?

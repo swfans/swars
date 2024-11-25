@@ -42,6 +42,8 @@ int dword_1DC7A4 = 0;
 short word_1DC7A0 = 0;
 short word_1DC7A2 = 0;
 
+extern ushort word_1DC8CE;
+
 TbBool thing_debug_selectable(short thing, short type, TbBool hidden)
 {
     if (thing > 0)
@@ -213,6 +215,38 @@ int select_thing_for_debug(short x, short y, short z, short type)
         draw_text_transformed_at_ground(p_sthing->X >> 8, p_sthing->Z >> 8, locstr);
     }
     return thing;
+}
+
+void count_fnavs(TbBool a1)
+{
+    asm volatile (
+      "call ASM_count_fnavs\n"
+        : : "a" (a1));
+}
+
+void navi_onscreen_debug(TbBool a1)
+{
+    if (!a1)
+    {
+        word_1DC8CE++;
+        return;
+    }
+    if ((ingame.Flags & GamF_Unkn0200) != 0)
+    {
+        ushort i;
+        int y;
+
+        for (i = 0; i < word_1DC8CE; i++)
+        {
+            y = 340 - 12 * i;
+            if (lbDisplay.GraphicsScreenHeight < 400)
+                LbDrawBox(290, y >> 1, 25, 5, colour_lookup[4]);
+            else
+                LbDrawBox(580, y, 50, 10, colour_lookup[4]);
+        }
+    }
+    word_1DC8CE = 0;
+    count_fnavs(1);
 }
 
 /** Make lines to target things or circles around target areas to visualize person command.
@@ -637,11 +671,11 @@ void things_debug_hud(void)
 
         if (p_track_thing->Flag & TngF_Unkn00040000)
             draw_text(30, 90, "Da", colour_lookup[1]);
-        if (p_track_thing->Flag & TngF_Unkn00010000)
+        if (p_track_thing->Flag & TngF_WepRecoil)
             draw_text(50, 90, "Re", colour_lookup[1]);
         if (p_track_thing->Flag & TngF_Unkn00020000)
             draw_text(70, 90, "Si", colour_lookup[1]);
-        if (p_track_thing->Flag & TngF_Unkn0002)
+        if (p_track_thing->Flag & TngF_Destroyed)
             draw_text(90, 90, "De", colour_lookup[1]);
         if (p_track_thing->Flag & TngF_Unkn0400)
             draw_text(110, 90, "Ch", colour_lookup[1]);
@@ -649,7 +683,7 @@ void things_debug_hud(void)
             draw_text(130, 90, "CI", colour_lookup[1]);
         if (p_track_thing->Flag & TngF_Unkn20000000)
             draw_text(150, 90, "SAP", colour_lookup[1]);
-        if (p_track_thing->Flag & TngF_Unkn0200)
+        if (p_track_thing->Flag & TngF_StationrSht)
             draw_text(190, 90, "Sta", colour_lookup[2]);
         if (p_track_thing->Flag & TngF_Unkn0800)
             draw_text(260, 90, "TRIG", colour_lookup[1]);

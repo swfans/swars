@@ -21,14 +21,65 @@
 #include <string.h>
 #include "bfmath.h"
 
+#include "bigmap.h"
 #include "display.h"
+#include "enginbckt.h"
 #include "engintrns.h"
 #include "engindrwlstm.h"
 #include "engindrwlstx.h"
-#include "thing.h"
+#include "enginsngobjs.h"
+#include "enginsngtxtr.h"
 #include "game.h"
+#include "game_data.h"
+#include "matrix.h"
+#include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
+struct ShadowTexture {
+    ushort Width;
+    ushort Length;
+    ubyte X1;
+    ubyte Y1;
+    ubyte X2;
+    ubyte Y2;
+};
+
+struct ShadowTexture shadowtexture[] = {
+  {300, 450,   0, 230,  20, 254},
+  {420, 700,  21, 225,  42, 254},
+  {150, 700, 143, 227, 151, 254},
+  {460, 850,  43, 226,  66, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {500, 800,  67, 236,  84, 254},
+  {550, 900, 152, 226, 173, 254},
+  {500, 800,  67, 236,  84, 254},
+  {500, 800, 121, 228, 142, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {500, 800,  85, 232,  94, 254},
+  {500, 800,  85, 232,  94, 254},
+  {400, 700,  67, 236,  84, 254},
+  {500, 800,  95, 226, 120, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {700, 900,  67, 236,  84, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {300, 450,   0, 230,  20, 254},
+  {420, 700,  21, 225,  42, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {500, 800,  95, 226, 120, 254},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+  {  0,   0,   0,   0,   0,   0},
+};
 
 extern const ubyte byte_154F2C[32];
 extern const ushort word_154F4C[14];
@@ -42,6 +93,15 @@ extern ubyte sprshadow_F388[600];
 extern ubyte sprshadow_F5E0[24];
 extern ubyte sprshadow_F5F8[600];
 extern sbyte sprshadow_F850[512];
+
+int alt_at_point_under_height(int x, int z, int h)
+{
+    int ret;
+    asm volatile (
+      "call ASM_alt_at_point_under_height\n"
+        : "=r" (ret) : "a" (x), "d" (z), "b" (h));
+    return ret;
+}
 
 void draw_person_shadow(ushort face)
 {
@@ -130,6 +190,143 @@ void draw_person_shadow(ushort face)
     if (vec_mode == 2)
         vec_mode = 27;
     draw_trigpoly(&point2.pp, &point1.pp, &point3.pp);
+}
+
+void draw_vehicle_shadow(ushort veh, ushort sort)
+{
+#if 0
+    asm volatile ("call ASM_draw_vehicle_shadow\n"
+        : : "a" (veh), "d" (sort));
+    return;
+#endif
+    struct ShEnginePoint sp1, sp2, sp3, sp4;
+    struct M31 vec_inp;
+    struct M31 vec_rot;
+    struct Thing *p_vehicle;
+    struct ShadowTexture *p_shtextr;
+    struct SingleObjectFace4 *p_face4;
+    struct SingleFloorTexture *p_sftex;
+    struct SpecialPoint *p_specpt;
+    int shd_w, shd_l;
+    short cor1_x, cor1_y, cor1_z;
+    short cor2_x, cor2_y, cor2_z;
+    short cor3_x, cor3_y, cor3_z;
+    short cor4_x, cor4_y, cor4_z;
+    ushort face, pt;
+    short sftex;
+    short bckt;
+
+    p_vehicle = &things[veh];
+    p_shtextr = &shadowtexture[p_vehicle->StartFrame];
+    if (p_shtextr->Width == 0)
+        return;
+
+    shd_w = p_shtextr->Width;
+    shd_l = p_shtextr->Length;
+
+    vec_inp.R[0] = -shd_w;
+    vec_inp.R[2] = -shd_l;
+    vec_inp.R[1] = 0;
+    matrix_transform(&vec_rot, &local_mats[p_vehicle->U.UVehicle.MatrixIndex], &vec_inp);
+    cor1_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
+    cor1_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+
+    vec_inp.R[1] = 0;
+    vec_inp.R[0] = shd_w;
+    vec_inp.R[2] = -shd_l;
+    matrix_transform(&vec_rot, &local_mats[p_vehicle->U.UVehicle.MatrixIndex], &vec_inp);
+    cor2_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
+    cor2_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+
+    vec_inp.R[0] = p_shtextr->Width;
+    vec_inp.R[1] = 0;
+    vec_inp.R[2] = shd_l;
+    matrix_transform(&vec_rot, &local_mats[p_vehicle->U.UVehicle.MatrixIndex], &vec_inp);
+    cor3_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
+    cor3_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+
+    vec_inp.R[0] = -p_shtextr->Width;
+    vec_inp.R[1] = 0;
+    vec_inp.R[2] = shd_l;
+    matrix_transform(&vec_rot, &local_mats[p_vehicle->U.UVehicle.MatrixIndex], &vec_inp);
+    cor4_x = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
+    cor4_z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+
+    if (p_vehicle->SubType == 40) {
+        cor1_y = alt_at_point_under_height(engn_xc + cor1_x, engn_zc + cor1_z, p_vehicle->Y) >> 8;
+        cor2_y = alt_at_point_under_height(engn_xc + cor2_x, engn_zc + cor2_z, p_vehicle->Y) >> 8;
+        cor3_y = alt_at_point_under_height(engn_xc + cor3_x, engn_zc + cor3_z, p_vehicle->Y) >> 8;
+        cor4_y = alt_at_point_under_height(engn_xc + cor4_x, engn_zc + cor4_z, p_vehicle->Y) >> 8;
+    } else {
+        cor1_y = alt_at_point(engn_xc + cor1_x, engn_zc + cor1_z) >> 5;
+        cor2_y = alt_at_point(engn_xc + cor2_x, engn_zc + cor2_z) >> 5;
+        cor3_y = alt_at_point(engn_xc + cor3_x, engn_zc + cor3_z) >> 5;
+        cor4_y = alt_at_point(engn_xc + cor4_x, engn_zc + cor4_z) >> 5;
+    }
+
+    transform_shpoint(&sp1, cor1_x, cor1_y - 8 * engn_yc, cor1_z);
+
+    transform_shpoint(&sp2, cor2_x, cor2_y - 8 * engn_yc, cor2_z);
+
+    transform_shpoint(&sp3, cor3_x, cor3_y - 8 * engn_yc, cor3_z);
+
+    transform_shpoint(&sp4, cor4_x, cor4_y - 8 * engn_yc, cor4_z);
+
+    face = next_special_face4;
+    if (face >= mem_game[25].N)
+        return;
+
+    pt = next_screen_point;
+    if (pt + 4 >= mem_game[30].N)
+        return;
+
+    next_special_face4++;
+    next_screen_point += 4;
+
+    p_face4 = &game_special_object_faces4[face];
+    p_face4->Flags = 10;
+    p_face4->GFlags = 1;
+    p_face4->ExCol = 16;
+    p_face4->PointNo[1] = pt + 1;
+    p_face4->PointNo[2] = pt + 3;
+    p_face4->PointNo[0] = pt + 0;
+    p_face4->PointNo[3] = pt + 2;
+
+    sftex = tnext_floor_texture;
+    if (sftex == 0)
+        tnext_floor_texture = next_floor_texture;
+    p_face4->Texture = tnext_floor_texture;
+    p_sftex = &game_textures[tnext_floor_texture];
+    tnext_floor_texture++;
+
+    p_sftex->TMapX1 = p_shtextr->X1;
+    p_sftex->TMapY1 = p_shtextr->Y1;
+    p_sftex->TMapX2 = p_shtextr->X2;
+    p_sftex->TMapY2 = p_shtextr->Y1;
+    p_sftex->TMapX4 = p_shtextr->X2;
+    p_sftex->TMapY4 = p_shtextr->Y2;
+    p_sftex->TMapX3 = p_shtextr->X1;
+    p_sftex->TMapY3 = p_shtextr->Y2;
+    p_sftex->Page = 4;
+
+    p_specpt = &game_screen_point_pool[pt + 0];
+    p_specpt->X = sp1.X;
+    p_specpt->Y = sp1.Y;
+
+    p_specpt = &game_screen_point_pool[pt + 1];
+    p_specpt->X = sp2.X;
+    p_specpt->Y = sp2.Y;
+
+    p_specpt = &game_screen_point_pool[pt + 2];
+    p_specpt->X = sp3.X;
+    p_specpt->Y = sp3.Y;
+
+    p_specpt = &game_screen_point_pool[pt + 3];
+    p_specpt->X = sp4.X;
+    p_specpt->Y = sp4.Y;
+
+    bckt = sort + 1;
+    draw_item_add(DrIT_Unkn12, face, bckt);
 }
 
 void copy_from_screen_ani(ubyte *buf)

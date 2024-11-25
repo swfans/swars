@@ -234,7 +234,22 @@ TbResult LbFileRename(const char *fname_old, const char *fname_new);
 TbResult LbFileDelete(const char *fname);
 
 long LbFileLengthRnc(const char *fname);
+
+/** Opens a file and reads it into given buffer, unpacking RNC if found.
+ *
+ * @param fname File name string
+ * @param buffer Memory buffer for storing the file content
+ * @return Size written into buffer, or -1 on error.
+ */
 long LbFileLoadAt(const char *fname, void *buffer);
+
+/** Creates a new file and writes content of given buffer into it.
+ *
+ * @param fname File name string
+ * @param buffer Memory buffer with the source data
+ * @param len Memory buffer length to be saved
+ * @return Size written to file, or -1 on error.
+ */
 long LbFileSaveAt(const char *fname, const void *buffer, ulong len);
 
 long LbFileStringSearch(TbFileHandle handle, const char *sstr, ubyte *buf,

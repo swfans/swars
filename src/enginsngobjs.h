@@ -157,7 +157,7 @@ struct SingleObject { // sizeof=36
   ushort NextObject;
   ushort StartFace4;
   ushort NumbFaces4;
-  ushort ZScale;
+  short ThingNo;
   short OffsetX;
   short OffsetY;
   short OffsetZ;
@@ -166,7 +166,9 @@ struct SingleObject { // sizeof=36
   short MapZ;
   ushort StartPoint;
   ushort EndPoint;
-  ubyte field_1C[7];
+  ushort field_1C;
+  ushort field_1E;
+  ubyte field_20[3];
   ubyte field_23;
 };
 

@@ -27,6 +27,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define EXPLODE_FACES_COUNT 1024
+
 struct ExplodeFace3 { // sizeof=46
     ushort Texture;
     ushort Flags;
@@ -59,9 +61,12 @@ struct ExplodeFace3 { // sizeof=46
 
 #pragma pack()
 /******************************************************************************/
-extern struct ExplodeFace3 ex_faces[1024];
+extern struct ExplodeFace3 ex_faces[EXPLODE_FACES_COUNT];
+extern ulong dont_bother_with_explode_faces;
 
 void init_free_explode_faces(void);
+void draw_explode(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

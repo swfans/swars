@@ -83,7 +83,7 @@ enum PacketActions
     PAct_31 = 0x31,
     PAct_32 = 0x32,
     PAct_33 = 0x33,
-    PAct_34 = 0x34,
+    PAct_SET_GRP_MOOD = 0x34,
     PAct_35 = 0x35,
     PAct_36 = 0x36,
     PAct_37 = 0x37,

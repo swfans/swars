@@ -62,11 +62,28 @@ void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushor
         : : "a" (p_thing), "d" (smptbl_id), "b" (vol), "c" (pan), "g" (pitch), "g" (loop), "g" (type));
 }
 
+void play_dist_ssample(struct SimpleThing *p_sthing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type)
+{
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_play_dist_ssample\n"
+        : : "a" (p_sthing), "d" (smptbl_id), "b" (vol), "c" (pan), "g" (pitch), "g" (loop), "g" (type));
+}
+
 //TODO better name?
 void fill_ail_sample_ids(void)
 {
     asm volatile ("call ASM_fill_ail_sample_ids\n"
         :  :  : "eax" );
+}
+
+void monitor_all_samples(void)
+{
+    asm volatile ("call ASM_monitor_all_samples\n"
+        :  :  : "eax" );
+    return;
 }
 
 void snd_unkn1_volume_all_samples(void)

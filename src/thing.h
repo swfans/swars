@@ -95,7 +95,7 @@ enum ThingType {
 
 enum ThingFlags {
     TngF_Unkn0001     = 0x0001,
-    TngF_Unkn0002     = 0x0002,
+    TngF_Destroyed    = 0x0002,
     TngF_Unkn0004     = 0x0004,
     TngF_Unkn0008     = 0x0008,
     TngF_Unkn0010     = 0x0010,
@@ -103,14 +103,14 @@ enum ThingFlags {
     TngF_Unkn0040     = 0x0040,
     TngF_Unkn0080     = 0x0080,
     TngF_Unkn0100     = 0x0100,
-    TngF_Unkn0200     = 0x0200,
+    TngF_StationrSht  = 0x0200,
     TngF_Unkn0400     = 0x0400,
     TngF_Unkn0800     = 0x0800,
     TngF_Unkn1000     = 0x1000,
     TngF_PlayerAgent  = 0x2000,
     TngF_Unkn4000     = 0x4000,
     TngF_Unkn8000     = 0x8000,
-    TngF_Unkn00010000 = 0x00010000,
+    TngF_WepRecoil    = 0x00010000,
     TngF_Unkn00020000 = 0x00020000,
     TngF_Unkn00040000 = 0x00040000,
     TngF_Persuaded    = 0x00080000,
@@ -132,7 +132,7 @@ enum ThingFlags2 {
     TgF2_Unkn0002     = 0x0002,
     TgF2_Unkn0004     = 0x0004,
     TgF2_Unkn0008     = 0x0008,
-    TgF2_Unkn0010     = 0x0010,
+    TgF2_KnockedOut   = 0x0010,
     TgF2_Unkn0020     = 0x0020,
     TgF2_Unkn0040     = 0x0040,
     TgF2_Unkn0080     = 0x0080,
@@ -152,12 +152,20 @@ enum ThingFlags2 {
     TgF2_Unkn00200000 = 0x00200000,
     TgF2_Unkn00400000 = 0x00400000,
     TgF2_Unkn00800000 = 0x00800000,
-    TgF2_Unkn01000000 = 0x01000000,
+    /** The thing is added to map content lists and is visible.
+     *
+     * If not set, the thing is invisible and on-map things cannot affect it.
+     * Non-existent thing can still execute commands though, working as
+     * invisible helper for creating level mechanics.
+     * The flag can be controlled by CMD_PING_EXIST, spawning and despawning
+     * the thing on the map.
+     */
+    TgF2_ExistsOnMap = 0x01000000,
     TgF2_Unkn02000000 = 0x02000000,
     TgF2_Unkn04000000 = 0x04000000,
     TgF2_Unkn08000000 = 0x08000000,
     TgF2_Unkn10000000 = 0x10000000,
-    TgF2_Unkn20000000 = 0x20000000,
+    TgF2_InsideBuilding = 0x20000000,
     TgF2_Unkn40000000 = 0x40000000,
 };
 
@@ -349,7 +357,7 @@ struct TngUPerson
    * Unless it's a player-controlled agent, then this is the player index and MyAgent index.
    */
   ushort ComCur;
-  char SpecialTimer;
+  sbyte SpecialTimer;
   ubyte Angle;
   short WeaponTurn;
   ubyte Brightness;
@@ -931,12 +939,17 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
 TbBool person_command_to_text(char *out, ushort cmd, ubyte a3);
 
 void things_debug_hud(void);
+void navi_onscreen_debug(TbBool a1);
 
 TbBool thing_is_destroyed(ThingIdx thing);
 
 /** Delete the thing from `mapwho` chain.
  */
 TbResult delete_node(struct Thing *p_thing);
+
+/** Delete the simple thing from `mapwho` chain.
+ */
+TbResult delete_snode(struct SimpleThing *p_sthing);
 
 void add_node_thing(ThingIdx new_thing);
 short get_new_thing(void);
@@ -990,6 +1003,7 @@ ThingIdx search_things_for_uniqueid(short index, ubyte flag);
 
 struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop);
 
+void shield_frames_init(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

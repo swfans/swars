@@ -417,7 +417,7 @@ void draw_objective_group_non_flag2_on_engine_scene(ushort group)
     for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
-        if ((p_thing->Flag & TngF_Unkn0002) == 0) {
+        if ((p_thing->Flag & TngF_Destroyed) == 0) {
             draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
     }
@@ -455,7 +455,7 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
     {
         p_thing = &things[thing];
         if (((p_thing->Flag & TngF_Persuaded) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
-            if ((p_thing->Flag & TngF_Unkn0002) == 0)
+            if ((p_thing->Flag & TngF_Destroyed) == 0)
                 draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
     }
@@ -473,7 +473,7 @@ void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short ow
     {
         p_thing = &things[thing];
         if (((p_thing->Flag & TngF_Persuaded) == 0) && (p_thing->Owner != owntng)) {
-            if ((p_thing->Flag & TngF_Unkn0002) == 0)
+            if ((p_thing->Flag & TngF_Destroyed) == 0)
                 draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
     }

@@ -16,6 +16,8 @@ extern "C" {
 
 #pragma pack(1)
 
+#define WEP_ROCKETS_FIRED_LIMIT 15
+
 enum GameModes {
     GamM_None        = 0,
     GamM_Unkn1       = 1,
@@ -39,7 +41,7 @@ enum GameFlags {
     GamF_Unkn1000     = 0x1000,
     GamF_HUDPanel     = 0x2000,
     GamF_Unkn4000     = 0x4000,
-    GamF_Unkn8000     = 0x8000,
+    GamF_ThermalView  = 0x8000,
     GamF_Unkn00010000 = 0x00010000,
     GamF_Unkn00020000 = 0x00020000,
     GamF_Unkn00040000 = 0x00040000,
@@ -209,15 +211,14 @@ struct InGame {
     ubyte GameOver;
     struct Scanner Scanner; // offset=0x0C
     long Credits;
-    short fld_unkC4B;
-    short fld_unkC4D;
+    ulong fld_unkC4B;
     short fld_unkC4F;
     short MissionStatus;
     long Flags;
     ushort fld_unkC57;
     short fld_unkC59;
     short draw_unknprop_01;
-    short Rocket1[15];
+    short Rocket1[WEP_ROCKETS_FIRED_LIMIT];
     short NextRocket;
     short TrainMode;
     short MyGroup;
@@ -540,6 +541,8 @@ extern ushort text_window_y1;
 extern ushort text_window_x2;
 extern ushort text_window_y2;
 
+extern ubyte execute_commands;
+
 // To be replaced by LbArcTanAngle()
 short arctan(int dx, int dz);
 
@@ -586,6 +589,8 @@ void bang_set_detail(int a1);
 int sub_73C64(char *a1, ubyte a2);
 void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
+
+void ingame_palette_reload(void);
 
 #ifdef __cplusplus
 };

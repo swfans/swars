@@ -28,6 +28,13 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define PANEL_STATE_NORMAL        0
+#define PANEL_STATE_WEP_SEL_ONE   1
+#define PANEL_STATE_WEP_SEL_GRP   5
+#define PANEL_STATE_MOOD_SET_ONE  9
+#define PANEL_STATE_MOOD_SET_GRP 13
+#define PANEL_STATE_SEND_MESSAGE 17
+
 struct GamePanel
 {
   short X;
@@ -56,6 +63,21 @@ extern long scanner_unkn3CC;
 int SCANNER_objective_info_height(void);
 
 void draw_new_panel(void);
+
+void load_pop_sprites_for_current_mode(void);
+
+/** Returns if a game panel is active, considering the target which it controls.
+ */
+TbBool panel_active_based_on_target(short panel);
+
+/** Returns if current mouse move position is over the given game panel.
+ */
+TbBool mouse_move_over_panel(short panel);
+
+TbBool mouse_over_infrared_slant_box(short panel);
+
+TbBool process_panel_state(void);
+TbBool check_panel_button(void);
 
 /******************************************************************************/
 #ifdef __cplusplus
