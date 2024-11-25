@@ -254,8 +254,8 @@ struct TbLoadFiles unk02_load_files[] =
   { "data/nfra-0.ani",	(void **)&frame,			(void **)&frame_end,	0, 0, 0 },
   { "data/font0-0.dat",	(void **)&small_font_data,	(void **)NULL,			0, 0, 0 },
   { "data/font0-0.tab",	(void **)&small_font,		(void **)&small_font_end, 0, 0, 0 },
-  { "data/pointers.dat",(void **)&pointer_data,		(void **)NULL,			0, 0, 0 },
-  { "data/pointers.tab",(void **)&pointer_sprites,	(void **)&pointer_sprites_end, 0, 0, 0 },
+  { "data/pointr0-2.dat",(void **)&pointer_data,	(void **)NULL,			0, 0, 0 },
+  { "data/pointr0-2.tab",(void **)&pointer_sprites,	(void **)&pointer_sprites_end, 0, 0, 0 },
   { "qdata/pal.pal",	(void **)&display_palette,	(void **)NULL,			0, 0, 0 },
   { "",					(void **)NULL, 				(void **)NULL,			0, 0, 0 }
 };

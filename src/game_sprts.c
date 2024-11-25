@@ -123,10 +123,6 @@ TbResult load_sprites_mouse_pointers(
     case 0:
         ret = load_sprites_with_detail(pointer_data, (ubyte *)pointer_sprites,
           (ubyte **)&pointer_sprites_end, dir, "pointr", styleno, 0, min_sprites);
-        if (ret != Lb_FAIL)
-            break;
-        ret = load_sprites_old(pointer_data, (ubyte *)pointer_sprites,
-          (ubyte **)&pointer_sprites_end, dir, "pointers", min_sprites);
         break;
     }
 
