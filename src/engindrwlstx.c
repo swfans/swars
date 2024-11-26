@@ -80,8 +80,6 @@ extern long dword_19F500;
 extern long dword_19F504;
 extern long dword_19F508;
 
-extern ushort shield_frm[4];
-
 extern short word_1A5834;
 extern short word_1A5836;
 

@@ -56,6 +56,11 @@ extern ushort *nstart_ani_end;
 extern struct Frame *frame;
 extern struct Frame *frame_end;
 
+extern ushort shield_frm[4];
+
+
+void shield_frames_init(void);
+void shield_frames_cycle(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

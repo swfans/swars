@@ -55,8 +55,6 @@ struct UnkFLight { // sizeof=0x0A
 #pragma pack()
 /******************************************************************************/
 
-extern ushort shield_frm[4];
-
 extern ushort next_unkn_full_light;
 extern struct UnkFLight unkn_full_lights[50];
 
@@ -146,24 +144,6 @@ void init_things(void)
 {
     asm volatile ("call ASM_init_things\n"
         :  :  : "eax" );
-}
-
-void shield_frames_init(void)
-{
-    shield_frm[0] = nstart_ani[984];
-    shield_frm[1] = frame[frame[shield_frm[0]].Next].Next;
-    shield_frm[2] = frame[frame[shield_frm[1]].Next].Next;
-    shield_frm[3] = frame[frame[shield_frm[2]].Next].Next;
-}
-
-void shield_frames_cycle(void)
-{
-    ushort i;
-
-    for (i = 0; i < 4; i++)
-    {
-        shield_frm[i] = frame[shield_frm[i]].Next;
-    }
 }
 
 void quick_light_unkn_func_04(short a1, int a2, short a3, short a4)
