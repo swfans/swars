@@ -17,9 +17,10 @@ the DOS-specific parts with platform-independent code, using [SDL](https://www.l
 for input and video display, [Vorbis](https://xiph.org/vorbis/) for music and
 [OpenAL](https://www.openal.org/) for sound.
 
-Only the modernised executable is provided with this port. This means that game
-data are not included. To install the **Syndicate Wars Port**, you will need to
-have the original data from either *Syndicate Wars CD*, or digital distribution.
+An executable and some, but not all, neccessary data files are provided with this
+port. This means that some of game data are not included. To install the
+**Syndicate Wars Port**, you will need to have the original data from either
+*Syndicate Wars CD*, or digital distribution.
 
 ## Community
 
@@ -31,8 +32,10 @@ you may post to the Google group [syndicate-wars-port](http://groups.google.com/
 
 To install **Syndicate Wars Port**, you will need either the original *Syndicate
 Wars CD*, or digital distribution of the game. There were several physical
-versions released. The multi-lingual version was tested and will definitely
-work, other version were not tested. Only releases for PC can be used.
+versions released. The multi-lingual european release, as well as american release,
+were tested and will definitely work; other version were not fully tested.
+Only releases for PC can be used. Releases from popular digital distribution
+platforms all include one of the tested releases.
 
 The CD version which you use narrows the range of available languages.
 
@@ -45,8 +48,8 @@ The steps you need to take vary depending on your operating system.
 
 ### Installing on GNU or UNIX
 
-If you're installing on GNU or UNIX, you will have to compile from source.
-The steps are:
+If you're installing on GNU or UNIX, you will have to compile from source,
+and then add the neccessary data files. The steps are:
 
 1. download and unpack the source tarball or clone git repo
 2. follow [building instructions](#general-building-instructions) below to get
@@ -59,6 +62,13 @@ The steps are:
    * *SOURCE* is the game CD path, like `/media/cdrom`,
    * *TARGET* is the destination path, in this case `/usr/local/share/swars`,
    * *LANG* is the installation language, and can be one of: `eng` `fre` `ger` `ita` `spa` `swe`.
+6. download extra data packages with files improved for the port:
+   * [swars-gfx release](https://github.com/swfans/swars-gfx/releases)
+   * [swars-sfx release](https://github.com/swfans/swars-sfx/releases)
+   * [swars-levels release](https://github.com/swfans/swars-levels/releases)
+7. Extract all the data packages to your installation folder, replacing any
+   existing files. Note that the packages have `swars` directory stored,
+   so the files to place into your installation folder are inside of that.
 
 If all went well, you can now play the game.
 
@@ -93,23 +103,25 @@ There are two ways to install **Syndicate Wars Port** on Windows - either downlo
 the installer, or download the source code and compile it by hand.
 It is recommended to use the installer!
 
-The installer requires the original *Syndicate Wars CD* to be present in the
-CD-ROM drive. It will copy the files from the original *Syndicate Wars CD* and
-optionally encode the game music from the CD to ogg files used by this port.
+The installer requires either the original *Syndicate Wars CD* to be present in
+the CD-ROM drive, or a *SW CD image* file on disk. The CD image can come from any
+popular digital distribution platform. The installer will copy the files from the
+original *Syndicate Wars CD* or *SW CD image* and optionally encode the game music
+to ogg files used by this port.
 
-The *Syndicate Wars CD* is not required to play the game, it is used only during
-the installation process.
+The *Syndicate Wars CD* or *SW CD image* is not required to play the game,
+it is used only during the installation process.
 
 If you've decided on the hand-compilation option, proceed with the following steps:
 
 1. download and unpack the source tarball or clone git repo
 2. follow [building instructions](#building-on-windows) below to get
    a compiled executable and configuration files
-3. copy all the files and directories, except for the Language directory, from
-   the `Game` directory within the *Syndicate Wars CD* to the location of your
+3. copy all the files and directories, except for the `language` directory, from
+   the `game` directory within the *Syndicate Wars CD* to the location of your
    desire, say `SWarsLocation`.
 4. copy all the files, except `sound.dat`, from the `game\language\LANGUAGE\` from
-   the *Syndicate Wars CD* to the `SWarsLocation\Data` directory, where *LANGUAGE*
+   the *Syndicate Wars CD* to the `SWarsLocation\data` directory, where *LANGUAGE*
    stands for the appropriate subdirectory fo the language you want
 5. copy the `sound.dat` file (from the directory stated above) to the
    `SWarsLocation\sound` directory
@@ -121,8 +133,15 @@ If you've decided on the hand-compilation option, proceed with the following ste
 9. from the compilation folder, copy `lang` directory to `SWarsLocation` and
    rename it to `language`, so that ie. files for english are within
    `SWarsLocation\language\eng\`
+10. download extra data packages with files improved for the port:
+   * [swars-gfx release](https://github.com/swfans/swars-gfx/releases)
+   * [swars-sfx release](https://github.com/swfans/swars-sfx/releases)
+   * [swars-levels release](https://github.com/swfans/swars-levels/releases)
+11. Extract all the data packages to your `SWarsLocation` directory, replacing
+   existing files. Note that the packages have `swars` directory stored,
+   and the files to place into `SWarsLocation` are inside of that.
 
-If instead ob the above points you prefer more technical description on what to
+If instead of the above points you prefer more technical description on what to
 copy and where, read the script `util/install` which is used to perform
 installation on GNU or UNIX systems. If your Windows has a Linux subsystem
 istalled, you may even use it to perform the installation automatically - see
