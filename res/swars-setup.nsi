@@ -70,7 +70,7 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 !define MUI_ICON "swars.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
 !define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Port Setup"
-!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\nBuild ${PRODUCT_VERSION}$\nLevels ${LEVELS_VERSION}"
+!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\nBuild ${PRODUCT_VERSION}$\nLevels ${LEVELS_VERSION}				Graphics ${GFX_VERSION}"
 
 
 ; --------------------
@@ -113,10 +113,12 @@ Section "Syndicate Wars Game" Section_0
   SetOutPath $INSTDIR
   Call CopyGameFilesFromCD
   IfErrors inst_game_fail
+  ${If} $RadioSelected != "UpdateInstall"
   Call RemoveSound
   IfErrors inst_game_fail
   Call InstallConfFile
   IfErrors inst_game_fail
+  ${EndIf}
   Call InstallRegistry
   IfErrors inst_game_fail
   File "${BUILDENV_PKG_DIR}\swars.exe"
@@ -642,12 +644,14 @@ FunctionEnd
 
 Function DownloadLevels
   DetailPrint "Downloading latest game levels from Github..."
+  DetailPrint "https://github.com/swfans/swars-levels/releases/download/${LEVELS_VERSION}/${LEVELS_PACKAGE}.zip"
   inetc::get "https://github.com/swfans/swars-levels/releases/download/${LEVELS_VERSION}/${LEVELS_PACKAGE}.zip" "$PLUGINSDIR\${LEVELS_PACKAGE}.zip"
 FunctionEnd
 
 
 Function DownloadGfx
   DetailPrint "Downloading latest game graphics from Github..."
+  DetailPrint "https://github.com/swfans/swars-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip"
    inetc::get "https://github.com/swfans/swars-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip" "$PLUGINSDIR\${GFX_PACKAGE}.zip"
 FunctionEnd
 
