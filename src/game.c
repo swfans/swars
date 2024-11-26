@@ -1699,7 +1699,7 @@ void init_outro(void)
     show_black_screen();
     StopAllSamples();
     reset_heaps();
-    setup_heaps(100);
+    setup_heaps(SHSC_CreditsSnd, language_3str);
     play_sample_using_heap(0, 1, 127, 64, 100, -1, 3);
 
     data_197150 = 1;
@@ -1765,7 +1765,7 @@ void init_outro(void)
 
     StopAllSamples();
     reset_heaps();
-    setup_heaps(2);
+    setup_heaps(SHSC_GameSndBestQ, language_3str);
 }
 
 void srm_scanner_set_size_at_bottom_left(short margin, short width, short height)
@@ -2094,7 +2094,7 @@ void init_syndwars(void)
     fill_ail_sample_ids();
     if (GetSoundInstalled() && GetSoundAble() && GetSoundActive())
         ingame.Flags |= GamF_Unkn00020000;
-    setup_heaps(0);
+    setup_heaps(SHSC_GameSndAutoQ, language_3str);
 }
 
 void setup_host_sub6(void)
@@ -7346,7 +7346,7 @@ void engine_reset(void)
 void host_reset(void)
 {
     StopCD();
-    setup_heaps(1);
+    setup_heaps(SHSC_ResetGameSnd, language_3str);
     FreeAudio();
     engine_reset();
     reset_multicolor_sprites();

@@ -186,7 +186,7 @@ void reset_heaps(void)
 {
 }
 
-void setup_heaps(int a1)
+void setup_heaps(short setup_cmd, const char *lang)
 {
     long sz;
     unsigned int n;
@@ -194,15 +194,15 @@ void setup_heaps(int a1)
     if ((ingame.Flags & GamF_Unkn00020000) == 0)
         return;
 
-    switch (a1)
+    switch (setup_cmd)
     {
-    case 100:
+    case SHSC_CreditsSnd:
         sz = sound_heap_size;
         setup_heap_manager(sound_heap_memory, sz, "sound/syncreds.dat", 1622);
         break;
     case 99:
         break;
-    case 0:
+    case SHSC_GameSndAutoQ:
         sz = 1500000;
         while ((sound_heap_memory == NULL) && (sz > 100))
         {
@@ -222,13 +222,13 @@ void setup_heaps(int a1)
             ingame.Flags &= GamF_Unkn00020000;
         sound_heap_size = sz;
         break;
-    case 2:
+    case SHSC_GameSndBestQ:
         sz = 1500000;
         if (!setup_heap_manager(sound_heap_memory, sz, "sound/sound.dat", 1622))
             ingame.Flags &= GamF_Unkn00020000;
         sound_heap_size = sz;
         break;
-    case 1:
+    case SHSC_ResetGameSnd:
     default:
         sz = 1500000;
         reset_heaps();
