@@ -40,6 +40,7 @@
 #include "game.h"
 #include "game_data.h"
 #include "game_speed.h"
+#include "game_sprani.h"
 #include "lvobjctv.h"
 #include "matrix.h"
 #include "building.h"

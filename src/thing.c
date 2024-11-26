@@ -31,6 +31,7 @@
 #include "enginsngtxtr.h"
 #include "game.h"
 #include "game_speed.h"
+#include "game_sprani.h"
 #include "matrix.h"
 #include "pepgroup.h"
 #include "player.h"

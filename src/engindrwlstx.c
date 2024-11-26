@@ -44,6 +44,7 @@
 #include "enginshrapn.h"
 #include "engintrns.h"
 #include "game_speed.h"
+#include "game_sprani.h"
 #include "game_sprts.h"
 #include "game.h"
 #include "player.h"

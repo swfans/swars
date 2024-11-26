@@ -31,6 +31,7 @@
 #include "player.h"
 #include "game.h"
 #include "game_speed.h"
+#include "game_sprani.h"
 #include "scandraw.h"
 #include "sound.h"
 #include "thing.h"

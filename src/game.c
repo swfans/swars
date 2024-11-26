@@ -94,6 +94,7 @@
 #include "game.h"
 #include "game_data.h"
 #include "game_speed.h"
+#include "game_sprani.h"
 #include "hud_panel.h"
 #include "hud_target.h"
 #include "keyboard.h"
