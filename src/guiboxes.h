@@ -206,6 +206,11 @@ TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box
  */
 TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
 
+
+/** Returns if given position is over given box with size (incl. borders).
+ */
+TbBool over_box(short x, short y, short box_x, short box_y, short box_w, short box_h);
+
 /** Returns if given position is over given box with coords (incl. borders).
  */
 TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
@@ -222,6 +227,9 @@ TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, shor
 TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2);
 
 TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, TbBool a5);
+
+short mouse_move_position_horizonal_over_bar_coords(short x, short w);
+short mouse_down_position_horizonal_over_bar_coords(short x, short w);
 
 /** Returns if given position is over given box (incl. borders).
  */
@@ -250,8 +258,8 @@ TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box);
 
 /** Returns X coord of current mouse move position relative to given box.
  */
-#define mouse_move_x_coord_over_box(box) mouse_move_x_coord_over_box_base((struct ScreenBoxBase *)box)
-short mouse_move_x_coord_over_box_base(struct ScreenBoxBase *box);
+#define mouse_move_position_horizonal_over_box(box) mouse_move_position_horizonal_over_box_base((struct ScreenBoxBase *)box)
+short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *box);
 
 /** Returns Y coord of current mouse move position relative to given box.
  */

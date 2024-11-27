@@ -57,13 +57,13 @@ struct GroupAction {
   short Dead;
   short Alive;
   short Persuaded;
-  short Storming;
+  ushort Storming;
 };
 
 #pragma pack()
 /******************************************************************************/
 extern struct WarFlag war_flags[PEOPLE_GROUPS_COUNT];
-extern struct GroupAction group_actions[PEOPLE_GROUPS_COUNT];
+extern struct GroupAction group_actions[PEOPLE_GROUPS_COUNT+1];
 
 /** Finds Group ID for which there are no things created.
  */

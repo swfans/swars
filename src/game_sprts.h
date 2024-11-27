@@ -87,6 +87,8 @@ extern ubyte *dword_1C6DE8;
 
 /******************************************************************************/
 
+TbResult load_sprites_mouse_pointers(
+  const char *dir, ushort styleno, ushort detail);
 void setup_mouse_pointers(void);
 void reset_mouse_pointers(void);
 
@@ -102,9 +104,10 @@ TbResult load_sprites_panel(ubyte **pp_buf, const char *dir);
 void setup_sprites_panel(void);
 void reset_sprites_panel(void);
 
-TbResult load_sprites_mouse(ubyte **pp_buf, const char *dir);
-void setup_sprites_mouse(void);
-void reset_sprites_mouse(void);
+TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
+  const char *dir, ushort styleno, ushort detail);
+void setup_sprites_fe_mouse_pointers(void);
+void reset_sprites_fe_mouse_pointers(void);
 
 void setup_sprites_small_font(void);
 void reset_sprites_small_font(void);
@@ -140,9 +143,11 @@ void setup_multicolor_sprites(void);
 void reset_multicolor_sprites(void);
 void debug_multicolor_sprite(int idx);
 
-/** Loads and sets up panel sprites for currently set PanelPermutation.
+/** Loads and sets up panel sprites for given color flavour and detail level.
+ * Requires the sprite buffers to be already allocated.
  */
-TbResult load_pop_sprites(const char *dir);
+TbResult load_pop_sprites(const char *dir, ushort styleno, ushort detail);
+TbResult load_prealp_pop_sprites(const char *dir, ushort styleno, ushort detail);
 void setup_pop_sprites(void);
 void reset_pop_sprites(void);
 /******************************************************************************/

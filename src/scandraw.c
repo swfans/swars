@@ -1136,7 +1136,7 @@ TbBool thing_visible_on_scanner(struct Thing *p_thing)
 {
     TbBool ret;
 
-    if ((p_thing->Flag2 & 0x21000002) != 0)
+    if ((p_thing->Flag2 & (TgF2_ExistsOnMap|TgF2_InsideBuilding|TgF2_Unkn0002)) != 0)
         return false;
 
     switch (p_thing->Type)
@@ -1165,7 +1165,7 @@ TbBool thing_visible_on_scanner_this_turn(struct Thing *p_thing)
         switch (p_thing->Type)
         {
         case TT_PERSON:
-            ret = (p_thing->Flag & 0x10000000) == 0;
+            ret = (p_thing->Flag & TngF_InVehicle) == 0;
             break;
         default:
             ret = true;
@@ -1437,9 +1437,9 @@ TbPixel SCANNER_thing_colour(struct Thing *p_thing)
         col = 1;
         break;
     case TT_PERSON:
-        if ((p_thing->Flag & 0x80000) != 0)
+        if ((p_thing->Flag & TngF_Persuaded) != 0)
             col = colour_lookup[5];
-        else if ( (p_thing->Flag & 0x2000) != 0 && p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD)
+        else if ( (p_thing->Flag & TngF_PlayerAgent) != 0 && p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD)
             col = SCANNER_people_colours[4];
         else
             col = SCANNER_people_colours[p_thing->SubType];
@@ -1466,7 +1466,7 @@ void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int
         int tng_z, tng_x;
         int bsh_x, bsh_y;
 
-        if ((p_thing->Type == TT_PERSON) && ((p_thing->Flag & 0x4000) != 0)) {
+        if ((p_thing->Type == TT_PERSON) && ((p_thing->Flag & TngF_Unkn4000) != 0)) {
             struct Thing *p_vehicle;
 
             p_vehicle = &things[p_thing->U.UPerson.Vehicle];
@@ -1497,9 +1497,9 @@ void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int
 
     x = ingame.Scanner.X1 + base_x;
     y = ingame.Scanner.Y1 + base_y;
-    if ((p_thing->Flag & 0x02) == 0)
+    if ((p_thing->Flag & TngF_Destroyed) == 0)
     {
-        if (((p_thing->Flag & 0x2000) == 0) || (p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD))
+        if (((p_thing->Flag & TngF_PlayerAgent) == 0) || (p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD))
         {
             SCANNER_draw_mark_point3_blink2_filled(x, y, col);
         }

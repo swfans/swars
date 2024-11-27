@@ -24,11 +24,13 @@
 #include "building.h"
 #include "display.h"
 #include "engindrwlstm.h"
+#include "enginshadws.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "enginzoom.h"
 #include "game.h"
 #include "game_speed.h"
+#include "game_sprani.h"
 #include "matrix.h"
 #include "player.h"
 #include "thing.h"
@@ -80,7 +82,7 @@ void build_vehicle(struct Thing *p_thing)
     PlayerInfo *p_locplayer;
     int i;
 
-    if (((p_thing->Flag2 & TgF2_Unkn01000000) != 0) && (byte_1C83E4 & 0x01) != 0)
+    if (((p_thing->Flag2 & TgF2_ExistsOnMap) != 0) && (byte_1C83E4 & 0x01) != 0)
         return;
     if (p_thing->SubType == SubTT_VEH_SHUTTLE_POD)
         return;
@@ -91,7 +93,7 @@ void build_vehicle(struct Thing *p_thing)
         check_mouse_overvehicle(p_thing, 4);
     if (p_thing->SubType == SubTT_VEH_MECH)
     {
-        if ((p_thing->Flag & TngF_Unkn0002) == 0)
+        if ((p_thing->Flag & TngF_Destroyed) == 0)
             mech_unkn_func_03(p_thing);
         i = 0;
     }
@@ -161,7 +163,12 @@ void build_person(struct Thing *p_thing)
 
         stframe_old = p_thing->StartFrame + 1 + p_thing->U.UPerson.Angle;
         stframe_new = p_thing->StartFrame + 1 + ((p_thing->U.UObject.Angle + 8 - byte_176D49) & 7);
-        frame = p_thing->Frame + nstart_ani[stframe_new] - nstart_ani[stframe_old];
+        // Allow increment the frame by the currently set frame, but do not allow decrement
+        // Use abs instead of max, to make animation visible even if the difference is negative
+        //TODO would be better if a negative frame difference was fixed by states properly updating the Frame
+        // The issue workarounded by this is reproducible on stress test level 0,109 - police can
+        // look like exploding while still alive; may be related to multiple pushes by explosions
+        frame = abs(p_thing->Frame - (int)nstart_ani[stframe_old]) + nstart_ani[stframe_new];
         bri = p_thing->U.UPerson.Brightness;
     }
 
@@ -211,6 +218,9 @@ void build_rocket(struct Thing *p_thing)
     m->R[2][0] = vec3.R[2] >> 14;
     object_vec_normalisation(m, 0);
 
+    if (ingame.NextRocket >= WEP_ROCKETS_FIRED_LIMIT)
+        return;
+
     obj = ingame.Rocket1[ingame.NextRocket++];
     p_sobj = &game_objects[obj];
 
@@ -234,7 +244,7 @@ void build_building(struct Thing *p_thing)
     if (p_thing->SubType == SubTT_BLD_BILLBOARD)
     {
         ingame.VisibleBillboardThing = p_thing->ThingOffset;
-        ingame.Flags |= 0x040000;
+        ingame.Flags |= GamF_Unkn00040000;
     }
 
     if (p_thing->SubType == SubTT_BLD_WIND_ROTOR)

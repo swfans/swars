@@ -330,6 +330,13 @@ void face_texture_switch_to_index(struct SingleTexture *p_fctextr, int index)
     p_fctextr->TMapY3 = beg_y + (p_fctextr->TMapY3 - prev_beg_y);
 }
 
+void animate_textures(void)
+{
+    asm volatile ("call ASM_animate_textures\n"
+        :  :  : "eax" );
+    return;
+}
+
 void refresh_old_face_texture_format(struct SingleTexture *p_fctextr,
   struct SingleTexture *p_oldfctextr, ulong fmtver)
 {

@@ -80,7 +80,7 @@ void cryo_update_agents_from_player(PlayerInfo *p_player)
         p_agent = p_player->MyAgent[plagent];
         if (p_agent->Type != TT_PERSON)
             continue;
-        if ((p_agent->Flag & TngF_Unkn0002) != 0) {
+        if ((p_agent->Flag & TngF_Destroyed) != 0) {
             remove_agent(plagent);
             ++nremoved;
             continue;

@@ -82,6 +82,8 @@ extern ushort tnext_floor_texture;
 void refresh_old_floor_texture_format(struct SingleFloorTexture *p_fltextr,
   struct SingleFloorTexture *p_oldfltextr, ulong fmtver);
 
+void animate_textures(void);
+
 /** Maps content of old SingleTexture struct to the current one.
  */
 void refresh_old_face_texture_format(struct SingleTexture *p_fctextr,

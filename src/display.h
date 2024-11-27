@@ -59,4 +59,6 @@ void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h);
 ulong my_string_width(const char *text);
 ubyte font_height(uchar c);
 
+void change_brightness(short val);
+
 #endif

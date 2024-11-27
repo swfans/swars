@@ -160,7 +160,13 @@ libbullfrogheaders_HEADERS = \
   $(libbullfrog_a_headers_src:%=$(srcdir)/%) \
   $(libbullfrog_a_headers_bld:%=$(builddir)/%)
 
-check_PROGRAMS = bflib_test_math bflib_test_memory bflib_test_poline bflib_test_poly bflib_test_tringl
+check_PROGRAMS = \
+  bflib_test_math \
+  bflib_test_memory \
+  bflib_test_pogpol \
+  bflib_test_poline \
+  bflib_test_potrig \
+  bflib_test_tringl
 
 bflib_test_math_SOURCES = \
   tests/bflib_test_math.c
@@ -187,6 +193,26 @@ nodist_EXTRA_bflib_test_memory_SOURCES = dummy.cxx
 bflib_test_memory_LDADD = \
   -L$(builddir) -lbullfrog
 
+
+bflib_test_pogpol_SOURCES = \
+  tests/mock_mouse.c \
+  tests/mock_palette.c \
+  tests/mock_screen.c \
+  tests/mock_windows.c \
+  tests/helpers_fr_swars01.c \
+  tests/helpers_screen.c \
+  tests/bflib_test_pogpol.c
+
+bflib_test_pogpol_CPPFLAGS = \
+  -I$(top_srcdir)/include -I$(builddir)/include
+
+# Pretending to contain c++ source so that Automake select c++ linker
+nodist_EXTRA_bflib_test_pogpol_SOURCES = dummy.cxx
+
+bflib_test_pogpol_LDADD = \
+  -L$(builddir) -lbullfrog
+
+
 bflib_test_poline_SOURCES = \
   tests/mock_mouse.c \
   tests/mock_palette.c \
@@ -204,22 +230,24 @@ nodist_EXTRA_bflib_test_poline_SOURCES = dummy.cxx
 bflib_test_poline_LDADD = \
   -L$(builddir) -lbullfrog
 
-bflib_test_poly_SOURCES = \
+
+bflib_test_potrig_SOURCES = \
   tests/mock_mouse.c \
   tests/mock_palette.c \
   tests/mock_screen.c \
   tests/mock_windows.c \
   tests/helpers_screen.c \
-  tests/bflib_test_poly.c
+  tests/bflib_test_potrig.c
 
-bflib_test_poly_CPPFLAGS = \
+bflib_test_potrig_CPPFLAGS = \
   -I$(top_srcdir)/include -I$(builddir)/include
 
 # Pretending to contain c++ source so that Automake select c++ linker
-nodist_EXTRA_bflib_test_poly_SOURCES = dummy.cxx
+nodist_EXTRA_bflib_test_potrig_SOURCES = dummy.cxx
 
-bflib_test_poly_LDADD = \
+bflib_test_potrig_LDADD = \
   -L$(builddir) -lbullfrog
+
 
 bflib_test_tringl_SOURCES = \
   tests/mock_mouse.c \

@@ -903,7 +903,7 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
         if (n_targets >= 5)
             break;
         p_thing = &things[thing];
-        if ((p_thing->Flag & TngF_Unkn0002) == 0)
+        if ((p_thing->Flag & TngF_Destroyed) == 0)
         {
             int dist_x, dist_z;
             dist_x = abs(PRCCOORD_TO_MAPCOORD(p_thing->X - p_person->X));
@@ -1121,7 +1121,7 @@ static void process_energy_recovery(struct Thing *p_person)
 {
     if (p_person->U.UPerson.Energy < p_person->U.UPerson.MaxEnergy)
     {
-        if ((p_person->Flag2 & TgF2_Unkn01000000) != 0)
+        if ((p_person->Flag2 & TgF2_ExistsOnMap) != 0)
         {
             p_person->U.UPerson.Energy = p_person->U.UPerson.MaxEnergy;
         }
@@ -1637,7 +1637,7 @@ void process_wielded_weapon(struct Thing *p_person)
                 init_laser_elec(p_person, p_person->U.UPerson.WeaponTimer);
                 stop_sample_using_heap(p_person->ThingOffset, 7);
                 stop_sample_using_heap(p_person->ThingOffset, 52);
-                if ((p_person->Flag2 & TgF2_Unkn01000000) == 0)
+                if ((p_person->Flag2 & TgF2_ExistsOnMap) == 0)
                     play_dist_sample(p_person, 6, 0x7F, 0x40, 100, 0, 3);
                 p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
                 break;
@@ -1671,7 +1671,7 @@ void process_wielded_weapon(struct Thing *p_person)
             p_person->Flag &= ~TngF_Unkn0400;
             if ((p_person->U.UPerson.WeaponTimer > 5)
               && (p_person->U.UPerson.CurrentWeapon != WEP_RAP))
-                p_person->Flag |= TngF_Unkn0200;
+                p_person->Flag |= TngF_StationrSht;
         }
     }
 }
