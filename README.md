@@ -164,7 +164,7 @@ To build **Syndicate Wars Port**, you will need the following:
 * vorbis-tools (oggenc in particular)
 * cdparanoia
 * development versions of the following libraries:
-  * SDL
+  * SDL2 or SDL1.2
   * OpenAL (we recommend OpenAL Soft)
   * libvorbis
   * libogg
@@ -192,7 +192,7 @@ sudo apt install gcc-multilib g++-multilib lib32z1
 sudo apt install python3 python3-polib
 sudo apt install vorbis-tools
 sudo apt install cdparanoia
-sudo apt install libsdl1.2-dev:i386
+sudo apt install libsdl2-dev:i386
 sudo apt install libopenal-dev:i386
 sudo apt install libvorbis-dev:i386 libvorbisfile3:i386
 sudo apt install libogg-dev:i386
@@ -210,7 +210,7 @@ Next, proceed with the build steps; we will do that in a separate folder.
 
 ```
 mkdir -p release; cd release
-PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --without-sdl2
+PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure
 make V=1
 ```
 
@@ -223,7 +223,7 @@ In case you also want a debug build:
 
 ```
 mkdir -p debug; cd debug
-PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -g -O0 -Wall" CXXFLAGS="-m32 -g -O0 -Wall" LDFLAGS="-m32 -g -O0 -Wall" ../configure --without-sdl2
+PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -g -O0 -Wall" CXXFLAGS="-m32 -g -O0 -Wall" LDFLAGS="-m32 -g -O0 -Wall" ../configure
 make V=1
 ```
 
@@ -255,7 +255,7 @@ First install the dependencies - mingw32, since we need 32-bit toolchain:
 ```
 pacman -S mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
 pacman -S mingw-w64-i686-libpng
-pacman -S mingw-w64-i686-SDL
+pacman -S mingw-w64-i686-SDL2
 pacman -S mingw-w64-i686-openal
 pacman -S mingw-w64-i686-libvorbis
 pacman -S mingw-w64-i686-libogg
@@ -300,7 +300,7 @@ the default mingw64 ones:
 
 ```
 mkdir -p release; cd release
-PATH="/mingw32/bin:$PATH" PKG_CONFIG_PATH="/mingw32/lib/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --prefix=/mingw32 --without-sdl2
+PATH="/mingw32/bin:$PATH" PKG_CONFIG_PATH="/mingw32/lib/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --prefix=/mingw32
 PATH="/mingw32/bin:$PATH" make V=1
 ```
 
@@ -317,7 +317,7 @@ compile them manually.
 
 If you have Mac OS 10.6 ("Snow Leopard") or newer, you will need to make sure
 that your libraries contain code for the i386 architecture. In MacPorts this
-is achieved by using the `+universal` variant (e.g. `port -vu install libsdl +universal`).
+is achieved by using the `+universal` variant (e.g. `port -vu install libsdl2 +universal`).
 
 When you configure your compilation toolchain and location of libraries,
 you will need to pass `CFLAGS="-arch i386"`, like so:
