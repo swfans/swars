@@ -5,7 +5,13 @@ SUBDIRS = bflibrary bfsoundlib conf lang src util
 # Do not install static libraries.
 install installdirs: SUBDIRS = conf lang src util
 
-doc_DATA = AUTHORS COPYING
+doc_DATA = AUTHORS COPYING GPL3
 docdir = $(prefix)/$(PACKAGE)
 
-EXTRA_DIST = GPL3 doc res
+res_DATA = res/swars.ico res/swars.icns
+resdir = $(prefix)/$(PACKAGE)
+
+instscript_DATA = util/install
+instscriptdir = $(prefix)/$(PACKAGE)
+
+EXTRA_DIST = doc res instscript
