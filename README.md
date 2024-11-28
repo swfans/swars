@@ -59,6 +59,7 @@ and then add the neccessary data files. The steps are:
    * *\<SOURCE\>* is the game CD path, like `/media/cdrom`,
    * *\<TARGET\>* is the destination path, meaning the installation folder you've chosen,
    * *\<LANG\>* is the installation language, and can be one of: `eng` `fre` `ger` `ita` `spa` `swe`.
+
    The install script will copy files from the CD or mounted CD image, but also
    will download additional data files from their repositories:
    [gfx](https://github.com/swfans/swars-gfx/releases),
@@ -121,9 +122,9 @@ If you've decided on the hand-compilation option, proceed with the following ste
    *SW CD image* (so that you get drive letter or path, ie. `e:`).
 2. Choose an installation folder, like `c:\Program Files\swars`.
 3. Use `util/install` script to both copy required files from CD and download
-   additional data, and place it into your chosen installation folder. If you
-   have UNIX or GNU support on your Windows (ie. Linux Windows Subsystem, or
-   MINGW, or MSYS2, or Cygwin), you can just run the script in `bash` - see
+   additional data, and place them all into your chosen installation folder.
+   If you have UNIX or GNU support on your Windows (ie. Linux Windows Subsystem,
+   or MINGW, or MSYS2, or Cygwin), you can just run the script in `bash` - see
    [Installing on GNU or UNIX](installing-on-gnu-or-unix) for details.
    If you don't have that, you will have to analyze said script to figure out
    what should be copied where - detailed instructions are not part of the
