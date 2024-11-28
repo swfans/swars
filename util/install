@@ -206,28 +206,6 @@ install_dir()
   return 0
 }
 
-install_directory()
-{
-  local src="$1"
-  local dst="$2"
-
-  install -v -d "$dst" || return 1
-
-  find "$src" -mindepth 1 -maxdepth 1 -type f \
-    | while read file; do
-        local bn=`basename "$file"`
-	install -v -m 0644 "$file" "$dst/$bn" || return 1
-      done
-
-  find "$src" -mindepth 1 -maxdepth 1 -type d \
-    | while read subdir; do
-        local bn=`basename "$subdir"`
-	install_directory "$subdir" "$dst/$bn" || return 1
-      done
-
-  return 0
-}
-
 copy_data()
 {
   install_dir "data" || return 1
@@ -411,16 +389,6 @@ extract_packages()
   return 0
 }
 
-clean_data()
-{
-  rm -vrf "$TARGET/qdata/sound"
-  find "$TARGET/sound" -mindepth 1 -maxdepth 1 -type f ! -iname '*.dat' \
-    | while read file; do
-	rm -vf "$file"
-      done
-  return 0
-}
-
 check_language()
 {
   case "$LANG" in
@@ -486,7 +454,6 @@ download_packages || error
 copy_music || error
 copy_data || error
 extract_packages || error
-clean_data || error
 create_config_ini || error
 
 echo "Data successfully installed."
