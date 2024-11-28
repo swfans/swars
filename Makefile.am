@@ -8,8 +8,14 @@ install installdirs: SUBDIRS = conf lang src util
 doc_DATA = AUTHORS COPYING GPL3
 docdir = $(prefix)/$(PACKAGE)
 
-res_DATA = res/swars.ico res/swars.icns
+res_DATA =
 resdir = $(prefix)/$(PACKAGE)
+
+if TARGET_WINDOWS
+res_DATA += res/swars_icon.ico
+else
+res_DATA += res/swars.icns res/swars_icon.png
+endif
 
 instscript_DATA = util/install
 instscriptdir = $(prefix)/$(PACKAGE)
