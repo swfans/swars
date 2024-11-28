@@ -215,7 +215,7 @@ copy_data()
     install_file "data/font${fn}.tab" || return 1
   done
 
-  for fn in bg.dat bgtables.dat tables.dat startgho.dat synghost.tab; do
+  for fn in bgtables.dat tables.dat startgho.dat synghost.tab; do
     install_file "data/${fn}" || return 1
   done
 
@@ -270,10 +270,6 @@ copy_data()
 
   for fn in pal s-proj; do
     install_file "data/${fn}.pal" || return 1
-  done
-
-  for fn in 0 1 2 3; do
-    install_file "data/pal${fn}.dat" || return 1
   done
 
   install_dir "data/equip" || return 1
