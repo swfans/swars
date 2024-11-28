@@ -128,8 +128,8 @@ If you've decided on the hand-compilation option, proceed with the following ste
    [Installing on GNU or UNIX](installing-on-gnu-or-unix) for details.
    If you don't have that, you will have to analyze said script to figure out
    what should be copied where - detailed instructions are not part of the
-   documentation. For converting CD music into `.ogg`, in case of issues disable
-   this function of the script - we will do this separately below.
+   documentation. As for converting CD music into `.ogg`, in case of issues
+   disable this function of the script - we will do this separately below.
 4. *[optional]* Rip the game CD Audio tracks to `track_{1,2,3}.ogg` (vorbis).
 5. *[optional]* Create a `music` directory inside your chosen installation
    folder, and place the previously encoded `.ogg` files there.
@@ -137,11 +137,11 @@ If you've decided on the hand-compilation option, proceed with the following ste
    tarball or clone git repo.
 5. Follow [building instructions](#building-on-windows) below to get
    a compiled executable and configuration files.
-8. from the compilation directory, copy `swars.exe` and `conf` folder to your
-   chosen installation folder
-9. from the compilation folder, copy `lang` directory to your chosen installation
-   folder and rename it to `language`, so that ie. files for english are within
-   `language\eng\`
+6. After the build succeeded, do `make DESTDIR=<TARGET> install` in the
+   directory where build commands were executed, to copy built files into the
+   *\<TARGET\>* installation folder you've chosen. If you've built the binary
+   yourself, you already have all the tools neccessary for that install command
+   to work.
 
 You can now launch `swars.exe` and have fun!
 
@@ -323,7 +323,7 @@ you will need to pass `CFLAGS="-arch i386"`, like so:
 ```
 
 If you are planning to create [Mac OS app bundle](#making-a-mac-os-app-bundle),
-you will also need to pass `data-path`, so youf final command will be:
+you will also need to pass `data-path`, so your final command will be:
 
 
 ```
