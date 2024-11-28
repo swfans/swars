@@ -189,6 +189,25 @@ install_file()
     return 1
   fi
 
+  install -v -T -m 0644 "$src" "$dst" || return 1
+
+  return 0
+}
+
+install_file_to()
+{
+  local fname="$1"
+  local dstdir="$2"
+
+  # Find the input file name ignoring case
+  local src=`find "$SOURCE" -ipath "$SOURCE/$fname"`
+  local fbase=`basename "$fname"`
+  local dst="$TARGET/$dstdir/$fbase"
+
+  if [ ! -n "$src" ]; then
+    printf 'File missing from your SOURCE: %s\n' "$fname" >&2
+    return 1
+  fi
 
   install -v -T -m 0644 "$src" "$dst" || return 1
 
@@ -347,17 +366,16 @@ copy_data()
     install_file "sound/${fn}" || return 1
   done
 
-  # Source lang dir (original game install files)
-  local sld="$SOURCE/language/$LANG"
-
   install_dir "intro" || return 1
 
-  install -v -m 0644 "$sld/text.dat" "$TARGET/data" || return 1
-  install -v -m 0644 "$sld/intro.smk" "$TARGET/intro" || return 1
-  install -v -m 0644 "$sld/syn_ele.smk" "$TARGET/data" || return 1
-  install -v -m 0644 "$sld/chu_ele.smk" "$TARGET/data" || return 1
+  # Copy files which on the CD are in per-language dir
+  install_file_to "language/$LANG/text.dat" "data" || return 1
+  install_file_to "language/$LANG/syn_ele.smk" "data" || return 1
+  install_file_to "language/$LANG/chu_ele.smk" "data" || return 1
 
-  install -v -m 0644 "$sld/sound.dat" "$TARGET/sound" || return 1
+  install_file_to "language/$LANG/intro.smk" "intro" || return 1
+
+  install_file_to "language/$LANG/sound.dat" "sound" || return 1
 
   return 0
 }
