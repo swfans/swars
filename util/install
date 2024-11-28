@@ -138,6 +138,36 @@ copy_music()
   return 0
 }
 
+install_file()
+{
+  local fname="$1"
+
+  # Find the input file name ignoring case
+  local src=`find "$SOURCE" -ipath "$SOURCE/$fname"`
+  local dst="$TARGET/$fname"
+
+  if [ ! -n "$src" ]; then
+    printf 'File missing from your SOURCE: %s\n' "$fname" >&2
+    return 1
+  fi
+
+
+  install -v -T -m 0644 "$src" "$dst" || return 1
+
+  return 0
+}
+
+install_dir()
+{
+  local dname="$1"
+
+  local dst="$TARGET/$dname"
+
+  install -v -d "$dst" || return 1
+
+  return 0
+}
+
 install_directory()
 {
   local src="$1"
@@ -162,14 +192,103 @@ install_directory()
 
 copy_data()
 {
-  for dir in data levels maps qdata sound; do
+  install_dir "data" || return 1
+
+  for fn in 0-0 0-1 0-2 0-3 0-4 0-5; do
+    install_file "data/font${fn}.dat" || return 1
+    install_file "data/font${fn}.tab" || return 1
+  done
+
+  for fn in bg.dat bgtables.dat tables.dat startgho.dat synghost.tab; do
+    install_file "data/${fn}" || return 1
+  done
+
+  for fn in cities.dat mapinsid.dat mech.dat people.txt; do
+    install_file "data/${fn}" || return 1
+  done
+
+  for fn in icons0-0 w-icons; do
+    install_file "data/${fn}.dat" || return 1
+    install_file "data/${fn}.tab" || return 1
+  done
+
+  for fn in mouse-0 pointers; do
+    install_file "data/${fn}.dat" || return 1
+    install_file "data/${fn}.tab" || return 1
+  done
+
+  for fn in 00 01 02 03 04 05; do
+    install_file "data/mapout${fn}.dat" || return 1
+    install_file "data/tex${fn}.dat" || return 1
+  done
+
+  for fn in mele-0 mfra-0 msta-0 nfra-0 nsta-0 tmap; do
+    install_file "data/${fn}.ani" || return 1
+  done
+
+  for fn in 0 1 2 3 4 5; do
+    install_file "data/mspr-${fn}.dat" || return 1
+    install_file "data/mspr-${fn}.tab" || return 1
+    install_file "data/mspr-${fn}.inf" || return 1
+  done
+
+  for fn in s z; do
+    install_file "data/outro-${fn}.smk" || return 1
+    install_file "data/outro-${fn}.raw" || return 1
+  done
+
+  for fn in 0-0 0-1 0-2 1-0 2-0; do
+    install_file "data/panel${fn}.dat" || return 1
+    install_file "data/panel${fn}.tab" || return 1
+  done
+
+  for fn in 0-0 0-1 1-0 1-1 2-0 2-1; do
+    install_file "data/pop${fn}.dat" || return 1
+    install_file "data/pop${fn}.tab" || return 1
+  done
+
+  for fn in tit nam qot; do
+    install_file "data/${fn}-font.dat" || return 1
+    install_file "data/${fn}-font.tab" || return 1
+  done
+
+  for fn in posdefs.idx posdefs.wad textwalk.dat; do
+    install_file "data/${fn}" || return 1
+  done
+
+  for fn in pal s-proj; do
+    install_file "data/${fn}.pal" || return 1
+  done
+
+  for fn in 0 1 2 3; do
+    install_file "data/pal${fn}.dat" || return 1
+  done
+
+  install_dir "data/equip" || return 1
+
+  for fn in 00 01 02 03 04 05 06 07 08 09 10 11; do
+    install_file "data/equip/mod-${fn}.fli" || return 1
+    install_file "data/equip/mod-${fn}z.fli" || return 1
+  done
+
+  for fn in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
+    install_file "data/equip/wep-${fn}.fli" || return 1
+    install_file "data/equip/wep-${fn}z.fli" || return 1
+  done
+
+  for fn in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18; do
+    install_file "data/equip/net${fn}.fli" || return 1
+  done
+
+
+  for dir in levels maps qdata sound; do
     install_directory "$SOURCE/$dir" "$TARGET/$dir" || return 1
   done
 
   # Source lang dir (original game install files)
   local sld="$SOURCE/language/$LANG"
 
-  install -v -d "$TARGET/intro" || return 1
+  install_dir "intro" || return 1
 
   install -v -m 0644 "$sld/text.dat" "$TARGET/data" || return 1
   install -v -m 0644 "$sld/intro.smk" "$TARGET/intro" || return 1
