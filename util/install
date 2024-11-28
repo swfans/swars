@@ -37,6 +37,10 @@ GFX_VERSION="1.0.1.23"
 GFX_PACKAGE="swars-gfx-1_0_1_23"
 GFX_PKG_MD5="2f940fe9bdf2e2d65307da1e6d0a270b"
 
+SFX_VERSION="1.0.0.21"
+SFX_PACKAGE="swars-sfx-1_0_0_21"
+SFX_PKG_MD5="dfcb50c273582884537ebf0f1db5518d"
+
 OPTS="f:t:Ml:h"
 
 while getopts "$OPTS" arg; do
@@ -151,6 +155,7 @@ download_packages()
 {
   dl_package "swfans/swars-levels" "${LEVELS_PACKAGE}" "${LEVELS_VERSION}" "${LEVELS_PKG_MD5}" || return 1
   dl_package "swfans/swars-gfx" "${GFX_PACKAGE}" "${GFX_VERSION}" "${GFX_PKG_MD5}" || return 1
+  dl_package "swfans/swars-sfx" "${SFX_PACKAGE}" "${SFX_VERSION}" "${SFX_PKG_MD5}" || return 1
 
   return 0
 }
@@ -358,7 +363,7 @@ copy_data()
 
   install_dir "sound" || return 1
 
-  for fn in music.dat sample.ad syncreds.dat; do
+  for fn in music.dat sample.ad; do
     install_file "sound/${fn}" || return 1
   done
 
@@ -370,8 +375,6 @@ copy_data()
   install_file_to "language/$LANG/chu_ele.smk" "data" || return 1
 
   install_file_to "language/$LANG/intro.smk" "intro" || return 1
-
-  install_file_to "language/$LANG/sound.dat" "sound" || return 1
 
   return 0
 }
@@ -393,6 +396,13 @@ extract_packages()
   find "$TARGET/swars/data" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
     | while read file; do
     mv -vn "$file" -t "${TARGET}/data" || return 1
+      done
+  rm -rf "${TARGET}/swars" || return 1
+
+  unzip -o "${SFX_PACKAGE}.zip" -d "${TARGET}" || return 1
+  find "$TARGET/swars/sound" -mindepth 1 -maxdepth 1 -type f -iname '*.dat' \
+    | while read file; do
+    mv -vn "$file" -t "${TARGET}/sound" || return 1
       done
   rm -rf "${TARGET}/swars" || return 1
 
