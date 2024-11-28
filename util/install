@@ -257,10 +257,6 @@ copy_data()
     install_file "data/tex${fn}.dat" || return 1
   done
 
-  for fn in mele-0 mfra-0 msta-0 nfra-0 nsta-0 tmap; do
-    install_file "data/${fn}.ani" || return 1
-  done
-
   for fn in 0 1 2 3 4 5; do
     install_file "data/mspr-${fn}.dat" || return 1
     install_file "data/mspr-${fn}.tab" || return 1
