@@ -203,7 +203,7 @@ copy_data()
     install_file "data/${fn}" || return 1
   done
 
-  for fn in cities.dat mapinsid.dat mech.dat people.txt; do
+  for fn in cities.dat mapinsid.dat mech.dat people.txt textwalk.dat; do
     install_file "data/${fn}" || return 1
   done
 
@@ -252,10 +252,6 @@ copy_data()
     install_file "data/${fn}-font.tab" || return 1
   done
 
-  for fn in posdefs.idx posdefs.wad textwalk.dat; do
-    install_file "data/${fn}" || return 1
-  done
-
   for fn in pal s-proj; do
     install_file "data/${fn}.pal" || return 1
   done
@@ -280,8 +276,52 @@ copy_data()
     install_file "data/equip/net${fn}.fli" || return 1
   done
 
+  install_dir "qdata" || return 1
 
-  for dir in levels maps qdata sound; do
+  for fn in posdefs.idx posdefs.wad primveh.obj; do
+    install_file "qdata/${fn}" || return 1
+  done
+
+  for fn in 10 11 12 13; do
+    install_file "qdata/demo-${fn}.fli" || return 1
+  done
+
+  for fn in flyby.fli pal.pal; do
+    install_file "qdata/${fn}" || return 1
+  done
+
+  for fn in 0 1 2 3; do
+    install_file "qdata/pal${fn}.dat" || return 1
+  done
+
+  for fn in s z; do
+    install_file "qdata/${fn}-proj.dat" || return 1
+  done
+
+  for fn in syn_fail syn_go syn_mc zel-go zel-mc; do
+    install_file "qdata/${fn}.smk" || return 1
+  done
+
+  install_dir "qdata/equip" || return 1
+
+  for fn in bgman bgmanz; do
+    install_file "qdata/equip/${fn}.dat" || return 1
+  done
+
+  for fn in m1a1 m1a2 m2a1 m2a2 m2a3 m3a1 m3a2 m3a3 z1a1 z1a2 z2a1 z2a2 z2a3 z3a1 z3a2 z3a3; do
+    install_file "qdata/equip/${fn}.dat" || return 1
+    install_file "qdata/equip/${fn}.fli" || return 1
+    install_file "qdata/equip/${fn}i.fli" || return 1
+    install_file "qdata/equip/${fn}o.fli" || return 1
+  done
+
+  for fn in m1b m1bb m1l1 m1l2 m2b m2bb m2l1 m2l2 m2l3 m3b m3bb m3l1 m3l2 m3l3 z1b z1bb z1l1 z1l2 z2b z2bb z2l1 z2l2 z2l3 z3b z3bb z3l1 z3l2 z3l3; do
+    install_file "qdata/equip/${fn}.dat" || return 1
+    install_file "qdata/equip/${fn}i.fli" || return 1
+    install_file "qdata/equip/${fn}o.fli" || return 1
+  done
+
+  for dir in levels maps sound; do
     install_directory "$SOURCE/$dir" "$TARGET/$dir" || return 1
   done
 
