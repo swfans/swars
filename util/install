@@ -29,6 +29,14 @@ SOURCE=""
 TARGET=""
 LANG="eng"
 
+LEVELS_VERSION="1.0.0.18"
+LEVELS_PACKAGE="swars-levels-1_0_0_18"
+LEVELS_PKG_MD5="629a3a7d091ed1c6c5760148406f775d"
+
+GFX_VERSION="1.0.1.23"
+GFX_PACKAGE="swars-gfx-1_0_1_23"
+GFX_PKG_MD5="2f940fe9bdf2e2d65307da1e6d0a270b"
+
 OPTS="f:t:Ml:h"
 
 while getopts "$OPTS" arg; do
@@ -113,6 +121,36 @@ check_target()
 
   install -v -d "$TARGET" || return 1
   OWN_TARGET="yes"
+
+  return 0
+}
+
+dl_package()
+{
+  local proj_nam=$1
+  local pkg_nam=$2
+  local pkg_ver=$3
+  local pkg_md5=$4
+
+  local real_md5=`md5sum "${pkg_nam}.zip" | cut -d " " -f1`
+  if [[ "x${real_md5}" != "x${pkg_md5}" ]]; then
+    wget "https://github.com/${proj_nam}/releases/download/${pkg_ver}/${pkg_nam}.zip" || return 1
+  fi
+
+  local real_md5=`md5sum "${pkg_nam}.zip" | cut -d " " -f1`
+  if [[ "x${real_md5}" != "x${pkg_md5}" ]]; then
+    printf 'Downloaded package MD5 mismatch: %s\n' "$pkg_nam" >&2
+    printf 'Expected md5sum: %s\n' "$pkg_md5" >&2
+    return 1
+  fi
+
+  return 0
+}
+
+download_packages()
+{
+  dl_package "swfans/swars-levels" "${LEVELS_PACKAGE}" "${LEVELS_VERSION}" "${LEVELS_PKG_MD5}" || return 1
+  dl_package "swfans/swars-gfx" "${GFX_PACKAGE}" "${GFX_VERSION}" "${GFX_PKG_MD5}" || return 1
 
   return 0
 }
@@ -321,8 +359,18 @@ copy_data()
     install_file "qdata/equip/${fn}o.fli" || return 1
   done
 
-  for dir in levels maps sound; do
-    install_directory "$SOURCE/$dir" "$TARGET/$dir" || return 1
+  install_dir "levels" || return 1
+
+  install_dir "maps" || return 1
+
+  for fn in 000 001 002 003 004 005 006 007 008 009 010 011 020 021 022 025 026 027 028 030 032 035 036 040 041 044 045 046 047 050 079; do
+    install_file "maps/map${fn}.scn" || return 1
+  done
+
+  install_dir "sound" || return 1
+
+  for fn in music.dat sample.ad syncreds.dat; do
+    install_file "sound/${fn}" || return 1
   done
 
   # Source lang dir (original game install files)
@@ -336,6 +384,29 @@ copy_data()
   install -v -m 0644 "$sld/chu_ele.smk" "$TARGET/data" || return 1
 
   install -v -m 0644 "$sld/sound.dat" "$TARGET/sound" || return 1
+
+  return 0
+}
+
+extract_packages()
+{
+  unzip -o "${LEVELS_PACKAGE}.zip" -d "${TARGET}" || return 1
+  find "$TARGET/swars/LEVELS" -mindepth 1 -maxdepth 1 -type f -iname 'c*.*' \
+    | while read file; do
+    mv -vn "$file" -t "${TARGET}/levels" || return 1
+      done
+  find "$TARGET/swars/MAPS" -mindepth 1 -maxdepth 1 -type f -iname 'map*.*' \
+    | while read file; do
+    mv -vn "$file" -t "${TARGET}/maps" || return 1
+      done
+  rm -rf "${TARGET}/swars" || return 1
+
+  unzip -o "${GFX_PACKAGE}.zip" -d "${TARGET}" || return 1
+  find "$TARGET/swars/data" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
+    | while read file; do
+    mv -vn "$file" -t "${TARGET}/data" || return 1
+      done
+  rm -rf "${TARGET}/swars" || return 1
 
   return 0
 }
@@ -411,8 +482,10 @@ check_source || error
 check_music_tools || error
 check_language || error
 check_target || error
+download_packages || error
 copy_music || error
 copy_data || error
+extract_packages || error
 clean_data || error
 create_config_ini || error
 
