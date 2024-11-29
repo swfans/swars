@@ -18,6 +18,8 @@
 /******************************************************************************/
 #include "player.h"
 
+#include <assert.h>
+
 #include "game.h"
 #include "guitext.h"
 #include "hud_panel.h"
@@ -103,12 +105,40 @@ void players_sync_from_cryo(void)
     player_update_agents_from_cryo(p_locplayer);
 }
 
-TbBool player_agent_has_weapon(ushort plagent, ubyte weapon)
+short player_agent_current_or_prev_weapon(PlayerIdx plyr, ushort plagent)
 {
-    PlayerInfo *p_locplayer;
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+    short curwep;
 
-    p_locplayer = &players[local_player_no];
-    return weapons_has_weapon(p_locplayer->Weapons[plagent], weapon);
+    p_player = &players[plyr];
+    p_agent = p_player->MyAgent[plagent];
+    if (p_agent->Type != TT_PERSON)
+        return WEP_NULL;
+    assert(plagent == (p_agent->U.UPerson.ComCur & 3));
+
+    curwep = p_agent->U.UPerson.CurrentWeapon;
+    if (curwep == WEP_NULL) {
+        curwep = p_player->PrevWeapon[plagent];
+    }
+    return curwep;
+}
+
+short player_agent_weapon_delay(PlayerIdx plyr, ushort plagent, ubyte weapon)
+{
+    PlayerInfo *p_player;
+
+    p_player = &players[plyr];
+    return p_player->WepDelays[plagent][weapon];
+}
+
+
+TbBool player_agent_has_weapon(PlayerIdx plyr, ushort plagent, ubyte weapon)
+{
+    PlayerInfo *p_player;
+
+    p_player = &players[plyr];
+    return weapons_has_weapon(p_player->Weapons[plagent], weapon);
 }
 
 TbBool free_slot(ushort plagent, ubyte weapon)
@@ -205,10 +235,10 @@ void add_agent(ulong weapons, ushort mods)
         : : "a" (weapons), "d" (mods));
 }
 
-short direct_control_thing_for_player(short plyr)
+ThingIdx direct_control_thing_for_player(PlayerIdx plyr)
 {
     PlayerInfo *p_player;
-    short dcthing;
+    ThingIdx dcthing;
 
     p_player = &players[plyr];
     if (p_player->DoubleMode)
@@ -218,7 +248,7 @@ short direct_control_thing_for_player(short plyr)
     return dcthing;
 }
 
-void player_target_clear(short plyr)
+void player_target_clear(PlayerIdx plyr)
 {
     PlayerInfo *p_player;
 
