@@ -105,6 +105,30 @@ void players_sync_from_cryo(void)
     player_update_agents_from_cryo(p_locplayer);
 }
 
+void player_agents_init_prev_weapon(PlayerIdx plyr)
+{
+    PlayerInfo *p_locplayer;
+    ushort plagent;
+
+    p_locplayer = &players[local_player_no];
+    for (plagent = 0; plagent < playable_agents; plagent++)
+    {
+        struct Thing *p_agent;
+        ushort weptype;
+
+        p_agent = p_locplayer->MyAgent[plagent];
+        if (p_agent->Type == TT_PERSON)
+            weptype = find_nth_weapon_held(p_agent->ThingOffset, 1);
+        else
+            weptype = WEP_NULL;
+        p_locplayer->PrevWeapon[plagent] = weptype;
+    }
+    for (; plagent < AGENTS_SQUAD_MAX_COUNT; plagent++)
+    {
+        p_locplayer->PrevWeapon[plagent] = WEP_NULL;
+    }
+}
+
 short player_agent_current_or_prev_weapon(PlayerIdx plyr, ushort plagent)
 {
     PlayerInfo *p_player;

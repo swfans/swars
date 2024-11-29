@@ -2116,9 +2116,7 @@ void draw_new_panel(void)
                 if (panel->Type == PanT_UNKN05) {
                     ubyte weapon;
 
-                    weapon = p_agent->U.UPerson.CurrentWeapon;
-                    if (weapon == 0)
-                        weapon = p_locplayer->PrevWeapon[panel->ID];
+                    weapon = player_agent_current_or_prev_weapon(local_player_no, panel->ID);
                     if (weapon == 0)
                         continue;
                 }
@@ -2689,9 +2687,8 @@ TbBool check_panel_input(short panel)
                     dcthing = p_locplayer->DirectControl[mouser];
                     if ((things[dcthing].Flag & TngF_Unkn0400) == 0)
                     {
-                        ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
+                        game_set_cam_track_thing_xz(p_agent);
                         engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
-                        ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
                         build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
                         if (p_agent->ThingOffset == dcthing)
                         {

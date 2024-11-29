@@ -132,6 +132,7 @@ const char *get_cryo_agent_name(ushort cryo_no);
 void remove_agent(ubyte cryo_no);
 void add_agent(ulong weapons, ushort mods);
 
+void player_agents_init_prev_weapon(PlayerIdx plyr);
 short player_agent_current_or_prev_weapon(PlayerIdx plyr, ushort plagent);
 TbBool player_agent_has_weapon(PlayerIdx plyr, ushort plagent, ubyte weapon);
 short player_agent_weapon_delay(PlayerIdx plyr, ushort plagent, ubyte weapon);

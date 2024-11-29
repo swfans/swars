@@ -2950,58 +2950,28 @@ void simulated_level(void)
         :  :  : "eax" );
 }
 
-/** Initializes player presence on a level.
- *
- * CurrentMission needs to be set before this funcion is called.
- */
-void init_player(void)
+void init_local_player_group(void)
 {
     PlayerInfo *p_locplayer;
-    int i;
+    struct Thing *p_agent;
+    ushort grp;
 
     p_locplayer = &players[local_player_no];
+    p_agent = p_locplayer->MyAgent[0];
 
-    gamep_unknval_10 = 0;
-    gamep_unknval_12 = 0;
-    nav_stats__ThisTurn = 0;
-    ingame.Flags &= ~GamF_Unkn0100;
-    gamep_unknval_16 = 0;
-    init_level_3d(0);
-    init_level();
-    if (in_network_game)
-    {
-        unkn1_handle_agent_groups();
-        unkn_truce_groups();
+    if (p_agent->Type == TT_PERSON) {
+        grp = p_agent->U.UPerson.EffectiveGroup;
+    } else {
+        grp = 0;
     }
-    else
-    {
-        struct Thing *p_agent;
-        place_single_player();
-        p_agent = p_locplayer->MyAgent[0];
-        if (p_agent->Type == TT_PERSON) {
-            ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
-            ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
-        } else {
-            ingame.TrackX = 128;
-            ingame.TrackZ = 128;
-        }
-    }
-    player_debug(" after place player");
-    if (current_level == 0)
-        simulated_level();
-    player_debug(" after sim level");
-    gameturn = 1;
-    player_debug(" after group action");
-    {
-        struct Thing *p_agent;
-        p_agent = p_locplayer->MyAgent[0];
-        if (p_agent->Type == TT_PERSON) {
-            ingame.MyGroup = p_agent->U.UPerson.EffectiveGroup;
-        } else {
-            ingame.MyGroup = 0;
-        }
-    }
+    ingame.MyGroup = grp;
+}
 
+void validate_player_double_mode(void)
+{
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
     switch (playable_agents)
     {
     case 1:
@@ -3018,18 +2988,58 @@ void init_player(void)
     default:
         break;
     }
+}
 
-    for (i = 0; i < playable_agents; i++)
+void game_set_cam_track_thing_xz(struct Thing *p_thing)
+{
+    ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_thing->X);
+    ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+}
+
+void game_set_cam_track_player_agent_xz(PlayerIdx plyr, ushort plagent)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+
+    p_player = &players[plyr];
+    p_agent = p_player->MyAgent[plagent];
+    if (p_agent->Type != TT_PERSON)
+        return;
+    game_set_cam_track_thing_xz(p_agent);
+}
+
+/** Initializes player presence on a level.
+ *
+ * CurrentMission needs to be set before this funcion is called.
+ */
+void init_player(void)
+{
+    gamep_unknval_10 = 0;
+    gamep_unknval_12 = 0;
+    nav_stats__ThisTurn = 0;
+    ingame.Flags &= ~GamF_Unkn0100;
+    gamep_unknval_16 = 0;
+    init_level_3d(0);
+    init_level();
+    if (in_network_game)
     {
-        struct Thing *p_agent;
-        ushort weptype;
-        p_agent = p_locplayer->MyAgent[i];
-        if (p_agent->Type == TT_PERSON)
-            weptype = find_nth_weapon_held(p_agent->ThingOffset, 1);
-        else
-            weptype = WEP_NULL;
-        p_locplayer->PrevWeapon[i] = weptype;
+        unkn1_handle_agent_groups();
+        unkn_truce_groups();
     }
+    else
+    {
+        place_single_player();
+        game_set_cam_track_player_agent_xz(local_player_no, 0);
+    }
+    player_debug(" after place player");
+    if (current_level == 0)
+        simulated_level();
+    player_debug(" after sim level");
+    gameturn = 1;
+    player_debug(" after group action");
+    init_local_player_group();
+    validate_player_double_mode();
+    player_agents_init_prev_weapon(local_player_no);
 
     init_game_controls();
 
@@ -3072,8 +3082,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_player->DirectControl[plagent] = p_person->ThingOffset;
             p_person->Flag |= TngF_Unkn1000;
             if ((plyr == local_player_no) && (plagent == 0)) {
-                ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_person->X);
-                ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_person->Z);
+                game_set_cam_track_thing_xz(p_person);
             }
         }
         players[plyr].MyAgent[plagent] = p_person;
@@ -5924,9 +5933,8 @@ ubyte do_user_interface(void)
 
                       p_pckt = &packets[local_player_no];
 
-                      ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
+                      game_set_cam_track_thing_xz(p_agent);
                       engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
-                      ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
                       dcthing = p_locplayer->DirectControl[mouser];
                       build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
                       if (p_agent->ThingOffset == (short)p_locplayer->DirectControl[mouser])
