@@ -31,7 +31,7 @@ LangString STR_CHOOSE_DRIVE 1033 "Choose the CD-ROM drive"
 LangString STR_CHOOSE_LANG 1033 "Choose the language"
 
 ; --------------------
-; VARIABLES: 12
+; VARIABLES: 13
 
 Var selected_lang_text
 Var selected_lang_abbr
@@ -70,7 +70,7 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 !define MUI_ICON "swars_icon.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
 !define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Port Setup"
-!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\nBuild ${PRODUCT_VERSION}$\nLevels ${LEVELS_VERSION}				Graphics ${GFX_VERSION}"
+!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\nBuild ${PRODUCT_VERSION}				Graphics ${GFX_VERSION}$\nLevels ${LEVELS_VERSION}				Sound ${SFX_VERSION}"
 
 
 ; --------------------
@@ -631,6 +631,36 @@ extract_gfx_files:
  nsisunz::Unzip  "$PLUGINSDIR\${GFX_PACKAGE}.zip" "$PLUGINSDIR\"
  CopyFiles /SILENT $PLUGINSDIR\SWARS\data\* $INSTDIR\data
 
+    ;Update sound files from swars-sfx repository
+
+  StrCpy $sfx_md5 "${SFX_PKG_MD5}"
+
+  !if /FileExists "$PLUGINSDIR\${SFX_PACKAGE}.zip"
+  !else
+ 	 Call DownloadSfx
+  !endif
+
+  ;Check MD5 of downloaded file to see if it's intact
+
+  md5dll::GetMD5File "$PLUGINSDIR\${SFX_PACKAGE}.zip"
+  Pop $0
+  StrCmp $0 $sfx_md5 extract_sfx_files retry_sfx_download
+
+retry_sfx_download:
+ DetailPrint "Error detected with sound files zip, retrying download"
+ Call DownloadSFX
+ md5dll::GetMD5File "$PLUGINSDIR\${SFX_PACKAGE}.zip"
+ Pop $0
+ StrCmp $0 $sfx_md5 extract_sfx_files 0
+ SetErrors
+ DetailPrint "Error downloading sound files from swars-sfx repository, please check the source file."
+ DetailPrint "Aborting install"
+ Abort
+
+extract_sfx_files:
+ DetailPrint "Extracting updated sound files..."
+ nsisunz::Unzip  "$PLUGINSDIR\${SFX_PACKAGE}.zip" "$PLUGINSDIR\"
+ CopyFiles /SILENT $PLUGINSDIR\SWARS\sound\* $INSTDIR\sound
  Return
 
 copy_files_fail:
@@ -653,6 +683,12 @@ Function DownloadGfx
   DetailPrint "Downloading latest game graphics from Github..."
   DetailPrint "https://github.com/swfans/swars-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip"
    inetc::get "https://github.com/swfans/swars-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip" "$PLUGINSDIR\${GFX_PACKAGE}.zip"
+FunctionEnd
+
+Function DownloadSfx
+  DetailPrint "Downloading latest game sound files from Github..."
+  DetailPrint "https://github.com/swfans/swars-sfx/releases/download/${SFX_VERSION}/${SFX_PACKAGE}.zip"
+   inetc::get "https://github.com/swfans/swars-sfx/releases/download/${SFX_VERSION}/${SFX_PACKAGE}.zip" "$PLUGINSDIR\${SFX_PACKAGE}.zip"
 FunctionEnd
 
 
