@@ -67,7 +67,7 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 !endif
 
 
-!define MUI_ICON "swars.ico"
+!define MUI_ICON "swars_icon.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
 !define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Port Setup"
 !define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\nBuild ${PRODUCT_VERSION}$\nLevels ${LEVELS_VERSION}				Graphics ${GFX_VERSION}"

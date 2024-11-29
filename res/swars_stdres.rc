@@ -21,7 +21,7 @@
 #include <windows.h> // include for version info constants
 #include "swars_ver.h" // define values for version info
 
-A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "swars.ico"
+A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "swars_icon.ico"
 
 // Create version info block, using defines from the header file
 1 VERSIONINFO

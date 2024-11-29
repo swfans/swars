@@ -280,7 +280,7 @@ AC_CONFIG_LINKS([
   res/swars-setup.nsi:res/swars-setup.nsi
   res/lang_n_cdrom.ini:res/lang_n_cdrom.ini
   res/license-eng.txt:res/license-eng.txt
-  res/swars.ico:res/swars.ico
+  res/swars_icon.ico:res/swars_icon.ico
 ])
 AC_CONFIG_FILES([res/swars-config.nsh])
 

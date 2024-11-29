@@ -31,6 +31,7 @@
 #include "enginsngtxtr.h"
 #include "game.h"
 #include "game_data.h"
+#include "game_sprani.h"
 #include "matrix.h"
 #include "thing.h"
 #include "swlog.h"

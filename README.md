@@ -25,17 +25,18 @@ port. This means that some of game data are not included. To install the
 ## Community
 
 If you wish to discuss the **Syndicate Wars Port** or if you have any problems,
-you may post to the Google group [syndicate-wars-port](http://groups.google.com/group/syndicate-wars-port)
+you may post to either [doscussion page of the project repo](https://github.com/swfans/swars/discussions)
+or to the Google group [syndicate-wars-port](http://groups.google.com/group/syndicate-wars-port)
  (you don't need to be a member to post).
 
 ## Installation
 
 To install **Syndicate Wars Port**, you will need either the original *Syndicate
-Wars CD*, or digital distribution of the game. There were several physical
-versions released. The multi-lingual european release, as well as american release,
-were tested and will definitely work; other version were not fully tested.
-Only releases for PC can be used. Releases from popular digital distribution
-platforms all include one of the tested releases.
+Wars CD*, or a *SW CD image* from digital distribution of the game. There were
+several physical versions released. The multi-lingual european release, as well
+as american release, were tested and will definitely work; other version were
+not fully tested. Only releases for PC can be used. Releases from popular
+digital distribution platforms all include one of the tested images.
 
 The CD version which you use narrows the range of available languages.
 
@@ -51,24 +52,26 @@ The steps you need to take vary depending on your operating system.
 If you're installing on GNU or UNIX, you will have to compile from source,
 and then add the neccessary data files. The steps are:
 
-1. download and unpack the source tarball or clone git repo
-2. follow [building instructions](#general-building-instructions) below to get
-   a compiled executable
-3. after the build succeeded, do `make install` in the directory where build
-   commands were executed, to copy built files into an installation folder
-   (`/usr/local/share/swars` by default)
-4. insert the *Syndicate Wars CD* and make sure it is mounted (e.g. in `/media/cdrom`)
-5. do `util/install -f SOURCE -t TARGET -l LANG`, where
-   * *SOURCE* is the game CD path, like `/media/cdrom`,
-   * *TARGET* is the destination path, in this case `/usr/local/share/swars`,
-   * *LANG* is the installation language, and can be one of: `eng` `fre` `ger` `ita` `spa` `swe`.
-6. download extra data packages with files improved for the port:
-   * [swars-gfx release](https://github.com/swfans/swars-gfx/releases)
-   * [swars-sfx release](https://github.com/swfans/swars-sfx/releases)
-   * [swars-levels release](https://github.com/swfans/swars-levels/releases)
-7. Extract all the data packages to your installation folder, replacing any
-   existing files. Note that the packages have `swars` directory stored,
-   so the files to place into your installation folder are inside of that.
+1. Insert the *Syndicate Wars CD* and make sure it is mounted, or mount a *SW CD image*
+   (e.g. in `/media/cdrom`).
+2. Choose an installation folder, like `/usr/local/share/swars` (this is the default).
+3. Do `util/install -f <SOURCE> -t <TARGET> -l <LANG>`, where
+   * *\<SOURCE\>* is the game CD path, like `/media/cdrom`,
+   * *\<TARGET\>* is the destination path, meaning the installation folder you've chosen,
+   * *\<LANG\>* is the installation language, and can be one of: `eng` `fre` `ger` `ita` `spa` `swe`.
+
+   The install script will copy files from the CD or mounted CD image, but also
+   will download additional data files from their repositories:
+   [gfx](https://github.com/swfans/swars-gfx/releases),
+   [sfx](https://github.com/swfans/swars-sfx/releases) and
+   [levels](https://github.com/swfans/swars-levels/releases).
+4. Now we finally get to this code repository. Download and unpack the source
+   tarball or clone git repo.
+5. Follow [building instructions](#general-building-instructions) below to get
+   a compiled executable.
+6. After the build succeeded, do `make DESTDIR=<TARGET> install` in the
+   directory where build commands were executed, to copy built files into the
+   *\<TARGET\>* installation folder you've chosen.
 
 If all went well, you can now play the game.
 
@@ -84,18 +87,18 @@ into your *Applications* directory.
 
 You can create the bundle by following these instructions:
 
-1. download and unpack the source tarball or clone git repo
-2. follow [building instructions](#building-on-mac-os-x) below to get
-   a compiled executable
-3. after the code is compiled, install the data, as explained in the
+1. Download and unpack the source tarball or clone git repo.
+2. Follow [building instructions](#building-on-mac-os-x) below to get
+   a compiled executable and configuration files.
+3. After the code is compiled, install the data, as explained in the
    [GNU or UNIX](#installing-on-gnu-or-unix) section, to any directory,
    say `./data` (in case you wonder, the CD drive should be mounted under
-   `/Volumes/SYN WARS QA 9.0`)
-4. finally, run `util/mkbundle ./data` (replacing `./data` with the directory
+   `/Volumes/SYN WARS QA 9.0`).
+4. Finally, run `util/mkbundle ./data` (replacing `./data` with the directory
    you installed the data to); this will produce an application bundle named
-   `Syndicate Wars.app` in the current directory
-5. if you want there to be a pretty icon for the bundle, copy `res/swars.icns`
-   to `Syndicate Wars.app/Contents/Resources`
+   `Syndicate Wars.app` in the current directory.
+5. If you want there to be a pretty icon for the bundle, copy `res/swars.icns`
+   to `Syndicate Wars.app/Contents/Resources`.
 
 ### Installing on Windows
 
@@ -104,48 +107,41 @@ the installer, or download the source code and compile it by hand.
 It is recommended to use the installer!
 
 The installer requires either the original *Syndicate Wars CD* to be present in
-the CD-ROM drive, or a *SW CD image* file on disk. The CD image can come from any
-popular digital distribution platform. The installer will copy the files from the
-original *Syndicate Wars CD* or *SW CD image* and optionally encode the game music
-to ogg files used by this port.
+the CD-ROM drive, or a *SW CD image* file on disk. The CD image can come from
+any popular digital distribution platform. The installer will copy the files
+from the original *Syndicate Wars CD* or *SW CD image*, download and install
+additional data specific to the port, and optionally encode the game music to
+`.ogg` files used by the port.
 
 The *Syndicate Wars CD* or *SW CD image* is not required to play the game,
 it is used only during the installation process.
 
 If you've decided on the hand-compilation option, proceed with the following steps:
 
-1. download and unpack the source tarball or clone git repo
-2. follow [building instructions](#building-on-windows) below to get
-   a compiled executable and configuration files
-3. copy all the files and directories, except for the `language` directory, from
-   the `game` directory within the *Syndicate Wars CD* to the location of your
-   desire, say `SWarsLocation`.
-4. copy all the files, except `sound.dat`, from the `game\language\LANGUAGE\` from
-   the *Syndicate Wars CD* to the `SWarsLocation\data` directory, where *LANGUAGE*
-   stands for the appropriate subdirectory fo the language you want
-5. copy the `sound.dat` file (from the directory stated above) to the
-   `SWarsLocation\sound` directory
-6. *[optional]* rip the game CD Audio tracks to `track_{1,2,3}.ogg` (vorbis)
-7. *[optional]* create a `SWarsLocation\music` directory and copy the
-   previously encoded ogg files there
-8. from the compilation folder, copy `swars.exe` and `conf` folder to your
-   `SWarsLocation` directory
-9. from the compilation folder, copy `lang` directory to `SWarsLocation` and
-   rename it to `language`, so that ie. files for english are within
-   `SWarsLocation\language\eng\`
-10. download extra data packages with files improved for the port:
-   * [swars-gfx release](https://github.com/swfans/swars-gfx/releases)
-   * [swars-sfx release](https://github.com/swfans/swars-sfx/releases)
-   * [swars-levels release](https://github.com/swfans/swars-levels/releases)
-11. Extract all the data packages to your `SWarsLocation` directory, replacing
-   existing files. Note that the packages have `swars` directory stored,
-   and the files to place into `SWarsLocation` are inside of that.
-
-If instead of the above points you prefer more technical description on what to
-copy and where, read the script `util/install` which is used to perform
-installation on GNU or UNIX systems. If your Windows has a Linux subsystem
-istalled, you may even use it to perform the installation automatically - see
-[GNU or UNIX chapter](#installing-on-gnu-or-unix) for details.
+1. Insert the *Syndicate Wars CD* and make sure it is mounted, or mount a
+   *SW CD image* (so that you get drive letter or path, ie. `e:`).
+2. Choose an installation folder, like `c:\Program Files\swars`.
+3. Use `util/install` script to both copy required files from CD and download
+   additional data, and place them all into your chosen installation folder.
+   If you have UNIX or GNU support on your Windows (ie. Linux Windows Subsystem,
+   or MINGW, or MSYS2, or Cygwin), you can just run the script in `bash` - see
+   [Installing on GNU or UNIX](installing-on-gnu-or-unix) for details.
+   If you don't have that, you will have to analyze said script to figure out
+   what should be copied where - detailed instructions are not part of the
+   documentation. As for converting CD music into `.ogg`, in case of issues
+   disable this function of the script - we will do this separately below.
+4. *[optional]* Rip the game CD Audio tracks to `track_{1,2,3}.ogg` (vorbis).
+5. *[optional]* Create a `music` directory inside your chosen installation
+   folder, and place the previously encoded `.ogg` files there.
+6. Now we finally get to this code repository. Download and unpack the source
+   tarball or clone git repo.
+5. Follow [building instructions](#building-on-windows) below to get
+   a compiled executable and configuration files.
+6. After the build succeeded, do `make DESTDIR=<TARGET> install` in the
+   directory where build commands were executed, to copy built files into the
+   *\<TARGET\>* installation folder you've chosen. If you've built the binary
+   yourself, you already have all the tools neccessary for that install command
+   to work.
 
 You can now launch `swars.exe` and have fun!
 
@@ -164,7 +160,7 @@ To build **Syndicate Wars Port**, you will need the following:
 * vorbis-tools (oggenc in particular)
 * cdparanoia
 * development versions of the following libraries:
-  * SDL
+  * SDL2 or SDL1.2
   * OpenAL (we recommend OpenAL Soft)
   * libvorbis
   * libogg
@@ -192,7 +188,7 @@ sudo apt install gcc-multilib g++-multilib lib32z1
 sudo apt install python3 python3-polib
 sudo apt install vorbis-tools
 sudo apt install cdparanoia
-sudo apt install libsdl1.2-dev:i386
+sudo apt install libsdl2-dev:i386
 sudo apt install libopenal-dev:i386
 sudo apt install libvorbis-dev:i386 libvorbisfile3:i386
 sudo apt install libogg-dev:i386
@@ -210,7 +206,7 @@ Next, proceed with the build steps; we will do that in a separate folder.
 
 ```
 mkdir -p release; cd release
-PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --without-sdl2
+PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure
 make V=1
 ```
 
@@ -223,7 +219,7 @@ In case you also want a debug build:
 
 ```
 mkdir -p debug; cd debug
-PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -g -O0 -Wall" CXXFLAGS="-m32 -g -O0 -Wall" LDFLAGS="-m32 -g -O0 -Wall" ../configure --without-sdl2
+PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -g -O0 -Wall" CXXFLAGS="-m32 -g -O0 -Wall" LDFLAGS="-m32 -g -O0 -Wall" ../configure
 make V=1
 ```
 
@@ -255,7 +251,7 @@ First install the dependencies - mingw32, since we need 32-bit toolchain:
 ```
 pacman -S mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
 pacman -S mingw-w64-i686-libpng
-pacman -S mingw-w64-i686-SDL
+pacman -S mingw-w64-i686-SDL2
 pacman -S mingw-w64-i686-openal
 pacman -S mingw-w64-i686-libvorbis
 pacman -S mingw-w64-i686-libogg
@@ -300,7 +296,7 @@ the default mingw64 ones:
 
 ```
 mkdir -p release; cd release
-PATH="/mingw32/bin:$PATH" PKG_CONFIG_PATH="/mingw32/lib/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --prefix=/mingw32 --without-sdl2
+PATH="/mingw32/bin:$PATH" PKG_CONFIG_PATH="/mingw32/lib/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --prefix=/mingw32
 PATH="/mingw32/bin:$PATH" make V=1
 ```
 
@@ -317,7 +313,7 @@ compile them manually.
 
 If you have Mac OS 10.6 ("Snow Leopard") or newer, you will need to make sure
 that your libraries contain code for the i386 architecture. In MacPorts this
-is achieved by using the `+universal` variant (e.g. `port -vu install libsdl +universal`).
+is achieved by using the `+universal` variant (e.g. `port -vu install libsdl2 +universal`).
 
 When you configure your compilation toolchain and location of libraries,
 you will need to pass `CFLAGS="-arch i386"`, like so:
@@ -327,7 +323,7 @@ you will need to pass `CFLAGS="-arch i386"`, like so:
 ```
 
 If you are planning to create [Mac OS app bundle](#making-a-mac-os-app-bundle),
-you will also need to pass `data-path`, so youf final command will be:
+you will also need to pass `data-path`, so your final command will be:
 
 
 ```

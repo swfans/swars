@@ -30,6 +30,7 @@
 #include "enginzoom.h"
 #include "game.h"
 #include "game_speed.h"
+#include "game_sprani.h"
 #include "matrix.h"
 #include "player.h"
 #include "thing.h"

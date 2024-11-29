@@ -284,23 +284,6 @@ struct Animation {
   short field_6E;
 };
 
-struct Frame {
-    ushort FirstElement;
-    ubyte SWidth;
-    ubyte SHeight;
-    ubyte FX;
-    ubyte Flags;
-    ushort Next;
-};
-
-struct Element { // sizeof=0x0A
-    ushort ToSprite;
-    short X;
-    short Y;
-    ushort Flags;
-    ushort Next;
-};
-
 #pragma pack()
 
 extern char session_name[20];
@@ -492,13 +475,6 @@ extern ubyte reload_background_flag;
 extern ushort word_1811AE;
 
 extern struct LevelDef level_def;
-
-extern struct Element *melement_ani;
-extern struct Element *mele_ani_end;
-extern ushort *nstart_ani;
-extern ushort *nstart_ani_end;
-extern struct Frame *frame;
-extern struct Frame *frame_end;
 
 extern long dword_17710C;
 extern long dword_177110;

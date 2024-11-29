@@ -29,6 +29,7 @@
 #include "engindrwlstm.h"
 #include "engindrwlstx.h"
 #include "engintrns.h"
+#include "game_sprani.h"
 #include "game_sprts.h"
 #include "game.h"
 #include "thing.h"

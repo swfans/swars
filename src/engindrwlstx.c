@@ -44,6 +44,7 @@
 #include "enginshrapn.h"
 #include "engintrns.h"
 #include "game_speed.h"
+#include "game_sprani.h"
 #include "game_sprts.h"
 #include "game.h"
 #include "player.h"
@@ -78,8 +79,6 @@ extern long dword_19F4FC;
 extern long dword_19F500;
 extern long dword_19F504;
 extern long dword_19F508;
-
-extern ushort shield_frm[4];
 
 extern short word_1A5834;
 extern short word_1A5836;

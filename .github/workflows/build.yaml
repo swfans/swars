@@ -202,9 +202,9 @@ jobs:
         working-directory: ${{ runner.workspace }}
         run: |
           mkdir -p "${DL_WORKSPACE}"
-          wget -O "${DL_WORKSPACE}\\Inetc.zip" "https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip"
-          wget -O "${DL_WORKSPACE}\\NSISunzU.zip" "https://nsis.sourceforge.io/mediawiki/images/5/5a/NSISunzU.zip"
-          wget -O "${DL_WORKSPACE}\\Md5dll.zip" "https://nsis.sourceforge.io/mediawiki/images/d/d7/Md5dll.zip"
+          wget -O "${DL_WORKSPACE}\\Inetc.zip" --auth-no-challenge --referer="https://nsis.sourceforge.io/Inetc_plug-in" "https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip"
+          wget -O "${DL_WORKSPACE}\\NSISunzU.zip" --auth-no-challenge --referer="https://nsis.sourceforge.io/Nsisunz_plug-in" "https://nsis.sourceforge.io/mediawiki/images/5/5a/NSISunzU.zip"
+          wget -O "${DL_WORKSPACE}\\Md5dll.zip" --auth-no-challenge --referer="https://nsis.sourceforge.io/MD5_plugin" "https://nsis.sourceforge.io/mediawiki/images/d/d7/Md5dll.zip"
 
       - name: Download installer utils
         # Instead of the usual actions/download-artifact, we are downloading from Mega

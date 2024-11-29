@@ -1,8 +1,10 @@
+
+#include "sound.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "bfwindows.h"
 #include "bffile.h"
 #include "bfmemory.h"
@@ -10,6 +12,8 @@
 #include "bfmusic.h"
 #include "bfsound.h"
 #include "bfscd.h"
+#include "ailss.h"
+#include "aila.h"
 #include "sb16.h"
 #include "awe32.h"
 #include "streamfx.h"
@@ -17,14 +21,13 @@
 #include "snderr.h"
 #include "ssampply.h"
 #include "ssamplst.h"
-#include "sound.h"
-#include "ailss.h"
-#include "aila.h"
+
 #include "display.h"
 #include "game_data.h"
 #include "game_speed.h"
 #include "game.h"
 #include "util.h"
+#include "swlog.h"
 
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
@@ -186,23 +189,48 @@ void reset_heaps(void)
 {
 }
 
-void setup_heaps(int a1)
+TbResult sound_banks_fname(char *fname, const char *dir, const char *lang)
 {
+    sprintf(fname, "%s/sound_%s.dat", dir, lang);
+    if (LbFileExists(fname)) {
+        return Lb_OK;
+    }
+    // If no language-specific version found, use the english as default
+    sprintf(fname, "%s/sound_%s.dat", dir, "eng");
+    if (LbFileExists(fname)) {
+        return Lb_OK;
+    }
+
+    // As last effort, try the old file name from original game
+    sprintf(fname, "%s/sound.dat", dir);
+    if (LbFileExists(fname)) {
+        return Lb_OK;
+    }
+
+    return Lb_FAIL;
+}
+
+void setup_heaps(short setup_cmd, const char *lang)
+{
+    char locstr[DISKPATH_SIZE];
+    PathInfo *pinfo;
     long sz;
     unsigned int n;
 
     if ((ingame.Flags & GamF_Unkn00020000) == 0)
         return;
+    pinfo = &game_dirs[DirPlace_Sound];
 
-    switch (a1)
+    switch (setup_cmd)
     {
-    case 100:
+    case SHSC_CreditsSnd:
+        sprintf(locstr, "%s/syncreds.dat", pinfo->directory);
         sz = sound_heap_size;
-        setup_heap_manager(sound_heap_memory, sz, "sound/syncreds.dat", 1622);
+        setup_heap_manager(sound_heap_memory, sz, locstr, 1622);
         break;
     case 99:
         break;
-    case 0:
+    case SHSC_GameSndAutoQ:
         sz = 1500000;
         while ((sound_heap_memory == NULL) && (sz > 100))
         {
@@ -211,24 +239,34 @@ void setup_heaps(int a1)
                 sz -= 30000;
         }
         if ((sound_heap_memory == NULL) || sz < 120000) {
-            ingame.Flags &= GamF_Unkn00020000;
+            ingame.Flags &= ~GamF_Unkn00020000;
             break;
         }
         if (sz <= 500000)
             n = 822;
         else
             n = 1622;
-        if (!setup_heap_manager(sound_heap_memory, sz, "sound/sound.dat", n))
-            ingame.Flags &= GamF_Unkn00020000;
+        if (sound_banks_fname(locstr, pinfo->directory, lang) == Lb_FAIL) {
+            LOGERR("Matching sound banks file not found.");
+            ingame.Flags &= ~GamF_Unkn00020000;
+            break;
+        }
+        if (!setup_heap_manager(sound_heap_memory, sz, locstr, n))
+            ingame.Flags &= ~GamF_Unkn00020000;
         sound_heap_size = sz;
         break;
-    case 2:
+    case SHSC_GameSndBestQ:
         sz = 1500000;
-        if (!setup_heap_manager(sound_heap_memory, sz, "sound/sound.dat", 1622))
-            ingame.Flags &= GamF_Unkn00020000;
+        if (sound_banks_fname(locstr, pinfo->directory, lang) == Lb_FAIL) {
+            LOGERR("Matching sound banks file not found.");
+            ingame.Flags &= ~GamF_Unkn00020000;
+            break;
+        }
+        if (!setup_heap_manager(sound_heap_memory, sz, locstr, 1622))
+            ingame.Flags &= ~GamF_Unkn00020000;
         sound_heap_size = sz;
         break;
-    case 1:
+    case SHSC_ResetGameSnd:
     default:
         sz = 1500000;
         reset_heaps();
