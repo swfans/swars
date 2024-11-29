@@ -1254,9 +1254,7 @@ void draw_hud(int dcthing)
     p_locplayer = &players[local_player_no];
     if (ingame.TrackThing != 0)
     {
-        struct Thing *p_trktng;
-        p_trktng = &things[ingame.TrackThing];
-        if ((p_trktng->Flag & TngF_PlayerAgent) == 0)
+        if (!game_cam_tracked_thing_is_player_agent())
             return;
     }
     if ((ingame.Flags & GamF_HUDPanel) == 0)
@@ -2990,6 +2988,14 @@ void validate_player_double_mode(void)
     }
 }
 
+TbBool game_cam_tracked_thing_is_player_agent(void)
+{
+    struct Thing *p_thing;
+
+    p_thing = &things[ingame.TrackThing];
+    return ((p_thing->Flag & TngF_PlayerAgent) != 0);
+}
+
 void game_set_cam_track_thing_xz(struct Thing *p_thing)
 {
     ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_thing->X);
@@ -3006,6 +3012,16 @@ void game_set_cam_track_player_agent_xz(PlayerIdx plyr, ushort plagent)
     if (p_agent->Type != TT_PERSON)
         return;
     game_set_cam_track_thing_xz(p_agent);
+}
+
+void preprogress_game_turns(void)
+{
+    struct Mission *p_missi;
+
+    p_missi = &mission_list[ingame.CurrentMission];
+    LOGSYNC("PreProcess %d turns for mission %d",
+      (int)p_missi->PreProcess, (int)ingame.CurrentMission);
+    blind_progress_game(p_missi->PreProcess);
 }
 
 /** Initializes player presence on a level.
@@ -3042,14 +3058,7 @@ void init_player(void)
     player_agents_init_prev_weapon(local_player_no);
 
     init_game_controls();
-
-    {
-        struct Mission *p_missi;
-        p_missi = &mission_list[ingame.CurrentMission];
-        LOGSYNC("PreProcess %d turns for mission %d",
-          (int)p_missi->PreProcess, (int)ingame.CurrentMission);
-        blind_progress_game(p_missi->PreProcess);
-    }
+    preprogress_game_turns();
 }
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)

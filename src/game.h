@@ -568,6 +568,7 @@ void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 
 void ingame_palette_reload(void);
 void game_set_cam_track_thing_xz(struct Thing *p_thing);
+TbBool game_cam_tracked_thing_is_player_agent(void);
 
 #ifdef __cplusplus
 };

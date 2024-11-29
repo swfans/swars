@@ -559,6 +559,133 @@ void SCANNER_move_objective_info(int width, int height, int end_pos)
     }
 }
 
+void draw_players_chat_talk(int x, int y)
+{
+    char locstr[164];
+    int plyr;
+    int base_x;
+    int pos_x, pos_y;
+
+    if (lbDisplay.GraphicsScreenHeight >= 400) {
+        base_x = x;
+        pos_y = y;
+    } else {
+        base_x = x / 2;
+        pos_y = y / 2;
+    }
+
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
+    {
+        char *plname;
+        char *str;
+        int fd;
+        int base_shift;
+        TbPixel col2;
+
+        if (player_unkn0C9[plyr] == 0)
+            continue;
+
+        plname = unkn2_names[plyr * 16];
+        col2 = byte_1C5C30[plyr];
+        if (player_unknCC9[plyr][0] != '\0')
+        {
+            if (plname[0] != '\0')
+                sprintf(locstr, "%s: %s", plname, player_unknCC9[plyr]);
+            else
+                sprintf(locstr, "%s", player_unknCC9[plyr]);
+        }
+        else
+        {
+            sprintf(locstr, "%s said nothing.", plname);
+        }
+
+        str = locstr;
+        if (lbDisplay.GraphicsScreenHeight >= 400)
+        {
+            pos_x = base_x;
+            base_shift = -180;
+            while (*str != 0)
+            {
+              if (*str == 32)
+              {
+                  if (pos_x + 2 * font_word_length(str + 1) < lbDisplay.PhysicalScreenWidth - 16) {
+                      pos_x += 8;
+                  } else {
+                      pos_x = base_x;
+                      pos_y += 12;
+                  }
+              }
+              else
+              {
+                  struct TbSprite *spr;
+                  ubyte ch;
+                  TbPixel col1;
+
+                  ch = my_char_to_upper(*str);
+                  spr = &small_font[ch - 31];
+                  fd = base_shift + 4 * player_unkn0C9[plyr];
+                  if (fd > 63)
+                      fd = 63 - (fd - 63);
+                  if (fd > 63)
+                      fd = 63;
+                  if (fd < 0)
+                      fd = 0;
+                  col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
+                  SCANNER_unkn_func_200(spr, pos_x + 1, pos_y + 1, col1);
+                  SCANNER_unkn_func_200(spr, pos_x, pos_y, col2);
+                  pos_x += spr->SWidth + spr->SWidth;
+              }
+              str++;
+              base_shift++;
+            }
+            pos_y += 12;
+        }
+        else
+        {
+          pos_x = base_x;
+          base_shift = -180;
+          while (*str != 0)
+          {
+              if (*str == 32)
+              {
+                  if (font_word_length(str + 1) + pos_x < lbDisplay.PhysicalScreenWidth - 8) {
+                      pos_x += 4;
+                  } else {
+                      pos_x = base_x;
+                      pos_y += 6;
+                  }
+              }
+              else
+              {
+                  struct TbSprite *spr;
+                  ubyte ch;
+                  TbPixel col1;
+
+                  ch = my_char_to_upper(*str);
+                  spr = &small_font[ch - 31];
+                  fd = base_shift + 4 * (ubyte)player_unkn0C9[plyr];
+                  if (fd > 63)
+                      fd = 63 - (fd - 63);
+                  if (fd > 63)
+                      fd = 63;
+                  if (fd < 0)
+                      fd = 0;
+                  col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
+                  LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, spr, col1);
+                  LbSpriteDrawOneColour(pos_x, pos_y, spr, col2);
+                  pos_x += spr->SWidth;
+              }
+              str++;
+              base_shift++;
+          }
+          pos_y += 6;
+        }
+
+        if ( !--player_unkn0C9[plyr] ) {
+            player_unknCC9[plyr][0] = '\0';
+        }
+    }
+}
 
 void SCANNER_draw_objective_info(int x, int y, int width)
 {
@@ -591,132 +718,10 @@ void SCANNER_draw_objective_info(int x, int y, int width)
 
     LbScreenLoadGraphicsWindow(&bkpwnd);
 
+    // TODO it would make sense to move this to higher level function
     if (in_network_game)
     {
-        char locstr[164];
-        int plyr;
-        int base_x;
-        int pos_x, pos_y;
-
-        if (lbDisplay.GraphicsScreenHeight >= 400) {
-            pos_y = 51;
-            base_x = 22;
-        } else {
-            pos_y = 25;
-            base_x = 11;
-        }
-
-        for (plyr = 0; plyr < 8; plyr++)
-        {
-            char *plname;
-            char *str;
-            int fd;
-            int base_shift;
-            TbPixel col2;
-
-            if (player_unkn0C9[plyr] == 0)
-                continue;
-
-            plname = unkn2_names[plyr * 16];
-            col2 = byte_1C5C30[plyr];
-            if (player_unknCC9[plyr][0] != '\0')
-            {
-                if (plname[0] != '\0')
-                    sprintf(locstr, "%s: %s", plname, player_unknCC9[plyr]);
-                else
-                    sprintf(locstr, "%s", player_unknCC9[plyr]);
-            }
-            else
-            {
-                sprintf(locstr, "%s said nothing.", plname);
-            }
-
-            str = locstr;
-            if (lbDisplay.GraphicsScreenHeight >= 400)
-            {
-                pos_x = base_x;
-                base_shift = -180;
-                while (*str != 0)
-                {
-                  if (*str == 32)
-                  {
-                      if (pos_x + 2 * font_word_length(str + 1) < lbDisplay.PhysicalScreenWidth - 16) {
-                          pos_x += 8;
-                      } else {
-                          pos_x = base_x;
-                          pos_y += 12;
-                      }
-                  }
-                  else
-                  {
-                      struct TbSprite *spr;
-                      ubyte ch;
-                      TbPixel col1;
-
-                      ch = my_char_to_upper(*str);
-                      spr = &small_font[ch - 31];
-                      fd = base_shift + 4 * player_unkn0C9[plyr];
-                      if (fd > 63)
-                          fd = 63 - (fd - 63);
-                      if (fd > 63)
-                          fd = 63;
-                      if (fd < 0)
-                          fd = 0;
-                      col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
-                      SCANNER_unkn_func_200(spr, pos_x + 1, pos_y + 1, col1);
-                      SCANNER_unkn_func_200(spr, pos_x, pos_y, col2);
-                      pos_x += spr->SWidth + spr->SWidth;
-                  }
-                  str++;
-                  base_shift++;
-                }
-                pos_y += 12;
-            }
-            else
-            {
-              pos_x = base_x;
-              base_shift = -180;
-              while (*str != 0)
-              {
-                  if (*str == 32)
-                  {
-                      if (font_word_length(str + 1) + pos_x < lbDisplay.PhysicalScreenWidth - 8) {
-                          pos_x += 4;
-                      } else {
-                          pos_x = base_x;
-                          pos_y += 6;
-                      }
-                  }
-                  else
-                  {
-                      struct TbSprite *spr;
-                      ubyte ch;
-                      TbPixel col1;
-
-                      ch = my_char_to_upper(*str);
-                      spr = &small_font[ch - 31];
-                      fd = base_shift + 4 * (ubyte)player_unkn0C9[plyr];
-                      if (fd > 63)
-                          fd = 63 - (fd - 63);
-                      if (fd > 63)
-                          fd = 63;
-                      if (fd < 0)
-                          fd = 0;
-                      col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
-                      LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, spr, col1);
-                      LbSpriteDrawOneColour(pos_x, pos_y, spr, col2);
-                      pos_x += spr->SWidth;
-                  }
-                  str++;
-                  base_shift++;
-              }
-              pos_y += 6;
-            }
-
-            if ( !--player_unkn0C9[plyr] ) {
-                player_unknCC9[plyr][0] = '\0';
-            }
-        }
+        draw_players_chat_talk(22, 51);
     }
 }
 
