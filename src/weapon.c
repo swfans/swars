@@ -730,7 +730,7 @@ TbBool current_weapon_has_targetting(struct Thing *p_person)
     return weapon_has_targetting(wtype);
 }
 
-sbyte find_nth_weapon_held(ushort index, ubyte n)
+ubyte find_nth_weapon_held(ushort index, ubyte n)
 {
     char ret;
     asm volatile ("call ASM_find_nth_weapon_held\n"

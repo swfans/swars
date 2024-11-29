@@ -146,7 +146,7 @@ TbBool weapons_add_one(ulong *p_weapons,
 void sanitize_weapon_quantities(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks);
 
-sbyte find_nth_weapon_held(ushort index, ubyte n);
+ubyte find_nth_weapon_held(ushort index, ubyte n);
 
 /** Returns range (in normal map coord points) of the person current weapon.
  *

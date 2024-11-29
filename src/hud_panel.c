@@ -1278,7 +1278,7 @@ TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong
 void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong weapons_carried, short current_weapon)
 {
     ushort nshown;
-    int weptype;
+    ushort weptype;
     int nchecked;
     ulong wepflags;
     int cy;

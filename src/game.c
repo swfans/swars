@@ -3022,13 +3022,13 @@ void init_player(void)
     for (i = 0; i < playable_agents; i++)
     {
         struct Thing *p_agent;
-        ulong wep;
+        ushort weptype;
         p_agent = p_locplayer->MyAgent[i];
         if (p_agent->Type == TT_PERSON)
-            wep = find_nth_weapon_held(p_agent->ThingOffset, 1);
+            weptype = find_nth_weapon_held(p_agent->ThingOffset, 1);
         else
-            wep = 0;
-        p_locplayer->PrevWeapon[i] = wep;
+            weptype = WEP_NULL;
+        p_locplayer->PrevWeapon[i] = weptype;
     }
 
     init_game_controls();
@@ -5377,10 +5377,45 @@ void do_scroll_map(void)
 
 ubyte weapon_select_input(void)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_weapon_select_input\n"
         : "=r" (ret) : );
     return ret;
+#endif
+    PlayerInfo *p_locplayer;
+    ThingIdx dcthing;
+    ushort weptype;
+    int n;
+
+    static ushort sel_weapon_keys[] = {
+        KC_5, KC_6, KC_7, KC_8, KC_9, KC_0,
+    };
+
+    p_locplayer = &players[local_player_no];
+    dcthing = p_locplayer->DirectControl[0];
+    weptype = WEP_NULL;
+
+
+    assert(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
+
+    for (n = 0; n < (int)(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0])); n++)
+    {
+        ushort kkey = sel_weapon_keys[n];
+        if (lbKeyOn[kkey] && (lbShift == KMod_NONE))
+        {
+            lbKeyOn[kkey] = 0;
+            weptype = find_nth_weapon_held(dcthing, n+1);
+            if (weptype != WEP_NULL)
+                break;
+        }
+    }
+
+    if (weptype == WEP_NULL)
+        return 0;
+
+    my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, 0, 0);
+    return 1;
 }
 
 void do_rotate_map(void)
@@ -5857,7 +5892,7 @@ ubyte do_user_interface(void)
     static ushort sel_agent_gkeys[] = {
         GKey_SEL_AGENT_1, GKey_SEL_AGENT_2, GKey_SEL_AGENT_3, GKey_SEL_AGENT_4
     };
-    static ulong last_sel_agent_turn[AGENTS_SQUAD_MAX_COUNT] = {0};
+    static GameTurn last_sel_agent_turn[AGENTS_SQUAD_MAX_COUNT] = {0};
     assert(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0]) <= AGENTS_SQUAD_MAX_COUNT);
     for (n = 0; n < (int)(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0])); n++)
     {
