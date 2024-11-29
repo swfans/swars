@@ -45,6 +45,7 @@ Var RadioSelected
 Var inst_src_root_dir
 Var levels_md5
 Var gfx_md5
+Var sfx_md5
 
 InstallDir "$PROGRAMFILES\Syndicate Wars\"
 
