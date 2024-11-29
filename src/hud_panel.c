@@ -559,12 +559,113 @@ void SCANNER_move_objective_info(int width, int height, int end_pos)
     }
 }
 
+void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
+{
+    int pos_x, pos_y;
+    const char *str;
+    int base_shift;
+    TbPixel col2;
+
+    str = text;
+    pos_x = base_x;
+    pos_y = *p_pos_y;
+    col2 = byte_1C5C30[plyr];
+    base_shift = -180;
+    while (*str != 0)
+    {
+        if (*str == 32)
+        {
+            if (pos_x + 2 * font_word_length(str + 1) < lbDisplay.PhysicalScreenWidth - 16) {
+                pos_x += 8;
+            } else {
+                pos_x = base_x;
+                pos_y += 12;
+            }
+        }
+        else
+        {
+            struct TbSprite *spr;
+            int fd;
+            ubyte ch;
+            TbPixel col1;
+
+            ch = my_char_to_upper(*str);
+            spr = &small_font[ch - 31];
+            fd = base_shift + 4 * player_unkn0C9[plyr];
+            if (fd > 63)
+                fd = 63 - (fd - 63);
+            if (fd > 63)
+                fd = 63;
+            if (fd < 0)
+                fd = 0;
+            col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
+            SCANNER_unkn_func_200(spr, pos_x + 1, pos_y + 1, col1);
+            SCANNER_unkn_func_200(spr, pos_x, pos_y, col2);
+            pos_x += 2 * spr->SWidth;
+        }
+        str++;
+        base_shift++;
+    }
+    pos_y += 12;
+    *p_pos_y = pos_y;
+}
+
+void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
+{
+    int pos_x, pos_y;
+    const char *str;
+    int base_shift;
+    TbPixel col2;
+
+    str = text;
+    pos_x = base_x;
+    pos_y = *p_pos_y;
+    col2 = byte_1C5C30[plyr];
+    base_shift = -180;
+    while (*str != 0)
+    {
+        if (*str == 32)
+        {
+            if (font_word_length(str + 1) + pos_x < lbDisplay.PhysicalScreenWidth - 8) {
+                pos_x += 4;
+            } else {
+                pos_x = base_x;
+                pos_y += 6;
+            }
+        }
+        else
+        {
+            struct TbSprite *spr;
+            int fd;
+            ubyte ch;
+            TbPixel col1;
+
+            ch = my_char_to_upper(*str);
+            spr = &small_font[ch - 31];
+            fd = base_shift + 4 * (ubyte)player_unkn0C9[plyr];
+            if (fd > 63)
+                fd = 63 - (fd - 63);
+            if (fd > 63)
+                fd = 63;
+            if (fd < 0)
+                fd = 0;
+            col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
+            LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, spr, col1);
+            LbSpriteDrawOneColour(pos_x, pos_y, spr, col2);
+            pos_x += spr->SWidth;
+        }
+        str++;
+        base_shift++;
+    }
+    pos_y += 6;
+    *p_pos_y = pos_y;
+}
+
 void draw_players_chat_talk(int x, int y)
 {
     char locstr[164];
     int plyr;
-    int base_x;
-    int pos_x, pos_y;
+    int base_x, pos_y;
 
     if (lbDisplay.GraphicsScreenHeight >= 400) {
         base_x = x;
@@ -577,16 +678,11 @@ void draw_players_chat_talk(int x, int y)
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {
         char *plname;
-        char *str;
-        int fd;
-        int base_shift;
-        TbPixel col2;
 
         if (player_unkn0C9[plyr] == 0)
             continue;
 
         plname = unkn2_names[plyr * 16];
-        col2 = byte_1C5C30[plyr];
         if (player_unknCC9[plyr][0] != '\0')
         {
             if (plname[0] != '\0')
@@ -599,86 +695,13 @@ void draw_players_chat_talk(int x, int y)
             sprintf(locstr, "%s said nothing.", plname);
         }
 
-        str = locstr;
         if (lbDisplay.GraphicsScreenHeight >= 400)
         {
-            pos_x = base_x;
-            base_shift = -180;
-            while (*str != 0)
-            {
-              if (*str == 32)
-              {
-                  if (pos_x + 2 * font_word_length(str + 1) < lbDisplay.PhysicalScreenWidth - 16) {
-                      pos_x += 8;
-                  } else {
-                      pos_x = base_x;
-                      pos_y += 12;
-                  }
-              }
-              else
-              {
-                  struct TbSprite *spr;
-                  ubyte ch;
-                  TbPixel col1;
-
-                  ch = my_char_to_upper(*str);
-                  spr = &small_font[ch - 31];
-                  fd = base_shift + 4 * player_unkn0C9[plyr];
-                  if (fd > 63)
-                      fd = 63 - (fd - 63);
-                  if (fd > 63)
-                      fd = 63;
-                  if (fd < 0)
-                      fd = 0;
-                  col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
-                  SCANNER_unkn_func_200(spr, pos_x + 1, pos_y + 1, col1);
-                  SCANNER_unkn_func_200(spr, pos_x, pos_y, col2);
-                  pos_x += spr->SWidth + spr->SWidth;
-              }
-              str++;
-              base_shift++;
-            }
-            pos_y += 12;
+            draw_text_linewrap1(base_x, &pos_y, plyr, locstr);
         }
         else
         {
-          pos_x = base_x;
-          base_shift = -180;
-          while (*str != 0)
-          {
-              if (*str == 32)
-              {
-                  if (font_word_length(str + 1) + pos_x < lbDisplay.PhysicalScreenWidth - 8) {
-                      pos_x += 4;
-                  } else {
-                      pos_x = base_x;
-                      pos_y += 6;
-                  }
-              }
-              else
-              {
-                  struct TbSprite *spr;
-                  ubyte ch;
-                  TbPixel col1;
-
-                  ch = my_char_to_upper(*str);
-                  spr = &small_font[ch - 31];
-                  fd = base_shift + 4 * (ubyte)player_unkn0C9[plyr];
-                  if (fd > 63)
-                      fd = 63 - (fd - 63);
-                  if (fd > 63)
-                      fd = 63;
-                  if (fd < 0)
-                      fd = 0;
-                  col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
-                  LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, spr, col1);
-                  LbSpriteDrawOneColour(pos_x, pos_y, spr, col2);
-                  pos_x += spr->SWidth;
-              }
-              str++;
-              base_shift++;
-          }
-          pos_y += 6;
+            draw_text_linewrap2(base_x, &pos_y, plyr, locstr);
         }
 
         if ( !--player_unkn0C9[plyr] ) {
