@@ -80,7 +80,7 @@ enum PacketActions
     PAct_PLANT_MINE_FAST = 0x2E,
     PAct_2F = 0x2F,
     PAct_PEEPS_SCATTER = 0x30,
-    PAct_31 = 0x31,
+    PAct_SELECT_GRP_SPEC_WEAPON = 0x31,
     PAct_32 = 0x32,
     PAct_33 = 0x33,
     PAct_SET_GRP_MOOD = 0x34,

@@ -2388,7 +2388,7 @@ TbBool process_panel_state_grp_agents_weapon(ushort agent)
         // release button while in weapon selection mode
         if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
         {
-            my_build_packet(p_pckt, PAct_31, p_agent->ThingOffset, pnitm, 0, 0);
+            my_build_packet(p_pckt, PAct_SELECT_GRP_SPEC_WEAPON, p_agent->ThingOffset, pnitm, 0, 0);
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             lbDisplay.RightButton = 0;
             lbDisplay.LeftButton = 0;

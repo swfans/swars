@@ -5409,6 +5409,7 @@ ubyte weapon_select_input(void)
     static ushort sel_weapon_keys[] = {
         KC_5, KC_6, KC_7, KC_8, KC_9, KC_0,
     };
+    static GameTurn last_sel_weapon_turn[WEAPONS_CARRIED_MAX_COUNT] = {0};
 
     p_locplayer = &players[local_player_no];
     dcthing = p_locplayer->DirectControl[0];
@@ -5432,7 +5433,25 @@ ubyte weapon_select_input(void)
     if (weptype == WEP_NULL)
         return 0;
 
-    my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, 0, 0);
+    // Double tapping - select for all agents
+    if (gameturn - last_sel_weapon_turn[n] < 7)
+    {
+        //TODO This doesn't work properly because our parameters do not distinguish between
+        // selecting and deselecting weapon; process_packets() would have to be updated for
+        // that to work, ie. to use one of zeroed packet parameters as select/deselect flag
+#if 0
+        my_build_packet(&packets[local_player_no], PAct_SELECT_GRP_SPEC_WEAPON, dcthing, weptype, 0, 0);
+#else
+        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, 0, 0);
+#endif
+        last_sel_weapon_turn[n] -= 7;
+    }
+    else
+    {
+        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, 0, 0);
+        last_sel_weapon_turn[n] = gameturn;
+    }
+
     return 1;
 }
 
