@@ -234,19 +234,34 @@ void reset_person_frame(struct Thing *p_person);
 int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushort flags);
 TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle);
 
+int limit_mood(struct Thing *p_thing, short mood);
+
 TbBool person_is_persuaded(ThingIdx thing);
 TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
 TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
 void player_change_person(short thing, ushort plyr);
+void make_peeps_scatter(struct Thing *p_person, int x, int z);
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);
 void person_init_drop(struct Thing *p_person, ThingIdx item);
 void person_init_pickup(struct Thing *p_person, ThingIdx item);
 void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle);
+void thing_shoot_at_thing(struct Thing *p_thing, short target);
 ubyte person_attempt_to_leave_vehicle(struct Thing *p_thing);
 void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint fast_flag);
 void call_protect(struct Thing *p_thing, ushort plyr);
 ushort count_protect(struct Thing *p_thing, ushort plyr);
+void call_unprotect(struct Thing *p_thing, ushort plyr, ubyte flag);
+void person_init_get_item(struct Thing *p_person, short item, ushort plyr);
+void person_init_get_item_fast(struct Thing *p_person, short item, ushort plyr);
+void person_init_plant_mine_fast(struct Thing *p_thing, short x, short y, short z, int face);
+void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, int face);
+int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, uint flag);
+void person_go_enter_vehicle_fast(struct Thing *p_person, struct Thing *p_vehicle, ushort plyr);
+void person_go_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle);
+void person_init_follow_person(struct Thing *p_person, struct Thing *p_other);
+void person_shield_toggle(struct Thing *p_person, PlayerIdx plyr);
+void person_self_destruct(struct Thing *p_person);
 
 struct Thing *new_sim_person(int x, int y, int z, ubyte subtype);
 

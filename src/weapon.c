@@ -1060,6 +1060,12 @@ void get_soul(struct Thing *p_dead, struct Thing *p_person)
         : : "a" (p_dead), "d" (p_person));
 }
 
+void choose_best_weapon_for_range(struct Thing *p_person, int dist)
+{
+    asm volatile ("call ASM_choose_best_weapon_for_range\n"
+        : : "a" (p_person), "d" (dist));
+}
+
 void process_weapon_recoil(struct Thing *p_person)
 {
     if (((p_person->Flag2 & TgF2_Unkn0800) == 0) &&

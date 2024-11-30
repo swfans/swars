@@ -7298,6 +7298,18 @@ ubyte select_new_weapon(ushort index, short dir)
     return ret;
 }
 
+void sub_36270(sbyte a1, ubyte a2)
+{
+    asm volatile ("call ASM_sub_36270\n"
+        :  : "a" (a1), "d" (a2));
+}
+
+void sub_3631C(sbyte a1, ubyte a2)
+{
+    asm volatile ("call ASM_sub_3631C\n"
+        :  : "a" (a1), "d" (a2));
+}
+
 void peep_change_weapon(struct Thing *p_person)
 {
     asm volatile (
@@ -7311,6 +7323,12 @@ short net_unkn_check_1(void)
     asm volatile ("call ASM_net_unkn_check_1\n"
         : "=r" (ret) : );
     return ret;
+}
+
+void sub_3E580(ushort a1, int a2)
+{
+    asm volatile ("call ASM_sub_3E580\n"
+        :  : "a" (a1), "d" (a2));
 }
 
 void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)

@@ -162,6 +162,8 @@ short current_weapon_range(struct Thing *p_person);
  */
 int get_weapon_range(struct Thing *p_person);
 
+void choose_best_weapon_for_range(struct Thing *p_person, int dist);
+
 /** Returns whether the person current weapon requires some time to achieve target lock.
  */
 TbBool current_weapon_has_targetting(struct Thing *p_person);

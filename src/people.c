@@ -1221,12 +1221,6 @@ void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
         : : "a" (p_person), "d" (p_vehicle));
 }
 
-void stop_looped_weapon_sample(struct Thing *p_person, short weapon)
-{
-    asm volatile ("call ASM_stop_looped_weapon_sample\n"
-        : : "a" (p_person), "d" (weapon));
-}
-
 ubyte person_attempt_to_leave_vehicle(struct Thing *p_thing)
 {
     ubyte ret;
@@ -1275,6 +1269,104 @@ ushort count_protect(struct Thing *p_thing, ushort plyr)
       "call ASM_count_protect\n"
         : "=r" (ret) : "a" (p_thing), "d" (plyr));
     return ret;
+}
+
+void call_unprotect(struct Thing *p_thing, ushort plyr, ubyte flag)
+{
+    asm volatile ("call ASM_call_unprotect\n"
+        : : "a" (p_thing), "d" (plyr), "b" (flag));
+}
+
+void thing_shoot_at_thing(struct Thing *p_thing, short target)
+{
+    asm volatile ("call ASM_thing_shoot_at_thing\n"
+        : : "a" (p_thing), "d" (target));
+}
+
+void person_init_get_item(struct Thing *p_person, short item, ushort plyr)
+{
+    asm volatile ("call ASM_person_init_get_item\n"
+        : : "a" (p_person), "d" (item), "b" (plyr));
+}
+
+void person_init_get_item_fast(struct Thing *p_person, short item, ushort plyr)
+{
+    asm volatile ("call ASM_person_init_get_item_fast\n"
+        : : "a" (p_person), "d" (item), "b" (plyr));
+}
+
+void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, int face)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_person_init_plant_mine\n"
+        : : "a" (p_person), "d" (x), "b" (y), "c" (z), "g" (face));
+}
+
+int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, uint flag)
+{
+    int ret;
+    asm volatile ("call ASM_thing_select_specific_weapon\n"
+        : "=r" (ret) : "a" (p_person), "d" (weapon), "b" (flag));
+    return ret;
+}
+
+void person_go_enter_vehicle_fast(struct Thing *p_person, struct Thing *p_vehicle, ushort plyr)
+{
+    asm volatile (
+      "call ASM_person_go_enter_vehicle_fast\n"
+        : : "a" (p_person), "d" (p_vehicle), "b" (plyr));
+}
+
+void person_go_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
+{
+    asm volatile (
+      "call ASM_person_go_enter_vehicle\n"
+        : : "a" (p_person), "d" (p_vehicle));
+}
+
+void person_init_follow_person(struct Thing *p_person, struct Thing *p_other)
+{
+    asm volatile (
+      "call ASM_person_init_follow_person\n"
+        : : "a" (p_person), "d" (p_other));
+}
+
+void person_shield_toggle(struct Thing *p_person, PlayerIdx plyr)
+{
+    asm volatile (
+      "call ASM_person_shield_toggle\n"
+        : : "a" (p_person), "d" (plyr));
+}
+
+void make_peeps_scatter(struct Thing *p_person, int x, int z)
+{
+    asm volatile (
+      "call ASM_make_peeps_scatter\n"
+        : : "a" (p_person), "d" (x), "b" (z));
+}
+
+int limit_mood(struct Thing *p_thing, short mood)
+{
+    int ret;
+    asm volatile ("call ASM_limit_mood\n"
+        : "=r" (ret) : "a" (p_thing), "d" (mood));
+    return ret;
+}
+
+void person_init_plant_mine_fast(struct Thing *p_thing, short x, short y, short z, int face)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_person_init_plant_mine_fast\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (face));
+}
+
+void person_self_destruct(struct Thing *p_person)
+{
+    asm volatile (
+      "call ASM_person_self_destruct\n"
+        : : "a" (p_person));
 }
 
 void person_scare_person(struct Thing *p_person)

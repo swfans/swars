@@ -80,6 +80,12 @@ void play_dist_ssample(struct SimpleThing *p_sthing, ushort smptbl_id, ushort vo
         : : "a" (p_sthing), "d" (smptbl_id), "b" (vol), "c" (pan), "g" (pitch), "g" (loop), "g" (type));
 }
 
+void stop_looped_weapon_sample(struct Thing *p_person, short weapon)
+{
+    asm volatile ("call ASM_stop_looped_weapon_sample\n"
+        : : "a" (p_person), "d" (weapon));
+}
+
 //TODO better name?
 void fill_ail_sample_ids(void)
 {
