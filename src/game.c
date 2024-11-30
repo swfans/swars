@@ -7333,12 +7333,417 @@ void sub_3E580(ushort a1, int a2)
 
 void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
 {
-    //TODO rewrite
+    struct Thing *p_person;
+    struct Thing *p_owntng;
+    struct Thing *p_thing;
+    int n;
+    ushort plagent;
+    ubyte flag;
+
+    switch (packet->Action & 0x7FFF)
+    {
+    case PAct_2:
+        if (!in_network_game) {
+            exit_game = 1;
+            break;
+        }
+        kill_my_players(plyr);
+        if ((net_host_player_no == plyr) || (plyr == local_player_no) || (nsvc.I.Type != 1))
+        {
+            ingame.DisplayMode = DpM_UNKN_37;
+            StopCD();
+            StopAllSamples();
+            SetMusicVolume(100, 0);
+            LbNetworkSessionStop();
+            if (nsvc.I.Type != 1 && byte_1C4A6F)
+                LbNetworkHangUp();
+        }
+        else
+        {
+            net_players_num--;
+            sprintf(player_unknCC9[plyr], "%s %s", unkn2_names[plyr], gui_strings[651]);
+            player_unkn0C9[plyr] = -106;
+            LbNetworkSessionStop();
+            ingame.InNetGame_UNSURE &= ~(1 << plyr);
+        }
+        break;
+    case PAct_B:
+        if (plyr == local_player_no)
+            show_goto_point(1);
+        p_thing = &things[packet->Data];
+        p_thing->U.UPerson.Flag3 &= ~0x04;
+        thing_goto_point(p_thing, packet->X, packet->Y, packet->Z);
+        break;
+    case PAct_C:
+        p_thing = &things[packet->Data];
+        thing_goto_point_rel(p_thing, packet->X, packet->Y, packet->Z);
+        break;
+    case PAct_D:
+        p_thing = &things[packet->Data];
+        if ((p_thing->State != PerSt_DROP_ITEM) && ((p_thing->Flag2 & 0x10) == 0))
+        {
+            p_thing->U.UPerson.CurrentWeapon = select_new_weapon(packet->Data, 1);
+            peep_change_weapon(p_thing);
+            p_thing->U.UPerson.AnimMode = gun_out_anim(p_thing, 0);
+            reset_person_frame(p_thing);
+            p_thing->Speed = calc_person_speed(p_thing);
+            p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
+            if ((plyr == local_player_no) && (p_thing->U.UPerson.CurrentWeapon != 0))
+            {
+                ushort smp;
+                if (background_type == 1)
+                    smp = weapon_sound_z[p_thing->U.UPerson.CurrentWeapon];
+                else
+                    smp = weapon_sound[p_thing->U.UPerson.CurrentWeapon];
+                play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
+            }
+        }
+        break;
+    case PAct_E:
+        p_thing = &things[packet->Data];
+        if ((p_thing->U.UPerson.CurrentWeapon == 0) || (p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
+            break;
+        p_thing->U.UPerson.AnimMode = 0;
+        reset_person_frame(p_thing);
+        if (p_thing->State == PerSt_PROTECT_PERSON)
+            p_thing->Flag2 |= 0x10000000;
+        person_init_drop(p_thing, 0);
+        p_thing->Speed = calc_person_speed(p_thing);
+        break;
+    case PAct_PICKUP:
+        p_thing = &things[packet->Data];
+        person_init_pickup(p_thing, packet->X);
+        break;
+    case PAct_ENTER_VEHICLE:
+        p_thing = &things[packet->Data];
+        if ((p_thing->Flag2 & 0x800) != 0)
+            break;
+        person_enter_vehicle(p_thing, &things[packet->X]);
+        break;
+    case PAct_LEAVE_VEHICLE:
+        p_thing = &things[packet->Data];
+        if ((p_thing->Flag2 & 0x800) != 0)
+            break;
+        person_attempt_to_leave_vehicle(p_thing);
+        break;
+    case PAct_17:
+        p_thing = &things[packet->X];
+        if (packet->X == (ThingIdx)players[plyr].DirectControl[mouser])
+            break;
+        if (plyr == local_player_no)
+        {
+            ushort smp;
+            if (p_thing->SubType == 1)
+                smp = 44;
+            else
+                smp = 46;
+            play_disk_sample(0, smp, 127, 64, 100, 0, 3);
+        }
+        if (packet->X != (ThingIdx)players[plyr].DirectControl[0]) {
+            player_change_person(packet->X, plyr);
+        }
+        break;
+    case PAct_GOTO_POINT_REL_FAST:
+        p_thing = &things[packet->Data];
+        thing_goto_point_rel_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
+        break;
+    case PAct_SHOOT_AT_POINT:
+        p_thing = &things[packet->Data];
+        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 0);
+        break;
+    case PAct_CHANGE_WEAPON:
+        p_thing = &things[packet->Data];
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
+            break;
+        peep_change_weapon(p_thing);
+        p_thing->U.UPerson.CurrentWeapon = select_new_weapon(packet->Data, -1);
+        p_thing->U.UPerson.AnimMode = gun_out_anim(p_thing, 0);
+        p_thing->Frame = nstart_ani[people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode] + p_thing->U.UObject.Angle];
+        p_thing->StartFrame = people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode] - 1;
+        p_thing->Speed = calc_person_speed(p_thing);
+        p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
+        if (plyr == local_player_no) {
+            if (p_thing->U.UPerson.CurrentWeapon != 0)
+                play_disk_sample(local_player_no, 0x2Cu, 127, 64, 100, 0, 3);
+        }
+        break;
+    case PAct_PROTECT_INC:
+        p_thing = &things[packet->Data];
+        call_protect(p_thing, plyr);
+        n = count_protect(p_thing, plyr);
+        if (plyr == local_player_no && n)
+            play_sample_using_heap(0, 61, 127, 64, 5 * n + 90, 0, 3);
+        break;
+    case PAct_PROTECT_TOGGLE:
+        p_thing = &things[packet->Data];
+        call_unprotect(p_thing, plyr, 0);
+        n = count_protect(p_thing, plyr);
+        if (plyr == local_player_no && n)
+            play_sample_using_heap(0, 61, 127, 64, 5 * n + 90, 0, 3);
+        break;
+    case PAct_SHOOT_AT_THING:
+        p_thing = &things[packet->Data];
+        thing_shoot_at_thing(p_thing, packet->X);
+        break;
+    case PAct_GET_ITEM:
+        p_thing = &things[packet->Data];
+        person_init_get_item(p_thing, packet->X, plyr);
+        break;
+    case PAct_PLANT_MINE:
+        p_thing = &things[packet->Data];
+        if ((p_thing->State != PerSt_DROP_ITEM) && ((p_thing->Flag2 & 0x10) == 0))
+            person_init_plant_mine(p_thing, packet->X, packet->Y, packet->Z, 0);
+        break;
+    case PAct_SELECT_SPECIFIC_WEAPON:
+        p_thing = &things[packet->Data];
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
+            break;
+        thing_select_specific_weapon(p_thing, packet->X, 0);
+        peep_change_weapon(p_thing);
+        p_thing->U.UPerson.AnimMode = gun_out_anim(p_thing, 0);
+        reset_person_frame(p_thing);
+        p_thing->Speed = calc_person_speed(p_thing);
+        p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
+        if ((plyr == local_player_no) && (p_thing->U.UPerson.CurrentWeapon != 0))
+        {
+            ushort smp;
+            if (background_type == 1)
+                smp = weapon_sound_z[p_thing->U.UPerson.CurrentWeapon];
+            else
+                smp = weapon_sound[p_thing->U.UPerson.CurrentWeapon];
+            play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
+        }
+        break;
+    case PAct_DROP:
+        p_thing = &things[packet->Data];
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
+            break;
+        if (packet->X == p_thing->U.UPerson.CurrentWeapon) {
+            p_thing->U.UPerson.AnimMode = 0;
+            reset_person_frame(p_thing);
+        }
+        if (p_thing->State == PerSt_PROTECT_PERSON)
+            p_thing->Flag2 |= 0x10000000;
+        person_init_drop(p_thing, packet->X);
+        p_thing->Speed = calc_person_speed(p_thing);
+        break;
+    case PAct_SET_MOOD:
+        if (packet->Data > 1000)
+            break;
+        p_thing = &things[packet->Data];
+        p_thing->U.UPerson.Mood = limit_mood(p_thing, packet->X);
+        p_thing->Speed = calc_person_speed(p_thing);
+        break;
+    case PAct_GO_ENTER_VEHICLE:
+        p_thing = &things[packet->Data];
+        person_go_enter_vehicle(p_thing, &things[packet->X]);
+        break;
+    case PAct_FOLLOW_PERSON:
+        p_thing = &things[packet->Data];
+        if ((p_thing->Flag2 & 0x0800) == 0)
+            person_init_follow_person(p_thing, &things[packet->X]);
+        break;
+    case PAct_CONTROL_MODE:
+        players[plyr].UserInput[0].ControlMode = packet->Data;
+        break;
+    case PAct_GOTO_POINT_ON_FACE:
+        if (plyr == local_player_no)
+            show_goto_point(1);
+        p_thing = &things[packet->Data];
+        p_thing->U.UPerson.Flag3 &= ~0x0004;
+        thing_goto_point_on_face(p_thing, packet->X, packet->Z, packet->Y);
+        break;
+    case PAct_GOTO_POINT_FAST:
+        if (plyr == local_player_no)
+            show_goto_point(1);
+        p_thing = &things[packet->Data];
+        p_thing->U.UPerson.Flag3 &= ~0x0004;
+        thing_goto_point_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
+        break;
+    case PAct_GOTO_POINT_ON_FACE_FAST:
+        if (plyr == local_player_no)
+            show_goto_point(1);
+        p_thing = &things[packet->Data];
+        p_thing->U.UPerson.Flag3 &= ~0x0004;
+        thing_goto_point_on_face_fast(p_thing, packet->X, packet->Z, packet->Y, plyr);
+        break;
+    case PAct_GO_ENTER_VEHICLE_FAST:
+        p_thing = &things[packet->Data];
+        person_go_enter_vehicle_fast(p_thing, &things[packet->X], plyr);
+        break;
+    case PAct_GET_ITEM_FAST:
+        p_thing = &things[packet->Data];
+        person_init_get_item_fast(p_thing, packet->X, plyr);
+        break;
+    case PAct_SHIELD_TOGGLE:
+        p_thing = &things[packet->Data];
+        if ((p_thing->Flag2 & 0x0800) == 0)
+            person_shield_toggle(p_thing, plyr);
+        break;
+    case PAct_PLANT_MINE_FAST:
+        p_thing = &things[packet->Data];
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+            break;
+        person_init_plant_mine_fast(p_thing, packet->X, packet->Y, packet->Z, 0);
+        break;
+    case PAct_2F:
+        p_thing = &things[packet->Data];
+        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 1);
+        break;
+    case PAct_PEEPS_SCATTER:
+        p_thing = &things[packet->Data];
+        if ((p_thing->Flag2 & 0x800) == 0)
+            make_peeps_scatter(p_thing, packet->X, packet->Z);
+        break;
+    case PAct_SELECT_GRP_SPEC_WEAPON:
+        p_person = &things[packet->Data];
+        if ((p_person->State == PerSt_DROP_ITEM) && ((p_person->Flag2 & 0x0010) != 0))
+            break;
+
+        p_owntng = p_person;
+        if (p_person->State == PerSt_PROTECT_PERSON)
+            p_owntng = &things[p_person->Owner];
+
+        flag = thing_select_specific_weapon(p_person, packet->X, 0);
+        if (flag != 1)
+            flag = 2;
+        peep_change_weapon(p_person);
+        p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
+        reset_person_frame(p_person);
+        p_person->Speed = calc_person_speed(p_person);
+        p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
+        if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
+            play_disk_sample(local_player_no, 0x2Cu, 127, 64, 100, 0, 3);
+
+        for (plagent = 0; plagent < playable_agents; plagent++)
+        {
+            struct Thing *p_agent;
+
+            p_agent = players[plyr].MyAgent[plagent];
+            if ((p_agent->State != PerSt_PROTECT_PERSON) || (p_agent->Owner != p_owntng->ThingOffset)) {
+                if (p_agent != p_owntng)
+                    continue;
+            }
+            if (p_agent == p_person)
+                continue;
+
+            if (((p_agent->U.UPerson.WeaponsCarried & (1 << (packet->X - 1))) == 0) || (flag == 1))
+            {
+                stop_looped_weapon_sample(p_agent, p_agent->U.UPerson.CurrentWeapon);
+                if (flag == 1)
+                {
+                    if (p_agent->U.UPerson.CurrentWeapon != 0)
+                      players[(int)p_agent->U.UPerson.ComCur >> 2].PrevWeapon[p_agent->U.UPerson.ComCur & 3] = p_agent->U.UPerson.CurrentWeapon;
+                    else
+                      players[(int)p_agent->U.UPerson.ComCur >> 2].PrevWeapon[p_agent->U.UPerson.ComCur & 3] = find_nth_weapon_held(p_agent->ThingOffset, 1u);
+                    p_agent->U.UPerson.CurrentWeapon = 0;
+                }
+                else if (p_agent->U.UPerson.TempWeapon != 0)
+                {
+                    thing_select_specific_weapon(p_agent, p_agent->U.UPerson.TempWeapon, flag);
+                }
+                else
+                {
+                    choose_best_weapon_for_range(p_agent, 1280);
+                }
+            }
+            else
+            {
+                peep_change_weapon(p_agent);
+                thing_select_specific_weapon(p_agent, packet->X, flag);
+            }
+            p_agent->U.UPerson.AnimMode = gun_out_anim(p_agent, 0);
+            reset_person_frame(p_agent);
+            p_agent->Speed = calc_person_speed(p_agent);
+            p_agent->U.UPerson.TempWeapon = p_agent->U.UPerson.CurrentWeapon;
+        }
+        break;
+    case PAct_32:
+        if (plyr == local_player_no)
+            play_sample_using_heap(0, 2, 127, 64, 100, 0, 3u);
+        p_thing = &things[packet->Data];
+        p_thing->Health = p_thing->U.UPerson.MaxHealth;
+        if ((p_thing->U.UPerson.WeaponsCarried & 0x04000000) != 0)
+        {
+            p_thing->U.UPerson.WeaponsCarried &= ~0x04000000;
+            if (p_thing->U.UPerson.CurrentWeapon == 27)
+                p_thing->U.UPerson.CurrentWeapon = 0;
+        }
+        else
+        {
+            p_thing->U.UPerson.WeaponsCarried &= ~0x08000000;
+            if (p_thing->U.UPerson.CurrentWeapon == 28)
+                p_thing->U.UPerson.CurrentWeapon = 0;
+        }
+        break;
+    case PAct_SET_GRP_MOOD:
+        if (packet->Data > 1000)
+            break;
+        p_thing = &things[packet->Data];
+
+        p_owntng = p_thing;
+        if (p_thing->State == PerSt_PROTECT_PERSON)
+            p_owntng = &things[p_thing->Owner];
+
+        p_thing->U.UPerson.Mood = limit_mood(p_thing, packet->X);
+        p_thing->Speed = calc_person_speed(p_thing);
+        for (plagent = 0; plagent < playable_agents; plagent++)
+        {
+            struct Thing *p_agent;
+
+            p_agent = players[plyr].MyAgent[plagent];
+            if ((p_agent <= &things[0]) || (p_agent >= &things[THINGS_LIMIT]))
+                continue;
+            if ((p_agent->State != PerSt_PROTECT_PERSON) || (p_agent->Owner != p_owntng->ThingOffset)) {
+                if (p_agent != p_owntng)
+                    continue;
+            }
+            if (p_agent == p_thing)
+                continue;
+            p_agent->U.UObject.RaiseY[0] = limit_mood(p_agent, packet->X);
+            p_agent->Speed = calc_person_speed(p_agent);
+        }
+        break;
+    case PAct_35:
+        sub_3631C(packet->Data, plyr);
+        break;
+    case PAct_36:
+        sub_36270(packet->Data, plyr);
+        break;
+    case PAct_37:
+        sub_3E580(plyr, packet->Data);
+        break;
+    case PAct_38:
+        p_thing = &things[packet->Data];
+        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 2);
+        break;
+    case PAct_39:
+        p_thing = &things[packet->Data];
+        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 3);
+        break;
+    case PAct_3A:
+        p_thing = &things[packet->Data];
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+            break;
+        person_init_plant_mine(p_thing, packet->X, 0, packet->Z, packet->Y);
+        break;
+    case PAct_3B:
+        p_thing = &things[packet->Data];
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+            break;
+        person_init_plant_mine_fast(p_thing, packet->X, 0, packet->Z, packet->Y);
+        break;
+    case 255:
+        p_thing = &things[packet->Data];
+        if ((p_thing->Flag2 & 0x0800) == 0)
+            person_self_destruct(p_thing);
+        break;
+    }
 }
 
 void process_packets(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_process_packets\n"
         :  :  : "eax" );
     return;
