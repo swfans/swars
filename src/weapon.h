@@ -126,6 +126,8 @@ struct WeaponsFourPack {
 extern struct WeaponDef weapon_defs[33];
 extern struct TbNamedEnum weapon_names[33];
 extern ubyte weapon_tech_level[33];
+extern ubyte weapon_sound[32];
+extern ubyte weapon_sound_z[32];
 extern short persuaded_person_weapons_sell_cost_permil;
 
 void read_weapons_conf_file(void);
@@ -171,6 +173,7 @@ void do_weapon_quantities1(struct Thing *p_person);
 void do_weapon_quantities_proper1(struct Thing *p_person);
 
 void process_weapon(struct Thing *p_person);
+int gun_out_anim(struct Thing *p_person, ubyte shoot_flag);
 /******************************************************************************/
 #ifdef __cplusplus
 }

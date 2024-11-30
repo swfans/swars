@@ -237,8 +237,16 @@ TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle);
 TbBool person_is_persuaded(ThingIdx thing);
 TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
 TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
+void player_change_person(short thing, ushort plyr);
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);
+void person_init_drop(struct Thing *p_person, ThingIdx item);
+void person_init_pickup(struct Thing *p_person, ThingIdx item);
+void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle);
+ubyte person_attempt_to_leave_vehicle(struct Thing *p_thing);
+void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint fast_flag);
+void call_protect(struct Thing *p_thing, ushort plyr);
+ushort count_protect(struct Thing *p_thing, ushort plyr);
 
 struct Thing *new_sim_person(int x, int y, int z, ubyte subtype);
 

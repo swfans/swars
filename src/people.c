@@ -1209,6 +1209,18 @@ void person_init_drop_special(struct Thing *p_person, ThingIdx item)
         : : "a" (p_person), "d" (item));
 }
 
+void person_init_pickup(struct Thing *p_person, ThingIdx item)
+{
+    asm volatile ("call ASM_person_init_pickup\n"
+        : : "a" (p_person), "d" (item));
+}
+
+void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_person_enter_vehicle\n"
+        : : "a" (p_person), "d" (p_vehicle));
+}
+
 void stop_looped_weapon_sample(struct Thing *p_person, short weapon)
 {
     asm volatile ("call ASM_stop_looped_weapon_sample\n"
@@ -1224,11 +1236,47 @@ ubyte person_attempt_to_leave_vehicle(struct Thing *p_thing)
     return ret;
 }
 
+void player_change_person(short thing, ushort plyr)
+{
+    asm volatile ("call ASM_player_change_person\n"
+        : : "a" (thing), "d" (plyr));
+}
+
 void person_attempt_to_leave_ferry(struct Thing *p_thing)
 {
     asm volatile ("call ASM_person_attempt_to_leave_ferry\n"
         : : "a" (p_thing));
 }
+
+void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint fast_flag)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_thing_shoot_at_point\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (fast_flag));
+}
+
+void call_protect(struct Thing *p_thing, ushort plyr)
+{
+    asm volatile ("call ASM_call_protect\n"
+        : : "a" (p_thing), "d" (plyr));
+}
+
+void call_protect_specific(struct Thing *p_person_client, struct Thing *p_protector)
+{
+    asm volatile ("call ASM_call_protect_specific\n"
+        : : "a" (p_person_client), "d" (p_protector));
+}
+
+ushort count_protect(struct Thing *p_thing, ushort plyr)
+{
+    ushort ret;
+    asm volatile (
+      "call ASM_count_protect\n"
+        : "=r" (ret) : "a" (p_thing), "d" (plyr));
+    return ret;
+}
+
 void person_scare_person(struct Thing *p_person)
 {
     struct Thing *p_target;

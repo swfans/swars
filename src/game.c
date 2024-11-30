@@ -7239,10 +7239,126 @@ void load_packet(void)
         :  :  : "eax" );
 }
 
+void kill_my_players(PlayerIdx plyr)
+{
+    asm volatile ("call ASM_kill_my_players\n"
+        : : "a" (plyr));
+}
+
+void thing_goto_point_rel_fast(struct Thing *p_thing, short x, short y, short z, int plyr)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_thing_goto_point_rel_fast\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (plyr));
+}
+
+void thing_goto_point_rel(struct Thing *p_thing, short x, short y, short z)
+{
+    asm volatile (
+      "call ASM_thing_goto_point_rel\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z));
+}
+
+void thing_goto_point_fast(struct Thing *p_thing, short x, short y, short z, int plyr)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_thing_goto_point_fast\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (plyr));
+}
+
+void thing_goto_point(struct Thing *p_thing, short x, short y, short z)
+{
+    asm volatile (
+      "call ASM_thing_goto_point\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z));
+}
+
+void thing_goto_point_on_face_fast(struct Thing *p_thing, short x, short z, short face, int plyr)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_thing_goto_point_on_face_fast\n"
+        : : "a" (p_thing), "d" (x), "b" (z), "c" (face), "g" (plyr));
+}
+
+void thing_goto_point_on_face(struct Thing *p_thing, short x, short z, short face)
+{
+    asm volatile (
+      "call ASM_thing_goto_point_on_face\n"
+        : : "a" (p_thing), "d" (x), "b" (z), "c" (face));
+}
+
+ubyte select_new_weapon(ushort index, short dir)
+{
+    ubyte ret;
+    asm volatile ("call ASM_select_new_weapon\n"
+        : "=r" (ret) : "a" (index), "d" (dir));
+    return ret;
+}
+
+void peep_change_weapon(struct Thing *p_person)
+{
+    asm volatile (
+      "call ASM_peep_change_weapon\n"
+        : : "a" (p_person));
+}
+
+short net_unkn_check_1(void)
+{
+    short ret;
+    asm volatile ("call ASM_net_unkn_check_1\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
+{
+    //TODO rewrite
+}
+
 void process_packets(void)
 {
+#if 1
     asm volatile ("call ASM_process_packets\n"
         :  :  : "eax" );
+    return;
+#endif
+    ushort v53;
+    PlayerIdx plyr;
+
+    if (pktrec_mode == 0)
+        v53 = 4;
+    else if (pktrec_mode <= 2)
+        v53 = 1;
+
+    if (in_network_game && (net_players_num > 1))
+        net_unkn_check_1();
+
+    for (plyr = 0; plyr < 8; plyr++)
+    {
+        struct Packet *packet;
+        ushort i;
+
+        if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
+            continue;
+        packet = &packets[plyr];
+        for (i = 0; i < v53; i++)
+        {
+            if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
+                packet->Action = 0;
+            if ((packet->Action & 0x8000) == 0)
+                things[packet->Data].Flag &= ~0x0800;
+            else
+                things[packet->Data].Flag |= 0x0800;
+
+            process_packet(plyr, packet, i);
+
+            packet->Action = 0;
+            packet = (struct Packet *)((char *)packet + 10);
+        }
+    }
 }
 
 void joy_input(void)
