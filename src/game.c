@@ -7363,14 +7363,89 @@ void plgroup_set_mood(PlayerIdx plyr, struct Thing *p_member, short mood)
     }
 }
 
+void person_grp_witch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr, ushort weapon)
+{
+    struct Thing *p_owntng;
+    ushort plagent;
+    ubyte flag;
+
+    p_owntng = p_person;
+    if (p_person->State == PerSt_PROTECT_PERSON)
+        p_owntng = &things[p_person->Owner];
+
+    flag = thing_select_specific_weapon(p_person, weapon, 0);
+    if (flag != 1)
+        flag = 2;
+
+    peep_change_weapon(p_person);
+    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
+    reset_person_frame(p_person);
+    p_person->Speed = calc_person_speed(p_person);
+    p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
+    if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
+        play_disk_sample(local_player_no, 0x2Cu, 127, 64, 100, 0, 3);
+
+    for (plagent = 0; plagent < playable_agents; plagent++)
+    {
+        struct Thing *p_agent;
+
+        p_agent = players[plyr].MyAgent[plagent];
+        if ((p_agent->State != PerSt_PROTECT_PERSON) || (p_agent->Owner != p_owntng->ThingOffset)) {
+            if (p_agent != p_owntng)
+                continue;
+        }
+        if (p_agent == p_person)
+            continue;
+
+        if (((p_agent->U.UPerson.WeaponsCarried & (1 << (weapon - 1))) == 0) || (flag == 1))
+        {
+            stop_looped_weapon_sample(p_agent, p_agent->U.UPerson.CurrentWeapon);
+            if (flag == 1)
+            {
+                if (p_agent->U.UPerson.CurrentWeapon != 0)
+                  players[(int)p_agent->U.UPerson.ComCur >> 2].PrevWeapon[p_agent->U.UPerson.ComCur & 3] = p_agent->U.UPerson.CurrentWeapon;
+                else
+                  players[(int)p_agent->U.UPerson.ComCur >> 2].PrevWeapon[p_agent->U.UPerson.ComCur & 3] = find_nth_weapon_held(p_agent->ThingOffset, 1u);
+                p_agent->U.UPerson.CurrentWeapon = 0;
+            }
+            else if (p_agent->U.UPerson.TempWeapon != 0)
+            {
+                thing_select_specific_weapon(p_agent, p_agent->U.UPerson.TempWeapon, flag);
+            }
+            else
+            {
+                choose_best_weapon_for_range(p_agent, 1280);
+            }
+        }
+        else
+        {
+            peep_change_weapon(p_agent);
+            thing_select_specific_weapon(p_agent, weapon, flag);
+        }
+        p_agent->U.UPerson.AnimMode = gun_out_anim(p_agent, 0);
+        reset_person_frame(p_agent);
+        p_agent->Speed = calc_person_speed(p_agent);
+        p_agent->U.UPerson.TempWeapon = p_agent->U.UPerson.CurrentWeapon;
+    }
+}
+
+void player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ushort weapon)
+{
+    if (weapon == p_person->U.UPerson.CurrentWeapon) {
+        p_person->U.UPerson.AnimMode = 0;
+        reset_person_frame(p_person);
+    }
+    if (p_person->State == PerSt_PROTECT_PERSON)
+        p_person->Flag2 |= 0x10000000;
+    person_init_drop(p_person, weapon);
+    p_person->Speed = calc_person_speed(p_person);
+}
+
 void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
 {
     struct Thing *p_person;
-    struct Thing *p_owntng;
     struct Thing *p_thing;
     int n;
-    ushort plagent;
-    ubyte flag;
 
     switch (packet->Action & 0x7FFF)
     {
@@ -7545,22 +7620,17 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         }
         break;
     case PAct_DROP:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
             break;
-        if (packet->X == p_thing->U.UPerson.CurrentWeapon) {
-            p_thing->U.UPerson.AnimMode = 0;
-            reset_person_frame(p_thing);
-        }
-        if (p_thing->State == PerSt_PROTECT_PERSON)
-            p_thing->Flag2 |= 0x10000000;
-        person_init_drop(p_thing, packet->X);
-        p_thing->Speed = calc_person_speed(p_thing);
+        player_agent_init_drop_item(plyr, p_thing, packet->X);
         break;
     case PAct_SET_MOOD:
-        if (packet->Data > 1000)
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
             break;
-        p_thing = &things[packet->Data];
         p_thing->U.UPerson.Mood = limit_mood(p_thing, packet->X);
         p_thing->Speed = calc_person_speed(p_thing);
         break;
@@ -7630,64 +7700,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_person = &things[packet->Data];
         if ((p_person->State == PerSt_DROP_ITEM) && ((p_person->Flag2 & 0x0010) != 0))
             break;
-
-        p_owntng = p_person;
-        if (p_person->State == PerSt_PROTECT_PERSON)
-            p_owntng = &things[p_person->Owner];
-
-        flag = thing_select_specific_weapon(p_person, packet->X, 0);
-        if (flag != 1)
-            flag = 2;
-        peep_change_weapon(p_person);
-        p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-        reset_person_frame(p_person);
-        p_person->Speed = calc_person_speed(p_person);
-        p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
-        if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
-            play_disk_sample(local_player_no, 0x2Cu, 127, 64, 100, 0, 3);
-
-        for (plagent = 0; plagent < playable_agents; plagent++)
-        {
-            struct Thing *p_agent;
-
-            p_agent = players[plyr].MyAgent[plagent];
-            if ((p_agent->State != PerSt_PROTECT_PERSON) || (p_agent->Owner != p_owntng->ThingOffset)) {
-                if (p_agent != p_owntng)
-                    continue;
-            }
-            if (p_agent == p_person)
-                continue;
-
-            if (((p_agent->U.UPerson.WeaponsCarried & (1 << (packet->X - 1))) == 0) || (flag == 1))
-            {
-                stop_looped_weapon_sample(p_agent, p_agent->U.UPerson.CurrentWeapon);
-                if (flag == 1)
-                {
-                    if (p_agent->U.UPerson.CurrentWeapon != 0)
-                      players[(int)p_agent->U.UPerson.ComCur >> 2].PrevWeapon[p_agent->U.UPerson.ComCur & 3] = p_agent->U.UPerson.CurrentWeapon;
-                    else
-                      players[(int)p_agent->U.UPerson.ComCur >> 2].PrevWeapon[p_agent->U.UPerson.ComCur & 3] = find_nth_weapon_held(p_agent->ThingOffset, 1u);
-                    p_agent->U.UPerson.CurrentWeapon = 0;
-                }
-                else if (p_agent->U.UPerson.TempWeapon != 0)
-                {
-                    thing_select_specific_weapon(p_agent, p_agent->U.UPerson.TempWeapon, flag);
-                }
-                else
-                {
-                    choose_best_weapon_for_range(p_agent, 1280);
-                }
-            }
-            else
-            {
-                peep_change_weapon(p_agent);
-                thing_select_specific_weapon(p_agent, packet->X, flag);
-            }
-            p_agent->U.UPerson.AnimMode = gun_out_anim(p_agent, 0);
-            reset_person_frame(p_agent);
-            p_agent->Speed = calc_person_speed(p_agent);
-            p_agent->U.UPerson.TempWeapon = p_agent->U.UPerson.CurrentWeapon;
-        }
+        person_grp_witch_to_specific_weapon(p_person, plyr, packet->X);
         break;
     case PAct_32:
         p_thing = &things[packet->Data];
