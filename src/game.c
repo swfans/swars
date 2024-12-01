@@ -7331,6 +7331,38 @@ void sub_3E580(ushort a1, int a2)
         :  : "a" (a1), "d" (a2));
 }
 
+void plgroup_set_mood(PlayerIdx plyr, struct Thing *p_member, short mood)
+{
+    struct Thing *p_owntng;
+    ushort plagent;
+
+    p_owntng = p_member;
+    if (p_member->State == PerSt_PROTECT_PERSON)
+        p_owntng = &things[p_member->Owner];
+
+    p_member->U.UPerson.Mood = limit_mood(p_member, mood);
+    p_member->Speed = calc_person_speed(p_member);
+
+    for (plagent = 0; plagent < playable_agents; plagent++)
+    {
+        struct Thing *p_agent;
+
+        p_agent = players[plyr].MyAgent[plagent];
+        if ((p_agent <= &things[0]) || (p_agent >= &things[THINGS_LIMIT]))
+            continue;
+
+        if ((p_agent->State != PerSt_PROTECT_PERSON) || (p_agent->Owner != p_owntng->ThingOffset)) {
+            if (p_agent != p_owntng)
+                continue;
+        }
+        if (p_agent == p_member) // already updated
+            continue;
+
+        p_agent->U.UPerson.Mood = limit_mood(p_agent, mood);
+        p_agent->Speed = calc_person_speed(p_agent);
+    }
+}
+
 void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
 {
     struct Thing *p_person;
@@ -7380,23 +7412,22 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         break;
     case PAct_D:
         p_thing = &things[packet->Data];
-        if ((p_thing->State != PerSt_DROP_ITEM) && ((p_thing->Flag2 & 0x10) == 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+            break;
+        p_thing->U.UPerson.CurrentWeapon = select_new_weapon(packet->Data, 1);
+        peep_change_weapon(p_thing);
+        p_thing->U.UPerson.AnimMode = gun_out_anim(p_thing, 0);
+        reset_person_frame(p_thing);
+        p_thing->Speed = calc_person_speed(p_thing);
+        p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
+        if ((plyr == local_player_no) && (p_thing->U.UPerson.CurrentWeapon != 0))
         {
-            p_thing->U.UPerson.CurrentWeapon = select_new_weapon(packet->Data, 1);
-            peep_change_weapon(p_thing);
-            p_thing->U.UPerson.AnimMode = gun_out_anim(p_thing, 0);
-            reset_person_frame(p_thing);
-            p_thing->Speed = calc_person_speed(p_thing);
-            p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
-            if ((plyr == local_player_no) && (p_thing->U.UPerson.CurrentWeapon != 0))
-            {
-                ushort smp;
-                if (background_type == 1)
-                    smp = weapon_sound_z[p_thing->U.UPerson.CurrentWeapon];
-                else
-                    smp = weapon_sound[p_thing->U.UPerson.CurrentWeapon];
-                play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
-            }
+            ushort smp;
+            if (background_type == 1)
+                smp = weapon_sound_z[p_thing->U.UPerson.CurrentWeapon];
+            else
+                smp = weapon_sound[p_thing->U.UPerson.CurrentWeapon];
+            play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
         }
         break;
     case PAct_E:
@@ -7462,9 +7493,8 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing->StartFrame = people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode] - 1;
         p_thing->Speed = calc_person_speed(p_thing);
         p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
-        if (plyr == local_player_no) {
-            if (p_thing->U.UPerson.CurrentWeapon != 0)
-                play_disk_sample(local_player_no, 0x2Cu, 127, 64, 100, 0, 3);
+        if ((plyr == local_player_no) && (p_thing->U.UPerson.CurrentWeapon != 0)) {
+            play_disk_sample(local_player_no, 0x2Cu, 127, 64, 100, 0, 3);
         }
         break;
     case PAct_PROTECT_INC:
@@ -7516,7 +7546,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         break;
     case PAct_DROP:
         p_thing = &things[packet->Data];
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
             break;
         if (packet->X == p_thing->U.UPerson.CurrentWeapon) {
             p_thing->U.UPerson.AnimMode = 0;
@@ -7577,8 +7607,9 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         break;
     case PAct_SHIELD_TOGGLE:
         p_thing = &things[packet->Data];
-        if ((p_thing->Flag2 & 0x0800) == 0)
-            person_shield_toggle(p_thing, plyr);
+        if ((p_thing->Flag2 & 0x0800) != 0)
+            break;
+        person_shield_toggle(p_thing, plyr);
         break;
     case PAct_PLANT_MINE_FAST:
         p_thing = &things[packet->Data];
@@ -7659,50 +7690,14 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         }
         break;
     case PAct_32:
-        if (plyr == local_player_no)
-            play_sample_using_heap(0, 2, 127, 64, 100, 0, 3u);
         p_thing = &things[packet->Data];
-        p_thing->Health = p_thing->U.UPerson.MaxHealth;
-        if ((p_thing->U.UPerson.WeaponsCarried & 0x04000000) != 0)
-        {
-            p_thing->U.UPerson.WeaponsCarried &= ~0x04000000;
-            if (p_thing->U.UPerson.CurrentWeapon == 27)
-                p_thing->U.UPerson.CurrentWeapon = 0;
-        }
-        else
-        {
-            p_thing->U.UPerson.WeaponsCarried &= ~0x08000000;
-            if (p_thing->U.UPerson.CurrentWeapon == 28)
-                p_thing->U.UPerson.CurrentWeapon = 0;
-        }
+        person_use_medikit(p_thing, plyr);
         break;
     case PAct_SET_GRP_MOOD:
-        if (packet->Data > 1000)
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
             break;
-        p_thing = &things[packet->Data];
-
-        p_owntng = p_thing;
-        if (p_thing->State == PerSt_PROTECT_PERSON)
-            p_owntng = &things[p_thing->Owner];
-
-        p_thing->U.UPerson.Mood = limit_mood(p_thing, packet->X);
-        p_thing->Speed = calc_person_speed(p_thing);
-        for (plagent = 0; plagent < playable_agents; plagent++)
-        {
-            struct Thing *p_agent;
-
-            p_agent = players[plyr].MyAgent[plagent];
-            if ((p_agent <= &things[0]) || (p_agent >= &things[THINGS_LIMIT]))
-                continue;
-            if ((p_agent->State != PerSt_PROTECT_PERSON) || (p_agent->Owner != p_owntng->ThingOffset)) {
-                if (p_agent != p_owntng)
-                    continue;
-            }
-            if (p_agent == p_thing)
-                continue;
-            p_agent->U.UObject.RaiseY[0] = limit_mood(p_agent, packet->X);
-            p_agent->Speed = calc_person_speed(p_agent);
-        }
+        plgroup_set_mood(plyr, p_thing, packet->X);
         break;
     case PAct_35:
         sub_3631C(packet->Data, plyr);
@@ -7734,9 +7729,12 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         person_init_plant_mine_fast(p_thing, packet->X, 0, packet->Z, packet->Y);
         break;
     case 255:
-        p_thing = &things[packet->Data];
-        if ((p_thing->Flag2 & 0x0800) == 0)
-            person_self_destruct(p_thing);
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->Flag2 & 0x0800) != 0)
+            break;
+        person_self_destruct(p_thing);
         break;
     }
 }

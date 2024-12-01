@@ -241,6 +241,7 @@ TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
 TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
 void player_change_person(short thing, ushort plyr);
 void make_peeps_scatter(struct Thing *p_person, int x, int z);
+TbBool person_use_medikit(struct Thing *p_person, PlayerIdx plyr);
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);
 void person_init_drop(struct Thing *p_person, ThingIdx item);

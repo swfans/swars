@@ -133,6 +133,47 @@ const char *thing_type_names[] = {
   "UNKN56",
 };
 
+TbBool thing_type_is_simple(short ttype)
+{
+    return (ttype == SmTT_STATIC) ||
+     (ttype == SmTT_SPARK) ||
+     (ttype == SmTT_INTELLIG_DOOR) ||
+     (ttype == SmTT_SCALE_EFFECT) ||
+     (ttype == SmTT_NUCLEAR_BOMB) ||
+     (ttype == SmTT_SMOKE_GENERATOR) ||
+     (ttype == SmTT_DROPPED_ITEM) ||
+     (ttype == SmTT_CARRIED_ITEM) ||
+     (ttype == SmTT_ELECTRIC_STRAND) ||
+     (ttype == SmTT_TIME_POD) ||
+     (ttype == SmTT_CANISTER) ||
+     (ttype == SmTT_STASIS_POD) ||
+     (ttype == SmTT_SOUL) ||
+     (ttype == SmTT_BANG) ||
+     (ttype == SmTT_FIRE) ||
+     (ttype == SmTT_SFX) ||
+     (ttype == SmTT_TEMP_LIGHT);
+}
+
+struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype)
+{
+    struct Thing *p_thing;
+
+    if (thing_type_is_simple(ttype))
+    {
+        if ((thing > -1) || (thing < STHINGS_LIMIT))
+            return INVALID_THING;
+    }
+    else
+    {
+        if ((thing < 1) || (thing > THINGS_LIMIT))
+            return INVALID_THING;
+    }
+    p_thing = &things[thing];
+    if (p_thing->Type != ttype)
+            return INVALID_THING;
+    return p_thing;
+}
+
 void move_mapwho(struct Thing *p_thing, int x, int y, int z)
 {
     asm volatile (
@@ -1071,27 +1112,6 @@ short get_thing_same_type_head(short ttype, short subtype)
         break;
     }
     return thing;
-}
-
-TbBool thing_type_is_simple(short ttype)
-{
-    return (ttype == SmTT_STATIC) ||
-     (ttype == SmTT_SPARK) ||
-     (ttype == SmTT_INTELLIG_DOOR) ||
-     (ttype == SmTT_SCALE_EFFECT) ||
-     (ttype == SmTT_NUCLEAR_BOMB) ||
-     (ttype == SmTT_SMOKE_GENERATOR) ||
-     (ttype == SmTT_DROPPED_ITEM) ||
-     (ttype == SmTT_CARRIED_ITEM) ||
-     (ttype == SmTT_ELECTRIC_STRAND) ||
-     (ttype == SmTT_TIME_POD) ||
-     (ttype == SmTT_CANISTER) ||
-     (ttype == SmTT_STASIS_POD) ||
-     (ttype == SmTT_SOUL) ||
-     (ttype == SmTT_BANG) ||
-     (ttype == SmTT_FIRE) ||
-     (ttype == SmTT_SFX) ||
-     (ttype == SmTT_TEMP_LIGHT);
 }
 
 static short find_thing_type_on_same_type_list_within_circle(short X, short Z, ushort R,

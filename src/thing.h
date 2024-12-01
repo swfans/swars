@@ -33,6 +33,8 @@ extern "C" {
 #define THINGS_LIMIT 1000
 #define STHINGS_LIMIT 1500
 
+#define INVALID_THING &things[0]
+
 enum ThingType {
     TT_NONE = 0x0,
     TT_UNKN1 = 0x1,
@@ -919,6 +921,8 @@ extern short sthings_used_head;
 extern ushort sthings_used;
 
 extern TbBool debug_hud_things;
+
+struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype);
 
 void init_things(void);
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
