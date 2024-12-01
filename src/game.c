@@ -7382,6 +7382,7 @@ void person_grp_witch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr,
     reset_person_frame(p_person);
     p_person->Speed = calc_person_speed(p_person);
     p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
+
     if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
         play_disk_sample(local_player_no, 0x2Cu, 127, 64, 100, 0, 3);
 
@@ -7402,10 +7403,7 @@ void person_grp_witch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr,
             stop_looped_weapon_sample(p_agent, p_agent->U.UPerson.CurrentWeapon);
             if (flag == 1)
             {
-                if (p_agent->U.UPerson.CurrentWeapon != 0)
-                  players[(int)p_agent->U.UPerson.ComCur >> 2].PrevWeapon[p_agent->U.UPerson.ComCur & 3] = p_agent->U.UPerson.CurrentWeapon;
-                else
-                  players[(int)p_agent->U.UPerson.ComCur >> 2].PrevWeapon[p_agent->U.UPerson.ComCur & 3] = find_nth_weapon_held(p_agent->ThingOffset, 1u);
+                player_agent_update_prev_weapon(p_agent);
                 p_agent->U.UPerson.CurrentWeapon = 0;
             }
             else if (p_agent->U.UPerson.TempWeapon != 0)
@@ -7429,9 +7427,37 @@ void person_grp_witch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr,
     }
 }
 
+void player_agent_weapon_switch(PlayerIdx plyr, ThingIdx person, short shift)
+{
+    struct Thing *p_person;
+
+    p_person = &things[person];
+
+    p_person->U.UPerson.CurrentWeapon = select_new_weapon(person, shift);
+    peep_change_weapon(p_person);
+    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
+    reset_person_frame(p_person);
+    p_person->Speed = calc_person_speed(p_person);
+    p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
+
+    if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
+    {
+        ushort smp;
+#if 0
+        smp = 0x2Cu; // 'selected' speech
+#endif
+        // Weapon name speech
+        if (background_type == 1)
+            smp = weapon_sound_z[p_person->U.UPerson.CurrentWeapon];
+        else
+            smp = weapon_sound[p_person->U.UPerson.CurrentWeapon];
+        play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
+    }
+}
+
 void player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ushort weapon)
 {
-    if (weapon == p_person->U.UPerson.CurrentWeapon) {
+    if ((weapon == 0) || (weapon == p_person->U.UPerson.CurrentWeapon)) {
         p_person->U.UPerson.AnimMode = 0;
         reset_person_frame(p_person);
     }
@@ -7449,7 +7475,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
 
     switch (packet->Action & 0x7FFF)
     {
-    case PAct_2:
+    case PAct_MISSN_ABORT:
         if (!in_network_game) {
             exit_game = 1;
             break;
@@ -7474,47 +7500,28 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             ingame.InNetGame_UNSURE &= ~(1 << plyr);
         }
         break;
-    case PAct_B:
+    case PAct_AGENT_GOTO_PT_ABS:
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];
         p_thing->U.UPerson.Flag3 &= ~0x04;
         thing_goto_point(p_thing, packet->X, packet->Y, packet->Z);
         break;
-    case PAct_C:
+    case PAct_AGENT_GOTO_PT_REL:
         p_thing = &things[packet->Data];
         thing_goto_point_rel(p_thing, packet->X, packet->Y, packet->Z);
         break;
-    case PAct_D:
+    case PAct_SELECT_NEXT_WEAPON:
         p_thing = &things[packet->Data];
         if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
             break;
-        p_thing->U.UPerson.CurrentWeapon = select_new_weapon(packet->Data, 1);
-        peep_change_weapon(p_thing);
-        p_thing->U.UPerson.AnimMode = gun_out_anim(p_thing, 0);
-        reset_person_frame(p_thing);
-        p_thing->Speed = calc_person_speed(p_thing);
-        p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
-        if ((plyr == local_player_no) && (p_thing->U.UPerson.CurrentWeapon != 0))
-        {
-            ushort smp;
-            if (background_type == 1)
-                smp = weapon_sound_z[p_thing->U.UPerson.CurrentWeapon];
-            else
-                smp = weapon_sound[p_thing->U.UPerson.CurrentWeapon];
-            play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
-        }
+        player_agent_weapon_switch(plyr, packet->Data, 1);
         break;
-    case PAct_E:
+    case PAct_DROP_SELC_WEAPON_SECR: // player controlled person drops a currently wielded weapon, so that it lays secured
         p_thing = &things[packet->Data];
         if ((p_thing->U.UPerson.CurrentWeapon == 0) || (p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
             break;
-        p_thing->U.UPerson.AnimMode = 0;
-        reset_person_frame(p_thing);
-        if (p_thing->State == PerSt_PROTECT_PERSON)
-            p_thing->Flag2 |= 0x10000000;
-        person_init_drop(p_thing, 0);
-        p_thing->Speed = calc_person_speed(p_thing);
+        player_agent_init_drop_item(plyr, p_thing, 0);
         break;
     case PAct_PICKUP:
         p_thing = &things[packet->Data];
@@ -7557,20 +7564,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = &things[packet->Data];
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 0);
         break;
-    case PAct_CHANGE_WEAPON:
+    case PAct_SELECT_PREV_WEAPON:
         p_thing = &things[packet->Data];
         if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
             break;
-        peep_change_weapon(p_thing);
-        p_thing->U.UPerson.CurrentWeapon = select_new_weapon(packet->Data, -1);
-        p_thing->U.UPerson.AnimMode = gun_out_anim(p_thing, 0);
-        p_thing->Frame = nstart_ani[people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode] + p_thing->U.UObject.Angle];
-        p_thing->StartFrame = people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode] - 1;
-        p_thing->Speed = calc_person_speed(p_thing);
-        p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
-        if ((plyr == local_player_no) && (p_thing->U.UPerson.CurrentWeapon != 0)) {
-            play_disk_sample(local_player_no, 0x2Cu, 127, 64, 100, 0, 3);
-        }
+        player_agent_weapon_switch(plyr, packet->Data, -1);
         break;
     case PAct_PROTECT_INC:
         p_thing = &things[packet->Data];
@@ -7619,7 +7617,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
         }
         break;
-    case PAct_DROP:
+    case PAct_DROP_HELD_WEAPON_SECR: // player controlled person drops one of held weapons, so that it lays secured
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
@@ -7653,7 +7651,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing->U.UPerson.Flag3 &= ~0x0004;
         thing_goto_point_on_face(p_thing, packet->X, packet->Z, packet->Y);
         break;
-    case PAct_GOTO_POINT_FAST:
+    case PAct_AGENT_GOTO_PT_ABS_FF:
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];

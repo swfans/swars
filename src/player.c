@@ -129,6 +129,22 @@ void player_agents_init_prev_weapon(PlayerIdx plyr)
     }
 }
 
+void player_agent_update_prev_weapon(struct Thing *p_agent)
+{
+    PlayerInfo *p_player;
+    PlayerIdx plyr;
+    ushort plagent;
+
+    plyr = p_agent->U.UPerson.ComCur >> 2;
+    plagent = p_agent->U.UPerson.ComCur & 3;
+    p_player = &players[plyr];
+
+    if (p_agent->U.UPerson.CurrentWeapon != 0)
+        p_player->PrevWeapon[plagent] = p_agent->U.UPerson.CurrentWeapon;
+    else
+        p_player->PrevWeapon[plagent] = find_nth_weapon_held(p_agent->ThingOffset, 1);
+}
+
 short player_agent_current_or_prev_weapon(PlayerIdx plyr, ushort plagent)
 {
     PlayerInfo *p_player;

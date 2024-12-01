@@ -787,13 +787,13 @@ TbBool check_scanner_input(void)
                 {
                     p_usrinp->Turn = gameturn & 0x7FFF;
                     if (can_control)
-                        my_build_packet(p_pckt, PAct_B, dcthing, map_x, map_y, map_z);
+                        my_build_packet(p_pckt, PAct_AGENT_GOTO_PT_ABS, dcthing, map_x, map_y, map_z);
                 }
                 else
                 {
                     p_usrinp->Turn = 0;
                     if (can_control)
-                        my_build_packet(p_pckt, PAct_GOTO_POINT_FAST, dcthing, map_x, map_y, map_z);
+                        my_build_packet(p_pckt, PAct_AGENT_GOTO_PT_ABS_FF, dcthing, map_x, map_y, map_z);
                 }
             }
             else
@@ -2314,7 +2314,7 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
         if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
         {
             p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
-            my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
+            my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, pnitm, 0, 0);
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             return true;
         }
@@ -2332,7 +2332,7 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
             if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
-                my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
+                my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, pnitm, 0, 0);
                 p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
                 return true;
             }
@@ -2375,7 +2375,7 @@ TbBool process_panel_state_grp_agents_weapon(ushort agent)
         if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
         {
             p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
-            my_build_packet(p_pckt, PAct_DROP, p_agent->ThingOffset, pnitm, 0, 0);
+            my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, pnitm, 0, 0);
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             return true;
         }
