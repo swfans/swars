@@ -5720,7 +5720,9 @@ ubyte do_user_interface(void)
     if (lbKeyOn[KC_M])
         LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
 
-    // TODO No idea what these are doing
+#if 0
+    // This looks like some kind of early idea for grouping agents like in C&C
+    // clearly unfinished; remove pending
     for (n = 0; n < 5; n++)
     {
         if (lbKeyOn[KC_F1+n])
@@ -5739,6 +5741,7 @@ ubyte do_user_interface(void)
             }
         }
     }
+#endif
 
     // change panel style
     if (lbKeyOn[KC_F9] && (lbShift == KMod_NONE))
@@ -7753,10 +7756,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             break;
         plgroup_set_mood(plyr, p_thing, packet->X);
         break;
-    case PAct_AGENT_UNKGROUP_PROT:
+    case PAct_AGENT_UNKGROUP_PROT: // Unfinished mess; remove pending
         unkn_player_group_prot(packet->Data, plyr);
         break;
-    case PAct_AGENT_UNKGROUP_ADD:
+    case PAct_AGENT_UNKGROUP_ADD: // Unfinished mess; remove pending
         unkn_player_group_add(packet->Data, plyr);
         break;
     case PAct_CHAT_MESSAGE_KEY:
