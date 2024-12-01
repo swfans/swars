@@ -5728,13 +5728,13 @@ ubyte do_user_interface(void)
             if (lbShift & KMod_ALT)
             {
                 lbKeyOn[KC_F1+n] = 0;
-                my_build_packet(&packets[local_player_no], PAct_36, n, 0, 0, 0);
+                my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_ADD, n, 0, 0, 0);
                 return 1;
             }
             if (lbShift & KMod_SHIFT)
             {
                 lbKeyOn[KC_F1+n] = 0;
-                my_build_packet(&packets[local_player_no], PAct_35, n, 0, 0, 0);
+                my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_PROT, n, 0, 0, 0);
                 return 1;
             }
         }
@@ -5952,7 +5952,7 @@ ubyte do_user_interface(void)
                 {
                     short dcthing;
                     dcthing = p_locplayer->DirectControl[n];
-                    my_build_packet(&packets[local_player_no], PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
+                    my_build_packet(&packets[local_player_no], PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
                     p_locplayer->UserInput[0].ControlMode |= 0x8000;
                     // Double tapping - center view on the agent
                     if (gameturn - last_sel_agent_turn[n] < 7)
@@ -5964,7 +5964,7 @@ ubyte do_user_interface(void)
                       game_set_cam_track_thing_xz(p_agent);
                       engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
                       dcthing = p_locplayer->DirectControl[mouser];
-                      build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
+                      build_packet(p_pckt, PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
                       if (p_agent->ThingOffset == (short)p_locplayer->DirectControl[mouser])
                       {
                           engn_xc = PRCCOORD_TO_MAPCOORD(p_agent->X);
@@ -7298,15 +7298,15 @@ ubyte select_new_weapon(ushort index, short dir)
     return ret;
 }
 
-void sub_36270(sbyte a1, ubyte a2)
+void unkn_player_group_add(sbyte a1, ubyte a2)
 {
-    asm volatile ("call ASM_sub_36270\n"
+    asm volatile ("call ASM_unkn_player_group_add\n"
         :  : "a" (a1), "d" (a2));
 }
 
-void sub_3631C(sbyte a1, ubyte a2)
+void unkn_player_group_prot(sbyte a1, ubyte a2)
 {
-    asm volatile ("call ASM_sub_3631C\n"
+    asm volatile ("call ASM_unkn_player_group_prot\n"
         :  : "a" (a1), "d" (a2));
 }
 
@@ -7325,9 +7325,9 @@ short net_unkn_check_1(void)
     return ret;
 }
 
-void sub_3E580(ushort a1, int a2)
+void player_chat_message_add_key(ushort a1, int a2)
 {
-    asm volatile ("call ASM_sub_3E580\n"
+    asm volatile ("call ASM_player_chat_message_add_key\n"
         :  : "a" (a1), "d" (a2));
 }
 
@@ -7443,9 +7443,6 @@ void player_agent_weapon_switch(PlayerIdx plyr, ThingIdx person, short shift)
     if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
     {
         ushort smp;
-#if 0
-        smp = 0x2Cu; // 'selected' speech
-#endif
         // Weapon name speech
         if (background_type == 1)
             smp = weapon_sound_z[p_person->U.UPerson.CurrentWeapon];
@@ -7467,6 +7464,51 @@ void player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ushort 
     p_person->Speed = calc_person_speed(p_person);
 }
 
+void player_agent_select(PlayerIdx plyr, ThingIdx person)
+{
+    if (person == (ThingIdx)players[plyr].DirectControl[mouser])
+        return;
+    if (plyr == local_player_no)
+    {
+        struct Thing *p_person;
+        ushort smp;
+
+        p_person = &things[person];
+        if (p_person->SubType == SubTT_PERS_AGENT)
+            smp = 44; // 'selected' speech
+        else
+            smp = 46;
+        play_disk_sample(0, smp, 127, 64, 100, 0, 3);
+    }
+    if (person != (ThingIdx)players[plyr].DirectControl[0])
+    {
+        player_change_person(person, plyr);
+    }
+}
+
+void net_player_leave(PlayerIdx plyr)
+{
+    kill_my_players(plyr);
+    if ((plyr == net_host_player_no) || (plyr == local_player_no) || (nsvc.I.Type != 1))
+    {
+        ingame.DisplayMode = DpM_UNKN_37;
+        StopCD();
+        StopAllSamples();
+        SetMusicVolume(100, 0);
+        LbNetworkSessionStop();
+        if (nsvc.I.Type != 1 && byte_1C4A6F)
+            LbNetworkHangUp();
+    }
+    else
+    {
+        net_players_num--;
+        sprintf(player_unknCC9[plyr], "%s %s", unkn2_names[plyr], gui_strings[651]);
+        player_unkn0C9[plyr] = -106;
+        LbNetworkSessionStop();
+        ingame.InNetGame_UNSURE &= ~(1 << plyr);
+    }
+}
+
 void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
 {
     struct Thing *p_person;
@@ -7476,130 +7518,131 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
     switch (packet->Action & 0x7FFF)
     {
     case PAct_MISSN_ABORT:
-        if (!in_network_game) {
-            exit_game = 1;
+        if (in_network_game) {
+            net_player_leave(plyr);
             break;
         }
-        kill_my_players(plyr);
-        if ((net_host_player_no == plyr) || (plyr == local_player_no) || (nsvc.I.Type != 1))
-        {
-            ingame.DisplayMode = DpM_UNKN_37;
-            StopCD();
-            StopAllSamples();
-            SetMusicVolume(100, 0);
-            LbNetworkSessionStop();
-            if (nsvc.I.Type != 1 && byte_1C4A6F)
-                LbNetworkHangUp();
-        }
-        else
-        {
-            net_players_num--;
-            sprintf(player_unknCC9[plyr], "%s %s", unkn2_names[plyr], gui_strings[651]);
-            player_unkn0C9[plyr] = -106;
-            LbNetworkSessionStop();
-            ingame.InNetGame_UNSURE &= ~(1 << plyr);
-        }
+        exit_game = 1;
         break;
-    case PAct_AGENT_GOTO_PT_ABS:
+    case PAct_AGENT_GOTO_GND_PT_ABS:
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];
         p_thing->U.UPerson.Flag3 &= ~0x04;
         thing_goto_point(p_thing, packet->X, packet->Y, packet->Z);
         break;
-    case PAct_AGENT_GOTO_PT_REL:
-        p_thing = &things[packet->Data];
+    case PAct_AGENT_GOTO_GND_PT_REL:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         thing_goto_point_rel(p_thing, packet->X, packet->Y, packet->Z);
         break;
     case PAct_SELECT_NEXT_WEAPON:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
             break;
         player_agent_weapon_switch(plyr, packet->Data, 1);
         break;
     case PAct_DROP_SELC_WEAPON_SECR: // player controlled person drops a currently wielded weapon, so that it lays secured
-        p_thing = &things[packet->Data];
-        if ((p_thing->U.UPerson.CurrentWeapon == 0) || (p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+            break;
+        if (p_thing->U.UPerson.CurrentWeapon == 0)
             break;
         player_agent_init_drop_item(plyr, p_thing, 0);
         break;
     case PAct_PICKUP:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         person_init_pickup(p_thing, packet->X);
         break;
     case PAct_ENTER_VEHICLE:
-        p_thing = &things[packet->Data];
-        if ((p_thing->Flag2 & 0x800) != 0)
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->Flag2 & 0x0800) != 0)
             break;
         person_enter_vehicle(p_thing, &things[packet->X]);
         break;
     case PAct_LEAVE_VEHICLE:
-        p_thing = &things[packet->Data];
-        if ((p_thing->Flag2 & 0x800) != 0)
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->Flag2 & 0x0800) != 0)
             break;
         person_attempt_to_leave_vehicle(p_thing);
         break;
-    case PAct_17:
-        p_thing = &things[packet->X];
-        if (packet->X == (ThingIdx)players[plyr].DirectControl[mouser])
-            break;
-        if (plyr == local_player_no)
-        {
-            ushort smp;
-            if (p_thing->SubType == 1)
-                smp = 44;
-            else
-                smp = 46;
-            play_disk_sample(0, smp, 127, 64, 100, 0, 3);
-        }
-        if (packet->X != (ThingIdx)players[plyr].DirectControl[0]) {
-            player_change_person(packet->X, plyr);
-        }
+    case PAct_SELECT_AGENT:
+        player_agent_select(plyr, packet->X);
         break;
-    case PAct_GOTO_POINT_REL_FAST:
-        p_thing = &things[packet->Data];
+    case PAct_AGENT_GOTO_GND_PT_REL_FF:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         thing_goto_point_rel_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
         break;
-    case PAct_SHOOT_AT_POINT:
-        p_thing = &things[packet->Data];
+    case PAct_SHOOT_AT_GND_POINT:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 0);
         break;
     case PAct_SELECT_PREV_WEAPON:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
             break;
         player_agent_weapon_switch(plyr, packet->Data, -1);
         break;
     case PAct_PROTECT_INC:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         call_protect(p_thing, plyr);
         n = count_protect(p_thing, plyr);
         if (plyr == local_player_no && n)
             play_sample_using_heap(0, 61, 127, 64, 5 * n + 90, 0, 3);
         break;
     case PAct_PROTECT_TOGGLE:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         call_unprotect(p_thing, plyr, 0);
         n = count_protect(p_thing, plyr);
         if (plyr == local_player_no && n)
             play_sample_using_heap(0, 61, 127, 64, 5 * n + 90, 0, 3);
         break;
     case PAct_SHOOT_AT_THING:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         thing_shoot_at_thing(p_thing, packet->X);
         break;
     case PAct_GET_ITEM:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         person_init_get_item(p_thing, packet->X, plyr);
         break;
-    case PAct_PLANT_MINE:
-        p_thing = &things[packet->Data];
-        if ((p_thing->State != PerSt_DROP_ITEM) && ((p_thing->Flag2 & 0x10) == 0))
-            person_init_plant_mine(p_thing, packet->X, packet->Y, packet->Z, 0);
+    case PAct_PLANT_MINE_AT_GND_PT:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+            break;
+        person_init_plant_mine(p_thing, packet->X, packet->Y, packet->Z, 0);
         break;
     case PAct_SELECT_SPECIFIC_WEAPON:
-        p_thing = &things[packet->Data];
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
             break;
         thing_select_specific_weapon(p_thing, packet->X, 0);
         peep_change_weapon(p_thing);
@@ -7625,7 +7668,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             break;
         player_agent_init_drop_item(plyr, p_thing, packet->X);
         break;
-    case PAct_SET_MOOD:
+    case PAct_AGENT_SET_MOOD:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
@@ -7644,28 +7687,28 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
     case PAct_CONTROL_MODE:
         players[plyr].UserInput[0].ControlMode = packet->Data;
         break;
-    case PAct_GOTO_POINT_ON_FACE:
+    case PAct_AGENT_GOTO_FACE_PT_ABS:
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];
         p_thing->U.UPerson.Flag3 &= ~0x0004;
         thing_goto_point_on_face(p_thing, packet->X, packet->Z, packet->Y);
         break;
-    case PAct_AGENT_GOTO_PT_ABS_FF:
+    case PAct_AGENT_GOTO_GND_PT_ABS_FF:
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];
         p_thing->U.UPerson.Flag3 &= ~0x0004;
         thing_goto_point_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
         break;
-    case PAct_GOTO_POINT_ON_FACE_FAST:
+    case PAct_AGENT_GOTO_FACE_PT_ABS_FF:
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];
         p_thing->U.UPerson.Flag3 &= ~0x0004;
         thing_goto_point_on_face_fast(p_thing, packet->X, packet->Z, packet->Y, plyr);
         break;
-    case PAct_GO_ENTER_VEHICLE_FAST:
+    case PAct_GO_ENTER_VEHICLE_FF:
         p_thing = &things[packet->Data];
         person_go_enter_vehicle_fast(p_thing, &things[packet->X], plyr);
         break;
@@ -7679,13 +7722,13 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             break;
         person_shield_toggle(p_thing, plyr);
         break;
-    case PAct_PLANT_MINE_FAST:
+    case PAct_PLANT_MINE_AT_GND_PT_FF:
         p_thing = &things[packet->Data];
         if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
             break;
         person_init_plant_mine_fast(p_thing, packet->X, packet->Y, packet->Z, 0);
         break;
-    case PAct_2F:
+    case PAct_SHOOT_AT_GND_POINT_FF:
         p_thing = &things[packet->Data];
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 1);
         break;
@@ -7700,46 +7743,54 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             break;
         person_grp_witch_to_specific_weapon(p_person, plyr, packet->X);
         break;
-    case PAct_32:
+    case PAct_AGENT_USE_MEDIKIT:
         p_thing = &things[packet->Data];
         person_use_medikit(p_thing, plyr);
         break;
-    case PAct_SET_GRP_MOOD:
+    case PAct_GROUP_SET_MOOD:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
         plgroup_set_mood(plyr, p_thing, packet->X);
         break;
-    case PAct_35:
-        sub_3631C(packet->Data, plyr);
+    case PAct_AGENT_UNKGROUP_PROT:
+        unkn_player_group_prot(packet->Data, plyr);
         break;
-    case PAct_36:
-        sub_36270(packet->Data, plyr);
+    case PAct_AGENT_UNKGROUP_ADD:
+        unkn_player_group_add(packet->Data, plyr);
         break;
-    case PAct_37:
-        sub_3E580(plyr, packet->Data);
+    case PAct_CHAT_MESSAGE_KEY:
+        player_chat_message_add_key(plyr, packet->Data);
         break;
-    case PAct_38:
-        p_thing = &things[packet->Data];
+    case PAct_SHOOT_AT_FACE_POINT:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 2);
         break;
-    case PAct_39:
-        p_thing = &things[packet->Data];
+    case PAct_SHOOT_AT_FACE_POINT_FF:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 3);
         break;
-    case PAct_3A:
-        p_thing = &things[packet->Data];
+    case PAct_PLANT_MINE_AT_FACE_PT:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
             break;
         person_init_plant_mine(p_thing, packet->X, 0, packet->Z, packet->Y);
         break;
-    case PAct_3B:
-        p_thing = &things[packet->Data];
+    case PAct_PLANT_MINE_AT_FACE_PT_FF:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
             break;
         person_init_plant_mine_fast(p_thing, packet->X, 0, packet->Z, packet->Y);
         break;
-    case 255:
+    case PAct_AGENT_SELF_DESTRUCT:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;

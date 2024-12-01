@@ -787,13 +787,13 @@ TbBool check_scanner_input(void)
                 {
                     p_usrinp->Turn = gameturn & 0x7FFF;
                     if (can_control)
-                        my_build_packet(p_pckt, PAct_AGENT_GOTO_PT_ABS, dcthing, map_x, map_y, map_z);
+                        my_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_ABS, dcthing, map_x, map_y, map_z);
                 }
                 else
                 {
                     p_usrinp->Turn = 0;
                     if (can_control)
-                        my_build_packet(p_pckt, PAct_AGENT_GOTO_PT_ABS_FF, dcthing, map_x, map_y, map_z);
+                        my_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_ABS_FF, dcthing, map_x, map_y, map_z);
                 }
             }
             else
@@ -833,9 +833,9 @@ TbBool check_scanner_input(void)
                         if (can_control)
                         {
                             if (p_locplayer->TargetType == 3)
-                                my_build_packet(p_pckt, PAct_3A, dcthing, map_x, p_locplayer->Target, map_z);
+                                my_build_packet(p_pckt, PAct_PLANT_MINE_AT_FACE_PT, dcthing, map_x, p_locplayer->Target, map_z);
                             else
-                                my_build_packet(p_pckt, PAct_PLANT_MINE, dcthing, map_x, map_y, map_z);
+                                my_build_packet(p_pckt, PAct_PLANT_MINE_AT_GND_PT, dcthing, map_x, map_y, map_z);
                         }
                     }
                     else
@@ -844,9 +844,9 @@ TbBool check_scanner_input(void)
                         if (can_control)
                         {
                             if (p_locplayer->TargetType == 3)
-                                my_build_packet(p_pckt, PAct_3B, dcthing, map_x, p_locplayer->Target, map_z);
+                                my_build_packet(p_pckt, PAct_PLANT_MINE_AT_FACE_PT_FF, dcthing, map_x, p_locplayer->Target, map_z);
                             else
-                                my_build_packet(p_pckt, PAct_PLANT_MINE_FAST, dcthing, map_x, map_y, map_z);
+                                my_build_packet(p_pckt, PAct_PLANT_MINE_AT_GND_PT_FF, dcthing, map_x, map_y, map_z);
                         }
                     }
                 }
@@ -858,9 +858,9 @@ TbBool check_scanner_input(void)
                         if (can_control)
                         {
                             if (p_locplayer->TargetType == 3)
-                                my_build_packet(p_pckt, PAct_38, dcthing, map_x, p_locplayer->Target, map_z);
+                                my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT, dcthing, map_x, p_locplayer->Target, map_z);
                             else
-                                my_build_packet(p_pckt, PAct_SHOOT_AT_POINT, dcthing, map_x, map_y, map_z);
+                                my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT, dcthing, map_x, map_y, map_z);
                         }
                     }
                     else
@@ -869,9 +869,9 @@ TbBool check_scanner_input(void)
                         if (can_control)
                         {
                             if (p_locplayer->TargetType == 3)
-                                my_build_packet(p_pckt, PAct_39, dcthing, map_x, p_locplayer->Target, map_z);
+                                my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT_FF, dcthing, map_x, p_locplayer->Target, map_z);
                             else
-                                my_build_packet(p_pckt, PAct_2F, dcthing, map_x, map_y, map_z);
+                                my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT_FF, dcthing, map_x, map_y, map_z);
                         }
                     }
                 }
@@ -880,9 +880,9 @@ TbBool check_scanner_input(void)
                     if (can_control)
                     {
                         if (p_locplayer->TargetType == 3)
-                            my_build_packet(p_pckt, PAct_38, dcthing, map_x, p_locplayer->Target, map_z);
+                            my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT, dcthing, map_x, p_locplayer->Target, map_z);
                         else
-                            my_build_packet(p_pckt, PAct_SHOOT_AT_POINT, dcthing, map_x, map_y, map_z);
+                            my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT, dcthing, map_x, map_y, map_z);
                     }
                 }
             }
@@ -2428,7 +2428,7 @@ TbBool process_panel_state_one_agent_mood(ushort main_panel, ushort agent)
         can_control = person_can_accept_control(dcthing);
 
         if ((p_agent->Type == TT_PERSON) && (can_control))
-            build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, mood, 0, 0);
+            build_packet(p_pckt, PAct_AGENT_SET_MOOD, p_agent->ThingOffset, mood, 0, 0);
         return true;
     }
     p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
@@ -2457,7 +2457,7 @@ TbBool process_panel_state_grp_agents_mood(ushort main_panel, ushort agent)
         can_control = person_can_accept_control(dcthing);
 
         if ((p_agent->Type == TT_PERSON) && (can_control))
-            build_packet(p_pckt, PAct_SET_GRP_MOOD, p_agent->ThingOffset, mood, 0, 0);
+            build_packet(p_pckt, PAct_GROUP_SET_MOOD, p_agent->ThingOffset, mood, 0, 0);
         return true;
     }
     p_locplayer->UserInput[mouser].ControlMode &= ~0xC000;
@@ -2515,7 +2515,7 @@ TbBool process_panel_state(void)
         {
             if (lbShift & 1)
                 i |= 0x0100;
-            my_build_packet(p_pckt, PAct_37, i, 0, 0, 0);
+            my_build_packet(p_pckt, PAct_CHAT_MESSAGE_KEY, i, 0, 0, 0);
             return 1;
         }
     }
@@ -2551,7 +2551,7 @@ TbBool check_panel_input(short panel)
                 byte_153198 = p_panel->ID + 1;
             } else {
                 dcthing = p_locplayer->DirectControl[0];
-                build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
+                build_packet(p_pckt, PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
                 p_locplayer->UserInput[0].ControlMode |= 0x8000;
             }
             return 1;
@@ -2563,7 +2563,7 @@ TbBool check_panel_input(short panel)
                 p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
                 i = panel_mouse_move_mood_value(panel);
                 if (panel_active_based_on_target(panel))
-                    my_build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
+                    my_build_packet(p_pckt, PAct_AGENT_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
                 p_locplayer->PanelState[mouser] = PANEL_STATE_MOOD_SET_ONE + p_panel->ID;
                 if (!IsSamplePlaying(0, 21, 0))
                     play_sample_using_heap(0, 21, 127, 64, 100, -1, 1u);
@@ -2586,7 +2586,7 @@ TbBool check_panel_input(short panel)
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
             {
-                my_build_packet(p_pckt, PAct_32, p_agent->ThingOffset, 0, 0, 0);
+                my_build_packet(p_pckt, PAct_AGENT_USE_MEDIKIT, p_agent->ThingOffset, 0, 0, 0);
                 return 1;
             }
             break;
@@ -2659,7 +2659,7 @@ TbBool check_panel_input(short panel)
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
                 i = panel_mouse_move_mood_value(panel);
                 if (panel_active_based_on_target(panel))
-                    my_build_packet(p_pckt, PAct_SET_GRP_MOOD, p_agent->ThingOffset, i, 0, 0);
+                    my_build_packet(p_pckt, PAct_GROUP_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
                 p_locplayer->PanelState[mouser] = PANEL_STATE_MOOD_SET_GRP + p_panel->ID;
                 if (!IsSamplePlaying(0, 21, 0))
                     play_sample_using_heap(0, 21, 127, 64, 100, -1, 1u);
@@ -2717,7 +2717,7 @@ TbBool check_panel_input(short panel)
                     {
                         game_set_cam_track_thing_xz(p_agent);
                         engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
-                        build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
+                        build_packet(p_pckt, PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
                         if (p_agent->ThingOffset == dcthing)
                         {
                             engn_xc = PRCCOORD_TO_MAPCOORD(p_agent->X);
