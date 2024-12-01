@@ -433,6 +433,13 @@ void process_shuttle_loader(struct Thing *p_building)
         : : "a" (p_building));
 }
 
+void init_mgun_laser(struct Thing *p_owner, ushort size)
+{
+    asm volatile (
+      "call ASM_init_mgun_laser\n"
+        : : "a" (p_owner), "d" (size));
+}
+
 void process_mounted_gun(struct Thing *p_building)
 {
     asm volatile ("call ASM_process_mounted_gun\n"
