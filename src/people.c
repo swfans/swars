@@ -1176,6 +1176,19 @@ ubyte is_command_completed(struct Thing *p_person)
     return ret;
 }
 
+int person_hit_by_bullet(struct Thing *p_person, short hp,
+  int vx, int vy, int vz, struct Thing *p_attacker, int type)
+{
+    int ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_person_hit_by_bullet\n"
+        : "=r" (ret) : "a" (p_person), "d" (hp), "b" (vx), "c" (vy), "g" (vz), "g" (p_attacker), "g" (type));
+    return ret;
+}
+
 TbBool person_use_medikit(struct Thing *p_person, PlayerIdx plyr)
 {
     if (plyr == local_player_no)

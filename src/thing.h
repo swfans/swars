@@ -436,9 +436,9 @@ struct Thing { // sizeof=168
     ushort StartFrame;
     short Timer1;
     short StartTimer1;
-    long VX;
-    long VY;
-    long VZ;
+    s32 VX;
+    s32 VY;
+    s32 VZ;
     short Speed;
     short Health;
     short Owner;
