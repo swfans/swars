@@ -22,6 +22,8 @@
 #include <string.h>
 #include "bffile.h"
 #include "bfmath.h"
+#include "bfmemut.h"
+
 #include "triangls.h"
 #include "trpoints.h"
 #include "trstate.h"
@@ -49,6 +51,7 @@
 #include "tngcolisn.h"
 #include "vehicle.h"
 #include "vehtraffic.h"
+#include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -387,8 +390,10 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         LbFileRead(lev_fh, byte_18110E, 40);
     }
 
-    if (fmtver >= 10)
-        LbFileRead(lev_fh, game_level_miscs, 4400);
+    if (fmtver >= 10) {
+        assert(sizeof(struct LevelMisc) == 22);
+        LbFileRead(lev_fh, game_level_miscs, sizeof(struct LevelMisc) * 200);
+    }
 
     if (fmtver >= 16)
         LbFileRead(lev_fh, &engn_anglexz, 4);
@@ -614,10 +619,139 @@ void fix_level_indexes(short missi, ulong fmtver, ubyte reload, TbBool deep)
     }
 }
 
+int map_things_unkn_func_04(short subtype)
+{
+    ubyte ret;
+    asm volatile ("call ASM_map_things_unkn_func_04\n"
+        : "=r" (ret) : "a" (subtype));
+    return ret;
+}
+
+TbResult level_misc_update_mgun(struct LevelMisc *p_lvmsc)
+{
+    struct Thing *p_mgun;
+    short mgun;
+
+    engn_xc = p_lvmsc->X;
+    engn_zc = p_lvmsc->Z;
+    engn_yc = 0;
+    mgun = map_things_unkn_func_04(SubTT_BLD_MGUN);
+    if (mgun == 0) {
+        return Lb_FAIL;
+    }
+
+    p_mgun = &things[mgun];
+    p_mgun->U.UMGun.Group = p_lvmsc->Group;
+    p_mgun->U.UMGun.RecoilTimer = 0;
+    p_mgun->U.UMGun.CurrentWeapon = p_lvmsc->Weapon;
+    LOGSYNC("Mounted gun at (%d,%d) set to %s(%d)", (int)p_lvmsc->X, (int)p_lvmsc->Z,
+      weapon_codename(p_lvmsc->Weapon), (int)p_lvmsc->Weapon);
+    return Lb_SUCCESS;
+}
+
+TbResult level_misc_verify_mgun(struct LevelMisc *p_lvmsc)
+{
+    long bkp_engn_xc, bkp_engn_yc, bkp_engn_zc;
+    short mgun;
+
+    if ((p_lvmsc->Group < 0) || (p_lvmsc->Group >= PEOPLE_GROUPS_COUNT))
+        return Lb_FAIL;
+    if ((p_lvmsc->Weapon < 1) || (p_lvmsc->Weapon >= WEP_TYPES_COUNT))
+        return Lb_FAIL;
+
+    bkp_engn_xc = engn_xc;
+    bkp_engn_yc = engn_yc;
+    bkp_engn_zc = engn_zc;
+
+    engn_xc = p_lvmsc->X;
+    engn_zc = p_lvmsc->Z;
+    engn_yc = 0;
+    mgun = map_things_unkn_func_04(SubTT_BLD_MGUN);
+    engn_xc = bkp_engn_xc;
+    engn_yc = bkp_engn_yc;
+    engn_zc = bkp_engn_zc;
+
+    if (mgun == 0)
+        return Lb_FAIL;
+
+    return Lb_OK;
+}
+
+/** Removes invalid entries from level_misc[].
+ */
+void level_misc_validate(void)
+{
+    int i, n, last_used;
+
+    // Get last used slot
+    last_used = 0;
+    for (i = 0; i < 200; i++) //TODO get size from memory system
+    {
+        struct LevelMisc *p_lvmsc;
+        p_lvmsc = &game_level_miscs[i];
+        if (p_lvmsc->Type != 0)
+            last_used = i;
+    }
+
+    for (i = 0; i <= last_used; i++)
+    {
+        struct LevelMisc *p_lvmsc;
+        TbResult ret;
+
+        p_lvmsc = &game_level_miscs[i];
+        switch (p_lvmsc->Type)
+        {
+        case 0: // empty entry
+            ret = Lb_FAIL;
+            break;
+        case 1:
+            ret = level_misc_verify_mgun(p_lvmsc);
+            break;
+        default:
+            ret = Lb_FAIL;
+            break;
+        }
+        if (ret == Lb_FAIL) {
+            LOGERR("Invalid LevelMisc entry %d type %d, removed", i, (int)p_lvmsc->Type);
+            for (n = i + 1; n <= last_used; n++)
+                LbMemoryCopy(&game_level_miscs[n - 1], &game_level_miscs[n], sizeof(struct LevelMisc));
+            LbMemorySet(&game_level_miscs[last_used], '\0', sizeof(struct LevelMisc));
+            last_used--;
+            i--;
+        }
+    }
+}
+
 void level_misc_update(void)
 {
+#if 0
     asm volatile ("call ASM_level_misc_update\n"
         :  :  : "eax" );
+#endif
+    int i;
+
+    for (i = 0; i < 200; i++) //TODO get size from memory system
+    {
+        struct LevelMisc *p_lvmsc;
+        TbResult ret;
+
+        p_lvmsc = &game_level_miscs[i];
+        switch (p_lvmsc->Type)
+        {
+        case 0: // empty entry
+            ret = Lb_OK;
+            break;
+        case 1:
+            ret = level_misc_update_mgun(p_lvmsc);
+            break;
+        default:
+            ret = Lb_FAIL;
+            break;
+        }
+        if (ret == Lb_FAIL) {
+            LOGERR("Invalid LevelMisc entry %d type %d", i, (int)p_lvmsc->Type);
+        }
+    }
 }
 
 void load_level_pc(short level, short missi, ubyte reload)

@@ -370,7 +370,6 @@ extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;
-extern struct LevelMisc *game_level_miscs;
 extern long target_old_frameno;
 extern ushort word_176E38;
 
