@@ -155,7 +155,11 @@ short player_agent_current_or_prev_weapon(PlayerIdx plyr, ushort plagent)
     p_agent = p_player->MyAgent[plagent];
     if (p_agent->Type != TT_PERSON)
         return WEP_NULL;
-    assert(plagent == (p_agent->U.UPerson.ComCur & 3));
+    if (plagent != (p_agent->U.UPerson.ComCur & 3)) {
+        LOGERR("Player %d agent (thing %d) claims it has slot %d while in fact it fills %d",
+          (int)plyr, (int)p_agent->ThingOffset, (int)(p_agent->U.UPerson.ComCur & 3), (int)plagent);
+        return WEP_NULL;
+    }
 
     curwep = p_agent->U.UPerson.CurrentWeapon;
     if (curwep == WEP_NULL) {
