@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "engintrns.h"
 
+#include "bigmap.h"
 #include "display.h"
 #include "engindrwlstm.h"
 #include "enginzoom.h"
@@ -46,10 +47,9 @@ void transform_point(struct EnginePoint *p_ep)
     p_ep->X3d = overall_scale * fctr_a;
     p_ep->Y3d = overall_scale * fctr_c;
 
+    scr_shx = p_ep->X3d >> 11;
     if (game_perspective == 5)
-        scr_shx = (0x4000 - p_ep->Z3d) * (p_ep->X3d >> 11) >> 14;
-    else
-        scr_shx = p_ep->X3d >> 11;
+        scr_shx = scr_shx * (0x4000 - p_ep->Z3d) >> 14;
 
     p_ep->pp.X = dword_176D3C + scr_shx;
     if (p_ep->pp.X < 0)
@@ -65,10 +65,9 @@ void transform_point(struct EnginePoint *p_ep)
         p_ep->Flags |= 0x02;
     }
 
+    scr_shy = p_ep->Y3d >> 11;
     if (game_perspective == 5)
-        scr_shy = (0x4000 - p_ep->Z3d) * (p_ep->Y3d >> 11) >> 14;
-    else
-        scr_shy = p_ep->Y3d >> 11;
+        scr_shy = scr_shy * (0x4000 - p_ep->Z3d) >> 14;
 
     p_ep->pp.Y = dword_176D40 - scr_shy;
     if (p_ep->pp.Y < 0)
@@ -270,8 +269,43 @@ void setup_engine_nullsub4(void)
 
 void calc_mouse_pos(void)
 {
+#if 0
     asm volatile ("call ASM_calc_mouse_pos\n"
         :  :  : "eax" );
+    return;
+#endif
+    int cor_dx, cor_dy, cor_dz;
+    int fctr_xz;
+    int chk_x, chk_y, chk_z;
+    short mag;
+    short i;
+
+    cor_dy = (dword_176D18 >> 8);
+    fctr_xz = (dword_176D1C >> 8);
+    cor_dx = (fctr_xz * dword_176D10) >> 16;
+    cor_dz = (fctr_xz * dword_176D14) >> 16;
+
+    chk_x = 200 * cor_dx + 16 * mouse_map_x;
+    chk_y = 200 * cor_dy;
+    chk_z = 200 * cor_dz + 16 * mouse_map_z;
+
+    mag = 0;
+    for (i = 0; i < 400; i++)
+    {
+        if ( chk_y >> 4 < alt_at_point(chk_x >> 4, chk_z >> 4) >> 5 )
+            mag = i;
+        chk_x -= cor_dx;
+        chk_y -= cor_dy;
+        chk_z -= cor_dz;
+    }
+
+    if (mag != 0)
+    {
+        mag -= 200;
+        mouse_map_x -= (mag * cor_dx) >> 4;
+        mouse_map_z -= (mag * cor_dz) >> 4;
+        mouse_map_y = alt_at_point(mouse_map_x, mouse_map_z) >> 8;
+    }
 }
 
 void process_engine_unk2(void)
@@ -319,6 +353,7 @@ void process_engine_unk2(void)
     }
     map_xc =  ((dword_176D14 * shift_x - dword_176D10 * shift_y) >> 16);
     map_yc = -((dword_176D10 * shift_x + dword_176D14 * shift_y) >> 16);
+
     mouse_map_x = engn_xc + map_xc;
     mouse_map_z = engn_zc + map_yc;
     if (ingame.DisplayMode == DpM_UNKN_32)
