@@ -308,6 +308,27 @@ void calc_mouse_pos(void)
     }
 }
 
+void transform_screen_to_map_isometric(int *dxc, int *dzc, int scr_x, int scr_y)
+{
+    int fctr_a, fctr_b_part;
+    int fctr_c;
+    int scr_shx, scr_shy;
+
+    if (dword_176D18 == 0) {
+        *dxc = *dzc = 0;
+        return;
+    }
+
+    scr_shx =  scr_x - dword_176D3C;
+    scr_shy = -scr_y + dword_176D40;
+    fctr_a = (scr_shx << 11) / overall_scale;
+    fctr_c = (scr_shy << 11) / overall_scale;
+    fctr_b_part = ((fctr_c << 16)) / dword_176D18;
+
+    *dxc =  ((dword_176D14 * fctr_a - dword_176D10 * fctr_b_part) >> 16);
+    *dzc = -((dword_176D10 * fctr_a + dword_176D14 * fctr_b_part) >> 16);
+}
+
 void process_engine_unk2(void)
 {
 #if 0
@@ -317,9 +338,8 @@ void process_engine_unk2(void)
 #endif
     short msx, msy;
     int offs_y;
-    int point_x, point_y;
-    int shift_x, shift_y;
-    int map_xc, map_yc;
+    int scr_x, scr_y;
+    int map_dxc, map_dzc;
 
     if (ingame.DisplayMode == DpM_UNKN_32)
       offs_y = overall_scale * engn_yc >> 8;
@@ -330,32 +350,19 @@ void process_engine_unk2(void)
 
     if (lbDisplay.GraphicsScreenHeight < 400)
     {
-        point_y = (msy >> 1) - offs_y;
-        point_x = msx >> 1;
+        scr_y = (msy >> 1) - offs_y;
+        scr_x = msx >> 1;
     }
     else
     {
-        point_y = msy - offs_y;
-        point_x = msx;
+        scr_y = msy - offs_y;
+        scr_x = msx;
     }
-    if (dword_176D18 != 0)
-    {
-        int shift_a;
 
-        shift_x = ((point_x - dword_176D3C) << 11) / overall_scale;
-        shift_a = ((point_y - dword_176D40) << 11) / overall_scale;
-        shift_y = -((shift_a << 16) / dword_176D18);
-    }
-    else
-    {
-        shift_x = 0;
-        shift_y = 0;
-    }
-    map_xc =  ((dword_176D14 * shift_x - dword_176D10 * shift_y) >> 16);
-    map_yc = -((dword_176D10 * shift_x + dword_176D14 * shift_y) >> 16);
+    transform_screen_to_map_isometric(&map_dxc, &map_dzc, scr_x, scr_y);
 
-    mouse_map_x = engn_xc + map_xc;
-    mouse_map_z = engn_zc + map_yc;
+    mouse_map_x = engn_xc + map_dxc;
+    mouse_map_z = engn_zc + map_dzc;
     if (ingame.DisplayMode == DpM_UNKN_32)
         calc_mouse_pos();
     setup_engine_nullsub4();
