@@ -380,7 +380,9 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     if (fmtver >= 7) {
         LbFileRead(lev_fh, &next_used_lvl_objective, sizeof(ushort));
         assert(sizeof(struct Objective) == 32);
-        LbFileRead(lev_fh, game_used_lvl_objectives, sizeof(struct Objective) * next_used_lvl_objective);
+        n = LbFileRead(lev_fh, game_used_lvl_objectives, sizeof(struct Objective) * next_used_lvl_objective);
+        if (n < (int)sizeof(struct Objective) * next_used_lvl_objective)
+            LOGWARN("Array used_lvl_objectives truncated, got %d bytes", n);
     } else {
         next_used_lvl_objective = 1;
     }
@@ -391,12 +393,19 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     }
 
     if (fmtver >= 10) {
+        // An older file format had this struct with sizeof=20,
+        // but we don't know the speciifc fmtver range for that
         assert(sizeof(struct LevelMisc) == 22);
-        LbFileRead(lev_fh, game_level_miscs, sizeof(struct LevelMisc) * 200);
+        n = LbFileRead(lev_fh, game_level_miscs, sizeof(struct LevelMisc) * 200);
+        if (n < (int)sizeof(struct LevelMisc) * 200)
+            LOGWARN("Array level_miscs truncated, got %d bytes", n);
     }
 
-    if (fmtver >= 16)
-        LbFileRead(lev_fh, &engn_anglexz, 4);
+    if (fmtver >= 16) {
+        n = LbFileRead(lev_fh, &engn_anglexz, 4);
+        if (n < 4)
+            LOGWARN("Field anglexz truncated, got %d bytes", n);
+    }
 
     return fmtver;
 }
