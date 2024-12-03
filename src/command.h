@@ -72,6 +72,11 @@ enum PersonCommandType
   PCmd_RUN_TO_POINT = 0x23,
   PCmd_KILL_EVERYONE = 0x24,
   PCmd_GUARD_OFF = 0x25,
+  /** Toggle execution of commands for the person.
+   * Should be used as first command if agents need to be controlled
+   * by commands at start of a level, and as last such command to
+   * then switch to player control.
+   */
   PCmd_EXECUTE_COMS = 0x26,
   PCmd_UNKN27 = 0x27,
   PCmd_UNKN28,
