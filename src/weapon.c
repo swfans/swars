@@ -1691,7 +1691,7 @@ void process_weapon(struct Thing *p_person)
 #endif
     process_energy_alarm(p_person);
 
-    p_person->U.UPerson.Flag3 &= ~0x40;
+    p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn40;
 
     process_move_while_firing(p_person);
 

@@ -7531,7 +7531,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];
-        p_thing->U.UPerson.Flag3 &= ~0x04;
+        p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point(p_thing, packet->X, packet->Y, packet->Z);
         break;
     case PAct_AGENT_GOTO_GND_PT_REL:
@@ -7694,21 +7694,21 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];
-        p_thing->U.UPerson.Flag3 &= ~0x0004;
+        p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point_on_face(p_thing, packet->X, packet->Z, packet->Y);
         break;
     case PAct_AGENT_GOTO_GND_PT_ABS_FF:
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];
-        p_thing->U.UPerson.Flag3 &= ~0x0004;
+        p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
         break;
     case PAct_AGENT_GOTO_FACE_PT_ABS_FF:
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing = &things[packet->Data];
-        p_thing->U.UPerson.Flag3 &= ~0x0004;
+        p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point_on_face_fast(p_thing, packet->X, packet->Z, packet->Y, plyr);
         break;
     case PAct_GO_ENTER_VEHICLE_FF:

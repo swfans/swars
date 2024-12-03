@@ -1820,7 +1820,7 @@ void process_person(struct Thing *p_person)
 
     if ( ((gameturn + p_person->ThingOffset) & 0x7F) == 0)
     {
-        p_person->U.UPerson.Flag3 &= ~0x0020;
+        p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn20;
         if ((p_person->Flag2 & TgF2_Unkn00020000) != 0)
         {
             p_person->U.UPerson.ComTimer = -1;
@@ -2036,7 +2036,7 @@ void process_person(struct Thing *p_person)
               break;
         case PerSt_GOTO_POINT:
               person_goto_point(p_person);
-              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & 0x04) != 0) && ((p_person->Flag & TngF_Unkn1000) == 0))
+              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & PrsF3_Unkn04) != 0) && ((p_person->Flag & TngF_Unkn1000) == 0))
               {
                   struct Thing *p_target;
 

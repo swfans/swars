@@ -111,6 +111,17 @@ enum PersonState {
   PerSt_BEING_PERSUADED = 0x3B,
 };
 
+enum PersonFlags3 {
+    PrsF3_Unkn01     = 0x01,
+    PrsF3_Unkn02     = 0x02,
+    PrsF3_Unkn04     = 0x04,
+    PrsF3_Unkn08     = 0x08,
+    PrsF3_Unkn10     = 0x10,
+    PrsF3_Unkn20     = 0x20,
+    PrsF3_Unkn40     = 0x40,
+    PrsF3_Unkn80     = 0x80,
+};
+
 /** Max health of a person cannot safely go beyond that.
  */
 #define PERSON_MAX_HEALTH_LIMIT 16383
