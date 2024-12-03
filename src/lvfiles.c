@@ -178,7 +178,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
             } else {
                 struct ThingOldV9 s_oldthing;
-                assert(sizeof(s_oldthing) == 216);
+                assert(sizeof(s_oldthing) == 216); // the sizeof(Thing) was 216 since fmtver=2
                 LbFileRead(lev_fh, &s_oldthing, sizeof(s_oldthing));
                 refresh_old_thing_format(p_thing, &s_oldthing, fmtver);
             }
@@ -304,17 +304,20 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     assert(sizeof(struct Command) == 32);
     LbFileRead(lev_fh, game_commands, sizeof(struct Command) * next_command);
 
-    LbFileRead(lev_fh, &level_def, 44);
+    if (fmtver >= 2)
+    {
+        LbFileRead(lev_fh, &level_def, 44);
+    }
     for (i = 0; i < 8; i++)
     {
         if (level_def.PlayableGroups[i] >= PEOPLE_GROUPS_COUNT)
             level_def.PlayableGroups[i] = 0;
     }
-
-    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1320 - 33, 1320);
-    LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
-    LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
-    LOGSYNC("Level fmtver=%lu n_command=%hu word_1531E0=%hu", fmtver, next_command, word_1531E0);
+    if (fmtver >= 3)
+    {
+        LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1320 - 33, 1320);
+        LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
+    }
     for (k = 0; k < PEOPLE_GROUPS_COUNT; k++)
     {
         for (i = 0; i < 8; i++)
@@ -323,10 +326,15 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 war_flags[k].Guardians[i] = 0;
         }
     }
-    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, 15 * word_1531E0);
-    LbFileRead(lev_fh, &unkn3de_len, sizeof(ushort));
-    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, unkn3de_len);
-
+    if (fmtver >= 3)
+    {
+        LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
+        LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, 15 * word_1531E0);
+        LbFileRead(lev_fh, &unkn3de_len, sizeof(ushort));
+        LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, unkn3de_len);
+    }
+    LOGSYNC("Level fmtver=%lu n_command=%hu word_1531E0=%hu unkn3de_len=%hu",
+      fmtver, next_command, word_1531E0, unkn3de_len);
     if (fmtver >= 4)
     {
         ulong count;
@@ -370,11 +378,11 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 
     if (fmtver >= 6)
     {
-        LbFileRead(lev_fh, &word_1810E4, 2);
-        if (word_1810E4 < 1000)
-            word_1810E4 = 1000;
-        if (word_1810E4 > 9000)
-            word_1810E4 = 4000;
+        LbFileRead(lev_fh, &game_level_unique_id, 2);
+        if (game_level_unique_id < 1000)
+            game_level_unique_id = 1000;
+        if (game_level_unique_id > 9000)
+            game_level_unique_id = 4000;
     }
 
     if (fmtver >= 7) {
@@ -388,8 +396,8 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     }
 
     if (fmtver >= 9) {
-        LbFileRead(lev_fh, byte_1810E6, 40);
-        LbFileRead(lev_fh, byte_18110E, 40);
+        LbFileRead(lev_fh, game_level_unkn1, 40);
+        LbFileRead(lev_fh, game_level_unkn2, 40);
     }
 
     if (fmtver >= 10) {
