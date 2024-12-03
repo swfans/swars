@@ -221,21 +221,24 @@ void load_pop_sprites_for_current_mode(void)
 }
 
 //TODO not the best location for agent state update
-void update_dropped_item_under_agent_exists(struct Thing *p_agent)
+void update_dropped_item_under_agent_exists(short agent)
 {
     struct SimpleThing *p_pickup;
+    struct Thing *p_agent;
     ThingIdx thing;
 
-    if (p_agent->Flag & TngF_Unkn08000000)
-    {
-        thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
-        if (thing < 0)
-            p_pickup = &sthings[thing];
-        else
-            p_pickup = NULL;
-        if ((p_pickup == NULL) || (p_pickup->Type != SmTT_DROPPED_ITEM)) {
-            p_agent->Flag &= ~TngF_Unkn08000000;
-        }
+    p_agent = &things[agent];
+
+    if ((p_agent->Flag & TngF_Unkn08000000) == 0)
+        return;
+
+    thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
+    if (thing < 0)
+        p_pickup = &sthings[thing];
+    else
+        p_pickup = NULL;
+    if ((p_pickup == NULL) || (p_pickup->Type != SmTT_DROPPED_ITEM)) {
+        p_agent->Flag &= ~TngF_Unkn08000000;
     }
 }
 
@@ -1149,7 +1152,7 @@ void draw_agent_carried_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
     draw_fourpack_items(cx, cy + 4, plagent, weptype);
 }
 
-void draw_agent_current_weapon(PlayerInfo *p_locplayer, ushort plagent, short slot, TbBool suborinate, TbBool ready, short weptype, short cx, short cy)
+void draw_agent_current_weapon(PlayerInfo *p_locplayer, ushort plagent, short slot, TbBool darkened, TbBool ready, short weptype, short cx, short cy)
 {
     TbBool wep_highlight;
     TbBool recharging;
@@ -1162,7 +1165,7 @@ void draw_agent_current_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
         if (ready)
             draw_new_panel_sprite_prealp(cx + 8, cy + 8, 14);
 
-        if (!suborinate) {
+        if (!darkened) {
             draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype, ready));
         } else {
             draw_new_panel_sprite_dark(cx + 8, cy + 8, weapon_sprite_index(weptype, ready));
@@ -1331,7 +1334,7 @@ void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong wea
     }
 }
 
-TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent)
+TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
 {
     PlayerInfo *p_player;
     struct Thing *p_agent;
@@ -1339,6 +1342,13 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent)
     ushort curwep, prevwep;
     short cx, cy;
     TbBool wep_highlight;
+
+    // If 0x01 not set, do not draw and do not access the agent as it may be invalid
+    if ((flags & 0x01) == 0)
+        return false;
+    // If the panel is drawn but disabled, disallow interaction
+    if ((flags & 0x02) != 0)
+        return false;
 
     p_player = &players[plyr];
     if (lbDisplay.GraphicsScreenHeight < 400) {
@@ -1349,9 +1359,6 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent)
         cx = 157 * nagent + 65;
     }
     p_agent = p_player->MyAgent[nagent];
-    // Protect from damaged / unfinished levels
-    if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Destroyed) != 0)
-        return false;
 
     panstate = p_player->PanelState[mouser];
     // If we have panel state opened for another agent, disallow interaction
@@ -1384,17 +1391,18 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent)
     return wep_highlight;
 }
 
-short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
+short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent, ubyte flags)
 {
     struct Thing *p_agent;
     ushort curwep, prevwep;
     short cx, cy;
-    TbBool suborinate;
+    TbBool darkened;
+
+    // If 0x01 not set, do not draw and do not access the agent as it may be invalid
+    if ((flags & 0x01) == 0)
+        return 0;
 
     p_agent = p_locplayer->MyAgent[nagent];
-    // Protect from damaged / unfinished levels
-    if ((p_agent->Type != TT_PERSON) || (p_agent->Flag & TngF_Destroyed) != 0)
-        return 0;
 
     if (lbDisplay.GraphicsScreenHeight < 400) {
         cy = 28;
@@ -1406,15 +1414,15 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_locplayer->PrevWeapon[nagent];
 
-    suborinate = (p_agent->State == PerSt_PROTECT_PERSON);
+    darkened = (p_agent->State == PerSt_PROTECT_PERSON) || ((flags & 0x02) != 0);
     if (curwep != 0) // Is ready/drawn weapon - draw lighted weapon shape
     {
-        draw_agent_current_weapon(p_locplayer, nagent, 0, suborinate, true, curwep, cx - 8, cy - 8);
+        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, true, curwep, cx - 8, cy - 8);
     }
     else if (prevwep != 0) // Weapon is carried but hidden - draw with dark weapon shape
     {
         curwep = prevwep;
-        draw_agent_current_weapon(p_locplayer, nagent, 0, suborinate, false, curwep, cx - 8, cy - 8);
+        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, false, curwep, cx - 8, cy - 8);
     }
     return curwep;
 }
@@ -1551,11 +1559,11 @@ TbBool func_1caf8(ubyte *panel_wep)
 
     p_locplayer = &players[local_player_no];
     dcthing = direct_control_thing_for_player(local_player_no);
+    // FIXME a strange place for fixing state of an agent; should be moved to game world update
+    update_dropped_item_under_agent_exists(dcthing);
     p_agent = &things[dcthing];
 
     p_locplayer->PanelItem[mouser] = 0;
-    // FIXME a strange place for fixing state of an agent; should be moved to game world update
-    update_dropped_item_under_agent_exists(p_agent);
     ret = draw_panel_pickable_thing_below_agent(p_agent);
     if (!ret)
         draw_panel_pickable_thing_player_targeted(p_locplayer);
@@ -1576,7 +1584,7 @@ TbBool func_1caf8(ubyte *panel_wep)
         ret = false;
         for (nagent = 0; nagent < playable_agents; nagent++)
         {
-            ret |= panel_update_weapon_current(local_player_no, nagent);
+            ret |= panel_update_weapon_current(local_player_no, nagent, panel_wep[nagent]);
         }
         panstate = p_locplayer->PanelState[mouser];
         nagent = panel_state_to_player_agent(panstate);
@@ -1600,9 +1608,7 @@ TbBool func_1caf8(ubyte *panel_wep)
 
         for (nagent = 0; nagent < playable_agents; nagent++)
         {
-            if ((panel_wep[nagent] & 0x01) == 0)
-                continue;
-            draw_current_weapon_button(p_locplayer, nagent);
+            draw_current_weapon_button(p_locplayer, nagent, panel_wep[nagent]);
         }
 
         panstate = p_locplayer->PanelState[mouser];
