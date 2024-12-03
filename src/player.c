@@ -18,6 +18,8 @@
 /******************************************************************************/
 #include "player.h"
 
+#include <assert.h>
+
 #include "game.h"
 #include "guitext.h"
 #include "hud_panel.h"
@@ -103,12 +105,110 @@ void players_sync_from_cryo(void)
     player_update_agents_from_cryo(p_locplayer);
 }
 
-TbBool player_agent_has_weapon(ushort plagent, ubyte weapon)
+void player_agents_init_prev_weapon(PlayerIdx plyr)
 {
     PlayerInfo *p_locplayer;
+    ushort plagent;
 
     p_locplayer = &players[local_player_no];
-    return weapons_has_weapon(p_locplayer->Weapons[plagent], weapon);
+    for (plagent = 0; plagent < playable_agents; plagent++)
+    {
+        struct Thing *p_agent;
+        ushort weptype;
+
+        p_agent = p_locplayer->MyAgent[plagent];
+        if (p_agent->Type == TT_PERSON)
+            weptype = find_nth_weapon_held(p_agent->ThingOffset, 1);
+        else
+            weptype = WEP_NULL;
+        p_locplayer->PrevWeapon[plagent] = weptype;
+    }
+    for (; plagent < AGENTS_SQUAD_MAX_COUNT; plagent++)
+    {
+        p_locplayer->PrevWeapon[plagent] = WEP_NULL;
+    }
+}
+
+void player_agent_update_prev_weapon(struct Thing *p_agent)
+{
+    PlayerInfo *p_player;
+    PlayerIdx plyr;
+    ushort plagent;
+
+    plyr = p_agent->U.UPerson.ComCur >> 2;
+    plagent = p_agent->U.UPerson.ComCur & 3;
+    p_player = &players[plyr];
+
+    if (p_agent->U.UPerson.CurrentWeapon != 0)
+        p_player->PrevWeapon[plagent] = p_agent->U.UPerson.CurrentWeapon;
+    else
+        p_player->PrevWeapon[plagent] = find_nth_weapon_held(p_agent->ThingOffset, 1);
+}
+
+short player_agent_current_or_prev_weapon(PlayerIdx plyr, ushort plagent)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+    short curwep;
+
+    p_player = &players[plyr];
+    p_agent = p_player->MyAgent[plagent];
+    if (p_agent->Type != TT_PERSON)
+        return WEP_NULL;
+    if (plagent != (p_agent->U.UPerson.ComCur & 3)) {
+        LOGERR("Player %d agent (thing %d) claims it has slot %d while in fact it fills %d",
+          (int)plyr, (int)p_agent->ThingOffset, (int)(p_agent->U.UPerson.ComCur & 3), (int)plagent);
+        return WEP_NULL;
+    }
+
+    curwep = p_agent->U.UPerson.CurrentWeapon;
+    if (curwep == WEP_NULL) {
+        curwep = p_player->PrevWeapon[plagent];
+    }
+    return curwep;
+}
+
+short player_agent_weapon_delay(PlayerIdx plyr, ushort plagent, ubyte weapon)
+{
+    PlayerInfo *p_player;
+
+    p_player = &players[plyr];
+    return p_player->WepDelays[plagent][weapon];
+}
+
+
+TbBool player_agent_has_weapon(PlayerIdx plyr, ushort plagent, ubyte weapon)
+{
+    PlayerInfo *p_player;
+
+    p_player = &players[plyr];
+    return weapons_has_weapon(p_player->Weapons[plagent], weapon);
+}
+
+TbBool player_agent_is_alive(PlayerIdx plyr, ushort plagent)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+
+    p_player = &players[plyr];
+    p_agent = p_player->MyAgent[plagent];
+    if (p_agent->Type != TT_PERSON)
+        return false;
+
+    return ((p_agent->Flag & TngF_Destroyed) == 0);
+}
+
+TbBool player_agent_is_executing_commands(PlayerIdx plyr, ushort plagent)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+
+    p_player = &players[plyr];
+    p_agent = p_player->MyAgent[plagent];
+    if (p_agent->Type != TT_PERSON)
+        return false;
+
+    return person_is_executing_commands(p_agent->ThingOffset);
 }
 
 TbBool free_slot(ushort plagent, ubyte weapon)
@@ -205,10 +305,10 @@ void add_agent(ulong weapons, ushort mods)
         : : "a" (weapons), "d" (mods));
 }
 
-short direct_control_thing_for_player(short plyr)
+ThingIdx direct_control_thing_for_player(PlayerIdx plyr)
 {
     PlayerInfo *p_player;
-    short dcthing;
+    ThingIdx dcthing;
 
     p_player = &players[plyr];
     if (p_player->DoubleMode)
@@ -218,7 +318,7 @@ short direct_control_thing_for_player(short plyr)
     return dcthing;
 }
 
-void player_target_clear(short plyr)
+void player_target_clear(PlayerIdx plyr)
 {
     PlayerInfo *p_player;
 

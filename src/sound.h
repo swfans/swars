@@ -48,6 +48,8 @@ struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, u
 void stop_sample_using_heap(long source_id, ulong sample_number);
 void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type);
 void play_dist_ssample(struct SimpleThing *p_sthing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type);
+void play_disk_sample(short id, ushort sample, short vol, short pan, int pitch, int loop, int type);
+void stop_looped_weapon_sample(struct Thing *p_person, short weapon);
 
 void snd_unkn1_volume_all_samples(void);
 void wait_for_sound_sample_finish(ushort smpl_id);

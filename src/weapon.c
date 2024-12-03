@@ -730,7 +730,7 @@ TbBool current_weapon_has_targetting(struct Thing *p_person)
     return weapon_has_targetting(wtype);
 }
 
-sbyte find_nth_weapon_held(ushort index, ubyte n)
+ubyte find_nth_weapon_held(ushort index, ubyte n)
 {
     char ret;
     asm volatile ("call ASM_find_nth_weapon_held\n"
@@ -1058,6 +1058,12 @@ void get_soul(struct Thing *p_dead, struct Thing *p_person)
 {
     asm volatile ("call ASM_get_soul\n"
         : : "a" (p_dead), "d" (p_person));
+}
+
+void choose_best_weapon_for_range(struct Thing *p_person, int dist)
+{
+    asm volatile ("call ASM_choose_best_weapon_for_range\n"
+        : : "a" (p_person), "d" (dist));
 }
 
 void process_weapon_recoil(struct Thing *p_person)
@@ -1685,7 +1691,7 @@ void process_weapon(struct Thing *p_person)
 #endif
     process_energy_alarm(p_person);
 
-    p_person->U.UPerson.Flag3 &= ~0x40;
+    p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn40;
 
     process_move_while_firing(p_person);
 
@@ -1741,6 +1747,18 @@ void process_weapon(struct Thing *p_person)
         }
         process_wielded_weapon(p_person);
     }
+}
+
+s32 laser_hit_at(s32 x1, s32 y1, s32 z1, s32 *x2, s32 *y2, s32 *z2, struct Thing *p_shot)
+{
+    s32 ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_laser_hit_at\n"
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (p_shot));
+    return ret;
 }
 
 /******************************************************************************/

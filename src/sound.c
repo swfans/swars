@@ -55,6 +55,11 @@ void stop_sample_using_heap(long source_id, ulong sample_number)
         : : "a" (source_id), "d" (sample_number));
 }
 
+void play_disk_sample(short id, ushort sample, short vol, short pan, int pitch, int loop, int type)
+{
+    play_sample_using_heap(9999, sample + 129, vol, pan, pitch, loop, type);
+}
+
 void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type)
 {
     asm volatile (
@@ -73,6 +78,12 @@ void play_dist_ssample(struct SimpleThing *p_sthing, ushort smptbl_id, ushort vo
       "push %4\n"
       "call ASM_play_dist_ssample\n"
         : : "a" (p_sthing), "d" (smptbl_id), "b" (vol), "c" (pan), "g" (pitch), "g" (loop), "g" (type));
+}
+
+void stop_looped_weapon_sample(struct Thing *p_person, short weapon)
+{
+    asm volatile ("call ASM_stop_looped_weapon_sample\n"
+        : : "a" (p_person), "d" (weapon));
 }
 
 //TODO better name?

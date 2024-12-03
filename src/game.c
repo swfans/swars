@@ -1254,9 +1254,7 @@ void draw_hud(int dcthing)
     p_locplayer = &players[local_player_no];
     if (ingame.TrackThing != 0)
     {
-        struct Thing *p_trktng;
-        p_trktng = &things[ingame.TrackThing];
-        if ((p_trktng->Flag & TngF_PlayerAgent) == 0)
+        if (!game_cam_tracked_thing_is_player_agent())
             return;
     }
     if ((ingame.Flags & GamF_HUDPanel) == 0)
@@ -2950,58 +2948,28 @@ void simulated_level(void)
         :  :  : "eax" );
 }
 
-/** Initializes player presence on a level.
- *
- * CurrentMission needs to be set before this funcion is called.
- */
-void init_player(void)
+void init_local_player_group(void)
 {
     PlayerInfo *p_locplayer;
-    int i;
+    struct Thing *p_agent;
+    ushort grp;
 
     p_locplayer = &players[local_player_no];
+    p_agent = p_locplayer->MyAgent[0];
 
-    gamep_unknval_10 = 0;
-    gamep_unknval_12 = 0;
-    nav_stats__ThisTurn = 0;
-    ingame.Flags &= ~GamF_Unkn0100;
-    gamep_unknval_16 = 0;
-    init_level_3d(0);
-    init_level();
-    if (in_network_game)
-    {
-        unkn1_handle_agent_groups();
-        unkn_truce_groups();
+    if (p_agent->Type == TT_PERSON) {
+        grp = p_agent->U.UPerson.EffectiveGroup;
+    } else {
+        grp = 0;
     }
-    else
-    {
-        struct Thing *p_agent;
-        place_single_player();
-        p_agent = p_locplayer->MyAgent[0];
-        if (p_agent->Type == TT_PERSON) {
-            ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
-            ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
-        } else {
-            ingame.TrackX = 128;
-            ingame.TrackZ = 128;
-        }
-    }
-    player_debug(" after place player");
-    if (current_level == 0)
-        simulated_level();
-    player_debug(" after sim level");
-    gameturn = 1;
-    player_debug(" after group action");
-    {
-        struct Thing *p_agent;
-        p_agent = p_locplayer->MyAgent[0];
-        if (p_agent->Type == TT_PERSON) {
-            ingame.MyGroup = p_agent->U.UPerson.EffectiveGroup;
-        } else {
-            ingame.MyGroup = 0;
-        }
-    }
+    ingame.MyGroup = grp;
+}
 
+void validate_player_double_mode(void)
+{
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
     switch (playable_agents)
     {
     case 1:
@@ -3018,28 +2986,79 @@ void init_player(void)
     default:
         break;
     }
+}
 
-    for (i = 0; i < playable_agents; i++)
+TbBool game_cam_tracked_thing_is_player_agent(void)
+{
+    struct Thing *p_thing;
+
+    p_thing = &things[ingame.TrackThing];
+    return ((p_thing->Flag & TngF_PlayerAgent) != 0);
+}
+
+void game_set_cam_track_thing_xz(struct Thing *p_thing)
+{
+    ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_thing->X);
+    ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+}
+
+void game_set_cam_track_player_agent_xz(PlayerIdx plyr, ushort plagent)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+
+    p_player = &players[plyr];
+    p_agent = p_player->MyAgent[plagent];
+    if (p_agent->Type != TT_PERSON)
+        return;
+    game_set_cam_track_thing_xz(p_agent);
+}
+
+void preprogress_game_turns(void)
+{
+    struct Mission *p_missi;
+
+    p_missi = &mission_list[ingame.CurrentMission];
+    LOGSYNC("PreProcess %d turns for mission %d",
+      (int)p_missi->PreProcess, (int)ingame.CurrentMission);
+    blind_progress_game(p_missi->PreProcess);
+}
+
+/** Initializes player presence on a level.
+ *
+ * CurrentMission needs to be set before this funcion is called.
+ */
+void init_player(void)
+{
+    gamep_unknval_10 = 0;
+    gamep_unknval_12 = 0;
+    nav_stats__ThisTurn = 0;
+    ingame.Flags &= ~GamF_Unkn0100;
+    gamep_unknval_16 = 0;
+    init_level_3d(0);
+    init_level();
+    if (in_network_game)
     {
-        struct Thing *p_agent;
-        ulong wep;
-        p_agent = p_locplayer->MyAgent[i];
-        if (p_agent->Type == TT_PERSON)
-            wep = find_nth_weapon_held(p_agent->ThingOffset, 1);
-        else
-            wep = 0;
-        p_locplayer->PrevWeapon[i] = wep;
+        unkn1_handle_agent_groups();
+        unkn_truce_groups();
     }
+    else
+    {
+        place_single_player();
+        game_set_cam_track_player_agent_xz(local_player_no, 0);
+    }
+    player_debug(" after place player");
+    if (current_level == 0)
+        simulated_level();
+    player_debug(" after sim level");
+    gameturn = 1;
+    player_debug(" after group action");
+    init_local_player_group();
+    validate_player_double_mode();
+    player_agents_init_prev_weapon(local_player_no);
 
     init_game_controls();
-
-    {
-        struct Mission *p_missi;
-        p_missi = &mission_list[ingame.CurrentMission];
-        LOGSYNC("PreProcess %d turns for mission %d",
-          (int)p_missi->PreProcess, (int)ingame.CurrentMission);
-        blind_progress_game(p_missi->PreProcess);
-    }
+    preprogress_game_turns();
 }
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
@@ -3072,8 +3091,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_player->DirectControl[plagent] = p_person->ThingOffset;
             p_person->Flag |= TngF_Unkn1000;
             if ((plyr == local_player_no) && (plagent == 0)) {
-                ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_person->X);
-                ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_person->Z);
+                game_set_cam_track_thing_xz(p_person);
             }
         }
         players[plyr].MyAgent[plagent] = p_person;
@@ -5377,10 +5395,64 @@ void do_scroll_map(void)
 
 ubyte weapon_select_input(void)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_weapon_select_input\n"
         : "=r" (ret) : );
     return ret;
+#endif
+    PlayerInfo *p_locplayer;
+    ThingIdx dcthing;
+    ushort weptype;
+    int n;
+
+    static ushort sel_weapon_keys[] = {
+        KC_5, KC_6, KC_7, KC_8, KC_9, KC_0,
+    };
+    static GameTurn last_sel_weapon_turn[WEAPONS_CARRIED_MAX_COUNT] = {0};
+
+    p_locplayer = &players[local_player_no];
+    dcthing = p_locplayer->DirectControl[0];
+    weptype = WEP_NULL;
+
+
+    assert(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
+
+    for (n = 0; n < (int)(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0])); n++)
+    {
+        ushort kkey = sel_weapon_keys[n];
+        if (lbKeyOn[kkey] && (lbShift == KMod_NONE))
+        {
+            lbKeyOn[kkey] = 0;
+            weptype = find_nth_weapon_held(dcthing, n+1);
+            if (weptype != WEP_NULL)
+                break;
+        }
+    }
+
+    if (weptype == WEP_NULL)
+        return 0;
+
+    // Double tapping - select for all agents
+    if (gameturn - last_sel_weapon_turn[n] < 7)
+    {
+        //TODO This doesn't work properly because our parameters do not distinguish between
+        // selecting and deselecting weapon; process_packets() would have to be updated for
+        // that to work, ie. to use one of zeroed packet parameters as select/deselect flag
+#if 0
+        my_build_packet(&packets[local_player_no], PAct_SELECT_GRP_SPEC_WEAPON, dcthing, weptype, 0, 0);
+#else
+        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, 0, 0);
+#endif
+        last_sel_weapon_turn[n] -= 7;
+    }
+    else
+    {
+        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, 0, 0);
+        last_sel_weapon_turn[n] = gameturn;
+    }
+
+    return 1;
 }
 
 void do_rotate_map(void)
@@ -5648,7 +5720,9 @@ ubyte do_user_interface(void)
     if (lbKeyOn[KC_M])
         LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
 
-    // TODO No idea what these are doing
+#if 0
+    // This looks like some kind of early idea for grouping agents like in C&C
+    // clearly unfinished; remove pending
     for (n = 0; n < 5; n++)
     {
         if (lbKeyOn[KC_F1+n])
@@ -5656,17 +5730,18 @@ ubyte do_user_interface(void)
             if (lbShift & KMod_ALT)
             {
                 lbKeyOn[KC_F1+n] = 0;
-                my_build_packet(&packets[local_player_no], PAct_36, n, 0, 0, 0);
+                my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_ADD, n, 0, 0, 0);
                 return 1;
             }
             if (lbShift & KMod_SHIFT)
             {
                 lbKeyOn[KC_F1+n] = 0;
-                my_build_packet(&packets[local_player_no], PAct_35, n, 0, 0, 0);
+                my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_PROT, n, 0, 0, 0);
                 return 1;
             }
         }
     }
+#endif
 
     // change panel style
     if (lbKeyOn[KC_F9] && (lbShift == KMod_NONE))
@@ -5857,7 +5932,7 @@ ubyte do_user_interface(void)
     static ushort sel_agent_gkeys[] = {
         GKey_SEL_AGENT_1, GKey_SEL_AGENT_2, GKey_SEL_AGENT_3, GKey_SEL_AGENT_4
     };
-    static ulong last_sel_agent_turn[AGENTS_SQUAD_MAX_COUNT] = {0};
+    static GameTurn last_sel_agent_turn[AGENTS_SQUAD_MAX_COUNT] = {0};
     assert(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0]) <= AGENTS_SQUAD_MAX_COUNT);
     for (n = 0; n < (int)(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0])); n++)
     {
@@ -5880,7 +5955,7 @@ ubyte do_user_interface(void)
                 {
                     short dcthing;
                     dcthing = p_locplayer->DirectControl[n];
-                    my_build_packet(&packets[local_player_no], PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
+                    my_build_packet(&packets[local_player_no], PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
                     p_locplayer->UserInput[0].ControlMode |= 0x8000;
                     // Double tapping - center view on the agent
                     if (gameturn - last_sel_agent_turn[n] < 7)
@@ -5889,11 +5964,10 @@ ubyte do_user_interface(void)
 
                       p_pckt = &packets[local_player_no];
 
-                      ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
+                      game_set_cam_track_thing_xz(p_agent);
                       engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
-                      ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
                       dcthing = p_locplayer->DirectControl[mouser];
-                      build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
+                      build_packet(p_pckt, PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
                       if (p_agent->ThingOffset == (short)p_locplayer->DirectControl[mouser])
                       {
                           engn_xc = PRCCOORD_TO_MAPCOORD(p_agent->X);
@@ -7168,10 +7242,613 @@ void load_packet(void)
         :  :  : "eax" );
 }
 
+void kill_my_players(PlayerIdx plyr)
+{
+    asm volatile ("call ASM_kill_my_players\n"
+        : : "a" (plyr));
+}
+
+void thing_goto_point_rel_fast(struct Thing *p_thing, short x, short y, short z, int plyr)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_thing_goto_point_rel_fast\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (plyr));
+}
+
+void thing_goto_point_rel(struct Thing *p_thing, short x, short y, short z)
+{
+    asm volatile (
+      "call ASM_thing_goto_point_rel\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z));
+}
+
+void thing_goto_point_fast(struct Thing *p_thing, short x, short y, short z, int plyr)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_thing_goto_point_fast\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (plyr));
+}
+
+void thing_goto_point(struct Thing *p_thing, short x, short y, short z)
+{
+    asm volatile (
+      "call ASM_thing_goto_point\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z));
+}
+
+void thing_goto_point_on_face_fast(struct Thing *p_thing, short x, short z, short face, int plyr)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_thing_goto_point_on_face_fast\n"
+        : : "a" (p_thing), "d" (x), "b" (z), "c" (face), "g" (plyr));
+}
+
+void thing_goto_point_on_face(struct Thing *p_thing, short x, short z, short face)
+{
+    asm volatile (
+      "call ASM_thing_goto_point_on_face\n"
+        : : "a" (p_thing), "d" (x), "b" (z), "c" (face));
+}
+
+ubyte select_new_weapon(ushort index, short dir)
+{
+    ubyte ret;
+    asm volatile ("call ASM_select_new_weapon\n"
+        : "=r" (ret) : "a" (index), "d" (dir));
+    return ret;
+}
+
+void unkn_player_group_add(sbyte a1, ubyte a2)
+{
+    asm volatile ("call ASM_unkn_player_group_add\n"
+        :  : "a" (a1), "d" (a2));
+}
+
+void unkn_player_group_prot(sbyte a1, ubyte a2)
+{
+    asm volatile ("call ASM_unkn_player_group_prot\n"
+        :  : "a" (a1), "d" (a2));
+}
+
+void peep_change_weapon(struct Thing *p_person)
+{
+    asm volatile (
+      "call ASM_peep_change_weapon\n"
+        : : "a" (p_person));
+}
+
+short net_unkn_check_1(void)
+{
+    short ret;
+    asm volatile ("call ASM_net_unkn_check_1\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+void player_chat_message_add_key(ushort a1, int a2)
+{
+    asm volatile ("call ASM_player_chat_message_add_key\n"
+        :  : "a" (a1), "d" (a2));
+}
+
+void plgroup_set_mood(PlayerIdx plyr, struct Thing *p_member, short mood)
+{
+    struct Thing *p_owntng;
+    ushort plagent;
+
+    p_owntng = p_member;
+    if (p_member->State == PerSt_PROTECT_PERSON)
+        p_owntng = &things[p_member->Owner];
+
+    p_member->U.UPerson.Mood = limit_mood(p_member, mood);
+    p_member->Speed = calc_person_speed(p_member);
+
+    for (plagent = 0; plagent < playable_agents; plagent++)
+    {
+        struct Thing *p_agent;
+
+        p_agent = players[plyr].MyAgent[plagent];
+        if ((p_agent <= &things[0]) || (p_agent >= &things[THINGS_LIMIT]))
+            continue;
+
+        if ((p_agent->State != PerSt_PROTECT_PERSON) || (p_agent->Owner != p_owntng->ThingOffset)) {
+            if (p_agent != p_owntng)
+                continue;
+        }
+        if (p_agent == p_member) // already updated
+            continue;
+
+        p_agent->U.UPerson.Mood = limit_mood(p_agent, mood);
+        p_agent->Speed = calc_person_speed(p_agent);
+    }
+}
+
+void person_grp_witch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr, ushort weapon)
+{
+    struct Thing *p_owntng;
+    ushort plagent;
+    ubyte flag;
+
+    p_owntng = p_person;
+    if (p_person->State == PerSt_PROTECT_PERSON)
+        p_owntng = &things[p_person->Owner];
+
+    flag = thing_select_specific_weapon(p_person, weapon, 0);
+    if (flag != 1)
+        flag = 2;
+
+    peep_change_weapon(p_person);
+    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
+    reset_person_frame(p_person);
+    p_person->Speed = calc_person_speed(p_person);
+    p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
+
+    if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
+        play_disk_sample(local_player_no, 0x2Cu, 127, 64, 100, 0, 3);
+
+    for (plagent = 0; plagent < playable_agents; plagent++)
+    {
+        struct Thing *p_agent;
+
+        p_agent = players[plyr].MyAgent[plagent];
+        if ((p_agent->State != PerSt_PROTECT_PERSON) || (p_agent->Owner != p_owntng->ThingOffset)) {
+            if (p_agent != p_owntng)
+                continue;
+        }
+        if (p_agent == p_person)
+            continue;
+
+        if (((p_agent->U.UPerson.WeaponsCarried & (1 << (weapon - 1))) == 0) || (flag == 1))
+        {
+            stop_looped_weapon_sample(p_agent, p_agent->U.UPerson.CurrentWeapon);
+            if (flag == 1)
+            {
+                player_agent_update_prev_weapon(p_agent);
+                p_agent->U.UPerson.CurrentWeapon = 0;
+            }
+            else if (p_agent->U.UPerson.TempWeapon != 0)
+            {
+                thing_select_specific_weapon(p_agent, p_agent->U.UPerson.TempWeapon, flag);
+            }
+            else
+            {
+                choose_best_weapon_for_range(p_agent, 1280);
+            }
+        }
+        else
+        {
+            peep_change_weapon(p_agent);
+            thing_select_specific_weapon(p_agent, weapon, flag);
+        }
+        p_agent->U.UPerson.AnimMode = gun_out_anim(p_agent, 0);
+        reset_person_frame(p_agent);
+        p_agent->Speed = calc_person_speed(p_agent);
+        p_agent->U.UPerson.TempWeapon = p_agent->U.UPerson.CurrentWeapon;
+    }
+}
+
+void player_agent_weapon_switch(PlayerIdx plyr, ThingIdx person, short shift)
+{
+    struct Thing *p_person;
+
+    p_person = &things[person];
+
+    p_person->U.UPerson.CurrentWeapon = select_new_weapon(person, shift);
+    peep_change_weapon(p_person);
+    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
+    reset_person_frame(p_person);
+    p_person->Speed = calc_person_speed(p_person);
+    p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
+
+    if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
+    {
+        ushort smp;
+        // Weapon name speech
+        if (background_type == 1)
+            smp = weapon_sound_z[p_person->U.UPerson.CurrentWeapon];
+        else
+            smp = weapon_sound[p_person->U.UPerson.CurrentWeapon];
+        play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
+    }
+}
+
+void player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ushort weapon)
+{
+    if ((weapon == 0) || (weapon == p_person->U.UPerson.CurrentWeapon)) {
+        p_person->U.UPerson.AnimMode = 0;
+        reset_person_frame(p_person);
+    }
+    if (p_person->State == PerSt_PROTECT_PERSON)
+        p_person->Flag2 |= TgF2_Unkn10000000;
+    person_init_drop(p_person, weapon);
+    p_person->Speed = calc_person_speed(p_person);
+}
+
+void player_agent_select(PlayerIdx plyr, ThingIdx person)
+{
+    if (person == (ThingIdx)players[plyr].DirectControl[mouser])
+        return;
+    if (plyr == local_player_no)
+    {
+        struct Thing *p_person;
+        ushort smp;
+
+        p_person = &things[person];
+        if (p_person->SubType == SubTT_PERS_AGENT)
+            smp = 44; // 'selected' speech
+        else
+            smp = 46;
+        play_disk_sample(0, smp, 127, 64, 100, 0, 3);
+    }
+    if (person != (ThingIdx)players[plyr].DirectControl[0])
+    {
+        player_change_person(person, plyr);
+    }
+}
+
+void net_player_leave(PlayerIdx plyr)
+{
+    kill_my_players(plyr);
+    if ((plyr == net_host_player_no) || (plyr == local_player_no) || (nsvc.I.Type != 1))
+    {
+        ingame.DisplayMode = DpM_UNKN_37;
+        StopCD();
+        StopAllSamples();
+        SetMusicVolume(100, 0);
+        LbNetworkSessionStop();
+        if (nsvc.I.Type != 1 && byte_1C4A6F)
+            LbNetworkHangUp();
+    }
+    else
+    {
+        net_players_num--;
+        sprintf(player_unknCC9[plyr], "%s %s", unkn2_names[plyr], gui_strings[651]);
+        player_unkn0C9[plyr] = -106;
+        LbNetworkSessionStop();
+        ingame.InNetGame_UNSURE &= ~(1 << plyr);
+    }
+}
+
+void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
+{
+    struct Thing *p_person;
+    struct Thing *p_thing;
+    int n;
+
+    switch (packet->Action & 0x7FFF)
+    {
+    case PAct_MISSN_ABORT:
+        if (in_network_game) {
+            net_player_leave(plyr);
+            break;
+        }
+        exit_game = 1;
+        break;
+    case PAct_AGENT_GOTO_GND_PT_ABS:
+        if (plyr == local_player_no)
+            show_goto_point(1);
+        p_thing = &things[packet->Data];
+        p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
+        thing_goto_point(p_thing, packet->X, packet->Y, packet->Z);
+        break;
+    case PAct_AGENT_GOTO_GND_PT_REL:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        thing_goto_point_rel(p_thing, packet->X, packet->Y, packet->Z);
+        break;
+    case PAct_SELECT_NEXT_WEAPON:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        player_agent_weapon_switch(plyr, packet->Data, 1);
+        break;
+    case PAct_DROP_SELC_WEAPON_SECR: // player controlled person drops a currently wielded weapon, so that it lays secured
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        if (p_thing->U.UPerson.CurrentWeapon == 0)
+            break;
+        player_agent_init_drop_item(plyr, p_thing, 0);
+        break;
+    case PAct_PICKUP:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        person_init_pickup(p_thing, packet->X);
+        break;
+    case PAct_ENTER_VEHICLE:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+            break;
+        person_enter_vehicle(p_thing, &things[packet->X]);
+        break;
+    case PAct_LEAVE_VEHICLE:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+            break;
+        person_attempt_to_leave_vehicle(p_thing);
+        break;
+    case PAct_SELECT_AGENT:
+        player_agent_select(plyr, packet->X);
+        break;
+    case PAct_AGENT_GOTO_GND_PT_REL_FF:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        thing_goto_point_rel_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
+        break;
+    case PAct_SHOOT_AT_GND_POINT:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 0);
+        break;
+    case PAct_SELECT_PREV_WEAPON:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        player_agent_weapon_switch(plyr, packet->Data, -1);
+        break;
+    case PAct_PROTECT_INC:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        call_protect(p_thing, plyr);
+        n = count_protect(p_thing, plyr);
+        if (plyr == local_player_no && n)
+            play_sample_using_heap(0, 61, 127, 64, 5 * n + 90, 0, 3);
+        break;
+    case PAct_PROTECT_TOGGLE:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        call_unprotect(p_thing, plyr, 0);
+        n = count_protect(p_thing, plyr);
+        if (plyr == local_player_no && n)
+            play_sample_using_heap(0, 61, 127, 64, 5 * n + 90, 0, 3);
+        break;
+    case PAct_SHOOT_AT_THING:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        thing_shoot_at_thing(p_thing, packet->X);
+        break;
+    case PAct_GET_ITEM:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        person_init_get_item(p_thing, packet->X, plyr);
+        break;
+    case PAct_PLANT_MINE_AT_GND_PT:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        person_init_plant_mine(p_thing, packet->X, packet->Y, packet->Z, 0);
+        break;
+    case PAct_SELECT_SPECIFIC_WEAPON:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        thing_select_specific_weapon(p_thing, packet->X, 0);
+        peep_change_weapon(p_thing);
+        p_thing->U.UPerson.AnimMode = gun_out_anim(p_thing, 0);
+        reset_person_frame(p_thing);
+        p_thing->Speed = calc_person_speed(p_thing);
+        p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
+        if ((plyr == local_player_no) && (p_thing->U.UPerson.CurrentWeapon != 0))
+        {
+            ushort smp;
+            if (background_type == 1)
+                smp = weapon_sound_z[p_thing->U.UPerson.CurrentWeapon];
+            else
+                smp = weapon_sound[p_thing->U.UPerson.CurrentWeapon];
+            play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
+        }
+        break;
+    case PAct_DROP_HELD_WEAPON_SECR: // player controlled person drops one of held weapons, so that it lays secured
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        player_agent_init_drop_item(plyr, p_thing, packet->X);
+        break;
+    case PAct_AGENT_SET_MOOD:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        p_thing->U.UPerson.Mood = limit_mood(p_thing, packet->X);
+        p_thing->Speed = calc_person_speed(p_thing);
+        break;
+    case PAct_GO_ENTER_VEHICLE:
+        p_thing = &things[packet->Data];
+        person_go_enter_vehicle(p_thing, &things[packet->X]);
+        break;
+    case PAct_FOLLOW_PERSON:
+        p_thing = &things[packet->Data];
+        if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
+            person_init_follow_person(p_thing, &things[packet->X]);
+        break;
+    case PAct_CONTROL_MODE:
+        players[plyr].UserInput[0].ControlMode = packet->Data;
+        break;
+    case PAct_AGENT_GOTO_FACE_PT_ABS:
+        if (plyr == local_player_no)
+            show_goto_point(1);
+        p_thing = &things[packet->Data];
+        p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
+        thing_goto_point_on_face(p_thing, packet->X, packet->Z, packet->Y);
+        break;
+    case PAct_AGENT_GOTO_GND_PT_ABS_FF:
+        if (plyr == local_player_no)
+            show_goto_point(1);
+        p_thing = &things[packet->Data];
+        p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
+        thing_goto_point_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
+        break;
+    case PAct_AGENT_GOTO_FACE_PT_ABS_FF:
+        if (plyr == local_player_no)
+            show_goto_point(1);
+        p_thing = &things[packet->Data];
+        p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
+        thing_goto_point_on_face_fast(p_thing, packet->X, packet->Z, packet->Y, plyr);
+        break;
+    case PAct_GO_ENTER_VEHICLE_FF:
+        p_thing = &things[packet->Data];
+        person_go_enter_vehicle_fast(p_thing, &things[packet->X], plyr);
+        break;
+    case PAct_GET_ITEM_FAST:
+        p_thing = &things[packet->Data];
+        person_init_get_item_fast(p_thing, packet->X, plyr);
+        break;
+    case PAct_SHIELD_TOGGLE:
+        p_thing = &things[packet->Data];
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+            break;
+        person_shield_toggle(p_thing, plyr);
+        break;
+    case PAct_PLANT_MINE_AT_GND_PT_FF:
+        p_thing = &things[packet->Data];
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        person_init_plant_mine_fast(p_thing, packet->X, packet->Y, packet->Z, 0);
+        break;
+    case PAct_SHOOT_AT_GND_POINT_FF:
+        p_thing = &things[packet->Data];
+        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 1);
+        break;
+    case PAct_PEEPS_SCATTER:
+        p_thing = &things[packet->Data];
+        if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
+            make_peeps_scatter(p_thing, packet->X, packet->Z);
+        break;
+    case PAct_SELECT_GRP_SPEC_WEAPON:
+        p_person = &things[packet->Data];
+        if ((p_person->State == PerSt_DROP_ITEM) && ((p_person->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        person_grp_witch_to_specific_weapon(p_person, plyr, packet->X);
+        break;
+    case PAct_AGENT_USE_MEDIKIT:
+        p_thing = &things[packet->Data];
+        person_use_medikit(p_thing, plyr);
+        break;
+    case PAct_GROUP_SET_MOOD:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        plgroup_set_mood(plyr, p_thing, packet->X);
+        break;
+    case PAct_AGENT_UNKGROUP_PROT: // Unfinished mess; remove pending
+        unkn_player_group_prot(packet->Data, plyr);
+        break;
+    case PAct_AGENT_UNKGROUP_ADD: // Unfinished mess; remove pending
+        unkn_player_group_add(packet->Data, plyr);
+        break;
+    case PAct_CHAT_MESSAGE_KEY:
+        player_chat_message_add_key(plyr, packet->Data);
+        break;
+    case PAct_SHOOT_AT_FACE_POINT:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 2);
+        break;
+    case PAct_SHOOT_AT_FACE_POINT_FF:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 3);
+        break;
+    case PAct_PLANT_MINE_AT_FACE_PT:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        person_init_plant_mine(p_thing, packet->X, 0, packet->Z, packet->Y);
+        break;
+    case PAct_PLANT_MINE_AT_FACE_PT_FF:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+            break;
+        person_init_plant_mine_fast(p_thing, packet->X, 0, packet->Z, packet->Y);
+        break;
+    case PAct_AGENT_SELF_DESTRUCT:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+            break;
+        person_self_destruct(p_thing);
+        break;
+    }
+}
+
 void process_packets(void)
 {
+#if 0
     asm volatile ("call ASM_process_packets\n"
         :  :  : "eax" );
+    return;
+#endif
+    ushort v53;
+    PlayerIdx plyr;
+
+    if (pktrec_mode == 0)
+        v53 = 4;
+    else if (pktrec_mode <= 2)
+        v53 = 1;
+
+    if (in_network_game && (net_players_num > 1))
+        net_unkn_check_1();
+
+    for (plyr = 0; plyr < 8; plyr++)
+    {
+        struct Packet *packet;
+        ushort i;
+
+        if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
+            continue;
+        packet = &packets[plyr];
+        for (i = 0; i < v53; i++)
+        {
+            struct Thing *p_thing;
+
+            p_thing = &things[packet->Data];
+
+            if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
+                packet->Action = 0;
+            if ((packet->Action & 0x8000) == 0)
+                p_thing->Flag &= ~TngF_Unkn0800;
+            else
+                p_thing->Flag |= TngF_Unkn0800;
+
+            process_packet(plyr, packet, i);
+
+            packet->Action = 0;
+            packet = (struct Packet *)((char *)packet + 10);
+        }
+    }
 }
 
 void joy_input(void)

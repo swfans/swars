@@ -544,7 +544,8 @@ TbBool person_carries_any_medikit(struct Thing *p_person)
 
 TbBool person_can_accept_control(ThingIdx person)
 {
-    return !person_is_dead_or_dying(person) && !thing_is_destroyed(person);
+    return !person_is_dead_or_dying(person)
+      && !thing_is_destroyed(person);
 }
 
 void person_give_best_mods(struct Thing *p_person)
@@ -555,14 +556,25 @@ void person_give_best_mods(struct Thing *p_person)
     set_person_mod_chest_level(p_person, 3);
 }
 
-TbBool person_is_persuaded(ThingIdx thing)
+TbBool person_is_executing_commands(ThingIdx person)
 {
     struct Thing *p_person;
 
-    if (thing <= 0)
+    if (person <= 0)
         return false;
 
-    p_person = &things[thing];
+    p_person = &things[person];
+    return ((p_person->Flag2 & TgF2_Unkn0800) != 0);
+}
+
+TbBool person_is_persuaded(ThingIdx person)
+{
+    struct Thing *p_person;
+
+    if (person <= 0)
+        return false;
+
+    p_person = &things[person];
     return ((p_person->Flag & TngF_Persuaded) != 0);
 }
 
@@ -1176,6 +1188,40 @@ ubyte is_command_completed(struct Thing *p_person)
     return ret;
 }
 
+int person_hit_by_bullet(struct Thing *p_person, short hp,
+  int vx, int vy, int vz, struct Thing *p_attacker, int type)
+{
+    int ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_person_hit_by_bullet\n"
+        : "=r" (ret) : "a" (p_person), "d" (hp), "b" (vx), "c" (vy), "g" (vz), "g" (p_attacker), "g" (type));
+    return ret;
+}
+
+TbBool person_use_medikit(struct Thing *p_person, PlayerIdx plyr)
+{
+    if (plyr == local_player_no)
+        play_sample_using_heap(0, 2, 127, 64, 100, 0, 3u);
+    p_person->Health = p_person->U.UPerson.MaxHealth;
+    // TODO use more advanced weapon removal functs
+    if (person_carries_weapon(p_person, WEP_MEDI1))
+    {
+        p_person->U.UPerson.WeaponsCarried &= ~0x04000000;
+        if (p_person->U.UPerson.CurrentWeapon == WEP_MEDI1)
+            p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+    }
+    else
+    {
+        p_person->U.UPerson.WeaponsCarried &= ~0x08000000;
+        if (p_person->U.UPerson.CurrentWeapon == WEP_MEDI2)
+            p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+    }
+    return true;
+}
+
 int person_goto_person_nav(struct Thing *p_person)
 {
     int ret;
@@ -1209,10 +1255,16 @@ void person_init_drop_special(struct Thing *p_person, ThingIdx item)
         : : "a" (p_person), "d" (item));
 }
 
-void stop_looped_weapon_sample(struct Thing *p_person, short weapon)
+void person_init_pickup(struct Thing *p_person, ThingIdx item)
 {
-    asm volatile ("call ASM_stop_looped_weapon_sample\n"
-        : : "a" (p_person), "d" (weapon));
+    asm volatile ("call ASM_person_init_pickup\n"
+        : : "a" (p_person), "d" (item));
+}
+
+void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_person_enter_vehicle\n"
+        : : "a" (p_person), "d" (p_vehicle));
 }
 
 ubyte person_attempt_to_leave_vehicle(struct Thing *p_thing)
@@ -1224,11 +1276,145 @@ ubyte person_attempt_to_leave_vehicle(struct Thing *p_thing)
     return ret;
 }
 
+void player_change_person(short thing, ushort plyr)
+{
+    asm volatile ("call ASM_player_change_person\n"
+        : : "a" (thing), "d" (plyr));
+}
+
 void person_attempt_to_leave_ferry(struct Thing *p_thing)
 {
     asm volatile ("call ASM_person_attempt_to_leave_ferry\n"
         : : "a" (p_thing));
 }
+
+void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint fast_flag)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_thing_shoot_at_point\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (fast_flag));
+}
+
+void call_protect(struct Thing *p_thing, ushort plyr)
+{
+    asm volatile ("call ASM_call_protect\n"
+        : : "a" (p_thing), "d" (plyr));
+}
+
+void call_protect_specific(struct Thing *p_person_client, struct Thing *p_protector)
+{
+    asm volatile ("call ASM_call_protect_specific\n"
+        : : "a" (p_person_client), "d" (p_protector));
+}
+
+ushort count_protect(struct Thing *p_thing, ushort plyr)
+{
+    ushort ret;
+    asm volatile (
+      "call ASM_count_protect\n"
+        : "=r" (ret) : "a" (p_thing), "d" (plyr));
+    return ret;
+}
+
+void call_unprotect(struct Thing *p_thing, ushort plyr, ubyte flag)
+{
+    asm volatile ("call ASM_call_unprotect\n"
+        : : "a" (p_thing), "d" (plyr), "b" (flag));
+}
+
+void thing_shoot_at_thing(struct Thing *p_thing, short target)
+{
+    asm volatile ("call ASM_thing_shoot_at_thing\n"
+        : : "a" (p_thing), "d" (target));
+}
+
+void person_init_get_item(struct Thing *p_person, short item, ushort plyr)
+{
+    asm volatile ("call ASM_person_init_get_item\n"
+        : : "a" (p_person), "d" (item), "b" (plyr));
+}
+
+void person_init_get_item_fast(struct Thing *p_person, short item, ushort plyr)
+{
+    asm volatile ("call ASM_person_init_get_item_fast\n"
+        : : "a" (p_person), "d" (item), "b" (plyr));
+}
+
+void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, int face)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_person_init_plant_mine\n"
+        : : "a" (p_person), "d" (x), "b" (y), "c" (z), "g" (face));
+}
+
+int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, uint flag)
+{
+    int ret;
+    asm volatile ("call ASM_thing_select_specific_weapon\n"
+        : "=r" (ret) : "a" (p_person), "d" (weapon), "b" (flag));
+    return ret;
+}
+
+void person_go_enter_vehicle_fast(struct Thing *p_person, struct Thing *p_vehicle, ushort plyr)
+{
+    asm volatile (
+      "call ASM_person_go_enter_vehicle_fast\n"
+        : : "a" (p_person), "d" (p_vehicle), "b" (plyr));
+}
+
+void person_go_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
+{
+    asm volatile (
+      "call ASM_person_go_enter_vehicle\n"
+        : : "a" (p_person), "d" (p_vehicle));
+}
+
+void person_init_follow_person(struct Thing *p_person, struct Thing *p_other)
+{
+    asm volatile (
+      "call ASM_person_init_follow_person\n"
+        : : "a" (p_person), "d" (p_other));
+}
+
+void person_shield_toggle(struct Thing *p_person, PlayerIdx plyr)
+{
+    asm volatile (
+      "call ASM_person_shield_toggle\n"
+        : : "a" (p_person), "d" (plyr));
+}
+
+void make_peeps_scatter(struct Thing *p_person, int x, int z)
+{
+    asm volatile (
+      "call ASM_make_peeps_scatter\n"
+        : : "a" (p_person), "d" (x), "b" (z));
+}
+
+int limit_mood(struct Thing *p_thing, short mood)
+{
+    int ret;
+    asm volatile ("call ASM_limit_mood\n"
+        : "=r" (ret) : "a" (p_thing), "d" (mood));
+    return ret;
+}
+
+void person_init_plant_mine_fast(struct Thing *p_thing, short x, short y, short z, int face)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_person_init_plant_mine_fast\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (face));
+}
+
+void person_self_destruct(struct Thing *p_person)
+{
+    asm volatile (
+      "call ASM_person_self_destruct\n"
+        : : "a" (p_person));
+}
+
 void person_scare_person(struct Thing *p_person)
 {
     struct Thing *p_target;
@@ -1634,7 +1820,7 @@ void process_person(struct Thing *p_person)
 
     if ( ((gameturn + p_person->ThingOffset) & 0x7F) == 0)
     {
-        p_person->U.UPerson.Flag3 &= ~0x0020;
+        p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn20;
         if ((p_person->Flag2 & TgF2_Unkn00020000) != 0)
         {
             p_person->U.UPerson.ComTimer = -1;
@@ -1850,7 +2036,7 @@ void process_person(struct Thing *p_person)
               break;
         case PerSt_GOTO_POINT:
               person_goto_point(p_person);
-              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & 0x04) != 0) && ((p_person->Flag & TngF_Unkn1000) == 0))
+              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & PrsF3_Unkn04) != 0) && ((p_person->Flag & TngF_Unkn1000) == 0))
               {
                   struct Thing *p_target;
 

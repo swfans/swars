@@ -300,6 +300,8 @@ extern ulong NetTimeoutTicks;
 extern struct NetworkPlayer network_players[8];
 extern struct NetPlayer2 net_players[5];
 extern struct TbNetworkSessionList unkstruct04_arr[20];
+// Application-accessible copy of the service structure?
+extern struct TbNetworkService nsvc;
 
 extern struct WeaponsFourPack net_agents__FourPacks[8][4]; // maybe a part of larger struct, maybe not
 

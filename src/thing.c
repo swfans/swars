@@ -133,6 +133,47 @@ const char *thing_type_names[] = {
   "UNKN56",
 };
 
+TbBool thing_type_is_simple(short ttype)
+{
+    return (ttype == SmTT_STATIC) ||
+     (ttype == SmTT_SPARK) ||
+     (ttype == SmTT_INTELLIG_DOOR) ||
+     (ttype == SmTT_SCALE_EFFECT) ||
+     (ttype == SmTT_NUCLEAR_BOMB) ||
+     (ttype == SmTT_SMOKE_GENERATOR) ||
+     (ttype == SmTT_DROPPED_ITEM) ||
+     (ttype == SmTT_CARRIED_ITEM) ||
+     (ttype == SmTT_ELECTRIC_STRAND) ||
+     (ttype == SmTT_TIME_POD) ||
+     (ttype == SmTT_CANISTER) ||
+     (ttype == SmTT_STASIS_POD) ||
+     (ttype == SmTT_SOUL) ||
+     (ttype == SmTT_BANG) ||
+     (ttype == SmTT_FIRE) ||
+     (ttype == SmTT_SFX) ||
+     (ttype == SmTT_TEMP_LIGHT);
+}
+
+struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype)
+{
+    struct Thing *p_thing;
+
+    if (thing_type_is_simple(ttype))
+    {
+        if ((thing > -1) || (thing < STHINGS_LIMIT))
+            return INVALID_THING;
+    }
+    else
+    {
+        if ((thing < 1) || (thing > THINGS_LIMIT))
+            return INVALID_THING;
+    }
+    p_thing = &things[thing];
+    if (p_thing->Type != ttype)
+            return INVALID_THING;
+    return p_thing;
+}
+
 void move_mapwho(struct Thing *p_thing, int x, int y, int z)
 {
     asm volatile (
@@ -396,7 +437,7 @@ TbBool process_thing_unkflag0002(struct Thing *p_thing)
         p_thing->U.UPerson.SpecialTimer--;
         if (p_thing->U.UPerson.SpecialTimer >= 0)
             return true;
-        if ((p_thing->Flag & 0x10000000) == 0)
+        if ((p_thing->Flag & TngF_InVehicle) == 0)
             add_node_thing(p_thing->ThingOffset);
         p_thing->Flag2 &= ~TgF2_Unkn0002;
         return true;
@@ -415,7 +456,7 @@ void process_thing(struct Thing *p_thing, ThingIdx thing)
     case TT_UNKN4:
         process_shield(p_thing);
         process_person(p_thing);
-        if ((p_thing->Flag & 0x0800) != 0)
+        if ((p_thing->Flag & TngF_Unkn0800) != 0)
             p_thing->Flag2 |= TgF2_Unkn0400;
         else
             p_thing->Flag2 &= ~TgF2_Unkn0400;
@@ -640,13 +681,13 @@ void process_things(void)
         dcthing = p_player->DirectControl[0];
         p_dcthing = &things[dcthing];
         if (((1 << plyr) & ingame.InNetGame_UNSURE) != 0
-          && (p_dcthing->Flag & 0x1000) == 0)
+          && (p_dcthing->Flag & TngF_Unkn1000) == 0)
         {
 #if 0
             for (i = 0; i < playable_agents; i++)
               ;
 #endif
-            p_dcthing->Flag |= 0x1000;
+            p_dcthing->Flag |= TngF_Unkn1000;
         }
     }
 #if 0
@@ -1071,27 +1112,6 @@ short get_thing_same_type_head(short ttype, short subtype)
         break;
     }
     return thing;
-}
-
-TbBool thing_type_is_simple(short ttype)
-{
-    return (ttype == SmTT_STATIC) ||
-     (ttype == SmTT_SPARK) ||
-     (ttype == SmTT_INTELLIG_DOOR) ||
-     (ttype == SmTT_SCALE_EFFECT) ||
-     (ttype == SmTT_NUCLEAR_BOMB) ||
-     (ttype == SmTT_SMOKE_GENERATOR) ||
-     (ttype == SmTT_DROPPED_ITEM) ||
-     (ttype == SmTT_CARRIED_ITEM) ||
-     (ttype == SmTT_ELECTRIC_STRAND) ||
-     (ttype == SmTT_TIME_POD) ||
-     (ttype == SmTT_CANISTER) ||
-     (ttype == SmTT_STASIS_POD) ||
-     (ttype == SmTT_SOUL) ||
-     (ttype == SmTT_BANG) ||
-     (ttype == SmTT_FIRE) ||
-     (ttype == SmTT_SFX) ||
-     (ttype == SmTT_TEMP_LIGHT);
 }
 
 static short find_thing_type_on_same_type_list_within_circle(short X, short Z, ushort R,
