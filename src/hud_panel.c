@@ -1030,25 +1030,36 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
     ThingIdx thing;
     TbBool drawn;
 
+    if ((p_agent->Flag & TngF_Unkn08000000) == 0)
+        return false;
+
+    thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
+    if (thing < 0)
+        p_pickup = &sthings[thing];
+    else
+        p_pickup = NULL;
+
     drawn = false;
-    if (p_agent->Flag & TngF_Unkn08000000)
+    if ((p_pickup != NULL) && (p_pickup->Type == SmTT_DROPPED_ITEM))
     {
         ushort weptype;
-        thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
-        if (thing < 0)
-            p_pickup = &sthings[thing];
-        else
-            p_pickup = NULL;
-        if ((p_pickup != NULL) && (p_pickup->Type == SmTT_DROPPED_ITEM)) {
-            lbDisplay.DrawFlags = 0;
-            weptype = p_pickup->U.UWeapon.WeaponType;
-            if (weptype)
-                draw_new_panel_sprite_std(548, 364, weapon_sprite_index(weptype, false));
-            else
-                draw_new_panel_sprite_std(548, 364, 70);
-            draw_new_panel_sprite_std(540, 360, 12);
-            drawn = true;
+        short x, y;
+
+        if (lbDisplay.GraphicsScreenHeight >= 400) {
+            x = lbDisplay.GraphicsScreenWidth - 100;
+            y = lbDisplay.GraphicsScreenHeight - 40;
+        } else {
+            x = (lbDisplay.GraphicsScreenWidth - 50) * 2;
+            y = (lbDisplay.GraphicsScreenHeight - 20) * 2;
         }
+        lbDisplay.DrawFlags = 0;
+        weptype = p_pickup->U.UWeapon.WeaponType;
+        draw_new_panel_sprite_std(x, y, 12);
+        if (weptype)
+            draw_new_panel_sprite_std(x + 8, y + 4, weapon_sprite_index(weptype, false));
+        else
+            draw_new_panel_sprite_std(x + 8, y + 4, 70);
+        drawn = true;
     }
     return drawn;
 }
@@ -1060,23 +1071,36 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
     ThingIdx thing;
     TbBool drawn;
 
+    if (p_locplayer->TargetType != 5)
+        return false;
+
+    thing = p_locplayer->field_102;
+    if (thing < 0)
+        p_pickup = &sthings[thing];
+    else
+        p_pickup = NULL;
+
     drawn = false;
-    if (p_locplayer->TargetType == 5)
+    if (p_pickup != NULL)
     {
         ushort weptype;
-        thing = p_locplayer->field_102;
-        if (thing < 0)
-        {
-            lbDisplay.DrawFlags = 0;
-            p_pickup = &sthings[thing];
-            weptype = p_pickup->U.UWeapon.WeaponType;
-            if (weptype)
-                draw_new_panel_sprite_std(548, 364, weapon_sprite_index(weptype, false));
-            else
-                draw_new_panel_sprite_std(548, 364, 70);
-            draw_new_panel_sprite_std(540, 360, 12);
-            drawn = true;
+        short x, y;
+
+        if (lbDisplay.GraphicsScreenHeight >= 400) {
+            x = lbDisplay.GraphicsScreenWidth - 100;
+            y = lbDisplay.GraphicsScreenHeight - 40;
+        } else {
+            x = (lbDisplay.GraphicsScreenWidth - 50) * 2;
+            y = (lbDisplay.GraphicsScreenHeight - 20) * 2;
         }
+        lbDisplay.DrawFlags = 0;
+        weptype = p_pickup->U.UWeapon.WeaponType;
+        draw_new_panel_sprite_std(x, y, 12);
+        if (weptype)
+            draw_new_panel_sprite_std(x + 8, y + 4, weapon_sprite_index(weptype, false));
+        else
+            draw_new_panel_sprite_std(x + 8, y + 4, 70);
+        drawn = true;
     }
     return drawn;
 }
@@ -1550,7 +1574,7 @@ void draw_agent_weapons_selection(PlayerIdx plyr, short nagent)
     }
 }
 
-TbBool func_1caf8(ubyte *panel_wep)
+void draw_panel_pickable_item(void)
 {
     TbBool ret;
     PlayerInfo *p_locplayer;
@@ -1563,11 +1587,23 @@ TbBool func_1caf8(ubyte *panel_wep)
     update_dropped_item_under_agent_exists(dcthing);
     p_agent = &things[dcthing];
 
-    p_locplayer->PanelItem[mouser] = 0;
     ret = draw_panel_pickable_thing_below_agent(p_agent);
     if (!ret)
         draw_panel_pickable_thing_player_targeted(p_locplayer);
+}
 
+TbBool func_1caf8(ubyte *panel_wep)
+{
+    TbBool ret;
+    PlayerInfo *p_locplayer;
+    struct Thing *p_agent;
+    short dcthing;
+
+    p_locplayer = &players[local_player_no];
+    dcthing = direct_control_thing_for_player(local_player_no);
+    p_agent = &things[dcthing];
+
+    p_locplayer->PanelItem[mouser] = 0;
     if (ingame.PanelPermutation >= 0)
     {
         ushort plagent;
@@ -2276,6 +2312,8 @@ void draw_new_panel(void)
         }
     }
     lbDisplay.DrawFlags = 0;
+
+    draw_panel_pickable_item();
 
     if (!func_1caf8(panel_wep))
     {
