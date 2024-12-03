@@ -544,7 +544,8 @@ TbBool person_carries_any_medikit(struct Thing *p_person)
 
 TbBool person_can_accept_control(ThingIdx person)
 {
-    return !person_is_dead_or_dying(person) && !thing_is_destroyed(person);
+    return !person_is_dead_or_dying(person)
+      && !thing_is_destroyed(person);
 }
 
 void person_give_best_mods(struct Thing *p_person)
@@ -555,14 +556,25 @@ void person_give_best_mods(struct Thing *p_person)
     set_person_mod_chest_level(p_person, 3);
 }
 
-TbBool person_is_persuaded(ThingIdx thing)
+TbBool person_is_executing_commands(ThingIdx person)
 {
     struct Thing *p_person;
 
-    if (thing <= 0)
+    if (person <= 0)
         return false;
 
-    p_person = &things[thing];
+    p_person = &things[person];
+    return ((p_person->Flag2 & TgF2_Unkn0800) != 0);
+}
+
+TbBool person_is_persuaded(ThingIdx person)
+{
+    struct Thing *p_person;
+
+    if (person <= 0)
+        return false;
+
+    p_person = &things[person];
     return ((p_person->Flag & TngF_Persuaded) != 0);
 }
 

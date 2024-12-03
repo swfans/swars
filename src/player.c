@@ -185,6 +185,32 @@ TbBool player_agent_has_weapon(PlayerIdx plyr, ushort plagent, ubyte weapon)
     return weapons_has_weapon(p_player->Weapons[plagent], weapon);
 }
 
+TbBool player_agent_is_alive(PlayerIdx plyr, ushort plagent)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+
+    p_player = &players[plyr];
+    p_agent = p_player->MyAgent[plagent];
+    if (p_agent->Type != TT_PERSON)
+        return false;
+
+    return ((p_agent->Flag & TngF_Destroyed) == 0);
+}
+
+TbBool player_agent_is_executing_commands(PlayerIdx plyr, ushort plagent)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+
+    p_player = &players[plyr];
+    p_agent = p_player->MyAgent[plagent];
+    if (p_agent->Type != TT_PERSON)
+        return false;
+
+    return person_is_executing_commands(p_agent->ThingOffset);
+}
+
 TbBool free_slot(ushort plagent, ubyte weapon)
 {
     TbBool ret;

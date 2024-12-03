@@ -236,6 +236,7 @@ TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle);
 
 int limit_mood(struct Thing *p_thing, short mood);
 
+TbBool person_is_executing_commands(ThingIdx person);
 TbBool person_is_persuaded(ThingIdx thing);
 TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
 TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
