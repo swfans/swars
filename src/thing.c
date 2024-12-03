@@ -437,7 +437,7 @@ TbBool process_thing_unkflag0002(struct Thing *p_thing)
         p_thing->U.UPerson.SpecialTimer--;
         if (p_thing->U.UPerson.SpecialTimer >= 0)
             return true;
-        if ((p_thing->Flag & 0x10000000) == 0)
+        if ((p_thing->Flag & TngF_InVehicle) == 0)
             add_node_thing(p_thing->ThingOffset);
         p_thing->Flag2 &= ~TgF2_Unkn0002;
         return true;
@@ -456,7 +456,7 @@ void process_thing(struct Thing *p_thing, ThingIdx thing)
     case TT_UNKN4:
         process_shield(p_thing);
         process_person(p_thing);
-        if ((p_thing->Flag & 0x0800) != 0)
+        if ((p_thing->Flag & TngF_Unkn0800) != 0)
             p_thing->Flag2 |= TgF2_Unkn0400;
         else
             p_thing->Flag2 &= ~TgF2_Unkn0400;
@@ -681,13 +681,13 @@ void process_things(void)
         dcthing = p_player->DirectControl[0];
         p_dcthing = &things[dcthing];
         if (((1 << plyr) & ingame.InNetGame_UNSURE) != 0
-          && (p_dcthing->Flag & 0x1000) == 0)
+          && (p_dcthing->Flag & TngF_Unkn1000) == 0)
         {
 #if 0
             for (i = 0; i < playable_agents; i++)
               ;
 #endif
-            p_dcthing->Flag |= 0x1000;
+            p_dcthing->Flag |= TngF_Unkn1000;
         }
     }
 #if 0

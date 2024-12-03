@@ -530,7 +530,7 @@ void init_mgun_laser(struct Thing *p_owner, ushort bmsize)
     }
     p_shot->StartTimer1 = bmsize;
     p_shot->Timer1 = bmsize;
-    p_shot->Flag = 0x04;
+    p_shot->Flag = TngF_Unkn0004;
     p_shot->Type = TT_LASER11;
     add_node_thing(p_shot->ThingOffset);
 }

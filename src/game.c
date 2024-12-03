@@ -7462,7 +7462,7 @@ void player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ushort 
         reset_person_frame(p_person);
     }
     if (p_person->State == PerSt_PROTECT_PERSON)
-        p_person->Flag2 |= 0x10000000;
+        p_person->Flag2 |= TgF2_Unkn10000000;
     person_init_drop(p_person, weapon);
     p_person->Speed = calc_person_speed(p_person);
 }
@@ -7544,7 +7544,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
             break;
         player_agent_weapon_switch(plyr, packet->Data, 1);
         break;
@@ -7552,7 +7552,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
             break;
         if (p_thing->U.UPerson.CurrentWeapon == 0)
             break;
@@ -7568,7 +7568,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->Flag2 & 0x0800) != 0)
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
             break;
         person_enter_vehicle(p_thing, &things[packet->X]);
         break;
@@ -7576,7 +7576,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->Flag2 & 0x0800) != 0)
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
             break;
         person_attempt_to_leave_vehicle(p_thing);
         break;
@@ -7599,7 +7599,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x10) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
             break;
         player_agent_weapon_switch(plyr, packet->Data, -1);
         break;
@@ -7637,7 +7637,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
             break;
         person_init_plant_mine(p_thing, packet->X, packet->Y, packet->Z, 0);
         break;
@@ -7645,7 +7645,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
             break;
         thing_select_specific_weapon(p_thing, packet->X, 0);
         peep_change_weapon(p_thing);
@@ -7667,7 +7667,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
             break;
         player_agent_init_drop_item(plyr, p_thing, packet->X);
         break;
@@ -7684,7 +7684,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         break;
     case PAct_FOLLOW_PERSON:
         p_thing = &things[packet->Data];
-        if ((p_thing->Flag2 & 0x0800) == 0)
+        if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
             person_init_follow_person(p_thing, &things[packet->X]);
         break;
     case PAct_CONTROL_MODE:
@@ -7721,13 +7721,13 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         break;
     case PAct_SHIELD_TOGGLE:
         p_thing = &things[packet->Data];
-        if ((p_thing->Flag2 & 0x0800) != 0)
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
             break;
         person_shield_toggle(p_thing, plyr);
         break;
     case PAct_PLANT_MINE_AT_GND_PT_FF:
         p_thing = &things[packet->Data];
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
             break;
         person_init_plant_mine_fast(p_thing, packet->X, packet->Y, packet->Z, 0);
         break;
@@ -7737,12 +7737,12 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         break;
     case PAct_PEEPS_SCATTER:
         p_thing = &things[packet->Data];
-        if ((p_thing->Flag2 & 0x800) == 0)
+        if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
             make_peeps_scatter(p_thing, packet->X, packet->Z);
         break;
     case PAct_SELECT_GRP_SPEC_WEAPON:
         p_person = &things[packet->Data];
-        if ((p_person->State == PerSt_DROP_ITEM) && ((p_person->Flag2 & 0x0010) != 0))
+        if ((p_person->State == PerSt_DROP_ITEM) && ((p_person->Flag2 & TgF2_KnockedOut) != 0))
             break;
         person_grp_witch_to_specific_weapon(p_person, plyr, packet->X);
         break;
@@ -7781,7 +7781,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
             break;
         person_init_plant_mine(p_thing, packet->X, 0, packet->Z, packet->Y);
         break;
@@ -7789,7 +7789,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & 0x0010) != 0))
+        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
             break;
         person_init_plant_mine_fast(p_thing, packet->X, 0, packet->Z, packet->Y);
         break;
@@ -7797,7 +7797,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->Flag2 & 0x0800) != 0)
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
             break;
         person_self_destruct(p_thing);
         break;
@@ -7832,12 +7832,16 @@ void process_packets(void)
         packet = &packets[plyr];
         for (i = 0; i < v53; i++)
         {
+            struct Thing *p_thing;
+
+            p_thing = &things[packet->Data];
+
             if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
                 packet->Action = 0;
             if ((packet->Action & 0x8000) == 0)
-                things[packet->Data].Flag &= ~0x0800;
+                p_thing->Flag &= ~TngF_Unkn0800;
             else
-                things[packet->Data].Flag |= 0x0800;
+                p_thing->Flag |= TngF_Unkn0800;
 
             process_packet(plyr, packet, i);
 
