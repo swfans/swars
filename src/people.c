@@ -1333,7 +1333,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     switch (p_cmd->Type)
     {
     case PCmd_NONE:
-        if ((p_person->Flag & 0x10000000) != 0)
+        if ((p_person->Flag & TngF_InVehicle) != 0)
         {
             p_vehicle = &things[p_person->U.UPerson.Vehicle];
             if ((p_vehicle->SubType == SubTT_VEH_GROUND) && ((p_vehicle->Flag & 0x02) == 0)) {
@@ -1414,7 +1414,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         break;
     case PCmd_GO_TO_POINT:
     case PCmd_RUN_TO_POINT:
-        if ((p_person->Flag & 0x10000000) != 0)
+        if ((p_person->Flag & TngF_InVehicle) != 0)
         {
             p_vehicle = &things[p_person->U.UPerson.Vehicle];
             p_vehicle->Flag &= ~0x2000;
@@ -1452,7 +1452,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.ComRange = p_cmd->Arg1;
         break;
     case PCmd_KILL_PERSON:
-        p_person->Flag2 &= ~0x80000000;
+        p_person->Flag2 &= ~TgF2_Unkn80000000;
         check_weapon(p_person, 1280);
         p_person->State = PerSt_KILL_PERSON;
         p_person->U.UPerson.ComTimer = -1;
@@ -1466,7 +1466,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         get_weapon_out(p_person);
         break;
     case PCmd_KILL_MEM_GROUP:
-        p_person->Flag2 &= ~0x80000000;
+        p_person->Flag2 &= ~TgF2_Unkn80000000;
         p_person->GotoThingIndex = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
         if (p_person->GotoThingIndex != 0)
         {
@@ -1488,7 +1488,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         get_weapon_out(p_person);
         break;
     case PCmd_KILL_ALL_GROUP:
-        p_person->Flag2 &= ~0x80000000;
+        p_person->Flag2 &= ~TgF2_Unkn80000000;
         p_person->GotoThingIndex = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
         n = p_person->U.UPerson.Group & 0x1F;
         war_flags[n].KillOnSight |= 1 << p_cmd->OtherThing;
@@ -1645,7 +1645,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             remove_path(p_person);
         break;
     case PCmd_EXIT_VEHICLE:
-        if ((p_person->Flag & 0x10000000) == 0) {
+        if ((p_person->Flag & TngF_InVehicle) == 0) {
             p_person->State = 0;
             break;
         }
@@ -1687,16 +1687,16 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
           remove_path(p_person);
         break;
     case PCmd_PING_EXIST:
-        if ((p_cmd->Flags & 0x0008) != 0)
+        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
         {
             if (on_mapwho(p_person))
                 delete_node(p_person);
-            p_person->Flag2 |= 0x01000000;
+            p_person->Flag2 |= TgF2_ExistsOffMap;
         }
-        else if ( (p_person->Flag2 & 0x01000000) != 0 )
+        else if ((p_person->Flag2 & TgF2_ExistsOffMap) != 0)
         {
-            p_person->Flag2 &= ~0x01000000;
-            if ((p_person->Flag & 0x10000000) == 0) {
+            p_person->Flag2 &= ~TgF2_ExistsOffMap;
+            if ((p_person->Flag & TngF_InVehicle) == 0) {
                 if (p_person->Type == TT_PERSON)
                     group_actions[p_person->U.UPerson.Group].Alive++;
                 add_node_thing(p_person->ThingOffset);
@@ -1705,7 +1705,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = 0;
         break;
     case PCmd_GOTOPOINT_FACE:
-        if ((p_person->Flag & 0x10000000) != 0) {
+        if ((p_person->Flag & TngF_InVehicle) != 0) {
             break;
         }
         if (p_person->U.UPerson.PathIndex != 0)
@@ -1736,7 +1736,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->SubState = 0;
         break;
     case PCmd_KILL_EVERYONE:
-        p_person->Flag2 &= ~0x80000000;
+        p_person->Flag2 &= ~TgF2_Unkn80000000;
         p_person->GotoThingIndex = find_peep_in_area(p_person, p_cmd);
         if (p_person->GotoThingIndex != 0)
         {
@@ -1758,9 +1758,9 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         break;
     case PCmd_GUARD_OFF:
         if ((p_cmd->Flags & 0x08) != 0) {
-            p_person->Flag &= ~0x0008;
+            p_person->Flag &= ~PCmdF_Unkn0008;
         } else {
-            p_person->Flag |= 0x0008;
+            p_person->Flag |= PCmdF_Unkn0008;
         }
         p_person->State = 0;
         break;
@@ -1808,7 +1808,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_WAND_MISSION_START:
     case PCmd_WAND_OBJT_DESTROY:
     case PCmd_WAND_OBJV:
-        if ((p_person->Flag & 0x10000000) != 0)
+        if ((p_person->Flag & TngF_InVehicle) != 0)
         {
             p_vehicle = &things[p_person->U.UPerson.Vehicle];
             if ((p_vehicle->SubType == SubTT_VEH_GROUND) && ((p_vehicle->Flag & 0x02) == 0))
@@ -1895,22 +1895,22 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         break;
     case PCmd_PING_P_V:
         p_othertng = &things[p_cmd->OtherThing];
-        if ((p_cmd->Flags & 0x0008) != 0)
+        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
         {
             if (on_mapwho(p_othertng))
                 delete_node(p_othertng);
-            p_othertng->Flag2 |= 0x01000000;
+            p_othertng->Flag2 |= TgF2_ExistsOffMap;
         }
-        else if ((p_othertng->Flag2 & 0x01000000) != 0)
+        else if ((p_othertng->Flag2 & TgF2_ExistsOffMap) != 0)
         {
-            p_othertng->Flag2 &= ~0x01000000;
-            if ((p_othertng->Flag & 0x10000000) == 0)
+            p_othertng->Flag2 &= ~TgF2_ExistsOffMap;
+            if ((p_othertng->Flag & TngF_InVehicle) == 0)
                 add_node_thing(p_othertng->ThingOffset);
         }
         p_person->State = 0;
         break;
     case PCmd_CAMERA_TRACK:
-        if ((p_cmd->Flags & 0x0008) != 0)
+        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
         {
             p_othertng = &things[players[local_player_no].DirectControl[0]];
             ingame.TrackThing = 0;
@@ -1928,7 +1928,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = 0;
         break;
     case PCmd_PLAY_SAMPLE:
-        if ((p_cmd->Flags & 0x0008) != 0)
+        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
         {
             play_sample_using_heap(0, p_cmd->OtherThing, 127, 64, 100, 0, 1u);
         }
@@ -1939,13 +1939,13 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = 0;
         break;
     case PCmd_IGNORE_ENEMIES:
-        if ((p_cmd->Flags & 0x0008) != 0)
+        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
         {
-            p_person->Flag2 &= ~0x80000000;
+            p_person->Flag2 &= ~TgF2_Unkn80000000;
         }
         else
         {
-            p_person->Flag2 |= 0x80000000;
+            p_person->Flag2 |= TgF2_Unkn80000000;
         }
         p_person->State = 0;
         break;
@@ -1953,7 +1953,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = PerSt_NONE;
         break;
     case PCmd_CAMERA_ROTATE:
-        if ((p_cmd->Flags & 0x0008) != 0)
+        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
         {
             ingame.fld_unkCA6 = 0;
         }
