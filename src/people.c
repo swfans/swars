@@ -25,6 +25,7 @@
 #include "bfutility.h"
 
 #include "bigmap.h"
+#include "building.h"
 #include "command.h"
 #include "display.h"
 #include "drawtext.h"
@@ -35,6 +36,7 @@
 #include "scandraw.h"
 #include "sound.h"
 #include "thing.h"
+#include "vehicle.h"
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -1164,10 +1166,20 @@ void process_stamina(struct Thing *p_person)
         : : "a" (p_person));
 }
 
-void person_init_command(struct Thing *p_person, ushort from)
+void set_peep_comcur(struct Thing *p_person)
 {
-    asm volatile ("call ASM_person_init_command\n"
-        : : "a" (p_person), "d" (from));
+    asm volatile ("call ASM_set_peep_comcur\n"
+        : : "a" (p_person));
+}
+
+ubyte thing_arrived_at_obj_radius(short thing, int x, int y, int z, int radius)
+{
+    ubyte ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_thing_arrived_at_obj_radius\n"
+        : "=r" (ret) : "a" (thing), "d" (x), "b" (y), "c" (z), "g" (radius));
+    return ret;
 }
 
 ubyte conditional_command_state_true(ushort com, struct Thing *p_me, ubyte from)
@@ -1177,6 +1189,78 @@ ubyte conditional_command_state_true(ushort com, struct Thing *p_me, ubyte from)
       "call ASM_conditional_command_state_true\n"
         : "=r" (ret) : "a" (com), "d" (p_me), "b" (from));
     return ret;
+}
+
+void person_init_drop_special(struct Thing *p_person, ThingIdx item)
+{
+    asm volatile ("call ASM_person_init_drop_special\n"
+        : : "a" (p_person), "d" (item));
+}
+
+int start_goto_vehicle(struct Thing *p_vehicle, int x, int z)
+{
+    int ret;
+    asm volatile (
+      "call ASM_start_goto_vehicle\n"
+        : "=r" (ret) : "a" (p_vehicle), "d" (x), "b" (z));
+    return ret;
+}
+
+short find_peep_in_area(struct Thing *p_me, struct Command *p_cmd)
+{
+    short ret;
+    asm volatile (
+      "call ASM_find_peep_in_area\n"
+        : "=r" (ret) : "a" (p_me), "d" (p_cmd));
+    return ret;
+}
+
+void set_person_animmode_run(struct Thing *p_person)
+{
+    asm volatile ("call ASM_set_person_animmode_run\n"
+        : : "a" (p_person));
+}
+
+void build_navigate_path_to_face(struct Thing *p_thing, short face)
+{
+    asm volatile ("call ASM_build_navigate_path_to_face\n"
+        : : "a" (p_thing), "d" (face));
+}
+
+void build_navigate_path_to_face_xz(struct Thing *p_thing, short face, int x, int z)
+{
+    asm volatile ("call ASM_build_navigate_path_to_face_xz\n"
+        : : "a" (p_thing), "d" (face), "b" (x), "c" (z));
+}
+
+ubyte on_mapwho(struct Thing *p_thing)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_on_mapwho\n"
+        : "=r" (ret) : "a" (p_thing));
+    return ret;
+}
+
+void check_weapon(struct Thing *p_person, int range)
+{
+    asm volatile ("call ASM_check_weapon\n"
+        : : "a" (p_person), "d" (range));
+}
+
+void get_weapon_out(struct Thing *p_person)
+{
+    asm volatile ("call ASM_get_weapon_out\n"
+        : : "a" (p_person));
+}
+
+void person_init_command(struct Thing *p_person, ushort from)
+{
+#if 1
+    asm volatile ("call ASM_person_init_command\n"
+        : : "a" (p_person), "d" (from));
+    return;
+#endif
 }
 
 ubyte is_command_completed(struct Thing *p_person)
@@ -1246,12 +1330,6 @@ void person_goto_point_rel(struct Thing *p_person)
 void person_init_drop(struct Thing *p_person, ThingIdx item)
 {
     asm volatile ("call ASM_person_init_drop\n"
-        : : "a" (p_person), "d" (item));
-}
-
-void person_init_drop_special(struct Thing *p_person, ThingIdx item)
-{
-    asm volatile ("call ASM_person_init_drop_special\n"
         : : "a" (p_person), "d" (item));
 }
 
@@ -1699,12 +1777,6 @@ void process_wander_and_fly(struct Thing *p_person, struct Thing *p_vehicle)
 {
     asm volatile ("call ASM_process_wander_and_fly\n"
         : : "a" (p_person), "d" (p_vehicle));
-}
-
-void set_peep_comcur(struct Thing *p_person)
-{
-    asm volatile ("call ASM_set_peep_comcur\n"
-        : : "a" (p_person));
 }
 
 void process_lighting_unkn1(struct Thing *p_person)
