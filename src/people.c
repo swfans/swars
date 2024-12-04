@@ -1254,6 +1254,69 @@ void get_weapon_out(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+#define CMD_CONDITION_CONTINUE 0xFFFF
+
+/** When one of "until" conditions of a command is met, give the next command.
+ *
+ * A command can have multiple "until" conditions below. Meeting at least one
+ * of the conditions terminates the command.
+ *
+ * @return If loop should terminate and the next command should start, this call
+ *   returns its index; otherwise, CMD_CONDITION_CONTINUE is returned.
+ */
+ushort person_command_until_check_condition(struct Thing *p_person, ushort cond_cmd)
+{
+    struct Command *p_cmd;
+    ushort cmd;
+    TbBool until_met;
+
+    p_cmd = &game_commands[cond_cmd];
+    cmd = p_cmd->Next;
+    until_met = false;
+
+    while (1)
+    {
+        if (cmd == 0)
+            break;
+        p_cmd = &game_commands[cmd];
+        if ((p_cmd->Flags & PCmdF_IsUntil) == 0)
+            break;
+        if (conditional_command_state_true(cmd, p_person, 3))
+            until_met = true;
+        cmd = p_cmd->Next;
+    }
+
+    if (!until_met)
+        return CMD_CONDITION_CONTINUE;
+
+    return cmd;
+}
+
+/** Gives the next command beyond conditions.
+ *
+ * @return Gives index of next command beyond "until" consitions, regardless
+ *   whether any of the conditions is met or not.
+ */
+ushort person_command_until_skip_condition(struct Thing *p_person, ushort cond_cmd)
+{
+    struct Command *p_cmd;
+    ushort cmd;
+
+    cmd = cond_cmd;
+
+    while (1)
+    {
+        if (cmd == 0)
+            break;
+        p_cmd = &game_commands[cmd];
+        if ((p_cmd->Flags & PCmdF_IsUntil) == 0)
+            break;
+        cmd = p_cmd->Next;
+    }
+
+    return cmd;
+}
+
 TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
 {
     struct Command *p_cmd;
@@ -1288,7 +1351,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->StartTimer1 = 48;
         p_person->U.UPerson.Timer2 = 5;
         p_person->U.UPerson.StartTimer2 = 50;
-        return 1;
+        break;
     case PCmd_STAY:
     case PCmd_HIDE:
     case PCmd_AVOID_PERSON:
@@ -1348,7 +1411,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_UNTIL_TIME:
     case PCmd_UNTIL_OBJV:
     case PCmd_UNTIL_G_NOT_SEEN:
-        return 1;
+        break;
     case PCmd_GO_TO_POINT:
     case PCmd_RUN_TO_POINT:
         if ((p_person->Flag & 0x10000000) != 0)
@@ -1357,7 +1420,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_vehicle->Flag &= ~0x2000;
             start_goto_vehicle(p_vehicle, p_cmd->X, p_cmd->Z);
             p_person->State = PerSt_WAIT_VEHICLE;
-            return 1;
+            break;
         }
         if (p_person->U.UPerson.PathIndex != 0)
             remove_path(p_person);
@@ -1378,7 +1441,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_person->StartTimer1 = 48;
             p_person->U.UPerson.ComRange = p_cmd->Arg1;
         }
-        return 1;
+        break;
     case PCmd_GO_TO_PERSON:
         p_person->State = PerSt_GOTO_PERSON;
         p_person->U.UPerson.ComTimer = -1;
@@ -1387,7 +1450,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.StartTimer2 = 50;
         p_person->SubState = 0;
         p_person->U.UPerson.ComRange = p_cmd->Arg1;
-        return 1;
+        break;
     case PCmd_KILL_PERSON:
         p_person->Flag2 &= ~0x80000000;
         check_weapon(p_person, 1280);
@@ -1401,7 +1464,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.ComRange = weapon_range >> 6;
         p_person->SubState = 0;
         get_weapon_out(p_person);
-        return 1;
+        break;
     case PCmd_KILL_MEM_GROUP:
         p_person->Flag2 &= ~0x80000000;
         p_person->GotoThingIndex = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
@@ -1423,7 +1486,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_person->State = 0;
         }
         get_weapon_out(p_person);
-        return 1;
+        break;
     case PCmd_KILL_ALL_GROUP:
         p_person->Flag2 &= ~0x80000000;
         p_person->GotoThingIndex = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
@@ -1446,7 +1509,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_person->State = 0;
         }
         get_weapon_out(p_person);
-        return 1;
+        break;
     case PCmd_PERSUADE_PERSON:
         p_person->State = 40;
         p_person->U.UPerson.ComTimer = -1;
@@ -1456,7 +1519,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.StartTimer2 = 10;
         p_person->SubState = 0;
         p_person->GotoThingIndex = p_cmd->OtherThing;
-        return 1;
+        break;
     case PCmd_PERSUADE_MEM_GROUP:
     case PCmd_PERSUADE_ALL_GROUP:
         p_person->GotoThingIndex = find_nearest_from_group(p_person, p_cmd->OtherThing, 1);
@@ -1470,7 +1533,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_person->SubState = 0;
             p_person->PTarget = &things[p_person->GotoThingIndex];
         }
-        return 1;
+        break;
     case PCmd_BLOCK_PERSON:
         p_person->State = 28;
         p_person->U.UPerson.ComTimer = -1;
@@ -1480,7 +1543,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.StartTimer2 = 20;
         p_person->SubState = 0;
         p_person->GotoThingIndex = p_cmd->OtherThing;
-        return 1;
+        break;
     case PCmd_SCARE_PERSON:
         p_person->State = PerSt_SCARE_PERSON;
         p_person->U.UPerson.ComTimer = -1;
@@ -1491,7 +1554,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->GotoThingIndex = p_cmd->OtherThing;
         p_person->SubState = 0;
         get_weapon_out(p_person);
-        return 1;
+        break;
     case PCmd_FOLLOW_PERSON:
         p_person->State = 41;
         p_person->U.UPerson.ComTimer = -1;
@@ -1500,7 +1563,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.StartTimer2 = 50;
         p_person->SubState = 0;
         p_person->GotoThingIndex = p_cmd->OtherThing;
-        return 1;
+        break;
     case PCmd_SUPPORT_PERSON:
         p_person->State = PerSt_SUPPORT_PERSON;
         p_person->U.UPerson.ComTimer = -1;
@@ -1509,7 +1572,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.StartTimer2 = 50;
         p_person->SubState = 0;
         p_person->GotoThingIndex = p_cmd->OtherThing;
-        return 1;
+        break;
     case PCmd_PROTECT_PERSON:
         p_person->State = PerSt_PROTECT_PERSON;
         p_person->U.UPerson.ComTimer = -1;
@@ -1519,7 +1582,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->SubState = 0;
         p_person->GotoThingIndex = p_cmd->OtherThing;
         p_person->Owner = p_cmd->OtherThing;
-        return 1;
+        break;
     case PCmd_GET_ITEM:
         p_person->State = 44;
         p_sthing = &sthings[p_cmd->OtherThing];
@@ -1530,7 +1593,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->SubState = 0;
         p_person->U.UPerson.ComRange = 0;
         p_person->GotoThingIndex = p_cmd->OtherThing;
-        return 1;
+        break;
     case PCmd_USE_WEAPON:
         wdef = &weapon_defs[p_cmd->OtherThing];
         if (p_person->U.UPerson.Energy < wdef->EnergyUsed + 1)
@@ -1540,10 +1603,10 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         thing_shoot_at_point(p_person, p_cmd->X, p_cmd->Y, p_cmd->Z, 0);
         process_weapon(p_person);
         p_person->Flag &= ~0x0800;
-        return 1;
+        break;
     case PCmd_DROP_SPEC_ITEM:
         person_init_drop_special(p_person, p_cmd->OtherThing);
-        return 1;
+        break;
     case PCmd_WAND_AVOID_GROUP:
         p_person->State = PerSt_AVOID_GROUP;
         p_person->U.UPerson.ComTimer = -1;
@@ -1552,7 +1615,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->Timer1 = 48;
         p_person->StartTimer1 = 48;
         p_person->SubState = p_cmd->Type;
-        return 1;
+        break;
     case PCmd_DESTROY_BUILDING:
         p_person->State = PerSt_DESTROY_BUILDING;
         p_person->U.UPerson.ComTimer = -1;
@@ -1568,7 +1631,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         if (p_person->U.UPerson.PathIndex != 0)
             remove_path(p_person);
         get_weapon_out(p_person);
-        return 1;
+        break;
     case PCmd_USE_VEHICLE:
         p_person->State = PerSt_USE_VEHICLE;
         p_person->U.UPerson.ComTimer = -1;
@@ -1580,14 +1643,14 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.GotoZ = p_othertng->Z >> 8;
         if (p_person->U.UPerson.PathIndex != 0)
             remove_path(p_person);
-        return 1;
+        break;
     case PCmd_EXIT_VEHICLE:
         if ((p_person->Flag & 0x10000000) == 0) {
             p_person->State = 0;
-            return 1;
+            break;
         }
         person_attempt_to_leave_vehicle(p_person);
-        return 1;
+        break;
     case PCmd_CATCH_TRAIN:
         p_person->State = PerSt_CATCH_TRAIN;
         p_person->U.UPerson.ComTimer = -1;
@@ -1598,21 +1661,21 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.Timer2 = 10;
         p_person->U.UPerson.StartTimer2 = 10;
         p_person->SubState = 0;
-        return 1;
+        break;
     case PCmd_OPEN_DOME:
         p_othertng = &things[p_cmd->OtherThing];
         if (p_othertng->SubType == SubTT_BLD_DOME)
             p_othertng->Flag |= 0x0040;
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_CLOSE_DOME:
         p_othertng = &things[p_cmd->OtherThing];
         p_othertng->Flag |= 0x0080;
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_DROP_WEAPON:
         person_init_drop(p_person, p_cmd->OtherThing);
-        return 1;
+        break;
     case PCmd_EXIT_FERRY:
         p_person->State = PerSt_EXIT_FERRY;
         p_person->U.UPerson.ComTimer = -1;
@@ -1622,7 +1685,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.GotoZ = things[p_cmd->OtherThing].Z >> 8;
         if (p_person->U.UPerson.PathIndex != 0)
           remove_path(p_person);
-        return 1;
+        break;
     case PCmd_PING_EXIST:
         if ((p_cmd->Flags & 0x0008) != 0)
         {
@@ -1640,10 +1703,10 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             }
         }
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_GOTOPOINT_FACE:
         if ((p_person->Flag & 0x10000000) != 0) {
-            return 1;
+            break;
         }
         if (p_person->U.UPerson.PathIndex != 0)
             remove_path(p_person);
@@ -1657,12 +1720,12 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->SubState = 0;
         p_person->Timer1 = 48;
         p_person->StartTimer1 = 48;
-        return 1;
+        break;
     case PCmd_SELF_DESTRUCT:
         p_person->U.UPerson.UMod.Mods &= ~0x01C0;
         p_person->U.UPerson.UMod.Mods |= (0x0C0);
         person_self_destruct(p_person);
-        return 1;
+        break;
     case PCmd_PROTECT_MEM_G:
         p_person->State = PerSt_PROTECT_PERSON;
         p_person->U.UPerson.ComTimer = -1;
@@ -1671,7 +1734,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.Timer2 = 50;
         p_person->U.UPerson.StartTimer2 = 50;
         p_person->SubState = 0;
-        return 1;
+        break;
     case PCmd_KILL_EVERYONE:
         p_person->Flag2 &= ~0x80000000;
         p_person->GotoThingIndex = find_peep_in_area(p_person, p_cmd);
@@ -1692,7 +1755,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_person->State = 0;
         }
         get_weapon_out(p_person);
-        return 1;
+        break;
     case PCmd_GUARD_OFF:
         if ((p_cmd->Flags & 0x08) != 0) {
             p_person->Flag &= ~0x0008;
@@ -1700,7 +1763,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_person->Flag |= 0x0008;
         }
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_WAIT_TIME:
         p_cmd->Arg1 = 0;
         // Fall through
@@ -1724,7 +1787,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = 5;
         p_person->U.UPerson.ComTimer = -1;
         p_person->SubState = p_cmd->Type;
-        return 1;
+        break;
     case PCmd_WAND_TIME:
         p_cmd->Arg1 = 0;
         // Fall through
@@ -1765,37 +1828,37 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_person->StartTimer1 = 48;
             p_person->SubState = p_cmd->Type;
         }
-        return 1;
+        break;
     case PCmd_UNKN66:
         p_ocmd = &game_commands[p_person->U.UPerson.ComCur];
         p_person->U.UPerson.ComCur = p_ocmd->Next;
-        return 2;
+        return true;
     case PCmd_ADD_STATIC:
         add_static(p_cmd->X, p_cmd->Y, p_cmd->Z, 900, 10);
         p_ocmd = &game_commands[p_person->U.UPerson.ComCur];
         p_person->U.UPerson.ComCur = p_ocmd->Next;
-        return 2;
+        return true;
     case PCmd_WAIT_TIME2:
         p_person->State = PerSt_WAIT;
         p_person->SubState = 0;
         p_person->U.UPerson.ComTimer = p_cmd->Time;
-        return 1;
+        break;
     case PCmd_LOOP_COM:
         p_person->State = PerSt_UNUSED_3A;
         p_person->U.UPerson.ComCur = p_cmd->OtherThing;
-        return 1;
+        break;
     case PCmd_WITHIN_AREA:
         p_person->State = 0;
         p_person->U.UPerson.Within = cmd;
-        return 1;
+        break;
     case PCmd_WITHIN_OFF:
         p_person->U.UPerson.Within = 0;
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_LOCK_BUILDN:
         things[p_cmd->OtherThing].Flag |= 0x0800;
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_UNLOCK_BUILDN:
         things[p_cmd->OtherThing].Flag &= ~0x0800;
         p_person->State = PerSt_NONE;
@@ -1803,7 +1866,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_SELECT_WEAPON:
         p_person->State = 0;
         p_person->U.UPerson.CurrentWeapon = p_cmd->OtherThing;
-        return 1;
+        break;
     case PCmd_HARD_AS_AGENT:
         p_pestat = &peep_type_stats[SubTT_PERS_AGENT];
         p_person->U.UPerson.Energy = p_pestat->MaxEnergy;
@@ -1825,11 +1888,11 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->U.UPerson.MaxHealth = p_person->Health;
         p_person->U.UPerson.MaxEnergy = p_person->U.UPerson.Energy;
         p_person->U.UPerson.MaxShieldEnergy = p_person->U.UPerson.ShieldEnergy;
-        return 1;
+        break;
     case PCmd_START_DANGER_MUSIC:
         update_danger_music(1);
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_PING_P_V:
         p_othertng = &things[p_cmd->OtherThing];
         if ((p_cmd->Flags & 0x0008) != 0)
@@ -1845,7 +1908,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
                 add_node_thing(p_othertng->ThingOffset);
         }
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_CAMERA_TRACK:
         if ((p_cmd->Flags & 0x0008) != 0)
         {
@@ -1859,11 +1922,11 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             ingame.TrackThing = p_cmd->OtherThing;
         }
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_UNTRUCE_GROUP:
         war_flags[p_person->U.UPerson.Group].Truce &= ~(1 << p_cmd->OtherThing);
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_PLAY_SAMPLE:
         if ((p_cmd->Flags & 0x0008) != 0)
         {
@@ -1874,7 +1937,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             play_dist_sample(p_person, p_cmd->OtherThing, 0x7Fu, 0x40u, 100, 0, 1);
         }
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_IGNORE_ENEMIES:
         if ((p_cmd->Flags & 0x0008) != 0)
         {
@@ -1885,7 +1948,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_person->Flag2 |= 0x80000000;
         }
         p_person->State = 0;
-        return 1;
+        break;
     case PCmd_FULL_STAMINA:
         p_person->State = PerSt_NONE;
         break;
@@ -1912,10 +1975,9 @@ void person_init_command(struct Thing *p_person, ushort from)
     return;
 #endif
     struct Command *p_cmd;
-    struct Command *p_cmd1;
     ushort cmd;
     ushort nxcmd;
-    TbBool cond_met;
+    ubyte do_next;
 
     for (cmd = p_person->U.UPerson.ComCur; 2; )
     {
@@ -1924,72 +1986,48 @@ void person_init_command(struct Thing *p_person, ushort from)
 
         p_cmd = &game_commands[cmd];
 
-        if ((p_person->Flag & 0x02) != 0)
+        if ((p_person->Flag & TngF_Destroyed) != 0)
         {
             p_person->State = PerSt_DEAD;
+            break;
         }
-        else if (cmd != 0)
+
+        if (cmd == 0)
         {
-          if ((p_cmd->Flags & 0x04) != 0)
-          {
-            while ( 1 )
+            if ((p_person->Flag2 & TgF2_Unkn0800) != 0)
             {
-              cmd = p_cmd->Next;
-              p_person->U.UPerson.ComCur = cmd;
-              p_cmd = &game_commands[cmd];
-              if (cmd == 0)
-                break;
-              if ((p_cmd->Flags & 0x04) == 0)
-                goto LABEL_7;
+                p_person->Flag2 &= ~TgF2_Unkn0800;
+                p_person->State = PerSt_WAIT;
+                p_person->U.UPerson.ComTimer = 50;
+                ingame.Flags &= ~0x01;
+                set_peep_comcur(p_person);
             }
-          }
-          else
-          {
-            if ((p_cmd->Flags & 0x02) == 0)
-            {
-              goto LABEL_142;
-            }
+            break;
+        }
 
-LABEL_7:
-            nxcmd = p_cmd->Next;
-            cond_met = false;
-            for (p_cmd1 = &game_commands[nxcmd]; (p_cmd1->Flags & 0x0004) != 0; p_cmd1 = &game_commands[p_cmd1->Next] )
-            {
-              if (nxcmd == 0)
-                break;
-              if (conditional_command_state_true(nxcmd, p_person, 3))
-                cond_met = 1;
-              nxcmd = p_cmd1->Next;
-            }
-            if (!cond_met)
-                nxcmd = 0xFFFF;
+        // Skip any detached "until" conditions for which we do not have a command
+        cmd = person_command_until_skip_condition(p_person, cmd);
+        if (cmd == 0)
+        {
+            //TODO No state change? So detached "until" causes the agent to never clear state? Do we really want that?
+            break;
+        }
 
-            if ((nxcmd & 0x8000) == 0)
-            {
-              p_person->State = PerSt_UNUSED_3A;
-              p_person->U.UPerson.ComCur = nxcmd;
+        if ((p_cmd->Flags & PCmdF_RunUntil) != 0)
+        {
+            nxcmd = person_command_until_check_condition(p_person, cmd);
+            if (nxcmd != CMD_CONDITION_CONTINUE) {
+                p_person->State = PerSt_UNUSED_3A;
+                p_person->U.UPerson.ComCur = nxcmd;
+                break;
             }
-            else
-            {
-              int ret;
-LABEL_142:
-              ret = person_init_specific_command(p_person, cmd);
-              if (ret == 1)
-                  return;
-              if (ret == 2)
+        }
+
+        do_next = person_init_specific_command(p_person, cmd);
+        if (do_next)
                   continue;
-            }
-          }
-        }
-        else if ((p_person->Flag2 & 0x0800) != 0)
-        {
-            p_person->Flag2 &= ~0x0800;
-            p_person->State = PerSt_WAIT;
-            p_person->U.UPerson.ComTimer = 50;
-            ingame.Flags &= ~0x01;
-            set_peep_comcur(p_person);
-        }
         break;
+
     }
 }
 
@@ -2774,27 +2812,14 @@ void process_person(struct Thing *p_person)
         if (p_person->U.UPerson.ComHead != 0)
         {
           struct Command *p_cmd;
-          TbBool cond_met;
-          short cmd;
+          ushort cmd;
 
           cmd = p_person->U.UPerson.ComCur;
           p_cmd = &game_commands[cmd];
-          if (((p_cmd->Flags & 0x0002) != 0) && ((p_person->Flag & TngF_Destroyed) == 0))
+          if (((p_cmd->Flags & PCmdF_RunUntil) != 0) && ((p_person->Flag & TngF_Destroyed) == 0))
           {
-              cmd = p_cmd->Next;
-              cond_met = 0;
-              for (p_cmd = &game_commands[cmd]; (p_cmd->Flags & 0x0004) != 0;
-                p_cmd = &game_commands[p_cmd->Next])
-              {
-                  if (cmd == 0)
-                      break;
-                  if (conditional_command_state_true(cmd, p_person, 3))
-                      cond_met = 1;
-                  cmd = p_cmd->Next;
-              }
-              if (!cond_met)
-                  cmd = -1;
-              if (cmd >= 0)
+              cmd = person_command_until_check_condition(p_person, cmd);
+              if (cmd != CMD_CONDITION_CONTINUE)
               {
                   p_person->U.UPerson.ComCur = cmd;
                   p_person->State = 0;
