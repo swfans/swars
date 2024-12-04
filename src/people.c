@@ -1254,13 +1254,743 @@ void get_weapon_out(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
+{
+    struct Command *p_cmd;
+    struct Command *p_ocmd;
+    struct Thing *p_vehicle;
+    struct WeaponDef *wdef;
+    struct PeepStat *p_pestat;
+    struct Thing *p_othertng;
+    struct SimpleThing *p_sthing;
+    int weapon_range;
+    int n;
+
+    p_cmd = &game_commands[cmd];
+    switch (p_cmd->Type)
+    {
+    case PCmd_NONE:
+        if ((p_person->Flag & 0x10000000) != 0)
+        {
+            p_vehicle = &things[p_person->U.UPerson.Vehicle];
+            if ((p_vehicle->SubType == SubTT_VEH_GROUND) && ((p_vehicle->Flag & 0x02) == 0)) {
+                p_vehicle->State = VehSt_WANDER;
+            }
+            p_person->SubState = PCmd_WAND_TIME;
+            p_person->U.UPerson.ComTimer = -1;
+        }
+        p_person->State = PerSt_WANDER;
+        p_person->SubState = PCmd_WAND_TIME;
+        p_person->U.UPerson.ComTimer = 9999;
+        p_person->U.UPerson.Timer2 = 10;
+        p_person->U.UPerson.StartTimer2 = 10;
+        p_person->Timer1 = 48;
+        p_person->StartTimer1 = 48;
+        p_person->U.UPerson.Timer2 = 5;
+        p_person->U.UPerson.StartTimer2 = 50;
+        return 1;
+    case PCmd_STAY:
+    case PCmd_HIDE:
+    case PCmd_AVOID_PERSON:
+    case PCmd_UNKN16:
+    case PCmd_CATCH_FERRY:
+    case PCmd_EXECUTE_COMS:
+    case PCmd_UNKN27:
+    case PCmd_UNKN28:
+    case PCmd_UNKN29:
+    case PCmd_UNKN2A:
+    case PCmd_UNKN2B:
+    case PCmd_UNKN2C:
+    case PCmd_UNKN2D:
+    case PCmd_UNKN2E:
+    case PCmd_UNKN2F:
+    case PCmd_UNKN30:
+    case PCmd_UNKN31:
+    case PCmd_UNKN32:
+    case PCmd_UNKN44:
+    case PCmd_UNKN45:
+    case PCmd_UNKN46:
+    case PCmd_UNKN58:
+    case PCmd_UNKN59:
+    case PCmd_UNKN5A:
+    case PCmd_UNKN5B:
+    case PCmd_UNKN5C:
+    case PCmd_UNKN5D:
+    case PCmd_UNKN5E:
+    case PCmd_UNKN5F:
+    case PCmd_UNKN60:
+    case PCmd_UNKN61:
+    case PCmd_UNKN62:
+    case PCmd_UNKN63:
+    case PCmd_UNKN64:
+    case PCmd_UNKN65:
+    case PCmd_UNKN67:
+    case PCmd_UNKN6A:
+    case PCmd_UNKN6B:
+    case PCmd_UNKN6C:
+    case PCmd_UNKN6D:
+    case PCmd_UNTIL_P_V_DEAD:
+    case PCmd_UNTIL_MEM_G_DEAD:
+    case PCmd_UNTIL_ALL_G_DEAD:
+    case PCmd_UNTIL_P_V_I_NEAR:
+    case PCmd_UNTIL_MEM_G_NEAR:
+    case PCmd_UNTIL_ALL_G_NEAR:
+    case PCmd_UNTIL_P_V_I_ARRIVE:
+    case PCmd_UNTIL_MEM_G_ARRIVE:
+    case PCmd_UNTIL_ALL_G_ARRIVE:
+    case PCmd_UNTIL_P_PERSUADE:
+    case PCmd_UNTIL_MEM_G_PERSUADE:
+    case PCmd_UNTIL_ALL_G_PERSUADE:
+    case PCmd_UNTIL_MISSION_SUCC:
+    case PCmd_UNTIL_MISSION_FAIL:
+    case PCmd_UNTIL_MISSION_START:
+    case PCmd_UNTIL_OBJT_DESTROY:
+    case PCmd_UNTIL_TIME:
+    case PCmd_UNTIL_OBJV:
+    case PCmd_UNTIL_G_NOT_SEEN:
+        return 1;
+    case PCmd_GO_TO_POINT:
+    case PCmd_RUN_TO_POINT:
+        if ((p_person->Flag & 0x10000000) != 0)
+        {
+            p_vehicle = &things[p_person->U.UPerson.Vehicle];
+            p_vehicle->Flag &= ~0x2000;
+            start_goto_vehicle(p_vehicle, p_cmd->X, p_cmd->Z);
+            p_person->State = PerSt_WAIT_VEHICLE;
+            return 1;
+        }
+        if (p_person->U.UPerson.PathIndex != 0)
+            remove_path(p_person);
+        if (thing_arrived_at_obj_radius(p_person->ThingOffset, p_cmd->X,
+          p_cmd->Y, p_cmd->Z, (p_cmd->Arg1 * p_cmd->Arg1) << 12)) {
+            p_person->State = 0;
+        }
+        else
+        {
+            if (p_cmd->Type == PCmd_RUN_TO_POINT)
+                set_person_animmode_run(p_person);
+            p_person->State = PerSt_GOTO_POINT;
+            p_person->U.UPerson.GotoX = p_cmd->X;
+            p_person->U.UPerson.ComTimer = -1;
+            p_person->SubState = 0;
+            p_person->U.UPerson.GotoZ = p_cmd->Z;
+            p_person->Timer1 = 48;
+            p_person->StartTimer1 = 48;
+            p_person->U.UPerson.ComRange = p_cmd->Arg1;
+        }
+        return 1;
+    case PCmd_GO_TO_PERSON:
+        p_person->State = PerSt_GOTO_PERSON;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        p_person->U.UPerson.Timer2 = 50;
+        p_person->U.UPerson.StartTimer2 = 50;
+        p_person->SubState = 0;
+        p_person->U.UPerson.ComRange = p_cmd->Arg1;
+        return 1;
+    case PCmd_KILL_PERSON:
+        p_person->Flag2 &= ~0x80000000;
+        check_weapon(p_person, 1280);
+        p_person->State = PerSt_KILL_PERSON;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->PTarget = &things[p_cmd->OtherThing];
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        weapon_range = get_weapon_range(p_person);
+        p_person->U.UPerson.Timer2 = 10;
+        p_person->U.UPerson.StartTimer2 = 10;
+        p_person->U.UPerson.ComRange = weapon_range >> 6;
+        p_person->SubState = 0;
+        get_weapon_out(p_person);
+        return 1;
+    case PCmd_KILL_MEM_GROUP:
+        p_person->Flag2 &= ~0x80000000;
+        p_person->GotoThingIndex = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
+        if (p_person->GotoThingIndex != 0)
+        {
+            check_weapon(p_person, 1280);
+            things[p_person->U.UPerson.Vehicle].Flag |= 0x2000;
+            p_person->State = 27;
+            p_person->U.UPerson.ComTimer = -1;
+            p_person->PTarget = &things[p_person->GotoThingIndex];
+            weapon_range = get_weapon_range(p_person);
+            p_person->U.UPerson.Timer2 = 10;
+            p_person->U.UPerson.StartTimer2 = 10;
+            p_person->SubState = 0;
+            p_person->U.UPerson.ComRange = weapon_range >> 6;
+        }
+        else
+        {
+            p_person->State = 0;
+        }
+        get_weapon_out(p_person);
+        return 1;
+    case PCmd_KILL_ALL_GROUP:
+        p_person->Flag2 &= ~0x80000000;
+        p_person->GotoThingIndex = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
+        n = p_person->U.UPerson.Group & 0x1F;
+        war_flags[n].KillOnSight |= 1 << p_cmd->OtherThing;
+        if (p_person->GotoThingIndex != 0)
+        {
+            check_weapon(p_person, 1280);
+            p_person->State = 27;
+            p_person->PTarget = &things[p_person->GotoThingIndex];
+            p_person->U.UPerson.ComTimer = -1;
+            weapon_range = get_weapon_range(p_person);
+            p_person->U.UPerson.Timer2 = 10;
+            p_person->U.UPerson.StartTimer2 = 10;
+            p_person->SubState = 0;
+            p_person->U.UPerson.ComRange = weapon_range >> 6;
+        }
+        else
+        {
+            p_person->State = 0;
+        }
+        get_weapon_out(p_person);
+        return 1;
+    case PCmd_PERSUADE_PERSON:
+        p_person->State = 40;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->PTarget = &things[p_cmd->OtherThing];
+        p_person->U.UPerson.ComRange = 10;
+        p_person->U.UPerson.Timer2 = 10;
+        p_person->U.UPerson.StartTimer2 = 10;
+        p_person->SubState = 0;
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        return 1;
+    case PCmd_PERSUADE_MEM_GROUP:
+    case PCmd_PERSUADE_ALL_GROUP:
+        p_person->GotoThingIndex = find_nearest_from_group(p_person, p_cmd->OtherThing, 1);
+        if (p_person->GotoThingIndex != 0)
+        {
+            p_person->State = 40;
+            p_person->U.UPerson.ComTimer = -1;
+            p_person->U.UPerson.ComRange = 10;
+            p_person->U.UPerson.Timer2 = 10;
+            p_person->U.UPerson.StartTimer2 = 10;
+            p_person->SubState = 0;
+            p_person->PTarget = &things[p_person->GotoThingIndex];
+        }
+        return 1;
+    case PCmd_BLOCK_PERSON:
+        p_person->State = 28;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->PTarget = &things[p_cmd->OtherThing];
+        p_person->U.UPerson.ComRange = 2;
+        p_person->U.UPerson.Timer2 = 20;
+        p_person->U.UPerson.StartTimer2 = 20;
+        p_person->SubState = 0;
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        return 1;
+    case PCmd_SCARE_PERSON:
+        p_person->State = PerSt_SCARE_PERSON;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->PTarget = &things[p_cmd->OtherThing];
+        p_person->U.UPerson.ComRange = 2;
+        p_person->U.UPerson.Timer2 = 50;
+        p_person->U.UPerson.StartTimer2 = 50;
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        p_person->SubState = 0;
+        get_weapon_out(p_person);
+        return 1;
+    case PCmd_FOLLOW_PERSON:
+        p_person->State = 41;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->U.UPerson.ComRange = 0;
+        p_person->U.UPerson.Timer2 = 50;
+        p_person->U.UPerson.StartTimer2 = 50;
+        p_person->SubState = 0;
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        return 1;
+    case PCmd_SUPPORT_PERSON:
+        p_person->State = PerSt_SUPPORT_PERSON;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->U.UPerson.ComRange = 3;
+        p_person->U.UPerson.Timer2 = 50;
+        p_person->U.UPerson.StartTimer2 = 50;
+        p_person->SubState = 0;
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        return 1;
+    case PCmd_PROTECT_PERSON:
+        p_person->State = PerSt_PROTECT_PERSON;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->U.UPerson.ComRange = 8;
+        p_person->U.UPerson.Timer2 = 50;
+        p_person->U.UPerson.StartTimer2 = 50;
+        p_person->SubState = 0;
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        p_person->Owner = p_cmd->OtherThing;
+        return 1;
+    case PCmd_GET_ITEM:
+        p_person->State = 44;
+        p_sthing = &sthings[p_cmd->OtherThing];
+        p_person->U.UPerson.GotoX = p_sthing->X >> 8;
+        p_person->U.UPerson.GotoZ = p_sthing->Z >> 8;
+        p_person->U.UPerson.Vehicle = 0;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->SubState = 0;
+        p_person->U.UPerson.ComRange = 0;
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        return 1;
+    case PCmd_USE_WEAPON:
+        wdef = &weapon_defs[p_cmd->OtherThing];
+        if (p_person->U.UPerson.Energy < wdef->EnergyUsed + 1)
+            p_person->U.UPerson.Energy = wdef->EnergyUsed + 1;
+        p_person->U.UPerson.CurrentWeapon = p_cmd->OtherThing;
+        p_person->U.UPerson.WeaponDir = 32 * p_person->U.UPerson.Angle;
+        thing_shoot_at_point(p_person, p_cmd->X, p_cmd->Y, p_cmd->Z, 0);
+        process_weapon(p_person);
+        p_person->Flag &= ~0x0800;
+        return 1;
+    case PCmd_DROP_SPEC_ITEM:
+        person_init_drop_special(p_person, p_cmd->OtherThing);
+        return 1;
+    case PCmd_WAND_AVOID_GROUP:
+        p_person->State = PerSt_AVOID_GROUP;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->U.UPerson.Timer2 = 5;
+        p_person->U.UPerson.StartTimer2 = 5;
+        p_person->Timer1 = 48;
+        p_person->StartTimer1 = 48;
+        p_person->SubState = p_cmd->Type;
+        return 1;
+    case PCmd_DESTROY_BUILDING:
+        p_person->State = PerSt_DESTROY_BUILDING;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->PTarget = &things[p_cmd->OtherThing];
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        weapon_range = get_weapon_range(p_person);
+        p_person->U.UPerson.Timer2 = 10;
+        p_person->U.UPerson.StartTimer2 = 10;
+        p_person->SubState = 0;
+        p_person->U.UPerson.ComRange = weapon_range >> 6;
+        p_person->U.UPerson.GotoX = p_cmd->X;
+        p_person->U.UPerson.GotoZ = p_cmd->Z;
+        if (p_person->U.UPerson.PathIndex != 0)
+            remove_path(p_person);
+        get_weapon_out(p_person);
+        return 1;
+    case PCmd_USE_VEHICLE:
+        p_person->State = PerSt_USE_VEHICLE;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->U.UPerson.ComRange = 1;
+        p_person->SubState = 0;
+        p_person->GotoThingIndex = p_cmd->OtherThing;
+        p_othertng = &things[p_cmd->OtherThing];
+        p_person->U.UPerson.GotoX = p_othertng->X >> 8;
+        p_person->U.UPerson.GotoZ = p_othertng->Z >> 8;
+        if (p_person->U.UPerson.PathIndex != 0)
+            remove_path(p_person);
+        return 1;
+    case PCmd_EXIT_VEHICLE:
+        if ((p_person->Flag & 0x10000000) == 0) {
+            p_person->State = 0;
+            return 1;
+        }
+        person_attempt_to_leave_vehicle(p_person);
+        return 1;
+    case PCmd_CATCH_TRAIN:
+        p_person->State = PerSt_CATCH_TRAIN;
+        p_person->U.UPerson.ComTimer = -1;
+        if (p_person->U.UPerson.PathIndex != 0)
+            remove_path(p_person);
+        build_navigate_path_to_face(p_person, p_cmd->OtherThing);
+        p_person->U.UPerson.ComRange = 0;
+        p_person->U.UPerson.Timer2 = 10;
+        p_person->U.UPerson.StartTimer2 = 10;
+        p_person->SubState = 0;
+        return 1;
+    case PCmd_OPEN_DOME:
+        p_othertng = &things[p_cmd->OtherThing];
+        if (p_othertng->SubType == SubTT_BLD_DOME)
+            p_othertng->Flag |= 0x0040;
+        p_person->State = 0;
+        return 1;
+    case PCmd_CLOSE_DOME:
+        p_othertng = &things[p_cmd->OtherThing];
+        p_othertng->Flag |= 0x0080;
+        p_person->State = 0;
+        return 1;
+    case PCmd_DROP_WEAPON:
+        person_init_drop(p_person, p_cmd->OtherThing);
+        return 1;
+    case PCmd_EXIT_FERRY:
+        p_person->State = PerSt_EXIT_FERRY;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->U.UPerson.ComRange = 1;
+        p_person->SubState = 0;
+        p_person->U.UPerson.GotoX = things[p_cmd->OtherThing].X >> 8;
+        p_person->U.UPerson.GotoZ = things[p_cmd->OtherThing].Z >> 8;
+        if (p_person->U.UPerson.PathIndex != 0)
+          remove_path(p_person);
+        return 1;
+    case PCmd_PING_EXIST:
+        if ((p_cmd->Flags & 0x0008) != 0)
+        {
+            if (on_mapwho(p_person))
+                delete_node(p_person);
+            p_person->Flag2 |= 0x01000000;
+        }
+        else if ( (p_person->Flag2 & 0x01000000) != 0 )
+        {
+            p_person->Flag2 &= ~0x01000000;
+            if ((p_person->Flag & 0x10000000) == 0) {
+                if (p_person->Type == TT_PERSON)
+                    group_actions[p_person->U.UPerson.Group].Alive++;
+                add_node_thing(p_person->ThingOffset);
+            }
+        }
+        p_person->State = 0;
+        return 1;
+    case PCmd_GOTOPOINT_FACE:
+        if ((p_person->Flag & 0x10000000) != 0) {
+            return 1;
+        }
+        if (p_person->U.UPerson.PathIndex != 0)
+            remove_path(p_person);
+        build_navigate_path_to_face_xz(p_person,
+          -p_cmd->OtherThing, p_cmd->X, p_cmd->Z);
+        p_person->U.UPerson.GotoX = p_cmd->X;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->U.UPerson.GotoZ = p_cmd->Z;
+        p_person->U.UPerson.ComRange = p_cmd->Arg1;
+        p_person->State = 1;
+        p_person->SubState = 0;
+        p_person->Timer1 = 48;
+        p_person->StartTimer1 = 48;
+        return 1;
+    case PCmd_SELF_DESTRUCT:
+        p_person->U.UPerson.UMod.Mods &= ~0x01C0;
+        p_person->U.UPerson.UMod.Mods |= (0x0C0);
+        person_self_destruct(p_person);
+        return 1;
+    case PCmd_PROTECT_MEM_G:
+        p_person->State = PerSt_PROTECT_PERSON;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->GotoThingIndex = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
+        p_person->U.UPerson.ComRange = 8;
+        p_person->U.UPerson.Timer2 = 50;
+        p_person->U.UPerson.StartTimer2 = 50;
+        p_person->SubState = 0;
+        return 1;
+    case PCmd_KILL_EVERYONE:
+        p_person->Flag2 &= ~0x80000000;
+        p_person->GotoThingIndex = find_peep_in_area(p_person, p_cmd);
+        if (p_person->GotoThingIndex != 0)
+        {
+            check_weapon(p_person, 1280);
+            p_person->State = 27;
+            p_person->U.UPerson.ComTimer = -1;
+            p_person->PTarget = &things[p_person->GotoThingIndex];
+            weapon_range = get_weapon_range(p_person);
+            p_person->U.UPerson.Timer2 = 10;
+            p_person->U.UPerson.StartTimer2 = 10;
+            p_person->SubState = 0;
+            p_person->U.UPerson.ComRange = weapon_range >> 6;
+        }
+        else
+        {
+            p_person->State = 0;
+        }
+        get_weapon_out(p_person);
+        return 1;
+    case PCmd_GUARD_OFF:
+        if ((p_cmd->Flags & 0x08) != 0) {
+            p_person->Flag &= ~0x0008;
+        } else {
+            p_person->Flag |= 0x0008;
+        }
+        p_person->State = 0;
+        return 1;
+    case PCmd_WAIT_TIME:
+        p_cmd->Arg1 = 0;
+        // Fall through
+    case PCmd_WAIT_P_V_DEAD:
+    case PCmd_WAIT_MEM_G_DEAD:
+    case PCmd_WAIT_ALL_G_DEAD:
+    case PCmd_WAIT_P_V_I_NEAR:
+    case PCmd_WAIT_MEM_G_NEAR:
+    case PCmd_WAIT_ALL_G_NEAR:
+    case PCmd_WAIT_P_V_I_ARRIVE:
+    case PCmd_WAIT_MEM_G_ARRIVE:
+    case PCmd_WAIT_ALL_G_ARRIVE:
+    case PCmd_WAIT_P_PERSUADE:
+    case PCmd_WAIT_MEM_G_PERSUADE:
+    case PCmd_WAIT_ALL_G_PERSUADE:
+    case PCmd_WAIT_MISSION_SUCC:
+    case PCmd_WAIT_MISSION_FAIL:
+    case PCmd_WAIT_MISSION_START:
+    case PCmd_WAIT_OBJT_DESTROY:
+    case PCmd_WAIT_OBJV:
+        p_person->State = 5;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->SubState = p_cmd->Type;
+        return 1;
+    case PCmd_WAND_TIME:
+        p_cmd->Arg1 = 0;
+        // Fall through
+    case PCmd_WAND_P_V_DEAD:
+    case PCmd_WAND_MEM_G_DEAD:
+    case PCmd_WAND_ALL_G_DEAD:
+    case PCmd_WAND_P_V_I_NEAR:
+    case PCmd_WAND_MEM_G_NEAR:
+    case PCmd_WAND_ALL_G_NEAR:
+    case PCmd_WAND_P_V_I_ARRIVE:
+    case PCmd_WAND_MEM_G_ARRIVE:
+    case PCmd_WAND_ALL_G_ARRIVE:
+    case PCmd_WAND_P_PERSUADE:
+    case PCmd_WAND_MEM_G_PERSUADE:
+    case PCmd_WAND_ALL_G_PERSUADE:
+    case PCmd_WAND_MISSION_SUCC:
+    case PCmd_WAND_MISSION_FAIL:
+    case PCmd_WAND_MISSION_START:
+    case PCmd_WAND_OBJT_DESTROY:
+    case PCmd_WAND_OBJV:
+        if ((p_person->Flag & 0x10000000) != 0)
+        {
+            p_vehicle = &things[p_person->U.UPerson.Vehicle];
+            if ((p_vehicle->SubType == SubTT_VEH_GROUND) && ((p_vehicle->Flag & 0x02) == 0))
+                p_vehicle->State = VehSt_WANDER;
+            p_person->State = PerSt_WANDER;
+            p_person->U.UPerson.ComTimer = -1;
+            p_person->U.UPerson.Timer2 = -1;
+            p_person->SubState = p_cmd->Type;
+        }
+        else
+        {
+            p_person->State = PerSt_WANDER;
+            p_person->U.UPerson.ComTimer = -1;
+            p_person->U.UPerson.Timer2 = 10;
+            p_person->U.UPerson.StartTimer2 = 10;
+            p_person->Timer1 = 48;
+            p_person->StartTimer1 = 48;
+            p_person->SubState = p_cmd->Type;
+        }
+        return 1;
+    case PCmd_UNKN66:
+        p_ocmd = &game_commands[p_person->U.UPerson.ComCur];
+        p_person->U.UPerson.ComCur = p_ocmd->Next;
+        return 2;
+    case PCmd_ADD_STATIC:
+        add_static(p_cmd->X, p_cmd->Y, p_cmd->Z, 900, 10);
+        p_ocmd = &game_commands[p_person->U.UPerson.ComCur];
+        p_person->U.UPerson.ComCur = p_ocmd->Next;
+        return 2;
+    case PCmd_WAIT_TIME2:
+        p_person->State = PerSt_WAIT;
+        p_person->SubState = 0;
+        p_person->U.UPerson.ComTimer = p_cmd->Time;
+        return 1;
+    case PCmd_LOOP_COM:
+        p_person->State = PerSt_UNUSED_3A;
+        p_person->U.UPerson.ComCur = p_cmd->OtherThing;
+        return 1;
+    case PCmd_WITHIN_AREA:
+        p_person->State = 0;
+        p_person->U.UPerson.Within = cmd;
+        return 1;
+    case PCmd_WITHIN_OFF:
+        p_person->U.UPerson.Within = 0;
+        p_person->State = 0;
+        return 1;
+    case PCmd_LOCK_BUILDN:
+        things[p_cmd->OtherThing].Flag |= 0x0800;
+        p_person->State = 0;
+        return 1;
+    case PCmd_UNLOCK_BUILDN:
+        things[p_cmd->OtherThing].Flag &= ~0x0800;
+        p_person->State = PerSt_NONE;
+        break;
+    case PCmd_SELECT_WEAPON:
+        p_person->State = 0;
+        p_person->U.UPerson.CurrentWeapon = p_cmd->OtherThing;
+        return 1;
+    case PCmd_HARD_AS_AGENT:
+        p_pestat = &peep_type_stats[SubTT_PERS_AGENT];
+        p_person->U.UPerson.Energy = p_pestat->MaxEnergy;
+        p_person->U.UPerson.ShieldEnergy = p_pestat->MaxShield;
+        p_person->Health = p_pestat->MaxHealth;
+        p_person->U.UPerson.Energy = ((p_pestat->MaxEnergy
+          * ((ushort)(p_person->U.UPerson.UMod.Mods << 7) >> 13)) >> 1) + p_person->U.UPerson.Energy;
+        p_person->U.UPerson.ShieldEnergy = ((((ushort)(16 * p_person->U.UPerson.UMod.Mods) >> 13)
+          * (ushort)p_pestat->MaxShield) >> 1) + p_person->U.UPerson.ShieldEnergy;
+        n = ((((ushort)(p_person->U.UPerson.UMod.Mods << 10) >> 13)
+              + (p_person->U.UPerson.UMod.Mods & 7)
+              + 2 * ((ushort)(p_person->U.UPerson.UMod.Mods << 7) >> 13)
+              + 2 * ((ushort)(16 * p_person->U.UPerson.UMod.Mods) >> 13))
+             * (ushort)p_pestat->MaxHealth) >> 3;
+        p_person->State = 0;
+        p_person->Health = p_person->Health + n;
+        p_person->U.UPerson.Stamina = p_pestat->MaximumStamina;
+        p_person->U.UPerson.MaxStamina = p_pestat->MaximumStamina;
+        p_person->U.UPerson.MaxHealth = p_person->Health;
+        p_person->U.UPerson.MaxEnergy = p_person->U.UPerson.Energy;
+        p_person->U.UPerson.MaxShieldEnergy = p_person->U.UPerson.ShieldEnergy;
+        return 1;
+    case PCmd_START_DANGER_MUSIC:
+        update_danger_music(1);
+        p_person->State = 0;
+        return 1;
+    case PCmd_PING_P_V:
+        p_othertng = &things[p_cmd->OtherThing];
+        if ((p_cmd->Flags & 0x0008) != 0)
+        {
+            if (on_mapwho(p_othertng))
+                delete_node(p_othertng);
+            p_othertng->Flag2 |= 0x01000000;
+        }
+        else if ((p_othertng->Flag2 & 0x01000000) != 0)
+        {
+            p_othertng->Flag2 &= ~0x01000000;
+            if ((p_othertng->Flag & 0x10000000) == 0)
+                add_node_thing(p_othertng->ThingOffset);
+        }
+        p_person->State = 0;
+        return 1;
+    case PCmd_CAMERA_TRACK:
+        if ((p_cmd->Flags & 0x0008) != 0)
+        {
+            p_othertng = &things[players[local_player_no].DirectControl[0]];
+            ingame.TrackThing = 0;
+            ingame.TrackX = p_othertng->X >> 8;
+            ingame.TrackZ = p_othertng->Z >> 8;
+        }
+        else
+        {
+            ingame.TrackThing = p_cmd->OtherThing;
+        }
+        p_person->State = 0;
+        return 1;
+    case PCmd_UNTRUCE_GROUP:
+        war_flags[p_person->U.UPerson.Group].Truce &= ~(1 << p_cmd->OtherThing);
+        p_person->State = 0;
+        return 1;
+    case PCmd_PLAY_SAMPLE:
+        if ((p_cmd->Flags & 0x0008) != 0)
+        {
+            play_sample_using_heap(0, p_cmd->OtherThing, 127, 64, 100, 0, 1u);
+        }
+        else
+        {
+            play_dist_sample(p_person, p_cmd->OtherThing, 0x7Fu, 0x40u, 100, 0, 1);
+        }
+        p_person->State = 0;
+        return 1;
+    case PCmd_IGNORE_ENEMIES:
+        if ((p_cmd->Flags & 0x0008) != 0)
+        {
+            p_person->Flag2 &= ~0x80000000;
+        }
+        else
+        {
+            p_person->Flag2 |= 0x80000000;
+        }
+        p_person->State = 0;
+        return 1;
+    case PCmd_FULL_STAMINA:
+        p_person->State = PerSt_NONE;
+        break;
+    case PCmd_CAMERA_ROTATE:
+        if ((p_cmd->Flags & 0x0008) != 0)
+        {
+            ingame.fld_unkCA6 = 0;
+        }
+        else
+        {
+            ingame.fld_unkCA6 = p_cmd->OtherThing;
+            ingame.fld_unkCA8 = p_cmd->Arg1;
+        }
+        break;
+    }
+    return false;
+}
+
 void person_init_command(struct Thing *p_person, ushort from)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_person_init_command\n"
         : : "a" (p_person), "d" (from));
     return;
 #endif
+    struct Command *p_cmd;
+    struct Command *p_cmd1;
+    ushort cmd;
+    ushort nxcmd;
+    TbBool cond_met;
+
+    for (cmd = p_person->U.UPerson.ComCur; 2; )
+    {
+        p_person->Flag &= ~0x0800;
+        p_person->U.UPerson.Target2 = 0;
+
+        p_cmd = &game_commands[cmd];
+
+        if ((p_person->Flag & 0x02) != 0)
+        {
+            p_person->State = PerSt_DEAD;
+        }
+        else if (cmd != 0)
+        {
+          if ((p_cmd->Flags & 0x04) != 0)
+          {
+            while ( 1 )
+            {
+              cmd = p_cmd->Next;
+              p_person->U.UPerson.ComCur = cmd;
+              p_cmd = &game_commands[cmd];
+              if (cmd == 0)
+                break;
+              if ((p_cmd->Flags & 0x04) == 0)
+                goto LABEL_7;
+            }
+          }
+          else
+          {
+            if ((p_cmd->Flags & 0x02) == 0)
+            {
+              goto LABEL_142;
+            }
+
+LABEL_7:
+            nxcmd = p_cmd->Next;
+            cond_met = false;
+            for (p_cmd1 = &game_commands[nxcmd]; (p_cmd1->Flags & 0x0004) != 0; p_cmd1 = &game_commands[p_cmd1->Next] )
+            {
+              if (nxcmd == 0)
+                break;
+              if (conditional_command_state_true(nxcmd, p_person, 3))
+                cond_met = 1;
+              nxcmd = p_cmd1->Next;
+            }
+            if (!cond_met)
+                nxcmd = 0xFFFF;
+
+            if ((nxcmd & 0x8000) == 0)
+            {
+              p_person->State = PerSt_UNUSED_3A;
+              p_person->U.UPerson.ComCur = nxcmd;
+            }
+            else
+            {
+              int ret;
+LABEL_142:
+              ret = person_init_specific_command(p_person, cmd);
+              if (ret == 1)
+                  return;
+              if (ret == 2)
+                  continue;
+            }
+          }
+        }
+        else if ((p_person->Flag2 & 0x0800) != 0)
+        {
+            p_person->Flag2 &= ~0x0800;
+            p_person->State = PerSt_WAIT;
+            p_person->U.UPerson.ComTimer = 50;
+            ingame.Flags &= ~0x01;
+            set_peep_comcur(p_person);
+        }
+        break;
+    }
 }
 
 ubyte is_command_completed(struct Thing *p_person)
