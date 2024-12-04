@@ -201,7 +201,11 @@ enum PersonCommandFlags
     * resolves to false, previous command stops being executed even if it did not finished.
     */
   PCmdF_IsUntil = 0x0004,
-  PCmdF_Unkn0008 = 0x0008,
+  /** The command has its function reverted.
+   * Reverting command is usually used to revert loop conditions, but some commands can
+   * also be toggled / reverted, like PING command.
+   */
+  PCmdF_RevertFunct = 0x0008,
   PCmdF_Unkn0010 = 0x0010,
   PCmdF_Unkn0020 = 0x0020,
   PCmdF_Unkn0040 = 0x0040,

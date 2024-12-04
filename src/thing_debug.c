@@ -824,7 +824,7 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
         sprintf(o, "IU ");
         o += strlen(o);
     }
-    if ( p_cmd->Flags & PCmdF_Unkn0008) {
+    if ( p_cmd->Flags & PCmdF_RevertFunct) {
         sprintf(o, "!!!");
         o += strlen(o);
     }

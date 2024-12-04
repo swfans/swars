@@ -1609,7 +1609,7 @@ void person_init_catch_train(struct Thing *p_person, short target)
     p_person->SubState = 0;
 }
 
-void person_init_open_dome(struct Thing *p_person, short target)
+void person_open_dome(struct Thing *p_person, short target)
 {
     struct Thing *p_dome;
 
@@ -1619,13 +1619,69 @@ void person_init_open_dome(struct Thing *p_person, short target)
     p_person->State = PerSt_NONE;
 }
 
-void person_init_close_dome(struct Thing *p_person, short target)
+void person_close_dome(struct Thing *p_person, short target)
 {
     struct Thing *p_dome;
 
     p_dome = &things[target];
     p_dome->Flag |= TngF_Unkn0080;
     p_person->State = PerSt_NONE;
+}
+
+void person_init_exit_ferry(struct Thing *p_person, short portbld)
+{
+    struct Thing *p_portbld;
+
+    p_portbld = &things[portbld];
+    p_person->State = PerSt_EXIT_FERRY;
+    p_person->U.UPerson.ComTimer = -1;
+    p_person->U.UPerson.ComRange = 1;
+    p_person->SubState = 0;
+    p_person->U.UPerson.GotoX = p_portbld->X >> 8;
+    p_person->U.UPerson.GotoZ = p_portbld->Z >> 8;
+
+    if (p_person->U.UPerson.PathIndex != 0)
+        remove_path(p_person);
+}
+
+void person_ping_exist(struct Thing *p_person, TbBool revert)
+{
+    if (revert)
+    {
+        if (on_mapwho(p_person))
+            delete_node(p_person);
+        p_person->Flag2 |= TgF2_ExistsOffMap;
+    }
+    else if ((p_person->Flag2 & TgF2_ExistsOffMap) != 0)
+    {
+        p_person->Flag2 &= ~TgF2_ExistsOffMap;
+        if ((p_person->Flag & TngF_InVehicle) == 0) {
+            if (p_person->Type == TT_PERSON)
+                group_actions[p_person->U.UPerson.Group].Alive++;
+            add_node_thing(p_person->ThingOffset);
+        }
+    }
+    p_person->State = PerSt_NONE;
+}
+
+void person_init_go_to_point_face(struct Thing *p_person, short x, short z, short face, ushort range)
+{
+    if ((p_person->Flag & TngF_InVehicle) != 0) {
+        return;
+    }
+
+    if (p_person->U.UPerson.PathIndex != 0)
+        remove_path(p_person);
+
+    build_navigate_path_to_face_xz(p_person, -face, x, z);
+    p_person->U.UPerson.GotoX = x;
+    p_person->U.UPerson.GotoZ = z;
+    p_person->U.UPerson.ComRange = range;
+    p_person->U.UPerson.ComTimer = -1;
+    p_person->State = PerSt_GOTO_POINT;
+    p_person->SubState = 0;
+    p_person->Timer1 = 48;
+    p_person->StartTimer1 = 48;
 }
 
 TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
@@ -1724,62 +1780,26 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         person_init_catch_train(p_person, p_cmd->OtherThing);
         break;
     case PCmd_OPEN_DOME:
-        person_init_open_dome(p_person, p_cmd->OtherThing);
+        person_open_dome(p_person, p_cmd->OtherThing);
         break;
     case PCmd_CLOSE_DOME:
-        person_init_close_dome(p_person, p_cmd->OtherThing);
+        person_close_dome(p_person, p_cmd->OtherThing);
         break;
     case PCmd_DROP_WEAPON:
         person_init_drop(p_person, p_cmd->OtherThing);
         break;
     case PCmd_EXIT_FERRY:
-        p_person->State = PerSt_EXIT_FERRY;
-        p_person->U.UPerson.ComTimer = -1;
-        p_person->U.UPerson.ComRange = 1;
-        p_person->SubState = 0;
-        p_person->U.UPerson.GotoX = things[p_cmd->OtherThing].X >> 8;
-        p_person->U.UPerson.GotoZ = things[p_cmd->OtherThing].Z >> 8;
-        if (p_person->U.UPerson.PathIndex != 0)
-          remove_path(p_person);
+        person_init_exit_ferry(p_person, p_cmd->OtherThing);
         break;
     case PCmd_PING_EXIST:
-        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
-        {
-            if (on_mapwho(p_person))
-                delete_node(p_person);
-            p_person->Flag2 |= TgF2_ExistsOffMap;
-        }
-        else if ((p_person->Flag2 & TgF2_ExistsOffMap) != 0)
-        {
-            p_person->Flag2 &= ~TgF2_ExistsOffMap;
-            if ((p_person->Flag & TngF_InVehicle) == 0) {
-                if (p_person->Type == TT_PERSON)
-                    group_actions[p_person->U.UPerson.Group].Alive++;
-                add_node_thing(p_person->ThingOffset);
-            }
-        }
-        p_person->State = PerSt_NONE;
+        person_ping_exist(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
     case PCmd_GOTOPOINT_FACE:
-        if ((p_person->Flag & TngF_InVehicle) != 0) {
-            break;
-        }
-        if (p_person->U.UPerson.PathIndex != 0)
-            remove_path(p_person);
-        build_navigate_path_to_face_xz(p_person,
-          -p_cmd->OtherThing, p_cmd->X, p_cmd->Z);
-        p_person->U.UPerson.GotoX = p_cmd->X;
-        p_person->U.UPerson.ComTimer = -1;
-        p_person->U.UPerson.GotoZ = p_cmd->Z;
-        p_person->U.UPerson.ComRange = p_cmd->Arg1;
-        p_person->State = 1;
-        p_person->SubState = 0;
-        p_person->Timer1 = 48;
-        p_person->StartTimer1 = 48;
+        person_init_go_to_point_face(p_person, p_cmd->X, p_cmd->Z, p_cmd->OtherThing, p_cmd->Arg1);
         break;
     case PCmd_SELF_DESTRUCT:
-        p_person->U.UPerson.UMod.Mods &= ~0x01C0;
-        p_person->U.UPerson.UMod.Mods |= (0x0C0);
+        if (cybmod_chest_level(&p_person->U.UPerson.UMod) < 2)
+            set_cybmod_chest_level(&p_person->U.UPerson.UMod, 2);
         person_self_destruct(p_person);
         break;
     case PCmd_PROTECT_MEM_G:
@@ -1814,9 +1834,9 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         break;
     case PCmd_GUARD_OFF:
         if ((p_cmd->Flags & 0x08) != 0) {
-            p_person->Flag &= ~PCmdF_Unkn0008;
+            p_person->Flag &= ~PCmdF_RevertFunct;
         } else {
-            p_person->Flag |= PCmdF_Unkn0008;
+            p_person->Flag |= PCmdF_RevertFunct;
         }
         p_person->State = PerSt_NONE;
         break;
@@ -1951,7 +1971,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         break;
     case PCmd_PING_P_V:
         p_othertng = &things[p_cmd->OtherThing];
-        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
+        if ((p_cmd->Flags & PCmdF_RevertFunct) != 0)
         {
             if (on_mapwho(p_othertng))
                 delete_node(p_othertng);
@@ -1966,7 +1986,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = PerSt_NONE;
         break;
     case PCmd_CAMERA_TRACK:
-        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
+        if ((p_cmd->Flags & PCmdF_RevertFunct) != 0)
         {
             p_othertng = &things[players[local_player_no].DirectControl[0]];
             ingame.TrackThing = 0;
@@ -1984,7 +2004,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = PerSt_NONE;
         break;
     case PCmd_PLAY_SAMPLE:
-        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
+        if ((p_cmd->Flags & PCmdF_RevertFunct) != 0)
         {
             play_sample_using_heap(0, p_cmd->OtherThing, 127, 64, 100, 0, 1u);
         }
@@ -1995,7 +2015,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = PerSt_NONE;
         break;
     case PCmd_IGNORE_ENEMIES:
-        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
+        if ((p_cmd->Flags & PCmdF_RevertFunct) != 0)
         {
             p_person->Flag2 &= ~TgF2_Unkn80000000;
         }
@@ -2009,7 +2029,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = PerSt_NONE;
         break;
     case PCmd_CAMERA_ROTATE:
-        if ((p_cmd->Flags & PCmdF_Unkn0008) != 0)
+        if ((p_cmd->Flags & PCmdF_RevertFunct) != 0)
         {
             ingame.fld_unkCA6 = 0;
         }
