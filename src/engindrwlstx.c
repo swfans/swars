@@ -1873,7 +1873,7 @@ void draw_sort_sprite1b(int sspr)
         draw_text(p_sspr->X, p_sspr->Y - dy, locstr, colour_lookup[2]);
     }
 
-    if ((p_thing->Flag2 & TgF2_ExistsOnMap) != 0) {
+    if ((p_thing->Flag2 & TgF2_ExistsOffMap) != 0) {
         short dx, dy;
         dx = (2 * overall_scale) >> 8;
         dy = (37 * overall_scale) >> 8;

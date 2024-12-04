@@ -214,7 +214,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     // Causes invisible NPCs when non-zero
                     p_thing->Flag2 = 0;
                 p_thing->U.UPerson.Flag3 = 0;
-                p_thing->Flag2 &= (TgF2_InsideBuilding|TgF2_ExistsOnMap);
+                p_thing->Flag2 &= (TgF2_InsideBuilding|TgF2_ExistsOffMap);
                 if ((p_thing->Flag & TngF_Unkn02000000) != 0)
                 {
                     p_thing->ThingOffset = p_thing - things;
@@ -241,7 +241,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 if (fmtver < 17)
                     p_thing->U.UVehicle.Armour = 4;
                 p_thing->U.UVehicle.PassengerHead = 0;
-                p_thing->Flag2 &= TgF2_ExistsOnMap;
+                p_thing->Flag2 &= TgF2_ExistsOffMap;
                 if (fmtver <= 8)
                     p_thing->Y >>= 3;
 

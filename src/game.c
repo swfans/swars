@@ -2651,7 +2651,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
         p_person->U.UPerson.ComHead = p_cmd->Next;
     }
 
-    if (((p_person->Flag2 & TgF2_ExistsOnMap) == 0)
+    if (((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
       && ((p_person->Flag & TngF_Destroyed) == 0))
     {
         struct GroupAction *p_grpact;
@@ -2680,7 +2680,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
         p_person->Flag |= TngF_Unkn0040;
     }
 
-    if ((p_person->Flag2 & TgF2_ExistsOnMap) != 0)
+    if ((p_person->Flag2 & TgF2_ExistsOffMap) != 0)
         delete_node(p_person);
     else
         p_person->Flag2 &= ~TgF2_InsideBuilding;
@@ -2702,7 +2702,7 @@ void init_level_unknsub01_building(struct Thing *p_buildng)
         p_buildng->PTarget = 0;
         p_buildng->U.UObject.EffectiveGroup = p_buildng->U.UObject.Group;
     }
-    if ((p_buildng->Flag2 & TgF2_ExistsOnMap) != 0)
+    if ((p_buildng->Flag2 & TgF2_ExistsOffMap) != 0)
     {
         delete_node(p_buildng);
     }
@@ -2710,7 +2710,7 @@ void init_level_unknsub01_building(struct Thing *p_buildng)
 
 void init_level_unknsub01_vehicle(struct Thing *p_vehicle)
 {
-    if ((p_vehicle->Flag2 & TgF2_ExistsOnMap) != 0)
+    if ((p_vehicle->Flag2 & TgF2_ExistsOffMap) != 0)
     {
         delete_node(p_vehicle);
     }

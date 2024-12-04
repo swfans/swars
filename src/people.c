@@ -1992,6 +1992,17 @@ void person_init_command(struct Thing *p_person, ushort from)
             break;
         }
 
+        // Skip any detached "until" conditions for which we do not have a command
+        nxcmd = person_command_until_skip_condition(p_person, cmd);
+        if (nxcmd != cmd) {
+            // Currently this log would be too verbose - we switch states
+            // without skipping the follwing `until` in some places.
+            LOGNO("Person %s %d state %d.%d command %d is detached 'until'",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset,
+              p_person->State, p_person->SubState, cmd);
+        }
+        cmd = nxcmd;
+
         if (cmd == 0)
         {
             if ((p_person->Flag2 & TgF2_Unkn0800) != 0)
@@ -2002,14 +2013,6 @@ void person_init_command(struct Thing *p_person, ushort from)
                 ingame.Flags &= ~0x01;
                 set_peep_comcur(p_person);
             }
-            break;
-        }
-
-        // Skip any detached "until" conditions for which we do not have a command
-        cmd = person_command_until_skip_condition(p_person, cmd);
-        if (cmd == 0)
-        {
-            //TODO No state change? So detached "until" causes the agent to never clear state? Do we really want that?
             break;
         }
 
