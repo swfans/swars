@@ -268,18 +268,56 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
         nparams++;
     }
 
-    if (((p_cdef->Flags & CmDF_ReqOtherThing) != 0) ||
-      (p_cmd->OtherThing != 0)) {
+    if ((p_cdef->Flags & CmDF_ReqOtherThing) != 0) {
         if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
         snprintf(s, buflen - (s - buf), "Thing(%hd)", p_cmd->OtherThing);
         s += strlen(s);
         nparams++;
     }
-
-    if (((p_cdef->Flags & CmDF_ReqArg1) != 0) ||
-      (p_cmd->Arg1 != 0) || (p_cmd->Arg2 != 0)) {
+    else if (((p_cdef->Flags & CmDF_ReqOtherIndex) != 0) || (p_cmd->OtherThing != 0)) {
         if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
-        snprintf(s, buflen - (s - buf), "Args(%hd,%hd)", p_cmd->Arg1, p_cmd->Arg2);
+        snprintf(s, buflen - (s - buf), "Index(%hd)", p_cmd->OtherThing);
+        s += strlen(s);
+        nparams++;
+    }
+
+    if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqCountT) != 0)) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Coord2(%hd,0,%hd)", p_cmd->Arg1, p_cmd->Time);
+        s += strlen(s);
+        nparams++;
+    }
+    else if ((p_cdef->Flags & CmDF_ReqCoord2) != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Coord2(%hd,%hd,%hd)", p_cmd->Arg1, p_cmd->Arg2, p_cmd->Time);
+        s += strlen(s);
+        nparams++;
+    }
+    else if ((p_cdef->Flags & CmDF_ReqRange1) != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Range(%hd)", p_cmd->Arg1);
+        s += strlen(s);
+        nparams++;
+    }
+    else if (((p_cdef->Flags & CmDF_ReqArg1) != 0) || (p_cmd->Arg1 != 0)) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Arg1(%hd)", p_cmd->Arg1);
+        s += strlen(s);
+        nparams++;
+    }
+
+    if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqCountT) == 0)) {
+        // Skip printing Arg2 since we've alredy used it for Coord2
+    }
+    else if ((p_cdef->Flags & CmDF_ReqCountT) != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "CountT(%hd)", p_cmd->Arg2);
+        s += strlen(s);
+        nparams++;
+    }
+    else if (p_cmd->Arg2 != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Arg2(%hd)", p_cmd->Arg2);
         s += strlen(s);
         nparams++;
     }
@@ -300,7 +338,10 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
         nparams++;
     }
 
-    {
+    if ((p_cdef->Flags & CmDF_ReqCoord2) != 0) {
+        // Skip printing Time since we've alredy used it for Coord2
+    }
+    else if (((p_cdef->Flags & CmDF_ReqTime) != 0) || (p_cmd->Time != 0)) {
         if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
         snprintf(s, buflen - (s - buf), "Time(%hd)", p_cmd->Time);
         s += strlen(s);
