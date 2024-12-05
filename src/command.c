@@ -268,9 +268,15 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
         nparams++;
     }
 
-    if ((p_cdef->Flags & CmDF_ReqOtherThing) != 0) {
+    if ((p_cdef->Flags & (CmDF_ReqPersonThing|CmDF_ReqPVIThing|CmDF_ReqOtherThing)) != 0) {
         if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
         snprintf(s, buflen - (s - buf), "Thing(%hd)", p_cmd->OtherThing);
+        s += strlen(s);
+        nparams++;
+    }
+    else if ((p_cdef->Flags & CmDF_ReqGroup) != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Group(%hd)", p_cmd->OtherThing);
         s += strlen(s);
         nparams++;
     }
