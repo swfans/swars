@@ -294,7 +294,7 @@ void build_laser11(struct Thing *p_thing)
     if ((p_thing->Flag & TngF_Unkn1000) != 0)
         colour = colour_lookup[4];
     else
-        colour = colour_lookup[2];
+        colour = colour_lookup[ColLU_RED];
     p_owntng = &things[p_thing->Owner];
     build_laser(
       PRCCOORD_TO_MAPCOORD(p_owntng->X),
@@ -439,7 +439,7 @@ void build_nuclear_bomb(struct SimpleThing *p_sthing)
       PRCCOORD_TO_MAPCOORD(p_sthing->Y),
       PRCCOORD_TO_MAPCOORD(p_sthing->Z),
       p_sthing->Radius, 20, 15,
-      game_textures, colour_lookup[1], 32, 96);
+      game_textures, colour_lookup[ColLU_WHITE], 32, 96);
 }
 
 void build_laser_beam(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)

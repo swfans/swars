@@ -1334,13 +1334,14 @@ void person_command_select_next(struct Thing *p_person)
 
 /** Jump to specific command on a person.
  */
-void person_command_jump(struct Thing *p_person, ushort cmd)
+StateChRes person_command_jump(struct Thing *p_person, ushort cmd)
 {
     p_person->State = PerSt_UNUSED_3A;
     p_person->U.UPerson.ComCur = cmd;
+    return StCh_ACCEPTED;
 }
 
-void person_init_cmd_wander(struct Thing *p_person, ubyte sstate)
+StateChRes person_init_cmd_wander(struct Thing *p_person, ubyte sstate)
 {
     if ((p_person->Flag & TngF_InVehicle) != 0)
     {
@@ -1367,6 +1368,7 @@ void person_init_cmd_wander(struct Thing *p_person, ubyte sstate)
         p_person->U.UPerson.Timer2 = 10;
         p_person->U.UPerson.StartTimer2 = 10;
     }
+    return StCh_ACCEPTED;
 }
 
 StateChRes person_init_go_to_point(struct Thing *p_person, short x, short y, short z, ushort range, TbBool fast_run)
@@ -2936,7 +2938,7 @@ void process_person(struct Thing *p_person)
         {
           make_peep_protect_peep(p_person, &things[p_person->Owner]);
           func_711F4(PRCCOORD_TO_MAPCOORD(p_person->X), PRCCOORD_TO_MAPCOORD(p_person->Y),
-            PRCCOORD_TO_MAPCOORD(p_person->Z), 200, colour_lookup[1]);
+            PRCCOORD_TO_MAPCOORD(p_person->Z), 200, colour_lookup[ColLU_WHITE]);
         }
     }
     if ((p_person->Flag2 & TgF2_Unkn0020) != 0)

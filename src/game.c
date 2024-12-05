@@ -7869,9 +7869,9 @@ void update_unkn_changing_colors(void)
     unkn_changing_color_1 = col1;
 
     if (unkn_changing_color_counter1 & 0x01)
-        col2 = colour_lookup[2];
+        col2 = colour_lookup[ColLU_RED];
     else
-        col2 = colour_lookup[1];
+        col2 = colour_lookup[ColLU_WHITE];
     unkn_changing_color_2 = col2;
 }
 

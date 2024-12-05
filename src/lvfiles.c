@@ -111,7 +111,7 @@ void global_3d_store(int action)
     if (action == 2)
     {
         if (stored_global3d_inuse[0])
-            draw_text(100, 120, " GLOBAL 3d STORED ->INUSE", colour_lookup[2]);
+            draw_text(100, 120, " GLOBAL 3d STORED ->INUSE", colour_lookup[ColLU_RED]);
     }
     else if (action == 1)
     {
