@@ -172,6 +172,15 @@ enum ThingFlags2 {
     TgF2_IgnoreEnemies = 0x80000000,
 };
 
+enum StateChangeResult {
+    StCh_ACCEPTED = 0,  /**< The new state was set to the world element. */
+    StCh_ALREADY,       /**< The conditions to finalize the state were already met, state not set as it is completed. */
+    StCh_DENIED,        /**< The current state of either target or other world elements prevents entering the state at this time. */
+    StCh_UNATTAIN,      /**< The current state of the world elements makes it impossible to ever enter that state, ie. target does not exist. */
+};
+
+typedef ubyte StateChRes;
+
 struct M33;
 
 /** State of Thing of type Object/Building.

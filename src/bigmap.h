@@ -33,19 +33,24 @@ extern "C" {
 #define MAP_COORD_WIDTH TILE_TO_MAPCOORD(MAP_TILE_WIDTH, 0)
 #define MAP_COORD_HEIGHT TILE_TO_MAPCOORD(MAP_TILE_HEIGHT, 0)
 
-/* Convert precise map coordinate to normal map coordinate.
+/** Convert precise map coordinate to normal map coordinate.
  */
 #define PRCCOORD_TO_MAPCOORD(pcor) ((pcor) >> 8)
 
-/* Convert normal map coordinate to precise map coordinate.
+/** Convert precise map Y coordinate to normal engine coordinate.
+ * For unknown reason, Y has often different shift than other coords..
+ */
+#define PRCCOORD_TO_YCOORD(pcor) ((pcor) >> 5)
+
+/** Convert normal map coordinate to precise map coordinate.
  */
 #define MAPCOORD_TO_PRCCOORD(mcor, ppos) (((mcor) << 8) + (ppos))
 
-/* Convert normal map coordinate to tile no.
+/** Convert normal map coordinate to tile no.
  */
 #define MAPCOORD_TO_TILE(mcor) ((mcor) >> 8)
 
-/* Convert tile(block) no to normal map coordinate.
+/** Convert tile(block) no to normal map coordinate.
  */
 #define TILE_TO_MAPCOORD(tile, mpos) (((tile) << 8) + (mpos))
 
