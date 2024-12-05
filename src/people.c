@@ -1421,7 +1421,7 @@ void person_init_kill_person(struct Thing *p_person, short target)
 {
     int weapon_range;
 
-    p_person->Flag2 &= ~TgF2_Unkn80000000;
+    p_person->Flag2 &= ~TgF2_IgnoreEnemies;
     p_person->GotoThingIndex = target;
     if (target == 0)
     {
@@ -1756,6 +1756,33 @@ void person_init_go_to_point_face(struct Thing *p_person, short x, short z, shor
     p_person->StartTimer1 = 48;
 }
 
+void person_make_hard_as_agent(struct Thing *p_person)
+{
+    struct PeepStat *p_pestat;
+    int n;
+
+    p_pestat = &peep_type_stats[SubTT_PERS_AGENT];
+    p_person->U.UPerson.Energy = p_pestat->MaxEnergy;
+    p_person->U.UPerson.ShieldEnergy = p_pestat->MaxShield;
+    p_person->Health = p_pestat->MaxHealth;
+    p_person->U.UPerson.Energy = ((p_pestat->MaxEnergy
+      * ((ushort)(p_person->U.UPerson.UMod.Mods << 7) >> 13)) >> 1) + p_person->U.UPerson.Energy;
+    p_person->U.UPerson.ShieldEnergy = ((((ushort)(16 * p_person->U.UPerson.UMod.Mods) >> 13)
+      * (ushort)p_pestat->MaxShield) >> 1) + p_person->U.UPerson.ShieldEnergy;
+    n = ((((ushort)(p_person->U.UPerson.UMod.Mods << 10) >> 13)
+          + (p_person->U.UPerson.UMod.Mods & 7)
+          + 2 * ((ushort)(p_person->U.UPerson.UMod.Mods << 7) >> 13)
+          + 2 * ((ushort)(16 * p_person->U.UPerson.UMod.Mods) >> 13))
+         * (ushort)p_pestat->MaxHealth) >> 3;
+    p_person->State = PerSt_NONE;
+    p_person->Health = p_person->Health + n;
+    p_person->U.UPerson.Stamina = p_pestat->MaximumStamina;
+    p_person->U.UPerson.MaxStamina = p_pestat->MaximumStamina;
+    p_person->U.UPerson.MaxHealth = p_person->Health;
+    p_person->U.UPerson.MaxEnergy = p_person->U.UPerson.Energy;
+    p_person->U.UPerson.MaxShieldEnergy = p_person->U.UPerson.ShieldEnergy;
+}
+
 void person_init_cmd_wait_patiently(struct Thing *p_person, ubyte sstate)
 {
     p_person->State = PerSt_WAIT;
@@ -1770,10 +1797,60 @@ void person_init_cmd_wait_wth_timeout(struct Thing *p_person, ubyte sstate, shor
     p_person->SubState = sstate;
 }
 
+void person_cmd_ignore_enemies(struct Thing *p_person, TbBool revert)
+{
+    if (revert)
+    {
+        p_person->Flag2 &= ~TgF2_IgnoreEnemies;
+    }
+    else
+    {
+        p_person->Flag2 |= TgF2_IgnoreEnemies;
+    }
+    p_person->State = PerSt_NONE;
+}
+
+void person_cmd_play_sample(struct Thing *p_person, short smptbl_id, TbBool revert)
+{
+    if (revert)
+    {
+        play_sample_using_heap(0, smptbl_id, 127, 64, 100, 0, 1u);
+    }
+    else
+    {
+        play_dist_sample(p_person, smptbl_id, 0x7Fu, 0x40u, 100, 0, 1);
+    }
+    p_person->State = PerSt_NONE;
+}
+
+void camera_track_thing(short thing, TbBool revert)
+{
+    if (revert)
+    {
+        struct Thing *p_agent;
+        p_agent = &things[players[local_player_no].DirectControl[0]];
+        ingame.TrackThing = 0;
+        ingame.TrackX = p_agent->X >> 8;
+        ingame.TrackZ = p_agent->Z >> 8;
+        return;
+    }
+    ingame.TrackThing = thing;
+}
+
+void camera_rotate_view(short ang1, short ang2, TbBool revert)
+{
+    if (revert)
+    {
+        ingame.fld_unkCA6 = 0;
+        return;
+    }
+    ingame.fld_unkCA6 = ang1;
+    ingame.fld_unkCA8 = ang2;
+}
+
 TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
 {
     struct Command *p_cmd;
-    struct PeepStat *p_pestat;
     struct Thing *p_othertng;
     short othertng;
     int n;
@@ -1796,7 +1873,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         person_init_kill_person(p_person, p_cmd->OtherThing);
         break;
     case PCmd_KILL_MEM_GROUP:
-        p_person->Flag2 &= ~TgF2_Unkn80000000;
+        p_person->Flag2 &= ~TgF2_IgnoreEnemies;
         othertng = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
         if (othertng != 0)
         {
@@ -1973,26 +2050,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         person_cmd_select_weapon(p_person, p_cmd->OtherThing);
         break;
     case PCmd_HARD_AS_AGENT:
-        p_pestat = &peep_type_stats[SubTT_PERS_AGENT];
-        p_person->U.UPerson.Energy = p_pestat->MaxEnergy;
-        p_person->U.UPerson.ShieldEnergy = p_pestat->MaxShield;
-        p_person->Health = p_pestat->MaxHealth;
-        p_person->U.UPerson.Energy = ((p_pestat->MaxEnergy
-          * ((ushort)(p_person->U.UPerson.UMod.Mods << 7) >> 13)) >> 1) + p_person->U.UPerson.Energy;
-        p_person->U.UPerson.ShieldEnergy = ((((ushort)(16 * p_person->U.UPerson.UMod.Mods) >> 13)
-          * (ushort)p_pestat->MaxShield) >> 1) + p_person->U.UPerson.ShieldEnergy;
-        n = ((((ushort)(p_person->U.UPerson.UMod.Mods << 10) >> 13)
-              + (p_person->U.UPerson.UMod.Mods & 7)
-              + 2 * ((ushort)(p_person->U.UPerson.UMod.Mods << 7) >> 13)
-              + 2 * ((ushort)(16 * p_person->U.UPerson.UMod.Mods) >> 13))
-             * (ushort)p_pestat->MaxHealth) >> 3;
-        p_person->State = PerSt_NONE;
-        p_person->Health = p_person->Health + n;
-        p_person->U.UPerson.Stamina = p_pestat->MaximumStamina;
-        p_person->U.UPerson.MaxStamina = p_pestat->MaximumStamina;
-        p_person->U.UPerson.MaxHealth = p_person->Health;
-        p_person->U.UPerson.MaxEnergy = p_person->U.UPerson.Energy;
-        p_person->U.UPerson.MaxShieldEnergy = p_person->U.UPerson.ShieldEnergy;
+        person_make_hard_as_agent(p_person);
         break;
     case PCmd_START_DANGER_MUSIC:
         person_cmd_start_danger_music(p_person, (p_cmd->Flags & PCmdF_RevertFunct) != 0);
@@ -2003,17 +2061,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = PerSt_NONE;
         break;
     case PCmd_CAMERA_TRACK:
-        if ((p_cmd->Flags & PCmdF_RevertFunct) != 0)
-        {
-            p_othertng = &things[players[local_player_no].DirectControl[0]];
-            ingame.TrackThing = 0;
-            ingame.TrackX = p_othertng->X >> 8;
-            ingame.TrackZ = p_othertng->Z >> 8;
-        }
-        else
-        {
-            ingame.TrackThing = p_cmd->OtherThing;
-        }
+        camera_track_thing(p_cmd->OtherThing, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         p_person->State = PerSt_NONE;
         break;
     case PCmd_UNTRUCE_GROUP:
@@ -2021,40 +2069,16 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = PerSt_NONE;
         break;
     case PCmd_PLAY_SAMPLE:
-        if ((p_cmd->Flags & PCmdF_RevertFunct) != 0)
-        {
-            play_sample_using_heap(0, p_cmd->OtherThing, 127, 64, 100, 0, 1u);
-        }
-        else
-        {
-            play_dist_sample(p_person, p_cmd->OtherThing, 0x7Fu, 0x40u, 100, 0, 1);
-        }
-        p_person->State = PerSt_NONE;
+        person_cmd_play_sample(p_person, p_cmd->OtherThing, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
     case PCmd_IGNORE_ENEMIES:
-        if ((p_cmd->Flags & PCmdF_RevertFunct) != 0)
-        {
-            p_person->Flag2 &= ~TgF2_Unkn80000000;
-        }
-        else
-        {
-            p_person->Flag2 |= TgF2_Unkn80000000;
-        }
-        p_person->State = PerSt_NONE;
+        person_cmd_ignore_enemies(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
     case PCmd_FULL_STAMINA:
         p_person->State = PerSt_NONE;
         break;
     case PCmd_CAMERA_ROTATE:
-        if ((p_cmd->Flags & PCmdF_RevertFunct) != 0)
-        {
-            ingame.fld_unkCA6 = 0;
-        }
-        else
-        {
-            ingame.fld_unkCA6 = p_cmd->OtherThing;
-            ingame.fld_unkCA8 = p_cmd->Arg1;
-        }
+        camera_rotate_view(p_cmd->OtherThing, p_cmd->Arg1, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
     case PCmd_STAY:
     case PCmd_HIDE:

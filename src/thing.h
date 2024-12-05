@@ -169,7 +169,7 @@ enum ThingFlags2 {
     TgF2_Unkn10000000 = 0x10000000,
     TgF2_InsideBuilding = 0x20000000,
     TgF2_Unkn40000000 = 0x40000000,
-    TgF2_Unkn80000000 = 0x80000000,
+    TgF2_IgnoreEnemies = 0x80000000,
 };
 
 struct M33;
