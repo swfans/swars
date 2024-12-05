@@ -141,6 +141,15 @@ void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
     }
 }
 
+void thing_group_set_kill_on_sight(short mod_grp, short target_grp, TbBool state)
+{
+    mod_grp &= 0x1F;
+    if (state)
+        war_flags[mod_grp].KillOnSight |= 1 << target_grp;
+    else
+        war_flags[mod_grp].KillOnSight &= ~(1 << target_grp);
+}
+
 int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int stay_limit, int tran_limit)
 {
     ThingIdx thing;

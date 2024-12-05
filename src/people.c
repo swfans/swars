@@ -1911,6 +1911,18 @@ StateChRes person_cmd_ignore_enemies(struct Thing *p_person, TbBool revert)
     return StCh_ACCEPTED;
 }
 
+StateChRes person_cmd_stay_within_area(struct Thing *p_person, ushort cmd)
+{
+    if (p_person->U.UPerson.Within == cmd)
+    {
+        p_person->State = PerSt_NONE;
+        return StCh_ALREADY;
+    }
+    p_person->U.UPerson.Within = cmd;
+    p_person->State = PerSt_NONE;
+    return StCh_ACCEPTED;
+}
+
 StateChRes person_cmd_play_sample(struct Thing *p_person, short smptbl_id, TbBool revert)
 {
     if (revert)
@@ -1954,25 +1966,25 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
 {
     struct Command *p_cmd;
     struct Thing *p_othertng;
+    StateChRes res;
     short othertng;
-    int n;
 
     p_cmd = &game_commands[cmd];
     switch (p_cmd->Type)
     {
     case PCmd_NONE:
-        person_init_cmd_wander(p_person, p_cmd->Type);
+        res = person_init_cmd_wander(p_person, p_cmd->Type);
         break;
     case PCmd_GO_TO_POINT:
     case PCmd_RUN_TO_POINT:
-        person_init_go_to_point(p_person, p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1,
+        res = person_init_go_to_point(p_person, p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1,
           (p_cmd->Type == PCmd_RUN_TO_POINT));
         break;
     case PCmd_GO_TO_PERSON:
-        person_init_go_to_person(p_person, p_cmd->OtherThing, p_cmd->Arg1, false);
+        res = person_init_go_to_person(p_person, p_cmd->OtherThing, p_cmd->Arg1, false);
         break;
     case PCmd_KILL_PERSON:
-        person_init_kill_person(p_person, p_cmd->OtherThing);
+        res = person_init_kill_person(p_person, p_cmd->OtherThing);
         break;
     case PCmd_KILL_MEM_GROUP:
         p_person->Flag2 &= ~TgF2_IgnoreEnemies;
@@ -1984,99 +1996,101 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
             p_vehicle = &things[p_person->U.UPerson.Vehicle];
             p_vehicle->Flag |= TngF_PlayerAgent;
         }
-        person_init_kill_person(p_person, othertng);
+        res = person_init_kill_person(p_person, othertng);
         break;
     case PCmd_KILL_ALL_GROUP:
         othertng = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
-        n = p_person->U.UPerson.Group & 0x1F;
-        war_flags[n].KillOnSight |= 1 << p_cmd->OtherThing;
-        person_init_kill_person(p_person, othertng);
+        thing_group_set_kill_on_sight(p_person->U.UPerson.Group, p_cmd->OtherThing, true);
+        res = person_init_kill_person(p_person, othertng);
         break;
     case PCmd_PERSUADE_PERSON:
-        person_init_persuade_person(p_person, p_cmd->OtherThing);
+        res = person_init_persuade_person(p_person, p_cmd->OtherThing);
         break;
     case PCmd_PERSUADE_MEM_GROUP:
     case PCmd_PERSUADE_ALL_GROUP:
         othertng = find_nearest_from_group(p_person, p_cmd->OtherThing, 1);
-        person_init_persuade_person(p_person, othertng);
+        res = person_init_persuade_person(p_person, othertng);
         break;
     case PCmd_BLOCK_PERSON:
-        person_init_block_person(p_person, p_cmd->OtherThing);
+        res = person_init_block_person(p_person, p_cmd->OtherThing);
         break;
     case PCmd_SCARE_PERSON:
-        person_init_scare_person(p_person, p_cmd->OtherThing);
+        res = person_init_scare_person(p_person, p_cmd->OtherThing);
         break;
     case PCmd_FOLLOW_PERSON:
-        person_init_cmd_follow_person(p_person, p_cmd->OtherThing);
+        res = person_init_cmd_follow_person(p_person, p_cmd->OtherThing);
         break;
     case PCmd_SUPPORT_PERSON:
-        person_init_support_person(p_person, p_cmd->OtherThing);
+        res = person_init_support_person(p_person, p_cmd->OtherThing);
         break;
     case PCmd_PROTECT_PERSON:
-        person_init_protect_person(p_person, p_cmd->OtherThing, true);
+        res = person_init_protect_person(p_person, p_cmd->OtherThing, true);
         break;
     case PCmd_GET_ITEM:
-        person_init_cmd_get_item(p_person, p_cmd->OtherThing);
+        res = person_init_cmd_get_item(p_person, p_cmd->OtherThing);
         break;
     case PCmd_USE_WEAPON:
-        person_init_cmd_use_weapon(p_person, p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->OtherThing);
+        res = person_init_cmd_use_weapon(p_person, p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->OtherThing);
         break;
     case PCmd_DROP_SPEC_ITEM:
         person_init_drop_special(p_person, p_cmd->OtherThing);
+        res = StCh_ACCEPTED;
         break;
     case PCmd_WAND_AVOID_GROUP:
-        person_init_wand_avoid_group(p_person, p_cmd->OtherThing, p_cmd->Type);
+        res = person_init_wand_avoid_group(p_person, p_cmd->OtherThing, p_cmd->Type);
         break;
     case PCmd_DESTROY_BUILDING:
-        person_init_destroy_building(p_person, p_cmd->X, p_cmd->Z, p_cmd->OtherThing);
+        res = person_init_destroy_building(p_person, p_cmd->X, p_cmd->Z, p_cmd->OtherThing);
         break;
     case PCmd_USE_VEHICLE:
-        person_init_use_vehicle(p_person, p_cmd->OtherThing);
+        res = person_init_use_vehicle(p_person, p_cmd->OtherThing);
         break;
     case PCmd_EXIT_VEHICLE:
-        person_init_exit_vehicle(p_person);
+        res = person_init_exit_vehicle(p_person);
         break;
     case PCmd_CATCH_TRAIN:
-        person_init_catch_train(p_person, p_cmd->OtherThing);
+        res = person_init_catch_train(p_person, p_cmd->OtherThing);
         break;
     case PCmd_OPEN_DOME:
-        person_open_dome(p_person, p_cmd->OtherThing);
+        res = person_open_dome(p_person, p_cmd->OtherThing);
         break;
     case PCmd_CLOSE_DOME:
-        person_close_dome(p_person, p_cmd->OtherThing);
+        res = person_close_dome(p_person, p_cmd->OtherThing);
         break;
     case PCmd_DROP_WEAPON:
         person_init_drop(p_person, p_cmd->OtherThing);
+        res = StCh_ACCEPTED;
         break;
     case PCmd_EXIT_FERRY:
-        person_init_exit_ferry(p_person, p_cmd->OtherThing);
+        res = person_init_exit_ferry(p_person, p_cmd->OtherThing);
         break;
     case PCmd_PING_EXIST:
-        person_or_vehicle_ping_exist(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
+        res = person_or_vehicle_ping_exist(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         p_person->State = PerSt_NONE;
         break;
     case PCmd_GOTOPOINT_FACE:
-        person_init_go_to_point_face(p_person, p_cmd->X, p_cmd->Z, p_cmd->OtherThing, p_cmd->Arg1);
+        res = person_init_go_to_point_face(p_person, p_cmd->X, p_cmd->Z, p_cmd->OtherThing, p_cmd->Arg1);
         break;
     case PCmd_SELF_DESTRUCT:
         if (cybmod_chest_level(&p_person->U.UPerson.UMod) < 2)
             set_cybmod_chest_level(&p_person->U.UPerson.UMod, 2);
         person_self_destruct(p_person);
+        res = StCh_ACCEPTED;
         break;
     case PCmd_PROTECT_MEM_G:
         othertng = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
-        person_init_protect_person(p_person, othertng, false);
+        res = person_init_protect_person(p_person, othertng, false);
         break;
     case PCmd_KILL_EVERYONE:
         othertng = find_peep_in_area(p_person, p_cmd);
-        person_init_kill_person(p_person, othertng);
+        res = person_init_kill_person(p_person, othertng);
         break;
     case PCmd_GUARD_OFF:
-        person_guard_switch(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
+        res = person_guard_switch(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
     case PCmd_WAIT_TIME:
         p_cmd->Arg1 = 0;
-        person_init_cmd_wait_patiently(p_person, p_cmd->Type);
+        res = person_init_cmd_wait_patiently(p_person, p_cmd->Type);
         break;
     case PCmd_WAIT_P_V_DEAD:
     case PCmd_WAIT_MEM_G_DEAD:
@@ -2095,11 +2109,11 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_WAIT_MISSION_START:
     case PCmd_WAIT_OBJT_DESTROY:
     case PCmd_WAIT_OBJV:
-        person_init_cmd_wait_patiently(p_person, p_cmd->Type);
+        res = person_init_cmd_wait_patiently(p_person, p_cmd->Type);
         break;
     case PCmd_WAND_TIME:
         p_cmd->Arg1 = 0;
-        person_init_cmd_wander(p_person, p_cmd->Type);
+        res = person_init_cmd_wander(p_person, p_cmd->Type);
         break;
     case PCmd_WAND_P_V_DEAD:
     case PCmd_WAND_MEM_G_DEAD:
@@ -2118,7 +2132,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_WAND_MISSION_START:
     case PCmd_WAND_OBJT_DESTROY:
     case PCmd_WAND_OBJV:
-        person_init_cmd_wander(p_person, p_cmd->Type);
+        res = person_init_cmd_wander(p_person, p_cmd->Type);
         break;
     case PCmd_UNKN66:
         // Nothing done here
@@ -2129,58 +2143,60 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         person_command_select_next(p_person);
         return true;
     case PCmd_WAIT_TIME2:
-        person_init_cmd_wait_wth_timeout(p_person, 0, p_cmd->Time);
+        res = person_init_cmd_wait_wth_timeout(p_person, 0, p_cmd->Time);
         break;
     case PCmd_LOOP_COM:
-        person_command_jump(p_person, p_cmd->OtherThing);
+        res = person_command_jump(p_person, p_cmd->OtherThing);
         break;
     case PCmd_WITHIN_AREA:
-        p_person->U.UPerson.Within = cmd;
-        p_person->State = PerSt_NONE;
+        res = person_cmd_stay_within_area(p_person, cmd);
         break;
     case PCmd_WITHIN_OFF:
-        p_person->U.UPerson.Within = 0;
-        p_person->State = PerSt_NONE;
+        res = person_cmd_stay_within_area(p_person, 0);
         break;
     case PCmd_LOCK_BUILDN:
-        person_lock_building(p_person, p_cmd->OtherThing);
+        res = person_lock_building(p_person, p_cmd->OtherThing);
         break;
     case PCmd_UNLOCK_BUILDN:
-        person_unlock_building(p_person, p_cmd->OtherThing);
+        res = person_unlock_building(p_person, p_cmd->OtherThing);
         break;
     case PCmd_SELECT_WEAPON:
-        person_cmd_select_weapon(p_person, p_cmd->OtherThing);
+        res = person_cmd_select_weapon(p_person, p_cmd->OtherThing);
         break;
     case PCmd_HARD_AS_AGENT:
-        person_make_hard_as_agent(p_person);
+        res = person_make_hard_as_agent(p_person);
         break;
     case PCmd_START_DANGER_MUSIC:
-        person_cmd_start_danger_music(p_person, (p_cmd->Flags & PCmdF_RevertFunct) != 0);
+        res = person_cmd_start_danger_music(p_person, (p_cmd->Flags & PCmdF_RevertFunct) != 0);
         break;
     case PCmd_PING_P_V:
         p_othertng = &things[p_cmd->OtherThing];
-        person_or_vehicle_ping_exist(p_othertng, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
+        res = person_or_vehicle_ping_exist(p_othertng, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         p_person->State = PerSt_NONE;
         break;
     case PCmd_CAMERA_TRACK:
         camera_track_thing(p_cmd->OtherThing, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         p_person->State = PerSt_NONE;
+        res = StCh_ACCEPTED;
         break;
     case PCmd_UNTRUCE_GROUP:
         war_flags[p_person->U.UPerson.Group].Truce &= ~(1 << p_cmd->OtherThing);
         p_person->State = PerSt_NONE;
+        res = StCh_ACCEPTED;
         break;
     case PCmd_PLAY_SAMPLE:
-        person_cmd_play_sample(p_person, p_cmd->OtherThing, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
+        res = person_cmd_play_sample(p_person, p_cmd->OtherThing, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
     case PCmd_IGNORE_ENEMIES:
-        person_cmd_ignore_enemies(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
+        res = person_cmd_ignore_enemies(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
     case PCmd_FULL_STAMINA:
         p_person->State = PerSt_NONE;
+        res = StCh_ACCEPTED;
         break;
     case PCmd_CAMERA_ROTATE:
         camera_rotate_view(p_cmd->OtherThing, p_cmd->Arg1, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
+        res = StCh_ACCEPTED;
         break;
     case PCmd_STAY:
     case PCmd_HIDE:
@@ -2241,8 +2257,26 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_UNTIL_TIME:
     case PCmd_UNTIL_OBJV:
     case PCmd_UNTIL_G_NOT_SEEN:
+        res = StCh_ACCEPTED;
         break;
     }
+
+	if (debug_log_things)
+    {
+        char locstr[100];
+
+        snprint_command(locstr, sizeof(locstr), cmd);
+
+        if (res <= StCh_ALREADY)
+            LOGSYNC("Person %s %d %s %d %s, state %d.%d",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset, locstr,
+              cmd, state_change_result_name(res), p_person->State, p_person->SubState);
+        else
+            LOGWARN("Person %s %d %s %d %s, state %d.%d",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset, locstr,
+              cmd, state_change_result_name(res), p_person->State, p_person->SubState);
+    }
+
     return false;
 }
 

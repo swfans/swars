@@ -931,6 +931,7 @@ extern short sthings_used_head;
 extern ushort sthings_used;
 
 extern TbBool debug_hud_things;
+extern ubyte debug_log_things;
 
 struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype);
 
@@ -949,6 +950,10 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
 /** Fill buffer with function-like declaration of simple thing properties.
  */
 void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
+
+/** Get a string representing text name of a state change result.
+ */
+const char *state_change_result_name(StateChRes res);
 
 TbBool person_command_to_text(char *out, ushort cmd, ubyte a3);
 
