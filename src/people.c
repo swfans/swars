@@ -1348,7 +1348,8 @@ StateChRes person_init_cmd_wander(struct Thing *p_person, ubyte sstate)
         struct Thing *p_vehicle;
 
         p_vehicle = &things[p_person->U.UPerson.Vehicle];
-        if ((p_vehicle->SubType == SubTT_VEH_GROUND) && ((p_vehicle->Flag & TngF_Destroyed) == 0)) {
+        if ((p_vehicle->SubType == SubTT_VEH_GROUND) &&
+          ((p_vehicle->Flag & TngF_Destroyed) == 0)) {
             p_vehicle->State = VehSt_WANDER;
         }
     }
@@ -1371,7 +1372,8 @@ StateChRes person_init_cmd_wander(struct Thing *p_person, ubyte sstate)
     return StCh_ACCEPTED;
 }
 
-StateChRes person_init_go_to_point(struct Thing *p_person, short x, short y, short z, ushort range, TbBool fast_run)
+StateChRes person_init_go_to_point(struct Thing *p_person, short x, short y,
+  short z, ushort range, TbBool fast_run)
 {
     if ((p_person->Flag & TngF_InVehicle) != 0)
     {
@@ -1406,7 +1408,8 @@ StateChRes person_init_go_to_point(struct Thing *p_person, short x, short y, sho
     return StCh_ACCEPTED;
 }
 
-StateChRes person_init_go_to_person(struct Thing *p_person, short target, ushort range, TbBool fast_run)
+StateChRes person_init_go_to_person(struct Thing *p_person, short target,
+  ushort range, TbBool fast_run)
 {
     if (fast_run)
         set_person_animmode_run(p_person);
@@ -1598,7 +1601,8 @@ StateChRes person_init_cmd_get_item(struct Thing *p_person, short target)
     return StCh_ACCEPTED;
 }
 
-StateChRes person_init_cmd_use_weapon(struct Thing *p_person, short x, short y, short z, ushort weapon)
+StateChRes person_init_cmd_use_weapon(struct Thing *p_person, short x, short y,
+  short z, ushort weapon)
 {
     struct WeaponDef *wdef;
 
@@ -1846,7 +1850,8 @@ StateChRes person_guard_switch(struct Thing *p_person, TbBool revert)
     return StCh_ACCEPTED;
 }
 
-StateChRes person_init_go_to_point_face(struct Thing *p_person, short x, short z, short face, ushort range)
+StateChRes person_init_go_to_point_face(struct Thing *p_person, short x,
+  short z, short face, ushort range)
 {
     if ((p_person->Flag & TngF_InVehicle) != 0) {
         p_person->State = PerSt_NONE;
@@ -1883,7 +1888,8 @@ StateChRes person_init_cmd_wait_patiently(struct Thing *p_person, ubyte sstate)
     return StCh_ACCEPTED;
 }
 
-StateChRes person_init_cmd_wait_wth_timeout(struct Thing *p_person, ubyte sstate, short timeout)
+StateChRes person_init_cmd_wait_wth_timeout(struct Thing *p_person,
+  ubyte sstate, short timeout)
 {
     p_person->State = PerSt_WAIT;
     p_person->U.UPerson.ComTimer = timeout;
@@ -1923,7 +1929,8 @@ StateChRes person_cmd_stay_within_area(struct Thing *p_person, ushort cmd)
     return StCh_ACCEPTED;
 }
 
-StateChRes person_cmd_play_sample(struct Thing *p_person, short smptbl_id, TbBool revert)
+StateChRes person_cmd_play_sample(struct Thing *p_person, short smptbl_id,
+  TbBool revert)
 {
     if (revert)
     {
@@ -2069,7 +2076,8 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         p_person->State = PerSt_NONE;
         break;
     case PCmd_GOTOPOINT_FACE:
-        res = person_init_go_to_point_face(p_person, p_cmd->X, p_cmd->Z, p_cmd->OtherThing, p_cmd->Arg1);
+        res = person_init_go_to_point_face(p_person, p_cmd->X, p_cmd->Z,
+          p_cmd->OtherThing, p_cmd->Arg1);
         break;
     case PCmd_SELF_DESTRUCT:
         if (cybmod_chest_level(&p_person->U.UPerson.UMod) < 2)
@@ -2185,7 +2193,8 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         res = StCh_ACCEPTED;
         break;
     case PCmd_PLAY_SAMPLE:
-        res = person_cmd_play_sample(p_person, p_cmd->OtherThing, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
+        res = person_cmd_play_sample(p_person, p_cmd->OtherThing,
+          ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
     case PCmd_IGNORE_ENEMIES:
         res = person_cmd_ignore_enemies(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
@@ -2238,6 +2247,9 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_UNKN6B:
     case PCmd_UNKN6C:
     case PCmd_UNKN6D:
+    default:
+        res = StCh_ACCEPTED;
+        break;
     case PCmd_UNTIL_P_V_DEAD:
     case PCmd_UNTIL_MEM_G_DEAD:
     case PCmd_UNTIL_ALL_G_DEAD:
@@ -2257,7 +2269,9 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_UNTIL_TIME:
     case PCmd_UNTIL_OBJV:
     case PCmd_UNTIL_G_NOT_SEEN:
-        res = StCh_ACCEPTED;
+        // It should not be possible to reach this function with `until` command
+        // is the `until` command not properly marked by flag?
+        res = StCh_DENIED;
         break;
     }
 
