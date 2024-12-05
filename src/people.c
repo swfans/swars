@@ -2277,7 +2277,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
 
 	if (debug_log_things)
     {
-        char locstr[100];
+        char locstr[192];
 
         snprint_command(locstr, sizeof(locstr), cmd);
 
