@@ -287,15 +287,15 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
         nparams++;
     }
 
-    if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqCountT) != 0)) {
+    // some commands have both CmDF_ReqCoord2 and CmDF_ReqRange1; which one is used depends on flags
+    if ((((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqRange1) == 0)) ||
+     (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqRange1) != 0) &&
+      ((p_cmd->Flags & 0x10) != 0))) {
         if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
-        snprintf(s, buflen - (s - buf), "Coord2(%hd,0,%hd)", p_cmd->Arg1, p_cmd->Time);
-        s += strlen(s);
-        nparams++;
-    }
-    else if ((p_cdef->Flags & CmDF_ReqCoord2) != 0) {
-        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
-        snprintf(s, buflen - (s - buf), "Coord2(%hd,%hd,%hd)", p_cmd->Arg1, p_cmd->Arg2, p_cmd->Time);
+        if ((p_cdef->Flags & CmDF_ReqCountT) != 0)
+            snprintf(s, buflen - (s - buf), "Coord2(%hd,0,%hd)", p_cmd->Arg1, p_cmd->Time);
+        else
+            snprintf(s, buflen - (s - buf), "Coord2(%hd,%hd,%hd)", p_cmd->Arg1, p_cmd->Arg2, p_cmd->Time);
         s += strlen(s);
         nparams++;
     }

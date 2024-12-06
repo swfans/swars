@@ -2419,8 +2419,8 @@ void person_init_command(struct Thing *p_person, ushort from)
             if ((p_person->Flag2 & TgF2_Unkn0800) != 0)
             {
                 p_person->Flag2 &= ~TgF2_Unkn0800;
-                p_person->State = PerSt_WAIT;
-                p_person->U.UPerson.ComTimer = 50;
+                //TODO should we really keep previous substate?
+                person_init_cmd_wait_wth_timeout(p_person, p_person->SubState, 50);
                 ingame.Flags &= ~0x01;
                 set_peep_comcur(p_person);
             }
@@ -2431,8 +2431,7 @@ void person_init_command(struct Thing *p_person, ushort from)
         {
             nxcmd = person_command_until_check_condition(p_person, cmd);
             if (nxcmd != CMD_CONDITION_CONTINUE) {
-                p_person->State = PerSt_UNUSED_3A;
-                p_person->U.UPerson.ComCur = nxcmd;
+                person_command_jump(p_person, nxcmd);
                 break;
             }
         }
