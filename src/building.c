@@ -37,6 +37,18 @@
 ubyte dome_open_speed = 4;
 
 
+TbBool building_can_transform_open(ThingIdx bldng)
+{
+    struct Thing *p_building;
+
+    p_building = &things[bldng];
+    if (p_building->Type != TT_BUILDING)
+        return false;
+    if ((p_building->Flag & TngF_Destroyed) != 0)
+        return false;
+    return (p_building->SubType == SubTT_BLD_DOME);
+}
+
 struct Thing *create_building_thing(int x, int y, int z, ushort obj, ushort nobj, ushort a6)
 {
     struct Thing *ret;

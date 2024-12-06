@@ -1728,7 +1728,7 @@ StateChRes person_open_dome(struct Thing *p_person, short dome)
 {
     struct Thing *p_dome;
 
-    if (dome == 0)
+    if ((dome == 0) || !building_can_transform_open(dome))
     {
         p_person->State = PerSt_NONE;
         return StCh_UNATTAIN;
@@ -1744,7 +1744,7 @@ StateChRes person_close_dome(struct Thing *p_person, short dome)
 {
     struct Thing *p_dome;
 
-    if (dome == 0)
+    if ((dome == 0) || !building_can_transform_open(dome))
     {
         p_person->State = PerSt_NONE;
         return StCh_UNATTAIN;
