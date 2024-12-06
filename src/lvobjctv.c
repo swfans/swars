@@ -773,6 +773,31 @@ ubyte all_group_arrived_square(ushort group, short x, short z, short x2, int z2)
     return ret;
 }
 
+ubyte mem_group_arrived_square2(struct Thing *p_person, ushort group, short x, short z,
+  int x2, int z2, int count)
+{
+    ubyte ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_mem_group_arrived_square2\n"
+        : "=r" (ret) : "a" (p_person), "d" (group), "b" (x), "c" (z), "g" (x2), "g" (z2), "g" (count));
+    return ret;
+}
+
+ubyte mem_group_arrived(ushort group, short x, short y, short z,
+  int radius, int count)
+{
+    ubyte ret;
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "call ASM_mem_group_arrived\n"
+        : "=r" (ret) : "a" (group), "d" (x), "b" (y), "c" (z), "g" (radius), "g" (count));
+    return ret;
+}
+
 TbBool all_group_persuaded(ushort group)
 {
     ThingIdx thing;

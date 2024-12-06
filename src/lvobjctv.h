@@ -158,6 +158,10 @@ ubyte group_not_seen(ushort group);
 ubyte all_group_arrived(ushort group, short x, short y, short z, int radius);
 ubyte thing_arrived_at_obj_radius(ThingIdx thing, int x, int y, int z, int radius);
 ubyte all_group_arrived_square(ushort group, short x, short z, short x2, int z2);
+ubyte mem_group_arrived_square2(struct Thing *p_person, ushort group, short x, short z,
+  int x2, int z2, int count);
+ubyte mem_group_arrived(ushort group, short x, short y, short z,
+  int radius, int count);
 
 /** Fixes parameters within objectives.
  *
