@@ -1346,6 +1346,22 @@ void person_command_select_next(struct Thing *p_person)
     p_person->U.UPerson.ComCur = person_command_until_skip_condition(p_person, p_cmd->Next);
 }
 
+/** Discards a command at top of the person stack.
+ * The command is then never used again.
+ */
+void person_command_skip_at_start(struct Thing *p_person)
+{
+    struct Command *p_cmd;
+    ushort cmd;
+
+    cmd = p_person->U.UPerson.ComHead;
+    if (cmd == 0)
+        return;
+
+    p_cmd = &game_commands[cmd];
+    p_person->U.UPerson.ComHead = person_command_until_skip_condition(p_person, p_cmd->Next);
+}
+
 /** Jump to specific command on a person.
  */
 StateChRes person_command_jump(struct Thing *p_person, ushort cmd)
@@ -2222,10 +2238,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         res = person_cmd_ignore_enemies(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
     case PCmd_FIT_AS_AGENT:
-        // Commands which should be at top of the list - can only be executed before the level starts
-        //TODO allow this command to go anywhere
-        p_person->State = PerSt_NONE;
-        res = StCh_UNATTAIN;
+        res = person_make_fit_as_agent(p_person);
         break;
     case PCmd_CAMERA_ROTATE:
         camera_rotate_view(p_cmd->OtherThing, p_cmd->Arg1, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
@@ -2299,7 +2312,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         break;
     }
 
-	if (debug_log_things)
+	if ((debug_log_things & 0x01) != 0)
     {
         char locstr[192];
 
@@ -2318,6 +2331,53 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     return false;
 }
 
+TbBool person_init_specific_preplay_command(struct Thing *p_person, ushort cmd)
+{
+    struct Command *p_cmd;
+
+    p_cmd = &game_commands[cmd];
+
+    switch (p_cmd->Type)
+    {
+    case PCmd_HARD_AS_AGENT:
+        set_person_stats_type(p_person, SubTT_PERS_AGENT);
+        break;
+    case PCmd_FIT_AS_AGENT:
+        set_person_energy_stamina_type(p_person, SubTT_PERS_AGENT);
+        break;
+    default:
+        // found in-play command; terminate the pre-play loop
+        return false;
+    }
+
+	if ((debug_log_things & 0x01) != 0)
+    {
+        char locstr[192];
+
+        snprint_command(locstr, sizeof(locstr), cmd);
+
+        LOGSYNC("Person %s %d %s %d %s, state %d.%d",
+          person_type_name(p_person->SubType), (int)p_person->ThingOffset, locstr,
+          cmd, "pre-played", p_person->State, p_person->SubState);
+    }
+    return true;
+}
+
+void person_init_preplay_command(struct Thing *p_person)
+{
+    ushort cmd;
+    ubyte do_next;
+
+    //TODO why are we discarding the commands completely from stack? just jump above them instead?
+    for (cmd = p_person->U.UPerson.ComHead; cmd != 0; cmd = p_person->U.UPerson.ComHead)
+    {
+        do_next = person_init_specific_preplay_command(p_person, cmd);
+        if (!do_next)
+            break;
+        person_command_skip_at_start(p_person);
+    }
+}
+
 void person_init_command(struct Thing *p_person, ushort from)
 {
 #if 0
@@ -2330,7 +2390,7 @@ void person_init_command(struct Thing *p_person, ushort from)
     ushort nxcmd;
     ubyte do_next;
 
-    for (cmd = p_person->U.UPerson.ComCur; 2; )
+    for (cmd = p_person->U.UPerson.ComCur; 1; )
     {
         p_person->Flag &= ~TngF_Unkn0800;
         p_person->U.UPerson.Target2 = 0;
@@ -2378,10 +2438,8 @@ void person_init_command(struct Thing *p_person, ushort from)
         }
 
         do_next = person_init_specific_command(p_person, cmd);
-        if (do_next)
-                  continue;
-        break;
-
+        if (!do_next)
+            break;
     }
 }
 

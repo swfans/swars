@@ -92,6 +92,8 @@ print_help (const char *argv0)
 "  --help        -h        Display the help message\n"
 "                -I <num>  Multiplayer connect through IPX using given IPX\n"
 "                          network address\n"
+"                -l <str>  Activate additional logging; s - thing states and\n"
+"                          commands\n"
 "                -m <n>,<n> Load campaign with given index, from which load\n"
 "                          mission with given index in single map mode\n"
 "                -N        Sets a flag which is never used. Debug feature?\n"
@@ -146,7 +148,7 @@ static TbBool process_options(int *argc, char ***argv)
     argv0 = (*argv)[0];
     index = 0;
 
-    while ((val = getopt_long (*argc, *argv, "ABCDd:E:FgHhI:Lm:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
+    while ((val = getopt_long (*argc, *argv, "ABCDd:E:FgHhI:Ll:m:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
     {
         LOGDBG("Command line option: '%c'", val);
         switch (val)
@@ -221,6 +223,21 @@ static TbBool process_options(int *argc, char ***argv)
 
         case 'L':
             level_deep_fix = true;
+            break;
+
+        case 'l':
+            for (tmpint = 0; optarg[tmpint] != '\0'; tmpint++)
+            {
+                switch (optarg[tmpint])
+                {
+                case 's':
+                    debug_log_things |= 0x01;
+                    break;
+                default:
+                    LOGERR("Invalid value after '-l' parameter. Unexpected char '%c'.", optarg[tmpint]);
+                    return false;
+                }
+            }
             break;
 
         case 'm':

@@ -2631,21 +2631,7 @@ void init_my_paths(void)
 
 void init_level_unknsub01_person(struct Thing *p_person)
 {
-    struct Command *p_cmd;
-
-    p_cmd = &game_commands[p_person->U.UPerson.ComHead];
-
-    if (p_cmd->Type == PCmd_HARD_AS_AGENT)
-    {
-        set_person_stats_type(p_person, SubTT_PERS_AGENT);
-        p_person->U.UPerson.ComHead = p_cmd->Next;
-    }
-
-    if (p_cmd->Type == PCmd_FIT_AS_AGENT)
-    {
-        set_person_energy_stamina_type(p_person, SubTT_PERS_AGENT);
-        p_person->U.UPerson.ComHead = p_cmd->Next;
-    }
+    person_init_preplay_command(p_person);
 
     if (((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
       && ((p_person->Flag & TngF_Destroyed) == 0))

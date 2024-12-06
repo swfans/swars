@@ -254,6 +254,10 @@ TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle);
 
 int limit_mood(struct Thing *p_thing, short mood);
 
+/** Init some commands which should be executed before the person is completely set up.
+ */
+void person_init_preplay_command(struct Thing *p_person);
+
 TbBool person_is_executing_commands(ThingIdx person);
 TbBool person_is_persuaded(ThingIdx thing);
 TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
