@@ -644,14 +644,23 @@ short calc_person_speed(struct Thing *p_person)
     return speed;
 }
 
-void set_person_health_energy_shield_stamina_type(struct Thing *p_person, ushort stype)
+void person_set_helath_to_max_limit(struct Thing *p_person)
+{
+    p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
+    p_person->Health = 2 * p_person->U.UPerson.MaxHealth; // double health - fill red bar
+}
+
+void person_set_energy_to_max_limit(struct Thing *p_person)
+{
+    p_person->U.UPerson.MaxEnergy = PERSON_MAX_ENERGY_LIMIT;
+    p_person->U.UPerson.Energy = p_person->U.UPerson.MaxEnergy;
+}
+
+void set_person_health_shield_type(struct Thing *p_person, ushort stype)
 {
     struct PeepStat *pstat;
 
     pstat = &peep_type_stats[stype];
-
-    p_person->U.UPerson.Energy = pstat->MaxEnergy +
-        (person_mod_chest_level(p_person) * pstat->MaxEnergy * 50 / 100);
 
     p_person->U.UPerson.ShieldEnergy = pstat->MaxShield +
         (person_mod_brain_level(p_person) * pstat->MaxShield * 50 / 100);
@@ -662,17 +671,32 @@ void set_person_health_energy_shield_stamina_type(struct Thing *p_person, ushort
         (person_mod_legs_level(p_person) * pstat->MaxHealth * 25 / 100) +
         (person_mod_arms_level(p_person) * pstat->MaxHealth * 25 / 100)) / 4;
 
+    p_person->U.UPerson.MaxHealth = p_person->Health;
+    p_person->U.UPerson.MaxShieldEnergy = p_person->U.UPerson.ShieldEnergy;
+
+    if (person_mod_chest_level(p_person) == 4)
+    {
+        person_set_helath_to_max_limit(p_person);
+    }
+}
+
+void set_person_energy_stamina_type(struct Thing *p_person, ushort stype)
+{
+    struct PeepStat *pstat;
+
+    pstat = &peep_type_stats[stype];
+
+    p_person->U.UPerson.Energy = pstat->MaxEnergy +
+        (person_mod_chest_level(p_person) * pstat->MaxEnergy * 50 / 100);
+
     p_person->U.UPerson.Stamina = pstat->MaximumStamina;
 
-    p_person->U.UPerson.MaxHealth = p_person->Health;
     p_person->U.UPerson.MaxEnergy = p_person->U.UPerson.Energy;
-    p_person->U.UPerson.MaxShieldEnergy = p_person->U.UPerson.ShieldEnergy;
     p_person->U.UPerson.MaxStamina = p_person->U.UPerson.Stamina;
 
     if (person_mod_chest_level(p_person) == 4)
     {
-        p_person->Health = 2 * PERSON_MAX_HEALTH_LIMIT;
-        p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
+        person_set_energy_to_max_limit(p_person);
     }
 }
 
@@ -683,18 +707,6 @@ void person_resurrect(struct Thing *p_person)
     p_person->State = PerSt_WAIT;
     p_person->Health = p_person->U.UPerson.MaxHealth * 3 / 4;
     set_person_anim_mode(p_person, 1);
-}
-
-void person_set_helath_to_max_limit(struct Thing *p_person)
-{
-    p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
-    p_person->Health = 2 * p_person->U.UPerson.MaxHealth; // double health - fill red bar
-}
-
-void person_set_energy_to_max_limit(struct Thing *p_person)
-{
-    p_person->U.UPerson.MaxEnergy = 32000;
-    p_person->U.UPerson.Energy = p_person->U.UPerson.MaxEnergy;
 }
 
 void person_set_persuade_power__to_allow_all(struct Thing *p_person)
@@ -740,7 +752,8 @@ ushort calc_person_radius_type(struct Thing *p_person, ushort stype)
 
 void set_person_stats_type(struct Thing *p_person, ushort stype)
 {
-    set_person_health_energy_shield_stamina_type(p_person, stype);
+    set_person_health_shield_type(p_person, stype);
+    set_person_energy_stamina_type(p_person, stype);
     p_person->U.UPerson.PersuadePower = 0;
     p_person->Speed = calc_person_speed(p_person);
 }
@@ -788,7 +801,8 @@ void change_player_angle(struct Thing *p_person, ushort angle)
 
 void init_person_thing(struct Thing *p_person)
 {
-    set_person_health_energy_shield_stamina_type(p_person, p_person->SubType);
+    set_person_health_shield_type(p_person, p_person->SubType);
+    set_person_energy_stamina_type(p_person, p_person->SubType);
 
     p_person->U.UPerson.PersuadePower = 0;
     p_person->Radius = calc_person_radius_type(p_person, p_person->SubType);
@@ -1875,7 +1889,15 @@ StateChRes person_init_go_to_point_face(struct Thing *p_person, short x,
 
 StateChRes person_make_hard_as_agent(struct Thing *p_person)
 {
-    set_person_health_energy_shield_stamina_type(p_person, SubTT_PERS_AGENT);
+    set_person_health_shield_type(p_person, SubTT_PERS_AGENT);
+    set_person_energy_stamina_type(p_person, SubTT_PERS_AGENT);
+    p_person->State = PerSt_NONE;
+    return StCh_ACCEPTED;
+}
+
+StateChRes person_make_fit_as_agent(struct Thing *p_person)
+{
+    set_person_energy_stamina_type(p_person, SubTT_PERS_AGENT);
     p_person->State = PerSt_NONE;
     return StCh_ACCEPTED;
 }
@@ -2199,9 +2221,11 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_IGNORE_ENEMIES:
         res = person_cmd_ignore_enemies(p_person, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));
         break;
-    case PCmd_FULL_STAMINA:
+    case PCmd_FIT_AS_AGENT:
+        // Commands which should be at top of the list - can only be executed before the level starts
+        //TODO allow this command to go anywhere
         p_person->State = PerSt_NONE;
-        res = StCh_ACCEPTED;
+        res = StCh_UNATTAIN;
         break;
     case PCmd_CAMERA_ROTATE:
         camera_rotate_view(p_cmd->OtherThing, p_cmd->Arg1, ((p_cmd->Flags & PCmdF_RevertFunct) != 0));

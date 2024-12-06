@@ -2637,17 +2637,13 @@ void init_level_unknsub01_person(struct Thing *p_person)
 
     if (p_cmd->Type == PCmd_HARD_AS_AGENT)
     {
-        set_person_stats_type(p_person, 1);
+        set_person_stats_type(p_person, SubTT_PERS_AGENT);
         p_person->U.UPerson.ComHead = p_cmd->Next;
     }
 
-    if (p_cmd->Type == PCmd_FULL_STAMINA)
+    if (p_cmd->Type == PCmd_FIT_AS_AGENT)
     {
-        struct PeepStat *p_pestat;
-
-        p_pestat = &peep_type_stats[SubTT_PERS_AGENT];
-        p_person->U.UPerson.MaxStamina = p_pestat->MaximumStamina;
-        p_person->U.UPerson.Stamina = p_person->U.UPerson.MaxStamina;
+        set_person_energy_stamina_type(p_person, SubTT_PERS_AGENT);
         p_person->U.UPerson.ComHead = p_cmd->Next;
     }
 
@@ -3122,7 +3118,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_person->U.UPerson.ComHead = game_commands[p_person->U.UPerson.ComHead].Next;
         }
 
-        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_FULL_STAMINA)
+        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_FIT_AS_AGENT)
         {
             p_person->U.UPerson.Stamina = peep_type_stats[1].MaximumStamina;
             p_person->U.UPerson.MaxStamina = peep_type_stats[1].MaximumStamina;

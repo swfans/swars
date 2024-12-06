@@ -122,9 +122,13 @@ enum PersonFlags3 {
     PrsF3_Unkn80     = 0x80,
 };
 
-/** Max health of a person cannot safely go beyond that.
+/** Max health of a person; cannot safely go beyond that.
  */
 #define PERSON_MAX_HEALTH_LIMIT 16383
+
+/** Max weapon energy of a person; cannot safely go beyond that.
+ */
+#define PERSON_MAX_ENERGY_LIMIT 32255
 
 #define PERSON_MAX_SPEED 2048
 
@@ -200,6 +204,9 @@ TbBool person_carries_any_medikit(struct Thing *p_person);
 TbBool person_can_accept_control(ThingIdx person);
 
 void set_person_stats_type(struct Thing *p_person, ushort type);
+void set_person_health_shield_type(struct Thing *p_person, ushort stype);
+void set_person_energy_stamina_type(struct Thing *p_person, ushort stype);
+
 void init_person_thing(struct Thing *p_person);
 void person_give_best_mods(struct Thing *p_person);
 short calc_person_speed(struct Thing *p_person);

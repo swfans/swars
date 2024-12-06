@@ -224,7 +224,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_UNTRUCE_GROUP",		NULL,				CmDF_ReqGroup },
     {"TNG_CMD_PLAY_SAMPLE",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = sample
     {"TNG_CMD_IGNORE_ENEMIES",		NULL,				CmDF_None },
-    {"TNG_CMD_FULL_STAMINA",		NULL,				CmDF_None },
+    {"TNG_CMD_FIT_AS_AGENT",		NULL,				CmDF_None },
     {"TNG_CMD_CAMERA_ROTATE",		NULL,				CmDF_ReqOtherIndex|CmDF_ReqArg1 }, //  OtherIndex = degrees delta, Arg1 = speed
     {NULL,							NULL,				CmDF_None },
 };
