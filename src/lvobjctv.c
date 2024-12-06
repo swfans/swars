@@ -744,6 +744,35 @@ ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
     return ret;
 }
 
+ubyte group_not_seen(ushort group)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_group_not_seen\n"
+        : "=r" (ret) : "a" (group));
+    return ret;
+}
+
+ubyte thing_arrived_at_obj_radius(ThingIdx thing, int x, int y, int z, int radius)
+{
+    ubyte ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_thing_arrived_at_obj_radius\n"
+        : "=r" (ret) : "a" (thing), "d" (x), "b" (y), "c" (z), "g" (radius));
+    return ret;
+}
+
+ubyte all_group_arrived_square(ushort group, short x, short z, short x2, int z2)
+{
+    ubyte ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_all_group_arrived_square\n"
+        : "=r" (ret) : "a" (group), "d" (x), "b" (z), "c" (x2), "g" (z2));
+    return ret;
+}
+
 TbBool all_group_persuaded(ushort group)
 {
     ThingIdx thing;

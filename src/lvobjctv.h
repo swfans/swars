@@ -21,6 +21,7 @@
 
 #include "bftypes.h"
 #include "bffile.h"
+#include "game_bstype.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -81,6 +82,8 @@ enum GameObjectiveFlags {
     /** The objective cannot be met - it is shown, but fulfilling its criteria does nothing */
     GObjF_CANT_MET = 0x02,
 };
+
+struct Thing;
 
 struct Objective { // sizeof=32
     ushort Next;
@@ -149,6 +152,12 @@ TbBool objective_target_is_item(struct Objective *p_objectv);
 TbBool objective_target_is_item_to_area(struct Objective *p_objectv);
 TbBool objective_target_is_object(struct Objective *p_objectv);
 TbBool objective_target_is_any_thing(struct Objective *p_objectv);
+
+short test_objective(ushort objectv, ushort show_obj);
+ubyte group_not_seen(ushort group);
+ubyte all_group_arrived(ushort group, short x, short y, short z, int radius);
+ubyte thing_arrived_at_obj_radius(ThingIdx thing, int x, int y, int z, int radius);
+ubyte all_group_arrived_square(ushort group, short x, short z, short x2, int z2);
 
 /** Fixes parameters within objectives.
  *

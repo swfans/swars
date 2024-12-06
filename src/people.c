@@ -33,6 +33,7 @@
 #include "game.h"
 #include "game_speed.h"
 #include "game_sprani.h"
+#include "lvobjctv.h"
 #include "scandraw.h"
 #include "sound.h"
 #include "thing.h"
@@ -1186,22 +1187,12 @@ void set_peep_comcur(struct Thing *p_person)
         : : "a" (p_person));
 }
 
-ubyte thing_arrived_at_obj_radius(short thing, int x, int y, int z, int radius)
-{
-    ubyte ret;
-    asm volatile (
-      "push %5\n"
-      "call ASM_thing_arrived_at_obj_radius\n"
-        : "=r" (ret) : "a" (thing), "d" (x), "b" (y), "c" (z), "g" (radius));
-    return ret;
-}
-
-ubyte conditional_command_state_true(ushort com, struct Thing *p_me, ubyte from)
+ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
 {
     ubyte ret;
     asm volatile (
       "call ASM_conditional_command_state_true\n"
-        : "=r" (ret) : "a" (com), "d" (p_me), "b" (from));
+        : "=r" (ret) : "a" (cmd), "d" (p_me), "b" (from));
     return ret;
 }
 
