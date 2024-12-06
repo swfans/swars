@@ -1189,11 +1189,231 @@ void set_peep_comcur(struct Thing *p_person)
 
 ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
 {
+#if 0
     ubyte ret;
     asm volatile (
       "call ASM_conditional_command_state_true\n"
         : "=r" (ret) : "a" (cmd), "d" (p_me), "b" (from));
     return ret;
+#endif
+    struct Command *p_cmd;
+    struct Thing *p_othertng;
+    struct SimpleThing *p_sthing;
+    int cor_x, cor_y;
+    ubyte flag8_set;
+
+    p_cmd = &game_commands[cmd];
+    flag8_set = (p_cmd->Flags & 0x0008) != 0;
+
+    switch (p_cmd->Type)
+    {
+    case PCmd_WAIT_MEM_G_ARRIVE:
+    case PCmd_WAND_MEM_G_ARRIVE:
+    case PCmd_UNTIL_MEM_G_ARRIVE:
+        if ((p_cmd->Flags & 0x0010) != 0)
+        {
+            if (mem_group_arrived_square2(p_me, p_cmd->OtherThing,
+              p_cmd->X, p_cmd->Z, p_cmd->Arg1, p_cmd->Time, p_cmd->Arg2))
+            {
+              return !flag8_set;
+            }
+        }
+        else if (mem_group_arrived(p_cmd->OtherThing,
+          p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1, p_cmd->Arg2))
+        {
+            return !flag8_set;
+        }
+        return flag8_set;
+
+    case PCmd_WAIT_P_V_DEAD:
+    case PCmd_WAND_P_V_DEAD:
+    case PCmd_UNTIL_P_V_DEAD:
+        p_othertng = &things[p_cmd->OtherThing];
+        if (p_othertng->State == PerSt_DEAD)
+            return 1;
+        return flag8_set;
+
+    case PCmd_WAIT_P_V_I_ARRIVE:
+    case PCmd_WAND_P_V_I_ARRIVE:
+    case PCmd_UNTIL_P_V_I_ARRIVE:
+        p_othertng = &things[p_cmd->OtherThing];
+        if (p_cmd->OtherThing <= 0 || (p_othertng->Flag & 0x0002) == 0 )
+        {
+            if ((p_cmd->Flags & 0x10) != 0)
+            {
+              if (p_cmd->OtherThing > 0)
+              {
+                p_othertng = &things[p_cmd->OtherThing];
+                cor_x = p_othertng->X >> 8;
+                cor_y = p_othertng->Z >> 8;
+                if ((cor_x > p_cmd->X) && (cor_x < p_cmd->Arg1))
+                {
+                  if ((cor_y > p_cmd->Z) && (cor_y < p_cmd->Time))
+                  {
+                      return (p_cmd->Flags & 8) == 0;
+                  }
+                }
+              }
+              if (p_cmd->OtherThing < 0)
+              {
+                p_sthing = &sthings[p_cmd->OtherThing];
+
+                cor_x = p_sthing->X >> 8;
+                cor_y = p_sthing->Z >> 8;
+                if (cor_x > p_cmd->X && cor_x < p_cmd->Arg1 && cor_y > p_cmd->Z && cor_y < p_cmd->Time)
+                  return !flag8_set;
+              }
+            }
+            else
+            {
+              if ((p_cmd->OtherThing > 0) && thing_arrived_at_obj_radius(p_cmd->OtherThing,
+                     p_cmd->X, p_cmd->Y, p_cmd->Z, (p_cmd->Arg1 * p_cmd->Arg1) << 12))
+              {
+                return !flag8_set;
+              }
+              if (p_cmd->OtherThing < 0)
+              {
+                  int r2;
+                  int dist_x, dist_y;
+
+                  p_sthing = &sthings[p_cmd->OtherThing];
+                  r2 = (p_cmd->Arg1 * p_cmd->Arg1);
+                  dist_x = (p_sthing->X >> 8) - p_cmd->X;
+                  dist_y = (p_sthing->Z >> 8) - p_cmd->Z;
+                  if (dist_x * dist_x + dist_y * dist_y < r2 << 12)
+                      return !flag8_set;
+              }
+            }
+        }
+        return flag8_set;
+
+    case PCmd_WAIT_ALL_G_NEAR:
+    case PCmd_WAND_ALL_G_NEAR:
+    case PCmd_UNTIL_ALL_G_NEAR:
+        if (all_group_arrived( p_cmd->OtherThing, p_me->X >> 8,
+          p_me->Y >> 8, p_me->Z >> 8, p_cmd->Arg1))
+        {
+            return !flag8_set;
+        }
+        return flag8_set;
+
+    case PCmd_WAND_MEM_G_NEAR:
+    case PCmd_WAIT_MEM_G_NEAR:
+    case PCmd_UNTIL_MEM_G_NEAR:
+        if (mem_group_arrived(p_cmd->OtherThing,
+          p_me->X >> 8, p_me->Y >> 8, p_me->Z >> 8, p_cmd->Arg1, p_cmd->Arg2))
+        {
+            return !flag8_set;
+        }
+        return flag8_set;
+
+    case PCmd_WAIT_MEM_G_PERSUADE:
+    case PCmd_WAND_MEM_G_PERSUADE:
+    case PCmd_UNTIL_MEM_G_PERSUADE:
+        if (p_cmd->Arg2 <= group_actions[p_cmd->OtherThing].Persuaded)
+            return !flag8_set;
+        return flag8_set;
+
+    case PCmd_WAIT_P_V_I_NEAR:
+    case PCmd_WAND_P_V_I_NEAR:
+    case PCmd_UNTIL_P_V_I_NEAR:
+        if (thing_arrived_at_obj_radius(p_cmd->OtherThing,
+          p_me->X >> 8, p_me->Y >> 8, p_me->Z >> 8, ((p_cmd->Arg1) * (p_cmd->Arg1)) << 12))
+        {
+            return !flag8_set;
+        }
+        return flag8_set;
+
+    case PCmd_WAIT_ALL_G_PERSUADE:
+    case PCmd_WAND_ALL_G_PERSUADE:
+    case PCmd_UNTIL_ALL_G_PERSUADE:
+        if (group_actions[p_cmd->OtherThing].Persuaded == group_actions[p_cmd->OtherThing].Alive)
+            return !flag8_set;
+        return flag8_set;
+
+    case PCmd_UNTIL_ALL_G_DEAD:
+    case PCmd_WAIT_ALL_G_DEAD:
+    case PCmd_WAND_ALL_G_DEAD:
+        if (!group_actions[p_cmd->OtherThing].Alive)
+            return 1;
+        return flag8_set;
+
+    case PCmd_UNTIL_TIME:
+    case PCmd_WAND_TIME:
+    case PCmd_WAIT_TIME:
+        if (p_cmd->Time < 9999)
+        {
+            p_cmd->Arg1++;
+            if (p_cmd->Arg1 >= p_cmd->Time) {
+                p_cmd->Arg1 = 0;
+                return 1;
+            }
+        }
+        return flag8_set;
+
+    case PCmd_UNTIL_G_NOT_SEEN:
+        if (group_not_seen(p_cmd->OtherThing))
+            return !flag8_set;
+        if (group_actions[p_cmd->OtherThing].Alive == 0)
+            return 1;
+        return flag8_set;
+
+    case PCmd_WAIT_OBJV:
+    case PCmd_WAND_OBJV:
+    case PCmd_UNTIL_OBJV:
+        return test_objective(p_cmd->OtherThing, 2);
+
+    case PCmd_WAIT_OBJT_DESTROY:
+    case PCmd_WAND_OBJT_DESTROY:
+    case PCmd_UNTIL_OBJT_DESTROY:
+        p_othertng = &things[p_cmd->OtherThing];
+        if ((p_othertng->Flag & 0x0002) != 0)
+            return !flag8_set;
+        return flag8_set;
+
+    case PCmd_WAIT_P_PERSUADE:
+    case PCmd_WAND_P_PERSUADE:
+    case PCmd_UNTIL_P_PERSUADE:
+        p_othertng = &things[p_cmd->OtherThing];
+        if ((p_othertng->Flag & 0x80000) != 0)
+            return !flag8_set;
+        return flag8_set;
+
+    case PCmd_WAIT_MEM_G_DEAD:
+    case PCmd_WAND_MEM_G_DEAD:
+    case PCmd_UNTIL_MEM_G_DEAD:
+        if (p_cmd->Arg2 <= group_actions[p_cmd->OtherThing].Dead)
+            return 1;
+        return flag8_set;
+
+    case PCmd_WAIT_ALL_G_ARRIVE:
+    case PCmd_WAND_ALL_G_ARRIVE:
+    case PCmd_UNTIL_ALL_G_ARRIVE:
+        if ((p_cmd->Flags & 0x0010) != 0)
+        {
+            if (all_group_arrived_square(p_cmd->OtherThing,
+              p_cmd->X, p_cmd->Z, p_cmd->Arg1, p_cmd->Time)) {
+                return !flag8_set;
+            }
+        }
+        else
+        {
+            if (all_group_arrived(p_cmd->OtherThing,
+              p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1)) {
+                return !flag8_set;
+            }
+        }
+        return flag8_set;
+
+    case PCmd_NONE:
+    case PCmd_STAY:
+    case PCmd_GO_TO_POINT:
+        return 0;
+
+    default:
+        break;
+    }
+    return flag8_set;
 }
 
 void person_init_drop_special(struct Thing *p_person, ThingIdx item)
