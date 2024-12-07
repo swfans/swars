@@ -1210,7 +1210,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_WAIT_MEM_G_ARRIVE:
     case PCmd_WAND_MEM_G_ARRIVE:
     case PCmd_UNTIL_MEM_G_ARRIVE:
-        if ((p_cmd->Flags & 0x0010) != 0)
+        if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0)
         {
             if (mem_group_arrived_square2(p_me, p_cmd->OtherThing,
               p_cmd->X, p_cmd->Z, p_cmd->Arg1, p_cmd->Time, p_cmd->Arg2))
@@ -1239,7 +1239,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
         p_othertng = &things[p_cmd->OtherThing];
         if (p_cmd->OtherThing <= 0 || (p_othertng->Flag & 0x0002) == 0 )
         {
-            if ((p_cmd->Flags & 0x10) != 0)
+            if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0)
             {
               if (p_cmd->OtherThing > 0)
               {
@@ -1389,7 +1389,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_WAIT_ALL_G_ARRIVE:
     case PCmd_WAND_ALL_G_ARRIVE:
     case PCmd_UNTIL_ALL_G_ARRIVE:
-        if ((p_cmd->Flags & 0x0010) != 0)
+        if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0)
         {
             if (all_group_arrived_square(p_cmd->OtherThing,
               p_cmd->X, p_cmd->Z, p_cmd->Arg1, p_cmd->Time)) {

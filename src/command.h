@@ -242,7 +242,13 @@ enum PersonCommandFlags
    * also be toggled / reverted, like PING command.
    */
   PCmdF_RevertFunct = 0x0008,
-  PCmdF_Unkn0010 = 0x0010,
+  /** The command defines a rectangular area.
+   * Commands with area of activation or area of effect often use circular shape, which requires
+   * storing only 1 point coords and radius. If a rectangle is required, some values need to be
+   * re-used for the second set of coordinates. This flag marks such shape, and therefore such
+   * reuse.
+   */
+  PCmdF_AreaIsRect = 0x0010,
   PCmdF_Unkn0020 = 0x0020,
   PCmdF_Unkn0040 = 0x0040,
   PCmdF_Unkn0080 = 0x0080,

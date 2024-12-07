@@ -287,10 +287,10 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
         nparams++;
     }
 
-    // some commands have both CmDF_ReqCoord2 and CmDF_ReqRange1; which one is used depends on flags
+    // some commands have both CmDF_ReqCoord2 and CmDF_ReqRange1; which one is used depends on AreaIsRect flag
     if ((((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqRange1) == 0)) ||
      (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqRange1) != 0) &&
-      ((p_cmd->Flags & 0x10) != 0))) {
+      ((p_cmd->Flags & PCmdF_AreaIsRect) != 0))) {
         if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
         if ((p_cdef->Flags & CmDF_ReqCountT) != 0)
             snprintf(s, buflen - (s - buf), "Coord2(%hd,0,%hd)", p_cmd->Arg1, p_cmd->Time);
@@ -713,7 +713,7 @@ ubyte fix_thing_command_indexes(ushort cmd, TbBool deep)
     }
 
     if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && (((p_cdef->Flags & CmDF_ReqRange1) == 0) ||
-        (((p_cdef->Flags & CmDF_ReqRange1) != 0) && ((p_cmd->Flags & PCmdF_Unkn0010) != 0))))
+        (((p_cdef->Flags & CmDF_ReqRange1) != 0) && ((p_cmd->Flags & PCmdF_AreaIsRect) != 0))))
     {
         if ((p_cmd->Arg1 < MAP_BORDER_MARGIN) || (p_cmd->Arg1 > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("Cmd%hu = %s target coord X/Arg1 of (%d,%d) out of range",
@@ -741,7 +741,7 @@ ubyte fix_thing_command_indexes(ushort cmd, TbBool deep)
         }
     } else
     if (((p_cdef->Flags & CmDF_ReqRange1) != 0) && (((p_cdef->Flags & CmDF_ReqCoord2) == 0) ||
-        (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & PCmdF_Unkn0010) == 0))))
+        (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & PCmdF_AreaIsRect) == 0))))
     {
         if ((p_cmd->Arg1 < 1) || (p_cmd->Arg1 > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("Cmd%hu = %s target Range/Arg1 of %d out of range",
