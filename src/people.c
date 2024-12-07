@@ -1200,10 +1200,10 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     struct Thing *p_othertng;
     struct SimpleThing *p_sthing;
     int cor_x, cor_y;
-    ubyte flag8_set;
+    ubyte unmet;
 
     p_cmd = &game_commands[cmd];
-    flag8_set = (p_cmd->Flags & 0x0008) != 0;
+    unmet = (p_cmd->Flags & PCmdF_RevertFunct) != 0;
 
     switch (p_cmd->Type)
     {
@@ -1215,15 +1215,15 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
             if (mem_group_arrived_square2(p_me, p_cmd->OtherThing,
               p_cmd->X, p_cmd->Z, p_cmd->Arg1, p_cmd->Time, p_cmd->Arg2))
             {
-              return !flag8_set;
+              return !unmet;
             }
         }
         else if (mem_group_arrived(p_cmd->OtherThing,
           p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1, p_cmd->Arg2))
         {
-            return !flag8_set;
+            return !unmet;
         }
-        return flag8_set;
+        return unmet;
 
     case PCmd_WAIT_P_V_DEAD:
     case PCmd_WAND_P_V_DEAD:
@@ -1231,7 +1231,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
         p_othertng = &things[p_cmd->OtherThing];
         if (p_othertng->State == PerSt_DEAD)
             return 1;
-        return flag8_set;
+        return unmet;
 
     case PCmd_WAIT_P_V_I_ARRIVE:
     case PCmd_WAND_P_V_I_ARRIVE:
@@ -1261,7 +1261,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
                 cor_x = p_sthing->X >> 8;
                 cor_y = p_sthing->Z >> 8;
                 if (cor_x > p_cmd->X && cor_x < p_cmd->Arg1 && cor_y > p_cmd->Z && cor_y < p_cmd->Time)
-                  return !flag8_set;
+                  return !unmet;
               }
             }
             else
@@ -1269,7 +1269,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
               if ((p_cmd->OtherThing > 0) && thing_arrived_at_obj_radius(p_cmd->OtherThing,
                      p_cmd->X, p_cmd->Y, p_cmd->Z, (p_cmd->Arg1 * p_cmd->Arg1) << 12))
               {
-                return !flag8_set;
+                return !unmet;
               }
               if (p_cmd->OtherThing < 0)
               {
@@ -1281,11 +1281,11 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
                   dist_x = (p_sthing->X >> 8) - p_cmd->X;
                   dist_y = (p_sthing->Z >> 8) - p_cmd->Z;
                   if (dist_x * dist_x + dist_y * dist_y < r2 << 12)
-                      return !flag8_set;
+                      return !unmet;
               }
             }
         }
-        return flag8_set;
+        return unmet;
 
     case PCmd_WAIT_ALL_G_NEAR:
     case PCmd_WAND_ALL_G_NEAR:
@@ -1293,9 +1293,9 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
         if (all_group_arrived( p_cmd->OtherThing, p_me->X >> 8,
           p_me->Y >> 8, p_me->Z >> 8, p_cmd->Arg1))
         {
-            return !flag8_set;
+            return !unmet;
         }
-        return flag8_set;
+        return unmet;
 
     case PCmd_WAND_MEM_G_NEAR:
     case PCmd_WAIT_MEM_G_NEAR:
@@ -1303,16 +1303,16 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
         if (mem_group_arrived(p_cmd->OtherThing,
           p_me->X >> 8, p_me->Y >> 8, p_me->Z >> 8, p_cmd->Arg1, p_cmd->Arg2))
         {
-            return !flag8_set;
+            return !unmet;
         }
-        return flag8_set;
+        return unmet;
 
     case PCmd_WAIT_MEM_G_PERSUADE:
     case PCmd_WAND_MEM_G_PERSUADE:
     case PCmd_UNTIL_MEM_G_PERSUADE:
         if (p_cmd->Arg2 <= group_actions[p_cmd->OtherThing].Persuaded)
-            return !flag8_set;
-        return flag8_set;
+            return !unmet;
+        return unmet;
 
     case PCmd_WAIT_P_V_I_NEAR:
     case PCmd_WAND_P_V_I_NEAR:
@@ -1320,23 +1320,23 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
         if (thing_arrived_at_obj_radius(p_cmd->OtherThing,
           p_me->X >> 8, p_me->Y >> 8, p_me->Z >> 8, ((p_cmd->Arg1) * (p_cmd->Arg1)) << 12))
         {
-            return !flag8_set;
+            return !unmet;
         }
-        return flag8_set;
+        return unmet;
 
     case PCmd_WAIT_ALL_G_PERSUADE:
     case PCmd_WAND_ALL_G_PERSUADE:
     case PCmd_UNTIL_ALL_G_PERSUADE:
         if (group_actions[p_cmd->OtherThing].Persuaded == group_actions[p_cmd->OtherThing].Alive)
-            return !flag8_set;
-        return flag8_set;
+            return !unmet;
+        return unmet;
 
     case PCmd_UNTIL_ALL_G_DEAD:
     case PCmd_WAIT_ALL_G_DEAD:
     case PCmd_WAND_ALL_G_DEAD:
         if (!group_actions[p_cmd->OtherThing].Alive)
             return 1;
-        return flag8_set;
+        return unmet;
 
     case PCmd_UNTIL_TIME:
     case PCmd_WAND_TIME:
@@ -1349,14 +1349,14 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
                 return 1;
             }
         }
-        return flag8_set;
+        return unmet;
 
     case PCmd_UNTIL_G_NOT_SEEN:
         if (group_not_seen(p_cmd->OtherThing))
-            return !flag8_set;
+            return !unmet;
         if (group_actions[p_cmd->OtherThing].Alive == 0)
             return 1;
-        return flag8_set;
+        return unmet;
 
     case PCmd_WAIT_OBJV:
     case PCmd_WAND_OBJV:
@@ -1368,23 +1368,23 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_UNTIL_OBJT_DESTROY:
         p_othertng = &things[p_cmd->OtherThing];
         if ((p_othertng->Flag & 0x0002) != 0)
-            return !flag8_set;
-        return flag8_set;
+            return !unmet;
+        return unmet;
 
     case PCmd_WAIT_P_PERSUADE:
     case PCmd_WAND_P_PERSUADE:
     case PCmd_UNTIL_P_PERSUADE:
         p_othertng = &things[p_cmd->OtherThing];
         if ((p_othertng->Flag & 0x80000) != 0)
-            return !flag8_set;
-        return flag8_set;
+            return !unmet;
+        return unmet;
 
     case PCmd_WAIT_MEM_G_DEAD:
     case PCmd_WAND_MEM_G_DEAD:
     case PCmd_UNTIL_MEM_G_DEAD:
         if (p_cmd->Arg2 <= group_actions[p_cmd->OtherThing].Dead)
             return 1;
-        return flag8_set;
+        return unmet;
 
     case PCmd_WAIT_ALL_G_ARRIVE:
     case PCmd_WAND_ALL_G_ARRIVE:
@@ -1393,17 +1393,17 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
         {
             if (all_group_arrived_square(p_cmd->OtherThing,
               p_cmd->X, p_cmd->Z, p_cmd->Arg1, p_cmd->Time)) {
-                return !flag8_set;
+                return !unmet;
             }
         }
         else
         {
             if (all_group_arrived(p_cmd->OtherThing,
               p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1)) {
-                return !flag8_set;
+                return !unmet;
             }
         }
-        return flag8_set;
+        return unmet;
 
     case PCmd_NONE:
     case PCmd_STAY:
@@ -1413,7 +1413,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     default:
         break;
     }
-    return flag8_set;
+    return unmet;
 }
 
 void person_init_drop_special(struct Thing *p_person, ThingIdx item)
