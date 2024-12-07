@@ -26,6 +26,8 @@
 #include "bfmemut.h"
 #include "bfini.h"
 #include "bfkeybd.h"
+
+#include "bigmap.h"
 #include "campaign.h"
 #include "drawtext.h"
 #include "thing.h"
@@ -753,14 +755,61 @@ ubyte group_not_seen(ushort group)
     return ret;
 }
 
-ubyte thing_arrived_at_obj_radius(ThingIdx thing, int x, int y, int z, int radius)
+TbBool thing_arrived_at_obj_radius(ThingIdx thing, int x, int y, int z, int radius_sq)
 {
+#if 0
     ubyte ret;
     asm volatile (
       "push %5\n"
       "call ASM_thing_arrived_at_obj_radius\n"
-        : "=r" (ret) : "a" (thing), "d" (x), "b" (y), "c" (z), "g" (radius));
+        : "=r" (ret) : "a" (thing), "d" (x), "b" (y), "c" (z), "g" (radius_sq));
     return ret;
+#endif
+    int dist_x, dist_z;
+
+    if (thing >= 0)
+    {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        dist_x = (p_thing->X >> 8) - x;
+        dist_z = (p_thing->Z >> 8) - z;
+    }
+    else
+    {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        dist_x = (p_sthing->X >> 8) - x;
+        dist_z = (p_sthing->Z >> 8) - z;
+    }
+    return dist_x * dist_x + dist_z * dist_z < radius_sq;
+}
+
+TbBool thing_arrived_at_obj_square2(ThingIdx thing, int x1, int z1, int x2, int z2)
+{
+    short cor_x, cor_z;
+
+    if (thing >= 0)
+    {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
+        cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    }
+    else
+    {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        cor_x = PRCCOORD_TO_MAPCOORD(p_sthing->X);
+        cor_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+    }
+    if ((cor_x > x1) && (cor_x < x2))
+    {
+        if ((cor_z > z1) && (cor_z < z2))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 ubyte all_group_arrived_square(ushort group, short x, short z, short x2, int z2)

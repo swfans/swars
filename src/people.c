@@ -1198,8 +1198,6 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
 #endif
     struct Command *p_cmd;
     struct Thing *p_othertng;
-    struct SimpleThing *p_sthing;
-    int cor_x, cor_y;
     ubyte unmet;
 
     p_cmd = &game_commands[cmd];
@@ -1213,15 +1211,16 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0)
         {
             if (mem_group_arrived_square2(p_me, p_cmd->OtherThing,
-              p_cmd->X, p_cmd->Z, p_cmd->Arg1, p_cmd->Time, p_cmd->Arg2))
-            {
-              return !unmet;
+              p_cmd->X, p_cmd->Z, p_cmd->Arg1, p_cmd->Time, p_cmd->Arg2)) {
+                return !unmet;
             }
         }
-        else if (mem_group_arrived(p_cmd->OtherThing,
-          p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1, p_cmd->Arg2))
+        else
         {
-            return !unmet;
+            if (mem_group_arrived(p_cmd->OtherThing,
+              p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1, p_cmd->Arg2)) {
+                return !unmet;
+            }
         }
         return unmet;
 
@@ -1230,59 +1229,32 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_UNTIL_P_V_DEAD:
         p_othertng = &things[p_cmd->OtherThing];
         if (p_othertng->State == PerSt_DEAD)
+        {
             return 1;
+        }
         return unmet;
 
     case PCmd_WAIT_P_V_I_ARRIVE:
     case PCmd_WAND_P_V_I_ARRIVE:
     case PCmd_UNTIL_P_V_I_ARRIVE:
-        p_othertng = &things[p_cmd->OtherThing];
-        if (p_cmd->OtherThing <= 0 || (p_othertng->Flag & 0x0002) == 0 )
+        if (thing_is_destroyed(p_cmd->OtherThing))
         {
-            if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0)
-            {
-              if (p_cmd->OtherThing > 0)
-              {
-                p_othertng = &things[p_cmd->OtherThing];
-                cor_x = p_othertng->X >> 8;
-                cor_y = p_othertng->Z >> 8;
-                if ((cor_x > p_cmd->X) && (cor_x < p_cmd->Arg1))
-                {
-                  if ((cor_y > p_cmd->Z) && (cor_y < p_cmd->Time))
-                  {
-                      return (p_cmd->Flags & 8) == 0;
-                  }
-                }
-              }
-              if (p_cmd->OtherThing < 0)
-              {
-                p_sthing = &sthings[p_cmd->OtherThing];
-
-                cor_x = p_sthing->X >> 8;
-                cor_y = p_sthing->Z >> 8;
-                if (cor_x > p_cmd->X && cor_x < p_cmd->Arg1 && cor_y > p_cmd->Z && cor_y < p_cmd->Time)
-                  return !unmet;
-              }
-            }
-            else
-            {
-              if ((p_cmd->OtherThing > 0) && thing_arrived_at_obj_radius(p_cmd->OtherThing,
-                     p_cmd->X, p_cmd->Y, p_cmd->Z, (p_cmd->Arg1 * p_cmd->Arg1) << 12))
-              {
+            return unmet;
+        }
+        if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0)
+        {
+            if (thing_arrived_at_obj_square2(p_cmd->OtherThing,
+              p_cmd->X, p_cmd->Z, p_cmd->Arg1, p_cmd->Time)) {
                 return !unmet;
-              }
-              if (p_cmd->OtherThing < 0)
-              {
-                  int r2;
-                  int dist_x, dist_y;
-
-                  p_sthing = &sthings[p_cmd->OtherThing];
-                  r2 = (p_cmd->Arg1 * p_cmd->Arg1);
-                  dist_x = (p_sthing->X >> 8) - p_cmd->X;
-                  dist_y = (p_sthing->Z >> 8) - p_cmd->Z;
-                  if (dist_x * dist_x + dist_y * dist_y < r2 << 12)
-                      return !unmet;
-              }
+            }
+        }
+        else
+        {
+            int radius_sq;
+            radius_sq = (p_cmd->Arg1 * p_cmd->Arg1) << 12;
+            if (thing_arrived_at_obj_radius(p_cmd->OtherThing,
+              p_cmd->X, p_cmd->Y, p_cmd->Z, radius_sq)) {
+                return !unmet;
             }
         }
         return unmet;
@@ -1310,7 +1282,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_WAIT_MEM_G_PERSUADE:
     case PCmd_WAND_MEM_G_PERSUADE:
     case PCmd_UNTIL_MEM_G_PERSUADE:
-        if (p_cmd->Arg2 <= group_actions[p_cmd->OtherThing].Persuaded)
+        if (group_actions[p_cmd->OtherThing].Persuaded >= p_cmd->Arg2)
             return !unmet;
         return unmet;
 
@@ -1334,8 +1306,10 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_UNTIL_ALL_G_DEAD:
     case PCmd_WAIT_ALL_G_DEAD:
     case PCmd_WAND_ALL_G_DEAD:
-        if (!group_actions[p_cmd->OtherThing].Alive)
+        if (group_actions[p_cmd->OtherThing].Alive == 0)
+        {
             return 1;
+        }
         return unmet;
 
     case PCmd_UNTIL_TIME:
@@ -1353,9 +1327,13 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
 
     case PCmd_UNTIL_G_NOT_SEEN:
         if (group_not_seen(p_cmd->OtherThing))
+        {
             return !unmet;
+        }
         if (group_actions[p_cmd->OtherThing].Alive == 0)
+        {
             return 1;
+        }
         return unmet;
 
     case PCmd_WAIT_OBJV:
@@ -1366,9 +1344,10 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_WAIT_OBJT_DESTROY:
     case PCmd_WAND_OBJT_DESTROY:
     case PCmd_UNTIL_OBJT_DESTROY:
-        p_othertng = &things[p_cmd->OtherThing];
-        if ((p_othertng->Flag & 0x0002) != 0)
+        if (thing_is_destroyed(p_cmd->OtherThing))
+        {
             return !unmet;
+        }
         return unmet;
 
     case PCmd_WAIT_P_PERSUADE:
@@ -1382,7 +1361,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_WAIT_MEM_G_DEAD:
     case PCmd_WAND_MEM_G_DEAD:
     case PCmd_UNTIL_MEM_G_DEAD:
-        if (p_cmd->Arg2 <= group_actions[p_cmd->OtherThing].Dead)
+        if (group_actions[p_cmd->OtherThing].Dead >= p_cmd->Arg2)
             return 1;
         return unmet;
 
