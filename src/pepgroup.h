@@ -80,6 +80,7 @@ ushort count_people_in_group(ushort group, short subtype);
 void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill);
 
 void thing_group_set_kill_on_sight(short mod_grp, short target_grp, TbBool state);
+void thing_group_set_truce(short mod_grp, short target_grp, TbBool state);
 
 /** Transfer some people of given subtype from one group to the other.
  * Skips `stay_limit` of people, then transfers the next `tran_limit`.

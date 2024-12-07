@@ -2416,7 +2416,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         res = StCh_ACCEPTED;
         break;
     case PCmd_UNTRUCE_GROUP:
-        war_flags[p_person->U.UPerson.Group].Truce &= ~(1 << p_cmd->OtherThing);
+        thing_group_set_truce(p_person->U.UPerson.Group, p_cmd->OtherThing, false);
         p_person->State = PerSt_NONE;
         res = StCh_ACCEPTED;
         break;
@@ -2639,6 +2639,37 @@ ubyte is_command_completed(struct Thing *p_person)
       "call ASM_is_command_completed\n"
         : "=r" (ret) : "a" (p_person));
     return ret;
+}
+
+void process_random_speech(struct Thing *p_person, ubyte a2)
+{
+#if 0
+    asm volatile ("call ASM_process_random_speech\n"
+        : : "a" (p_person), "d" (a2));
+    return;
+#endif
+    ushort rndval;
+
+    rndval = LbRandomAnyShort();
+    if (ingame.TrackThing != 0)
+        return;
+    if (((p_person->Flag2 & 0x1000000) != 0) || ((p_person->Flag & 0x80000) != 0))
+        return;
+    if (a2)
+        return;
+
+    switch (p_person->SubType)
+    {
+    case SubTT_PERS_MERCENARY:
+        play_dist_speech(p_person, 57 + (rndval % 3), 0x7Fu, 0x40u, 100, 0, 3);
+        break;
+    case SubTT_PERS_POLICE:
+        play_dist_speech(p_person, 50 + (rndval & 3), 0x7Fu, 0x40u, 100, 0, 3);
+        break;
+    case SubTT_PERS_SCIENTIST:
+        play_dist_speech(p_person, 60 + (rndval % 2), 0x7Fu, 0x40u, 100, 0, 3);
+        break;
+    }
 }
 
 int person_hit_by_bullet(struct Thing *p_person, short hp,
@@ -3017,8 +3048,48 @@ void person_kill_target2(struct Thing *p_person)
 
 void person_wait(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_person_wait\n"
         : : "a" (p_person));
+#endif
+    if ((p_person->Flag2 & TgF2_Unkn00080000) != 0)
+    {
+        p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
+        reset_person_frame(p_person);
+        p_person->Timer1 = 48;
+        p_person->StartTimer1 = 48;
+        p_person->Flag2 &= ~TgF2_Unkn00080000;
+        p_person->Speed = calc_person_speed(p_person);
+    }
+    if ((p_person->U.UPerson.AnimMode != 21) && (p_person->U.UPerson.CurrentWeapon == 0))
+    {
+        p_person->U.UPerson.AnimMode = 21;
+        reset_person_frame(p_person);
+    }
+    p_person->Flag &= ~TngF_Unkn0001;
+    if (((p_person->Flag & TngF_Unkn0400) != 0) || (p_person->U.UPerson.WeaponTurn != 0))
+    {
+        if (p_person->U.UPerson.AnimMode == 14 || p_person->U.UPerson.AnimMode == 15)
+        {
+            p_person->Timer1 -= fifties_per_gameturn;
+            if (p_person->Timer1 < 0) {
+                p_person->Timer1 = p_person->StartTimer1;
+                p_person->Frame = frame[p_person->Frame].Next;
+            }
+        }
+    }
+    else if (((gameturn + 32 * p_person->ThingOffset) & 0x7F) == 0)
+    {
+        process_random_speech(p_person, 0);
+    }
+    if (((p_person->Flag & TngF_PlayerAgent) == 0 || (p_person->Flag2 & TgF2_Unkn0800) != 0)
+      && (p_person->U.UPerson.ComHead != 0)
+      && conditional_command_state_true(p_person->U.UPerson.ComCur, p_person, 2))
+    {
+        p_person->State = 0;
+    }
+    if (p_person->State < 0)
+        p_person->Frame = frame[p_person->Frame].Next;
 }
 
 void person_pickup(struct Thing *p_person)
