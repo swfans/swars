@@ -186,21 +186,56 @@ enum PersonCommandType
   PCmd_UNKN6C,
   PCmd_UNKN6D,
   PCmd_LOOP_COM = 0x6E,
+  /** Repeat the preceding command as long as given person/vehicle is not dead/destroyed.
+   */
   PCmd_UNTIL_P_V_DEAD = 0x6F,
+  /** Repeat the preceding command as long as given group has dead members count below given
+   * amount.
+   */
   PCmd_UNTIL_MEM_G_DEAD = 0x70,
+  /** Repeat the preceding command as long as not all members of given group are dead.
+   */
   PCmd_UNTIL_ALL_G_DEAD = 0x71,
+  /** Repeat the preceding command as long as given person/vehicle/item is not within given
+   * range around command owner.
+   */
   PCmd_UNTIL_P_V_I_NEAR = 0x72,
+  /** Repeat the preceding command as long as given group has less than given amount of members
+   * within given range around command owner.
+   */
   PCmd_UNTIL_MEM_G_NEAR = 0x73,
+  /** Repeat the preceding command as long as given group does not have all living members within
+   * given range around command owner.
+   */
   PCmd_UNTIL_ALL_G_NEAR = 0x74,
+  /** Repeat the preceding command as long as given person/vehicle/item is not within given
+   * range around given map position.
+   */
   PCmd_UNTIL_P_V_I_ARRIVE = 0x75,
+  /** Repeat the preceding command as long as given group has less than given amount of members
+   * within given range around given map position.
+   */
   PCmd_UNTIL_MEM_G_ARRIVE = 0x76,
+  /** Repeat the preceding command as long as given group does not have all living members within
+   * given range around given map position.
+   */
   PCmd_UNTIL_ALL_G_ARRIVE = 0x77,
+  /** Repeat the preceding command as long as given person is not persuaded.
+   */
   PCmd_UNTIL_P_PERSUADE = 0x78,
+  /** Repeat the preceding command as long as given group has less than given amount of members
+   * persuaded.
+   */
   PCmd_UNTIL_MEM_G_PERSUADE = 0x79,
+  /** Repeat the preceding command as long as given group does not have all living members
+   * persuaded.
+   */
   PCmd_UNTIL_ALL_G_PERSUADE = 0x7A,
   PCmd_UNTIL_MISSION_SUCC = 0x7B,
   PCmd_UNTIL_MISSION_FAIL = 0x7C,
   PCmd_UNTIL_MISSION_START = 0x7D,
+  /** Repeat the preceding command as long as given object is not destroyed.
+   */
   PCmd_UNTIL_OBJT_DESTROY = 0x7E,
   PCmd_UNTIL_TIME = 0x7F,
   PCmd_WAIT_OBJV = 0x80,
@@ -219,6 +254,10 @@ enum PersonCommandType
   PCmd_UNTRUCE_GROUP = 0x8D,
   PCmd_PLAY_SAMPLE = 0x8E,
   PCmd_IGNORE_ENEMIES = 0x8F,
+  /** Change the person stamina and weapon energy to match the ones for an agent.
+   * Used to beefup a person to increase its chances of executing a tactic which
+   * requires agility.
+   */
   PCmd_FIT_AS_AGENT = 0x90,
   PCmd_CAMERA_ROTATE = 0x91,
   PCmd_TYPES_COUNT,

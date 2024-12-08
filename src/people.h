@@ -107,7 +107,11 @@ enum PersonState {
   PerSt_CATCH_FERRY = 0x37,
   PerSt_EXIT_FERRY = 0x38,
   PerSt_AVOID_GROUP = 0x39,
-  PerSt_UNUSED_3A = 0x3A,
+  /** Init the current command on next state update.
+   * This is used internally to ensure the thing inits the current command
+   * rather than assuming that current means already initialised.
+   */
+  PerSt_INIT_COMMAND = 0x3A,
   PerSt_BEING_PERSUADED = 0x3B,
 };
 
@@ -266,6 +270,9 @@ void player_change_person(short thing, ushort plyr);
 void make_peeps_scatter(struct Thing *p_person, int x, int z);
 int person_hit_by_bullet(struct Thing *p_person, short hp,
   int vx, int vy, int vz, struct Thing *p_attacker, int type);
+
+/** Restores agents health by consuming a medikit, or just restores if no medikit available.
+ */
 TbBool person_use_medikit(struct Thing *p_person, PlayerIdx plyr);
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);

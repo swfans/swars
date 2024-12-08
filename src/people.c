@@ -1230,7 +1230,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
         p_othertng = &things[p_cmd->OtherThing];
         if (p_othertng->State == PerSt_DEAD)
         {
-            return 1;
+            return !unmet;
         }
         return unmet;
 
@@ -1354,7 +1354,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_WAND_P_PERSUADE:
     case PCmd_UNTIL_P_PERSUADE:
         p_othertng = &things[p_cmd->OtherThing];
-        if ((p_othertng->Flag & 0x80000) != 0)
+        if ((p_othertng->Flag & TngF_Persuaded) != 0)
             return !unmet;
         return unmet;
 
@@ -1556,7 +1556,7 @@ void person_command_skip_at_start(struct Thing *p_person)
  */
 StateChRes person_command_jump(struct Thing *p_person, ushort cmd)
 {
-    p_person->State = PerSt_UNUSED_3A;
+    p_person->State = PerSt_INIT_COMMAND;
     p_person->U.UPerson.ComCur = cmd;
     return StCh_ACCEPTED;
 }
@@ -2653,7 +2653,7 @@ void process_random_speech(struct Thing *p_person, ubyte a2)
     rndval = LbRandomAnyShort();
     if (ingame.TrackThing != 0)
         return;
-    if (((p_person->Flag2 & 0x1000000) != 0) || ((p_person->Flag & 0x80000) != 0))
+    if (((p_person->Flag2 & TgF2_ExistsOffMap) != 0) || ((p_person->Flag & TngF_Persuaded) != 0))
         return;
     if (a2)
         return;
@@ -2661,13 +2661,13 @@ void process_random_speech(struct Thing *p_person, ubyte a2)
     switch (p_person->SubType)
     {
     case SubTT_PERS_MERCENARY:
-        play_dist_speech(p_person, 57 + (rndval % 3), 0x7Fu, 0x40u, 100, 0, 3);
+        play_dist_speech(p_person, 57 + (rndval % 3), 127, 64, 100, 0, 3);
         break;
     case SubTT_PERS_POLICE:
-        play_dist_speech(p_person, 50 + (rndval & 3), 0x7Fu, 0x40u, 100, 0, 3);
+        play_dist_speech(p_person, 50 + (rndval & 3), 127, 64, 100, 0, 3);
         break;
     case SubTT_PERS_SCIENTIST:
-        play_dist_speech(p_person, 60 + (rndval % 2), 0x7Fu, 0x40u, 100, 0, 3);
+        play_dist_speech(p_person, 60 + (rndval % 2), 127, 64, 100, 0, 3);
         break;
     }
 }
@@ -3615,7 +3615,7 @@ void process_person(struct Thing *p_person)
         case PerSt_AVOID_GROUP:
               process_avoid_group(p_person);
               break;
-        case PerSt_UNUSED_3A:
+        case PerSt_INIT_COMMAND:
               person_init_command(p_person, PCmd_DROP_SPEC_ITEM);
               break;
         case PerSt_BEING_PERSUADED:
