@@ -2646,7 +2646,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
     p_person->U.UPerson.Target2 = 0;
     p_person->U.UPerson.Within = 0;
     p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
-    p_person->PTarget = 0;
+    p_person->PTarget = NULL;
     p_person->U.UPerson.WeaponsCarried |= (1 << (WEP_ENERGYSHLD-1));
     p_person->OldTarget = 0;
 
@@ -3098,29 +3098,24 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_person->U.UPerson.CurrentWeapon = 0;
         }
 
-        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_HARD_AS_AGENT)
-        {
-            set_person_stats_type(p_person, 1);
-            p_person->U.UPerson.ComHead = game_commands[p_person->U.UPerson.ComHead].Next;
-        }
+        person_init_preplay_command(p_person);
 
-        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_FIT_AS_AGENT)
-        {
-            p_person->U.UPerson.Stamina = peep_type_stats[1].MaximumStamina;
-            p_person->U.UPerson.MaxStamina = peep_type_stats[1].MaximumStamina;
-            p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
-            p_person->Flag |= TngF_Unkn0040;
-        }
+        // Player agents can go with default loadout for the level, but usually we want them to
+        // use either the equipment selected by the player (either local one or from the net).
+        // Setting command to player control is required to properly update weapons
+        p_person->U.UPerson.ComCur = (plyr << 2) + plagent;
+        if (ingame.GameMode == GamM_Unkn3)
+            do_weapon_quantities_proper1(p_person);
+        else
+            do_weapon_quantities1(p_person);
 
+        // Using any commands other than preplay on player agents requires explicit marking
+        // in form of use of EXECUTE_COMS.
         if ((p_person->U.UPerson.ComHead != 0) &&
             (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_EXECUTE_COMS))
         {
+            // Now we can re-set current command to the real command
             p_person->Flag2 |= TgF2_Unkn0800;
-            p_person->U.UPerson.ComCur = (plyr << 2) + plagent;
-            if (ingame.GameMode == GamM_Unkn3)
-                do_weapon_quantities_proper1(p_person);
-            else
-                do_weapon_quantities1(p_person);
             p_person->Flag |= TngF_Unkn0040;
             p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
             ingame.Flags |= GamF_Unkn0100;
@@ -3129,11 +3124,9 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         {
             p_person->U.UPerson.ComCur = (plyr << 2) + plagent;
             p_person->U.UPerson.ComHead = 0;
-            if (ingame.GameMode == GamM_Unkn3)
-                do_weapon_quantities_proper1(p_person);
-            else
-                do_weapon_quantities1(p_person);
         }
+
+
         netgame_agent_pos_x[plyr][plagent] = PRCCOORD_TO_MAPCOORD(p_person->X);
         netgame_agent_pos_y[plyr][plagent] = PRCCOORD_TO_MAPCOORD(p_person->Z);
         p_person->State = PerSt_NONE;
