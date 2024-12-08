@@ -34,8 +34,21 @@ struct QuickLoad {
     ushort Extra;
 };
 
+struct LevelMisc { // sizeof=22
+    short X;
+    short Y;
+    short Z;
+    short Group;
+    short Weapon;
+    ubyte Flag;
+    ubyte Type;
+    ubyte field_C[9];
+    ubyte field_15;
+};
+
 #pragma pack()
 /******************************************************************************/
+extern struct LevelMisc *game_level_miscs;
 extern TbBool level_deep_fix;
 
 

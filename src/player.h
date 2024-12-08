@@ -20,6 +20,7 @@
 #define PLAYER_H
 
 #include "bftypes.h"
+#include "game_bstype.h"
 #include "cybmod.h"
 #include "weapon.h"
 
@@ -28,6 +29,8 @@ extern "C" {
 #endif
 /******************************************************************************/
 #pragma pack(1)
+
+#define PLAYERS_LIMIT 8
 
 #define CRYO_PODS_MAX_COUNT 32
 #define AGENTS_SQUAD_MAX_COUNT 4
@@ -110,8 +113,8 @@ typedef struct {
 
 #pragma pack()
 /******************************************************************************/
-extern PlayerInfo players[8];
-extern ubyte local_player_no;
+extern PlayerInfo players[PLAYERS_LIMIT];
+extern PlayerIdx local_player_no;
 extern struct AgentInfo cryo_agents;
 
 void place_single_player(void);
@@ -120,7 +123,6 @@ void player_update_agents_from_cryo(PlayerInfo *p_player);
 void cryo_update_agents_from_player(PlayerInfo *p_player);
 void players_sync_from_cryo(void);
 
-TbBool player_agent_has_weapon(ushort plagent, ubyte weapon);
 TbBool free_slot(ushort plagent, ubyte weapon);
 TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon);
 TbBool player_cryo_remove_weapon_one(ushort cryo_no, ubyte weapon);
@@ -130,8 +132,15 @@ const char *get_cryo_agent_name(ushort cryo_no);
 void remove_agent(ubyte cryo_no);
 void add_agent(ulong weapons, ushort mods);
 
-short direct_control_thing_for_player(short plyr);
-void player_target_clear(short plyr);
+void player_agents_init_prev_weapon(PlayerIdx plyr);
+void player_agent_update_prev_weapon(struct Thing *p_agent);
+short player_agent_current_or_prev_weapon(PlayerIdx plyr, ushort plagent);
+TbBool player_agent_has_weapon(PlayerIdx plyr, ushort plagent, ubyte weapon);
+TbBool player_agent_is_alive(PlayerIdx plyr, ushort plagent);
+TbBool player_agent_is_executing_commands(PlayerIdx plyr, ushort plagent);
+short player_agent_weapon_delay(PlayerIdx plyr, ushort plagent, ubyte weapon);
+ThingIdx direct_control_thing_for_player(PlayerIdx plyr);
+void player_target_clear(PlayerIdx plyr);
 /******************************************************************************/
 #ifdef __cplusplus
 }

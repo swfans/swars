@@ -1870,20 +1870,20 @@ void draw_sort_sprite1b(int sspr)
         short dy;
         sprintf(locstr, "%d ", p_thing->U.UPerson.RecoilTimer);
         dy = (37 * overall_scale) >> 8;
-        draw_text(p_sspr->X, p_sspr->Y - dy, locstr, colour_lookup[2]);
+        draw_text(p_sspr->X, p_sspr->Y - dy, locstr, colour_lookup[ColLU_RED]);
     }
 
-    if ((p_thing->Flag2 & TgF2_ExistsOnMap) != 0) {
+    if ((p_thing->Flag2 & TgF2_ExistsOffMap) != 0) {
         short dx, dy;
         dx = (2 * overall_scale) >> 8;
         dy = (37 * overall_scale) >> 8;
-        draw_text(p_sspr->X - dx, p_sspr->Y - dy, "E", colour_lookup[2]);
+        draw_text(p_sspr->X - dx, p_sspr->Y - dy, "E", colour_lookup[ColLU_RED]);
     }
     if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0)) {
         short dx, dy;
         dx = (2 * overall_scale) >> 8;
         dy = (37 * overall_scale) >> 8;
-        draw_text(p_sspr->X + dx, p_sspr->Y - dy, "B", colour_lookup[2]);
+        draw_text(p_sspr->X + dx, p_sspr->Y - dy, "B", colour_lookup[ColLU_RED]);
     }
 }
 
@@ -2197,7 +2197,7 @@ void draw_object_face3_textrd(ushort face)
     if (game_perspective == 3)
     {
         vec_mode = 0;
-        vec_colour = pixmap.fade_table[256 * (point3.S >> 16) + colour_lookup[2]];
+        vec_colour = pixmap.fade_table[256 * (point3.S >> 16) + colour_lookup[ColLU_RED]];
         draw_trigpoly(&point1, &point2, &point3);
         vec_colour = colour_lookup[3];
         if (!lbKeyOn[KC_RALT])
@@ -3247,7 +3247,7 @@ void draw_sort_sprite_number(ushort sspr)
 
     p_sspr = &game_sort_sprites[sspr];
     sprintf(locstr, "%d", (int)p_sspr->PThing);
-    draw_text(p_sspr->X, p_sspr->Y, locstr, colour_lookup[2]);
+    draw_text(p_sspr->X, p_sspr->Y, locstr, colour_lookup[ColLU_RED]);
 }
 
 void number_player(struct Thing *p_person, ubyte n)

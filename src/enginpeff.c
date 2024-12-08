@@ -175,7 +175,7 @@ void draw_falling_snow(int bckt)
         shift2 = (10000 - bckt) * gameturn;
         y = (shift2 >> (12 - speed/2)) + ((engn_xc * lbSinTable[angXZs]) >> 20) + ((engn_zc * lbSinTable[angXZc]) >> 20) + LbRandomAnyShort();
         lbDisplay.DrawFlags = 0x0004;
-        draw_static_dot((x * m) % scanln, (y % height) * m, m, m, 128 * ((10000 - bckt) / 416) + colour_lookup[1]);
+        draw_static_dot((x * m) % scanln, (y % height) * m, m, m, 128 * ((10000 - bckt) / 416) + colour_lookup[ColLU_WHITE]);
         lbSeed = seed_bkp;
         lbDisplay.DrawFlags = 0;
     }

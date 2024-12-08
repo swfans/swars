@@ -25,7 +25,7 @@
 
 enum GameKeys
 {
-  GKey_UNKN0 = 0,
+  GKey_NONE = 0,
   GKey_FIRE = 1,
   GKey_CHANGE_MD_WP = 2,
   GKey_VIEW_SPIN_L = 3,

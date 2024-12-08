@@ -21,6 +21,7 @@
 #include "bfmath.h"
 #include "bfmemory.h"
 #include "bfutility.h"
+
 #include "bigmap.h"
 #include "bmbang.h"
 #include "enginsngobjs.h"
@@ -31,10 +32,23 @@
 #include "thing.h"
 #include "tngcolisn.h"
 #include "vehtraffic.h"
+#include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
 ubyte dome_open_speed = 4;
 
+
+TbBool building_can_transform_open(ThingIdx bldng)
+{
+    struct Thing *p_building;
+
+    p_building = &things[bldng];
+    if (p_building->Type != TT_BUILDING)
+        return false;
+    if ((p_building->Flag & TngF_Destroyed) != 0)
+        return false;
+    return (p_building->SubType == SubTT_BLD_DOME);
+}
 
 struct Thing *create_building_thing(int x, int y, int z, ushort obj, ushort nobj, ushort a6)
 {
@@ -92,7 +106,7 @@ void process_dome1(struct Thing *p_building)
 
     switch (p_building->State)
     {
-    case 1:
+    case BldSt_TRA_OPENING:
         timer0 = p_building->SubState - dome_open_speed;
         p_building->SubState = timer0;
         if (timer0 <= 127)
@@ -104,42 +118,45 @@ void process_dome1(struct Thing *p_building)
         }
         else
         {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
             p_building->SubState = 0;
             p_building->Timer1 = 100;
-            p_building->State = 7;
+            p_building->State = BldSt_TRA_OPENED;
         }
         break;
-    case 4:
+    case BldSt_TRA_CLOSING:
         timer0 = p_building->SubState + dome_open_speed;
         p_building->SubState = timer0;
         if (timer0 <= 127)
         {
-            if ((timer0 >= 112u) && (timer0 < 112u + dome_open_speed)) {
-                set_dome_col(p_building, 0);
-            }
             do_dome_rotate1(p_building);
         }
         else
         {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
             p_building->SubState = 127;
             p_building->Timer1 = 100;
-            p_building->State = 8;
+            p_building->State = BldSt_TRA_CLOSED;
         }
         break;
-    case 7:
-        if ((p_building->Flag & TngF_Unkn0080) != 0)
-            p_building->State = 4;
-        p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
+    case BldSt_TRA_OPENED:
+        if ((p_building->Flag & TngF_TransCloseRq) != 0) {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
+            p_building->State = BldSt_TRA_CLOSING;
+        }
+        p_building->Flag &= ~(TngF_TransCloseRq|TngF_TransOpenRq);
         break;
-    case 8:
-        if ((p_building->Flag & TngF_Unkn0040) != 0)
-            p_building->State = 1;
-        p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
+    case BldSt_TRA_CLOSED:
+        if ((p_building->Flag & TngF_TransOpenRq) != 0) {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
+            p_building->State = BldSt_TRA_OPENING;
+        }
+        p_building->Flag &= ~(TngF_TransCloseRq|TngF_TransOpenRq);
         break;
     default:
         p_building->SubState = 127;
         p_building->Timer1 = 100;
-        p_building->State = 8;
+        p_building->State = BldSt_TRA_CLOSED;
         break;
     }
 }
@@ -431,6 +448,107 @@ void process_shuttle_loader(struct Thing *p_building)
 {
     asm volatile ("call ASM_process_shuttle_loader\n"
         : : "a" (p_building));
+}
+
+void bul_hit_vector(int x, int y, int z, short col, int hp, int type)
+{
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_bul_hit_vector\n"
+        : : "a" (x), "d" (y), "b" (z), "c" (col), "g" (hp), "g" (type));
+}
+
+void init_mgun_laser(struct Thing *p_owner, ushort bmsize)
+{
+#if 0
+    asm volatile (
+      "call ASM_init_mgun_laser\n"
+        : : "a" (p_owner), "d" (bmsize));
+    return;
+#endif
+    struct Thing *p_shot;
+    int prc_x, prc_y, prc_z;
+    int cor_x, cor_y, cor_z;
+    u32 rhit;
+    short shottng;
+    short angle;
+    short damage;
+
+    if (p_owner->PTarget == NULL)
+        return;
+
+    shottng = get_new_thing();
+    if (shottng == 0) {
+        LOGERR("No thing slots for a shot");
+        return;
+    }
+    p_shot = &things[shottng];
+    if (p_owner->U.UMGun.ShotTurn != 0)
+        angle = p_owner->U.UMGun.AngleY + 48;
+    else
+        angle = p_owner->U.UMGun.AngleY - 48;
+
+    angle = (angle + 0x800) & 0x7FF;
+    prc_x = p_owner->X + 3 * lbSinTable[angle] / 2;
+    prc_z = p_owner->Z - 3 * lbSinTable[angle + 512] / 2;
+    prc_y = p_owner->Y;
+
+    p_shot->U.UEffect.Angle = p_owner->U.UMGun.AngleY;
+    p_shot->Z = prc_z;
+    p_shot->Y = prc_y;
+    p_shot->X = prc_x;
+    p_shot->VX = (p_owner->PTarget->X >> 8);
+    p_shot->VY = (p_owner->PTarget->Y >> 8) + 10;
+    p_shot->VZ = p_owner->PTarget->Z >> 8;
+    p_shot->Radius = 50;
+    p_shot->Owner = p_owner->ThingOffset;
+
+    cor_x = PRCCOORD_TO_MAPCOORD(prc_x);
+    cor_y = PRCCOORD_TO_MAPCOORD(prc_y);
+    cor_z = PRCCOORD_TO_MAPCOORD(prc_z);
+
+    rhit = laser_hit_at(cor_x, cor_y, cor_z, &p_shot->VX, &p_shot->VY, &p_shot->VZ, p_shot);
+
+    if (bmsize > 15)
+        bmsize = 15;
+    if (bmsize < 5)
+        bmsize = 5;
+    damage = (bmsize - 4) * weapon_defs[WEP_LASER].HitDamage;
+
+    if ((rhit & 0x80000000) != 0) // hit 3D object collision vector
+    {
+        s32 hitvec;
+
+        hitvec = rhit;
+        bul_hit_vector(p_shot->VX, p_shot->VY, p_shot->VZ, -hitvec, 2 * bmsize, 0);
+    }
+    else if ((rhit & 0x40000000) != 0) // hit SimpleThing
+    {
+        struct SimpleThing *p_hitstng;
+        ThingIdx hittng;
+
+        hittng = (short)rhit;
+        p_hitstng = &sthings[-hittng];
+        //TODO is it really ok to use person hit function for hitting SimpleThings?
+        person_hit_by_bullet((struct Thing *)p_hitstng, damage, p_shot->VX - cor_x,
+          p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, 4);
+    }
+    else if (rhit != 0) // hit normal thing
+    {
+        struct Thing *p_hittng;
+        ThingIdx hittng;
+
+        hittng = (short)rhit;
+        p_hittng = &things[hittng];
+        person_hit_by_bullet(p_hittng, damage, p_shot->VX - cor_x,
+          p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, 4);
+    }
+    p_shot->StartTimer1 = bmsize;
+    p_shot->Timer1 = bmsize;
+    p_shot->Flag = TngF_Unkn0004;
+    p_shot->Type = TT_LASER11;
+    add_node_thing(p_shot->ThingOffset);
 }
 
 void process_mounted_gun(struct Thing *p_building)

@@ -337,9 +337,9 @@ extern ubyte *scratch_buf1;
 extern void *dword_1810D1;
 extern ulong dword_1810D5;
 
-extern ushort word_1810E4;
-extern ubyte byte_1810E6[40];
-extern ubyte byte_18110E[40];
+extern ushort game_level_unique_id;
+extern ubyte game_level_unkn1[40];
+extern ubyte game_level_unkn2[40];
 
 extern ushort word_1531E0;
 
@@ -370,7 +370,6 @@ extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;
-extern struct LevelMisc *game_level_miscs;
 extern long target_old_frameno;
 extern ushort word_176E38;
 
@@ -567,6 +566,8 @@ void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 
 void ingame_palette_reload(void);
+void game_set_cam_track_thing_xz(struct Thing *p_thing);
+TbBool game_cam_tracked_thing_is_player_agent(void);
 
 #ifdef __cplusplus
 };

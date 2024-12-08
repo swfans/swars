@@ -173,7 +173,7 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
     {
         lbDisplay.DrawFlags = 0;
         if (h_cur < 3)
-            colour = colour_lookup[2];
+            colour = colour_lookup[ColLU_RED];
         LbDrawBox(x + dx, y + dy + h_total - h_cur, w, h_cur, colour);
 
         // Extra health if the thing is above max (soul gun bonus)
@@ -224,7 +224,7 @@ void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
     {
         lbDisplay.DrawFlags = 0;
         if (h_cur < 3)
-            colour = colour_lookup[2];
+            colour = colour_lookup[ColLU_RED];
         LbDrawBox(x + dx, y + dy + h_total - h_cur, w, h_cur, colour);
     }
 }

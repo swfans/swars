@@ -38,6 +38,12 @@ typedef long SGameTurn;
  */
 typedef short ThingIdx;
 
+/** Type which stores index/offset of a Player.
+ *
+ * The value is a valid index in players[] array.
+ */
+typedef ubyte PlayerIdx;
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

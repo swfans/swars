@@ -126,6 +126,8 @@ struct WeaponsFourPack {
 extern struct WeaponDef weapon_defs[33];
 extern struct TbNamedEnum weapon_names[33];
 extern ubyte weapon_tech_level[33];
+extern ubyte weapon_sound[32];
+extern ubyte weapon_sound_z[32];
 extern short persuaded_person_weapons_sell_cost_permil;
 
 void read_weapons_conf_file(void);
@@ -146,7 +148,7 @@ TbBool weapons_add_one(ulong *p_weapons,
 void sanitize_weapon_quantities(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks);
 
-sbyte find_nth_weapon_held(ushort index, ubyte n);
+ubyte find_nth_weapon_held(ushort index, ubyte n);
 
 /** Returns range (in normal map coord points) of the person current weapon.
  *
@@ -160,6 +162,8 @@ short current_weapon_range(struct Thing *p_person);
  */
 int get_weapon_range(struct Thing *p_person);
 
+void choose_best_weapon_for_range(struct Thing *p_person, int dist);
+
 /** Returns whether the person current weapon requires some time to achieve target lock.
  */
 TbBool current_weapon_has_targetting(struct Thing *p_person);
@@ -171,6 +175,10 @@ void do_weapon_quantities1(struct Thing *p_person);
 void do_weapon_quantities_proper1(struct Thing *p_person);
 
 void process_weapon(struct Thing *p_person);
+int gun_out_anim(struct Thing *p_person, ubyte shoot_flag);
+
+s32 laser_hit_at(s32 x1, s32 y1, s32 z1, s32 *x2, s32 *y2, s32 *z2, struct Thing *p_shot);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

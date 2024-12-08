@@ -1128,15 +1128,15 @@ void SCANNER_draw_orientation_arrow(int pos_x1, int pos_y1, int range, int angle
     len_x = (range * -lbSinTable[angle + 512]) >> 19;
     x2 = x1 - len_y;
     y2 = y1 - len_x;
-    LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[1]);
-    LbDrawLine(x1, y1, x2 + len_x, y2 - len_y, colour_lookup[1]);
+    LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[ColLU_WHITE]);
+    LbDrawLine(x1, y1, x2 + len_x, y2 - len_y, colour_lookup[ColLU_WHITE]);
 }
 
 TbBool thing_visible_on_scanner(struct Thing *p_thing)
 {
     TbBool ret;
 
-    if ((p_thing->Flag2 & (TgF2_ExistsOnMap|TgF2_InsideBuilding|TgF2_Unkn0002)) != 0)
+    if ((p_thing->Flag2 & (TgF2_ExistsOffMap|TgF2_InsideBuilding|TgF2_Unkn0002)) != 0)
         return false;
 
     switch (p_thing->Type)

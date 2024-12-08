@@ -176,10 +176,10 @@ void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
     {
         if (lbDisplay.GraphicsScreenHeight < 400)
             LbSpriteDrawOneColour(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100],
-              colour_lookup[1]);
+              colour_lookup[ColLU_WHITE]);
         else
             LbSpriteDrawOneColour(box->X, box->Y - stp, &pop1_sprites[100],
-              colour_lookup[1]);
+              colour_lookup[ColLU_WHITE]);
     }
     else
     {
@@ -203,10 +203,10 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
     {
         if (lbDisplay.GraphicsScreenHeight < 400)
             LbSpriteDrawOneColour((box->X >> 1) - stp, (box->Y >> 1) - stp,
-              &pop1_sprites[101], colour_lookup[1]);
+              &pop1_sprites[101], colour_lookup[ColLU_WHITE]);
         else
             LbSpriteDrawOneColour(box->X - stp, box->Y - stp,
-              &pop1_sprites[101], colour_lookup[1]);
+              &pop1_sprites[101], colour_lookup[ColLU_WHITE]);
     }
     else
     {
@@ -392,7 +392,7 @@ TbBool pause_screen_handle(void)
             box4.Y = box1.Y + 2;
             box4.Width = (box1.Width - 6) * (*target) / 322;
             box4.Height = box1.Height - 4;
-            draw_slant_box(&box4, colour_lookup[1]);
+            draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
         }
         }
 
@@ -434,7 +434,7 @@ TbBool pause_screen_handle(void)
             box4.Y = box1.Y + 2;
             box4.Width = (box1.Width - 6) * (*target) / 322;
             box4.Height = box1.Height - 4;
-            draw_slant_box(&box4, colour_lookup[1]);
+            draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
         }
         }
 
@@ -476,7 +476,7 @@ TbBool pause_screen_handle(void)
             box4.Y = box1.Y + 2;
             box4.Width = (box1.Width - 6) * (*target) / 322;
             box4.Height = box1.Height - 4;
-            draw_slant_box(&box4, colour_lookup[1]);
+            draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
         }
         }
 

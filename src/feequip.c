@@ -642,7 +642,7 @@ ubyte equip_offer_can_buy_or_sell(ubyte weapon)
 
         for (i = 0; i < 4; i++)
         {
-            if (!player_agent_has_weapon(i, weapon))
+            if (!player_agent_has_weapon(local_player_no, i, weapon))
               break;
         }
         if (i == 4) // all agents have that weapon
@@ -651,7 +651,7 @@ ubyte equip_offer_can_buy_or_sell(ubyte weapon)
         return 0;
     }
 
-    if (player_agent_has_weapon(selected_agent, weapon))
+    if (player_agent_has_weapon(local_player_no, selected_agent, weapon))
         return 2;
 
     if (is_research_weapon_completed(weapon) ||

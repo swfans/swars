@@ -117,7 +117,7 @@ void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text)
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
-        draw_text(ep.pp.X, ep.pp.Y, text, colour_lookup[2]);
+        draw_text(ep.pp.X, ep.pp.Y, text, colour_lookup[ColLU_RED]);
     }
 }
 
@@ -137,7 +137,7 @@ void draw_number_transformed_at_ground(int coord_x, int coord_z, int num)
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
         sprintf(locstr, "%d", num);
-        draw_text(ep.pp.X, ep.pp.Y, locstr, colour_lookup[2]);
+        draw_text(ep.pp.X, ep.pp.Y, locstr, colour_lookup[ColLU_RED]);
     }
 }
 

@@ -730,7 +730,7 @@ TbBool current_weapon_has_targetting(struct Thing *p_person)
     return weapon_has_targetting(wtype);
 }
 
-sbyte find_nth_weapon_held(ushort index, ubyte n)
+ubyte find_nth_weapon_held(ushort index, ubyte n)
 {
     char ret;
     asm volatile ("call ASM_find_nth_weapon_held\n"
@@ -1060,6 +1060,12 @@ void get_soul(struct Thing *p_dead, struct Thing *p_person)
         : : "a" (p_dead), "d" (p_person));
 }
 
+void choose_best_weapon_for_range(struct Thing *p_person, int dist)
+{
+    asm volatile ("call ASM_choose_best_weapon_for_range\n"
+        : : "a" (p_person), "d" (dist));
+}
+
 void process_weapon_recoil(struct Thing *p_person)
 {
     if (((p_person->Flag2 & TgF2_Unkn0800) == 0) &&
@@ -1121,7 +1127,7 @@ static void process_energy_recovery(struct Thing *p_person)
 {
     if (p_person->U.UPerson.Energy < p_person->U.UPerson.MaxEnergy)
     {
-        if ((p_person->Flag2 & TgF2_ExistsOnMap) != 0)
+        if ((p_person->Flag2 & TgF2_ExistsOffMap) != 0)
         {
             p_person->U.UPerson.Energy = p_person->U.UPerson.MaxEnergy;
         }
@@ -1637,7 +1643,7 @@ void process_wielded_weapon(struct Thing *p_person)
                 init_laser_elec(p_person, p_person->U.UPerson.WeaponTimer);
                 stop_sample_using_heap(p_person->ThingOffset, 7);
                 stop_sample_using_heap(p_person->ThingOffset, 52);
-                if ((p_person->Flag2 & TgF2_ExistsOnMap) == 0)
+                if ((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
                     play_dist_sample(p_person, 6, 0x7F, 0x40, 100, 0, 3);
                 p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
                 break;
@@ -1685,7 +1691,7 @@ void process_weapon(struct Thing *p_person)
 #endif
     process_energy_alarm(p_person);
 
-    p_person->U.UPerson.Flag3 &= ~0x40;
+    p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn40;
 
     process_move_while_firing(p_person);
 
@@ -1741,6 +1747,18 @@ void process_weapon(struct Thing *p_person)
         }
         process_wielded_weapon(p_person);
     }
+}
+
+s32 laser_hit_at(s32 x1, s32 y1, s32 z1, s32 *x2, s32 *y2, s32 *z2, struct Thing *p_shot)
+{
+    s32 ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_laser_hit_at\n"
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (p_shot));
+    return ret;
 }
 
 /******************************************************************************/

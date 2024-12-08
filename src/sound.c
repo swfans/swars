@@ -26,6 +26,7 @@
 #include "game_data.h"
 #include "game_speed.h"
 #include "game.h"
+#include "thing.h"
 #include "util.h"
 #include "swlog.h"
 
@@ -55,6 +56,21 @@ void stop_sample_using_heap(long source_id, ulong sample_number)
         : : "a" (source_id), "d" (sample_number));
 }
 
+int play_dist_speech(struct Thing *p_thing, ushort samp, ushort vol, ushort pan, int pitch, int loop, ubyte type)
+{
+    if ((p_thing <= &things[0]) || (p_thing >= &things[THINGS_LIMIT])) {
+        LOGERR("Speech %hu playback requested on invalid thing", samp);
+        return -1;
+    }
+    play_dist_sample(p_thing, 129 + samp,  vol, pan, pitch, loop, type);
+    return 0;
+}
+
+void play_disk_sample(short id, ushort sample, short vol, short pan, int pitch, int loop, int type)
+{
+    play_sample_using_heap(9999, 129 + sample, vol, pan, pitch, loop, type);
+}
+
 void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type)
 {
     asm volatile (
@@ -73,6 +89,12 @@ void play_dist_ssample(struct SimpleThing *p_sthing, ushort smptbl_id, ushort vo
       "push %4\n"
       "call ASM_play_dist_ssample\n"
         : : "a" (p_sthing), "d" (smptbl_id), "b" (vol), "c" (pan), "g" (pitch), "g" (loop), "g" (type));
+}
+
+void stop_looped_weapon_sample(struct Thing *p_person, short weapon)
+{
+    asm volatile ("call ASM_stop_looped_weapon_sample\n"
+        : : "a" (p_person), "d" (weapon));
 }
 
 //TODO better name?
