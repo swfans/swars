@@ -129,6 +129,18 @@ enum ThingFlags {
     TngF_Unkn40000000 = 0x40000000,
 };
 
+/** Transformation into closed was requested on the building thing.
+ * A flag with meaning for people, is reused for different purpose
+ * when set on a building.
+ */
+#define TngF_TransOpenRq TngF_Unkn0040
+
+/** Transformation into open was requested on the building thing.
+ * A flag with meaning for people, is reused for different purpose
+ * when set on a building.
+ */
+#define TngF_TransCloseRq TngF_Unkn0080
+
 enum ThingFlags2 {
     TgF2_Unkn0001     = 0x0001,
     TgF2_Unkn0002     = 0x0002,

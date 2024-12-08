@@ -1941,7 +1941,7 @@ StateChRes person_open_dome(struct Thing *p_person, short dome)
     }
     p_dome = &things[dome];
     if (p_dome->SubType == SubTT_BLD_DOME)
-        p_dome->Flag |= TngF_Unkn0040;
+        p_dome->Flag |= TngF_TransOpenRq;
     p_person->State = PerSt_NONE;
     return StCh_ACCEPTED;
 }
@@ -1956,7 +1956,7 @@ StateChRes person_close_dome(struct Thing *p_person, short dome)
         return StCh_UNATTAIN;
     }
     p_dome = &things[dome];
-    p_dome->Flag |= TngF_Unkn0080;
+    p_dome->Flag |= TngF_TransCloseRq;
     p_person->State = PerSt_NONE;
     return StCh_ACCEPTED;
 }

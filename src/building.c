@@ -140,18 +140,18 @@ void process_dome1(struct Thing *p_building)
         }
         break;
     case BldSt_TRA_OPENED:
-        if ((p_building->Flag & TngF_Unkn0080) != 0) {
+        if ((p_building->Flag & TngF_TransCloseRq) != 0) {
             play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
             p_building->State = BldSt_TRA_CLOSING;
         }
-        p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
+        p_building->Flag &= ~(TngF_TransCloseRq|TngF_TransOpenRq);
         break;
     case BldSt_TRA_CLOSED:
-        if ((p_building->Flag & TngF_Unkn0040) != 0) {
+        if ((p_building->Flag & TngF_TransOpenRq) != 0) {
             play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
             p_building->State = BldSt_TRA_OPENING;
         }
-        p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
+        p_building->Flag &= ~(TngF_TransCloseRq|TngF_TransOpenRq);
         break;
     default:
         p_building->SubState = 127;
