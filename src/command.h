@@ -93,6 +93,12 @@ enum PersonCommandType
   PCmd_UNKN16 = 0x16,
   PCmd_USE_VEHICLE = 0x17,
   PCmd_EXIT_VEHICLE = 0x18,
+  /** Go to a train station at given coordinates and enter the next train.
+   * During level load, the given station position is used to find
+   * the station building, and then a flat surface (face) to stand on.
+   * When the command is activated, the person walks to that face
+   * and then enters the next train which arrives at the station.
+   */
   PCmd_CATCH_TRAIN = 0x19,
   PCmd_OPEN_DOME = 0x1A,
   PCmd_CLOSE_DOME = 0x1B,
