@@ -26,6 +26,8 @@
 #include "bfmemut.h"
 #include "bfini.h"
 #include "bfkeybd.h"
+
+#include "bigmap.h"
 #include "campaign.h"
 #include "drawtext.h"
 #include "thing.h"
@@ -544,7 +546,7 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
     case GAME_OBJ_MEM_G_ARRIVES:
     case GAME_OBJ_ALL_G_ARRIVES:
         // Arrival place
-        func_711F4(p_objectv->X, p_objectv->Y, p_objectv->Z, p_objectv->Radius << 6, colour_lookup[2]);
+        func_711F4(p_objectv->X, p_objectv->Y, p_objectv->Z, p_objectv->Radius << 6, colour_lookup[ColLU_RED]);
         unkn_draw_transformed_point(draw_objectv_x - 10, draw_objectv_y,
           p_objectv->X, p_objectv->Y, p_objectv->Z, colour_lookup[colk]);
         break;
@@ -555,7 +557,7 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
         thing = p_objectv->Thing;
         draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         // Arrival place
-        func_711F4(p_objectv->X, p_objectv->Y, p_objectv->Z, p_objectv->Radius << 6, colour_lookup[2]);
+        func_711F4(p_objectv->X, p_objectv->Y, p_objectv->Z, p_objectv->Radius << 6, colour_lookup[ColLU_RED]);
         unkn_draw_transformed_point(draw_objectv_x - 10, draw_objectv_y,
           p_objectv->X, p_objectv->Y, p_objectv->Z, colour_lookup[colk]);
         break;
@@ -741,6 +743,107 @@ ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
       "push %5\n"
       "call ASM_all_group_arrived\n"
         : "=r" (ret) : "a" (group), "d" (x), "b" (y), "c" (z), "g" (radius));
+    return ret;
+}
+
+ubyte group_not_seen(ushort group)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_group_not_seen\n"
+        : "=r" (ret) : "a" (group));
+    return ret;
+}
+
+TbBool thing_arrived_at_obj_radius(ThingIdx thing, int x, int y, int z, int radius_sq)
+{
+#if 0
+    ubyte ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_thing_arrived_at_obj_radius\n"
+        : "=r" (ret) : "a" (thing), "d" (x), "b" (y), "c" (z), "g" (radius_sq));
+    return ret;
+#endif
+    int dist_x, dist_z;
+
+    if (thing >= 0)
+    {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        dist_x = (p_thing->X >> 8) - x;
+        dist_z = (p_thing->Z >> 8) - z;
+    }
+    else
+    {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        dist_x = (p_sthing->X >> 8) - x;
+        dist_z = (p_sthing->Z >> 8) - z;
+    }
+    return dist_x * dist_x + dist_z * dist_z < radius_sq;
+}
+
+TbBool thing_arrived_at_obj_square2(ThingIdx thing, int x1, int z1, int x2, int z2)
+{
+    short cor_x, cor_z;
+
+    if (thing >= 0)
+    {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
+        cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    }
+    else
+    {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        cor_x = PRCCOORD_TO_MAPCOORD(p_sthing->X);
+        cor_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+    }
+    if ((cor_x > x1) && (cor_x < x2))
+    {
+        if ((cor_z > z1) && (cor_z < z2))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+ubyte all_group_arrived_square(ushort group, short x, short z, short x2, int z2)
+{
+    ubyte ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_all_group_arrived_square\n"
+        : "=r" (ret) : "a" (group), "d" (x), "b" (z), "c" (x2), "g" (z2));
+    return ret;
+}
+
+ubyte mem_group_arrived_square2(struct Thing *p_person, ushort group, short x, short z,
+  int x2, int z2, int count)
+{
+    ubyte ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_mem_group_arrived_square2\n"
+        : "=r" (ret) : "a" (p_person), "d" (group), "b" (x), "c" (z), "g" (x2), "g" (z2), "g" (count));
+    return ret;
+}
+
+ubyte mem_group_arrived(ushort group, short x, short y, short z,
+  int radius, int count)
+{
+    ubyte ret;
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "call ASM_mem_group_arrived\n"
+        : "=r" (ret) : "a" (group), "d" (x), "b" (y), "c" (z), "g" (radius), "g" (count));
     return ret;
 }
 

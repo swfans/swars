@@ -224,7 +224,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_UNTRUCE_GROUP",		NULL,				CmDF_ReqGroup },
     {"TNG_CMD_PLAY_SAMPLE",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = sample
     {"TNG_CMD_IGNORE_ENEMIES",		NULL,				CmDF_None },
-    {"TNG_CMD_FULL_STAMINA",		NULL,				CmDF_None },
+    {"TNG_CMD_FIT_AS_AGENT",		NULL,				CmDF_None },
     {"TNG_CMD_CAMERA_ROTATE",		NULL,				CmDF_ReqOtherIndex|CmDF_ReqArg1 }, //  OtherIndex = degrees delta, Arg1 = speed
     {NULL,							NULL,				CmDF_None },
 };
@@ -242,81 +242,128 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
     s = buf;
 
     if (p_cmd->Type > PCmd_TYPES_COUNT) {
-        sprintf(s, "%s%hu()", "INVALID", cmd);
+        snprintf(s, buflen - (s - buf), "%s%hu()", "INVALID", cmd);
         return;
     }
 
     p_cdef = &command_defs[p_cmd->Type];
 
-    sprintf(s, "%s( ", p_cdef->CmdName);
+    snprintf(s, buflen - (s - buf), "%s( ", p_cdef->CmdName);
     s += strlen(s);
     nparams = 0;
 
     if (((p_cdef->Flags & CmDF_ReqSubType) != 0) ||
       (p_cmd->SubType != 0)) {
-        if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "SubType(%d)", (int)p_cmd->SubType);
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "SubType(%d)", (int)p_cmd->SubType);
         s += strlen(s);
         nparams++;
     }
 
     if (((p_cdef->Flags & CmDF_ReqCoord) != 0) ||
       (p_cmd->X|p_cmd->Y|p_cmd->Z) != 0) {
-        if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Coord(%hd,%hd,%hd)", p_cmd->X, p_cmd->Y, p_cmd->Z);
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Coord(%hd,%hd,%hd)", p_cmd->X, p_cmd->Y, p_cmd->Z);
         s += strlen(s);
         nparams++;
     }
 
-    if (((p_cdef->Flags & CmDF_ReqOtherThing) != 0) ||
-      (p_cmd->OtherThing != 0)) {
-        if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Thing(%hd)", p_cmd->OtherThing);
+    if ((p_cdef->Flags & (CmDF_ReqPersonThing|CmDF_ReqPVIThing|CmDF_ReqOtherThing)) != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Thing(%hd)", p_cmd->OtherThing);
+        s += strlen(s);
+        nparams++;
+    }
+    else if ((p_cdef->Flags & CmDF_ReqGroup) != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Group(%hd)", p_cmd->OtherThing);
+        s += strlen(s);
+        nparams++;
+    }
+    else if (((p_cdef->Flags & CmDF_ReqOtherIndex) != 0) || (p_cmd->OtherThing != 0)) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Index(%hd)", p_cmd->OtherThing);
         s += strlen(s);
         nparams++;
     }
 
-    if (((p_cdef->Flags & CmDF_ReqArg1) != 0) ||
-      (p_cmd->Arg1 != 0) || (p_cmd->Arg2 != 0)) {
-        if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Args(%hd,%hd)", p_cmd->Arg1, p_cmd->Arg2);
+    // some commands have both CmDF_ReqCoord2 and CmDF_ReqRange1; which one is used depends on AreaIsRect flag
+    if ((((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqRange1) == 0)) ||
+     (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqRange1) != 0) &&
+      ((p_cmd->Flags & PCmdF_AreaIsRect) != 0))) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        if ((p_cdef->Flags & CmDF_ReqCountT) != 0)
+            snprintf(s, buflen - (s - buf), "Coord2(%hd,0,%hd)", p_cmd->Arg1, p_cmd->Time);
+        else
+            snprintf(s, buflen - (s - buf), "Coord2(%hd,%hd,%hd)", p_cmd->Arg1, p_cmd->Arg2, p_cmd->Time);
+        s += strlen(s);
+        nparams++;
+    }
+    else if ((p_cdef->Flags & CmDF_ReqRange1) != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Range(%hd)", p_cmd->Arg1);
+        s += strlen(s);
+        nparams++;
+    }
+    else if (((p_cdef->Flags & CmDF_ReqArg1) != 0) || (p_cmd->Arg1 != 0)) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Arg1(%hd)", p_cmd->Arg1);
+        s += strlen(s);
+        nparams++;
+    }
+
+    if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cdef->Flags & CmDF_ReqCountT) == 0)) {
+        // Skip printing Arg2 since we've alredy used it for Coord2
+    }
+    else if ((p_cdef->Flags & CmDF_ReqCountT) != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "CountT(%hd)", p_cmd->Arg2);
+        s += strlen(s);
+        nparams++;
+    }
+    else if (p_cmd->Arg2 != 0) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Arg2(%hd)", p_cmd->Arg2);
         s += strlen(s);
         nparams++;
     }
 
     if (((p_cdef->Flags & CmDF_ReqMyThing) != 0) ||
       (p_cmd->MyThing != 0)) {
-        if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "MyThing(%hd)", p_cmd->MyThing);
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "MyThing(%hd)", p_cmd->MyThing);
         s += strlen(s);
         nparams++;
     }
 
     if (((p_cdef->Flags & CmDF_ReqParent) != 0) ||
       (p_cmd->Parent != 0)) {
-        if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Parent(%hd)", p_cmd->Parent);
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Parent(%hd)", p_cmd->Parent);
+        s += strlen(s);
+        nparams++;
+    }
+
+    if ((p_cdef->Flags & CmDF_ReqCoord2) != 0) {
+        // Skip printing Time since we've alredy used it for Coord2
+    }
+    else if (((p_cdef->Flags & CmDF_ReqTime) != 0) || (p_cmd->Time != 0)) {
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Time(%hd)", p_cmd->Time);
         s += strlen(s);
         nparams++;
     }
 
     {
-        if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Time(%hd)", p_cmd->Time);
-        s += strlen(s);
-        nparams++;
-    }
-
-    {
-        if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Flags(0x%02lX)", p_cmd->Flags);
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Flags(0x%02lX)", p_cmd->Flags);
         s += strlen(s);
         nparams++;
     }
 
     if ((p_cmd->field_1C != 0) || (p_cmd->field_1E != 0)) {
-        if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Padding(%hd,%hd)", p_cmd->field_1C, p_cmd->field_1E);
+        if (nparams) { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Padding(%hd,%hd)", p_cmd->field_1C, p_cmd->field_1E);
         s += strlen(s);
         nparams++;
     }
@@ -666,7 +713,7 @@ ubyte fix_thing_command_indexes(ushort cmd, TbBool deep)
     }
 
     if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && (((p_cdef->Flags & CmDF_ReqRange1) == 0) ||
-        (((p_cdef->Flags & CmDF_ReqRange1) != 0) && ((p_cmd->Flags & PCmdF_Unkn0010) != 0))))
+        (((p_cdef->Flags & CmDF_ReqRange1) != 0) && ((p_cmd->Flags & PCmdF_AreaIsRect) != 0))))
     {
         if ((p_cmd->Arg1 < MAP_BORDER_MARGIN) || (p_cmd->Arg1 > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("Cmd%hu = %s target coord X/Arg1 of (%d,%d) out of range",
@@ -694,7 +741,7 @@ ubyte fix_thing_command_indexes(ushort cmd, TbBool deep)
         }
     } else
     if (((p_cdef->Flags & CmDF_ReqRange1) != 0) && (((p_cdef->Flags & CmDF_ReqCoord2) == 0) ||
-        (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & PCmdF_Unkn0010) == 0))))
+        (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & PCmdF_AreaIsRect) == 0))))
     {
         if ((p_cmd->Arg1 < 1) || (p_cmd->Arg1 > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("Cmd%hu = %s target Range/Arg1 of %d out of range",

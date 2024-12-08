@@ -31,20 +31,54 @@ enum PersonCommandType
 {
   PCmd_NONE = 0x0,
   PCmd_STAY = 0x1,
+  /** Walk or drive to specific map coords, until withn given radius.
+   */
   PCmd_GO_TO_POINT = 0x2,
+  /** Walk towards given person, until withn given radius.
+   */
   PCmd_GO_TO_PERSON = 0x3,
+  /** Take the gun out, intercept and kill given person.
+   * Can be used with target 0 to just take the gun out.
+   */
   PCmd_KILL_PERSON = 0x4,
+  /** Kill nearest members of given group, until given amount of kills.
+   */
   PCmd_KILL_MEM_GROUP = 0x5,
+  /** Kill nearest members of given group, until all eliminated.
+   * Whole group of the person executing this command will start killing
+   * target group members on sight.
+   */
   PCmd_KILL_ALL_GROUP = 0x6,
+  /** Walk to given person, then stay close until persuaded.
+   */
   PCmd_PERSUADE_PERSON = 0x7,
+  /** Walk to and persuade nearest members of given group, until given amount
+   * of said group is persuaded.
+   */
   PCmd_PERSUADE_MEM_GROUP = 0x8,
+  /** Walk to and persuade nearest members of given group, until all persuaded.
+   */
   PCmd_PERSUADE_ALL_GROUP = 0x9,
+  /** Walk very close to given person, restricting its movement.
+   */
   PCmd_BLOCK_PERSON = 0xA,
+  /** Walk to line of sight of person with gun out, with intent to scare the target.
+   */
   PCmd_SCARE_PERSON = 0xB,
+  /** Move towards given person and keep just behind it.
+   */
   PCmd_FOLLOW_PERSON = 0xC,
+  /** Keep near given person, engaging any enemies nearby but focusing
+   * especially on the targets selected by given person.
+   */
   PCmd_SUPPORT_PERSON = 0xD,
+  /** Follow given person like persuaded (so including vehicles),
+   * engaging any threats nearby.
+   */
   PCmd_PROTECT_PERSON = 0xE,
   PCmd_HIDE = 0xF,
+  /** Walk to the place where given item is, then pick it up.
+   */
   PCmd_GET_ITEM = 0x10,
   /** Use specified weapon pointing at given coords.
    */
@@ -69,6 +103,8 @@ enum PersonCommandType
   PCmd_GOTOPOINT_FACE = 0x20,
   PCmd_SELF_DESTRUCT = 0x21,
   PCmd_PROTECT_MEM_G = 0x22,
+  /** Run to specific map coords, until withn given radius.
+   */
   PCmd_RUN_TO_POINT = 0x23,
   PCmd_KILL_EVERYONE = 0x24,
   PCmd_GUARD_OFF = 0x25,
@@ -150,21 +186,56 @@ enum PersonCommandType
   PCmd_UNKN6C,
   PCmd_UNKN6D,
   PCmd_LOOP_COM = 0x6E,
+  /** Repeat the preceding command as long as given person/vehicle is not dead/destroyed.
+   */
   PCmd_UNTIL_P_V_DEAD = 0x6F,
+  /** Repeat the preceding command as long as given group has dead members count below given
+   * amount.
+   */
   PCmd_UNTIL_MEM_G_DEAD = 0x70,
+  /** Repeat the preceding command as long as not all members of given group are dead.
+   */
   PCmd_UNTIL_ALL_G_DEAD = 0x71,
+  /** Repeat the preceding command as long as given person/vehicle/item is not within given
+   * range around command owner.
+   */
   PCmd_UNTIL_P_V_I_NEAR = 0x72,
+  /** Repeat the preceding command as long as given group has less than given amount of members
+   * within given range around command owner.
+   */
   PCmd_UNTIL_MEM_G_NEAR = 0x73,
+  /** Repeat the preceding command as long as given group does not have all living members within
+   * given range around command owner.
+   */
   PCmd_UNTIL_ALL_G_NEAR = 0x74,
+  /** Repeat the preceding command as long as given person/vehicle/item is not within given
+   * range around given map position.
+   */
   PCmd_UNTIL_P_V_I_ARRIVE = 0x75,
+  /** Repeat the preceding command as long as given group has less than given amount of members
+   * within given range around given map position.
+   */
   PCmd_UNTIL_MEM_G_ARRIVE = 0x76,
+  /** Repeat the preceding command as long as given group does not have all living members within
+   * given range around given map position.
+   */
   PCmd_UNTIL_ALL_G_ARRIVE = 0x77,
+  /** Repeat the preceding command as long as given person is not persuaded.
+   */
   PCmd_UNTIL_P_PERSUADE = 0x78,
+  /** Repeat the preceding command as long as given group has less than given amount of members
+   * persuaded.
+   */
   PCmd_UNTIL_MEM_G_PERSUADE = 0x79,
+  /** Repeat the preceding command as long as given group does not have all living members
+   * persuaded.
+   */
   PCmd_UNTIL_ALL_G_PERSUADE = 0x7A,
   PCmd_UNTIL_MISSION_SUCC = 0x7B,
   PCmd_UNTIL_MISSION_FAIL = 0x7C,
   PCmd_UNTIL_MISSION_START = 0x7D,
+  /** Repeat the preceding command as long as given object is not destroyed.
+   */
   PCmd_UNTIL_OBJT_DESTROY = 0x7E,
   PCmd_UNTIL_TIME = 0x7F,
   PCmd_WAIT_OBJV = 0x80,
@@ -183,7 +254,11 @@ enum PersonCommandType
   PCmd_UNTRUCE_GROUP = 0x8D,
   PCmd_PLAY_SAMPLE = 0x8E,
   PCmd_IGNORE_ENEMIES = 0x8F,
-  PCmd_FULL_STAMINA = 0x90, // Name uncertain
+  /** Change the person stamina and weapon energy to match the ones for an agent.
+   * Used to beefup a person to increase its chances of executing a tactic which
+   * requires agility.
+   */
+  PCmd_FIT_AS_AGENT = 0x90,
   PCmd_CAMERA_ROTATE = 0x91,
   PCmd_TYPES_COUNT,
 };
@@ -201,8 +276,18 @@ enum PersonCommandFlags
     * resolves to false, previous command stops being executed even if it did not finished.
     */
   PCmdF_IsUntil = 0x0004,
-  PCmdF_Unkn0008 = 0x0008,
-  PCmdF_Unkn0010 = 0x0010,
+  /** The command has its function reverted.
+   * Reverting command is usually used to revert loop conditions, but some commands can
+   * also be toggled / reverted, like PING command.
+   */
+  PCmdF_RevertFunct = 0x0008,
+  /** The command defines a rectangular area.
+   * Commands with area of activation or area of effect often use circular shape, which requires
+   * storing only 1 point coords and radius. If a rectangle is required, some values need to be
+   * re-used for the second set of coordinates. This flag marks such shape, and therefore such
+   * reuse.
+   */
+  PCmdF_AreaIsRect = 0x0010,
   PCmdF_Unkn0020 = 0x0020,
   PCmdF_Unkn0040 = 0x0040,
   PCmdF_Unkn0080 = 0x0080,

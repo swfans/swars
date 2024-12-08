@@ -21,6 +21,7 @@
 #include "bfmath.h"
 #include "bfmemory.h"
 #include "bfutility.h"
+
 #include "bigmap.h"
 #include "bmbang.h"
 #include "enginsngobjs.h"
@@ -36,6 +37,18 @@
 /******************************************************************************/
 ubyte dome_open_speed = 4;
 
+
+TbBool building_can_transform_open(ThingIdx bldng)
+{
+    struct Thing *p_building;
+
+    p_building = &things[bldng];
+    if (p_building->Type != TT_BUILDING)
+        return false;
+    if ((p_building->Flag & TngF_Destroyed) != 0)
+        return false;
+    return (p_building->SubType == SubTT_BLD_DOME);
+}
 
 struct Thing *create_building_thing(int x, int y, int z, ushort obj, ushort nobj, ushort a6)
 {
@@ -93,7 +106,7 @@ void process_dome1(struct Thing *p_building)
 
     switch (p_building->State)
     {
-    case 1:
+    case BldSt_TRA_OPENING:
         timer0 = p_building->SubState - dome_open_speed;
         p_building->SubState = timer0;
         if (timer0 <= 127)
@@ -105,42 +118,45 @@ void process_dome1(struct Thing *p_building)
         }
         else
         {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
             p_building->SubState = 0;
             p_building->Timer1 = 100;
-            p_building->State = 7;
+            p_building->State = BldSt_TRA_OPENED;
         }
         break;
-    case 4:
+    case BldSt_TRA_CLOSING:
         timer0 = p_building->SubState + dome_open_speed;
         p_building->SubState = timer0;
         if (timer0 <= 127)
         {
-            if ((timer0 >= 112u) && (timer0 < 112u + dome_open_speed)) {
-                set_dome_col(p_building, 0);
-            }
             do_dome_rotate1(p_building);
         }
         else
         {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
             p_building->SubState = 127;
             p_building->Timer1 = 100;
-            p_building->State = 8;
+            p_building->State = BldSt_TRA_CLOSED;
         }
         break;
-    case 7:
-        if ((p_building->Flag & TngF_Unkn0080) != 0)
-            p_building->State = 4;
-        p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
+    case BldSt_TRA_OPENED:
+        if ((p_building->Flag & TngF_TransCloseRq) != 0) {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
+            p_building->State = BldSt_TRA_CLOSING;
+        }
+        p_building->Flag &= ~(TngF_TransCloseRq|TngF_TransOpenRq);
         break;
-    case 8:
-        if ((p_building->Flag & TngF_Unkn0040) != 0)
-            p_building->State = 1;
-        p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
+    case BldSt_TRA_CLOSED:
+        if ((p_building->Flag & TngF_TransOpenRq) != 0) {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
+            p_building->State = BldSt_TRA_OPENING;
+        }
+        p_building->Flag &= ~(TngF_TransCloseRq|TngF_TransOpenRq);
         break;
     default:
         p_building->SubState = 127;
         p_building->Timer1 = 100;
-        p_building->State = 8;
+        p_building->State = BldSt_TRA_CLOSED;
         break;
     }
 }
@@ -166,7 +182,7 @@ void collapse_building_process_tnodes(struct Thing *p_building)
         if (tnode != 0) {
             struct TrafficNode *p_tnode;
             p_tnode = &game_traffic_nodes[tnode];
-            p_tnode->Flags |= 0x3000;
+            p_tnode->Flags |= (0x2000|0x1000);
         }
     }
 
@@ -304,22 +320,22 @@ void collapse_building_station(struct Thing *p_building)
     short cntr_x, cntr_z;
     short x, z;
 
-    cntr_x = p_building->X >> 16;
-    cntr_z = p_building->Z >> 16;
+    cntr_x = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_building->X));
+    cntr_z = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_building->Z));
 
     for (x = cntr_x - 8; x <= cntr_x + 8; x++)
     {
-        if ((x < 0) || (x > 127))
+        if ((x < 0) || (x > MAP_TILE_WIDTH-1))
             continue;
         for (z = cntr_z - 8; z <= cntr_z + 8; z++)
         {
             struct MyMapElement *p_mapel;
             short thing;
 
-            if ((z < 0) || (z > 127))
+            if ((z < 0) || (z > MAP_TILE_HEIGHT-1))
                 continue;
 
-            p_mapel = &game_my_big_map[128 * z + x];
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * z + x];
             thing = p_mapel->Child;
             while (thing != 0)
             {
@@ -369,8 +385,9 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
     }
     else
     {
-        play_dist_sample(p_building, 0x2Du, 0x7Fu, 0x40u, 100, 0, 3);
-        p_sthing = create_sound_effect(p_building->X >> 8, p_building->Y >> 8, p_building->Z >> 8, 0x2Eu, 127, -1);
+        play_dist_sample(p_building, 0x2Du, 127, 64, 100, 0, 3);
+        p_sthing = create_sound_effect(PRCCOORD_TO_MAPCOORD(p_building->X),
+          PRCCOORD_TO_MAPCOORD(p_building->Y), PRCCOORD_TO_MAPCOORD(p_building->Z), 0x2Eu, 127, -1);
         if (p_sthing != NULL)
         {
             p_sthing->State = 1;
@@ -401,7 +418,11 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
         p_sobj = &game_objects[p_building->U.UObject.Object];
         if (((p_sobj->field_1C & 0x0100) == 0) || current_map == 9) // map009 Singapore on-water map
         {
-            quick_crater(p_building->X >> 16, p_building->Z >> 16, 3);
+            short cra_tl_x, cra_tl_z;
+
+            cra_tl_x = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_building->X));
+            cra_tl_z = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_building->Z));
+            quick_crater(cra_tl_x, cra_tl_z, 3);
             for (i = 0; i < 32; i++)
             {
                 int dx, dz;
@@ -600,7 +621,7 @@ void process_building(struct Thing *p_building)
         process_bld36(p_building);
         break;
     default:
-        if (p_building->State == 9) {
+        if (p_building->State == BldSt_OBJ_UNKN09) {
             collapse_building(p_building->X >> 8, p_building->Y >> 8, p_building->Z >> 8, p_building);
         }
         break;

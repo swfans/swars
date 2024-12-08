@@ -21,6 +21,7 @@
 
 #include "bftypes.h"
 #include "bffile.h"
+#include "game_bstype.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -81,6 +82,8 @@ enum GameObjectiveFlags {
     /** The objective cannot be met - it is shown, but fulfilling its criteria does nothing */
     GObjF_CANT_MET = 0x02,
 };
+
+struct Thing;
 
 struct Objective { // sizeof=32
     ushort Next;
@@ -149,6 +152,34 @@ TbBool objective_target_is_item(struct Objective *p_objectv);
 TbBool objective_target_is_item_to_area(struct Objective *p_objectv);
 TbBool objective_target_is_object(struct Objective *p_objectv);
 TbBool objective_target_is_any_thing(struct Objective *p_objectv);
+
+short test_objective(ushort objectv, ushort show_obj);
+ubyte group_not_seen(ushort group);
+ubyte all_group_arrived(ushort group, short x, short y, short z, int radius);
+
+/** Checks if given thing is within circle defined by parameters.
+ * @param thing Thing index to check position.
+ * @param x Target circle center X coord.
+ * @param y Target circle center Y coord.
+ * @param z Target circle center Z coord.
+ * @param radius_sq Squared target circle radius.
+ */
+TbBool thing_arrived_at_obj_radius(ThingIdx thing, int x, int y, int z, int radius_sq);
+
+/** Checks if given thing is within 2D rectangle defined by parameters.
+ * @param thing Thing index to check position.
+ * @param x1 Target rectangle point 1 X coord.
+ * @param z1 Target rectangle point 1 Z coord.
+ * @param x2 Target rectangle point 2 X coord.
+ * @param z2 Target rectangle point 2 Z coord.
+ */
+TbBool thing_arrived_at_obj_square2(ThingIdx thing, int x1, int z1, int x2, int z2);
+
+ubyte all_group_arrived_square(ushort group, short x, short z, short x2, int z2);
+ubyte mem_group_arrived_square2(struct Thing *p_person, ushort group, short x, short z,
+  int x2, int z2, int count);
+ubyte mem_group_arrived(ushort group, short x, short y, short z,
+  int radius, int count);
 
 /** Fixes parameters within objectives.
  *

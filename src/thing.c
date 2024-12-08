@@ -58,6 +58,8 @@ struct UnkFLight { // sizeof=0x0A
 extern ushort next_unkn_full_light;
 extern struct UnkFLight unkn_full_lights[50];
 
+ubyte debug_log_things = 0;
+
 /** Radiuses of Things of type STATIC.
  */
 short static_radii[] = {
@@ -133,6 +135,13 @@ const char *thing_type_names[] = {
   "UNKN56",
 };
 
+const char *state_change_result_names[] = {
+    "accepted",
+    "already done",
+    "change denied",
+    "goal unattainable",
+};
+
 TbBool thing_type_is_simple(short ttype)
 {
     return (ttype == SmTT_STATIC) ||
@@ -172,6 +181,11 @@ struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype)
     if (p_thing->Type != ttype)
             return INVALID_THING;
     return p_thing;
+}
+
+const char *state_change_result_name(StateChRes res)
+{
+    return state_change_result_names[res];
 }
 
 void move_mapwho(struct Thing *p_thing, int x, int y, int z)

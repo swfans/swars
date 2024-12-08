@@ -107,7 +107,11 @@ enum PersonState {
   PerSt_CATCH_FERRY = 0x37,
   PerSt_EXIT_FERRY = 0x38,
   PerSt_AVOID_GROUP = 0x39,
-  PerSt_UNUSED_3A = 0x3A,
+  /** Init the current command on next state update.
+   * This is used internally to ensure the thing inits the current command
+   * rather than assuming that current means already initialised.
+   */
+  PerSt_INIT_COMMAND = 0x3A,
   PerSt_BEING_PERSUADED = 0x3B,
 };
 
@@ -122,9 +126,13 @@ enum PersonFlags3 {
     PrsF3_Unkn80     = 0x80,
 };
 
-/** Max health of a person cannot safely go beyond that.
+/** Max health of a person; cannot safely go beyond that.
  */
 #define PERSON_MAX_HEALTH_LIMIT 16383
+
+/** Max weapon energy of a person; cannot safely go beyond that.
+ */
+#define PERSON_MAX_ENERGY_LIMIT 32255
 
 #define PERSON_MAX_SPEED 2048
 
@@ -200,6 +208,9 @@ TbBool person_carries_any_medikit(struct Thing *p_person);
 TbBool person_can_accept_control(ThingIdx person);
 
 void set_person_stats_type(struct Thing *p_person, ushort type);
+void set_person_health_shield_type(struct Thing *p_person, ushort stype);
+void set_person_energy_stamina_type(struct Thing *p_person, ushort stype);
+
 void init_person_thing(struct Thing *p_person);
 void person_give_best_mods(struct Thing *p_person);
 short calc_person_speed(struct Thing *p_person);
@@ -247,6 +258,10 @@ TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle);
 
 int limit_mood(struct Thing *p_thing, short mood);
 
+/** Init some commands which should be executed before the person is completely set up.
+ */
+void person_init_preplay_command(struct Thing *p_person);
+
 TbBool person_is_executing_commands(ThingIdx person);
 TbBool person_is_persuaded(ThingIdx thing);
 TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
@@ -255,6 +270,9 @@ void player_change_person(short thing, ushort plyr);
 void make_peeps_scatter(struct Thing *p_person, int x, int z);
 int person_hit_by_bullet(struct Thing *p_person, short hp,
   int vx, int vy, int vz, struct Thing *p_attacker, int type);
+
+/** Restores agents health by consuming a medikit, or just restores if no medikit available.
+ */
 TbBool person_use_medikit(struct Thing *p_person, PlayerIdx plyr);
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);

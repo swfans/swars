@@ -20,6 +20,7 @@
 #define BUILDING_H
 
 #include "bftypes.h"
+#include "game_bstype.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -99,8 +100,26 @@ enum SubTypeBuilding {
   SubTT_BLD_44 = 0x44,
 };
 
+enum BuildingStates {
+  BldSt_OBJ_NONE = 0x0,
+  BldSt_TRA_OPENING,
+  BldSt_OBJ_UNKN02,
+  BldSt_OBJ_UNKN03,
+  BldSt_TRA_CLOSING,
+  BldSt_OBJ_UNKN05,
+  BldSt_OBJ_UNKN06,
+  BldSt_TRA_OPENED,
+  BldSt_TRA_CLOSED,
+  BldSt_OBJ_UNKN09,
+};
+
 #pragma pack()
 /******************************************************************************/
+
+/** Returns whether given thing is a building which can transform into open structure.
+ * Only domes can do such transformation.
+ */
+TbBool building_can_transform_open(ThingIdx bldng);
 
 struct Thing *create_building_thing(int x, int y, int z, ushort a4, ushort a5, ushort a6);
 

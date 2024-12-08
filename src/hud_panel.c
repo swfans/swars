@@ -1869,7 +1869,7 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
 
     fade = value >> 2;
     if (value >= 0)
-        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 - fade) + colour_lookup[2]];
+        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 - fade) + colour_lookup[ColLU_RED]];
     else
         col = pixmap.fade_table[PALETTE_8b_COLORS * (63 + fade) + colour_lookup[4]];
 
@@ -1912,7 +1912,7 @@ void draw_mood_limits(short x, short y, short w, short h, short value, short max
     if (value <= 0)
         return;
 
-    col = colour_lookup[1];
+    col = colour_lookup[ColLU_WHITE];
     scaled_val = (w * value / maxval) >> 1;
 
     curr_x = x + (w >> 1) - scaled_val;
@@ -1937,7 +1937,7 @@ void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
     if (len_div == 0)
         return;
 
-    col = colour_lookup[1];
+    col = colour_lookup[ColLU_WHITE];
     scaled_val = 2 * (7 * len_mul / len_div);
 
     w = x1 + scaled_val;
@@ -2153,14 +2153,14 @@ void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
     lv = p_agent->Health;
     lvmax = p_agent->U.UPerson.MaxHealth;
     if (lv <= lvmax) { // Normal health amount
-        draw_health_level(x, y, w, h, lv, lvmax, colour_lookup[1], 0);
+        draw_health_level(x, y, w, h, lv, lvmax, colour_lookup[ColLU_WHITE], 0);
     } else { // Health reinforced beyond max is drawn in red
-        draw_health_level(x, y, w, h, lvmax, lvmax, colour_lookup[1], 0);
-        draw_health_level(x, y, w, h, lv - lvmax, lvmax, colour_lookup[2], 0);
+        draw_health_level(x, y, w, h, lvmax, lvmax, colour_lookup[ColLU_WHITE], 0);
+        draw_health_level(x, y, w, h, lv - lvmax, lvmax, colour_lookup[ColLU_RED], 0);
     }
     // Draw shield level over health
     lv = p_agent->U.UPerson.ShieldEnergy;
-    draw_health_level(x, y, w, h, lv, 0x400, colour_lookup[1], 1);
+    draw_health_level(x, y, w, h, lv, 0x400, colour_lookup[ColLU_WHITE], 1);
 
     // Draw drug level aka mood (or just a red line if no drugs)
     x = p_mopanel->X;
@@ -2322,7 +2322,7 @@ void draw_new_panel(void)
             md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
             if (md == 1 && pktrec_mode != PktR_PLAYBACK) {
                 y = alt_at_point(mouse_map_x, mouse_map_z);
-                func_702c0(mouse_map_x, y >> 5, mouse_map_z, 64, 64, colour_lookup[2]);
+                func_702c0(mouse_map_x, y >> 5, mouse_map_z, 64, 64, colour_lookup[ColLU_RED]);
             }
         }
     }
