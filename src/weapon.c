@@ -606,6 +606,24 @@ void weapons_remove_weapon(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks
         p_fourpacks->Amount[fp] = 0;
 }
 
+TbBool weapons_remove_one_from_npc(ulong *p_weapons, ushort wtype)
+{
+    ushort fp;
+    TbBool was_last;
+
+    if ((*p_weapons & (1 << (wtype-1))) == 0)
+        return false;
+
+    was_last = true;
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        was_last = false;
+    }
+    if (was_last)
+        *p_weapons &= ~(1 << (wtype-1));
+    return true;
+}
+
 TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
 {
     ushort fp;
@@ -623,7 +641,30 @@ TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks,
     if (was_last)
         *p_weapons &= ~(1 << (wtype-1));
     return true;
+}
 
+/** Remove one weapon from player-controlled person in-game.
+ * Player struct contains dumb own array rather than uniform WeaponsFourPack, so it requires
+ * this special function. To be removed when possible.
+ */
+TbBool weapons_remove_one_for_player(ulong *p_weapons,
+  ubyte p_plfourpacks[][4], ushort plagent, ushort wtype)
+{
+    ushort fp;
+    TbBool was_last;
+
+    if ((*p_weapons & (1 << (wtype-1))) == 0)
+        return false;
+
+    was_last = true;
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        was_last = (p_plfourpacks[fp][plagent] <= 1);
+        p_plfourpacks[fp][plagent]--;
+    }
+    if (was_last)
+        *p_weapons &= ~(1 << (wtype-1));
+    return true;
 }
 
 TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
@@ -654,7 +695,6 @@ TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, us
         *p_weapons |= (1 << (wtype-1));
 
     return true;
-
 }
 
 void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks)
@@ -1213,6 +1253,33 @@ void process_clone_disguise(struct Thing *p_person)
     }
 }
 
+TbBool person_weapons_remove_one(struct Thing *p_person, ushort wtype)
+{
+    PlayerInfo *p_player;
+    ushort plagent;
+    TbBool done;
+
+    p_player = NULL;
+    plagent = 0;
+    if ((p_person->Flag & TngF_PlayerAgent) != 0)
+    {
+        PlayerIdx plyr;
+        plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+        plagent = p_person->U.UPerson.ComCur & 3;
+        p_player = &players[plyr];
+    }
+
+    if (p_person->U.UPerson.CurrentWeapon == wtype)
+        p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+
+    if (p_player != NULL)
+        //TODO replace  with weapons_remove_one() call, when FourPacks have unified format
+        done = weapons_remove_one_for_player(&p_person->U.UPerson.WeaponsCarried, p_player->FourPacks, plagent, wtype);
+    else
+        done = weapons_remove_one_from_npc(&p_person->U.UPerson.WeaponsCarried, wtype);
+    return done;
+}
+
 void process_automedkit(struct Thing *p_person)
 {
     if (!weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, WEP_MEDI2))
@@ -1220,12 +1287,9 @@ void process_automedkit(struct Thing *p_person)
     if (p_person->Health >= p_person->U.UPerson.MaxHealth / 8)
         return;
 
-    //TODO for the comment below; plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-    //TODO for the comment below; plagent = p_person->U.UPerson.ComCur & 3;
     p_person->Health = p_person->U.UPerson.MaxHealth;
-    //TODO replace NULL with &players[plyr]->FourPacks[plagent] pointer, when that has unified format
-    weapons_remove_one(&p_person->U.UPerson.WeaponsCarried, NULL, WEP_MEDI2);
-    play_dist_sample(p_person, 2, 0x7F, 0x40, 100, 0, 1);
+    person_weapons_remove_one(p_person, WEP_MEDI2);
+    play_dist_sample(p_person, 2, 127, 64, 100, 0, 1);
 }
 
 void low_energy_alarm_stop(void)

@@ -141,8 +141,27 @@ ushort weapon_sprite_index(ushort wtype, TbBool enabled);
 ushort weapon_fourpack_index(ushort weapon);
 void weapons_remove_weapon(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
+
+/** Remove one weapon from an npc person in-game.
+ * NPCs have no FourPacks, meaning removing one consumable weapon does nothing.
+ * For non-consumable weapons, this removes the related weapon normally.
+ */
+TbBool weapons_remove_one_from_npc(ulong *p_weapons, ushort wtype);
+
+/** Remove one weapon from a player character, in Cryo Chamber.
+ * Currently this is only for cryo chamber, as in-game fourpacks have different format.
+ */
 TbBool weapons_remove_one(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
+
+/** Remove one weapon from player-controlled person in-game.
+ * Player struct contains dumb own array rather than uniform WeaponsFourPack, so it requires
+ * this special function.
+ * DEPRECATED: To be removed when possible.
+ */
+TbBool weapons_remove_one_for_player(ulong *p_weapons,
+  ubyte p_plfourpacks[][4], ushort plagent, ushort wtype);
+
 TbBool weapons_add_one(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
 void sanitize_weapon_quantities(ulong *p_weapons,
@@ -169,6 +188,8 @@ void choose_best_weapon_for_range(struct Thing *p_person, int dist);
 TbBool current_weapon_has_targetting(struct Thing *p_person);
 
 ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person);
+
+TbBool person_weapons_remove_one(struct Thing *p_person, ushort wtype);
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person);
 void do_weapon_quantities1(struct Thing *p_person);

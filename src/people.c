@@ -2690,18 +2690,10 @@ TbBool person_use_medikit(struct Thing *p_person, PlayerIdx plyr)
     if (plyr == local_player_no)
         play_sample_using_heap(0, 2, 127, 64, 100, 0, 3u);
     p_person->Health = p_person->U.UPerson.MaxHealth;
-    // TODO use more advanced weapon removal functs
-    if (person_carries_weapon(p_person, WEP_MEDI1))
-    {
-        p_person->U.UPerson.WeaponsCarried &= ~0x04000000;
-        if (p_person->U.UPerson.CurrentWeapon == WEP_MEDI1)
-            p_person->U.UPerson.CurrentWeapon = WEP_NULL;
-    }
-    else
-    {
-        p_person->U.UPerson.WeaponsCarried &= ~0x08000000;
-        if (p_person->U.UPerson.CurrentWeapon == WEP_MEDI2)
-            p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+    if (person_carries_weapon(p_person, WEP_MEDI1)) {
+        person_weapons_remove_one(p_person, WEP_MEDI1);
+    } else if (person_carries_weapon(p_person, WEP_MEDI2)) {
+        person_weapons_remove_one(p_person, WEP_MEDI2);
     }
     return true;
 }
