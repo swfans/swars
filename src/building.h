@@ -100,6 +100,18 @@ enum SubTypeBuilding {
   SubTT_BLD_44 = 0x44,
 };
 
+enum BuildingStates {
+  BldSt_OBJ_NONE = 0x0,
+  BldSt_TRA_OPENING,
+  BldSt_OBJ_UNKN2,
+  BldSt_OBJ_UNKN3,
+  BldSt_TRA_CLOSING,
+  BldSt_OBJ_UNKN5,
+  BldSt_OBJ_UNKN6,
+  BldSt_TRA_OPENED,
+  BldSt_TRA_CLOSED,
+};
+
 #pragma pack()
 /******************************************************************************/
 

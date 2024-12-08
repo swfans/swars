@@ -2162,11 +2162,11 @@ StateChRes person_cmd_play_sample(struct Thing *p_person, short smptbl_id,
 {
     if (revert)
     {
-        play_sample_using_heap(0, smptbl_id, 127, 64, 100, 0, 1u);
+        play_sample_using_heap(0, smptbl_id, 127, 64, 100, 0, 1);
     }
     else
     {
-        play_dist_sample(p_person, smptbl_id, 127, 0x40u, 100, 0, 1);
+        play_dist_sample(p_person, smptbl_id, 127, 64, 100, 0, 1);
     }
     p_person->State = PerSt_NONE;
     return StCh_ACCEPTED;

@@ -21,6 +21,7 @@
 #include "bfmath.h"
 #include "bfmemory.h"
 #include "bfutility.h"
+
 #include "bigmap.h"
 #include "bmbang.h"
 #include "enginsngobjs.h"
@@ -105,7 +106,7 @@ void process_dome1(struct Thing *p_building)
 
     switch (p_building->State)
     {
-    case 1:
+    case BldSt_TRA_OPENING:
         timer0 = p_building->SubState - dome_open_speed;
         p_building->SubState = timer0;
         if (timer0 <= 127)
@@ -117,42 +118,45 @@ void process_dome1(struct Thing *p_building)
         }
         else
         {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
             p_building->SubState = 0;
             p_building->Timer1 = 100;
-            p_building->State = 7;
+            p_building->State = BldSt_TRA_OPENED;
         }
         break;
-    case 4:
+    case BldSt_TRA_CLOSING:
         timer0 = p_building->SubState + dome_open_speed;
         p_building->SubState = timer0;
         if (timer0 <= 127)
         {
-            if ((timer0 >= 112u) && (timer0 < 112u + dome_open_speed)) {
-                set_dome_col(p_building, 0);
-            }
             do_dome_rotate1(p_building);
         }
         else
         {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
             p_building->SubState = 127;
             p_building->Timer1 = 100;
-            p_building->State = 8;
+            p_building->State = BldSt_TRA_CLOSED;
         }
         break;
-    case 7:
-        if ((p_building->Flag & TngF_Unkn0080) != 0)
-            p_building->State = 4;
+    case BldSt_TRA_OPENED:
+        if ((p_building->Flag & TngF_Unkn0080) != 0) {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
+            p_building->State = BldSt_TRA_CLOSING;
+        }
         p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
         break;
-    case 8:
-        if ((p_building->Flag & TngF_Unkn0040) != 0)
-            p_building->State = 1;
+    case BldSt_TRA_CLOSED:
+        if ((p_building->Flag & TngF_Unkn0040) != 0) {
+            play_dist_sample(p_building, 47, 127, 64, 100, 0, 3);
+            p_building->State = BldSt_TRA_OPENING;
+        }
         p_building->Flag &= ~(TngF_Unkn0080|TngF_Unkn0040);
         break;
     default:
         p_building->SubState = 127;
         p_building->Timer1 = 100;
-        p_building->State = 8;
+        p_building->State = BldSt_TRA_CLOSED;
         break;
     }
 }
