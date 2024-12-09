@@ -569,6 +569,8 @@ typedef struct {
 
 /** Definition of a simple callback type which can only return true/false and has no memory
  * of previous checks.
+ * As the first thing which returns true is accepted, searching with this filter is faster
+ * than the complex ones which need all things to be checked.
  */
 typedef TbBool (*ThingBoolFilter)(ThingIdx thing, ThingFilterParams *params);
 
@@ -1019,13 +1021,29 @@ TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R);
  * @param X Map coordinate in map units.
  * @param Z Map coordinate in map units.
  * @param R Circle radius in map units.
- * @param ttype Thing Type; need to be specific, no -1 allowed.
+ * @param ttype Thing Type; to catch all, use -1 (but that will be slower).
  * @param subtype Thing SubType; to catch all, use -1.
  * @param filter Filter callback function.
  * @param param Parameters for filter callback function.
  */
 ThingIdx find_thing_type_within_circle_with_bfilter(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params);
+
+/** Unified function to find a thing of given type within given circle and matching
+ * minimizing filter.
+ *
+ * Tries to use mapwho and same type list, and if cannot then just searches all used things.
+ *
+ * @param X Map coordinate in map units.
+ * @param Z Map coordinate in map units.
+ * @param R Circle radius in map units.
+ * @param ttype Thing Type; to catch all, use -1 (but that will be slower).
+ * @param subtype Thing SubType; to catch all, use -1.
+ * @param filter Filter callback function.
+ * @param param Parameters for filter callback function.
+ */
+ThingIdx find_thing_type_within_circle_with_mfilter(short X, short Z, ushort R,
+  short ttype, short subtype, ThingMinFilter filter, ThingFilterParams *params);
 
 ThingIdx find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon);
 ThingIdx find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
@@ -1040,6 +1058,14 @@ short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort aft
 ThingIdx search_for_station(short X, short Z);
 ThingIdx search_for_vehicle(short X, short Z);
 ThingIdx search_things_for_uniqueid(short index, ubyte flag);
+/** Search for any thing, including off-map, nearest within given circle.
+ * To be used for editors and debug modes.
+ *
+ * @param X Map coordinate in map units.
+ * @param Z Map coordinate in map units.
+ * @param R Circle radius in map units.
+ */
+ThingIdx search_things_for_any_including_offmap_nearest_within_circle(short X, short Z, ushort R);
 
 struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop);
 

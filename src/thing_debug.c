@@ -44,36 +44,34 @@ short word_1DC7A2 = 0;
 
 extern ushort word_1DC8CE;
 
-TbBool thing_debug_selectable(short thing, short type, TbBool hidden)
+s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilterParams *params)
 {
-    if (thing > 0)
-    {
-        struct Thing *p_thing;
+    short dtX, dtZ;
+    TbBool allow_hidden, basic_types;
 
-        p_thing = &things[thing];
-        if (hidden || (p_thing->Flag & TngF_Unkn04000000) != 0)
-        {
-            if ((type == 0) || (p_thing->Type == type))
-                return true;
-            if ((type == -1) && (p_thing->Type == TT_PERSON
-                || p_thing->Type == TT_VEHICLE))
-                return true;
-        }
-    }
-    else if (thing < 0)
-    {
+    allow_hidden = (params->Arg1 & 0x01) != 0;
+    basic_types = (params->Arg1 & 0x02) != 0;
+
+    if (thing <= 0) {
         struct SimpleThing *p_sthing;
-
         p_sthing = &sthings[thing];
-        if (hidden || (p_sthing->Flag & TngF_Unkn04000000) != 0)
-        {
-            if ((type == 0) || (p_sthing->Type == type))
-                return true;
-            if ((type == -1) && (p_sthing->Type == SmTT_DROPPED_ITEM))
-                return true;
-        }
+        if (!allow_hidden && (p_sthing->Flag & TngF_Unkn04000000) == 0)
+            return INT32_MAX;
+        if (basic_types && (p_sthing->Type != SmTT_DROPPED_ITEM))
+            return INT32_MAX;
+        dtX = PRCCOORD_TO_MAPCOORD(p_sthing->X) - X;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_sthing->Z) - Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        if (!allow_hidden && (p_thing->Flag & TngF_Unkn04000000) == 0)
+            return INT32_MAX;
+        if (basic_types && (p_thing->Type != TT_PERSON) && (p_thing->Type != TT_VEHICLE))
+            return INT32_MAX;
+        dtX = PRCCOORD_TO_MAPCOORD(p_thing->X) - X;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_thing->Z) - Z;
     }
-    return false;
+    return (dtZ * dtZ + dtX * dtX);
 }
 
 void unused_func_203(short x, short y, short thing, ubyte colkp)
@@ -116,83 +114,35 @@ void func_705bc(int a1, int a2, int a3, int a4, int a5, ubyte a6)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
 }
 
-short unused_func_201(short x, short y, short z, short type)
+/** Searches all existing things in order to find one for debug.
+ * @param ttype Thing type, or -1 to catch all basic types, or -2 to catch all possible.
+ */
+ThingIdx search_for_thing_for_debug(short x, short y, short z, short ttype)
 {
-    ulong sel_dist;
-    short sel_thing;
-    short shift_x, shift_z;
+    ThingIdx thing;
+    ThingFilterParams params;
 
-    sel_thing = 0;
-    sel_dist = 0x7FFFFFFF;
-
-    for (shift_x = -9; shift_x <= 9; shift_x++)
-    {
-        for (shift_z = -9; shift_z <= 9; shift_z++)
-        {
-            ulong dist;
-            long dist_x, dist_z;
-            short tile_x, tile_z;
-            short thing;
-
-            tile_x = MAPCOORD_TO_TILE(x) + shift_x;
-            if ((tile_x <= 0) || (tile_x >= MAP_TILE_WIDTH))
-                continue;
-            tile_z = MAPCOORD_TO_TILE(z) + shift_z;
-            if ((tile_z <= 0) && (tile_z >= MAP_TILE_HEIGHT))
-                continue;
-            thing = game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x].Child;
-
-            while ((thing != 0) && (thing > -STHINGS_LIMIT) && (thing < THINGS_LIMIT))
-            {
-                if (thing > 0)
-                {
-                    struct Thing *p_thing;
-
-                    p_thing = &things[thing];
-                    if (thing_debug_selectable(thing, type, false))
-                    {
-                        dist_x = x - PRCCOORD_TO_MAPCOORD(p_thing->X);
-                        dist_z = z - PRCCOORD_TO_MAPCOORD(p_thing->Z);
-                        dist = dist_x * dist_x + dist_z * dist_z;
-                        if (dist < sel_dist)
-                        {
-                            sel_dist = dist;
-                            sel_thing = thing;
-                        }
-                    }
-                    thing = p_thing->Next;
-                }
-                if (thing < 0)
-                {
-                    struct SimpleThing *p_sthing;
-
-                    p_sthing = &sthings[thing];
-                    if (thing_debug_selectable(thing, type, false))
-                    {
-                        dist_x = x - PRCCOORD_TO_MAPCOORD(p_sthing->X);
-                        dist_z = z - PRCCOORD_TO_MAPCOORD(p_sthing->Z);
-                        dist = dist_x * dist_x + dist_z * dist_z;
-                        if (dist < sel_dist)
-                        {
-                            sel_dist = dist;
-                            sel_thing = thing;
-                        }
-                    }
-                    thing = p_sthing->Next;
-                }
-            }
-        }
+    params.Arg1 = 0;
+    if (ttype == -2) {
+        params.Arg1 |= 0x01; // allow hidden things
+        ttype = -1;
+    } else if (ttype == -1) {
+        params.Arg1 |= 0x02; // limit to basic types only
     }
-    return sel_thing;
+
+    thing = find_thing_type_within_circle_with_mfilter(x, z, TILE_TO_MAPCOORD(9,0),
+      ttype, -1, mfilter_nearest_debug_selectable, &params);
+
+    return thing;
 }
 
-int select_thing_for_debug(short x, short y, short z, short type)
+int select_thing_for_debug(short x, short y, short z, short ttype)
 {
     ThingIdx thing;
     short alt;
     char locstr[52];
 
-    thing = unused_func_201(x, y, z, type);
+    thing = search_for_thing_for_debug(x, y, z, ttype);
     alt = alt_at_point(x, z) >> 5;
     if (thing > 0)
     {

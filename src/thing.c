@@ -1255,7 +1255,7 @@ short get_thing_same_type_head(short ttype, short subtype)
     return thing;
 }
 
-static short find_thing_type_on_same_type_list_within_circle(short X, short Z, ushort R,
+static ThingIdx find_thing_type_on_same_type_list_within_circle_with_bfilter(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     ThingIdx thing;
@@ -1298,7 +1298,7 @@ static short find_thing_type_on_same_type_list_within_circle(short X, short Z, u
             thing = p_thing->LinkSame;
         }
         // If searching for all subtypes, make sure we really catch them all; switch to
-        // second linked list if forst one did not gave results
+        // second linked list if first one did not gave results
         if ((thing == 0) && (subtype == -1) && (ttype == TT_VEHICLE)) {
             subtype = SubTT_VEH_SHIP;
             thing = get_thing_same_type_head(ttype, subtype);
@@ -1314,6 +1314,76 @@ static short find_thing_type_on_same_type_list_within_circle(short X, short Z, u
         }
     }
     return 0;
+}
+
+static ThingIdx find_thing_type_on_same_type_list_within_circle_with_mfilter(short X, short Z, ushort R,
+  short ttype, short subtype, ThingMinFilter filter, ThingFilterParams *params)
+{
+    s32 min_fval, fval;
+    ThingIdx min_thing, thing;
+    ulong k;
+
+    k = 0;
+    min_fval = INT32_MAX;
+    min_thing = 0;
+    thing = get_thing_same_type_head(ttype, subtype);
+    while (thing != 0)
+    {
+        if (thing <= 0)
+        {
+            struct SimpleThing *p_sthing;
+            p_sthing = &sthings[thing];
+            // Per thing code start
+            if (p_sthing->Type == ttype) {
+                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        fval = filter(thing, X, Z, params);
+                        if (fval < min_fval) {
+                            min_fval = fval;
+                            min_thing = thing;
+                        }
+                    }
+                }
+            }
+            // Per thing code end
+            thing = p_sthing->LinkSame;
+        }
+        else
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            // Per thing code start
+            if (p_thing->Type == ttype) {
+                if ((p_thing->SubType == subtype) || (subtype == -1)) {
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        fval = filter(thing, X, Z, params);
+                        if (fval < min_fval) {
+                            min_fval = fval;
+                            min_thing = thing;
+                        }
+                    }
+                }
+            }
+            // Per thing code end
+            thing = p_thing->LinkSame;
+        }
+        // If searching for all subtypes, make sure we really catch them all; switch to
+        // second linked list if first one did not gave results
+        if ((thing == 0) && (subtype == -1) && (ttype == TT_VEHICLE)) {
+            subtype = SubTT_VEH_SHIP;
+            thing = get_thing_same_type_head(ttype, subtype);
+        }
+        if ((thing == 0) && (subtype == -1) && (ttype == TT_BUILDING)) {
+            subtype = SubTT_BLD_MGUN;
+            thing = get_thing_same_type_head(ttype, subtype);
+        }
+        k++;
+        if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
+            LOGERR("Infinite loop in mapwho things list");
+            break;
+        }
+    }
+    return min_thing;
 }
 
 static short find_thing_type_on_same_type_list(short ttype, short subtype,
@@ -1373,7 +1443,19 @@ static short find_thing_type_on_same_type_list(short ttype, short subtype,
     return 0;
 }
 
-static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort R,
+/** Slowest but most comprehensive search for things within given circle and meeting given
+ * bool filter.
+ * Unlike most search functions, this one allows searching for multiple thing types.
+ *
+ * @param X Map coordinate in map units.
+ * @param Z Map coordinate in map units.
+ * @param R Circle radius in map units.
+ * @param ttype Thing Type; to catch all, use -1.
+ * @param subtype Thing SubType; to catch all, use -1.
+ * @param filter Filter callback function.
+ * @param param Parameters for filter callback function.
+ */
+static ThingIdx find_thing_type_on_used_list_within_circle_with_bfilter(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     ThingIdx thing;
@@ -1385,7 +1467,7 @@ static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort
         {
             p_sthing = &sthings[thing];
             // Per thing code start
-            if (p_sthing->Type == ttype) {
+            if ((p_sthing->Type == ttype) || (ttype == -1)) {
                 if ((p_sthing->SubType == subtype) || (subtype == -1)) {
                     if (thing_is_within_circle(thing, X, Z, R)) {
                         if (filter(thing, params))
@@ -1403,7 +1485,7 @@ static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort
         {
             p_thing = &things[thing];
             // Per thing code start
-            if (p_thing->Type == ttype) {
+            if ((p_thing->Type == ttype) || (ttype == -1)) {
                 if ((p_thing->SubType == subtype) || (subtype == -1)) {
                     if (thing_is_within_circle(thing, X, Z, R)) {
                         if (filter(thing, params))
@@ -1417,6 +1499,71 @@ static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort
     return 0;
 }
 
+/** Slowest but most comprehensive search for things within given circle and meeting given
+ * minimizing filter.
+ * Unlike most search functions, this one allows searching for multiple thing types.
+ *
+ * @param X Map coordinate in map units.
+ * @param Z Map coordinate in map units.
+ * @param R Circle radius in map units.
+ * @param ttype Thing Type; to catch all, use -1.
+ * @param subtype Thing SubType; to catch all, use -1.
+ * @param filter Filter callback function.
+ * @param param Parameters for filter callback function.
+ */
+static ThingIdx find_thing_type_on_used_list_within_circle_with_mfilter(short X, short Z, ushort R,
+  short ttype, short subtype, ThingMinFilter filter, ThingFilterParams *params)
+{
+    s32 min_fval, fval;
+    ThingIdx min_thing, thing;
+
+    min_fval = INT32_MAX;
+    min_thing = 0;
+    if (thing_type_is_simple(ttype))
+    {
+        struct SimpleThing *p_sthing;
+        for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
+        {
+            p_sthing = &sthings[thing];
+            // Per thing code start
+            if ((p_sthing->Type == ttype) || (ttype == -1)) {
+                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        fval = filter(thing, X, Z, params);
+                        if (fval < min_fval) {
+                            min_fval = fval;
+                            min_thing = thing;
+                        }
+                    }
+                }
+            }
+            // Per thing code end
+        }
+    }
+    else
+    {
+        struct Thing *p_thing;
+        for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
+        {
+            p_thing = &things[thing];
+            // Per thing code start
+            if ((p_thing->Type == ttype) || (ttype == -1)) {
+                if ((p_thing->SubType == subtype) || (subtype == -1)) {
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        fval = filter(thing, X, Z, params);
+                        if (fval < min_fval) {
+                            min_fval = fval;
+                            min_thing = thing;
+                        }
+                    }
+                }
+            }
+            // Per thing code end
+        }
+    }
+    return min_thing;
+}
+
 ThingIdx find_thing_type_within_circle_with_bfilter(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
@@ -1424,19 +1571,21 @@ ThingIdx find_thing_type_within_circle_with_bfilter(short X, short Z, ushort R,
     ThingIdx thing;
 
     tile_dist = MAPCOORD_TO_TILE(R + 255);
-    if (tile_dist <= spiral_dist_tiles_limit)
+    if ((tile_dist <= spiral_dist_tiles_limit) && (ttype != -1))
     {
         thing = find_thing_type_on_spiral_near_tile_with_bfilter(X, Z, R,
           dist_tiles_to_spiral_step[tile_dist], ttype, subtype, filter, params);
     }
     else if ((ttype == TT_PERSON) || (ttype == TT_UNKN4) || (ttype == TT_VEHICLE) || (ttype == TT_BUILDING))
     {
-        thing = find_thing_type_on_same_type_list_within_circle(
+        thing = find_thing_type_on_same_type_list_within_circle_with_bfilter(
           X, Z, R, ttype, subtype, filter, params);
     }
     else
     {
-        thing = find_thing_type_on_used_list_within_circle(
+        // do slow search on all existing things
+        // if ttype == -1, then this is the only option possible
+        thing = find_thing_type_on_used_list_within_circle_with_bfilter(
           X, Z, R, ttype, subtype, filter, params);
     }
     return thing;
@@ -1449,22 +1598,21 @@ ThingIdx find_thing_type_within_circle_with_mfilter(short X, short Z, ushort R,
     ThingIdx thing;
 
     tile_dist = MAPCOORD_TO_TILE(R + 255);
-    if (tile_dist <= spiral_dist_tiles_limit)
+    if ((tile_dist <= spiral_dist_tiles_limit) && (ttype != -1))
     {
         thing = find_thing_type_on_spiral_near_tile_with_mfilter(X, Z, R,
           dist_tiles_to_spiral_step[tile_dist], ttype, subtype, filter, params);
     }
     else if ((ttype == TT_PERSON) || (ttype == TT_UNKN4) || (ttype == TT_VEHICLE) || (ttype == TT_BUILDING))
     {
-        //TODO finish
-        thing = 0;/*find_thing_type_on_same_type_list_within_circle(
-          X, Z, R, ttype, subtype, filter, params);*/
+        thing = find_thing_type_on_same_type_list_within_circle_with_mfilter(
+          X, Z, R, ttype, subtype, filter, params);
     }
     else
     {
-        //TODO finish
-        thing = 0;/*find_thing_type_on_used_list_within_circle(
-          X, Z, R, ttype, subtype, filter, params);*/
+        // do slow search on all existing things
+        thing = find_thing_type_on_used_list_within_circle_with_mfilter(
+          X, Z, R, ttype, subtype, filter, params);
     }
     return thing;
 }
@@ -1588,6 +1736,16 @@ ThingIdx search_things_for_index(short index)
         }
     }
     return 0;
+}
+
+ThingIdx search_things_for_any_including_offmap_nearest_within_circle(short X, short Z, ushort R)
+{
+    ThingIdx thing;
+    ThingFilterParams params;
+
+    thing = find_thing_type_within_circle_with_mfilter(X, Z, R, -1, -1, mfilter_nearest, &params);
+
+    return thing;
 }
 
 ThingIdx search_things_for_uniqueid(short uniqid, ubyte flag)
