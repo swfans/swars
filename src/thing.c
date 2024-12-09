@@ -1460,7 +1460,7 @@ static ThingIdx find_thing_type_on_used_list_within_circle_with_bfilter(short X,
 {
     ThingIdx thing;
 
-    if (thing_type_is_simple(ttype))
+    if ((ttype == -1) || thing_type_is_simple(ttype))
     {
         struct SimpleThing *p_sthing;
         for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
@@ -1478,7 +1478,7 @@ static ThingIdx find_thing_type_on_used_list_within_circle_with_bfilter(short X,
             // Per thing code end
         }
     }
-    else
+    if ((ttype == -1) || !thing_type_is_simple(ttype))
     {
         struct Thing *p_thing;
         for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
@@ -1519,7 +1519,7 @@ static ThingIdx find_thing_type_on_used_list_within_circle_with_mfilter(short X,
 
     min_fval = INT32_MAX;
     min_thing = 0;
-    if (thing_type_is_simple(ttype))
+    if ((ttype == -1) || thing_type_is_simple(ttype))
     {
         struct SimpleThing *p_sthing;
         for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
@@ -1540,7 +1540,7 @@ static ThingIdx find_thing_type_on_used_list_within_circle_with_mfilter(short X,
             // Per thing code end
         }
     }
-    else
+    if ((ttype == -1) || !thing_type_is_simple(ttype))
     {
         struct Thing *p_thing;
         for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
