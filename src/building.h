@@ -113,8 +113,16 @@ enum BuildingStates {
   BldSt_OBJ_UNKN09,
 };
 
+struct BuildingStat
+{
+    char Name[12];
+};
+
+
 #pragma pack()
 /******************************************************************************/
+
+const char *building_type_name(ushort btype);
 
 /** Returns whether given thing is a building which can transform into open structure.
  * Only domes can do such transformation.

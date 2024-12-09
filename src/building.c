@@ -37,6 +37,88 @@
 /******************************************************************************/
 ubyte dome_open_speed = 4;
 
+struct BuildingStat bldng_type_stats[] = {
+  {"BLD_NONE",},
+  {"BLD_1",},
+  {"BLD_2",},
+  {"BLD_3",},
+  {"BLD_4",},
+  {"BLD_5",},
+  {"BLD_6",},
+  {"BLD_7",},
+  {"BLD_8",},
+  {"BLD_9",},
+  {"BLD_A",},
+  {"BLD_B",},
+  {"BLD_C",},
+  {"BLD_D",},
+  {"BLD_E",},
+  {"BLD_F",},
+  {"BLD_10",},
+  {"BLD_11",},
+  {"BLD_12",},
+  {"BLD_13",},
+  {"SHUTTL_LDR",},
+  {"BLD_15",},
+  {"BLD_16",},
+  {"BLD_17",},
+  {"DOME",},
+  {"BLD_19",},
+  {"BLD_1A",},
+  {"BLD_1B",},
+  {"BLD_1C",},
+  {"BLD_1D",},
+  {"BLD_1E",},
+  {"BLD_1F",},
+  {"MOUNT_GUN",},
+  {"BLD_21",},
+  {"BLD_22",},
+  {"BLD_23",},
+  {"BLD_24",},
+  {"BLD_GATE",},
+  {"BLD_26",},
+  {"BLD_27",},
+  {"BLD_28",},
+  {"BLD_29",},
+  {"BLD_2A",},
+  {"BLD_2B",},
+  {"BLD_2C",},
+  {"BLD_2D",},
+  {"BLD_2E",},
+  {"TRAIN_STATN",},
+  {"BLD_30",},
+  {"BLD_31",},
+  {"BLD_32",},
+  {"BLD_33",},
+  {"BLD_34",},
+  {"BLD_35",},
+  {"WIND_ROTOR",},
+  {"BLD_37",},
+  {"BLD_38",},
+  {"BLD_39",},
+  {"BLD_3A",},
+  {"BLD_3B",},
+  {"BLD_3C",},
+  {"BILLBOARD",},
+  {"BLD_3E",},
+  {"BLD_3F",},
+  {"BLD_40",},
+  {"BLD_41",},
+  {"BLD_42",},
+  {"BLD_43",},
+  {"BLD_44",},
+};
+
+
+const char *building_type_name(ushort btype)
+{
+    struct BuildingStat *p_bldstat;
+
+    p_bldstat = &bldng_type_stats[btype];
+    if (strlen(p_bldstat->Name) == 0)
+        return "OUTRNG_BLDNG";
+    return p_bldstat->Name;
+}
 
 TbBool building_can_transform_open(ThingIdx bldng)
 {

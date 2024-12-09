@@ -828,6 +828,8 @@ const char *thing_type_name(ubyte tngtype, ubyte subtype)
         return person_type_name(subtype);
     if (tngtype == TT_VEHICLE)
         return vehicle_type_name(subtype);
+    if (tngtype == TT_BUILDING)
+        return building_type_name(subtype);
     // TODO support some sub-types
     return thing_type_names[tngtype];
 }
