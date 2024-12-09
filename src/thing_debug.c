@@ -457,6 +457,7 @@ void things_debug_hud(void)
     short path;
     short pasngr;
     char locstr[100];
+    short scr_x, scr_y, ln;
 
     thing = select_thing_for_debug(mouse_map_x, 0, mouse_map_z, -1);
     // Lock on current thing
@@ -474,8 +475,19 @@ void things_debug_hud(void)
 
     if (lbShift == KMod_SHIFT)
         return;
-    if (thing == 0 || thing >= THINGS_LIMIT)
+    if (thing == 0)
         return;
+
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        scr_x = 30;
+        scr_y = 30;
+        ln = 15;
+    } else {
+        scr_x = 60;
+        scr_y = 60;
+        ln = 15;
+    }
+
     if (thing < 0)
     {
         struct SimpleThing *p_sthing;
@@ -487,17 +499,17 @@ void things_debug_hud(void)
               (int)p_sthing->State);
             snprintf(locstr+strlen(locstr), sizeof(locstr)-strlen(locstr), " th %d",
               (int)p_sthing->ThingOffset);
-            draw_text(30, 30, locstr, colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x, scr_y + ln*0, locstr, colour_lookup[ColLU_WHITE]);
 
             sprintf(locstr, "F  %08x SF %d F %d",
               (uint)p_sthing->Flag,
               (int)p_sthing->StartFrame,
               (int)p_sthing->Frame);
-            draw_text(30, 45, locstr, colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x, scr_y + ln*1, locstr, colour_lookup[ColLU_WHITE]);
 
             sprintf(locstr, "%s",
               thing_type_name(p_sthing->Type, p_sthing->SubType));
-            draw_text(360, 90, locstr, colour_lookup[7]);
+            draw_text(scr_x + 330, ln*4, locstr, colour_lookup[7]);
         }
         return;
     }
@@ -546,7 +558,7 @@ void things_debug_hud(void)
               (int)p_track_thing->ThingOffset);
             break;
         }
-        draw_text(30, 30, locstr, colour_lookup[ColLU_WHITE]);
+        draw_text(scr_x, scr_y, locstr, colour_lookup[ColLU_WHITE]);
 
         switch (p_track_thing->Type)
         {
@@ -582,7 +594,7 @@ void things_debug_hud(void)
               (int)p_track_thing->Frame);
             break;
         }
-        draw_text(30, 45, locstr, colour_lookup[ColLU_WHITE]);
+        draw_text(scr_x, scr_y + ln*1, locstr, colour_lookup[ColLU_WHITE]);
 
         switch (p_track_thing->Type)
         {
@@ -611,32 +623,32 @@ void things_debug_hud(void)
               (uint)p_track_thing->Flag2);
             break;
         }
-        draw_text(30, 60, locstr, colour_lookup[ColLU_WHITE]);
+        draw_text(scr_x, scr_y + ln*2, locstr, colour_lookup[ColLU_WHITE]);
 
         sprintf(locstr, "Targ2 %d pTarg %x gotoTI %d",
           (int)p_track_thing->U.UPerson.Target2,
           (uint)p_track_thing->PTarget,
           (int)p_track_thing->GotoThingIndex);
-        draw_text(30, 75, locstr, colour_lookup[ColLU_WHITE]);
+        draw_text(scr_x, scr_y + ln*3, locstr, colour_lookup[ColLU_WHITE]);
 
         if (p_track_thing->Flag & TngF_Unkn00040000)
-            draw_text(30, 90, "Da", colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x + 0, scr_y + ln*4, "Da", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_WepRecoil)
-            draw_text(50, 90, "Re", colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x + 20, scr_y + ln*4, "Re", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_Unkn00020000)
-            draw_text(70, 90, "Si", colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x + 40, scr_y + ln*4, "Si", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_Destroyed)
-            draw_text(90, 90, "De", colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x + 60, scr_y + ln*4, "De", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_Unkn0400)
-            draw_text(110, 90, "Ch", colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x + 80, scr_y + ln*4, "Ch", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_Unkn0040)
-            draw_text(130, 90, "CI", colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x + 100, scr_y + ln*4, "CI", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_Unkn20000000)
-            draw_text(150, 90, "SAP", colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x + 120, scr_y + ln*4, "SAP", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_StationrSht)
-            draw_text(190, 90, "Sta", colour_lookup[ColLU_RED]);
+            draw_text(scr_x + 160, scr_y + ln*4, "Sta", colour_lookup[ColLU_RED]);
         if (p_track_thing->Flag & TngF_Unkn0800)
-            draw_text(260, 90, "TRIG", colour_lookup[ColLU_WHITE]);
+            draw_text(scr_x + 230, scr_y + ln*4, "TRIG", colour_lookup[ColLU_WHITE]);
 
         switch (p_track_thing->Type)
         {
@@ -661,7 +673,7 @@ void things_debug_hud(void)
                       thing_type_name(p_track_thing->Type, p_track_thing->SubType),
                       thing_type_name(p_spasngr->Type, p_spasngr->SubType), (int)pasngr);
                 }
-            draw_text(360, 90, locstr, colour_lookup[ColLU_RED]);
+            draw_text(scr_x + 330, scr_y + ln*4, locstr, colour_lookup[ColLU_RED]);
             break;
         case TT_PERSON:
             sprintf(locstr, "%s: lastdist %d VX,VZ (%d,%d)",
@@ -669,12 +681,12 @@ void things_debug_hud(void)
               (int)p_track_thing->U.UPerson.LastDist,
               (int)p_track_thing->VX,
               (int)p_track_thing->VZ);
-            draw_text(360, 90, locstr, colour_lookup[3]);
+            draw_text(scr_x + 330, scr_y + ln*4, locstr, colour_lookup[3]);
             break;
         default:
             sprintf(locstr, "%s",
               thing_type_name(p_track_thing->Type, p_track_thing->SubType));
-            draw_text(360, 90, locstr, colour_lookup[7]);
+            draw_text(scr_x + 330, scr_y + ln*4, locstr, colour_lookup[7]);
             break;
         }
 
@@ -684,7 +696,7 @@ void things_debug_hud(void)
           (int)cybmod_arms_level(&p_track_thing->U.UPerson.UMod),
           (int)cybmod_brain_level(&p_track_thing->U.UPerson.UMod),
           (int)cybmod_skin_level(&p_track_thing->U.UPerson.UMod));
-        draw_text(30, 105, locstr, colour_lookup[ColLU_WHITE]);
+        draw_text(scr_x, scr_y + ln*5, locstr, colour_lookup[ColLU_WHITE]);
 
         sprintf(locstr, "T1 %d T2 %d ct %d RT %d BC %d",
           (int)p_track_thing->Timer1,
@@ -692,14 +704,14 @@ void things_debug_hud(void)
           (int)p_track_thing->U.UPerson.ComTimer,
           (int)p_track_thing->U.UPerson.RecoilTimer,
           (int)p_track_thing->U.UPerson.BumpCount);
-        draw_text(30, 120, locstr, colour_lookup[ColLU_WHITE]);
+        draw_text(scr_x, scr_y + ln*6, locstr, colour_lookup[ColLU_WHITE]);
 
         path = p_track_thing->U.UPerson.PathIndex;
         if (path != 0)
         {
             short cy;
 
-            cy = 140;
+            cy = scr_y + ln*7 + ln/2;
             while (path != 0)
             {
                 sprintf(locstr, " n %d  f %d  x %d z %d",
@@ -707,10 +719,10 @@ void things_debug_hud(void)
                   (int)my_paths[path].Flag,
                   (int)my_paths[path].X[0] >> 8,
                   (int)my_paths[path].Z[0] >> 8);
-                draw_text(52, cy, locstr, colour_lookup[0]);
-                draw_text(50, cy, locstr, colour_lookup[ColLU_WHITE]);
+                draw_text(scr_x + 22, cy, locstr, colour_lookup[0]);
+                draw_text(scr_x + 20, cy, locstr, colour_lookup[ColLU_WHITE]);
                 path = my_paths[path].Next;
-                cy += 15;
+                cy += ln;
             }
         }
 
