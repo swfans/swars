@@ -125,9 +125,9 @@ short unused_func_201(short x, short y, short z, short type)
     sel_thing = 0;
     sel_dist = 0x7FFFFFFF;
 
-    for (shift_x = -8; shift_x < 11; shift_x++)
+    for (shift_x = -9; shift_x <= 9; shift_x++)
     {
-        for (shift_z = -8; shift_z < 11; shift_z++)
+        for (shift_z = -9; shift_z <= 9; shift_z++)
         {
             ulong dist;
             long dist_x, dist_z;
@@ -135,12 +135,12 @@ short unused_func_201(short x, short y, short z, short type)
             short thing;
 
             tile_x = MAPCOORD_TO_TILE(x) + shift_x;
-            if ((tile_x <= 0) || (tile_x >= 128))
+            if ((tile_x <= 0) || (tile_x >= MAP_TILE_WIDTH))
                 continue;
             tile_z = MAPCOORD_TO_TILE(z) + shift_z;
-            if ((tile_z <= 0) && (tile_z >= 128))
+            if ((tile_z <= 0) && (tile_z >= MAP_TILE_HEIGHT))
                 continue;
-            thing = game_my_big_map[128 * tile_z + tile_x].Child;
+            thing = game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x].Child;
 
             while ((thing != 0) && (thing > -STHINGS_LIMIT) && (thing < THINGS_LIMIT))
             {
