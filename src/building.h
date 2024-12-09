@@ -58,7 +58,7 @@ enum SubTypeBuilding {
   SubTT_BLD_1A = 0x1A,
   /** Standard building with no special mechanics. */
   SubTT_BLD_STANDARD = 0x1B,
-  SubTT_BLD_1C = 0x1C,
+  SubTT_BLD_TRAINTRK = 0x1C,
   SubTT_BLD_1D = 0x1D,
   SubTT_BLD_1E = 0x1E,
   SubTT_BLD_1F = 0x1F,

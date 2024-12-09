@@ -66,7 +66,7 @@ struct BuildingStat bldng_type_stats[] = {
   {"BLD_19",},
   {"BLD_1A",},
   {"STANDRD BLD",},
-  {"BLD_1C",},
+  {"TRAIN_TRACK",},
   {"BLD_1D",},
   {"BLD_1E",},
   {"BLD_1F",},
@@ -426,7 +426,7 @@ void collapse_building_station(struct Thing *p_building)
                     struct Thing *p_thing;
                     p_thing = &things[thing];
                     if ((p_thing->Type == TT_BUILDING)
-                      && (p_thing->SubType == SubTT_BLD_1C)
+                      && (p_thing->SubType == SubTT_BLD_TRAINTRK)
                       && ((p_thing->Flag & TngF_Destroyed) == 0))
                     {
                         collapse_building(x << 8, 0, z << 8, p_thing);
@@ -484,7 +484,7 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
     {
     case SubTT_BLD_SHUTLDR:
     case SubTT_BLD_1D:
-    case SubTT_BLD_1C:
+    case SubTT_BLD_TRAINTRK:
     case SubTT_BLD_15:
         collapse_building_shuttle_loader(x, y, z, p_building);
         break;
