@@ -425,8 +425,10 @@ short find_station_platform(short x, short z)
     ThingIdx station;
 
     station = search_for_station(x, z);
-    if (station <= 0)
+    if (station <= 0) {
+        LOGWARN("No train station found at Coord(%hd,%hd)", x, z);
         return 0;
+    }
     p_station = &things[station];
     return search_object_for_qface(p_station->U.UObject.Object, 4, 2, 0);
 }

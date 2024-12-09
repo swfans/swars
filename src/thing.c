@@ -1296,7 +1296,7 @@ short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
     ushort tile_dist;
     ThingIdx thing;
 
-    tile_dist = MAPCOORD_TO_TILE(R + 256);
+    tile_dist = MAPCOORD_TO_TILE(R + 255);
     if (tile_dist <= spiral_dist_tiles_limit)
     {
         thing = find_thing_type_on_spiral_near_tile(X, Z, R,
@@ -1460,12 +1460,21 @@ short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort aft
     return ret;
 }
 
-ThingIdx search_for_station(short x, short z)
+ThingIdx search_for_station(short X, short Z)
 {
+#if 0
     ushort ret;
     asm volatile ("call ASM_search_for_station\n"
         : "=r" (ret) : "a" (x), "d" (z));
     return ret;
+#endif
+    ThingIdx thing;
+    ThingFilterParams params;
+
+    thing = find_thing_type_within_circle_with_filter(X, Z, TILE_TO_MAPCOORD(15,0),
+      TT_BUILDING, SubTT_BLD_STATION, bfilter_match_all, &params);
+
+    return thing;
 }
 
 void new_thing_traffic_clone(struct SimpleThing *p_clsthing)
