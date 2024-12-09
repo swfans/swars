@@ -567,8 +567,15 @@ typedef struct {
     long Arg5;
 } ThingFilterParams;
 
-/** Definition of a simple callback type which can only return true/false and has no memory of previous checks. */
+/** Definition of a simple callback type which can only return true/false and has no memory
+ * of previous checks.
+ */
 typedef TbBool (*ThingBoolFilter)(ThingIdx thing, ThingFilterParams *params);
+
+/** Definition of a minimizing callback type which returns a number to be compared by the
+ * search function and return the thing which gives smallest.
+ */
+typedef s32 (*ThingMinFilter)(ThingIdx thing, short X, short Z, ThingFilterParams *params);
 
 /** Old structure for storing State of any Thing.
  * Used only to allow reading old, pre-release levels.
@@ -1005,7 +1012,7 @@ short get_thing_same_type_head(short ttype, short subtype);
 
 TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R);
 
-/** Unified function to find a thing of given type within given circle and matching filter.
+/** Unified function to find a thing of given type within given circle and matching bool filter.
  *
  * Tries to use mapwho and same type list, and if cannot then just searches all used things.
  *
@@ -1017,7 +1024,7 @@ TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R);
  * @param filter Filter callback function.
  * @param param Parameters for filter callback function.
  */
-ThingIdx find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
+ThingIdx find_thing_type_within_circle_with_bfilter(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params);
 
 ThingIdx find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon);

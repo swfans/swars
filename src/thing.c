@@ -1005,7 +1005,7 @@ TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R)
 /** Searches for a thing of given type on the specific mapwho tile.
  * Besides being given a title, the thing must also meet circular range condition.
  */
-short find_thing_on_mapwho_tile_within_circle_with_filter(short tile_x, short tile_z, short X, short Z, ushort R,
+ThingIdx find_thing_on_mapwho_tile_within_circle_with_bfilter(short tile_x, short tile_z, short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     ThingIdx thing;
@@ -1058,13 +1058,79 @@ short find_thing_on_mapwho_tile_within_circle_with_filter(short tile_x, short ti
     return 0;
 }
 
+/** Searches for a thing of given type on the specific mapwho tile.
+ * Besides being given a title, the thing must also meet circular range condition.
+ */
+ThingIdx find_thing_on_mapwho_tile_within_circle_with_mfilter(s32 *p_min_fval, short tile_x, short tile_z, short X, short Z, ushort R,
+  short ttype, short subtype, ThingMinFilter filter, ThingFilterParams *params)
+{
+    s32 min_fval, fval;
+    ThingIdx min_thing, thing;
+    ulong k;
+
+    k = 0;
+    min_fval = INT32_MAX;
+    min_thing = 0;
+    thing = get_mapwho_thing_index(tile_x, tile_z);
+    while (thing != 0)
+    {
+        if (thing <= 0)
+        {
+            struct SimpleThing *p_sthing;
+            p_sthing = &sthings[thing];
+            // Per thing code start
+            if (p_sthing->Type == ttype) {
+                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
+                    // Our search radius could have exceeded expected one a bit
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        fval = filter(thing, X, Z, params);
+                        if (fval < min_fval) {
+                            min_fval = fval;
+                            min_thing = thing;
+                        }
+                    }
+                }
+            }
+            // Per thing code end
+            thing = p_sthing->Next;
+        }
+        else
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            // Per thing code start
+            if (p_thing->Type == ttype) {
+                if ((p_thing->SubType == subtype) || (subtype == -1)) {
+                    // Our search radius could have exceeded expected one a bit
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        fval = filter(thing, X, Z, params);
+                        if (fval < min_fval) {
+                            min_fval = fval;
+                            min_thing = thing;
+                        }
+                    }
+                }
+            }
+            // Per thing code end
+            thing = p_thing->Next;
+        }
+        k++;
+        if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
+            LOGERR("Infinite loop in mapwho things list");
+            break;
+        }
+    }
+    *p_min_fval = min_fval;
+    return min_thing;
+}
+
 /**
- * Searches for thing of given type and subtype around tile under given coords.
+ * Searches for thing of given type and subtype around tile under given coords, with bool filter.
  * Uses `spiral` checking of surrounding `mapwho` tiles, up to given number of tiles.
  *
  * @return Gives thing index, or 0 if not found.
  */
-static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, long spiral_len,
+static ThingIdx find_thing_type_on_spiral_near_tile_with_bfilter(short X, short Z, ushort R, long spiral_len,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     short tile_x, tile_z;
@@ -1081,12 +1147,73 @@ static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, lon
         sstep = &spiral_step[around];
         sX = tile_x + sstep->h;
         sZ = tile_z + sstep->v;
-        thing = find_thing_on_mapwho_tile_within_circle_with_filter(sX, sZ, X, Z, R,
+        thing = find_thing_on_mapwho_tile_within_circle_with_bfilter(sX, sZ, X, Z, R,
           ttype, subtype, filter, params);
         if (thing != 0)
             return thing;
     }
     return 0;
+}
+
+s32 mfilter_nearest(ThingIdx thing, short X, short Z, ThingFilterParams *params)
+{
+    short dtX, dtZ;
+
+    if (thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        dtX = PRCCOORD_TO_MAPCOORD(p_sthing->X) - X;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_sthing->Z) - Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        dtX = PRCCOORD_TO_MAPCOORD(p_thing->X) - X;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_thing->Z) - Z;
+    }
+    return (dtZ * dtZ + dtX * dtX);
+}
+
+/**
+ * Searches for thing of given type and subtype around tile under given coords, with minimizing
+ * filter.
+ * Uses `spiral` checking of surrounding `mapwho` tiles, up to given number of tiles.
+ *
+ * @return Gives thing index, or 0 if not found.
+ */
+static ThingIdx find_thing_type_on_spiral_near_tile_with_mfilter(short X, short Z, ushort R, long spiral_len,
+  short ttype, short subtype, ThingMinFilter filter, ThingFilterParams *params)
+{
+    s32 min_fval;
+    ThingIdx min_thing;
+    int around;
+    short tile_x, tile_z;
+
+    min_fval = INT32_MAX;
+    min_thing = 0;
+    tile_x = MAPCOORD_TO_TILE(X);
+    tile_z = MAPCOORD_TO_TILE(Z);
+    for (around = 0; around < spiral_len; around++)
+    {
+        struct MapOffset *sstep;
+        s32 fval;
+        ThingIdx thing;
+        long sX, sZ;
+
+        sstep = &spiral_step[around];
+        sX = tile_x + sstep->h;
+        sZ = tile_z + sstep->v;
+        thing = find_thing_on_mapwho_tile_within_circle_with_mfilter(&fval, sX, sZ, X, Z, R,
+          ttype, subtype, filter, params);
+        if (fval < min_fval) {
+            min_fval = fval;
+            min_thing = thing;
+            // If the minimizing factor is distance, then finding any match narrows the spiral
+            // length to check (because we expect lower values further away)
+            if (filter == mfilter_nearest)
+                spiral_len = min(spiral_len, around * 2 + 4); // good enough estimate of where to finish
+        }
+    }
+    return min_thing;
 }
 
 void build_same_type_headers(void)
@@ -1290,7 +1417,7 @@ static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort
     return 0;
 }
 
-short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
+ThingIdx find_thing_type_within_circle_with_bfilter(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     ushort tile_dist;
@@ -1299,7 +1426,7 @@ short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
     tile_dist = MAPCOORD_TO_TILE(R + 255);
     if (tile_dist <= spiral_dist_tiles_limit)
     {
-        thing = find_thing_type_on_spiral_near_tile(X, Z, R,
+        thing = find_thing_type_on_spiral_near_tile_with_bfilter(X, Z, R,
           dist_tiles_to_spiral_step[tile_dist], ttype, subtype, filter, params);
     }
     else if ((ttype == TT_PERSON) || (ttype == TT_UNKN4) || (ttype == TT_VEHICLE) || (ttype == TT_BUILDING))
@@ -1311,6 +1438,33 @@ short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
     {
         thing = find_thing_type_on_used_list_within_circle(
           X, Z, R, ttype, subtype, filter, params);
+    }
+    return thing;
+}
+
+ThingIdx find_thing_type_within_circle_with_mfilter(short X, short Z, ushort R,
+  short ttype, short subtype, ThingMinFilter filter, ThingFilterParams *params)
+{
+    ushort tile_dist;
+    ThingIdx thing;
+
+    tile_dist = MAPCOORD_TO_TILE(R + 255);
+    if (tile_dist <= spiral_dist_tiles_limit)
+    {
+        thing = find_thing_type_on_spiral_near_tile_with_mfilter(X, Z, R,
+          dist_tiles_to_spiral_step[tile_dist], ttype, subtype, filter, params);
+    }
+    else if ((ttype == TT_PERSON) || (ttype == TT_UNKN4) || (ttype == TT_VEHICLE) || (ttype == TT_BUILDING))
+    {
+        //TODO finish
+        thing = 0;/*find_thing_type_on_same_type_list_within_circle(
+          X, Z, R, ttype, subtype, filter, params);*/
+    }
+    else
+    {
+        //TODO finish
+        thing = 0;/*find_thing_type_on_used_list_within_circle(
+          X, Z, R, ttype, subtype, filter, params);*/
     }
     return thing;
 }
@@ -1358,7 +1512,7 @@ short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon
     ThingFilterParams params;
 
     params.Arg1 = weapon;
-    thing = find_thing_type_within_circle_with_filter(X, Z, R, SmTT_DROPPED_ITEM, 0, bfilter_item_is_weapon, &params);
+    thing = find_thing_type_within_circle_with_bfilter(X, Z, R, SmTT_DROPPED_ITEM, 0, bfilter_item_is_weapon, &params);
 
     return thing;
 }
@@ -1369,7 +1523,7 @@ short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, shor
     ThingFilterParams params;
 
     params.Arg1 = weapon;
-    thing = find_thing_type_within_circle_with_filter(X, Z, R, TT_PERSON, -1, bfilter_person_carries_weapon, &params);
+    thing = find_thing_type_within_circle_with_bfilter(X, Z, R, TT_PERSON, -1, bfilter_person_carries_weapon, &params);
 
     return thing;
 }
@@ -1399,10 +1553,10 @@ ThingIdx search_for_vehicle(short X, short Z)
     ThingFilterParams params;
 
     // Try finding very close to target coords
-    thing = find_thing_type_within_circle_with_filter(X, Z, 48, TT_VEHICLE, 0, bfilter_match_all, &params);
+    thing = find_thing_type_within_circle_with_bfilter(X, Z, 48, TT_VEHICLE, 0, bfilter_match_all, &params);
     // If very clos search failed, retry with bigger radius
     if (thing == 0)
-        thing = find_thing_type_within_circle_with_filter(X, Z, 1024, TT_VEHICLE, 0, bfilter_match_all, &params);
+        thing = find_thing_type_within_circle_with_bfilter(X, Z, 1024, TT_VEHICLE, 0, bfilter_match_all, &params);
 
     return thing;
 }
@@ -1471,7 +1625,7 @@ ThingIdx search_for_station(short X, short Z)
     ThingIdx thing;
     ThingFilterParams params;
 
-    thing = find_thing_type_within_circle_with_filter(X, Z, TILE_TO_MAPCOORD(15,0),
+    thing = find_thing_type_within_circle_with_bfilter(X, Z, TILE_TO_MAPCOORD(15,0),
       TT_BUILDING, SubTT_BLD_STATION, bfilter_match_all, &params);
 
     return thing;
