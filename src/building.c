@@ -65,7 +65,7 @@ struct BuildingStat bldng_type_stats[] = {
   {"DOME",},
   {"BLD_19",},
   {"BLD_1A",},
-  {"BLD_1B",},
+  {"STANDRD BLD",},
   {"BLD_1C",},
   {"BLD_1D",},
   {"BLD_1E",},

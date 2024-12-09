@@ -367,15 +367,13 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
 #if 0
     hilight_cmd = -1;
 #endif
-    box_width = 200;
+    box_width = w;
     p_person = &things[person];
-    box_height = 150;
-    box_x = 400;
-    box_y = 100;
+    box_height = h;
+    box_x = x;
+    box_y = y;
     row_height = 16;
     cmdhead = p_person->U.UPerson.ComHead;
-    if (lbDisplay.GraphicsScreenHeight >= 400)
-        box_width = 100;
     cmds_count = 0;
     for (cmd = cmdhead; cmd; cmds_count++)
         cmd = game_commands[cmd].Next;
@@ -383,8 +381,8 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
     if (cmds_count == 0)
         return;
 
-    if (16 * cmds_count + 8 < box_height)
-        box_height = 16 * cmds_count + 8;
+    if (row_height * cmds_count + 8 < box_height)
+        box_height = row_height * cmds_count + 8;
     if ((word_1DC7A0 >> 2) > word_1DC7A2 - 4)
         word_1DC7A0 = 0;
     word_1DC7A2 = cmds_count;
@@ -432,10 +430,16 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
 #endif
             if (p_person != NULL)
                 person_command_dbg_point_to_target(box_x + 8 - 20, cy + 5, cmd, p_person);
-            if (person_command_to_text(locstr, cmd, 0))
-                draw_text(box_x + 8, cy, locstr, col2);
+            if (person_command_to_text(locstr, cmd, 0)) {
+                if (lbDisplay.GraphicsScreenHeight < 400)
+                    draw_text((box_x + 8)/2, (cy)/2, locstr, col2);
+                else
+                    draw_text(box_x + 8, cy, locstr, col2);
+            }
             else
+            {
                 cy -= row_height;
+            }
             if (cy + 28 > box_height + box_y)
                 break;
         }
@@ -520,9 +524,9 @@ void things_debug_hud(void)
       colour_lookup[ColLU_WHITE]);
     // Show commands list
     if (p_track_thing->Type == TT_PERSON)
-          person_commands_debug_hud(356, 80, 280, 150, thing, colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[4]);
+          person_commands_debug_hud(scr_x + 326, scr_y + 75, 250, 150, thing, colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[4]);
     else if ((p_track_thing->Type == TT_VEHICLE) && (p_track_thing->U.UVehicle.PassengerHead > 0))
-          person_commands_debug_hud(356, 80, 280, 150,
+          person_commands_debug_hud(scr_x + 326, scr_y + 75, 250, 150,
             p_track_thing->U.UVehicle.PassengerHead, colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[4]);
 
     if (execute_commands)

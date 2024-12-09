@@ -56,7 +56,8 @@ enum SubTypeBuilding {
   SubTT_BLD_DOME = 0x18,
   SubTT_BLD_19 = 0x19,
   SubTT_BLD_1A = 0x1A,
-  SubTT_BLD_1B = 0x1B,
+  /** Standard building with no special mechanics. */
+  SubTT_BLD_STANDARD = 0x1B,
   SubTT_BLD_1C = 0x1C,
   SubTT_BLD_1D = 0x1D,
   SubTT_BLD_1E = 0x1E,
