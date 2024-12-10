@@ -1485,7 +1485,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 p_snpoint2 = &game_object_points[p_face4->PointNo[1]];
                 dxc = p_snpoint2->X + obj_x;
                 dzc = p_snpoint2->Z + obj_z;
-                dyc = p_snpoint2->Y;
+                dyc = p_snpoint2->Y + obj_y;
                 transform_shpoint(&sp3, dxc, dyc - 8 * engn_yc, dzc);
 
                 specpt++;
