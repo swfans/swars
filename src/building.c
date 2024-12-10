@@ -469,9 +469,10 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
     }
     else
     {
+        short tng_x, tng_y, tng_z;
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_building->ThingOffset);
         play_dist_sample(p_building, 0x2Du, 127, 64, 100, 0, 3);
-        p_sthing = create_sound_effect(PRCCOORD_TO_MAPCOORD(p_building->X),
-          PRCCOORD_TO_MAPCOORD(p_building->Y), PRCCOORD_TO_MAPCOORD(p_building->Z), 0x2Eu, 127, -1);
+        p_sthing = create_sound_effect(tng_x, tng_y, tng_z, 0x2Eu, 127, -1);
         if (p_sthing != NULL)
         {
             p_sthing->State = 1;
@@ -502,11 +503,10 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
         p_sobj = &game_objects[p_building->U.UObject.Object];
         if (((p_sobj->field_1C & 0x0100) == 0) || current_map == 9) // map009 Singapore on-water map
         {
-            short cra_tl_x, cra_tl_z;
+            short cra_cor_x, cra_cor_z;
 
-            cra_tl_x = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_building->X));
-            cra_tl_z = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_building->Z));
-            quick_crater(cra_tl_x, cra_tl_z, 3);
+            get_thing_position_mapcoords(&cra_cor_x, NULL, &cra_cor_z, p_building->ThingOffset);
+            quick_crater(MAPCOORD_TO_TILE(cra_cor_x), MAPCOORD_TO_TILE(cra_cor_z), 3);
             for (i = 0; i < 32; i++)
             {
                 int dx, dz;

@@ -172,7 +172,7 @@ extern long gamep_unknval_15;
 extern long gamep_unknval_16;
 
 extern ushort netgame_agent_pos_x[8][4];
-extern ushort netgame_agent_pos_y[8][4];
+extern ushort netgame_agent_pos_z[8][4];
 
 extern long dword_155010;
 extern long dword_155014;
@@ -2980,8 +2980,11 @@ TbBool game_cam_tracked_thing_is_player_agent(void)
 
 void game_set_cam_track_thing_xz(struct Thing *p_thing)
 {
-    ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_thing->X);
-    ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    short tng_x, tng_z;
+
+    get_thing_position_mapcoords(&tng_x, NULL, &tng_z, p_thing->ThingOffset);
+    ingame.TrackX = tng_x;
+    ingame.TrackZ = tng_z;
 }
 
 void game_set_cam_track_player_agent_xz(PlayerIdx plyr, ushort plagent)
@@ -3045,10 +3048,10 @@ void init_player(void)
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
 {
-    ulong n;
-    ushort plagent, high_tier;
-    PlayerInfo *p_player;
     struct Thing *p_person;
+    PlayerInfo *p_player;
+    ushort plagent, high_tier;
+    ulong n;
 
     p_player = &players[plyr];
     p_person = NULL;
@@ -3126,9 +3129,12 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_person->U.UPerson.ComHead = 0;
         }
 
-
-        netgame_agent_pos_x[plyr][plagent] = PRCCOORD_TO_MAPCOORD(p_person->X);
-        netgame_agent_pos_y[plyr][plagent] = PRCCOORD_TO_MAPCOORD(p_person->Z);
+        {
+            short cor_x, cor_z;
+            get_thing_position_mapcoords(&cor_x, NULL, &cor_z, p_person->ThingOffset);
+            netgame_agent_pos_x[plyr][plagent] = cor_x;
+            netgame_agent_pos_z[plyr][plagent] = cor_z;
+        }
         p_person->State = PerSt_NONE;
         { // Why are we tripling the health?
             uint health;

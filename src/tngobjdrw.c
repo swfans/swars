@@ -117,11 +117,11 @@ void build_vehicle(struct Thing *p_thing)
     if ((p_thing->U.UVehicle.SubThing != 0) && (p_thing->SubType == SubTT_VEH_TANK))
         process_child_object(p_thing);
 
-    if (p_thing->U.UVehicle.RecoilTimer != 0) {
-        build_polygon_circle(
-          PRCCOORD_TO_MAPCOORD(p_thing->X),
-          PRCCOORD_TO_MAPCOORD(p_thing->Y) + 10,
-          PRCCOORD_TO_MAPCOORD(p_thing->Z),
+    if (p_thing->U.UVehicle.RecoilTimer != 0)
+    {
+        short tng_x, tng_y, tng_z;
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
+        build_polygon_circle(tng_x, tng_y + 10, tng_z,
           3 * p_thing->U.UVehicle.RecoilTimer + 15, 30, 15,
           game_textures, colour_lookup[ColLU_BLUE], 16,
            16 * ((6 - p_thing->U.UVehicle.RecoilTimer) & 0x0F));
@@ -194,9 +194,10 @@ void build_rocket(struct Thing *p_thing)
     struct M33 *m;
     struct M31 vec1, vec2, vec3;
     ushort obj;
+    short tng_x, tng_y, tng_z;
 
-    build_glare(PRCCOORD_TO_MAPCOORD(p_thing->X), p_thing->Y >> 5,
-      PRCCOORD_TO_MAPCOORD(p_thing->Z), 64);
+    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
+    build_glare(tng_x, tng_y, tng_z, 64);
 
     p_thing->U.UObject.MatrixIndex = next_local_mat + 1;
     m = &local_mats[p_thing->U.UObject.MatrixIndex];
@@ -224,10 +225,11 @@ void build_rocket(struct Thing *p_thing)
     obj = ingame.Rocket1[ingame.NextRocket++];
     p_sobj = &game_objects[obj];
 
+    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
     draw_rot_object(
-      PRCCOORD_TO_MAPCOORD(p_thing->X) + (p_thing->VX >> 1) - engn_xc,
-      (p_thing->Y >> 5) + 30,
-      PRCCOORD_TO_MAPCOORD(p_thing->Z) + (p_thing->VZ >> 1) - engn_zc,
+      tng_x + (p_thing->VX >> 1) - engn_xc,
+      tng_y + 30,
+      tng_z + (p_thing->VZ >> 1) - engn_zc,
       p_sobj, p_thing);
 }
 
@@ -249,12 +251,10 @@ void build_building(struct Thing *p_thing)
 
     if (p_thing->SubType == SubTT_BLD_WIND_ROTOR)
     {
+        short tng_x, tng_y, tng_z;
         p_sobj = &game_objects[p_thing->U.UObject.Object];
-        draw_rot_object2(
-          PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-          PRCCOORD_TO_MAPCOORD(p_thing->Y),
-          PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-          p_sobj, p_thing);
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
+        draw_rot_object2(tng_x - engn_xc, tng_y, tng_z - engn_zc, p_sobj, p_thing);
     }
     else if (p_thing->SubType != SubTT_BLD_MGUN)
     {
@@ -271,16 +271,14 @@ void build_building(struct Thing *p_thing)
     else
     {
         PlayerInfo *p_locplayer;
+        short tng_x, tng_y, tng_z;
 
         p_locplayer = &players[local_player_no];
         if (p_locplayer->TargetType < 2)
             check_mouse_overvehicle(p_thing, 2);
         p_sobj = &game_objects[p_thing->U.UObject.Object];
-        draw_rot_object2(
-          PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-          p_thing->Y >> 5,
-          PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-          p_sobj, p_thing);
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
+        draw_rot_object2(tng_x - engn_xc, tng_y, tng_z - engn_zc, p_sobj, p_thing);
         if (p_thing->Health < p_thing->U.UMGun.MaxHealth)
             draw_vehicle_health(p_thing);
     }
@@ -289,17 +287,17 @@ void build_building(struct Thing *p_thing)
 void build_laser11(struct Thing *p_thing)
 {
     struct Thing *p_owntng;
+    short owtng_x, owtng_y, owtng_z;
     TbPixel colour;
 
     if ((p_thing->Flag & TngF_Unkn1000) != 0)
         colour = colour_lookup[ColLU_BLUE];
     else
         colour = colour_lookup[ColLU_RED];
+    get_thing_position_mapcoords(&owtng_x, &owtng_y, &owtng_z, p_thing->Owner);
     p_owntng = &things[p_thing->Owner];
-    build_laser(
-      PRCCOORD_TO_MAPCOORD(p_owntng->X),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Z),
+
+    build_laser(owtng_x, owtng_y, owtng_z,
       p_thing->VX, p_thing->VY, p_thing->VZ,
       p_thing->Timer1, p_owntng, colour);
 }
@@ -307,15 +305,14 @@ void build_laser11(struct Thing *p_thing)
 void build_grenade(struct Thing *p_thing)
 {
     struct MyMapElement *p_mapel;
+    short tng_x, tng_y, tng_z;
     ushort frame;
 
     frame = p_thing->Frame;
     p_mapel = &game_my_big_map[128 * (p_thing->Z >> 16) + (p_thing->X >> 16)];
+    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
 
-    draw_e_graphic(
-      PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
-      PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
+    draw_e_graphic(tng_x - engn_xc, tng_y, tng_z - engn_zc,
       frame, p_thing->Radius, p_mapel->ShadeR, p_thing);
 }
 
