@@ -579,6 +579,7 @@ void process_carried_item(struct SimpleThing *p_item)
 void process_temp_light(struct SimpleThing *p_sthing)
 {
     int bri, rng;
+    short lgtng_x, lgtng_y, lgtng_z;
 
     p_sthing->Timer1--;
     if (p_sthing->Timer1 < 0) {
@@ -590,8 +591,8 @@ void process_temp_light(struct SimpleThing *p_sthing)
         rng = p_sthing->U.ULight.RangeBright;
         bri += (ushort)LbRandomAnyShort() % rng;
     }
-    apply_full_light(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_MAPCOORD(p_sthing->Y),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Z), bri, 0);
+    get_thing_position_mapcoords(&lgtng_x, &lgtng_y, &lgtng_z, p_sthing->ThingOffset);
+    apply_full_light(lgtng_x, lgtng_y >> 3, lgtng_z, bri, 0);
 }
 
 void process_static(struct SimpleThing *p_sthing)

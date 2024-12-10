@@ -358,7 +358,7 @@ void build_spark(struct SimpleThing *p_sthing)
 {
     draw_mapwho_vect_len(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
       p_sthing->U.UEffect.OX - engn_xc,
       p_sthing->U.UEffect.OY,
@@ -395,7 +395,7 @@ void build_laser_elec(struct Thing *p_thing)
     {
         build_electricity(
           PRCCOORD_TO_MAPCOORD(p_owntng->X),
-          PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+          PRCCOORD_TO_YCOORD(p_owntng->Y) >> 3,
           PRCCOORD_TO_MAPCOORD(p_owntng->Z),
           p_thing->VX, p_thing->VY, p_thing->VZ,
           100 + p_thing->Timer1, p_owntng);
@@ -407,7 +407,7 @@ void build_laser_elec(struct Thing *p_thing)
         for (i = 0; i < p_thing->SubType >> 1; i++)
             build_electricity(
               PRCCOORD_TO_MAPCOORD(p_owntng->X),
-              PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+              PRCCOORD_TO_YCOORD(p_owntng->Y) >> 3,
               PRCCOORD_TO_MAPCOORD(p_owntng->Z),
               p_thing->VX, p_thing->VY, p_thing->VZ,
               p_thing->Timer1, p_owntng);
@@ -433,7 +433,7 @@ void build_nuclear_bomb(struct SimpleThing *p_sthing)
 
     build_polygon_circle(
       PRCCOORD_TO_MAPCOORD(p_sthing->X),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z),
       p_sthing->Radius, 20, 15,
       game_textures, colour_lookup[ColLU_WHITE], 32, 96);
@@ -468,7 +468,7 @@ void build_laser29(struct Thing *p_thing)
     p_owntng = &things[p_thing->Owner];
     build_laser_beam(
       PRCCOORD_TO_MAPCOORD(p_owntng->X),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+      PRCCOORD_TO_YCOORD(p_owntng->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_owntng->Z),
       p_thing->VX, p_thing->VY, p_thing->VZ,
       p_thing->Timer1, p_owntng);
@@ -494,7 +494,8 @@ void build_razor_wire_strand(int x1, int y1, int z1, int x2, int y2, int z2, int
 
 void build_soul(struct SimpleThing *p_sthing)
 {
-    build_glare(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_YCOORD(p_sthing->Y),
+    build_glare(PRCCOORD_TO_MAPCOORD(p_sthing->X),
+      PRCCOORD_TO_YCOORD(p_sthing->Y),
       PRCCOORD_TO_MAPCOORD(p_sthing->Z), 32);
 }
 
@@ -505,7 +506,7 @@ void build_laser38(struct Thing *p_thing)
     p_owntng = &things[p_thing->Owner];
     build_laser_beam_q(
       PRCCOORD_TO_MAPCOORD(p_owntng->X),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+      PRCCOORD_TO_YCOORD(p_owntng->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_owntng->Z),
       p_thing->VX, p_thing->VY, p_thing->VZ,
       p_thing->Timer1, p_owntng);
@@ -533,7 +534,7 @@ void build_razor_wire(struct Thing *p_thing)
 
     build_razor_wire_strand(
       PRCCOORD_TO_MAPCOORD(p_thing->X),
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
+      PRCCOORD_TO_YCOORD(p_thing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_thing->Z),
       p_thing->VX, p_thing->VY, p_thing->VZ,
       p_thing->Timer1, p_thing);

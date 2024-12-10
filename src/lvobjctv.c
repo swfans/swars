@@ -788,20 +788,8 @@ TbBool thing_arrived_at_obj_square2(ThingIdx thing, int x1, int z1, int x2, int 
 {
     short cor_x, cor_z;
 
-    if (thing >= 0)
-    {
-        struct Thing *p_thing;
-        p_thing = &things[thing];
-        cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
-        cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
-    }
-    else
-    {
-        struct SimpleThing *p_sthing;
-        p_sthing = &sthings[thing];
-        cor_x = PRCCOORD_TO_MAPCOORD(p_sthing->X);
-        cor_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
-    }
+    get_thing_position_mapcoords(&cor_x, NULL, &cor_z, thing);
+
     if ((cor_x > x1) && (cor_x < x2))
     {
         if ((cor_z > z1) && (cor_z < z2))

@@ -1801,7 +1801,7 @@ void person_init_get_item_fast(struct Thing *p_person, short item, ushort plyr)
 
 StateChRes person_init_cmd_get_item(struct Thing *p_person, short target)
 {
-    struct SimpleThing *p_sthing;
+    short tgtng_x, tgtng_z;
 
     //TODO it would probably make sense to reuse person_init_get_item() here
     if (target == 0)
@@ -1809,11 +1809,11 @@ StateChRes person_init_cmd_get_item(struct Thing *p_person, short target)
         p_person->State = PerSt_NONE;
         return StCh_UNATTAIN;
     }
+    get_thing_position_mapcoords(&tgtng_x, NULL, &tgtng_z, target);
     p_person->GotoThingIndex = target;
     p_person->State = PerSt_GET_ITEM;
-    p_sthing = &sthings[target];
-    p_person->U.UPerson.GotoX = PRCCOORD_TO_MAPCOORD(p_sthing->X);
-    p_person->U.UPerson.GotoZ = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+    p_person->U.UPerson.GotoX = tgtng_x;
+    p_person->U.UPerson.GotoZ = tgtng_z;
     p_person->U.UPerson.Vehicle = 0;
     p_person->U.UPerson.ComTimer = -1;
     p_person->SubState = 0;
@@ -1881,22 +1881,21 @@ StateChRes person_init_destroy_building(struct Thing *p_person, short x, short z
 
 StateChRes person_init_use_vehicle(struct Thing *p_person, short vehicle)
 {
-    struct Thing *p_vehicle;
+    short vhtng_x, vhtng_z;
 
     if (vehicle == 0)
     {
         p_person->State = PerSt_NONE;
         return StCh_UNATTAIN;
     }
+    get_thing_position_mapcoords(&vhtng_x, NULL, &vhtng_z, vehicle);
     p_person->GotoThingIndex = vehicle;
     p_person->State = PerSt_USE_VEHICLE;
     p_person->U.UPerson.ComTimer = -1;
     p_person->U.UPerson.ComRange = 1;
     p_person->SubState = 0;
-
-    p_vehicle = &things[vehicle];
-    p_person->U.UPerson.GotoX = PRCCOORD_TO_MAPCOORD(p_vehicle->X);
-    p_person->U.UPerson.GotoZ = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
+    p_person->U.UPerson.GotoX = vhtng_x;
+    p_person->U.UPerson.GotoZ = vhtng_z;
 
     if (p_person->U.UPerson.PathIndex != 0)
         remove_path(p_person);
@@ -1916,7 +1915,7 @@ StateChRes person_init_exit_vehicle(struct Thing *p_person)
 
 StateChRes person_init_catch_train(struct Thing *p_person, short face)
 {
-    //TODO why target is a face only? would be better with station building and face.
+    // Station coords were converted to face index during level load
     if (p_person->U.UPerson.PathIndex != 0)
         remove_path(p_person);
 
@@ -2010,20 +2009,20 @@ StateChRes person_cmd_start_danger_music(struct Thing *p_person, TbBool revert)
 
 StateChRes person_init_exit_ferry(struct Thing *p_person, short portbld)
 {
-    struct Thing *p_portbld;
+    short prtng_x, prtng_z;
 
     if (portbld == 0)
     {
         p_person->State = PerSt_NONE;
         return StCh_UNATTAIN;
     }
-    p_portbld = &things[portbld];
+    get_thing_position_mapcoords(&prtng_x, NULL, &prtng_z, portbld);
     p_person->State = PerSt_EXIT_FERRY;
     p_person->U.UPerson.ComTimer = -1;
     p_person->U.UPerson.ComRange = 1;
     p_person->SubState = 0;
-    p_person->U.UPerson.GotoX = PRCCOORD_TO_MAPCOORD(p_portbld->X);
-    p_person->U.UPerson.GotoZ = PRCCOORD_TO_MAPCOORD(p_portbld->Z);
+    p_person->U.UPerson.GotoX = prtng_x;
+    p_person->U.UPerson.GotoZ = prtng_z;
 
     if (p_person->U.UPerson.PathIndex != 0)
         remove_path(p_person);
@@ -2176,11 +2175,13 @@ void camera_track_thing(short thing, TbBool revert)
 {
     if (revert)
     {
-        struct Thing *p_agent;
-        p_agent = &things[players[local_player_no].DirectControl[0]];
+        short dctng_x, dctng_z;
+        ThingIdx dcthing;
+        dcthing = players[local_player_no].DirectControl[0];
+        get_thing_position_mapcoords(&dctng_x, NULL, &dctng_z, dcthing);
         ingame.TrackThing = 0;
-        ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
-        ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
+        ingame.TrackX = dctng_x;
+        ingame.TrackZ = dctng_z;
         return;
     }
     ingame.TrackThing = thing;
@@ -3318,9 +3319,10 @@ void process_person(struct Thing *p_person)
         state = p_person->State;
         if ((state != PerSt_GET_ITEM) && (state != PerSt_PICKUP_ITEM))
         {
-          make_peep_protect_peep(p_person, &things[p_person->Owner]);
-          func_711F4(PRCCOORD_TO_MAPCOORD(p_person->X), PRCCOORD_TO_MAPCOORD(p_person->Y),
-            PRCCOORD_TO_MAPCOORD(p_person->Z), 200, colour_lookup[ColLU_WHITE]);
+            short pstng_x, pstng_y, pstng_z;
+            make_peep_protect_peep(p_person, &things[p_person->Owner]);
+            get_thing_position_mapcoords(&pstng_x, &pstng_y, &pstng_z, p_person->ThingOffset);
+            func_711F4(pstng_x, pstng_y, pstng_z, 200, colour_lookup[ColLU_WHITE]);
         }
     }
     if ((p_person->Flag2 & TgF2_Unkn0020) != 0)
@@ -3483,10 +3485,11 @@ void process_person(struct Thing *p_person)
     if ((debug_hud_collision == 1) && (p_person->Y != 0))
     {
         char locstr[150];
+        short pstng_x, pstng_y, pstng_z;
 
         sprintf(locstr, "%ld", (long)p_person->Y);
-        draw_text_transformed(PRCCOORD_TO_MAPCOORD(p_person->X), PRCCOORD_TO_YCOORD(p_person->Y),
-          PRCCOORD_TO_MAPCOORD(p_person->Z), locstr);
+        get_thing_position_mapcoords(&pstng_x, &pstng_y, &pstng_z, p_person->ThingOffset);
+        draw_text_transformed(pstng_x, pstng_y, pstng_z, locstr);
     }
 
     if ((p_person->U.UPerson.Target2 != 0) && ((p_person->Flag & (TngF_Unkn40000000|TngF_Destroyed)) == 0))
