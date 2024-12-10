@@ -46,6 +46,7 @@ extern ushort word_1DC8CE;
 
 s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilterParams *params)
 {
+    short tng_x, tng_z;
     short dtX, dtZ;
     TbBool allow_hidden, basic_types;
 
@@ -59,8 +60,6 @@ s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilt
             return INT32_MAX;
         if (basic_types && (p_sthing->Type != SmTT_DROPPED_ITEM))
             return INT32_MAX;
-        dtX = PRCCOORD_TO_MAPCOORD(p_sthing->X) - X;
-        dtZ = PRCCOORD_TO_MAPCOORD(p_sthing->Z) - Z;
     } else {
         struct Thing *p_thing;
         p_thing = &things[thing];
@@ -68,9 +67,11 @@ s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilt
             return INT32_MAX;
         if (basic_types && (p_thing->Type != TT_PERSON) && (p_thing->Type != TT_VEHICLE))
             return INT32_MAX;
-        dtX = PRCCOORD_TO_MAPCOORD(p_thing->X) - X;
-        dtZ = PRCCOORD_TO_MAPCOORD(p_thing->Z) - Z;
     }
+
+    get_thing_position_mapcoords(&tng_x, NULL, &tng_z, thing);
+    dtX = tng_x - X;
+    dtZ = tng_z - Z;
     return (dtZ * dtZ + dtX * dtX);
 }
 
@@ -79,12 +80,11 @@ void unused_func_203(short x, short y, short thing, ubyte colkp)
     short tng_x, tng_y, tng_z;
     get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        unkn_draw_transformed_point(x >> 1, y >> 1, tng_x, tng_y, tng_z,
-          colour_lookup[colkp]);
-    else
-        unkn_draw_transformed_point(x, y, tng_x, tng_y, tng_z,
-          colour_lookup[colkp]);
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x >>= 1;
+        y >>= 1;
+    }
+    unkn_draw_transformed_point(x, y, tng_x, tng_y, tng_z, colour_lookup[colkp]);
 }
 
 int unused_func_200(short x, short y, ushort group)
@@ -128,32 +128,30 @@ ThingIdx search_for_thing_for_debug(short x, short y, short z, short ttype)
 
 int select_thing_for_debug(short x, short y, short z, short ttype)
 {
-    ThingIdx thing;
-    short alt;
     char locstr[52];
+    ThingIdx thing;
+    short tng_x, tng_y, tng_z;
+    short alt;
 
     thing = search_for_thing_for_debug(x, y, z, ttype);
     alt = alt_at_point(x, z) >> 5;
+
+    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
+    func_6fe80(x, alt, z, tng_x, tng_y, tng_z, colour_lookup[ColLU_WHITE]);
+
     if (thing > 0)
     {
         struct Thing *p_thing;
-
         p_thing = &things[thing];
-        func_6fe80(x, alt, z, PRCCOORD_TO_MAPCOORD(p_thing->X),
-        p_thing->Y >> 5, PRCCOORD_TO_MAPCOORD(p_thing->Z), colour_lookup[ColLU_WHITE]);
         sprintf(locstr, "TH %d ID %d", thing, p_thing->U.UPerson.UniqueID);
-        draw_text_transformed_at_ground(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z), locstr);
     }
     else if (thing < 0)
     {
         struct SimpleThing *p_sthing;
-
         p_sthing = &sthings[thing];
-        func_6fe80(x, alt, z, PRCCOORD_TO_MAPCOORD(p_sthing->X), p_sthing->Y >> 5,
-          PRCCOORD_TO_MAPCOORD(p_sthing->Z), colour_lookup[ColLU_WHITE]);
         sprintf(locstr, "TH %d ID %d", thing, p_sthing->UniqueID);
-        draw_text_transformed_at_ground(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_MAPCOORD(p_sthing->Z), locstr);
     }
+    draw_text_transformed_at_ground(tng_x, tng_z, locstr);
     return thing;
 }
 
@@ -194,6 +192,7 @@ void navi_onscreen_debug(TbBool a1)
 int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thing *p_person)
 {
     struct Command *p_cmd;
+    short tng_x, tng_y, tng_z;
 
     p_cmd = &game_commands[cmd];
     switch (p_cmd->Type)
@@ -279,7 +278,9 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAIT_P_V_I_NEAR:
     case PCmd_UNTIL_P_V_I_NEAR:
         unused_func_203(x, y, p_cmd->OtherThing, 1u);
-        func_711F4(PRCCOORD_TO_MAPCOORD(p_person->X), p_person->Y >> 8, PRCCOORD_TO_MAPCOORD(p_person->Z), p_cmd->Arg1 << 6, 2u);
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
+
+        func_711F4(tng_x, tng_y, tng_z, p_cmd->Arg1 << 6, 2u);
         return 1;
     case PCmd_UNTIL_MEM_G_NEAR:
     case PCmd_UNTIL_ALL_G_NEAR:
@@ -287,7 +288,8 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAND_MEM_G_NEAR:
         if ((lbShift & KMod_SHIFT) != 0)
             unused_func_200(x, y, p_cmd->OtherThing);
-        func_711F4(PRCCOORD_TO_MAPCOORD(p_person->X), p_person->Y >> 8, PRCCOORD_TO_MAPCOORD(p_person->Z), p_cmd->Arg1 << 6, 2u);
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
+        func_711F4(tng_x, tng_y, tng_z, p_cmd->Arg1 << 6, 2u);
         return 1;
     case PCmd_UNTIL_P_V_I_ARRIVE:
     case PCmd_WAIT_P_V_I_ARRIVE:
@@ -511,14 +513,15 @@ void things_debug_hud(void)
     p_track_thing = &things[thing];
     p_track2_thing = &things[thing];
     get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
-    func_6fe80(mouse_map_x, mouse_map_y, mouse_map_z,
-      tng_x, tng_y, tng_z, colour_lookup[ColLU_WHITE]);
+    func_6fe80(mouse_map_x, mouse_map_y, mouse_map_z,  tng_x, tng_y, tng_z,
+      colour_lookup[ColLU_WHITE]);
     // Show commands list
     if (p_track_thing->Type == TT_PERSON)
-          person_commands_debug_hud(scr_x + 326, scr_y + 75, 250, 150, thing, colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[ColLU_BLUE]);
+          person_commands_debug_hud(scr_x + 326, scr_y + 75, 250, 150, thing,
+            colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[ColLU_BLUE]);
     else if ((p_track_thing->Type == TT_VEHICLE) && (p_track_thing->U.UVehicle.PassengerHead > 0))
-          person_commands_debug_hud(scr_x + 326, scr_y + 75, 250, 150,
-            p_track_thing->U.UVehicle.PassengerHead, colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[ColLU_BLUE]);
+          person_commands_debug_hud(scr_x + 326, scr_y + 75, 250, 150, p_track_thing->U.UVehicle.PassengerHead,
+            colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[ColLU_BLUE]);
 
     if (execute_commands)
     {

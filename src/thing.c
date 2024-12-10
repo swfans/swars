@@ -208,9 +208,12 @@ void get_thing_position_mapcoords(short *x, short *y, short *z, ThingIdx thing)
         cor_y = PRCCOORD_TO_YCOORD(p_sthing->Y);
         cor_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
     }
-    *x = cor_x;
-    *y = cor_y;
-    *z = cor_z;
+    if (x != NULL)
+        *x = cor_x;
+    if (y != NULL)
+        *y = cor_y;
+    if (z != NULL)
+        *z = cor_z;
 }
 
 const char *state_change_result_name(StateChRes res)

@@ -399,11 +399,13 @@ void collapse_building_shuttle_loader(short x, short y, short z, struct Thing *p
 
 void collapse_building_station(struct Thing *p_building)
 {
+    short cntr_cor_x, cntr_cor_z;
     short cntr_x, cntr_z;
     short x, z;
 
-    cntr_x = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_building->X));
-    cntr_z = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_building->Z));
+    get_thing_position_mapcoords(&cntr_cor_x, NULL, &cntr_cor_z, p_building->ThingOffset);
+    cntr_x = MAPCOORD_TO_TILE(cntr_cor_x);
+    cntr_z = MAPCOORD_TO_TILE(cntr_cor_z);
 
     for (x = cntr_x - 8; x <= cntr_x + 8; x++)
     {
@@ -429,7 +431,7 @@ void collapse_building_station(struct Thing *p_building)
                       && (p_thing->SubType == SubTT_BLD_TRAINTRK)
                       && ((p_thing->Flag & TngF_Destroyed) == 0))
                     {
-                        collapse_building(x << 8, 0, z << 8, p_thing);
+                        collapse_building(TILE_TO_MAPCOORD(x,0), 0, TILE_TO_MAPCOORD(z,0), p_thing);
                         break; // do not expect more than one building on a tile
                     }
                     thing = p_thing->Next;
