@@ -2612,7 +2612,7 @@ void person_init_command(struct Thing *p_person, ushort from)
                 p_person->Flag2 &= ~TgF2_Unkn0800;
                 //TODO should we really keep previous substate?
                 person_init_cmd_wait_wth_timeout(p_person, p_person->SubState, 50);
-                ingame.Flags &= ~0x01;
+                ingame.Flags &= ~GamF_Unkn0100;
                 set_peep_comcur(p_person);
             }
             break;
