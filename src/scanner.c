@@ -170,7 +170,7 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
         colr = colour_lookup[ColLU_WHITE];
     } else if (objective_target_is_to_be_acquired(p_objectv)) {
         nearthing = find_nearest_from_group(&things[dcthing], group, 1);
-        colr = colour_lookup[3];
+        colr = colour_lookup[ColLU_GREEN];
     } else {
         nearthing = find_nearest_from_group(&things[dcthing], group, 0);
         colr = colour_lookup[ColLU_RED];
@@ -225,7 +225,7 @@ ushort do_group_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
         colr = colour_lookup[ColLU_WHITE];
     } else if (objective_target_is_to_be_acquired(p_objectv)) {
         nearthing = find_nearest_from_group(&things[tgthing], group, 1);
-        colr = colour_lookup[3];
+        colr = colour_lookup[ColLU_GREEN];
     } else {
         nearthing = find_nearest_from_group(&things[tgthing], group, 0);
         colr = colour_lookup[ColLU_RED];
@@ -299,7 +299,7 @@ ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[ColLU_WHITE];
     else if (objective_target_is_to_be_acquired(p_objectv))
-        colr = colour_lookup[3];
+        colr = colour_lookup[ColLU_GREEN];
     else
         colr = colour_lookup[ColLU_RED];
 
@@ -334,7 +334,7 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[ColLU_WHITE];
     else if (objective_target_is_to_be_acquired(p_objectv))
-        colr = colour_lookup[3];
+        colr = colour_lookup[ColLU_GREEN];
     else
         colr = colour_lookup[ColLU_RED];
 
@@ -382,7 +382,7 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[ColLU_WHITE];
     else if (objective_target_is_to_be_acquired(p_objectv))
-        colr = colour_lookup[3];
+        colr = colour_lookup[ColLU_GREEN];
     else
         colr = colour_lookup[ColLU_RED];
 
@@ -431,7 +431,7 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[ColLU_WHITE];
     else if (objective_target_is_to_be_acquired(p_objectv))
-        colr = colour_lookup[3];
+        colr = colour_lookup[ColLU_GREEN];
     else
         colr = colour_lookup[ColLU_RED];
 
@@ -481,7 +481,7 @@ ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[ColLU_WHITE];
     else if (objective_target_is_to_be_acquired(p_objectv))
-        colr = colour_lookup[3];
+        colr = colour_lookup[ColLU_GREEN];
     else
         colr = colour_lookup[ColLU_RED];
 

@@ -1871,7 +1871,7 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
     if (value >= 0)
         col = pixmap.fade_table[PALETTE_8b_COLORS * (63 - fade) + colour_lookup[ColLU_RED]];
     else
-        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 + fade) + colour_lookup[4]];
+        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 + fade) + colour_lookup[ColLU_BLUE]];
 
     cent_x = x + (w >> 1);
     if (lbDisplay.GraphicsScreenHeight < 400)

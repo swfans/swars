@@ -166,7 +166,7 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
       h_cur = dy;
 
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-    colour = colour_lookup[4];
+    colour = colour_lookup[ColLU_BLUE];
     LbDrawBox(dx + x, y + h_total, w, dy, colour);
 
     if (p_thing->Health >= 0)
@@ -217,7 +217,7 @@ void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
     if (h_cur > dy)
       h_cur = dy;
 
-    colour = colour_lookup[4];
+    colour = colour_lookup[ColLU_BLUE];
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     LbDrawBox(dx + x, h_total + y, w, dy, colour);
     if (p_thing->U.UPerson.ShieldEnergy > 0)

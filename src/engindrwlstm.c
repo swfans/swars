@@ -853,7 +853,7 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
           int bckt;
 
           bckt = (scr_depth >> 8) + 5000 - 641;
-          if ((itime < 0) || (colour == colour_lookup[3]))
+          if ((itime < 0) || (colour == colour_lookup[ColLU_GREEN]))
               bckt -= 400;
 
           cor_x1 = (scr_x + thick_x) >> 8;
@@ -907,7 +907,7 @@ void draw_bang(struct SimpleThing *p_pow)
         TbPixel col;
         st = p_pow->State;
         if (st < 100) {
-            col = colour_lookup[3];
+            col = colour_lookup[ColLU_GREEN];
         } else {
             st = -10;
             col = colour_lookup[7];

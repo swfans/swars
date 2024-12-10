@@ -183,6 +183,36 @@ struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype)
     return p_thing;
 }
 
+void get_thing_position_mapcoords(short *x, short *y, short *z, ThingIdx thing)
+{
+    short cor_x, cor_y, cor_z;
+
+    if (thing >= 0) {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
+        switch (p_thing->Type)
+        {
+        case TT_BUILDING:
+            cor_y = PRCCOORD_TO_MAPCOORD(p_thing->Y);
+            break;
+        default:
+            cor_y = PRCCOORD_TO_YCOORD(p_thing->Y);
+            break;
+        }
+        cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    } else {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        cor_x = PRCCOORD_TO_MAPCOORD(p_sthing->X);
+        cor_y = PRCCOORD_TO_YCOORD(p_sthing->Y);
+        cor_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+    }
+    *x = cor_x;
+    *y = cor_y;
+    *z = cor_z;
+}
+
 const char *state_change_result_name(StateChRes res)
 {
     return state_change_result_names[res];

@@ -77,24 +77,14 @@ s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilt
 void unused_func_203(short x, short y, short thing, ubyte colkp)
 {
     short tng_x, tng_y, tng_z;
+    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
 
-    if (thing > 0) {
-        struct Thing *p_thing;
-        p_thing = &things[thing];
-        tng_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
-        tng_y = PRCCOORD_TO_MAPCOORD(p_thing->Y);
-        tng_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
-    } else {
-        struct SimpleThing *p_sthing;
-        p_sthing = &sthings[thing];
-        tng_x = PRCCOORD_TO_MAPCOORD(p_sthing->X);
-        tng_y = PRCCOORD_TO_MAPCOORD(p_sthing->Y);
-        tng_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
-    }
-    unkn_draw_transformed_point(
-      x >> (lbDisplay.GraphicsScreenHeight < 400),
-      y >> (lbDisplay.GraphicsScreenHeight < 400),
-      tng_x, 8 * tng_y, tng_z, colour_lookup[colkp]);
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        unkn_draw_transformed_point(x >> 1, y >> 1, tng_x, tng_y, tng_z,
+          colour_lookup[colkp]);
+    else
+        unkn_draw_transformed_point(x, y, tng_x, tng_y, tng_z,
+          colour_lookup[colkp]);
 }
 
 int unused_func_200(short x, short y, ushort group)
@@ -149,20 +139,20 @@ int select_thing_for_debug(short x, short y, short z, short ttype)
         struct Thing *p_thing;
 
         p_thing = &things[thing];
-        func_6fe80(x, alt, z, p_thing->X >> 8,
-        p_thing->Y >> 5, p_thing->Z >> 8, colour_lookup[ColLU_WHITE]);
+        func_6fe80(x, alt, z, PRCCOORD_TO_MAPCOORD(p_thing->X),
+        p_thing->Y >> 5, PRCCOORD_TO_MAPCOORD(p_thing->Z), colour_lookup[ColLU_WHITE]);
         sprintf(locstr, "TH %d ID %d", thing, p_thing->U.UPerson.UniqueID);
-        draw_text_transformed_at_ground(p_thing->X >> 8, p_thing->Z >> 8, locstr);
+        draw_text_transformed_at_ground(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z), locstr);
     }
     else if (thing < 0)
     {
         struct SimpleThing *p_sthing;
 
         p_sthing = &sthings[thing];
-        func_6fe80(x, alt, z, p_sthing->X >> 8, p_sthing->Y >> 5,
-          p_sthing->Z >> 8, colour_lookup[ColLU_WHITE]);
+        func_6fe80(x, alt, z, PRCCOORD_TO_MAPCOORD(p_sthing->X), p_sthing->Y >> 5,
+          PRCCOORD_TO_MAPCOORD(p_sthing->Z), colour_lookup[ColLU_WHITE]);
         sprintf(locstr, "TH %d ID %d", thing, p_sthing->UniqueID);
-        draw_text_transformed_at_ground(p_sthing->X >> 8, p_sthing->Z >> 8, locstr);
+        draw_text_transformed_at_ground(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_MAPCOORD(p_sthing->Z), locstr);
     }
     return thing;
 }
@@ -190,9 +180,9 @@ void navi_onscreen_debug(TbBool a1)
         {
             y = 340 - 12 * i;
             if (lbDisplay.GraphicsScreenHeight < 400)
-                LbDrawBox(290, y >> 1, 25, 5, colour_lookup[4]);
+                LbDrawBox(290, y >> 1, 25, 5, colour_lookup[ColLU_BLUE]);
             else
-                LbDrawBox(580, y, 50, 10, colour_lookup[4]);
+                LbDrawBox(580, y, 50, 10, colour_lookup[ColLU_BLUE]);
         }
     }
     word_1DC8CE = 0;
@@ -289,7 +279,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAIT_P_V_I_NEAR:
     case PCmd_UNTIL_P_V_I_NEAR:
         unused_func_203(x, y, p_cmd->OtherThing, 1u);
-        func_711F4(p_person->X >> 8, p_person->Y >> 8, p_person->Z >> 8, p_cmd->Arg1 << 6, 2u);
+        func_711F4(PRCCOORD_TO_MAPCOORD(p_person->X), p_person->Y >> 8, PRCCOORD_TO_MAPCOORD(p_person->Z), p_cmd->Arg1 << 6, 2u);
         return 1;
     case PCmd_UNTIL_MEM_G_NEAR:
     case PCmd_UNTIL_ALL_G_NEAR:
@@ -297,7 +287,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAND_MEM_G_NEAR:
         if ((lbShift & KMod_SHIFT) != 0)
             unused_func_200(x, y, p_cmd->OtherThing);
-        func_711F4(p_person->X >> 8, p_person->Y >> 8, p_person->Z >> 8, p_cmd->Arg1 << 6, 2u);
+        func_711F4(PRCCOORD_TO_MAPCOORD(p_person->X), p_person->Y >> 8, PRCCOORD_TO_MAPCOORD(p_person->Z), p_cmd->Arg1 << 6, 2u);
         return 1;
     case PCmd_UNTIL_P_V_I_ARRIVE:
     case PCmd_WAIT_P_V_I_ARRIVE:
@@ -417,9 +407,9 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
             if ((p_person != NULL) && (p_person->U.UPerson.ComCur == cmd))
             {
                 if (lbDisplay.GraphicsScreenHeight < 400)
-                    LbDrawBox((box_x + 4)/2, (cy - 2)/2, (box_width - 8)/2, (row_height - 1)/2, colour_lookup[3]);
+                    LbDrawBox((box_x + 4)/2, (cy - 2)/2, (box_width - 8)/2, (row_height - 1)/2, colour_lookup[ColLU_GREEN]);
                 else
-                    LbDrawBox(box_x + 4, cy - 2, box_width - 8, row_height - 1, colour_lookup[3]);
+                    LbDrawBox(box_x + 4, cy - 2, box_width - 8, row_height - 1, colour_lookup[ColLU_GREEN]);
             }
 
 #if 0
@@ -461,6 +451,7 @@ void things_debug_hud(void)
     short path;
     short pasngr;
     char locstr[100];
+    short tng_x, tng_y, tng_z;
     short scr_x, scr_y, ln;
 
     thing = select_thing_for_debug(mouse_map_x, 0, mouse_map_z, -1);
@@ -519,15 +510,15 @@ void things_debug_hud(void)
     }
     p_track_thing = &things[thing];
     p_track2_thing = &things[thing];
+    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
     func_6fe80(mouse_map_x, mouse_map_y, mouse_map_z,
-      p_track_thing->X >> 8, p_track_thing->Y >> 5, p_track_thing->Z >> 8,
-      colour_lookup[ColLU_WHITE]);
+      tng_x, tng_y, tng_z, colour_lookup[ColLU_WHITE]);
     // Show commands list
     if (p_track_thing->Type == TT_PERSON)
-          person_commands_debug_hud(scr_x + 326, scr_y + 75, 250, 150, thing, colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[4]);
+          person_commands_debug_hud(scr_x + 326, scr_y + 75, 250, 150, thing, colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[ColLU_BLUE]);
     else if ((p_track_thing->Type == TT_VEHICLE) && (p_track_thing->U.UVehicle.PassengerHead > 0))
           person_commands_debug_hud(scr_x + 326, scr_y + 75, 250, 150,
-            p_track_thing->U.UVehicle.PassengerHead, colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[4]);
+            p_track_thing->U.UVehicle.PassengerHead, colour_lookup[ColLU_WHITE], colour_lookup[ColLU_RED], colour_lookup[ColLU_BLUE]);
 
     if (execute_commands)
     {
@@ -629,11 +620,25 @@ void things_debug_hud(void)
         }
         draw_text(scr_x, scr_y + ln*2, locstr, colour_lookup[ColLU_WHITE]);
 
-        sprintf(locstr, "Targ2 %d pTarg %x gotoTI %d",
-          (int)p_track_thing->U.UPerson.Target2,
-          (uint)p_track_thing->PTarget,
-          (int)p_track_thing->GotoThingIndex);
-        draw_text(scr_x, scr_y + ln*3, locstr, colour_lookup[ColLU_WHITE]);
+        // Print targets separately as we need their positions to draw line to the things they relate to
+
+        short trg2_scr_x, trg2_scr_y;
+        sprintf(locstr, "Targ2 %d", (int)p_track_thing->U.UPerson.Target2);
+        trg2_scr_x = scr_x;
+        trg2_scr_y = scr_y + ln*3;
+        draw_text(trg2_scr_x, trg2_scr_y, locstr, colour_lookup[ColLU_WHITE]);
+
+        short targ_scr_x, targ_scr_y;
+        sprintf(locstr, "pTarg %x",  (uint)p_track_thing->PTarget);
+        targ_scr_x = scr_x + 45;
+        targ_scr_y = scr_y + ln*3;
+        draw_text(targ_scr_x, targ_scr_y, locstr, colour_lookup[ColLU_WHITE]);
+
+        short gtti_scr_x, gtti_scr_y;
+        sprintf(locstr, "gotoTI %d", (int)p_track_thing->GotoThingIndex);
+        gtti_scr_x = scr_x + 110;
+        gtti_scr_y = scr_y + ln*3;
+        draw_text(gtti_scr_x, gtti_scr_y, locstr, colour_lookup[ColLU_WHITE]);
 
         if (p_track_thing->Flag & TngF_Unkn00040000)
             draw_text(scr_x + 0, scr_y + ln*4, "Da", colour_lookup[ColLU_WHITE]);
@@ -685,7 +690,7 @@ void things_debug_hud(void)
               (int)p_track_thing->U.UPerson.LastDist,
               (int)p_track_thing->VX,
               (int)p_track_thing->VZ);
-            draw_text(scr_x + 330, scr_y + ln*4, locstr, colour_lookup[3]);
+            draw_text(scr_x + 330, scr_y + ln*4, locstr, colour_lookup[ColLU_GREEN]);
             break;
         default:
             sprintf(locstr, "%s",
@@ -732,30 +737,31 @@ void things_debug_hud(void)
 
         if (p_track_thing->U.UPerson.Target2 != 0)
         {
-            struct Thing *p_target;
-            p_target = &things[p_track_thing->U.UPerson.Target2];
-            unkn_draw_transformed_point(50, 41, p_target->X >> 8, p_target->Y >> 8, p_target->Z >> 8, colour_lookup[ColLU_RED]);
+            short tgtng_x, tgtng_y, tgtng_z;
+            get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_track_thing->U.UPerson.Target2);
+            unkn_draw_transformed_point(trg2_scr_x, trg2_scr_y + ln/2, tgtng_x, tgtng_y, tgtng_z,
+              colour_lookup[ColLU_RED]);
         }
 
         if (p_track_thing->GotoThingIndex != 0)
         {
-            struct Thing *p_gotng;
-            p_gotng = &things[p_track_thing->GotoThingIndex];
-            unkn_draw_transformed_point(140, 41, p_gotng->X >> 8, p_gotng->Y >> 8, p_gotng->Z >> 8, colour_lookup[3]);
+            short gttng_x, gttng_y, gttng_z;
+            get_thing_position_mapcoords(&gttng_x, &gttng_y, &gttng_z, p_track_thing->GotoThingIndex);
+            unkn_draw_transformed_point(gtti_scr_x, gtti_scr_y + ln/2, gttng_x, gttng_y, gttng_z,
+              colour_lookup[ColLU_GREEN]);
         }
 
         if (p_track_thing->PTarget != NULL)
         {
+            short tgtng_x, tgtng_y, tgtng_z;
             struct Thing *p_target;
             p_target = p_track_thing->PTarget;
-            func_6fd1c(
-              p_track_thing->X >> 8,
-              p_track_thing->Y >> 8,
-              p_track_thing->Z >> 8,
-              p_target->X >> 8,
-              p_target->Y >> 8,
-              p_target->Z >> 8,
-              colour_lookup[4]);
+            if ((p_target > &things[0]) && (p_target < &things[THINGS_LIMIT]))
+                get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_target->ThingOffset);
+            else
+                tgtng_x = tgtng_y = tgtng_z = 0;
+            func_6fd1c(tng_x, tng_y, tng_z, tgtng_x, tgtng_y, tgtng_z,
+              colour_lookup[ColLU_BLUE]);
         }
 
         unkn_path_func_001(p_track_thing, 0);

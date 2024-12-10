@@ -972,6 +972,13 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
  */
 void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
 
+/** Given thing index, sets its position in map coordinates to three variables.
+ *
+ * Different kinds of things have different quirks in regard to position on map.
+ * This function deals with all that and just gives the straight, simple position.
+ */
+void get_thing_position_mapcoords(short *x, short *y, short *z, ThingIdx thing);
+
 /** Get a string representing text name of a state change result.
  */
 const char *state_change_result_name(StateChRes res);

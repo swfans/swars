@@ -123,7 +123,7 @@ void build_vehicle(struct Thing *p_thing)
           PRCCOORD_TO_MAPCOORD(p_thing->Y) + 10,
           PRCCOORD_TO_MAPCOORD(p_thing->Z),
           3 * p_thing->U.UVehicle.RecoilTimer + 15, 30, 15,
-          game_textures, colour_lookup[4], 16,
+          game_textures, colour_lookup[ColLU_BLUE], 16,
            16 * ((6 - p_thing->U.UVehicle.RecoilTimer) & 0x0F));
     }
 
@@ -292,7 +292,7 @@ void build_laser11(struct Thing *p_thing)
     TbPixel colour;
 
     if ((p_thing->Flag & TngF_Unkn1000) != 0)
-        colour = colour_lookup[4];
+        colour = colour_lookup[ColLU_BLUE];
     else
         colour = colour_lookup[ColLU_RED];
     p_owntng = &things[p_thing->Owner];

@@ -10,6 +10,8 @@ enum ColourLookUp {
     ColLU_UNKN0     = 0,
     ColLU_WHITE,
     ColLU_RED,
+    ColLU_GREEN,
+    ColLU_BLUE,
 };
 
 struct ScreenBufBkp {
