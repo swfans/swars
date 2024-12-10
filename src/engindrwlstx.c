@@ -3320,7 +3320,7 @@ void number_player(struct Thing *p_person, ubyte n)
             tng_cor_z = p_person->Z;
         }
         cor_x = PRCCOORD_TO_MAPCOORD(tng_cor_x) - engn_xc;
-        cor_y = (tng_cor_y >> 5) - (engn_yc >> 3);
+        cor_y = PRCCOORD_TO_YCOORD(tng_cor_y) - (engn_yc >> 3);
         cor_z = PRCCOORD_TO_MAPCOORD(tng_cor_z) - engn_zc;
     }
     {

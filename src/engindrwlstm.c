@@ -434,7 +434,7 @@ void draw_bang_phwoar(struct SimpleThing *p_pow)
         p_phwoar = &phwoar[phw];
         x = (p_phwoar->x >> 8) - engn_xc;
         z = (p_phwoar->z >> 8) - engn_zc;
-        y = (p_phwoar->y >> 5) - engn_yc;
+        y = PRCCOORD_TO_YCOORD(p_phwoar->y) - engn_yc;
 
         transform_shpoint(&sp, x, y - 8 * engn_yc, z);
 
@@ -498,7 +498,7 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
             sh_z = sin_yaw >> 10;
 
             x = (p_shrapnel->x >> 8) - engn_xc;
-            y = (p_shrapnel->y >> 5) - engn_yc;
+            y = PRCCOORD_TO_YCOORD(p_shrapnel->y) - engn_yc;
             z = (p_shrapnel->z >> 8) - engn_zc;
 
             x_pcc = x + sh_cc;
@@ -721,13 +721,13 @@ void draw_bang_wobble_line(struct SimpleThing *p_pow)
 
         x = (p_shrapnel1->x >> 8) - engn_xc;
         z = (p_shrapnel1->z >> 8) - engn_zc;
-        y = (p_shrapnel1->y >> 5) - engn_yc;
+        y = PRCCOORD_TO_YCOORD(p_shrapnel1->y) - engn_yc;
 
         transform_shpoint(&sp1, x, y - 8 * engn_yc, z);
 
         x = (p_shrapnel2->x >> 8) - engn_xc;
         z = (p_shrapnel2->z >> 8) - engn_zc;
-        y = (p_shrapnel2->y >> 5) - engn_yc;
+        y = PRCCOORD_TO_YCOORD(p_shrapnel2->y) - engn_yc;
 
         transform_shpoint(&sp2, x, y - 8 * engn_yc, z);
 
@@ -1650,7 +1650,7 @@ void draw_vehicle_health(struct Thing *p_thing)
     int scr_depth;
 
     x = (p_thing->X >> 8) - engn_xc;
-    y = (p_thing->Y >> 5) - engn_yc;
+    y = PRCCOORD_TO_YCOORD(p_thing->Y) - engn_yc;
     z = (p_thing->Z >> 8) - engn_zc;
     transform_shpoint(&sp, x, y - 8 * engn_yc, z);
 

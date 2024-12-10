@@ -292,7 +292,7 @@ void calc_mouse_pos(void)
     mag = 0;
     for (i = 0; i < 400; i++)
     {
-        if ( chk_y >> 4 < alt_at_point(chk_x >> 4, chk_z >> 4) >> 5 )
+        if ( chk_y >> 4 < PRCCOORD_TO_YCOORD(alt_at_point(chk_x >> 4, chk_z >> 4)))
             mag = i;
         chk_x -= cor_dx;
         chk_y -= cor_dy;

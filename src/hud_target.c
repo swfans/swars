@@ -62,7 +62,7 @@ void draw_target_person(struct Thing *p_person, uint radius)
     ep.X3d = PRCCOORD_TO_MAPCOORD(p_person->X) - engn_xc;
     ep.Z3d = PRCCOORD_TO_MAPCOORD(p_person->Z) - engn_zc;
     // TODO Why constant height of 120? Maybe differnt main body position for different thing types?
-    ep.Y3d = (p_person->Y >> 5) - engn_yc + 120;
+    ep.Y3d = PRCCOORD_TO_YCOORD(p_person->Y) - engn_yc + 120;
     ep.Flags = 0;
     transform_point(&ep);
 
@@ -264,7 +264,7 @@ void draw_hud_target_old_frame(struct Thing *p_target, int fr)
 
     ep.X3d = PRCCOORD_TO_MAPCOORD(p_target->X) - engn_xc;
     ep.Z3d = PRCCOORD_TO_MAPCOORD(p_target->Z) - engn_zc;
-    ep.Y3d = (p_target->Y >> 5) - engn_yc;
+    ep.Y3d = PRCCOORD_TO_YCOORD(p_target->Y) - engn_yc;
     ep.Flags = 0;
     transform_point(&ep);
 

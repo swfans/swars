@@ -485,7 +485,7 @@ void thin_wall_around_face3(short obj_x, short obj_y, short obj_z, short face, u
     for (cor = 0; cor < 3; cor++) {
         int alt;
         alt = alt_at_point(x_cor[cor], z_cor[cor]);
-        alt_cor[cor] = alt >> 5;
+        alt_cor[cor] = PRCCOORD_TO_YCOORD(alt);
     }
     if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
       && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
@@ -525,7 +525,7 @@ void thin_wall_around_face4(short obj_x, short obj_y, short obj_z, short face, u
     for (cor = 0; cor < 4; cor++) {
         int alt;
         alt = alt_at_point(x_cor[cor], z_cor[cor]);
-        alt_cor[cor] = alt >> 5;
+        alt_cor[cor] = PRCCOORD_TO_YCOORD(alt);
     }
     if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
       && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {

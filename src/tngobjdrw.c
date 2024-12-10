@@ -58,7 +58,7 @@ void process_child_object(struct Thing *p_vehicle)
     struct M31 gear;
 
     gear.R[0] = p_vehicle->X >> 8;
-    gear.R[1] = p_vehicle->Y >> 5;
+    gear.R[1] = PRCCOORD_TO_YCOORD(p_vehicle->Y);
     gear.R[2] = p_vehicle->Z >> 8;
 
     p_mgun = &things[p_vehicle->U.UVehicle.SubThing];
@@ -104,7 +104,7 @@ void build_vehicle(struct Thing *p_thing)
         p_sobj = &game_objects[p_thing->U.UVehicle.Object];
         i = draw_rot_object(
              PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-             p_thing->Y >> 5,
+             PRCCOORD_TO_YCOORD(p_thing->Y),
              PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
              p_sobj, p_thing);
     }
@@ -174,7 +174,7 @@ void build_person(struct Thing *p_thing)
 
     draw_pers_e_graphic(p_thing,
       PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
+      PRCCOORD_TO_YCOORD(p_thing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
       frame, p_thing->Radius, bri);
 }
@@ -312,7 +312,7 @@ void build_grenade(struct Thing *p_thing)
     p_mapel = &game_my_big_map[128 * (p_thing->Z >> 16) + (p_thing->X >> 16)];
     get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
 
-    draw_e_graphic(tng_x - engn_xc, tng_y, tng_z - engn_zc,
+    draw_e_graphic(tng_x - engn_xc, tng_y >> 3, tng_z - engn_zc,
       frame, p_thing->Radius, p_mapel->ShadeR, p_thing);
 }
 
@@ -328,7 +328,7 @@ void build_static(struct SimpleThing *p_sthing)
 
     draw_e_graphic(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
       frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
 }
@@ -349,7 +349,7 @@ void build_dropped_item(struct SimpleThing *p_sthing)
 
     draw_e_graphic(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
       frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
 }
@@ -370,7 +370,7 @@ void build_unkn18(struct Thing *p_thing)
 {
     draw_e_graphic(
       PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
+      PRCCOORD_TO_YCOORD(p_thing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
       nstart_ani[900], p_thing->Radius, 63, p_thing);
 }
@@ -421,7 +421,7 @@ void build_scale_effect(struct SimpleThing *p_sthing)
     frame = p_sthing->Frame;
     draw_e_graphic_scale(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
       frame, p_sthing->Radius, 32, p_sthing->Object);
 }
@@ -494,7 +494,7 @@ void build_razor_wire_strand(int x1, int y1, int z1, int x2, int y2, int z2, int
 
 void build_soul(struct SimpleThing *p_sthing)
 {
-    build_glare(PRCCOORD_TO_MAPCOORD(p_sthing->X), p_sthing->Y >> 5,
+    build_glare(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_YCOORD(p_sthing->Y),
       PRCCOORD_TO_MAPCOORD(p_sthing->Z), 32);
 }
 

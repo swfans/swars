@@ -183,6 +183,19 @@ struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype)
     return p_thing;
 }
 
+TbBool thing_position_uses_y_mul_8(struct Thing *p_thing)
+{
+    switch (p_thing->Type)
+    {
+    case TT_BUILDING:
+        return (p_thing->SubType == SubTT_BLD_MGUN);
+    case TT_VEHICLE:
+    case TT_PERSON:
+    default:
+        return true;
+    }
+}
+
 void get_thing_position_mapcoords(short *x, short *y, short *z, ThingIdx thing)
 {
     short cor_x, cor_y, cor_z;
@@ -191,18 +204,10 @@ void get_thing_position_mapcoords(short *x, short *y, short *z, ThingIdx thing)
         struct Thing *p_thing;
         p_thing = &things[thing];
         cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
-        switch (p_thing->Type)
-        {
-        case TT_BUILDING:
-            if (p_thing->SubType == SubTT_BLD_MGUN)
-                cor_y = PRCCOORD_TO_YCOORD(p_thing->Y);
-            else
-                cor_y = PRCCOORD_TO_MAPCOORD(p_thing->Y);
-            break;
-        default:
+        if (thing_position_uses_y_mul_8(p_thing))
             cor_y = PRCCOORD_TO_YCOORD(p_thing->Y);
-            break;
-        }
+        else
+            cor_y = PRCCOORD_TO_MAPCOORD(p_thing->Y);
         cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
     } else {
         struct SimpleThing *p_sthing;

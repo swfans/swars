@@ -1355,7 +1355,7 @@ void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign)
     int ms_dx, ms_dy, tng_dim;
 
     cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc;
-    cor_y = (p_thing->Y >> 5) - engn_yc;
+    cor_y = PRCCOORD_TO_YCOORD(p_thing->Y) - engn_yc;
     cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc;
 
     transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);

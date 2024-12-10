@@ -134,7 +134,7 @@ int select_thing_for_debug(short x, short y, short z, short ttype)
     short alt;
 
     thing = search_for_thing_for_debug(x, y, z, ttype);
-    alt = alt_at_point(x, z) >> 5;
+    alt = PRCCOORD_TO_YCOORD(alt_at_point(x, z));
 
     get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
     func_6fe80(x, alt, z, tng_x, tng_y, tng_z, colour_lookup[ColLU_WHITE]);

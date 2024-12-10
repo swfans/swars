@@ -259,10 +259,10 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
         cor3_y = alt_at_point_under_height(engn_xc + cor3_x, engn_zc + cor3_z, p_vehicle->Y) >> 8;
         cor4_y = alt_at_point_under_height(engn_xc + cor4_x, engn_zc + cor4_z, p_vehicle->Y) >> 8;
     } else {
-        cor1_y = alt_at_point(engn_xc + cor1_x, engn_zc + cor1_z) >> 5;
-        cor2_y = alt_at_point(engn_xc + cor2_x, engn_zc + cor2_z) >> 5;
-        cor3_y = alt_at_point(engn_xc + cor3_x, engn_zc + cor3_z) >> 5;
-        cor4_y = alt_at_point(engn_xc + cor4_x, engn_zc + cor4_z) >> 5;
+        cor1_y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + cor1_x, engn_zc + cor1_z));
+        cor2_y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + cor2_x, engn_zc + cor2_z));
+        cor3_y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + cor3_x, engn_zc + cor3_z));
+        cor4_y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + cor4_x, engn_zc + cor4_z));
     }
 
     transform_shpoint(&sp1, cor1_x, cor1_y - 8 * engn_yc, cor1_z);
