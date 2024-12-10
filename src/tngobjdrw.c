@@ -256,19 +256,7 @@ void build_building(struct Thing *p_thing)
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
         draw_rot_object2(tng_x - engn_xc, tng_y, tng_z - engn_zc, p_sobj, p_thing);
     }
-    else if (p_thing->SubType != SubTT_BLD_MGUN)
-    {
-        ushort beg_obj, end_obj;
-        ushort obj;
-
-        beg_obj = p_thing->U.UObject.Object;
-        end_obj = beg_obj + p_thing->U.UObject.NumbObjects;
-        for (obj = beg_obj; obj < end_obj; obj++) {
-            p_sobj = &game_objects[obj];
-            draw_object(0, 0, 0, p_sobj);
-        }
-    }
-    else
+    else if (p_thing->SubType == SubTT_BLD_MGUN)
     {
         PlayerInfo *p_locplayer;
         short tng_x, tng_y, tng_z;
@@ -281,6 +269,18 @@ void build_building(struct Thing *p_thing)
         draw_rot_object2(tng_x - engn_xc, tng_y, tng_z - engn_zc, p_sobj, p_thing);
         if (p_thing->Health < p_thing->U.UMGun.MaxHealth)
             draw_vehicle_health(p_thing);
+    }
+    else
+    {
+        ushort beg_obj, end_obj;
+        ushort obj;
+
+        beg_obj = p_thing->U.UObject.Object;
+        end_obj = beg_obj + p_thing->U.UObject.NumbObjects;
+        for (obj = beg_obj; obj < end_obj; obj++) {
+            p_sobj = &game_objects[obj];
+            draw_object(0, 0, 0, p_sobj);
+        }
     }
 }
 

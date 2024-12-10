@@ -194,7 +194,10 @@ void get_thing_position_mapcoords(short *x, short *y, short *z, ThingIdx thing)
         switch (p_thing->Type)
         {
         case TT_BUILDING:
-            cor_y = PRCCOORD_TO_MAPCOORD(p_thing->Y);
+            if (p_thing->SubType == SubTT_BLD_MGUN)
+                cor_y = PRCCOORD_TO_YCOORD(p_thing->Y);
+            else
+                cor_y = PRCCOORD_TO_MAPCOORD(p_thing->Y);
             break;
         default:
             cor_y = PRCCOORD_TO_YCOORD(p_thing->Y);
