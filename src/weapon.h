@@ -133,10 +133,20 @@ extern short persuaded_person_weapons_sell_cost_permil;
 void read_weapons_conf_file(void);
 void init_weapon_text(void);
 
+/** Gives a string which names the weapon.
+ */
+const char *weapon_codename(ushort wtype);
+
+/** Returns if the weapon activates at the location of the wielding person.
+ */
+ushort weapon_is_deployed_at_wielder_pos(ushort wtype);
+
+/** Returns panel sprite index to be used to represent the weapon.
+ */
+ushort weapon_sprite_index(ushort wtype, TbBool enabled);
+
 TbBool weapons_has_weapon(ulong weapons, ushort wtype);
 ushort weapons_prev_weapon(ulong weapons, ushort last_wtype);
-const char *weapon_codename(ushort wtype);
-ushort weapon_sprite_index(ushort wtype, TbBool enabled);
 
 ushort weapon_fourpack_index(ushort weapon);
 void weapons_remove_weapon(ulong *p_weapons,

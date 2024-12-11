@@ -1687,13 +1687,16 @@ StateChRes person_init_kill_person(struct Thing *p_person, short target)
     check_weapon(p_person, 1280);
     p_person->State = PerSt_KILL_PERSON;
     p_person->PTarget = &things[target];
-    weapon_range = get_weapon_range(p_person);
     p_person->U.UPerson.ComTimer = -1;
+    p_person->SubState = 0;
+
+    get_weapon_out(p_person);
+
+    weapon_range = get_weapon_range(p_person);
     p_person->U.UPerson.ComRange = weapon_range >> 6;
+
     p_person->U.UPerson.Timer2 = 10;
     p_person->U.UPerson.StartTimer2 = 10;
-    p_person->SubState = 0;
-    get_weapon_out(p_person);
     return StCh_ACCEPTED;
 }
 
@@ -1709,9 +1712,10 @@ StateChRes person_init_persuade_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComTimer = -1;
     p_person->PTarget = &things[target];
     p_person->U.UPerson.ComRange = 10; // TODO range changes with mods; make it more dynamic?
+    p_person->SubState = 0;
+
     p_person->U.UPerson.Timer2 = 10;
     p_person->U.UPerson.StartTimer2 = 10;
-    p_person->SubState = 0;
     return StCh_ACCEPTED;
 }
 
@@ -1891,18 +1895,33 @@ StateChRes person_init_destroy_building(struct Thing *p_person, short x, short z
     p_person->State = PerSt_DESTROY_BUILDING;
     p_person->U.UPerson.ComTimer = -1;
     p_person->PTarget = &things[target];
-    weapon_range = get_weapon_range(p_person);
     p_person->U.UPerson.Timer2 = 10;
     p_person->U.UPerson.StartTimer2 = 10;
     p_person->SubState = 0;
-    p_person->U.UPerson.ComRange = weapon_range >> 6;
-    p_person->U.UPerson.GotoX = x;
-    p_person->U.UPerson.GotoZ = z;
 
     if (p_person->U.UPerson.PathIndex != 0)
         remove_path(p_person);
 
     get_weapon_out(p_person);
+
+    // Make sure the target position is within current weapon range; our ComRange is in strange
+    // units, they seem to be quarters of a tile; weapon_range is in normal map coords
+    weapon_range = get_weapon_range(p_person);
+    // Narrow range for drop weapons, wide range for throwing / shooting weapons
+    // TODO include size of the building?
+    if (((p_person->Flag & TngF_InVehicle) == 0) && weapon_is_deployed_at_wielder_pos(p_person->U.UPerson.CurrentWeapon)) {
+        p_person->U.UPerson.ComRange = (weapon_range >> 6);
+    } else {
+        p_person->U.UPerson.ComRange = (weapon_range >> 6) * 2 / 3;
+    }
+    //  the range needs to be larger than the person step distance
+    p_person->U.UPerson.ComRange += PRCCOORD_TO_MAPCOORD(p_person->Speed + 255) >> 6;
+    // Avoid zero range
+    if (p_person->U.UPerson.ComRange < 1)
+        p_person->U.UPerson.ComRange = 1;
+    p_person->U.UPerson.GotoX = x;
+    p_person->U.UPerson.GotoZ = z;
+
     return StCh_ACCEPTED;
 }
 

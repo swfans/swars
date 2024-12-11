@@ -548,6 +548,13 @@ ushort weapon_sprite_index(ushort wtype, TbBool enabled)
     return sprid;
 }
 
+ushort weapon_is_deployed_at_wielder_pos(ushort wtype)
+{
+    return (wtype == WEP_ELEMINE) || (wtype == WEP_EXPLMINE) ||
+      (wtype == WEP_AIRSTRIKE) || (wtype == WEP_CEREBUSIFF) ||
+      (wtype == WEP_RAZORWIRE) || (wtype == WEP_EXPLWIRE);
+}
+
 ushort weapon_fourpack_index(ushort wtype)
 {
     switch (wtype)
