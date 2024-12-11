@@ -1909,7 +1909,8 @@ StateChRes person_init_destroy_building(struct Thing *p_person, short x, short z
     weapon_range = get_weapon_range(p_person);
     // Narrow range for drop weapons, wide range for throwing / shooting weapons
     // TODO include size of the building?
-    if (((p_person->Flag & TngF_InVehicle) == 0) && weapon_is_deployed_at_wielder_pos(p_person->U.UPerson.CurrentWeapon)) {
+    if (((p_person->Flag & TngF_InVehicle) == 0) &&
+      weapon_is_deployed_at_wielder_pos(p_person->U.UPerson.CurrentWeapon)) {
         p_person->U.UPerson.ComRange = (weapon_range >> 6);
     } else {
         p_person->U.UPerson.ComRange = (weapon_range >> 6) * 2 / 3;
@@ -2688,6 +2689,16 @@ ubyte is_command_completed(struct Thing *p_person)
     return ret;
 }
 
+int can_i_see_building(struct Thing *p_i, struct Thing *p_thing,
+        int max_dist, ushort flags)
+{
+    int ret;
+    asm volatile (
+      "call ASM_can_i_see_building\n"
+        : "=r" (ret) : "a" (p_i), "d" (p_thing), "b" (max_dist), "c" (flags));
+    return ret;
+}
+
 void process_random_speech(struct Thing *p_person, ubyte a2)
 {
 #if 0
@@ -3224,8 +3235,82 @@ void person_wait_vehicle(struct Thing *p_person)
 
 void person_destroy_building(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_person_destroy_building\n"
         : : "a" (p_person));
+#endif
+    struct Thing *p_target;
+    TbBool in_range;
+
+    if (((p_person->Flag & (TngF_Unkn0800|TngF_Unkn0400)) != 0) && (p_person->U.UPerson.WeaponTimer > 5))
+        p_person->Flag &= ~TngF_Unkn0800;
+
+    {
+        int dist_x, dist_z, range;
+
+        dist_x = (p_person->X >> 8) - p_person->U.UPerson.GotoX;
+        dist_z = (p_person->Z >> 8) - p_person->U.UPerson.GotoZ;
+        range = p_person->U.UPerson.ComRange << 6;
+
+        in_range = 0;
+        if (dist_x * dist_x + dist_z * dist_z < range * range)
+            in_range = 1;
+    }
+
+    if (!in_range)
+        person_goto_point(p_person);
+
+    p_target = p_person->PTarget;
+    if (p_target == NULL)
+    {
+        p_person->State = PerSt_NONE;
+        p_person->Flag &= ~TngF_Unkn0800;
+        return;
+    }
+
+    if (in_range && (p_person->U.UPerson.WeaponTurn == 0) && ((p_target->Flag & TngF_Destroyed) == 0))
+    {
+        struct Thing *p_building;
+        int weapon_range;
+        weapon_range = get_weapon_range(p_person);
+        p_building = &things[p_person->GotoThingIndex];
+        if (can_i_see_building(p_person, p_building, weapon_range * weapon_range, 1) <= 0)
+        {
+            in_range = 0;
+            p_person->Flag &= ~TngF_Unkn0800;
+        }
+        else
+        {
+            p_person->Flag &= ~(TngF_Unkn00200000|TngF_Unkn0800|TngF_Unkn0100);
+            p_person->Flag |= TngF_Unkn0800;
+            if ((p_person->Flag & TngF_InVehicle) != 0) {
+                struct Thing *p_vehicle;
+                p_vehicle = &things[p_person->U.UPerson.Vehicle];
+                p_vehicle->Flag |= TngF_Unkn01000000;
+            }
+            p_person->U.UPerson.ComRange += 2;
+            if (p_person->U.UPerson.ComRange > 5 * 4)
+                p_person->U.UPerson.ComRange = 5 * 4;
+        }
+        if (!in_range)
+        {
+            if (p_person->U.UPerson.ComRange < 4)
+                p_person->U.UPerson.ComRange = 2;
+            else
+                p_person->U.UPerson.ComRange -= 2;
+        }
+    }
+
+    if (p_person->State == PerSt_NONE)
+    {
+        p_person->State = PerSt_DESTROY_BUILDING;
+        p_person->Flag &= ~TngF_Unkn0800;
+    }
+    if ((p_target->Flag & TngF_Destroyed) != 0)
+    {
+        p_person->State = PerSt_NONE;
+        p_person->Flag &= ~TngF_Unkn0800;
+    }
 }
 
 void person_catch_train(struct Thing *p_person)
