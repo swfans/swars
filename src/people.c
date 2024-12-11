@@ -3237,6 +3237,8 @@ void process_avoid_group(struct Thing *p_person)
     asm volatile ("call ASM_process_avoid_group\n"
         : : "a" (p_person));
 #endif
+    if ((p_person->Flag & TngF_Destroyed) != 0)
+        return;
     if (p_person->U.UPerson.RecoilTimer != 0) {
         return;
     }
@@ -3246,26 +3248,29 @@ void process_avoid_group(struct Thing *p_person)
 
     if (person_move(p_person))
     {
-        ushort angle;
-        angle = (p_person->U.UPerson.Angle + 9) & 7;
-        change_player_angle(p_person, angle);
+        ubyte oangle;
+        sbyte change;
+        // Select changed, but not to opposite direction - only one of: -2,-1,1,2
+        change = (LbRandomAnyShort() & 3) - 2;
+        if (change >= 0) change++;
+        oangle = (p_person->U.UPerson.Angle + change) & 7;
+        change_player_angle(p_person, oangle);
     }
 
-    if ((p_person->Flag & 0x0002) == 0)
+    p_person->Timer1 -= fifties_per_gameturn;
+    if (p_person->Timer1 < 0)
     {
-        p_person->Timer1 -= fifties_per_gameturn;
-        if (p_person->Timer1 < 0) {
-            p_person->Timer1 = p_person->StartTimer1;
-            p_person->Frame = frame[p_person->Frame].Next;
-        }
-        p_person->U.UPerson.Timer2--;
-        if (p_person->U.UPerson.Timer2 < 0)
-        {
-            ushort rnd;
-            rnd = LbRandomAnyShort();
-            p_person->U.UPerson.Timer2 = p_person->U.UPerson.StartTimer2 + ((rnd & 0xF) >> 1);
-            set_angle_to_avoid_group(p_person);
-        }
+        p_person->Timer1 = p_person->StartTimer1;
+        p_person->Frame = frame[p_person->Frame].Next;
+    }
+
+    p_person->U.UPerson.Timer2--;
+    if (p_person->U.UPerson.Timer2 < 0)
+    {
+        ushort rnd;
+        rnd = LbRandomAnyShort();
+        p_person->U.UPerson.Timer2 = p_person->U.UPerson.StartTimer2 + ((rnd & 0xF) >> 1);
+        set_angle_to_avoid_group(p_person);
     }
 }
 
