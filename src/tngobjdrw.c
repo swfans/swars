@@ -297,7 +297,7 @@ void build_laser11(struct Thing *p_thing)
     get_thing_position_mapcoords(&owtng_x, &owtng_y, &owtng_z, p_thing->Owner);
     p_owntng = &things[p_thing->Owner];
 
-    build_laser(owtng_x, owtng_y, owtng_z,
+    build_laser(owtng_x, owtng_y >> 3, owtng_z,
       p_thing->VX, p_thing->VY, p_thing->VZ,
       p_thing->Timer1, p_owntng, colour);
 }
