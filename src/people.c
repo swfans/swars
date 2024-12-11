@@ -1488,6 +1488,10 @@ ushort person_command_until_check_condition(struct Thing *p_person, ushort cond_
         if ((p_cmd->Flags & PCmdF_IsUntil) == 0)
             break;
         if (conditional_command_state_true(cmd, p_person, 3)) {
+            if (gameturn <= 1) {
+                LOGWARN("Person %s %d command %d end condition %d met just at start of the game",
+                  person_type_name(p_person->SubType), (int)p_person->ThingOffset, cond_cmd, cmd);
+            }
             if ((debug_log_things & 0x01) != 0) {
                 char cond_locstr[192];
                 char locstr[192];
@@ -3087,10 +3091,23 @@ void person_wait(struct Thing *p_person)
     {
         process_random_speech(p_person, 0);
     }
+
     if (((p_person->Flag & TngF_PlayerAgent) == 0 || (p_person->Flag2 & TgF2_Unkn0800) != 0)
       && (p_person->U.UPerson.ComHead != 0)
       && conditional_command_state_true(p_person->U.UPerson.ComCur, p_person, 2))
     {
+        if (gameturn <= 1) {
+            LOGWARN("Person %s %d command %d condition met just at start of the game",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset,
+              (int)p_person->U.UPerson.ComCur);
+        }
+        if ((debug_log_things & 0x01) != 0) {
+            char locstr[192];
+            snprint_command(locstr, sizeof(locstr), p_person->U.UPerson.ComCur);
+            LOGSYNC("Person %s %d %s %d condition met, state %d.%d",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset,
+              locstr, (int)p_person->U.UPerson.ComCur, p_person->State, p_person->SubState);
+        }
         p_person->State = 0;
     }
     if (p_person->State < 0)

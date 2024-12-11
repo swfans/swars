@@ -3004,8 +3004,8 @@ void preprogress_game_turns(void)
     struct Mission *p_missi;
 
     p_missi = &mission_list[ingame.CurrentMission];
-    LOGSYNC("PreProcess %d turns for mission %d",
-      (int)p_missi->PreProcess, (int)ingame.CurrentMission);
+    LOGSYNC("PreProcess %d turns for mission %d, starting at %lu",
+      (int)p_missi->PreProcess, (int)ingame.CurrentMission, (ulong)gameturn);
     blind_progress_game(p_missi->PreProcess);
 }
 
@@ -7953,7 +7953,7 @@ void game_process(void)
         input();
         update_tick_time();
         draw_game();
-        debug_trace_turn_bound(gameturn + 100);
+        debug_trace_turn_bound(gameturn);
         load_packet();
         if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
           ((ingame.Flags & GamF_ThermalView) != 0) )
