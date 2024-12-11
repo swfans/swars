@@ -1198,6 +1198,7 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
 #endif
     struct Command *p_cmd;
     struct Thing *p_othertng;
+    short tng_x, tng_y, tng_z;
     ubyte unmet;
 
     p_cmd = &game_commands[cmd];
@@ -1272,8 +1273,9 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_WAND_MEM_G_NEAR:
     case PCmd_WAIT_MEM_G_NEAR:
     case PCmd_UNTIL_MEM_G_NEAR:
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_me->ThingOffset);
         if (mem_group_arrived(p_cmd->OtherThing,
-          p_me->X >> 8, p_me->Y >> 8, p_me->Z >> 8, p_cmd->Arg1, p_cmd->Arg2))
+          tng_x, tng_y >> 3, tng_z, p_cmd->Arg1, p_cmd->Arg2))
         {
             return !unmet;
         }
@@ -1485,8 +1487,18 @@ ushort person_command_until_check_condition(struct Thing *p_person, ushort cond_
         p_cmd = &game_commands[cmd];
         if ((p_cmd->Flags & PCmdF_IsUntil) == 0)
             break;
-        if (conditional_command_state_true(cmd, p_person, 3))
+        if (conditional_command_state_true(cmd, p_person, 3)) {
+            if ((debug_log_things & 0x01) != 0) {
+                char cond_locstr[192];
+                char locstr[192];
+                snprint_command(cond_locstr, sizeof(cond_locstr), cond_cmd);
+                snprint_command(locstr, sizeof(locstr), cmd);
+                LOGSYNC("Person %s %d %s %d ends, met %s %d, state %d.%d",
+                  person_type_name(p_person->SubType), (int)p_person->ThingOffset,
+                  cond_locstr, cond_cmd, locstr, cmd, p_person->State, p_person->SubState);
+            }
             until_met = true;
+        }
         cmd = p_cmd->Next;
     }
 
@@ -2503,7 +2515,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         break;
     }
 
-	if ((debug_log_things & 0x01) != 0)
+    if ((debug_log_things & 0x01) != 0)
     {
         char locstr[192];
 
@@ -2541,7 +2553,7 @@ TbBool person_init_specific_preplay_command(struct Thing *p_person, ushort cmd)
         return false;
     }
 
-	if ((debug_log_things & 0x01) != 0)
+    if ((debug_log_things & 0x01) != 0)
     {
         char locstr[192];
 

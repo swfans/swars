@@ -456,7 +456,7 @@ void things_debug_hud(void)
     short tng_x, tng_y, tng_z;
     short scr_x, scr_y, ln;
 
-    thing = select_thing_for_debug(mouse_map_x, 0, mouse_map_z, -1);
+    thing = select_thing_for_debug(mouse_map_x, 0, mouse_map_z, -2);
     // Lock on current thing
     if (lbKeyOn[KC_W])
     {
