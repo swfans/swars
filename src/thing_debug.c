@@ -21,7 +21,9 @@
 #include <string.h>
 #include "bfkeybd.h"
 #include "bfbox.h"
+
 #include "bigmap.h"
+#include "building.h"
 #include "command.h"
 #include "drawtext.h"
 #include "display.h"
@@ -53,20 +55,42 @@ s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilt
     allow_hidden = (params->Arg1 & 0x01) != 0;
     basic_types = (params->Arg1 & 0x02) != 0;
 
-    if (thing <= 0) {
+    if (thing <= 0)
+    {
         struct SimpleThing *p_sthing;
         p_sthing = &sthings[thing];
         if (!allow_hidden && (p_sthing->Flag & TngF_Unkn04000000) == 0)
+        {
             return INT32_MAX;
+        }
         if (basic_types && (p_sthing->Type != SmTT_DROPPED_ITEM))
             return INT32_MAX;
-    } else {
+    }
+    else
+    {
         struct Thing *p_thing;
         p_thing = &things[thing];
         if (!allow_hidden && (p_thing->Flag & TngF_Unkn04000000) == 0)
-            return INT32_MAX;
-        if (basic_types && (p_thing->Type != TT_PERSON) && (p_thing->Type != TT_VEHICLE))
-            return INT32_MAX;
+        {
+            // Mounted guns do not have this flag set, but we still may want to allow them
+            if ((p_thing->Type != TT_BUILDING) || (p_thing->SubType != SubTT_BLD_MGUN))
+                return INT32_MAX;
+        }
+        if (basic_types)
+        {
+            switch (p_thing->Type)
+            {
+            case TT_PERSON:
+            case TT_VEHICLE:
+                break;
+            case TT_BUILDING:
+                if (p_thing->SubType == SubTT_BLD_MGUN)
+                    break;
+                return INT32_MAX;
+            default:
+                return INT32_MAX;
+            }
+        }
     }
 
     get_thing_position_mapcoords(&tng_x, NULL, &tng_z, thing);
