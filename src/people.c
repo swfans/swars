@@ -185,6 +185,17 @@ const ubyte follow_dist[4][4] = {
   { 3, 6, 9, 0 },
 };
 
+const struct Direction angle_direction[] = {
+    {   0,  256},
+    { 181,  181},
+    { 256,    0},
+    { 181, -181},
+    {   0, -256},
+    {-181, -181},
+    {-256,    0},
+    {-181,  181},
+};
+
 void read_people_conf_file(void)
 {
     TbFileHandle conf_fh;
@@ -3204,10 +3215,58 @@ void person_catch_train(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void set_angle_to_avoid_group(struct Thing *p_person)
+{
+#if 1
+    asm volatile ("call ASM_set_angle_to_avoid_group\n"
+        : : "a" (p_person));
+#endif
+}
+
+short person_move(struct Thing *p_person)
+{
+    short ret;
+    asm volatile ("call ASM_person_move\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+}
+
 void process_avoid_group(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_process_avoid_group\n"
         : : "a" (p_person));
+#endif
+    if (p_person->U.UPerson.RecoilTimer != 0) {
+        return;
+    }
+
+    p_person->VX = angle_direction[p_person->U.UPerson.Angle].DiX;
+    p_person->VZ = angle_direction[p_person->U.UPerson.Angle].DiY;
+
+    if (person_move(p_person))
+    {
+        ushort angle;
+        angle = (p_person->U.UPerson.Angle + 9) & 7;
+        change_player_angle(p_person, angle);
+    }
+
+    if ((p_person->Flag & 0x0002) == 0)
+    {
+        p_person->Timer1 -= fifties_per_gameturn;
+        if (p_person->Timer1 < 0) {
+            p_person->Timer1 = p_person->StartTimer1;
+            p_person->Frame = frame[p_person->Frame].Next;
+        }
+        p_person->U.UPerson.Timer2--;
+        if (p_person->U.UPerson.Timer2 < 0)
+        {
+            ushort rnd;
+            rnd = LbRandomAnyShort();
+            p_person->U.UPerson.Timer2 = p_person->U.UPerson.StartTimer2 + ((rnd & 0xF) >> 1);
+            set_angle_to_avoid_group(p_person);
+        }
+    }
 }
 
 void person_being_persuaded(struct Thing *p_person)

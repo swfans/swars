@@ -172,6 +172,11 @@ struct MyPath {
     ushort Next;
 };
 
+struct Direction {
+  short DiX;
+  short DiY;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct PeepStat peep_type_stats[];
