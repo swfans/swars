@@ -559,6 +559,7 @@ void init_mgun_laser(struct Thing *p_owner, ushort bmsize)
     struct Thing *p_shot;
     int prc_x, prc_y, prc_z;
     int cor_x, cor_y, cor_z;
+    short tgtng_x, tgtng_y, tgtng_z;
     u32 rhit;
     short shottng;
     short angle;
@@ -583,13 +584,18 @@ void init_mgun_laser(struct Thing *p_owner, ushort bmsize)
     prc_z = p_owner->Z - 3 * lbSinTable[angle + 512] / 2;
     prc_y = p_owner->Y;
 
+    if ((p_owner->PTarget > &things[0]) && (p_owner->PTarget < &things[THINGS_LIMIT]))
+        get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_owner->PTarget->ThingOffset);
+    else
+        tgtng_x = tgtng_y = tgtng_z = 0;
+
     p_shot->U.UEffect.Angle = p_owner->U.UMGun.AngleY;
     p_shot->Z = prc_z;
     p_shot->Y = prc_y;
     p_shot->X = prc_x;
-    p_shot->VX = (p_owner->PTarget->X >> 8);
-    p_shot->VY = (p_owner->PTarget->Y >> 8) + 10;
-    p_shot->VZ = p_owner->PTarget->Z >> 8;
+    p_shot->VX = tgtng_x;
+    p_shot->VY = (tgtng_y >> 3) + 10;
+    p_shot->VZ = tgtng_z;
     p_shot->Radius = 50;
     p_shot->Owner = p_owner->ThingOffset;
 
