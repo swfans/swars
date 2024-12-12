@@ -494,9 +494,9 @@ extern sbyte mo_weapon;
 
 extern ubyte selected_agent;
 
-extern uint mouse_map_x;
-extern uint mouse_map_y;
-extern uint mouse_map_z;
+extern int mouse_map_x;
+extern int mouse_map_y;
+extern int mouse_map_z;
 extern void *scratch_malloc_mem;
 
 extern ubyte game_gfx_advanced_lights;

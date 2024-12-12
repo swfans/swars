@@ -910,7 +910,7 @@ void draw_bang(struct SimpleThing *p_pow)
             col = colour_lookup[ColLU_GREEN];
         } else {
             st = -10;
-            col = colour_lookup[7];
+            col = colour_lookup[ColLU_PINK];
         }
         build_laser(p_pow->X >> 8, p_pow->Y >> 8, p_pow->Z >> 8,
           (p_pow->X >> 8), (p_pow->Y >> 8) + 400, p_pow->Z >> 8, st, 0, col);

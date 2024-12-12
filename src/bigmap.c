@@ -27,6 +27,31 @@ struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
 ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
 ushort spiral_dist_tiles_limit = 0;
 
+void map_coords_limit(short *cor_x, short *cor_y, short *cor_z, long map_x, long map_y, long map_z)
+{
+    if (map_x < 0)
+        map_x = 0;
+    else if (map_x >= MAP_COORD_WIDTH)
+        map_x = MAP_COORD_WIDTH - 1;
+
+    if (map_y < -INT16_MAX)
+        map_y = -INT16_MAX;
+    else if (map_y > INT16_MAX)
+        map_y = INT16_MAX;
+
+    if (map_z < 0)
+        map_z = 0;
+    else if (map_z >= MAP_COORD_HEIGHT)
+        map_z = MAP_COORD_HEIGHT - 1;
+
+    if (cor_x != NULL)
+        *cor_x = map_x;
+    if (cor_y != NULL)
+        *cor_y = map_y;
+    if (cor_z != NULL)
+        *cor_z = map_z;
+}
+
 void clear_mapwho_on_whole_map(void)
 {
     short tile_x, tile_z;

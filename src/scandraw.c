@@ -1438,7 +1438,7 @@ TbPixel SCANNER_thing_colour(struct Thing *p_thing)
         break;
     case TT_PERSON:
         if ((p_thing->Flag & TngF_Persuaded) != 0)
-            col = colour_lookup[5];
+            col = colour_lookup[ColLU_YELLOW];
         else if ( (p_thing->Flag & TngF_PlayerAgent) != 0 && p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD)
             col = SCANNER_people_colours[4];
         else
@@ -1552,7 +1552,7 @@ void SCANNER_draw_sthing(struct SimpleThing *p_sthing, int pos_mx, int pos_mz, i
     x = ingame.Scanner.X1 + base_x;
     y = ingame.Scanner.Y1 + base_y;
 
-    col = p_sthing->U.UWeapon.WeaponType ? colour_lookup[8] : colour_lookup[5];
+    col = p_sthing->U.UWeapon.WeaponType ? colour_lookup[8] : colour_lookup[ColLU_YELLOW];
 
     if ((base_y < 0) || (base_y > ingame.Scanner.Y2 - ingame.Scanner.Y1)
       || (base_x < 0) || (base_x > SCANNER_width[base_y])) {

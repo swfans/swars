@@ -1029,7 +1029,7 @@ short add_static(int x, int y, int z, ushort frame, int timer)
 
 TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R)
 {
-    long dtX, dtZ, r2;
+    s32 dtX, dtZ, r2;
 
     if (thing <= 0) {
         struct SimpleThing *p_sthing;

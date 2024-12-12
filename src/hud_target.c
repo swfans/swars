@@ -184,7 +184,7 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
                 h_ext = dy;
 
             lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-            colour = colour_lookup[5];
+            colour = colour_lookup[ColLU_YELLOW];
             LbDrawBox(dx + x, y + h_total, w, dy, colour);
             lbDisplay.DrawFlags = 0;
             LbDrawBox(x + dx, y + dy + h_total - h_ext, w, h_ext, colour);

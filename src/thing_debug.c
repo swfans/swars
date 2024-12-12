@@ -49,7 +49,7 @@ extern ushort word_1DC8CE;
 s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilterParams *params)
 {
     short tng_x, tng_z;
-    short dtX, dtZ;
+    s32 dtX, dtZ;
     TbBool allow_hidden, basic_types;
 
     allow_hidden = (params->Arg1 & 0x01) != 0;
@@ -156,14 +156,27 @@ int select_thing_for_debug(short x, short y, short z, short ttype)
     ThingIdx thing;
     short tng_x, tng_y, tng_z;
     short alt;
+    ubyte colu;
 
     thing = search_for_thing_for_debug(x, y, z, ttype);
+
     alt = PRCCOORD_TO_YCOORD(alt_at_point(x, z));
+    if (thing != 0) {
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
+        colu = ColLU_WHITE;
+    } else {
+        tng_x = MAP_COORD_WIDTH / 2;
+        tng_y = alt;
+        tng_z = MAP_COORD_HEIGHT / 2;
+        colu = ColLU_GREYMD;
+    }
+    func_6fe80(x, alt, z, tng_x, tng_y, tng_z, colour_lookup[colu]);
 
-    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
-    func_6fe80(x, alt, z, tng_x, tng_y, tng_z, colour_lookup[ColLU_WHITE]);
-
-    if (thing > 0)
+    if (thing == 0)
+    {
+        sprintf(locstr, "MAP CENTER");
+    }
+    else if (thing > 0)
     {
         struct Thing *p_thing;
         p_thing = &things[thing];
@@ -479,8 +492,10 @@ void things_debug_hud(void)
     char locstr[100];
     short tng_x, tng_y, tng_z;
     short scr_x, scr_y, ln;
+    short map_x, map_y, map_z;
 
-    thing = select_thing_for_debug(mouse_map_x, 0, mouse_map_z, -1);
+    map_coords_limit(&map_x, &map_y, &map_z, mouse_map_x, 0, mouse_map_z);
+    thing = select_thing_for_debug(map_x, map_y, map_z, -1);
     // Lock on current thing
     if (lbKeyOn[KC_W])
     {
@@ -530,7 +545,7 @@ void things_debug_hud(void)
 
             sprintf(locstr, "%s",
               thing_type_name(p_sthing->Type, p_sthing->SubType));
-            draw_text(scr_x + 330, ln*4, locstr, colour_lookup[7]);
+            draw_text(scr_x + 330, ln*4, locstr, colour_lookup[ColLU_PINK]);
         }
         return;
     }
@@ -722,7 +737,7 @@ void things_debug_hud(void)
         default:
             sprintf(locstr, "%s",
               thing_type_name(p_track_thing->Type, p_track_thing->SubType));
-            draw_text(scr_x + 330, scr_y + ln*4, locstr, colour_lookup[7]);
+            draw_text(scr_x + 330, scr_y + ln*4, locstr, colour_lookup[ColLU_PINK]);
             break;
         }
 

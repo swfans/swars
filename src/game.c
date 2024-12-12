@@ -7896,7 +7896,7 @@ void update_unkn_changing_colors(void)
 
     unkn_changing_color_counter1++;
     if (unkn_changing_color_counter1 & 0x01)
-        col1 = colour_lookup[5];
+        col1 = colour_lookup[ColLU_YELLOW];
     else
         col1 = colour_lookup[0];
     unkn_changing_color_1 = col1;
