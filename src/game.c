@@ -1317,16 +1317,6 @@ void draw_hud(int dcthing)
     }
 }
 
-void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)
-{
-    asm volatile (
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_func_6fe80\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
-}
-
 void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)
 {
     asm volatile (

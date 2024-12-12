@@ -21,12 +21,15 @@
 #include <string.h>
 #include "bfkeybd.h"
 #include "bfbox.h"
+#include "bfline.h"
+#include "bfmath.h"
 
 #include "bigmap.h"
 #include "building.h"
 #include "command.h"
 #include "drawtext.h"
 #include "display.h"
+#include "engintrns.h"
 #include "game.h"
 #include "pathtrig.h"
 #include "scandraw.h"
@@ -117,6 +120,89 @@ int unused_func_200(short x, short y, ushort group)
     asm volatile ("call ASM_unused_func_200\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (group));
     return ret;
+}
+
+void func_6fe80(int probe_x, int probe_y, int probe_z, int target_x, int target_y, int target_z, TbPixel colour)
+{
+#if 0
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_6fe80\n"
+        : : "a" (probe_x), "d" (probe_y), "b" (probe_z), "c" (target_x), "g" (target_y), "g" (target_z), "g" (colour));
+#endif
+    struct EnginePoint ep1;
+    struct EnginePoint ep2;
+    struct EnginePoint ep3;
+    struct EnginePoint ep4;
+    struct EnginePoint ep5;
+    struct EnginePoint ep6;
+    int dist_x, dist_y, dist_z;
+    int tdist;
+    int cur_x, cur_y, cur_z;
+    int prv_x, prv_z;
+    ushort step, steps_tot;
+    TbPixel col2;
+
+    dist_x = target_x - probe_x;
+    dist_y = target_y - probe_y;
+    dist_z = target_z - probe_z;
+    tdist = LbSqrL(dist_x * dist_x + dist_z * dist_z);
+
+    if (tdist == 0) {
+        return;
+    }
+    dist_x = 50 * dist_x / tdist;
+    dist_y = 50 * dist_y / tdist;
+    dist_z = 50 * dist_z / tdist;
+    col2 = colour - 1;
+    steps_tot = tdist / 50;
+
+    for (step = 1; step < steps_tot; step += 8)
+    {
+        cur_x = probe_x + dist_x * (step);
+        cur_y = probe_y + dist_y * (step);
+        cur_z = probe_z + dist_z * (step);
+        prv_x = probe_x + dist_x * (step - 1);
+        prv_z = probe_z + dist_z * (step - 1);
+
+        ep1.X3d = cur_x - engn_xc;
+        ep1.Y3d = cur_y - engn_yc;
+        ep1.Z3d = cur_z - engn_zc;
+        ep1.Flags = 0;
+        transform_point(&ep1);
+        ep5.X3d = prv_x + dist_z - engn_xc;
+        ep5.Z3d = prv_z - dist_x - engn_zc;
+        ep5.Y3d = cur_y - engn_yc;
+        ep5.Flags = 0;
+        transform_point(&ep5);
+        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep5.pp.X, ep5.pp.Y, col2);
+
+        ep6.X3d = cur_x - engn_xc;
+        ep6.Y3d = cur_y - engn_yc;
+        ep6.Z3d = cur_z - engn_zc;
+        ep6.Flags = 0;
+        transform_point(&ep6);
+        ep4.X3d = prv_x - dist_z - engn_xc;
+        ep4.Y3d = cur_y - engn_yc;
+        ep4.Z3d = prv_z + dist_x - engn_zc;
+        ep4.Flags = 0;
+        transform_point(&ep4);
+        LbDrawLine(ep6.pp.X, ep6.pp.Y, ep4.pp.X, ep4.pp.Y, col2);
+    }
+
+    ep2.X3d = probe_x - engn_xc;
+    ep2.Y3d = probe_y - engn_yc;
+    ep2.Z3d = probe_z - engn_zc;
+    ep2.Flags = 0;
+    transform_point(&ep2);
+    ep3.X3d = target_x - engn_xc;
+    ep3.Y3d = target_y - engn_yc;
+    ep3.Z3d = target_z - engn_zc;
+    ep3.Flags = 0;
+    transform_point(&ep3);
+    LbDrawLine(ep2.pp.X, ep2.pp.Y, ep3.pp.X, ep3.pp.Y, colour);
 }
 
 void func_705bc(int a1, int a2, int a3, int a4, int a5, ubyte a6)

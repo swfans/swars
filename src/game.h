@@ -562,7 +562,6 @@ void update_map_thing_and_traffic_refs(void);
 void unkn_lights_processing(void);
 void bang_set_detail(int a1);
 int sub_73C64(char *a1, ubyte a2);
-void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 
 void ingame_palette_reload(void);
