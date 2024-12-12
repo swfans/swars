@@ -209,15 +209,22 @@ void navi_onscreen_debug(TbBool a1)
     if ((ingame.Flags & GamF_Unkn0200) != 0)
     {
         ushort i;
-        int y;
 
         for (i = 0; i < word_1DC8CE; i++)
         {
-            y = 340 - 12 * i;
-            if (lbDisplay.GraphicsScreenHeight < 400)
-                LbDrawBox(290, y >> 1, 25, 5, colour_lookup[ColLU_BLUE]);
-            else
-                LbDrawBox(580, y, 50, 10, colour_lookup[ColLU_BLUE]);
+            short scr_x, scr_y, w, h;
+            if (lbDisplay.GraphicsScreenHeight < 400) {
+                w = 25;
+                h = 5;
+                scr_x = lbDisplay.GraphicsScreenWidth - 60 / 2;
+                scr_y = lbDisplay.GraphicsScreenHeight - (60 + 12 * i) / 2;
+            } else {
+                w = 50;
+                h = 10;
+                scr_x = lbDisplay.GraphicsScreenWidth - 60;
+                scr_y = lbDisplay.GraphicsScreenHeight - (60 + 12 * i);
+            }
+            LbDrawBox(scr_x, scr_y, w, h, colour_lookup[ColLU_BLUE]);
         }
     }
     word_1DC8CE = 0;
