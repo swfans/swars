@@ -56,12 +56,15 @@ void process_child_object(struct Thing *p_vehicle)
     struct M31 vec1;
     struct M31 vec2;
     struct M31 gear;
+    short vhtng_x, vhtng_y, vhtng_z;
 
-    gear.R[0] = p_vehicle->X >> 8;
-    gear.R[1] = PRCCOORD_TO_YCOORD(p_vehicle->Y);
-    gear.R[2] = p_vehicle->Z >> 8;
+    get_thing_position_mapcoords(&vhtng_x, &vhtng_y, &vhtng_z, p_vehicle->ThingOffset);
+    gear.R[0] = vhtng_x;
+    gear.R[1] = vhtng_y;
+    gear.R[2] = vhtng_z;
 
     p_mgun = &things[p_vehicle->U.UVehicle.SubThing];
+    // the mounted gun position is relative, so no need to subtract the base here
     vec2.R[0] = PRCCOORD_TO_MAPCOORD(p_mgun->X);
     vec2.R[1] = p_mgun->Y >> 4;
     vec2.R[2] = PRCCOORD_TO_MAPCOORD(p_mgun->Z);

@@ -990,7 +990,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
     p_person->U.UPerson.ComRange = 3;
     p_person->U.UPerson.Timer2 = 5;
     p_person->U.UPerson.StartTimer2 = 5;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
 
     p_person->U.UPerson.EffectiveGroup = p_attacker->U.UPerson.EffectiveGroup;
     p_person->U.UPerson.Within = 0;
@@ -1649,7 +1649,7 @@ StateChRes person_init_go_to_point(struct Thing *p_person, short x, short y,
     p_person->U.UPerson.GotoZ = z;
     p_person->U.UPerson.ComRange = range;
     p_person->U.UPerson.ComTimer = -1;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     p_person->Timer1 = 48;
     p_person->StartTimer1 = 48;
     return StCh_ACCEPTED;
@@ -1666,7 +1666,7 @@ StateChRes person_init_go_to_person(struct Thing *p_person, short target,
     p_person->GotoThingIndex = target;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     p_person->U.UPerson.ComRange = range;
     return StCh_ACCEPTED;
 }
@@ -1688,7 +1688,7 @@ StateChRes person_init_kill_person(struct Thing *p_person, short target)
     p_person->State = PerSt_KILL_PERSON;
     p_person->PTarget = &things[target];
     p_person->U.UPerson.ComTimer = -1;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
 
     get_weapon_out(p_person);
 
@@ -1712,7 +1712,7 @@ StateChRes person_init_persuade_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComTimer = -1;
     p_person->PTarget = &things[target];
     p_person->U.UPerson.ComRange = 10; // TODO range changes with mods; make it more dynamic?
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
 
     p_person->U.UPerson.Timer2 = 10;
     p_person->U.UPerson.StartTimer2 = 10;
@@ -1733,7 +1733,7 @@ StateChRes person_init_block_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComRange = 2;
     p_person->U.UPerson.Timer2 = 20;
     p_person->U.UPerson.StartTimer2 = 20;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     return StCh_ACCEPTED;
 }
 
@@ -1752,7 +1752,7 @@ StateChRes person_init_scare_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComRange = 2;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     get_weapon_out(p_person);
     return StCh_ACCEPTED;
 }
@@ -1778,7 +1778,7 @@ StateChRes person_init_cmd_follow_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComRange = 0;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     return StCh_ACCEPTED;
 }
 
@@ -1795,7 +1795,7 @@ StateChRes person_init_support_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComRange = 3;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     return StCh_ACCEPTED;
 }
 
@@ -1812,7 +1812,7 @@ StateChRes person_init_protect_person(struct Thing *p_person, short target, TbBo
     p_person->U.UPerson.ComRange = 8;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     if (one_target)
         p_person->Owner = target;
     return StCh_ACCEPTED;
@@ -1847,7 +1847,7 @@ StateChRes person_init_cmd_get_item(struct Thing *p_person, short target)
     p_person->U.UPerson.GotoZ = tgtng_z;
     p_person->U.UPerson.Vehicle = 0;
     p_person->U.UPerson.ComTimer = -1;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     p_person->U.UPerson.ComRange = 0;
     return StCh_ACCEPTED;
 }
@@ -1895,9 +1895,10 @@ StateChRes person_init_destroy_building(struct Thing *p_person, short x, short z
     p_person->State = PerSt_DESTROY_BUILDING;
     p_person->U.UPerson.ComTimer = -1;
     p_person->PTarget = &things[target];
+    p_person->SubState = PerSt_NONE;
+
     p_person->U.UPerson.Timer2 = 10;
     p_person->U.UPerson.StartTimer2 = 10;
-    p_person->SubState = 0;
 
     if (p_person->U.UPerson.PathIndex != 0)
         remove_path(p_person);
@@ -1908,7 +1909,6 @@ StateChRes person_init_destroy_building(struct Thing *p_person, short x, short z
     // units, they seem to be quarters of a tile; weapon_range is in normal map coords
     weapon_range = get_weapon_range(p_person);
     // Narrow range for drop weapons, wide range for throwing / shooting weapons
-    // TODO include size of the building?
     if (((p_person->Flag & TngF_InVehicle) == 0) &&
       weapon_is_deployed_at_wielder_pos(p_person->U.UPerson.CurrentWeapon)) {
         p_person->U.UPerson.ComRange = (weapon_range >> 6);
@@ -1918,8 +1918,8 @@ StateChRes person_init_destroy_building(struct Thing *p_person, short x, short z
     //  the range needs to be larger than the person step distance
     p_person->U.UPerson.ComRange += PRCCOORD_TO_MAPCOORD(p_person->Speed + 255) >> 6;
     // Avoid zero range
-    if (p_person->U.UPerson.ComRange < 1)
-        p_person->U.UPerson.ComRange = 1;
+    if (p_person->U.UPerson.ComRange < 2)
+        p_person->U.UPerson.ComRange = 2;
     p_person->U.UPerson.GotoX = x;
     p_person->U.UPerson.GotoZ = z;
 
@@ -1940,7 +1940,7 @@ StateChRes person_init_use_vehicle(struct Thing *p_person, short vehicle)
     p_person->State = PerSt_USE_VEHICLE;
     p_person->U.UPerson.ComTimer = -1;
     p_person->U.UPerson.ComRange = 1;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     p_person->U.UPerson.GotoX = vhtng_x;
     p_person->U.UPerson.GotoZ = vhtng_z;
 
@@ -1970,9 +1970,10 @@ StateChRes person_init_catch_train(struct Thing *p_person, short face)
     p_person->State = PerSt_CATCH_TRAIN;
     p_person->U.UPerson.ComTimer = -1;
     p_person->U.UPerson.ComRange = 0;
+    p_person->SubState = PerSt_NONE;
+
     p_person->U.UPerson.Timer2 = 10;
     p_person->U.UPerson.StartTimer2 = 10;
-    p_person->SubState = 0;
     return StCh_ACCEPTED;
 }
 
@@ -2067,7 +2068,7 @@ StateChRes person_init_exit_ferry(struct Thing *p_person, short portbld)
     p_person->State = PerSt_EXIT_FERRY;
     p_person->U.UPerson.ComTimer = -1;
     p_person->U.UPerson.ComRange = 1;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
     p_person->U.UPerson.GotoX = prtng_x;
     p_person->U.UPerson.GotoZ = prtng_z;
 
@@ -2133,7 +2134,8 @@ StateChRes person_init_go_to_point_face(struct Thing *p_person, short x,
     p_person->U.UPerson.ComRange = range;
     p_person->U.UPerson.ComTimer = -1;
     p_person->State = PerSt_GOTO_POINT;
-    p_person->SubState = 0;
+    p_person->SubState = PerSt_NONE;
+
     p_person->Timer1 = 48;
     p_person->StartTimer1 = 48;
     return StCh_ACCEPTED;
@@ -3242,7 +3244,8 @@ void person_destroy_building(struct Thing *p_person)
     struct Thing *p_target;
     TbBool in_range;
 
-    if (((p_person->Flag & (TngF_Unkn0800|TngF_Unkn0400)) != 0) && (p_person->U.UPerson.WeaponTimer > 5))
+    if (((p_person->Flag & (TngF_Unkn0800|TngF_Unkn0400)) != 0) &&
+      (p_person->U.UPerson.WeaponTimer > 5))
         p_person->Flag &= ~TngF_Unkn0800;
 
     {

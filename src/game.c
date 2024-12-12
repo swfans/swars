@@ -2681,7 +2681,7 @@ void init_level_unknsub01_building(struct Thing *p_buildng)
     p_buildng->Flag &= TngF_Unkn0800;
     if (p_buildng->SubType == SubTT_BLD_MGUN)
     {
-        p_buildng->PTarget = 0;
+        p_buildng->PTarget = NULL;
         p_buildng->U.UObject.EffectiveGroup = p_buildng->U.UObject.Group;
     }
     if ((p_buildng->Flag2 & TgF2_ExistsOffMap) != 0)
