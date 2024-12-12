@@ -179,11 +179,19 @@ void sanitize_weapon_quantities(ulong *p_weapons,
 
 ubyte find_nth_weapon_held(ushort index, ubyte n);
 
-/** Returns range (in normal map coord points) of the person current weapon.
+/** Gives range (in normal map coord points) of given weapon when wielded by given person.
  *
- * Simply gets the value from weapon config, without adjustments.
+ * Does not check if the person is in a situation where it uses different
+ * weapon than the one in hand, ie. ignores if the person is inside a tank.
  */
-short current_weapon_range(struct Thing *p_person);
+short get_hand_weapon_range(struct Thing *p_person, ushort wtype);
+
+/** Gives range (in normal map coord points) of the person current weapon.
+ *
+ * Does not check if the person is in a situation where it uses different
+ * weapon than the one in hand, ie. ignores if the person is inside a tank.
+ */
+short current_hand_weapon_range(struct Thing *p_person);
 
 /** Returns range (in normal map coord points) of the person current weapon.
  *

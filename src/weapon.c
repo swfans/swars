@@ -555,6 +555,11 @@ ushort weapon_is_deployed_at_wielder_pos(ushort wtype)
       (wtype == WEP_RAZORWIRE) || (wtype == WEP_EXPLWIRE);
 }
 
+ushort weapon_is_for_throwing(ushort weptype)
+{
+    return (weptype == WEP_NUCLGREN) || (weptype == WEP_CRAZYGAS) || (weptype == WEP_KOGAS);
+}
+
 ushort weapon_fourpack_index(ushort wtype)
 {
     switch (wtype)
@@ -738,6 +743,35 @@ void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_four
     }
 }
 
+short get_hand_weapon_range(struct Thing *p_person, ushort weptype)
+{
+    struct WeaponDef *wdef;
+    short range;
+
+    if (weptype >= WEP_TYPES_COUNT)
+        return 0;
+
+    wdef = &weapon_defs[weptype];
+
+    range = TILE_TO_MAPCOORD(wdef->RangeBlocks, 0);
+
+    if (weapon_is_for_throwing(weptype))
+        range = (85 * range * (3 + cybmod_arms_level(&p_person->U.UPerson.UMod))) >> 8;
+
+    return range;
+}
+
+short current_hand_weapon_range(struct Thing *p_person)
+{
+#if 0
+    short ret;
+    asm volatile ("call ASM_current_hand_weapon_range\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+#endif
+    return get_hand_weapon_range(p_person, p_person->U.UPerson.CurrentWeapon);
+}
+
 int get_weapon_range(struct Thing *p_person)
 {
     int ret;
@@ -746,35 +780,15 @@ int get_weapon_range(struct Thing *p_person)
     return ret;
 }
 
-short current_weapon_range(struct Thing *p_person)
-{
-#if 0
-    short ret;
-    asm volatile ("call ASM_current_weapon_range\n"
-        : "=r" (ret) : "a" (p_person));
-    return ret;
-#endif
-    struct WeaponDef *wdef;
-    ushort wtype;
-
-    wtype = p_person->U.UPerson.CurrentWeapon;
-    if (wtype >= WEP_TYPES_COUNT)
-        return 0;
-
-    wdef = &weapon_defs[wtype];
-
-    return TILE_TO_MAPCOORD(wdef->RangeBlocks, 0);
-}
-
 TbBool current_weapon_has_targetting(struct Thing *p_person)
 {
-    ushort wtype;
+    ushort weptype;
 
-    wtype = p_person->U.UPerson.CurrentWeapon;
-    if (wtype >= WEP_TYPES_COUNT)
+    weptype = p_person->U.UPerson.CurrentWeapon;
+    if (weptype >= WEP_TYPES_COUNT)
         return false;
 
-    return weapon_has_targetting(wtype);
+    return weapon_has_targetting(weptype);
 }
 
 ubyte find_nth_weapon_held(ushort index, ubyte n)
@@ -788,17 +802,17 @@ ubyte find_nth_weapon_held(ushort index, ubyte n)
 ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person)
 {
     ulong credits;
-    ushort wtype;
+    ushort weptype;
 
     credits = 0;
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         struct WeaponDef *wdef;
 
-        if (!person_carries_weapon(p_person, wtype))
+        if (!person_carries_weapon(p_person, weptype))
             continue;
 
-        wdef = &weapon_defs[wtype];
+        wdef = &weapon_defs[weptype];
         credits += wdef->Cost * persuaded_person_weapons_sell_cost_permil / 1000;
     }
     return credits;
@@ -807,20 +821,20 @@ ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person)
 void do_weapon_quantities_net_to_player(struct Thing *p_person)
 {
     ushort plyr, plagent;
-    ushort wtype;
+    ushort weptype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
     plagent = p_person->U.UPerson.ComCur & 3;
 
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         ushort fp, n;
 
-        fp = weapon_fourpack_index(wtype);
+        fp = weapon_fourpack_index(weptype);
         if (fp >= WFRPK_COUNT)
             continue;
 
-        if (person_carries_weapon(p_person, wtype))
+        if (person_carries_weapon(p_person, weptype))
             n = net_agents__FourPacks[plyr][plagent].Amount[fp];
         else
             n = 0;
@@ -831,20 +845,20 @@ void do_weapon_quantities_net_to_player(struct Thing *p_person)
 void do_weapon_quantities_player_to_net(struct Thing *p_person)
 {
     ushort plyr, plagent;
-    ushort wtype;
+    ushort weptype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
     plagent = p_person->U.UPerson.ComCur & 3;
 
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         ushort fp, n;
 
-        fp = weapon_fourpack_index(wtype);
+        fp = weapon_fourpack_index(weptype);
         if (fp >= WFRPK_COUNT)
             continue;
 
-        if (person_carries_weapon(p_person, wtype))
+        if (person_carries_weapon(p_person, weptype))
             n = players[plyr].FourPacks[fp][plagent];
         else
             n = 0;
@@ -855,20 +869,20 @@ void do_weapon_quantities_player_to_net(struct Thing *p_person)
 void do_weapon_quantities_cryo_to_player(struct Thing *p_person)
 {
     ushort plyr, plagent;
-    ushort wtype;
+    ushort weptype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
     plagent = p_person->U.UPerson.ComCur & 3;
 
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         ushort fp, n;
 
-        fp = weapon_fourpack_index(wtype);
+        fp = weapon_fourpack_index(weptype);
         if (fp >= WFRPK_COUNT)
             continue;
 
-        if (person_carries_weapon(p_person, wtype))
+        if (person_carries_weapon(p_person, weptype))
             n = cryo_agents.FourPacks[plagent].Amount[fp];
         else
             n = 0;
@@ -879,20 +893,20 @@ void do_weapon_quantities_cryo_to_player(struct Thing *p_person)
 void do_weapon_quantities_max_to_player(struct Thing *p_person)
 {
     ushort plyr, plagent;
-    ushort wtype;
+    ushort weptype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
     plagent = p_person->U.UPerson.ComCur & 3;
 
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         ushort fp, n;
 
-        fp = weapon_fourpack_index(wtype);
+        fp = weapon_fourpack_index(weptype);
         if (fp >= WFRPK_COUNT)
             continue;
 
-        if (person_carries_weapon(p_person, wtype))
+        if (person_carries_weapon(p_person, weptype))
             n = 4;
         else
             n = 0;
@@ -1223,13 +1237,13 @@ void set_person_weapon_turn(struct Thing *p_person, short n_turn)
     {
         PlayerInfo *p_player;
         ushort plyr, plagent;
-        ushort wtype;
+        ushort weptype;
 
         plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
         plagent = p_person->U.UPerson.ComCur & 3;
         p_player = &players[plyr];
-        wtype = p_person->U.UPerson.CurrentWeapon;
-        p_player->WepDelays[plagent][wtype] = n_turn;
+        weptype = p_person->U.UPerson.CurrentWeapon;
+        p_player->WepDelays[plagent][weptype] = n_turn;
         p_person->U.UPerson.WeaponTurn = n_turn;
     }
 }
@@ -1260,7 +1274,7 @@ void process_clone_disguise(struct Thing *p_person)
     }
 }
 
-TbBool person_weapons_remove_one(struct Thing *p_person, ushort wtype)
+TbBool person_weapons_remove_one(struct Thing *p_person, ushort weptype)
 {
     PlayerInfo *p_player;
     ushort plagent;
@@ -1276,14 +1290,14 @@ TbBool person_weapons_remove_one(struct Thing *p_person, ushort wtype)
         p_player = &players[plyr];
     }
 
-    if (p_person->U.UPerson.CurrentWeapon == wtype)
+    if (p_person->U.UPerson.CurrentWeapon == weptype)
         p_person->U.UPerson.CurrentWeapon = WEP_NULL;
 
     if (p_player != NULL)
         //TODO replace  with weapons_remove_one() call, when FourPacks have unified format
-        done = weapons_remove_one_for_player(&p_person->U.UPerson.WeaponsCarried, p_player->FourPacks, plagent, wtype);
+        done = weapons_remove_one_for_player(&p_person->U.UPerson.WeaponsCarried, p_player->FourPacks, plagent, weptype);
     else
-        done = weapons_remove_one_from_npc(&p_person->U.UPerson.WeaponsCarried, wtype);
+        done = weapons_remove_one_from_npc(&p_person->U.UPerson.WeaponsCarried, weptype);
     return done;
 }
 

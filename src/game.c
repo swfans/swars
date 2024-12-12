@@ -1177,7 +1177,7 @@ void draw_hud_target_mouse(short dcthing)
         ushort msspr;
         uint range;
 
-        weprange = current_weapon_range(p_dcthing);
+        weprange = current_hand_weapon_range(p_dcthing);
         switch (p_locplayer->TargetType)
         {
         case 1:
