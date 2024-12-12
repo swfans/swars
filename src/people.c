@@ -1702,6 +1702,8 @@ StateChRes person_init_kill_person(struct Thing *p_person, short target)
 
 StateChRes person_init_persuade_person(struct Thing *p_person, short target)
 {
+    int weapon_range;
+
     if (target == 0)
     {
         p_person->State = PerSt_NONE;
@@ -1711,7 +1713,13 @@ StateChRes person_init_persuade_person(struct Thing *p_person, short target)
     p_person->State = PerSt_PERSUADE_PERSON;
     p_person->U.UPerson.ComTimer = -1;
     p_person->PTarget = &things[target];
-    p_person->U.UPerson.ComRange = 10; // TODO range changes with mods; make it more dynamic?
+    if (person_carries_weapon(p_person, WEP_PERSUADER2))
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADER2);
+    else
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
+    p_person->U.UPerson.ComRange = (weapon_range >> 6) * 3 / 4;
+    if (p_person->U.UPerson.ComRange < 1)
+        p_person->U.UPerson.ComRange = 1;
     p_person->SubState = PerSt_NONE;
 
     p_person->U.UPerson.Timer2 = 10;
