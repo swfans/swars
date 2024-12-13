@@ -200,6 +200,11 @@ void load_peep_type_stats(void);
  */
 const char *person_type_name(ushort ptype);
 
+/** Returns if a given type of person requires advanced persuadertron to be affected.
+ */
+TbBool person_type_only_affected_by_adv_persuader(ushort ptype);
+TbBool person_only_affected_by_adv_persuader(ThingIdx person);
+
 /** Print person state in function-like style to a buffer.
  */
 void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing);

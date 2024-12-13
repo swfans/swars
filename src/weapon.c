@@ -37,6 +37,12 @@
 #include "swlog.h"
 /******************************************************************************/
 
+enum ProcessProximityWieldWeaponTargetSelect {
+    PTargSelect_Persuader = 0,
+    PTargSelect_PersuadeAdv,
+    PTargSelect_SoulCollect,
+};
+
 struct WeaponDef weapon_defs[] = {
     { 0,    0,  0,  0,   0,  0, 0, 0, WEPDFLG_None,          0, 0,     0,     0,  0},
     { 5,   50,  4,  5,   8, 10, 1, 1, WEPDFLG_CanPurchease, 16, 1,    40,    40, 10},
@@ -1115,12 +1121,36 @@ void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
         : : "a" (p_vehicle), "d" (p_person));
 }
 
-TbBool person_can_be_persuaded_now(struct Thing *p_person, ThingIdx target, short weapon_range, ushort flag, ushort *energy_reqd)
+ushort persuade_power_required(ThingIdx victim)
+{
+    struct Thing *p_victim;
+    ushort ptype;
+    ushort persd_pwr_rq;
+    short brain_lv;
+
+    if (victim <= 0)
+        return 9999;
+
+    p_victim = &things[victim];
+    if ((p_victim->Flag2 & TgF2_Unkn00400000) != 0)
+        ptype = p_victim->U.UPerson.OldSubType;
+    else
+        ptype = p_victim->SubType;
+
+    persd_pwr_rq = peep_type_stats[ptype].PersuadeReqd;
+    brain_lv = cybmod_brain_level(&p_victim->U.UPerson.UMod);
+    if (brain_lv == 5)
+        return 9999;
+    if (brain_lv == 4)
+        persd_pwr_rq = peep_type_stats[SubTT_PERS_AGENT].PersuadeReqd;
+
+    return persd_pwr_rq;
+}
+
+TbBool person_can_be_persuaded_now(struct Thing *p_person, ThingIdx target, short weapon_range, ushort target_select, ushort *energy_reqd)
 {
     struct Thing *p_target;
-    TbBool req_pers2;
-    short persuadeReqd;
-    short brain_lv;
+    short target_persd_pwr_rq;
 
     if (target <= 0)
         return false;
@@ -1141,51 +1171,62 @@ TbBool person_can_be_persuaded_now(struct Thing *p_person, ThingIdx target, shor
         }
     }
 
-    {
-        ushort target_stype;
+    if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
+      ((p_target->Flag & (TngF_Unkn40000000|TngF_Persuaded|TngF_Destroyed)) != 0))
+        return false;
 
-        if ((p_target->Flag2 & 0x400000) != 0)
-            target_stype = p_target->U.UPerson.OldSubType;
-        else
-            target_stype = p_target->SubType;
+    // If already harvested the soul
+    if ((target_select == PTargSelect_SoulCollect) && ((p_target->Flag2 & TgF2_SoulDepleted) != 0))
+        return false;
 
-        persuadeReqd = peep_type_stats[target_stype].PersuadeReqd;
-        req_pers2 = (target_stype == SubTT_PERS_ZEALOT);
-    }
-    brain_lv = cybmod_brain_level(&p_target->U.UPerson.UMod);
-    if (brain_lv == 4)
-    {
-        persuadeReqd = peep_type_stats[SubTT_PERS_AGENT].PersuadeReqd;
-    }
-    else if (brain_lv == 5)
-    {
-        persuadeReqd = 9999;
-    }
+    // Cannot persuade people from own group
+    if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
+      (p_target->U.UPerson.EffectiveGroup == p_person->U.UPerson.EffectiveGroup))
+        return false;
+
+    // Holding a taser prevents both persuasion and soul harvest
+    if (p_target->U.UPerson.CurrentWeapon == WEP_H2HTASER)
+        return false;
+
+    // Self-affecting not allowed for both persuasion and soul harvest
+    if (target == p_person->ThingOffset)
+        return false;
+
+    // Some people can only be affected by advanced persuader
+    if ((target_select == PTargSelect_Persuader) &&
+      person_only_affected_by_adv_persuader(target))
+        return false;
+
+    target_persd_pwr_rq = persuade_power_required(target);
+
+    // Check if we have enough persuade power to overwhelm the target
+    if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
+      (target_persd_pwr_rq > p_person->U.UPerson.PersuadePower))
+        return false;
+
     if ((p_person->Flag & TngF_PlayerAgent) != 0)
-        *energy_reqd = 30 * (persuadeReqd + 1);
+        *energy_reqd = 30 * (target_persd_pwr_rq + 1);
     if (*energy_reqd > 600)
         *energy_reqd = 600;
 
-    if (((p_target->Flag & 0x40080002) == 0 || flag == 2)
-        && (flag != 2 || (p_target->Flag2 & 0x4000000) == 0) && (!req_pers2 || flag)
-        && (persuadeReqd <= p_person->U.UPerson.PersuadePower || flag == 2)
-        && (p_target->U.UPerson.EffectiveGroup != p_person->U.UPerson.EffectiveGroup || flag > 1u)
-        && (p_target->U.UPerson.CurrentWeapon != WEP_H2HTASER)
-        && (*energy_reqd <= p_person->U.UPerson.Energy)
-        && (p_target != p_person)
-        && (p_person->State != PerSt_PERSUADE_PERSON || flag == 2 || target == p_person->GotoThingIndex) )
-    {
-        return true;
-    }
-    return false;
+    // Check if we have enough weapon energy
+    if (*energy_reqd > p_person->U.UPerson.Energy)
+        return false;
+
+    // If under commands to persuade a specific person, accept only that person ignoring anyone else
+    if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
+      (p_person->State == PerSt_PERSUADE_PERSON) && (target != p_person->GotoThingIndex))
+        return false;
+
+    return true;
 }
 
-short process_persuadertron(struct Thing *p_person, ubyte flag, ushort *energy_reqd)
+short process_persuadertron(struct Thing *p_person, ubyte target_select, ushort *energy_reqd)
 {
 #if 0
     short ret;
     asm volatile ("call ASM_process_persuadertron\n"
-        : "=r" (ret) : "a" (p_person), "d" (flag), "b" (energy_reqd));
+        : "=r" (ret) : "a" (p_person), "d" (target_select), "b" (energy_reqd));
     return ret;
 #endif
     short cntr_cor_x, cntr_cor_z;
@@ -1242,7 +1283,7 @@ short process_persuadertron(struct Thing *p_person, ubyte flag, ushort *energy_r
                     dist_z >>= 1;
                 if (dist_x + dist_z < weapon_range)
                 {
-                    if (person_can_be_persuaded_now(p_person, target, weapon_range, flag, energy_reqd))
+                    if (person_can_be_persuaded_now(p_person, target, weapon_range, target_select, energy_reqd))
                         return target;
                 }
                 target = p_target->Next;
@@ -1647,21 +1688,21 @@ void process_wielded_weapon(struct Thing *p_person)
         if ((p_person->Health < 2 * p_person->U.UPerson.MaxHealth) &&
           (((gameturn + p_person->ThingOffset) & 7) == 0))
         {
-            targtng = process_persuadertron(p_person, 2u, &energy_rq);
+            targtng = process_persuadertron(p_person, PTargSelect_SoulCollect, &energy_rq);
             if (targtng > 0)
                 get_soul(&things[targtng], p_person);
         }
         return;
     case WEP_PERSUADRTRN:
         {
-            targtng = process_persuadertron(p_person, 0, &energy_rq);
+            targtng = process_persuadertron(p_person, PTargSelect_Persuader, &energy_rq);
             if (targtng > 0)
                 set_person_persuaded(&things[targtng], p_person, energy_rq);
         }
         return;
     case WEP_PERSUADER2:
         {
-            targtng = process_persuadertron(p_person, 1u, &energy_rq);
+            targtng = process_persuadertron(p_person, PTargSelect_PersuadeAdv, &energy_rq);
             if (targtng > 0)
                 set_person_persuaded(&things[targtng], p_person, energy_rq);
         }

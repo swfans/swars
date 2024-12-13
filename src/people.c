@@ -432,6 +432,11 @@ const char *person_type_name(ushort ptype)
     return p_pestata->Name;
 }
 
+TbBool person_type_only_affected_by_adv_persuader(ushort ptype)
+{
+    return (ptype == SubTT_PERS_ZEALOT);
+}
+
 void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing)
 {
     char *s;
@@ -580,6 +585,24 @@ TbBool person_is_executing_commands(ThingIdx person)
 
     p_person = &things[person];
     return ((p_person->Flag2 & TgF2_Unkn0800) != 0);
+}
+
+TbBool person_only_affected_by_adv_persuader(ThingIdx person)
+{
+    struct Thing *p_person;
+    ushort ptype;
+
+    if (person <= 0)
+        return false;
+
+    p_person = &things[person];
+
+    if ((p_person->Flag2 & TgF2_Unkn00400000) != 0)
+        ptype = p_person->U.UPerson.OldSubType;
+    else
+        ptype = p_person->SubType;
+
+    return person_type_only_affected_by_adv_persuader(ptype);
 }
 
 TbBool person_is_persuaded(ThingIdx person)
