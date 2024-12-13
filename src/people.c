@@ -966,6 +966,7 @@ void persuaded_person_remove_from_stats(struct Thing *p_person, ushort brief)
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy)
 {
+    // Cannot persuade other players agent
     if ((p_person->Flag & TngF_PlayerAgent) != 0)
         return;
 
@@ -974,23 +975,25 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
 
     play_dist_sample(p_person, 20, 127, 64, 100, 0, 3);
     remove_path(p_person);
-    set_person_animmode_walk(p_person);
+
     p_attacker->U.UPerson.Energy -= energy;
     if (p_attacker->U.UPerson.Energy < 0)
         p_attacker->U.UPerson.Energy = 0;
+
     p_person->PTarget = NULL;
     p_person->U.UPerson.Target2 = 0;
-    p_person->State = 0;
+    p_person->State = PerSt_NONE;
 
     p_person->Flag |= TngF_Unkn40000000 | TngF_Unkn0004;
     p_person->Owner = p_attacker->ThingOffset;
     p_person->Flag &= ~(TngF_Unkn00800000|TngF_Unkn00040000|TngF_Unkn00020000|TngF_Unkn0800|TngF_Unkn0080);
+
     set_person_animmode_walk(p_person);
     p_person->U.UPerson.ComTimer = -1;
     p_person->U.UPerson.ComRange = 3;
     p_person->U.UPerson.Timer2 = 5;
     p_person->U.UPerson.StartTimer2 = 5;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
 
     p_person->U.UPerson.EffectiveGroup = p_attacker->U.UPerson.EffectiveGroup;
     p_person->U.UPerson.Within = 0;
@@ -1649,7 +1652,7 @@ StateChRes person_init_go_to_point(struct Thing *p_person, short x, short y,
     p_person->U.UPerson.GotoZ = z;
     p_person->U.UPerson.ComRange = range;
     p_person->U.UPerson.ComTimer = -1;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     p_person->Timer1 = 48;
     p_person->StartTimer1 = 48;
     return StCh_ACCEPTED;
@@ -1666,7 +1669,7 @@ StateChRes person_init_go_to_person(struct Thing *p_person, short target,
     p_person->GotoThingIndex = target;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     p_person->U.UPerson.ComRange = range;
     return StCh_ACCEPTED;
 }
@@ -1688,7 +1691,7 @@ StateChRes person_init_kill_person(struct Thing *p_person, short target)
     p_person->State = PerSt_KILL_PERSON;
     p_person->PTarget = &things[target];
     p_person->U.UPerson.ComTimer = -1;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
 
     get_weapon_out(p_person);
 
@@ -1720,7 +1723,7 @@ StateChRes person_init_persuade_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComRange = (weapon_range >> 6) * 3 / 4;
     if (p_person->U.UPerson.ComRange < 1)
         p_person->U.UPerson.ComRange = 1;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
 
     p_person->U.UPerson.Timer2 = 10;
     p_person->U.UPerson.StartTimer2 = 10;
@@ -1741,7 +1744,7 @@ StateChRes person_init_block_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComRange = 2;
     p_person->U.UPerson.Timer2 = 20;
     p_person->U.UPerson.StartTimer2 = 20;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     return StCh_ACCEPTED;
 }
 
@@ -1760,7 +1763,7 @@ StateChRes person_init_scare_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComRange = 2;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     get_weapon_out(p_person);
     return StCh_ACCEPTED;
 }
@@ -1786,7 +1789,7 @@ StateChRes person_init_cmd_follow_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComRange = 0;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     return StCh_ACCEPTED;
 }
 
@@ -1803,7 +1806,7 @@ StateChRes person_init_support_person(struct Thing *p_person, short target)
     p_person->U.UPerson.ComRange = 3;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     return StCh_ACCEPTED;
 }
 
@@ -1820,7 +1823,7 @@ StateChRes person_init_protect_person(struct Thing *p_person, short target, TbBo
     p_person->U.UPerson.ComRange = 8;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     if (one_target)
         p_person->Owner = target;
     return StCh_ACCEPTED;
@@ -1855,7 +1858,7 @@ StateChRes person_init_cmd_get_item(struct Thing *p_person, short target)
     p_person->U.UPerson.GotoZ = tgtng_z;
     p_person->U.UPerson.Vehicle = 0;
     p_person->U.UPerson.ComTimer = -1;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     p_person->U.UPerson.ComRange = 0;
     return StCh_ACCEPTED;
 }
@@ -1903,7 +1906,7 @@ StateChRes person_init_destroy_building(struct Thing *p_person, short x, short z
     p_person->State = PerSt_DESTROY_BUILDING;
     p_person->U.UPerson.ComTimer = -1;
     p_person->PTarget = &things[target];
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
 
     p_person->U.UPerson.Timer2 = 10;
     p_person->U.UPerson.StartTimer2 = 10;
@@ -1948,7 +1951,7 @@ StateChRes person_init_use_vehicle(struct Thing *p_person, short vehicle)
     p_person->State = PerSt_USE_VEHICLE;
     p_person->U.UPerson.ComTimer = -1;
     p_person->U.UPerson.ComRange = 1;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     p_person->U.UPerson.GotoX = vhtng_x;
     p_person->U.UPerson.GotoZ = vhtng_z;
 
@@ -1978,7 +1981,7 @@ StateChRes person_init_catch_train(struct Thing *p_person, short face)
     p_person->State = PerSt_CATCH_TRAIN;
     p_person->U.UPerson.ComTimer = -1;
     p_person->U.UPerson.ComRange = 0;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
 
     p_person->U.UPerson.Timer2 = 10;
     p_person->U.UPerson.StartTimer2 = 10;
@@ -2076,7 +2079,7 @@ StateChRes person_init_exit_ferry(struct Thing *p_person, short portbld)
     p_person->State = PerSt_EXIT_FERRY;
     p_person->U.UPerson.ComTimer = -1;
     p_person->U.UPerson.ComRange = 1;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
     p_person->U.UPerson.GotoX = prtng_x;
     p_person->U.UPerson.GotoZ = prtng_z;
 
@@ -2142,7 +2145,7 @@ StateChRes person_init_go_to_point_face(struct Thing *p_person, short x,
     p_person->U.UPerson.ComRange = range;
     p_person->U.UPerson.ComTimer = -1;
     p_person->State = PerSt_GOTO_POINT;
-    p_person->SubState = PerSt_NONE;
+    p_person->SubState = 0;
 
     p_person->Timer1 = 48;
     p_person->StartTimer1 = 48;

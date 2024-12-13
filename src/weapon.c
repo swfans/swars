@@ -1117,10 +1117,114 @@ void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
 
 short process_persuadertron(struct Thing *p_person, ubyte flag, ushort *energy_reqd)
 {
+#if 0
     short ret;
     asm volatile ("call ASM_process_persuadertron\n"
         : "=r" (ret) : "a" (p_person), "d" (flag), "b" (energy_reqd));
     return ret;
+#endif
+    short cntr_cor_x, cntr_cor_y, cntr_cor_z;
+    short dt_x, dt_y;
+    short weapon_range;
+
+    *energy_reqd = 0;
+    cntr_cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+    cntr_cor_y = PRCCOORD_TO_MAPCOORD(p_person->Y);
+    cntr_cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+
+    if (p_person->U.UPerson.CurrentWeapon == WEP_PERSUADER2)
+        weapon_range = current_hand_weapon_range(p_person);
+    else
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
+
+    for (dt_x = -3; dt_x <= 3; dt_x++)
+    {
+        for (dt_y = -3; dt_y <= 3; dt_y++)
+        {
+            ThingIdx target;
+            short tl_x, tl_z;
+            int k;
+
+            tl_x = MAPCOORD_TO_TILE(cntr_cor_x) + dt_x;
+            if ((tl_x < 0) || (tl_x >= MAP_TILE_WIDTH))
+                continue;
+            tl_z = MAPCOORD_TO_TILE(cntr_cor_z) + dt_y;
+            if ((tl_z < 0) || (tl_z >= MAP_TILE_HEIGHT))
+              continue;
+
+            target = get_mapwho_thing_index(tl_x, tl_z);
+            k = 0;
+            while (target != 0)
+            {
+                struct Thing *p_target;
+                TbBool req_pers2;
+                short persuadeReqd;
+                short brain_lv;
+
+                if (k >= 700)
+                    break;
+                ++k;
+
+                req_pers2 = 0;
+                if (target <= 0)
+                {
+                    target = sthings[target].Next;
+                    continue;
+                }
+                p_target = &things[target];
+                {
+                    ushort target_stype;
+                    if ((p_target->Flag2 & 0x400000) != 0)
+                        target_stype = p_target->U.UPerson.OldSubType;
+                    else
+                        target_stype = p_target->SubType;
+
+                    persuadeReqd = peep_type_stats[target_stype].PersuadeReqd;
+                    if (target_stype == SubTT_PERS_ZEALOT)
+                        req_pers2 = 1;
+                }
+                brain_lv = cybmod_brain_level(&p_target->U.UPerson.UMod);
+                if (brain_lv == 4)
+                {
+                    persuadeReqd = peep_type_stats[SubTT_PERS_AGENT].PersuadeReqd;
+                }
+                else if (brain_lv == 5)
+                {
+                    persuadeReqd = 9999;
+                }
+                if ((p_person->Flag & 0x2000) != 0)
+                    *energy_reqd = 30 * (persuadeReqd + 1);
+                if (*energy_reqd > 600)
+                    *energy_reqd = 600;
+                if ((p_target->Type == TT_PERSON) && ((p_target->Flag & 0x40080002) == 0 || flag == 2)
+                    && (flag != 2 || (p_target->Flag2 & 0x4000000) == 0) && (!req_pers2 || flag)
+                    && (persuadeReqd <= p_person->U.UPerson.PersuadePower || flag == 2)
+                    && (p_target->U.UPerson.EffectiveGroup != p_person->U.UPerson.EffectiveGroup || flag > 1u)
+                    && (p_target->U.UPerson.CurrentWeapon != WEP_H2HTASER)
+                    && (*energy_reqd <= p_person->U.UPerson.Energy)
+                    && (p_target != p_person)
+                    && (p_person->State != PerSt_PERSUADE_PERSON || flag == 2 || target == p_person->GotoThingIndex) )
+                {
+                    int dist_x, dist_y, dist_z;
+
+                    dist_y = PRCCOORD_TO_MAPCOORD(p_target->Y) - cntr_cor_y;
+                    if ((dist_y < 155) && (dist_y > -155))
+                    {
+                      dist_x = abs(PRCCOORD_TO_MAPCOORD(p_target->X) - cntr_cor_x);
+                      dist_z = abs(PRCCOORD_TO_MAPCOORD(p_target->Z) - cntr_cor_z);
+                      if (dist_x <= dist_z)
+                          dist_x >>= 1;
+                      else
+                          dist_z >>= 1;
+                      if (dist_x + dist_z < weapon_range)
+                          return p_target->ThingOffset;
+                    }
+                }
+                target = p_target->Next;
+            }
+        }
+    }
+    return 0;
 }
 
 void get_soul(struct Thing *p_dead, struct Thing *p_person)
