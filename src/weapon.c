@@ -548,16 +548,21 @@ ushort weapon_sprite_index(ushort wtype, TbBool enabled)
     return sprid;
 }
 
-ushort weapon_is_deployed_at_wielder_pos(ushort wtype)
+TbBool weapon_is_deployed_at_wielder_pos(ushort wtype)
 {
     return (wtype == WEP_ELEMINE) || (wtype == WEP_EXPLMINE) ||
       (wtype == WEP_AIRSTRIKE) || (wtype == WEP_CEREBUSIFF) ||
       (wtype == WEP_RAZORWIRE) || (wtype == WEP_EXPLWIRE);
 }
 
-ushort weapon_is_for_throwing(ushort weptype)
+TbBool weapon_is_for_throwing(ushort weptype)
 {
     return (weptype == WEP_NUCLGREN) || (weptype == WEP_CRAZYGAS) || (weptype == WEP_KOGAS);
+}
+
+TbBool weapon_is_breaking_will(ushort weptype)
+{
+    return (weptype == WEP_PERSUADRTRN) || (weptype == WEP_PERSUADER2);
 }
 
 ushort weapon_fourpack_index(ushort wtype)
@@ -757,6 +762,9 @@ short get_hand_weapon_range(struct Thing *p_person, ushort weptype)
 
     if (weapon_is_for_throwing(weptype))
         range = (85 * range * (3 + cybmod_arms_level(&p_person->U.UPerson.UMod)) + 1) >> 8;
+
+    if (weapon_is_breaking_will(weptype))
+        range = (85 * range * (3 + cybmod_brain_level(&p_person->U.UPerson.UMod)) + 1) >> 8;
 
     return range;
 }

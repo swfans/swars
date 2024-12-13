@@ -139,7 +139,7 @@ const char *weapon_codename(ushort wtype);
 
 /** Returns if the weapon activates at the location of the wielding person.
  */
-ushort weapon_is_deployed_at_wielder_pos(ushort wtype);
+TbBool weapon_is_deployed_at_wielder_pos(ushort wtype);
 
 /** Returns panel sprite index to be used to represent the weapon.
  */
