@@ -31,6 +31,7 @@
 #include "player.h"
 #include "game.h"
 #include "game_speed.h"
+#include "thing_search.h"
 #include "wadfile.h"
 #include "sound.h"
 #include "vehicle.h"
@@ -1147,13 +1148,17 @@ ushort persuade_power_required(ThingIdx victim)
     return persd_pwr_rq;
 }
 
-TbBool person_can_be_persuaded_now(struct Thing *p_person, ThingIdx target, short weapon_range, ushort target_select, ushort *energy_reqd)
+TbBool person_can_be_persuaded_now(ThingIdx attacker, ThingIdx target,
+  short weapon_range, ubyte target_select, ushort *energy_reqd)
 {
     struct Thing *p_target;
+    struct Thing *p_attacker;
     short target_persd_pwr_rq;
 
-    if (target <= 0)
+    if ((target <= 0) || (attacker <= 0))
         return false;
+
+    p_attacker = &things[attacker];
 
     p_target = &things[target];
     if (p_target->Type != TT_PERSON)
@@ -1163,12 +1168,10 @@ TbBool person_can_be_persuaded_now(struct Thing *p_person, ThingIdx target, shor
         int dist_y;
         short cntr_cor_y;
 
-        cntr_cor_y = PRCCOORD_TO_MAPCOORD(p_person->Y);
-        dist_y = abs(PRCCOORD_TO_MAPCOORD(p_target->Y) - cntr_cor_y);
-        if (dist_y >= 155)
-        {
+        cntr_cor_y = PRCCOORD_TO_YCOORD(p_attacker->Y);
+        dist_y = abs(PRCCOORD_TO_YCOORD(p_target->Y) - cntr_cor_y);
+        if (dist_y >= 1240)
             return false;
-        }
     }
 
     if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
@@ -1181,7 +1184,7 @@ TbBool person_can_be_persuaded_now(struct Thing *p_person, ThingIdx target, shor
 
     // Cannot persuade people from own group
     if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
-      (p_target->U.UPerson.EffectiveGroup == p_person->U.UPerson.EffectiveGroup))
+      (p_target->U.UPerson.EffectiveGroup == p_attacker->U.UPerson.EffectiveGroup))
         return false;
 
     // Holding a taser prevents both persuasion and soul harvest
@@ -1189,7 +1192,7 @@ TbBool person_can_be_persuaded_now(struct Thing *p_person, ThingIdx target, shor
         return false;
 
     // Self-affecting not allowed for both persuasion and soul harvest
-    if (target == p_person->ThingOffset)
+    if (target == attacker)
         return false;
 
     // Some people can only be affected by advanced persuader
@@ -1201,21 +1204,23 @@ TbBool person_can_be_persuaded_now(struct Thing *p_person, ThingIdx target, shor
 
     // Check if we have enough persuade power to overwhelm the target
     if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
-      (target_persd_pwr_rq > p_person->U.UPerson.PersuadePower))
+      (target_persd_pwr_rq > p_attacker->U.UPerson.PersuadePower))
         return false;
 
-    if ((p_person->Flag & TngF_PlayerAgent) != 0)
+    // Only player agents require energy to persuade
+    *energy_reqd = 0;
+    if ((p_attacker->Flag & TngF_PlayerAgent) != 0)
         *energy_reqd = 30 * (target_persd_pwr_rq + 1);
     if (*energy_reqd > 600)
         *energy_reqd = 600;
 
     // Check if we have enough weapon energy
-    if (*energy_reqd > p_person->U.UPerson.Energy)
+    if (*energy_reqd > p_attacker->U.UPerson.Energy)
         return false;
 
     // If under commands to persuade a specific person, accept only that person ignoring anyone else
     if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
-      (p_person->State == PerSt_PERSUADE_PERSON) && (target != p_person->GotoThingIndex))
+      (p_attacker->State == PerSt_PERSUADE_PERSON) && (target != p_attacker->GotoThingIndex))
         return false;
 
     return true;
@@ -1229,68 +1234,28 @@ short process_persuadertron(struct Thing *p_person, ubyte target_select, ushort 
         : "=r" (ret) : "a" (p_person), "d" (target_select), "b" (energy_reqd));
     return ret;
 #endif
-    short cntr_cor_x, cntr_cor_z;
-    short dt_x, dt_y;
+    short cor_x, cor_z;
     short weapon_range;
 
-    *energy_reqd = 0;
-    cntr_cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
-    cntr_cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+    cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+    cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
 
-    if (p_person->U.UPerson.CurrentWeapon == WEP_PERSUADER2)
-        weapon_range = current_hand_weapon_range(p_person);
-    else
-        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
-
-    for (dt_x = -3; dt_x <= 3; dt_x++)
+    switch (target_select)
     {
-        for (dt_y = -3; dt_y <= 3; dt_y++)
-        {
-            ThingIdx target;
-            short tl_x, tl_z;
-            int k;
-
-            tl_x = MAPCOORD_TO_TILE(cntr_cor_x) + dt_x;
-            if ((tl_x < 0) || (tl_x >= MAP_TILE_WIDTH))
-                continue;
-            tl_z = MAPCOORD_TO_TILE(cntr_cor_z) + dt_y;
-            if ((tl_z < 0) || (tl_z >= MAP_TILE_HEIGHT))
-              continue;
-
-            target = get_mapwho_thing_index(tl_x, tl_z);
-            k = 0;
-            while (target != 0)
-            {
-                struct Thing *p_target;
-                int dist_x, dist_z;
-
-                if (k >= 700)
-                    break;
-                ++k;
-
-                if (target <= 0)
-                {
-                    target = sthings[target].Next;
-                    continue;
-                }
-
-                p_target = &things[target];
-                dist_x = abs(PRCCOORD_TO_MAPCOORD(p_target->X) - cntr_cor_x);
-                dist_z = abs(PRCCOORD_TO_MAPCOORD(p_target->Z) - cntr_cor_z);
-                if (dist_x <= dist_z)
-                    dist_x >>= 1;
-                else
-                    dist_z >>= 1;
-                if (dist_x + dist_z < weapon_range)
-                {
-                    if (person_can_be_persuaded_now(p_person, target, weapon_range, target_select, energy_reqd))
-                        return target;
-                }
-                target = p_target->Next;
-            }
-        }
+    case PTargSelect_Persuader:
+    default:
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
+        break;
+    case PTargSelect_PersuadeAdv:
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADER2);
+        break;
+    case PTargSelect_SoulCollect:
+        weapon_range = get_hand_weapon_range(p_person, WEP_SOULGUN);
+        break;
     }
-    return 0;
+
+    return find_person_which_can_be_persuaded_now(cor_x, cor_z, weapon_range,
+      p_person->ThingOffset, target_select, energy_reqd);
 }
 
 void get_soul(struct Thing *p_dead, struct Thing *p_person)

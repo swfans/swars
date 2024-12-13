@@ -26,6 +26,7 @@
 #include "swlog.h"
 #include "thing.h"
 #include "vehicle.h"
+#include "weapon.h"
 
 /******************************************************************************/
 
@@ -642,6 +643,33 @@ TbBool bfilter_person_carries_weapon(ThingIdx thing, ThingFilterParams *params)
     return (weapon == -1) || person_carries_weapon(p_thing, weapon);
 }
 
+TbBool bfilter_person_can_be_persuaded_now(ThingIdx thing, ThingFilterParams *params)
+{
+    struct Thing *p_thing;
+    ThingIdx attacker;
+    short weapon_range;
+    ushort target_select;
+    ushort energy_reqd;
+    TbBool found;
+
+    if (thing <= 0)
+        return false;
+
+    attacker = params->Arg1;
+    weapon_range = params->Arg2;
+    target_select = params->Arg3;
+    energy_reqd = -1;
+
+    p_thing = &things[thing];
+    if (p_thing->Type != TT_PERSON)
+        return false;
+
+    found = person_can_be_persuaded_now(attacker, thing, weapon_range, target_select, &energy_reqd);
+    if (found)
+        params->Arg4 = energy_reqd;
+    return found;
+}
+
 short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon)
 {
     ThingIdx thing;
@@ -653,13 +681,31 @@ short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon
     return thing;
 }
 
-short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon)
+ThingIdx find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon)
 {
     ThingIdx thing;
     ThingFilterParams params;
 
     params.Arg1 = weapon;
-    thing = find_thing_type_within_circle_with_bfilter(X, Z, R, TT_PERSON, -1, bfilter_person_carries_weapon, &params);
+    thing = find_thing_type_within_circle_with_bfilter(X, Z, R, TT_PERSON, -1,
+      bfilter_person_carries_weapon, &params);
+
+    return thing;
+}
+
+ThingIdx find_person_which_can_be_persuaded_now(short X, short Z, ushort R,
+  ThingIdx attacker, ushort target_select, ushort *energy_reqd)
+{
+    ThingIdx thing;
+    ThingFilterParams params;
+
+    params.Arg1 = attacker;
+    params.Arg2 = R;
+    params.Arg3 = target_select;
+    params.Arg4 = -1;
+    thing = find_thing_type_within_circle_with_bfilter(X, Z, R, TT_PERSON, -1,
+      bfilter_person_can_be_persuaded_now, &params);
+    *energy_reqd = params.Arg4;
 
     return thing;
 }

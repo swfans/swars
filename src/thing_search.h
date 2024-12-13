@@ -88,6 +88,9 @@ ThingIdx find_dropped_weapon_within_circle(short X, short Z, ushort R, short wea
 ThingIdx find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
 ThingIdx find_person_carrying_weapon(short weapon);
 
+ThingIdx find_person_which_can_be_persuaded_now(short X, short Z, ushort R,
+  ThingIdx attacker, ushort target_select, ushort *energy_reqd);
+
 ThingIdx find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
 ThingIdx search_things_for_index(short index);
 ThingIdx find_nearest_object2(short mx, short mz, ushort sub_type);

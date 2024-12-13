@@ -22,6 +22,8 @@
 #include "bftypes.h"
 #include "bfini.h"
 
+#include "game_bstype.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -200,6 +202,9 @@ short current_hand_weapon_range(struct Thing *p_person);
 int get_weapon_range(struct Thing *p_person);
 
 void choose_best_weapon_for_range(struct Thing *p_person, int dist);
+
+TbBool person_can_be_persuaded_now(ThingIdx attacker, ThingIdx target,
+  short weapon_range, ubyte target_select, ushort *energy_reqd);
 
 /** Returns whether the person current weapon requires some time to achieve target lock.
  */
