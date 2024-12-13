@@ -31,6 +31,7 @@
 #include "campaign.h"
 #include "drawtext.h"
 #include "thing.h"
+#include "thing_search.h"
 #include "pepgroup.h"
 #include "player.h"
 #include "scanner.h"

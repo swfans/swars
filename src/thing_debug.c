@@ -33,6 +33,7 @@
 #include "game.h"
 #include "pathtrig.h"
 #include "scandraw.h"
+#include "thing_search.h"
 #include "vehicle.h"
 #include "weapon.h"
 #include "swlog.h"

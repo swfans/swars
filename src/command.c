@@ -23,8 +23,10 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfutility.h"
-#include "thing.h"
+
 #include "building.h"
+#include "thing.h"
+#include "thing_search.h"
 #include "pepgroup.h"
 #include "swlog.h"
 /******************************************************************************/

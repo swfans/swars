@@ -37,6 +37,7 @@
 #include "scandraw.h"
 #include "sound.h"
 #include "thing.h"
+#include "thing_search.h"
 #include "vehicle.h"
 #include "weapon.h"
 #include "swlog.h"

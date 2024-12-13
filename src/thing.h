@@ -559,26 +559,6 @@ struct SimpleThing
     ushort UniqueID;
 };
 
-typedef struct {
-    short Arg1;
-    short Arg2;
-    short Arg3;
-    short Arg4;
-    long Arg5;
-} ThingFilterParams;
-
-/** Definition of a simple callback type which can only return true/false and has no memory
- * of previous checks.
- * As the first thing which returns true is accepted, searching with this filter is faster
- * than the complex ones which need all things to be checked.
- */
-typedef TbBool (*ThingBoolFilter)(ThingIdx thing, ThingFilterParams *params);
-
-/** Definition of a minimizing callback type which returns a number to be compared by the
- * search function and return the thing which gives smallest.
- */
-typedef s32 (*ThingMinFilter)(ThingIdx thing, short X, short Z, ThingFilterParams *params);
-
 /** Old structure for storing State of any Thing.
  * Used only to allow reading old, pre-release levels.
  */
@@ -972,6 +952,10 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
  */
 void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
 
+/** Returns if given type represents SimpleThing rather than a full featured Thing.
+ */
+TbBool thing_type_is_simple(short ttype);
+
 /** Given thing index, sets its position in map coordinates to three variables.
  *
  * Different kinds of things have different quirks in regard to position on map.
@@ -1020,59 +1004,6 @@ void build_same_type_headers(void);
 short get_thing_same_type_head(short ttype, short subtype);
 
 TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R);
-
-/** Unified function to find a thing of given type within given circle and matching bool filter.
- *
- * Tries to use mapwho and same type list, and if cannot then just searches all used things.
- *
- * @param X Map coordinate in map units.
- * @param Z Map coordinate in map units.
- * @param R Circle radius in map units.
- * @param ttype Thing Type; to catch all, use -1 (but that will be slower).
- * @param subtype Thing SubType; to catch all, use -1.
- * @param filter Filter callback function.
- * @param param Parameters for filter callback function.
- */
-ThingIdx find_thing_type_within_circle_with_bfilter(short X, short Z, ushort R,
-  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params);
-
-/** Unified function to find a thing of given type within given circle and matching
- * minimizing filter.
- *
- * Tries to use mapwho and same type list, and if cannot then just searches all used things.
- *
- * @param X Map coordinate in map units.
- * @param Z Map coordinate in map units.
- * @param R Circle radius in map units.
- * @param ttype Thing Type; to catch all, use -1 (but that will be slower).
- * @param subtype Thing SubType; to catch all, use -1.
- * @param filter Filter callback function.
- * @param param Parameters for filter callback function.
- */
-ThingIdx find_thing_type_within_circle_with_mfilter(short X, short Z, ushort R,
-  short ttype, short subtype, ThingMinFilter filter, ThingFilterParams *params);
-
-ThingIdx find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon);
-ThingIdx find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
-ThingIdx find_person_carrying_weapon(short weapon);
-
-ThingIdx find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
-ThingIdx search_things_for_index(short index);
-ThingIdx find_nearest_object2(short mx, short mz, ushort sub_type);
-short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after);
-/** Search for train station building around given coordinates.
- */
-ThingIdx search_for_station(short X, short Z);
-ThingIdx search_for_vehicle(short X, short Z);
-ThingIdx search_things_for_uniqueid(short index, ubyte flag);
-/** Search for any thing, including off-map, nearest within given circle.
- * To be used for editors and debug modes.
- *
- * @param X Map coordinate in map units.
- * @param Z Map coordinate in map units.
- * @param R Circle radius in map units.
- */
-ThingIdx search_things_for_any_including_offmap_nearest_within_circle(short X, short Z, ushort R);
 
 struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop);
 
