@@ -762,10 +762,10 @@ short get_hand_weapon_range(struct Thing *p_person, ushort weptype)
     range = TILE_TO_MAPCOORD(wdef->RangeBlocks, 0);
 
     if (weapon_is_for_throwing(weptype))
-        range = (85 * range * (3 + cybmod_arms_level(&p_person->U.UPerson.UMod)) + 1) >> 8;
+        range = (85 * range * (3 + cybmod_arms_level(&p_person->U.UPerson.UMod)) + range) >> 8;
 
     if (weapon_is_breaking_will(weptype))
-        range = (85 * range * (3 + cybmod_brain_level(&p_person->U.UPerson.UMod)) + 1) >> 8;
+        range = (85 * range * (3 + cybmod_brain_level(&p_person->U.UPerson.UMod)) + range) >> 8;
 
     return range;
 }
