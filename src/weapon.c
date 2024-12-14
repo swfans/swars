@@ -968,7 +968,8 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
     init_laser(p_person, timer);
 
     n_targets = 0;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing != 0; thing = p_thing->LinkSameGroup)
     {
         if (n_targets >= 5)
             break;

@@ -20,6 +20,7 @@
 #define PEPGROUP_H
 
 #include "bftypes.h"
+#include "game_bstype.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -89,6 +90,19 @@ int thing_group_transfer_people(short pv_group, short nx_group, short subtype,
   int stay_limit, int tran_limit);
 
 void thing_groups_clear_all_actions(void);
+
+TbBool all_group_members_destroyed(ushort group);
+TbBool all_group_persuaded(ushort group);
+ubyte all_group_arrived(ushort group, short x, short y, short z, int radius);
+TbBool group_has_all_killed_or_persuaded_by_player(ushort group, ushort plyr);
+TbBool group_has_all_survivors_in_vehicle(ushort group, ThingIdx vehicle);
+
+TbBool group_has_no_less_members_in_vehicle(ushort group, ThingIdx vehicle, ushort amount);
+TbBool group_has_no_less_members_persuaded_by_player(ushort group, ushort plyr, ushort amount);
+TbBool group_has_no_less_members_killed_or_persuaded_by_player(ushort group, ushort plyr, ushort amount);
+TbBool group_has_no_less_members_dead(ushort group, ushort amount);
+TbBool group_has_no_less_members_near_thing(ThingIdx neartng, ushort group, ushort amount, ushort radius);
+TbBool group_has_no_less_members_persuaded_by_person(ushort group, ThingIdx owntng, ushort amount);
 
 /******************************************************************************/
 #ifdef __cplusplus

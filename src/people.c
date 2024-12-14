@@ -1810,7 +1810,7 @@ StateChRes person_init_cmd_follow_person(struct Thing *p_person, short target)
     p_person->GotoThingIndex = target;
     p_person->State = PerSt_FOLLOW_PERSON;
     p_person->U.UPerson.ComTimer = -1;
-    p_person->U.UPerson.ComRange = 0;
+    p_person->U.UPerson.ComRange = 1;
     p_person->U.UPerson.Timer2 = 50;
     p_person->U.UPerson.StartTimer2 = 50;
     p_person->SubState = 0;
@@ -3310,8 +3310,9 @@ void person_persuade_person(struct Thing *p_person)
             p_person->State = 0;
             return;
         }
-        p_person->U.UPerson.ComRange -= 2;
-        if (p_person->U.UPerson.ComRange < 2)
+        if (p_person->U.UPerson.ComRange > 2)
+            p_person->U.UPerson.ComRange -= 2;
+        else
             p_person->U.UPerson.ComRange = 2;
     }
     if (p_person->State == 0) {

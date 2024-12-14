@@ -737,16 +737,6 @@ TbBool item_is_carried_by_player(ThingIdx thing, ushort weapon, ushort plyr)
     return false;
 }
 
-ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
-{
-    ubyte ret;
-    asm volatile (
-      "push %5\n"
-      "call ASM_all_group_arrived\n"
-        : "=r" (ret) : "a" (group), "d" (x), "b" (y), "c" (z), "g" (radius));
-    return ret;
-}
-
 ubyte group_not_seen(ushort group)
 {
     ubyte ret;
@@ -836,140 +826,6 @@ ubyte mem_group_arrived(ushort group, short x, short y, short z,
     return ret;
 }
 
-TbBool all_group_persuaded(ushort group)
-{
-    ThingIdx thing;
-    struct Thing *p_thing;
-
-    thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
-    {
-        p_thing = &things[thing];
-        if (!person_is_persuaded(thing) || ((things[p_thing->Owner].Flag & TngF_PlayerAgent) == 0))
-        {
-            if (!person_is_dead(thing) && !thing_is_destroyed(thing))
-                return false;
-        }
-    }
-    return true;
-}
-
-TbBool group_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
-{
-    ThingIdx thing;
-    struct Thing *p_thing;
-
-    thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
-    {
-        p_thing = &things[thing];
-        if (!person_is_persuaded_by_player(thing, plyr))
-        {
-            if (!person_is_dead(thing) && !thing_is_destroyed(thing))
-                return false;
-        }
-    }
-    return true;
-}
-
-TbBool group_all_survivors_in_vehicle(ushort group, short vehicle)
-{
-    ThingIdx thing;
-    struct Thing *p_thing;
-
-    thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
-    {
-        p_thing = &things[thing];
-        if (p_thing->U.UPerson.Vehicle != vehicle)
-        {
-            if (!person_is_dead(thing) && !thing_is_destroyed(thing))
-                return false;
-        }
-    }
-    return false;
-}
-
-TbBool group_members_in_vehicle(ushort group, short vehicle, ushort amount)
-{
-    ThingIdx thing;
-    struct Thing *p_thing;
-    ushort n;
-
-    n = 0;
-    thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
-    {
-        p_thing = &things[thing];
-        if (!person_is_dead(thing) && !thing_is_destroyed(thing))
-        {
-            if (p_thing->U.UPerson.Vehicle == vehicle)
-                n++;
-        }
-        if (n >= amount)
-            return true;
-    }
-    return false;
-}
-
-TbBool group_members_persuaded_by_player(ushort group, ushort plyr, ushort amount)
-{
-    ThingIdx thing;
-    struct Thing *p_thing;
-    ushort n;
-
-    n = 0;
-    thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
-    {
-        p_thing = &things[thing];
-        if (person_is_persuaded_by_player(thing, plyr))
-            n++;
-        if (n >= amount)
-            return true;
-    }
-    return false;
-}
-
-TbBool group_members_killed_or_persuaded_by_player(ushort group, ushort plyr, ushort amount)
-{
-    ThingIdx thing;
-    struct Thing *p_thing;
-    ushort n;
-
-    n = 0;
-    thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
-    {
-        p_thing = &things[thing];
-        if (person_is_persuaded_by_player(thing, plyr) ||
-          person_is_dead(thing) || thing_is_destroyed(thing))
-            n++;
-        if (n >= amount)
-            return true;
-    }
-    return false;
-}
-
-TbBool group_members_dead(ushort group, ushort amount)
-{
-    ThingIdx thing;
-    struct Thing *p_thing;
-    ushort n;
-
-    n = 0;
-    thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
-    {
-        p_thing = &things[thing];
-        if (person_is_dead(thing) || thing_is_destroyed(thing))
-            n++;
-        if (n >= amount)
-            return true;
-    }
-    return false;
-}
-
 TbBool person_is_near_thing(ThingIdx neartng, ThingIdx thing, ushort radius)
 {
     short nearX, nearZ;
@@ -994,62 +850,6 @@ TbBool person_is_near_thing(ThingIdx neartng, ThingIdx thing, ushort radius)
     return (thing_is_within_circle(thing, nearX, nearZ, radius << 6));
 }
 
-
-TbBool group_members_near_thing(ThingIdx neartng, ushort group, ushort amount, ushort radius)
-{
-    ThingIdx thing;
-    struct Thing *p_thing;
-    ushort n;
-    short nearX, nearZ;
-
-    if ((neartng == 0) || person_is_dead(neartng) || thing_is_destroyed(neartng))
-        return false;
-    if (neartng <= 0) {
-        struct SimpleThing *p_neartng;
-        p_neartng = &sthings[neartng];
-        nearX = p_neartng->X;
-        nearZ = p_neartng->Z;
-    } else {
-        struct Thing *p_neartng;
-        p_neartng = &things[neartng];
-        nearX = p_neartng->X;
-        nearZ = p_neartng->Z;
-    }
-
-    n = 0;
-    thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
-    {
-        p_thing = &things[thing];
-        if (!person_is_dead(thing) && !thing_is_destroyed(thing))
-        {
-            if (thing_is_within_circle(thing, nearX, nearZ, radius << 6))
-                n++;
-        }
-        if (n >= amount)
-            return true;
-    }
-    return false;
-}
-
-TbBool group_members_persuaded_by_person(ushort group, ThingIdx owntng, ushort amount)
-{
-    ThingIdx thing;
-    struct Thing *p_thing;
-    ushort n;
-
-    n = 0;
-    thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
-    {
-        p_thing = &things[thing];
-        if (person_is_persuaded_by_person(thing, owntng))
-            n++;
-        if (n >= amount)
-            return true;
-    }
-    return false;
-}
 
 TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_objectv, ushort amount)
 {
@@ -1378,7 +1178,7 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_MEM_G_DEAD:
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
-        if (group_members_dead(group, amount)) {
+        if (group_has_no_less_members_dead(group, amount)) {
             p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
@@ -1395,7 +1195,7 @@ short test_objective(ushort objectv, ushort show_obj)
         thing = p_objectv->Thing;
         group = p_objectv->Arg2;
         amount = p_objectv->Y;
-        if (group_members_near_thing(thing, group, amount, p_objectv->Radius)) {
+        if (group_has_no_less_members_near_thing(thing, group, amount, p_objectv->Radius)) {
             p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
@@ -1432,7 +1232,7 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_PERSUADE_MEM_G:
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
-        if (group_members_persuaded_by_player(group, local_player_no, amount)) {
+        if (group_has_no_less_members_persuaded_by_player(group, local_player_no, amount)) {
             p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
@@ -1481,14 +1281,14 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_PKILL_MEM_G:
         group = p_objectv->Thing;
         amount = p_objectv->Arg2;
-        if (group_members_killed_or_persuaded_by_player(group, local_player_no, amount)) {
+        if (group_has_no_less_members_killed_or_persuaded_by_player(group, local_player_no, amount)) {
             p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
         break;
     case GAME_OBJ_PKILL_ALL_G:
         group = p_objectv->Thing;
-        if (group_all_killed_or_persuaded_by_player(group, local_player_no)) {
+        if (group_has_all_killed_or_persuaded_by_player(group, local_player_no)) {
             p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
@@ -1499,7 +1299,7 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_PROTECT_G:
         group = p_objectv->Thing;
-        if (group_members_dead(group, 1)) {
+        if (group_has_no_less_members_dead(group, 1)) {
             p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
@@ -1507,7 +1307,7 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_P_PERS_G:
         group = p_objectv->Thing;
         thing = p_objectv->Arg2;
-        if (group_members_persuaded_by_person(group, thing, 1)) {
+        if (group_has_no_less_members_persuaded_by_person(group, thing, 1)) {
             p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
@@ -1519,7 +1319,7 @@ short test_objective(ushort objectv, ushort show_obj)
             p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
-        if (group_all_survivors_in_vehicle(group, thing)) {
+        if (group_has_all_survivors_in_vehicle(group, thing)) {
             p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
@@ -1532,7 +1332,7 @@ short test_objective(ushort objectv, ushort show_obj)
             p_objectv->Status = ObvStatu_COMPLETED;
             return 0;
         }
-        if (group_members_in_vehicle(group, thing, amount)) {
+        if (group_has_no_less_members_in_vehicle(group, thing, amount)) {
             p_objectv->Status = ObvStatu_FAILED;
             return 1;
         }
