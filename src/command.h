@@ -41,7 +41,9 @@ enum PersonCommandType
    * Can be used with target 0 to just take the gun out.
    */
   PCmd_KILL_PERSON = 0x4,
-  /** Kill nearest members of given group, until given amount of kills.
+  /** Kill nearest members of given group, until given amount of group
+   * members are dead.
+   * The finish condition is met regardless of how the members died.
    */
   PCmd_KILL_MEM_GROUP = 0x5,
   /** Kill nearest members of given group, until all eliminated.

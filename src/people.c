@@ -1727,10 +1727,24 @@ StateChRes person_init_kill_person(struct Thing *p_person, short target)
     return StCh_ACCEPTED;
 }
 
-StateChRes person_init_persuade_person(struct Thing *p_person, short target)
+short person_get_command_range_for_persuade(struct Thing *p_person)
 {
     int weapon_range;
+    int cmd_range;
 
+    if (person_carries_weapon(p_person, WEP_PERSUADER2))
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADER2);
+    else
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
+
+    cmd_range = (weapon_range >> 6) * 3 / 4;
+    if (cmd_range < 1)
+        cmd_range = 1;
+    return cmd_range;
+}
+
+StateChRes person_init_persuade_person(struct Thing *p_person, short target)
+{
     if (target == 0)
     {
         p_person->State = PerSt_NONE;
@@ -1740,13 +1754,8 @@ StateChRes person_init_persuade_person(struct Thing *p_person, short target)
     p_person->State = PerSt_PERSUADE_PERSON;
     p_person->U.UPerson.ComTimer = -1;
     p_person->PTarget = &things[target];
-    if (person_carries_weapon(p_person, WEP_PERSUADER2))
-        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADER2);
-    else
-        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
-    p_person->U.UPerson.ComRange = (weapon_range >> 6) * 3 / 4;
-    if (p_person->U.UPerson.ComRange < 1)
-        p_person->U.UPerson.ComRange = 1;
+
+    p_person->U.UPerson.ComRange = person_get_command_range_for_persuade(p_person);
     p_person->SubState = 0;
 
     p_person->U.UPerson.Timer2 = 10;
@@ -2717,13 +2726,67 @@ void person_init_command(struct Thing *p_person, ushort from)
     }
 }
 
+void assign_next_target_from_group(struct Thing *p_person, ushort group, ubyte flag)
+{
+    asm volatile ("call ASM_assign_next_target_from_group\n"
+        : : "a" (p_person), "d" (group), "b" (flag));
+    return;
+}
+
+short is_group_all_persuaded_by_me(ushort group, struct Thing *p_me, short count)
+{
+    // looks like a variation on group_has_no_less_members_persuaded_by_person(); reuse?
+    short ret;
+    asm volatile (
+      "call ASM_is_group_all_persuaded_by_me\n"
+        : "=r" (ret) : "a" (group), "d" (p_me), "b" (count));
+    return ret;
+}
+
 ubyte is_command_completed(struct Thing *p_person)
 {
+#if 0
     ubyte ret;
     asm volatile (
       "call ASM_is_command_completed\n"
         : "=r" (ret) : "a" (p_person));
     return ret;
+#else
+    struct Command *p_cmd;
+
+    p_cmd = &game_commands[p_person->U.UPerson.ComCur];
+    switch (p_cmd->Type)
+    {
+    case PCmd_KILL_MEM_GROUP:
+        if (group_actions[p_cmd->OtherThing].Dead >= p_cmd->Arg2)
+            return 1;
+        assign_next_target_from_group(p_person, p_cmd->OtherThing, 0);
+        p_person->State = PerSt_KILL_PERSON;
+        return 0;
+    case PCmd_KILL_ALL_GROUP:
+        if (all_group_members_destroyed(p_cmd->OtherThing))
+            return 1;
+        assign_next_target_from_group(p_person, p_cmd->OtherThing, 0);
+        p_person->State = PerSt_KILL_PERSON;
+        return 0;
+    case PCmd_PERSUADE_MEM_GROUP:
+        if (is_group_all_persuaded_by_me(p_cmd->OtherThing, p_person, p_cmd->Arg2))
+            return 1;
+        assign_next_target_from_group(p_person, p_cmd->OtherThing, 1);
+        p_person->State = PerSt_PERSUADE_PERSON;
+        p_person->U.UPerson.ComRange = person_get_command_range_for_persuade(p_person);
+        return 0;
+    case PCmd_PERSUADE_ALL_GROUP:
+        if (is_group_all_persuaded_by_me(p_cmd->OtherThing, p_person, -1))
+            return 1;
+        assign_next_target_from_group(p_person, p_cmd->OtherThing, 1);
+        p_person->State = PerSt_PERSUADE_PERSON;
+        p_person->U.UPerson.ComRange = person_get_command_range_for_persuade(p_person);
+        return 0;
+    default:
+        return 1;
+    }
+#endif
 }
 
 int can_i_see_building(struct Thing *p_i, struct Thing *p_thing,
