@@ -38,12 +38,6 @@
 #include "swlog.h"
 /******************************************************************************/
 
-enum ProcessProximityWieldWeaponTargetSelect {
-    PTargSelect_Persuader = 0,
-    PTargSelect_PersuadeAdv,
-    PTargSelect_SoulCollect,
-};
-
 struct WeaponDef weapon_defs[] = {
     { 0,    0,  0,  0,   0,  0, 0, 0, WEPDFLG_None,          0, 0,     0,     0,  0},
     { 5,   50,  4,  5,   8, 10, 1, 1, WEPDFLG_CanPurchease, 16, 1,    40,    40, 10},

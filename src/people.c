@@ -3246,10 +3246,84 @@ void person_burning(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void person_becomes_persuaded(struct Thing *p_person, ushort energy)
+{
+    asm volatile ("call ASM_person_becomes_persuaded\n"
+        : : "a" (p_person), "d" (energy));
+}
+
 void person_persuade_person(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_person_persuade_person\n"
         : : "a" (p_person));
+#endif
+    struct Thing *p_target;
+    int dist_sq;
+    short weapon_range;
+    TbBool reached_target;
+
+    if (person_carries_weapon(p_person, WEP_PERSUADER2))
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADER2);
+    else
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
+
+    if (((p_person->Flag & (TngF_Unkn0800|TngF_Unkn0400)) != 0) &&
+      (p_person->U.UPerson.WeaponTimer > 5)) {
+        p_person->Flag &= ~TngF_Unkn0800;
+    }
+
+    p_target = &things[p_person->GotoThingIndex];
+    p_person->PTarget = p_target;
+
+    if (p_person->GotoThingIndex == 0) {
+        p_person->State = 0;
+        return;
+    }
+    if ((p_target->Flag & TngF_Persuaded) != 0) {
+        p_person->State = 0;
+        return;
+    }
+
+    dist_sq = person_goto_person_nav(p_person);
+
+    reached_target = 0;
+    if ((dist_sq != 0) && (dist_sq < weapon_range * weapon_range))
+        reached_target = 1;
+
+    if (reached_target)
+    {
+        ushort energy_reqd;
+        ubyte target_select;
+        ThingIdx target;
+
+        if (person_carries_weapon(p_person, WEP_PERSUADER2))
+            target_select = PTargSelect_PersuadeAdv;
+        else
+            target_select = PTargSelect_Persuader;
+
+        target = process_persuadertron(p_person, target_select, &energy_reqd);
+        if (target != 0)
+        {
+            p_person->PTarget = &things[p_person->GotoThingIndex];
+            person_becomes_persuaded(p_person, 0);
+            p_person->State = 0;
+            return;
+        }
+        p_person->U.UPerson.ComRange -= 2;
+        if (p_person->U.UPerson.ComRange < 2)
+            p_person->U.UPerson.ComRange = 2;
+    }
+    if (p_person->State == 0) {
+        p_person->State = PerSt_PERSUADE_PERSON;
+        p_person->Flag &= ~TngF_Unkn0800;
+    }
+
+    p_target = p_person->PTarget;
+    if ((p_target != NULL) && ((p_target->Flag & TngF_Destroyed) != 0)) {
+        p_person->State = 0;
+        p_person->Flag &= ~TngF_Unkn0800;
+    }
 }
 
 void process_support_person(struct Thing *p_person)

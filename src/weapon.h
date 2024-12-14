@@ -84,6 +84,12 @@ enum WeaponFourPackIndex
     WFRPK_COUNT,
 };
 
+enum ProcessProximityWieldWeaponTargetSelect {
+    PTargSelect_Persuader = 0,
+    PTargSelect_PersuadeAdv,
+    PTargSelect_SoulCollect,
+};
+
 struct Thing;
 
 enum WeaponDefFlags
@@ -219,6 +225,7 @@ void do_weapon_quantities1(struct Thing *p_person);
 void do_weapon_quantities_proper1(struct Thing *p_person);
 
 void process_weapon(struct Thing *p_person);
+short process_persuadertron(struct Thing *p_person, ubyte target_select, ushort *energy_reqd);
 int gun_out_anim(struct Thing *p_person, ubyte shoot_flag);
 
 s32 laser_hit_at(s32 x1, s32 y1, s32 z1, s32 *x2, s32 *y2, s32 *z2, struct Thing *p_shot);
