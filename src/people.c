@@ -23,21 +23,24 @@
 #include "bffile.h"
 #include "bfini.h"
 #include "bfutility.h"
+#include "ssampply.h"
 
 #include "bigmap.h"
 #include "building.h"
 #include "command.h"
 #include "display.h"
 #include "drawtext.h"
-#include "player.h"
+#include "enginsngobjs.h"
 #include "game.h"
 #include "game_speed.h"
 #include "game_sprani.h"
 #include "lvobjctv.h"
+#include "player.h"
 #include "scandraw.h"
 #include "sound.h"
 #include "thing.h"
 #include "thing_search.h"
+#include "tngcolisn.h"
 #include "vehicle.h"
 #include "weapon.h"
 #include "swlog.h"
@@ -196,6 +199,11 @@ const struct Direction angle_direction[] = {
     {-256,    0},
     {-181,  181},
 };
+
+extern short word_1AA38E;
+extern short word_1AA390;
+extern short word_1AA392;
+extern short word_1AA394;
 
 void read_people_conf_file(void)
 {
@@ -3503,12 +3511,77 @@ void set_angle_to_avoid_group(struct Thing *p_person)
 #endif
 }
 
+ubyte check_person_within(struct Command *p_cmd, int x, int z)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_check_person_within\n"
+        : "=r" (ret) : "a" (p_cmd), "d" (x), "b" (z));
+    return ret;
+}
+
+short do_move_colide(struct Thing *p_person, int dx, int dz, struct MyMapElement *p_mapel)
+{
+    short ret;
+    asm volatile (
+      "call ASM_do_move_colide\n"
+        : "=r" (ret) : "a" (p_person), "d" (dx), "b" (dz), "c" (p_mapel));
+    return ret;
+}
+
+short person_hit_razor_wire(struct Thing *p_person, ThingIdx thing)
+{
+    short ret;
+    asm volatile (
+      "call ASM_person_hit_razor_wire\n"
+        : "=r" (ret) : "a" (p_person), "d" (thing));
+    return ret;
+}
+
+ubyte create_intelligent_door(short col)
+{
+    ubyte ret;
+    asm volatile (
+      "call ASM_create_intelligent_door\n"
+        : "=r" (ret) : "a" (col));
+    return ret;
+}
+
+ushort set_thing_height_on_face(struct Thing *p_thing, int x, int z, short face)
+{
+    ushort ret;
+    asm volatile (
+      "call ASM_set_thing_height_on_face\n"
+        : "=r" (ret) : "a" (p_thing), "d" (x), "b" (z), "c" (face));
+    return ret;
+}
+
+ushort set_thing_height_on_face_quad(struct Thing *p_thing, int x, int z, short face)
+{
+    ushort ret;
+    asm volatile (
+      "call ASM_set_thing_height_on_face_quad\n"
+        : "=r" (ret) : "a" (p_thing), "d" (x), "b" (z), "c" (face));
+    return ret;
+}
+
+short find_and_set_connected_face(struct Thing *p_thing, int x, int z, short face)
+{
+    short ret;
+    asm volatile (
+      "call ASM_find_and_set_connected_face\n"
+        : "=r" (ret) : "a" (p_thing), "d" (x), "b" (z), "c" (face));
+    return ret;
+}
+
 short person_move(struct Thing *p_person)
 {
+#if 1
     short ret;
     asm volatile ("call ASM_person_move\n"
         : "=r" (ret) : "a" (p_person));
     return ret;
+#endif
 }
 
 void process_avoid_group(struct Thing *p_person)
