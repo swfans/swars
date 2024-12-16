@@ -197,6 +197,8 @@ swars_SOURCES = \
 	swlog.h \
 	thing.c \
 	thing.h \
+	thing_search.c \
+	thing_search.h \
 	thing_debug.c \
 	thing_debug_s.sx \
 	tngcolisn.c \

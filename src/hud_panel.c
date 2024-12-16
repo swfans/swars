@@ -1871,7 +1871,7 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
     if (value >= 0)
         col = pixmap.fade_table[PALETTE_8b_COLORS * (63 - fade) + colour_lookup[ColLU_RED]];
     else
-        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 + fade) + colour_lookup[4]];
+        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 + fade) + colour_lookup[ColLU_BLUE]];
 
     cent_x = x + (w >> 1);
     if (lbDisplay.GraphicsScreenHeight < 400)
@@ -2322,7 +2322,7 @@ void draw_new_panel(void)
             md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
             if (md == 1 && pktrec_mode != PktR_PLAYBACK) {
                 y = alt_at_point(mouse_map_x, mouse_map_z);
-                func_702c0(mouse_map_x, y >> 5, mouse_map_z, 64, 64, colour_lookup[ColLU_RED]);
+                func_702c0(mouse_map_x, PRCCOORD_TO_YCOORD(y), mouse_map_z, 64, 64, colour_lookup[ColLU_RED]);
             }
         }
     }

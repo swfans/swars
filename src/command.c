@@ -23,8 +23,10 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfutility.h"
-#include "thing.h"
+
 #include "building.h"
+#include "thing.h"
+#include "thing_search.h"
 #include "pepgroup.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -188,7 +190,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_UNKN6B",				NULL,				CmDF_None },
     {"TNG_CMD_UNKN6C",				NULL,				CmDF_None },
     {"TNG_CMD_UNKN6D",				NULL,				CmDF_None },
-    {"TNG_CMD_LOOP_COM",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = command
+    {"TNG_CMD_LOOP_COM",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = command index
     /* Repeat until event commands */
     {"TNG_CMD_UNTIL_P_V_DEAD",		NULL,				CmDF_ReqPVIThing },
     {"TNG_CMD_UNTIL_MEM_G_DEAD",	NULL,				CmDF_ReqGroup|CmDF_ReqCountT },
@@ -419,6 +421,20 @@ ushort get_new_command(void)
     return cmd;
 }
 
+short find_station_platform(short x, short z)
+{
+    struct Thing *p_station;
+    ThingIdx station;
+
+    station = search_for_station(x, z);
+    if (station <= 0) {
+        LOGWARN("No train station found at Coord(%hd,%hd)", x, z);
+        return 0;
+    }
+    p_station = &things[station];
+    return search_object_for_qface(p_station->U.UObject.Object, 4, 2, 0);
+}
+
 #define MAP_BORDER_MARGIN 32
 
 /** Fixes parameters within a command.
@@ -449,28 +465,14 @@ ubyte fix_thing_command_indexes(ushort cmd, TbBool deep)
     }
     else if ((p_cdef->Flags & CmDF_ReqStationCoord) != 0)
     {
-        struct Thing *p_secthing;
-        short secthing;
-        secthing = search_for_station(p_cmd->X, p_cmd->Z);
-        p_secthing = &things[secthing];
-        thing = search_object_for_qface(p_secthing->U.UPerson.ComHead, 4u, 2u, 0);
-        if (thing == 0) {
-            LOGSYNC("Cmd%hu = %s target station not found based on Coord(%hd,%hd); using train index",
-              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
-            thing = search_things_for_index(p_cmd->OtherThing);
-            if (thing <= 0) {
-                thing = 0;
-            } else {
-                struct Thing *p_thing = &things[thing];
-                if (p_thing->Type != TT_VEHICLE)
-                    thing = 0;
-            }
-        }
-        if (thing != 0) {
-            p_cmd->OtherThing = thing;
+        short face;
+        face = find_station_platform(p_cmd->X, p_cmd->Z);
+        if (face != 0) {
+            p_cmd->OtherThing = face;
             if (ret) ret = 2;
         } else {
-            LOGERR("Cmd%hu = %s target train not found", p_cdef->CmdName, cmd);
+            LOGERR("Cmd%hu = %s matching platform face on target station not found based on Coord(%hd,%hd)",
+              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             p_cmd->OtherThing = 0;
             ret = 0;
         }

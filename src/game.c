@@ -172,7 +172,7 @@ extern long gamep_unknval_15;
 extern long gamep_unknval_16;
 
 extern ushort netgame_agent_pos_x[8][4];
-extern ushort netgame_agent_pos_y[8][4];
+extern ushort netgame_agent_pos_z[8][4];
 
 extern long dword_155010;
 extern long dword_155014;
@@ -1177,7 +1177,7 @@ void draw_hud_target_mouse(short dcthing)
         ushort msspr;
         uint range;
 
-        weprange = current_weapon_range(p_dcthing);
+        weprange = current_hand_weapon_range(p_dcthing);
         switch (p_locplayer->TargetType)
         {
         case 1:
@@ -1317,16 +1317,6 @@ void draw_hud(int dcthing)
     }
 }
 
-void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)
-{
-    asm volatile (
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_func_6fe80\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
-}
-
 void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)
 {
     asm volatile (
@@ -1355,7 +1345,7 @@ void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign)
     int ms_dx, ms_dy, tng_dim;
 
     cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc;
-    cor_y = (p_thing->Y >> 5) - engn_yc;
+    cor_y = PRCCOORD_TO_YCOORD(p_thing->Y) - engn_yc;
     cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc;
 
     transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
@@ -2646,7 +2636,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
     p_person->U.UPerson.Target2 = 0;
     p_person->U.UPerson.Within = 0;
     p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
-    p_person->PTarget = 0;
+    p_person->PTarget = NULL;
     p_person->U.UPerson.WeaponsCarried |= (1 << (WEP_ENERGYSHLD-1));
     p_person->OldTarget = 0;
 
@@ -2681,7 +2671,7 @@ void init_level_unknsub01_building(struct Thing *p_buildng)
     p_buildng->Flag &= TngF_Unkn0800;
     if (p_buildng->SubType == SubTT_BLD_MGUN)
     {
-        p_buildng->PTarget = 0;
+        p_buildng->PTarget = NULL;
         p_buildng->U.UObject.EffectiveGroup = p_buildng->U.UObject.Group;
     }
     if ((p_buildng->Flag2 & TgF2_ExistsOffMap) != 0)
@@ -2980,8 +2970,11 @@ TbBool game_cam_tracked_thing_is_player_agent(void)
 
 void game_set_cam_track_thing_xz(struct Thing *p_thing)
 {
-    ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_thing->X);
-    ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    short tng_x, tng_z;
+
+    get_thing_position_mapcoords(&tng_x, NULL, &tng_z, p_thing->ThingOffset);
+    ingame.TrackX = tng_x;
+    ingame.TrackZ = tng_z;
 }
 
 void game_set_cam_track_player_agent_xz(PlayerIdx plyr, ushort plagent)
@@ -3001,8 +2994,8 @@ void preprogress_game_turns(void)
     struct Mission *p_missi;
 
     p_missi = &mission_list[ingame.CurrentMission];
-    LOGSYNC("PreProcess %d turns for mission %d",
-      (int)p_missi->PreProcess, (int)ingame.CurrentMission);
+    LOGSYNC("PreProcess %d turns for mission %d, starting at %lu",
+      (int)p_missi->PreProcess, (int)ingame.CurrentMission, (ulong)gameturn);
     blind_progress_game(p_missi->PreProcess);
 }
 
@@ -3045,10 +3038,10 @@ void init_player(void)
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
 {
-    ulong n;
-    ushort plagent, high_tier;
-    PlayerInfo *p_player;
     struct Thing *p_person;
+    PlayerInfo *p_player;
+    ushort plagent, high_tier;
+    ulong n;
 
     p_player = &players[plyr];
     p_person = NULL;
@@ -3098,29 +3091,24 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_person->U.UPerson.CurrentWeapon = 0;
         }
 
-        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_HARD_AS_AGENT)
-        {
-            set_person_stats_type(p_person, 1);
-            p_person->U.UPerson.ComHead = game_commands[p_person->U.UPerson.ComHead].Next;
-        }
+        person_init_preplay_command(p_person);
 
-        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_FIT_AS_AGENT)
-        {
-            p_person->U.UPerson.Stamina = peep_type_stats[1].MaximumStamina;
-            p_person->U.UPerson.MaxStamina = peep_type_stats[1].MaximumStamina;
-            p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
-            p_person->Flag |= TngF_Unkn0040;
-        }
+        // Player agents can go with default loadout for the level, but usually we want them to
+        // use either the equipment selected by the player (either local one or from the net).
+        // Setting command to player control is required to properly update weapons
+        p_person->U.UPerson.ComCur = (plyr << 2) + plagent;
+        if (ingame.GameMode == GamM_Unkn3)
+            do_weapon_quantities_proper1(p_person);
+        else
+            do_weapon_quantities1(p_person);
 
+        // Using any commands other than preplay on player agents requires explicit marking
+        // in form of use of EXECUTE_COMS.
         if ((p_person->U.UPerson.ComHead != 0) &&
             (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_EXECUTE_COMS))
         {
+            // Now we can re-set current command to the real command
             p_person->Flag2 |= TgF2_Unkn0800;
-            p_person->U.UPerson.ComCur = (plyr << 2) + plagent;
-            if (ingame.GameMode == GamM_Unkn3)
-                do_weapon_quantities_proper1(p_person);
-            else
-                do_weapon_quantities1(p_person);
             p_person->Flag |= TngF_Unkn0040;
             p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
             ingame.Flags |= GamF_Unkn0100;
@@ -3129,13 +3117,14 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         {
             p_person->U.UPerson.ComCur = (plyr << 2) + plagent;
             p_person->U.UPerson.ComHead = 0;
-            if (ingame.GameMode == GamM_Unkn3)
-                do_weapon_quantities_proper1(p_person);
-            else
-                do_weapon_quantities1(p_person);
         }
-        netgame_agent_pos_x[plyr][plagent] = PRCCOORD_TO_MAPCOORD(p_person->X);
-        netgame_agent_pos_y[plyr][plagent] = PRCCOORD_TO_MAPCOORD(p_person->Z);
+
+        {
+            short cor_x, cor_z;
+            get_thing_position_mapcoords(&cor_x, NULL, &cor_z, p_person->ThingOffset);
+            netgame_agent_pos_x[plyr][plagent] = cor_x;
+            netgame_agent_pos_z[plyr][plagent] = cor_z;
+        }
         p_person->State = PerSt_NONE;
         { // Why are we tripling the health?
             uint health;
@@ -7496,8 +7485,8 @@ void net_player_leave(PlayerIdx plyr)
 
 void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
 {
-    struct Thing *p_person;
     struct Thing *p_thing;
+    struct Thing *p_sectng;
     int n;
 
     switch (packet->Action & 0x7FFF)
@@ -7512,7 +7501,9 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
     case PAct_AGENT_GOTO_GND_PT_ABS:
         if (plyr == local_player_no)
             show_goto_point(1);
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point(p_thing, packet->X, packet->Y, packet->Z);
         break;
@@ -7550,9 +7541,12 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
+        p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
+        if (p_sectng == INVALID_THING)
+            break;
         if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
             break;
-        person_enter_vehicle(p_thing, &things[packet->X]);
+        person_enter_vehicle(p_thing, p_sectng);
         break;
     case PAct_LEAVE_VEHICLE:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
@@ -7661,13 +7655,23 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing->Speed = calc_person_speed(p_thing);
         break;
     case PAct_GO_ENTER_VEHICLE:
-        p_thing = &things[packet->Data];
-        person_go_enter_vehicle(p_thing, &things[packet->X]);
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
+        if (p_sectng == INVALID_THING)
+            break;
+        person_go_enter_vehicle(p_thing, p_sectng);
         break;
     case PAct_FOLLOW_PERSON:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        p_sectng = get_thing_safe(packet->X, TT_PERSON);
+        if (p_sectng == INVALID_THING)
+            break;
         if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
-            person_init_follow_person(p_thing, &things[packet->X]);
+            person_init_follow_person(p_thing, p_sectng);
         break;
     case PAct_CONTROL_MODE:
         players[plyr].UserInput[0].ControlMode = packet->Data;
@@ -7675,61 +7679,94 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
     case PAct_AGENT_GOTO_FACE_PT_ABS:
         if (plyr == local_player_no)
             show_goto_point(1);
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point_on_face(p_thing, packet->X, packet->Z, packet->Y);
         break;
     case PAct_AGENT_GOTO_GND_PT_ABS_FF:
         if (plyr == local_player_no)
             show_goto_point(1);
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
         break;
     case PAct_AGENT_GOTO_FACE_PT_ABS_FF:
         if (plyr == local_player_no)
             show_goto_point(1);
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point_on_face_fast(p_thing, packet->X, packet->Z, packet->Y, plyr);
         break;
     case PAct_GO_ENTER_VEHICLE_FF:
-        p_thing = &things[packet->Data];
-        person_go_enter_vehicle_fast(p_thing, &things[packet->X], plyr);
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
+        if (p_sectng == INVALID_THING)
+            break;
+        person_go_enter_vehicle_fast(p_thing, p_sectng, plyr);
         break;
     case PAct_GET_ITEM_FAST:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         person_init_get_item_fast(p_thing, packet->X, plyr);
         break;
     case PAct_SHIELD_TOGGLE:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
             break;
         person_shield_toggle(p_thing, plyr);
         break;
     case PAct_PLANT_MINE_AT_GND_PT_FF:
-        p_thing = &things[packet->Data];
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if (p_thing->State == PerSt_DROP_ITEM)
+            break;
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0)
             break;
         person_init_plant_mine_fast(p_thing, packet->X, packet->Y, packet->Z, 0);
         break;
     case PAct_SHOOT_AT_GND_POINT_FF:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 1);
         break;
     case PAct_PEEPS_SCATTER:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
         if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
             make_peeps_scatter(p_thing, packet->X, packet->Z);
         break;
     case PAct_SELECT_GRP_SPEC_WEAPON:
-        p_person = &things[packet->Data];
-        if ((p_person->State == PerSt_DROP_ITEM) && ((p_person->Flag2 & TgF2_KnockedOut) != 0))
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
             break;
-        person_grp_witch_to_specific_weapon(p_person, plyr, packet->X);
+        if (p_thing->State == PerSt_DROP_ITEM)
+            break;
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0)
+            break;
+        person_grp_witch_to_specific_weapon(p_thing, plyr, packet->X);
         break;
     case PAct_AGENT_USE_MEDIKIT:
-        p_thing = &things[packet->Data];
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING)
+            break;
+        if (!person_carries_any_medikit(p_thing)) {
+            LOGERR("Cheater? Player %d requested medikit use when none available.", (int)plyr);
+            break;
+        }
         person_use_medikit(p_thing, plyr);
         break;
     case PAct_GROUP_SET_MOOD:
@@ -7816,14 +7853,18 @@ void process_packets(void)
         {
             struct Thing *p_thing;
 
-            p_thing = &things[packet->Data];
+            p_thing = get_thing_safe(packet->Data, TT_PERSON);
 
             if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
                 packet->Action = 0;
-            if ((packet->Action & 0x8000) == 0)
-                p_thing->Flag &= ~TngF_Unkn0800;
-            else
-                p_thing->Flag |= TngF_Unkn0800;
+
+            if (p_thing != INVALID_THING)
+            {
+                if ((packet->Action & 0x8000) == 0)
+                    p_thing->Flag &= ~TngF_Unkn0800;
+                else
+                    p_thing->Flag |= TngF_Unkn0800;
+            }
 
             process_packet(plyr, packet, i);
 
@@ -7845,7 +7886,7 @@ void update_unkn_changing_colors(void)
 
     unkn_changing_color_counter1++;
     if (unkn_changing_color_counter1 & 0x01)
-        col1 = colour_lookup[5];
+        col1 = colour_lookup[ColLU_YELLOW];
     else
         col1 = colour_lookup[0];
     unkn_changing_color_1 = col1;
@@ -7902,7 +7943,7 @@ void game_process(void)
         input();
         update_tick_time();
         draw_game();
-        debug_trace_turn_bound(gameturn + 100);
+        debug_trace_turn_bound(gameturn);
         load_packet();
         if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
           ((ingame.Flags & GamF_ThermalView) != 0) )

@@ -112,6 +112,10 @@ extern struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
 extern ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
 extern ushort spiral_dist_tiles_limit;
 
+/** Limit the map coordinates boundaries of valid map positions and ranges of data types used.
+ */
+void map_coords_limit(short *cor_x, short *cor_y, short *cor_z, long map_x, long map_y, long map_z);
+
 void clear_mapwho_on_whole_map(void);
 void refresh_old_my_big_map_format(struct MyMapElement *p_mapel,
  struct MyMapElementOldV7 *p_oldmapel, ulong fmtver);

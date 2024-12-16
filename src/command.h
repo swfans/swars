@@ -41,7 +41,9 @@ enum PersonCommandType
    * Can be used with target 0 to just take the gun out.
    */
   PCmd_KILL_PERSON = 0x4,
-  /** Kill nearest members of given group, until given amount of kills.
+  /** Kill nearest members of given group, until given amount of group
+   * members are dead.
+   * The finish condition is met regardless of how the members died.
    */
   PCmd_KILL_MEM_GROUP = 0x5,
   /** Kill nearest members of given group, until all eliminated.
@@ -86,13 +88,25 @@ enum PersonCommandType
   PCmd_DROP_SPEC_ITEM = 0x12,
   PCmd_AVOID_PERSON = 0x13,
   PCmd_WAND_AVOID_GROUP = 0x14,
-  /** Plant a bomb under a building. Given coords not only
-   * identify the building, but are also bomb location.
+  /** Plant a bomb under a building. Given coords are not only to identify
+   * the building, but are the walkable center point to calculate bomb or
+   * shooting location. The bomber walks toward that point, then stops for
+   * shooting or bombing when he decides he is close enough to said location,
+   * based on the range of weapon selected.
+   * The currently selected weapon will be used, or vehicle weapon if within
+   * such vehicle. If no weapon selected, person will choose best one for
+   * the job.
    */
   PCmd_DESTROY_BUILDING = 0x15,
   PCmd_UNKN16 = 0x16,
   PCmd_USE_VEHICLE = 0x17,
   PCmd_EXIT_VEHICLE = 0x18,
+  /** Go to a train station at given coordinates and enter the next train.
+   * During level load, the given station position is used to find
+   * the station building, and then a flat surface (face) to stand on.
+   * When the command is activated, the person walks to that face
+   * and then enters the next train which arrives at the station.
+   */
   PCmd_CATCH_TRAIN = 0x19,
   PCmd_OPEN_DOME = 0x1A,
   PCmd_CLOSE_DOME = 0x1B,
@@ -186,21 +200,56 @@ enum PersonCommandType
   PCmd_UNKN6C,
   PCmd_UNKN6D,
   PCmd_LOOP_COM = 0x6E,
+  /** Repeat the preceding command as long as given person/vehicle is not dead/destroyed.
+   */
   PCmd_UNTIL_P_V_DEAD = 0x6F,
+  /** Repeat the preceding command as long as given group has dead members count below given
+   * amount.
+   */
   PCmd_UNTIL_MEM_G_DEAD = 0x70,
+  /** Repeat the preceding command as long as not all members of given group are dead.
+   */
   PCmd_UNTIL_ALL_G_DEAD = 0x71,
+  /** Repeat the preceding command as long as given person/vehicle/item is not within given
+   * range around command owner.
+   */
   PCmd_UNTIL_P_V_I_NEAR = 0x72,
+  /** Repeat the preceding command as long as given group has less than given amount of members
+   * within given range around command owner.
+   */
   PCmd_UNTIL_MEM_G_NEAR = 0x73,
+  /** Repeat the preceding command as long as given group does not have all living members within
+   * given range around command owner.
+   */
   PCmd_UNTIL_ALL_G_NEAR = 0x74,
+  /** Repeat the preceding command as long as given person/vehicle/item is not within given
+   * range around given map position.
+   */
   PCmd_UNTIL_P_V_I_ARRIVE = 0x75,
+  /** Repeat the preceding command as long as given group has less than given amount of members
+   * within given range around given map position.
+   */
   PCmd_UNTIL_MEM_G_ARRIVE = 0x76,
+  /** Repeat the preceding command as long as given group does not have all living members within
+   * given range around given map position.
+   */
   PCmd_UNTIL_ALL_G_ARRIVE = 0x77,
+  /** Repeat the preceding command as long as given person is not persuaded.
+   */
   PCmd_UNTIL_P_PERSUADE = 0x78,
+  /** Repeat the preceding command as long as given group has less than given amount of members
+   * persuaded.
+   */
   PCmd_UNTIL_MEM_G_PERSUADE = 0x79,
+  /** Repeat the preceding command as long as given group does not have all living members
+   * persuaded.
+   */
   PCmd_UNTIL_ALL_G_PERSUADE = 0x7A,
   PCmd_UNTIL_MISSION_SUCC = 0x7B,
   PCmd_UNTIL_MISSION_FAIL = 0x7C,
   PCmd_UNTIL_MISSION_START = 0x7D,
+  /** Repeat the preceding command as long as given object is not destroyed.
+   */
   PCmd_UNTIL_OBJT_DESTROY = 0x7E,
   PCmd_UNTIL_TIME = 0x7F,
   PCmd_WAIT_OBJV = 0x80,
@@ -219,6 +268,10 @@ enum PersonCommandType
   PCmd_UNTRUCE_GROUP = 0x8D,
   PCmd_PLAY_SAMPLE = 0x8E,
   PCmd_IGNORE_ENEMIES = 0x8F,
+  /** Change the person stamina and weapon energy to match the ones for an agent.
+   * Used to beefup a person to increase its chances of executing a tactic which
+   * requires agility.
+   */
   PCmd_FIT_AS_AGENT = 0x90,
   PCmd_CAMERA_ROTATE = 0x91,
   PCmd_TYPES_COUNT,

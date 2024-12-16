@@ -62,7 +62,7 @@ void draw_target_person(struct Thing *p_person, uint radius)
     ep.X3d = PRCCOORD_TO_MAPCOORD(p_person->X) - engn_xc;
     ep.Z3d = PRCCOORD_TO_MAPCOORD(p_person->Z) - engn_zc;
     // TODO Why constant height of 120? Maybe differnt main body position for different thing types?
-    ep.Y3d = (p_person->Y >> 5) - engn_yc + 120;
+    ep.Y3d = PRCCOORD_TO_YCOORD(p_person->Y) - engn_yc + 120;
     ep.Flags = 0;
     transform_point(&ep);
 
@@ -166,7 +166,7 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
       h_cur = dy;
 
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-    colour = colour_lookup[4];
+    colour = colour_lookup[ColLU_BLUE];
     LbDrawBox(dx + x, y + h_total, w, dy, colour);
 
     if (p_thing->Health >= 0)
@@ -184,7 +184,7 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
                 h_ext = dy;
 
             lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-            colour = colour_lookup[5];
+            colour = colour_lookup[ColLU_YELLOW];
             LbDrawBox(dx + x, y + h_total, w, dy, colour);
             lbDisplay.DrawFlags = 0;
             LbDrawBox(x + dx, y + dy + h_total - h_ext, w, h_ext, colour);
@@ -217,7 +217,7 @@ void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
     if (h_cur > dy)
       h_cur = dy;
 
-    colour = colour_lookup[4];
+    colour = colour_lookup[ColLU_BLUE];
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     LbDrawBox(dx + x, h_total + y, w, dy, colour);
     if (p_thing->U.UPerson.ShieldEnergy > 0)
@@ -264,7 +264,7 @@ void draw_hud_target_old_frame(struct Thing *p_target, int fr)
 
     ep.X3d = PRCCOORD_TO_MAPCOORD(p_target->X) - engn_xc;
     ep.Z3d = PRCCOORD_TO_MAPCOORD(p_target->Z) - engn_zc;
-    ep.Y3d = (p_target->Y >> 5) - engn_yc;
+    ep.Y3d = PRCCOORD_TO_YCOORD(p_target->Y) - engn_yc;
     ep.Flags = 0;
     transform_point(&ep);
 

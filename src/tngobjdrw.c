@@ -56,12 +56,15 @@ void process_child_object(struct Thing *p_vehicle)
     struct M31 vec1;
     struct M31 vec2;
     struct M31 gear;
+    short vhtng_x, vhtng_y, vhtng_z;
 
-    gear.R[0] = p_vehicle->X >> 8;
-    gear.R[1] = p_vehicle->Y >> 5;
-    gear.R[2] = p_vehicle->Z >> 8;
+    get_thing_position_mapcoords(&vhtng_x, &vhtng_y, &vhtng_z, p_vehicle->ThingOffset);
+    gear.R[0] = vhtng_x;
+    gear.R[1] = vhtng_y;
+    gear.R[2] = vhtng_z;
 
     p_mgun = &things[p_vehicle->U.UVehicle.SubThing];
+    // the mounted gun position is relative, so no need to subtract the base here
     vec2.R[0] = PRCCOORD_TO_MAPCOORD(p_mgun->X);
     vec2.R[1] = p_mgun->Y >> 4;
     vec2.R[2] = PRCCOORD_TO_MAPCOORD(p_mgun->Z);
@@ -104,7 +107,7 @@ void build_vehicle(struct Thing *p_thing)
         p_sobj = &game_objects[p_thing->U.UVehicle.Object];
         i = draw_rot_object(
              PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-             p_thing->Y >> 5,
+             PRCCOORD_TO_YCOORD(p_thing->Y),
              PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
              p_sobj, p_thing);
     }
@@ -117,13 +120,13 @@ void build_vehicle(struct Thing *p_thing)
     if ((p_thing->U.UVehicle.SubThing != 0) && (p_thing->SubType == SubTT_VEH_TANK))
         process_child_object(p_thing);
 
-    if (p_thing->U.UVehicle.RecoilTimer != 0) {
-        build_polygon_circle(
-          PRCCOORD_TO_MAPCOORD(p_thing->X),
-          PRCCOORD_TO_MAPCOORD(p_thing->Y) + 10,
-          PRCCOORD_TO_MAPCOORD(p_thing->Z),
+    if (p_thing->U.UVehicle.RecoilTimer != 0)
+    {
+        short tng_x, tng_y, tng_z;
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
+        build_polygon_circle(tng_x, tng_y + 10, tng_z,
           3 * p_thing->U.UVehicle.RecoilTimer + 15, 30, 15,
-          game_textures, colour_lookup[4], 16,
+          game_textures, colour_lookup[ColLU_BLUE], 16,
            16 * ((6 - p_thing->U.UVehicle.RecoilTimer) & 0x0F));
     }
 
@@ -174,7 +177,7 @@ void build_person(struct Thing *p_thing)
 
     draw_pers_e_graphic(p_thing,
       PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
+      PRCCOORD_TO_YCOORD(p_thing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
       frame, p_thing->Radius, bri);
 }
@@ -194,9 +197,10 @@ void build_rocket(struct Thing *p_thing)
     struct M33 *m;
     struct M31 vec1, vec2, vec3;
     ushort obj;
+    short tng_x, tng_y, tng_z;
 
-    build_glare(PRCCOORD_TO_MAPCOORD(p_thing->X), p_thing->Y >> 5,
-      PRCCOORD_TO_MAPCOORD(p_thing->Z), 64);
+    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
+    build_glare(tng_x, tng_y, tng_z, 64);
 
     p_thing->U.UObject.MatrixIndex = next_local_mat + 1;
     m = &local_mats[p_thing->U.UObject.MatrixIndex];
@@ -224,10 +228,11 @@ void build_rocket(struct Thing *p_thing)
     obj = ingame.Rocket1[ingame.NextRocket++];
     p_sobj = &game_objects[obj];
 
+    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
     draw_rot_object(
-      PRCCOORD_TO_MAPCOORD(p_thing->X) + (p_thing->VX >> 1) - engn_xc,
-      (p_thing->Y >> 5) + 30,
-      PRCCOORD_TO_MAPCOORD(p_thing->Z) + (p_thing->VZ >> 1) - engn_zc,
+      tng_x + (p_thing->VX >> 1) - engn_xc,
+      tng_y + 30,
+      tng_z + (p_thing->VZ >> 1) - engn_zc,
       p_sobj, p_thing);
 }
 
@@ -249,14 +254,26 @@ void build_building(struct Thing *p_thing)
 
     if (p_thing->SubType == SubTT_BLD_WIND_ROTOR)
     {
+        short tng_x, tng_y, tng_z;
         p_sobj = &game_objects[p_thing->U.UObject.Object];
-        draw_rot_object2(
-          PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-          PRCCOORD_TO_MAPCOORD(p_thing->Y),
-          PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-          p_sobj, p_thing);
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
+        draw_rot_object2(tng_x - engn_xc, tng_y, tng_z - engn_zc, p_sobj, p_thing);
     }
-    else if (p_thing->SubType != SubTT_BLD_MGUN)
+    else if (p_thing->SubType == SubTT_BLD_MGUN)
+    {
+        PlayerInfo *p_locplayer;
+        short tng_x, tng_y, tng_z;
+
+        p_locplayer = &players[local_player_no];
+        if (p_locplayer->TargetType < 2)
+            check_mouse_overvehicle(p_thing, 2);
+        p_sobj = &game_objects[p_thing->U.UObject.Object];
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
+        draw_rot_object2(tng_x - engn_xc, tng_y, tng_z - engn_zc, p_sobj, p_thing);
+        if (p_thing->Health < p_thing->U.UMGun.MaxHealth)
+            draw_vehicle_health(p_thing);
+    }
+    else
     {
         ushort beg_obj, end_obj;
         ushort obj;
@@ -268,38 +285,22 @@ void build_building(struct Thing *p_thing)
             draw_object(0, 0, 0, p_sobj);
         }
     }
-    else
-    {
-        PlayerInfo *p_locplayer;
-
-        p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < 2)
-            check_mouse_overvehicle(p_thing, 2);
-        p_sobj = &game_objects[p_thing->U.UObject.Object];
-        draw_rot_object2(
-          PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-          p_thing->Y >> 5,
-          PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-          p_sobj, p_thing);
-        if (p_thing->Health < p_thing->U.UMGun.MaxHealth)
-            draw_vehicle_health(p_thing);
-    }
 }
 
 void build_laser11(struct Thing *p_thing)
 {
     struct Thing *p_owntng;
+    short owtng_x, owtng_y, owtng_z;
     TbPixel colour;
 
     if ((p_thing->Flag & TngF_Unkn1000) != 0)
-        colour = colour_lookup[4];
+        colour = colour_lookup[ColLU_BLUE];
     else
         colour = colour_lookup[ColLU_RED];
+    get_thing_position_mapcoords(&owtng_x, &owtng_y, &owtng_z, p_thing->Owner);
     p_owntng = &things[p_thing->Owner];
-    build_laser(
-      PRCCOORD_TO_MAPCOORD(p_owntng->X),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Z),
+
+    build_laser(owtng_x, owtng_y >> 3, owtng_z,
       p_thing->VX, p_thing->VY, p_thing->VZ,
       p_thing->Timer1, p_owntng, colour);
 }
@@ -307,15 +308,14 @@ void build_laser11(struct Thing *p_thing)
 void build_grenade(struct Thing *p_thing)
 {
     struct MyMapElement *p_mapel;
+    short tng_x, tng_y, tng_z;
     ushort frame;
 
     frame = p_thing->Frame;
     p_mapel = &game_my_big_map[128 * (p_thing->Z >> 16) + (p_thing->X >> 16)];
+    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
 
-    draw_e_graphic(
-      PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
-      PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
+    draw_e_graphic(tng_x - engn_xc, tng_y >> 3, tng_z - engn_zc,
       frame, p_thing->Radius, p_mapel->ShadeR, p_thing);
 }
 
@@ -331,7 +331,7 @@ void build_static(struct SimpleThing *p_sthing)
 
     draw_e_graphic(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
       frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
 }
@@ -352,7 +352,7 @@ void build_dropped_item(struct SimpleThing *p_sthing)
 
     draw_e_graphic(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
       frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
 }
@@ -361,7 +361,7 @@ void build_spark(struct SimpleThing *p_sthing)
 {
     draw_mapwho_vect_len(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
       p_sthing->U.UEffect.OX - engn_xc,
       p_sthing->U.UEffect.OY,
@@ -373,7 +373,7 @@ void build_unkn18(struct Thing *p_thing)
 {
     draw_e_graphic(
       PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
+      PRCCOORD_TO_YCOORD(p_thing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
       nstart_ani[900], p_thing->Radius, 63, p_thing);
 }
@@ -398,7 +398,7 @@ void build_laser_elec(struct Thing *p_thing)
     {
         build_electricity(
           PRCCOORD_TO_MAPCOORD(p_owntng->X),
-          PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+          PRCCOORD_TO_YCOORD(p_owntng->Y) >> 3,
           PRCCOORD_TO_MAPCOORD(p_owntng->Z),
           p_thing->VX, p_thing->VY, p_thing->VZ,
           100 + p_thing->Timer1, p_owntng);
@@ -410,7 +410,7 @@ void build_laser_elec(struct Thing *p_thing)
         for (i = 0; i < p_thing->SubType >> 1; i++)
             build_electricity(
               PRCCOORD_TO_MAPCOORD(p_owntng->X),
-              PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+              PRCCOORD_TO_YCOORD(p_owntng->Y) >> 3,
               PRCCOORD_TO_MAPCOORD(p_owntng->Z),
               p_thing->VX, p_thing->VY, p_thing->VZ,
               p_thing->Timer1, p_owntng);
@@ -424,7 +424,7 @@ void build_scale_effect(struct SimpleThing *p_sthing)
     frame = p_sthing->Frame;
     draw_e_graphic_scale(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
       frame, p_sthing->Radius, 32, p_sthing->Object);
 }
@@ -436,7 +436,7 @@ void build_nuclear_bomb(struct SimpleThing *p_sthing)
 
     build_polygon_circle(
       PRCCOORD_TO_MAPCOORD(p_sthing->X),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+      PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z),
       p_sthing->Radius, 20, 15,
       game_textures, colour_lookup[ColLU_WHITE], 32, 96);
@@ -471,7 +471,7 @@ void build_laser29(struct Thing *p_thing)
     p_owntng = &things[p_thing->Owner];
     build_laser_beam(
       PRCCOORD_TO_MAPCOORD(p_owntng->X),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+      PRCCOORD_TO_YCOORD(p_owntng->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_owntng->Z),
       p_thing->VX, p_thing->VY, p_thing->VZ,
       p_thing->Timer1, p_owntng);
@@ -497,7 +497,8 @@ void build_razor_wire_strand(int x1, int y1, int z1, int x2, int y2, int z2, int
 
 void build_soul(struct SimpleThing *p_sthing)
 {
-    build_glare(PRCCOORD_TO_MAPCOORD(p_sthing->X), p_sthing->Y >> 5,
+    build_glare(PRCCOORD_TO_MAPCOORD(p_sthing->X),
+      PRCCOORD_TO_YCOORD(p_sthing->Y),
       PRCCOORD_TO_MAPCOORD(p_sthing->Z), 32);
 }
 
@@ -508,7 +509,7 @@ void build_laser38(struct Thing *p_thing)
     p_owntng = &things[p_thing->Owner];
     build_laser_beam_q(
       PRCCOORD_TO_MAPCOORD(p_owntng->X),
-      PRCCOORD_TO_MAPCOORD(p_owntng->Y),
+      PRCCOORD_TO_YCOORD(p_owntng->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_owntng->Z),
       p_thing->VX, p_thing->VY, p_thing->VZ,
       p_thing->Timer1, p_owntng);
@@ -536,7 +537,7 @@ void build_razor_wire(struct Thing *p_thing)
 
     build_razor_wire_strand(
       PRCCOORD_TO_MAPCOORD(p_thing->X),
-      PRCCOORD_TO_MAPCOORD(p_thing->Y),
+      PRCCOORD_TO_YCOORD(p_thing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_thing->Z),
       p_thing->VX, p_thing->VY, p_thing->VZ,
       p_thing->Timer1, p_thing);

@@ -37,6 +37,88 @@
 /******************************************************************************/
 ubyte dome_open_speed = 4;
 
+struct BuildingStat bldng_type_stats[] = {
+  {"BLD_NONE",},
+  {"BLD_1",},
+  {"BLD_2",},
+  {"BLD_3",},
+  {"BLD_4",},
+  {"BLD_5",},
+  {"BLD_6",},
+  {"BLD_7",},
+  {"BLD_8",},
+  {"BLD_9",},
+  {"BLD_A",},
+  {"BLD_B",},
+  {"BLD_C",},
+  {"BLD_D",},
+  {"BLD_E",},
+  {"BLD_F",},
+  {"BLD_10",},
+  {"BLD_11",},
+  {"BLD_12",},
+  {"BLD_13",},
+  {"SHUTTL_LDR",},
+  {"BLD_15",},
+  {"BLD_16",},
+  {"BLD_17",},
+  {"DOME",},
+  {"BLD_19",},
+  {"BLD_1A",},
+  {"STANDRD BLD",},
+  {"TRAIN_TRACK",},
+  {"BLD_1D",},
+  {"BLD_1E",},
+  {"BLD_1F",},
+  {"MOUNT_GUN",},
+  {"BLD_21",},
+  {"BLD_22",},
+  {"BLD_23",},
+  {"BLD_24",},
+  {"BLD_GATE",},
+  {"BLD_26",},
+  {"BLD_27",},
+  {"BLD_28",},
+  {"BLD_29",},
+  {"BLD_2A",},
+  {"BLD_2B",},
+  {"BLD_2C",},
+  {"BLD_2D",},
+  {"BLD_2E",},
+  {"TRAIN_STATN",},
+  {"BLD_30",},
+  {"BLD_31",},
+  {"BLD_32",},
+  {"BLD_33",},
+  {"BLD_34",},
+  {"BLD_35",},
+  {"WIND_ROTOR",},
+  {"BLD_37",},
+  {"BLD_38",},
+  {"BLD_39",},
+  {"BLD_3A",},
+  {"BLD_3B",},
+  {"BLD_3C",},
+  {"BILLBOARD",},
+  {"BLD_3E",},
+  {"BLD_3F",},
+  {"BLD_40",},
+  {"BLD_41",},
+  {"BLD_42",},
+  {"BLD_43",},
+  {"BLD_44",},
+};
+
+
+const char *building_type_name(ushort btype)
+{
+    struct BuildingStat *p_bldstat;
+
+    p_bldstat = &bldng_type_stats[btype];
+    if (strlen(p_bldstat->Name) == 0)
+        return "OUTRNG_BLDNG";
+    return p_bldstat->Name;
+}
 
 TbBool building_can_transform_open(ThingIdx bldng)
 {
@@ -182,7 +264,7 @@ void collapse_building_process_tnodes(struct Thing *p_building)
         if (tnode != 0) {
             struct TrafficNode *p_tnode;
             p_tnode = &game_traffic_nodes[tnode];
-            p_tnode->Flags |= 0x3000;
+            p_tnode->Flags |= (0x2000|0x1000);
         }
     }
 
@@ -317,25 +399,27 @@ void collapse_building_shuttle_loader(short x, short y, short z, struct Thing *p
 
 void collapse_building_station(struct Thing *p_building)
 {
+    short cntr_cor_x, cntr_cor_z;
     short cntr_x, cntr_z;
     short x, z;
 
-    cntr_x = p_building->X >> 16;
-    cntr_z = p_building->Z >> 16;
+    get_thing_position_mapcoords(&cntr_cor_x, NULL, &cntr_cor_z, p_building->ThingOffset);
+    cntr_x = MAPCOORD_TO_TILE(cntr_cor_x);
+    cntr_z = MAPCOORD_TO_TILE(cntr_cor_z);
 
     for (x = cntr_x - 8; x <= cntr_x + 8; x++)
     {
-        if ((x < 0) || (x > 127))
+        if ((x < 0) || (x > MAP_TILE_WIDTH-1))
             continue;
         for (z = cntr_z - 8; z <= cntr_z + 8; z++)
         {
             struct MyMapElement *p_mapel;
             short thing;
 
-            if ((z < 0) || (z > 127))
+            if ((z < 0) || (z > MAP_TILE_HEIGHT-1))
                 continue;
 
-            p_mapel = &game_my_big_map[128 * z + x];
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * z + x];
             thing = p_mapel->Child;
             while (thing != 0)
             {
@@ -344,10 +428,10 @@ void collapse_building_station(struct Thing *p_building)
                     struct Thing *p_thing;
                     p_thing = &things[thing];
                     if ((p_thing->Type == TT_BUILDING)
-                      && (p_thing->SubType == SubTT_BLD_1C)
+                      && (p_thing->SubType == SubTT_BLD_TRAINTRK)
                       && ((p_thing->Flag & TngF_Destroyed) == 0))
                     {
-                        collapse_building(x << 8, 0, z << 8, p_thing);
+                        collapse_building(TILE_TO_MAPCOORD(x,0), 0, TILE_TO_MAPCOORD(z,0), p_thing);
                         break; // do not expect more than one building on a tile
                     }
                     thing = p_thing->Next;
@@ -385,8 +469,10 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
     }
     else
     {
-        play_dist_sample(p_building, 0x2Du, 0x7Fu, 0x40u, 100, 0, 3);
-        p_sthing = create_sound_effect(p_building->X >> 8, p_building->Y >> 8, p_building->Z >> 8, 0x2Eu, 127, -1);
+        short tng_x, tng_y, tng_z;
+        get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_building->ThingOffset);
+        play_dist_sample(p_building, 0x2Du, 127, 64, 100, 0, 3);
+        p_sthing = create_sound_effect(tng_x, tng_y, tng_z, 0x2Eu, 127, -1);
         if (p_sthing != NULL)
         {
             p_sthing->State = 1;
@@ -401,7 +487,7 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
     {
     case SubTT_BLD_SHUTLDR:
     case SubTT_BLD_1D:
-    case SubTT_BLD_1C:
+    case SubTT_BLD_TRAINTRK:
     case SubTT_BLD_15:
         collapse_building_shuttle_loader(x, y, z, p_building);
         break;
@@ -417,7 +503,10 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
         p_sobj = &game_objects[p_building->U.UObject.Object];
         if (((p_sobj->field_1C & 0x0100) == 0) || current_map == 9) // map009 Singapore on-water map
         {
-            quick_crater(p_building->X >> 16, p_building->Z >> 16, 3);
+            short cra_cor_x, cra_cor_z;
+
+            get_thing_position_mapcoords(&cra_cor_x, NULL, &cra_cor_z, p_building->ThingOffset);
+            quick_crater(MAPCOORD_TO_TILE(cra_cor_x), MAPCOORD_TO_TILE(cra_cor_z), 3);
             for (i = 0; i < 32; i++)
             {
                 int dx, dz;
@@ -470,6 +559,7 @@ void init_mgun_laser(struct Thing *p_owner, ushort bmsize)
     struct Thing *p_shot;
     int prc_x, prc_y, prc_z;
     int cor_x, cor_y, cor_z;
+    short tgtng_x, tgtng_y, tgtng_z;
     u32 rhit;
     short shottng;
     short angle;
@@ -494,13 +584,18 @@ void init_mgun_laser(struct Thing *p_owner, ushort bmsize)
     prc_z = p_owner->Z - 3 * lbSinTable[angle + 512] / 2;
     prc_y = p_owner->Y;
 
+    if ((p_owner->PTarget > &things[0]) && (p_owner->PTarget < &things[THINGS_LIMIT]))
+        get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_owner->PTarget->ThingOffset);
+    else
+        tgtng_x = tgtng_y = tgtng_z = 0;
+
     p_shot->U.UEffect.Angle = p_owner->U.UMGun.AngleY;
     p_shot->Z = prc_z;
     p_shot->Y = prc_y;
     p_shot->X = prc_x;
-    p_shot->VX = (p_owner->PTarget->X >> 8);
-    p_shot->VY = (p_owner->PTarget->Y >> 8) + 10;
-    p_shot->VZ = p_owner->PTarget->Z >> 8;
+    p_shot->VX = tgtng_x;
+    p_shot->VY = (tgtng_y >> 3) + 10;
+    p_shot->VZ = tgtng_z;
     p_shot->Radius = 50;
     p_shot->Owner = p_owner->ThingOffset;
 
@@ -616,7 +711,7 @@ void process_building(struct Thing *p_building)
         process_bld36(p_building);
         break;
     default:
-        if (p_building->State == 9) {
+        if (p_building->State == BldSt_OBJ_UNKN09) {
             collapse_building(p_building->X >> 8, p_building->Y >> 8, p_building->Z >> 8, p_building);
         }
         break;

@@ -83,7 +83,7 @@ void draw_unkn1_bar(ushort cv)
     scr_x = ep2.pp.X + ep1.pp.X;
     scr_y = ep2.pp.Y + ep1.pp.Y;
     sprintf(locstr, "%d", cv);
-    draw_text(scr_x, scr_y, locstr, colour_lookup[7]);
+    draw_text(scr_x, scr_y, locstr, colour_lookup[ColLU_PINK]);
 }
 
 void draw_engine_unk3_last(short x, short z)
