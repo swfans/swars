@@ -1350,12 +1350,12 @@ void generate_walk_items(void)
     next_walk_item = 1;
     for (face = 1; face < next_object_face; face++)
     {
-        if ((game_object_faces[face].GFlags & 0x04) != 0)
+        if ((game_object_faces[face].GFlags & FGFlg_Unkn04) != 0)
             add_walk_items_for_face(face);
     }
     for (face = 1; face < next_object_face4; face++)
     {
-        if ((game_object_faces4[face].GFlags & 0x04) != 0)
+        if ((game_object_faces4[face].GFlags & FGFlg_Unkn04) != 0)
             add_walk_items_for_face(-face);
     }
 }
