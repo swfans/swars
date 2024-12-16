@@ -3574,14 +3574,442 @@ short find_and_set_connected_face(struct Thing *p_thing, int x, int z, short fac
     return ret;
 }
 
+// overflow flag of subtraction (x-y)
+ubyte __OFSUB__(int x, int y)
+{
+    int y2 = y;
+    ubyte sx = (x < 0);
+    return (sx ^ (y2 < 0)) & (sx ^ (x-y2 < 0));
+}
+
 short person_move(struct Thing *p_person)
 {
-#if 1
+#if 0
     short ret;
     asm volatile ("call ASM_person_move\n"
         : "=r" (ret) : "a" (p_person));
     return ret;
 #endif
+    struct ColVect *p_colvect;
+    struct MyMapElement *p_mapel;
+    int speed_x, speed_y;
+    int dist_sum;
+    int alt_cc, alt_cr, alt_uc, alt_ur;
+    int x, y, z;
+    int tile_dt_x, tile_dt_z;
+    int v80;
+    short colvect;
+    short face;
+
+    word_1AA390 = 0;
+    if (((gameturn + 32 * p_person->ThingOffset) & 0x7F) == 0) {
+        process_random_speech(p_person, 0);
+    }
+    if ((p_person->SubType == SubTT_PERS_MECH_SPIDER) && !IsSamplePlaying(p_person->ThingOffset, 79, 0)) {
+        play_dist_sample(p_person, 0x4Fu, 0x7Fu, 0x40u, 100, -1, 3);
+    }
+    if (p_person->U.UPerson.AnimMode == 21) {
+        p_person->U.UPerson.AnimMode = 0;
+        reset_person_frame(p_person);
+    }
+    if ((p_person->Flag & (TngF_InVehicle|TngF_Unkn4000)) != 0) {
+        return 1;
+    }
+
+    {
+        short used_stamina;
+        used_stamina = abs(p_person->U.UPerson.Mood >> 5) - cybmod_chest_level(&p_person->U.UPerson.UMod);
+        if (used_stamina < 0)
+            used_stamina = 0;
+        p_person->U.UPerson.Stamina -= used_stamina;
+    }
+
+    if ((p_person->Flag2 & TgF2_Unkn00080000) != 0)
+    {
+        if ((p_person->Flag & TngF_PlayerAgent) != 0) {
+            p_person->U.UPerson.Stamina = p_person->U.UPerson.Stamina - (7 - 2 * cybmod_legs_level(&p_person->U.UPerson.UMod));
+        }
+        if ((p_person->U.UPerson.Stamina < p_person->U.UPerson.MaxStamina >> 2) && (p_person->State != PerSt_PERSON_BURNING)) {
+            p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
+            reset_person_frame(p_person);
+            p_person->Timer1 = 48;
+            p_person->StartTimer1 = 48;
+            p_person->Flag2 &= ~0x080000;
+            p_person->Speed = calc_person_speed(p_person);
+        }
+    }
+    speed_x = (p_person->Speed * p_person->VX) >> 4;
+    speed_y = (p_person->Speed * p_person->VZ) >> 4;
+    p_person->Flag2 &= ~TngF_Unkn0100;
+    x = speed_x + p_person->X;
+    y = p_person->Y;
+    z = speed_y + p_person->Z;
+
+    v80 = 2;
+    if (p_person->State == PerSt_WANDER)
+        v80 = 0;
+    if (p_person->U.UPerson.OnFace != 0)
+        v80 = 0;
+
+    for (; 1; v80--)
+    {
+      while ( 1 )
+      {
+        s64 ldt;
+        int dvdr;
+        int dist_x, dist_z;
+        ThingIdx thing;
+        int v26, v27;
+        int v76, v81;
+        sbyte v33;
+        int v36, v37;
+        int tile_x, tile_y;
+
+        if ((x < 0) || (PRCCOORD_TO_MAPCOORD(x) >= MAP_COORD_WIDTH))
+            return 1;
+        if ((z < 0) || (PRCCOORD_TO_MAPCOORD(z) >= MAP_COORD_HEIGHT))
+            return 1;
+
+        if ((p_person->Flag & (0x10|0x04)) != 0)
+        {
+            thing = check_for_other_people(x, y, z, p_person);
+            if (thing != 0) {
+                p_person->U.UPerson.BumpCount++;
+                if (((p_person->Flag & TngF_Unkn0010) == 0) && ((p_person->Flag & TngF_Unkn01000000) != 0))
+                    return 1;
+            } else {
+                p_person->Flag &= ~(TngF_Unkn0004|TngF_Unkn0010);
+            }
+        }
+        else
+        {
+            thing = check_for_other_people(x, y, z, p_person);
+            if (thing != 0) {
+                p_person->U.UPerson.BumpCount++;
+                return thing;
+            }
+        }
+
+        if (p_person->U.UPerson.Within != 0)
+        {
+            struct Command *p_cmd;
+
+            p_cmd = &game_commands[p_person->U.UPerson.Within];
+            if (!check_person_within(p_cmd, PRCCOORD_TO_MAPCOORD(speed_x + x),
+              PRCCOORD_TO_MAPCOORD(speed_y + z))) {
+                p_person->Flag2 |= TngF_Unkn0080;
+                return 1;
+            }
+            p_person->Flag2 &= ~TngF_Unkn0080;
+        }
+
+        tile_x = p_person->X >> 16;
+        tile_dt_x = (x >> 16) - tile_x;
+        tile_y = p_person->Z >> 16;
+        tile_dt_z = (z >> 16) - tile_y;
+        word_1AA394 = 0;
+        word_1AA392 = 0;
+        p_mapel = &game_my_big_map[128 * tile_y + tile_x];
+        colvect = do_move_colide(p_person, speed_x, speed_y, p_mapel);
+        if (!colvect || ((p_person->Flag & TngF_Persuaded) != 0)
+          || !v80 || game_col_vects_list[word_1AA38E].Object < 0
+          || (face = game_col_vects[colvect].Face, face >= 0)
+          || (game_object_faces4[-face].GFlags & (0x10|0x04)) != 0 )
+        {
+            if (!tile_dt_z || colvect)
+              break;
+            if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel[128 * tile_dt_z].Flags2 & 5) != 0))
+            {
+              if (!v80 || ((p_person->Flag & TngF_Persuaded) != 0)) {
+                  p_person->U.UPerson.BumpCount++;
+                  return 1;
+              }
+              x = speed_x + p_person->X;
+              speed_y = 0;
+              z = p_person->Z;
+              goto LABEL_78;
+            }
+            colvect = do_move_colide(p_person, speed_x, speed_y, &p_mapel[128 * tile_dt_z]);
+            if ( !colvect )
+              break;
+            if ((p_person->Flag & TngF_Persuaded) != 0)
+              break;
+            if ( !v80 )
+              break;
+            if (game_col_vects_list[word_1AA38E].Object < 0)
+              break;
+            face = game_col_vects[colvect].Face;
+            if ( face >= 0 || (game_object_faces4[-face].GFlags & 0x14) != 0 )
+              break;
+        }
+LABEL_23:
+        p_colvect = &game_col_vects[colvect];
+        v80--;
+        dist_z = abs((p_colvect->Z2 - p_colvect->Z1) << 8);
+        dist_x = abs((p_colvect->X2 - p_colvect->X1) << 8);
+
+        if (dist_x >= dist_z)
+            dvdr = dist_x + (dist_z >> 2) + (dist_z >> 3) - (dist_x >> 5) + (dist_z >> 6) - (dist_x >> 7) + (dist_z >> 7);
+        else
+            dvdr = dist_z + (dist_x >> 2) + (dist_x >> 3) - (dist_z >> 5) + (dist_x >> 6) + (dist_x >> 7) - (dist_z >> 7);
+        if (dvdr < 10)
+          dvdr = 10;
+        ldt = (s64)(p_colvect->X2 - p_colvect->X1) << 24;
+        v81 = ldt / dvdr;
+        ldt = (s64)(p_colvect->Z2 - p_colvect->Z1) << 24;
+        v76 = ldt / dvdr;
+
+        dist_sum = ((speed_x * v81) >> 16) + ((speed_y * v76) >> 16);
+        v26 = (v81 * dist_sum) >> 16;
+        v27 = (v76 * dist_sum) >> 16;
+
+        {
+            s64 v28, v31;
+            int v35;
+            TbBool v32, v34;
+
+            v28 = (p_person->Z - (p_colvect->Z1 << 8)) * v81;
+            v31 = (p_person->X - (p_colvect->X1 << 8)) * v76;
+
+            v32 = v28 < v31;
+            v33 = v28 != v31;
+            v34 = __OFSUB__(v28 >> 32, (v31 >> 32) + v32);
+            v35 = (v28 >> 32) - ((v31 >> 32) + v32);
+            if (v35)
+                v33 = !((v35 < 0) ^ v34) - ((v35 < 0) ^ v34);
+        }
+
+        if (v33 > 0) {
+            v37 = -v76 >> 5;
+            v36 = v81 >> 5;
+        } else if (v33 < 0) {
+            v37 = v76 >> 5;
+            v36 = -v81 >> 5;
+        } else {
+            v37 = 0;
+            v36 = 0;
+        }
+
+        speed_x = v37 + v26;
+        x = speed_x + p_person->X;
+        speed_y = v36 + v27;
+        z = speed_y + p_person->Z;
+      }
+      if ( !tile_dt_x || colvect )
+        break;
+      if ((p_person->U.UPerson.OnFace != 0) || ((p_mapel[tile_dt_x].Flags2 & 5) == 0))
+      {
+        colvect = do_move_colide(p_person, speed_x, speed_y, &p_mapel[tile_dt_x]);
+        if (colvect != 0)
+        {
+          if ((p_person->Flag & TngF_Persuaded) == 0)
+          {
+            if ( v80 )
+            {
+              if (game_col_vects_list[word_1AA38E].Object >= 0)
+              {
+                face = game_col_vects[colvect].Face;
+                if ((face < 0) && (game_object_faces4[-face].GFlags & 0x14) == 0 )
+                  goto LABEL_23;
+              }
+            }
+          }
+        }
+        break;
+      }
+      if (!v80 || ((p_person->Flag & TngF_Persuaded) != 0))
+      {
+          p_person->U.UPerson.BumpCount++;
+          return 1;
+      }
+      x = p_person->X;
+      speed_x = 0;
+      z = speed_y + p_person->Z;
+LABEL_78:
+      ;
+    }
+
+    if ( tile_dt_z && tile_dt_x && !colvect )
+    {
+      if ((p_person->U.UPerson.OnFace == 0) && (p_mapel[128 * tile_dt_z + tile_dt_x].Flags2 & 5) != 0 )
+      {
+        p_person->U.UPerson.BumpCount++;
+        return 1;
+      }
+      colvect = do_move_colide(p_person, speed_x, speed_y, &p_mapel[128 * tile_dt_z + tile_dt_x]);
+      if (colvect != 0)
+      {
+        if ((p_person->Flag & TngF_Persuaded) == 0)
+        {
+          if ( v80 )
+          {
+            if (game_col_vects_list[word_1AA38E].Object >= 0) {
+                face = game_col_vects[colvect].Face;
+                if ( face < 0 && (game_object_faces4[-face].GFlags & 0x14) == 0 )
+                  goto LABEL_23;
+            }
+          }
+        }
+      }
+    }
+    if ( debug_hud_collision || byte_1C844F )
+      draw_line_transformed_at_ground(
+        p_person->X >> 8,
+        p_person->Z >> 8,
+        (p_person->X >> 8) + (speed_x >> 7),
+        (p_person->Z >> 8) + (speed_y >> 7),
+        0xE6u);
+    if (colvect < 0)
+      return 1;
+    if (colvect != 0)
+    {
+      struct ColVectList *p_cvlist;
+
+      p_cvlist = &game_col_vects_list[word_1AA38E];
+      if (p_cvlist->Object < 0)
+      {
+        x = (speed_x >> 3) + p_person->X;
+        z = (speed_y >> 3) + p_person->Z;
+        if (!person_is_dead_or_dying(p_person->ThingOffset) &&
+          ((p_person->Flag & TngF_Destroyed) == 0) &&
+          person_hit_razor_wire(p_person, -p_cvlist->Object)) {
+            return 0;
+        }
+        colvect = 0;
+      }
+    }
+    if (word_1AA392)
+    {
+        short v50;
+        p_person->Flag2 |= TgF2_Unkn40000000;
+        if (create_intelligent_door(word_1AA392) != 1) {
+            p_person->U.UPerson.LastDist = 32000;
+            return 1;
+        }
+        v50 = word_1AA394;
+        p_person->U.UPerson.LastDist = 32000;
+        colvect = 0;
+        if ( v50 )
+        {
+            if (word_1AA394 <= 0)
+                p_person->Flag2 |= 0x20000000;
+            else
+                p_person->Flag2 &= ~0x20000000;
+        }
+    }
+
+    face = p_person->U.UPerson.OnFace;
+    if (face != 0)
+    {
+        if (face > 0)
+        {
+            if (set_thing_height_on_face(p_person, x, z, p_person->U.UPerson.OnFace)) {
+                move_mapwho(p_person, x, p_person->Y, z);
+                p_person->U.UPerson.BumpMode = 0;
+                p_person->Flag2 |= 0x0100;
+                return 0;
+            }
+        }
+        else
+        {
+            if (set_thing_height_on_face_quad(p_person, x, z, -face)) {
+                move_mapwho(p_person, x, p_person->Y, z);
+                p_person->U.UPerson.BumpMode = 0;
+                p_person->Flag2 |= 0x0100;
+                return 0;
+            }
+        }
+        if (!find_and_set_connected_face(p_person, x, z, p_person->U.UPerson.OnFace))
+        {
+            if ( !colvect || (p_person->U.UPerson.OnFace != game_col_vects[colvect].Face))
+                return 1;
+            p_person->U.UPerson.OnFace = 0;
+            p_person->U.UPerson.Flag3 &= ~0x80;
+        }
+        move_mapwho(p_person, x, p_person->Y, z);
+        p_person->U.UPerson.BumpMode = 0;
+        p_person->Flag2 |= 0x0100;
+        return 0;
+    }
+    if (colvect != 0) {
+        face = game_col_vects[colvect].Face;
+    } else {
+        face = 0;
+    }
+    if (face != 0)
+    {
+        if (face > 0)
+        {
+            if ((game_object_faces[face].GFlags & 0x0004) != 0)
+            {
+              if (set_thing_height_on_face(p_person, x, z, face)) {
+                  p_person->U.UPerson.BumpMode = 0;
+                  p_person->U.UPerson.OnFace = face;
+                  p_person->Flag2 |= TgF2_Unkn0100;
+                  move_mapwho(p_person, x, p_person->Y, z);
+                  return 0;
+              }
+              colvect = 0;
+            }
+            else
+            {
+              if (p_person->U.UPerson.OnFace != 0)
+                colvect = 0;
+            }
+        }
+        else
+        {
+            if ((game_object_faces4[-face].GFlags & 0x0004) != 0)
+            {
+              if (set_thing_height_on_face_quad(p_person, x, z, -face)) {
+                  p_person->U.UPerson.BumpMode = 0;
+                  p_person->U.UPerson.OnFace = face;
+                  p_person->Flag2 |= TgF2_Unkn0100;
+                  move_mapwho(p_person, x, p_person->Y, z);
+                  return 0;
+              }
+              colvect = 0;
+            }
+            else
+            {
+              if (p_person->U.UPerson.OnFace != 0)
+                colvect = 0;
+            }
+        }
+    }
+
+    if ((colvect == 0) && (p_person->U.UPerson.OnFace == 0))
+    {
+        struct MyMapElement *p_mapel;
+        short tile_x, tile_z;
+        short subcor_x, subcor_z;
+        short new_alt;
+
+        tile_x = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(x));
+        tile_z = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(z));
+
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 0) + (tile_x + 1)];
+        alt_cr = p_mapel->Alt;
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 0) + (tile_x + 0)];
+        alt_cc = p_mapel->Alt;
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 1) + (tile_x + 0)];
+        alt_uc = p_mapel->Alt;
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 1) + (tile_x + 1)];
+        alt_ur = p_mapel->Alt;
+
+        subcor_x = PRCCOORD_TO_MAPCOORD(x) & 0xFF;
+        subcor_z = PRCCOORD_TO_MAPCOORD(z) & 0xFF;
+        if (subcor_x + subcor_z >= 256)
+            new_alt = alt_ur + (((alt_uc - alt_ur) * (256 - subcor_x)) >> 8) + (((256 - subcor_z) * (alt_cr - alt_ur)) >> 8);
+        else
+            new_alt = alt_cc + (((alt_cr - alt_cc) * subcor_x) >> 8) + (((alt_uc - alt_cc) * subcor_z) >> 8);
+        move_mapwho(p_person, x, MAPCOORD_TO_PRCCOORD(new_alt, 0), z);
+    }
+    if (colvect != 0)
+      return 1;
+    p_person->U.UPerson.BumpMode = 0;
+    p_person->Flag2 |= 0x0100;
+    return 0;
 }
 
 void process_avoid_group(struct Thing *p_person)
