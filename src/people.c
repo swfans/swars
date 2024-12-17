@@ -3574,6 +3574,8 @@ short find_and_set_connected_face(struct Thing *p_thing, int x, int z, short fac
     return ret;
 }
 
+/** Get collision vector which would collide with given thing at given position.
+ */
 short move_colide_on_tile(struct Thing *p_person, short tl_x, short tl_z, int speed_x, int speed_z)
 {
     struct MyMapElement *p_mapel;
@@ -3598,6 +3600,35 @@ TbBool move_blocked_by_collision_vect(struct Thing *p_person, short colvect)
     return true;
 }
 
+void set_thing_height_on_ground_mesh(struct Thing *p_person, int x, int z)
+{
+    struct MyMapElement *p_mapel;
+    int alt_cc, alt_cr, alt_uc, alt_ur;
+    short tile_x, tile_z;
+    short subcor_x, subcor_z;
+    short new_alt;
+
+    tile_x = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(x));
+    tile_z = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(z));
+
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 0) + (tile_x + 1)];
+    alt_cr = p_mapel->Alt;
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 0) + (tile_x + 0)];
+    alt_cc = p_mapel->Alt;
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 1) + (tile_x + 0)];
+    alt_uc = p_mapel->Alt;
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 1) + (tile_x + 1)];
+    alt_ur = p_mapel->Alt;
+
+    subcor_x = PRCCOORD_TO_MAPCOORD(x) & 0xFF;
+    subcor_z = PRCCOORD_TO_MAPCOORD(z) & 0xFF;
+    if (subcor_x + subcor_z >= 256)
+        new_alt = alt_ur + (((alt_uc - alt_ur) * (256 - subcor_x)) >> 8) + (((256 - subcor_z) * (alt_cr - alt_ur)) >> 8);
+    else
+        new_alt = alt_cc + (((alt_cr - alt_cc) * subcor_x) >> 8) + (((alt_uc - alt_cc) * subcor_z) >> 8);
+    move_mapwho(p_person, x, MAPCOORD_TO_PRCCOORD(new_alt, 0), z);
+}
+
 // overflow flag of subtraction (x-y)
 ubyte __OFSUB__(int x, int y)
 {
@@ -3617,7 +3648,7 @@ short person_move(struct Thing *p_person)
     int speed_x, speed_z;
     int x, y, z;
     short colvect;
-    short v80;
+    short retry;
 
     word_1AA390 = 0;
     if (((gameturn + 32 * p_person->ThingOffset) & 0x7F) == 0) {
@@ -3663,13 +3694,13 @@ short person_move(struct Thing *p_person)
     y = p_person->Y;
     z = speed_z + p_person->Z;
 
-    v80 = 2;
+    retry = 2;
     if (p_person->State == PerSt_WANDER)
-        v80 = 0;
+        retry = 0;
     if (p_person->U.UPerson.OnFace != 0)
-        v80 = 0;
+        retry = 0;
 
-    for (; 1; v80--)
+    for (; 1; retry--)
     {
         int tile_x, tile_z;
         int tile_dt_x, tile_dt_z;
@@ -3728,7 +3759,7 @@ short person_move(struct Thing *p_person)
         bumped_colvect = false;
         {
             colvect = move_colide_on_tile(p_person, tile_x, tile_z, speed_x, speed_z);
-            if ((v80 != 0) && move_blocked_by_collision_vect(p_person, colvect))
+            if ((retry != 0) && move_blocked_by_collision_vect(p_person, colvect))
                 bumped_colvect = true;
         }
         if (!bumped_colvect)
@@ -3737,9 +3768,9 @@ short person_move(struct Thing *p_person)
             {
                 struct MyMapElement *p_mapel;
                 p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + tile_dt_z) + (tile_x)];
-                if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel->Flags2 & (0x0004|0x0001)) != 0))
+                if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel->Flags2 & (TgF2_Unkn0004|TgF2_Unkn0001)) != 0))
                 {
-                  if (!v80 || ((p_person->Flag & TngF_Persuaded) != 0)) {
+                  if (!retry || ((p_person->Flag & TngF_Persuaded) != 0)) {
                       p_person->U.UPerson.BumpCount++;
                       return 1;
                   }
@@ -3749,16 +3780,16 @@ short person_move(struct Thing *p_person)
                   continue;
                 }
                 colvect = move_colide_on_tile(p_person, tile_x, tile_z + tile_dt_z, speed_x, speed_z);
-                if ((v80 != 0) && move_blocked_by_collision_vect(p_person, colvect))
+                if ((retry != 0) && move_blocked_by_collision_vect(p_person, colvect))
                     bumped_colvect = true;
             }
             if (!bumped_colvect && (tile_dt_x != 0) && (colvect == 0))
             {
                 struct MyMapElement *p_mapel;
                 p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x + tile_dt_x)];
-                if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel->Flags2 & (0x0004|0x0001)) != 0))
+                if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel->Flags2 & (TgF2_Unkn0004|TgF2_Unkn0001)) != 0))
                 {
-                    if ((v80 == 0) || ((p_person->Flag & TngF_Persuaded) != 0))
+                    if ((retry == 0) || ((p_person->Flag & TngF_Persuaded) != 0))
                     {
                         p_person->U.UPerson.BumpCount++;
                         return 1;
@@ -3769,20 +3800,20 @@ short person_move(struct Thing *p_person)
                     continue;
                 }
                 colvect = move_colide_on_tile(p_person, tile_x + tile_dt_x, tile_z, speed_x, speed_z);
-                if ((v80 != 0) && move_blocked_by_collision_vect(p_person, colvect))
+                if ((retry != 0) && move_blocked_by_collision_vect(p_person, colvect))
                     bumped_colvect = true;
             }
             if (!bumped_colvect && (tile_dt_z != 0) && (tile_dt_x != 0) && (colvect == 0))
             {
                 struct MyMapElement *p_mapel;
                 p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + tile_dt_z) + (tile_x + tile_dt_x)];
-                if ((p_person->U.UPerson.OnFace == 0) && (p_mapel->Flags2 & (0x0004|0x0001)) != 0)
+                if ((p_person->U.UPerson.OnFace == 0) && (p_mapel->Flags2 & (TgF2_Unkn0004|TgF2_Unkn0001)) != 0)
                 {
                     p_person->U.UPerson.BumpCount++;
                     return 1;
                 }
                 colvect = move_colide_on_tile(p_person, tile_x + tile_dt_x, tile_z + tile_dt_z, speed_x, speed_z);
-                if ((v80 != 0) && move_blocked_by_collision_vect(p_person, colvect))
+                if ((retry != 0) && move_blocked_by_collision_vect(p_person, colvect))
                     bumped_colvect = true;
             }
             if (!bumped_colvect)
@@ -3978,36 +4009,12 @@ short person_move(struct Thing *p_person)
 
     if ((colvect == 0) && (p_person->U.UPerson.OnFace == 0))
     {
-        struct MyMapElement *p_mapel;
-        int alt_cc, alt_cr, alt_uc, alt_ur;
-        short tile_x, tile_z;
-        short subcor_x, subcor_z;
-        short new_alt;
-
-        tile_x = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(x));
-        tile_z = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(z));
-
-        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 0) + (tile_x + 1)];
-        alt_cr = p_mapel->Alt;
-        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 0) + (tile_x + 0)];
-        alt_cc = p_mapel->Alt;
-        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 1) + (tile_x + 0)];
-        alt_uc = p_mapel->Alt;
-        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + 1) + (tile_x + 1)];
-        alt_ur = p_mapel->Alt;
-
-        subcor_x = PRCCOORD_TO_MAPCOORD(x) & 0xFF;
-        subcor_z = PRCCOORD_TO_MAPCOORD(z) & 0xFF;
-        if (subcor_x + subcor_z >= 256)
-            new_alt = alt_ur + (((alt_uc - alt_ur) * (256 - subcor_x)) >> 8) + (((256 - subcor_z) * (alt_cr - alt_ur)) >> 8);
-        else
-            new_alt = alt_cc + (((alt_cr - alt_cc) * subcor_x) >> 8) + (((alt_uc - alt_cc) * subcor_z) >> 8);
-        move_mapwho(p_person, x, MAPCOORD_TO_PRCCOORD(new_alt, 0), z);
+        set_thing_height_on_ground_mesh(p_person, x, z);
     }
     if (colvect != 0)
-      return 1;
+        return 1;
     p_person->U.UPerson.BumpMode = 0;
-    p_person->Flag2 |= 0x0100;
+    p_person->Flag2 |= TgF2_Unkn0100;
     return 0;
 }
 
