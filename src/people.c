@@ -3600,6 +3600,73 @@ TbBool move_blocked_by_collision_vect(struct Thing *p_person, short colvect)
     return true;
 }
 
+// overflow flag of subtraction (x-y)
+ubyte __OFSUB__(int x, int y)
+{
+    int y2 = y;
+    ubyte sx = (x < 0);
+    return (sx ^ (y2 < 0)) & (sx ^ (x-y2 < 0));
+}
+
+void adjust_speed_for_colvect_collision(int *p_speed_x, int *p_speed_z, struct Thing *p_person, short colvect)
+{
+    struct ColVect *p_colvect;
+    s64 ldt;
+    int dvdr;
+    int dist_x, dist_z;
+    int dist_sum;
+    s64 v28, v31;
+    int v35;
+    int v76, v81;
+    int v26, v27;
+    sbyte v33;
+    int v36, v37;
+    TbBool v32, v34;
+
+    p_colvect = &game_col_vects[colvect];
+    dist_z = abs((p_colvect->Z2 - p_colvect->Z1) << 8);
+    dist_x = abs((p_colvect->X2 - p_colvect->X1) << 8);
+
+    if (dist_x >= dist_z)
+        dvdr = dist_x + (dist_z >> 2) + (dist_z >> 3) - (dist_x >> 5) + (dist_z >> 6) - (dist_x >> 7) + (dist_z >> 7);
+    else
+        dvdr = dist_z + (dist_x >> 2) + (dist_x >> 3) - (dist_z >> 5) + (dist_x >> 6) + (dist_x >> 7) - (dist_z >> 7);
+    if (dvdr < 10)
+      dvdr = 10;
+    ldt = (s64)(p_colvect->X2 - p_colvect->X1) << 24;
+    v81 = ldt / dvdr;
+    ldt = (s64)(p_colvect->Z2 - p_colvect->Z1) << 24;
+    v76 = ldt / dvdr;
+
+    dist_sum = (((*p_speed_x) * v81) >> 16) + (((*p_speed_z) * v76) >> 16);
+    v26 = (v81 * dist_sum) >> 16;
+    v27 = (v76 * dist_sum) >> 16;
+
+    v28 = (p_person->Z - (p_colvect->Z1 << 8)) * v81;
+    v31 = (p_person->X - (p_colvect->X1 << 8)) * v76;
+
+    v32 = v28 < v31;
+    v33 = v28 != v31;
+    v34 = __OFSUB__(v28 >> 32, (v31 >> 32) + v32);
+    v35 = (v28 >> 32) - ((v31 >> 32) + v32);
+    if (v35)
+        v33 = !((v35 < 0) ^ v34) - ((v35 < 0) ^ v34);
+
+    if (v33 > 0) {
+        v37 = -v76 >> 5;
+        v36 = v81 >> 5;
+    } else if (v33 < 0) {
+        v37 = v76 >> 5;
+        v36 = -v81 >> 5;
+    } else {
+        v37 = 0;
+        v36 = 0;
+    }
+
+    *p_speed_x = v37 + v26;
+    *p_speed_z = v36 + v27;
+}
+
 void set_thing_height_on_ground_mesh(struct Thing *p_person, int x, int z)
 {
     struct MyMapElement *p_mapel;
@@ -3627,14 +3694,6 @@ void set_thing_height_on_ground_mesh(struct Thing *p_person, int x, int z)
     else
         new_alt = alt_cc + (((alt_cr - alt_cc) * subcor_x) >> 8) + (((alt_uc - alt_cc) * subcor_z) >> 8);
     move_mapwho(p_person, x, MAPCOORD_TO_PRCCOORD(new_alt, 0), z);
-}
-
-// overflow flag of subtraction (x-y)
-ubyte __OFSUB__(int x, int y)
-{
-    int y2 = y;
-    ubyte sx = (x < 0);
-    return (sx ^ (y2 < 0)) & (sx ^ (x-y2 < 0));
 }
 
 short person_move(struct Thing *p_person)
@@ -3705,10 +3764,6 @@ short person_move(struct Thing *p_person)
         int tile_x, tile_z;
         int tile_dt_x, tile_dt_z;
         ThingIdx thing;
-        int v26, v27;
-        int v76, v81;
-        sbyte v33;
-        int v36, v37;
         TbBool bumped_colvect;
 
         if ((x < 0) || (PRCCOORD_TO_MAPCOORD(x) >= MAP_COORD_WIDTH))
@@ -3820,63 +3875,7 @@ short person_move(struct Thing *p_person)
                 break;
         }
 
-        struct ColVect *p_colvect;
-        {
-            s64 ldt;
-            int dvdr;
-            int dist_x, dist_z;
-            int dist_sum;
-
-            p_colvect = &game_col_vects[colvect];
-            dist_z = abs((p_colvect->Z2 - p_colvect->Z1) << 8);
-            dist_x = abs((p_colvect->X2 - p_colvect->X1) << 8);
-
-            if (dist_x >= dist_z)
-                dvdr = dist_x + (dist_z >> 2) + (dist_z >> 3) - (dist_x >> 5) + (dist_z >> 6) - (dist_x >> 7) + (dist_z >> 7);
-            else
-                dvdr = dist_z + (dist_x >> 2) + (dist_x >> 3) - (dist_z >> 5) + (dist_x >> 6) + (dist_x >> 7) - (dist_z >> 7);
-            if (dvdr < 10)
-              dvdr = 10;
-            ldt = (s64)(p_colvect->X2 - p_colvect->X1) << 24;
-            v81 = ldt / dvdr;
-            ldt = (s64)(p_colvect->Z2 - p_colvect->Z1) << 24;
-            v76 = ldt / dvdr;
-
-            dist_sum = ((speed_x * v81) >> 16) + ((speed_z * v76) >> 16);
-            v26 = (v81 * dist_sum) >> 16;
-            v27 = (v76 * dist_sum) >> 16;
-        }
-
-        {
-            s64 v28, v31;
-            int v35;
-            TbBool v32, v34;
-
-            v28 = (p_person->Z - (p_colvect->Z1 << 8)) * v81;
-            v31 = (p_person->X - (p_colvect->X1 << 8)) * v76;
-
-            v32 = v28 < v31;
-            v33 = v28 != v31;
-            v34 = __OFSUB__(v28 >> 32, (v31 >> 32) + v32);
-            v35 = (v28 >> 32) - ((v31 >> 32) + v32);
-            if (v35)
-                v33 = !((v35 < 0) ^ v34) - ((v35 < 0) ^ v34);
-
-            if (v33 > 0) {
-                v37 = -v76 >> 5;
-                v36 = v81 >> 5;
-            } else if (v33 < 0) {
-                v37 = v76 >> 5;
-                v36 = -v81 >> 5;
-            } else {
-                v37 = 0;
-                v36 = 0;
-            }
-
-            speed_x = v37 + v26;
-            speed_z = v36 + v27;
-        }
-
+        adjust_speed_for_colvect_collision(&speed_x, &speed_z, p_person, colvect);
         x = speed_x + p_person->X;
         z = speed_z + p_person->Z;
     }
