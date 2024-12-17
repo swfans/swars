@@ -3574,24 +3574,28 @@ short find_and_set_connected_face(struct Thing *p_thing, int x, int z, short fac
     return ret;
 }
 
-short move_blocked_by_collision_vect(struct Thing *p_person, short tl_x, short tl_z, int speed_x, int speed_z)
+short move_colide_on_tile(struct Thing *p_person, short tl_x, short tl_z, int speed_x, int speed_z)
 {
     struct MyMapElement *p_mapel;
-    short colvect;
-    short face;
 
     p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_z + tl_x];
-    colvect = do_move_colide(p_person, speed_x, speed_z, p_mapel);
+    return do_move_colide(p_person, speed_x, speed_z, p_mapel);
+}
+
+TbBool move_blocked_by_collision_vect(struct Thing *p_person, short colvect)
+{
+    short face;
+
     if (colvect == 0)
-        return 0;
+        return false;
     if ((p_person->Flag & TngF_Persuaded) != 0)
-        return 0;
+        return false;
     if (game_col_vects_list[word_1AA38E].Object < 0)
-        return 0;
+        return false;
     face = game_col_vects[colvect].Face;
     if ((face >= 0) || (game_object_faces4[-face].GFlags & (FGFlg_Unkn10|FGFlg_Unkn04)) != 0)
-        return 0;
-    return colvect;
+        return false;
+    return true;
 }
 
 // overflow flag of subtraction (x-y)
@@ -3685,8 +3689,6 @@ short person_move(struct Thing *p_person)
 
         while ( 1 )
         {
-            struct MyMapElement *p_mapel;
-
             if ((x < 0) || (PRCCOORD_TO_MAPCOORD(x) >= MAP_COORD_WIDTH))
                 return 1;
             if ((z < 0) || (PRCCOORD_TO_MAPCOORD(z) >= MAP_COORD_HEIGHT))
@@ -3731,19 +3733,21 @@ short person_move(struct Thing *p_person)
             tile_dt_z = (z >> 16) - tile_z;
             word_1AA394 = 0;
             word_1AA392 = 0;
+
             bumped_colvect = false;
-
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            colvect = do_move_colide(p_person, speed_x, speed_z, p_mapel);
-
-            if (!colvect || ((p_person->Flag & TngF_Persuaded) != 0)
-              || !v80 || game_col_vects_list[word_1AA38E].Object < 0
-              || (face = game_col_vects[colvect].Face, face >= 0)
-              || (game_object_faces4[-face].GFlags & (FGFlg_Unkn10|FGFlg_Unkn04)) != 0 )
             {
-                struct MyMapElement *p_mapel;
+                colvect = move_colide_on_tile(p_person, tile_x, tile_z, speed_x, speed_z);
+                bumped_colvect = true;
+                if (!v80 || !move_blocked_by_collision_vect(p_person, colvect))
+                    bumped_colvect = false;
+            }
+            if (bumped_colvect)
+                goto LABEL_23;
+
+            {
                 if ((tile_dt_z != 0) && (colvect == 0))
                 {
+                    struct MyMapElement *p_mapel;
                     p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + tile_dt_z) + (tile_x)];
                     if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel->Flags2 & (0x0004|0x0001)) != 0))
                     {
@@ -3756,8 +3760,8 @@ short person_move(struct Thing *p_person)
                       z = p_person->Z;
                       goto LABEL_78;
                     }
-                    colvect = move_blocked_by_collision_vect(p_person, tile_x, tile_z + tile_dt_z, speed_x, speed_z);
-                    if ((colvect != 0) && (v80 != 0))
+                    colvect = move_colide_on_tile(p_person, tile_x, tile_z + tile_dt_z, speed_x, speed_z);
+                    if ((v80 != 0) && move_blocked_by_collision_vect(p_person, colvect))
                         bumped_colvect = true;
                 }
                 if (!bumped_colvect && (tile_dt_x != 0) && (colvect == 0))
@@ -3776,8 +3780,8 @@ short person_move(struct Thing *p_person)
                         z = speed_z + p_person->Z;
                         goto LABEL_78;
                     }
-                    colvect = move_blocked_by_collision_vect(p_person, tile_x + tile_dt_x, tile_z, speed_x, speed_z);
-                    if ((colvect != 0) && (v80 != 0))
+                    colvect = move_colide_on_tile(p_person, tile_x + tile_dt_x, tile_z, speed_x, speed_z);
+                    if ((v80 != 0) && move_blocked_by_collision_vect(p_person, colvect))
                         bumped_colvect = true;
                 }
                 if (!bumped_colvect && (tile_dt_z != 0) && (tile_dt_x != 0) && (colvect == 0))
@@ -3789,8 +3793,8 @@ short person_move(struct Thing *p_person)
                         p_person->U.UPerson.BumpCount++;
                         return 1;
                     }
-                    colvect = move_blocked_by_collision_vect(p_person, tile_x + tile_dt_x, tile_z + tile_dt_z, speed_x, speed_z);
-                    if ((colvect != 0) && (v80 != 0))
+                    colvect = move_colide_on_tile(p_person, tile_x + tile_dt_x, tile_z + tile_dt_z, speed_x, speed_z);
+                    if ((v80 != 0) && move_blocked_by_collision_vect(p_person, colvect))
                         bumped_colvect = true;
                 }
                 if (bumped_colvect)
