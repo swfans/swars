@@ -3759,9 +3759,7 @@ short person_move(struct Thing *p_person)
     speed_x = (p_person->Speed * p_person->VX) >> 4;
     speed_z = (p_person->Speed * p_person->VZ) >> 4;
     p_person->Flag2 &= ~TngF_Unkn0100;
-    x = speed_x + p_person->X;
     y = p_person->Y;
-    z = speed_z + p_person->Z;
 
     retry = 2;
     if (p_person->State == PerSt_WANDER)
@@ -3775,6 +3773,9 @@ short person_move(struct Thing *p_person)
         int tile_dt_x, tile_dt_z;
         ThingIdx thing;
         TbBool bumped_colvect;
+
+        x = p_person->X + speed_x;
+        z = p_person->Z + speed_z;
 
         if ((x < 0) || (PRCCOORD_TO_MAPCOORD(x) >= MAP_COORD_WIDTH))
             return 1;
@@ -3814,10 +3815,11 @@ short person_move(struct Thing *p_person)
             p_person->Flag2 &= ~TngF_Unkn0080;
         }
 
-        tile_x = p_person->X >> 16;
-        tile_dt_x = (x >> 16) - tile_x;
-        tile_z = p_person->Z >> 16;
-        tile_dt_z = (z >> 16) - tile_z;
+        tile_x = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_person->X));
+        tile_dt_x = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(x)) - tile_x;
+        tile_z = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(p_person->Z));
+        tile_dt_z = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(z)) - tile_z;
+
         word_1AA394 = 0;
         word_1AA392 = 0;
 
@@ -3839,9 +3841,7 @@ short person_move(struct Thing *p_person)
                       p_person->U.UPerson.BumpCount++;
                       return 1;
                   }
-                  x = speed_x + p_person->X;
                   speed_z = 0;
-                  z = p_person->Z;
                   continue;
                 }
                 colvect = move_colide_on_tile(p_person, tile_x, tile_z + tile_dt_z, speed_x, speed_z);
@@ -3859,9 +3859,7 @@ short person_move(struct Thing *p_person)
                         p_person->U.UPerson.BumpCount++;
                         return 1;
                     }
-                    x = p_person->X;
                     speed_x = 0;
-                    z = speed_z + p_person->Z;
                     continue;
                 }
                 colvect = move_colide_on_tile(p_person, tile_x + tile_dt_x, tile_z, speed_x, speed_z);
@@ -3886,8 +3884,6 @@ short person_move(struct Thing *p_person)
         }
 
         adjust_speed_for_colvect_collision(&speed_x, &speed_z, p_person, colvect);
-        x = speed_x + p_person->X;
-        z = speed_z + p_person->Z;
     }
 
     if (debug_hud_collision || byte_1C844F) {
@@ -3955,7 +3951,8 @@ short person_move(struct Thing *p_person)
         return 0;
     }
 
-    if (colvect != 0) {
+    if (colvect != 0)
+    {
         short face;
 
         face = game_col_vects[colvect].Face;
