@@ -67,6 +67,17 @@ extern "C" {
  */
 #define MAX_WALKABLE_STEEPNESS_PER_256 98
 
+enum MyMapElementFlags2 {
+    MEF2_Unkn01     = 0x01,
+    MEF2_Unkn02     = 0x02,
+    MEF2_Unkn04     = 0x04,
+    MEF2_Unkn08     = 0x08,
+    MEF2_Unkn10     = 0x10,
+    MEF2_Unkn20     = 0x20,
+    MEF2_Unkn40     = 0x40,
+    MEF2_Unkn80     = 0x80,
+};
+
 struct MyMapElement { // sizeof=18
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
   ushort Shade;

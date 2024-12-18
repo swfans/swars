@@ -363,9 +363,9 @@ void update_map_flags(void)
 
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
             // set having a walkable tile or too steep tile
-            p_mapel->Flags2 &= ~0x04;
+            p_mapel->Flags2 &= ~MEF2_Unkn04;
             if (compute_map_tile_is_blocking_walk(tile_x, tile_z))
-                p_mapel->Flags2 |= 0x04;
+                p_mapel->Flags2 |= MEF2_Unkn04;
         }
     }
 }

@@ -2105,7 +2105,7 @@ int fringe_at_tile(short tile_x, short tile_z)
 
     p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
 
-    return (p_mapel->Flags2 & 0x04);
+    return (p_mapel->Flags2 & MEF2_Unkn04);
 }
 
 void fill_ground_map(ubyte *p_map)

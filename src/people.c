@@ -3835,14 +3835,14 @@ short person_move(struct Thing *p_person)
             {
                 struct MyMapElement *p_mapel;
                 p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + tile_dt_z) + (tile_x)];
-                if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel->Flags2 & (TgF2_Unkn0004|TgF2_Unkn0001)) != 0))
+                if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel->Flags2 & (MEF2_Unkn04|MEF2_Unkn01)) != 0))
                 {
-                  if (!retry || ((p_person->Flag & TngF_Persuaded) != 0)) {
-                      p_person->U.UPerson.BumpCount++;
-                      return 1;
-                  }
-                  speed_z = 0;
-                  continue;
+                    if (!retry || ((p_person->Flag & TngF_Persuaded) != 0)) {
+                        p_person->U.UPerson.BumpCount++;
+                        return 1;
+                    }
+                    speed_z = 0;
+                    continue;
                 }
                 colvect = move_colide_on_tile(p_person, tile_x, tile_z + tile_dt_z, speed_x, speed_z);
                 if ((retry != 0) && move_blocked_by_collision_vect(p_person, colvect))
@@ -3852,7 +3852,7 @@ short person_move(struct Thing *p_person)
             {
                 struct MyMapElement *p_mapel;
                 p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x + tile_dt_x)];
-                if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel->Flags2 & (TgF2_Unkn0004|TgF2_Unkn0001)) != 0))
+                if ((p_person->U.UPerson.OnFace == 0) && ((p_mapel->Flags2 & (MEF2_Unkn04|MEF2_Unkn01)) != 0))
                 {
                     if ((retry == 0) || ((p_person->Flag & TngF_Persuaded) != 0))
                     {
@@ -3870,7 +3870,7 @@ short person_move(struct Thing *p_person)
             {
                 struct MyMapElement *p_mapel;
                 p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + tile_dt_z) + (tile_x + tile_dt_x)];
-                if ((p_person->U.UPerson.OnFace == 0) && (p_mapel->Flags2 & (TgF2_Unkn0004|TgF2_Unkn0001)) != 0)
+                if ((p_person->U.UPerson.OnFace == 0) && (p_mapel->Flags2 & (MEF2_Unkn04|MEF2_Unkn01)) != 0)
                 {
                     p_person->U.UPerson.BumpCount++;
                     return 1;
