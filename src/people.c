@@ -3625,13 +3625,13 @@ void adjust_speed_for_colvect_collision(int *p_speed_x, int *p_speed_z, struct T
     int dvdr;
     int dist_x, dist_z;
     int dist_sum;
-    s64 v28, v31;
-    int v35;
-    int v76, v81;
-    int v26, v27;
-    sbyte v33;
-    int v36, v37;
-    TbBool v32, v34;
+    s64 chk_z, chk_x;
+    int sgnhi;
+    int norm_z, norm_x;
+    int speed_x2, speed_z2;
+    sbyte sgn;
+    int speed_z1, speed_x1;
+    TbBool lower_z, v34;
 
     p_colvect = &game_col_vects[colvect];
     dist_z = abs((p_colvect->Z2 - p_colvect->Z1) << 8);
@@ -3644,37 +3644,37 @@ void adjust_speed_for_colvect_collision(int *p_speed_x, int *p_speed_z, struct T
     if (dvdr < 10)
       dvdr = 10;
     ldt = (s64)(p_colvect->X2 - p_colvect->X1) << 24;
-    v81 = ldt / dvdr;
+    norm_x = ldt / dvdr;
     ldt = (s64)(p_colvect->Z2 - p_colvect->Z1) << 24;
-    v76 = ldt / dvdr;
+    norm_z = ldt / dvdr;
 
-    dist_sum = (((*p_speed_x) * v81) >> 16) + (((*p_speed_z) * v76) >> 16);
-    v26 = (v81 * dist_sum) >> 16;
-    v27 = (v76 * dist_sum) >> 16;
+    dist_sum = (((*p_speed_x) * norm_x) >> 16) + (((*p_speed_z) * norm_z) >> 16);
+    speed_x2 = (norm_x * dist_sum) >> 16;
+    speed_z2 = (norm_z * dist_sum) >> 16;
 
-    v28 = (p_person->Z - (p_colvect->Z1 << 8)) * v81;
-    v31 = (p_person->X - (p_colvect->X1 << 8)) * v76;
+    chk_z = (p_person->Z - (p_colvect->Z1 << 8)) * norm_x;
+    chk_x = (p_person->X - (p_colvect->X1 << 8)) * norm_z;
 
-    v32 = v28 < v31;
-    v33 = v28 != v31;
-    v34 = __OFSUB__(v28 >> 32, (v31 >> 32) + v32);
-    v35 = (v28 >> 32) - ((v31 >> 32) + v32);
-    if (v35)
-        v33 = !((v35 < 0) ^ v34) - ((v35 < 0) ^ v34);
+    lower_z = chk_z < chk_x;
+    sgn = chk_z != chk_x;
+    v34 = __OFSUB__(chk_z >> 32, (chk_x >> 32) + lower_z);
+    sgnhi = (chk_z >> 32) - ((chk_x >> 32) + lower_z);
+    if (sgnhi)
+        sgn = !((sgnhi < 0) ^ v34) - ((sgnhi < 0) ^ v34);
 
-    if (v33 > 0) {
-        v37 = -v76 >> 5;
-        v36 = v81 >> 5;
-    } else if (v33 < 0) {
-        v37 = v76 >> 5;
-        v36 = -v81 >> 5;
+    if (sgn > 0) {
+        speed_x1 = -norm_z >> 5;
+        speed_z1 = norm_x >> 5;
+    } else if (sgn < 0) {
+        speed_x1 = norm_z >> 5;
+        speed_z1 = -norm_x >> 5;
     } else {
-        v37 = 0;
-        v36 = 0;
+        speed_x1 = 0;
+        speed_z1 = 0;
     }
 
-    *p_speed_x = v37 + v26;
-    *p_speed_z = v36 + v27;
+    *p_speed_x = speed_x1 + speed_x2;
+    *p_speed_z = speed_z1 + speed_z2;
 }
 
 void set_thing_height_on_ground_mesh(struct Thing *p_person, int x, int z)
@@ -3902,8 +3902,8 @@ short person_move(struct Thing *p_person)
         p_cvlist = &game_col_vects_list[word_1AA38E];
         if (p_cvlist->Object < 0)
         {
-            x = (speed_x >> 3) + p_person->X;
-            z = (speed_z >> 3) + p_person->Z;
+            x = p_person->X + (speed_x >> 3);
+            z = p_person->Z + (speed_z >> 3);
             if (!person_is_dead_or_dying(p_person->ThingOffset) &&
               ((p_person->Flag & TngF_Destroyed) == 0) &&
               person_hit_razor_wire(p_person, -p_cvlist->Object)) {
