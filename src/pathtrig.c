@@ -1985,24 +1985,6 @@ void generate_thin_paths_entrance(void)
     }
 }
 
-TbBool face_is_blocking_walk(short face)
-{
-    if (face < 0)
-    {
-        struct SingleObjectFace4 *p_face;
-        p_face = &game_object_faces4[-face];
-        return ((p_face->GFlags & FGFlg_Unkn04) == 0);
-    }
-    else if (face > 0)
-    {
-        struct SingleObjectFace3 *p_face;
-        p_face = &game_object_faces[face];
-        return ((p_face->GFlags & FGFlg_Unkn04) == 0);
-    }
-
-   return false;
-}
-
 void thin_paths_on_vectlist(ushort vl_head,
   TrTriangId *faces3_added, TrTriangId *faces4_added)
 {

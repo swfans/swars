@@ -3547,11 +3547,11 @@ ubyte create_intelligent_door(short col)
     return ret;
 }
 
-ushort set_thing_height_on_face(struct Thing *p_thing, int x, int z, short face)
+ushort set_thing_height_on_face_tri(struct Thing *p_thing, int x, int z, short face)
 {
     ushort ret;
     asm volatile (
-      "call ASM_set_thing_height_on_face\n"
+      "call ASM_set_thing_height_on_face_tri\n"
         : "=r" (ret) : "a" (p_thing), "d" (x), "b" (z), "c" (face));
     return ret;
 }
@@ -3563,6 +3563,16 @@ ushort set_thing_height_on_face_quad(struct Thing *p_thing, int x, int z, short 
       "call ASM_set_thing_height_on_face_quad\n"
         : "=r" (ret) : "a" (p_thing), "d" (x), "b" (z), "c" (face));
     return ret;
+}
+
+ushort set_thing_height_on_face(struct Thing *p_thing, int x, int z, short face)
+{
+    if (face > 0) {
+        return set_thing_height_on_face_tri(p_thing, x, z, face);
+    } else if (face < 0) {
+        return set_thing_height_on_face_quad(p_thing, x, z, -face);
+    }
+    return 0;
 }
 
 short find_and_set_connected_face(struct Thing *p_thing, int x, int z, short face)
@@ -3771,7 +3781,7 @@ short person_move(struct Thing *p_person)
         if ((z < 0) || (PRCCOORD_TO_MAPCOORD(z) >= MAP_COORD_HEIGHT))
             return 1;
 
-        if ((p_person->Flag & (0x10|0x04)) != 0)
+        if ((p_person->Flag & (TngF_Unkn0010|TngF_Unkn0004)) != 0)
         {
             thing = check_for_other_people(x, y, z, p_person);
             if (thing != 0) {
@@ -3918,91 +3928,55 @@ short person_move(struct Thing *p_person)
         if (word_1AA394 != 0)
         {
             if (word_1AA394 <= 0)
-                p_person->Flag2 |= 0x20000000;
+                p_person->Flag2 |= TgF2_InsideBuilding;
             else
-                p_person->Flag2 &= ~0x20000000;
+                p_person->Flag2 &= ~TgF2_InsideBuilding;
         }
     }
 
-    short face;
-    face = p_person->U.UPerson.OnFace;
-    if (face != 0)
+    if (p_person->U.UPerson.OnFace != 0)
     {
-        if (face > 0)
-        {
-            if (set_thing_height_on_face(p_person, x, z, p_person->U.UPerson.OnFace)) {
-                move_mapwho(p_person, x, p_person->Y, z);
-                p_person->U.UPerson.BumpMode = 0;
-                p_person->Flag2 |= 0x0100;
-                return 0;
-            }
-        }
-        else
-        {
-            if (set_thing_height_on_face_quad(p_person, x, z, -face)) {
-                move_mapwho(p_person, x, p_person->Y, z);
-                p_person->U.UPerson.BumpMode = 0;
-                p_person->Flag2 |= 0x0100;
-                return 0;
-            }
+        if (set_thing_height_on_face(p_person, x, z, p_person->U.UPerson.OnFace)) {
+            move_mapwho(p_person, x, p_person->Y, z);
+            p_person->U.UPerson.BumpMode = 0;
+            p_person->Flag2 |= TgF2_Unkn0100;
+            return 0;
         }
         if (!find_and_set_connected_face(p_person, x, z, p_person->U.UPerson.OnFace))
         {
-            if ( !colvect || (p_person->U.UPerson.OnFace != game_col_vects[colvect].Face))
+            if ((colvect == 0) || (p_person->U.UPerson.OnFace != game_col_vects[colvect].Face))
                 return 1;
             p_person->U.UPerson.OnFace = 0;
-            p_person->U.UPerson.Flag3 &= ~0x80;
+            p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn80;
         }
         move_mapwho(p_person, x, p_person->Y, z);
         p_person->U.UPerson.BumpMode = 0;
-        p_person->Flag2 |= 0x0100;
+        p_person->Flag2 |= TgF2_Unkn0100;
         return 0;
     }
 
     if (colvect != 0) {
+        short face;
+
         face = game_col_vects[colvect].Face;
-    } else {
-        face = 0;
-    }
-    if (face != 0)
-    {
-        if (face > 0)
+        if (face == 0)
         {
-            if ((game_object_faces[face].GFlags & FGFlg_Unkn04) != 0)
-            {
-              if (set_thing_height_on_face(p_person, x, z, face)) {
-                  p_person->U.UPerson.BumpMode = 0;
-                  p_person->U.UPerson.OnFace = face;
-                  p_person->Flag2 |= TgF2_Unkn0100;
-                  move_mapwho(p_person, x, p_person->Y, z);
-                  return 0;
-              }
-              colvect = 0;
-            }
-            else
-            {
-              if (p_person->U.UPerson.OnFace != 0)
-                colvect = 0;
-            }
+            // No action
         }
-        else
+        else if (!face_is_blocking_walk(face))
         {
-            if ((game_object_faces4[-face].GFlags & FGFlg_Unkn04) != 0)
-            {
-              if (set_thing_height_on_face_quad(p_person, x, z, -face)) {
-                  p_person->U.UPerson.BumpMode = 0;
-                  p_person->U.UPerson.OnFace = face;
-                  p_person->Flag2 |= TgF2_Unkn0100;
-                  move_mapwho(p_person, x, p_person->Y, z);
-                  return 0;
-              }
-              colvect = 0;
+            if (set_thing_height_on_face(p_person, x, z, face)) {
+                p_person->U.UPerson.BumpMode = 0;
+                p_person->U.UPerson.OnFace = face;
+                p_person->Flag2 |= TgF2_Unkn0100;
+                move_mapwho(p_person, x, p_person->Y, z);
+                return 0;
             }
-            else
-            {
-              if (p_person->U.UPerson.OnFace != 0)
-                colvect = 0;
-            }
+            colvect = 0;
+        }
+        else if (p_person->U.UPerson.OnFace != 0)
+        {
+            colvect = 0;
         }
     }
 
