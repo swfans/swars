@@ -1004,10 +1004,32 @@ int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushor
 
 TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle)
 {
+#if 0
     TbBool ret;
     asm volatile ("call ASM_can_i_enter_vehicle\n"
         : "=r" (ret) : "a" (p_me), "d" (p_vehicle));
     return ret;
+#endif
+    struct Thing *p_thing;
+    ThingIdx thing;
+    ushort tngroup, mygroup;
+
+    if ((p_me->Flag2 & 0x0800) != 0)
+        return true;
+
+    thing = p_vehicle->U.UVehicle.PassengerHead;
+    if (thing <= 0)
+        return true;
+    p_thing = &things[thing];
+
+    tngroup = p_thing->U.UObject.EffectiveGroup;
+    mygroup = p_me->U.UObject.EffectiveGroup;
+    if (tngroup == mygroup)
+        return true;
+    if (thing_group_have_truce(tngroup, mygroup) || thing_group_have_truce(mygroup, tngroup))
+        return true;
+
+    return false;
 }
 
 void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
@@ -2988,8 +3010,45 @@ void person_init_pickup(struct Thing *p_person, ThingIdx item)
 
 void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 {
+#if 0
     asm volatile ("call ASM_person_enter_vehicle\n"
         : : "a" (p_person), "d" (p_vehicle));
+#endif
+    ThingIdx passngr;
+
+    if ((p_vehicle->SubType == SubTT_VEH_SHIP) && (p_vehicle->State == VehSt_UNKN_40))
+    {
+        // Allow ships to be entered when in motion, because we just do not have the proper functionality to stop them
+    }
+    else if ((p_vehicle->State != VehSt_PARKED_PARAL) && (p_vehicle->State != VehSt_PARKED_PERPN) && (p_vehicle->State != VehSt_NONE))
+    {
+        if ((debug_log_things & 0x01) != 0) {
+            LOGSYNC("Person %s %d state %d.%d cannot enter %s %d state %d.%d",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset,
+              p_person->State, p_person->SubState,
+              vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,
+              p_vehicle->State, p_vehicle->SubState);
+        }
+        return;
+    }
+
+    p_person->Flag |= 0x10000000|0x02000000;
+    p_person->Flag &= ~0x01000000;
+    p_person->State = PerSt_DRIVING_VEHICLE;
+
+    passngr = p_vehicle->U.UVehicle.PassengerHead;
+    p_vehicle->U.UVehicle.PassengerHead = p_person->ThingOffset;
+    p_person->U.UPerson.LinkPassenger = passngr;
+
+    if ((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
+        delete_node(p_person);
+    p_person->X = p_vehicle->X;
+    p_person->Y = p_vehicle->Y;
+    p_person->Z = p_vehicle->Z;
+    p_vehicle->U.UVehicle.EffectiveGroup = p_person->U.UPerson.EffectiveGroup;
+
+    if ((p_person->Flag2 & 0x080000) != 0)
+        set_person_animmode_walk(p_person);
 }
 
 ubyte person_attempt_to_leave_vehicle(struct Thing *p_thing)
@@ -3578,8 +3637,57 @@ void process_support_person(struct Thing *p_person)
 
 void person_use_vehicle(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_person_use_vehicle\n"
         : : "a" (p_person));
+#endif
+    struct Thing *p_vehicle;
+
+    if ((p_person->Flag & TngF_InVehicle) != 0)
+    {
+        if ((debug_log_things & 0x01) != 0) {
+            LOGSYNC("Person %s %d has finished state %d.%d",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset,
+              p_person->State, p_person->SubState);
+        }
+        p_person->State = PerSt_NONE;
+        return;
+    }
+
+    person_goto_point(p_person);
+    if ((p_person->Flag & TngF_Unkn01000000) == 0) {
+        if ((debug_log_things & 0x01) != 0) {
+            LOGSYNC("Person %s %d has wrong flags to enter, state %d.%d",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset,
+              p_person->State, p_person->SubState);
+        }
+        return;
+    }
+
+    if (p_person->U.UPerson.Vehicle != p_person->GotoThingIndex) {
+        if ((debug_log_things & 0x01) != 0) {
+            LOGSYNC("Person %s %d went to wrong thing, state %d.%d",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset,
+              p_person->State, p_person->SubState);
+        }
+        return;
+    }
+
+    p_vehicle = &things[p_person->U.UPerson.Vehicle];
+
+    if (!can_i_enter_vehicle(p_person, p_vehicle)) {
+        if ((debug_log_things & 0x01) != 0) {
+            LOGSYNC("Person %s %d state %d.%d cannot enter %s %d state %d.%d",
+              person_type_name(p_person->SubType), (int)p_person->ThingOffset,
+              p_person->State, p_person->SubState,
+              vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,
+              p_vehicle->State, p_vehicle->SubState);
+        }
+        return;
+    }
+
+    person_enter_vehicle(p_person, p_vehicle);
+    p_person->State = PerSt_NONE;
 }
 
 void person_wait_vehicle(struct Thing *p_person)

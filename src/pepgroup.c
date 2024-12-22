@@ -150,6 +150,12 @@ void thing_group_set_kill_on_sight(short mod_grp, short target_grp, TbBool state
         war_flags[mod_grp].KillOnSight &= ~(1 << target_grp);
 }
 
+TbBool thing_group_have_truce(short check_grp, short target_grp)
+{
+    check_grp &= 0x1F;
+    return (war_flags[check_grp].Truce & (1 << target_grp)) != 0;
+}
+
 void thing_group_set_truce(short mod_grp, short target_grp, TbBool state)
 {
     mod_grp &= 0x1F;
