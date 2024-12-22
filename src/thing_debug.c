@@ -1008,7 +1008,7 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       break;
     case PCmd_CATCH_FERRY:
     case PCmd_EXIT_FERRY:
-      sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
+      sprintf(o, "%s X%d Z%d", cmd_name, p_cmd->X, p_cmd->Z);
       result = 1;
       break;
     case PCmd_GOTOPOINT_FACE:

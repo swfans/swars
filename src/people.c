@@ -2180,9 +2180,17 @@ StateChRes person_cmd_start_danger_music(struct Thing *p_person, TbBool revert)
     return StCh_ACCEPTED;
 }
 
-StateChRes person_init_catch_ferry(struct Thing *p_person, short portbld)
+StateChRes person_init_catch_ferry(struct Thing *p_person, short cor_x, short cor_z, ushort radius)
 {
-    //TODO not implemented
+    p_person->State = PerSt_CATCH_FERRY;
+    p_person->U.UPerson.ComTimer = -1;
+    p_person->U.UPerson.ComRange = 1;
+    p_person->SubState = 0;
+    p_person->U.UPerson.GotoX = cor_x;
+    p_person->U.UPerson.GotoZ = cor_z;
+
+    if (p_person->U.UPerson.PathIndex != 0)
+        remove_path(p_person);
     return StCh_ACCEPTED;
 }
 
@@ -2478,7 +2486,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         res = StCh_ACCEPTED;
         break;
     case PCmd_CATCH_FERRY:
-        res = person_init_catch_ferry(p_person, p_cmd->OtherThing);
+        res = person_init_catch_ferry(p_person, p_cmd->X, p_cmd->Z, p_cmd->Arg1);
         break;
     case PCmd_EXIT_FERRY:
         res = person_init_exit_ferry(p_person, p_cmd->OtherThing);

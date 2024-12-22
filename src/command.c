@@ -107,7 +107,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_OPEN_DOME",			NULL,				CmDF_ReqDomeCoord },
     {"TNG_CMD_CLOSE_DOME",			NULL,				CmDF_ReqDomeCoord },
     {"TNG_CMD_DROP_WEAPON",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = weapon type
-    {"TNG_CMD_CATCH_FERRY",			NULL,				CmDF_ReqOtherThing },
+    {"TNG_CMD_CATCH_FERRY",			NULL,				CmDF_ReqCoord|CmDF_ReqRange1 },
     {"TNG_CMD_EXIT_FERRY",			NULL,				CmDF_ReqOtherThing },
     {"TNG_CMD_PING_EXIST",			NULL,				CmDF_None },
     {"TNG_CMD_GOTOPOINT_FACE",		NULL,				CmDF_ReqOtherIndex|CmDF_ReqCoord|CmDF_ReqRange1 }, // OtherIndex = face
