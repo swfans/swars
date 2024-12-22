@@ -757,36 +757,58 @@ void person_start_executing_commands(struct Thing *p_person)
     ingame.Flags |= GamF_Unkn0100;
 }
 
+short person_slot_as_player_agent(struct Thing *p_person, ushort plyr)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+    short plagent;
+
+    p_player = &players[plyr];
+
+    for (plagent = 0; plagent < playable_agents; plagent++)
+    {
+        p_agent = p_player->MyAgent[plagent];
+        if (p_person->ThingOffset == p_agent->ThingOffset)
+        {
+            return plagent;
+        }
+    }
+    return -1;
+}
+
+TbBool person_is_player_agent_in_slot(struct Thing *p_person, ushort plyr, short plagent)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_agent;
+
+    p_player = &players[plyr];
+    p_agent = p_player->MyAgent[0];
+
+    return (p_person->ThingOffset == p_agent->ThingOffset);
+}
+
 void set_peep_comcur(struct Thing *p_person)
 {
 #if 0
     asm volatile ("call ASM_set_peep_comcur\n"
         : : "a" (p_person));
 #endif
-    PlayerInfo *p_locplayer;
-    struct Thing *p_agent;
-    ushort plyr, plagent;
+    ushort plyr;
+    short plagent;
 
-    p_locplayer = &players[local_player_no];
     plyr = local_player_no;
+    plagent = person_slot_as_player_agent(p_person, plyr);
 
-    for (plagent = 0; plagent < playable_agents; plagent++)
+    if (plagent >= 0)
     {
-        p_agent = p_locplayer->MyAgent[plagent];
-        if (p_person->ThingOffset == p_agent->ThingOffset)
-        {
-            p_agent->U.UPerson.ComHead = 0;
-            p_agent->U.UPerson.ComCur = (plyr << 2) | plagent;
-            break;
-        }
+        p_person->U.UPerson.ComHead = 0;
+        p_person->U.UPerson.ComCur = (plyr << 2) | plagent;
     }
+
+    if (person_is_player_agent_in_slot(p_person, plyr, 0))
     {
-        p_agent = p_locplayer->MyAgent[0];
-        if (p_person->ThingOffset == p_agent->ThingOffset)
-        {
-            ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
-            ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
-        }
+        ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_person->X);
+        ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_person->Z);
     }
 }
 
