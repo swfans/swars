@@ -145,7 +145,7 @@ struct PeepStateConfig person_states[] = {
   {"CATCH_FERRY",},
   {"EXIT_FERRY",},
   {"AVOID_GROUP",},
-  {"STATE_UNUSED_3A",},
+  {"INIT_COMMAND",},
   {"BEING_PERSUADED",},
 };
 
@@ -2470,6 +2470,9 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         person_init_drop(p_person, p_cmd->OtherThing);
         res = StCh_ACCEPTED;
         break;
+    case PCmd_CATCH_FERRY:
+        res = StCh_ACCEPTED;
+        break;
     case PCmd_EXIT_FERRY:
         res = person_init_exit_ferry(p_person, p_cmd->OtherThing);
         break;
@@ -2612,7 +2615,6 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     case PCmd_HIDE:
     case PCmd_AVOID_PERSON:
     case PCmd_UNKN16:
-    case PCmd_CATCH_FERRY:
     case PCmd_EXECUTE_COMS:
     case PCmd_UNKN27:
     case PCmd_UNKN28:
@@ -4230,7 +4232,7 @@ void process_person(struct Thing *p_person)
             short pstng_x, pstng_y, pstng_z;
             make_peep_protect_peep(p_person, &things[p_person->Owner]);
             get_thing_position_mapcoords(&pstng_x, &pstng_y, &pstng_z, p_person->ThingOffset);
-            func_711F4(pstng_x, pstng_y, pstng_z, 200, colour_lookup[ColLU_WHITE]);
+            draw_map_flat_circle(pstng_x, pstng_y, pstng_z, 200, colour_lookup[ColLU_WHITE]);
         }
     }
     if ((p_person->Flag2 & TgF2_Unkn0020) != 0)
