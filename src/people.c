@@ -744,6 +744,62 @@ void set_person_energy_stamina_type(struct Thing *p_person, ushort stype)
     }
 }
 
+void person_init_wait(struct Thing *p_person, short wait_turns)
+{
+    p_person->State = PerSt_WAIT;
+    p_person->U.UPerson.ComTimer = wait_turns;
+}
+
+void person_start_executing_commands(struct Thing *p_person)
+{
+    p_person->Flag2 |= TgF2_Unkn0800;
+    p_person->Flag |= TngF_Unkn0040;
+    ingame.Flags |= GamF_Unkn0100;
+}
+
+void set_peep_comcur(struct Thing *p_person)
+{
+#if 0
+    asm volatile ("call ASM_set_peep_comcur\n"
+        : : "a" (p_person));
+#endif
+    PlayerInfo *p_locplayer;
+    struct Thing *p_agent;
+    ushort plyr, plagent;
+
+    p_locplayer = &players[local_player_no];
+    plyr = local_player_no;
+
+    for (plagent = 0; plagent < playable_agents; plagent++)
+    {
+        p_agent = p_locplayer->MyAgent[plagent];
+        if (p_person->ThingOffset == p_agent->ThingOffset)
+        {
+            p_agent->U.UPerson.ComHead = 0;
+            p_agent->U.UPerson.ComCur = (plyr << 2) | plagent;
+            break;
+        }
+    }
+    {
+        p_agent = p_locplayer->MyAgent[0];
+        if (p_person->ThingOffset == p_agent->ThingOffset)
+        {
+            ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
+            ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
+        }
+    }
+}
+
+void person_finish_executing_commands(struct Thing *p_person)
+{
+    if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & TgF2_Unkn0800) != 0))
+    {
+        p_person->Flag2 &= ~TgF2_Unkn0800;
+        ingame.Flags &= ~GamF_Unkn0100;
+        set_peep_comcur(p_person);
+    }
+}
+
 void person_resurrect(struct Thing *p_person)
 {
     p_person->Flag &= ~TngF_Destroyed;
@@ -1224,12 +1280,6 @@ void check_persons_target2(struct Thing *p_person)
 void process_stamina(struct Thing *p_person)
 {
     asm volatile ("call ASM_process_stamina\n"
-        : : "a" (p_person));
-}
-
-void set_peep_comcur(struct Thing *p_person)
-{
-    asm volatile ("call ASM_set_peep_comcur\n"
         : : "a" (p_person));
 }
 
@@ -4055,21 +4105,14 @@ void person_find_next_state(struct Thing *p_person)
 
     if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & TgF2_Unkn0800) == 0))
     {
-        p_person->State = PerSt_WAIT;
-        p_person->U.UPerson.ComTimer = 50;
+        person_init_wait(p_person, 50);
         return;
     }
 
     if (p_person->U.UPerson.ComCur == 0)
     {
-        if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & TgF2_Unkn0800) != 0))
-        {
-            p_person->Flag2 &= ~TgF2_Unkn0800;
-            ingame.Flags &= ~GamF_Unkn0100;
-            set_peep_comcur(p_person);
-        }
-        p_person->State = PerSt_WAIT;
-        p_person->U.UPerson.ComTimer = 50;
+        person_finish_executing_commands(p_person);
+        person_init_wait(p_person, 50);
         return;
     }
 
@@ -4085,8 +4128,7 @@ void person_find_next_state(struct Thing *p_person)
 
     if (p_person->U.UPerson.ComHead == 0)
     {
-        p_person->State = PerSt_WAIT;
-        p_person->U.UPerson.ComTimer = 50;
+        person_init_wait(p_person, 50);
         return;
     }
 
@@ -4097,14 +4139,8 @@ void person_find_next_state(struct Thing *p_person)
     // Repeat with new ComCur
     if (p_person->U.UPerson.ComCur == 0)
     {
-        if (((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag2 & TgF2_Unkn0800) != 0))
-        {
-            p_person->Flag2 &= ~TgF2_Unkn0800;
-            ingame.Flags &= ~GamF_Unkn0100;
-            set_peep_comcur(p_person);
-        }
-        p_person->State = PerSt_WAIT;
-        p_person->U.UPerson.ComTimer = 100;
+        person_finish_executing_commands(p_person);
+        person_init_wait(p_person, 100);
         return;
     }
 

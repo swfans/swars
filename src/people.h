@@ -273,9 +273,12 @@ int limit_mood(struct Thing *p_thing, short mood);
 void person_init_preplay_command(struct Thing *p_person);
 
 TbBool person_is_executing_commands(ThingIdx person);
+void person_start_executing_commands(struct Thing *p_person);
+
 TbBool person_is_persuaded(ThingIdx thing);
 TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
 TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
+
 void player_change_person(short thing, ushort plyr);
 void make_peeps_scatter(struct Thing *p_person, int x, int z);
 int person_hit_by_bullet(struct Thing *p_person, short hp,

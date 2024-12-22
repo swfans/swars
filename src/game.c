@@ -3108,10 +3108,8 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_EXECUTE_COMS))
         {
             // Now we can re-set current command to the real command
-            p_person->Flag2 |= TgF2_Unkn0800;
-            p_person->Flag |= TngF_Unkn0040;
             p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
-            ingame.Flags |= GamF_Unkn0100;
+            person_start_executing_commands(p_person);
         }
         else
         {
@@ -7670,8 +7668,9 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_sectng = get_thing_safe(packet->X, TT_PERSON);
         if (p_sectng == INVALID_THING)
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
-            person_init_follow_person(p_thing, p_sectng);
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+            break;
+        person_init_follow_person(p_thing, p_sectng);
         break;
     case PAct_CONTROL_MODE:
         players[plyr].UserInput[0].ControlMode = packet->Data;
@@ -7746,8 +7745,9 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
-            make_peeps_scatter(p_thing, packet->X, packet->Z);
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+            break;
+        make_peeps_scatter(p_thing, packet->X, packet->Z);
         break;
     case PAct_SELECT_GRP_SPEC_WEAPON:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
