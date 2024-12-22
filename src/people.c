@@ -1381,8 +1381,8 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_WAIT_ALL_G_NEAR:
     case PCmd_WAND_ALL_G_NEAR:
     case PCmd_UNTIL_ALL_G_NEAR:
-        if (all_group_arrived( p_cmd->OtherThing, p_me->X >> 8,
-          p_me->Y >> 8, p_me->Z >> 8, p_cmd->Arg1))
+        if (all_group_arrived( p_cmd->OtherThing, PRCCOORD_TO_MAPCOORD(p_me->X),
+          PRCCOORD_TO_MAPCOORD(p_me->Y), PRCCOORD_TO_MAPCOORD(p_me->Z), p_cmd->Arg1))
         {
             return !unmet;
         }
@@ -1410,7 +1410,8 @@ ubyte conditional_command_state_true(ushort cmd, struct Thing *p_me, ubyte from)
     case PCmd_WAND_P_V_I_NEAR:
     case PCmd_UNTIL_P_V_I_NEAR:
         if (thing_arrived_at_obj_radius(p_cmd->OtherThing,
-          p_me->X >> 8, p_me->Y >> 8, p_me->Z >> 8, ((p_cmd->Arg1) * (p_cmd->Arg1)) << 12))
+          PRCCOORD_TO_MAPCOORD(p_me->X), PRCCOORD_TO_MAPCOORD(p_me->Y), PRCCOORD_TO_MAPCOORD(p_me->Z),
+          ((p_cmd->Arg1) * (p_cmd->Arg1)) << 12))
         {
             return !unmet;
         }
@@ -2179,6 +2180,12 @@ StateChRes person_cmd_start_danger_music(struct Thing *p_person, TbBool revert)
     return StCh_ACCEPTED;
 }
 
+StateChRes person_init_catch_ferry(struct Thing *p_person, short portbld)
+{
+    //TODO not implemented
+    return StCh_ACCEPTED;
+}
+
 StateChRes person_init_exit_ferry(struct Thing *p_person, short portbld)
 {
     short prtng_x, prtng_z;
@@ -2471,7 +2478,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         res = StCh_ACCEPTED;
         break;
     case PCmd_CATCH_FERRY:
-        res = StCh_ACCEPTED;
+        res = person_init_catch_ferry(p_person, p_cmd->OtherThing);
         break;
     case PCmd_EXIT_FERRY:
         res = person_init_exit_ferry(p_person, p_cmd->OtherThing);
@@ -2992,10 +2999,93 @@ void player_change_person(short thing, ushort plyr)
         : : "a" (thing), "d" (plyr));
 }
 
-void person_attempt_to_leave_ferry(struct Thing *p_thing)
+ubyte person_leave_vehicle(struct Thing *p_thing, struct Thing *p_vehicle)
 {
+    ubyte ret;
+    asm volatile (
+      "call ASM_person_leave_vehicle\n"
+        : "=r" (ret) : "a" (p_thing), "d" (p_vehicle));
+    return ret;
+}
+
+ThingIdx person_find_ferry_to_catch(struct Thing *p_person)
+{
+    struct Command *p_cmd;
+    int radius;
+    ThingIdx thing;
+    short cor_x, cor_y, cor_z;
+
+    p_cmd = &game_commands[p_person->U.UPerson.ComCur];
+    radius = (p_cmd->Arg1 << 6);
+    cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+    cor_y = PRCCOORD_TO_MAPCOORD(p_person->Y);
+    cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+
+    thing = search_for_ferry(cor_x, cor_y, cor_z, radius);
+
+    return thing;
+}
+
+void person_catch_ferry(struct Thing *p_person)
+{
+    struct Thing *p_vehicle;
+    ThingIdx veh;
+
+    if ((p_person->Flag & TngF_InVehicle) != 0)
+        return;
+    person_goto_point(p_person);
+    p_person->State = PerSt_CATCH_FERRY;
+    veh = person_find_ferry_to_catch(p_person);
+    if (veh == 0)
+        return;
+
+    p_vehicle = &things[veh];
+    person_enter_vehicle(p_person, p_vehicle);
+    p_person->State = 0;
+    p_person->U.UPerson.Vehicle = veh;
+}
+
+void person_attempt_to_leave_ferry(struct Thing *p_person)
+{
+#if 0
     asm volatile ("call ASM_person_attempt_to_leave_ferry\n"
-        : : "a" (p_thing));
+        : : "a" (p_person));
+#endif
+    struct Command *p_cmd;
+    struct Thing *p_vehicle;
+    int radius_sqr;
+    short state_bkp;
+
+    p_cmd = &game_commands[p_person->U.UPerson.ComCur];
+    radius_sqr = (p_cmd->Arg1 << 6) * (p_cmd->Arg1 << 6);
+    p_vehicle = &things[p_person->U.UPerson.Vehicle];
+    func_6fd1c(PRCCOORD_TO_MAPCOORD(p_person->X),
+      PRCCOORD_TO_MAPCOORD(p_person->Y),
+      PRCCOORD_TO_MAPCOORD(p_person->Z),
+      p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
+    func_6fd1c(PRCCOORD_TO_MAPCOORD(p_vehicle->X),
+      PRCCOORD_TO_MAPCOORD(p_vehicle->Y),
+      PRCCOORD_TO_MAPCOORD(p_vehicle->Z),
+      p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_BLUE]);
+
+    if ((p_vehicle->U.UVehicle.LeisurePlace == 0) || (p_vehicle->Speed != 0))
+        return;
+    if (!thing_arrived_at_obj_radius(p_person->ThingOffset,
+      p_cmd->X, p_cmd->Y, p_cmd->Z, radius_sqr))
+        return;
+
+    state_bkp = p_vehicle->State;
+    p_vehicle->State = VehSt_NONE;
+    person_leave_vehicle(p_person, p_vehicle);
+    p_vehicle->State = state_bkp;
+
+    delete_node(p_person);
+    p_person->X = MAPCOORD_TO_PRCCOORD(p_cmd->X,0);
+    p_person->Y = alt_at_point(p_cmd->X, p_cmd->Z);
+    p_person->Z = MAPCOORD_TO_PRCCOORD(p_cmd->Z,0);
+    add_node_thing(p_person->ThingOffset);
+    p_person->State = 0;
+    p_person->Flag |= TngF_Unkn0004;
 }
 
 void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint fast_flag)
@@ -3506,8 +3596,8 @@ void person_destroy_building(struct Thing *p_person)
     {
         int dist_x, dist_z, range;
 
-        dist_x = (p_person->X >> 8) - p_person->U.UPerson.GotoX;
-        dist_z = (p_person->Z >> 8) - p_person->U.UPerson.GotoZ;
+        dist_x = PRCCOORD_TO_MAPCOORD(p_person->X) - p_person->U.UPerson.GotoX;
+        dist_z = PRCCOORD_TO_MAPCOORD(p_person->Z) - p_person->U.UPerson.GotoZ;
         range = p_person->U.UPerson.ComRange << 6;
 
         in_range = 0;
@@ -4513,6 +4603,9 @@ void process_person(struct Thing *p_person)
               break;
         case PerSt_WAIT_TO_EXIT_VEHICLE:
               person_attempt_to_leave_vehicle(p_person);
+              break;
+        case PerSt_CATCH_FERRY:
+              person_catch_ferry(p_person);
               break;
         case PerSt_EXIT_FERRY:
               person_attempt_to_leave_ferry(p_person);

@@ -261,6 +261,11 @@ static ThingIdx find_thing_type_on_same_type_list_within_circle_with_bfilter(sho
             // Per thing code start
             if (p_sthing->Type == ttype) {
                 if ((p_sthing->SubType == subtype) || (subtype == -1)) {
+#if 0
+                    func_6fd1c(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+                      PRCCOORD_TO_MAPCOORD(p_sthing->Z), X, PRCCOORD_TO_MAPCOORD(p_sthing->Y), Z, colour_lookup[ColLU_RED]);
+#endif
+
                     if (thing_is_within_circle(thing, X, Z, R)) {
                         if (filter(thing, params))
                             return thing;
@@ -277,6 +282,10 @@ static ThingIdx find_thing_type_on_same_type_list_within_circle_with_bfilter(sho
             // Per thing code start
             if (p_thing->Type == ttype) {
                 if ((p_thing->SubType == subtype) || (subtype == -1)) {
+#if 0
+                    func_6fd1c(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Y),
+                      PRCCOORD_TO_MAPCOORD(p_thing->Z), X, PRCCOORD_TO_MAPCOORD(p_thing->Y), Z, colour_lookup[ColLU_RED]);
+#endif
                     if (thing_is_within_circle(thing, X, Z, R)) {
                         if (filter(thing, params))
                             return thing;
@@ -670,6 +679,21 @@ TbBool bfilter_person_can_be_persuaded_now(ThingIdx thing, ThingFilterParams *pa
     return found;
 }
 
+TbBool bfilter_waiting_stopped(ThingIdx thing, ThingFilterParams *params)
+{
+    struct Thing *p_thing;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+
+    if ((p_thing->U.UVehicle.LeisurePlace == 0) || (p_thing->Speed != 0))
+        return false;
+
+    return true;
+}
+
 short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon)
 {
     ThingIdx thing;
@@ -819,6 +843,19 @@ ThingIdx search_for_station(short X, short Z)
 
     thing = find_thing_type_within_circle_with_bfilter(X, Z, TILE_TO_MAPCOORD(15,0),
       TT_BUILDING, SubTT_BLD_STATION, bfilter_match_all, &params);
+
+    return thing;
+}
+
+ThingIdx search_for_ferry(short X, short Y, short Z, ushort R)
+{
+    ThingIdx thing;
+    ThingFilterParams params;
+
+    params.Arg1 = Y;
+    params.Arg2 = R;
+    thing = find_thing_type_within_circle_with_bfilter(X, Z, R,
+      TT_VEHICLE, SubTT_VEH_SHIP, bfilter_waiting_stopped, &params);
 
     return thing;
 }
