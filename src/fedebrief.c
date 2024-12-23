@@ -28,6 +28,7 @@
 #include "game_sprts.h"
 #include "game.h"
 #include "thing.h"
+#include "misstat.h"
 #include "player.h"
 #include "purpldrw.h"
 #include "research.h"
@@ -541,7 +542,8 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
     char *text;
     char locstr[40];
     int fheight, lnheight;
-    int i, k;
+    PlayerIdx plyr;
+    int k;
     int used_num; // Player number counting existing player; starts at 1
     short x1, x2, x3;
     short y;
@@ -553,41 +555,26 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
 
     y = 2 * lnheight;
     used_num = 1;
-    for (i = 0; i < 8; i++)
+    for (plyr = 0; plyr < 8; plyr++)
     {
-        k = byte_1C5C28[i];
+        k = byte_1C5C28[plyr];
         word_1C4856[k] = 0;
     }
 
     x1 = 20;
     x3 = 25;
-    for (i = 0; i < 8; i++)
+    for (plyr = 0; plyr < 8; plyr++)
     {
-        struct MissionStatus *p_mistat;
-        ushort plyr;
         int textw;
 
-        if (unkn2_names[i][0] == '\0')
+        if (unkn2_names[plyr][0] == '\0')
             continue;
 
-        plyr = (players[i].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
-        word_1C4846[i] = 0;
-        // The CivsKilled property should start a list of ushort stats; there are 6 of these
-        p_mistat = &mission_status[plyr];
-        for (k = 0; k < 8; k++)
-        {
-            if (unkn2_names[k][0] == '\0')
-                continue;
+        word_1C4846[plyr] = stats_mp_count_net_players_agents_kills(plyr);
 
-            if (k == i)
-                word_1C4846[i] -= p_mistat->MP.AgentsKilled[k];
-            else
-                word_1C4846[i] += p_mistat->MP.AgentsKilled[k];
-        }
-
-        k = byte_1C5C28[i];
+        k = byte_1C5C28[plyr];
         if (k != 0)
-            word_1C4856[k] += word_1C4846[i];
+            word_1C4856[k] += word_1C4846[plyr];
 
         snprintf(locstr, sizeof(locstr), "%d", used_num);
         text = (char *)(back_buffer + text_buf_pos);
@@ -597,7 +584,7 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
         x2 = 140 + 40 * (used_num - 1);
         draw_text_purple_list2(x2 - textw, lnheight, text, 0);
         text_buf_pos += strlen(text) + 1;
-        draw_text_purple_list2(x3, y, unkn2_names[i], 0);
+        draw_text_purple_list2(x3, y, unkn2_names[plyr], 0);
         y += lnheight;
 
         used_num++;
@@ -682,7 +669,6 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
 
     for (i = 0; i != 8; i++)
     {
-        struct MissionStatus *p_mistat;
         int textw;
         ushort plyr;
         int n;
@@ -690,17 +676,8 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
         if (unkn2_names[i][0] == '\0')
             continue;
 
-        n = 0;
         plyr = (players[k].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
-        p_mistat = &mission_status[plyr];
-        for (k = 0; k != 8; k++)
-        {
-
-            if (unkn2_names[k][0] == '\0')
-                continue;
-
-            n += p_mistat->MP.AgentsKilled[k];
-        }
+        n = stats_mp_count_players_agents_killed(plyr);
         snprintf(locstr, sizeof(locstr), "%d", n);
         text = (char *)(back_buffer + text_buf_pos);
         strcpy(text, locstr);

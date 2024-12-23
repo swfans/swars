@@ -36,6 +36,7 @@
 #include "game_speed.h"
 #include "game_sprani.h"
 #include "lvobjctv.h"
+#include "misstat.h"
 #include "player.h"
 #include "scandraw.h"
 #include "sound.h"
@@ -1030,78 +1031,6 @@ TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle)
         return true;
 
     return false;
-}
-
-void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
-{
-    struct MissionStatus *p_mistat;
-
-    p_mistat = &mission_status[brief];
-
-    switch (p_person->SubType)
-    {
-    case SubTT_PERS_AGENT:
-          p_mistat->AgentsGained++;
-          // fall through
-    case SubTT_PERS_ZEALOT:
-    case SubTT_PERS_HIGH_PRIEST:
-    case SubTT_PERS_PUNK_F:
-    case SubTT_PERS_PUNK_M:
-          p_mistat->SP.EnemiesPersuaded++;
-          break;
-    case SubTT_PERS_BRIEFCASE_M:
-    case SubTT_PERS_WHITE_BRUN_F:
-    case SubTT_PERS_SCIENTIST:
-    case SubTT_PERS_SHADY_M:
-    case SubTT_PERS_WHIT_BLOND_F:
-    case SubTT_PERS_LETH_JACKT_M:
-    case SubTT_PERS_FAST_BLOND_F:
-          p_mistat->SP.CivsPersuaded++;
-          break;
-    case SubTT_PERS_MERCENARY:
-    case SubTT_PERS_MECH_SPIDER:
-    case SubTT_PERS_POLICE:
-          p_mistat->SP.SecurityPersuaded++;
-          break;
-    default:
-          break;
-    }
-}
-
-void persuaded_person_remove_from_stats(struct Thing *p_person, ushort brief)
-{
-    struct MissionStatus *p_mistat;
-
-    p_mistat = &mission_status[brief];
-
-    switch (p_person->SubType)
-    {
-    case SubTT_PERS_AGENT:
-        p_mistat->AgentsGained--;
-        // fall through
-    case SubTT_PERS_ZEALOT:
-    case SubTT_PERS_PUNK_F:
-    case SubTT_PERS_PUNK_M:
-    case SubTT_PERS_HIGH_PRIEST:
-        p_mistat->SP.EnemiesPersuaded--;
-        break;
-    case SubTT_PERS_BRIEFCASE_M:
-    case SubTT_PERS_WHITE_BRUN_F:
-    case SubTT_PERS_SCIENTIST:
-    case SubTT_PERS_SHADY_M:
-    case SubTT_PERS_WHIT_BLOND_F:
-    case SubTT_PERS_LETH_JACKT_M:
-    case SubTT_PERS_FAST_BLOND_F:
-        p_mistat->SP.CivsPersuaded--;
-        break;
-    case SubTT_PERS_MERCENARY:
-    case SubTT_PERS_MECH_SPIDER:
-    case SubTT_PERS_POLICE:
-        p_mistat->SP.SecurityPersuaded--;
-        break;
-    default:
-        break;
-    }
 }
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy)

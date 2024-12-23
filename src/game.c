@@ -98,6 +98,7 @@
 #include "hud_panel.h"
 #include "hud_target.h"
 #include "keyboard.h"
+#include "misstat.h"
 #include "mouse.h"
 #include "mydraw.h"
 #include "network.h"
@@ -2477,43 +2478,6 @@ void blind_progress_game(ulong nturns)
     {
         process_things();
         gameturn++;
-    }
-}
-
-void clear_mission_status(ulong id)
-{
-    struct MissionStatus *p_mistat;
-
-    p_mistat = &mission_status[id];
-
-    p_mistat->SP.CivsKilled = 0;
-    p_mistat->SP.EnemiesKilled = 0;
-    p_mistat->SP.CivsPersuaded = 0;
-    p_mistat->SP.SecurityPersuaded = 0;
-    p_mistat->SP.EnemiesPersuaded = 0;
-    p_mistat->SP.SecurityKilled = 0;
-    p_mistat->AgentsGained = 0;
-    p_mistat->AgentsLost = 0;
-    p_mistat->CityDays = 0;
-    p_mistat->CityHours = 0;
-}
-
-void clear_open_mission_status(void)
-{
-    ulong id;
-
-    if (in_network_game)
-    {
-        // In network game, mission status is per-player rather than per-mission
-        for (id = 0; id < 8; id++)
-        {
-            clear_mission_status(id);
-        }
-    }
-    else if (!in_network_game)
-    {
-        // Each mission has its status (unless in network game)
-        clear_mission_status(open_brief);
     }
 }
 

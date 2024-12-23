@@ -22,11 +22,13 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfini.h"
+
 #include "cybmod.h"
 #include "weapon.h"
-#include "lvobjctv.h"
 #include "game_data.h"
 #include "game.h"
+#include "lvobjctv.h"
+#include "misstat.h"
 #include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -505,7 +507,7 @@ void read_missions_bin_file(int num)
     }
 
     if (!in_network_game)
-        LbMemorySet(mission_status, 0, 120 * sizeof(struct MissionStatus));
+        clear_mission_status_all();
     if (fmtver < 2)
     {
         for (i = 1; i < next_mission; i++)

@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "bfmemut.h"
+
 #include "swlog.h"
 /******************************************************************************/
 struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
