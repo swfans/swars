@@ -2985,6 +2985,57 @@ void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
         set_person_animmode_walk(p_person);
 }
 
+void person_go_sleep(struct Thing *p_person)
+{
+#if 1
+    asm volatile ("call ASM_person_go_sleep\n"
+        : : "a" (p_person));
+    return;
+#endif
+}
+
+ubyte get_my_texture_bits(short tex)
+{
+#if 1
+    ubyte ret;
+    asm volatile (
+      "call ASM_get_my_texture_bits\n"
+        : "=r" (ret) : "a" (tex));
+    return ret;
+#endif
+}
+
+ubyte vector_in_way(struct Thing *p_thing, int dx, int dz)
+{
+#if 1
+    ubyte ret;
+    asm volatile (
+      "call ASM_vector_in_way\n"
+        : "=r" (ret) : "a" (p_thing), "d" (dx), "b" (dz));
+    return ret;
+#endif
+}
+
+ushort check_col_collision(int x, int y, int z)
+{
+#if 1
+    ushort ret;
+    asm volatile (
+      "call ASM_check_col_collision\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z));
+    return ret;
+#endif
+}
+
+void set_person_dead(struct Thing *p_person, ushort anim_mode)
+{
+#if 1
+    asm volatile ("call ASM_set_person_dead\n"
+        : : "a" (p_person), "d" (anim_mode));
+    return;
+#endif
+}
+
 ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 {
 #if 1
