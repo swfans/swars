@@ -197,6 +197,7 @@ void process_tank_turret(struct Thing *p_tank);
 void process_vehicle(struct Thing *p_vehicle);
 
 void start_crashing(struct Thing *p_vehicle);
+void start_landing(struct Thing *p_vehicle);
 
 int check_for_a_vehicle_here(int x, int z, struct Thing *p_vehicle);
 

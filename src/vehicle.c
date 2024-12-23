@@ -834,6 +834,12 @@ void start_crashing(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
 }
 
+void start_landing(struct Thing *p_vehicle)
+{
+    asm volatile ("call ASM_start_landing\n"
+        : : "a" (p_vehicle));
+}
+
 void process_shuttle_pod(struct Thing *p_vehicle)
 {
     asm volatile ("call ASM_process_shuttle_pod\n"

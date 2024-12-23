@@ -3047,21 +3047,6 @@ void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
         set_person_animmode_walk(p_person);
 }
 
-ubyte person_attempt_to_leave_vehicle(struct Thing *p_thing)
-{
-    ubyte ret;
-    asm volatile (
-      "call ASM_person_attempt_to_leave_vehicle\n"
-        : "=r" (ret) : "a" (p_thing));
-    return ret;
-}
-
-void player_change_person(short thing, ushort plyr)
-{
-    asm volatile ("call ASM_player_change_person\n"
-        : : "a" (thing), "d" (plyr));
-}
-
 ubyte person_leave_vehicle(struct Thing *p_thing, struct Thing *p_vehicle)
 {
     ubyte ret;
@@ -3069,6 +3054,74 @@ ubyte person_leave_vehicle(struct Thing *p_thing, struct Thing *p_vehicle)
       "call ASM_person_leave_vehicle\n"
         : "=r" (ret) : "a" (p_thing), "d" (p_vehicle));
     return ret;
+}
+
+ubyte person_attempt_to_leave_vehicle(struct Thing *p_person)
+{
+#if 0
+    ubyte ret;
+    asm volatile (
+      "call ASM_person_attempt_to_leave_vehicle\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+#endif
+    struct Thing *p_vehicle;
+
+    p_vehicle = &things[p_person->U.UPerson.Vehicle];
+    if (p_vehicle->State == VehSt_UNKN_45) {
+        return 0;
+    }
+    if ((p_vehicle->Flag & TngF_Destroyed) != 0) {
+        return 0;
+    }
+    switch (p_vehicle->SubType)
+    {
+    case SubTT_VEH_TRAIN:
+        break;
+    case SubTT_VEH_TANK:
+        if (p_vehicle->State != SubTT_VEH_UNKN33) {
+            p_vehicle->U.UVehicle.GotoX = p_vehicle->X >> 8;
+            p_vehicle->U.UVehicle.GotoZ = p_vehicle->Z >> 8;
+            break;
+        }
+        person_leave_vehicle(p_person, p_vehicle);
+        return 1;
+    case SubTT_VEH_FLYING:
+        if (p_vehicle->State != VehSt_PARKED_PARAL)
+        {
+            if (p_vehicle->State != VehSt_FLY_LANDING)
+                start_landing(p_vehicle);
+            p_person->State = VehSt_UNKN_36;
+            break;
+        }
+        if (!person_leave_vehicle(p_person, p_vehicle))
+        {
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+                p_person->State = PerSt_NONE;
+            break;
+        }
+        return 1;
+    case SubTT_VEH_SHIP:
+    default:
+        if ((p_vehicle->State != VehSt_PARKED_PARAL) && (p_vehicle->State != VehSt_PARKED_PERPN)
+          && (p_vehicle->State != VehSt_NONE)
+          && (p_vehicle->State != VehSt_UNKN_3E) && (p_vehicle->State != VehSt_UNKN_38))
+        {
+            if ((p_vehicle->State != VehSt_UNKN_33) && (p_vehicle->State != VehSt_UNKN_36))
+                p_vehicle->State = VehSt_UNKN_3C;
+            p_person->State = PerSt_WAIT_TO_EXIT_VEHICLE;
+            break;
+        }
+        person_leave_vehicle(p_person, p_vehicle);
+        return 1;
+    }
+    return 0;
+}
+
+void player_change_person(short thing, ushort plyr)
+{
+    asm volatile ("call ASM_player_change_person\n"
+        : : "a" (thing), "d" (plyr));
 }
 
 ThingIdx person_find_ferry_to_catch(struct Thing *p_person)
@@ -3131,11 +3184,13 @@ void person_attempt_to_leave_ferry(struct Thing *p_person)
       PRCCOORD_TO_MAPCOORD(p_vehicle->Z),
       p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_BLUE]);
 
-    if ((p_vehicle->U.UVehicle.LeisurePlace == 0) || (p_vehicle->Speed != 0))
+    if ((p_vehicle->U.UVehicle.LeisurePlace == 0) || (p_vehicle->Speed != 0)) {
         return;
+    }
     if (!thing_arrived_at_obj_radius(p_person->ThingOffset,
-      p_cmd->X, p_cmd->Y, p_cmd->Z, radius_sqr))
+      p_cmd->X, p_cmd->Y, p_cmd->Z, radius_sqr)) {
         return;
+    }
 
     state_bkp = p_vehicle->State;
     p_vehicle->State = VehSt_NONE;
