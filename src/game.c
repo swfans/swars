@@ -2775,7 +2775,7 @@ void init_level(void)
     if (in_network_game)
     {
         ingame.DetailLevel = 1;
-        for (plyr_no = 0; plyr_no < 8; plyr_no++)
+        for (plyr_no = 0; plyr_no < PLAYERS_LIMIT; plyr_no++)
         {
             player_unkn0C9[plyr_no] = 0;
             player_unknCC9[plyr_no][0] =  '\0';
@@ -2787,7 +2787,7 @@ void init_level(void)
     }
 
     plyr_no = 0;
-    for (plyr_no = 0; plyr_no < 8; plyr_no++)
+    for (plyr_no = 0; plyr_no < PLAYERS_LIMIT; plyr_no++)
     {
         PlayerInfo *p_player;
         short mouser;
@@ -2824,8 +2824,8 @@ void init_level(void)
     ingame.TrackThing = 0;
     func_74934();
     ingame.TrackX = engn_xc;
-    ingame.fld_unkCA6 = 0;
     ingame.TrackZ = engn_zc;
+    ingame.fld_unkCA6 = 0;
     ingame.UserZoom = 120;
     word_1AABD0 = next_floor_texture;
     init_crater_textures();
@@ -5128,9 +5128,9 @@ void reload_background(void)
 
 void players_init_control_mode(void)
 {
-    int player;
-    for (player = 0; player < 8; player++) {
-      players[player].UserInput[0].ControlMode = 1;
+    PlayerIdx plyr;
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {
+      players[plyr].UserInput[0].ControlMode = 1;
     }
 }
 
@@ -6361,7 +6361,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
                 net_new_game_prepare();
                 memset(unkstruct04_arr, 0, 0x1108u);
                 byte_1C6D48 = 0;
-                for (i = 0; i < 8; i++) {
+                for (i = 0; i < PLAYERS_LIMIT; i++) {
                     unkn2_names[i][0] = '\0';
                 }
             }
@@ -6369,7 +6369,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         else
         {
             net_new_game_prepare();
-            for (i = 0; i < 8; i++) {
+            for (i = 0; i < PLAYERS_LIMIT; i++) {
                 unkn2_names[i][0] = '\0';
             }
             if ( byte_1C4A6F )
@@ -6389,7 +6389,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
     case 14:
         if ((net_host_player_no == plyr) && ((unkn_flags_08 & 0x08) != 0))
         {
-            for (i = 0; i < 8; i++)
+            for (i = 0; i < PLAYERS_LIMIT; i++)
             {
                 if (unkn2_names[i][0] == '\0')
                     continue;
@@ -6416,7 +6416,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
     case 15:
         if ((net_host_player_no == plyr) && ((unkn_flags_08 & 0x08) != 0))
         {
-            for (i = 0; i < 8; i++)
+            for (i = 0; i < PLAYERS_LIMIT; i++)
             {
                 if (unkn2_names[i][0] == '\0')
                     continue;
@@ -6529,7 +6529,7 @@ void net_unkn_func_33(void)
         byte_1C6D4A = 0;
     }
 
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < PLAYERS_LIMIT; i++)
     {
         network_players[i].Type = 17;
     }
@@ -6759,7 +6759,7 @@ void show_load_and_prep_mission(void)
         else
         {
             int i;
-            for (i = 0; i < 8; i++) {
+            for (i = 0; i < PLAYERS_LIMIT; i++) {
                 unkn2_names[i][0] = 0;
             }
             strncpy(unkn2_names[0], login_name, 16);
@@ -7813,7 +7813,7 @@ void process_packets(void)
     if (in_network_game && (net_players_num > 1))
         net_unkn_check_1();
 
-    for (plyr = 0; plyr < 8; plyr++)
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {
         struct Packet *packet;
         ushort i;

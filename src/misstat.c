@@ -22,6 +22,7 @@
 
 #include "game.h"
 #include "people.h"
+#include "player.h"
 #include "swlog.h"
 #include "thing.h"
 /******************************************************************************/
@@ -56,7 +57,7 @@ void clear_open_mission_status(void)
     if (in_network_game)
     {
         // In network game, mission status is per-player rather than per-mission
-        for (id = 0; id < 8; id++)
+        for (id = 0; id < PLAYERS_LIMIT; id++)
         {
             clear_mission_status(id);
         }
@@ -148,7 +149,7 @@ int stats_mp_count_players_agents_killed(PlayerIdx plyr)
 
     n = 0;
     p_mistat = &mission_status[plyr];
-    for (k = 0; k != 8; k++)
+    for (k = 0; k < PLAYERS_LIMIT; k++)
     {
         if (unkn2_names[k][0] == '\0')
             continue;
@@ -166,7 +167,7 @@ int stats_mp_count_net_players_agents_kills(PlayerIdx plyr)
 
     n = 0;
     p_mistat = &mission_status[plyr];
-    for (k = 0; k != 8; k++)
+    for (k = 0; k < PLAYERS_LIMIT; k++)
     {
         if (unkn2_names[k][0] == '\0')
             continue;

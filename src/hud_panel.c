@@ -686,7 +686,7 @@ void draw_players_chat_talk(int x, int y)
         if (player_unkn0C9[plyr] == 0)
             continue;
 
-        plname = unkn2_names[plyr * 16];
+        plname = unkn2_names[plyr];
         if (player_unknCC9[plyr][0] != '\0')
         {
             if (plname[0] != '\0')

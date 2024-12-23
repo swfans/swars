@@ -555,7 +555,7 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
 
     y = 2 * lnheight;
     used_num = 1;
-    for (plyr = 0; plyr < 8; plyr++)
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {
         k = byte_1C5C28[plyr];
         word_1C4856[k] = 0;
@@ -563,7 +563,7 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
 
     x1 = 20;
     x3 = 25;
-    for (plyr = 0; plyr < 8; plyr++)
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {
         int textw;
 
@@ -608,7 +608,7 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
     y = 2 * lnheight;
     lbDisplay.DrawColour = 87;
 
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < PLAYERS_LIMIT; i++)
     {
         struct MissionStatus *p_mistat;
         int textw;
@@ -621,7 +621,7 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
 
         plyr = (players[i].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
         p_mistat = &mission_status[plyr];
-        for (k = 0; k < 8; k++)
+        for (k = 0; k < PLAYERS_LIMIT; k++)
         {
             if (unkn2_names[k][0] == '\0')
                 continue;
@@ -667,7 +667,7 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
     x = 140;
     lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
 
-    for (i = 0; i != 8; i++)
+    for (i = 0; i != PLAYERS_LIMIT; i++)
     {
         int textw;
         ushort plyr;
