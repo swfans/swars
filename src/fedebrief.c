@@ -119,10 +119,11 @@ void draw_mission_stats_names_column(struct ScreenBox *box,
 void draw_mission_stats_vals_static(struct ScreenBox *box,
   struct DebriefReport *p_rep, ubyte research_ln, ubyte scilost_ln)
 {
-    short fheight, lnheight, sepheight;
-    short x, y;
+    struct MissionStatus *p_mistat;
     char *text;
     char locstr[40];
+    short fheight, lnheight, sepheight;
+    short x, y;
 
     lbDisplay.DrawFlags = 0;
     lbFontPtr = med_font;
@@ -136,6 +137,7 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
     // Row with values
     x = MISSION_STATS_SECOND_COLUMN_X;
     y = sepheight;
+    p_mistat = &mission_status[p_rep->BriefNo];
 
     // Reference no
     snprintf(locstr, sizeof(locstr), "%hd", p_rep->RefNo);
@@ -153,7 +155,7 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
     y += lnheight;
 
     snprint_dh_time_duration(locstr, sizeof(locstr),
-      mission_status[open_brief].CityDays, mission_status[p_rep->BriefNo].CityHours);
+      p_mistat->CityDays, p_mistat->CityHours);
     text = (char *)(back_buffer + text_buf_pos);
     strcpy(text, locstr);
     draw_text_purple_list2(x, y, text, 0);
@@ -161,7 +163,7 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
     y += lnheight;
 
     snprint_dh_time_duration(locstr, sizeof(locstr),
-      mission_status[open_brief].Days, mission_status[p_rep->BriefNo].Hours);
+      p_mistat->Days, p_mistat->Hours);
     text = (char *)(back_buffer + text_buf_pos);
     strcpy(text, locstr);
     draw_text_purple_list2(x, y, text, 0);
@@ -458,6 +460,7 @@ void draw_mission_people_stats_names_column(struct ScreenBox *box,
 void draw_mission_people_stats_vals_column(struct ScreenBox *box,
   struct DebriefReport *p_rep)
 {
+    struct MissionStatus *p_mistat;
     char *text;
     char locstr[40];
     int fheight, lnheight;
@@ -471,44 +474,23 @@ void draw_mission_people_stats_vals_column(struct ScreenBox *box,
     // Row with values
     x = PEOPLE_STATS_SECOND_COLUMN_X;
     y = lnheight;
+    p_mistat = &mission_status[p_rep->BriefNo];
 
-    snprintf(locstr, sizeof(locstr), "%d", mission_status[p_rep->BriefNo].CivsPersuaded);
+    snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.CivsPersuaded);
     text = (char *)(back_buffer + text_buf_pos);
     strcpy(text, locstr);
     draw_text_purple_list2(x, y, text, 0);
     text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
-    snprintf(locstr, sizeof(locstr), "%d", mission_status[p_rep->BriefNo].SecurityPersuaded);
+    snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.SecurityPersuaded);
     text = (char *)(back_buffer + text_buf_pos);
     strcpy(text, locstr);
     draw_text_purple_list2(x, y, text, 0);
     text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
-    snprintf(locstr, sizeof(locstr), "%d", mission_status[p_rep->BriefNo].EnemiesPersuaded);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
-    draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
-    y += lnheight;
-    y += lnheight;
-
-    snprintf(locstr, sizeof(locstr), "%d", mission_status[p_rep->BriefNo].CivsKilled);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
-    draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
-    y += lnheight;
-
-    snprintf(locstr, sizeof(locstr), "%d", mission_status[p_rep->BriefNo].SecurityKilled);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
-    draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
-    y += lnheight;
-
-    snprintf(locstr, sizeof(locstr), "%d", mission_status[p_rep->BriefNo].EnemiesKilled);
+    snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.EnemiesPersuaded);
     text = (char *)(back_buffer + text_buf_pos);
     strcpy(text, locstr);
     draw_text_purple_list2(x, y, text, 0);
@@ -516,14 +498,36 @@ void draw_mission_people_stats_vals_column(struct ScreenBox *box,
     y += lnheight;
     y += lnheight;
 
-    snprintf(locstr, sizeof(locstr), "%d", mission_status[p_rep->BriefNo].AgentsLost);
+    snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.CivsKilled);
     text = (char *)(back_buffer + text_buf_pos);
     strcpy(text, locstr);
     draw_text_purple_list2(x, y, text, 0);
     text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
-    snprintf(locstr, sizeof(locstr), "%d", mission_status[p_rep->BriefNo].AgentsGained);
+    snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.SecurityKilled);
+    text = (char *)(back_buffer + text_buf_pos);
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, y, text, 0);
+    text_buf_pos += strlen(text) + 1;
+    y += lnheight;
+
+    snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.EnemiesKilled);
+    text = (char *)(back_buffer + text_buf_pos);
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, y, text, 0);
+    text_buf_pos += strlen(text) + 1;
+    y += lnheight;
+    y += lnheight;
+
+    snprintf(locstr, sizeof(locstr), "%d", p_mistat->AgentsLost);
+    text = (char *)(back_buffer + text_buf_pos);
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, y, text, 0);
+    text_buf_pos += strlen(text) + 1;
+    y += lnheight;
+
+    snprintf(locstr, sizeof(locstr), "%d", p_mistat->AgentsGained);
     text = (char *)(back_buffer + text_buf_pos);
     strcpy(text, locstr);
     draw_text_purple_list2(x, y, text, 0);
@@ -559,8 +563,8 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
     x3 = 25;
     for (i = 0; i < 8; i++)
     {
+        struct MissionStatus *p_mistat;
         ushort plyr;
-        ushort *p_stat;
         int textw;
 
         if (unkn2_names[i][0] == '\0')
@@ -569,16 +573,16 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
         plyr = (players[i].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
         word_1C4846[i] = 0;
         // The CivsKilled property should start a list of ushort stats; there are 6 of these
-        p_stat = &mission_status[plyr].CivsKilled;
-        for (k = 0; k < 8; k++, p_stat++)
+        p_mistat = &mission_status[plyr];
+        for (k = 0; k < 8; k++)
         {
             if (unkn2_names[k][0] == '\0')
                 continue;
 
             if (k == i)
-                word_1C4846[i] -= *p_stat;
+                word_1C4846[i] -= p_mistat->MP.AgentsKilled[k];
             else
-                word_1C4846[i] += *p_stat;
+                word_1C4846[i] += p_mistat->MP.AgentsKilled[k];
         }
 
         k = byte_1C5C28[i];
@@ -619,9 +623,9 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
 
     for (i = 0; i < 8; i++)
     {
-        ushort plyr;
-        ushort *p_stat;
+        struct MissionStatus *p_mistat;
         int textw;
+        ushort plyr;
 
         if (unkn2_names[i][0] == '\0')
             continue;
@@ -629,15 +633,15 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
         x = 140;
 
         plyr = (players[i].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
-        p_stat = &mission_status[plyr].CivsKilled;
-        for (k = 0; k < 8; k++, p_stat++)
+        p_mistat = &mission_status[plyr];
+        for (k = 0; k < 8; k++)
         {
             if (unkn2_names[k][0] == '\0')
                 continue;
 
             if (k == i)
                 lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
-            snprintf(locstr, sizeof(locstr), "%d", *p_stat);
+            snprintf(locstr, sizeof(locstr), "%d", (int)p_mistat->MP.AgentsKilled[k]);
             text = (char *)(back_buffer + text_buf_pos);
             strcpy(text, locstr);
             textw = my_string_width(text);
@@ -678,9 +682,9 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
 
     for (i = 0; i != 8; i++)
     {
+        struct MissionStatus *p_mistat;
         int textw;
         ushort plyr;
-        ushort *p_stat;
         int n;
 
         if (unkn2_names[i][0] == '\0')
@@ -688,14 +692,14 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
 
         n = 0;
         plyr = (players[k].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
-        p_stat = &mission_status[plyr].CivsKilled;
-        for (k = 0; k != 8; k++, p_stat++)
+        p_mistat = &mission_status[plyr];
+        for (k = 0; k != 8; k++)
         {
 
             if (unkn2_names[k][0] == '\0')
                 continue;
 
-            n += *p_stat;
+            n += p_mistat->MP.AgentsKilled[k];
         }
         snprintf(locstr, sizeof(locstr), "%d", n);
         text = (char *)(back_buffer + text_buf_pos);

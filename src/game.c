@@ -2482,16 +2482,20 @@ void blind_progress_game(ulong nturns)
 
 void clear_mission_status(ulong id)
 {
-    mission_status[id].CivsKilled = 0;
-    mission_status[id].EnemiesKilled = 0;
-    mission_status[id].CivsPersuaded = 0;
-    mission_status[id].SecurityPersuaded = 0;
-    mission_status[id].EnemiesPersuaded = 0;
-    mission_status[id].AgentsGained = 0;
-    mission_status[id].AgentsLost = 0;
-    mission_status[id].SecurityKilled = 0;
-    mission_status[id].CityDays = 0;
-    mission_status[id].CityHours = 0;
+    struct MissionStatus *p_mistat;
+
+    p_mistat = &mission_status[id];
+
+    p_mistat->SP.CivsKilled = 0;
+    p_mistat->SP.EnemiesKilled = 0;
+    p_mistat->SP.CivsPersuaded = 0;
+    p_mistat->SP.SecurityPersuaded = 0;
+    p_mistat->SP.EnemiesPersuaded = 0;
+    p_mistat->SP.SecurityKilled = 0;
+    p_mistat->AgentsGained = 0;
+    p_mistat->AgentsLost = 0;
+    p_mistat->CityDays = 0;
+    p_mistat->CityHours = 0;
 }
 
 void clear_open_mission_status(void)
@@ -4082,15 +4086,17 @@ ubyte load_game(int slot, char *desc)
     }
     else if (fmtver >= 10)
     {
+        struct MissionStatus *p_mistat;
         int i;
         i = sizeof(struct MissionStatus) - offsetof(struct MissionStatus, Expenditure);
         assert(i == 32);
-        memcpy(&mission_status[open_brief], &save_game_buffer[gblen], i);
+        p_mistat = &mission_status[open_brief];
+        memcpy(p_mistat, &save_game_buffer[gblen], i);
         gblen += i;
         gblen += 2;
-        mission_status[open_brief].AgentsLost = save_game_buffer[gblen];
+        p_mistat->AgentsLost = save_game_buffer[gblen];
         gblen++;
-        mission_status[open_brief].AgentsGained = save_game_buffer[gblen];
+        p_mistat->AgentsGained = save_game_buffer[gblen];
         gblen++;
     }
     else
@@ -6612,7 +6618,9 @@ void show_menu_screen_st2(void)
       }
       else
       {
-            forward_research_progress_after_mission(mission_status[open_brief].CityDays);
+            struct MissionStatus *p_mistat;
+            p_mistat = &mission_status[open_brief];
+            forward_research_progress_after_mission(p_mistat->CityDays);
             if ((ingame.Flags & GamF_MortalGame) != 0) {
                 save_game_write(0, save_active_desc);
             }

@@ -19,6 +19,7 @@
 #include "people.h"
 
 #include "pepgroup.h"
+#include "bfmath.h"
 #include "bfmemory.h"
 #include "bffile.h"
 #include "bfini.h"
@@ -1033,16 +1034,20 @@ TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle)
 
 void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
 {
+    struct MissionStatus *p_mistat;
+
+    p_mistat = &mission_status[brief];
+
     switch (p_person->SubType)
     {
     case SubTT_PERS_AGENT:
-          ++mission_status[brief].AgentsGained;
+          p_mistat->AgentsGained++;
           // fall through
     case SubTT_PERS_ZEALOT:
     case SubTT_PERS_HIGH_PRIEST:
     case SubTT_PERS_PUNK_F:
     case SubTT_PERS_PUNK_M:
-          ++mission_status[brief].EnemiesPersuaded;
+          p_mistat->SP.EnemiesPersuaded++;
           break;
     case SubTT_PERS_BRIEFCASE_M:
     case SubTT_PERS_WHITE_BRUN_F:
@@ -1051,12 +1056,12 @@ void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
     case SubTT_PERS_WHIT_BLOND_F:
     case SubTT_PERS_LETH_JACKT_M:
     case SubTT_PERS_FAST_BLOND_F:
-          ++mission_status[brief].CivsPersuaded;
+          p_mistat->SP.CivsPersuaded++;
           break;
     case SubTT_PERS_MERCENARY:
     case SubTT_PERS_MECH_SPIDER:
     case SubTT_PERS_POLICE:
-          ++mission_status[brief].SecurityPersuaded;
+          p_mistat->SP.SecurityPersuaded++;
           break;
     default:
           break;
@@ -1065,16 +1070,20 @@ void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
 
 void persuaded_person_remove_from_stats(struct Thing *p_person, ushort brief)
 {
+    struct MissionStatus *p_mistat;
+
+    p_mistat = &mission_status[brief];
+
     switch (p_person->SubType)
     {
     case SubTT_PERS_AGENT:
-        --mission_status[brief].AgentsGained;
+        p_mistat->AgentsGained--;
         // fall through
     case SubTT_PERS_ZEALOT:
     case SubTT_PERS_PUNK_F:
     case SubTT_PERS_PUNK_M:
     case SubTT_PERS_HIGH_PRIEST:
-        --mission_status[brief].EnemiesPersuaded;
+        p_mistat->SP.EnemiesPersuaded--;
         break;
     case SubTT_PERS_BRIEFCASE_M:
     case SubTT_PERS_WHITE_BRUN_F:
@@ -1083,12 +1092,12 @@ void persuaded_person_remove_from_stats(struct Thing *p_person, ushort brief)
     case SubTT_PERS_WHIT_BLOND_F:
     case SubTT_PERS_LETH_JACKT_M:
     case SubTT_PERS_FAST_BLOND_F:
-        --mission_status[brief].CivsPersuaded;
+        p_mistat->SP.CivsPersuaded--;
         break;
     case SubTT_PERS_MERCENARY:
     case SubTT_PERS_MECH_SPIDER:
     case SubTT_PERS_POLICE:
-        --mission_status[brief].SecurityPersuaded;
+        p_mistat->SP.SecurityPersuaded--;
         break;
     default:
         break;
@@ -3047,13 +3056,15 @@ void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
         set_person_animmode_walk(p_person);
 }
 
-ubyte person_leave_vehicle(struct Thing *p_thing, struct Thing *p_vehicle)
+ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 {
+#if 1
     ubyte ret;
     asm volatile (
       "call ASM_person_leave_vehicle\n"
-        : "=r" (ret) : "a" (p_thing), "d" (p_vehicle));
+        : "=r" (ret) : "a" (p_person), "d" (p_vehicle));
     return ret;
+#endif
 }
 
 ubyte person_attempt_to_leave_vehicle(struct Thing *p_person)

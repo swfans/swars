@@ -177,13 +177,20 @@ struct MissionStatus { // sizeof=40
     ulong CityHours;
     ulong Days;
     ulong Hours;
-    ushort CivsKilled;
-    ushort CivsPersuaded;
-    ushort SecurityKilled;
-    ushort SecurityPersuaded;
-    ushort EnemiesKilled;
-    ushort EnemiesPersuaded;
-    ulong CashAtStart;
+    union {
+      struct {
+      ushort CivsKilled;
+      ushort CivsPersuaded;
+      ushort SecurityKilled;
+      ushort SecurityPersuaded;
+      ushort EnemiesKilled;
+      ushort EnemiesPersuaded;
+      ulong CashAtStart;
+      } SP;
+      struct {
+      ushort AgentsKilled[8];
+      } MP;
+    };
     ulong Expenditure;
     ubyte HitAccuracy;
     ubyte ObjectivesComplete;
