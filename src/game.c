@@ -2968,11 +2968,11 @@ TbBool game_cam_tracked_thing_is_player_agent(void)
     return ((p_thing->Flag & TngF_PlayerAgent) != 0);
 }
 
-void game_set_cam_track_thing_xz(struct Thing *p_thing)
+void game_set_cam_track_thing_xz(ThingIdx thing)
 {
     short tng_x, tng_z;
 
-    get_thing_position_mapcoords(&tng_x, NULL, &tng_z, p_thing->ThingOffset);
+    get_thing_position_mapcoords(&tng_x, NULL, &tng_z, thing);
     ingame.TrackX = tng_x;
     ingame.TrackZ = tng_z;
 }
@@ -2986,7 +2986,7 @@ void game_set_cam_track_player_agent_xz(PlayerIdx plyr, ushort plagent)
     p_agent = p_player->MyAgent[plagent];
     if (p_agent->Type != TT_PERSON)
         return;
-    game_set_cam_track_thing_xz(p_agent);
+    game_set_cam_track_thing_xz(p_agent->ThingOffset);
 }
 
 void preprogress_game_turns(void)
@@ -3066,7 +3066,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_player->DirectControl[plagent] = p_person->ThingOffset;
             p_person->Flag |= TngF_Unkn1000;
             if ((plyr == local_player_no) && (plagent == 0)) {
-                game_set_cam_track_thing_xz(p_person);
+                game_set_cam_track_thing_xz(p_person->ThingOffset);
             }
         }
         players[plyr].MyAgent[plagent] = p_person;
@@ -5933,7 +5933,7 @@ ubyte do_user_interface(void)
 
                       p_pckt = &packets[local_player_no];
 
-                      game_set_cam_track_thing_xz(p_agent);
+                      game_set_cam_track_thing_xz(p_agent->ThingOffset);
                       engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
                       dcthing = p_locplayer->DirectControl[mouser];
                       build_packet(p_pckt, PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);

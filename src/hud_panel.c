@@ -2781,7 +2781,7 @@ TbBool check_panel_input(short panel)
                     dcthing = p_locplayer->DirectControl[mouser];
                     if ((things[dcthing].Flag & TngF_Unkn0400) == 0)
                     {
-                        game_set_cam_track_thing_xz(p_agent);
+                        game_set_cam_track_thing_xz(p_agent->ThingOffset);
                         engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
                         build_packet(p_pckt, PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
                         if (p_agent->ThingOffset == dcthing)

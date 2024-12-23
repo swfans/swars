@@ -807,8 +807,7 @@ void set_peep_comcur(struct Thing *p_person)
 
     if (person_is_player_agent_in_slot(p_person, plyr, 0))
     {
-        ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_person->X);
-        ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_person->Z);
+        game_set_cam_track_thing_xz(p_person->ThingOffset);
     }
 }
 
@@ -1188,7 +1187,7 @@ void unpersuade_my_peeps(struct Thing *p_owntng)
             continue;
         p_person->Flag &= ~TngF_Persuaded;
         p_person->U.UPerson.EffectiveGroup = p_owntng->U.UPerson.Group;
-        p_person->State = 0;
+        p_person->State = PerSt_NONE;
         p_person->Flag |= TngF_Unkn0040 | TngF_Unkn0004;
         --group_actions[p_person->U.UPerson.Group].Persuaded;
         for (k = i; k < count - 1; k++) {
@@ -2385,13 +2384,10 @@ void camera_track_thing(short thing, TbBool revert)
 {
     if (revert)
     {
-        short dctng_x, dctng_z;
         ThingIdx dcthing;
         dcthing = players[local_player_no].DirectControl[0];
-        get_thing_position_mapcoords(&dctng_x, NULL, &dctng_z, dcthing);
         ingame.TrackThing = 0;
-        ingame.TrackX = dctng_x;
-        ingame.TrackZ = dctng_z;
+        game_set_cam_track_thing_xz(dcthing);
         return;
     }
     ingame.TrackThing = thing;
@@ -3032,8 +3028,8 @@ void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
         return;
     }
 
-    p_person->Flag |= 0x10000000|0x02000000;
-    p_person->Flag &= ~0x01000000;
+    p_person->Flag |= TngF_InVehicle|TngF_Unkn02000000;
+    p_person->Flag &= ~TngF_Unkn01000000;
     p_person->State = PerSt_DRIVING_VEHICLE;
 
     passngr = p_vehicle->U.UVehicle.PassengerHead;
@@ -3047,7 +3043,7 @@ void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
     p_person->Z = p_vehicle->Z;
     p_vehicle->U.UVehicle.EffectiveGroup = p_person->U.UPerson.EffectiveGroup;
 
-    if ((p_person->Flag2 & 0x080000) != 0)
+    if ((p_person->Flag2 & TgF2_Unkn00080000) != 0)
         set_person_animmode_walk(p_person);
 }
 
@@ -3108,7 +3104,7 @@ void person_catch_ferry(struct Thing *p_person)
 
     p_vehicle = &things[veh];
     person_enter_vehicle(p_person, p_vehicle);
-    p_person->State = 0;
+    p_person->State = PerSt_NONE;
     p_person->U.UPerson.Vehicle = veh;
 }
 
@@ -3151,7 +3147,7 @@ void person_attempt_to_leave_ferry(struct Thing *p_person)
     p_person->Y = alt_at_point(p_cmd->X, p_cmd->Z);
     p_person->Z = MAPCOORD_TO_PRCCOORD(p_cmd->Z,0);
     add_node_thing(p_person->ThingOffset);
-    p_person->State = 0;
+    p_person->State = PerSt_NONE;
     p_person->Flag |= TngF_Unkn0004;
 }
 
@@ -3488,7 +3484,7 @@ void person_wait(struct Thing *p_person)
               person_type_name(p_person->SubType), (int)p_person->ThingOffset,
               locstr, (int)p_person->U.UPerson.ComCur, p_person->State, p_person->SubState);
         }
-        p_person->State = 0;
+        p_person->State = PerSt_NONE;
     }
     if (p_person->State < 0)
         p_person->Frame = frame[p_person->Frame].Next;
@@ -3579,11 +3575,11 @@ void person_persuade_person(struct Thing *p_person)
     p_person->PTarget = p_target;
 
     if (p_person->GotoThingIndex == 0) {
-        p_person->State = 0;
+        p_person->State = PerSt_NONE;
         return;
     }
     if ((p_target->Flag & TngF_Persuaded) != 0) {
-        p_person->State = 0;
+        p_person->State = PerSt_NONE;
         return;
     }
 
@@ -3609,7 +3605,7 @@ void person_persuade_person(struct Thing *p_person)
         {
             p_person->PTarget = &things[p_person->GotoThingIndex];
             person_becomes_persuaded(p_person, 0);
-            p_person->State = 0;
+            p_person->State = PerSt_NONE;
             return;
         }
         if (p_person->U.UPerson.ComRange > 2)
@@ -3624,7 +3620,7 @@ void person_persuade_person(struct Thing *p_person)
 
     p_target = p_person->PTarget;
     if ((p_target != NULL) && ((p_target->Flag & TngF_Destroyed) != 0)) {
-        p_person->State = 0;
+        p_person->State = PerSt_NONE;
         p_person->Flag &= ~TngF_Unkn0800;
     }
 }
