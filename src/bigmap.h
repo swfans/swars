@@ -142,6 +142,14 @@ int alt_change_at_tile(short tile_x, short tile_z, int *change_xz);
  */
 void update_map_flags(void);
 
+/** Checks if a tile should not be allowed to walk on due to terrain.
+ *
+ * To do such check during gameplay, MapElement flags should be used - this one
+ * is mostly to update these flags, if neccessary. Unless we really want to
+ * disregard any changes to the computed flags - then using this makes sense.
+ */
+TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z);
+
 void quick_crater(int x, int z, int size);
 
 /******************************************************************************/

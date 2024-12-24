@@ -312,12 +312,7 @@ static ushort count_tiles_around_steeper_than(short tile_x, short tile_z, short 
     return matches;
 }
 
-/** Checks if a tile should not be allowed to walk on due to terrain.
- *
- * To do such check during gameplay, MapElement flags should be used - this one
- * is only to update these flags, if neccessary.
- */
-static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
+TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
 {
     int alt_dt, gnd_dt;
 

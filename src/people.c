@@ -3036,6 +3036,81 @@ void set_person_dead(struct Thing *p_person, ushort anim_mode)
 #endif
 }
 
+ThingIdx thing_collide_with_thing_when_moved_by(struct Thing *p_person, short sh_x, short sh_z)
+{
+    int nxcor_x, nxcor_z;
+    ThingIdx thing, nxthing;
+
+    nxcor_x = PRCCOORD_TO_MAPCOORD(p_person->X) + sh_x;
+    nxcor_z = PRCCOORD_TO_MAPCOORD(p_person->Z) + sh_z;
+
+    if ((nxcor_x < 0) || (nxcor_x >= MAP_COORD_WIDTH) || (nxcor_z < 0) || (nxcor_z >= MAP_COORD_HEIGHT))
+        return 0;
+
+    thing = get_mapwho_thing_index(MAPCOORD_TO_TILE(nxcor_x), MAPCOORD_TO_TILE(nxcor_z));
+    for (; thing != 0; thing = nxthing)
+    {
+        int dist_x, dist_z, r;
+        if (thing < 0)
+        {
+            struct SimpleThing *p_sthing;
+            p_sthing = &sthings[thing];
+            dist_x = nxcor_x - PRCCOORD_TO_MAPCOORD(p_sthing->X);
+            dist_z = nxcor_z - PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+            r = p_person->Radius + p_sthing->Radius;
+            nxthing = p_sthing->Next;
+        }
+        else
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            dist_x = nxcor_x - PRCCOORD_TO_MAPCOORD(p_thing->X);
+            dist_z = nxcor_z - PRCCOORD_TO_MAPCOORD(p_thing->Z);
+            r = p_person->Radius + p_thing->Radius;
+            nxthing = p_thing->Next;
+        }
+        if (LbSqrL(dist_x * dist_x + dist_z * dist_z) <= r)
+        {
+            break;
+        }
+    }
+    return thing;
+}
+
+TbBool check_ground_unkn01(struct Thing *p_person, short sh_x, short sh_z)
+{
+    struct MyMapElement *p_mapel;
+    ushort tflags;
+    short tile_x, tile_z;
+    ushort txtr;
+    TbBool tile_blocking;
+
+    tile_z = (p_person->Z + (sh_z << 8)) >> 16;
+    tile_x = (p_person->X + (sh_x << 8)) >> 16;
+
+    tile_blocking = compute_map_tile_is_blocking_walk(tile_x, tile_z);
+
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+
+    txtr = p_mapel->Texture & 0x3FFF;
+    tflags = ((get_my_texture_bits(txtr) & 0xC0) >> 6) & 0x02;
+
+    if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH) || (tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
+    {
+      return true;
+    }
+
+    if (tile_blocking)
+        tflags |= 0x04;
+    if ((p_mapel->Flags2 & 0x02) != 0)
+        tflags &= ~0x04;
+    if (((tflags & 0x04) != 0) || (p_mapel->Flags2 & (MEF2_Unkn01|MEF2_Unkn04)) != 0)
+    {
+        return true;
+    }
+    return false;
+}
+
 ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 {
 #if 1
