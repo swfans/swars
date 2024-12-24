@@ -28,6 +28,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define VEHICLE_PASSENGER_LIMIT 500
+
 enum SubTypeVehicle {
   SubTT_VEH_TRAIN = 0x1D,
   SubTT_VEH_UNKN30 = 0x1E,

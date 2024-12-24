@@ -2942,14 +2942,58 @@ void person_init_pickup(struct Thing *p_person, ThingIdx item)
         : : "a" (p_person), "d" (item));
 }
 
+void vehicle_passenger_list_add_first(struct Thing *p_vehicle, ThingIdx passngr)
+{
+    struct Thing *p_passngr;
+    ThingIdx nxpassngr;
+
+    p_passngr = &things[passngr];
+    nxpassngr = p_vehicle->U.UVehicle.PassengerHead;
+    p_vehicle->U.UVehicle.PassengerHead = passngr;
+    p_passngr->U.UPerson.LinkPassenger = nxpassngr;
+}
+
+void vehicle_passenger_list_remove(struct Thing *p_vehicle, ThingIdx passngr)
+{
+    struct Thing *p_passngr;
+    struct Thing *p_pvpassngr;
+    ThingIdx crpassngr, pvpassngr;
+    ushort k;
+
+    p_passngr = &things[passngr];
+
+    // If removing first passenger
+    if (passngr == p_vehicle->U.UVehicle.PassengerHead)
+    {
+        p_vehicle->U.UVehicle.PassengerHead = p_passngr->U.UPerson.LinkPassenger;
+        return;
+    }
+
+    k = 0;
+    crpassngr = p_vehicle->U.UVehicle.PassengerHead;
+    pvpassngr = 0;
+    while (crpassngr != 0)
+    {
+        if (k >= VEHICLE_PASSENGER_LIMIT)
+            break;
+        if (crpassngr == passngr) {
+            p_pvpassngr = &things[pvpassngr];
+            p_pvpassngr->U.UPerson.LinkPassenger = p_passngr->U.UPerson.LinkPassenger;
+            break;
+        }
+        pvpassngr = crpassngr;
+        p_pvpassngr = &things[pvpassngr];
+        crpassngr = p_pvpassngr->U.UPerson.LinkPassenger;
+        k++;
+    }
+}
+
 void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 {
 #if 0
     asm volatile ("call ASM_person_enter_vehicle\n"
         : : "a" (p_person), "d" (p_vehicle));
 #endif
-    ThingIdx passngr;
-
     if ((p_vehicle->SubType == SubTT_VEH_SHIP) && (p_vehicle->State == VehSt_UNKN_40))
     {
         // Allow ships to be entered when in motion, because we just do not have the proper functionality to stop them
@@ -2970,9 +3014,7 @@ void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
     p_person->Flag &= ~TngF_Unkn01000000;
     p_person->State = PerSt_DRIVING_VEHICLE;
 
-    passngr = p_vehicle->U.UVehicle.PassengerHead;
-    p_vehicle->U.UVehicle.PassengerHead = p_person->ThingOffset;
-    p_person->U.UPerson.LinkPassenger = passngr;
+    vehicle_passenger_list_add_first(p_vehicle, p_person->ThingOffset);
 
     if ((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
         delete_node(p_person);
@@ -3111,15 +3153,203 @@ TbBool check_ground_unkn01(struct Thing *p_person, short sh_x, short sh_z)
     return false;
 }
 
+
+short check_col_collision_when_moved_by(struct Thing *p_person, short sh_x, short sh_z)
+{
+    int cor_x, cor_y, cor_z;
+    int dist;
+    int dt_x, dt_z;
+
+    dist = LbSqrL(sh_x * sh_x + sh_z * sh_z) >> 6;
+    if (dist == 0)
+        dist = 1;
+    cor_x = p_person->X >> 8;
+    cor_z = p_person->Z >> 8;
+    cor_y = (alt_at_point(cor_x, cor_z) >> 8) + 3;
+    dt_x = sh_x / dist;
+    dt_z = sh_z / dist;
+    while (dist != 0)
+    {
+        short qbit;
+
+        qbit = check_col_collision(cor_x, cor_y, cor_z);
+        if (qbit != 0)
+        {
+          return qbit;
+        }
+        cor_z += dt_z;
+        cor_x += dt_x;
+        dist--;
+        cor_y = (alt_at_point(cor_x, cor_z) >> 8) + 3;
+    }
+    return 0;
+}
+
 ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile (
       "call ASM_person_leave_vehicle\n"
         : "=r" (ret) : "a" (p_person), "d" (p_vehicle));
     return ret;
 #endif
+    int sh_x, sh_z;
+    int can_move;
+
+    if ((p_vehicle->State != VehSt_PARKED_PARAL) && (p_vehicle->State != VehSt_PARKED_PERPN) &&
+      (p_vehicle->State != VehSt_UNKN_D))
+    {
+        if ((p_vehicle->State != VehSt_UNKN_33) &&  (p_vehicle->State != VehSt_UNKN_36) &&
+          (p_vehicle->State != VehSt_UNKN_3E) && (p_vehicle->State != VehSt_UNKN_38))
+            p_vehicle->State = VehSt_UNKN_3C;
+        return 1;
+    }
+    if ((p_person->Flag & TngF_InVehicle) == 0)
+    {
+        return 2;
+    }
+
+    can_move = 0;
+    sh_x = 0;
+    sh_z = 0;
+    if ((p_vehicle->SubType != SubTT_VEH_FLYING)
+      || alt_at_point(p_vehicle->X >> 8, p_vehicle->Z >> 8) + 3500 >= p_vehicle->Y)
+    {
+        int dt_angle;
+
+        for (dt_angle = 256; dt_angle < 2048; )
+        {
+            short angle;
+            ushort radius;
+            int cor_x, cor_z;
+
+            angle = (dt_angle + p_vehicle->U.UVehicle.AngleY) & 0x7FF;
+            radius = p_vehicle->Radius;
+            sh_z = -(radius * lbSinTable[angle + 512]) >> 16;
+            sh_x = (radius * lbSinTable[angle]) >> 16;
+
+            cor_x = (p_person->X >> 8) + sh_x;
+            cor_z = (p_person->Z >> 8) + sh_z;
+            can_move = (cor_z >= 0) && (cor_z < MAP_COORD_HEIGHT) && (cor_x >= 0) && (cor_x < MAP_COORD_WIDTH);
+
+            if (can_move && check_ground_unkn01(p_person, sh_x, sh_z)) {
+                can_move = 0;
+            }
+            if (can_move) {
+                can_move = vector_in_way(p_person, sh_x, sh_z);
+            }
+            if (can_move && check_col_collision_when_moved_by(p_person, sh_x, sh_z)) {
+                can_move = 0;
+            }
+            if (can_move && thing_collide_with_thing_when_moved_by(p_person, sh_x, sh_z)) {
+                can_move = 0;
+            }
+            dt_angle += 180;
+            if (dt_angle >= 1024 && dt_angle < 1280)
+                dt_angle = 1280;
+            if (can_move != 0)
+                break;
+        }
+    }
+
+    if ( can_move || (p_vehicle->State == VehSt_UNKN_D))
+    {
+      struct Command *p_cmd;
+      struct Command *p_nxcmd;
+
+      p_person->Flag &= ~(TngF_InVehicle|TngF_Unkn02000000);
+      vehicle_passenger_list_remove(p_vehicle, p_person->ThingOffset);
+      p_person->State = PerSt_NONE;
+
+      p_cmd = &game_commands[p_person->U.UPerson.ComCur];
+      p_nxcmd = &game_commands[p_cmd->Next];
+
+      if ((p_person->U.UPerson.ComHead != 0) &&
+        ((p_nxcmd->Type == PCmd_GO_TO_POINT) || (p_nxcmd->Type == PCmd_GOTOPOINT_FACE)
+         || (p_nxcmd->Type == PCmd_RUN_TO_POINT)))
+      {
+          sh_x >>= 2;
+          sh_z >>= 2;
+      }
+      p_person->X += sh_x << 8;
+      p_person->Z += sh_z << 8;
+      if ((p_person->X >> 8) >= MAP_COORD_WIDTH || (p_person->Z >> 8) >= MAP_COORD_HEIGHT)
+      {
+          p_person->X -= (sh_x << 8);
+          p_person->Z -= (sh_z << 8);
+      }
+      p_person->Y = alt_at_point(p_person->X >> 8, p_person->Z >> 8);
+      p_person->Flag |= TngF_Unkn0010|TngF_Unkn0004;
+
+      struct MyMapElement *p_mapel;
+      short tile_x, tile_z;
+
+      tile_z = (p_person->Z >> 16);
+      tile_x = (p_person->X >> 16);
+      p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+
+      if (((p_mapel->Flags2 & MEF2_Unkn01) != 0) && can_move)
+          can_move = 0;
+
+      if ((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
+          add_node_thing(p_person->ThingOffset);
+      p_person->Timer1 = 48;
+      p_person->StartTimer1 = 48;
+      if (p_vehicle->U.UVehicle.PassengerHead == 0)
+          p_vehicle->U.UVehicle.EffectiveGroup = 99;
+      remove_path(p_person);
+
+      if (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->State == PerSt_PROTECT_PERSON))
+      {
+          short plagent, owagent;
+
+          plagent = p_person->U.UPerson.ComCur & 3;
+          owagent = things[p_person->Owner].U.UPerson.ComCur & 3;
+          p_person->U.UPerson.ComRange = follow_dist[owagent][plagent];
+      }
+
+      if ((p_vehicle->Flag & TngF_Destroyed) != 0)
+      {
+        if (!can_move)
+        {
+          if (in_network_game)
+          {
+            struct Thing *p_oldtgt;
+            ThingIdx oldtgt;
+
+            oldtgt = p_vehicle->OldTarget;
+            if (oldtgt != 0)
+            {
+              p_oldtgt = &things[oldtgt];
+              if ((p_oldtgt->Flag & TngF_PlayerAgent) != 0)
+              {
+                  struct MissionStatus *p_mistat;
+                  ushort plyr, otplyr;
+
+                  plyr = things[oldtgt].U.UPerson.ComCur >> 2;
+                  otplyr = p_person->U.UPerson.ComCur >> 2;
+                  p_mistat = &mission_status[plyr];
+                  p_mistat->MP.AgentsKilled[otplyr]++;
+              }
+            }
+          }
+          set_person_dead(p_person, 10);
+          return 0;
+        }
+        p_person->Health -= 800;
+        if (p_person->Health <= 0)
+        {
+            set_person_dead(p_person, 10);
+            return 0;
+        }
+        if ((p_person->Flag & TngF_PlayerAgent) == 0)
+        {
+            person_go_sleep(p_person);
+        }
+      }
+    }
+    return 0;
 }
 
 ubyte person_attempt_to_leave_vehicle(struct Thing *p_person)
