@@ -180,4 +180,32 @@ int stats_mp_count_net_players_agents_kills(PlayerIdx plyr)
     return n;
 }
 
+void stats_mp_add_player_kills_player_agent(PlayerIdx plyr_kil, PlayerIdx plyr_vic)
+{
+    struct MissionStatus *p_mistat;
+    p_mistat = &mission_status[plyr_kil];
+    p_mistat->MP.AgentsKilled[plyr_vic]++;
+}
+
+void stats_mp_add_person_kills_person(ThingIdx killer, ThingIdx victim)
+{
+    struct Thing *p_killer;
+    struct Thing *p_victim;
+
+    if ((killer == 0) || (victim == 0))
+        return;
+
+    p_killer = &things[killer];
+    p_victim = &things[victim];
+
+    if (((p_victim->Flag & TngF_PlayerAgent) != 0) &&
+      ((p_killer->Flag & TngF_PlayerAgent) != 0))
+    {
+        PlayerIdx plyr_kil, plyr_vic;
+
+        plyr_vic = p_victim->U.UPerson.ComCur >> 2;
+        plyr_kil = p_killer->U.UPerson.ComCur >> 2;
+        stats_mp_add_player_kills_player_agent(plyr_kil, plyr_vic);
+    }
+}
 /******************************************************************************/

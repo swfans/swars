@@ -49,6 +49,7 @@ struct MissionStatus { // sizeof=40
       ulong CashAtStart;
       } SP;
       struct {
+      /** How many agents of a player were killed by each other player. */
       ushort AgentsKilled[8];
       } MP;
     };
@@ -69,6 +70,8 @@ void clear_open_mission_status(void);
 
 void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief);
 void persuaded_person_remove_from_stats(struct Thing *p_person, ushort brief);
+
+void stats_mp_add_person_kills_person(ThingIdx killer, ThingIdx victim);
 
 int stats_mp_count_players_agents_killed(PlayerIdx plyr);
 int stats_mp_count_net_players_agents_kills(PlayerIdx plyr);

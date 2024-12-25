@@ -3144,7 +3144,7 @@ TbBool check_ground_unkn01(struct Thing *p_person, short sh_x, short sh_z)
 
     if (tile_blocking)
         tflags |= 0x04;
-    if ((p_mapel->Flags2 & 0x02) != 0)
+    if ((p_mapel->Flags2 & MEF2_Unkn02) != 0)
         tflags &= ~0x04;
     if (((tflags & 0x04) != 0) || (p_mapel->Flags2 & (MEF2_Unkn01|MEF2_Unkn04)) != 0)
     {
@@ -3175,7 +3175,7 @@ short check_col_collision_when_moved_by(struct Thing *p_person, short sh_x, shor
         qbit = check_col_collision(cor_x, cor_y, cor_z);
         if (qbit != 0)
         {
-          return qbit;
+            return qbit;
         }
         cor_z += dt_z;
         cor_x += dt_x;
@@ -3313,27 +3313,9 @@ ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
       {
         if (!can_move)
         {
+          // SP stats are updated inside set_person_dead(), but MP stats not? maybe add a wrapper to include both?
           if (in_network_game)
-          {
-            struct Thing *p_oldtgt;
-            ThingIdx oldtgt;
-
-            oldtgt = p_vehicle->OldTarget;
-            if (oldtgt != 0)
-            {
-              p_oldtgt = &things[oldtgt];
-              if ((p_oldtgt->Flag & TngF_PlayerAgent) != 0)
-              {
-                  struct MissionStatus *p_mistat;
-                  ushort plyr, otplyr;
-
-                  plyr = things[oldtgt].U.UPerson.ComCur >> 2;
-                  otplyr = p_person->U.UPerson.ComCur >> 2;
-                  p_mistat = &mission_status[plyr];
-                  p_mistat->MP.AgentsKilled[otplyr]++;
-              }
-            }
-          }
+              stats_mp_add_person_kills_person(p_vehicle->OldTarget, p_person->ThingOffset);
           set_person_dead(p_person, 10);
           return 0;
         }
