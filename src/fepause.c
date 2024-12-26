@@ -45,25 +45,27 @@
 /******************************************************************************/
 static struct ScreenBox pause_main_box;
 static TbPixel pause_colr1, pause_colr2;
-static struct ScreenBox samplevol_box1;
-static struct ScreenBox samplevol_box2;
-static struct ScreenBox samplevol_box3;
-static struct ScreenBox midivol_box1;
-static struct ScreenBox midivol_box2;
-static struct ScreenBox midivol_box3;
-static struct ScreenBox cdvolume_box1;
-static struct ScreenBox cdvolume_box2;
-static struct ScreenBox cdvolume_box3;
+static struct ScreenBox samplevol_slider_box;
+static struct ScreenBox samplevol_arrow_l_box;
+static struct ScreenBox samplevol_arrow_r_box;
+static struct ScreenBox midivol_slider_box;
+static struct ScreenBox midivol_arrow_l_box;
+static struct ScreenBox midivol_arrow_r_box;
+static struct ScreenBox cdvolume_slider_box;
+static struct ScreenBox cdvolume_arrow_l_box;
+static struct ScreenBox cdvolume_arrow_r_box;
 
-ubyte sub_71694(int a1, int a2, char *text, int a4, ubyte a5, ubyte a6)
+ubyte sub_71694(short scr_x, short scr_y, char *text, TbPixel colr1, TbPixel colr2, ubyte enabled)
 {
+#if 1
     ubyte ret;
     asm volatile (
       "push %6\n"
       "push %5\n"
       "call ASM_sub_71694\n"
-        : "=r" (ret) : "a" (a1), "d" (a2), "b" (text), "c" (a4), "g" (a5), "g" (a6));
+        : "=r" (ret) : "a" (scr_x), "d" (scr_y), "b" (text), "c" (colr1), "g" (colr2), "g" (enabled));
     return ret;
+#endif
 }
 
 TbBool input_kicked_left_arrow(struct ScreenBox *box, short *target)
@@ -228,65 +230,55 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
     }
 }
 
+void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct ScreenBox *arrow_l_box,
+  struct ScreenBox *arrow_r_box, const struct ScreenBox *parent_box, int shift_y, int slider_w, int arrow_w, int h)
+{
+    slider_box->Width = slider_w;
+    slider_box->Height = h;
+    slider_box->X = parent_box->X + (parent_box->Width - slider_box->Width) / 2 + 4;
+    slider_box->Y = parent_box->Y + shift_y;
+
+    arrow_l_box->Width = arrow_w;
+    arrow_l_box->Height = h;
+    arrow_l_box->X = slider_box->X - 28;
+    arrow_l_box->Y = slider_box->Y;
+
+    arrow_r_box->Width = arrow_w;
+    arrow_r_box->Height = h;
+    arrow_r_box->X = slider_box->X + slider_box->Width - 10;
+    arrow_r_box->Y = slider_box->Y;
+}
+
 void init_pause_screen_boxes(void)
 {
+    int slider_w, arrow_w, slider_h, margin_h;
+
+    pause_main_box.Width = 466;
+    pause_main_box.Height = 244;
+    pause_main_box.X = 86;
+    pause_main_box.Y = 54;
+    slider_h = 18;
+
+    slider_w = 466 * 131 / 256;
+    arrow_w = slider_w * 9 / 256;
+    margin_h = 26;
+
+    init_slider_with_arrows_centered(&samplevol_slider_box, &samplevol_arrow_l_box,
+      &samplevol_arrow_r_box, &pause_main_box, 68, slider_w, arrow_w, slider_h);
+
+    init_slider_with_arrows_centered(&midivol_slider_box, &midivol_arrow_l_box,
+      &midivol_arrow_r_box, &pause_main_box, 68 + 1 * (slider_h + margin_h), slider_w, arrow_w, slider_h);
+
+    init_slider_with_arrows_centered(&cdvolume_slider_box, &cdvolume_arrow_l_box,
+      &cdvolume_arrow_r_box, &pause_main_box, 68 + 2 * (slider_h + margin_h), slider_w, arrow_w, slider_h);
+
+    // Currenlty not all components should be scaled to low res, hence changing the parent box here
     if (lbDisplay.GraphicsScreenHeight < 400) {
         pause_main_box.Width = 233;
         pause_main_box.Height = 122;
         pause_main_box.X = 43;
         pause_main_box.Y = 27;
-    } else {
-        pause_main_box.Width = 466;
-        pause_main_box.Height = 244;
-        pause_main_box.X = 86;
-        pause_main_box.Y = 54;
     }
-
-    samplevol_box1.Width = 238;
-    samplevol_box1.Height = 18;
-    samplevol_box1.X = pause_main_box.X + 118;
-    samplevol_box1.Y = pause_main_box.Y + 68;
-
-    samplevol_box2.Width = 8;
-    samplevol_box2.Height = 18;
-    samplevol_box2.X = pause_main_box.X + 90;
-    samplevol_box2.Y = pause_main_box.Y + 68;
-
-    samplevol_box3.Width = 8;
-    samplevol_box3.Height = 18;
-    samplevol_box3.X = pause_main_box.X + 346;
-    samplevol_box3.Y = pause_main_box.Y + 68;
-
-    midivol_box1.Width = 238;
-    midivol_box1.Height = 18;
-    midivol_box1.X = 204;
-    midivol_box1.Y = 166;
-
-    midivol_box2.Width = 8;
-    midivol_box2.Height = 18;
-    midivol_box2.X = 176;
-    midivol_box2.Y = 166;
-
-    midivol_box3.Width = 8;
-    midivol_box3.Height = 18;
-    midivol_box3.X = 432;
-    midivol_box3.Y = 166;
-
-    cdvolume_box1.Width = 238;
-    cdvolume_box1.Height = 18;
-    cdvolume_box1.X = 204;
-    cdvolume_box1.Y = 210;
-
-    cdvolume_box2.Width = 8;
-    cdvolume_box2.Height = 18;
-    cdvolume_box2.X = 176;
-    cdvolume_box2.Y = 210;
-
-    cdvolume_box3.Width = 8;
-    cdvolume_box3.Height = 18;
-    cdvolume_box3.X = 432;
-    cdvolume_box3.Y = 210;
-
 }
 
 void start_pause_screen(void)
@@ -447,9 +439,9 @@ ubyte show_pause_screen(struct ScreenBox *box)
         box->Flags |= GBxFlg_BkgndDrawn;
     }
 
-    draw_pause_volume_bar(&samplevol_box1, &samplevol_box2, &samplevol_box3, &startscr_samplevol);
-    draw_pause_volume_bar(&midivol_box1, &midivol_box2, &midivol_box3, &startscr_midivol);
-    draw_pause_volume_bar(&cdvolume_box1, &cdvolume_box2, &cdvolume_box3, &startscr_cdvolume);
+    draw_pause_volume_bar(&samplevol_slider_box, &samplevol_arrow_l_box, &samplevol_arrow_r_box, &startscr_samplevol);
+    draw_pause_volume_bar(&midivol_slider_box, &midivol_arrow_l_box, &midivol_arrow_r_box, &startscr_midivol);
+    draw_pause_volume_bar(&cdvolume_slider_box, &cdvolume_arrow_l_box, &cdvolume_arrow_r_box, &startscr_cdvolume);
 
     return 0;
 }
@@ -481,11 +473,11 @@ TbBool pause_screen_handle(void)
 
         {
         target = &startscr_samplevol;
-        if (input_kicked_left_arrow(&samplevol_box2, target))
+        if (input_kicked_left_arrow(&samplevol_arrow_l_box, target))
             affected = target;
-        if (input_kicked_right_arrow(&samplevol_box3, target))
+        if (input_kicked_right_arrow(&samplevol_arrow_r_box, target))
             affected = target;
-        if (input_slant_box(&samplevol_box1, target))
+        if (input_slant_box(&samplevol_slider_box, target))
             affected = target;
         }
 
@@ -494,22 +486,22 @@ TbBool pause_screen_handle(void)
         {
         target = &startscr_midivol;
 
-        if (input_kicked_left_arrow(&midivol_box2, target))
+        if (input_kicked_left_arrow(&midivol_arrow_l_box, target))
             affected = target;
-        if (input_kicked_right_arrow(&midivol_box3, target))
+        if (input_kicked_right_arrow(&midivol_arrow_r_box, target))
             affected = target;
-        if (input_slant_box(&midivol_box1, target))
+        if (input_slant_box(&midivol_slider_box, target))
             affected = target;
         }
 
         {
         target = &startscr_cdvolume;
 
-        if (input_kicked_left_arrow(&cdvolume_box2, target))
+        if (input_kicked_left_arrow(&cdvolume_arrow_l_box, target))
             affected = target;
-        if (input_kicked_right_arrow(&cdvolume_box3, target))
+        if (input_kicked_right_arrow(&cdvolume_arrow_r_box, target))
             affected = target;
-        if (input_slant_box(&cdvolume_box1, target))
+        if (input_slant_box(&cdvolume_slider_box, target))
             affected = target;
         }
 
@@ -541,6 +533,7 @@ TbBool pause_screen_handle(void)
 
         if (sub_71694(140, 134, gui_strings[455], pause_colr1, pause_colr2, 0))
             resume_game = true;
+
         if (sub_71694(197, 134, gui_strings[445], pause_colr1, pause_colr2, 0))
         {
             swap_wscreen();
