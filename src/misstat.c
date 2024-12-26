@@ -203,8 +203,8 @@ void stats_mp_add_person_kills_person(ThingIdx killer, ThingIdx victim)
     {
         PlayerIdx plyr_kil, plyr_vic;
 
-        plyr_vic = p_victim->U.UPerson.ComCur >> 2;
-        plyr_kil = p_killer->U.UPerson.ComCur >> 2;
+        plyr_vic = (p_victim->U.UPerson.ComCur & 0x1C) >> 2;
+        plyr_kil = (p_killer->U.UPerson.ComCur & 0x1C) >> 2;
         stats_mp_add_player_kills_player_agent(plyr_kil, plyr_vic);
     }
 }

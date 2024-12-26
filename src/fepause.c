@@ -43,6 +43,17 @@
 #include "sound.h"
 #include "swlog.h"
 /******************************************************************************/
+static struct ScreenBox pause_main_box;
+static TbPixel pause_colr1, pause_colr2;
+static struct ScreenBox samplevol_box1;
+static struct ScreenBox samplevol_box2;
+static struct ScreenBox samplevol_box3;
+static struct ScreenBox midivol_box1;
+static struct ScreenBox midivol_box2;
+static struct ScreenBox midivol_box3;
+static struct ScreenBox cdvolume_box1;
+static struct ScreenBox cdvolume_box2;
+static struct ScreenBox cdvolume_box3;
 
 ubyte sub_71694(int a1, int a2, char *text, int a4, ubyte a5, ubyte a6)
 {
@@ -217,61 +228,126 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
     }
 }
 
-TbBool pause_screen_handle(void)
+void init_pause_screen_boxes(void)
 {
-    int w;
-    const char *s;
-    TbBool resume_game;
-    TbPixel colr1, colr2;
-    struct ScreenBox main_box;
-    short *target;
-    short *affected;
-
     if (lbDisplay.GraphicsScreenHeight < 400) {
-        main_box.X = 43;
-        main_box.Width = 233;
-        main_box.Y = 27;
-        main_box.Height = 122;
+        pause_main_box.Width = 233;
+        pause_main_box.Height = 122;
+        pause_main_box.X = 43;
+        pause_main_box.Y = 27;
     } else {
-        main_box.X = 86;
-        main_box.Width = 466;
-        main_box.Y = 54;
-        main_box.Height = 244;
+        pause_main_box.Width = 466;
+        pause_main_box.Height = 244;
+        pause_main_box.X = 86;
+        pause_main_box.Y = 54;
     }
 
-    if ((ingame.PanelPermutation != 2) && (ingame.PanelPermutation != -3))
-        colr1 = 20;
-    else
-        colr1 = 40;
+    samplevol_box1.Width = 238;
+    samplevol_box1.Height = 18;
+    samplevol_box1.X = pause_main_box.X + 118;
+    samplevol_box1.Y = pause_main_box.Y + 68;
+
+    samplevol_box2.Width = 8;
+    samplevol_box2.Height = 18;
+    samplevol_box2.X = pause_main_box.X + 90;
+    samplevol_box2.Y = pause_main_box.Y + 68;
+
+    samplevol_box3.Width = 8;
+    samplevol_box3.Height = 18;
+    samplevol_box3.X = pause_main_box.X + 346;
+    samplevol_box3.Y = pause_main_box.Y + 68;
+
+    midivol_box1.Width = 238;
+    midivol_box1.Height = 18;
+    midivol_box1.X = 204;
+    midivol_box1.Y = 166;
+
+    midivol_box2.Width = 8;
+    midivol_box2.Height = 18;
+    midivol_box2.X = 176;
+    midivol_box2.Y = 166;
+
+    midivol_box3.Width = 8;
+    midivol_box3.Height = 18;
+    midivol_box3.X = 432;
+    midivol_box3.Y = 166;
+
+    cdvolume_box1.Width = 238;
+    cdvolume_box1.Height = 18;
+    cdvolume_box1.X = 204;
+    cdvolume_box1.Y = 210;
+
+    cdvolume_box2.Width = 8;
+    cdvolume_box2.Height = 18;
+    cdvolume_box2.X = 176;
+    cdvolume_box2.Y = 210;
+
+    cdvolume_box3.Width = 8;
+    cdvolume_box3.Height = 18;
+    cdvolume_box3.X = 432;
+    cdvolume_box3.Y = 210;
+
+}
+
+void start_pause_screen(void)
+{
+    if ((ingame.PanelPermutation != 2) && (ingame.PanelPermutation != -3)) {
+        pause_colr1 = 20;
+        pause_colr2 = 15;
+    } else {
+        pause_colr1 = 40;
+        pause_colr2 = 35;
+    }
+
     snd_unkn1_volume_all_samples();
     update_danger_music(2);
 
-    // Wait for the pause key to be released
-    lbKeyOn[kbkeys[GKey_PAUSE]] = 0;
-    while ((jskeys[GKey_PAUSE] != 0) &&
-      (jskeys[GKey_PAUSE] != joy.Buttons[0]))
+    do_change_mouse(8);
+
+    pause_main_box.Flags &= ~GBxFlg_BkgndDrawn;
+
+}
+
+/** Wait for the pause toggle key to be released.
+ */
+void wait_for_keypress_end(ushort game_key, TbBool impatient)
+{
+    TbBool ended;
+
+    if (impatient) {
+        lbKeyOn[kbkeys[game_key]] = 0;
+    }
+
+    ended = false;
+    while (!ended)
     {
         joy_func_065(&joy);
+
+        if (!lbKeyOn[kbkeys[game_key]]
+          && (jskeys[game_key] == 0 || jskeys[game_key] != joy.Buttons[0]))
+            ended = true;
+
+        PlayCDTrack(ingame.CDTrack);
 
         swap_wscreen();
         game_update();
     }
+}
 
-    do_change_mouse(8);
+void draw_pause_screen_static(struct ScreenBox *box)
+{
+    int w;
+    const char *s;
 
-    draw_box_cutedge(&main_box, colr1);
+    draw_box_cutedge(box, pause_colr1);
 
-    if ((ingame.PanelPermutation != 2) && (ingame.PanelPermutation != -3))
-        colr2 = 15;
-    else
-        colr2 = 35;
     lbFontPtr = small_font;
     my_set_text_window(0, 0, lbDisplay.PhysicalScreenWidth,
       lbDisplay.PhysicalScreenHeight);
     if ((ingame.PanelPermutation == 2) || (ingame.PanelPermutation == -3))
     {
         lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
-        lbDisplay.DrawColour = colr2;
+        lbDisplay.DrawColour = pause_colr2;
     }
     if (lbDisplay.GraphicsScreenHeight < 400)
     {
@@ -342,6 +418,55 @@ TbBool pause_screen_handle(void)
             my_draw_text(206 - (w >> 1), 246, s, 0);
         }
     }
+}
+
+void draw_pause_volume_bar(struct ScreenBox *p_box1, struct ScreenBox *p_box2, struct ScreenBox *p_box3, short *p_target)
+{
+    // Draw the main slider box
+    draw_slant_box(p_box1, pause_colr2);
+    // Draw the side arrows
+    draw_kicked_left_arrow(p_box2, pause_colr2);
+    draw_kicked_right_arrow(p_box3, pause_colr2);
+
+    if (*p_target) // Draw slider box filling
+    {
+        struct ScreenBox box4;
+        box4.X = p_box1->X + 2;
+        box4.Y = p_box1->Y + 2;
+        box4.Width = (p_box1->Width - 6) * (*p_target) / 322;
+        box4.Height = p_box1->Height - 4;
+        draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
+    }
+}
+
+ubyte show_pause_screen(struct ScreenBox *box)
+{
+    if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
+    {
+        draw_pause_screen_static(box);
+        box->Flags |= GBxFlg_BkgndDrawn;
+    }
+
+    draw_pause_volume_bar(&samplevol_box1, &samplevol_box2, &samplevol_box3, &startscr_samplevol);
+    draw_pause_volume_bar(&midivol_box1, &midivol_box2, &midivol_box3, &startscr_midivol);
+    draw_pause_volume_bar(&cdvolume_box1, &cdvolume_box2, &cdvolume_box3, &startscr_cdvolume);
+
+    return 0;
+}
+
+TbBool pause_screen_handle(void)
+{
+    short *affected;
+    TbBool resume_game;
+
+    init_pause_screen_boxes();
+    start_pause_screen();
+
+    // Wait for the pause key to be released
+    wait_for_keypress_end(GKey_PAUSE, true);
+
+    show_pause_screen(&pause_main_box);
+
     swap_wscreen();
     if (!ingame.fld_unk7DA)
         SetMusicVolume(100, 0x7F);
@@ -349,135 +474,43 @@ TbBool pause_screen_handle(void)
     resume_game = false;
     while (!resume_game)
     {
+        short *target;
+
         joy_func_065(&joy);
         affected = NULL;
 
         {
         target = &startscr_samplevol;
-        struct ScreenBox box1;
-        box1.X = 204;
-        box1.Y = 122;
-        box1.Width = 238;
-        box1.Height = 18;
-
-        struct ScreenBox box2;
-        box2.X = 176;
-        box2.Y = 122;
-        box2.Width = 8;
-        box2.Height = 18;
-
-        struct ScreenBox box3;
-        box3.X = 432;
-        box3.Y = 122;
-        box3.Width = 8;
-        box3.Height = 18;
-
-        // Draw the main slider box
-        draw_slant_box(&box1, colr2);
-        // Draw the side arrows
-        draw_kicked_left_arrow(&box2, colr2);
-        draw_kicked_right_arrow(&box3, colr2);
-
-        if (input_kicked_left_arrow(&box2, target))
+        if (input_kicked_left_arrow(&samplevol_box2, target))
             affected = target;
-        if (input_kicked_right_arrow(&box3, target))
+        if (input_kicked_right_arrow(&samplevol_box3, target))
             affected = target;
-        if (input_slant_box(&box1, target))
+        if (input_slant_box(&samplevol_box1, target))
             affected = target;
-
-        if (*target) // Draw slider box filling
-        {
-            struct ScreenBox box4;
-            box4.X = box1.X + 2;
-            box4.Y = box1.Y + 2;
-            box4.Width = (box1.Width - 6) * (*target) / 322;
-            box4.Height = box1.Height - 4;
-            draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
         }
-        }
+
+        show_pause_screen(&pause_main_box);
 
         {
         target = &startscr_midivol;
-        struct ScreenBox box1;
-        box1.X = 204;
-        box1.Y = 166;
-        box1.Width = 238;
-        box1.Height = 18;
 
-        struct ScreenBox box2;
-        box2.X = 176;
-        box2.Y = 166;
-        box2.Width = 8;
-        box2.Height = 18;
-
-        struct ScreenBox box3;
-        box3.X = 432;
-        box3.Y = 166;
-        box3.Width = 8;
-        box3.Height = 18;
-
-        draw_slant_box(&box1, colr2);
-        draw_kicked_left_arrow(&box2, colr2);
-        draw_kicked_right_arrow(&box3, colr2);
-
-        if (input_kicked_left_arrow(&box2, target))
+        if (input_kicked_left_arrow(&midivol_box2, target))
             affected = target;
-        if (input_kicked_right_arrow(&box3, target))
+        if (input_kicked_right_arrow(&midivol_box3, target))
             affected = target;
-        if (input_slant_box(&box1, target))
+        if (input_slant_box(&midivol_box1, target))
             affected = target;
-
-        if (*target)
-        {
-            struct ScreenBox box4;
-            box4.X = box1.X + 2;
-            box4.Y = box1.Y + 2;
-            box4.Width = (box1.Width - 6) * (*target) / 322;
-            box4.Height = box1.Height - 4;
-            draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
-        }
         }
 
         {
         target = &startscr_cdvolume;
-        struct ScreenBox box1;
-        box1.X = 204;
-        box1.Y = 210;
-        box1.Width = 238;
-        box1.Height = 18;
 
-        struct ScreenBox box2;
-        box2.X = 176;
-        box2.Y = 210;
-        box2.Width = 8;
-        box2.Height = 18;
-
-        struct ScreenBox box3;
-        box3.X = 432;
-        box3.Y = 210;
-        box3.Width = 8;
-        box3.Height = 18;
-
-        draw_slant_box(&box1, colr2);
-        draw_kicked_left_arrow(&box2, colr2);
-        draw_kicked_right_arrow(&box3, colr2);
-
-        if (input_kicked_left_arrow(&box2, target))
+        if (input_kicked_left_arrow(&cdvolume_box2, target))
             affected = target;
-        if (input_kicked_right_arrow(&box3, target))
+        if (input_kicked_right_arrow(&cdvolume_box3, target))
             affected = target;
-        if (input_slant_box(&box1, target))
+        if (input_slant_box(&cdvolume_box1, target))
             affected = target;
-
-        if (*target)
-        {
-            struct ScreenBox box4;
-            box4.X = box1.X + 2;
-            box4.Y = box1.Y + 2;
-            box4.Width = (box1.Width - 6) * (*target) / 322;
-            box4.Height = box1.Height - 4;
-            draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
-        }
         }
 
         if (affected == &startscr_samplevol)
@@ -495,20 +528,20 @@ TbBool pause_screen_handle(void)
             SetCDVolume(70 * (127 * (*affected) / 322) / 100);
         }
 
-        if (sub_71694(180, 120, gui_strings[477], colr1, colr2, ingame.DetailLevel == 1))
+        if (sub_71694(180, 120, gui_strings[477], pause_colr1, pause_colr2, ingame.DetailLevel == 1))
         {
             ingame.DetailLevel = 1;
             bang_set_detail(0);
         }
-        if (sub_71694(220, 120, gui_strings[475], colr1, colr2, ingame.DetailLevel == 0))
+        if (sub_71694(220, 120, gui_strings[475], pause_colr1, pause_colr2, ingame.DetailLevel == 0))
         {
             ingame.DetailLevel = 0;
             bang_set_detail(1);
         }
 
-        if (sub_71694(140, 134, gui_strings[455], colr1, colr2, 0))
+        if (sub_71694(140, 134, gui_strings[455], pause_colr1, pause_colr2, 0))
             resume_game = true;
-        if (sub_71694(197, 134, gui_strings[445], colr1, colr2, 0))
+        if (sub_71694(197, 134, gui_strings[445], pause_colr1, pause_colr2, 0))
         {
             swap_wscreen();
             SetMusicVolume(100, 0);
@@ -530,20 +563,8 @@ TbBool pause_screen_handle(void)
     }
 
     // Wait for the pause key to be released
-    resume_game = false;
-    while (!resume_game)
-    {
-        joy_func_065(&joy);
+    wait_for_keypress_end(GKey_PAUSE, false);
 
-        if (!(lbKeyOn[kbkeys[GKey_PAUSE]]
-          || (jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0])))
-            resume_game = true;
-
-        PlayCDTrack(ingame.CDTrack);
-
-        swap_wscreen();
-        game_update();
-    }
     lbDisplay.RightButton = 0;
     lbDisplay.LeftButton = 0;
     if (!ingame.fld_unk7DA)
