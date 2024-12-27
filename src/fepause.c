@@ -54,6 +54,88 @@ static struct ScreenBox midivol_arrow_r_box;
 static struct ScreenBox cdvolume_slider_box;
 static struct ScreenBox cdvolume_arrow_l_box;
 static struct ScreenBox cdvolume_arrow_r_box;
+static struct ScreenButton detail_hi_btn;
+static struct ScreenButton detail_lo_btn;
+static struct ScreenButton continue_btn;
+static struct ScreenButton abort_btn;
+
+ubyte update_ingame_button(struct ScreenButton *p_button, TbPixel colr1, TbPixel colr2, ubyte enabled)
+{
+    struct ScreenButton btn1;
+    short line_h;
+    short text_w;
+    short margin;
+
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        line_h = font_height('A');
+        text_w = my_string_width(p_button->Text);
+        margin = 1;
+    } else {
+        line_h = 2 * font_height('A');
+        text_w = 2 * my_string_width(p_button->Text);
+        margin = 2;
+    }
+
+    btn1.Width = text_w + 4 * margin;
+    btn1.Height = line_h + 4 * margin;
+    btn1.X = p_button->X - (btn1.Width >> 1);
+    btn1.Y = p_button->Y;
+
+    lbDisplay.DrawFlags = 0x0004;
+    LbDrawBox(btn1.X - margin, btn1.Y - margin, btn1.Width + 2 * margin, btn1.Height + 2 * margin, colr1);
+
+    lbDisplay.DrawFlags = 0x0010;
+    lbDisplay.DrawColour = colour_lookup[1];
+
+    if (enabled || mouse_move_over_box(&btn1))
+    {
+      short text_x, text_y;
+
+      LbDrawBox(btn1.X, btn1.Y, btn1.Width, btn1.Height, lbDisplay.DrawColour);
+
+      lbDisplay.DrawFlags |= 0x0040;
+      if (lbDisplay.GraphicsScreenHeight < 400) {
+          text_x = btn1.X + 2 * margin;
+          text_y = btn1.Y + 2 * margin;
+      } else {
+          text_x = btn1.X + (text_w >> 2) + 2 * margin;
+          text_y = btn1.Y + (line_h >> 1) + margin;
+      }
+      my_draw_text(text_x, text_y, p_button->Text, 0);
+
+      lbDisplay.DrawFlags &= ~0x0040;
+      if (lbDisplay.LeftButton)
+      {
+        if (mouse_move_over_box(&btn1))
+            lbDisplay.LeftButton = 0;
+
+        if (mouse_down_over_box(&btn1))
+            return 1;
+      }
+    }
+    else
+    {
+      short text_x, text_y;
+
+      if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3)
+      {
+          lbDisplay.DrawFlags |= 0x0040;
+          lbDisplay.DrawColour = colr2;
+      }
+      LbDrawBox(btn1.X, btn1.Y, btn1.Width, btn1.Height, colr2);
+
+      if (lbDisplay.GraphicsScreenHeight < 400) {
+          text_x = btn1.X + 2 * margin;
+          text_y = btn1.Y + 2 * margin;
+      } else {
+          text_x = btn1.X + (text_w >> 2) + 2 * margin;
+          text_y = btn1.Y + (line_h >> 1) + margin;
+      }
+      my_draw_text(text_x, text_y, p_button->Text, 0);
+      lbDisplay.DrawFlags &= ~0x0040;
+    }
+    return 0;
+}
 
 ubyte update_button(short scr_x, short scr_y, char *text, TbPixel colr1, TbPixel colr2, ubyte enabled)
 {
@@ -355,6 +437,15 @@ void init_pause_screen_boxes(void)
         pause_main_box.X = 43;
         pause_main_box.Y = 27;
     }
+
+    init_screen_button(&detail_hi_btn, pause_main_box.X + pause_main_box.Width * 151 / 256,
+      pause_main_box.Y + pause_main_box.Height * 196 / 256, gui_strings[477], 0, small_font, 0, 0);
+    init_screen_button(&detail_lo_btn, pause_main_box.X + pause_main_box.Width * 195 / 256,
+      pause_main_box.Y + pause_main_box.Height * 196 / 256, gui_strings[475], 0, small_font, 0, 0);
+    init_screen_button(&continue_btn, pause_main_box.X + pause_main_box.Width * 107 / 256,
+      pause_main_box.Y + pause_main_box.Height * 225 / 256, gui_strings[455], 0, small_font, 0, 0);
+    init_screen_button(&abort_btn, pause_main_box.X + pause_main_box.Width * 170 / 256,
+      pause_main_box.Y + pause_main_box.Height * 225 / 256, gui_strings[445], 0, small_font, 0, 0);
 }
 
 void start_pause_screen(void)
@@ -557,8 +648,6 @@ TbBool pause_screen_handle(void)
             affected = target;
         }
 
-        show_pause_screen(&pause_main_box);
-
         {
         target = &startscr_midivol;
 
@@ -596,21 +685,23 @@ TbBool pause_screen_handle(void)
             SetCDVolume(70 * (127 * (*affected) / 322) / 100);
         }
 
-        if (update_button(180, 120, gui_strings[477], pause_colr1, pause_colr2, ingame.DetailLevel == 1))
+        show_pause_screen(&pause_main_box);
+
+        if (update_ingame_button(&detail_hi_btn, pause_colr1, pause_colr2, ingame.DetailLevel == 1))
         {
             ingame.DetailLevel = 1;
             bang_set_detail(0);
         }
-        if (update_button(220, 120, gui_strings[475], pause_colr1, pause_colr2, ingame.DetailLevel == 0))
+        if (update_ingame_button(&detail_lo_btn, pause_colr1, pause_colr2, ingame.DetailLevel == 0))
         {
             ingame.DetailLevel = 0;
             bang_set_detail(1);
         }
 
-        if (update_button(140, 134, gui_strings[455], pause_colr1, pause_colr2, 0))
+        if (update_ingame_button(&continue_btn, pause_colr1, pause_colr2, 0))
             resume_game = true;
 
-        if (update_button(197, 134, gui_strings[445], pause_colr1, pause_colr2, 0))
+        if (update_ingame_button(&abort_btn, pause_colr1, pause_colr2, 0))
         {
             swap_wscreen();
             SetMusicVolume(100, 0);
