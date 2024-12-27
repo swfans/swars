@@ -18,7 +18,12 @@
 /******************************************************************************/
 #include "guiboxes.h"
 
+#include "bfkeybd.h"
 #include "bfscreen.h"
+#include "bftext.h"
+
+#include "display.h"
+#include "purpldrw.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -50,8 +55,8 @@ TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, shor
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
@@ -59,8 +64,8 @@ TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, shor
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    ms_x = lbDisplay.MouseX;
+    ms_y = lbDisplay.MouseY;
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
@@ -69,8 +74,8 @@ TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
@@ -79,8 +84,8 @@ TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, T
     short ms_x, ms_y;
     short dx, dy;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
 
     if (a5)
     {
@@ -109,7 +114,7 @@ short mouse_move_position_horizonal_over_bar_coords(short x, short w)
 {
     short ms_x;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_x = lbDisplay.MMouseX;
     return (ms_x - x);
 }
 
@@ -117,7 +122,7 @@ short mouse_down_position_horizonal_over_bar_coords(short x, short w)
 {
     short ms_x;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    ms_x = lbDisplay.MouseX;
     return (ms_x - x);
 }
 
@@ -146,8 +151,8 @@ TbBool mouse_move_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
     return is_over_box_base(ms_x, ms_y, box);
 }
 
@@ -155,8 +160,8 @@ TbBool mouse_down_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    ms_x = lbDisplay.MouseX;
+    ms_y = lbDisplay.MouseY;
     return is_over_box_base(ms_x, ms_y, box);
 }
 
@@ -164,8 +169,8 @@ TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
     return is_over_slant_box_base(ms_x, ms_y, box);
 }
 
@@ -178,7 +183,7 @@ short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_y;
 
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_y = lbDisplay.MMouseY;
     return ms_y - box->Y;
 }
 
@@ -204,6 +209,7 @@ void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y, ushort 
 
 void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
 {
+#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
@@ -211,6 +217,30 @@ void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char
       "push %4\n"
       "call ASM_init_screen_button\n"
         : : "a" (box), "d" (x), "b" (y), "c" (text), "g" (drawspeed), "g" (font), "g" (textspeed), "g" (flags));
+#endif
+    lbFontPtr = font;
+    box->Y = y;
+    box->Width = my_string_width(text) + 4;
+    box->Height = font_height('A') + 6;
+    box->DrawSpeed = drawspeed;
+    box->Font = font;
+    box->Flags = flags | 0x01;
+    if ((flags & 0x80) != 0)
+        x -= box->Width;
+    box->X = x;
+    box->DrawFn = ac_flashy_draw_purple_button;
+    box->DrawTextFn = ac_button_text;
+    box->CallBackFn = 0;
+    box->Border = 1;
+    box->Colour = 0xAE;
+    box->BGColour = 0xF3;
+    box->AccelKey = 0;
+    box->Text = text;
+    box->TextSpeed = textspeed;
+    if (*text != '\0')
+        box->AccelKey = lbAsciiToInkey[*(ubyte *)text];
+    box->Radio = 0;
+    box->RadioValue = 0;
 }
 
 void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort width, const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)

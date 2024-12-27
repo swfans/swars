@@ -176,7 +176,7 @@ enum ThingFlags2 {
      */
     TgF2_ExistsOffMap = 0x01000000,
     TgF2_Unkn02000000 = 0x02000000,
-    TgF2_Unkn04000000 = 0x04000000,
+    TgF2_SoulDepleted = 0x04000000,
     TgF2_Unkn08000000 = 0x08000000,
     TgF2_Unkn10000000 = 0x10000000,
     TgF2_InsideBuilding = 0x20000000,
@@ -558,17 +558,6 @@ struct SimpleThing
     short field_38;
     ushort UniqueID;
 };
-
-typedef struct {
-    short Arg1;
-    short Arg2;
-    short Arg3;
-    short Arg4;
-    long Arg5;
-} ThingFilterParams;
-
-/** Definition of a simple callback type which can only return true/false and has no memory of previous checks. */
-typedef TbBool (*ThingBoolFilter)(ThingIdx thing, ThingFilterParams *params);
 
 /** Old structure for storing State of any Thing.
  * Used only to allow reading old, pre-release levels.
@@ -963,6 +952,17 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
  */
 void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
 
+/** Returns if given type represents SimpleThing rather than a full featured Thing.
+ */
+TbBool thing_type_is_simple(short ttype);
+
+/** Given thing index, sets its position in map coordinates to three variables.
+ *
+ * Different kinds of things have different quirks in regard to position on map.
+ * This function deals with all that and just gives the straight, simple position.
+ */
+void get_thing_position_mapcoords(short *x, short *y, short *z, ThingIdx thing);
+
 /** Get a string representing text name of a state change result.
  */
 const char *state_change_result_name(StateChRes res);
@@ -1004,33 +1004,6 @@ void build_same_type_headers(void);
 short get_thing_same_type_head(short ttype, short subtype);
 
 TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R);
-
-/** Unified function to find a thing of given type within given circle and matching filter.
- *
- * Tries to use mapwho and same type list, and if cannot then just searches all used things.
- *
- * @param X Map coordinate in map units.
- * @param Z Map coordinate in map units.
- * @param R Circle radius in map units.
- * @param ttype Thing Type; need to be specific, no -1 allowed.
- * @param subtype Thing SubType; to catch all, use -1.
- * @param filter Filter callback function.
- * @param param Parameters for filter callback function.
- */
-ThingIdx find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
-  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params);
-
-ThingIdx find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon);
-ThingIdx find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
-ThingIdx find_person_carrying_weapon(short weapon);
-
-ThingIdx find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
-ThingIdx search_things_for_index(short index);
-ThingIdx find_nearest_object2(short mx, short mz, ushort sub_type);
-short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after);
-ThingIdx search_for_station(short x, short z);
-ThingIdx search_for_vehicle(short X, short Z);
-ThingIdx search_things_for_uniqueid(short index, ubyte flag);
 
 struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop);
 

@@ -22,6 +22,8 @@
 #include "bftypes.h"
 #include "bfini.h"
 
+#include "game_bstype.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -82,6 +84,12 @@ enum WeaponFourPackIndex
     WFRPK_COUNT,
 };
 
+enum ProcessProximityWieldWeaponTargetSelect {
+    PTargSelect_Persuader = 0,
+    PTargSelect_PersuadeAdv,
+    PTargSelect_SoulCollect,
+};
+
 struct Thing;
 
 enum WeaponDefFlags
@@ -133,16 +141,45 @@ extern short persuaded_person_weapons_sell_cost_permil;
 void read_weapons_conf_file(void);
 void init_weapon_text(void);
 
+/** Gives a string which names the weapon.
+ */
+const char *weapon_codename(ushort wtype);
+
+/** Returns if the weapon activates at the location of the wielding person.
+ */
+TbBool weapon_is_deployed_at_wielder_pos(ushort wtype);
+
+/** Returns panel sprite index to be used to represent the weapon.
+ */
+ushort weapon_sprite_index(ushort wtype, TbBool enabled);
+
 TbBool weapons_has_weapon(ulong weapons, ushort wtype);
 ushort weapons_prev_weapon(ulong weapons, ushort last_wtype);
-const char *weapon_codename(ushort wtype);
-ushort weapon_sprite_index(ushort wtype, TbBool enabled);
 
 ushort weapon_fourpack_index(ushort weapon);
 void weapons_remove_weapon(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
+
+/** Remove one weapon from an npc person in-game.
+ * NPCs have no FourPacks, meaning removing one consumable weapon does nothing.
+ * For non-consumable weapons, this removes the related weapon normally.
+ */
+TbBool weapons_remove_one_from_npc(ulong *p_weapons, ushort wtype);
+
+/** Remove one weapon from a player character, in Cryo Chamber.
+ * Currently this is only for cryo chamber, as in-game fourpacks have different format.
+ */
 TbBool weapons_remove_one(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
+
+/** Remove one weapon from player-controlled person in-game.
+ * Player struct contains dumb own array rather than uniform WeaponsFourPack, so it requires
+ * this special function.
+ * DEPRECATED: To be removed when possible.
+ */
+TbBool weapons_remove_one_for_player(ulong *p_weapons,
+  ubyte p_plfourpacks[][4], ushort plagent, ushort wtype);
+
 TbBool weapons_add_one(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
 void sanitize_weapon_quantities(ulong *p_weapons,
@@ -150,11 +187,19 @@ void sanitize_weapon_quantities(ulong *p_weapons,
 
 ubyte find_nth_weapon_held(ushort index, ubyte n);
 
-/** Returns range (in normal map coord points) of the person current weapon.
+/** Gives range (in normal map coord points) of given weapon when wielded by given person.
  *
- * Simply gets the value from weapon config, without adjustments.
+ * Does not check if the person is in a situation where it uses different
+ * weapon than the one in hand, ie. ignores if the person is inside a tank.
  */
-short current_weapon_range(struct Thing *p_person);
+short get_hand_weapon_range(struct Thing *p_person, ushort wtype);
+
+/** Gives range (in normal map coord points) of the person current weapon.
+ *
+ * Does not check if the person is in a situation where it uses different
+ * weapon than the one in hand, ie. ignores if the person is inside a tank.
+ */
+short current_hand_weapon_range(struct Thing *p_person);
 
 /** Returns range (in normal map coord points) of the person current weapon.
  *
@@ -164,17 +209,23 @@ int get_weapon_range(struct Thing *p_person);
 
 void choose_best_weapon_for_range(struct Thing *p_person, int dist);
 
+TbBool person_can_be_persuaded_now(ThingIdx attacker, ThingIdx target,
+  short weapon_range, ubyte target_select, ushort *energy_reqd);
+
 /** Returns whether the person current weapon requires some time to achieve target lock.
  */
 TbBool current_weapon_has_targetting(struct Thing *p_person);
 
 ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person);
 
+TbBool person_weapons_remove_one(struct Thing *p_person, ushort wtype);
+
 void do_weapon_quantities_net_to_player(struct Thing *p_person);
 void do_weapon_quantities1(struct Thing *p_person);
 void do_weapon_quantities_proper1(struct Thing *p_person);
 
 void process_weapon(struct Thing *p_person);
+short process_persuadertron(struct Thing *p_person, ubyte target_select, ushort *energy_reqd);
 int gun_out_anim(struct Thing *p_person, ubyte shoot_flag);
 
 s32 laser_hit_at(s32 x1, s32 y1, s32 z1, s32 *x2, s32 *y2, s32 *z2, struct Thing *p_shot);

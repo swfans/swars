@@ -751,12 +751,77 @@ void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour
     unkn_draw_transformed_point(x, y, ptX, ptY, ptZ, colour);
 }
 
-void func_711F4(short a1, short a2, short a3, short a4, ubyte colour)
+void draw_map_flat_circle(short cor_x, short cor_y, short cor_z, short radius, TbPixel colour)
 {
     asm volatile (
       "push %4\n"
-      "call ASM_func_711F4\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (colour));
+      "call ASM_draw_map_flat_circle\n"
+        : : "a" (cor_x), "d" (cor_y), "b" (cor_z), "c" (radius), "g" (colour));
+}
+
+void draw_map_flat_rect(int cor_x, int cor_y, int cor_z, int size_x, int size_z, TbPixel colour)
+{
+#if 0
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_draw_map_flat_rect\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+#endif
+    struct EnginePoint ep1;
+    struct EnginePoint ep2;
+    int cor_x2, cor_z2;
+
+    cor_x2 = cor_x + size_x;
+    cor_z2 = cor_z + size_z;
+
+    ep1.X3d = cor_x  - engn_xc;
+    ep1.Y3d = cor_y  - engn_yc;
+    ep1.Z3d = cor_z  - engn_zc;
+    ep1.Flags = 0;
+    transform_point(&ep1);
+    ep2.X3d = cor_x2 - engn_xc;
+    ep2.Y3d = cor_y  - engn_yc;
+    ep2.Z3d = cor_z  - engn_zc;
+    ep2.Flags = 0;
+    transform_point(&ep2);
+    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+
+    ep1.X3d = cor_x2 - engn_xc;
+    ep1.Y3d = cor_y  - engn_yc;
+    ep1.Z3d = cor_z  - engn_zc;
+    ep1.Flags = 0;
+    transform_point(&ep1);
+    ep2.X3d = cor_x2 - engn_xc;
+    ep2.Y3d = cor_y  - engn_yc;
+    ep2.Z3d = cor_z2 - engn_zc;
+    ep2.Flags = 0;
+    transform_point(&ep2);
+    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+
+    ep1.X3d = cor_x2 - engn_xc;
+    ep1.Y3d = cor_y  - engn_yc;
+    ep1.Z3d = cor_z2 - engn_zc;
+    ep1.Flags = 0;
+    transform_point(&ep1);
+    ep2.X3d = cor_x  - engn_xc;
+    ep2.Y3d = cor_y  - engn_yc;
+    ep2.Z3d = cor_z2 - engn_zc;
+    ep2.Flags = 0;
+    transform_point(&ep2);
+    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+
+    ep1.X3d = cor_x  - engn_xc;
+    ep1.Y3d = cor_y  - engn_yc;
+    ep1.Z3d = cor_z2 - engn_zc;
+    ep1.Flags = 0;
+    transform_point(&ep1);
+    ep2.Flags = 0;
+    ep2.X3d = cor_x  - engn_xc;
+    ep2.Y3d = cor_y  - engn_yc;
+    ep2.Z3d = cor_z  - engn_zc;
+    transform_point(&ep2);
+    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
 }
 
 void SCANNER_draw_shape_from_points(int x, int y, const struct TbPoint *points, ushort count, TbPixel col)
@@ -1438,7 +1503,7 @@ TbPixel SCANNER_thing_colour(struct Thing *p_thing)
         break;
     case TT_PERSON:
         if ((p_thing->Flag & TngF_Persuaded) != 0)
-            col = colour_lookup[5];
+            col = colour_lookup[ColLU_YELLOW];
         else if ( (p_thing->Flag & TngF_PlayerAgent) != 0 && p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD)
             col = SCANNER_people_colours[4];
         else
@@ -1552,7 +1617,7 @@ void SCANNER_draw_sthing(struct SimpleThing *p_sthing, int pos_mx, int pos_mz, i
     x = ingame.Scanner.X1 + base_x;
     y = ingame.Scanner.Y1 + base_y;
 
-    col = p_sthing->U.UWeapon.WeaponType ? colour_lookup[8] : colour_lookup[5];
+    col = p_sthing->U.UWeapon.WeaponType ? colour_lookup[8] : colour_lookup[ColLU_YELLOW];
 
     if ((base_y < 0) || (base_y > ingame.Scanner.Y2 - ingame.Scanner.Y1)
       || (base_x < 0) || (base_x > SCANNER_width[base_y])) {

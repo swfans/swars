@@ -41,7 +41,9 @@ enum PersonCommandType
    * Can be used with target 0 to just take the gun out.
    */
   PCmd_KILL_PERSON = 0x4,
-  /** Kill nearest members of given group, until given amount of kills.
+  /** Kill nearest members of given group, until given amount of group
+   * members are dead.
+   * The finish condition is met regardless of how the members died.
    */
   PCmd_KILL_MEM_GROUP = 0x5,
   /** Kill nearest members of given group, until all eliminated.
@@ -86,13 +88,25 @@ enum PersonCommandType
   PCmd_DROP_SPEC_ITEM = 0x12,
   PCmd_AVOID_PERSON = 0x13,
   PCmd_WAND_AVOID_GROUP = 0x14,
-  /** Plant a bomb under a building. Given coords not only
-   * identify the building, but are also bomb location.
+  /** Plant a bomb under a building. Given coords are not only to identify
+   * the building, but are the walkable center point to calculate bomb or
+   * shooting location. The bomber walks toward that point, then stops for
+   * shooting or bombing when he decides he is close enough to said location,
+   * based on the range of weapon selected.
+   * The currently selected weapon will be used, or vehicle weapon if within
+   * such vehicle. If no weapon selected, person will choose best one for
+   * the job.
    */
   PCmd_DESTROY_BUILDING = 0x15,
   PCmd_UNKN16 = 0x16,
   PCmd_USE_VEHICLE = 0x17,
   PCmd_EXIT_VEHICLE = 0x18,
+  /** Go to a train station at given coordinates and enter the next train.
+   * During level load, the given station position is used to find
+   * the station building, and then a flat surface (face) to stand on.
+   * When the command is activated, the person walks to that face
+   * and then enters the next train which arrives at the station.
+   */
   PCmd_CATCH_TRAIN = 0x19,
   PCmd_OPEN_DOME = 0x1A,
   PCmd_CLOSE_DOME = 0x1B,

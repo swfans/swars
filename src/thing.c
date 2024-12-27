@@ -183,6 +183,47 @@ struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype)
     return p_thing;
 }
 
+TbBool thing_position_uses_y_mul_8(struct Thing *p_thing)
+{
+    switch (p_thing->Type)
+    {
+    case TT_BUILDING:
+        return (p_thing->SubType == SubTT_BLD_MGUN);
+    case TT_VEHICLE:
+    case TT_PERSON:
+    default:
+        return true;
+    }
+}
+
+void get_thing_position_mapcoords(short *x, short *y, short *z, ThingIdx thing)
+{
+    short cor_x, cor_y, cor_z;
+
+    if (thing >= 0) {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
+        if (thing_position_uses_y_mul_8(p_thing))
+            cor_y = PRCCOORD_TO_YCOORD(p_thing->Y);
+        else
+            cor_y = PRCCOORD_TO_MAPCOORD(p_thing->Y);
+        cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    } else {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        cor_x = PRCCOORD_TO_MAPCOORD(p_sthing->X);
+        cor_y = PRCCOORD_TO_YCOORD(p_sthing->Y);
+        cor_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z);
+    }
+    if (x != NULL)
+        *x = cor_x;
+    if (y != NULL)
+        *y = cor_y;
+    if (z != NULL)
+        *z = cor_z;
+}
+
 const char *state_change_result_name(StateChRes res)
 {
     return state_change_result_names[res];
@@ -538,6 +579,7 @@ void process_carried_item(struct SimpleThing *p_item)
 void process_temp_light(struct SimpleThing *p_sthing)
 {
     int bri, rng;
+    short lgtng_x, lgtng_y, lgtng_z;
 
     p_sthing->Timer1--;
     if (p_sthing->Timer1 < 0) {
@@ -549,8 +591,8 @@ void process_temp_light(struct SimpleThing *p_sthing)
         rng = p_sthing->U.ULight.RangeBright;
         bri += (ushort)LbRandomAnyShort() % rng;
     }
-    apply_full_light(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_MAPCOORD(p_sthing->Y),
-      PRCCOORD_TO_MAPCOORD(p_sthing->Z), bri, 0);
+    get_thing_position_mapcoords(&lgtng_x, &lgtng_y, &lgtng_z, p_sthing->ThingOffset);
+    apply_full_light(lgtng_x, lgtng_y >> 3, lgtng_z, bri, 0);
 }
 
 void process_static(struct SimpleThing *p_sthing)
@@ -828,6 +870,8 @@ const char *thing_type_name(ubyte tngtype, ubyte subtype)
         return person_type_name(subtype);
     if (tngtype == TT_VEHICLE)
         return vehicle_type_name(subtype);
+    if (tngtype == TT_BUILDING)
+        return building_type_name(subtype);
     // TODO support some sub-types
     return thing_type_names[tngtype];
 }
@@ -985,7 +1029,7 @@ short add_static(int x, int y, int z, ushort frame, int timer)
 
 TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R)
 {
-    long dtX, dtZ, r2;
+    s32 dtX, dtZ, r2;
 
     if (thing <= 0) {
         struct SimpleThing *p_sthing;
@@ -1000,93 +1044,6 @@ TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R)
     }
     r2 = R * R;
     return ((dtZ * dtZ + dtX * dtX) < r2);
-}
-
-/** Searches for a thing of given type on the specific mapwho tile.
- * Besides being given a title, the thing must also meet circular range condition.
- */
-short find_thing_on_mapwho_tile_within_circle_with_filter(short tile_x, short tile_z, short X, short Z, ushort R,
-  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
-{
-    ThingIdx thing;
-    ulong k;
-
-    k = 0;
-    thing = get_mapwho_thing_index(tile_x, tile_z);
-    while (thing != 0)
-    {
-        if (thing <= 0)
-        {
-            struct SimpleThing *p_sthing;
-            p_sthing = &sthings[thing];
-            // Per thing code start
-            if (p_sthing->Type == ttype) {
-                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
-                    // Our search radius could have exceeded expected one a bit
-                    if (thing_is_within_circle(thing, X, Z, R)) {
-                        if (filter(thing, params))
-                            return thing;
-                    }
-                }
-            }
-            // Per thing code end
-            thing = p_sthing->Next;
-        }
-        else
-        {
-            struct Thing *p_thing;
-            p_thing = &things[thing];
-            // Per thing code start
-            if (p_thing->Type == ttype) {
-                if ((p_thing->SubType == subtype) || (subtype == -1)) {
-                    // Our search radius could have exceeded expected one a bit
-                    if (thing_is_within_circle(thing, X, Z, R)) {
-                        if (filter(thing, params))
-                            return thing;
-                    }
-                }
-            }
-            // Per thing code end
-            thing = p_thing->Next;
-        }
-        k++;
-        if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
-            LOGERR("Infinite loop in mapwho things list");
-            break;
-        }
-    }
-    return 0;
-}
-
-/**
- * Searches for thing of given type and subtype around tile under given coords.
- * Uses `spiral` checking of surrounding `mapwho` tiles, up to given number of tiles.
- *
- * @return Gives thing index, or 0 if not found.
- */
-static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, long spiral_len,
-  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
-{
-    short tile_x, tile_z;
-    int around;
-
-    tile_x = MAPCOORD_TO_TILE(X);
-    tile_z = MAPCOORD_TO_TILE(Z);
-    for (around = 0; around < spiral_len; around++)
-    {
-        struct MapOffset *sstep;
-        ThingIdx thing;
-        long sX, sZ;
-
-        sstep = &spiral_step[around];
-        sX = tile_x + sstep->h;
-        sZ = tile_z + sstep->v;
-        thing = find_thing_on_mapwho_tile_within_circle_with_filter(sX, sZ, X, Z, R,
-          ttype, subtype, filter, params);
-        if (thing != 0)
-            return thing;
-    }
-    return 0;
 }
 
 void build_same_type_headers(void)
@@ -1126,346 +1083,6 @@ short get_thing_same_type_head(short ttype, short subtype)
         break;
     }
     return thing;
-}
-
-static short find_thing_type_on_same_type_list_within_circle(short X, short Z, ushort R,
-  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
-{
-    ThingIdx thing;
-    ulong k;
-
-    k = 0;
-    thing = get_thing_same_type_head(ttype, subtype);
-    while (thing != 0)
-    {
-        if (thing <= 0)
-        {
-            struct SimpleThing *p_sthing;
-            p_sthing = &sthings[thing];
-            // Per thing code start
-            if (p_sthing->Type == ttype) {
-                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
-                    if (thing_is_within_circle(thing, X, Z, R)) {
-                        if (filter(thing, params))
-                            return thing;
-                    }
-                }
-            }
-            // Per thing code end
-            thing = p_sthing->LinkSame;
-        }
-        else
-        {
-            struct Thing *p_thing;
-            p_thing = &things[thing];
-            // Per thing code start
-            if (p_thing->Type == ttype) {
-                if ((p_thing->SubType == subtype) || (subtype == -1)) {
-                    if (thing_is_within_circle(thing, X, Z, R)) {
-                        if (filter(thing, params))
-                            return thing;
-                    }
-                }
-            }
-            // Per thing code end
-            thing = p_thing->LinkSame;
-        }
-        // If searching for all subtypes, make sure we really catch them all; switch to
-        // second linked list if forst one did not gave results
-        if ((thing == 0) && (subtype == -1) && (ttype == TT_VEHICLE)) {
-            subtype = SubTT_VEH_SHIP;
-            thing = get_thing_same_type_head(ttype, subtype);
-        }
-        if ((thing == 0) && (subtype == -1) && (ttype == TT_BUILDING)) {
-            subtype = SubTT_BLD_MGUN;
-            thing = get_thing_same_type_head(ttype, subtype);
-        }
-        k++;
-        if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
-            LOGERR("Infinite loop in mapwho things list");
-            break;
-        }
-    }
-    return 0;
-}
-
-static short find_thing_type_on_same_type_list(short ttype, short subtype,
-  ThingBoolFilter filter, ThingFilterParams *params)
-{
-    ThingIdx thing;
-    ulong k;
-
-    k = 0;
-    thing = get_thing_same_type_head(ttype, subtype);
-    while (thing != 0)
-    {
-        if (thing <= 0)
-        {
-            struct SimpleThing *p_sthing;
-            p_sthing = &sthings[thing];
-            // Per thing code start
-            if (p_sthing->Type == ttype) {
-                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
-                    if (filter(thing, params))
-                        return thing;
-                }
-            }
-            // Per thing code end
-            thing = p_sthing->LinkSame;
-        }
-        else
-        {
-            struct Thing *p_thing;
-            p_thing = &things[thing];
-            // Per thing code start
-            if (p_thing->Type == ttype) {
-                if ((p_thing->SubType == subtype) || (subtype == -1)) {
-                    if (filter(thing, params))
-                        return thing;
-                }
-            }
-            // Per thing code end
-            thing = p_thing->LinkSame;
-        }
-        // If searching for all subtypes, make sure we really catch them all; switch to
-        // second linked list if first one did not gave results
-        if ((thing == 0) && (subtype == -1) && (ttype == TT_VEHICLE)) {
-            subtype = SubTT_VEH_SHIP;
-            thing = get_thing_same_type_head(ttype, subtype);
-        }
-        if ((thing == 0) && (subtype == -1) && (ttype == TT_BUILDING)) {
-            subtype = SubTT_BLD_MGUN;
-            thing = get_thing_same_type_head(ttype, subtype);
-        }
-        k++;
-        if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
-            LOGERR("Infinite loop in mapwho things list");
-            break;
-        }
-    }
-    return 0;
-}
-
-static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort R,
-  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
-{
-    ThingIdx thing;
-
-    if (thing_type_is_simple(ttype))
-    {
-        struct SimpleThing *p_sthing;
-        for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
-        {
-            p_sthing = &sthings[thing];
-            // Per thing code start
-            if (p_sthing->Type == ttype) {
-                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
-                    if (thing_is_within_circle(thing, X, Z, R)) {
-                        if (filter(thing, params))
-                            return thing;
-                    }
-                }
-            }
-            // Per thing code end
-        }
-    }
-    else
-    {
-        struct Thing *p_thing;
-        for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
-        {
-            p_thing = &things[thing];
-            // Per thing code start
-            if (p_thing->Type == ttype) {
-                if ((p_thing->SubType == subtype) || (subtype == -1)) {
-                    if (thing_is_within_circle(thing, X, Z, R)) {
-                        if (filter(thing, params))
-                            return thing;
-                    }
-                }
-            }
-            // Per thing code end
-        }
-    }
-    return 0;
-}
-
-short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
-  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
-{
-    ushort tile_dist;
-    ThingIdx thing;
-
-    tile_dist = MAPCOORD_TO_TILE(R + 256);
-    if (tile_dist <= spiral_dist_tiles_limit)
-    {
-        thing = find_thing_type_on_spiral_near_tile(X, Z, R,
-          dist_tiles_to_spiral_step[tile_dist], ttype, subtype, filter, params);
-    }
-    else if ((ttype == TT_PERSON) || (ttype == TT_UNKN4) || (ttype == TT_VEHICLE) || (ttype == TT_BUILDING))
-    {
-        thing = find_thing_type_on_same_type_list_within_circle(
-          X, Z, R, ttype, subtype, filter, params);
-    }
-    else
-    {
-        thing = find_thing_type_on_used_list_within_circle(
-          X, Z, R, ttype, subtype, filter, params);
-    }
-    return thing;
-}
-
-TbBool bfilter_match_all(ThingIdx thing, ThingFilterParams *params)
-{
-    return true;
-}
-
-TbBool bfilter_item_is_weapon(ThingIdx thing, ThingFilterParams *params)
-{
-    struct SimpleThing *p_sthing;
-    short weapon;
-
-    if (thing >= 0)
-        return false;
-    weapon = params->Arg1;
-
-    p_sthing = &sthings[thing];
-    if ((p_sthing->Type != SmTT_DROPPED_ITEM) && (p_sthing->Type != SmTT_CARRIED_ITEM))
-        return false;
-
-    return (weapon == -1) || (p_sthing->U.UWeapon.WeaponType == weapon);
-}
-
-TbBool bfilter_person_carries_weapon(ThingIdx thing, ThingFilterParams *params)
-{
-    struct Thing *p_thing;
-    short weapon;
-
-    if (thing <= 0)
-        return false;
-    weapon = params->Arg1;
-
-    p_thing = &things[thing];
-    if (p_thing->Type != TT_PERSON)
-        return false;
-
-    return (weapon == -1) || person_carries_weapon(p_thing, weapon);
-}
-
-short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon)
-{
-    ThingIdx thing;
-    ThingFilterParams params;
-
-    params.Arg1 = weapon;
-    thing = find_thing_type_within_circle_with_filter(X, Z, R, SmTT_DROPPED_ITEM, 0, bfilter_item_is_weapon, &params);
-
-    return thing;
-}
-
-short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon)
-{
-    ThingIdx thing;
-    ThingFilterParams params;
-
-    params.Arg1 = weapon;
-    thing = find_thing_type_within_circle_with_filter(X, Z, R, TT_PERSON, -1, bfilter_person_carries_weapon, &params);
-
-    return thing;
-}
-
-short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded)
-{
-    short ret;
-    asm volatile ("call ASM_find_nearest_from_group\n"
-        : "=r" (ret) : "a" (p_person), "d" (group), "b" (no_persuaded));
-    return ret;
-}
-
-ThingIdx find_person_carrying_weapon(short weapon)
-{
-    ThingIdx thing;
-    ThingFilterParams params;
-
-    params.Arg1 = weapon;
-    thing = find_thing_type_on_same_type_list(TT_PERSON, -1, bfilter_person_carries_weapon, &params);
-
-    return thing;
-}
-
-ThingIdx search_for_vehicle(short X, short Z)
-{
-    ThingIdx thing;
-    ThingFilterParams params;
-
-    // Try finding very close to target coords
-    thing = find_thing_type_within_circle_with_filter(X, Z, 48, TT_VEHICLE, 0, bfilter_match_all, &params);
-    // If very clos search failed, retry with bigger radius
-    if (thing == 0)
-        thing = find_thing_type_within_circle_with_filter(X, Z, 1024, TT_VEHICLE, 0, bfilter_match_all, &params);
-
-    return thing;
-}
-
-ThingIdx search_things_for_index(short index)
-{
-    ThingIdx thing;
-    if (index <= 0)
-    {
-        struct SimpleThing *p_sthing;
-        for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
-        {
-            p_sthing = &sthings[thing];
-            if (index == p_sthing->ThingOffset) {
-                return thing;
-            }
-        }
-    }
-    else
-    {
-        struct Thing *p_thing;
-        for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
-        {
-            p_thing = &things[thing];
-            if (index == p_thing->ThingOffset) {
-                if (p_thing->Type != TT_UNKN33)
-                    return thing;
-            }
-        }
-    }
-    return 0;
-}
-
-ThingIdx search_things_for_uniqueid(short uniqid, ubyte flag)
-{
-    ThingIdx ret;
-    asm volatile ("call ASM_search_things_for_uniqueid\n"
-        : "=r" (ret) : "a" (uniqid), "d" (flag));
-    return ret;
-}
-
-ThingIdx find_nearest_object2(short mx, short mz, ushort sub_type)
-{
-    ThingIdx ret;
-    asm volatile ("call ASM_find_nearest_object2\n"
-        : "=r" (ret) : "a" (mx), "d" (mz), "b" (sub_type));
-    return ret;
-}
-
-short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after)
-{
-    short ret;
-    asm volatile ("call ASM_search_object_for_qface\n"
-        : "=r" (ret) : "a" (object), "d" (gflag), "b" (flag), "c" (after));
-    return ret;
-}
-
-ThingIdx search_for_station(short x, short z)
-{
-    ushort ret;
-    asm volatile ("call ASM_search_for_station\n"
-        : "=r" (ret) : "a" (x), "d" (z));
-    return ret;
 }
 
 void new_thing_traffic_clone(struct SimpleThing *p_clsthing)

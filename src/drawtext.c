@@ -65,7 +65,7 @@ void draw_text_transformed(int coord_x, int coord_y, int coord_z, const char *te
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
-        draw_text(ep.pp.X, ep.pp.Y, text, colour_lookup[3]);
+        draw_text(ep.pp.X, ep.pp.Y, text, colour_lookup[ColLU_GREEN]);
     }
 }
 
@@ -85,7 +85,7 @@ void draw_number_transformed(int coord_x, int coord_y, int coord_z, int num)
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
         sprintf(locstr, "%d", num);
-        draw_text(ep.pp.X, ep.pp.Y, locstr, colour_lookup[3]);
+        draw_text(ep.pp.X, ep.pp.Y, locstr, colour_lookup[ColLU_GREEN]);
     }
 }
 
@@ -112,7 +112,7 @@ void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text)
     h = lbDisplay.GraphicsScreenHeight;
     ep.X3d = coord_x - engn_xc;
     ep.Z3d = coord_z - engn_zc;
-    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
+    ep.Y3d = PRCCOORD_TO_YCOORD(alt_at_point(coord_x, coord_z)) - engn_yc;
     ep.Flags = 0;
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
@@ -131,7 +131,7 @@ void draw_number_transformed_at_ground(int coord_x, int coord_z, int num)
     h = lbDisplay.GraphicsScreenHeight;
     ep.X3d = coord_x - engn_xc;
     ep.Z3d = coord_z - engn_zc;
-    ep.Y3d = (alt_at_point(coord_x, coord_z) >> 5) - engn_yc;
+    ep.Y3d = PRCCOORD_TO_YCOORD(alt_at_point(coord_x, coord_z)) - engn_yc;
     ep.Flags = 0;
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))

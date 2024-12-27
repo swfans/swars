@@ -31,6 +31,7 @@
 #include "player.h"
 #include "game.h"
 #include "game_speed.h"
+#include "thing_search.h"
 #include "wadfile.h"
 #include "sound.h"
 #include "vehicle.h"
@@ -548,6 +549,23 @@ ushort weapon_sprite_index(ushort wtype, TbBool enabled)
     return sprid;
 }
 
+TbBool weapon_is_deployed_at_wielder_pos(ushort wtype)
+{
+    return (wtype == WEP_ELEMINE) || (wtype == WEP_EXPLMINE) ||
+      (wtype == WEP_AIRSTRIKE) || (wtype == WEP_CEREBUSIFF) ||
+      (wtype == WEP_RAZORWIRE) || (wtype == WEP_EXPLWIRE);
+}
+
+TbBool weapon_is_for_throwing(ushort weptype)
+{
+    return (weptype == WEP_NUCLGREN) || (weptype == WEP_CRAZYGAS) || (weptype == WEP_KOGAS);
+}
+
+TbBool weapon_is_breaking_will(ushort weptype)
+{
+    return (weptype == WEP_PERSUADRTRN) || (weptype == WEP_PERSUADER2);
+}
+
 ushort weapon_fourpack_index(ushort wtype)
 {
     switch (wtype)
@@ -606,6 +624,24 @@ void weapons_remove_weapon(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks
         p_fourpacks->Amount[fp] = 0;
 }
 
+TbBool weapons_remove_one_from_npc(ulong *p_weapons, ushort wtype)
+{
+    ushort fp;
+    TbBool was_last;
+
+    if ((*p_weapons & (1 << (wtype-1))) == 0)
+        return false;
+
+    was_last = true;
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        was_last = false;
+    }
+    if (was_last)
+        *p_weapons &= ~(1 << (wtype-1));
+    return true;
+}
+
 TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
 {
     ushort fp;
@@ -623,7 +659,30 @@ TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks,
     if (was_last)
         *p_weapons &= ~(1 << (wtype-1));
     return true;
+}
 
+/** Remove one weapon from player-controlled person in-game.
+ * Player struct contains dumb own array rather than uniform WeaponsFourPack, so it requires
+ * this special function. To be removed when possible.
+ */
+TbBool weapons_remove_one_for_player(ulong *p_weapons,
+  ubyte p_plfourpacks[][4], ushort plagent, ushort wtype)
+{
+    ushort fp;
+    TbBool was_last;
+
+    if ((*p_weapons & (1 << (wtype-1))) == 0)
+        return false;
+
+    was_last = true;
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        was_last = (p_plfourpacks[fp][plagent] <= 1);
+        p_plfourpacks[fp][plagent]--;
+    }
+    if (was_last)
+        *p_weapons &= ~(1 << (wtype-1));
+    return true;
 }
 
 TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
@@ -654,7 +713,6 @@ TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, us
         *p_weapons |= (1 << (wtype-1));
 
     return true;
-
 }
 
 void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks)
@@ -691,6 +749,38 @@ void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_four
     }
 }
 
+short get_hand_weapon_range(struct Thing *p_person, ushort weptype)
+{
+    struct WeaponDef *wdef;
+    short range;
+
+    if (weptype >= WEP_TYPES_COUNT)
+        return 0;
+
+    wdef = &weapon_defs[weptype];
+
+    range = TILE_TO_MAPCOORD(wdef->RangeBlocks, 0);
+
+    if (weapon_is_for_throwing(weptype))
+        range = (85 * range * (3 + cybmod_arms_level(&p_person->U.UPerson.UMod)) + range) >> 8;
+
+    if (weapon_is_breaking_will(weptype))
+        range = (85 * range * (3 + cybmod_brain_level(&p_person->U.UPerson.UMod)) + range) >> 8;
+
+    return range;
+}
+
+short current_hand_weapon_range(struct Thing *p_person)
+{
+#if 0
+    short ret;
+    asm volatile ("call ASM_current_hand_weapon_range\n"
+        : "=r" (ret) : "a" (p_person));
+    return ret;
+#endif
+    return get_hand_weapon_range(p_person, p_person->U.UPerson.CurrentWeapon);
+}
+
 int get_weapon_range(struct Thing *p_person)
 {
     int ret;
@@ -699,35 +789,15 @@ int get_weapon_range(struct Thing *p_person)
     return ret;
 }
 
-short current_weapon_range(struct Thing *p_person)
-{
-#if 0
-    short ret;
-    asm volatile ("call ASM_current_weapon_range\n"
-        : "=r" (ret) : "a" (p_person));
-    return ret;
-#endif
-    struct WeaponDef *wdef;
-    ushort wtype;
-
-    wtype = p_person->U.UPerson.CurrentWeapon;
-    if (wtype >= WEP_TYPES_COUNT)
-        return 0;
-
-    wdef = &weapon_defs[wtype];
-
-    return TILE_TO_MAPCOORD(wdef->RangeBlocks, 0);
-}
-
 TbBool current_weapon_has_targetting(struct Thing *p_person)
 {
-    ushort wtype;
+    ushort weptype;
 
-    wtype = p_person->U.UPerson.CurrentWeapon;
-    if (wtype >= WEP_TYPES_COUNT)
+    weptype = p_person->U.UPerson.CurrentWeapon;
+    if (weptype >= WEP_TYPES_COUNT)
         return false;
 
-    return weapon_has_targetting(wtype);
+    return weapon_has_targetting(weptype);
 }
 
 ubyte find_nth_weapon_held(ushort index, ubyte n)
@@ -741,17 +811,17 @@ ubyte find_nth_weapon_held(ushort index, ubyte n)
 ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person)
 {
     ulong credits;
-    ushort wtype;
+    ushort weptype;
 
     credits = 0;
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         struct WeaponDef *wdef;
 
-        if (!person_carries_weapon(p_person, wtype))
+        if (!person_carries_weapon(p_person, weptype))
             continue;
 
-        wdef = &weapon_defs[wtype];
+        wdef = &weapon_defs[weptype];
         credits += wdef->Cost * persuaded_person_weapons_sell_cost_permil / 1000;
     }
     return credits;
@@ -760,20 +830,20 @@ ulong person_carried_weapons_pesuaded_sell_value(struct Thing *p_person)
 void do_weapon_quantities_net_to_player(struct Thing *p_person)
 {
     ushort plyr, plagent;
-    ushort wtype;
+    ushort weptype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
     plagent = p_person->U.UPerson.ComCur & 3;
 
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         ushort fp, n;
 
-        fp = weapon_fourpack_index(wtype);
+        fp = weapon_fourpack_index(weptype);
         if (fp >= WFRPK_COUNT)
             continue;
 
-        if (person_carries_weapon(p_person, wtype))
+        if (person_carries_weapon(p_person, weptype))
             n = net_agents__FourPacks[plyr][plagent].Amount[fp];
         else
             n = 0;
@@ -784,20 +854,20 @@ void do_weapon_quantities_net_to_player(struct Thing *p_person)
 void do_weapon_quantities_player_to_net(struct Thing *p_person)
 {
     ushort plyr, plagent;
-    ushort wtype;
+    ushort weptype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
     plagent = p_person->U.UPerson.ComCur & 3;
 
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         ushort fp, n;
 
-        fp = weapon_fourpack_index(wtype);
+        fp = weapon_fourpack_index(weptype);
         if (fp >= WFRPK_COUNT)
             continue;
 
-        if (person_carries_weapon(p_person, wtype))
+        if (person_carries_weapon(p_person, weptype))
             n = players[plyr].FourPacks[fp][plagent];
         else
             n = 0;
@@ -808,20 +878,20 @@ void do_weapon_quantities_player_to_net(struct Thing *p_person)
 void do_weapon_quantities_cryo_to_player(struct Thing *p_person)
 {
     ushort plyr, plagent;
-    ushort wtype;
+    ushort weptype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
     plagent = p_person->U.UPerson.ComCur & 3;
 
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         ushort fp, n;
 
-        fp = weapon_fourpack_index(wtype);
+        fp = weapon_fourpack_index(weptype);
         if (fp >= WFRPK_COUNT)
             continue;
 
-        if (person_carries_weapon(p_person, wtype))
+        if (person_carries_weapon(p_person, weptype))
             n = cryo_agents.FourPacks[plagent].Amount[fp];
         else
             n = 0;
@@ -832,20 +902,20 @@ void do_weapon_quantities_cryo_to_player(struct Thing *p_person)
 void do_weapon_quantities_max_to_player(struct Thing *p_person)
 {
     ushort plyr, plagent;
-    ushort wtype;
+    ushort weptype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
     plagent = p_person->U.UPerson.ComCur & 3;
 
-    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    for (weptype = WEP_TYPES_COUNT-1; weptype > 0; weptype--)
     {
         ushort fp, n;
 
-        fp = weapon_fourpack_index(wtype);
+        fp = weapon_fourpack_index(weptype);
         if (fp >= WFRPK_COUNT)
             continue;
 
-        if (person_carries_weapon(p_person, wtype))
+        if (person_carries_weapon(p_person, weptype))
             n = 4;
         else
             n = 0;
@@ -898,7 +968,8 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
     init_laser(p_person, timer);
 
     n_targets = 0;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing != 0; thing = p_thing->LinkSameGroup)
     {
         if (n_targets >= 5)
             break;
@@ -1046,12 +1117,140 @@ void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
         : : "a" (p_vehicle), "d" (p_person));
 }
 
-short process_persuadertron(struct Thing *p_person, ubyte flag, ushort *energy_reqd)
+ushort persuade_power_required(ThingIdx victim)
 {
+    struct Thing *p_victim;
+    ushort ptype;
+    ushort persd_pwr_rq;
+    short brain_lv;
+
+    if (victim <= 0)
+        return 9999;
+
+    p_victim = &things[victim];
+    if ((p_victim->Flag2 & TgF2_Unkn00400000) != 0)
+        ptype = p_victim->U.UPerson.OldSubType;
+    else
+        ptype = p_victim->SubType;
+
+    persd_pwr_rq = peep_type_stats[ptype].PersuadeReqd;
+    brain_lv = cybmod_brain_level(&p_victim->U.UPerson.UMod);
+    if (brain_lv == 5)
+        return 9999;
+    if (brain_lv == 4)
+        persd_pwr_rq = peep_type_stats[SubTT_PERS_AGENT].PersuadeReqd;
+
+    return persd_pwr_rq;
+}
+
+TbBool person_can_be_persuaded_now(ThingIdx attacker, ThingIdx target,
+  short weapon_range, ubyte target_select, ushort *energy_reqd)
+{
+    struct Thing *p_target;
+    struct Thing *p_attacker;
+    short target_persd_pwr_rq;
+
+    if ((target <= 0) || (attacker <= 0))
+        return false;
+
+    p_attacker = &things[attacker];
+
+    p_target = &things[target];
+    if (p_target->Type != TT_PERSON)
+        return false;
+
+    {
+        int dist_y;
+        short cntr_cor_y;
+
+        cntr_cor_y = PRCCOORD_TO_YCOORD(p_attacker->Y);
+        dist_y = abs(PRCCOORD_TO_YCOORD(p_target->Y) - cntr_cor_y);
+        if (dist_y >= 1240)
+            return false;
+    }
+
+    if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
+      ((p_target->Flag & (TngF_Unkn40000000|TngF_Persuaded|TngF_Destroyed)) != 0))
+        return false;
+
+    // If already harvested the soul
+    if ((target_select == PTargSelect_SoulCollect) && ((p_target->Flag2 & TgF2_SoulDepleted) != 0))
+        return false;
+
+    // Cannot persuade people from own group
+    if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
+      (p_target->U.UPerson.EffectiveGroup == p_attacker->U.UPerson.EffectiveGroup))
+        return false;
+
+    // Holding a taser prevents both persuasion and soul harvest
+    if (p_target->U.UPerson.CurrentWeapon == WEP_H2HTASER)
+        return false;
+
+    // Self-affecting not allowed for both persuasion and soul harvest
+    if (target == attacker)
+        return false;
+
+    // Some people can only be affected by advanced persuader
+    if ((target_select == PTargSelect_Persuader) &&
+      person_only_affected_by_adv_persuader(target))
+        return false;
+
+    target_persd_pwr_rq = persuade_power_required(target);
+
+    // Check if we have enough persuade power to overwhelm the target
+    if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
+      (target_persd_pwr_rq > p_attacker->U.UPerson.PersuadePower))
+        return false;
+
+    // Only player agents require energy to persuade
+    *energy_reqd = 0;
+    if ((p_attacker->Flag & TngF_PlayerAgent) != 0)
+        *energy_reqd = 30 * (target_persd_pwr_rq + 1);
+    if (*energy_reqd > 600)
+        *energy_reqd = 600;
+
+    // Check if we have enough weapon energy
+    if (*energy_reqd > p_attacker->U.UPerson.Energy)
+        return false;
+
+    // If under commands to persuade a specific person, accept only that person ignoring anyone else
+    if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
+      (p_attacker->State == PerSt_PERSUADE_PERSON) && (target != p_attacker->GotoThingIndex))
+        return false;
+
+    return true;
+}
+
+short process_persuadertron(struct Thing *p_person, ubyte target_select, ushort *energy_reqd)
+{
+#if 0
     short ret;
     asm volatile ("call ASM_process_persuadertron\n"
-        : "=r" (ret) : "a" (p_person), "d" (flag), "b" (energy_reqd));
+        : "=r" (ret) : "a" (p_person), "d" (target_select), "b" (energy_reqd));
     return ret;
+#endif
+    short cor_x, cor_z;
+    short weapon_range;
+
+    cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+    cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+
+    switch (target_select)
+    {
+    case PTargSelect_Persuader:
+    default:
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
+        break;
+    case PTargSelect_PersuadeAdv:
+        weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADER2);
+        break;
+    case PTargSelect_SoulCollect:
+        weapon_range = get_hand_weapon_range(p_person, WEP_SOULGUN);
+        break;
+    }
+
+    return find_person_which_can_be_persuaded_now(cor_x, cor_z, weapon_range,
+      p_person->ThingOffset, target_select, energy_reqd);
 }
 
 void get_soul(struct Thing *p_dead, struct Thing *p_person)
@@ -1176,13 +1375,13 @@ void set_person_weapon_turn(struct Thing *p_person, short n_turn)
     {
         PlayerInfo *p_player;
         ushort plyr, plagent;
-        ushort wtype;
+        ushort weptype;
 
         plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
         plagent = p_person->U.UPerson.ComCur & 3;
         p_player = &players[plyr];
-        wtype = p_person->U.UPerson.CurrentWeapon;
-        p_player->WepDelays[plagent][wtype] = n_turn;
+        weptype = p_person->U.UPerson.CurrentWeapon;
+        p_player->WepDelays[plagent][weptype] = n_turn;
         p_person->U.UPerson.WeaponTurn = n_turn;
     }
 }
@@ -1213,6 +1412,33 @@ void process_clone_disguise(struct Thing *p_person)
     }
 }
 
+TbBool person_weapons_remove_one(struct Thing *p_person, ushort weptype)
+{
+    PlayerInfo *p_player;
+    ushort plagent;
+    TbBool done;
+
+    p_player = NULL;
+    plagent = 0;
+    if ((p_person->Flag & TngF_PlayerAgent) != 0)
+    {
+        PlayerIdx plyr;
+        plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+        plagent = p_person->U.UPerson.ComCur & 3;
+        p_player = &players[plyr];
+    }
+
+    if (p_person->U.UPerson.CurrentWeapon == weptype)
+        p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+
+    if (p_player != NULL)
+        //TODO replace  with weapons_remove_one() call, when FourPacks have unified format
+        done = weapons_remove_one_for_player(&p_person->U.UPerson.WeaponsCarried, p_player->FourPacks, plagent, weptype);
+    else
+        done = weapons_remove_one_from_npc(&p_person->U.UPerson.WeaponsCarried, weptype);
+    return done;
+}
+
 void process_automedkit(struct Thing *p_person)
 {
     if (!weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, WEP_MEDI2))
@@ -1220,12 +1446,9 @@ void process_automedkit(struct Thing *p_person)
     if (p_person->Health >= p_person->U.UPerson.MaxHealth / 8)
         return;
 
-    //TODO for the comment below; plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-    //TODO for the comment below; plagent = p_person->U.UPerson.ComCur & 3;
     p_person->Health = p_person->U.UPerson.MaxHealth;
-    //TODO replace NULL with &players[plyr]->FourPacks[plagent] pointer, when that has unified format
-    weapons_remove_one(&p_person->U.UPerson.WeaponsCarried, NULL, WEP_MEDI2);
-    play_dist_sample(p_person, 2, 0x7F, 0x40, 100, 0, 1);
+    person_weapons_remove_one(p_person, WEP_MEDI2);
+    play_dist_sample(p_person, 2, 127, 64, 100, 0, 1);
 }
 
 void low_energy_alarm_stop(void)
@@ -1425,21 +1648,21 @@ void process_wielded_weapon(struct Thing *p_person)
         if ((p_person->Health < 2 * p_person->U.UPerson.MaxHealth) &&
           (((gameturn + p_person->ThingOffset) & 7) == 0))
         {
-            targtng = process_persuadertron(p_person, 2u, &energy_rq);
+            targtng = process_persuadertron(p_person, PTargSelect_SoulCollect, &energy_rq);
             if (targtng > 0)
                 get_soul(&things[targtng], p_person);
         }
         return;
     case WEP_PERSUADRTRN:
         {
-            targtng = process_persuadertron(p_person, 0, &energy_rq);
+            targtng = process_persuadertron(p_person, PTargSelect_Persuader, &energy_rq);
             if (targtng > 0)
                 set_person_persuaded(&things[targtng], p_person, energy_rq);
         }
         return;
     case WEP_PERSUADER2:
         {
-            targtng = process_persuadertron(p_person, 1u, &energy_rq);
+            targtng = process_persuadertron(p_person, PTargSelect_PersuadeAdv, &energy_rq);
             if (targtng > 0)
                 set_person_persuaded(&things[targtng], p_person, energy_rq);
         }

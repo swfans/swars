@@ -155,7 +155,6 @@ TbBool objective_target_is_any_thing(struct Objective *p_objectv);
 
 short test_objective(ushort objectv, ushort show_obj);
 ubyte group_not_seen(ushort group);
-ubyte all_group_arrived(ushort group, short x, short y, short z, int radius);
 
 /** Checks if given thing is within circle defined by parameters.
  * @param thing Thing index to check position.

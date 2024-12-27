@@ -434,7 +434,7 @@ void draw_bang_phwoar(struct SimpleThing *p_pow)
         p_phwoar = &phwoar[phw];
         x = (p_phwoar->x >> 8) - engn_xc;
         z = (p_phwoar->z >> 8) - engn_zc;
-        y = (p_phwoar->y >> 5) - engn_yc;
+        y = PRCCOORD_TO_YCOORD(p_phwoar->y) - engn_yc;
 
         transform_shpoint(&sp, x, y - 8 * engn_yc, z);
 
@@ -498,7 +498,7 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
             sh_z = sin_yaw >> 10;
 
             x = (p_shrapnel->x >> 8) - engn_xc;
-            y = (p_shrapnel->y >> 5) - engn_yc;
+            y = PRCCOORD_TO_YCOORD(p_shrapnel->y) - engn_yc;
             z = (p_shrapnel->z >> 8) - engn_zc;
 
             x_pcc = x + sh_cc;
@@ -721,13 +721,13 @@ void draw_bang_wobble_line(struct SimpleThing *p_pow)
 
         x = (p_shrapnel1->x >> 8) - engn_xc;
         z = (p_shrapnel1->z >> 8) - engn_zc;
-        y = (p_shrapnel1->y >> 5) - engn_yc;
+        y = PRCCOORD_TO_YCOORD(p_shrapnel1->y) - engn_yc;
 
         transform_shpoint(&sp1, x, y - 8 * engn_yc, z);
 
         x = (p_shrapnel2->x >> 8) - engn_xc;
         z = (p_shrapnel2->z >> 8) - engn_zc;
-        y = (p_shrapnel2->y >> 5) - engn_yc;
+        y = PRCCOORD_TO_YCOORD(p_shrapnel2->y) - engn_yc;
 
         transform_shpoint(&sp2, x, y - 8 * engn_yc, z);
 
@@ -853,7 +853,7 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
           int bckt;
 
           bckt = (scr_depth >> 8) + 5000 - 641;
-          if ((itime < 0) || (colour == colour_lookup[3]))
+          if ((itime < 0) || (colour == colour_lookup[ColLU_GREEN]))
               bckt -= 400;
 
           cor_x1 = (scr_x + thick_x) >> 8;
@@ -907,10 +907,10 @@ void draw_bang(struct SimpleThing *p_pow)
         TbPixel col;
         st = p_pow->State;
         if (st < 100) {
-            col = colour_lookup[3];
+            col = colour_lookup[ColLU_GREEN];
         } else {
             st = -10;
-            col = colour_lookup[7];
+            col = colour_lookup[ColLU_PINK];
         }
         build_laser(p_pow->X >> 8, p_pow->Y >> 8, p_pow->Z >> 8,
           (p_pow->X >> 8), (p_pow->Y >> 8) + 400, p_pow->Z >> 8, st, 0, col);
@@ -1485,7 +1485,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 p_snpoint2 = &game_object_points[p_face4->PointNo[1]];
                 dxc = p_snpoint2->X + obj_x;
                 dzc = p_snpoint2->Z + obj_z;
-                dyc = p_snpoint2->Y;
+                dyc = p_snpoint2->Y + obj_y;
                 transform_shpoint(&sp3, dxc, dyc - 8 * engn_yc, dzc);
 
                 specpt++;
@@ -1650,7 +1650,7 @@ void draw_vehicle_health(struct Thing *p_thing)
     int scr_depth;
 
     x = (p_thing->X >> 8) - engn_xc;
-    y = (p_thing->Y >> 5) - engn_yc;
+    y = PRCCOORD_TO_YCOORD(p_thing->Y) - engn_yc;
     z = (p_thing->Z >> 8) - engn_zc;
     transform_shpoint(&sp, x, y - 8 * engn_yc, z);
 

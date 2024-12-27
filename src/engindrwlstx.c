@@ -574,7 +574,7 @@ void draw_object_face3_textrd_dk(ushort face)
 
     if (game_perspective == 3)
     {
-        vec_colour = colour_lookup[3];
+        vec_colour = colour_lookup[ColLU_GREEN];
         if (!lbKeyOn[KC_RALT])
         {
             poly_line(&point1, &point3);
@@ -2199,7 +2199,7 @@ void draw_object_face3_textrd(ushort face)
         vec_mode = 0;
         vec_colour = pixmap.fade_table[256 * (point3.S >> 16) + colour_lookup[ColLU_RED]];
         draw_trigpoly(&point1, &point2, &point3);
-        vec_colour = colour_lookup[3];
+        vec_colour = colour_lookup[ColLU_GREEN];
         if (!lbKeyOn[KC_RALT])
         {
             poly_line(&point1, &point3);
@@ -3320,7 +3320,7 @@ void number_player(struct Thing *p_person, ubyte n)
             tng_cor_z = p_person->Z;
         }
         cor_x = PRCCOORD_TO_MAPCOORD(tng_cor_x) - engn_xc;
-        cor_y = (tng_cor_y >> 5) - (engn_yc >> 3);
+        cor_y = PRCCOORD_TO_YCOORD(tng_cor_y) - (engn_yc >> 3);
         cor_z = PRCCOORD_TO_MAPCOORD(tng_cor_z) - engn_zc;
     }
     {

@@ -686,7 +686,7 @@ void draw_players_chat_talk(int x, int y)
         if (player_unkn0C9[plyr] == 0)
             continue;
 
-        plname = unkn2_names[plyr * 16];
+        plname = unkn2_names[plyr];
         if (player_unknCC9[plyr][0] != '\0')
         {
             if (plname[0] != '\0')
@@ -1871,7 +1871,7 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
     if (value >= 0)
         col = pixmap.fade_table[PALETTE_8b_COLORS * (63 - fade) + colour_lookup[ColLU_RED]];
     else
-        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 + fade) + colour_lookup[4]];
+        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 + fade) + colour_lookup[ColLU_BLUE]];
 
     cent_x = x + (w >> 1);
     if (lbDisplay.GraphicsScreenHeight < 400)
@@ -2322,7 +2322,7 @@ void draw_new_panel(void)
             md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
             if (md == 1 && pktrec_mode != PktR_PLAYBACK) {
                 y = alt_at_point(mouse_map_x, mouse_map_z);
-                func_702c0(mouse_map_x, y >> 5, mouse_map_z, 64, 64, colour_lookup[ColLU_RED]);
+                func_702c0(mouse_map_x, PRCCOORD_TO_YCOORD(y), mouse_map_z, 64, 64, colour_lookup[ColLU_RED]);
             }
         }
     }
@@ -2781,7 +2781,7 @@ TbBool check_panel_input(short panel)
                     dcthing = p_locplayer->DirectControl[mouser];
                     if ((things[dcthing].Flag & TngF_Unkn0400) == 0)
                     {
-                        game_set_cam_track_thing_xz(p_agent);
+                        game_set_cam_track_thing_xz(p_agent->ThingOffset);
                         engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
                         build_packet(p_pckt, PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
                         if (p_agent->ThingOffset == dcthing)

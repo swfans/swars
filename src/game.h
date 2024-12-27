@@ -172,25 +172,6 @@ struct BezierPt { // sizeof=28
     ushort field_2A;
 };
 
-struct MissionStatus { // sizeof=40
-    ulong CityDays;
-    ulong CityHours;
-    ulong Days;
-    ulong Hours;
-    ushort CivsKilled;
-    ushort CivsPersuaded;
-    ushort SecurityKilled;
-    ushort SecurityPersuaded;
-    ushort EnemiesKilled;
-    ushort EnemiesPersuaded;
-    ulong CashAtStart;
-    ulong Expenditure;
-    ubyte HitAccuracy;
-    ubyte ObjectivesComplete;
-    ubyte AgentsLost;
-    ubyte AgentsGained;
-};
-
 struct LevelDef {
   ubyte PlayableGroups[8];
   ubyte field_8[33];
@@ -482,7 +463,6 @@ extern ubyte *dword_1AA280;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;
 
-extern struct MissionStatus mission_status[120];
 extern short old_mission_brief;
 extern short open_brief;
 extern short next_brief;
@@ -494,9 +474,9 @@ extern sbyte mo_weapon;
 
 extern ubyte selected_agent;
 
-extern uint mouse_map_x;
-extern uint mouse_map_y;
-extern uint mouse_map_z;
+extern int mouse_map_x;
+extern int mouse_map_y;
+extern int mouse_map_z;
 extern void *scratch_malloc_mem;
 
 extern ubyte game_gfx_advanced_lights;
@@ -562,11 +542,10 @@ void update_map_thing_and_traffic_refs(void);
 void unkn_lights_processing(void);
 void bang_set_detail(int a1);
 int sub_73C64(char *a1, ubyte a2);
-void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 
 void ingame_palette_reload(void);
-void game_set_cam_track_thing_xz(struct Thing *p_thing);
+void game_set_cam_track_thing_xz(ThingIdx thing);
 TbBool game_cam_tracked_thing_is_player_agent(void);
 
 #ifdef __cplusplus

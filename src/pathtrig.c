@@ -485,7 +485,7 @@ void thin_wall_around_face3(short obj_x, short obj_y, short obj_z, short face, u
     for (cor = 0; cor < 3; cor++) {
         int alt;
         alt = alt_at_point(x_cor[cor], z_cor[cor]);
-        alt_cor[cor] = alt >> 5;
+        alt_cor[cor] = PRCCOORD_TO_YCOORD(alt);
     }
     if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
       && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
@@ -525,7 +525,7 @@ void thin_wall_around_face4(short obj_x, short obj_y, short obj_z, short face, u
     for (cor = 0; cor < 4; cor++) {
         int alt;
         alt = alt_at_point(x_cor[cor], z_cor[cor]);
-        alt_cor[cor] = alt >> 5;
+        alt_cor[cor] = PRCCOORD_TO_YCOORD(alt);
     }
     if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
       && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
@@ -1350,12 +1350,12 @@ void generate_walk_items(void)
     next_walk_item = 1;
     for (face = 1; face < next_object_face; face++)
     {
-        if ((game_object_faces[face].GFlags & 0x04) != 0)
+        if ((game_object_faces[face].GFlags & FGFlg_Unkn04) != 0)
             add_walk_items_for_face(face);
     }
     for (face = 1; face < next_object_face4; face++)
     {
-        if ((game_object_faces4[face].GFlags & 0x04) != 0)
+        if ((game_object_faces4[face].GFlags & FGFlg_Unkn04) != 0)
             add_walk_items_for_face(-face);
     }
 }
@@ -1985,24 +1985,6 @@ void generate_thin_paths_entrance(void)
     }
 }
 
-TbBool face_is_blocking_walk(short face)
-{
-    if (face < 0)
-    {
-        struct SingleObjectFace4 *p_face;
-        p_face = &game_object_faces4[-face];
-        return ((p_face->GFlags & FGFlg_Unkn04) == 0);
-    }
-    else if (face > 0)
-    {
-        struct SingleObjectFace3 *p_face;
-        p_face = &game_object_faces[face];
-        return ((p_face->GFlags & FGFlg_Unkn04) == 0);
-    }
-
-   return false;
-}
-
 void thin_paths_on_vectlist(ushort vl_head,
   TrTriangId *faces3_added, TrTriangId *faces4_added)
 {
@@ -2123,7 +2105,7 @@ int fringe_at_tile(short tile_x, short tile_z)
 
     p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
 
-    return (p_mapel->Flags2 & 0x04);
+    return (p_mapel->Flags2 & MEF2_Unkn04);
 }
 
 void fill_ground_map(ubyte *p_map)

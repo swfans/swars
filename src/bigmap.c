@@ -21,11 +21,37 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "bfmemut.h"
+
 #include "swlog.h"
 /******************************************************************************/
 struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
 ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
 ushort spiral_dist_tiles_limit = 0;
+
+void map_coords_limit(short *cor_x, short *cor_y, short *cor_z, long map_x, long map_y, long map_z)
+{
+    if (map_x < 0)
+        map_x = 0;
+    else if (map_x >= MAP_COORD_WIDTH)
+        map_x = MAP_COORD_WIDTH - 1;
+
+    if (map_y < -INT16_MAX)
+        map_y = -INT16_MAX;
+    else if (map_y > INT16_MAX)
+        map_y = INT16_MAX;
+
+    if (map_z < 0)
+        map_z = 0;
+    else if (map_z >= MAP_COORD_HEIGHT)
+        map_z = MAP_COORD_HEIGHT - 1;
+
+    if (cor_x != NULL)
+        *cor_x = map_x;
+    if (cor_y != NULL)
+        *cor_y = map_y;
+    if (cor_z != NULL)
+        *cor_z = map_z;
+}
 
 void clear_mapwho_on_whole_map(void)
 {
@@ -286,12 +312,7 @@ static ushort count_tiles_around_steeper_than(short tile_x, short tile_z, short 
     return matches;
 }
 
-/** Checks if a tile should not be allowed to walk on due to terrain.
- *
- * To do such check during gameplay, MapElement flags should be used - this one
- * is only to update these flags, if neccessary.
- */
-static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
+TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
 {
     int alt_dt, gnd_dt;
 
@@ -338,9 +359,9 @@ void update_map_flags(void)
 
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
             // set having a walkable tile or too steep tile
-            p_mapel->Flags2 &= ~0x04;
+            p_mapel->Flags2 &= ~MEF2_Unkn04;
             if (compute_map_tile_is_blocking_walk(tile_x, tile_z))
-                p_mapel->Flags2 |= 0x04;
+                p_mapel->Flags2 |= MEF2_Unkn04;
         }
     }
 }

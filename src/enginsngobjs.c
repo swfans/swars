@@ -218,6 +218,24 @@ void update_object_faces_flags(void)
     }
 }
 
+TbBool face_is_blocking_walk(short face)
+{
+    if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        p_face = &game_object_faces4[-face];
+        return ((p_face->GFlags & FGFlg_Unkn04) == 0);
+    }
+    else if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        p_face = &game_object_faces[face];
+        return ((p_face->GFlags & FGFlg_Unkn04) == 0);
+    }
+
+   return false;
+}
+
 void unkn_object_shift_03(ushort objectno)
 {
     asm volatile ("call ASM_unkn_object_shift_03\n"

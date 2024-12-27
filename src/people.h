@@ -172,6 +172,11 @@ struct MyPath {
     ushort Next;
 };
 
+struct Direction {
+  short DiX;
+  short DiY;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct PeepStat peep_type_stats[];
@@ -194,6 +199,11 @@ void load_peep_type_stats(void);
 /** Get a string up to 14 chars containing person type name.
  */
 const char *person_type_name(ushort ptype);
+
+/** Returns if a given type of person requires advanced persuadertron to be affected.
+ */
+TbBool person_type_only_affected_by_adv_persuader(ushort ptype);
+TbBool person_only_affected_by_adv_persuader(ThingIdx person);
 
 /** Print person state in function-like style to a buffer.
  */
@@ -263,9 +273,12 @@ int limit_mood(struct Thing *p_thing, short mood);
 void person_init_preplay_command(struct Thing *p_person);
 
 TbBool person_is_executing_commands(ThingIdx person);
+void person_start_executing_commands(struct Thing *p_person);
+
 TbBool person_is_persuaded(ThingIdx thing);
 TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
 TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
+
 void player_change_person(short thing, ushort plyr);
 void make_peeps_scatter(struct Thing *p_person, int x, int z);
 int person_hit_by_bullet(struct Thing *p_person, short hp,

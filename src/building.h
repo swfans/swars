@@ -56,8 +56,9 @@ enum SubTypeBuilding {
   SubTT_BLD_DOME = 0x18,
   SubTT_BLD_19 = 0x19,
   SubTT_BLD_1A = 0x1A,
-  SubTT_BLD_1B = 0x1B,
-  SubTT_BLD_1C = 0x1C,
+  /** Standard building with no special mechanics. */
+  SubTT_BLD_STANDARD = 0x1B,
+  SubTT_BLD_TRAINTRK = 0x1C,
   SubTT_BLD_1D = 0x1D,
   SubTT_BLD_1E = 0x1E,
   SubTT_BLD_1F = 0x1F,
@@ -113,8 +114,16 @@ enum BuildingStates {
   BldSt_OBJ_UNKN09,
 };
 
+struct BuildingStat
+{
+    char Name[12];
+};
+
+
 #pragma pack()
 /******************************************************************************/
+
+const char *building_type_name(ushort btype);
 
 /** Returns whether given thing is a building which can transform into open structure.
  * Only domes can do such transformation.
