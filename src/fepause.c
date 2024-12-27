@@ -55,17 +55,93 @@ static struct ScreenBox cdvolume_slider_box;
 static struct ScreenBox cdvolume_arrow_l_box;
 static struct ScreenBox cdvolume_arrow_r_box;
 
-ubyte sub_71694(short scr_x, short scr_y, char *text, TbPixel colr1, TbPixel colr2, ubyte enabled)
+ubyte update_button(short scr_x, short scr_y, char *text, TbPixel colr1, TbPixel colr2, ubyte enabled)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile (
       "push %6\n"
       "push %5\n"
-      "call ASM_sub_71694\n"
+      "call ASM_update_button\n"
         : "=r" (ret) : "a" (scr_x), "d" (scr_y), "b" (text), "c" (colr1), "g" (colr2), "g" (enabled));
     return ret;
 #endif
+    struct ScreenButton btn1;
+    short line_h;
+    short text_w;
+    short margin;
+
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        line_h = font_height('A');
+        text_w = my_string_width(text);
+        margin = 1;
+    } else {
+        scr_x *= 2;
+        scr_y *= 2;
+        line_h = 2 * font_height('A');
+        text_w = 2 * my_string_width(text);
+        margin = 2;
+    }
+
+    btn1.Width = text_w + 4 * margin;
+    btn1.Height = line_h + 4 * margin;
+    btn1.X = scr_x - (btn1.Width >> 1);
+    btn1.Y = scr_y;
+
+    lbDisplay.DrawFlags = 0x0004;
+    LbDrawBox(btn1.X - margin, btn1.Y - margin, btn1.Width + 2 * margin, btn1.Height + 2 * margin, colr1);
+
+    lbDisplay.DrawFlags = 0x0010;
+    lbDisplay.DrawColour = colour_lookup[1];
+
+    if (enabled || mouse_down_over_box(&btn1))
+    {
+      short text_x, text_y;
+
+      LbDrawBox(btn1.X, btn1.Y, btn1.Width, btn1.Height, lbDisplay.DrawColour);
+
+      lbDisplay.DrawFlags |= 0x0040;
+      if (lbDisplay.GraphicsScreenHeight < 400) {
+          text_x = btn1.X + 2 * margin;
+          text_y = btn1.Y + 2 * margin;
+      } else {
+          text_x = btn1.X + (text_w >> 2) + 2 * margin;
+          text_y = btn1.Y + (line_h >> 1) + margin;
+      }
+      my_draw_text(text_x, text_y, text, 0);
+
+      lbDisplay.DrawFlags &= ~0x0040;
+      if (lbDisplay.LeftButton)
+      {
+        if (mouse_down_over_box(&btn1))
+            lbDisplay.LeftButton = 0;
+
+        if (mouse_down_over_box(&btn1))
+            return 1;
+      }
+    }
+    else
+    {
+      short text_x, text_y;
+
+      if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3)
+      {
+          lbDisplay.DrawFlags |= 0x0040;
+          lbDisplay.DrawColour = colr2;
+      }
+      LbDrawBox(btn1.X, btn1.Y, btn1.Width, btn1.Height, colr2);
+
+      if (lbDisplay.GraphicsScreenHeight < 400) {
+          text_x = btn1.X + 2 * margin;
+          text_y = btn1.Y + 2 * margin;
+      } else {
+          text_x = btn1.X + (text_w >> 2) + 2 * margin;
+          text_y = btn1.Y + (line_h >> 1) + margin;
+      }
+      my_draw_text(text_x, text_y, text, 0);
+      lbDisplay.DrawFlags &= ~0x0040;
+    }
+    return 0;
 }
 
 TbBool input_kicked_left_arrow(struct ScreenBox *box, short *target)
@@ -520,21 +596,21 @@ TbBool pause_screen_handle(void)
             SetCDVolume(70 * (127 * (*affected) / 322) / 100);
         }
 
-        if (sub_71694(180, 120, gui_strings[477], pause_colr1, pause_colr2, ingame.DetailLevel == 1))
+        if (update_button(180, 120, gui_strings[477], pause_colr1, pause_colr2, ingame.DetailLevel == 1))
         {
             ingame.DetailLevel = 1;
             bang_set_detail(0);
         }
-        if (sub_71694(220, 120, gui_strings[475], pause_colr1, pause_colr2, ingame.DetailLevel == 0))
+        if (update_button(220, 120, gui_strings[475], pause_colr1, pause_colr2, ingame.DetailLevel == 0))
         {
             ingame.DetailLevel = 0;
             bang_set_detail(1);
         }
 
-        if (sub_71694(140, 134, gui_strings[455], pause_colr1, pause_colr2, 0))
+        if (update_button(140, 134, gui_strings[455], pause_colr1, pause_colr2, 0))
             resume_game = true;
 
-        if (sub_71694(197, 134, gui_strings[445], pause_colr1, pause_colr2, 0))
+        if (update_button(197, 134, gui_strings[445], pause_colr1, pause_colr2, 0))
         {
             swap_wscreen();
             SetMusicVolume(100, 0);
