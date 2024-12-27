@@ -224,7 +224,7 @@ void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char
     box->Height = font_height('A') + 6;
     box->DrawSpeed = drawspeed;
     box->Font = font;
-    box->Flags = flags | 1;
+    box->Flags = flags | 0x01;
     if ((flags & 0x80) != 0)
         x -= box->Width;
     box->X = x;
