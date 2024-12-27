@@ -59,8 +59,9 @@ static struct ScreenButton detail_lo_btn;
 static struct ScreenButton continue_btn;
 static struct ScreenButton abort_btn;
 
-ubyte update_ingame_button(struct ScreenButton *p_button, ubyte enabled)
+ubyte draw_ingame_button(struct ScreenButton *p_button, ubyte enabled)
 {
+    short text_x, text_y;
     short margin;
 
     margin = p_button->Border + 1;
@@ -70,24 +71,38 @@ ubyte update_ingame_button(struct ScreenButton *p_button, ubyte enabled)
 
     lbDisplay.DrawFlags = 0x0010;
     lbDisplay.DrawColour = colour_lookup[ColLU_WHITE];
-
     if (enabled || mouse_move_over_box(p_button))
     {
-      short text_x, text_y;
+        LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, lbDisplay.DrawColour);
+        lbDisplay.DrawFlags |= 0x0040;
+    }
+    else
+    {
+        if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3) {
+            lbDisplay.DrawFlags |= 0x0040;
+            lbDisplay.DrawColour = p_button->Colour;
+        }
+        LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, p_button->Colour);
+    }
 
-      LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, lbDisplay.DrawColour);
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        text_x = p_button->X + 2 * margin;
+        text_y = p_button->Y + 2 * margin;
+    } else {
+        text_x = p_button->X + (p_button->Width >> 2) + margin;
+        text_y = p_button->Y + (p_button->Height >> 1) - margin;
+    }
+    my_draw_text(text_x, text_y, p_button->Text, 0);
 
-      lbDisplay.DrawFlags |= 0x0040;
-      if (lbDisplay.GraphicsScreenHeight < 400) {
-          text_x = p_button->X + 2 * margin;
-          text_y = p_button->Y + 2 * margin;
-      } else {
-          text_x = p_button->X + (p_button->Width >> 2) + margin;
-          text_y = p_button->Y + (p_button->Height >> 1) - margin;
-      }
-      my_draw_text(text_x, text_y, p_button->Text, 0);
+    lbDisplay.DrawFlags &= ~0x0040;
 
-      lbDisplay.DrawFlags &= ~0x0040;
+    return 0;
+}
+
+ubyte input_ingame_button(struct ScreenButton *p_button, ubyte enabled)
+{
+    if (enabled || mouse_move_over_box(p_button))
+    {
       if (lbDisplay.LeftButton)
       {
         if (mouse_move_over_box(p_button))
@@ -96,27 +111,6 @@ ubyte update_ingame_button(struct ScreenButton *p_button, ubyte enabled)
         if (mouse_down_over_box(p_button))
             return 1;
       }
-    }
-    else
-    {
-      short text_x, text_y;
-
-      if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3)
-      {
-          lbDisplay.DrawFlags |= 0x0040;
-          lbDisplay.DrawColour = p_button->Colour;
-      }
-      LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, p_button->Colour);
-
-      if (lbDisplay.GraphicsScreenHeight < 400) {
-          text_x = p_button->X + 2 * margin;
-          text_y = p_button->Y + 2 * margin;
-      } else {
-          text_x = p_button->X + (p_button->Width >> 2) + margin;
-          text_y = p_button->Y + (p_button->Height >> 1) - margin;
-      }
-      my_draw_text(text_x, text_y, p_button->Text, 0);
-      lbDisplay.DrawFlags &= ~0x0040;
     }
     return 0;
 }
@@ -532,12 +526,73 @@ ubyte show_pause_screen(struct ScreenBox *box)
     draw_pause_volume_bar(&midivol_slider_box, &midivol_arrow_l_box, &midivol_arrow_r_box, &startscr_midivol);
     draw_pause_volume_bar(&cdvolume_slider_box, &cdvolume_arrow_l_box, &cdvolume_arrow_r_box, &startscr_cdvolume);
 
+    draw_ingame_button(&detail_hi_btn, (ingame.DetailLevel == 1));
+    draw_ingame_button(&detail_lo_btn, (ingame.DetailLevel == 0));
+    draw_ingame_button(&continue_btn, 0);
+    draw_ingame_button(&abort_btn, 0);
+
     return 0;
+}
+
+void *input_pause_screen(void)
+{
+    short *target;
+    void *affected;
+
+    affected = NULL;
+
+    {
+    target = &startscr_samplevol;
+
+    if (input_kicked_left_arrow(&samplevol_arrow_l_box, target))
+        affected = target;
+    if (input_kicked_right_arrow(&samplevol_arrow_r_box, target))
+        affected = target;
+    if (input_slant_box(&samplevol_slider_box, target))
+        affected = target;
+    }
+
+    {
+    target = &startscr_midivol;
+
+    if (input_kicked_left_arrow(&midivol_arrow_l_box, target))
+        affected = target;
+    if (input_kicked_right_arrow(&midivol_arrow_r_box, target))
+        affected = target;
+    if (input_slant_box(&midivol_slider_box, target))
+        affected = target;
+    }
+
+    {
+    target = &startscr_cdvolume;
+
+    if (input_kicked_left_arrow(&cdvolume_arrow_l_box, target))
+        affected = target;
+    if (input_kicked_right_arrow(&cdvolume_arrow_r_box, target))
+        affected = target;
+    if (input_slant_box(&cdvolume_slider_box, target))
+        affected = target;
+    }
+
+    {
+    target = &startscr_cdvolume;
+
+        if (input_ingame_button(&detail_hi_btn, ingame.DetailLevel == 1)) {
+            ingame.DetailLevel = 1;
+            affected = target;
+        }
+        if (input_ingame_button(&detail_lo_btn, ingame.DetailLevel == 0)) {
+            ingame.DetailLevel = 0;
+            affected = target;
+        }
+    }
+
+    return affected;
 }
 
 TbBool pause_screen_handle(void)
 {
-    short *affected;
+    void *affected;
     TbBool resume_game;
 
     init_pause_screen_boxes();
@@ -555,75 +610,35 @@ TbBool pause_screen_handle(void)
     resume_game = false;
     while (!resume_game)
     {
-        short *target;
-
         joy_func_065(&joy);
-        affected = NULL;
 
-        {
-        target = &startscr_samplevol;
-        if (input_kicked_left_arrow(&samplevol_arrow_l_box, target))
-            affected = target;
-        if (input_kicked_right_arrow(&samplevol_arrow_r_box, target))
-            affected = target;
-        if (input_slant_box(&samplevol_slider_box, target))
-            affected = target;
-        }
-
-        {
-        target = &startscr_midivol;
-
-        if (input_kicked_left_arrow(&midivol_arrow_l_box, target))
-            affected = target;
-        if (input_kicked_right_arrow(&midivol_arrow_r_box, target))
-            affected = target;
-        if (input_slant_box(&midivol_slider_box, target))
-            affected = target;
-        }
-
-        {
-        target = &startscr_cdvolume;
-
-        if (input_kicked_left_arrow(&cdvolume_arrow_l_box, target))
-            affected = target;
-        if (input_kicked_right_arrow(&cdvolume_arrow_r_box, target))
-            affected = target;
-        if (input_slant_box(&cdvolume_slider_box, target))
-            affected = target;
-        }
+        affected = input_pause_screen();
 
         if (affected == &startscr_samplevol)
         {
-            SetSoundMasterVolume(127 * (*affected) / 322);
+            SetSoundMasterVolume(127 * startscr_samplevol / 322);
             if (!IsSamplePlaying(0, 80, 0))
                 play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
         }
         else if (affected == &startscr_midivol)
         {
-            SetMusicMasterVolume(127 * (*affected) / 322);
+            SetMusicMasterVolume(127 * startscr_midivol / 322);
         }
         else if (affected == &startscr_cdvolume)
         {
-            SetCDVolume(70 * (127 * (*affected) / 322) / 100);
+            SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+        }
+        else if (affected == &ingame.DetailLevel)
+        {
+            bang_set_detail(1 - ingame.DetailLevel);
         }
 
         show_pause_screen(&pause_main_box);
 
-        if (update_ingame_button(&detail_hi_btn, ingame.DetailLevel == 1))
-        {
-            ingame.DetailLevel = 1;
-            bang_set_detail(0);
-        }
-        if (update_ingame_button(&detail_lo_btn, ingame.DetailLevel == 0))
-        {
-            ingame.DetailLevel = 0;
-            bang_set_detail(1);
-        }
-
-        if (update_ingame_button(&continue_btn, 0))
+        if (input_ingame_button(&continue_btn, 0))
             resume_game = true;
 
-        if (update_ingame_button(&abort_btn, 0))
+        if (input_ingame_button(&abort_btn, 0))
         {
             swap_wscreen();
             SetMusicVolume(100, 0);
