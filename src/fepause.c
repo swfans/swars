@@ -150,19 +150,22 @@ TbBool input_kicked_right_arrow(struct ScreenBox *box, short *target)
 TbBool input_slant_box(struct ScreenBox *box, short *target)
 {
     int ms_x, ms_y;
+    short border;
+
+    border = lbDisplay.GraphicsScreenHeight < 400 ? 1 : 2;
 
     if (lbDisplay.MLeftButton)
     {
-        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        if ((ms_y >= box->Y + 2) && (ms_y <= box->Y + box->Height - 4))
+        ms_x = lbDisplay.MMouseX;
+        ms_y = lbDisplay.MMouseY;
+        if ((ms_y >= box->Y + border) && (ms_y <= box->Y + box->Height - 2 * border))
         {
             int dx, dy;
-            dx = ms_x - box->X - 2;
-            dy = ms_y - box->Y - 2;
-            if (dx + dy >= 0 && dx + dy <= box->Width - 4 - 2)
+            dx = ms_x - box->X - border;
+            dy = ms_y - box->Y - border;
+            if (dx + dy >= 0 && dx + dy <= box->Width - 2 * border - border)
             {
-                (*target) = 322 * (dx + dy) / (box->Width - 4 - 2);
+                (*target) = 322 * (dx + dy) / (box->Width - 2 * border - border);
                 return true;
             }
         }
@@ -208,10 +211,7 @@ void draw_parallelogram_45degi(short x, short y, short w, short h, TbPixel colr2
     cx = x;
     for (i = 0; i < h; i += 2)
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbDrawLine((cx) >> 1, (y+i) >> 1, (cx+w) >> 1, (y+i) >> 1, colr2);
-        else
-            LbDrawLine((cx), (y+i), (cx+w), (y+i), colr2);
+        LbDrawLine(cx, y + i, cx + w, y + i, colr2);
         cx -= 2;
     }
 }
@@ -219,8 +219,7 @@ void draw_parallelogram_45degi(short x, short y, short w, short h, TbPixel colr2
 void draw_slant_box(struct ScreenBox *box, TbPixel colr2)
 {
     draw_parallelogram_45degi(box->X, box->Y, box->Width, box->Height, colr2);
-    if (lbDisplay.GraphicsScreenHeight >= 400)
-        draw_parallelogram_45degi(box->X - 1, box->Y + 1, box->Width, box->Height, colr2);
+    draw_parallelogram_45degi(box->X - 1, box->Y + 1, box->Width, box->Height, colr2);
 }
 
 void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
@@ -234,19 +233,12 @@ void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
 
     if (mouse_move_over_slant_box(box))
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbSpriteDrawOneColour(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100],
-              colour_lookup[ColLU_WHITE]);
-        else
-            LbSpriteDrawOneColour(box->X, box->Y - stp, &pop1_sprites[100],
-              colour_lookup[ColLU_WHITE]);
+        LbSpriteDrawOneColour(box->X, box->Y - stp, &pop1_sprites[100],
+          colour_lookup[ColLU_WHITE]);
     }
     else
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbSpriteDraw(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100]);
-        else
-            LbSpriteDraw(box->X, box->Y - stp, &pop1_sprites[100]);
+        LbSpriteDraw(box->X, box->Y - stp, &pop1_sprites[100]);
     }
 }
 
@@ -261,24 +253,17 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
 
     if (mouse_move_over_slant_box(box))
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbSpriteDrawOneColour((box->X >> 1) - stp, (box->Y >> 1) - stp,
-              &pop1_sprites[101], colour_lookup[ColLU_WHITE]);
-        else
-            LbSpriteDrawOneColour(box->X - stp, box->Y - stp,
-              &pop1_sprites[101], colour_lookup[ColLU_WHITE]);
+        LbSpriteDrawOneColour(box->X - stp, box->Y - stp,
+          &pop1_sprites[101], colour_lookup[ColLU_WHITE]);
     }
     else
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbSpriteDraw((box->X >> 1) - stp, (box->Y >> 1) - stp, &pop1_sprites[101]);
-        else
-            LbSpriteDraw(box->X - stp, box->Y - stp, &pop1_sprites[101]);
+        LbSpriteDraw(box->X - stp, box->Y - stp, &pop1_sprites[101]);
     }
 }
 
 void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct ScreenBox *arrow_l_box,
-  struct ScreenBox *arrow_r_box, const struct ScreenBox *parent_box, int shift_y, int slider_w, int arrow_w, int h)
+  struct ScreenBox *arrow_r_box, const struct ScreenBox *parent_box, int shift_y, int slider_w, int arrow_w, int cutin_w, int h)
 {
     slider_box->Width = slider_w;
     slider_box->Height = h;
@@ -287,12 +272,12 @@ void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct Scree
 
     arrow_l_box->Width = arrow_w;
     arrow_l_box->Height = h;
-    arrow_l_box->X = slider_box->X - 28;
+    arrow_l_box->X = slider_box->X - arrow_w - 2 * cutin_w;
     arrow_l_box->Y = slider_box->Y;
 
     arrow_r_box->Width = arrow_w;
     arrow_r_box->Height = h;
-    arrow_r_box->X = slider_box->X + slider_box->Width - 10;
+    arrow_r_box->X = slider_box->X + slider_box->Width - cutin_w;
     arrow_r_box->Y = slider_box->Y;
 }
 
@@ -325,7 +310,8 @@ void init_ingame_screen_button(struct ScreenButton *p_button, ushort x, ushort y
 
 void init_pause_screen_boxes(void)
 {
-    int slider_w, arrow_w, slider_h, margin_h;
+    short slider_w, arrow_w, cutin_w, slider_h, margin_h_bef, margin_h_aft;
+    short shift_x, shift_y;
 
     if ((ingame.PanelPermutation != 2) && (ingame.PanelPermutation != -3)) {
         ingame_boxes_colr1 = 20;
@@ -335,41 +321,60 @@ void init_pause_screen_boxes(void)
         ingame_boxes_colr2 = 35;
     }
 
-    pause_main_box.Width = 466;
-    pause_main_box.Height = 244;
-    pause_main_box.X = 86;
-    pause_main_box.Y = 54;
-    slider_h = 18;
-
-    slider_w = 466 * 131 / 256;
-    arrow_w = slider_w * 9 / 256;
-    margin_h = 26;
-
-    init_slider_with_arrows_centered(&samplevol_slider_box, &samplevol_arrow_l_box,
-      &samplevol_arrow_r_box, &pause_main_box, 68, slider_w, arrow_w, slider_h);
-
-    init_slider_with_arrows_centered(&midivol_slider_box, &midivol_arrow_l_box,
-      &midivol_arrow_r_box, &pause_main_box, 68 + 1 * (slider_h + margin_h), slider_w, arrow_w, slider_h);
-
-    init_slider_with_arrows_centered(&cdvolume_slider_box, &cdvolume_arrow_l_box,
-      &cdvolume_arrow_r_box, &pause_main_box, 68 + 2 * (slider_h + margin_h), slider_w, arrow_w, slider_h);
-
-    // Currenlty not all components should be scaled to low res, hence changing the parent box here
     if (lbDisplay.GraphicsScreenHeight < 400) {
         pause_main_box.Width = 233;
         pause_main_box.Height = 122;
         pause_main_box.X = 43;
         pause_main_box.Y = 27;
+        cutin_w = 5;
+        slider_h = 9;
+        margin_h_bef = 7;
+        margin_h_aft = 6;
+    } else {
+        pause_main_box.Width = 466;
+        pause_main_box.Height = 244;
+        pause_main_box.X = 86;
+        pause_main_box.Y = 54;
+        cutin_w = 10;
+        slider_h = 18;
+        margin_h_bef = 14;
+        margin_h_aft = 12;
     }
 
-    init_ingame_screen_button(&detail_hi_btn, pause_main_box.X + pause_main_box.Width * 151 / 256,
-      pause_main_box.Y + pause_main_box.Height * 196 / 256, gui_strings[477], small_font, 0);
-    init_ingame_screen_button(&detail_lo_btn, pause_main_box.X + pause_main_box.Width * 195 / 256,
-      pause_main_box.Y + pause_main_box.Height * 196 / 256, gui_strings[475], small_font, 0);
-    init_ingame_screen_button(&continue_btn, pause_main_box.X + pause_main_box.Width * 107 / 256,
-      pause_main_box.Y + pause_main_box.Height * 225 / 256, gui_strings[455], small_font, 0);
-    init_ingame_screen_button(&abort_btn, pause_main_box.X + pause_main_box.Width * 170 / 256,
-      pause_main_box.Y + pause_main_box.Height * 225 / 256, gui_strings[445], small_font, 0);
+    slider_w = pause_main_box.Width * 131 / 256;
+    arrow_w = slider_w * 9 / 256;
+
+    shift_y = pause_main_box.Y + margin_h_bef;
+    init_slider_with_arrows_centered(&samplevol_slider_box, &samplevol_arrow_l_box,
+      &samplevol_arrow_r_box, &pause_main_box, shift_y, slider_w, arrow_w, cutin_w, slider_h);
+
+    shift_y = pause_main_box.Y + margin_h_bef + 1 * (margin_h_bef + slider_h + margin_h_aft);
+    init_slider_with_arrows_centered(&midivol_slider_box, &midivol_arrow_l_box,
+      &midivol_arrow_r_box, &pause_main_box, shift_y, slider_w, arrow_w, cutin_w, slider_h);
+
+    shift_y = pause_main_box.Y + margin_h_bef + 2 * (margin_h_bef + slider_h + margin_h_aft);
+    init_slider_with_arrows_centered(&cdvolume_slider_box, &cdvolume_arrow_l_box,
+      &cdvolume_arrow_r_box, &pause_main_box, shift_y, slider_w, arrow_w, cutin_w, slider_h);
+
+    shift_x = pause_main_box.Width * 151 / 256;
+    shift_y = pause_main_box.Height * 196 / 256;
+    init_ingame_screen_button(&detail_hi_btn, pause_main_box.X + shift_x,
+      pause_main_box.Y + shift_y, gui_strings[477], small_font, 0);
+
+    shift_x = pause_main_box.Width * 195 / 256;
+    shift_y = pause_main_box.Height * 196 / 256;
+    init_ingame_screen_button(&detail_lo_btn, pause_main_box.X + shift_x,
+      pause_main_box.Y + shift_y, gui_strings[475], small_font, 0);
+
+    shift_x = pause_main_box.Width * 107 / 256;
+    shift_y = pause_main_box.Height * 225 / 256;
+    init_ingame_screen_button(&continue_btn, pause_main_box.X + shift_x,
+      pause_main_box.Y + shift_y, gui_strings[455], small_font, 0);
+
+    shift_x = pause_main_box.Width * 170 / 256;
+    shift_y = pause_main_box.Height * 225 / 256;
+    init_ingame_screen_button(&abort_btn, pause_main_box.X + shift_x,
+      pause_main_box.Y + shift_y, gui_strings[445], small_font, 0);
 }
 
 void start_pause_screen(void)
