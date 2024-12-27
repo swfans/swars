@@ -248,7 +248,7 @@ TbBool mouse_move_over_box_base(struct ScreenBoxBase *box);
 
 /** Returns if mouse position when button was pressed down is over given box (incl. borders).
  */
-#define mouse_down_over_box(box) mouse_move_over_box_base((struct ScreenBoxBase *)box)
+#define mouse_down_over_box(box) mouse_down_over_box_base((struct ScreenBoxBase *)box)
 TbBool mouse_down_over_box_base(struct ScreenBoxBase *box);
 
 /** Returns if current mouse move position is over given slant (leaning right) box (incl. borders).

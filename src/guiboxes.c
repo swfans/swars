@@ -50,8 +50,8 @@ TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, shor
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
@@ -59,8 +59,8 @@ TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, shor
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    ms_x = lbDisplay.MouseX;
+    ms_y = lbDisplay.MouseY;
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
@@ -69,8 +69,8 @@ TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
@@ -79,8 +79,8 @@ TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, T
     short ms_x, ms_y;
     short dx, dy;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
 
     if (a5)
     {
@@ -109,7 +109,7 @@ short mouse_move_position_horizonal_over_bar_coords(short x, short w)
 {
     short ms_x;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_x = lbDisplay.MMouseX;
     return (ms_x - x);
 }
 
@@ -117,7 +117,7 @@ short mouse_down_position_horizonal_over_bar_coords(short x, short w)
 {
     short ms_x;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    ms_x = lbDisplay.MouseX;
     return (ms_x - x);
 }
 
@@ -146,8 +146,8 @@ TbBool mouse_move_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
     return is_over_box_base(ms_x, ms_y, box);
 }
 
@@ -155,8 +155,8 @@ TbBool mouse_down_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    ms_x = lbDisplay.MouseX;
+    ms_y = lbDisplay.MouseY;
     return is_over_box_base(ms_x, ms_y, box);
 }
 
@@ -164,8 +164,8 @@ TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
     return is_over_slant_box_base(ms_x, ms_y, box);
 }
 
@@ -178,7 +178,7 @@ short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_y;
 
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_y = lbDisplay.MMouseY;
     return ms_y - box->Y;
 }
 

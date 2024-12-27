@@ -94,7 +94,7 @@ ubyte update_button(short scr_x, short scr_y, char *text, TbPixel colr1, TbPixel
     lbDisplay.DrawFlags = 0x0010;
     lbDisplay.DrawColour = colour_lookup[1];
 
-    if (enabled || mouse_down_over_box(&btn1))
+    if (enabled || mouse_move_over_box(&btn1))
     {
       short text_x, text_y;
 
@@ -113,7 +113,7 @@ ubyte update_button(short scr_x, short scr_y, char *text, TbPixel colr1, TbPixel
       lbDisplay.DrawFlags &= ~0x0040;
       if (lbDisplay.LeftButton)
       {
-        if (mouse_down_over_box(&btn1))
+        if (mouse_move_over_box(&btn1))
             lbDisplay.LeftButton = 0;
 
         if (mouse_down_over_box(&btn1))
