@@ -18,7 +18,12 @@
 /******************************************************************************/
 #include "guiboxes.h"
 
+#include "bfkeybd.h"
 #include "bfscreen.h"
+#include "bftext.h"
+
+#include "display.h"
+#include "purpldrw.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -204,6 +209,7 @@ void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y, ushort 
 
 void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
 {
+#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
@@ -211,6 +217,30 @@ void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char
       "push %4\n"
       "call ASM_init_screen_button\n"
         : : "a" (box), "d" (x), "b" (y), "c" (text), "g" (drawspeed), "g" (font), "g" (textspeed), "g" (flags));
+#endif
+    lbFontPtr = font;
+    box->Y = y;
+    box->Width = my_string_width(text) + 4;
+    box->Height = font_height('A') + 6;
+    box->DrawSpeed = drawspeed;
+    box->Font = font;
+    box->Flags = flags | 1;
+    if ((flags & 0x80) != 0)
+        x -= box->Width;
+    box->X = x;
+    box->DrawFn = ac_flashy_draw_purple_button;
+    box->DrawTextFn = ac_button_text;
+    box->CallBackFn = 0;
+    box->Border = 1;
+    box->Colour = 0xAE;
+    box->BGColour = 0xF3;
+    box->AccelKey = 0;
+    box->Text = text;
+    box->TextSpeed = textspeed;
+    if (*text != '\0')
+        box->AccelKey = lbAsciiToInkey[*(ubyte *)text];
+    box->Radio = 0;
+    box->RadioValue = 0;
 }
 
 void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort width, const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
