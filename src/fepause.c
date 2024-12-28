@@ -324,18 +324,17 @@ void init_pause_screen_boxes(void)
     if (lbDisplay.GraphicsScreenHeight < 400) {
         pause_main_box.Width = 233;
         pause_main_box.Height = 122;
-        pause_main_box.X = 43;
-        pause_main_box.Y = 27;
         cutin_w = 5;
         slider_h = 9;
     } else {
         pause_main_box.Width = 466;
         pause_main_box.Height = 244;
-        pause_main_box.X = 86;
-        pause_main_box.Y = 54;
         cutin_w = 10;
         slider_h = 18;
     }
+
+    pause_main_box.X = (lbDisplay.GraphicsScreenWidth - pause_main_box.Width) / 2;
+    pause_main_box.Y = (lbDisplay.GraphicsScreenHeight - pause_main_box.Height) / 2;
 
     slider_w = pause_main_box.Width * 131 / 256;
     arrow_w = slider_w * 9 / 256;
