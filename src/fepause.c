@@ -416,87 +416,93 @@ void wait_for_keypress_end(ushort game_key, TbBool impatient)
 
 void draw_pause_screen_static(struct ScreenBox *box)
 {
-    int w;
     const char *s;
+    int x, y, w;
 
     draw_box_cutedge(box, ingame_boxes_colr1);
 
     lbFontPtr = small_font;
     my_set_text_window(0, 0, lbDisplay.PhysicalScreenWidth,
       lbDisplay.PhysicalScreenHeight);
-    if ((ingame.PanelPermutation == 2) || (ingame.PanelPermutation == -3))
-    {
+
+    if ((ingame.PanelPermutation == 2) || (ingame.PanelPermutation == -3)) {
         lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
         lbDisplay.DrawColour = ingame_boxes_colr2;
     }
-    if (lbDisplay.GraphicsScreenHeight < 400)
     {
         s = mission_name;
         w = my_string_width(s);
-        my_draw_text(161 - (w >> 1), 44, s, 0);
-        s = gui_strings[419];
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + pause_main_box.Width / 114;
+        y = pause_main_box.Y + pause_main_box.Height * 9 / 60;
+        my_draw_text(x, y, s, 0);
+
+        s = gui_strings[419]; // "sound volume"
         w = my_string_width(s);
-        my_draw_text(161 - (w >> 1), 54, s, 0);
-        s = gui_strings[420];
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + pause_main_box.Width / 114;
+        y += pause_main_box.Height * 5 / 60;
+        my_draw_text(x, y, s, 0);
+
+        s = gui_strings[420]; // "tension volume"
         w = my_string_width(s);
-        my_draw_text(161 - (w >> 1), 76, s, 0);
-        s = gui_strings[516];
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + pause_main_box.Width / 114;
+        y += pause_main_box.Height * 11 / 60;
+        my_draw_text(x, y, s, 0);
+
+        s = gui_strings[516]; // "cd volume"
         w = my_string_width(s);
-        my_draw_text(161 - (w >> 1), 98, s, 0);
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + pause_main_box.Width / 114;
+        y += pause_main_box.Height * 11 / 60;
+        my_draw_text(x, y, s, 0);
     }
-    else
-    {
-        s = mission_name;
-        w = my_string_width(s);
-        my_draw_text(322 - (w >> 1), 88, s, 0);
-        s = gui_strings[419];
-        w = my_string_width(s);
-        my_draw_text(322 - (w >> 1), 108, s, 0);
-        s = gui_strings[420];
-        w = my_string_width(s);
-        my_draw_text(322 - (w >> 1), 152, s, 0);
-        s = gui_strings[516];
-        w = my_string_width(s);
-        my_draw_text(322 - (w >> 1), 196, s, 0);
-    }
-    if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3)
+    if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3) {
         lbDisplay.DrawFlags &= ~Lb_TEXT_ONE_COLOR;
+    }
 
     if (language_3str[0] == 'e')
     {
+        // Special sprites with large text are only available for some languages
+        struct TbSprite *p_spr;
+
         if (lbDisplay.GraphicsScreenHeight < 400)
         {
-            LbSpriteDraw(89, 31, &pop1_sprites[102]);
-            LbSpriteDraw(83, 120, &pop1_sprites[103]);
+            p_spr = &pop1_sprites[102]; // "uplink paused"
+            w = p_spr->SWidth;
+            x = pause_main_box.X + (pause_main_box.Width - w) / 2;
+            y = pause_main_box.Y + pause_main_box.Height * 2 / 60;
+            LbSpriteDraw(x, y, p_spr);
         }
         else
         {
-            LbSpriteDraw(178, 62, &pop1_sprites[102]);
-            w = pop1_sprites[102].SWidth;
-            LbSpriteDraw(178 + w, 62, &pop1_sprites[104]);
-            LbSpriteDraw(166, 240, &pop1_sprites[103]);
+            w = pop1_sprites[102].SWidth + pop1_sprites[104].SWidth;
+            p_spr = &pop1_sprites[102]; // "uplink"
+            x = pause_main_box.X + (pause_main_box.Width - w) / 2;
+            y = pause_main_box.Y + pause_main_box.Height * 2 / 60;
+            LbSpriteDraw(x, y, p_spr);
+            x += p_spr->SWidth;
+            p_spr = &pop1_sprites[104]; // "paused"
+            LbSpriteDraw(x, y, p_spr);
+
         }
+        p_spr = &pop1_sprites[103]; // "detail"
+        w = p_spr->SWidth;
+        x = pause_main_box.X + (pause_main_box.Width / 2 - w) / 2 + pause_main_box.Width * 4 / 114;
+        y = pause_main_box.Y + pause_main_box.Height * 46 / 60;
+        LbSpriteDraw(x, y, p_spr);
     }
     else
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-        {
-            s = gui_strings[606];
-            w = my_string_width(s);
-            my_draw_text(161 - (w >> 1), 31, s, 0);
-            s = gui_strings[470];
-            w = my_string_width(s);
-            my_draw_text(103 - (w >> 1), 123, s, 0);
-        }
-        else
-        {
-            s = gui_strings[606];
-            w = my_string_width(s);
-            my_draw_text(322 - (w >> 1), 62, s, 0);
-            s = gui_strings[470];
-            w = my_string_width(s);
-            my_draw_text(206 - (w >> 1), 246, s, 0);
-        }
+        // If no special sprites, draw the text in the normal font available in-game
+        s = gui_strings[606]; // "uplink paused"
+        w = my_string_width(s);
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + 3;
+        y = pause_main_box.Y + pause_main_box.Height * 2 / 60;
+        my_draw_text(x, y, s, 0);
+
+        s = gui_strings[470]; // "detail"
+        w = my_string_width(s);
+        x = pause_main_box.X + (pause_main_box.Width / 2 - w) / 2 + pause_main_box.Width * 4 / 114;
+        y = pause_main_box.Y + pause_main_box.Height * 48 / 60;
+        my_draw_text(x, y, s, 0);
     }
 }
 
