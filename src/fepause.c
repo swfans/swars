@@ -263,12 +263,12 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
 }
 
 void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct ScreenBox *arrow_l_box,
-  struct ScreenBox *arrow_r_box, const struct ScreenBox *parent_box, int shift_y, int slider_w, int arrow_w, int cutin_w, int h)
+  struct ScreenBox *arrow_r_box, const struct ScreenBox *parent_box, int y, int slider_w, int arrow_w, int cutin_w, int h)
 {
     slider_box->Width = slider_w;
     slider_box->Height = h;
     slider_box->X = parent_box->X + (parent_box->Width - slider_box->Width) / 2 + 4;
-    slider_box->Y = parent_box->Y + shift_y;
+    slider_box->Y = y;
 
     arrow_l_box->Width = arrow_w;
     arrow_l_box->Height = h;
@@ -310,8 +310,8 @@ void init_ingame_screen_button(struct ScreenButton *p_button, ushort x, ushort y
 
 void init_pause_screen_boxes(void)
 {
-    short slider_w, arrow_w, cutin_w, slider_h, margin_h_bef, margin_h_aft;
-    short shift_x, shift_y;
+    short slider_w, arrow_w, cutin_w, slider_h;
+    int x, y;
 
     if ((ingame.PanelPermutation != 2) && (ingame.PanelPermutation != -3)) {
         ingame_boxes_colr1 = 20;
@@ -328,8 +328,6 @@ void init_pause_screen_boxes(void)
         pause_main_box.Y = 27;
         cutin_w = 5;
         slider_h = 9;
-        margin_h_bef = 7;
-        margin_h_aft = 6;
     } else {
         pause_main_box.Width = 466;
         pause_main_box.Height = 244;
@@ -337,44 +335,38 @@ void init_pause_screen_boxes(void)
         pause_main_box.Y = 54;
         cutin_w = 10;
         slider_h = 18;
-        margin_h_bef = 14;
-        margin_h_aft = 12;
     }
 
     slider_w = pause_main_box.Width * 131 / 256;
     arrow_w = slider_w * 9 / 256;
 
-    shift_y = pause_main_box.Y + margin_h_bef;
+    y = pause_main_box.Y + pause_main_box.Height * 17 / 60;
     init_slider_with_arrows_centered(&samplevol_slider_box, &samplevol_arrow_l_box,
-      &samplevol_arrow_r_box, &pause_main_box, shift_y, slider_w, arrow_w, cutin_w, slider_h);
+      &samplevol_arrow_r_box, &pause_main_box, y, slider_w, arrow_w, cutin_w, slider_h);
 
-    shift_y = pause_main_box.Y + margin_h_bef + 1 * (margin_h_bef + slider_h + margin_h_aft);
+    y += pause_main_box.Height * 11 / 60;
     init_slider_with_arrows_centered(&midivol_slider_box, &midivol_arrow_l_box,
-      &midivol_arrow_r_box, &pause_main_box, shift_y, slider_w, arrow_w, cutin_w, slider_h);
+      &midivol_arrow_r_box, &pause_main_box, y, slider_w, arrow_w, cutin_w, slider_h);
 
-    shift_y = pause_main_box.Y + margin_h_bef + 2 * (margin_h_bef + slider_h + margin_h_aft);
+    y += pause_main_box.Height * 11 / 60;
     init_slider_with_arrows_centered(&cdvolume_slider_box, &cdvolume_arrow_l_box,
-      &cdvolume_arrow_r_box, &pause_main_box, shift_y, slider_w, arrow_w, cutin_w, slider_h);
+      &cdvolume_arrow_r_box, &pause_main_box, y, slider_w, arrow_w, cutin_w, slider_h);
 
-    shift_x = pause_main_box.Width * 151 / 256;
-    shift_y = pause_main_box.Height * 196 / 256;
-    init_ingame_screen_button(&detail_hi_btn, pause_main_box.X + shift_x,
-      pause_main_box.Y + shift_y, gui_strings[477], small_font, 0);
+    x = pause_main_box.X + pause_main_box.Width * 67 / 114;
+    y = pause_main_box.Y + pause_main_box.Height * 46 / 60;
+    init_ingame_screen_button(&detail_hi_btn, x, y, gui_strings[477], small_font, 0);
 
-    shift_x = pause_main_box.Width * 195 / 256;
-    shift_y = pause_main_box.Height * 196 / 256;
-    init_ingame_screen_button(&detail_lo_btn, pause_main_box.X + shift_x,
-      pause_main_box.Y + shift_y, gui_strings[475], small_font, 0);
+    x = pause_main_box.X + pause_main_box.Width * 87 / 114;
+    y = pause_main_box.Y + pause_main_box.Height * 46 / 60;
+    init_ingame_screen_button(&detail_lo_btn, x, y, gui_strings[475], small_font, 0);
 
-    shift_x = pause_main_box.Width * 107 / 256;
-    shift_y = pause_main_box.Height * 225 / 256;
-    init_ingame_screen_button(&continue_btn, pause_main_box.X + shift_x,
-      pause_main_box.Y + shift_y, gui_strings[455], small_font, 0);
+    x = pause_main_box.X + pause_main_box.Width * 47 / 114;
+    y = pause_main_box.Y + pause_main_box.Height * 53 / 60;
+    init_ingame_screen_button(&continue_btn, x, y, gui_strings[455], small_font, 0);
 
-    shift_x = pause_main_box.Width * 170 / 256;
-    shift_y = pause_main_box.Height * 225 / 256;
-    init_ingame_screen_button(&abort_btn, pause_main_box.X + shift_x,
-      pause_main_box.Y + shift_y, gui_strings[445], small_font, 0);
+    x = pause_main_box.X + pause_main_box.Width * 76 / 114;
+    y = pause_main_box.Y + pause_main_box.Height * 53 / 60;
+    init_ingame_screen_button(&abort_btn, x, y, gui_strings[445], small_font, 0);
 }
 
 void start_pause_screen(void)
