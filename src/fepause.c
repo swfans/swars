@@ -59,8 +59,9 @@ static struct ScreenButton detail_lo_btn;
 static struct ScreenButton continue_btn;
 static struct ScreenButton abort_btn;
 
-ubyte update_ingame_button(struct ScreenButton *p_button, ubyte enabled)
+ubyte draw_ingame_button(struct ScreenButton *p_button, ubyte enabled)
 {
+    short text_x, text_y;
     short margin;
 
     margin = p_button->Border + 1;
@@ -70,24 +71,38 @@ ubyte update_ingame_button(struct ScreenButton *p_button, ubyte enabled)
 
     lbDisplay.DrawFlags = 0x0010;
     lbDisplay.DrawColour = colour_lookup[ColLU_WHITE];
-
     if (enabled || mouse_move_over_box(p_button))
     {
-      short text_x, text_y;
+        LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, lbDisplay.DrawColour);
+        lbDisplay.DrawFlags |= 0x0040;
+    }
+    else
+    {
+        if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3) {
+            lbDisplay.DrawFlags |= 0x0040;
+            lbDisplay.DrawColour = p_button->Colour;
+        }
+        LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, p_button->Colour);
+    }
 
-      LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, lbDisplay.DrawColour);
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        text_x = p_button->X + 2 * margin;
+        text_y = p_button->Y + 2 * margin;
+    } else {
+        text_x = p_button->X + (p_button->Width >> 2) + margin;
+        text_y = p_button->Y + (p_button->Height >> 1) - margin;
+    }
+    my_draw_text(text_x, text_y, p_button->Text, 0);
 
-      lbDisplay.DrawFlags |= 0x0040;
-      if (lbDisplay.GraphicsScreenHeight < 400) {
-          text_x = p_button->X + 2 * margin;
-          text_y = p_button->Y + 2 * margin;
-      } else {
-          text_x = p_button->X + (p_button->Width >> 2) + margin;
-          text_y = p_button->Y + (p_button->Height >> 1) - margin;
-      }
-      my_draw_text(text_x, text_y, p_button->Text, 0);
+    lbDisplay.DrawFlags &= ~0x0040;
 
-      lbDisplay.DrawFlags &= ~0x0040;
+    return 0;
+}
+
+ubyte input_ingame_button(struct ScreenButton *p_button, ubyte enabled)
+{
+    if (enabled || mouse_move_over_box(p_button))
+    {
       if (lbDisplay.LeftButton)
       {
         if (mouse_move_over_box(p_button))
@@ -96,27 +111,6 @@ ubyte update_ingame_button(struct ScreenButton *p_button, ubyte enabled)
         if (mouse_down_over_box(p_button))
             return 1;
       }
-    }
-    else
-    {
-      short text_x, text_y;
-
-      if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3)
-      {
-          lbDisplay.DrawFlags |= 0x0040;
-          lbDisplay.DrawColour = p_button->Colour;
-      }
-      LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, p_button->Colour);
-
-      if (lbDisplay.GraphicsScreenHeight < 400) {
-          text_x = p_button->X + 2 * margin;
-          text_y = p_button->Y + 2 * margin;
-      } else {
-          text_x = p_button->X + (p_button->Width >> 2) + margin;
-          text_y = p_button->Y + (p_button->Height >> 1) - margin;
-      }
-      my_draw_text(text_x, text_y, p_button->Text, 0);
-      lbDisplay.DrawFlags &= ~0x0040;
     }
     return 0;
 }
@@ -156,19 +150,22 @@ TbBool input_kicked_right_arrow(struct ScreenBox *box, short *target)
 TbBool input_slant_box(struct ScreenBox *box, short *target)
 {
     int ms_x, ms_y;
+    short border;
+
+    border = lbDisplay.GraphicsScreenHeight < 400 ? 1 : 2;
 
     if (lbDisplay.MLeftButton)
     {
-        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        if ((ms_y >= box->Y + 2) && (ms_y <= box->Y + box->Height - 4))
+        ms_x = lbDisplay.MMouseX;
+        ms_y = lbDisplay.MMouseY;
+        if ((ms_y >= box->Y + border) && (ms_y <= box->Y + box->Height - 2 * border))
         {
             int dx, dy;
-            dx = ms_x - box->X - 2;
-            dy = ms_y - box->Y - 2;
-            if (dx + dy >= 0 && dx + dy <= box->Width - 4 - 2)
+            dx = ms_x - box->X - border;
+            dy = ms_y - box->Y - border;
+            if (dx + dy >= 0 && dx + dy <= box->Width - 2 * border - border)
             {
-                (*target) = 322 * (dx + dy) / (box->Width - 4 - 2);
+                (*target) = 322 * (dx + dy) / (box->Width - 2 * border - border);
                 return true;
             }
         }
@@ -214,10 +211,7 @@ void draw_parallelogram_45degi(short x, short y, short w, short h, TbPixel colr2
     cx = x;
     for (i = 0; i < h; i += 2)
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbDrawLine((cx) >> 1, (y+i) >> 1, (cx+w) >> 1, (y+i) >> 1, colr2);
-        else
-            LbDrawLine((cx), (y+i), (cx+w), (y+i), colr2);
+        LbDrawLine(cx, y + i, cx + w, y + i, colr2);
         cx -= 2;
     }
 }
@@ -225,8 +219,7 @@ void draw_parallelogram_45degi(short x, short y, short w, short h, TbPixel colr2
 void draw_slant_box(struct ScreenBox *box, TbPixel colr2)
 {
     draw_parallelogram_45degi(box->X, box->Y, box->Width, box->Height, colr2);
-    if (lbDisplay.GraphicsScreenHeight >= 400)
-        draw_parallelogram_45degi(box->X - 1, box->Y + 1, box->Width, box->Height, colr2);
+    draw_parallelogram_45degi(box->X - 1, box->Y + 1, box->Width, box->Height, colr2);
 }
 
 void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
@@ -240,19 +233,12 @@ void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
 
     if (mouse_move_over_slant_box(box))
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbSpriteDrawOneColour(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100],
-              colour_lookup[ColLU_WHITE]);
-        else
-            LbSpriteDrawOneColour(box->X, box->Y - stp, &pop1_sprites[100],
-              colour_lookup[ColLU_WHITE]);
+        LbSpriteDrawOneColour(box->X, box->Y - stp, &pop1_sprites[100],
+          colour_lookup[ColLU_WHITE]);
     }
     else
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbSpriteDraw(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100]);
-        else
-            LbSpriteDraw(box->X, box->Y - stp, &pop1_sprites[100]);
+        LbSpriteDraw(box->X, box->Y - stp, &pop1_sprites[100]);
     }
 }
 
@@ -267,38 +253,31 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
 
     if (mouse_move_over_slant_box(box))
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbSpriteDrawOneColour((box->X >> 1) - stp, (box->Y >> 1) - stp,
-              &pop1_sprites[101], colour_lookup[ColLU_WHITE]);
-        else
-            LbSpriteDrawOneColour(box->X - stp, box->Y - stp,
-              &pop1_sprites[101], colour_lookup[ColLU_WHITE]);
+        LbSpriteDrawOneColour(box->X - stp, box->Y - stp,
+          &pop1_sprites[101], colour_lookup[ColLU_WHITE]);
     }
     else
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            LbSpriteDraw((box->X >> 1) - stp, (box->Y >> 1) - stp, &pop1_sprites[101]);
-        else
-            LbSpriteDraw(box->X - stp, box->Y - stp, &pop1_sprites[101]);
+        LbSpriteDraw(box->X - stp, box->Y - stp, &pop1_sprites[101]);
     }
 }
 
 void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct ScreenBox *arrow_l_box,
-  struct ScreenBox *arrow_r_box, const struct ScreenBox *parent_box, int shift_y, int slider_w, int arrow_w, int h)
+  struct ScreenBox *arrow_r_box, const struct ScreenBox *parent_box, int y, int slider_w, int arrow_w, int cutin_w, int h)
 {
     slider_box->Width = slider_w;
     slider_box->Height = h;
     slider_box->X = parent_box->X + (parent_box->Width - slider_box->Width) / 2 + 4;
-    slider_box->Y = parent_box->Y + shift_y;
+    slider_box->Y = y;
 
     arrow_l_box->Width = arrow_w;
     arrow_l_box->Height = h;
-    arrow_l_box->X = slider_box->X - 28;
+    arrow_l_box->X = slider_box->X - arrow_w - 2 * cutin_w;
     arrow_l_box->Y = slider_box->Y;
 
     arrow_r_box->Width = arrow_w;
     arrow_r_box->Height = h;
-    arrow_r_box->X = slider_box->X + slider_box->Width - 10;
+    arrow_r_box->X = slider_box->X + slider_box->Width - cutin_w;
     arrow_r_box->Y = slider_box->Y;
 }
 
@@ -331,7 +310,8 @@ void init_ingame_screen_button(struct ScreenButton *p_button, ushort x, ushort y
 
 void init_pause_screen_boxes(void)
 {
-    int slider_w, arrow_w, slider_h, margin_h;
+    short slider_w, arrow_w, cutin_w, slider_h;
+    int x, y;
 
     if ((ingame.PanelPermutation != 2) && (ingame.PanelPermutation != -3)) {
         ingame_boxes_colr1 = 20;
@@ -341,41 +321,51 @@ void init_pause_screen_boxes(void)
         ingame_boxes_colr2 = 35;
     }
 
-    pause_main_box.Width = 466;
-    pause_main_box.Height = 244;
-    pause_main_box.X = 86;
-    pause_main_box.Y = 54;
-    slider_h = 18;
-
-    slider_w = 466 * 131 / 256;
-    arrow_w = slider_w * 9 / 256;
-    margin_h = 26;
-
-    init_slider_with_arrows_centered(&samplevol_slider_box, &samplevol_arrow_l_box,
-      &samplevol_arrow_r_box, &pause_main_box, 68, slider_w, arrow_w, slider_h);
-
-    init_slider_with_arrows_centered(&midivol_slider_box, &midivol_arrow_l_box,
-      &midivol_arrow_r_box, &pause_main_box, 68 + 1 * (slider_h + margin_h), slider_w, arrow_w, slider_h);
-
-    init_slider_with_arrows_centered(&cdvolume_slider_box, &cdvolume_arrow_l_box,
-      &cdvolume_arrow_r_box, &pause_main_box, 68 + 2 * (slider_h + margin_h), slider_w, arrow_w, slider_h);
-
-    // Currenlty not all components should be scaled to low res, hence changing the parent box here
     if (lbDisplay.GraphicsScreenHeight < 400) {
         pause_main_box.Width = 233;
         pause_main_box.Height = 122;
-        pause_main_box.X = 43;
-        pause_main_box.Y = 27;
+        cutin_w = 5;
+        slider_h = 9;
+    } else {
+        pause_main_box.Width = 466;
+        pause_main_box.Height = 244;
+        cutin_w = 10;
+        slider_h = 18;
     }
 
-    init_ingame_screen_button(&detail_hi_btn, pause_main_box.X + pause_main_box.Width * 151 / 256,
-      pause_main_box.Y + pause_main_box.Height * 196 / 256, gui_strings[477], small_font, 0);
-    init_ingame_screen_button(&detail_lo_btn, pause_main_box.X + pause_main_box.Width * 195 / 256,
-      pause_main_box.Y + pause_main_box.Height * 196 / 256, gui_strings[475], small_font, 0);
-    init_ingame_screen_button(&continue_btn, pause_main_box.X + pause_main_box.Width * 107 / 256,
-      pause_main_box.Y + pause_main_box.Height * 225 / 256, gui_strings[455], small_font, 0);
-    init_ingame_screen_button(&abort_btn, pause_main_box.X + pause_main_box.Width * 170 / 256,
-      pause_main_box.Y + pause_main_box.Height * 225 / 256, gui_strings[445], small_font, 0);
+    pause_main_box.X = (lbDisplay.GraphicsScreenWidth - pause_main_box.Width) / 2;
+    pause_main_box.Y = (lbDisplay.GraphicsScreenHeight - pause_main_box.Height) / 2;
+
+    slider_w = pause_main_box.Width * 131 / 256;
+    arrow_w = slider_w * 9 / 256;
+
+    y = pause_main_box.Y + pause_main_box.Height * 17 / 60;
+    init_slider_with_arrows_centered(&samplevol_slider_box, &samplevol_arrow_l_box,
+      &samplevol_arrow_r_box, &pause_main_box, y, slider_w, arrow_w, cutin_w, slider_h);
+
+    y += pause_main_box.Height * 11 / 60;
+    init_slider_with_arrows_centered(&midivol_slider_box, &midivol_arrow_l_box,
+      &midivol_arrow_r_box, &pause_main_box, y, slider_w, arrow_w, cutin_w, slider_h);
+
+    y += pause_main_box.Height * 11 / 60;
+    init_slider_with_arrows_centered(&cdvolume_slider_box, &cdvolume_arrow_l_box,
+      &cdvolume_arrow_r_box, &pause_main_box, y, slider_w, arrow_w, cutin_w, slider_h);
+
+    x = pause_main_box.X + pause_main_box.Width * 67 / 114;
+    y = pause_main_box.Y + pause_main_box.Height * 46 / 60;
+    init_ingame_screen_button(&detail_hi_btn, x, y, gui_strings[477], small_font, 0);
+
+    x = pause_main_box.X + pause_main_box.Width * 87 / 114;
+    y = pause_main_box.Y + pause_main_box.Height * 46 / 60;
+    init_ingame_screen_button(&detail_lo_btn, x, y, gui_strings[475], small_font, 0);
+
+    x = pause_main_box.X + pause_main_box.Width * 47 / 114;
+    y = pause_main_box.Y + pause_main_box.Height * 53 / 60;
+    init_ingame_screen_button(&continue_btn, x, y, gui_strings[455], small_font, 0);
+
+    x = pause_main_box.X + pause_main_box.Width * 76 / 114;
+    y = pause_main_box.Y + pause_main_box.Height * 53 / 60;
+    init_ingame_screen_button(&abort_btn, x, y, gui_strings[445], small_font, 0);
 }
 
 void start_pause_screen(void)
@@ -417,87 +407,93 @@ void wait_for_keypress_end(ushort game_key, TbBool impatient)
 
 void draw_pause_screen_static(struct ScreenBox *box)
 {
-    int w;
     const char *s;
+    int x, y, w;
 
     draw_box_cutedge(box, ingame_boxes_colr1);
 
     lbFontPtr = small_font;
     my_set_text_window(0, 0, lbDisplay.PhysicalScreenWidth,
       lbDisplay.PhysicalScreenHeight);
-    if ((ingame.PanelPermutation == 2) || (ingame.PanelPermutation == -3))
-    {
+
+    if ((ingame.PanelPermutation == 2) || (ingame.PanelPermutation == -3)) {
         lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
         lbDisplay.DrawColour = ingame_boxes_colr2;
     }
-    if (lbDisplay.GraphicsScreenHeight < 400)
     {
         s = mission_name;
         w = my_string_width(s);
-        my_draw_text(161 - (w >> 1), 44, s, 0);
-        s = gui_strings[419];
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + pause_main_box.Width / 114;
+        y = pause_main_box.Y + pause_main_box.Height * 9 / 60;
+        my_draw_text(x, y, s, 0);
+
+        s = gui_strings[419]; // "sound volume"
         w = my_string_width(s);
-        my_draw_text(161 - (w >> 1), 54, s, 0);
-        s = gui_strings[420];
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + pause_main_box.Width / 114;
+        y += pause_main_box.Height * 5 / 60;
+        my_draw_text(x, y, s, 0);
+
+        s = gui_strings[420]; // "tension volume"
         w = my_string_width(s);
-        my_draw_text(161 - (w >> 1), 76, s, 0);
-        s = gui_strings[516];
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + pause_main_box.Width / 114;
+        y += pause_main_box.Height * 11 / 60;
+        my_draw_text(x, y, s, 0);
+
+        s = gui_strings[516]; // "cd volume"
         w = my_string_width(s);
-        my_draw_text(161 - (w >> 1), 98, s, 0);
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + pause_main_box.Width / 114;
+        y += pause_main_box.Height * 11 / 60;
+        my_draw_text(x, y, s, 0);
     }
-    else
-    {
-        s = mission_name;
-        w = my_string_width(s);
-        my_draw_text(322 - (w >> 1), 88, s, 0);
-        s = gui_strings[419];
-        w = my_string_width(s);
-        my_draw_text(322 - (w >> 1), 108, s, 0);
-        s = gui_strings[420];
-        w = my_string_width(s);
-        my_draw_text(322 - (w >> 1), 152, s, 0);
-        s = gui_strings[516];
-        w = my_string_width(s);
-        my_draw_text(322 - (w >> 1), 196, s, 0);
-    }
-    if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3)
+    if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3) {
         lbDisplay.DrawFlags &= ~Lb_TEXT_ONE_COLOR;
+    }
 
     if (language_3str[0] == 'e')
     {
+        // Special sprites with large text are only available for some languages
+        struct TbSprite *p_spr;
+
         if (lbDisplay.GraphicsScreenHeight < 400)
         {
-            LbSpriteDraw(89, 31, &pop1_sprites[102]);
-            LbSpriteDraw(83, 120, &pop1_sprites[103]);
+            p_spr = &pop1_sprites[102]; // "uplink paused"
+            w = p_spr->SWidth;
+            x = pause_main_box.X + (pause_main_box.Width - w) / 2;
+            y = pause_main_box.Y + pause_main_box.Height * 2 / 60;
+            LbSpriteDraw(x, y, p_spr);
         }
         else
         {
-            LbSpriteDraw(178, 62, &pop1_sprites[102]);
-            w = pop1_sprites[102].SWidth;
-            LbSpriteDraw(178 + w, 62, &pop1_sprites[104]);
-            LbSpriteDraw(166, 240, &pop1_sprites[103]);
+            w = pop1_sprites[102].SWidth + pop1_sprites[104].SWidth;
+            p_spr = &pop1_sprites[102]; // "uplink"
+            x = pause_main_box.X + (pause_main_box.Width - w) / 2;
+            y = pause_main_box.Y + pause_main_box.Height * 2 / 60;
+            LbSpriteDraw(x, y, p_spr);
+            x += p_spr->SWidth;
+            p_spr = &pop1_sprites[104]; // "paused"
+            LbSpriteDraw(x, y, p_spr);
+
         }
+        p_spr = &pop1_sprites[103]; // "detail"
+        w = p_spr->SWidth;
+        x = pause_main_box.X + (pause_main_box.Width / 2 - w) / 2 + pause_main_box.Width * 4 / 114;
+        y = pause_main_box.Y + pause_main_box.Height * 46 / 60;
+        LbSpriteDraw(x, y, p_spr);
     }
     else
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-        {
-            s = gui_strings[606];
-            w = my_string_width(s);
-            my_draw_text(161 - (w >> 1), 31, s, 0);
-            s = gui_strings[470];
-            w = my_string_width(s);
-            my_draw_text(103 - (w >> 1), 123, s, 0);
-        }
-        else
-        {
-            s = gui_strings[606];
-            w = my_string_width(s);
-            my_draw_text(322 - (w >> 1), 62, s, 0);
-            s = gui_strings[470];
-            w = my_string_width(s);
-            my_draw_text(206 - (w >> 1), 246, s, 0);
-        }
+        // If no special sprites, draw the text in the normal font available in-game
+        s = gui_strings[606]; // "uplink paused"
+        w = my_string_width(s);
+        x = pause_main_box.X + (pause_main_box.Width - w) / 2 + 3;
+        y = pause_main_box.Y + pause_main_box.Height * 2 / 60;
+        my_draw_text(x, y, s, 0);
+
+        s = gui_strings[470]; // "detail"
+        w = my_string_width(s);
+        x = pause_main_box.X + (pause_main_box.Width / 2 - w) / 2 + pause_main_box.Width * 4 / 114;
+        y = pause_main_box.Y + pause_main_box.Height * 48 / 60;
+        my_draw_text(x, y, s, 0);
     }
 }
 
@@ -532,12 +528,73 @@ ubyte show_pause_screen(struct ScreenBox *box)
     draw_pause_volume_bar(&midivol_slider_box, &midivol_arrow_l_box, &midivol_arrow_r_box, &startscr_midivol);
     draw_pause_volume_bar(&cdvolume_slider_box, &cdvolume_arrow_l_box, &cdvolume_arrow_r_box, &startscr_cdvolume);
 
+    draw_ingame_button(&detail_hi_btn, (ingame.DetailLevel == 1));
+    draw_ingame_button(&detail_lo_btn, (ingame.DetailLevel == 0));
+    draw_ingame_button(&continue_btn, 0);
+    draw_ingame_button(&abort_btn, 0);
+
     return 0;
+}
+
+void *input_pause_screen(void)
+{
+    short *target;
+    void *affected;
+
+    affected = NULL;
+
+    {
+    target = &startscr_samplevol;
+
+    if (input_kicked_left_arrow(&samplevol_arrow_l_box, target))
+        affected = target;
+    if (input_kicked_right_arrow(&samplevol_arrow_r_box, target))
+        affected = target;
+    if (input_slant_box(&samplevol_slider_box, target))
+        affected = target;
+    }
+
+    {
+    target = &startscr_midivol;
+
+    if (input_kicked_left_arrow(&midivol_arrow_l_box, target))
+        affected = target;
+    if (input_kicked_right_arrow(&midivol_arrow_r_box, target))
+        affected = target;
+    if (input_slant_box(&midivol_slider_box, target))
+        affected = target;
+    }
+
+    {
+    target = &startscr_cdvolume;
+
+    if (input_kicked_left_arrow(&cdvolume_arrow_l_box, target))
+        affected = target;
+    if (input_kicked_right_arrow(&cdvolume_arrow_r_box, target))
+        affected = target;
+    if (input_slant_box(&cdvolume_slider_box, target))
+        affected = target;
+    }
+
+    {
+    target = &startscr_cdvolume;
+
+        if (input_ingame_button(&detail_hi_btn, ingame.DetailLevel == 1)) {
+            ingame.DetailLevel = 1;
+            affected = target;
+        }
+        if (input_ingame_button(&detail_lo_btn, ingame.DetailLevel == 0)) {
+            ingame.DetailLevel = 0;
+            affected = target;
+        }
+    }
+
+    return affected;
 }
 
 TbBool pause_screen_handle(void)
 {
-    short *affected;
+    void *affected;
     TbBool resume_game;
 
     init_pause_screen_boxes();
@@ -555,75 +612,35 @@ TbBool pause_screen_handle(void)
     resume_game = false;
     while (!resume_game)
     {
-        short *target;
-
         joy_func_065(&joy);
-        affected = NULL;
 
-        {
-        target = &startscr_samplevol;
-        if (input_kicked_left_arrow(&samplevol_arrow_l_box, target))
-            affected = target;
-        if (input_kicked_right_arrow(&samplevol_arrow_r_box, target))
-            affected = target;
-        if (input_slant_box(&samplevol_slider_box, target))
-            affected = target;
-        }
-
-        {
-        target = &startscr_midivol;
-
-        if (input_kicked_left_arrow(&midivol_arrow_l_box, target))
-            affected = target;
-        if (input_kicked_right_arrow(&midivol_arrow_r_box, target))
-            affected = target;
-        if (input_slant_box(&midivol_slider_box, target))
-            affected = target;
-        }
-
-        {
-        target = &startscr_cdvolume;
-
-        if (input_kicked_left_arrow(&cdvolume_arrow_l_box, target))
-            affected = target;
-        if (input_kicked_right_arrow(&cdvolume_arrow_r_box, target))
-            affected = target;
-        if (input_slant_box(&cdvolume_slider_box, target))
-            affected = target;
-        }
+        affected = input_pause_screen();
 
         if (affected == &startscr_samplevol)
         {
-            SetSoundMasterVolume(127 * (*affected) / 322);
+            SetSoundMasterVolume(127 * startscr_samplevol / 322);
             if (!IsSamplePlaying(0, 80, 0))
                 play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
         }
         else if (affected == &startscr_midivol)
         {
-            SetMusicMasterVolume(127 * (*affected) / 322);
+            SetMusicMasterVolume(127 * startscr_midivol / 322);
         }
         else if (affected == &startscr_cdvolume)
         {
-            SetCDVolume(70 * (127 * (*affected) / 322) / 100);
+            SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+        }
+        else if (affected == &ingame.DetailLevel)
+        {
+            bang_set_detail(1 - ingame.DetailLevel);
         }
 
         show_pause_screen(&pause_main_box);
 
-        if (update_ingame_button(&detail_hi_btn, ingame.DetailLevel == 1))
-        {
-            ingame.DetailLevel = 1;
-            bang_set_detail(0);
-        }
-        if (update_ingame_button(&detail_lo_btn, ingame.DetailLevel == 0))
-        {
-            ingame.DetailLevel = 0;
-            bang_set_detail(1);
-        }
-
-        if (update_ingame_button(&continue_btn, 0))
+        if (input_ingame_button(&continue_btn, 0))
             resume_game = true;
 
-        if (update_ingame_button(&abort_btn, 0))
+        if (input_ingame_button(&abort_btn, 0))
         {
             swap_wscreen();
             SetMusicVolume(100, 0);
