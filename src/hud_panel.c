@@ -1021,20 +1021,16 @@ TbBool check_scanner_input(void)
 void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
 {
     struct TbSprite *spr;
-    int x, y;
 
-    spr = &pop1_sprites[spr_id];
-    if (lbDisplay.GraphicsScreenHeight >= 400) {
-        x = px;
-        y = py;
-    } else {
-        x = px >> 1;
-        y = py >> 1;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        px /= 2;
+        py /= 2;
     }
+    spr = &pop1_sprites[spr_id];
     if (ingame.PanelPermutation == -1)
-        SCANNER_unkn_func_202(spr, x, y, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+        SCANNER_unkn_func_202(spr, px, py, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
     else
-        LbSpriteDraw_1(x, y, spr);
+        LbSpriteDraw_1(px, py, spr);
 }
 
 /**
@@ -1046,20 +1042,16 @@ void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
 void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
 {
     struct TbSprite *spr;
-    int x, y;
 
-    spr = &pop1_sprites[spr_id];
-    if (lbDisplay.GraphicsScreenHeight >= 400) {
-        x = px;
-        y = py;
-    } else {
-        x = px >> 1;
-        y = py >> 1;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        px /= 2;
+        py /= 2;
     }
+    spr = &pop1_sprites[spr_id];
     if (ingame.PanelPermutation == -1)
-        SCANNER_unkn_func_202(spr, x, y, ingame.Scanner.Contrast, 8);
+        SCANNER_unkn_func_202(spr, px, py, ingame.Scanner.Contrast, 8);
     else
-        SCANNER_unkn_func_201(spr, x, y, &pixmap.fade_table[4096]);
+        SCANNER_unkn_func_201(spr, px, py, &pixmap.fade_table[4096]);
 }
 
 /**
@@ -1071,18 +1063,14 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
 void draw_new_panel_sprite_prealp(int px, int py, ulong spr_id)
 {
     struct TbSprite *spr;
-    int x, y;
 
     spr = &pop1_sprites[spr_id];
-    if (lbDisplay.GraphicsScreenHeight >= 400) {
-        x = px;
-        y = py;
-    } else {
-        x = px >> 1;
-        y = py >> 1;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        px /= 2;
+        py /= 2;
     }
     if (ingame.PanelPermutation == -1)
-        SCANNER_unkn_func_202(spr, x, y, ingame.Scanner.Contrast,
+        SCANNER_unkn_func_202(spr, px, py, ingame.Scanner.Contrast,
           ingame.Scanner.Brightness);
 }
 
@@ -1109,7 +1097,7 @@ void draw_fourpack_amount(short x, ushort y, ushort amount)
     for (i = 0; i < min(amount,8); i++)
     {
       if (lbDisplay.GraphicsScreenHeight < 400)
-          LbDrawBox((x + dtx[i]) >> 1, (y + dty[i]) >> 1, 2, 2, col);
+          LbDrawBox(x + (dtx[i] >> 1), y + (dty[i] >> 1), 2, 2, col);
       else
           LbDrawBox(x + dtx[i], y + dty[i], 4, 4, col);
     }
@@ -1326,6 +1314,11 @@ void draw_agent_carried_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
         x = cx + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].x;
         y = cy + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].y;
     }
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x /= 2;
+        y /= 2;
+    }
+
     draw_fourpack_items(x, y, plagent, weptype);
 }
 
@@ -1360,6 +1353,10 @@ void draw_agent_current_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
 
     x = cx + game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].x;
     y = cy + game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].y;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x /= 2;
+        y /= 2;
+    }
     draw_fourpack_items(x, y, plagent, weptype);
 }
 
@@ -1372,27 +1369,32 @@ void draw_agent_carried_weapon_prealp_list(PlayerInfo *p_locplayer, ushort plage
     recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
     wep_highlight = panel_agents_weapon_highlighted(p_locplayer, plagent, weptype);
 
+    x = cx + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].x;
+    y = cy + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].y;
+
     lbDisplay.DrawFlags = 0;
     if (!recharging || (gameturn & 1))
     {
         if (slot == 6)
-            draw_new_panel_sprite_std(cx, cy + 4, 13);
+            draw_new_panel_sprite_std(cx, cy, 13);
         else
-            draw_new_panel_sprite_std(cx, cy + 4, 12);
+            draw_new_panel_sprite_std(cx, cy, 12);
 
-        draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype, false));
+        draw_new_panel_sprite_std(x, y, weapon_sprite_index(weptype, false));
     }
     if (ready) {
-        draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype, true));
+        draw_new_panel_sprite_std(x, y, weapon_sprite_index(weptype, true));
     }
 
     if (wep_highlight)
     {
-        draw_new_panel_sprite_std(cx, cy + 4, 90);
+        draw_new_panel_sprite_std(cx, cy, 90);
+    }
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x /= 2;
+        y /= 2;
     }
 
-    x = cx + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].x;
-    y = cy + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].y;
     draw_fourpack_items(x, y, plagent, weptype);
 }
 
@@ -1508,7 +1510,7 @@ void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong wea
             continue;
         if (nshown >= ncarr_below)
         {
-            draw_agent_carried_weapon_prealp_list(p_locplayer, plagent, nshown, (weptype == current_weapon), weptype, 30 - 8, cy - 4);
+            draw_agent_carried_weapon_prealp_list(p_locplayer, plagent, nshown, (weptype == current_weapon), weptype, 30 - 8, cy);
 
             cy += 28;
             ++nchecked;
