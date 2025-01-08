@@ -23,6 +23,7 @@
 #include "bfgentab.h"
 #include "bfline.h"
 #include "bfmemut.h"
+#include "bfplanar.h"
 #include "bfscreen.h"
 #include "bfsprite.h"
 #include "bfutility.h"
@@ -70,6 +71,18 @@ enum PanelType {
     PanT_UNKN08,
     PanT_UNKN09,
     PanT_UNKN10,
+};
+
+enum PanelShift {
+    PaSh_AGENT_PANEL_TO_NUMBER = 0,
+    PaSh_AGENT_WEAPON_TO_LIST = 4,
+    PaSh_GROUP_PANE_TO_THERMAL = 5,
+    PaSh_WEP_CURR_BTN_TO_SYMBOL = 6,
+    PaSh_WEP_FRST_BTN_TO_SYMBOL = 7,
+    PaSh_WEP_NEXT_BTN_TO_SYMBOL = 8,
+    PaSh_WEP_CURR_BTN_TO_DECOR =  9,
+    PaSh_WEP_FRST_BTN_TO_DECOR = 10,
+    PaSh_WEP_NEXT_BTN_TO_DECOR = 11,
 };
 
 struct GamePanel game_panel_lo[] = {
@@ -155,12 +168,103 @@ struct GamePanel game_panel_prealp_hi[] = {
     { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
 };
 
-short panel_agent_number_sprite_shift[] =
-  { 4,  8,  4, 10};
-short panel_prealp_agent_number_sprite_shift_hi[] =
-  {14,  9, 10, 16};
-short panel_prealp_agent_number_sprite_shift_lo[] =
-  {13,  9,  7, 12};
+struct TbPoint game_panel_hi_shifts[] = {
+    // PaSh_AGENT_PANEL_TO_NUMBER
+    { 4, 2},
+    { 8, 2},
+    { 4, 2},
+    {10, 2},
+    // PaSh_AGENT_WEAPON_TO_LIST
+    { 1,24},
+    // PaSh_GROUP_PANE_TO_THERMAL
+    { 4,60},
+    // PaSh_WEP_CURR_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_FRST_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_CURR_BTN_TO_DECOR
+    { 0, 0},
+    // PaSh_WEP_FRST_BTN_TO_DECOR
+    {-16,-8},
+    // PaSh_WEP_NEXT_BTN_TO_DECOR
+    { 0, -4},
+};
+
+struct TbPoint game_panel_prealp_hi_shifts[] = {
+    // PaSh_AGENT_PANEL_TO_NUMBER
+    {14, 4},
+    { 9, 4},
+    {10, 4},
+    {16, 4},
+    // PaSh_AGENT_WEAPON_TO_LIST
+    { 1,24},
+    // PaSh_GROUP_PANE_TO_THERMAL
+    { 4,60},
+    // PaSh_WEP_CURR_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_FRST_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_CURR_BTN_TO_DECOR
+    { 0, 0},
+    // PaSh_WEP_FRST_BTN_TO_DECOR
+    {-16,-8},
+    // PaSh_WEP_NEXT_BTN_TO_DECOR
+    { 0, -4},
+};
+
+struct TbPoint game_panel_lo_shifts[] = {
+    // PaSh_AGENT_PANEL_TO_NUMBER
+    { 4, 2},
+    { 8, 2},
+    { 4, 2},
+    {10, 2},
+    // PaSh_AGENT_WEAPON_TO_LIST
+    { 1,24},
+    // PaSh_GROUP_PANE_TO_THERMAL
+    { 4,60},
+    // PaSh_WEP_CURR_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_FRST_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_CURR_BTN_TO_DECOR
+    { 0, 0},
+    // PaSh_WEP_FRST_BTN_TO_DECOR
+    {-16,-8},
+    // PaSh_WEP_NEXT_BTN_TO_DECOR
+    { 0, -4},
+};
+
+struct TbPoint game_panel_prealp_lo_shifts[] = {
+    // PaSh_AGENT_PANEL_TO_NUMBER
+    {13, 3},
+    { 9, 3},
+    { 7, 3},
+    {12, 3},
+    // PaSh_AGENT_WEAPON_TO_LIST
+    { 1,24},
+    // PaSh_GROUP_PANE_TO_THERMAL
+    { 4,60},
+    // PaSh_WEP_CURR_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_FRST_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_CURR_BTN_TO_DECOR
+    { 0, 0},
+    // PaSh_WEP_FRST_BTN_TO_DECOR
+    {-16,-8},
+    // PaSh_WEP_NEXT_BTN_TO_DECOR
+    { 0, -4},
+};
+
+struct TbPoint *game_panel_shifts;
 
 TbResult prep_pop_sprites(short detail)
 {
@@ -194,9 +298,15 @@ void load_pop_sprites_lo(void)
 #endif
     prep_pop_sprites(0);
     if (ingame.PanelPermutation >= 0)
+    {
         game_panel = game_panel_prealp_hi;
+        game_panel_shifts = game_panel_prealp_lo_shifts;
+    }
     else
+    {
         game_panel = game_panel_lo;
+        game_panel_shifts = game_panel_lo_shifts;
+    }
 }
 
 void load_pop_sprites_hi(void)
@@ -207,9 +317,15 @@ void load_pop_sprites_hi(void)
 #endif
     prep_pop_sprites(1);
     if (ingame.PanelPermutation >= 0)
+    {
         game_panel = game_panel_prealp_hi;
+        game_panel_shifts = game_panel_prealp_hi_shifts;
+    }
     else
+    {
         game_panel = game_panel_hi;
+        game_panel_shifts = game_panel_hi_shifts;
+    }
 }
 
 void load_pop_sprites_for_current_mode(void)
@@ -980,8 +1096,8 @@ void draw_new_panel_sprite_prealp(int px, int py, ulong spr_id)
 void draw_fourpack_amount(short x, ushort y, ushort amount)
 {
     // We're expecting to draw 4 items; 8 are supported mostly to signal an issue
-    static short dtx[] = {0+10, 0+10, 72-10, 72-10, 0+16, 0+16, 72-16, 72-16,};
-    static short dty[] = {0+4, 22-4, 0+4, 22-4, 0+4, 22-4, 0+4, 22-4,};
+    static short dtx[] = {0+2, 0+2, 60-4-2, 60-4-2, 0+8, 0+8, 60-4-2-4-2, 60-4-2-4-2,};
+    static short dty[] = {0+0, 18-4-0, 0+0, 18-4-0, 0+0, 18-4-0, 0+0, 18-4-0,};
     int i;
     TbPixel col;
 
@@ -1007,12 +1123,12 @@ TbBool panel_agents_weapon_highlighted(PlayerInfo *p_locplayer, ushort plagent, 
 /**
  * For weapons which contain up to four itemized parts, draw the items.
  *
- * @param a1
+ * @param x
  * @param y
  * @param plagent
  * @param weptype
  */
-void draw_fourpack_items(int a1, ushort y, short plagent, short weptype)
+void draw_fourpack_items(short x, short y, short plagent, short weptype)
 {
     ushort fp;
 
@@ -1020,7 +1136,7 @@ void draw_fourpack_items(int a1, ushort y, short plagent, short weptype)
     if (fp < WFRPK_COUNT) {
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];
-        draw_fourpack_amount(a1, y, p_locplayer->FourPacks[fp][plagent]);
+        draw_fourpack_amount(x, y, p_locplayer->FourPacks[fp][plagent]);
     }
 }
 
@@ -1044,6 +1160,7 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
     {
         ushort weptype;
         short x, y;
+        ushort spr;
 
         if (lbDisplay.GraphicsScreenHeight >= 400) {
             x = lbDisplay.GraphicsScreenWidth - 100;
@@ -1054,11 +1171,15 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
         }
         lbDisplay.DrawFlags = 0;
         weptype = p_pickup->U.UWeapon.WeaponType;
+
         draw_new_panel_sprite_std(x, y, 12);
         if (weptype)
-            draw_new_panel_sprite_std(x + 8, y + 4, weapon_sprite_index(weptype, false));
+            spr = weapon_sprite_index(weptype, false);
         else
-            draw_new_panel_sprite_std(x + 8, y + 4, 70);
+            spr = 70;
+        x += game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].x;
+        y += game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].y;
+        draw_new_panel_sprite_std(x, y, spr);
         drawn = true;
     }
     return drawn;
@@ -1066,7 +1187,6 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
 
 TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
 {
-    ;
     struct SimpleThing *p_pickup;
     ThingIdx thing;
     TbBool drawn;
@@ -1085,6 +1205,7 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
     {
         ushort weptype;
         short x, y;
+        ushort spr;
 
         if (lbDisplay.GraphicsScreenHeight >= 400) {
             x = lbDisplay.GraphicsScreenWidth - 100;
@@ -1095,11 +1216,15 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
         }
         lbDisplay.DrawFlags = 0;
         weptype = p_pickup->U.UWeapon.WeaponType;
+
         draw_new_panel_sprite_std(x, y, 12);
         if (weptype)
-            draw_new_panel_sprite_std(x + 8, y + 4, weapon_sprite_index(weptype, false));
+            spr = weapon_sprite_index(weptype, false);
         else
-            draw_new_panel_sprite_std(x + 8, y + 4, 70);
+            spr = 70;
+        x += game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].x;
+        y += game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].y;
+        draw_new_panel_sprite_std(x, y, spr);
         drawn = true;
     }
     return drawn;
@@ -1149,6 +1274,8 @@ void draw_agent_carried_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
 {
     TbBool wep_highlight;
     TbBool recharging;
+    short x, y;
+    ushort spr;
 
     recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
     wep_highlight = panel_agents_weapon_highlighted(p_locplayer, plagent, weptype);
@@ -1156,59 +1283,91 @@ void draw_agent_carried_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
     lbDisplay.DrawFlags = 0;
     if (!recharging || (gameturn & 1))
     {
-        if (slot == 1) // First weapon on list entry starts its sprite a bit earlier
-            draw_new_panel_sprite_std(cx - 16, cy - 4, 13);
-        else
-            draw_new_panel_sprite_std(cx, cy, 94);
+        if (slot == 1) { // First weapon on list entry starts its sprite a bit earlier
+            x = cx + game_panel_shifts[PaSh_WEP_FRST_BTN_TO_DECOR].x;
+            y = cy + game_panel_shifts[PaSh_WEP_FRST_BTN_TO_DECOR].y;
+            spr = 13;
+        } else {
+            x = cx + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_DECOR].x;
+            y = cy + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_DECOR].y;
+            spr = 94;
+        }
+        draw_new_panel_sprite_std(x, y, spr);
 
-        draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype, ready));
+        if (slot == 1) {
+            x = cx + game_panel_shifts[PaSh_WEP_FRST_BTN_TO_SYMBOL].x;
+            y = cy + game_panel_shifts[PaSh_WEP_FRST_BTN_TO_SYMBOL].y;
+        } else {
+            x = cx + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].x;
+            y = cy + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].y;
+        }
+        draw_new_panel_sprite_std(x, y, weapon_sprite_index(weptype, ready));
     }
 
     if (wep_highlight)
     {
         lbDisplay.DrawFlags = 0;
-        if (slot == 1) // The first on list longer sprite has its own highlight
-            draw_new_panel_sprite_std(cx - 16, cy - 4, 92);
-        else
-            draw_new_panel_sprite_std(cx, cy, 93);
+        if (slot == 1) {// The first on list longer sprite has its own highlight
+            x = cx + game_panel_shifts[PaSh_WEP_FRST_BTN_TO_DECOR].x;
+            y = cy + game_panel_shifts[PaSh_WEP_FRST_BTN_TO_DECOR].y;
+            spr = 92;
+        } else {
+            x = cx + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_DECOR].x;
+            y = cy + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_DECOR].y;
+            spr = 93;
+        }
+        draw_new_panel_sprite_std(x, y, spr);
     }
 
-    draw_fourpack_items(cx, cy + 4, plagent, weptype);
+    if (slot == 1) {
+        x = cx + game_panel_shifts[PaSh_WEP_FRST_BTN_TO_SYMBOL].x;
+        y = cy + game_panel_shifts[PaSh_WEP_FRST_BTN_TO_SYMBOL].y;
+    } else {
+        x = cx + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].x;
+        y = cy + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].y;
+    }
+    draw_fourpack_items(x, y, plagent, weptype);
 }
 
 void draw_agent_current_weapon(PlayerInfo *p_locplayer, ushort plagent, short slot, TbBool darkened, TbBool ready, short weptype, short cx, short cy)
 {
     TbBool wep_highlight;
     TbBool recharging;
+    short x, y;
 
     recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
     wep_highlight = panel_agents_weapon_highlighted(p_locplayer, plagent, weptype);
 
     if (!recharging || (gameturn & 1))
     {
+        x = cx + game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].x;
+        y = cy + game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].y;
         if (ready)
-            draw_new_panel_sprite_prealp(cx + 8, cy + 8, 14);
+            draw_new_panel_sprite_prealp(x, y, 14);
 
         if (!darkened) {
-            draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype, ready));
+            draw_new_panel_sprite_std(x, y, weapon_sprite_index(weptype, ready));
         } else {
-            draw_new_panel_sprite_dark(cx + 8, cy + 8, weapon_sprite_index(weptype, ready));
+            draw_new_panel_sprite_dark(x, y, weapon_sprite_index(weptype, ready));
         }
     }
 
     // Additional border highlight around button on mouse over
     if (wep_highlight)
     {
-        draw_new_panel_sprite_std(cx, cy + 4, 90);
+        draw_new_panel_sprite_std(cx, cy, 90);
     }
 
-    draw_fourpack_items(cx, cy + 4, plagent, weptype);
+    x = cx + game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].x;
+    y = cy + game_panel_shifts[PaSh_WEP_CURR_BTN_TO_SYMBOL].y;
+    draw_fourpack_items(x, y, plagent, weptype);
 }
 
 void draw_agent_carried_weapon_prealp_list(PlayerInfo *p_locplayer, ushort plagent, short slot, TbBool ready, short weptype, short cx, short cy)
 {
     TbBool wep_highlight;
     TbBool recharging;
+    short x, y;
 
     recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
     wep_highlight = panel_agents_weapon_highlighted(p_locplayer, plagent, weptype);
@@ -1232,7 +1391,9 @@ void draw_agent_carried_weapon_prealp_list(PlayerInfo *p_locplayer, ushort plage
         draw_new_panel_sprite_std(cx, cy + 4, 90);
     }
 
-    draw_fourpack_items(cx, cy + 4, plagent, weptype);
+    x = cx + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].x;
+    y = cy + game_panel_shifts[PaSh_WEP_NEXT_BTN_TO_SYMBOL].y;
+    draw_fourpack_items(x, y, plagent, weptype);
 }
 
 TbBool panel_mouse_over_weapon(short box_x, short box_y, short box_w, short box_h, int panstate, short box_no)
@@ -1441,12 +1602,12 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent, ubyte fl
     darkened = (p_agent->State == PerSt_PROTECT_PERSON) || ((flags & 0x02) != 0);
     if (curwep != 0) // Is ready/drawn weapon - draw lighted weapon shape
     {
-        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, true, curwep, cx - 8, cy - 8);
+        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, true, curwep, cx - 8, cy - 4);
     }
     else if (prevwep != 0) // Weapon is carried but hidden - draw with dark weapon shape
     {
         curwep = prevwep;
-        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, false, curwep, cx - 8, cy - 8);
+        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, false, curwep, cx - 8, cy - 4);
     }
     return curwep;
 }
@@ -1480,8 +1641,8 @@ TbBool update_agent_weapons_selection(PlayerIdx plyr, short nagent)
     panstate = p_player->PanelState[mouser];
     plagent = p_agent->U.UPerson.ComCur & 3;
     wepflags = p_agent->U.UPerson.WeaponsCarried;
-    cx = game_panel[12 + plagent].X + 1;
-    cy = game_panel[12 + plagent].Y + 24;
+    cx = game_panel[12 + plagent].X + game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].x;
+    cy = game_panel[12 + plagent].Y + game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y;
 
     cur_ready_wep = player_agent_current_or_prev_weapon(plyr, plagent);
 
@@ -1541,8 +1702,8 @@ void draw_agent_weapons_selection(PlayerIdx plyr, short nagent)
 
     plagent = p_agent->U.UPerson.ComCur & 3;
     wepflags = p_agent->U.UPerson.WeaponsCarried;
-    cx = game_panel[12 + plagent].X + 1;
-    cy = game_panel[12 + plagent].Y + 24;
+    cx = game_panel[12 + plagent].X + game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].x;
+    cy = game_panel[12 + plagent].Y + game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y;
 
     cur_ready_wep = player_agent_current_or_prev_weapon(plyr, plagent);
 
@@ -1562,7 +1723,7 @@ void draw_agent_weapons_selection(PlayerIdx plyr, short nagent)
 
         if (wep_visible)
         {
-            draw_agent_carried_weapon(p_player, plagent, nshown + 1, false, weptype, cx, cy);
+            draw_agent_carried_weapon(p_player, plagent, nshown + 1, false, weptype, cx, cy + 4);
 
             cy += 28;
             nshown++;
@@ -2094,11 +2255,11 @@ void draw_panel_thermal_button(void)
     {
         short x, y;
         if (lbDisplay.GraphicsScreenHeight < 400) {
-            x = game_panel[17].X + 4;
-            y = game_panel[17].Y + 60;
+            x = game_panel[17].X + game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL].x;
+            y = game_panel[17].Y + game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL].y;
         } else {
-            x = game_panel[18].X + 4;
-            y = game_panel[18].Y + 60;
+            x = game_panel[18].X + game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL].x;
+            y = game_panel[18].Y + game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL].y;
         }
         draw_new_panel_sprite_std(x, y, 91);
     }
@@ -2297,17 +2458,8 @@ void draw_new_panel(void)
             ushort plagent;
 
             plagent = p_agent->U.UPerson.ComCur & 3;
-            if (ingame.PanelPermutation >= 0) {
-                if (lbDisplay.GraphicsScreenHeight < 400) {
-                    x = game_panel[0 + plagent].X + panel_prealp_agent_number_sprite_shift_lo[plagent];
-                    y = 3;
-                } else {
-                    x = game_panel[0 + plagent].X + panel_prealp_agent_number_sprite_shift_hi[plagent];
-                    y = 4;
-                }
-            } else {
-                x = game_panel[0 + plagent].X + panel_agent_number_sprite_shift[plagent];
-            }
+            x = game_panel[0 + plagent].X + game_panel_shifts[PaSh_AGENT_PANEL_TO_NUMBER + plagent].x;
+            y = game_panel[0 + plagent].Y + game_panel_shifts[PaSh_AGENT_PANEL_TO_NUMBER + plagent].y;
             draw_new_panel_sprite_std(x, y, 6 + plagent);
         }
     }
