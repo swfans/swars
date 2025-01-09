@@ -2415,7 +2415,7 @@ void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
     draw_mood_limits(x, y, w, h, lv, lvmax);
 
     if (lbDisplay.GraphicsScreenHeight < 400)
-        x = p_panel->X + 2 * p_panel->Width - 16;
+        x = p_panel->X + p_panel->Width - 8;
     else
         x = p_panel->X + p_panel->Width - 17;
     y = p_panel->Y;
