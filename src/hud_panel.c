@@ -1280,10 +1280,6 @@ void draw_agent_carried_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
     short x, y;
     ushort spr;
 
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        cx /= 2;
-        cy /= 2;
-    }
     recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
     wep_highlight = panel_agents_weapon_highlighted(p_locplayer, plagent, weptype);
 
@@ -1343,10 +1339,6 @@ void draw_agent_current_weapon(PlayerInfo *p_locplayer, ushort plagent, short sl
     TbBool recharging;
     short x, y;
 
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        cx /= 2;
-        cy /= 2;
-    }
     recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
     wep_highlight = panel_agents_weapon_highlighted(p_locplayer, plagent, weptype);
 
@@ -1611,6 +1603,7 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
 short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent, ubyte flags)
 {
     struct Thing *p_agent;
+    struct GamePanel *p_panel;
     ushort curwep, prevwep;
     short cx, cy;
     TbBool darkened;
@@ -1620,26 +1613,27 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent, ubyte fl
         return 0;
 
     p_agent = p_locplayer->MyAgent[nagent];
+    p_panel = &game_panel[12 + nagent];
 
+    cx = p_panel->X;
+    cy = p_panel->Y;
     if (lbDisplay.GraphicsScreenHeight < 400) {
-        cy = 28;
-        cx = 158 * nagent + 66;
-    } else {
-        cy = 29;
-        cx = 157 * nagent + 65;
+        cx /= 2;
+        cy /= 2;
     }
+
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_locplayer->PrevWeapon[nagent];
 
     darkened = (p_agent->State == PerSt_PROTECT_PERSON) || ((flags & 0x02) != 0);
     if (curwep != 0) // Is ready/drawn weapon - draw lighted weapon shape
     {
-        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, true, curwep, cx - 8, cy - 4);
+        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, true, curwep, cx, cy);
     }
     else if (prevwep != 0) // Weapon is carried but hidden - draw with dark weapon shape
     {
         curwep = prevwep;
-        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, false, curwep, cx - 8, cy - 4);
+        draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, false, curwep, cx, cy);
     }
     return curwep;
 }
@@ -1745,8 +1739,14 @@ void draw_agent_weapons_selection(PlayerIdx plyr, short nagent)
 
     plagent = p_agent->U.UPerson.ComCur & 3;
     wepflags = p_agent->U.UPerson.WeaponsCarried;
-    cx = game_panel[12 + plagent].X + game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].x;
-    cy = game_panel[12 + plagent].Y + game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y;
+    cx = game_panel[12 + plagent].X;
+    cy = game_panel[12 + plagent].Y + 4;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        cx /= 2;
+        cy /= 2;
+    }
+    cx += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].x;
+    cy += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y;
 
     cur_ready_wep = player_agent_current_or_prev_weapon(plyr, plagent);
 
@@ -1766,9 +1766,10 @@ void draw_agent_weapons_selection(PlayerIdx plyr, short nagent)
 
         if (wep_visible)
         {
-            draw_agent_carried_weapon(p_player, plagent, nshown + 1, false, weptype, cx, cy + 4);
+            draw_agent_carried_weapon(p_player, plagent, nshown + 1, false, weptype, cx, cy);
 
-            cy += 28;
+            cx += game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].x;
+            cy += game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].y;
             nshown++;
         }
 
