@@ -77,15 +77,16 @@ enum PanelShift {
     PaSh_AGENT_PANEL_TO_NUMBER = 0,
     PaSh_AGENT_WEAPON_TO_LIST = 4,
     PaSh_GROUP_PANE_TO_THERMAL = 5,
-    PaSh_WEP_CURR_BTN_TO_SYMBOL = 6,
-    PaSh_WEP_FRST_BTN_TO_SYMBOL = 7,
-    PaSh_WEP_NEXT_BTN_TO_SYMBOL = 8,
-    PaSh_WEP_CURR_BTN_TO_DECOR =  9,
-    PaSh_WEP_FRST_BTN_TO_DECOR = 10,
-    PaSh_WEP_NEXT_BTN_TO_DECOR = 11,
-    PaSh_WEP_NEXT_DISTANCE = 12,
-    PaSh_WEP_CURR_BUTTON_AREA = 13,
-    PaSh_WEP_NEXT_BUTTON_AREA = 14,
+    PaSh_GROUP_PANE_AGENTS = 6,
+    PaSh_WEP_CURR_BTN_TO_SYMBOL = 9,
+    PaSh_WEP_FRST_BTN_TO_SYMBOL = 10,
+    PaSh_WEP_NEXT_BTN_TO_SYMBOL = 11,
+    PaSh_WEP_CURR_BTN_TO_DECOR =  12,
+    PaSh_WEP_FRST_BTN_TO_DECOR = 13,
+    PaSh_WEP_NEXT_BTN_TO_DECOR = 14,
+    PaSh_WEP_NEXT_DISTANCE = 15,
+    PaSh_WEP_CURR_BUTTON_AREA = 16,
+    PaSh_WEP_NEXT_BUTTON_AREA = 17,
 };
 
 struct GamePanel game_panel_hi[] = {
@@ -209,6 +210,10 @@ struct TbPoint game_panel_hi_shifts[] = {
     { 1,24},
     // PaSh_GROUP_PANE_TO_THERMAL
     { 4,60},
+    // PaSh_GROUP_PANE_AGENTS
+    { 4, 36},
+    { 4, 24},
+    { 4, 12},
     // PaSh_WEP_CURR_BTN_TO_SYMBOL
     { 8, 4},
     // PaSh_WEP_FRST_BTN_TO_SYMBOL
@@ -239,6 +244,10 @@ struct TbPoint game_panel_lo_shifts[] = {
     { 0,12},
     // PaSh_GROUP_PANE_TO_THERMAL
     { 2,30},
+    // PaSh_GROUP_PANE_AGENTS
+    { 2, 18},
+    { 2, 12},
+    { 2,  6},
     // PaSh_WEP_CURR_BTN_TO_SYMBOL
     { 4, 2},
     // PaSh_WEP_FRST_BTN_TO_SYMBOL
@@ -269,6 +278,10 @@ struct TbPoint game_panel_prealp_hi_shifts[] = {
     { 1,24},
     // PaSh_GROUP_PANE_TO_THERMAL
     { 4,60},
+    // PaSh_GROUP_PANE_AGENTS
+    { 4, 36},
+    { 4, 24},
+    { 4, 12},
     // PaSh_WEP_CURR_BTN_TO_SYMBOL
     { 8, 4},
     // PaSh_WEP_FRST_BTN_TO_SYMBOL
@@ -299,6 +312,10 @@ struct TbPoint game_panel_prealp_lo_shifts[] = {
     { 0,12},
     // PaSh_GROUP_PANE_TO_THERMAL
     { 2,30},
+    // PaSh_GROUP_PANE_AGENTS
+    { 2, 18},
+    { 2, 12},
+    { 2,  6},
     // PaSh_WEP_CURR_BTN_TO_SYMBOL
     { 4, 2},
     // PaSh_WEP_FRST_BTN_TO_SYMBOL
@@ -1915,22 +1932,26 @@ void draw_agent_grouping_bars(void)
 
     for (n--; n >= 0; n--)
     {
-        if (lbDisplay.GraphicsScreenHeight < 400)
-        {
-            if (ingame.PanelPermutation == -1)
-                SCANNER_unkn_func_202(&pop1_sprites[69], 2, 2 * (107 - 6 * n) >> 1,
-                  ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-            else
-                LbSpriteDraw_1(2, 2 * (107 - 6 * n) >> 1, &pop1_sprites[69]);
+        short x, y;
+
+        if (lbDisplay.GraphicsScreenHeight < 400) {
+            x = game_panel[17].X;
+            y = game_panel[17].Y;
+        } else {
+            x = game_panel[18].X;
+            y = game_panel[18].Y;
         }
+        if (lbDisplay.GraphicsScreenHeight < 400) {
+            x /= 2;
+            y /= 2;
+        }
+        x += game_panel_shifts[PaSh_GROUP_PANE_AGENTS + n].x;
+        y += game_panel_shifts[PaSh_GROUP_PANE_AGENTS + n].y;
+        if (ingame.PanelPermutation == -1)
+            SCANNER_unkn_func_202(&pop1_sprites[69], x, y,
+              ingame.Scanner.Contrast, ingame.Scanner.Brightness);
         else
-        {
-            if (ingame.PanelPermutation == -1)
-                SCANNER_unkn_func_202(&pop1_sprites[69], 4, 89 + 2 * (107 - 6 * n),
-                  ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-            else
-                LbSpriteDraw_1(4, 89 + 2 * (107 - 6 * n), &pop1_sprites[69]);
-        }
+            LbSpriteDraw_1(x, y, &pop1_sprites[69]);
     }
 }
 
