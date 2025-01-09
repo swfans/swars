@@ -117,15 +117,15 @@ struct GamePanel game_panel_lo[] = {
 
 struct GamePanel game_panel_hi[] = {
     // Per-agent main panel frame
-    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_AgentBadge},
-    {145,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
-    {302,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
-    {459,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
+    {  0,  0,  1,150, 32, 1, 1, 0, PanT_AgentBadge},
+    {145,  0,  3,162, 28, 2, 1, 1, PanT_AgentBadge},
+    {302,  0,  4,162, 28, 3, 1, 2, PanT_AgentBadge},
+    {459,  0,  5,162, 28, 4, 1, 3, PanT_AgentBadge},
     // Per-agent mood bar
-    { 45, 10,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
-    {202, 10,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
-    {359, 10,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
-    {516, 10,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
+    { 45, 10,  0, 88, 10, 1, 1, 0, PanT_AgentMood},
+    {202, 10,  0, 88, 10, 2, 1, 1, PanT_AgentMood},
+    {359, 10,  0, 88, 10, 3, 1, 2, PanT_AgentMood},
+    {516, 10,  0, 88, 10, 4, 1, 3, PanT_AgentMood},
     // Per-agent medikit button
     { 30, 25, 95,  0,  0, 1, 1, 0, PanT_AgentMedi},
     {187, 25, 95,  0,  0, 2, 1, 1, PanT_AgentMedi},
@@ -145,15 +145,15 @@ struct GamePanel game_panel_hi[] = {
 
 struct GamePanel game_panel_prealp_hi[] = {
     // Per-agent main panel frame
-    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_AgentBadge},
-    {145,  0,  3, 82, 14, 2, 1, 1, PanT_AgentBadge},
-    {302,  0,  4, 82, 14, 3, 1, 2, PanT_AgentBadge},
-    {459,  0,  5, 82, 14, 4, 1, 3, PanT_AgentBadge},
+    {  0,  0,  1,150, 32, 1, 1, 0, PanT_AgentBadge},
+    {145,  0,  3,162, 28, 2, 1, 1, PanT_AgentBadge},
+    {302,  0,  4,162, 28, 3, 1, 2, PanT_AgentBadge},
+    {459,  0,  5,162, 28, 4, 1, 3, PanT_AgentBadge},
     // Per-agent mood bar
-    { 44, 12,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
-    {202, 12,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
-    {360, 12,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
-    {518, 12,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
+    { 44, 12,  0, 88, 10, 1, 1, 0, PanT_AgentMood},
+    {202, 12,  0, 88, 10, 2, 1, 1, PanT_AgentMood},
+    {360, 12,  0, 88, 10, 3, 1, 2, PanT_AgentMood},
+    {518, 12,  0, 88, 10, 4, 1, 3, PanT_AgentMood},
     // Per-agent medikit button
     {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
     {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
@@ -1914,25 +1914,25 @@ void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
 
 void draw_transparent_skewed_bar(short x, short y, ushort w, ushort h)
 {
-    ubyte m;
     long waftx, wafty;
     ushort tmx, tmy;
     struct EnginePoint point4;
     struct EnginePoint point2;
     struct EnginePoint point1;
     struct EnginePoint point3;
+    short sh_x;
 
-    m = 0;
+    sh_x = 3;
     if (lbDisplay.GraphicsScreenHeight < 400)
-        m = 1;
-    point1.pp.X = x >> m;
-    point1.pp.Y = y >> m;
-    point4.pp.X = (x + w) >> m;
-    point4.pp.Y = y >> m;
-    point2.pp.Y = (y + h) >> m;
-    point2.pp.X = (x + w - 3) >> m;
-    point3.pp.Y = (y + h) >> m;
-    point3.pp.X = (x - 3) >> m;
+        sh_x /= 2;
+    point1.pp.X = x;
+    point1.pp.Y = y;
+    point4.pp.X = (x + w);
+    point4.pp.Y = y;
+    point2.pp.Y = (y + h);
+    point2.pp.X = (x + w - sh_x);
+    point3.pp.Y = (y + h);
+    point3.pp.X = (x - sh_x);
 
     // The shield bar is animated, even if it's not possible to see
     waftx = waft_table[(gameturn >> 3) & 31];
@@ -1963,37 +1963,16 @@ void draw_transparent_skewed_bar(short x, short y, ushort w, ushort h)
 
 void draw_solid_skewed_bar(short x, short y, ushort w, ushort h, ubyte col)
 {
-    if (lbDisplay.GraphicsScreenHeight < 400)
+    short cx, cy;
+    short ch;
+
+    cx = x;
+    cy = y;
+    for (ch = h; ch > 0; ch--)
     {
-        short cx, cy;
-        short ch;
-        cx = x;
-        cy = y;
-        for (ch = h; ch > 0; ch-=2)
-        {
-            if (lbDisplay.GraphicsScreenHeight < 400)
-                LbDrawLine(cx >> 1, cy >> 1, (cx + w) >> 1, cy >> 1, col);
-            else
-                LbDrawLine(cx, cy, (cx + w), cy, col);
-            cx -= 2;
-            cy += 2;
-        }
-    }
-    else
-    {
-        short cx, cy;
-        short ch;
-        cx = x;
-        cy = y;
-        for (ch = h; ch > 0; ch--)
-        {
-            if (lbDisplay.GraphicsScreenHeight < 400)
-                LbDrawLine(cx >> 1, cy >> 1, (cx + w) >> 1, cy >> 1, col);
-            else
-                LbDrawLine(cx, cy, cx + w, cy, col);
-            --cx;
-            ++cy;
-        }
+        LbDrawLine(cx, cy, cx + w, cy, col);
+        --cx;
+        ++cy;
     }
 }
 
@@ -2066,7 +2045,7 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
 void draw_mood_level(short x, short y, ushort w, int h, short value)
 {
     short cent_x;
-    short cur_x, cur_y;
+    short x1, y1, x2;
     TbPixel col;
     short fade;
     short i;
@@ -2078,93 +2057,63 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
         col = pixmap.fade_table[PALETTE_8b_COLORS * (63 + fade) + colour_lookup[ColLU_BLUE]];
 
     cent_x = x + (w >> 1);
-    if (lbDisplay.GraphicsScreenHeight < 400)
-    {
-        cur_x = cent_x;
-        cur_y = y;
+    x1 = cent_x;
+    x2 = x1 + (w >> 1) * value / 88;
+    y1 = y;
 
-        for (i = h; i > 0; i -= 2)
-        {
-            SCANNER_unkn_func_203(cur_x >> 1, cur_y >> 1,
-                (cur_x + (value >> 2)) >> 1, cur_y >> 1,
-                col, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-            cur_x -= 2;
-            cur_y += 2;
-        }
-    }
-    else
+    for (i = h; i > 0; i--)
     {
-        cur_x = cent_x;
-        cur_y = y;
-
-        for (i = h; i > 0; i--)
-        {
-            SCANNER_unkn_func_203(cur_x, cur_y, cur_x + (value >> 1), cur_y,
-                col, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-            cur_x--;
-            cur_y++;
-        }
+        SCANNER_unkn_func_203(x1, y1, x2, y1,
+            col, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+        x1--;
+        x2--;
+        y1++;
     }
 }
 
 void draw_mood_limits(short x, short y, short w, short h, short value, short maxval)
 {
     short scaled_val;
-    short curr_x;
+    short curr_x, sh_x;
     TbPixel col;
 
     if (value <= 0)
         return;
 
+    sh_x = 4;
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        sh_x /= 2;
+
     col = colour_lookup[ColLU_WHITE];
     scaled_val = (w * value / maxval) >> 1;
 
     curr_x = x + (w >> 1) - scaled_val;
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        LbDrawLine(curr_x >> 1, y >> 1, (curr_x - 4) >> 1, (y + h) >> 1, col);
-    else
-        LbDrawLine(curr_x, y, curr_x - 4, (y + h), col);
+    LbDrawLine(curr_x, y, curr_x - sh_x, (y + h), col);
 
     curr_x = x + (w >> 1) + scaled_val;
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        LbDrawLine(curr_x >> 1, y >> 1, (curr_x - 4) >> 1, (y + h) >> 1, col);
-    else
-        LbDrawLine(curr_x, y, curr_x - 4, (y + h), col);
+    LbDrawLine(curr_x, y, curr_x - sh_x, (y + h), col);
 }
 
-void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
+void draw_energy_bar(int x1, int y1, short w, short h, int value, int maxval)
 {
     short scaled_val;
-    short w, h;
+    short x2, y2;
+    short i;
     TbPixel col;
 
-    if (len_div == 0)
+    if (maxval == 0)
         return;
 
     col = colour_lookup[ColLU_WHITE];
-    scaled_val = 2 * (7 * len_mul / len_div);
+    scaled_val = h * value / maxval;
 
-    w = x1 + scaled_val;
-    h = y1 - scaled_val;
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        LbDrawLine((x1 + 0) >> 1, y1 >> 1, w >> 1, h >> 1, col);
-    else
-        LbDrawLine(x1 + 0, y1, w, h, col);
-    w = x1 + 2 + scaled_val;
-    h = y1 - scaled_val;
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        LbDrawLine((x1 + 2) >> 1, y1 >> 1, w >> 1, h >> 1, col);
-    else
-        LbDrawLine(x1 + 2, y1, w, h, col);
-
-    if (lbDisplay.GraphicsScreenHeight >= 400)
+    x2 = x1 + scaled_val;
+    y2 = y1 - scaled_val;
+    for (i = w; i > 0; i--)
     {
-        w = x1 + 1 + scaled_val;
-        h = y1 - scaled_val;
-        LbDrawLine(x1 + 1, y1, w, h, col);
-        w = x1 + 3 + scaled_val;
-        h = y1 - scaled_val;
-        LbDrawLine(x1 + 3, y1, w, h, col);
+        LbDrawLine(x1, y1, x2, y2, col);
+        x1++;
+        x2++;
     }
 }
 
@@ -2201,15 +2150,19 @@ TbBool mouse_move_over_panel(short panel)
 
     x = p_panel->X;
     y = p_panel->Y;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x /= 2;
+        y /= 2;
+    }
     if (p_panel->Width == 0 && p_panel->Height == 0)
     {
         struct TbSprite *spr;
         spr = &pop1_sprites[p_panel->Spr];
-        w = lbDisplay.GraphicsScreenHeight < 400 ? 2 * spr->SWidth : spr->SWidth;
-        h = lbDisplay.GraphicsScreenHeight < 400 ? 2 * spr->SHeight : spr->SHeight;
+        w = spr->SWidth;
+        h = spr->SHeight;
     } else {
-        w = 2 * p_panel->Width;
-        h = 2 * p_panel->Height;
+        w = p_panel->Width;
+        h = p_panel->Height;
     }
 
     if (!panel_active_based_on_target(panel))
@@ -2281,9 +2234,15 @@ short panel_mouse_move_mood_value(short panel)
 {
     struct GamePanel *p_panel;
     short i;
+    short x;
 
     p_panel = &game_panel[panel];
-    i = 2 * mouse_move_position_horizonal_over_bar_coords(p_panel->X, p_panel->Width) - 88;
+    x = p_panel->X;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x /= 2;
+    }
+    i = mouse_move_position_horizonal_over_bar_coords(x, p_panel->Width);
+    i = 2 * (i * 88 / p_panel->Width) - 88;
     if (i < -88) i = -88;
     if (i > 88) i = 88;
 
@@ -2354,11 +2313,18 @@ void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
     // The X of health bar in anchored to mood panel
     x = p_mopanel->X + 8;
     y = p_panel->Y + 4;
-    w = 2 * p_mopanel->Width;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x /= 2;
+        y /= 2;
+    }
+    w = p_mopanel->Width;
     if (ingame.PanelPermutation >= 0)
         h = 6;
     else
         h = 4;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        h /= 2;
+    }
     // Draw health level
     lv = p_agent->Health;
     lvmax = p_agent->U.UPerson.MaxHealth;
@@ -2375,11 +2341,21 @@ void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
     // Draw drug level aka mood (or just a red line if no drugs)
     x = p_mopanel->X;
     y = p_mopanel->Y + 2;
-    w = 2 * p_mopanel->Width;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x /= 2;
+        y /= 2;
+    }
+    w = p_mopanel->Width;
     h = 6;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        h /= 2;
+    }
     draw_mood_level(x, y, w, h, p_agent->U.UPerson.Mood);
     // Draw stamina level which caps the mood level
     h = 4;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        h /= 2;
+    }
     lv = p_agent->U.UPerson.Stamina;
     lvmax = p_agent->U.UPerson.MaxStamina;
     draw_mood_limits(x, y, w, h, lv, lvmax);
@@ -2387,11 +2363,21 @@ void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
     if (lbDisplay.GraphicsScreenHeight < 400)
         x = p_panel->X + 2 * p_panel->Width - 16;
     else
-        x = p_panel->X + 2 * p_panel->Width - 17;
+        x = p_panel->X + p_panel->Width - 17;
     y = p_panel->Y + 18;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x /= 2;
+        y /= 2;
+    }
+    w = 4;
+    h = 14;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        w /= 2;
+        h /= 2;
+    }
     lv = p_agent->U.UPerson.Energy;
     lvmax = p_agent->U.UPerson.MaxEnergy;
-    draw_energy_bar(x, y, lv, lvmax);
+    draw_energy_bar(x, y, w, h, lv, lvmax);
 }
 
 void draw_new_panel_weapon_overlay(ushort panel, ushort plagent, TbBool darkened)
