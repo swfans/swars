@@ -207,7 +207,7 @@ struct TbPoint game_panel_hi_shifts[] = {
     { 4, 2},
     {10, 2},
     // PaSh_AGENT_WEAPON_TO_LIST
-    { 1,24},
+    { 1,28},
     // PaSh_GROUP_PANE_TO_THERMAL
     { 4,60},
     // PaSh_GROUP_PANE_AGENTS
@@ -241,7 +241,7 @@ struct TbPoint game_panel_lo_shifts[] = {
     { 2, 1},
     { 5, 1},
     // PaSh_AGENT_WEAPON_TO_LIST
-    { 0,12},
+    { 0,14},
     // PaSh_GROUP_PANE_TO_THERMAL
     { 2,30},
     // PaSh_GROUP_PANE_AGENTS
@@ -275,7 +275,7 @@ struct TbPoint game_panel_prealp_hi_shifts[] = {
     { 4, 4},
     {12, 4},
     // PaSh_AGENT_WEAPON_TO_LIST
-    { 1,24},
+    { 1,28},
     // PaSh_GROUP_PANE_TO_THERMAL
     { 4,60},
     // PaSh_GROUP_PANE_AGENTS
@@ -309,7 +309,7 @@ struct TbPoint game_panel_prealp_lo_shifts[] = {
     { 3, 1},
     { 6, 1},
     // PaSh_AGENT_WEAPON_TO_LIST
-    { 0,12},
+    { 0,14},
     // PaSh_GROUP_PANE_TO_THERMAL
     { 2,30},
     // PaSh_GROUP_PANE_AGENTS
@@ -662,7 +662,7 @@ void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int
 int SCANNER_text_draw(const char *text, int start_x, int height)
 {
     const ubyte *str;
-    struct TbSprite *spr;
+    struct TbSprite *p_spr;
     int x;
     ubyte sel_c1;
     ubyte ch;
@@ -683,10 +683,10 @@ int SCANNER_text_draw(const char *text, int start_x, int height)
         } else {
           ch = my_char_to_upper(*str);
           col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
-          spr = &small_font[ch - 31];
-          chr_width = spr->SWidth * height / 9;
-          chr_height = spr->SHeight * height / 9;
-          LbSpriteDrawScaledOneColour(x, 2, spr, chr_width, chr_height, col);
+          p_spr = &small_font[ch - 31];
+          chr_width = p_spr->SWidth * height / 9;
+          chr_height = p_spr->SHeight * height / 9;
+          LbSpriteDrawScaledOneColour(x, 2, p_spr, chr_width, chr_height, col);
           x += chr_width;
         }
         str++;
@@ -702,9 +702,9 @@ int SCANNER_text_draw(const char *text, int start_x, int height)
         } else {
           ch = my_char_to_upper(*str);
           col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
-          spr = &small_font[ch - 31];
-          LbSpriteDrawOneColour(x, 1, spr, col);
-          x += spr->SWidth;
+          p_spr = &small_font[ch - 31];
+          LbSpriteDrawOneColour(x, 1, p_spr, col);
+          x += p_spr->SWidth;
         }
         str++;
       }
@@ -776,13 +776,13 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
         }
         else
         {
-            struct TbSprite *spr;
+            struct TbSprite *p_spr;
             int fd;
             ubyte ch;
             TbPixel col1;
 
             ch = my_char_to_upper(*str);
-            spr = &small_font[ch - 31];
+            p_spr = &small_font[ch - 31];
             fd = base_shift + 4 * player_unkn0C9[plyr];
             if (fd > 63)
                 fd = 63 - (fd - 63);
@@ -791,9 +791,9 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
             if (fd < 0)
                 fd = 0;
             col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
-            SCANNER_unkn_func_200(spr, pos_x + 1, pos_y + 1, col1);
-            SCANNER_unkn_func_200(spr, pos_x, pos_y, col2);
-            pos_x += 2 * spr->SWidth;
+            SCANNER_unkn_func_200(p_spr, pos_x + 1, pos_y + 1, col1);
+            SCANNER_unkn_func_200(p_spr, pos_x, pos_y, col2);
+            pos_x += 2 * p_spr->SWidth;
         }
         str++;
         base_shift++;
@@ -827,13 +827,13 @@ void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
         }
         else
         {
-            struct TbSprite *spr;
+            struct TbSprite *p_spr;
             int fd;
             ubyte ch;
             TbPixel col1;
 
             ch = my_char_to_upper(*str);
-            spr = &small_font[ch - 31];
+            p_spr = &small_font[ch - 31];
             fd = base_shift + 4 * (ubyte)player_unkn0C9[plyr];
             if (fd > 63)
                 fd = 63 - (fd - 63);
@@ -842,9 +842,9 @@ void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
             if (fd < 0)
                 fd = 0;
             col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
-            LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, spr, col1);
-            LbSpriteDrawOneColour(pos_x, pos_y, spr, col2);
-            pos_x += spr->SWidth;
+            LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, p_spr, col1);
+            LbSpriteDrawOneColour(pos_x, pos_y, p_spr, col2);
+            pos_x += p_spr->SWidth;
         }
         str++;
         base_shift++;
@@ -1092,13 +1092,13 @@ TbBool check_scanner_input(void)
  */
 void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
 {
-    struct TbSprite *spr;
+    struct TbSprite *p_spr;
 
-    spr = &pop1_sprites[spr_id];
+    p_spr = &pop1_sprites[spr_id];
     if (ingame.PanelPermutation == -1)
-        SCANNER_unkn_func_202(spr, px, py, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+        SCANNER_unkn_func_202(p_spr, px, py, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
     else
-        LbSpriteDraw_1(px, py, spr);
+        LbSpriteDraw_1(px, py, p_spr);
 }
 
 /**
@@ -1109,13 +1109,13 @@ void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
  */
 void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
 {
-    struct TbSprite *spr;
+    struct TbSprite *p_spr;
 
-    spr = &pop1_sprites[spr_id];
+    p_spr = &pop1_sprites[spr_id];
     if (ingame.PanelPermutation == -1)
-        SCANNER_unkn_func_202(spr, px, py, ingame.Scanner.Contrast, 8);
+        SCANNER_unkn_func_202(p_spr, px, py, ingame.Scanner.Contrast, 8);
     else
-        SCANNER_unkn_func_201(spr, px, py, &pixmap.fade_table[4096]);
+        SCANNER_unkn_func_201(p_spr, px, py, &pixmap.fade_table[4096]);
 }
 
 /**
@@ -1126,11 +1126,11 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
  */
 void draw_new_panel_sprite_prealp(int px, int py, ulong spr_id)
 {
-    struct TbSprite *spr;
+    struct TbSprite *p_spr;
 
-    spr = &pop1_sprites[spr_id];
+    p_spr = &pop1_sprites[spr_id];
     if (ingame.PanelPermutation == -1)
-        SCANNER_unkn_func_202(spr, px, py, ingame.Scanner.Contrast,
+        SCANNER_unkn_func_202(p_spr, px, py, ingame.Scanner.Contrast,
           ingame.Scanner.Brightness);
 }
 
@@ -1694,6 +1694,7 @@ TbBool update_agent_weapons_selection(PlayerIdx plyr, short nagent)
 {
     PlayerInfo *p_player;
     struct Thing *p_agent;
+    struct GamePanel *p_panel;
     ulong wepflags;
     ushort panstate;
     int cx, cy;
@@ -1714,14 +1715,22 @@ TbBool update_agent_weapons_selection(PlayerIdx plyr, short nagent)
     panstate = p_player->PanelState[mouser];
     plagent = p_agent->U.UPerson.ComCur & 3;
     wepflags = p_agent->U.UPerson.WeaponsCarried;
-    cx = game_panel[12 + plagent].X;
-    cy = game_panel[12 + plagent].Y;
+    p_panel = &game_panel[12 + plagent];
+
+    cx = p_panel->X;
+    cy = p_panel->Y;
     if (lbDisplay.GraphicsScreenHeight < 400) {
         cx /= 2;
         cy /= 2;
     }
     cx += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].x;
     cy += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y;
+    { // Shift the input a bit up to avoid having a do-nothin area between current weapon and the weapon list
+        struct TbSprite *p_spr;
+
+        p_spr = &pop1_sprites[12];
+        cy -= max(game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y - p_spr->SHeight, 0);
+    }
 
     cur_ready_wep = player_agent_current_or_prev_weapon(plyr, plagent);
 
@@ -1773,6 +1782,7 @@ void draw_agent_weapons_selection(PlayerIdx plyr, short nagent)
 {
     PlayerInfo *p_player;
     struct Thing *p_agent;
+    struct GamePanel *p_panel;
     ulong wepflags;
     int cx, cy;
     short cur_ready_wep, weptype;
@@ -1786,8 +1796,10 @@ void draw_agent_weapons_selection(PlayerIdx plyr, short nagent)
 
     plagent = p_agent->U.UPerson.ComCur & 3;
     wepflags = p_agent->U.UPerson.WeaponsCarried;
-    cx = game_panel[12 + plagent].X;
-    cy = game_panel[12 + plagent].Y + 4;
+    p_panel = &game_panel[12 + plagent];
+
+    cx = p_panel->X;
+    cy = p_panel->Y;
     if (lbDisplay.GraphicsScreenHeight < 400) {
         cx /= 2;
         cy /= 2;
@@ -2208,10 +2220,10 @@ TbBool mouse_move_over_panel(short panel)
     }
     if (p_panel->Width == 0 && p_panel->Height == 0)
     {
-        struct TbSprite *spr;
-        spr = &pop1_sprites[p_panel->Spr];
-        w = spr->SWidth;
-        h = spr->SHeight;
+        struct TbSprite *p_spr;
+        p_spr = &pop1_sprites[p_panel->Spr];
+        w = p_spr->SWidth;
+        h = p_spr->SHeight;
     } else {
         w = p_panel->Width;
         h = p_panel->Height;
