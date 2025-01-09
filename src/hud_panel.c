@@ -76,17 +76,18 @@ enum PanelType {
 enum PanelShift {
     PaSh_AGENT_PANEL_TO_NUMBER = 0,
     PaSh_AGENT_WEAPON_TO_LIST = 4,
-    PaSh_GROUP_PANE_TO_THERMAL = 5,
-    PaSh_GROUP_PANE_AGENTS = 6,
-    PaSh_WEP_CURR_BTN_TO_SYMBOL = 9,
-    PaSh_WEP_FRST_BTN_TO_SYMBOL = 10,
-    PaSh_WEP_NEXT_BTN_TO_SYMBOL = 11,
-    PaSh_WEP_CURR_BTN_TO_DECOR =  12,
-    PaSh_WEP_FRST_BTN_TO_DECOR = 13,
-    PaSh_WEP_NEXT_BTN_TO_DECOR = 14,
-    PaSh_WEP_NEXT_DISTANCE = 15,
-    PaSh_WEP_CURR_BUTTON_AREA = 16,
-    PaSh_WEP_NEXT_BUTTON_AREA = 17,
+    PaSh_GROUP_PANE_TO_THERMAL_BOX = 5,
+    PaSh_GROUP_PANE_TO_THERMAL_SPR = 6,
+    PaSh_GROUP_PANE_AGENTS = 7,
+    PaSh_WEP_CURR_BTN_TO_SYMBOL = 10,
+    PaSh_WEP_FRST_BTN_TO_SYMBOL = 11,
+    PaSh_WEP_NEXT_BTN_TO_SYMBOL = 12,
+    PaSh_WEP_CURR_BTN_TO_DECOR =  13,
+    PaSh_WEP_FRST_BTN_TO_DECOR = 14,
+    PaSh_WEP_NEXT_BTN_TO_DECOR = 15,
+    PaSh_WEP_NEXT_DISTANCE = 16,
+    PaSh_WEP_CURR_BUTTON_AREA = 17,
+    PaSh_WEP_NEXT_BUTTON_AREA = 18,
 };
 
 struct GamePanel game_panel_hi[] = {
@@ -208,7 +209,9 @@ struct TbPoint game_panel_hi_shifts[] = {
     {10, 2},
     // PaSh_AGENT_WEAPON_TO_LIST
     { 1,28},
-    // PaSh_GROUP_PANE_TO_THERMAL
+    // PaSh_GROUP_PANE_TO_THERMAL_BOX
+    { 0,48},
+    // PaSh_GROUP_PANE_TO_THERMAL_SPR
     { 4,60},
     // PaSh_GROUP_PANE_AGENTS
     { 4, 36},
@@ -242,7 +245,9 @@ struct TbPoint game_panel_lo_shifts[] = {
     { 5, 1},
     // PaSh_AGENT_WEAPON_TO_LIST
     { 0,14},
-    // PaSh_GROUP_PANE_TO_THERMAL
+    // PaSh_GROUP_PANE_TO_THERMAL_BOX
+    { 0,22},
+    // PaSh_GROUP_PANE_TO_THERMAL_SPR
     { 2,30},
     // PaSh_GROUP_PANE_AGENTS
     { 2, 18},
@@ -276,7 +281,9 @@ struct TbPoint game_panel_prealp_hi_shifts[] = {
     {12, 4},
     // PaSh_AGENT_WEAPON_TO_LIST
     { 1,28},
-    // PaSh_GROUP_PANE_TO_THERMAL
+    // PaSh_GROUP_PANE_TO_THERMAL_BOX
+    { 0,48},
+    // PaSh_GROUP_PANE_TO_THERMAL_SPR
     { 4,60},
     // PaSh_GROUP_PANE_AGENTS
     { 4, 36},
@@ -310,7 +317,9 @@ struct TbPoint game_panel_prealp_lo_shifts[] = {
     { 6, 1},
     // PaSh_AGENT_WEAPON_TO_LIST
     { 0,14},
-    // PaSh_GROUP_PANE_TO_THERMAL
+    // PaSh_GROUP_PANE_TO_THERMAL_BOX
+    { 0,22},
+    // PaSh_GROUP_PANE_TO_THERMAL_SPR
     { 2,30},
     // PaSh_GROUP_PANE_AGENTS
     { 2, 18},
@@ -1944,15 +1953,16 @@ void draw_agent_grouping_bars(void)
 
     for (n--; n >= 0; n--)
     {
+        struct GamePanel *p_panel;
         short x, y;
 
         if (lbDisplay.GraphicsScreenHeight < 400) {
-            x = game_panel[17].X;
-            y = game_panel[17].Y;
+            p_panel = &game_panel[17];
         } else {
-            x = game_panel[18].X;
-            y = game_panel[18].Y;
+            p_panel = &game_panel[18];
         }
+        x = p_panel->X;
+        y = p_panel->Y;
         if (lbDisplay.GraphicsScreenHeight < 400) {
             x /= 2;
             y /= 2;
@@ -2284,10 +2294,16 @@ TbBool mouse_over_infrared_slant_box(short panel)
     p_panel = &game_panel[panel];
 
     x = p_panel->X;
-    y = lbDisplay.GraphicsScreenHeight < 400 ? (p_panel->Y + 44) : (p_panel->Y + 48);
+    y = p_panel->Y;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        x /= 2;
+        y /= 2;
+    }
+    x += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL_BOX].x;
+    y += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL_BOX].y;
 
-    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    ms_x = lbDisplay.MouseX;
+    ms_y = lbDisplay.MouseY;
     delta_x = (ms_x - x);
     delta_y = (ms_y - y);
 
@@ -2319,20 +2335,22 @@ void draw_panel_thermal_button(void)
 {
     if ((ingame.Flags & GamF_ThermalView) != 0)
     {
+        struct GamePanel *p_panel;
         short x, y;
+
         if (lbDisplay.GraphicsScreenHeight < 400) {
-            x = game_panel[17].X;
-            y = game_panel[17].Y;
+            p_panel = &game_panel[17];
         } else {
-            x = game_panel[18].X;
-            y = game_panel[18].Y;
+            p_panel = &game_panel[18];
         }
+        x = p_panel->X;
+        y = p_panel->Y;
         if (lbDisplay.GraphicsScreenHeight < 400) {
             x /= 2;
             y /= 2;
         }
-        x += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL].x;
-        y += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL].y;
+        x += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL_SPR].x;
+        y += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL_SPR].y;
         draw_new_panel_sprite_std(x, y, 91);
     }
 }
