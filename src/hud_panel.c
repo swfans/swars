@@ -88,33 +88,6 @@ enum PanelShift {
     PaSh_WEP_NEXT_BUTTON_AREA = 14,
 };
 
-struct GamePanel game_panel_lo[] = {
-    // Per-agent main panel frame
-    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_AgentBadge},
-    {146,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
-    {304,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
-    {462,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
-    // Per-agent mood bar
-    { 44, 10,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
-    {202, 10,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
-    {360, 10,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
-    {518, 10,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
-    // Per-agent medikit button
-    { 30, 24, 95,  0,  0, 1, 1, 0, PanT_AgentMedi},
-    {188, 24, 95,  0,  0, 2, 1, 1, PanT_AgentMedi},
-    {346, 24, 95,  0,  0, 3, 1, 2, PanT_AgentMedi},
-    {504, 24, 95,  0,  0, 4, 1, 3, PanT_AgentMedi},
-    // Per-agent current weapon frame
-    { 58, 24, 12,  0,  0, 1, 1, 0, PanT_AgentWeapon},
-    {216, 24, 12,  0,  0, 2, 1, 1, PanT_AgentWeapon},
-    {374, 24, 12,  0,  0, 3, 1, 2, PanT_AgentWeapon},
-    {532, 24, 12,  0,  0, 4, 1, 3, PanT_AgentWeapon},
-    // Left-side indicators
-    {  0, 38, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0,178, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
-    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
-};
-
 struct GamePanel game_panel_hi[] = {
     // Per-agent main panel frame
     {  0,  0,  1,150, 32, 1, 1, 0, PanT_AgentBadge},
@@ -143,6 +116,33 @@ struct GamePanel game_panel_hi[] = {
     { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
 };
 
+struct GamePanel game_panel_lo[] = {
+    // Per-agent main panel frame
+    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_AgentBadge},
+    {146,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
+    {304,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
+    {462,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
+    // Per-agent mood bar
+    { 44, 10,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
+    {202, 10,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
+    {360, 10,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
+    {518, 10,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
+    // Per-agent medikit button
+    { 30, 24, 95,  0,  0, 1, 1, 0, PanT_AgentMedi},
+    {188, 24, 95,  0,  0, 2, 1, 1, PanT_AgentMedi},
+    {346, 24, 95,  0,  0, 3, 1, 2, PanT_AgentMedi},
+    {504, 24, 95,  0,  0, 4, 1, 3, PanT_AgentMedi},
+    // Per-agent current weapon frame
+    { 58, 24, 12,  0,  0, 1, 1, 0, PanT_AgentWeapon},
+    {216, 24, 12,  0,  0, 2, 1, 1, PanT_AgentWeapon},
+    {374, 24, 12,  0,  0, 3, 1, 2, PanT_AgentWeapon},
+    {532, 24, 12,  0,  0, 4, 1, 3, PanT_AgentWeapon},
+    // Left-side indicators
+    {  0, 38, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0,178, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
+    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
+};
+
 struct GamePanel game_panel_prealp_hi[] = {
     // Per-agent main panel frame
     {  0,  0,  1,150, 32, 1, 1, 0, PanT_AgentBadge},
@@ -154,6 +154,34 @@ struct GamePanel game_panel_prealp_hi[] = {
     {202, 12,  0, 88, 10, 2, 1, 1, PanT_AgentMood},
     {360, 12,  0, 88, 10, 3, 1, 2, PanT_AgentMood},
     {518, 12,  0, 88, 10, 4, 1, 3, PanT_AgentMood},
+    // Per-agent medikit button
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    // Per-agent current weapon frame
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
+    // Left-side indicators
+    {  0, 37, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0,191,105,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0,267, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
+    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
+};
+
+struct GamePanel game_panel_prealp_lo[] = {
+    // Per-agent main panel frame
+    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_AgentBadge},
+    {145,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
+    {302,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
+    {459,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
+    // Per-agent mood bar
+    { 44, 12,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
+    {202, 12,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
+    {360, 12,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
+    {518, 12,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
     // Per-agent medikit button
     {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
     {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
@@ -201,36 +229,6 @@ struct TbPoint game_panel_hi_shifts[] = {
     {74, 26},
 };
 
-struct TbPoint game_panel_prealp_hi_shifts[] = {
-    // PaSh_AGENT_PANEL_TO_NUMBER
-    {14, 4},
-    { 9, 4},
-    {10, 4},
-    {16, 4},
-    // PaSh_AGENT_WEAPON_TO_LIST
-    { 1,24},
-    // PaSh_GROUP_PANE_TO_THERMAL
-    { 4,60},
-    // PaSh_WEP_CURR_BTN_TO_SYMBOL
-    { 8, 4},
-    // PaSh_WEP_FRST_BTN_TO_SYMBOL
-    { 8, 4},
-    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
-    { 8, 4},
-    // PaSh_WEP_CURR_BTN_TO_DECOR
-    { 0, 0},
-    // PaSh_WEP_FRST_BTN_TO_DECOR
-    {-16,-8},
-    // PaSh_WEP_NEXT_BTN_TO_DECOR
-    { 0,-4},
-    // PaSh_WEP_NEXT_DISTANCE
-    { 0, 28},
-    // PaSh_WEP_CURR_BUTTON_AREA
-    {74, 26},
-    // PaSh_WEP_NEXT_BUTTON_AREA
-    {74, 26},
-};
-
 struct TbPoint game_panel_lo_shifts[] = {
     // PaSh_AGENT_PANEL_TO_NUMBER
     { 2, 1},
@@ -259,6 +257,36 @@ struct TbPoint game_panel_lo_shifts[] = {
     {38, 13},
     // PaSh_WEP_NEXT_BUTTON_AREA
     {37, 13},
+};
+
+struct TbPoint game_panel_prealp_hi_shifts[] = {
+    // PaSh_AGENT_PANEL_TO_NUMBER
+    {14, 4},
+    { 9, 4},
+    {10, 4},
+    {16, 4},
+    // PaSh_AGENT_WEAPON_TO_LIST
+    { 1,24},
+    // PaSh_GROUP_PANE_TO_THERMAL
+    { 4,60},
+    // PaSh_WEP_CURR_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_FRST_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
+    { 8, 4},
+    // PaSh_WEP_CURR_BTN_TO_DECOR
+    { 0, 0},
+    // PaSh_WEP_FRST_BTN_TO_DECOR
+    {-16,-8},
+    // PaSh_WEP_NEXT_BTN_TO_DECOR
+    { 0,-4},
+    // PaSh_WEP_NEXT_DISTANCE
+    { 0, 28},
+    // PaSh_WEP_CURR_BUTTON_AREA
+    {74, 26},
+    // PaSh_WEP_NEXT_BUTTON_AREA
+    {74, 26},
 };
 
 struct TbPoint game_panel_prealp_lo_shifts[] = {
@@ -326,7 +354,7 @@ void load_pop_sprites_lo(void)
     prep_pop_sprites(0);
     if (ingame.PanelPermutation >= 0)
     {
-        game_panel = game_panel_prealp_hi;
+        game_panel = game_panel_prealp_lo;
         game_panel_shifts = game_panel_prealp_lo_shifts;
     }
     else
@@ -1373,10 +1401,6 @@ void draw_agent_carried_weapon_prealp_list(PlayerInfo *p_locplayer, ushort plage
     TbBool recharging;
     short x, y;
 
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        cx /= 2;
-        cy /= 2;
-    }
     recharging = p_locplayer->WepDelays[plagent][weptype] != 0;
     wep_highlight = panel_agents_weapon_highlighted(p_locplayer, plagent, weptype);
 
@@ -1502,7 +1526,7 @@ void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong wea
     ushort weptype;
     int nchecked;
     ulong wepflags;
-    int cy;
+    int cx, cy;
     int ncarried;
     int ncarr_below;
     int ncarr_above;
@@ -1517,7 +1541,12 @@ void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong wea
         ncarr_below -= 4;
     nshown = 0;
     wepflags = weapons_carried;
+    cx = 22;
     cy = 36;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        cx /= 2;
+        cy /= 2;
+    }
     nchecked = 0;
     for (weptype = 1; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
     {
@@ -1527,9 +1556,10 @@ void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong wea
             continue;
         if (nshown >= ncarr_below)
         {
-            draw_agent_carried_weapon_prealp_list(p_locplayer, plagent, nshown, (weptype == current_weapon), weptype, 30 - 8, cy);
+            draw_agent_carried_weapon_prealp_list(p_locplayer, plagent, nshown, (weptype == current_weapon), weptype, cx, cy);
 
-            cy += 28;
+            cx += game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].x;
+            cy += game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].y;
             ++nchecked;
         }
         nshown++;
