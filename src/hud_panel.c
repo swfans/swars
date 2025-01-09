@@ -291,7 +291,7 @@ struct TbPoint game_panel_prealp_hi_shifts[] = {
 
 struct TbPoint game_panel_prealp_lo_shifts[] = {
     // PaSh_AGENT_PANEL_TO_NUMBER
-    { 5, 1},
+    { 4, 1},
     { 4, 1},
     { 3, 1},
     { 6, 1},
