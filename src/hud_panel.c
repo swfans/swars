@@ -83,6 +83,9 @@ enum PanelShift {
     PaSh_WEP_CURR_BTN_TO_DECOR =  9,
     PaSh_WEP_FRST_BTN_TO_DECOR = 10,
     PaSh_WEP_NEXT_BTN_TO_DECOR = 11,
+    PaSh_WEP_NEXT_DISTANCE = 12,
+    PaSh_WEP_CURR_BUTTON_AREA = 13,
+    PaSh_WEP_NEXT_BUTTON_AREA = 14,
 };
 
 struct GamePanel game_panel_lo[] = {
@@ -190,6 +193,12 @@ struct TbPoint game_panel_hi_shifts[] = {
     {-16,-8},
     // PaSh_WEP_NEXT_BTN_TO_DECOR
     { 0, -4},
+    // PaSh_WEP_NEXT_DISTANCE
+    { 0, 28},
+    // PaSh_WEP_CURR_BUTTON_AREA
+    {76, 26},
+    // PaSh_WEP_NEXT_BUTTON_AREA
+    {74, 26},
 };
 
 struct TbPoint game_panel_prealp_hi_shifts[] = {
@@ -214,6 +223,12 @@ struct TbPoint game_panel_prealp_hi_shifts[] = {
     {-16,-8},
     // PaSh_WEP_NEXT_BTN_TO_DECOR
     { 0,-4},
+    // PaSh_WEP_NEXT_DISTANCE
+    { 0, 28},
+    // PaSh_WEP_CURR_BUTTON_AREA
+    {74, 26},
+    // PaSh_WEP_NEXT_BUTTON_AREA
+    {74, 26},
 };
 
 struct TbPoint game_panel_lo_shifts[] = {
@@ -238,6 +253,12 @@ struct TbPoint game_panel_lo_shifts[] = {
     { -8,-4},
     // PaSh_WEP_NEXT_BTN_TO_DECOR
     { 0,-2},
+    // PaSh_WEP_NEXT_DISTANCE
+    { 0, 14},
+    // PaSh_WEP_CURR_BUTTON_AREA
+    {38, 13},
+    // PaSh_WEP_NEXT_BUTTON_AREA
+    {37, 13},
 };
 
 struct TbPoint game_panel_prealp_lo_shifts[] = {
@@ -262,6 +283,12 @@ struct TbPoint game_panel_prealp_lo_shifts[] = {
     {-8,-4},
     // PaSh_WEP_NEXT_BTN_TO_DECOR
     { 0,-2},
+    // PaSh_WEP_NEXT_DISTANCE
+    { 0, 14},
+    // PaSh_WEP_CURR_BUTTON_AREA
+    {37, 13},
+    // PaSh_WEP_NEXT_BUTTON_AREA
+    {37, 13},
 };
 
 struct TbPoint *game_panel_shifts;
@@ -1393,15 +1420,15 @@ TbBool panel_mouse_over_weapon(short box_x, short box_y, short box_w, short box_
     if ((panstate >= PANEL_STATE_WEP_SEL_GRP) && (panstate < PANEL_STATE_WEP_SEL_GRP + 4))
     {
         if (!lbDisplay.MRightButton) {
-            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
-            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+            msx = lbDisplay.RMouseX;
+            msy = lbDisplay.RMouseY;
             if (over_box(msx, msy, box_x, box_y, box_w, box_h))
                 return true;
         }
     }
     {
-        msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        msx = lbDisplay.MMouseX;
+        msy = lbDisplay.MMouseY;
         if (over_box(msx, msy, box_x, box_y, box_w, box_h))
             return true;
     }
@@ -1419,7 +1446,7 @@ TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong
     int weptype;
     int nchecked;
     ulong wepflags;
-    int cy;
+    int cx, cy;
     int ncarried;
     int ncarr_below;
     int ncarr_above;
@@ -1436,7 +1463,12 @@ TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong
         ncarr_below -= 4;
     nshown = 0;
     wepflags = weapons_carried;
-    cy = 36;
+    cx = 34;
+    cy = 40;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        cx /= 2;
+        cy /= 2;
+    }
     nchecked = 0;
     for (weptype = 1; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
     {
@@ -1447,7 +1479,11 @@ TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong
         if (nshown >= ncarr_below)
         {
             TbBool wep_highlight;
-            wep_highlight = panel_mouse_over_weapon(30 - 4, cy - 4, 76, 24, PANEL_STATE_WEP_SEL_GRP + plagent, 0);
+            short w, h;
+
+            w = max(game_panel_shifts[PaSh_WEP_NEXT_BUTTON_AREA].x + 2, game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].x - 1);
+            h = max(game_panel_shifts[PaSh_WEP_NEXT_BUTTON_AREA].y, game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].y - 1);
+            wep_highlight = panel_mouse_over_weapon(cx - 1, cy, w, h, PANEL_STATE_WEP_SEL_GRP + plagent, 0);
 
             if (wep_highlight)
             {
@@ -1457,7 +1493,8 @@ TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong
                 break;
             }
 
-            cy += 28;
+            cx += game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].x;
+            cy += game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].y;
             ++nchecked;
         }
         nshown++;
@@ -1513,10 +1550,12 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
 {
     PlayerInfo *p_player;
     struct Thing *p_agent;
+    struct GamePanel *p_panel;
     ushort panstate;
     ushort curwep, prevwep;
     short cx, cy;
     TbBool wep_highlight;
+    short w, h;
 
     // If 0x01 not set, do not draw and do not access the agent as it may be invalid
     if ((flags & 0x01) == 0)
@@ -1526,12 +1565,13 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
         return false;
 
     p_player = &players[plyr];
+    p_panel = &game_panel[12 + nagent];
+
+    cx = p_panel->X;
+    cy = p_panel->Y;
     if (lbDisplay.GraphicsScreenHeight < 400) {
-        cy = 28;
-        cx = 158 * nagent + 66;
-    } else {
-        cy = 29;
-        cx = 157 * nagent + 65;
+        cx /= 2;
+        cy /= 2;
     }
     p_agent = p_player->MyAgent[nagent];
 
@@ -1551,7 +1591,9 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
         return false;
     }
 
-    wep_highlight = panel_mouse_over_weapon(cx - 4, cy - 4, 76, 24, panstate, 0);
+    w = game_panel_shifts[PaSh_WEP_CURR_BUTTON_AREA].x;
+    h = game_panel_shifts[PaSh_WEP_CURR_BUTTON_AREA].y;
+    wep_highlight = panel_mouse_over_weapon(cx, cy, w, h, panstate, 0);
 
     if (wep_highlight)
     {
@@ -1631,8 +1673,14 @@ TbBool update_agent_weapons_selection(PlayerIdx plyr, short nagent)
     panstate = p_player->PanelState[mouser];
     plagent = p_agent->U.UPerson.ComCur & 3;
     wepflags = p_agent->U.UPerson.WeaponsCarried;
-    cx = game_panel[12 + plagent].X + game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].x;
-    cy = game_panel[12 + plagent].Y + game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y;
+    cx = game_panel[12 + plagent].X;
+    cy = game_panel[12 + plagent].Y;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        cx /= 2;
+        cy /= 2;
+    }
+    cx += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].x;
+    cy += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y;
 
     cur_ready_wep = player_agent_current_or_prev_weapon(plyr, plagent);
 
@@ -1653,7 +1701,11 @@ TbBool update_agent_weapons_selection(PlayerIdx plyr, short nagent)
         if (wep_visible)
         {
             TbBool wep_highlight;
-            wep_highlight = panel_mouse_over_weapon(cx - 1, cy, 76, 27, panstate, nshown + 1);
+            short w, h;
+
+            w = max(game_panel_shifts[PaSh_WEP_NEXT_BUTTON_AREA].x + 2, game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].x - 1);
+            h = max(game_panel_shifts[PaSh_WEP_NEXT_BUTTON_AREA].y, game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].y - 1);
+            wep_highlight = panel_mouse_over_weapon(cx - 1, cy, w, h, panstate, nshown + 1);
 
             if (wep_highlight) {
                 p_player->PanelItem[mouser] = weptype;
@@ -1662,7 +1714,8 @@ TbBool update_agent_weapons_selection(PlayerIdx plyr, short nagent)
                 break;
             }
 
-            cy += 28;
+            cx += game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].x;
+            cy += game_panel_shifts[PaSh_WEP_NEXT_DISTANCE].y;
             nshown++;
         }
 
