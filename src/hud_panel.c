@@ -121,27 +121,27 @@ struct GamePanel game_panel_hi[] = {
 struct GamePanel game_panel_lo[] = {
     // Per-agent main panel frame
     {  0,  0,  1, 75, 16, 1, 1, 0, PanT_AgentBadge},
-    {146,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
-    {304,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
-    {462,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
+    { 73,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
+    {152,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
+    {231,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
     // Per-agent mood bar
-    { 44, 10,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
-    {202, 10,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
-    {360, 10,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
-    {518, 10,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
+    { 22,  5,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
+    {101,  5,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
+    {180,  5,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
+    {259,  5,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
     // Per-agent medikit button
-    { 30, 24, 95,  0,  0, 1, 1, 0, PanT_AgentMedi},
-    {188, 24, 95,  0,  0, 2, 1, 1, PanT_AgentMedi},
-    {346, 24, 95,  0,  0, 3, 1, 2, PanT_AgentMedi},
-    {504, 24, 95,  0,  0, 4, 1, 3, PanT_AgentMedi},
+    { 15, 12, 95,  0,  0, 1, 1, 0, PanT_AgentMedi},
+    { 94, 12, 95,  0,  0, 2, 1, 1, PanT_AgentMedi},
+    {173, 12, 95,  0,  0, 3, 1, 2, PanT_AgentMedi},
+    {252, 12, 95,  0,  0, 4, 1, 3, PanT_AgentMedi},
     // Per-agent current weapon frame
-    { 58, 24, 12,  0,  0, 1, 1, 0, PanT_AgentWeapon},
-    {216, 24, 12,  0,  0, 2, 1, 1, PanT_AgentWeapon},
-    {374, 24, 12,  0,  0, 3, 1, 2, PanT_AgentWeapon},
-    {532, 24, 12,  0,  0, 4, 1, 3, PanT_AgentWeapon},
+    { 29, 12, 12,  0,  0, 1, 1, 0, PanT_AgentWeapon},
+    {108, 12, 12,  0,  0, 2, 1, 1, PanT_AgentWeapon},
+    {187, 12, 12,  0,  0, 3, 1, 2, PanT_AgentWeapon},
+    {266, 12, 12,  0,  0, 4, 1, 3, PanT_AgentWeapon},
     // Left-side indicators
-    {  0, 38, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0,178, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
+    {  0, 19, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0, 89, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
     { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
 };
 
@@ -170,20 +170,21 @@ struct GamePanel game_panel_prealp_hi[] = {
     {  0, 37, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
     {  0,191,105,  0,  0, 4, 1, 0, PanT_UNKN08},
     {  0,267, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
+    { 22, 36,  0,  0,  0, 4, 1, 0, PanT_AgentWeapon},
     { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
 };
 
 struct GamePanel game_panel_prealp_lo[] = {
     // Per-agent main panel frame
     {  0,  0,  1, 75, 16, 1, 1, 0, PanT_AgentBadge},
-    {145,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
-    {302,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
-    {459,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
+    { 72,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
+    {151,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
+    {229,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
     // Per-agent mood bar
-    { 44, 12,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
-    {202, 12,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
-    {360, 12,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
-    {518, 12,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
+    { 22,  6,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
+    {101,  6,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
+    {180,  6,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
+    {259,  6,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
     // Per-agent medikit button
     {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
     {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
@@ -195,9 +196,10 @@ struct GamePanel game_panel_prealp_lo[] = {
     {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
     {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
     // Left-side indicators
-    {  0, 37, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0,191,105,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0,267, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
+    {  0, 18, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0, 95,105,  0,  0, 4, 1, 0, PanT_UNKN08},
+    {  0,133, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
+    { 11, 18,  0,  0,  0, 4, 1, 0, PanT_AgentWeapon},
     { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
 };
 
@@ -868,13 +870,8 @@ void draw_players_chat_talk(int x, int y)
     int plyr;
     int base_x, pos_y;
 
-    if (lbDisplay.GraphicsScreenHeight >= 400) {
-        base_x = x;
-        pos_y = y;
-    } else {
-        base_x = x / 2;
-        pos_y = y / 2;
-    }
+    base_x = x;
+    pos_y = y;
 
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {
@@ -945,7 +942,16 @@ void SCANNER_draw_objective_info(int x, int y, int width)
     // TODO it would make sense to move this to higher level function
     if (in_network_game)
     {
-        draw_players_chat_talk(22, 51);
+        short x, y;
+
+        if (lbDisplay.GraphicsScreenHeight >= 400) {
+            x = 22;
+            y = 51;
+        } else {
+            x = 11;
+            y = 26;
+        }
+        draw_players_chat_talk(x, y);
     }
 }
 
@@ -1484,11 +1490,12 @@ TbBool panel_mouse_over_weapon(short box_x, short box_y, short box_w, short box_
  */
 TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong weapons_carried, short current_weapon)
 {
+    struct GamePanel *p_panel;
     ushort nshown;
     int weptype;
     int nchecked;
     ulong wepflags;
-    int cx, cy;
+    short cx, cy;
     int ncarried;
     int ncarr_below;
     int ncarr_above;
@@ -1503,14 +1510,12 @@ TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong
         ncarr_below = 0;
     else
         ncarr_below -= 4;
+    p_panel = &game_panel[19];
+    cx = p_panel->X;
+    cy = p_panel->Y;
+
     nshown = 0;
     wepflags = weapons_carried;
-    cx = 34;
-    cy = 40;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        cx /= 2;
-        cy /= 2;
-    }
     nchecked = 0;
     for (weptype = 1; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
     {
@@ -1548,11 +1553,12 @@ TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong
 
 void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong weapons_carried, short current_weapon)
 {
+    struct GamePanel *p_panel;
     ushort nshown;
     ushort weptype;
     int nchecked;
     ulong wepflags;
-    int cx, cy;
+    short cx, cy;
     int ncarried;
     int ncarr_below;
     int ncarr_above;
@@ -1565,14 +1571,12 @@ void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong wea
         ncarr_below = 0;
     else
         ncarr_below -= 4;
+    p_panel = &game_panel[19];
+    cx = p_panel->X;
+    cy = p_panel->Y;
+
     nshown = 0;
     wepflags = weapons_carried;
-    cx = 22;
-    cy = 36;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        cx /= 2;
-        cy /= 2;
-    }
     nchecked = 0;
     for (weptype = 1; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
     {
@@ -1617,10 +1621,6 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
 
     cx = p_panel->X;
     cy = p_panel->Y;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        cx /= 2;
-        cy /= 2;
-    }
     p_agent = p_player->MyAgent[nagent];
 
     panstate = p_player->PanelState[mouser];
@@ -1673,11 +1673,6 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent, ubyte fl
 
     cx = p_panel->X;
     cy = p_panel->Y;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        cx /= 2;
-        cy /= 2;
-    }
-
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_locplayer->PrevWeapon[nagent];
 
@@ -1728,10 +1723,6 @@ TbBool update_agent_weapons_selection(PlayerIdx plyr, short nagent)
 
     cx = p_panel->X;
     cy = p_panel->Y;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        cx /= 2;
-        cy /= 2;
-    }
     cx += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].x;
     cy += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y;
     { // Shift the input a bit up to avoid having a do-nothin area between current weapon and the weapon list
@@ -1809,10 +1800,6 @@ void draw_agent_weapons_selection(PlayerIdx plyr, short nagent)
 
     cx = p_panel->X;
     cy = p_panel->Y;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        cx /= 2;
-        cy /= 2;
-    }
     cx += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].x;
     cy += game_panel_shifts[PaSh_AGENT_WEAPON_TO_LIST].y;
 
@@ -1963,10 +1950,6 @@ void draw_agent_grouping_bars(void)
         }
         x = p_panel->X;
         y = p_panel->Y;
-        if (lbDisplay.GraphicsScreenHeight < 400) {
-            x /= 2;
-            y /= 2;
-        }
         x += game_panel_shifts[PaSh_GROUP_PANE_AGENTS + n].x;
         y += game_panel_shifts[PaSh_GROUP_PANE_AGENTS + n].y;
         if (ingame.PanelPermutation == -1)
@@ -2224,11 +2207,7 @@ TbBool mouse_move_over_panel(short panel)
 
     x = p_panel->X;
     y = p_panel->Y;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        x /= 2;
-        y /= 2;
-    }
-    if (p_panel->Width == 0 && p_panel->Height == 0)
+    if ((p_panel->Width == 0) && (p_panel->Height == 0))
     {
         struct TbSprite *p_spr;
         p_spr = &pop1_sprites[p_panel->Spr];
@@ -2295,10 +2274,6 @@ TbBool mouse_over_infrared_slant_box(short panel)
 
     x = p_panel->X;
     y = p_panel->Y;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        x /= 2;
-        y /= 2;
-    }
     x += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL_BOX].x;
     y += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL_BOX].y;
 
@@ -2318,9 +2293,6 @@ short panel_mouse_move_mood_value(short panel)
 
     p_panel = &game_panel[panel];
     x = p_panel->X;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        x /= 2;
-    }
     i = mouse_move_position_horizonal_over_bar_coords(x, p_panel->Width);
     i = 2 * (i * 88 / p_panel->Width) - 88;
     if (i < -88) i = -88;
@@ -2345,10 +2317,6 @@ void draw_panel_thermal_button(void)
         }
         x = p_panel->X;
         y = p_panel->Y;
-        if (lbDisplay.GraphicsScreenHeight < 400) {
-            x /= 2;
-            y /= 2;
-        }
         x += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL_SPR].x;
         y += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL_SPR].y;
         draw_new_panel_sprite_std(x, y, 91);
@@ -2393,11 +2361,14 @@ void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
     }
 
     // The X of health bar in anchored to mood panel
-    x = p_mopanel->X + 8;
-    y = p_panel->Y + 4;
+    x = p_mopanel->X;
+    y = p_panel->Y;
     if (lbDisplay.GraphicsScreenHeight < 400) {
-        x /= 2;
-        y /= 2;
+        x += 4;
+        y += 2;
+    } else {
+        x += 8;
+        y += 4;
     }
     w = p_mopanel->Width;
     if (ingame.PanelPermutation >= 0)
@@ -2422,10 +2393,11 @@ void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
 
     // Draw drug level aka mood (or just a red line if no drugs)
     x = p_mopanel->X;
-    y = p_mopanel->Y + 2;
+    y = p_mopanel->Y;
     if (lbDisplay.GraphicsScreenHeight < 400) {
-        x /= 2;
-        y /= 2;
+        y += 1;
+    } else {
+        y += 2;
     }
     w = p_mopanel->Width;
     h = 6;
@@ -2446,10 +2418,11 @@ void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
         x = p_panel->X + 2 * p_panel->Width - 16;
     else
         x = p_panel->X + p_panel->Width - 17;
-    y = p_panel->Y + 18;
+    y = p_panel->Y;
     if (lbDisplay.GraphicsScreenHeight < 400) {
-        x /= 2;
-        y /= 2;
+        y += 9;
+    } else {
+        y += 18;
     }
     w = 4;
     h = 14;
@@ -2493,10 +2466,6 @@ void draw_new_panel(void)
             short x, y;
             x = p_panel->X;
             y = p_panel->Y;
-            if (lbDisplay.GraphicsScreenHeight < 400) {
-                x /= 2;
-                y /= 2;
-            }
             draw_new_panel_sprite_std(x, y, p_panel->Spr);
         }
         else
@@ -2546,10 +2515,6 @@ void draw_new_panel(void)
 
             x = p_panel->X;
             y = p_panel->Y;
-            if (lbDisplay.GraphicsScreenHeight < 400) {
-                x /= 2;
-                y /= 2;
-            }
             if (is_darkened)
                 draw_new_panel_sprite_dark(x, y, p_panel->Spr);
             else
@@ -2589,10 +2554,6 @@ void draw_new_panel(void)
             plagent = p_agent->U.UPerson.ComCur & 3;
             x = game_panel[0 + plagent].X;
             y = game_panel[0 + plagent].Y;
-            if (lbDisplay.GraphicsScreenHeight < 400) {
-                x /= 2;
-                y /= 2;
-            }
             x += game_panel_shifts[PaSh_AGENT_PANEL_TO_NUMBER + plagent].x;
             y += game_panel_shifts[PaSh_AGENT_PANEL_TO_NUMBER + plagent].y;
             draw_new_panel_sprite_std(x, y, 6 + plagent);
