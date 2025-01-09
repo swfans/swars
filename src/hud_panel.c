@@ -261,10 +261,10 @@ struct TbPoint game_panel_lo_shifts[] = {
 
 struct TbPoint game_panel_prealp_hi_shifts[] = {
     // PaSh_AGENT_PANEL_TO_NUMBER
-    {14, 4},
-    { 9, 4},
-    {10, 4},
-    {16, 4},
+    { 8, 4},
+    { 8, 4},
+    { 4, 4},
+    {12, 4},
     // PaSh_AGENT_WEAPON_TO_LIST
     { 1,24},
     // PaSh_GROUP_PANE_TO_THERMAL
@@ -291,7 +291,7 @@ struct TbPoint game_panel_prealp_hi_shifts[] = {
 
 struct TbPoint game_panel_prealp_lo_shifts[] = {
     // PaSh_AGENT_PANEL_TO_NUMBER
-    { 6, 1},
+    { 5, 1},
     { 4, 1},
     { 3, 1},
     { 6, 1},
