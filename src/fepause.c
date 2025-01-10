@@ -29,6 +29,7 @@
 #include "bfmusic.h"
 #include "bfscd.h"
 #include "ssampply.h"
+
 #include "bflib_joyst.h"
 #include "campaign.h"
 #include "display.h"
@@ -204,25 +205,12 @@ void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
     LbDrawLine(box->X + stp, box->Y + box->Height - cut, box->X + cut, box->Height + cut + stp, colr1);
 }
 
-void draw_parallelogram_45degi(short x, short y, short w, short h, TbPixel colr2)
+void draw_slant_screen_box(struct ScreenBox *box, TbPixel colr2)
 {
-    short cx, i;
-
-    cx = x;
-    for (i = 0; i < h; i += 2)
-    {
-        LbDrawLine(cx, y + i, cx + w, y + i, colr2);
-        cx -= 2;
-    }
+    ApDrawSlantBox(box->X, box->Y, box->Width, box->Height, colr2);
 }
 
-void draw_slant_box(struct ScreenBox *box, TbPixel colr2)
-{
-    draw_parallelogram_45degi(box->X, box->Y, box->Width, box->Height, colr2);
-    draw_parallelogram_45degi(box->X - 1, box->Y + 1, box->Width, box->Height, colr2);
-}
-
-void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
+void draw_slant_left_arrow_spr(struct ScreenBox *box, TbPixel colr2)
 {
     short stp;
 
@@ -242,7 +230,7 @@ void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
     }
 }
 
-void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
+void draw_slant_right_arrow_spr(struct ScreenBox *box, TbPixel colr2)
 {
     short stp;
 
@@ -260,6 +248,34 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
     {
         LbSpriteDraw(box->X - stp, box->Y - stp, &pop1_sprites[101]);
     }
+}
+
+void draw_slant_left_arrow(struct ScreenBox *box, TbPixel colr2)
+{
+    short x, y;
+    short stp;
+    TbPixel colour;
+
+    if (mouse_move_over_slant_box(box))
+        colour = colour_lookup[ColLU_WHITE];
+    else
+        colour = colr2;
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        stp = 1;
+    else
+        stp = 2;
+
+    x = box->X;
+    y = box->Y - stp;
+
+    LbDrawTriangle(x + 0, y + stp * 5, x + stp * 11, y - 1, x +  0, y + stp * 11, colour);
+    ApDrawSlantBox(x + stp * 11 - 1, y + 0, stp * 2 / 2, stp * 11, colour);
+}
+
+void draw_slant_right_arrow(struct ScreenBox *box, TbPixel colr2)
+{
+    draw_slant_right_arrow_spr(box, colr2);
 }
 
 void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct ScreenBox *arrow_l_box,
@@ -500,10 +516,10 @@ void draw_pause_screen_static(struct ScreenBox *box)
 void draw_pause_volume_bar(struct ScreenBox *p_box1, struct ScreenBox *p_box2, struct ScreenBox *p_box3, short *p_target)
 {
     // Draw the main slider box
-    draw_slant_box(p_box1, ingame_boxes_colr2);
+    draw_slant_screen_box(p_box1, ingame_boxes_colr2);
     // Draw the side arrows
-    draw_kicked_left_arrow(p_box2, ingame_boxes_colr2);
-    draw_kicked_right_arrow(p_box3, ingame_boxes_colr2);
+    draw_slant_left_arrow(p_box2, ingame_boxes_colr2);
+    draw_slant_right_arrow(p_box3, ingame_boxes_colr2);
 
     if (*p_target) // Draw slider box filling
     {
@@ -512,7 +528,7 @@ void draw_pause_volume_bar(struct ScreenBox *p_box1, struct ScreenBox *p_box2, s
         box4.Y = p_box1->Y + 2;
         box4.Width = (p_box1->Width - 6) * (*p_target) / 322;
         box4.Height = p_box1->Height - 4;
-        draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
+        draw_slant_screen_box(&box4, colour_lookup[ColLU_WHITE]);
     }
 }
 

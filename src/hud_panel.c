@@ -1969,7 +1969,7 @@ void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
 }
 
-void draw_transparent_skewed_bar(short x, short y, ushort w, ushort h)
+void draw_transparent_slant_bar(short x, short y, ushort w, ushort h)
 {
     long waftx, wafty;
     ushort tmx, tmy;
@@ -2018,21 +2018,6 @@ void draw_transparent_skewed_bar(short x, short y, ushort w, ushort h)
     draw_trigpoly(&point4.pp, &point2.pp, &point3.pp);
 }
 
-void draw_solid_skewed_bar(short x, short y, ushort w, ushort h, ubyte col)
-{
-    short cx, cy;
-    short ch;
-
-    cx = x;
-    cy = y;
-    for (ch = h; ch > 0; ch--)
-    {
-        LbDrawLine(cx, cy, cx + w, cy, col);
-        --cx;
-        ++cy;
-    }
-}
-
 void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte transp)
 {
     short cw;
@@ -2043,11 +2028,11 @@ void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lv
     cw = w * lv / lvmax;
     if (transp)
     {
-        draw_transparent_skewed_bar(x, y, cw, h);
+        draw_transparent_slant_bar(x, y, cw, h);
     }
     else
     {
-        draw_solid_skewed_bar(x, y, cw, h, col);
+        ApDrawSlantBox(x, y, cw, h, col);
     }
 }
 
@@ -2183,7 +2168,7 @@ TbBool panel_active_based_on_target(short panel)
 
     p_panel = &game_panel[panel];
 
-    if (p_panel->Type == PanT_UNKN08 || p_panel->Type == PanT_UNKN10)
+    if ((p_panel->Type == PanT_UNKN08) || (p_panel->Type == PanT_UNKN10))
         return true;
 
     if (p_panel->ID >= playable_agents)

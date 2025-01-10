@@ -19,6 +19,7 @@
 #include "guiboxes.h"
 
 #include "bfkeybd.h"
+#include "bfline.h"
 #include "bfscreen.h"
 #include "bftext.h"
 
@@ -185,6 +186,22 @@ short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
 
     ms_y = lbDisplay.MMouseY;
     return ms_y - box->Y;
+}
+
+TbResult ApDrawSlantBox(short x, short y, ushort w, ushort h, TbPixel col)
+{
+    short cx, cy;
+    short ch;
+
+    cx = x;
+    cy = y;
+    for (ch = h; ch > 0; ch--)
+    {
+        LbDrawLine(cx, cy, cx + w, cy, col);
+        --cx;
+        ++cy;
+    }
+    return Lb_SUCCESS;
 }
 
 void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed)
