@@ -116,7 +116,7 @@ ubyte input_ingame_button(struct ScreenButton *p_button, ubyte enabled)
     return 0;
 }
 
-TbBool input_kicked_left_arrow(struct ScreenBox *box, short *target)
+TbBool input_slant_left_arrow(struct ScreenBox *box, short *target)
 {
     if (mouse_move_over_slant_box(box))
     {
@@ -132,7 +132,7 @@ TbBool input_kicked_left_arrow(struct ScreenBox *box, short *target)
     return false;
 }
 
-TbBool input_kicked_right_arrow(struct ScreenBox *box, short *target)
+TbBool input_slant_right_arrow(struct ScreenBox *box, short *target)
 {
     if (mouse_move_over_slant_box(box))
     {
@@ -205,7 +205,7 @@ void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
     LbDrawLine(box->X + stp, box->Y + box->Height - cut, box->X + cut, box->Height + cut + stp, colr1);
 }
 
-void draw_slant_screen_box(struct ScreenBox *box, TbPixel colr2)
+void draw_slant_box(struct ScreenBox *box, TbPixel colr2)
 {
     ApDrawSlantBox(box->X, box->Y, box->Width, box->Height, colr2);
 }
@@ -275,7 +275,25 @@ void draw_slant_left_arrow(struct ScreenBox *box, TbPixel colr2)
 
 void draw_slant_right_arrow(struct ScreenBox *box, TbPixel colr2)
 {
-    draw_slant_right_arrow_spr(box, colr2);
+    short x, y;
+    short stp;
+    TbPixel colour;
+
+    if (mouse_move_over_slant_box(box))
+        colour = colour_lookup[ColLU_WHITE];
+    else
+        colour = colr2;
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        stp = 1;
+    else
+        stp = 2;
+
+    x = box->X;
+    y = box->Y - stp;
+
+    ApDrawSlantBox(x + stp * 10 - 1, y + 0, stp * 2 / 2, stp * 11, colour);
+    LbDrawTriangle(x + 22, y + 11, x + 0, y + 22, x +  22, y + 0, colour);
 }
 
 void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct ScreenBox *arrow_l_box,
@@ -516,7 +534,7 @@ void draw_pause_screen_static(struct ScreenBox *box)
 void draw_pause_volume_bar(struct ScreenBox *p_box1, struct ScreenBox *p_box2, struct ScreenBox *p_box3, short *p_target)
 {
     // Draw the main slider box
-    draw_slant_screen_box(p_box1, ingame_boxes_colr2);
+    draw_slant_box(p_box1, ingame_boxes_colr2);
     // Draw the side arrows
     draw_slant_left_arrow(p_box2, ingame_boxes_colr2);
     draw_slant_right_arrow(p_box3, ingame_boxes_colr2);
@@ -528,7 +546,7 @@ void draw_pause_volume_bar(struct ScreenBox *p_box1, struct ScreenBox *p_box2, s
         box4.Y = p_box1->Y + 2;
         box4.Width = (p_box1->Width - 6) * (*p_target) / 322;
         box4.Height = p_box1->Height - 4;
-        draw_slant_screen_box(&box4, colour_lookup[ColLU_WHITE]);
+        draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
     }
 }
 
@@ -540,6 +558,7 @@ ubyte show_pause_screen(struct ScreenBox *box)
         box->Flags |= GBxFlg_BkgndDrawn;
     }
 
+    lbDisplay.DrawFlags = 0;
     draw_pause_volume_bar(&samplevol_slider_box, &samplevol_arrow_l_box, &samplevol_arrow_r_box, &startscr_samplevol);
     draw_pause_volume_bar(&midivol_slider_box, &midivol_arrow_l_box, &midivol_arrow_r_box, &startscr_midivol);
     draw_pause_volume_bar(&cdvolume_slider_box, &cdvolume_arrow_l_box, &cdvolume_arrow_r_box, &startscr_cdvolume);
@@ -562,9 +581,9 @@ void *input_pause_screen(void)
     {
     target = &startscr_samplevol;
 
-    if (input_kicked_left_arrow(&samplevol_arrow_l_box, target))
+    if (input_slant_left_arrow(&samplevol_arrow_l_box, target))
         affected = target;
-    if (input_kicked_right_arrow(&samplevol_arrow_r_box, target))
+    if (input_slant_right_arrow(&samplevol_arrow_r_box, target))
         affected = target;
     if (input_slant_box(&samplevol_slider_box, target))
         affected = target;
@@ -573,9 +592,9 @@ void *input_pause_screen(void)
     {
     target = &startscr_midivol;
 
-    if (input_kicked_left_arrow(&midivol_arrow_l_box, target))
+    if (input_slant_left_arrow(&midivol_arrow_l_box, target))
         affected = target;
-    if (input_kicked_right_arrow(&midivol_arrow_r_box, target))
+    if (input_slant_right_arrow(&midivol_arrow_r_box, target))
         affected = target;
     if (input_slant_box(&midivol_slider_box, target))
         affected = target;
@@ -584,9 +603,9 @@ void *input_pause_screen(void)
     {
     target = &startscr_cdvolume;
 
-    if (input_kicked_left_arrow(&cdvolume_arrow_l_box, target))
+    if (input_slant_left_arrow(&cdvolume_arrow_l_box, target))
         affected = target;
-    if (input_kicked_right_arrow(&cdvolume_arrow_r_box, target))
+    if (input_slant_right_arrow(&cdvolume_arrow_r_box, target))
         affected = target;
     if (input_slant_box(&cdvolume_slider_box, target))
         affected = target;
