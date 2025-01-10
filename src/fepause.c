@@ -293,7 +293,7 @@ void draw_slant_right_arrow(struct ScreenBox *box, TbPixel colr2)
     y = box->Y - stp;
 
     ApDrawSlantBox(x + stp * 10 - 1, y + 0, stp * 2 / 2, stp * 11, colour);
-    LbDrawTriangle(x + 22, y + 11, x + 0, y + 22, x +  22, y + 0, colour);
+    LbDrawTriangle(x + stp * 11, y + stp * 5 + 1, x + 0, y + stp * 11, x +  stp * 11, y + 0, colour);
 }
 
 void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct ScreenBox *arrow_l_box,
