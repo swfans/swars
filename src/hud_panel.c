@@ -59,6 +59,8 @@ extern long dword_1DC36C;
  */
 sbyte agent_with_mouse_over_weapon = -1;
 
+short gui_scale = 0;
+
 enum PanelType {
     PanT_NONE = 0,
     PanT_AgentBadge,
@@ -366,6 +368,7 @@ TbResult prep_pop_sprites(short detail)
         colorno = -ingame.PanelPermutation - 1;
         ret = load_pop_sprites(pinfo->directory, colorno, detail);
     }
+    gui_scale = detail;
     setup_pop_sprites();
     if (ret == Lb_FAIL) {
         LOGERR("Some files were not loaded successfully");
@@ -373,50 +376,59 @@ TbResult prep_pop_sprites(short detail)
     return ret;
 }
 
-void load_pop_sprites_lo(void)
+void size_panels_for_detail(short detail)
 {
-#if 0
-    asm volatile ("call ASM_load_pop_sprites_lo\n"
-        :  :  : "eax" );
-#endif
-    prep_pop_sprites(0);
-    if (ingame.PanelPermutation >= 0)
+
+    if (detail == 0)
     {
-        game_panel = game_panel_prealp_lo;
-        game_panel_shifts = game_panel_prealp_lo_shifts;
+        if (ingame.PanelPermutation >= 0)
+        {
+            game_panel = game_panel_prealp_lo;
+            game_panel_shifts = game_panel_prealp_lo_shifts;
+        }
+        else
+        {
+            game_panel = game_panel_lo;
+            game_panel_shifts = game_panel_lo_shifts;
+        }
     }
     else
     {
-        game_panel = game_panel_lo;
-        game_panel_shifts = game_panel_lo_shifts;
+        if (ingame.PanelPermutation >= 0)
+        {
+            game_panel = game_panel_prealp_hi;
+            game_panel_shifts = game_panel_prealp_hi_shifts;
+        }
+        else
+        {
+            game_panel = game_panel_hi;
+            game_panel_shifts = game_panel_hi_shifts;
+        }
     }
 }
 
-void load_pop_sprites_hi(void)
+void load_pop_sprites_up_to(short max_detail)
 {
-#if 0
-    asm volatile ("call ASM_load_pop_sprites_hi\n"
-        :  :  : "eax" );
-#endif
-    prep_pop_sprites(1);
-    if (ingame.PanelPermutation >= 0)
+    short detail;
+    for (detail = max_detail; detail >= 0; detail--)
     {
-        game_panel = game_panel_prealp_hi;
-        game_panel_shifts = game_panel_prealp_hi_shifts;
+        TbResult ret;
+
+        ret = prep_pop_sprites(detail);
+        if (ret != Lb_FAIL)
+            break;
     }
-    else
-    {
-        game_panel = game_panel_hi;
-        game_panel_shifts = game_panel_hi_shifts;
-    }
+    if (detail < 0)
+        detail = 0;
+    size_panels_for_detail(detail);
 }
 
 void load_pop_sprites_for_current_mode(void)
 {
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        load_pop_sprites_lo();
-    else
-        load_pop_sprites_hi();
+    short max_detail;
+
+    max_detail = lbDisplay.GraphicsScreenHeight / 400;
+    load_pop_sprites_up_to(max_detail);
 }
 
 //TODO not the best location for agent state update
