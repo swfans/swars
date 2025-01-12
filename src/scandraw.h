@@ -36,7 +36,8 @@ extern ubyte byte_1C5C30[8];
 
 void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ, ubyte colour);
 void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour);
-void func_711F4(short a1, short a2, short a3, short a4, ubyte colour);
+void draw_map_flat_circle(short cor_x, short cor_y, short cor_z, short radius, TbPixel colour);
+void draw_map_flat_rect(int cor_x, int cor_y, int cor_z, int size_x, int size_z, TbPixel colour);
 
 void SCANNER_draw_new_transparent(void);
 /******************************************************************************/

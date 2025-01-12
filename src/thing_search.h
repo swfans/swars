@@ -98,6 +98,7 @@ short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort aft
 /** Search for train station building around given coordinates.
  */
 ThingIdx search_for_station(short X, short Z);
+ThingIdx search_for_ferry(short X, short Y, short Z, ushort R);
 ThingIdx search_for_vehicle(short X, short Z);
 ThingIdx search_things_for_uniqueid(short index, ubyte flag);
 /** Search for any thing, including off-map, nearest within given circle.

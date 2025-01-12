@@ -155,6 +155,8 @@ swars_SOURCES = \
 	main.c \
 	matrix.c \
 	matrix.h \
+	misstat.c \
+	misstat.h \
 	mouse.c \
 	mouse.h \
 	mydraw.c \

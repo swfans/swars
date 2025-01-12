@@ -67,6 +67,17 @@ extern "C" {
  */
 #define MAX_WALKABLE_STEEPNESS_PER_256 98
 
+enum MyMapElementFlags2 {
+    MEF2_Unkn01     = 0x01,
+    MEF2_Unkn02     = 0x02,
+    MEF2_Unkn04     = 0x04,
+    MEF2_Unkn08     = 0x08,
+    MEF2_Unkn10     = 0x10,
+    MEF2_Unkn20     = 0x20,
+    MEF2_Unkn40     = 0x40,
+    MEF2_Unkn80     = 0x80,
+};
+
 struct MyMapElement { // sizeof=18
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
   ushort Shade;
@@ -130,6 +141,14 @@ int alt_change_at_tile(short tile_x, short tile_z, int *change_xz);
 /** Sets some of the map elements flags based on other properties.
  */
 void update_map_flags(void);
+
+/** Checks if a tile should not be allowed to walk on due to terrain.
+ *
+ * To do such check during gameplay, MapElement flags should be used - this one
+ * is mostly to update these flags, if neccessary. Unless we really want to
+ * disregard any changes to the computed flags - then using this makes sense.
+ */
+TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z);
 
 void quick_crater(int x, int z, int size);
 

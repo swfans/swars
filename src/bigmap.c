@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "bfmemut.h"
+
 #include "swlog.h"
 /******************************************************************************/
 struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
@@ -311,12 +312,7 @@ static ushort count_tiles_around_steeper_than(short tile_x, short tile_z, short 
     return matches;
 }
 
-/** Checks if a tile should not be allowed to walk on due to terrain.
- *
- * To do such check during gameplay, MapElement flags should be used - this one
- * is only to update these flags, if neccessary.
- */
-static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
+TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
 {
     int alt_dt, gnd_dt;
 
@@ -363,9 +359,9 @@ void update_map_flags(void)
 
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
             // set having a walkable tile or too steep tile
-            p_mapel->Flags2 &= ~0x04;
+            p_mapel->Flags2 &= ~MEF2_Unkn04;
             if (compute_map_tile_is_blocking_walk(tile_x, tile_z))
-                p_mapel->Flags2 |= 0x04;
+                p_mapel->Flags2 |= MEF2_Unkn04;
         }
     }
 }

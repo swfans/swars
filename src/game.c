@@ -98,6 +98,7 @@
 #include "hud_panel.h"
 #include "hud_target.h"
 #include "keyboard.h"
+#include "misstat.h"
 #include "mouse.h"
 #include "mydraw.h"
 #include "network.h"
@@ -2480,39 +2481,6 @@ void blind_progress_game(ulong nturns)
     }
 }
 
-void clear_mission_status(ulong id)
-{
-    mission_status[id].CivsKilled = 0;
-    mission_status[id].EnemiesKilled = 0;
-    mission_status[id].CivsPersuaded = 0;
-    mission_status[id].SecurityPersuaded = 0;
-    mission_status[id].EnemiesPersuaded = 0;
-    mission_status[id].AgentsGained = 0;
-    mission_status[id].AgentsLost = 0;
-    mission_status[id].SecurityKilled = 0;
-    mission_status[id].CityDays = 0;
-    mission_status[id].CityHours = 0;
-}
-
-void clear_open_mission_status(void)
-{
-    ulong id;
-
-    if (in_network_game)
-    {
-        // In network game, mission status is per-player rather than per-mission
-        for (id = 0; id < 8; id++)
-        {
-            clear_mission_status(id);
-        }
-    }
-    else if (!in_network_game)
-    {
-        // Each mission has its status (unless in network game)
-        clear_mission_status(open_brief);
-    }
-}
-
 void map_lights_update(void)
 {
     asm volatile ("call ASM_map_lights_update\n"
@@ -2807,7 +2775,7 @@ void init_level(void)
     if (in_network_game)
     {
         ingame.DetailLevel = 1;
-        for (plyr_no = 0; plyr_no < 8; plyr_no++)
+        for (plyr_no = 0; plyr_no < PLAYERS_LIMIT; plyr_no++)
         {
             player_unkn0C9[plyr_no] = 0;
             player_unknCC9[plyr_no][0] =  '\0';
@@ -2819,7 +2787,7 @@ void init_level(void)
     }
 
     plyr_no = 0;
-    for (plyr_no = 0; plyr_no < 8; plyr_no++)
+    for (plyr_no = 0; plyr_no < PLAYERS_LIMIT; plyr_no++)
     {
         PlayerInfo *p_player;
         short mouser;
@@ -2856,8 +2824,8 @@ void init_level(void)
     ingame.TrackThing = 0;
     func_74934();
     ingame.TrackX = engn_xc;
-    ingame.fld_unkCA6 = 0;
     ingame.TrackZ = engn_zc;
+    ingame.fld_unkCA6 = 0;
     ingame.UserZoom = 120;
     word_1AABD0 = next_floor_texture;
     init_crater_textures();
@@ -2968,11 +2936,11 @@ TbBool game_cam_tracked_thing_is_player_agent(void)
     return ((p_thing->Flag & TngF_PlayerAgent) != 0);
 }
 
-void game_set_cam_track_thing_xz(struct Thing *p_thing)
+void game_set_cam_track_thing_xz(ThingIdx thing)
 {
     short tng_x, tng_z;
 
-    get_thing_position_mapcoords(&tng_x, NULL, &tng_z, p_thing->ThingOffset);
+    get_thing_position_mapcoords(&tng_x, NULL, &tng_z, thing);
     ingame.TrackX = tng_x;
     ingame.TrackZ = tng_z;
 }
@@ -2986,7 +2954,7 @@ void game_set_cam_track_player_agent_xz(PlayerIdx plyr, ushort plagent)
     p_agent = p_player->MyAgent[plagent];
     if (p_agent->Type != TT_PERSON)
         return;
-    game_set_cam_track_thing_xz(p_agent);
+    game_set_cam_track_thing_xz(p_agent->ThingOffset);
 }
 
 void preprogress_game_turns(void)
@@ -3066,7 +3034,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_player->DirectControl[plagent] = p_person->ThingOffset;
             p_person->Flag |= TngF_Unkn1000;
             if ((plyr == local_player_no) && (plagent == 0)) {
-                game_set_cam_track_thing_xz(p_person);
+                game_set_cam_track_thing_xz(p_person->ThingOffset);
             }
         }
         players[plyr].MyAgent[plagent] = p_person;
@@ -3108,10 +3076,8 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_EXECUTE_COMS))
         {
             // Now we can re-set current command to the real command
-            p_person->Flag2 |= TgF2_Unkn0800;
-            p_person->Flag |= TngF_Unkn0040;
             p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
-            ingame.Flags |= GamF_Unkn0100;
+            person_start_executing_commands(p_person);
         }
         else
         {
@@ -4084,15 +4050,17 @@ ubyte load_game(int slot, char *desc)
     }
     else if (fmtver >= 10)
     {
+        struct MissionStatus *p_mistat;
         int i;
         i = sizeof(struct MissionStatus) - offsetof(struct MissionStatus, Expenditure);
         assert(i == 32);
-        memcpy(&mission_status[open_brief], &save_game_buffer[gblen], i);
+        p_mistat = &mission_status[open_brief];
+        memcpy(p_mistat, &save_game_buffer[gblen], i);
         gblen += i;
         gblen += 2;
-        mission_status[open_brief].AgentsLost = save_game_buffer[gblen];
+        p_mistat->AgentsLost = save_game_buffer[gblen];
         gblen++;
-        mission_status[open_brief].AgentsGained = save_game_buffer[gblen];
+        p_mistat->AgentsGained = save_game_buffer[gblen];
         gblen++;
     }
     else
@@ -5160,9 +5128,9 @@ void reload_background(void)
 
 void players_init_control_mode(void)
 {
-    int player;
-    for (player = 0; player < 8; player++) {
-      players[player].UserInput[0].ControlMode = 1;
+    PlayerIdx plyr;
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {
+      players[plyr].UserInput[0].ControlMode = 1;
     }
 }
 
@@ -5935,7 +5903,7 @@ ubyte do_user_interface(void)
 
                       p_pckt = &packets[local_player_no];
 
-                      game_set_cam_track_thing_xz(p_agent);
+                      game_set_cam_track_thing_xz(p_agent->ThingOffset);
                       engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
                       dcthing = p_locplayer->DirectControl[mouser];
                       build_packet(p_pckt, PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
@@ -6393,7 +6361,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
                 net_new_game_prepare();
                 memset(unkstruct04_arr, 0, 0x1108u);
                 byte_1C6D48 = 0;
-                for (i = 0; i < 8; i++) {
+                for (i = 0; i < PLAYERS_LIMIT; i++) {
                     unkn2_names[i][0] = '\0';
                 }
             }
@@ -6401,7 +6369,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         else
         {
             net_new_game_prepare();
-            for (i = 0; i < 8; i++) {
+            for (i = 0; i < PLAYERS_LIMIT; i++) {
                 unkn2_names[i][0] = '\0';
             }
             if ( byte_1C4A6F )
@@ -6421,7 +6389,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
     case 14:
         if ((net_host_player_no == plyr) && ((unkn_flags_08 & 0x08) != 0))
         {
-            for (i = 0; i < 8; i++)
+            for (i = 0; i < PLAYERS_LIMIT; i++)
             {
                 if (unkn2_names[i][0] == '\0')
                     continue;
@@ -6448,7 +6416,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
     case 15:
         if ((net_host_player_no == plyr) && ((unkn_flags_08 & 0x08) != 0))
         {
-            for (i = 0; i < 8; i++)
+            for (i = 0; i < PLAYERS_LIMIT; i++)
             {
                 if (unkn2_names[i][0] == '\0')
                     continue;
@@ -6561,7 +6529,7 @@ void net_unkn_func_33(void)
         byte_1C6D4A = 0;
     }
 
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < PLAYERS_LIMIT; i++)
     {
         network_players[i].Type = 17;
     }
@@ -6614,7 +6582,9 @@ void show_menu_screen_st2(void)
       }
       else
       {
-            forward_research_progress_after_mission(mission_status[open_brief].CityDays);
+            struct MissionStatus *p_mistat;
+            p_mistat = &mission_status[open_brief];
+            forward_research_progress_after_mission(p_mistat->CityDays);
             if ((ingame.Flags & GamF_MortalGame) != 0) {
                 save_game_write(0, save_active_desc);
             }
@@ -6789,7 +6759,7 @@ void show_load_and_prep_mission(void)
         else
         {
             int i;
-            for (i = 0; i < 8; i++) {
+            for (i = 0; i < PLAYERS_LIMIT; i++) {
                 unkn2_names[i][0] = 0;
             }
             strncpy(unkn2_names[0], login_name, 16);
@@ -7670,8 +7640,9 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_sectng = get_thing_safe(packet->X, TT_PERSON);
         if (p_sectng == INVALID_THING)
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
-            person_init_follow_person(p_thing, p_sectng);
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+            break;
+        person_init_follow_person(p_thing, p_sectng);
         break;
     case PAct_CONTROL_MODE:
         players[plyr].UserInput[0].ControlMode = packet->Data;
@@ -7746,8 +7717,9 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) == 0)
-            make_peeps_scatter(p_thing, packet->X, packet->Z);
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+            break;
+        make_peeps_scatter(p_thing, packet->X, packet->Z);
         break;
     case PAct_SELECT_GRP_SPEC_WEAPON:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
@@ -7841,7 +7813,7 @@ void process_packets(void)
     if (in_network_game && (net_players_num > 1))
         net_unkn_check_1();
 
-    for (plyr = 0; plyr < 8; plyr++)
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {
         struct Packet *packet;
         ushort i;

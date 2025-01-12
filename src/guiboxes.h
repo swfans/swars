@@ -248,7 +248,7 @@ TbBool mouse_move_over_box_base(struct ScreenBoxBase *box);
 
 /** Returns if mouse position when button was pressed down is over given box (incl. borders).
  */
-#define mouse_down_over_box(box) mouse_move_over_box_base((struct ScreenBoxBase *)box)
+#define mouse_down_over_box(box) mouse_down_over_box_base((struct ScreenBoxBase *)box)
 TbBool mouse_down_over_box_base(struct ScreenBoxBase *box);
 
 /** Returns if current mouse move position is over given slant (leaning right) box (incl. borders).
@@ -265,6 +265,11 @@ short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *box);
  */
 #define mouse_move_y_coord_over_box(box) mouse_move_y_coord_over_box_base((struct ScreenBoxBase *)box)
 short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box);
+
+/** Draws slant box / kicked box / parallellogram skewed 45 deg.
+ * This function is like a extension to bflibrary API, but it's defined on application side.
+ */
+TbResult ApDrawSlantBox(short x, short y, ushort w, ushort h, TbPixel col);
 
 void init_screen_box(struct ScreenBox *box, ushort x, ushort y,
   ushort width, ushort height, int drawspeed);

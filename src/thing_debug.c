@@ -135,10 +135,6 @@ void func_6fe80(int probe_x, int probe_y, int probe_z, int target_x, int target_
 #endif
     struct EnginePoint ep1;
     struct EnginePoint ep2;
-    struct EnginePoint ep3;
-    struct EnginePoint ep4;
-    struct EnginePoint ep5;
-    struct EnginePoint ep6;
     int dist_x, dist_y, dist_z;
     int tdist;
     int cur_x, cur_y, cur_z;
@@ -173,46 +169,37 @@ void func_6fe80(int probe_x, int probe_y, int probe_z, int target_x, int target_
         ep1.Z3d = cur_z - engn_zc;
         ep1.Flags = 0;
         transform_point(&ep1);
-        ep5.X3d = prv_x + dist_z - engn_xc;
-        ep5.Z3d = prv_z - dist_x - engn_zc;
-        ep5.Y3d = cur_y - engn_yc;
-        ep5.Flags = 0;
-        transform_point(&ep5);
-        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep5.pp.X, ep5.pp.Y, col2);
+        ep2.X3d = prv_x + dist_z - engn_xc;
+        ep2.Z3d = prv_z - dist_x - engn_zc;
+        ep2.Y3d = cur_y - engn_yc;
+        ep2.Flags = 0;
+        transform_point(&ep2);
+        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, col2);
 
-        ep6.X3d = cur_x - engn_xc;
-        ep6.Y3d = cur_y - engn_yc;
-        ep6.Z3d = cur_z - engn_zc;
-        ep6.Flags = 0;
-        transform_point(&ep6);
-        ep4.X3d = prv_x - dist_z - engn_xc;
-        ep4.Y3d = cur_y - engn_yc;
-        ep4.Z3d = prv_z + dist_x - engn_zc;
-        ep4.Flags = 0;
-        transform_point(&ep4);
-        LbDrawLine(ep6.pp.X, ep6.pp.Y, ep4.pp.X, ep4.pp.Y, col2);
+        ep1.X3d = cur_x - engn_xc;
+        ep1.Y3d = cur_y - engn_yc;
+        ep1.Z3d = cur_z - engn_zc;
+        ep1.Flags = 0;
+        transform_point(&ep1);
+        ep2.X3d = prv_x - dist_z - engn_xc;
+        ep2.Y3d = cur_y - engn_yc;
+        ep2.Z3d = prv_z + dist_x - engn_zc;
+        ep2.Flags = 0;
+        transform_point(&ep2);
+        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, col2);
     }
 
-    ep2.X3d = probe_x - engn_xc;
-    ep2.Y3d = probe_y - engn_yc;
-    ep2.Z3d = probe_z - engn_zc;
+    ep1.X3d = probe_x - engn_xc;
+    ep1.Y3d = probe_y - engn_yc;
+    ep1.Z3d = probe_z - engn_zc;
+    ep1.Flags = 0;
+    transform_point(&ep1);
+    ep2.X3d = target_x - engn_xc;
+    ep2.Y3d = target_y - engn_yc;
+    ep2.Z3d = target_z - engn_zc;
     ep2.Flags = 0;
     transform_point(&ep2);
-    ep3.X3d = target_x - engn_xc;
-    ep3.Y3d = target_y - engn_yc;
-    ep3.Z3d = target_z - engn_zc;
-    ep3.Flags = 0;
-    transform_point(&ep3);
-    LbDrawLine(ep2.pp.X, ep2.pp.Y, ep3.pp.X, ep3.pp.Y, colour);
-}
-
-void func_705bc(int a1, int a2, int a3, int a4, int a5, ubyte a6)
-{
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_func_705bc\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
 }
 
 /** Searches all existing things in order to find one for debug.
@@ -352,7 +339,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
-        func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
         return 1;
     case PCmd_KILL_MEM_GROUP:
     case PCmd_KILL_ALL_GROUP:
@@ -380,11 +367,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
-        if ((p_cmd->Flags & 0x10) != 0) {
-            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+        if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
+            draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
         } else {
-            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+            draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
         }
         return 1;
     case PCmd_PROTECT_MEM_G:
@@ -399,11 +386,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
-        if ((p_cmd->Flags & 0x10) != 0) {
-            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+        if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
+            draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
         } else {
-            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+            draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
         }
         return 1;
     case PCmd_WAIT_P_V_I_NEAR:
@@ -411,7 +398,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         unused_func_203(x, y, p_cmd->OtherThing, 1u);
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
 
-        func_711F4(tng_x, tng_y, tng_z, p_cmd->Arg1 << 6, 2u);
+        draw_map_flat_circle(tng_x, tng_y, tng_z, p_cmd->Arg1 << 6, 2u);
         return 1;
     case PCmd_UNTIL_MEM_G_NEAR:
     case PCmd_UNTIL_ALL_G_NEAR:
@@ -420,7 +407,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         if ((lbShift & KMod_SHIFT) != 0)
             unused_func_200(x, y, p_cmd->OtherThing);
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
-        func_711F4(tng_x, tng_y, tng_z, p_cmd->Arg1 << 6, 2u);
+        draw_map_flat_circle(tng_x, tng_y, tng_z, p_cmd->Arg1 << 6, 2u);
         return 1;
     case PCmd_UNTIL_P_V_I_ARRIVE:
     case PCmd_WAIT_P_V_I_ARRIVE:
@@ -430,11 +417,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
-        if ((p_cmd->Flags & 0x10) != 0) {
-            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+        if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
+            draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
                 p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
         } else {
-            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+            draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
         }
         return 1;
     case PCmd_UNTIL_MEM_G_ARRIVE:
@@ -448,11 +435,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
-        if ((p_cmd->Flags & 0x10) != 0) {
-            func_705bc(p_cmd->X, p_cmd->Y, p_cmd->Z,
+        if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
+            draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
         } else {
-            func_711F4(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+            draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
         }
         return 1;
     default:
@@ -1021,7 +1008,7 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       break;
     case PCmd_CATCH_FERRY:
     case PCmd_EXIT_FERRY:
-      sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
+      sprintf(o, "%s X%d Z%d", cmd_name, p_cmd->X, p_cmd->Z);
       result = 1;
       break;
     case PCmd_GOTOPOINT_FACE:

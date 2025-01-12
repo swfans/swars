@@ -126,6 +126,14 @@ ubyte flashy_draw_purple_button(struct ScreenButton *button)
     return ret;
 }
 
+ubyte button_text(struct ScreenButton *button)
+{
+    ubyte ret;
+    asm volatile ("call ASM_button_text\n"
+        : "=r" (ret) : "a" (button));
+    return ret;
+}
+
 void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, TbPixel colour)
 {
     asm volatile (
