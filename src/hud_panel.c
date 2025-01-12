@@ -425,9 +425,14 @@ void load_pop_sprites_up_to(short max_detail)
 
 void load_pop_sprites_for_current_mode(void)
 {
-    short max_detail;
+    short i, max_detail;
 
-    max_detail = lbDisplay.GraphicsScreenHeight / 400;
+    max_detail = 0;
+    for (i = 0; i <= MAX_SUPPORTED_SCREEN_HEIGHT/180; i++) {
+        if ((320 * i > lbDisplay.GraphicsScreenWidth) || (180 * i > lbDisplay.GraphicsScreenHeight))
+            break;
+        max_detail = i;
+    }
     load_pop_sprites_up_to(max_detail);
 }
 
