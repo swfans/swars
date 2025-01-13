@@ -92,6 +92,15 @@ enum PanelShift {
     PaSh_WEP_NEXT_BUTTON_AREA = 18,
 };
 
+/** Momentary flags - filled and used only while updating the panel, then forgitten.
+ */
+enum PanelMomentaryFlags {
+    PaMF_NONE = 0,
+    PaMF_EXISTS = 0x01, /**< The panel exists on screen. */
+    PaMF_DISABLED = 0x02, /**< The panel is for a disabled agent who cannot accept input (executing automated commands, unconscious, dying). */
+    PaMF_SUBORDNT = 0x04, /**< The panel is for an agent with no direct control (subordinate due to grouping). */
+};
+
 struct GamePanel game_panel_hi[] = {
     // Per-agent main panel frame
     {  0,  0,  1,150, 32, 1, 1, 0, PanT_AgentBadge},
@@ -1626,11 +1635,11 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
     TbBool wep_highlight;
     short w, h;
 
-    // If 0x01 not set, do not draw and do not access the agent as it may be invalid
-    if ((flags & 0x01) == 0)
+    // If PaMF_EXISTS not set, do not draw and do not access the agent as it may be invalid
+    if ((flags & PaMF_EXISTS) == 0)
         return false;
     // If the panel is drawn but disabled, disallow interaction
-    if ((flags & 0x02) != 0)
+    if ((flags & PaMF_DISABLED) != 0)
         return false;
 
     p_player = &players[plyr];
@@ -1647,7 +1656,7 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
 
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_player->PrevWeapon[nagent];
-    if (!curwep && !prevwep) {
+    if (curwep == 0 && prevwep == 0) {
         prevwep = find_nth_weapon_held(p_agent->ThingOffset, 1);
         p_player->PrevWeapon[nagent] = prevwep;
     }
@@ -1662,7 +1671,7 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
 
     if (wep_highlight)
     {
-        if (curwep)
+        if (curwep != 0)
             p_player->PanelItem[mouser] = curwep;
         else
             p_player->PanelItem[mouser] = prevwep;
@@ -1681,8 +1690,8 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent, ubyte fl
     short cx, cy;
     TbBool darkened;
 
-    // If 0x01 not set, do not draw and do not access the agent as it may be invalid
-    if ((flags & 0x01) == 0)
+    // If PaMF_EXISTS not set, do not draw and do not access the agent as it may be invalid
+    if ((flags & PaMF_EXISTS) == 0)
         return 0;
 
     p_agent = p_locplayer->MyAgent[nagent];
@@ -1693,7 +1702,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent, ubyte fl
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_locplayer->PrevWeapon[nagent];
 
-    darkened = (p_agent->State == PerSt_PROTECT_PERSON) || ((flags & 0x02) != 0);
+    darkened = ((flags & (PaMF_DISABLED|PaMF_SUBORDNT)) != 0);
     if (curwep != 0) // Is ready/drawn weapon - draw lighted weapon shape
     {
         draw_agent_current_weapon(p_locplayer, nagent, 0, darkened, true, curwep, cx, cy);
@@ -1880,7 +1889,8 @@ TbBool func_1caf8(ubyte *panel_wep)
     dcthing = direct_control_thing_for_player(local_player_no);
     p_agent = &things[dcthing];
 
-    p_locplayer->PanelItem[mouser] = 0;
+    // Clearing active weapon so it can be re-set
+    p_locplayer->PanelItem[mouser] = WEP_NULL;
     if (ingame.PanelPermutation >= 0)
     {
         ushort plagent;
@@ -2450,7 +2460,7 @@ void draw_new_panel(void)
     update_game_panel();
 
     p_locplayer = &players[local_player_no];
-    LbMemorySet(panel_wep, '\0', sizeof(panel_wep));
+    LbMemorySet(panel_wep, 0, sizeof(panel_wep));
 
     for (i = 0; true; i++)
     {
@@ -2473,7 +2483,7 @@ void draw_new_panel(void)
         else
         {
             TbBool is_visible;
-            TbBool is_darkened;
+            TbBool is_disabled, is_subordnt;
             short x, y;
 
             is_visible = true;
@@ -2510,14 +2520,14 @@ void draw_new_panel(void)
                 struct Thing *p_agent;
                 p_agent = p_locplayer->MyAgent[p_panel->ID];
 
-                is_darkened = ((p_agent->State == PerSt_PROTECT_PERSON) ||
-                  (p_agent->Flag2 & TgF2_Unkn10000000) ||
+                is_subordnt = (p_agent->State == PerSt_PROTECT_PERSON);
+                is_disabled = (((p_agent->Flag2 & TgF2_Unkn10000000) != 0) ||
                   person_is_executing_commands(p_agent->ThingOffset));
             }
 
             x = p_panel->X;
             y = p_panel->Y;
-            if (is_darkened)
+            if (is_disabled || is_subordnt)
                 draw_new_panel_sprite_dark(x, y, p_panel->Spr);
             else
                 draw_new_panel_sprite_std(x, y, p_panel->Spr);
@@ -2526,15 +2536,17 @@ void draw_new_panel(void)
             switch (p_panel->Type)
             {
             case PanT_AgentBadge:
-                draw_new_panel_badge_overlay(i, p_panel->ID, is_darkened);
+                draw_new_panel_badge_overlay(i, p_panel->ID, is_disabled || is_subordnt);
                 break;
             case PanT_AgentMedi:
                 // Medi sprite gets switched when we have medikit, so no need for update
                 break;
             case PanT_AgentWeapon:
-                panel_wep[p_panel->ID] |= 0x01;
-                if (is_darkened)
-                    panel_wep[p_panel->ID] |= 0x02;
+                panel_wep[p_panel->ID] |= PaMF_EXISTS;
+                if (is_disabled)
+                    panel_wep[p_panel->ID] |= PaMF_DISABLED;
+                if (is_subordnt)
+                    panel_wep[p_panel->ID] |= PaMF_SUBORDNT;
                 break;
             }
         }
