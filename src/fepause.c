@@ -201,8 +201,10 @@ void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
     LbDrawLine(box->X + 0, box->Y + 0, box->X + 0, box->Y + box->Height - cut - stp, colr1);
     LbDrawLine(box->X + box->Width, box->Y + cut, box->X + box->Width, box->Y + box->Height - stp, colr1);
     LbDrawLine(box->X + cut, box->Y + box->Height - stp, box->X + box->Width, box->Y + box->Height - stp, colr1);
-    LbDrawLine(box->X + box->Width - cut, box->Y + 0, box->X + box->Width, box->Y + cut, colr1);
-    LbDrawLine(box->X + stp, box->Y + box->Height - cut, box->X + cut, box->Height + cut + stp, colr1);
+    LbDrawLine(box->X + box->Width - cut, box->Y + 0,
+      box->X + box->Width, box->Y + cut, colr1);
+    LbDrawLine(box->X + stp, box->Y + box->Height - cut,
+      box->X + cut, box->Y + box->Height - stp, colr1);
 }
 
 void draw_slant_box(struct ScreenBox *box, TbPixel colr2)
