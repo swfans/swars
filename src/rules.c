@@ -42,12 +42,14 @@ const struct TbNamedEnum rules_conf_engine_cmnds[] = {
 
 enum RulesScannerConfigCmd {
     RScanrCmd_BaseZoomFactor = 1,
-    RScanrCmd_UserZoomFactor = 2,
+    RScanrCmd_UserZoomFactor,
+    RScanrCmd_ScaleDotsCircles,
 };
 
 const struct TbNamedEnum rules_conf_scanner_cmnds[] = {
   {"BaseZoomFactor",RScanrCmd_BaseZoomFactor},
   {"UserZoomFactor",RScanrCmd_UserZoomFactor},
+  {"ScaleDotsCircles",RScanrCmd_ScaleDotsCircles},
   {NULL,			0},
 };
 
@@ -208,6 +210,15 @@ TbBool read_rules_file(void)
             }
             SCANNER_user_zoom_factor = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)SCANNER_user_zoom_factor);
+            break;
+        case RScanrCmd_ScaleDotsCircles:
+            i = LbIniValueGetNamedEnum(&parser, rules_conf_any_bool);
+            if (i <= 0) {
+                CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            SCANNER_scale_dots = (i == 1);
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)SCANNER_scale_dots);
             break;
         case 0: // comment
             break;

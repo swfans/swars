@@ -1105,6 +1105,8 @@ ushort SCANNER_scale_size(short base_size)
 {
     short sz;
 
+    if (!SCANNER_scale_dots)
+        return base_size;
     sz = base_size * (450 - ingame.Scanner.Zoom) / 192;
     if (sz > 15)
         sz = 15;
