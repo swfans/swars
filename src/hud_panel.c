@@ -379,9 +379,6 @@ TbResult prep_pop_sprites(short detail)
     }
     gui_scale = detail;
     setup_pop_sprites();
-    if (ret == Lb_FAIL) {
-        LOGERR("Some files were not loaded successfully");
-    }
     return ret;
 }
 
@@ -427,8 +424,10 @@ void load_pop_sprites_up_to(short max_detail)
         if (ret != Lb_FAIL)
             break;
     }
-    if (detail < 0)
+    if (detail < 0) {
+        LOGERR("Some files were not loaded successfully despite trying whole detail levels range");
         detail = 0;
+    }
     size_panels_for_detail(detail);
 }
 

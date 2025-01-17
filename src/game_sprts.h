@@ -76,6 +76,7 @@ extern ubyte *unk2_sprites_data;
 extern struct TbSprite *pop1_sprites;
 extern struct TbSprite *pop1_sprites_end;
 extern ubyte *pop1_data;
+extern ubyte *pop1_data_end;
 
 extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
