@@ -3649,7 +3649,7 @@ void gproc3_unknsub2(void)
     if (!lbDisplay.MRightButton)
     {
         dword_155010 += lbSinTable[dword_1AAB74] >> 9;
-        dword_155014 += lbSinTable[dword_1AAB74 + 512] >> 9;
+        dword_155014 += lbSinTable[dword_1AAB74 + LbFPMath_PI/2] >> 9;
     }
 
     if (ms_y < 180)
@@ -5272,7 +5272,7 @@ void do_scroll_map(void)
     if (angle >= 0) {
         int wibl_x, wibl_y;
         wibl_x = dword_153194 * lbSinTable[angle] >> 8 >> dampr;
-        wibl_y = dword_153194 * lbSinTable[angle + 512] >> 8 >> dampr;
+        wibl_y = dword_153194 * lbSinTable[angle + LbFPMath_PI/2] >> 8 >> dampr;
         ingame.TrackX -= wibl_x;
         ingame.TrackZ += wibl_y;
         engn_xc -= wibl_x;
@@ -5286,7 +5286,7 @@ void do_scroll_map(void)
     if (angle >= 0) {
         int wibl_x, wibl_y;
         wibl_x = dword_153194 * lbSinTable[angle] >> 8 >> dampr;
-        wibl_y = dword_153194 * lbSinTable[angle + 512] >> 8 >> dampr;
+        wibl_y = dword_153194 * lbSinTable[angle + LbFPMath_PI/2] >> 8 >> dampr;
         ingame.TrackX -= wibl_x;
         ingame.TrackZ += wibl_y;
         engn_xc -= wibl_x;

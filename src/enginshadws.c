@@ -468,7 +468,7 @@ void generate_shadows_for_multicolor_sprites(void)
 
         angle = 8 * i;
         x = lbSinTable[angle] >> 9;
-        y = lbSinTable[angle + 512] >> 9;
+        y = lbSinTable[angle + LbFPMath_PI/2] >> 9;
         if (x > 127)
             x = 127;
         if (x < -128)

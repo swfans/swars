@@ -207,7 +207,7 @@ void camera_setup_view(int *p_pos_beg_x, int *p_pos_beg_z,
         tlcount_x = render_area_a + tlreach_x;
         pos_beg_x = rend_beg_x + (tlreach_x << 8);
     }
-    tlreach_z = (lbSinTable[angXZ + 512] >> 12) + (lbSinTable[angXZ + 512] >> 13);
+    tlreach_z = (lbSinTable[angXZ + LbFPMath_PI/2] >> 12) + (lbSinTable[angXZ + LbFPMath_PI/2] >> 13);
     if (tlreach_z <= 0) {
         tlcount_z = render_area_b - tlreach_z;
         pos_beg_z = rend_beg_z;
