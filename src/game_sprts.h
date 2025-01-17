@@ -69,10 +69,15 @@ extern struct TbSprite *unk3_sprites;
 extern struct TbSprite *unk3_sprites_end;
 extern ubyte *unk3_sprites_data;
 
-extern struct TbSprite *unk2_sprites;
-extern struct TbSprite *unk2_sprites_end;
-extern ubyte *unk2_sprites_data;
+/** Panel sprites, but loaded for front-end menu purposes.
+ * The main purpose is to get small weapon sprites.
+ */
+extern struct TbSprite *fepanel_sprites;
+extern struct TbSprite *fepanel_sprites_end;
+extern ubyte *fepanel_sprites_data;
 
+/** In-game panel sprites.
+ */
 extern struct TbSprite *pop1_sprites;
 extern struct TbSprite *pop1_sprites_end;
 extern ubyte *pop1_data;

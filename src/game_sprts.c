@@ -574,7 +574,7 @@ TbResult load_sprites_panel(ubyte **pp_buf, const char *dir)
     p_buf = *pp_buf;
     ret = Lb_OK;
 
-    unk2_sprites_data = p_buf;
+    fepanel_sprites_data = p_buf;
     sprintf(locstr, "%s/panel0-0.dat", dir);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
@@ -582,7 +582,7 @@ TbResult load_sprites_panel(ubyte **pp_buf, const char *dir)
         len = 0;
     }
     p_buf += len;
-    unk2_sprites = (struct TbSprite *)p_buf;
+    fepanel_sprites = (struct TbSprite *)p_buf;
     sprintf(locstr, "%s/panel0-0.tab", dir);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
@@ -591,7 +591,7 @@ TbResult load_sprites_panel(ubyte **pp_buf, const char *dir)
         LbMemorySet(p_buf, '\0', len);
     }
     p_buf += len;
-    unk2_sprites_end = (struct TbSprite *)p_buf;
+    fepanel_sprites_end = (struct TbSprite *)p_buf;
 
     *pp_buf = p_buf;
     return ret;
@@ -599,12 +599,12 @@ TbResult load_sprites_panel(ubyte **pp_buf, const char *dir)
 
 void setup_sprites_panel(void)
 {
-    LbSpriteSetup(unk2_sprites, unk2_sprites_end, unk2_sprites_data);
+    LbSpriteSetup(fepanel_sprites, fepanel_sprites_end, fepanel_sprites_data);
 }
 
 void reset_sprites_panel(void)
 {
-    LbSpriteReset(unk2_sprites, unk2_sprites_end, unk2_sprites_data);
+    LbSpriteReset(fepanel_sprites, fepanel_sprites_end, fepanel_sprites_data);
 }
 
 TbResult load_pop_sprites(const char *dir, ushort styleno, ushort detail)
