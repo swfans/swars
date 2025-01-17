@@ -1105,7 +1105,15 @@ ushort SCANNER_scale_size(short base_size)
 {
     short sz;
 
-    sz = base_size * (450 - ingame.Scanner.Zoom) / 192;
+    if (!SCANNER_scale_dots)
+        return base_size;
+    // For lower resolutions, keep the smaller size for wider zoom range
+    // This assumes the game is played on a large monitor - in such case,
+    // switching to larger dots doesn't look that good
+    if (lbDisplay.GraphicsScreenHeight < 600)
+        sz = base_size * (450 - ingame.Scanner.Zoom) / 208;
+    else
+        sz = base_size * (450 - ingame.Scanner.Zoom) / 192;
     if (sz > 15)
         sz = 15;
     else if (sz < 1)

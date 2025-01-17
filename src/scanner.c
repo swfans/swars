@@ -38,6 +38,7 @@ extern ulong dword_1DB1A0;
 
 ushort SCANNER_base_zoom_factor = 180;
 ushort SCANNER_user_zoom_factor = 192;
+ubyte SCANNER_scale_dots = true;
 
 void SCANNER_set_zoom(int zoom)
 {

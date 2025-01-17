@@ -4,16 +4,16 @@
 !define PRODUCT_VERSION "@VERSION@"
 
 ; Version number and file name for levels package
-!define LEVELS_VERSION "1.0.0.18"
-!define LEVELS_PACKAGE "swars-levels-1_0_0_18"
-!define LEVELS_PKG_MD5 "629a3a7d091ed1c6c5760148406f775d"
+!define LEVELS_VERSION "1.0.1.25"
+!define LEVELS_PACKAGE "swars-levels-1_0_1_25"
+!define LEVELS_PKG_MD5 "bbf821b463613993c1d53ba7017abc06"
 
 ; Version number and file name for gfx package
-!define GFX_VERSION "1.0.1.23"
-!define GFX_PACKAGE "swars-gfx-1_0_1_23"
-!define GFX_PKG_MD5 "2f940fe9bdf2e2d65307da1e6d0a270b"
+!define GFX_VERSION "1.0.1.33"
+!define GFX_PACKAGE "swars-gfx-1_0_1_33"
+!define GFX_PKG_MD5 "fddc9d1f9078442c52b5a37bad42d624"
 
 ; Version number and file name for sfx package
-!define SFX_VERSION "1.0.0.21"
-!define SFX_PACKAGE "swars-sfx-1_0_0_21"
-!define SFX_PKG_MD5 "dfcb50c273582884537ebf0f1db5518d"
+!define SFX_VERSION "1.0.0.22"
+!define SFX_PACKAGE "swars-sfx-1_0_0_22"
+!define SFX_PKG_MD5 "f222a89bfe0a2c931394c2ae25508a6d"

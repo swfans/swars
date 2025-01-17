@@ -124,7 +124,7 @@ void build_vehicle(struct Thing *p_thing)
     {
         short tng_x, tng_y, tng_z;
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
-        build_polygon_circle(tng_x, tng_y + 10, tng_z,
+        build_polygon_circle(tng_x, (tng_y >> 3) + 10, tng_z,
           3 * p_thing->U.UVehicle.RecoilTimer + 15, 30, 15,
           game_textures, colour_lookup[ColLU_BLUE], 16,
            16 * ((6 - p_thing->U.UVehicle.RecoilTimer) & 0x0F));

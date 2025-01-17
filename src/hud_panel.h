@@ -60,6 +60,10 @@ extern char player_unknCC9[8][128];
 extern ubyte player_unkn0C9[8];
 extern long scanner_unkn3CC;
 
+/** Scale factor for figuring out GUI size.
+ */
+extern short gui_scale;
+
 int SCANNER_objective_info_height(void);
 
 void draw_new_panel(void);

@@ -551,7 +551,7 @@ ubyte show_equipment_screen(void)
 
         ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        spr = &unk2_sprites[weapon_sprite_index(mo_weapon + 1, true)];
+        spr = &fepanel_sprites[weapon_sprite_index(mo_weapon + 1, true)];
         draw_sprite_purple_list(ms_x, ms_y, spr);
     }
 
@@ -798,7 +798,7 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
       box->Width - 20, box->ScrollWindowHeight + 23);
     lbFontPtr = small_med_font;
     h0 = 3;
-    spr = &unk2_sprites[15 + 0];
+    spr = &fepanel_sprites[15 + 0];
     sheight = spr->SHeight;
 
     for (weapon = box->field_38; (weapon < WEP_TYPES_COUNT) && (h0 + sheight < box->ScrollWindowHeight + 23); weapon++)
@@ -862,7 +862,7 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
         }
         struct TbSprite *spr;
 
-        spr = &unk2_sprites[weapon_sprite_index(weapon + 1, true)];
+        spr = &fepanel_sprites[weapon_sprite_index(weapon + 1, true)];
         lbDisplay.DrawFlags |= 0x8000;
         draw_sprite_purple_list(text_window_x1 + 2, h0 + text_window_y1, spr);
         lbDisplay.DrawFlags &= ~0x8000;
@@ -874,7 +874,7 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
             strid = p_campgn->WeaponsTextIdShift + weapon;
             text = gui_strings[strid];
         }
-        spr = &unk2_sprites[15 + weapon];
+        spr = &fepanel_sprites[15 + weapon];
         draw_text_purple_list2(spr->SWidth + 4, h0 + 1, text, 0);
         h0 += sheight + 3;
     }
@@ -923,7 +923,7 @@ void init_equip_screen_boxes(void)
     equip_list_head_box.Text = gui_strings[408];
     equip_list_head_box.Font = med_font;
     equip_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
-    equip_list_box.BGColour = unk2_sprites[15].SHeight + 3;
+    equip_list_box.BGColour = fepanel_sprites[15].SHeight + 3;
     equip_list_box.ScrollWindowHeight -= 27;
 
     lbFontPtr = med2_font;
