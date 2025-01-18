@@ -30,22 +30,32 @@
 
 /******************************************************************************/
 
+struct TbSprite *pointer_sprites;
+struct TbSprite *pointer_sprites_end;
+ubyte *pointer_data;
+ubyte *pointer_data_end;
+short pointer_sprites_scale = 1;
+
 struct TbSprite *pop1_sprites;
 struct TbSprite *pop1_sprites_end;
 ubyte *pop1_data;
 ubyte *pop1_data_end;
+short pop1_sprites_scale = 1;
 
 
 /******************************************************************************/
 
-static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_spr, ubyte **pp_spr_end,
-  const char *dir, const char *name, ushort styleno, ushort detail, ushort min_sprites)
+/** Load sprites of given style and detail, to a preallocated area.
+ */
+static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_dat_end,
+  ubyte *p_spr, ubyte *p_spr_end, const char *dir, const char *name,
+  ushort styleno, ushort detail)
 {
     char locstr[DISKPATH_SIZE];
     long len;
     TbResult ret;
 
-    ret = Lb_OK;
+    ret = Lb_SUCCESS;
 
     sprintf(locstr, "%s/%s%hu-%hu.dat", dir, name, styleno, detail);
     len = LbFileLoadAt(locstr, p_dat);
@@ -53,83 +63,58 @@ static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_spr, ubyt
         ret = Lb_FAIL;
         len = 0;
     }
+    else if (p_dat + len > p_dat_end) {
+        ret = Lb_OK;
+        LOGERR("Load caused overflow, file \"%s\"", locstr);
+    }
+
     sprintf(locstr, "%s/%s%hu-%hu.tab", dir, name, styleno, detail);
     len = LbFileLoadAt(locstr, p_spr);
     if (len == -1) {
         ret = Lb_FAIL;
-        len = min_sprites * sizeof(struct TbSprite);
-        LbMemorySet(p_spr, '\0', len);
+        LbMemorySet(p_spr, 0, p_spr_end - p_spr);
     }
-    else if (len < min_sprites * (long)sizeof(struct TbSprite)) {
-        long exlen;
-        exlen = min_sprites * sizeof(struct TbSprite) - len;
-        LbMemorySet(p_spr + len, '\0', exlen);
-        len += exlen;
+    else if (p_spr + len > p_spr_end) {
+        ret = Lb_OK;
+        LOGERR("Load caused overflow, file \"%s\"", locstr);
+        // Clear the overflown data
+        LbMemorySet(p_spr + len, 0, p_spr + len - p_spr_end);
     }
-    *pp_spr_end = &p_spr[len];
+    else if (p_spr + len < p_spr_end) {
+        ret = Lb_OK;
+        // If loaded file is smaller than allocated space, clear the rest; we do not access
+        // data pointer for zero-sized sprites, so this is enough as safety measure
+        LbMemorySet(p_spr + len, 0, p_spr_end - p_spr - len);
+    }
 
     return ret;
 }
 
-static inline TbResult load_sprites_old(ubyte *p_dat, ubyte *p_spr, ubyte **pp_spr_end,
-  const char *dir, const char *name, ushort min_sprites)
+TbResult load_sprites_mouse_pointers_up_to(const char *dir, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
-    long len;
-    TbResult ret;
-
-    ret = Lb_OK;
-
-    sprintf(locstr, "%s/%s.dat", dir, name);
-    len = LbFileLoadAt(locstr, p_dat);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    sprintf(locstr, "%s/%s.tab", dir, name);
-    len = LbFileLoadAt(locstr, p_spr);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = min_sprites * sizeof(struct TbSprite);
-        LbMemorySet(p_spr, '\0', len);
-    }
-    else if (len < min_sprites * (long)sizeof(struct TbSprite)) {
-        long exlen;
-        exlen = min_sprites * sizeof(struct TbSprite) - len;
-        LbMemorySet(p_spr + len, '\0', exlen);
-        len += exlen;
-    }
-    *pp_spr_end = &p_spr[len];
-
-    return ret;
-}
-
-TbResult load_sprites_mouse_pointers(
-  const char *dir, ushort styleno, ushort detail)
-{
-    TbResult ret;
     ushort min_sprites;
+    short detail;
+    TbResult ret;
 
     min_sprites = 10;
-    switch (detail)
-    {
-    default:
-        ret = load_sprites_with_detail(pointer_data, (ubyte *)pointer_sprites,
-          (ubyte **)&pointer_sprites_end, dir, "pointr", styleno, detail, min_sprites);
-        if (ret != Lb_FAIL)
-            break;
-        // fall through
-    case 1:
-        ret = load_sprites_with_detail(pointer_data, (ubyte *)pointer_sprites,
-          (ubyte **)&pointer_sprites_end, dir, "pointr", styleno, 1, min_sprites);
-        if (ret != Lb_FAIL)
-            break;
-        // fall through
-    case 0:
-        ret = load_sprites_with_detail(pointer_data, (ubyte *)pointer_sprites,
-          (ubyte **)&pointer_sprites_end, dir, "pointr", styleno, 0, min_sprites);
-        break;
+    if (pointer_sprites_end - pointer_sprites < min_sprites) {
+        LOGERR("Preallocated area for %d sprites is below expected minimum %d",
+         pointer_sprites_end - pointer_sprites, min_sprites);
     }
+    ret = Lb_FAIL;
+    for (detail = max_detail; detail >= 0; detail--)
+    {
+        ret = load_sprites_with_detail(pointer_data, pointer_data_end,
+          (ubyte *)pointer_sprites, (ubyte *)pointer_sprites_end,
+          dir, "pointr", styleno, detail);
+        if (ret != Lb_FAIL)
+            break;
+    }
+    if (detail < 0) {
+        LOGERR("Some files were not loaded despite trying whole detail levels range");
+        detail = 0;
+    }
+    pointer_sprites_scale = detail + 1;
 
     return ret;
 }
@@ -564,7 +549,7 @@ void debug_multicolor_sprite(int idx)
     LOGDBG("m_sprites: %s", strdata);
 }
 
-TbResult load_sprites_panel(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_fepanel(ubyte **pp_buf, const char *dir)
 {
     char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
@@ -597,88 +582,41 @@ TbResult load_sprites_panel(ubyte **pp_buf, const char *dir)
     return ret;
 }
 
-void setup_sprites_panel(void)
+void setup_sprites_fepanel(void)
 {
     LbSpriteSetup(fepanel_sprites, fepanel_sprites_end, fepanel_sprites_data);
 }
 
-void reset_sprites_panel(void)
+void reset_sprites_fepanel(void)
 {
     LbSpriteReset(fepanel_sprites, fepanel_sprites_end, fepanel_sprites_data);
 }
 
-TbResult load_pop_sprites(const char *dir, ushort styleno, ushort detail)
+TbResult load_pop_sprites_up_to(const char *dir, const char *name, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
-    long len;
+    ushort min_sprites;
+    short detail;
     TbResult ret;
 
-    ret = Lb_OK;
-
-    sprintf(locstr, "%s/pop%hu-%hu.dat", dir, styleno, detail);
-    len = LbFileLoadAt(locstr, pop1_data);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
+    min_sprites = 106;
+    if (pop1_sprites_end - pop1_sprites < min_sprites) {
+        LOGERR("Preallocated area for %d sprites is below expected minimum %d",
+         pop1_sprites_end - pop1_sprites, min_sprites);
     }
-    else if (pop1_data + len > pop1_data_end) {
-        LOGERR("Load caused overflow, file \"%s\"", locstr);
+    ret = Lb_FAIL;
+    for (detail = max_detail; detail >= 0; detail--)
+    {
+        ret = load_sprites_with_detail(pop1_data, pop1_data_end,
+          (ubyte *)pop1_sprites, (ubyte *)pop1_sprites_end,
+          dir, name, styleno, detail);
+        if (ret != Lb_FAIL)
+            break;
     }
-
-    sprintf(locstr, "%s/pop%hu-%hu.tab", dir, styleno, detail);
-    len = LbFileLoadAt(locstr, pop1_sprites);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        LbMemorySet(pop1_sprites, 0, (ubyte *)pop1_sprites_end - (ubyte *)pop1_sprites);
+    if (detail < 0) {
+        LOGERR("Some files were not loaded despite trying whole detail levels range");
+        detail = 0;
     }
-    else if ((ubyte *)pop1_sprites + len > (ubyte *)pop1_sprites_end) {
-        LOGERR("Load caused overflow, file \"%s\"", locstr);
-        // Clear the overflown data
-        LbMemorySet(pop1_sprites + len, 0, (ubyte *)pop1_sprites + len - (ubyte *)pop1_sprites_end);
-    }
-    else if ((ubyte *)pop1_sprites + len < (ubyte *)pop1_sprites_end) {
-        // If loaded file is smaller than allocated space, clear the rest; we do not access
-        // data pointer for zero-sized sprites, so this is enough as safety measure
-        LbMemorySet(pop1_sprites + len, 0, (ubyte *)pop1_sprites_end - (ubyte *)pop1_sprites - len);
-    }
-
-    return ret;
-}
-
-TbResult load_prealp_pop_sprites(const char *dir, ushort styleno, ushort detail)
-{
-    char locstr[DISKPATH_SIZE];
-    long len;
-    TbResult ret;
-
-    ret = Lb_OK;
-
-    sprintf(locstr, "%s/panel%hu-%hu.dat", dir, styleno, detail);
-    len = LbFileLoadAt(locstr, pop1_data);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    else if (pop1_data + len > pop1_data_end) {
-        LOGERR("Load caused overflow, file \"%s\"", locstr);
-    }
-
-    sprintf(locstr, "%s/panel%hu-%hu.tab", dir, styleno, detail);
-    len = LbFileLoadAt(locstr, pop1_sprites);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        LbMemorySet(pop1_sprites, 0, (ubyte *)pop1_sprites_end - (ubyte *)pop1_sprites);
-    }
-    else if ((ubyte *)pop1_sprites + len > (ubyte *)pop1_sprites_end) {
-        LOGERR("Load caused overflow, file \"%s\"", locstr);
-        // Clear the overflown data
-        LbMemorySet(pop1_sprites + len, 0, (ubyte *)pop1_sprites + len - (ubyte *)pop1_sprites_end);
-    }
-    else if ((ubyte *)pop1_sprites + len < (ubyte *)pop1_sprites_end) {
-        // If loaded file is smaller than allocated space, clear the rest; we do not access
-        // data pointer for zero-sized sprites, so this is enough as safety measure
-        LbMemorySet(pop1_sprites + len, 0, (ubyte *)pop1_sprites_end - (ubyte *)pop1_sprites - len);
-    }
+    pop1_sprites_scale = detail + 1;
 
     return ret;
 }

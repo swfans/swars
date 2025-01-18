@@ -59,39 +59,6 @@ extern long dword_1DC36C;
  */
 sbyte agent_with_mouse_over_weapon = -1;
 
-short gui_scale = 0;
-
-enum PanelType {
-    PanT_NONE = 0,
-    PanT_AgentBadge,
-    PanT_AgentMood,
-    PanT_UNKN03,
-    PanT_UNKN04,
-    PanT_AgentWeapon,
-    PanT_AgentMedi,
-    PanT_UNKN07,
-    PanT_UNKN08,
-    PanT_UNKN09,
-    PanT_UNKN10,
-};
-
-enum PanelShift {
-    PaSh_AGENT_PANEL_TO_NUMBER = 0,
-    PaSh_AGENT_WEAPON_TO_LIST = 4,
-    PaSh_GROUP_PANE_TO_THERMAL_BOX = 5,
-    PaSh_GROUP_PANE_TO_THERMAL_SPR = 6,
-    PaSh_GROUP_PANE_AGENTS = 7,
-    PaSh_WEP_CURR_BTN_TO_SYMBOL = 10,
-    PaSh_WEP_FRST_BTN_TO_SYMBOL = 11,
-    PaSh_WEP_NEXT_BTN_TO_SYMBOL = 12,
-    PaSh_WEP_CURR_BTN_TO_DECOR =  13,
-    PaSh_WEP_FRST_BTN_TO_DECOR = 14,
-    PaSh_WEP_NEXT_BTN_TO_DECOR = 15,
-    PaSh_WEP_NEXT_DISTANCE = 16,
-    PaSh_WEP_CURR_BUTTON_AREA = 17,
-    PaSh_WEP_NEXT_BUTTON_AREA = 18,
-};
-
 /** Momentary flags - filled and used only while updating the panel, then forgitten.
  */
 enum PanelMomentaryFlags {
@@ -360,28 +327,6 @@ struct TbPoint game_panel_prealp_lo_shifts[] = {
 
 struct TbPoint *game_panel_shifts;
 
-TbResult prep_pop_sprites(short detail)
-{
-    PathInfo *pinfo;
-    short colorno;
-    TbResult ret;
-
-    pinfo = &game_dirs[DirPlace_Data];
-    if (ingame.PanelPermutation >= 0)
-    {
-        colorno = ingame.PanelPermutation;
-        ret = load_prealp_pop_sprites(pinfo->directory, colorno, detail);
-    }
-    else
-    {
-        colorno = -ingame.PanelPermutation - 1;
-        ret = load_pop_sprites(pinfo->directory, colorno, detail);
-    }
-    gui_scale = detail;
-    setup_pop_sprites();
-    return ret;
-}
-
 void size_panels_for_detail(short detail)
 {
 
@@ -413,27 +358,13 @@ void size_panels_for_detail(short detail)
     }
 }
 
-void load_pop_sprites_up_to(short max_detail)
+TbResult load_pop_sprites_for_current_mode(void)
 {
-    short detail;
-    for (detail = max_detail; detail >= 0; detail--)
-    {
-        TbResult ret;
-
-        ret = prep_pop_sprites(detail);
-        if (ret != Lb_FAIL)
-            break;
-    }
-    if (detail < 0) {
-        LOGERR("Some files were not loaded successfully despite trying whole detail levels range");
-        detail = 0;
-    }
-    size_panels_for_detail(detail);
-}
-
-void load_pop_sprites_for_current_mode(void)
-{
+    PathInfo *pinfo;
+    const char *name;
+    short styleno;
     short i, max_detail;
+    TbResult ret;
 
     max_detail = 0;
     for (i = 0; i <= MAX_SUPPORTED_SCREEN_HEIGHT/180; i++) {
@@ -441,7 +372,19 @@ void load_pop_sprites_for_current_mode(void)
             break;
         max_detail = i;
     }
-    load_pop_sprites_up_to(max_detail);
+
+    pinfo = &game_dirs[DirPlace_Data];
+    if (ingame.PanelPermutation >= 0) {
+        styleno = ingame.PanelPermutation;
+        name = "panel";
+    } else {
+        styleno = -ingame.PanelPermutation - 1;
+        name = "pop";
+    }
+    ret = load_pop_sprites_up_to(pinfo->directory, name, styleno, max_detail);
+    setup_pop_sprites();
+    size_panels_for_detail(pop1_sprites_scale - 1);
+    return ret;
 }
 
 //TODO not the best location for agent state update

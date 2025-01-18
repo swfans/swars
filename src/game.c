@@ -256,7 +256,7 @@ struct TbLoadFiles unk02_load_files[] =
   { "data/nfra-0.ani",	(void **)&frame,			(void **)&frame_end,		0, 0, 0 },
   { "data/font0-0.dat",	(void **)&small_font_data,	(void **)NULL,				0, 0, 0 },
   { "data/font0-0.tab",	(void **)&small_font,		(void **)&small_font_end,	0, 0, 0 },
-  { "data/pointr0-2.dat",(void **)&pointer_data,	(void **)NULL,				0, 0, 0 },
+  { "data/pointr0-2.dat",(void **)&pointer_data,	(void **)&pointer_data_end,	0, 0, 0 },
   { "data/pointr0-2.tab",(void **)&pointer_sprites,	(void **)&pointer_sprites_end, 0, 0, 0 },
   { "qdata/pal.pal",	(void **)&display_palette,	(void **)NULL,				0, 0, 0 },
   { "",					(void **)NULL, 				(void **)NULL,				0, 0, 0 }
@@ -2172,7 +2172,7 @@ TbResult init_read_all_sprite_files(void)
     if (tret == Lb_OK)
         tret = ret;
 
-    ret = load_sprites_panel(&p_buf, pinfo->directory);
+    ret = load_sprites_fepanel(&p_buf, pinfo->directory);
     if (tret == Lb_OK)
         tret = ret;
 
@@ -2215,7 +2215,7 @@ TbResult init_read_all_sprite_files(void)
 
     setup_sprites_icons();
     setup_sprites_wicons();
-    setup_sprites_panel();
+    setup_sprites_fepanel();
     setup_sprites_fe_mouse_pointers();
     setup_sprites_small_font();
     setup_sprites_small2_font();

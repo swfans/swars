@@ -34,6 +34,7 @@ enum DirPlacement {
     DirPlace_Intro,
     DirPlace_Sound,
     DirPlace_Equip,
+    DirPlace_Config,
     DirPlace_None,
 };
 
