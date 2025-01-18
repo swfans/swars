@@ -38,6 +38,7 @@
 #include "game_sprts.h"
 #include "game.h"
 #include "guiboxes.h"
+#include "hud_panecfg.h"
 #include "keyboard.h"
 #include "lvobjctv.h"
 #include "mouse.h"
@@ -68,295 +69,8 @@ enum PanelMomentaryFlags {
     PaMF_SUBORDNT = 0x04, /**< The panel is for an agent with no direct control (subordinate due to grouping). */
 };
 
-struct GamePanel game_panel_hi[] = {
-    // Per-agent main panel frame
-    {  0,  0,  1,150, 32, 1, 1, 0, PanT_AgentBadge},
-    {145,  0,  3,162, 28, 2, 1, 1, PanT_AgentBadge},
-    {302,  0,  4,162, 28, 3, 1, 2, PanT_AgentBadge},
-    {459,  0,  5,162, 28, 4, 1, 3, PanT_AgentBadge},
-    // Per-agent mood bar
-    { 45, 10,  0, 88, 10, 1, 1, 0, PanT_AgentMood},
-    {202, 10,  0, 88, 10, 2, 1, 1, PanT_AgentMood},
-    {359, 10,  0, 88, 10, 3, 1, 2, PanT_AgentMood},
-    {516, 10,  0, 88, 10, 4, 1, 3, PanT_AgentMood},
-    // Per-agent medikit button
-    { 30, 25, 95,  0,  0, 1, 1, 0, PanT_AgentMedi},
-    {187, 25, 95,  0,  0, 2, 1, 1, PanT_AgentMedi},
-    {344, 25, 95,  0,  0, 3, 1, 2, PanT_AgentMedi},
-    {501, 25, 95,  0,  0, 4, 1, 3, PanT_AgentMedi},
-    // Per-agent current weapon frame
-    { 57, 25, 12,  0,  0, 1, 1, 0, PanT_AgentWeapon},
-    {214, 25, 12,  0,  0, 2, 1, 1, PanT_AgentWeapon},
-    {371, 25, 12,  0,  0, 3, 1, 2, PanT_AgentWeapon},
-    {528, 25, 12,  0,  0, 4, 1, 3, PanT_AgentWeapon},
-    // Left-side indicators
-    {  0, 37, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0,191,105,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0,267, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
-    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
-};
-
-struct GamePanel game_panel_lo[] = {
-    // Per-agent main panel frame
-    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_AgentBadge},
-    { 73,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
-    {152,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
-    {231,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
-    // Per-agent mood bar
-    { 22,  5,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
-    {101,  5,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
-    {180,  5,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
-    {259,  5,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
-    // Per-agent medikit button
-    { 15, 12, 95,  0,  0, 1, 1, 0, PanT_AgentMedi},
-    { 94, 12, 95,  0,  0, 2, 1, 1, PanT_AgentMedi},
-    {173, 12, 95,  0,  0, 3, 1, 2, PanT_AgentMedi},
-    {252, 12, 95,  0,  0, 4, 1, 3, PanT_AgentMedi},
-    // Per-agent current weapon frame
-    { 29, 12, 12,  0,  0, 1, 1, 0, PanT_AgentWeapon},
-    {108, 12, 12,  0,  0, 2, 1, 1, PanT_AgentWeapon},
-    {187, 12, 12,  0,  0, 3, 1, 2, PanT_AgentWeapon},
-    {266, 12, 12,  0,  0, 4, 1, 3, PanT_AgentWeapon},
-    // Left-side indicators
-    {  0, 19, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0, 89, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
-    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
-};
-
-struct GamePanel game_panel_prealp_hi[] = {
-    // Per-agent main panel frame
-    {  0,  0,  1,150, 32, 1, 1, 0, PanT_AgentBadge},
-    {145,  0,  3,162, 28, 2, 1, 1, PanT_AgentBadge},
-    {302,  0,  4,162, 28, 3, 1, 2, PanT_AgentBadge},
-    {459,  0,  5,162, 28, 4, 1, 3, PanT_AgentBadge},
-    // Per-agent mood bar
-    { 44, 12,  0, 88, 10, 1, 1, 0, PanT_AgentMood},
-    {202, 12,  0, 88, 10, 2, 1, 1, PanT_AgentMood},
-    {360, 12,  0, 88, 10, 3, 1, 2, PanT_AgentMood},
-    {518, 12,  0, 88, 10, 4, 1, 3, PanT_AgentMood},
-    // Per-agent medikit button
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    // Per-agent current weapon frame
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    // Left-side indicators
-    {  0, 37, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0,191,105,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0,267, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
-    { 22, 36,  0,  0,  0, 4, 1, 0, PanT_AgentWeapon},
-    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
-};
-
-struct GamePanel game_panel_prealp_lo[] = {
-    // Per-agent main panel frame
-    {  0,  0,  1, 75, 16, 1, 1, 0, PanT_AgentBadge},
-    { 72,  0,  3, 81, 14, 2, 1, 1, PanT_AgentBadge},
-    {151,  0,  4, 81, 14, 3, 1, 2, PanT_AgentBadge},
-    {229,  0,  5, 81, 14, 4, 1, 3, PanT_AgentBadge},
-    // Per-agent mood bar
-    { 22,  6,  0, 44,  5, 1, 1, 0, PanT_AgentMood},
-    {101,  6,  0, 44,  5, 2, 1, 1, PanT_AgentMood},
-    {180,  6,  0, 44,  5, 3, 1, 2, PanT_AgentMood},
-    {259,  6,  0, 44,  5, 4, 1, 3, PanT_AgentMood},
-    // Per-agent medikit button
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    // Per-agent current weapon frame
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    {  0,  0,  0,  0,  0, 4, 1, 0, PanT_NONE},
-    // Left-side indicators
-    {  0, 18, 10,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0, 95,105,  0,  0, 4, 1, 0, PanT_UNKN08},
-    {  0,133, 11,  0,  0, 4, 1, 0, PanT_UNKN10},
-    { 11, 18,  0,  0,  0, 4, 1, 0, PanT_AgentWeapon},
-    { -1, -1, -1,  0,  0, 4, 1, 0, PanT_NONE},
-};
-
-struct TbPoint game_panel_hi_shifts[] = {
-    // PaSh_AGENT_PANEL_TO_NUMBER
-    { 4, 2},
-    { 8, 2},
-    { 4, 2},
-    {10, 2},
-    // PaSh_AGENT_WEAPON_TO_LIST
-    { 1,28},
-    // PaSh_GROUP_PANE_TO_THERMAL_BOX
-    { 0,48},
-    // PaSh_GROUP_PANE_TO_THERMAL_SPR
-    { 4,60},
-    // PaSh_GROUP_PANE_AGENTS
-    { 4, 36},
-    { 4, 24},
-    { 4, 12},
-    // PaSh_WEP_CURR_BTN_TO_SYMBOL
-    { 8, 4},
-    // PaSh_WEP_FRST_BTN_TO_SYMBOL
-    { 8, 4},
-    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
-    { 8, 4},
-    // PaSh_WEP_CURR_BTN_TO_DECOR
-    { 0, 0},
-    // PaSh_WEP_FRST_BTN_TO_DECOR
-    {-16,-8},
-    // PaSh_WEP_NEXT_BTN_TO_DECOR
-    { 0, -4},
-    // PaSh_WEP_NEXT_DISTANCE
-    { 0, 28},
-    // PaSh_WEP_CURR_BUTTON_AREA
-    {76, 26},
-    // PaSh_WEP_NEXT_BUTTON_AREA
-    {74, 26},
-};
-
-struct TbPoint game_panel_lo_shifts[] = {
-    // PaSh_AGENT_PANEL_TO_NUMBER
-    { 2, 1},
-    { 4, 1},
-    { 2, 1},
-    { 5, 1},
-    // PaSh_AGENT_WEAPON_TO_LIST
-    { 0,14},
-    // PaSh_GROUP_PANE_TO_THERMAL_BOX
-    { 0,22},
-    // PaSh_GROUP_PANE_TO_THERMAL_SPR
-    { 2,30},
-    // PaSh_GROUP_PANE_AGENTS
-    { 2, 18},
-    { 2, 12},
-    { 2,  6},
-    // PaSh_WEP_CURR_BTN_TO_SYMBOL
-    { 4, 2},
-    // PaSh_WEP_FRST_BTN_TO_SYMBOL
-    { 4, 2},
-    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
-    { 4, 2},
-    // PaSh_WEP_CURR_BTN_TO_DECOR
-    { 0, 0},
-    // PaSh_WEP_FRST_BTN_TO_DECOR
-    { -8,-4},
-    // PaSh_WEP_NEXT_BTN_TO_DECOR
-    { 0,-2},
-    // PaSh_WEP_NEXT_DISTANCE
-    { 0, 14},
-    // PaSh_WEP_CURR_BUTTON_AREA
-    {38, 13},
-    // PaSh_WEP_NEXT_BUTTON_AREA
-    {37, 13},
-};
-
-struct TbPoint game_panel_prealp_hi_shifts[] = {
-    // PaSh_AGENT_PANEL_TO_NUMBER
-    { 8, 4},
-    { 8, 4},
-    { 4, 4},
-    {12, 4},
-    // PaSh_AGENT_WEAPON_TO_LIST
-    { 1,28},
-    // PaSh_GROUP_PANE_TO_THERMAL_BOX
-    { 0,48},
-    // PaSh_GROUP_PANE_TO_THERMAL_SPR
-    { 4,60},
-    // PaSh_GROUP_PANE_AGENTS
-    { 4, 36},
-    { 4, 24},
-    { 4, 12},
-    // PaSh_WEP_CURR_BTN_TO_SYMBOL
-    { 8, 4},
-    // PaSh_WEP_FRST_BTN_TO_SYMBOL
-    { 8, 4},
-    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
-    { 8, 4},
-    // PaSh_WEP_CURR_BTN_TO_DECOR
-    { 0, 0},
-    // PaSh_WEP_FRST_BTN_TO_DECOR
-    {-16,-8},
-    // PaSh_WEP_NEXT_BTN_TO_DECOR
-    { 0,-4},
-    // PaSh_WEP_NEXT_DISTANCE
-    { 0, 28},
-    // PaSh_WEP_CURR_BUTTON_AREA
-    {74, 26},
-    // PaSh_WEP_NEXT_BUTTON_AREA
-    {74, 26},
-};
-
-struct TbPoint game_panel_prealp_lo_shifts[] = {
-    // PaSh_AGENT_PANEL_TO_NUMBER
-    { 4, 1},
-    { 4, 1},
-    { 3, 1},
-    { 6, 1},
-    // PaSh_AGENT_WEAPON_TO_LIST
-    { 0,14},
-    // PaSh_GROUP_PANE_TO_THERMAL_BOX
-    { 0,22},
-    // PaSh_GROUP_PANE_TO_THERMAL_SPR
-    { 2,30},
-    // PaSh_GROUP_PANE_AGENTS
-    { 2, 18},
-    { 2, 12},
-    { 2,  6},
-    // PaSh_WEP_CURR_BTN_TO_SYMBOL
-    { 4, 2},
-    // PaSh_WEP_FRST_BTN_TO_SYMBOL
-    { 4, 2},
-    // PaSh_WEP_NEXT_BTN_TO_SYMBOL
-    { 4, 2},
-    // PaSh_WEP_CURR_BTN_TO_DECOR
-    { 0, 0},
-    // PaSh_WEP_FRST_BTN_TO_DECOR
-    {-8,-4},
-    // PaSh_WEP_NEXT_BTN_TO_DECOR
-    { 0,-2},
-    // PaSh_WEP_NEXT_DISTANCE
-    { 0, 14},
-    // PaSh_WEP_CURR_BUTTON_AREA
-    {37, 13},
-    // PaSh_WEP_NEXT_BUTTON_AREA
-    {37, 13},
-};
-
+struct GamePanel *game_panel;
 struct TbPoint *game_panel_shifts;
-
-void size_panels_for_detail(short detail)
-{
-
-    if (detail == 0)
-    {
-        if (ingame.PanelPermutation >= 0)
-        {
-            game_panel = game_panel_prealp_lo;
-            game_panel_shifts = game_panel_prealp_lo_shifts;
-        }
-        else
-        {
-            game_panel = game_panel_lo;
-            game_panel_shifts = game_panel_lo_shifts;
-        }
-    }
-    else
-    {
-        if (ingame.PanelPermutation >= 0)
-        {
-            game_panel = game_panel_prealp_hi;
-            game_panel_shifts = game_panel_prealp_hi_shifts;
-        }
-        else
-        {
-            game_panel = game_panel_hi;
-            game_panel_shifts = game_panel_hi_shifts;
-        }
-    }
-}
 
 TbResult load_pop_sprites_for_current_mode(void)
 {
@@ -2137,7 +1851,7 @@ TbBool panel_active_based_on_target(short panel)
 
     p_panel = &game_panel[panel];
 
-    if ((p_panel->Type == PanT_UNKN08) || (p_panel->Type == PanT_UNKN10))
+    if ((p_panel->Type == PanT_WeaponEnergy) || (p_panel->Type == PanT_Grouping))
         return true;
 
     if (p_panel->ID >= playable_agents)
@@ -2860,7 +2574,7 @@ TbBool check_panel_input(short panel)
                 return 1;
             }
             break;
-        case PanT_UNKN08:
+        case PanT_WeaponEnergy:
             // Enable supershield
             if (p_locplayer->DoubleMode && byte_153198 - 1 != mouser)
                 break;
@@ -2875,7 +2589,7 @@ TbBool check_panel_input(short panel)
             build_packet(p_pckt, PAct_SHIELD_TOGGLE, dcthing, p_agent->ThingOffset, 0, 0);
             p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
             return 1;
-        case PanT_UNKN10:
+        case PanT_Grouping:
             if (mouse_over_infrared_slant_box(panel))
             {
                 // Toggle thermal view
@@ -2947,7 +2661,7 @@ TbBool check_panel_input(short panel)
                 return 1;
             }
             break;
-        case PanT_UNKN10:
+        case PanT_Grouping:
             // Switch grouping fully on or fully off
             p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
             if (panel_active_based_on_target(panel))

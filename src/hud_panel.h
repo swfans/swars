@@ -44,9 +44,9 @@ enum PanelType {
     PanT_AgentWeapon,
     PanT_AgentMedi,
     PanT_UNKN07,
-    PanT_UNKN08,
+    PanT_WeaponEnergy,
     PanT_UNKN09,
-    PanT_UNKN10,
+    PanT_Grouping,
 };
 
 enum PanelShift {
@@ -80,10 +80,12 @@ struct GamePanel
 };
 
 struct Thing;
+struct TbPoint;
 
 #pragma pack()
 /******************************************************************************/
 extern struct GamePanel *game_panel;
+extern struct TbPoint *game_panel_shifts;
 extern ubyte byte_153198;
 extern long scanner_unkn370;
 
