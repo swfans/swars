@@ -66,7 +66,7 @@ TbResult load_mouse_pointers_sprites_for_current_mode(void)
     TbResult ret;
 
     pinfo = &game_dirs[DirPlace_Data];
-    max_detail = min(lbDisplay.GraphicsScreenHeight / 180, lbDisplay.GraphicsScreenWidth / 320);
+    max_detail = min(lbDisplay.GraphicsScreenHeight / 192, lbDisplay.GraphicsScreenWidth / 320);
     if (max_detail > 0)
         max_detail--;
 
