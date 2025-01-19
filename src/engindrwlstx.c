@@ -3345,9 +3345,9 @@ void number_player(struct Thing *p_person, ubyte n)
     }
     else
     {
-        shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + 512] >> 14;
+        shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + LbFPMath_PI/2] >> 14;
         if ((p_person->Flag2 & TgF2_Unkn00080000) == 0)
-            shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + 512] >> 15;
+            shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + LbFPMath_PI/2] >> 15;
     }
     shift_y = 0;
 

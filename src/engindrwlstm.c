@@ -474,8 +474,8 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
 
             shrap_yaw = 8 * p_shrapnel->yaw;
             shrap_pitch = 8 * p_shrapnel->pitch;
-            cos_yaw = lbSinTable[512 + shrap_yaw];
-            cos_pitch = lbSinTable[512 + shrap_pitch];
+            cos_yaw = lbSinTable[shrap_yaw + LbFPMath_PI/2];
+            cos_pitch = lbSinTable[shrap_pitch + LbFPMath_PI/2];
             sin_pitch = lbSinTable[shrap_pitch];
             sin_yaw = lbSinTable[shrap_yaw];
 
@@ -767,7 +767,7 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
         angle = ((angle + 0x0800) & 0x0700) | (angle & 0xFF);
         x1 = (3 * lbSinTable[angle] / 2 + p_owner->X) >> 8;
         y1 = p_owner->Y >> 8;
-        z1 = (p_owner->Z - 3 * lbSinTable[angle + 512] / 2) >> 8;
+        z1 = (p_owner->Z - 3 * lbSinTable[angle + LbFPMath_PI/2] / 2) >> 8;
     }
     ep1.Flags = 0;
     ep1.X3d = x1 - engn_xc;
@@ -1739,10 +1739,10 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, stru
         int hlf_y, hlf_x;
         ushort face;
 
-        cos_angl = lbSinTable[(angle & 0x7FF) + 512];
+        cos_angl = lbSinTable[(angle & 0x7FF) + LbFPMath_PI/2];
         sin_angl = lbSinTable[angle & 0x7FF];
         half_angl = (angle - angle_detail) & 0x7FF;
-        hlf_x = pp_X + ((scrad1 * lbSinTable[half_angl + 512]) >> 16);
+        hlf_x = pp_X + ((scrad1 * lbSinTable[half_angl + LbFPMath_PI/2]) >> 16);
         hlf_y = pp_Y + ((scrad1 * lbSinTable[half_angl]) >> 16);
         nxt_x = pp_X + ((scrad1 * cos_angl) >> 16);
         nxt_y = pp_Y + ((scrad1 * sin_angl) >> 16);

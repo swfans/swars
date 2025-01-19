@@ -35,6 +35,37 @@ extern "C" {
 #define PANEL_STATE_MOOD_SET_GRP 13
 #define PANEL_STATE_SEND_MESSAGE 17
 
+enum PanelType {
+    PanT_NONE = 0,
+    PanT_AgentBadge,
+    PanT_AgentMood,
+    PanT_UNKN03,
+    PanT_UNKN04,
+    PanT_AgentWeapon,
+    PanT_AgentMedi,
+    PanT_UNKN07,
+    PanT_WeaponEnergy,
+    PanT_UNKN09,
+    PanT_Grouping,
+};
+
+enum PanelShift {
+    PaSh_AGENT_PANEL_TO_NUMBER = 0,
+    PaSh_AGENT_WEAPON_TO_LIST = 4,
+    PaSh_GROUP_PANE_TO_THERMAL_BOX = 5,
+    PaSh_GROUP_PANE_TO_THERMAL_SPR = 6,
+    PaSh_GROUP_PANE_AGENTS = 7,
+    PaSh_WEP_CURR_BTN_TO_SYMBOL = 10,
+    PaSh_WEP_FRST_BTN_TO_SYMBOL = 11,
+    PaSh_WEP_NEXT_BTN_TO_SYMBOL = 12,
+    PaSh_WEP_CURR_BTN_TO_DECOR =  13,
+    PaSh_WEP_FRST_BTN_TO_DECOR = 14,
+    PaSh_WEP_NEXT_BTN_TO_DECOR = 15,
+    PaSh_WEP_NEXT_DISTANCE = 16,
+    PaSh_WEP_CURR_BUTTON_AREA = 17,
+    PaSh_WEP_NEXT_BUTTON_AREA = 18,
+};
+
 struct GamePanel
 {
   short X;
@@ -49,10 +80,12 @@ struct GamePanel
 };
 
 struct Thing;
+struct TbPoint;
 
 #pragma pack()
 /******************************************************************************/
 extern struct GamePanel *game_panel;
+extern struct TbPoint *game_panel_shifts;
 extern ubyte byte_153198;
 extern long scanner_unkn370;
 
@@ -68,7 +101,7 @@ int SCANNER_objective_info_height(void);
 
 void draw_new_panel(void);
 
-void load_pop_sprites_for_current_mode(void);
+TbResult load_pop_sprites_for_current_mode(void);
 
 /** Returns if a game panel is active, considering the target which it controls.
  */

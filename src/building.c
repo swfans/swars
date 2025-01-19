@@ -164,7 +164,7 @@ void do_dome_rotate1(struct Thing *p_building)
 
         angle = (i - obj) * p_building->SubState;
         pt2_beg = game_objects[i].StartPoint;
-        factrC = lbSinTable[angle + 512];
+        factrC = lbSinTable[angle + LbFPMath_PI/2];
         factrS = lbSinTable[angle];
         for (dpt = 0; dpt <= pt1_num; dpt++)
         {
@@ -581,7 +581,7 @@ void init_mgun_laser(struct Thing *p_owner, ushort bmsize)
 
     angle = (angle + 0x800) & 0x7FF;
     prc_x = p_owner->X + 3 * lbSinTable[angle] / 2;
-    prc_z = p_owner->Z - 3 * lbSinTable[angle + 512] / 2;
+    prc_z = p_owner->Z - 3 * lbSinTable[angle + LbFPMath_PI/2] / 2;
     prc_y = p_owner->Y;
 
     if ((p_owner->PTarget > &things[0]) && (p_owner->PTarget < &things[THINGS_LIMIT]))

@@ -3226,7 +3226,7 @@ ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 
             angle = (dt_angle + p_vehicle->U.UVehicle.AngleY) & 0x7FF;
             radius = p_vehicle->Radius;
-            sh_z = -(radius * lbSinTable[angle + 512]) >> 16;
+            sh_z = -(radius * lbSinTable[angle + LbFPMath_PI/2]) >> 16;
             sh_x = (radius * lbSinTable[angle]) >> 16;
 
             cor_x = (p_person->X >> 8) + sh_x;

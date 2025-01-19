@@ -104,6 +104,7 @@ PathInfo game_dirs[] = {
   {"intro",		1},
   {"sound",		1},
   {"data/equip",1},
+  {"conf",		0},
   {NULL,		0},
 };
 

@@ -138,6 +138,8 @@ swars_SOURCES = \
 	game_sprts.h \
 	game.h \
 	globals.h \
+	hud_panecfg.c \
+	hud_panecfg.h \
 	hud_panel.c \
 	hud_panel.h \
 	hud_target.c \

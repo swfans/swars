@@ -382,10 +382,10 @@ ubyte input_citymap_scanner(struct ScreenBox *box)
         dy++;
         ret = 1;
     }
-    ingame.Scanner.MX += dx * lbSinTable[ingame.Scanner.Angle + 512] >> 13;
+    ingame.Scanner.MX += dx * lbSinTable[ingame.Scanner.Angle + LbFPMath_PI/2] >> 13;
     ingame.Scanner.MX += dy * lbSinTable[ingame.Scanner.Angle] >> 13;
     sdx = dx * lbSinTable[ingame.Scanner.Angle] >> 13;
-    sdy = dy * lbSinTable[ingame.Scanner.Angle + 512] >> 13;
+    sdy = dy * lbSinTable[ingame.Scanner.Angle + LbFPMath_PI/2] >> 13;
     ingame.Scanner.MZ += sdx - sdy;
     if (ingame.Scanner.MX < 0)
         ingame.Scanner.MX = 0;
