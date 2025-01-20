@@ -21,6 +21,7 @@
 
 #include "bftypes.h"
 #include "game_bstype.h"
+#include "guiboxes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,15 +78,19 @@ enum PanelShift {
 
 struct GamePanel
 {
-  short X;
-  short Y;
-  short Spr;
-  ushort Width;
-  ushort Height;
-  ushort Use;
-  ushort Flags;
-  ubyte ID;
-  ubyte Type;
+    /** Rectange representing area active for mouse events and sprite drawing. */
+    struct ScreenRect pos;
+    /** Rectange representing area of dynamically generated content (text/value/bar). */
+    struct ScreenRect dyn;
+    /** Panel sprite decoration. */
+    short Spr;
+    /** Panel sprite decorations to switch to on toggle event, or additional sprites
+     * to draw on top. */
+    short ExtraSpr[2];
+    ushort Use;
+    ushort Flags;
+    ubyte ID;
+    ubyte Type;
 };
 
 struct Thing;

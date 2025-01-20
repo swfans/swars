@@ -66,9 +66,18 @@ enum GUIBoxFlags {
   GBxFlg_BkgndDrawn = 0x8000,	/**< Whether static background of the box has been already drawn. */
 };
 
+/** Point on the screen surface. */
 struct ScreenPoint {
 	short X;
 	short Y;
+};
+
+/** Rectangle on the screen surface. */
+struct ScreenRect {
+	short X;
+	short Y;
+    ushort Width;
+    ushort Height;
 };
 
 /** Base to which every Screen Box/Button/Text can be casted.

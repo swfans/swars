@@ -43,6 +43,8 @@ const struct TbNamedEnum panels_conf_common_cmnds[] = {
 enum PanelsPanelConfigCmd {
     PnPanelCmd_ScreenPos = 1,
     PnPanelCmd_ScreenSize,
+    PnPanelCmd_DynaPos,
+    PnPanelCmd_DynaSize,
     PnPanelCmd_Sprite,
     PnPanelCmd_Use,
     PnPanelCmd_Flags,
@@ -53,6 +55,8 @@ enum PanelsPanelConfigCmd {
 const struct TbNamedEnum panels_conf_panel_cmnds[] = {
   {"ScreenPos",		PnPanelCmd_ScreenPos},
   {"ScreenSize",	PnPanelCmd_ScreenSize},
+  {"DynaPos",		PnPanelCmd_DynaPos},
+  {"DynaSize",		PnPanelCmd_DynaSize},
   {"Sprite",		PnPanelCmd_Sprite},
   {"Use",			PnPanelCmd_Use},
   {"Flags",			PnPanelCmd_Flags},
@@ -398,9 +402,9 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
                     CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                p_panel->X = k;
-                p_panel->Y = m;
-                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->X, (int)p_panel->Y);
+                p_panel->pos.X = k;
+                p_panel->pos.Y = m;
+                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->pos.X, (int)p_panel->pos.Y);
                 break;
             case PnPanelCmd_ScreenSize:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -413,9 +417,39 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
                     CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                p_panel->Width = k;
-                p_panel->Height = m;
-                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->Width, (int)p_panel->Height);
+                p_panel->pos.Width = k;
+                p_panel->pos.Height = m;
+                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->pos.Width, (int)p_panel->pos.Height);
+                break;
+            case PnPanelCmd_DynaPos:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command 1st parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                i = LbIniValueGetLongInt(&parser, &m);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_panel->dyn.X = k;
+                p_panel->dyn.Y = m;
+                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->dyn.X, (int)p_panel->dyn.Y);
+                break;
+            case PnPanelCmd_DynaSize:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command 1st parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                i = LbIniValueGetLongInt(&parser, &m);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_panel->dyn.Width = k;
+                p_panel->dyn.Height = m;
+                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->dyn.Width, (int)p_panel->dyn.Height);
                 break;
             case PnPanelCmd_Sprite:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -486,8 +520,8 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
 
         p_panel = &game_panel_custom[panel];
         LbMemorySet(p_panel, 0, sizeof(struct GamePanel));
-        p_panel->X = -1;
-        p_panel->Y = -1;
+        p_panel->pos.X = -1;
+        p_panel->pos.Y = -1;
         p_panel->Spr = -1;
     }
 
