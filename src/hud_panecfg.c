@@ -23,8 +23,10 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfplanar.h"
+#include "bfsprite.h"
 
 #include "game.h"
+#include "game_sprts.h"
 #include "hud_panel.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -125,7 +127,56 @@ const struct TbNamedEnum panels_conf_any_bool[] = {
 };
 
 struct GamePanel game_panel_custom[22];
-struct TbPoint game_panel_custom_shifts[22];
+struct TbPoint game_panel_custom_shifts[32];
+
+void update_panel_derivative_shifts(short detail)
+{
+    struct TbSprite *p_spr;
+    struct TbPoint *p_base_shift;
+    struct TbPoint *p_slot_size;
+    int i;
+
+    p_base_shift = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_BASE_SH];
+    p_slot_size = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_SIZE];
+
+    // TODO out to config file
+    p_base_shift->x = 1 * (detail + 1);
+    p_base_shift->y = 0;
+    p_slot_size->x = 2 * (detail + 1);
+    p_slot_size->y = 2 * (detail + 1);
+
+    p_spr = &pop1_sprites[14];
+    // We're expecting to use 4 ammo slots; 8 are supported mostly to signal an issue
+    for (i = 0; i < 8; i++)
+    {
+        struct TbPoint *p_shift;
+        int dx, dy;
+
+        if ((i & 3) < 2)
+        {
+            dx = p_base_shift->x;
+            dx += (p_base_shift->x + p_slot_size->x) * (i / 4);
+        }
+        else
+        {
+            dx = p_spr->SWidth - (p_base_shift->x + p_slot_size->x);
+            dx -= (p_base_shift->x + p_slot_size->x) * (i / 4);
+        }
+
+        if ((i & 3) == 0 || (i & 3) == 3)
+        {
+            dy = p_base_shift->y;
+        }
+        else
+        {
+            dy = p_spr->SHeight - (p_base_shift->y + p_slot_size->y);
+        }
+
+        p_shift = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_SLOTS + i];
+        p_shift->x = dx;
+        p_shift->y = dy;
+    }
+}
 
 void size_panels_for_detail(short detail)
 {
@@ -140,6 +191,7 @@ void size_panels_for_detail(short detail)
     // Currently we use the same config for all styles
     styleno = 0;
     read_panel_config(name, styleno, detail);
+    update_panel_derivative_shifts(detail);
     game_panel = game_panel_custom;
     game_panel_shifts = game_panel_custom_shifts;
 }

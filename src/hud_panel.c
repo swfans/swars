@@ -840,9 +840,6 @@ void draw_new_panel_sprite_prealp(int px, int py, ulong spr_id)
  */
 void draw_fourpack_amount(short x, ushort y, ushort amount)
 {
-    // We're expecting to draw 4 items; 8 are supported mostly to signal an issue
-    static short dtx[] = {0+2, 0+2, 60-4-2, 60-4-2, 0+8, 0+8, 60-4-2-4-2, 60-4-2-4-2,};
-    static short dty[] = {0+0, 18-4-0, 0+0, 18-4-0, 0+0, 18-4-0, 0+0, 18-4-0,};
     int i;
     TbPixel col;
 
@@ -853,10 +850,12 @@ void draw_fourpack_amount(short x, ushort y, ushort amount)
 
     for (i = 0; i < min(amount,8); i++)
     {
-      if (lbDisplay.GraphicsScreenHeight < 400)
-          LbDrawBox(x + (dtx[i] >> 1), y + (dty[i] >> 1), 2, 2, col);
-      else
-          LbDrawBox(x + dtx[i], y + dty[i], 4, 4, col);
+        struct TbPoint *p_shift;
+        struct TbPoint *p_size;
+
+        p_shift = &game_panel_shifts[PaSh_WEP_FOURPACK_SLOTS + i];
+        p_size = &game_panel_shifts[PaSh_WEP_FOURPACK_SIZE];
+        LbDrawBox(x + p_shift->x, y + p_shift->y, p_size->x, p_size->y, col);
     }
 }
 

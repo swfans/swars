@@ -64,6 +64,9 @@ enum PanelShift {
     PaSh_WEP_NEXT_DISTANCE = 16,
     PaSh_WEP_CURR_BUTTON_AREA = 17,
     PaSh_WEP_NEXT_BUTTON_AREA = 18,
+    PaSh_WEP_FOURPACK_BASE_SH = 19,
+    PaSh_WEP_FOURPACK_SIZE = 20,
+    PaSh_WEP_FOURPACK_SLOTS = 21,
 };
 
 struct GamePanel
