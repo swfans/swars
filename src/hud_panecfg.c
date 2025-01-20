@@ -109,8 +109,8 @@ const struct TbNamedEnum panels_conf_panel_type[] = {
   {"Default",		PanT_NONE + 1},
   {"AgentBadge",	PanT_AgentBadge + 1},
   {"AgentMood",		PanT_AgentMood + 1},
-  {"UNKN03",		PanT_UNKN03 + 1},
-  {"UNKN04",		PanT_UNKN04 + 1},
+  {"AgentHealth",	PanT_AgentHealth + 1},
+  {"AgentEnergy",	PanT_AgentEnergy + 1},
   {"AgentWeapon",	PanT_AgentWeapon + 1},
   {"AgentMedi",		PanT_AgentMedi + 1},
   {"UNKN07",		PanT_UNKN07 + 1},
@@ -126,8 +126,8 @@ const struct TbNamedEnum panels_conf_any_bool[] = {
   {NULL,			0},
 };
 
-struct GamePanel game_panel_custom[22];
-struct TbPoint game_panel_custom_shifts[32];
+struct GamePanel game_panel_custom[GAME_PANELS_LIMIT];
+struct TbPoint game_panel_custom_shifts[48];
 
 void update_panel_derivative_shifts(short detail)
 {
@@ -138,13 +138,6 @@ void update_panel_derivative_shifts(short detail)
 
     p_base_shift = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_BASE_SH];
     p_slot_size = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_SIZE];
-
-    // TODO out to config file
-    p_base_shift->x = 1 * (detail + 1);
-    p_base_shift->y = 0;
-    p_slot_size->x = 2 * (detail + 1);
-    p_slot_size->y = 2 * (detail + 1);
-
     p_spr = &pop1_sprites[14];
     // We're expecting to use 4 ammo slots; 8 are supported mostly to signal an issue
     for (i = 0; i < 8; i++)
@@ -337,6 +330,37 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         LbIniSkipToNextLine(&parser);
     }
 #undef COMMAND_TEXT
+    { // TODO out to config file
+    struct TbPoint *p_slot;
+
+    p_slot = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_BASE_SH];
+    p_slot->x = 1 * (detail + 1);
+    p_slot->y = 0;
+    p_slot = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_SIZE];
+    p_slot->x = 2 * (detail + 1);
+    p_slot->y = 2 * (detail + 1);
+
+    p_slot = &game_panel_custom_shifts[PaSh_AGENT_HEALTH_PAD_BEF];
+    p_slot->x = 0;
+    p_slot->y = 0;
+    p_slot = &game_panel_custom_shifts[PaSh_AGENT_HEALTH_PAD_AFT];
+    p_slot->x = 0;
+    p_slot->y = 0;
+
+    p_slot = &game_panel_custom_shifts[PaSh_AGENT_ENERGY_PAD_BEF];
+    p_slot->x = 0;
+    p_slot->y = 0;
+    p_slot = &game_panel_custom_shifts[PaSh_AGENT_ENERGY_PAD_AFT];
+    p_slot->x = 0;
+    p_slot->y = 0;
+
+    p_slot = &game_panel_custom_shifts[PaSh_AGENT_MOOD_PAD_BEF];
+    p_slot->x = 0;
+    p_slot->y = 1 * (detail + 1);
+    p_slot = &game_panel_custom_shifts[PaSh_AGENT_MOOD_PAD_AFT];
+    p_slot->x = 0;
+    p_slot->y = 1 * (detail + 1);
+    }
 
     for (panel = 0; panel < pop_panel_count; panel++)
     {

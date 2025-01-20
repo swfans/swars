@@ -72,6 +72,24 @@ enum PanelMomentaryFlags {
 struct GamePanel *game_panel;
 struct TbPoint *game_panel_shifts;
 
+TbBool panel_exists(short panel)
+{
+    struct GamePanel *p_panel;
+
+    p_panel = &game_panel[panel];
+    return (p_panel->Spr != -1);
+}
+
+TbBool panel_for_speciifc_agent(short panel)
+{
+    struct GamePanel *p_panel;
+
+    p_panel = &game_panel[panel];
+    return (p_panel->Type == PanT_AgentBadge || p_panel->Type == PanT_AgentMood ||
+      p_panel->Type == PanT_AgentHealth || p_panel->Type == PanT_AgentEnergy ||
+      p_panel->Type == PanT_AgentMedi || p_panel->Type == PanT_AgentWeapon);
+}
+
 TbResult load_pop_sprites_for_current_mode(void)
 {
     PathInfo *pinfo;
@@ -1191,7 +1209,7 @@ TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong
         ncarr_below = 0;
     else
         ncarr_below -= 4;
-    p_panel = &game_panel[19];
+    p_panel = &game_panel[27];
     cx = p_panel->X;
     cy = p_panel->Y;
 
@@ -1252,7 +1270,7 @@ void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong wea
         ncarr_below = 0;
     else
         ncarr_below -= 4;
-    p_panel = &game_panel[19];
+    p_panel = &game_panel[27];
     cx = p_panel->X;
     cy = p_panel->Y;
 
@@ -1298,7 +1316,7 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
         return false;
 
     p_player = &players[plyr];
-    p_panel = &game_panel[12 + nagent];
+    p_panel = &game_panel[20 + nagent];
 
     cx = p_panel->X;
     cy = p_panel->Y;
@@ -1350,7 +1368,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent, ubyte fl
         return 0;
 
     p_agent = p_locplayer->MyAgent[nagent];
-    p_panel = &game_panel[12 + nagent];
+    p_panel = &game_panel[20 + nagent];
 
     cx = p_panel->X;
     cy = p_panel->Y;
@@ -1400,7 +1418,7 @@ TbBool update_agent_weapons_selection(PlayerIdx plyr, short nagent)
     panstate = p_player->PanelState[mouser];
     plagent = p_agent->U.UPerson.ComCur & 3;
     wepflags = p_agent->U.UPerson.WeaponsCarried;
-    p_panel = &game_panel[12 + plagent];
+    p_panel = &game_panel[20 + plagent];
 
     cx = p_panel->X;
     cy = p_panel->Y;
@@ -1477,7 +1495,7 @@ void draw_agent_weapons_selection(PlayerIdx plyr, short nagent)
 
     plagent = p_agent->U.UPerson.ComCur & 3;
     wepflags = p_agent->U.UPerson.WeaponsCarried;
-    p_panel = &game_panel[12 + plagent];
+    p_panel = &game_panel[20 + plagent];
 
     cx = p_panel->X;
     cy = p_panel->Y;
@@ -1626,9 +1644,9 @@ void draw_agent_grouping_bars(void)
         short x, y;
 
         if (lbDisplay.GraphicsScreenHeight < 400) {
-            p_panel = &game_panel[17];
+            p_panel = &game_panel[25];
         } else {
-            p_panel = &game_panel[18];
+            p_panel = &game_panel[26];
         }
         x = p_panel->X;
         y = p_panel->Y;
@@ -1804,9 +1822,7 @@ void draw_mood_limits(short x, short y, short w, short h, short value, short max
     if (value <= 0)
         return;
 
-    sh_x = 4;
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        sh_x /= 2;
+    sh_x = h;
 
     col = colour_lookup[ColLU_WHITE];
     scaled_val = (w * value / maxval) >> 1;
@@ -1907,9 +1923,9 @@ void update_game_panel(void)
         struct Thing *p_agent;
         p_agent = p_locplayer->MyAgent[i];
         if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
-            game_panel[8+i].Spr = 96;
+            game_panel[16+i].Spr = 96;
         else
-            game_panel[8+i].Spr = 95;
+            game_panel[16+i].Spr = 95;
     }
 
     { // If supershield is enabled for the current agent, draw energy bar in red
@@ -1917,15 +1933,15 @@ void update_game_panel(void)
         p_agent = &things[p_locplayer->DirectControl[0]];
         if ((p_agent->Type == TT_PERSON) && (p_agent->Flag & TngF_Unkn0100) != 0)
         {
-            game_panel[16].Spr = 99;
+            game_panel[24].Spr = 99;
             if (lbDisplay.GraphicsScreenHeight >= 400)
-                game_panel[17].Spr = 106;
+                game_panel[25].Spr = 106;
         }
         else
         {
-            game_panel[16].Spr = 10;
+            game_panel[24].Spr = 10;
             if (lbDisplay.GraphicsScreenHeight >= 400)
-                game_panel[17].Spr = 105;
+                game_panel[25].Spr = 105;
         }
     }
 }
@@ -1978,9 +1994,9 @@ void draw_panel_thermal_button(void)
         short x, y;
 
         if (lbDisplay.GraphicsScreenHeight < 400) {
-            p_panel = &game_panel[17];
+            p_panel = &game_panel[25];
         } else {
-            p_panel = &game_panel[18];
+            p_panel = &game_panel[26];
         }
         x = p_panel->X;
         y = p_panel->Y;
@@ -2009,42 +2025,34 @@ void draw_panel_objective_info(void)
     SCANNER_draw_objective_info(x, y, w);
 }
 
-void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
+void draw_new_panel_badge_overlay(short panel, ushort plagent, TbBool darkened)
+{
+}
+
+void draw_new_panel_health_overlay(short panel, ushort plagent, TbBool darkened)
 {
     struct GamePanel *p_panel;
-    struct GamePanel *p_mopanel;
-    PlayerInfo *p_locplayer;
     struct Thing *p_agent;
+    PlayerInfo *p_locplayer;
+    struct TbPoint *p_slot_bef;
+    struct TbPoint *p_slot_aft;
     int lv, lvmax;
     short x, y, w, h;
 
-    p_panel = &game_panel[0 + plagent];
-    p_mopanel = &game_panel[4 + plagent];
+    p_panel = &game_panel[panel];
     p_locplayer = &players[local_player_no];
     p_agent = p_locplayer->MyAgent[plagent];
     if ((p_agent->Flag & TngF_PlayerAgent) == 0) {
-        LOGERR("Agent %d unexpected flags", plagent);
+        LOGNO("Agent %d unexpected flags", plagent);
         return;
     }
+    p_slot_bef = &game_panel_shifts[PaSh_AGENT_HEALTH_PAD_BEF];
+    p_slot_aft = &game_panel_shifts[PaSh_AGENT_HEALTH_PAD_AFT];
+    x = p_panel->X + p_slot_bef->x;
+    y = p_panel->Y + p_slot_bef->y;
+    w = p_panel->Width - p_slot_bef->x - p_slot_aft->x;
+    h = p_panel->Height - p_slot_bef->y - p_slot_aft->y;
 
-    // The X of health bar in anchored to mood panel
-    x = p_mopanel->X;
-    y = p_panel->Y;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        x += 4;
-        y += 2;
-    } else {
-        x += 8;
-        y += 4;
-    }
-    w = p_mopanel->Width;
-    if (ingame.PanelPermutation >= 0)
-        h = 6;
-    else
-        h = 4;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        h /= 2;
-    }
     // Draw health level
     lv = p_agent->Health;
     lvmax = p_agent->U.UPerson.MaxHealth;
@@ -2057,52 +2065,72 @@ void draw_new_panel_badge_overlay(ushort panel, ushort plagent, TbBool darkened)
     // Draw shield level over health
     lv = p_agent->U.UPerson.ShieldEnergy;
     draw_health_level(x, y, w, h, lv, 0x400, colour_lookup[ColLU_WHITE], 1);
+}
+
+void draw_new_panel_mood_overlay(short panel, ushort plagent, TbBool darkened)
+{
+    struct GamePanel *p_panel;
+    struct Thing *p_agent;
+    PlayerInfo *p_locplayer;
+    struct TbPoint *p_slot_bef;
+    struct TbPoint *p_slot_aft;
+    int lv, lvmax;
+    short x, y, w, h;
+
+    p_panel = &game_panel[panel];
+    p_locplayer = &players[local_player_no];
+    p_agent = p_locplayer->MyAgent[plagent];
+    if ((p_agent->Flag & TngF_PlayerAgent) == 0) {
+        LOGNO("Agent %d unexpected flags", plagent);
+        return;
+    }
+    p_slot_bef = &game_panel_shifts[PaSh_AGENT_MOOD_PAD_BEF];
+    p_slot_aft = &game_panel_shifts[PaSh_AGENT_MOOD_PAD_AFT];
+    x = p_panel->X + p_slot_bef->x;
+    y = p_panel->Y + p_slot_bef->y;
+    w = p_panel->Width - p_slot_bef->x - p_slot_aft->x;
+    h = p_panel->Height - p_slot_bef->y - p_slot_aft->y;
 
     // Draw drug level aka mood (or just a red line if no drugs)
-    x = p_mopanel->X;
-    y = p_mopanel->Y;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        y += 1;
-    } else {
-        y += 2;
-    }
-    w = p_mopanel->Width;
-    h = 6;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        h /= 2;
-    }
     draw_mood_level(x, y, w, h, p_agent->U.UPerson.Mood);
     // Draw stamina level which caps the mood level
-    h = 4;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        h /= 2;
-    }
+    h = h * 3 / 4;
     lv = p_agent->U.UPerson.Stamina;
     lvmax = p_agent->U.UPerson.MaxStamina;
     draw_mood_limits(x, y, w, h, lv, lvmax);
+}
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        x = p_panel->X + p_panel->Width - 8;
-    else
-        x = p_panel->X + p_panel->Width - 17;
-    y = p_panel->Y;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        y += 9;
-    } else {
-        y += 18;
+void draw_new_panel_energy_overlay(short panel, ushort plagent, TbBool darkened)
+{
+    struct GamePanel *p_panel;
+    struct Thing *p_agent;
+    PlayerInfo *p_locplayer;
+    struct TbPoint *p_slot_bef;
+    struct TbPoint *p_slot_aft;
+    int lv, lvmax;
+    short x, y, w, h;
+
+    p_panel = &game_panel[panel];
+    p_locplayer = &players[local_player_no];
+    p_agent = p_locplayer->MyAgent[plagent];
+    if ((p_agent->Flag & TngF_PlayerAgent) == 0) {
+        LOGNO("Agent %d unexpected flags", plagent);
+        return;
     }
-    w = 4;
-    h = 14;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        w /= 2;
-        h /= 2;
-    }
+    p_slot_bef = &game_panel_shifts[PaSh_AGENT_ENERGY_PAD_BEF];
+    p_slot_aft = &game_panel_shifts[PaSh_AGENT_ENERGY_PAD_AFT];
+    x = p_panel->X + p_slot_bef->x;
+    y = p_panel->Y + p_slot_bef->y;
+    w = p_panel->Width - p_slot_bef->x - p_slot_aft->x;
+    h = p_panel->Height - p_slot_bef->y - p_slot_aft->y;
+
+    // Draw weapon energy level
     lv = p_agent->U.UPerson.Energy;
     lvmax = p_agent->U.UPerson.MaxEnergy;
     draw_energy_bar(x, y, w, h, lv, lvmax);
 }
 
-void draw_new_panel_weapon_overlay(ushort panel, ushort plagent, TbBool darkened)
+void draw_new_panel_weapon_overlay(short panel, ushort plagent, TbBool darkened)
 {
 }
 
@@ -2124,13 +2152,14 @@ void draw_new_panel(void)
         p_panel = &game_panel[i];
         if (p_panel->Spr < 0)
           break;
-        if (p_panel->Spr == 0)
-          continue;
         lbDisplay.DrawFlags = 0;
 
-        if (p_panel->Type != PanT_AgentBadge && p_panel->Type != PanT_AgentMedi && p_panel->Type != PanT_AgentWeapon)
+        if (!panel_for_speciifc_agent(i))
         {
             short x, y;
+
+            if (p_panel->Spr == 0)
+                continue;
             x = p_panel->X;
             y = p_panel->Y;
             draw_new_panel_sprite_std(x, y, p_panel->Spr);
@@ -2139,7 +2168,6 @@ void draw_new_panel(void)
         {
             TbBool is_visible;
             TbBool is_disabled, is_subordnt;
-            short x, y;
 
             is_visible = true;
             if (p_panel->ID >= playable_agents)
@@ -2180,18 +2208,32 @@ void draw_new_panel(void)
                   person_is_executing_commands(p_agent->ThingOffset));
             }
 
-            x = p_panel->X;
-            y = p_panel->Y;
-            if (is_disabled || is_subordnt)
-                draw_new_panel_sprite_dark(x, y, p_panel->Spr);
-            else
-                draw_new_panel_sprite_std(x, y, p_panel->Spr);
+            if (p_panel->Spr != 0)
+            {
+                short x, y;
+
+                x = p_panel->X;
+                y = p_panel->Y;
+                if (is_disabled || is_subordnt)
+                    draw_new_panel_sprite_dark(x, y, p_panel->Spr);
+                else
+                    draw_new_panel_sprite_std(x, y, p_panel->Spr);
+            }
 
             // Fill additional info on top of the sprites
             switch (p_panel->Type)
             {
             case PanT_AgentBadge:
                 draw_new_panel_badge_overlay(i, p_panel->ID, is_disabled || is_subordnt);
+                break;
+            case PanT_AgentHealth:
+                draw_new_panel_health_overlay(i, p_panel->ID, is_disabled || is_subordnt);
+                break;
+            case PanT_AgentMood:
+                draw_new_panel_mood_overlay(i, p_panel->ID, is_disabled || is_subordnt);
+                break;
+            case PanT_AgentEnergy:
+                draw_new_panel_energy_overlay(i, p_panel->ID, is_disabled || is_subordnt);
                 break;
             case PanT_AgentMedi:
                 // Medi sprite gets switched when we have medikit, so no need for update
@@ -2526,6 +2568,8 @@ TbBool check_panel_input(short panel)
         switch (p_panel->Type)
         {
         case PanT_AgentBadge:
+        case PanT_AgentHealth:
+        case PanT_AgentEnergy:
             // Select controlled agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type != TT_PERSON) || ((p_agent->Flag & TngF_Destroyed) != 0) || ((p_agent->Flag2 & TgF2_KnockedOut) != 0))
@@ -2720,7 +2764,7 @@ TbBool check_panel_input(short panel)
 
 TbBool check_panel_button(void)
 {
-    short panel, tot_panels;
+    short panel;
 
     if (lbDisplay.LeftButton && lbDisplay.RightButton)
     {
@@ -2744,9 +2788,10 @@ TbBool check_panel_button(void)
             return 1;
     }
 
-    tot_panels = lbDisplay.GraphicsScreenHeight < 400 ? 17 : 18;
-    for (panel = tot_panels; panel >= 0; panel--)
+    for (panel = GAME_PANELS_LIMIT - 1; panel >= 0; panel--)
     {
+        if (!panel_exists(panel))
+            continue;
         if (mouse_move_over_panel(panel))
         {
             if (check_panel_input(panel))
