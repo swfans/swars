@@ -54,6 +54,7 @@ enum PanelFlags {
     PanF_ENABLED = 0x0001,
     PanF_SPRITES_IN_LINE_HORIZ = 0x0020,
     PanF_SPRITES_IN_LINE_VERTC = 0x0040,
+    PanF_SPR_TOGGLED_ON = 0x0080,
 };
 
 enum PanelShift {
@@ -82,7 +83,7 @@ struct GamePanel
     struct ScreenRect pos;
     /** Rectange representing area of dynamically generated content (text/value/bar). */
     struct ScreenRect dyn;
-    /** Panel sprite decoration. */
+    /** Panel sprite decoration; only first is used, unless flags state otherwise. */
     short Spr[3];
     /** Panel sprite decorations to switch to on toggle event, or additional sprites
      * to draw on top. */

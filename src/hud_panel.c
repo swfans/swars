@@ -155,7 +155,7 @@ int SCANNER_objective_info_height(void)
 }
 
 /* draws a sprite scaled to double size; remove pending */
-void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
+void SCANNER_unkn_func_200(struct TbSprite *p_spr, int x, int y, ubyte col)
 {
     int xwind_beg;
     int xwind_end;
@@ -169,23 +169,23 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
     xwind_beg = lbDisplay.GraphicsWindowX;
     xwind_end = lbDisplay.GraphicsWindowX + lbDisplay.GraphicsWindowWidth;
     xwind_start = lbDisplay.GraphicsWindowX + x;
-    inp = (sbyte *)spr->Data;
+    inp = (sbyte *)p_spr->Data;
     opitch = lbDisplay.GraphicsScreenWidth;
     oline = &lbDisplay.WScreen[opitch * (lbDisplay.GraphicsWindowY + y) + lbDisplay.GraphicsWindowX + x];
     if (xwind_start < lbDisplay.GraphicsWindowX) {
-        if (xwind_start + 2 * spr->SWidth <= lbDisplay.GraphicsWindowX)
+        if (xwind_start + 2 * p_spr->SWidth <= lbDisplay.GraphicsWindowX)
             return;
         needs_window_bounding = true;
     } else {
         if (xwind_start >= xwind_end)
             return;
-        needs_window_bounding = (xwind_start + 2 * spr->SWidth > xwind_end);
+        needs_window_bounding = (xwind_start + 2 * p_spr->SWidth > xwind_end);
     }
 
     if (!needs_window_bounding)
     {
         // Simplified and faster drawing when we do not have to check bounds
-        for (h = 0; h < spr->SHeight; h++)
+        for (h = 0; h < p_spr->SHeight; h++)
         {
             ubyte *o;
 
@@ -218,7 +218,7 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
     }
     else
     {
-        for (h = 0; h < spr->SHeight; h++)
+        for (h = 0; h < p_spr->SHeight; h++)
         {
             ubyte *o;
             int xwind_curr;
@@ -262,7 +262,7 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
 }
 
 
-void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
+void SCANNER_unkn_func_201(struct TbSprite *p_spr, int x, int y, ubyte *fade)
 {
     ubyte *oline;
     ubyte *dt;
@@ -270,8 +270,8 @@ void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
     ubyte *o;
 
     oline = &lbDisplay.WScreen[lbDisplay.GraphicsScreenWidth * y + x];
-    dt = spr->Data;
-    for (ich = spr->SHeight; ich > 0; ich--)
+    dt = p_spr->Data;
+    for (ich = p_spr->SHeight; ich > 0; ich--)
     {
         o = oline;
         while (1)
@@ -306,7 +306,7 @@ void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
     }
 }
 
-void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
+void SCANNER_unkn_func_202(struct TbSprite *p_spr, int x, int y, int ctr, int bri)
 {
     ubyte *oline;
     ubyte *dt;
@@ -317,15 +317,15 @@ void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
         return;
     if ((y < 0) || (y > lbDisplay.PhysicalScreenHeight))
         return;
-    if ((x + spr->SWidth < 0) || (x + spr->SWidth > lbDisplay.PhysicalScreenWidth))
+    if ((x + p_spr->SWidth < 0) || (x + p_spr->SWidth > lbDisplay.PhysicalScreenWidth))
         return;
-    if ((y + spr->SHeight < 0) || (y + spr->SHeight > lbDisplay.PhysicalScreenHeight))
+    if ((y + p_spr->SHeight < 0) || (y + p_spr->SHeight > lbDisplay.PhysicalScreenHeight))
         return;
 
     oline = &lbDisplay.WScreen[y * lbDisplay.GraphicsScreenWidth + x];
     dword_1DC36C = bri;
-    dt = spr->Data;
-    for (ich = spr->SHeight; ich > 0; ich--)
+    dt = p_spr->Data;
+    for (ich = p_spr->SHeight; ich > 0; ich--)
     {
         o = oline;
         while (1)
@@ -1935,6 +1935,40 @@ TbBool mouse_move_over_panel(short panel)
     return mouse_move_over_box_coords(x, y, x + w, y + h);
 }
 
+void panel_sprites_switch(short panel, TbBool sw_on)
+{
+    struct GamePanel *p_panel;
+    short loc_spr[3];
+
+    p_panel = &game_panel[panel];
+    loc_spr[0] = p_panel->Spr[0];
+    loc_spr[1] = p_panel->Spr[1];
+    loc_spr[2] = p_panel->Spr[2];
+
+    if (sw_on && ((p_panel->Flags & PanF_SPR_TOGGLED_ON) == 0))
+    {
+        p_panel->Spr[0] = p_panel->ExtraSpr[0];
+        p_panel->Spr[1] = p_panel->ExtraSpr[1];
+        p_panel->Spr[2] = p_panel->ExtraSpr[2];
+
+        p_panel->Flags |= PanF_SPR_TOGGLED_ON;
+        p_panel->ExtraSpr[0] = loc_spr[0];
+        p_panel->ExtraSpr[1] = loc_spr[1];
+        p_panel->ExtraSpr[2] = loc_spr[2];
+    }
+    else if (!sw_on && ((p_panel->Flags & PanF_SPR_TOGGLED_ON) != 0))
+    {
+        p_panel->Spr[0] = p_panel->ExtraSpr[0];
+        p_panel->Spr[1] = p_panel->ExtraSpr[1];
+        p_panel->Spr[2] = p_panel->ExtraSpr[2];
+
+        p_panel->Flags &= ~PanF_SPR_TOGGLED_ON;
+        p_panel->ExtraSpr[0] = loc_spr[0];
+        p_panel->ExtraSpr[1] = loc_spr[1];
+        p_panel->ExtraSpr[2] = loc_spr[2];
+    }
+}
+
 void update_game_panel(void)
 {
     PlayerInfo *p_locplayer;
@@ -1955,24 +1989,12 @@ void update_game_panel(void)
         case PanT_AgentMedi:
             // If an agent has a medkit, use the sprite with lighted cross
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
-                p_panel->Spr[0] = 96;
-            else
-                p_panel->Spr[0] = 95;
+            panel_sprites_switch(panel, (p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent));
             break;
         case PanT_WeaponEnergy:
             // If supershield is enabled for the current agent, draw energy bar in red
             p_agent = &things[p_locplayer->DirectControl[0]];
-            if ((p_agent->Type == TT_PERSON) && (p_agent->Flag & TngF_Unkn0100) != 0)
-            {
-                p_panel->Spr[0] = 99;
-                p_panel->Spr[2] = 106;
-            }
-            else
-            {
-                p_panel->Spr[0] = 10;
-                p_panel->Spr[2] = 105;
-            }
+            panel_sprites_switch(panel, (p_agent->Type == TT_PERSON) && (p_agent->Flag & TngF_Unkn0100) != 0);
             break;
         }
     }
