@@ -46,6 +46,7 @@ enum PanelsPanelConfigCmd {
     PnPanelCmd_DynaPos,
     PnPanelCmd_DynaSize,
     PnPanelCmd_Sprite,
+    PnPanelCmd_ExtraSpr,
     PnPanelCmd_Use,
     PnPanelCmd_Flags,
     PnPanelCmd_Ident,
@@ -58,6 +59,7 @@ const struct TbNamedEnum panels_conf_panel_cmnds[] = {
   {"DynaPos",		PnPanelCmd_DynaPos},
   {"DynaSize",		PnPanelCmd_DynaSize},
   {"Sprite",		PnPanelCmd_Sprite},
+  {"ExtraSpr",		PnPanelCmd_ExtraSpr},
   {"Use",			PnPanelCmd_Use},
   {"Flags",			PnPanelCmd_Flags},
   {"Ident",			PnPanelCmd_Ident},
@@ -114,6 +116,13 @@ const struct TbNamedEnum panels_conf_panel_type[] = {
   {"UNKN09",		PanT_UNKN09 + 1},
   {"Grouping",		PanT_Grouping + 1},
   {NULL,			0},
+};
+
+const struct TbNamedEnum panels_conf_panel_flags[] = {
+  {"Enabled",				PanF_ENABLED},
+  {"SpritesInLineHoriz",	PanF_SPRITES_IN_LINE_HORIZ},
+  {"SpritesInLineVertc",	PanF_SPRITES_IN_LINE_VERTC},
+  {NULL,					0},
 };
 
 const struct TbNamedEnum panels_conf_any_bool[] = {
@@ -189,7 +198,7 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
 {
     TbFileHandle conf_fh;
     TbBool done;
-    int i;
+    int i, n;
     long k, m;
     char *conf_buf;
     struct TbIniParser parser;
@@ -427,6 +436,19 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
                 p_panel->Spr = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_panel->Spr);
                 break;
+            case PnPanelCmd_ExtraSpr:
+                for (n = 0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                        break;
+                    }
+                    p_panel->ExtraSpr[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_panel->ExtraSpr[0],
+                  (int)p_panel->ExtraSpr[1], (int)p_panel->ExtraSpr[2]);
+                break;
             case PnPanelCmd_Use:
                 i = LbIniValueGetLongInt(&parser, &k);
                 if (i <= 0) {
@@ -437,13 +459,20 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_panel->Use);
                 break;
             case PnPanelCmd_Flags:
-                i = LbIniValueGetLongInt(&parser, &k);
-                if (i <= 0) {
-                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
-                    break;
+                k = 0;
+                while (1)
+                {
+                    i = LbIniValueGetNamedEnum(&parser, panels_conf_panel_flags);
+                    if (i <= 0) {
+                        if (i == 0)
+                            break;
+                        CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                        break;
+                    }
+                    k |= i;
                 }
                 p_panel->Flags = k;
-                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_panel->Flags);
+                CONFDBGLOG("%s 0x%x", COMMAND_TEXT(cmd_num), (int)p_panel->Flags);
                 break;
             case PnPanelCmd_Ident:
                 i = LbIniValueGetLongInt(&parser, &k);

@@ -1209,7 +1209,7 @@ TbBool update_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong
         ncarr_below = 0;
     else
         ncarr_below -= 4;
-    p_panel = &game_panel[27];
+    p_panel = &game_panel[26];
     cx = p_panel->pos.X;
     cy = p_panel->pos.Y;
 
@@ -1270,7 +1270,7 @@ void draw_weapons_list_prealp(PlayerInfo *p_locplayer, ushort plagent, ulong wea
         ncarr_below = 0;
     else
         ncarr_below -= 4;
-    p_panel = &game_panel[27];
+    p_panel = &game_panel[26];
     cx = p_panel->pos.X;
     cy = p_panel->pos.Y;
 
@@ -1914,19 +1914,13 @@ void update_game_panel(void)
             p_agent = &things[p_locplayer->DirectControl[0]];
             if ((p_agent->Type == TT_PERSON) && (p_agent->Flag & TngF_Unkn0100) != 0)
             {
-                //TODO hard-coded panel index
-                if (panel == 24)
-                    p_panel->Spr = 99;
-                else if (panel == 25)
-                    p_panel->Spr = 106;
+                p_panel->Spr = 99;
+                p_panel->ExtraSpr[2] = 106;
             }
             else
             {
-                //TODO hard-coded panel index
-                if (panel == 24)
-                    p_panel->Spr = 10;
-                else if (panel == 25)
-                    p_panel->Spr = 105;
+                p_panel->Spr = 10;
+                p_panel->ExtraSpr[2] = 105;
             }
             break;
         }
@@ -2027,20 +2021,6 @@ void draw_weapon_energy_bar(short panel)
     y = p_panel->dyn.Y;
     w = p_panel->dyn.Width;
     h = p_panel->dyn.Height;
-
-    x = 3;
-    y = 30;
-    w = 4;
-    h = 54;
-    if (lbDisplay.GraphicsScreenHeight >= 400)
-    {
-        h += 45;
-
-        x *= 2;
-        y *= 2;
-        w *= 2;
-        h *= 2;
-    }
 
     if ((p_agent->U.UPerson.Energy < 50) && (gameturn & 1))
         col = ColLU_RED;
@@ -2242,14 +2222,51 @@ void draw_new_panel(void)
         if (p_panel->Spr != 0)
         {
             short x, y;
+            short spr;
+            short i;
 
+            spr = p_panel->Spr;
             x = p_panel->pos.X;
             y = p_panel->pos.Y;
             if (is_disabled || is_subordnt)
-                draw_new_panel_sprite_dark(x, y, p_panel->Spr);
+                draw_new_panel_sprite_dark(x, y, spr);
             else
-                draw_new_panel_sprite_std(x, y, p_panel->Spr);
+                draw_new_panel_sprite_std(x, y, spr);
+
+            if ((p_panel->Flags & PanF_SPRITES_IN_LINE_HORIZ) != 0)
+            {
+                for (i = 1; i < 3; i++)
+                {
+                    struct TbSprite *p_spr;
+
+                    p_spr = &pop1_sprites[spr];
+                    x += p_spr->SWidth;
+
+                    spr = p_panel->ExtraSpr[i];
+                    if (is_disabled || is_subordnt)
+                        draw_new_panel_sprite_dark(x, y, spr);
+                    else
+                        draw_new_panel_sprite_std(x, y, spr);
+                }
+            }
+            if ((p_panel->Flags & PanF_SPRITES_IN_LINE_VERTC) != 0)
+            {
+                for (i = 1; i < 3; i++)
+                {
+                    struct TbSprite *p_spr;
+
+                    p_spr = &pop1_sprites[spr];
+                    y += p_spr->SHeight;
+
+                    spr = p_panel->ExtraSpr[i];
+                    if (is_disabled || is_subordnt)
+                        draw_new_panel_sprite_dark(x, y, spr);
+                    else
+                        draw_new_panel_sprite_std(x, y, spr);
+                }
+            }
         }
+
         // Fill additional info on top of the sprites
         switch (p_panel->Type)
         {

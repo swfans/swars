@@ -50,6 +50,12 @@ enum PanelType {
     PanT_Grouping,
 };
 
+enum PanelFlags {
+    PanF_ENABLED = 0x0001,
+    PanF_SPRITES_IN_LINE_HORIZ = 0x0020,
+    PanF_SPRITES_IN_LINE_VERTC = 0x0040,
+};
+
 enum PanelShift {
     PaSh_AGENT_UNUSED0 = 0,
     PaSh_AGENT_WEAPON_TO_LIST = 4,
@@ -80,7 +86,7 @@ struct GamePanel
     short Spr;
     /** Panel sprite decorations to switch to on toggle event, or additional sprites
      * to draw on top. */
-    short ExtraSpr[2];
+    short ExtraSpr[3];
     ushort Use;
     ushort Flags;
     ubyte ID;
