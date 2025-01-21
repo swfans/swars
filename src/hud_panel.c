@@ -1619,7 +1619,7 @@ TbBool func_1caf8(ubyte *panel_wep)
     return ret;
 }
 
-void draw_agent_grouping_bars(void)
+void draw_agent_grouping_bars(short panel)
 {
     struct Thing *p_thing;
     short dcthing;
@@ -1643,11 +1643,7 @@ void draw_agent_grouping_bars(void)
         struct GamePanel *p_panel;
         short x, y;
 
-        if (lbDisplay.GraphicsScreenHeight < 400) {
-            p_panel = &game_panel[25];
-        } else {
-            p_panel = &game_panel[26];
-        }
+        p_panel = &game_panel[panel];
         x = p_panel->pos.X;
         y = p_panel->pos.Y;
         x += game_panel_shifts[PaSh_GROUP_PANE_AGENTS + n].x;
@@ -1736,7 +1732,7 @@ void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lv
     }
 }
 
-void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte col, int a8)
+void draw_wep_energy_level(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte transp)
 {
     short cw, ch;
 
@@ -1744,43 +1740,20 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
         return;
 
     ch = h * lv / lvmax;
-    if (lbDisplay.GraphicsScreenHeight < 400)
+
+    short cx, cy;
+    cx = x;
+    cy = y;
+    for (cw = w; cw > 0; cw--)
     {
-        short cx, cy;
-        cx = x;
-        cy = y;
-        for (cw = w; cw > 0; cw--)
-        {
-            short cy1, cy2;
-            cy1 = cy + h;
-            cy2 = cy + h - ch;
-            if (lbDisplay.GraphicsScreenHeight < 400)
-                SCANNER_unkn_func_203(2 * cx >> 1, 2 * cy1 >> 1, 2 * cx >> 1, 2 * cy2 >> 1, col,
-                    ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-            else
-                SCANNER_unkn_func_203(2 * cx, 2 * cy1, 2 * cx, 2 * cy2, col,
-                    ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-            ++cx;
-            ++cy;
-        }
-    }
-    else
-    {
-        short cx, cy;
-        cx = 2 * x;
-        cy = 2 * y;
-        for (cw = 2 * w; cw > 0; cw--)
-        {
-            short cy1, cy2;
-            cy1 = 2*h + cy;
-            cy2 = 2*h + cy - 2*ch;
-            if (lbDisplay.GraphicsScreenHeight < 400)
-                LbDrawLine(cx >> 1, cy1 >> 1, cx >> 1, cy2 >> 1, col);
-            else
-                LbDrawLine(cx, cy1, cx, cy2, col);
-            ++cx;
-            ++cy;
-        }
+        short cy1, cy2;
+
+        cy1 = h + cy;
+        cy2 = h + cy - ch;
+        SCANNER_unkn_func_203(cx, cy1, cx, cy2, col,
+            ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+        ++cx;
+        ++cy;
     }
 }
 
@@ -2000,18 +1973,14 @@ short panel_mouse_move_mood_value(short panel)
 
 /** Thermal vision button light.
  */
-void draw_panel_thermal_button(void)
+void draw_panel_thermal_button(short panel)
 {
     if ((ingame.Flags & GamF_ThermalView) != 0)
     {
         struct GamePanel *p_panel;
         short x, y;
 
-        if (lbDisplay.GraphicsScreenHeight < 400) {
-            p_panel = &game_panel[25];
-        } else {
-            p_panel = &game_panel[26];
-        }
+        p_panel = &game_panel[panel];
         x = p_panel->pos.X;
         y = p_panel->pos.Y;
         x += game_panel_shifts[PaSh_GROUP_PANE_TO_THERMAL_SPR].x;
@@ -2037,6 +2006,49 @@ void draw_panel_objective_info(void)
         w = ingame.Scanner.X2 - ingame.Scanner.X1 + 3;
     }
     SCANNER_draw_objective_info(x, y, w);
+}
+
+void draw_weapon_energy_bar(short panel)
+{
+    struct GamePanel *p_panel;
+    struct Thing *p_agent;
+    int lv, lvmax, col;
+    short x, y, w, h;
+    ThingIdx dcthing;
+
+    p_panel = &game_panel[panel];
+    dcthing = direct_control_thing_for_player(local_player_no);
+    p_agent = &things[dcthing];
+    if ((p_agent->Flag & TngF_PlayerAgent) == 0) {
+        LOGNO("Agent %d unexpected flags", plagent);
+        return;
+    }
+    x = p_panel->dyn.X;
+    y = p_panel->dyn.Y;
+    w = p_panel->dyn.Width;
+    h = p_panel->dyn.Height;
+
+    x = 3;
+    y = 30;
+    w = 4;
+    h = 54;
+    if (lbDisplay.GraphicsScreenHeight >= 400)
+    {
+        h += 45;
+
+        x *= 2;
+        y *= 2;
+        w *= 2;
+        h *= 2;
+    }
+
+    if ((p_agent->U.UPerson.Energy < 50) && (gameturn & 1))
+        col = ColLU_RED;
+    else
+        col = ColLU_WHITE;
+    lvmax = p_agent->U.UPerson.MaxEnergy;
+    lv = p_agent->U.UPerson.Energy;
+    draw_wep_energy_level(x, y, w, h, lv, lvmax, colour_lookup[col], 0);
 }
 
 void draw_new_panel_badge_overlay(short panel, ushort plagent, TbBool darkened)
@@ -2159,7 +2171,7 @@ void draw_new_panel_weapon_overlay(short panel, ushort plagent, TbBool darkened)
 void draw_new_panel(void)
 {
     PlayerInfo *p_locplayer;
-    int i;
+    short panel;
     ubyte panel_wep[AGENTS_SQUAD_MAX_COUNT];
 
     update_game_panel();
@@ -2167,30 +2179,25 @@ void draw_new_panel(void)
     p_locplayer = &players[local_player_no];
     LbMemorySet(panel_wep, 0, sizeof(panel_wep));
 
-    for (i = 0; true; i++)
+    for (panel = 0; true; panel++)
     {
         struct GamePanel *p_panel;
+        TbBool is_visible;
+        TbBool is_disabled, is_subordnt;
 
-        p_panel = &game_panel[i];
+        p_panel = &game_panel[panel];
         if (p_panel->Spr < 0)
           break;
         lbDisplay.DrawFlags = 0;
 
-        if (!panel_for_speciifc_agent(i))
+        if (!panel_for_speciifc_agent(panel))
         {
-            short x, y;
-
-            if (p_panel->Spr == 0)
-                continue;
-            x = p_panel->pos.X;
-            y = p_panel->pos.Y;
-            draw_new_panel_sprite_std(x, y, p_panel->Spr);
+            is_visible = (p_panel->Spr != 0);
+            is_disabled = false;
+            is_subordnt = false;
         }
         else
         {
-            TbBool is_visible;
-            TbBool is_disabled, is_subordnt;
-
             is_visible = true;
             if (p_panel->ID >= playable_agents)
             {
@@ -2219,8 +2226,6 @@ void draw_new_panel(void)
                 }
             }
 
-            if (!is_visible)
-                continue;
             {
                 struct Thing *p_agent;
                 p_agent = p_locplayer->MyAgent[p_panel->ID];
@@ -2229,45 +2234,55 @@ void draw_new_panel(void)
                 is_disabled = (((p_agent->Flag2 & TgF2_Unkn10000000) != 0) ||
                   person_is_executing_commands(p_agent->ThingOffset));
             }
+        }
 
-            if (p_panel->Spr != 0)
-            {
-                short x, y;
+        if (!is_visible)
+            continue;
 
-                x = p_panel->pos.X;
-                y = p_panel->pos.Y;
-                if (is_disabled || is_subordnt)
-                    draw_new_panel_sprite_dark(x, y, p_panel->Spr);
-                else
-                    draw_new_panel_sprite_std(x, y, p_panel->Spr);
-            }
+        if (p_panel->Spr != 0)
+        {
+            short x, y;
 
-            // Fill additional info on top of the sprites
-            switch (p_panel->Type)
-            {
-            case PanT_AgentBadge:
-                draw_new_panel_badge_overlay(i, p_panel->ID, is_disabled || is_subordnt);
-                break;
-            case PanT_AgentHealth:
-                draw_new_panel_health_overlay(i, p_panel->ID, is_disabled || is_subordnt);
-                break;
-            case PanT_AgentMood:
-                draw_new_panel_mood_overlay(i, p_panel->ID, is_disabled || is_subordnt);
-                break;
-            case PanT_AgentEnergy:
-                draw_new_panel_energy_overlay(i, p_panel->ID, is_disabled || is_subordnt);
-                break;
-            case PanT_AgentMedi:
-                // Medi sprite gets switched when we have medikit, so no need for update
-                break;
-            case PanT_AgentWeapon:
-                panel_wep[p_panel->ID] |= PaMF_EXISTS;
-                if (is_disabled)
-                    panel_wep[p_panel->ID] |= PaMF_DISABLED;
-                if (is_subordnt)
-                    panel_wep[p_panel->ID] |= PaMF_SUBORDNT;
-                break;
-            }
+            x = p_panel->pos.X;
+            y = p_panel->pos.Y;
+            if (is_disabled || is_subordnt)
+                draw_new_panel_sprite_dark(x, y, p_panel->Spr);
+            else
+                draw_new_panel_sprite_std(x, y, p_panel->Spr);
+        }
+        // Fill additional info on top of the sprites
+        switch (p_panel->Type)
+        {
+        case PanT_AgentBadge:
+            draw_new_panel_badge_overlay(panel, p_panel->ID, is_disabled || is_subordnt);
+            break;
+        case PanT_AgentHealth:
+            draw_new_panel_health_overlay(panel, p_panel->ID, is_disabled || is_subordnt);
+            break;
+        case PanT_AgentMood:
+            draw_new_panel_mood_overlay(panel, p_panel->ID, is_disabled || is_subordnt);
+            break;
+        case PanT_AgentEnergy:
+            draw_new_panel_energy_overlay(panel, p_panel->ID, is_disabled || is_subordnt);
+            break;
+        case PanT_AgentMedi:
+            // Medi sprite gets switched when we have medikit, so no need for update
+            break;
+        case PanT_AgentWeapon:
+            panel_wep[p_panel->ID] |= PaMF_EXISTS;
+            if (is_disabled)
+                panel_wep[p_panel->ID] |= PaMF_DISABLED;
+            if (is_subordnt)
+                panel_wep[p_panel->ID] |= PaMF_SUBORDNT;
+            break;
+        case PanT_WeaponEnergy:
+            // Fill the left energy bar
+            draw_weapon_energy_bar(panel);
+            break;
+        case PanT_Grouping:
+            draw_agent_grouping_bars(panel);
+            draw_panel_thermal_button(panel);
+            break;
         }
     }
 
@@ -2286,28 +2301,6 @@ void draw_new_panel(void)
             }
         }
     }
-    draw_agent_grouping_bars();
-
-    // Fill the left energy bar
-    {
-        short dcthing;
-        struct Thing *p_agent;
-        int lv, lvmax, col, w;
-
-        dcthing = direct_control_thing_for_player(local_player_no);
-        p_agent = &things[dcthing];
-        if ((p_agent->U.UPerson.Energy < 50) && (gameturn & 1))
-            col = 2;
-        else
-            col = 1;
-        lvmax = p_agent->U.UPerson.MaxEnergy;
-        lv = p_agent->U.UPerson.Energy;
-        if (lbDisplay.GraphicsScreenHeight < 400)
-            w = 0;
-        else
-            w = 45;
-        func_1eae4(3, 30, 4, 54+w, lv, lvmax, colour_lookup[col], 0);
-    }
 
     ingame.Scanner.MX = engn_xc >> 7;
     ingame.Scanner.MZ = engn_zc >> 7;
@@ -2315,8 +2308,6 @@ void draw_new_panel(void)
     SCANNER_draw_new_transparent();
 
     draw_panel_objective_info();
-
-    draw_panel_thermal_button();
 }
 
 TbBool process_panel_state_one_agent_weapon(ushort agent)
