@@ -1040,6 +1040,9 @@ void read_missions_conf_file(int num)
             {
                 i = LbIniValueGetNamedEnum(&parser, weapon_names);
                 if (i <= 0) {
+                    if (i == 0)
+                        break;
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
                 n |= (1 << (i-1));
@@ -1053,6 +1056,9 @@ void read_missions_conf_file(int num)
             {
                 i = LbIniValueGetNamedEnum(&parser, weapon_names);
                 if (i <= 0) {
+                    if (i == 0)
+                        break;
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
                 n |= (1 << (i-1));
@@ -1066,6 +1072,9 @@ void read_missions_conf_file(int num)
             {
                 i = LbIniValueGetNamedEnum(&parser, mod_names);
                 if (i <= 0) {
+                    if (i == 0)
+                        break;
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
                 n |= (1 << (i-1));
@@ -1079,6 +1088,9 @@ void read_missions_conf_file(int num)
             {
                 i = LbIniValueGetNamedEnum(&parser, mod_names);
                 if (i <= 0) {
+                    if (i == 0)
+                        break;
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
                 n |= (1 << (i-1));
@@ -1274,6 +1286,9 @@ void read_missions_conf_file(int num)
                 {
                     i = LbIniValueGetNamedEnum(&parser, weapon_names);
                     if (i <= 0) {
+                        if (i == 0)
+                            break;
+                        CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                         break;
                     }
                     n |= (1 << (i-1));
