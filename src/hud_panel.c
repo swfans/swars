@@ -1913,46 +1913,49 @@ TbBool mouse_move_over_panel(short panel)
 
 void update_game_panel(void)
 {
-    int i;
     PlayerInfo *p_locplayer;
+    short panel;
 
     p_locplayer = &players[local_player_no];
-    // If an agent has a medkit, use the sprite with lighted cross
-    for (i = 0; i < playable_agents; i++)
+    for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
     {
-        struct Thing *p_agent;
         struct GamePanel *p_panel;
-
-        p_panel = &game_panel[16+i];
-        p_agent = p_locplayer->MyAgent[i];
-        if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
-            p_panel->Spr = 96;
-        else
-            p_panel->Spr = 95;
-    }
-
-    { // If supershield is enabled for the current agent, draw energy bar in red
         struct Thing *p_agent;
-        struct GamePanel *p_panel;
 
-        p_agent = &things[p_locplayer->DirectControl[0]];
-        if ((p_agent->Type == TT_PERSON) && (p_agent->Flag & TngF_Unkn0100) != 0)
+        if (!panel_exists(panel))
+            break;
+        p_panel = &game_panel[panel];
+
+        switch (p_panel->Type)
         {
-            p_panel = &game_panel[24];
-            p_panel->Spr = 99;
-            if (lbDisplay.GraphicsScreenHeight >= 400) {
-                p_panel = &game_panel[25];
-                p_panel->Spr = 106;
+        case PanT_AgentMedi:
+            // If an agent has a medkit, use the sprite with lighted cross
+            p_agent = p_locplayer->MyAgent[p_panel->ID];
+            if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
+                p_panel->Spr = 96;
+            else
+                p_panel->Spr = 95;
+            break;
+        case PanT_WeaponEnergy:
+            // If supershield is enabled for the current agent, draw energy bar in red
+            p_agent = &things[p_locplayer->DirectControl[0]];
+            if ((p_agent->Type == TT_PERSON) && (p_agent->Flag & TngF_Unkn0100) != 0)
+            {
+                //TODO hard-coded panel index
+                if (panel == 24)
+                    p_panel->Spr = 99;
+                else if (panel == 25)
+                    p_panel->Spr = 106;
             }
-        }
-        else
-        {
-            p_panel = &game_panel[24];
-            p_panel->Spr = 10;
-            if (lbDisplay.GraphicsScreenHeight >= 400) {
-                p_panel = &game_panel[25];
-                p_panel->Spr = 105;
+            else
+            {
+                //TODO hard-coded panel index
+                if (panel == 24)
+                    p_panel->Spr = 10;
+                else if (panel == 25)
+                    p_panel->Spr = 105;
             }
+            break;
         }
     }
 }
@@ -2041,7 +2044,6 @@ void draw_new_panel_badge_overlay(short panel, ushort plagent, TbBool darkened)
     // Blink the number of active agent
     if (gameturn & 4)
     {
-        short x, y;
         short dcthing;
         struct Thing *p_agent;
 
@@ -2051,8 +2053,9 @@ void draw_new_panel_badge_overlay(short panel, ushort plagent, TbBool darkened)
           (plagent == (p_agent->U.UPerson.ComCur & 3)))
         {
             struct GamePanel *p_panel;
+            short x, y;
 
-            p_panel = &game_panel[0 + plagent];
+            p_panel = &game_panel[panel];
             x = p_panel->dyn.X;
             y = p_panel->dyn.Y;
             draw_new_panel_sprite_std(x, y, 6 + plagent);
@@ -2065,8 +2068,6 @@ void draw_new_panel_health_overlay(short panel, ushort plagent, TbBool darkened)
     struct GamePanel *p_panel;
     struct Thing *p_agent;
     PlayerInfo *p_locplayer;
-    struct TbPoint *p_slot_bef;
-    struct TbPoint *p_slot_aft;
     int lv, lvmax;
     short x, y, w, h;
 
@@ -2077,12 +2078,10 @@ void draw_new_panel_health_overlay(short panel, ushort plagent, TbBool darkened)
         LOGNO("Agent %d unexpected flags", plagent);
         return;
     }
-    p_slot_bef = &game_panel_shifts[PaSh_AGENT_HEALTH_PAD_BEF];
-    p_slot_aft = &game_panel_shifts[PaSh_AGENT_HEALTH_PAD_AFT];
-    x = p_panel->pos.X + p_slot_bef->x;
-    y = p_panel->pos.Y + p_slot_bef->y;
-    w = p_panel->pos.Width - p_slot_bef->x - p_slot_aft->x;
-    h = p_panel->pos.Height - p_slot_bef->y - p_slot_aft->y;
+    x = p_panel->dyn.X;
+    y = p_panel->dyn.Y;
+    w = p_panel->dyn.Width;
+    h = p_panel->dyn.Height;
 
     // Draw health level
     lv = p_agent->Health;
@@ -2103,8 +2102,6 @@ void draw_new_panel_mood_overlay(short panel, ushort plagent, TbBool darkened)
     struct GamePanel *p_panel;
     struct Thing *p_agent;
     PlayerInfo *p_locplayer;
-    struct TbPoint *p_slot_bef;
-    struct TbPoint *p_slot_aft;
     int lv, lvmax;
     short x, y, w, h;
 
@@ -2115,12 +2112,10 @@ void draw_new_panel_mood_overlay(short panel, ushort plagent, TbBool darkened)
         LOGNO("Agent %d unexpected flags", plagent);
         return;
     }
-    p_slot_bef = &game_panel_shifts[PaSh_AGENT_MOOD_PAD_BEF];
-    p_slot_aft = &game_panel_shifts[PaSh_AGENT_MOOD_PAD_AFT];
-    x = p_panel->pos.X + p_slot_bef->x;
-    y = p_panel->pos.Y + p_slot_bef->y;
-    w = p_panel->pos.Width - p_slot_bef->x - p_slot_aft->x;
-    h = p_panel->pos.Height - p_slot_bef->y - p_slot_aft->y;
+    x = p_panel->dyn.X;
+    y = p_panel->dyn.Y;
+    w = p_panel->dyn.Width;
+    h = p_panel->dyn.Height;
 
     // Draw drug level aka mood (or just a red line if no drugs)
     draw_mood_level(x, y, w, h, p_agent->U.UPerson.Mood);
@@ -2136,8 +2131,6 @@ void draw_new_panel_energy_overlay(short panel, ushort plagent, TbBool darkened)
     struct GamePanel *p_panel;
     struct Thing *p_agent;
     PlayerInfo *p_locplayer;
-    struct TbPoint *p_slot_bef;
-    struct TbPoint *p_slot_aft;
     int lv, lvmax;
     short x, y, w, h;
 
@@ -2148,12 +2141,10 @@ void draw_new_panel_energy_overlay(short panel, ushort plagent, TbBool darkened)
         LOGNO("Agent %d unexpected flags", plagent);
         return;
     }
-    p_slot_bef = &game_panel_shifts[PaSh_AGENT_ENERGY_PAD_BEF];
-    p_slot_aft = &game_panel_shifts[PaSh_AGENT_ENERGY_PAD_AFT];
-    x = p_panel->pos.X + p_slot_bef->x;
-    y = p_panel->pos.Y + p_slot_bef->y;
-    w = p_panel->pos.Width - p_slot_bef->x - p_slot_aft->x;
-    h = p_panel->pos.Height - p_slot_bef->y - p_slot_aft->y;
+    x = p_panel->dyn.X;
+    y = p_panel->dyn.Y;
+    w = p_panel->dyn.Width;
+    h = p_panel->dyn.Height;
 
     // Draw weapon energy level
     lv = p_agent->U.UPerson.Energy;

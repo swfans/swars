@@ -66,11 +66,7 @@ const struct TbNamedEnum panels_conf_panel_cmnds[] = {
 };
 
 enum PanelsShiftsConfigCmd {
-    PnShiftCmd_Agent1PanelToNumber = 1,
-    PnShiftCmd_Agent2PanelToNumber,
-    PnShiftCmd_Agent3PanelToNumber,
-    PnShiftCmd_Agent4PanelToNumber,
-    PnShiftCmd_AgentWeaponToList,
+    PnShiftCmd_AgentWeaponToList = 1,
     PnShiftCmd_GroupPaneToThermalBox,
     PnShiftCmd_GroupPaneToThermalSpr,
     PnShiftCmd_GroupPaneAgents2,
@@ -88,10 +84,6 @@ enum PanelsShiftsConfigCmd {
 };
 
 const struct TbNamedEnum panels_conf_shifts_cmnds[] = {
-  {"Agent1PanelToNumber",	PaSh_AGENT_PANEL_TO_NUMBER + 1},
-  {"Agent2PanelToNumber",	PaSh_AGENT_PANEL_TO_NUMBER + 2},
-  {"Agent3PanelToNumber",	PaSh_AGENT_PANEL_TO_NUMBER + 3},
-  {"Agent4PanelToNumber",	PaSh_AGENT_PANEL_TO_NUMBER + 4},
   {"AgentWeaponToList",		PaSh_AGENT_WEAPON_TO_LIST + 1},
   {"GroupPaneToThermalBox",	PaSh_GROUP_PANE_TO_THERMAL_BOX + 1},
   {"GroupPaneToThermalSpr",	PaSh_GROUP_PANE_TO_THERMAL_SPR + 1},
@@ -287,10 +279,6 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         // Now store the config item in correct place
         switch (cmd_num)
         {
-        case PaSh_AGENT_PANEL_TO_NUMBER + 1:
-        case PaSh_AGENT_PANEL_TO_NUMBER + 2:
-        case PaSh_AGENT_PANEL_TO_NUMBER + 3:
-        case PaSh_AGENT_PANEL_TO_NUMBER + 4:
         case PaSh_AGENT_WEAPON_TO_LIST + 1:
         case PaSh_GROUP_PANE_TO_THERMAL_BOX + 1:
         case PaSh_GROUP_PANE_TO_THERMAL_SPR + 1:
@@ -343,27 +331,6 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
     p_slot = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_SIZE];
     p_slot->x = 2 * (detail + 1);
     p_slot->y = 2 * (detail + 1);
-
-    p_slot = &game_panel_custom_shifts[PaSh_AGENT_HEALTH_PAD_BEF];
-    p_slot->x = 0;
-    p_slot->y = 0;
-    p_slot = &game_panel_custom_shifts[PaSh_AGENT_HEALTH_PAD_AFT];
-    p_slot->x = 0;
-    p_slot->y = 0;
-
-    p_slot = &game_panel_custom_shifts[PaSh_AGENT_ENERGY_PAD_BEF];
-    p_slot->x = 0;
-    p_slot->y = 0;
-    p_slot = &game_panel_custom_shifts[PaSh_AGENT_ENERGY_PAD_AFT];
-    p_slot->x = 0;
-    p_slot->y = 0;
-
-    p_slot = &game_panel_custom_shifts[PaSh_AGENT_MOOD_PAD_BEF];
-    p_slot->x = 0;
-    p_slot->y = 1 * (detail + 1);
-    p_slot = &game_panel_custom_shifts[PaSh_AGENT_MOOD_PAD_AFT];
-    p_slot->x = 0;
-    p_slot->y = 1 * (detail + 1);
     }
 
     for (panel = 0; panel < pop_panel_count; panel++)
