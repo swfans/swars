@@ -2038,6 +2038,26 @@ void draw_panel_objective_info(void)
 
 void draw_new_panel_badge_overlay(short panel, ushort plagent, TbBool darkened)
 {
+    // Blink the number of active agent
+    if (gameturn & 4)
+    {
+        short x, y;
+        short dcthing;
+        struct Thing *p_agent;
+
+        dcthing = direct_control_thing_for_player(local_player_no);
+        p_agent = &things[dcthing];
+        if ((p_agent->Flag & TngF_Destroyed) == 0 && !person_is_executing_commands(p_agent->ThingOffset) &&
+          (plagent == (p_agent->U.UPerson.ComCur & 3)))
+        {
+            struct GamePanel *p_panel;
+
+            p_panel = &game_panel[0 + plagent];
+            x = p_panel->dyn.X;
+            y = p_panel->dyn.Y;
+            draw_new_panel_sprite_std(x, y, 6 + plagent);
+        }
+    }
 }
 
 void draw_new_panel_health_overlay(short panel, ushort plagent, TbBool darkened)
@@ -2260,27 +2280,6 @@ void draw_new_panel(void)
         }
     }
 
-    // Blink the number of active agent
-    if (gameturn & 4)
-    {
-        short x, y;
-        short dcthing;
-        struct Thing *p_agent;
-
-        dcthing = direct_control_thing_for_player(local_player_no);
-        p_agent = &things[dcthing];
-        if ((p_agent->Flag & TngF_Destroyed) == 0 && !person_is_executing_commands(p_agent->ThingOffset))
-        {
-            ushort plagent;
-            struct GamePanel *p_panel;
-
-            plagent = p_agent->U.UPerson.ComCur & 3;
-            p_panel = &game_panel[0 + plagent];
-            x = p_panel->dyn.X;
-            y = p_panel->dyn.Y;
-            draw_new_panel_sprite_std(x, y, 6 + plagent);
-        }
-    }
     lbDisplay.DrawFlags = 0;
 
     draw_panel_pickable_item();
