@@ -83,7 +83,7 @@ struct GamePanel
     /** Rectange representing area of dynamically generated content (text/value/bar). */
     struct ScreenRect dyn;
     /** Panel sprite decoration. */
-    short Spr;
+    short Spr[3];
     /** Panel sprite decorations to switch to on toggle event, or additional sprites
      * to draw on top. */
     short ExtraSpr[3];

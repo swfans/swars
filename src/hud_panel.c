@@ -77,7 +77,7 @@ TbBool panel_exists(short panel)
     struct GamePanel *p_panel;
 
     p_panel = &game_panel[panel];
-    return (p_panel->Spr != -1);
+    return (p_panel->Spr[0] != -1);
 }
 
 TbBool panel_for_speciifc_agent(short panel)
@@ -1854,6 +1854,66 @@ TbBool panel_active_based_on_target(short panel)
     return ((p_agent->Flag & TngF_Destroyed) == 0);
 }
 
+void panel_get_size(short *p_width, short *p_height, short panel)
+{
+    struct GamePanel *p_panel;
+    short w, h;
+
+    p_panel = &game_panel[panel];
+
+    if ((p_panel->pos.Width == 0) && (p_panel->pos.Height == 0))
+    {
+        struct TbSprite *p_spr;
+        short spr;
+        short i;
+
+        w = 0;
+        h = 0;
+        spr = p_panel->Spr[0];
+        if (spr >= 0)
+        {
+            p_spr = &pop1_sprites[spr];
+            w = p_spr->SWidth;
+            h = p_spr->SHeight;
+
+            if ((p_panel->Flags & PanF_SPRITES_IN_LINE_HORIZ) != 0)
+            {
+                for (i = 1; i < 3; i++)
+                {
+                    spr = p_panel->Spr[i];
+                    if (spr <= 0) {
+                        if (spr == 0)
+                            continue;
+                        break;
+                    }
+                    p_spr = &pop1_sprites[spr];
+                    w += p_spr->SWidth;
+                }
+            }
+            if ((p_panel->Flags & PanF_SPRITES_IN_LINE_VERTC) != 0)
+            {
+                for (i = 1; i < 3; i++)
+                {
+                    spr = p_panel->Spr[i];
+                    if (spr <= 0) {
+                        if (spr == 0)
+                            continue;
+                        break;
+                    }
+                    p_spr = &pop1_sprites[spr];
+                    h += p_spr->SHeight;
+                }
+            }
+        }
+    } else {
+        w = p_panel->pos.Width;
+        h = p_panel->pos.Height;
+    }
+
+   *p_width = w;
+   *p_height = h;
+}
+
 TbBool mouse_move_over_panel(short panel)
 {
     struct GamePanel *p_panel;
@@ -1863,16 +1923,7 @@ TbBool mouse_move_over_panel(short panel)
 
     x = p_panel->pos.X;
     y = p_panel->pos.Y;
-    if ((p_panel->pos.Width == 0) && (p_panel->pos.Height == 0))
-    {
-        struct TbSprite *p_spr;
-        p_spr = &pop1_sprites[p_panel->Spr];
-        w = p_spr->SWidth;
-        h = p_spr->SHeight;
-    } else {
-        w = p_panel->pos.Width;
-        h = p_panel->pos.Height;
-    }
+    panel_get_size(&w, &h, panel);
 
     if (!panel_active_based_on_target(panel))
         return false;
@@ -1905,22 +1956,22 @@ void update_game_panel(void)
             // If an agent has a medkit, use the sprite with lighted cross
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
-                p_panel->Spr = 96;
+                p_panel->Spr[0] = 96;
             else
-                p_panel->Spr = 95;
+                p_panel->Spr[0] = 95;
             break;
         case PanT_WeaponEnergy:
             // If supershield is enabled for the current agent, draw energy bar in red
             p_agent = &things[p_locplayer->DirectControl[0]];
             if ((p_agent->Type == TT_PERSON) && (p_agent->Flag & TngF_Unkn0100) != 0)
             {
-                p_panel->Spr = 99;
-                p_panel->ExtraSpr[2] = 106;
+                p_panel->Spr[0] = 99;
+                p_panel->Spr[2] = 106;
             }
             else
             {
-                p_panel->Spr = 10;
-                p_panel->ExtraSpr[2] = 105;
+                p_panel->Spr[0] = 10;
+                p_panel->Spr[2] = 105;
             }
             break;
         }
@@ -2166,13 +2217,13 @@ void draw_new_panel(void)
         TbBool is_disabled, is_subordnt;
 
         p_panel = &game_panel[panel];
-        if (p_panel->Spr < 0)
+        if (p_panel->Spr[0] < 0)
           break;
         lbDisplay.DrawFlags = 0;
 
         if (!panel_for_speciifc_agent(panel))
         {
-            is_visible = (p_panel->Spr != 0);
+            is_visible = (p_panel->Spr[0] != 0);
             is_disabled = false;
             is_subordnt = false;
         }
@@ -2219,13 +2270,13 @@ void draw_new_panel(void)
         if (!is_visible)
             continue;
 
-        if (p_panel->Spr != 0)
+        if (p_panel->Spr[0] != 0)
         {
             short x, y;
             short spr;
             short i;
 
-            spr = p_panel->Spr;
+            spr = p_panel->Spr[0];
             x = p_panel->pos.X;
             y = p_panel->pos.Y;
             if (is_disabled || is_subordnt)
@@ -2242,7 +2293,7 @@ void draw_new_panel(void)
                     p_spr = &pop1_sprites[spr];
                     x += p_spr->SWidth;
 
-                    spr = p_panel->ExtraSpr[i];
+                    spr = p_panel->Spr[i];
                     if (is_disabled || is_subordnt)
                         draw_new_panel_sprite_dark(x, y, spr);
                     else
@@ -2258,7 +2309,7 @@ void draw_new_panel(void)
                     p_spr = &pop1_sprites[spr];
                     y += p_spr->SHeight;
 
-                    spr = p_panel->ExtraSpr[i];
+                    spr = p_panel->Spr[i];
                     if (is_disabled || is_subordnt)
                         draw_new_panel_sprite_dark(x, y, spr);
                     else

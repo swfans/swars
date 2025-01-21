@@ -428,13 +428,17 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
                 CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->dyn.Width, (int)p_panel->dyn.Height);
                 break;
             case PnPanelCmd_Sprite:
-                i = LbIniValueGetLongInt(&parser, &k);
-                if (i <= 0) {
-                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
-                    break;
+                for (n = 0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                        break;
+                    }
+                    p_panel->Spr[n] = k;
                 }
-                p_panel->Spr = k;
-                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_panel->Spr);
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_panel->Spr[0],
+                  (int)p_panel->Spr[1], (int)p_panel->Spr[2]);
                 break;
             case PnPanelCmd_ExtraSpr:
                 for (n = 0; n < 3; n++)
@@ -518,7 +522,8 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         LbMemorySet(p_panel, 0, sizeof(struct GamePanel));
         p_panel->pos.X = -1;
         p_panel->pos.Y = -1;
-        p_panel->Spr = -1;
+        for (n = 0; n < 3; n++)
+            p_panel->Spr[n] = -1;
     }
 
 #undef CONFDBGLOG
