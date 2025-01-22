@@ -18,7 +18,10 @@
 /******************************************************************************/
 #include "scanner.h"
 
+#include "bfgentab.h"
+#include "bfmath.h"
 #include "bfutility.h"
+
 #include "bigmap.h"
 #include "campaign.h"
 #include "player.h"
@@ -28,13 +31,25 @@
 #include "game_speed.h"
 #include "lvobjctv.h"
 #include "display.h"
+#include "scandraw.h"
 #include "swlog.h"
+/******************************************************************************/
+#pragma pack(1)
+
+struct BbpAdds {
+    s32 du;
+    s32 dv;
+};
+
+#pragma pack()
+
 /******************************************************************************/
 
 extern ushort signal_count;
 extern ulong turn_last; // = 999;
 extern ulong SCANNER_keep_arcs;
 extern ulong dword_1DB1A0;
+extern struct BbpAdds SCANNER_bbpadds[16];
 
 ushort SCANNER_base_zoom_factor = 180;
 ushort SCANNER_user_zoom_factor = 192;
@@ -50,10 +65,88 @@ void SCANNER_set_zoom(int zoom)
         ingame.Scanner.Zoom = zoom;
 }
 
+/** Init a table storing brightness of each colour in the palette.
+ */
+void SCANNER_init_palette_bright(void)
+{
+    ubyte *pal;
+    int col;
+    ubyte col_r, col_g, col_b;
+    ubyte col_C;
+
+    pal = display_palette;
+    for (col = 0; col < PALETTE_8b_COLORS; col++)
+    {
+        col_r = pal[col * 3 + 0];
+        col_g = pal[col * 3 + 1];
+        col_b = pal[col * 3 + 2];
+
+        if ((col_r > col_g) && (col_r > col_b))
+            col_C = col_r;
+        else if (col_g > col_b)
+            col_C = col_g;
+        else
+            col_C = col_b;
+
+        SCANNER_pal_bright[col] = (col_C + ((col_b + col_r + col_g) >> 1)) / 3;
+    }
+}
+
+/** Init a table used to limit colour value to 6-bit area.
+ */
+void SCANNER_init_bright_limit_table(void)
+{
+    int i;
+
+    for (i = 0; i < 64; i++)
+        SCANNER_bright_limit[i] = i;
+    for (; i < 256; i++)
+        SCANNER_bright_limit[i] = 63;
+}
+
+void SCANNER_init_bbpoints(void)
+{
+    int angle, k;
+    int i;
+
+    k = 0;
+    for (i = 0; i < 16; i++, k += 2048)
+    {
+      angle = (k >> 4);
+      SCANNER_bbpadds[i+1].du = lbSinTable[angle] >> 2;
+      SCANNER_bbpadds[i+1].dv = lbSinTable[angle + 512] >> 2;
+    }
+}
+
+void SCANNER_init_people_colours(void)
+{
+    SCANNER_people_colours[1] =  pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[2]];
+    SCANNER_people_colours[6] =  pixmap.fade_table[10 * PALETTE_8b_COLORS + colour_lookup[7]];
+    SCANNER_people_colours[8] =  pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[4]];
+    SCANNER_people_colours[10] = pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[5]];
+    SCANNER_people_colours[3] =  pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[3]];
+    SCANNER_people_colours[9] =  SCANNER_people_colours[3];
+    SCANNER_people_colours[2] =  pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[1]];
+    SCANNER_people_colours[12] = SCANNER_people_colours[2];
+    SCANNER_people_colours[7] =  SCANNER_people_colours[2];
+    SCANNER_people_colours[11] = pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[9]];
+    SCANNER_people_colours[4] =  pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[9]];
+    SCANNER_people_colours[5] =  SCANNER_people_colours[4];
+    SCANNER_people_colours[13] = SCANNER_people_colours[4];
+    SCANNER_people_colours[14] = SCANNER_people_colours[4];
+}
+
 void SCANNER_init(void)
 {
+#if 0
     asm volatile ("call ASM_SCANNER_init\n"
         :  :  : "eax" );
+#else
+    SCANNER_init_palette_bright();
+    SCANNER_init_bbpoints();
+    SCANNER_init_bright_limit_table();
+    SCANNER_init_people_colours();
+#endif
 }
 
 void SCANNER_set_colour(ubyte col)

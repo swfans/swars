@@ -50,8 +50,6 @@
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
-extern ubyte byte_1CAB64[];
-extern ubyte byte_1DB088[];
 extern long dword_1DC36C;
 
 /** Over which agent weapon the cursor is currently placed.
@@ -342,8 +340,8 @@ void SCANNER_unkn_func_202(struct TbSprite *p_spr, int x, int y, int ctr, int br
                 while (len)
                 {
                     ftidx = *dt++;
-                    ftsub = dword_1DC36C + ((byte_1CAB64[ftidx] >> 1) + (byte_1CAB64[*o] >> 1));
-                    ftidx |= byte_1DB088[ftsub] << 8;
+                    ftsub = dword_1DC36C + ((SCANNER_pal_bright[ftidx] >> 1) + (SCANNER_pal_bright[*o] >> 1));
+                    ftidx |= SCANNER_bright_limit[ftsub] << 8;
                     *o++ = pixmap.fade_table[ftidx];
                     len--;
                 }
@@ -1648,11 +1646,7 @@ void draw_agent_grouping_bars(short panel)
         y = p_panel->pos.Y;
         x += game_panel_shifts[PaSh_GROUP_PANE_AGENTS + n].x;
         y += game_panel_shifts[PaSh_GROUP_PANE_AGENTS + n].y;
-        if (ingame.PanelPermutation == -1)
-            SCANNER_unkn_func_202(&pop1_sprites[69], x, y,
-              ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-        else
-            LbSpriteDraw_1(x, y, &pop1_sprites[69]);
+        draw_new_panel_sprite_std(x, y, 69);
     }
 }
 

@@ -84,6 +84,8 @@ extern ubyte SCANNER_data[256][256];
 extern ushort SCANNER_base_zoom_factor;
 extern ushort SCANNER_user_zoom_factor;
 extern ubyte SCANNER_scale_dots;
+extern ubyte SCANNER_pal_bright[];
+extern ubyte SCANNER_bright_limit[];
 
 extern short waft_table2[32];
 extern short waft_table[32];

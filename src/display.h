@@ -38,6 +38,8 @@ extern TbScreenMode screen_mode_fmvid_hi;
 
 extern ubyte game_high_resolution;
 
+extern ubyte *display_palette;
+
 extern ubyte *back_buffer;
 extern TbPixel fade_unaffected_colours[];
 extern TbPixel colour_lookup[];
