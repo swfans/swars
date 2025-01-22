@@ -101,6 +101,8 @@ const struct TbNamedEnum panels_conf_shifts_cmnds[] = {
   {"WepNextDistance",		PaSh_WEP_NEXT_DISTANCE + 1},
   {"WepCurrButtonArea",		PaSh_WEP_CURR_BUTTON_AREA + 1},
   {"WepNextButtonArea",		PaSh_WEP_NEXT_BUTTON_AREA + 1},
+  {"WepFourpackBaseSh",		PaSh_WEP_FOURPACK_BASE_SH + 1},
+  {"WepFourpackSize",		PaSh_WEP_FOURPACK_SIZE + 1},
 };
 
 const struct TbNamedEnum panels_conf_panel_type[] = {
@@ -303,6 +305,8 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         case PaSh_WEP_NEXT_DISTANCE + 1:
         case PaSh_WEP_CURR_BUTTON_AREA + 1:
         case PaSh_WEP_NEXT_BUTTON_AREA + 1:
+        case PaSh_WEP_FOURPACK_BASE_SH + 1:
+        case PaSh_WEP_FOURPACK_SIZE + 1:
             i = LbIniValueGetLongInt(&parser, &k);
             if (i <= 0) {
                 CONFWRNLOG("Could not read \"%s\" command 1st parameter.", COMMAND_TEXT(cmd_num));
@@ -331,16 +335,6 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         LbIniSkipToNextLine(&parser);
     }
 #undef COMMAND_TEXT
-    { // TODO out to config file
-    struct TbPoint *p_slot;
-
-    p_slot = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_BASE_SH];
-    p_slot->x = 1 * (detail + 1);
-    p_slot->y = 0;
-    p_slot = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_SIZE];
-    p_slot->x = 2 * (detail + 1);
-    p_slot->y = 2 * (detail + 1);
-    }
 
     for (panel = 0; panel < pop_panel_count; panel++)
     {
