@@ -2308,20 +2308,54 @@ void draw_new_panel(void)
 
             if ((p_panel->Flags & PanF_SPRITES_IN_LINE_HORIZ) != 0)
             {
-                for (i = 1; i < 3; i++)
-                {
-                    struct TbSprite *p_spr;
+                struct TbSprite *p_spr;
+                short real_spr1_width;
 
+                spr = p_panel->Spr[0];
+                p_spr = &pop1_sprites[spr];
+                x += p_spr->SWidth;
+
+                if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0) {
+                    short const_width;
+
+                    const_width = p_spr->SWidth;
+
+                    spr = p_panel->Spr[2];
                     p_spr = &pop1_sprites[spr];
-                    x += p_spr->SWidth;
+                    const_width += p_spr->SWidth;
 
-                    spr = p_panel->Spr[i];
+                    real_spr1_width = p_panel->pos.Width - const_width;
+                } else {
+                    spr = p_panel->Spr[1];
+                    p_spr = &pop1_sprites[spr];
+                    real_spr1_width = p_spr->SWidth;
+                }
+
+                spr = p_panel->Spr[1];
+                p_spr = &pop1_sprites[spr];
+                if (real_spr1_width == p_spr->SWidth)
+                {
                     if (is_disabled || is_subordnt)
                         draw_new_panel_sprite_dark(x, y, spr);
                     else
                         draw_new_panel_sprite_std(x, y, spr);
                 }
+                else
+                { // TODO resize
+                    if (is_disabled || is_subordnt)
+                        draw_new_panel_sprite_dark(x, y, spr);
+                    else
+                        draw_new_panel_sprite_std(x, y, spr);
+                }
+                x += real_spr1_width;
+
+                spr = p_panel->Spr[2];
+                if (is_disabled || is_subordnt)
+                    draw_new_panel_sprite_dark(x, y, spr);
+                else
+                    draw_new_panel_sprite_std(x, y, spr);
             }
+
             if ((p_panel->Flags & PanF_SPRITES_IN_LINE_VERTC) != 0)
             {
                 for (i = 1; i < 3; i++)

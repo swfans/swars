@@ -55,6 +55,7 @@ enum PanelFlags {
     PanF_SPRITES_IN_LINE_HORIZ = 0x0020,
     PanF_SPRITES_IN_LINE_VERTC = 0x0040,
     PanF_SPR_TOGGLED_ON = 0x0080,
+    PanF_RESIZE_MIDDLE_SPR = 0x0100,
 };
 
 enum PanelShift {

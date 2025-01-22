@@ -23,6 +23,7 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfplanar.h"
+#include "bfscreen.h"
 #include "bfsprite.h"
 
 #include "game.h"
@@ -178,6 +179,44 @@ void update_panel_derivative_shifts(short detail)
     }
 }
 
+void panel_strech_width_to_res(short detail)
+{
+    short panel;
+    short base_width, new_dim, dt_x, dt_width;
+
+    base_width = 320 * (detail + 1);
+
+    for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
+    {
+        struct GamePanel *p_panel;
+
+        p_panel = &game_panel_custom[panel];
+
+        if (p_panel->Spr[0] == -1)
+            break;
+        if (p_panel->Spr[1] == -1)
+            continue;
+        if ((p_panel->Flags & PanF_SPRITES_IN_LINE_HORIZ) == 0)
+            continue;
+        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) == 0)
+            continue;
+
+        new_dim = p_panel->pos.X * lbDisplay.GraphicsScreenWidth / base_width;
+        dt_x = new_dim - p_panel->pos.X;
+        new_dim = p_panel->pos.Width * lbDisplay.GraphicsScreenWidth / base_width;
+        dt_width = new_dim - p_panel->pos.Width;
+        p_panel->pos.X += dt_x;
+        p_panel->dyn.X += dt_x;
+        p_panel->pos.Width += dt_width;
+        p_panel->dyn.Width += dt_width;
+    }
+}
+
+void panel_strech_height_to_res(short detail)
+{
+    //TODO implement
+}
+
 void size_panels_for_detail(short detail)
 {
     const char *name;
@@ -192,6 +231,8 @@ void size_panels_for_detail(short detail)
     styleno = 0;
     read_panel_config(name, styleno, detail);
     update_panel_derivative_shifts(detail);
+    panel_strech_width_to_res(detail);
+    panel_strech_height_to_res(detail);
     game_panel = game_panel_custom;
     game_panel_shifts = game_panel_custom_shifts;
 }
