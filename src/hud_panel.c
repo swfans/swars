@@ -29,6 +29,7 @@
 #include "bfutility.h"
 #include "ssampply.h"
 
+#include "app_sprite.h"
 #include "bflib_render_drspr.h"
 #include "bigmap.h"
 #include "display.h"

@@ -22,15 +22,16 @@
 #include "bfmath.h"
 #include "bfutility.h"
 
+#include "app_sprite.h"
 #include "bigmap.h"
 #include "campaign.h"
+#include "display.h"
 #include "player.h"
 #include "thing.h"
 #include "thing_search.h"
 #include "game.h"
 #include "game_speed.h"
 #include "lvobjctv.h"
-#include "display.h"
 #include "scandraw.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -65,45 +66,6 @@ void SCANNER_set_zoom(int zoom)
         ingame.Scanner.Zoom = zoom;
 }
 
-/** Init a table storing brightness of each colour in the palette.
- */
-void SCANNER_init_palette_bright(void)
-{
-    ubyte *pal;
-    int col;
-    ubyte col_r, col_g, col_b;
-    ubyte col_C;
-
-    pal = display_palette;
-    for (col = 0; col < PALETTE_8b_COLORS; col++)
-    {
-        col_r = pal[col * 3 + 0];
-        col_g = pal[col * 3 + 1];
-        col_b = pal[col * 3 + 2];
-
-        if ((col_r > col_g) && (col_r > col_b))
-            col_C = col_r;
-        else if (col_g > col_b)
-            col_C = col_g;
-        else
-            col_C = col_b;
-
-        SCANNER_pal_bright[col] = (col_C + ((col_b + col_r + col_g) >> 1)) / 3;
-    }
-}
-
-/** Init a table used to limit colour value to 6-bit area.
- */
-void SCANNER_init_bright_limit_table(void)
-{
-    int i;
-
-    for (i = 0; i < 64; i++)
-        SCANNER_bright_limit[i] = i;
-    for (; i < 256; i++)
-        SCANNER_bright_limit[i] = 63;
-}
-
 void SCANNER_init_bbpoints(void)
 {
     int angle, k;
@@ -120,17 +82,25 @@ void SCANNER_init_bbpoints(void)
 
 void SCANNER_init_people_colours(void)
 {
-    SCANNER_people_colours[1] =  pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[2]];
-    SCANNER_people_colours[6] =  pixmap.fade_table[10 * PALETTE_8b_COLORS + colour_lookup[7]];
-    SCANNER_people_colours[8] =  pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[4]];
-    SCANNER_people_colours[10] = pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[5]];
-    SCANNER_people_colours[3] =  pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[3]];
-    SCANNER_people_colours[9] =  SCANNER_people_colours[3];
-    SCANNER_people_colours[2] =  pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[1]];
+    SCANNER_people_colours[1] =
+      pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[ColLU_RED]];
+    SCANNER_people_colours[6] =
+      pixmap.fade_table[10 * PALETTE_8b_COLORS + colour_lookup[ColLU_PINK]];
+    SCANNER_people_colours[8] =
+      pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[ColLU_BLUE]];
+    SCANNER_people_colours[10] =
+      pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[ColLU_YELLOW]];
+    SCANNER_people_colours[3] =
+      pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[ColLU_GREEN]];
+    SCANNER_people_colours[9] = SCANNER_people_colours[3];
+    SCANNER_people_colours[2] =
+      pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[ColLU_WHITE]];
     SCANNER_people_colours[12] = SCANNER_people_colours[2];
     SCANNER_people_colours[7] =  SCANNER_people_colours[2];
-    SCANNER_people_colours[11] = pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[9]];
-    SCANNER_people_colours[4] =  pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[9]];
+    SCANNER_people_colours[11] =
+      pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[ColLU_GREYMD]];
+    SCANNER_people_colours[4] =
+      pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[ColLU_GREYMD]];
     SCANNER_people_colours[5] =  SCANNER_people_colours[4];
     SCANNER_people_colours[13] = SCANNER_people_colours[4];
     SCANNER_people_colours[14] = SCANNER_people_colours[4];
