@@ -799,7 +799,7 @@ TbBool check_scanner_input(void)
 }
 
 /**
- * Draw the button with standard palette, for selectable items.
+ * Draw the panel button with standard palette, for selectable items.
  * @param px
  * @param py
  * @param spr_id
@@ -816,7 +816,26 @@ void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
 }
 
 /**
- * Draw the button with darkened palette, like the item is unavailable.
+ * Draw the rescaled panel button with standard palette, for selectable items.
+ * @param px
+ * @param py
+ * @param spr_id
+ */
+void draw_new_panel_sprite_scaled_std(int px, int py, ulong spr_id, int dest_width, int dest_height)
+{
+    struct TbSprite *p_spr;
+
+    p_spr = &pop1_sprites[spr_id];
+    if (ingame.PanelPermutation == -1)
+        lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+
+    dword_1DC36C = ingame.Scanner.Brightness;
+    ApSpriteDrawScaledModRecolorTrans(px, py, p_spr, dest_width, dest_height);
+    lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+}
+
+/**
+ * Draw the panel button with darkened palette, like the item is unavailable.
  * @param px
  * @param py
  * @param spr_id
@@ -830,6 +849,25 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
         SCANNER_unkn_func_202(p_spr, px, py, ingame.Scanner.Contrast, 8);
     else
         SCANNER_unkn_func_201(p_spr, px, py, &pixmap.fade_table[4096]);
+}
+
+/**
+ * Draw the rescaled panel button with darkened palette, like the item is unavailable.
+ * @param px
+ * @param py
+ * @param spr_id
+ */
+void draw_new_panel_sprite_scaled_dark(int px, int py, ulong spr_id, int dest_width, int dest_height)
+{
+    struct TbSprite *p_spr;
+
+    p_spr = &pop1_sprites[spr_id];
+    if (ingame.PanelPermutation == -1)
+        lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+
+    dword_1DC36C = 8;
+    ApSpriteDrawScaledModRecolorTrans(px, py, p_spr, dest_width, dest_height);
+    lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
 }
 
 /**
@@ -2291,7 +2329,6 @@ void draw_new_panel(void)
         {
             short x, y;
             short spr;
-            short i;
 
             spr = p_panel->Spr[0];
             x = p_panel->pos.X;
@@ -2336,11 +2373,11 @@ void draw_new_panel(void)
                         draw_new_panel_sprite_std(x, y, spr);
                 }
                 else
-                { // TODO resize
+                {
                     if (is_disabled || is_subordnt)
-                        draw_new_panel_sprite_dark(x, y, spr);
+                        draw_new_panel_sprite_scaled_dark(x, y, spr, real_spr1_width, p_spr->SHeight);
                     else
-                        draw_new_panel_sprite_std(x, y, spr);
+                        draw_new_panel_sprite_scaled_std(x, y, spr, real_spr1_width, p_spr->SHeight);
                 }
                 x += real_spr1_width;
 
@@ -2353,19 +2390,52 @@ void draw_new_panel(void)
 
             if ((p_panel->Flags & PanF_SPRITES_IN_LINE_VERTC) != 0)
             {
-                for (i = 1; i < 3; i++)
-                {
-                    struct TbSprite *p_spr;
+                struct TbSprite *p_spr;
+                short real_spr1_height;
 
+                spr = p_panel->Spr[0];
+                p_spr = &pop1_sprites[spr];
+                y += p_spr->SHeight;
+
+                if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0) {
+                    short const_height;
+
+                    const_height = p_spr->SHeight;
+
+                    spr = p_panel->Spr[2];
                     p_spr = &pop1_sprites[spr];
-                    y += p_spr->SHeight;
+                    const_height += p_spr->SHeight;
 
-                    spr = p_panel->Spr[i];
+                    real_spr1_height = p_panel->pos.Height - const_height;
+                } else {
+                    spr = p_panel->Spr[1];
+                    p_spr = &pop1_sprites[spr];
+                    real_spr1_height = p_spr->SHeight;
+                }
+
+                spr = p_panel->Spr[1];
+                p_spr = &pop1_sprites[spr];
+                if (real_spr1_height == p_spr->SHeight)
+                {
                     if (is_disabled || is_subordnt)
                         draw_new_panel_sprite_dark(x, y, spr);
                     else
                         draw_new_panel_sprite_std(x, y, spr);
                 }
+                else
+                {
+                    if (is_disabled || is_subordnt)
+                        draw_new_panel_sprite_scaled_dark(x, y, spr, p_spr->SWidth, real_spr1_height);
+                    else
+                        draw_new_panel_sprite_scaled_std(x, y, spr, p_spr->SWidth, real_spr1_height);
+                }
+                y += real_spr1_height;
+
+                spr = p_panel->Spr[2];
+                if (is_disabled || is_subordnt)
+                    draw_new_panel_sprite_dark(x, y, spr);
+                else
+                    draw_new_panel_sprite_std(x, y, spr);
             }
         }
 
