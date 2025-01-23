@@ -3,7 +3,7 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file app_sprite.h
- *     Header file for gsprite.c, gspr_std.cpp, gspr_col.cpp, spr_scl.asm.
+ *     Header file for app_spr_init.c, ap_gspr_map.c, ap_spr_smap.c.
  * @par Purpose:
  *     Unknown.
  * @par Comment:
@@ -46,10 +46,18 @@ void SCANNER_init_bright_limit_table(void);
 
 /** Sprite drawing routine with modified transparency support.
  * Instead of standard transparency, it converts input and background to
- * grayscale and recolors to destination palette.
+ * grayscale and recolors using given color map.
  */
-TbResult ApSpriteDrawScaledModRecolorTrans(long xpos, long ypos,
-     const struct TbSprite *sprite, long dest_width, long dest_height);
+TbResult ApSpriteDrawLowTransGreyRemap(long x, long y,
+  const struct TbSprite *spr, const ubyte *transmap);
+
+/** Scaled sprite drawing routine with modified transparency support.
+ * Instead of standard transparency, it converts input and background to
+ * grayscale and recolors using given color map.
+ */
+TbResult ApSpriteDrawScaledLowTransGreyRemap(long xpos, long ypos,
+  const struct TbSprite *sprite, long dest_width, long dest_height,
+  const ubyte *transmap);
 
 #ifdef __cplusplus
 };

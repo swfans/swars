@@ -809,10 +809,17 @@ void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
     struct TbSprite *p_spr;
 
     p_spr = &pop1_sprites[spr_id];
-    if (ingame.PanelPermutation == -1)
-        SCANNER_unkn_func_202(p_spr, px, py, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
-    else
-        LbSpriteDraw_1(px, py, p_spr);
+    dword_1DC36C = ingame.Scanner.Brightness;
+
+    if (ingame.PanelPermutation == -1) {
+        lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+        ApSpriteDrawLowTransGreyRemap(px, py, p_spr,
+          &pixmap.fade_table[0 * PALETTE_8b_COLORS]);
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+    } else {
+        // We do not want to scale brightness of non-transparent panels - using a standard function
+        LbSpriteDraw(px, py, p_spr);
+    }
 }
 
 /**
@@ -826,12 +833,16 @@ void draw_new_panel_sprite_scaled_std(int px, int py, ulong spr_id, int dest_wid
     struct TbSprite *p_spr;
 
     p_spr = &pop1_sprites[spr_id];
-    if (ingame.PanelPermutation == -1)
-        lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
-
     dword_1DC36C = ingame.Scanner.Brightness;
-    ApSpriteDrawScaledModRecolorTrans(px, py, p_spr, dest_width, dest_height);
-    lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+
+    if (ingame.PanelPermutation == -1) {
+        lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+        ApSpriteDrawScaledLowTransGreyRemap(px, py, p_spr, dest_width, dest_height,
+          &pixmap.fade_table[0 * PALETTE_8b_COLORS]);
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+    } else {
+        LbSpriteDrawScaled(px, py, p_spr, dest_width, dest_height);
+    }
 }
 
 /**
@@ -845,10 +856,16 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
     struct TbSprite *p_spr;
 
     p_spr = &pop1_sprites[spr_id];
-    if (ingame.PanelPermutation == -1)
-        SCANNER_unkn_func_202(p_spr, px, py, ingame.Scanner.Contrast, 8);
-    else
-        SCANNER_unkn_func_201(p_spr, px, py, &pixmap.fade_table[4096]);
+    dword_1DC36C = 8;
+
+    if (ingame.PanelPermutation == -1) {
+        lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+        ApSpriteDrawLowTransGreyRemap(px, py, p_spr,
+          &pixmap.fade_table[0 * PALETTE_8b_COLORS]);
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+    } else {
+        LbSpriteDrawRemap(px, py, p_spr, &pixmap.fade_table[16 * PALETTE_8b_COLORS]);
+    }
 }
 
 /**
@@ -862,12 +879,17 @@ void draw_new_panel_sprite_scaled_dark(int px, int py, ulong spr_id, int dest_wi
     struct TbSprite *p_spr;
 
     p_spr = &pop1_sprites[spr_id];
-    if (ingame.PanelPermutation == -1)
-        lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
-
     dword_1DC36C = 8;
-    ApSpriteDrawScaledModRecolorTrans(px, py, p_spr, dest_width, dest_height);
-    lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+
+    if (ingame.PanelPermutation == -1) {
+        lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+        ApSpriteDrawScaledLowTransGreyRemap(px, py, p_spr, dest_width, dest_height,
+          &pixmap.fade_table[0 * PALETTE_8b_COLORS]);
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+    } else {
+        LbSpriteDrawScaledRemap(px, py, p_spr, dest_width, dest_height,
+          &pixmap.fade_table[16 * PALETTE_8b_COLORS]);
+    }
 }
 
 /**
