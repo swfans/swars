@@ -128,8 +128,10 @@ const struct TbNamedEnum panels_conf_panel_flags[] = {
   {"SpritesInLineHoriz",	PanF_SPRITES_IN_LINE_HORIZ},
   {"SpritesInLineVertc",	PanF_SPRITES_IN_LINE_VERTC},
   {"ResizeMiddleSpr",		PanF_RESIZE_MIDDLE_SPR},
-  {"StrechToParentPos",		PanF_STRECH_TO_PARENT_POS},
-  {"StrechToParentAfter",	PanF_STRECH_TO_PARENT_AFTER},
+  {"RepositionHoriz",		PanF_REPOSITION_HORIZ},
+  {"RepositionVertc",		PanF_REPOSITION_VERTC},
+  {"RepositionWithParent",	PanF_REPOSITION_WITH_PARENT},
+  {"RepositionToAfter",		PanF_REPOSITION_TO_AFTER},
   {"StrechToParentSize",	PanF_STRECH_TO_PARENT_SIZE},
   {NULL,					0},
 };
@@ -211,9 +213,7 @@ void panel_strech_width_to_res(short detail)
 
         if (p_panel->Spr[1] == -1)
             continue;
-        if ((p_panel->Flags & PanF_SPRITES_IN_LINE_HORIZ) == 0)
-            continue;
-        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) == 0)
+        if ((p_panel->Flags & (PanF_SPRITES_IN_LINE_HORIZ|PanF_REPOSITION_HORIZ)) == 0)
             continue;
 
         if (p_panel->Spr[1] > 0)
@@ -231,10 +231,18 @@ void panel_strech_width_to_res(short detail)
             p_panel->SprWidth += p_spr->SWidth;
         }
 
-        new_dim = p_panel->pos.X * lbDisplay.GraphicsScreenWidth / base_width;
-        dt_x = new_dim - p_panel->pos.X;
-        new_dim = p_panel->pos.Width * lbDisplay.GraphicsScreenWidth / base_width;
-        dt_width = new_dim - p_panel->pos.Width;
+        dt_x = 0;
+        dt_width = 0;
+        if ((p_panel->Flags & PanF_REPOSITION_HORIZ) != 0)
+        {
+            new_dim = p_panel->pos.X * lbDisplay.GraphicsScreenWidth / base_width;
+            dt_x = new_dim - p_panel->pos.X;
+        }
+        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0)
+        {
+            new_dim = p_panel->pos.Width * lbDisplay.GraphicsScreenWidth / base_width;
+            dt_width = new_dim - p_panel->pos.Width;
+        }
 
         p_panel->pos.X += dt_x;
         p_panel->dyn.X += dt_x;
@@ -248,12 +256,12 @@ void panel_strech_width_to_res(short detail)
             if (p_panel->OwningPanel != panel)
                 continue;
 
-            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_POS) != 0) {
+            if ((p_panel->Flags & PanF_REPOSITION_WITH_PARENT) != 0) {
                 p_panel->pos.X += dt_x;
                 p_panel->dyn.X += dt_x;
             }
 
-            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_AFTER) != 0) {
+            if ((p_panel->Flags & PanF_REPOSITION_TO_AFTER) != 0) {
                 p_panel->pos.X += dt_width;
                 p_panel->dyn.X += dt_width;
             }
@@ -295,9 +303,7 @@ void panel_strech_height_to_res(short detail)
 
         if (p_panel->Spr[1] == -1)
             continue;
-        if ((p_panel->Flags & PanF_SPRITES_IN_LINE_VERTC) == 0)
-            continue;
-        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) == 0)
+        if ((p_panel->Flags & (PanF_SPRITES_IN_LINE_VERTC|PanF_REPOSITION_VERTC)) == 0)
             continue;
 
         if (p_panel->Spr[1] > 0)
@@ -315,10 +321,18 @@ void panel_strech_height_to_res(short detail)
             p_panel->SprHeight += p_spr->SHeight;
         }
 
-        new_dim = p_panel->pos.Y * lbDisplay.GraphicsScreenHeight / base_height;
-        dt_y = new_dim - p_panel->pos.Y;
-        new_dim = p_panel->pos.Height * lbDisplay.GraphicsScreenHeight / base_height;
-        dt_height = new_dim - p_panel->pos.Height;
+        dt_y = 0;
+        dt_height = 0;
+        if ((p_panel->Flags & PanF_REPOSITION_VERTC) != 0)
+        {
+            new_dim = p_panel->pos.Y * lbDisplay.GraphicsScreenHeight / base_height;
+            dt_y = new_dim - p_panel->pos.Y;
+        }
+        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0)
+        {
+            new_dim = p_panel->pos.Height * lbDisplay.GraphicsScreenHeight / base_height;
+            dt_height = new_dim - p_panel->pos.Height;
+        }
 
         p_panel->pos.Y += dt_y;
         p_panel->dyn.Y += dt_y;
@@ -332,12 +346,12 @@ void panel_strech_height_to_res(short detail)
             if (p_panel->OwningPanel != panel)
                 continue;
 
-            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_POS) != 0) {
+            if ((p_panel->Flags & PanF_REPOSITION_WITH_PARENT) != 0) {
                 p_panel->pos.Y += dt_y;
                 p_panel->dyn.Y += dt_y;
             }
 
-            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_AFTER) != 0) {
+            if ((p_panel->Flags & PanF_REPOSITION_TO_AFTER) != 0) {
                 p_panel->pos.Y += dt_height;
                 p_panel->dyn.Y += dt_height;
             }
