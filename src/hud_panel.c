@@ -2378,7 +2378,7 @@ void draw_new_panel(void)
                     p_spr = &pop1_sprites[spr];
                     const_width += p_spr->SWidth;
 
-                    real_spr1_width = p_panel->pos.Width - const_width;
+                    real_spr1_width = p_panel->SprWidth - const_width;
                 } else {
                     spr = p_panel->Spr[1];
                     p_spr = &pop1_sprites[spr];
@@ -2428,7 +2428,7 @@ void draw_new_panel(void)
                     p_spr = &pop1_sprites[spr];
                     const_height += p_spr->SHeight;
 
-                    real_spr1_height = p_panel->pos.Height - const_height;
+                    real_spr1_height = p_panel->SprHeight - const_height;
                 } else {
                     spr = p_panel->Spr[1];
                     p_spr = &pop1_sprites[spr];

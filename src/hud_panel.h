@@ -56,6 +56,9 @@ enum PanelFlags {
     PanF_SPRITES_IN_LINE_VERTC = 0x0040,
     PanF_SPR_TOGGLED_ON = 0x0080,
     PanF_RESIZE_MIDDLE_SPR = 0x0100,
+    PanF_STRECH_TO_PARENT_POS = 0x0200,
+    PanF_STRECH_TO_PARENT_SIZE = 0x0400,
+    PanF_STRECH_TO_PARENT_AFTER = 0x0800,
 };
 
 enum PanelShift {
@@ -89,6 +92,9 @@ struct GamePanel
     /** Panel sprite decorations to switch to on toggle event, or additional sprites
      * to draw on top. */
     short ExtraSpr[3];
+    short OwningPanel;
+    short SprWidth;
+    short SprHeight;
     ushort Use;
     ushort Flags;
     ubyte ID;

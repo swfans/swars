@@ -52,6 +52,25 @@ TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x
         && y >= box_y1 && y <= box_y2;
 }
 
+TbBool boxes_intersect(short box1_x, short box1_y, short box1_w, short box1_h,
+  short box2_x, short box2_y, short box2_w, short box2_h)
+{
+    if ((box1_x + box1_w < box2_x) || (box1_x > box2_x + box2_w))
+        return false;
+    if ((box1_y + box1_h < box2_y) || (box1_y > box2_y + box2_h))
+        return false;
+    return true;
+}
+
+TbBool base_boxes_intersect(struct ScreenBoxBase *box1, struct ScreenBoxBase *box2)
+{
+    if ((box1->X + box1->Width < box2->X) || (box1->X > box2->X + box2->Width))
+        return false;
+    if ((box1->Y + box1->Height < box2->Y) || (box1->Y > box2->Y + box2->Height))
+        return false;
+    return true;
+}
+
 TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2)
 {
     short ms_x, ms_y;

@@ -224,6 +224,16 @@ TbBool over_box(short x, short y, short box_x, short box_y, short box_w, short b
  */
 TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
 
+/** Returns if given two boxes have a common part (incl. borders).
+ */
+TbBool boxes_intersect(short box1_x, short box1_y, short box1_w, short box1_h,
+  short box2_x, short box2_y, short box2_w, short box2_h);
+
+/** Returns if given two boxes have a common part (incl. borders).
+ */
+#define screen_boxes_intersect(box1, box2) base_boxes_intersect((struct ScreenBoxBase *)box1, (struct ScreenBoxBase *)box2)
+TbBool base_boxes_intersect(struct ScreenBoxBase *box1, struct ScreenBoxBase *box2);
+
 /** Returns if current mouse move position is over given box with coords (incl. borders).
  */
 TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);

@@ -48,6 +48,7 @@ enum PanelsPanelConfigCmd {
     PnPanelCmd_DynaSize,
     PnPanelCmd_Sprite,
     PnPanelCmd_ExtraSpr,
+    PnPanelCmd_OwningPanel,
     PnPanelCmd_Use,
     PnPanelCmd_Flags,
     PnPanelCmd_Ident,
@@ -61,6 +62,7 @@ const struct TbNamedEnum panels_conf_panel_cmnds[] = {
   {"DynaSize",		PnPanelCmd_DynaSize},
   {"Sprite",		PnPanelCmd_Sprite},
   {"ExtraSpr",		PnPanelCmd_ExtraSpr},
+  {"OwningPanel",	PnPanelCmd_OwningPanel},
   {"Use",			PnPanelCmd_Use},
   {"Flags",			PnPanelCmd_Flags},
   {"Ident",			PnPanelCmd_Ident},
@@ -125,6 +127,10 @@ const struct TbNamedEnum panels_conf_panel_flags[] = {
   {"Enabled",				PanF_ENABLED},
   {"SpritesInLineHoriz",	PanF_SPRITES_IN_LINE_HORIZ},
   {"SpritesInLineVertc",	PanF_SPRITES_IN_LINE_VERTC},
+  {"ResizeMiddleSpr",		PanF_RESIZE_MIDDLE_SPR},
+  {"StrechToParentPos",		PanF_STRECH_TO_PARENT_POS},
+  {"StrechToParentAfter",	PanF_STRECH_TO_PARENT_AFTER},
+  {"StrechToParentSize",	PanF_STRECH_TO_PARENT_SIZE},
   {NULL,					0},
 };
 
@@ -181,19 +187,28 @@ void update_panel_derivative_shifts(short detail)
 
 void panel_strech_width_to_res(short detail)
 {
+    short base_width;
     short panel;
-    short base_width, new_dim, dt_x, dt_width;
 
     base_width = 320 * (detail + 1);
 
     for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
     {
         struct GamePanel *p_panel;
+        short new_dim, dt_x, dt_width;
+        short owpanl;
 
         p_panel = &game_panel_custom[panel];
-
         if (p_panel->Spr[0] == -1)
             break;
+
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[p_panel->Spr[0]];
+            p_panel->SprWidth = p_spr->SWidth;
+        }
+
         if (p_panel->Spr[1] == -1)
             continue;
         if ((p_panel->Flags & PanF_SPRITES_IN_LINE_HORIZ) == 0)
@@ -201,20 +216,138 @@ void panel_strech_width_to_res(short detail)
         if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) == 0)
             continue;
 
+        if (p_panel->Spr[1] > 0)
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[p_panel->Spr[1]];
+            p_panel->SprWidth += p_spr->SWidth;
+        }
+
+        if (p_panel->Spr[2] > 0)
+        {
+            struct TbSprite *p_spr;
+            p_spr = &pop1_sprites[p_panel->Spr[2]];
+            p_panel->SprWidth += p_spr->SWidth;
+        }
+
         new_dim = p_panel->pos.X * lbDisplay.GraphicsScreenWidth / base_width;
         dt_x = new_dim - p_panel->pos.X;
         new_dim = p_panel->pos.Width * lbDisplay.GraphicsScreenWidth / base_width;
         dt_width = new_dim - p_panel->pos.Width;
+
         p_panel->pos.X += dt_x;
         p_panel->dyn.X += dt_x;
         p_panel->pos.Width += dt_width;
         p_panel->dyn.Width += dt_width;
+        p_panel->SprWidth += dt_width;
+
+        for (owpanl = 0; owpanl < GAME_PANELS_LIMIT; owpanl++)
+        {
+            p_panel = &game_panel_custom[owpanl];
+            if (p_panel->OwningPanel != panel)
+                continue;
+
+            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_POS) != 0) {
+                p_panel->pos.X += dt_x;
+                p_panel->dyn.X += dt_x;
+            }
+
+            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_AFTER) != 0) {
+                p_panel->pos.X += dt_width;
+                p_panel->dyn.X += dt_width;
+            }
+
+            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_SIZE) != 0) {
+                p_panel->pos.Width += dt_width;
+                p_panel->dyn.Width += dt_width;
+            }
+        }
     }
 }
 
 void panel_strech_height_to_res(short detail)
 {
-    //TODO implement
+    short base_height;
+    short panel;
+
+    if (detail == 0)
+        base_height = 200 * (detail + 1);
+    else
+        base_height = 240 * (detail + 1);
+
+    for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
+    {
+        struct GamePanel *p_panel;
+        short new_dim, dt_y, dt_height;
+        short owpanl;
+
+        p_panel = &game_panel_custom[panel];
+        if (p_panel->Spr[0] == -1)
+            break;
+
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[p_panel->Spr[0]];
+            p_panel->SprHeight = p_spr->SHeight;
+        }
+
+        if (p_panel->Spr[1] == -1)
+            continue;
+        if ((p_panel->Flags & PanF_SPRITES_IN_LINE_VERTC) == 0)
+            continue;
+        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) == 0)
+            continue;
+
+        if (p_panel->Spr[1] > 0)
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[p_panel->Spr[1]];
+            p_panel->SprHeight += p_spr->SHeight;
+        }
+
+        if (p_panel->Spr[2] > 0)
+        {
+            struct TbSprite *p_spr;
+            p_spr = &pop1_sprites[p_panel->Spr[2]];
+            p_panel->SprHeight += p_spr->SHeight;
+        }
+
+        new_dim = p_panel->pos.Y * lbDisplay.GraphicsScreenHeight / base_height;
+        dt_y = new_dim - p_panel->pos.Y;
+        new_dim = p_panel->pos.Height * lbDisplay.GraphicsScreenHeight / base_height;
+        dt_height = new_dim - p_panel->pos.Height;
+
+        p_panel->pos.Y += dt_y;
+        p_panel->dyn.Y += dt_y;
+        p_panel->pos.Height += dt_height;
+        p_panel->dyn.Height += dt_height;
+        p_panel->SprHeight += dt_height;
+
+        for (owpanl = 0; owpanl < GAME_PANELS_LIMIT; owpanl++)
+        {
+            p_panel = &game_panel_custom[owpanl];
+            if (p_panel->OwningPanel != panel)
+                continue;
+
+            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_POS) != 0) {
+                p_panel->pos.Y += dt_y;
+                p_panel->dyn.Y += dt_y;
+            }
+
+            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_AFTER) != 0) {
+                p_panel->pos.Y += dt_height;
+                p_panel->dyn.Y += dt_height;
+            }
+
+            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_SIZE) != 0) {
+                p_panel->pos.Height += dt_height;
+                p_panel->dyn.Height += dt_height;
+            }
+        }
+    }
 }
 
 void size_panels_for_detail(short detail)
@@ -386,6 +519,12 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         sprintf(sect_name, "panel%hd", panel);
         p_panel = &game_panel_custom[panel];
         LbMemorySet(p_panel, 0, sizeof(struct GamePanel));
+        p_panel->pos.X = -1;
+        p_panel->pos.Y = -1;
+        for (n = 0; n < 3; n++)
+            p_panel->Spr[n] = -1;
+        p_panel->OwningPanel = -1;
+
         if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
             CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
             continue;
@@ -488,6 +627,15 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
                 CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_panel->ExtraSpr[0],
                   (int)p_panel->ExtraSpr[1], (int)p_panel->ExtraSpr[2]);
                 break;
+            case PnPanelCmd_OwningPanel:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_panel->OwningPanel = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_panel->OwningPanel);
+                break;
             case PnPanelCmd_Use:
                 i = LbIniValueGetLongInt(&parser, &k);
                 if (i <= 0) {
@@ -559,6 +707,7 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         p_panel->pos.Y = -1;
         for (n = 0; n < 3; n++)
             p_panel->Spr[n] = -1;
+        p_panel->OwningPanel = -1;
     }
 
 #undef CONFDBGLOG
