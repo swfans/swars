@@ -34,7 +34,7 @@ extern "C" {
 struct Objective;
 struct NetscanObjective;
 
-struct BigBlip
+struct BigBlip // sizeof=12
 {
   long X;
   long Z;
