@@ -260,105 +260,6 @@ void SCANNER_unkn_func_200(struct TbSprite *p_spr, int x, int y, ubyte col)
     }
 }
 
-
-void SCANNER_unkn_func_201(struct TbSprite *p_spr, int x, int y, ubyte *fade)
-{
-    ubyte *oline;
-    ubyte *dt;
-    int ich;
-    ubyte *o;
-
-    oline = &lbDisplay.WScreen[lbDisplay.GraphicsScreenWidth * y + x];
-    dt = p_spr->Data;
-    for (ich = p_spr->SHeight; ich > 0; ich--)
-    {
-        o = oline;
-        while (1)
-        {
-            ushort ftidx;
-            sbyte len;
-
-            len = *dt;
-            if (!len)
-                break;
-            if (len > 0)
-            {
-                ++dt;
-                while (len)
-                {
-                    ftidx = *dt;
-                    *o = fade[ftidx];
-                    ++dt;
-                    ++o;
-                    len--;
-                }
-            }
-            else
-            {
-                len = -len;
-                o += len;
-                ++dt;
-            }
-        }
-        ++dt;
-        oline += lbDisplay.GraphicsScreenWidth;
-    }
-}
-
-void SCANNER_unkn_func_202(struct TbSprite *p_spr, int x, int y, int ctr, int bri)
-{
-    ubyte *oline;
-    ubyte *dt;
-    int ich;
-    ubyte *o;
-
-    if ((x < 0) || (x > lbDisplay.PhysicalScreenWidth))
-        return;
-    if ((y < 0) || (y > lbDisplay.PhysicalScreenHeight))
-        return;
-    if ((x + p_spr->SWidth < 0) || (x + p_spr->SWidth > lbDisplay.PhysicalScreenWidth))
-        return;
-    if ((y + p_spr->SHeight < 0) || (y + p_spr->SHeight > lbDisplay.PhysicalScreenHeight))
-        return;
-
-    oline = &lbDisplay.WScreen[y * lbDisplay.GraphicsScreenWidth + x];
-    dword_1DC36C = bri;
-    dt = p_spr->Data;
-    for (ich = p_spr->SHeight; ich > 0; ich--)
-    {
-        o = oline;
-        while (1)
-        {
-            ushort ftsub, ftidx;
-            sbyte len;
-
-            len = *dt;
-            if (!len)
-                break;
-            if (len > 0)
-            {
-                ++dt;
-                while (len)
-                {
-                    ftidx = *dt++;
-                    ftsub = dword_1DC36C + ((SCANNER_pal_bright[ftidx] >> 1) + (SCANNER_pal_bright[*o] >> 1));
-                    ftidx |= SCANNER_bright_limit[ftsub] << 8;
-                    *o++ = pixmap.fade_table[ftidx];
-                    len--;
-                }
-            }
-            else
-            {
-                len = -len;
-                o += len;
-                ++dt;
-            }
-        }
-        ++dt;
-        oline += lbDisplay.GraphicsScreenWidth;
-    }
-}
-
 void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int a7)
 {
     asm volatile (
@@ -903,9 +804,14 @@ void draw_new_panel_sprite_prealp(int px, int py, ulong spr_id)
     struct TbSprite *p_spr;
 
     p_spr = &pop1_sprites[spr_id];
-    if (ingame.PanelPermutation == -1)
-        SCANNER_unkn_func_202(p_spr, px, py, ingame.Scanner.Contrast,
-          ingame.Scanner.Brightness);
+    dword_1DC36C = ingame.Scanner.Brightness;
+
+    if (ingame.PanelPermutation == -1) {
+        lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+        ApSpriteDrawLowTransGreyRemap(px, py, p_spr,
+          &pixmap.fade_table[0 * PALETTE_8b_COLORS]);
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+    }
 }
 
 /**
