@@ -140,19 +140,6 @@ void update_dropped_item_under_agent_exists(short agent)
     }
 }
 
-int SCANNER_objective_info_height(void)
-{
-    int h;
-
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        return 9;
-    h = 18 * lbDisplay.GraphicsScreenHeight / 400;
-
-    h -= (h % 9);
-
-    return h;
-}
-
 /* draws a sprite scaled to double size; remove pending */
 void SCANNER_unkn_func_200(struct TbSprite *p_spr, int x, int y, ubyte col)
 {
@@ -521,7 +508,7 @@ void SCANNER_draw_objective_info(int x, int y, int width)
     int height;
     int i;
 
-    height = SCANNER_objective_info_height();
+    height = panel_get_objective_info_height(lbDisplay.GraphicsScreenHeight);
     v48 = y;
     for (i = 0; i < height; i++)
     {
@@ -2025,10 +2012,10 @@ void draw_panel_objective_info(void)
     x = ingame.Scanner.X1 - 1;
     if (x < 0)
         x = 0;
-    y = lbDisplay.GraphicsScreenHeight - SCANNER_objective_info_height();
+    y = lbDisplay.GraphicsScreenHeight - panel_get_objective_info_height(lbDisplay.GraphicsScreenHeight);
     if (in_network_game) {
         SCANNER_unkn_func_205();
-        w = lbDisplay.PhysicalScreenWidth;
+        w = lbDisplay.GraphicsScreenWidth;
     } else {
         // original width 67 low res, 132 high res
         w = ingame.Scanner.X2 - ingame.Scanner.X1 + 3;

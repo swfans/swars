@@ -145,6 +145,14 @@ const struct TbNamedEnum panels_conf_any_bool[] = {
 struct GamePanel game_panel_custom[GAME_PANELS_LIMIT];
 struct TbPoint game_panel_custom_shifts[48];
 
+// Original sizes of scanner in low res 64x62, high res 129x119
+
+/** Width of the scanner map area, in percentage of screen. */
+ubyte scanner_width_pct = 20;
+/** Height of the scanner map area, in percentage of screen. */
+ubyte scanner_height_pct = 25;
+
+
 void update_panel_derivative_shifts(short detail)
 {
     struct TbSprite *p_spr;
@@ -185,6 +193,39 @@ void update_panel_derivative_shifts(short detail)
         p_shift->x = dx;
         p_shift->y = dy;
     }
+}
+
+int panel_get_objective_info_height(short screen_height)
+{
+    int h;
+
+    if (screen_height < 400)
+        return 9;
+    h = 18 * screen_height / 400;
+
+    h -= (h % 9);
+
+    return h;
+}
+
+void panel_get_scanner_screen_size(short *p_margin, short *p_width, short *p_height,
+  short screen_width, short screen_height, short spr_scale)
+{
+    int margin, width, height;
+
+    width = screen_width * scanner_width_pct / 100;
+    height = screen_height * scanner_height_pct / 100;
+    margin = panel_get_objective_info_height(screen_height) + 2;
+    if (screen_width >= 640) {
+        width = width * 101 / 100;
+        height = height * 99 / 100;
+    } else {
+        // width without change
+        height = height * 124 / 100;
+    }
+    *p_margin = margin;
+    *p_width = width;
+    *p_height = height;
 }
 
 void panel_strech_width_to_res(short detail)
@@ -276,18 +317,27 @@ void panel_strech_width_to_res(short detail)
 
 void panel_strech_height_to_res(short detail)
 {
-    short base_height;
+    short scan_margin, scan_width, scan_height;
+    short base_height, curr_height;
     short panel;
 
-    if (detail == 0)
-        base_height = 200 * (detail + 1);
-    else
-        base_height = 240 * (detail + 1);
+    if (detail == 0) {
+        panel_get_scanner_screen_size(&scan_margin, &scan_width, &scan_height, 320, 200, 1);
+        base_height = (200 - (scan_height + scan_margin)) * (detail + 1);
+    } else {
+        panel_get_scanner_screen_size(&scan_margin, &scan_width, &scan_height, 640, 480, 2);
+        base_height = (240 - (scan_height + scan_margin)/2) * (detail + 1);
+    }
+
+    panel_get_scanner_screen_size(&scan_margin, &scan_width, &scan_height,
+      lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, detail + 1);
+    curr_height = lbDisplay.GraphicsScreenHeight - (scan_height + scan_margin);
 
     for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
     {
         struct GamePanel *p_panel;
         short new_dim, dt_y, dt_height;
+        short adjusted_base_height, adjusted_curr_height;
         short owpanl;
 
         p_panel = &game_panel_custom[panel];
@@ -321,16 +371,44 @@ void panel_strech_height_to_res(short detail)
             p_panel->SprHeight += p_spr->SHeight;
         }
 
+        // Compute adjusted size, bot better fit the panel size
+        adjusted_base_height = base_height;
+        adjusted_curr_height = curr_height;
+        for (owpanl = 0; owpanl < GAME_PANELS_LIMIT; owpanl++)
+        {
+            struct GamePanel *p_owpanl;
+
+            p_owpanl = &game_panel_custom[owpanl];
+            if (p_owpanl->OwningPanel != panel)
+                continue;
+
+            if (((p_owpanl->Flags & PanF_REPOSITION_WITH_PARENT) != 0) &&
+              (p_owpanl->Flags & PanF_REPOSITION_TO_AFTER) != 0) {
+                short adj_height;
+                // If panels overlap, adjust only for the non-overlapping part
+                if (p_panel->pos.Y + p_panel->pos.Height > p_owpanl->pos.Y)
+                    adj_height = (p_owpanl->pos.Y + p_owpanl->pos.Height) - (p_panel->pos.Y + p_panel->pos.Height);
+                else
+                    adj_height = p_owpanl->pos.Height;
+                adjusted_base_height -= adj_height;
+                adjusted_curr_height -= adj_height;
+            }
+        }
+
         dt_y = 0;
         dt_height = 0;
         if ((p_panel->Flags & PanF_REPOSITION_VERTC) != 0)
         {
-            new_dim = p_panel->pos.Y * lbDisplay.GraphicsScreenHeight / base_height;
+            new_dim = p_panel->pos.Y * adjusted_curr_height / adjusted_base_height;
             dt_y = new_dim - p_panel->pos.Y;
         }
         if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0)
         {
-            new_dim = p_panel->pos.Height * lbDisplay.GraphicsScreenHeight / base_height;
+            if ((p_panel->Flags & PanF_REPOSITION_VERTC) != 0) {
+                new_dim = p_panel->pos.Height * adjusted_curr_height / adjusted_base_height;
+            } else {
+                new_dim = p_panel->pos.Height * (adjusted_curr_height - p_panel->pos.Y) / (adjusted_base_height - p_panel->pos.Y);
+            }
             dt_height = new_dim - p_panel->pos.Height;
         }
 
@@ -342,23 +420,25 @@ void panel_strech_height_to_res(short detail)
 
         for (owpanl = 0; owpanl < GAME_PANELS_LIMIT; owpanl++)
         {
-            p_panel = &game_panel_custom[owpanl];
-            if (p_panel->OwningPanel != panel)
+            struct GamePanel *p_owpanl;
+
+            p_owpanl = &game_panel_custom[owpanl];
+            if (p_owpanl->OwningPanel != panel)
                 continue;
 
-            if ((p_panel->Flags & PanF_REPOSITION_WITH_PARENT) != 0) {
-                p_panel->pos.Y += dt_y;
-                p_panel->dyn.Y += dt_y;
+            if ((p_owpanl->Flags & PanF_REPOSITION_WITH_PARENT) != 0) {
+                p_owpanl->pos.Y += dt_y;
+                p_owpanl->dyn.Y += dt_y;
             }
 
-            if ((p_panel->Flags & PanF_REPOSITION_TO_AFTER) != 0) {
-                p_panel->pos.Y += dt_height;
-                p_panel->dyn.Y += dt_height;
+            if ((p_owpanl->Flags & PanF_REPOSITION_TO_AFTER) != 0) {
+                p_owpanl->pos.Y += dt_height;
+                p_owpanl->dyn.Y += dt_height;
             }
 
-            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_SIZE) != 0) {
-                p_panel->pos.Height += dt_height;
-                p_panel->dyn.Height += dt_height;
+            if ((p_owpanl->Flags & PanF_STRECH_TO_PARENT_SIZE) != 0) {
+                p_owpanl->pos.Height += dt_height;
+                p_owpanl->dyn.Height += dt_height;
             }
         }
     }
