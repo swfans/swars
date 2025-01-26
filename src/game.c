@@ -247,8 +247,8 @@ struct TbLoadFiles unk02_load_files[] =
 #if 1 // !defined(LB_WSCREEN_CONTROL)
   { "*W_SCREEN",		(void **)&lbDisplay.WScreen,(void **)NULL,MAX_SUPPORTED_SCREEN_WIDTH*(MAX_SUPPORTED_SCREEN_HEIGHT+1), 0, 0 },
 #endif
-  { "data/pop0-3.dat",	(void **)&pop1_data,		(void **)&pop1_data_end,	0, 0, 0 },
-  { "data/pop0-3.tab",	(void **)&pop1_sprites,		(void **)&pop1_sprites_end, 0, 0, 0 },
+  { "data/pop2-3.dat",	(void **)&pop1_data,		(void **)&pop1_data_end,	0, 0, 0 },
+  { "data/pop2-3.tab",	(void **)&pop1_sprites,		(void **)&pop1_sprites_end, 0, 0, 0 },
   { "data/mspr-0.dat",	(void **)&m_spr_data,		(void **)&m_spr_data_end,	0, 0, 0 },
   { "data/mspr-0.tab",	(void **)&m_sprites,		(void **)&m_sprites_end,	0, 0, 0 },
   { "data/mele-0.ani",	(void **)&melement_ani,		(void **)&mele_ani_end,		0, 0, 0 },
