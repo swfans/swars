@@ -876,12 +876,12 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
         short x, y;
         ushort spr;
 
-        if (lbDisplay.GraphicsScreenHeight >= 400) {
-            x = lbDisplay.GraphicsScreenWidth - 100;
-            y = lbDisplay.GraphicsScreenHeight - 40;
-        } else {
-            x = lbDisplay.GraphicsScreenWidth - 50;
-            y = lbDisplay.GraphicsScreenHeight - 20;
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[12];
+            x = lbDisplay.GraphicsScreenWidth - 8 * pop1_sprites_scale - p_spr->SWidth;
+            y = lbDisplay.GraphicsScreenHeight - 8 * pop1_sprites_scale - p_spr->SHeight;
         }
         lbDisplay.DrawFlags = 0;
         weptype = p_pickup->U.UWeapon.WeaponType;
@@ -921,12 +921,12 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
         short x, y;
         ushort spr;
 
-        if (lbDisplay.GraphicsScreenHeight >= 400) {
-            x = lbDisplay.GraphicsScreenWidth - 100;
-            y = lbDisplay.GraphicsScreenHeight - 40;
-        } else {
-            x = lbDisplay.GraphicsScreenWidth - 50;
-            y = lbDisplay.GraphicsScreenHeight - 20;
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[12];
+            x = lbDisplay.GraphicsScreenWidth - 8 * pop1_sprites_scale - p_spr->SWidth;
+            y = lbDisplay.GraphicsScreenHeight - 8 * pop1_sprites_scale - p_spr->SHeight;
         }
         lbDisplay.DrawFlags = 0;
         weptype = p_pickup->U.UWeapon.WeaponType;
