@@ -78,6 +78,8 @@
 #include "feresearch.h"
 #include "festorage.h"
 #include "feworld.h"
+#include "hud_panecfg.h"
+#include "hud_panel.h"
 #include "purpldrw.h"
 #include "purpldrwlst.h"
 #include "building.h"
@@ -95,7 +97,6 @@
 #include "game_data.h"
 #include "game_speed.h"
 #include "game_sprani.h"
-#include "hud_panel.h"
 #include "hud_target.h"
 #include "keyboard.h"
 #include "misstat.h"
@@ -247,8 +248,8 @@ struct TbLoadFiles unk02_load_files[] =
 #if 1 // !defined(LB_WSCREEN_CONTROL)
   { "*W_SCREEN",		(void **)&lbDisplay.WScreen,(void **)NULL,MAX_SUPPORTED_SCREEN_WIDTH*(MAX_SUPPORTED_SCREEN_HEIGHT+1), 0, 0 },
 #endif
-  { "data/pop0-3.dat",	(void **)&pop1_data,		(void **)&pop1_data_end,	0, 0, 0 },
-  { "data/pop0-3.tab",	(void **)&pop1_sprites,		(void **)&pop1_sprites_end, 0, 0, 0 },
+  { "data/pop2-3.dat",	(void **)&pop1_data,		(void **)&pop1_data_end,	0, 0, 0 },
+  { "data/pop2-3.tab",	(void **)&pop1_sprites,		(void **)&pop1_sprites_end, 0, 0, 0 },
   { "data/mspr-0.dat",	(void **)&m_spr_data,		(void **)&m_spr_data_end,	0, 0, 0 },
   { "data/mspr-0.tab",	(void **)&m_sprites,		(void **)&m_sprites_end,	0, 0, 0 },
   { "data/mele-0.ani",	(void **)&melement_ani,		(void **)&mele_ani_end,		0, 0, 0 },
@@ -265,13 +266,6 @@ struct TbLoadFiles unk02_load_files[] =
 char unk_credits_text_s[] = "";
 char unk_credits_text_z[] = "";
 char unk_credits_text_p[] = "";
-
-// Original sizes of scanner in low res 64x62, high res 129x119
-
-/** Width of the scanner map area, in percentage of screen. */
-ubyte scanner_width_pct = 20;
-/** Height of the scanner map area, in percentage of screen. */
-ubyte scanner_height_pct = 25;
 
 void ac_purple_unkn1_data_to_screen(void);
 
@@ -1772,18 +1766,10 @@ void srm_scanner_set_size_at_bottom_left(short margin, short width, short height
 
 void srm_scanner_size_update(void)
 {
-    int margin, width, height;
+    short margin, width, height;
 
-    width = lbDisplay.GraphicsScreenWidth * scanner_width_pct / 100;
-    height = lbDisplay.GraphicsScreenHeight * scanner_height_pct / 100;
-    margin = SCANNER_objective_info_height() + 2;
-    if (lbDisplay.GraphicsScreenWidth >= 640) {
-        width = width * 101 / 100;
-        height = height * 99 / 100;
-    } else {
-        // width without change
-        height = height * 124 / 100;
-    }
+    panel_get_scanner_screen_size(&margin, &width, &height,
+      lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, pop1_sprites_scale);
     srm_scanner_set_size_at_bottom_left(margin, width, height);
 }
 

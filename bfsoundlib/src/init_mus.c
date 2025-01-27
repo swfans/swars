@@ -345,34 +345,32 @@ int InitMusicBanks(void)
         return 0;
     }
 
-    sprintf(SoundProgressMessage, "BF40 - music%s bank allocation", MusicType);
+    sprintf(SoundProgressMessage, "BF40 - 'music%s' bank allocation begin\n", MusicType);
     SoundProgressLog(SoundProgressMessage);
 
     music_allocated = AllocateMusicBankMemory();
     if ((strcasecmp(MusicType, "w") == 0) && (music_allocated == -2))
     {
-        sprintf(SoundProgressMessage, " - not present in music.dat\n");
+        sprintf(SoundProgressMessage, "BF40 - 'music%s' bank not present in 'music.dat'\n", MusicType);
         SoundProgressLog(SoundProgressMessage);
         sprintf(MusicType, "g");
-        sprintf(SoundProgressMessage, "BF40A - music%s bank allocation", MusicType);
-        SoundProgressLog(SoundProgressMessage);
         music_allocated = AllocateMusicBankMemory();
     }
     if (music_allocated <= 0)
     {
         if (music_allocated == 0) {
-            sprintf(SoundProgressMessage, " - cannot allocate\n");
+            sprintf(SoundProgressMessage, "BF40 - 'music%s' bank cannot allocate\n", MusicType);
             SoundProgressLog(SoundProgressMessage);
         } else if (music_allocated == -1) {
-            sprintf(SoundProgressMessage, " - no music.dat\n");
+            sprintf(SoundProgressMessage, "BF40 - 'music%s' bank empty as cannot open 'music.dat'\n", MusicType);
             SoundProgressLog(SoundProgressMessage);
         } else if (music_allocated == -2) {
-            sprintf(SoundProgressMessage, " - not present in music.dat\n");
+            sprintf(SoundProgressMessage, "BF40 - 'music%s' bank not present in 'music.dat'\n", MusicType);
             SoundProgressLog(SoundProgressMessage);
         }
         return -1;
     }
-    sprintf(SoundProgressMessage, " - allocation successful\n");
+    sprintf(SoundProgressMessage, "BF40 - 'music%s' bank allocation successful\n", MusicType);
     SoundProgressLog(SoundProgressMessage);
     return 1;
 }
@@ -409,13 +407,13 @@ void InitMusic(void)
 
     snprintf(locfname, sizeof(locfname),"%s.ad", locnoext);
     if (!fm_instrument_file_exists(locfname)) {
-        sprintf(SoundProgressMessage, "BF26 - sample.ad not found\n");
+        sprintf(SoundProgressMessage, "BF26 - 'sample.ad' not found\n");
         SoundProgressLog(SoundProgressMessage);
     }
 
     snprintf(locfname, sizeof(locfname), "%s.opl", locnoext);
     if (!fm_instrument_file_exists(locfname)) {
-        sprintf(SoundProgressMessage, "BF27 - sample.opl not found\n");
+        sprintf(SoundProgressMessage, "BF27 - 'sample.opl' not found\n");
         SoundProgressLog(SoundProgressMessage);
     }
 

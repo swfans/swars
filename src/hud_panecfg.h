@@ -27,11 +27,16 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define GAME_PANELS_LIMIT 32
 
 #pragma pack()
 /******************************************************************************/
 TbBool read_panel_config(const char *name, ushort styleno, ushort detail);
 void size_panels_for_detail(short detail);
+
+int panel_get_objective_info_height(short screen_height);
+void panel_get_scanner_screen_size(short *p_margin, short *p_width, short *p_height,
+  short screen_width, short screen_height, short spr_scale);
 
 /******************************************************************************/
 #ifdef __cplusplus

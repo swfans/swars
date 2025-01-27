@@ -23,8 +23,11 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfplanar.h"
+#include "bfscreen.h"
+#include "bfsprite.h"
 
 #include "game.h"
+#include "game_sprts.h"
 #include "hud_panel.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -41,7 +44,11 @@ const struct TbNamedEnum panels_conf_common_cmnds[] = {
 enum PanelsPanelConfigCmd {
     PnPanelCmd_ScreenPos = 1,
     PnPanelCmd_ScreenSize,
+    PnPanelCmd_DynaPos,
+    PnPanelCmd_DynaSize,
     PnPanelCmd_Sprite,
+    PnPanelCmd_ExtraSpr,
+    PnPanelCmd_OwningPanel,
     PnPanelCmd_Use,
     PnPanelCmd_Flags,
     PnPanelCmd_Ident,
@@ -51,7 +58,11 @@ enum PanelsPanelConfigCmd {
 const struct TbNamedEnum panels_conf_panel_cmnds[] = {
   {"ScreenPos",		PnPanelCmd_ScreenPos},
   {"ScreenSize",	PnPanelCmd_ScreenSize},
+  {"DynaPos",		PnPanelCmd_DynaPos},
+  {"DynaSize",		PnPanelCmd_DynaSize},
   {"Sprite",		PnPanelCmd_Sprite},
+  {"ExtraSpr",		PnPanelCmd_ExtraSpr},
+  {"OwningPanel",	PnPanelCmd_OwningPanel},
   {"Use",			PnPanelCmd_Use},
   {"Flags",			PnPanelCmd_Flags},
   {"Ident",			PnPanelCmd_Ident},
@@ -60,11 +71,7 @@ const struct TbNamedEnum panels_conf_panel_cmnds[] = {
 };
 
 enum PanelsShiftsConfigCmd {
-    PnShiftCmd_Agent1PanelToNumber = 1,
-    PnShiftCmd_Agent2PanelToNumber,
-    PnShiftCmd_Agent3PanelToNumber,
-    PnShiftCmd_Agent4PanelToNumber,
-    PnShiftCmd_AgentWeaponToList,
+    PnShiftCmd_AgentWeaponToList = 1,
     PnShiftCmd_GroupPaneToThermalBox,
     PnShiftCmd_GroupPaneToThermalSpr,
     PnShiftCmd_GroupPaneAgents2,
@@ -82,10 +89,6 @@ enum PanelsShiftsConfigCmd {
 };
 
 const struct TbNamedEnum panels_conf_shifts_cmnds[] = {
-  {"Agent1PanelToNumber",	PaSh_AGENT_PANEL_TO_NUMBER + 1},
-  {"Agent2PanelToNumber",	PaSh_AGENT_PANEL_TO_NUMBER + 2},
-  {"Agent3PanelToNumber",	PaSh_AGENT_PANEL_TO_NUMBER + 3},
-  {"Agent4PanelToNumber",	PaSh_AGENT_PANEL_TO_NUMBER + 4},
   {"AgentWeaponToList",		PaSh_AGENT_WEAPON_TO_LIST + 1},
   {"GroupPaneToThermalBox",	PaSh_GROUP_PANE_TO_THERMAL_BOX + 1},
   {"GroupPaneToThermalSpr",	PaSh_GROUP_PANE_TO_THERMAL_SPR + 1},
@@ -101,14 +104,16 @@ const struct TbNamedEnum panels_conf_shifts_cmnds[] = {
   {"WepNextDistance",		PaSh_WEP_NEXT_DISTANCE + 1},
   {"WepCurrButtonArea",		PaSh_WEP_CURR_BUTTON_AREA + 1},
   {"WepNextButtonArea",		PaSh_WEP_NEXT_BUTTON_AREA + 1},
+  {"WepFourpackBaseSh",		PaSh_WEP_FOURPACK_BASE_SH + 1},
+  {"WepFourpackSize",		PaSh_WEP_FOURPACK_SIZE + 1},
 };
 
 const struct TbNamedEnum panels_conf_panel_type[] = {
   {"Default",		PanT_NONE + 1},
   {"AgentBadge",	PanT_AgentBadge + 1},
   {"AgentMood",		PanT_AgentMood + 1},
-  {"UNKN03",		PanT_UNKN03 + 1},
-  {"UNKN04",		PanT_UNKN04 + 1},
+  {"AgentHealth",	PanT_AgentHealth + 1},
+  {"AgentEnergy",	PanT_AgentEnergy + 1},
   {"AgentWeapon",	PanT_AgentWeapon + 1},
   {"AgentMedi",		PanT_AgentMedi + 1},
   {"UNKN07",		PanT_UNKN07 + 1},
@@ -118,14 +123,326 @@ const struct TbNamedEnum panels_conf_panel_type[] = {
   {NULL,			0},
 };
 
+const struct TbNamedEnum panels_conf_panel_flags[] = {
+  {"Enabled",				PanF_ENABLED},
+  {"SpritesInLineHoriz",	PanF_SPRITES_IN_LINE_HORIZ},
+  {"SpritesInLineVertc",	PanF_SPRITES_IN_LINE_VERTC},
+  {"ResizeMiddleSpr",		PanF_RESIZE_MIDDLE_SPR},
+  {"RepositionHoriz",		PanF_REPOSITION_HORIZ},
+  {"RepositionVertc",		PanF_REPOSITION_VERTC},
+  {"RepositionWithParent",	PanF_REPOSITION_WITH_PARENT},
+  {"RepositionToAfter",		PanF_REPOSITION_TO_AFTER},
+  {"StrechToParentSize",	PanF_STRECH_TO_PARENT_SIZE},
+  {NULL,					0},
+};
+
 const struct TbNamedEnum panels_conf_any_bool[] = {
   {"True",			1},
   {"False",			2},
   {NULL,			0},
 };
 
-struct GamePanel game_panel_custom[22];
-struct TbPoint game_panel_custom_shifts[22];
+struct GamePanel game_panel_custom[GAME_PANELS_LIMIT];
+struct TbPoint game_panel_custom_shifts[48];
+
+// Original sizes of scanner in low res 64x62, high res 129x119
+
+/** Width of the scanner map area, in percentage of screen. */
+ubyte scanner_width_pct = 20;
+/** Height of the scanner map area, in percentage of screen. */
+ubyte scanner_height_pct = 25;
+
+
+void update_panel_derivative_shifts(short detail)
+{
+    struct TbSprite *p_spr;
+    struct TbPoint *p_base_shift;
+    struct TbPoint *p_slot_size;
+    int i;
+
+    p_base_shift = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_BASE_SH];
+    p_slot_size = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_SIZE];
+    p_spr = &pop1_sprites[14];
+    // We're expecting to use 4 ammo slots; 8 are supported mostly to signal an issue
+    for (i = 0; i < 8; i++)
+    {
+        struct TbPoint *p_shift;
+        int dx, dy;
+
+        if ((i & 3) < 2)
+        {
+            dx = p_base_shift->x;
+            dx += (p_base_shift->x + p_slot_size->x) * (i / 4);
+        }
+        else
+        {
+            dx = p_spr->SWidth - (p_base_shift->x + p_slot_size->x);
+            dx -= (p_base_shift->x + p_slot_size->x) * (i / 4);
+        }
+
+        if ((i & 3) == 0 || (i & 3) == 3)
+        {
+            dy = p_base_shift->y;
+        }
+        else
+        {
+            dy = p_spr->SHeight - (p_base_shift->y + p_slot_size->y);
+        }
+
+        p_shift = &game_panel_custom_shifts[PaSh_WEP_FOURPACK_SLOTS + i];
+        p_shift->x = dx;
+        p_shift->y = dy;
+    }
+}
+
+int panel_get_objective_info_height(short screen_height)
+{
+    int h;
+
+    if (screen_height < 400)
+        return 9;
+    h = 18 * screen_height / 400;
+
+    h -= (h % 9);
+
+    return h;
+}
+
+void panel_get_scanner_screen_size(short *p_margin, short *p_width, short *p_height,
+  short screen_width, short screen_height, short spr_scale)
+{
+    int margin, width, height;
+
+    width = screen_width * scanner_width_pct / 100;
+    height = screen_height * scanner_height_pct / 100;
+    margin = panel_get_objective_info_height(screen_height) + 2;
+    if (screen_width >= 640) {
+        width = width * 101 / 100;
+        height = height * 99 / 100;
+    } else {
+        // width without change
+        height = height * 124 / 100;
+    }
+    *p_margin = margin;
+    *p_width = width;
+    *p_height = height;
+}
+
+void panel_strech_width_to_res(short detail)
+{
+    short base_width;
+    short panel;
+
+    base_width = 320 * (detail + 1);
+
+    for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
+    {
+        struct GamePanel *p_panel;
+        short new_dim, dt_x, dt_width;
+        short owpanl;
+
+        p_panel = &game_panel_custom[panel];
+        if (p_panel->Spr[0] == -1)
+            break;
+
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[p_panel->Spr[0]];
+            p_panel->SprWidth = p_spr->SWidth;
+        }
+
+        if (p_panel->Spr[1] == -1)
+            continue;
+        if ((p_panel->Flags & (PanF_SPRITES_IN_LINE_HORIZ|PanF_REPOSITION_HORIZ)) == 0)
+            continue;
+
+        if (p_panel->Spr[1] > 0)
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[p_panel->Spr[1]];
+            p_panel->SprWidth += p_spr->SWidth;
+        }
+
+        if (p_panel->Spr[2] > 0)
+        {
+            struct TbSprite *p_spr;
+            p_spr = &pop1_sprites[p_panel->Spr[2]];
+            p_panel->SprWidth += p_spr->SWidth;
+        }
+
+        dt_x = 0;
+        dt_width = 0;
+        if ((p_panel->Flags & PanF_REPOSITION_HORIZ) != 0)
+        {
+            new_dim = p_panel->pos.X * lbDisplay.GraphicsScreenWidth / base_width;
+            dt_x = new_dim - p_panel->pos.X;
+        }
+        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0)
+        {
+            new_dim = p_panel->pos.Width * lbDisplay.GraphicsScreenWidth / base_width;
+            dt_width = new_dim - p_panel->pos.Width;
+        }
+
+        p_panel->pos.X += dt_x;
+        p_panel->dyn.X += dt_x;
+        p_panel->pos.Width += dt_width;
+        p_panel->dyn.Width += dt_width;
+        p_panel->SprWidth += dt_width;
+
+        for (owpanl = 0; owpanl < GAME_PANELS_LIMIT; owpanl++)
+        {
+            p_panel = &game_panel_custom[owpanl];
+            if (p_panel->OwningPanel != panel)
+                continue;
+
+            if ((p_panel->Flags & PanF_REPOSITION_WITH_PARENT) != 0) {
+                p_panel->pos.X += dt_x;
+                p_panel->dyn.X += dt_x;
+            }
+
+            if ((p_panel->Flags & PanF_REPOSITION_TO_AFTER) != 0) {
+                p_panel->pos.X += dt_width;
+                p_panel->dyn.X += dt_width;
+            }
+
+            if ((p_panel->Flags & PanF_STRECH_TO_PARENT_SIZE) != 0) {
+                p_panel->pos.Width += dt_width;
+                p_panel->dyn.Width += dt_width;
+            }
+        }
+    }
+}
+
+void panel_strech_height_to_res(short detail)
+{
+    short scan_margin, scan_width, scan_height;
+    short base_height, curr_height;
+    short panel;
+
+    if (detail == 0) {
+        panel_get_scanner_screen_size(&scan_margin, &scan_width, &scan_height, 320, 200, 1);
+        base_height = (200 - (scan_height + scan_margin)) * (detail + 1);
+    } else {
+        panel_get_scanner_screen_size(&scan_margin, &scan_width, &scan_height, 640, 480, 2);
+        base_height = (240 - (scan_height + scan_margin)/2) * (detail + 1);
+    }
+
+    panel_get_scanner_screen_size(&scan_margin, &scan_width, &scan_height,
+      lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, detail + 1);
+    curr_height = lbDisplay.GraphicsScreenHeight - (scan_height + scan_margin);
+
+    for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
+    {
+        struct GamePanel *p_panel;
+        short new_dim, dt_y, dt_height;
+        short adjusted_base_height, adjusted_curr_height;
+        short owpanl;
+
+        p_panel = &game_panel_custom[panel];
+        if (p_panel->Spr[0] == -1)
+            break;
+
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[p_panel->Spr[0]];
+            p_panel->SprHeight = p_spr->SHeight;
+        }
+
+        if (p_panel->Spr[1] == -1)
+            continue;
+        if ((p_panel->Flags & (PanF_SPRITES_IN_LINE_VERTC|PanF_REPOSITION_VERTC)) == 0)
+            continue;
+
+        if (p_panel->Spr[1] > 0)
+        {
+            struct TbSprite *p_spr;
+
+            p_spr = &pop1_sprites[p_panel->Spr[1]];
+            p_panel->SprHeight += p_spr->SHeight;
+        }
+
+        if (p_panel->Spr[2] > 0)
+        {
+            struct TbSprite *p_spr;
+            p_spr = &pop1_sprites[p_panel->Spr[2]];
+            p_panel->SprHeight += p_spr->SHeight;
+        }
+
+        // Compute adjusted size, bot better fit the panel size
+        adjusted_base_height = base_height;
+        adjusted_curr_height = curr_height;
+        for (owpanl = 0; owpanl < GAME_PANELS_LIMIT; owpanl++)
+        {
+            struct GamePanel *p_owpanl;
+
+            p_owpanl = &game_panel_custom[owpanl];
+            if (p_owpanl->OwningPanel != panel)
+                continue;
+
+            if (((p_owpanl->Flags & PanF_REPOSITION_WITH_PARENT) != 0) &&
+              (p_owpanl->Flags & PanF_REPOSITION_TO_AFTER) != 0) {
+                short adj_height;
+                // If panels overlap, adjust only for the non-overlapping part
+                if (p_panel->pos.Y + p_panel->pos.Height > p_owpanl->pos.Y)
+                    adj_height = (p_owpanl->pos.Y + p_owpanl->pos.Height) - (p_panel->pos.Y + p_panel->pos.Height);
+                else
+                    adj_height = p_owpanl->pos.Height;
+                adjusted_base_height -= adj_height;
+                adjusted_curr_height -= adj_height;
+            }
+        }
+
+        dt_y = 0;
+        dt_height = 0;
+        if ((p_panel->Flags & PanF_REPOSITION_VERTC) != 0)
+        {
+            new_dim = p_panel->pos.Y * adjusted_curr_height / adjusted_base_height;
+            dt_y = new_dim - p_panel->pos.Y;
+        }
+        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0)
+        {
+            if ((p_panel->Flags & PanF_REPOSITION_VERTC) != 0) {
+                new_dim = p_panel->pos.Height * adjusted_curr_height / adjusted_base_height;
+            } else {
+                new_dim = p_panel->pos.Height * (adjusted_curr_height - p_panel->pos.Y) / (adjusted_base_height - p_panel->pos.Y);
+            }
+            dt_height = new_dim - p_panel->pos.Height;
+        }
+
+        p_panel->pos.Y += dt_y;
+        p_panel->dyn.Y += dt_y;
+        p_panel->pos.Height += dt_height;
+        p_panel->dyn.Height += dt_height;
+        p_panel->SprHeight += dt_height;
+
+        for (owpanl = 0; owpanl < GAME_PANELS_LIMIT; owpanl++)
+        {
+            struct GamePanel *p_owpanl;
+
+            p_owpanl = &game_panel_custom[owpanl];
+            if (p_owpanl->OwningPanel != panel)
+                continue;
+
+            if ((p_owpanl->Flags & PanF_REPOSITION_WITH_PARENT) != 0) {
+                p_owpanl->pos.Y += dt_y;
+                p_owpanl->dyn.Y += dt_y;
+            }
+
+            if ((p_owpanl->Flags & PanF_REPOSITION_TO_AFTER) != 0) {
+                p_owpanl->pos.Y += dt_height;
+                p_owpanl->dyn.Y += dt_height;
+            }
+
+            if ((p_owpanl->Flags & PanF_STRECH_TO_PARENT_SIZE) != 0) {
+                p_owpanl->pos.Height += dt_height;
+                p_owpanl->dyn.Height += dt_height;
+            }
+        }
+    }
+}
 
 void size_panels_for_detail(short detail)
 {
@@ -140,6 +457,9 @@ void size_panels_for_detail(short detail)
     // Currently we use the same config for all styles
     styleno = 0;
     read_panel_config(name, styleno, detail);
+    update_panel_derivative_shifts(detail);
+    panel_strech_width_to_res(detail);
+    panel_strech_height_to_res(detail);
     game_panel = game_panel_custom;
     game_panel_shifts = game_panel_custom_shifts;
 }
@@ -148,7 +468,7 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
 {
     TbFileHandle conf_fh;
     TbBool done;
-    int i;
+    int i, n;
     long k, m;
     char *conf_buf;
     struct TbIniParser parser;
@@ -238,10 +558,6 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         // Now store the config item in correct place
         switch (cmd_num)
         {
-        case PaSh_AGENT_PANEL_TO_NUMBER + 1:
-        case PaSh_AGENT_PANEL_TO_NUMBER + 2:
-        case PaSh_AGENT_PANEL_TO_NUMBER + 3:
-        case PaSh_AGENT_PANEL_TO_NUMBER + 4:
         case PaSh_AGENT_WEAPON_TO_LIST + 1:
         case PaSh_GROUP_PANE_TO_THERMAL_BOX + 1:
         case PaSh_GROUP_PANE_TO_THERMAL_SPR + 1:
@@ -257,6 +573,8 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         case PaSh_WEP_NEXT_DISTANCE + 1:
         case PaSh_WEP_CURR_BUTTON_AREA + 1:
         case PaSh_WEP_NEXT_BUTTON_AREA + 1:
+        case PaSh_WEP_FOURPACK_BASE_SH + 1:
+        case PaSh_WEP_FOURPACK_SIZE + 1:
             i = LbIniValueGetLongInt(&parser, &k);
             if (i <= 0) {
                 CONFWRNLOG("Could not read \"%s\" command 1st parameter.", COMMAND_TEXT(cmd_num));
@@ -295,6 +613,12 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
         sprintf(sect_name, "panel%hd", panel);
         p_panel = &game_panel_custom[panel];
         LbMemorySet(p_panel, 0, sizeof(struct GamePanel));
+        p_panel->pos.X = -1;
+        p_panel->pos.Y = -1;
+        for (n = 0; n < 3; n++)
+            p_panel->Spr[n] = -1;
+        p_panel->OwningPanel = -1;
+
         if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
             CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
             continue;
@@ -322,9 +646,9 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
                     CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                p_panel->X = k;
-                p_panel->Y = m;
-                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->X, (int)p_panel->Y);
+                p_panel->pos.X = k;
+                p_panel->pos.Y = m;
+                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->pos.X, (int)p_panel->pos.Y);
                 break;
             case PnPanelCmd_ScreenSize:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -337,18 +661,74 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
                     CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                p_panel->Width = k;
-                p_panel->Height = m;
-                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->Width, (int)p_panel->Height);
+                p_panel->pos.Width = k;
+                p_panel->pos.Height = m;
+                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->pos.Width, (int)p_panel->pos.Height);
+                break;
+            case PnPanelCmd_DynaPos:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command 1st parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                i = LbIniValueGetLongInt(&parser, &m);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_panel->dyn.X = k;
+                p_panel->dyn.Y = m;
+                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->dyn.X, (int)p_panel->dyn.Y);
+                break;
+            case PnPanelCmd_DynaSize:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command 1st parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                i = LbIniValueGetLongInt(&parser, &m);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_panel->dyn.Width = k;
+                p_panel->dyn.Height = m;
+                CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_panel->dyn.Width, (int)p_panel->dyn.Height);
                 break;
             case PnPanelCmd_Sprite:
+                for (n = 0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                        break;
+                    }
+                    p_panel->Spr[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_panel->Spr[0],
+                  (int)p_panel->Spr[1], (int)p_panel->Spr[2]);
+                break;
+            case PnPanelCmd_ExtraSpr:
+                for (n = 0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                        break;
+                    }
+                    p_panel->ExtraSpr[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_panel->ExtraSpr[0],
+                  (int)p_panel->ExtraSpr[1], (int)p_panel->ExtraSpr[2]);
+                break;
+            case PnPanelCmd_OwningPanel:
                 i = LbIniValueGetLongInt(&parser, &k);
                 if (i <= 0) {
                     CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                p_panel->Spr = k;
-                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_panel->Spr);
+                p_panel->OwningPanel = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_panel->OwningPanel);
                 break;
             case PnPanelCmd_Use:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -360,13 +740,20 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_panel->Use);
                 break;
             case PnPanelCmd_Flags:
-                i = LbIniValueGetLongInt(&parser, &k);
-                if (i <= 0) {
-                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
-                    break;
+                k = 0;
+                while (1)
+                {
+                    i = LbIniValueGetNamedEnum(&parser, panels_conf_panel_flags);
+                    if (i <= 0) {
+                        if (i == 0)
+                            break;
+                        CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                        break;
+                    }
+                    k |= i;
                 }
                 p_panel->Flags = k;
-                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_panel->Flags);
+                CONFDBGLOG("%s 0x%x", COMMAND_TEXT(cmd_num), (int)p_panel->Flags);
                 break;
             case PnPanelCmd_Ident:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -410,9 +797,11 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
 
         p_panel = &game_panel_custom[panel];
         LbMemorySet(p_panel, 0, sizeof(struct GamePanel));
-        p_panel->X = -1;
-        p_panel->Y = -1;
-        p_panel->Spr = -1;
+        p_panel->pos.X = -1;
+        p_panel->pos.Y = -1;
+        for (n = 0; n < 3; n++)
+            p_panel->Spr[n] = -1;
+        p_panel->OwningPanel = -1;
     }
 
 #undef CONFDBGLOG

@@ -118,4 +118,9 @@ TbResult LbErrorLogReset(void)
     return result;
 }
 
+TbBool LbErrorLogReady(void)
+{
+    return error_log_initialised;
+}
+
 /******************************************************************************/

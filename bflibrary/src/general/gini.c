@@ -380,8 +380,12 @@ int LbIniValueGetNamedEnum(struct TbIniParser *parser, const struct TbNamedEnum 
     if (parser->buf[parser->pos] == '\"') {
         in_quotes = true;
         parser->pos++;
-        if (parser->pos >= parser->buflen) return 0;
+        if (parser->pos >= parser->buflen) return -1;
     }
+    // If EOLN, return here to differentiate empty (ret 0) from unrecognized (ret -1)
+    if ((parser->buf[parser->pos] == '\n') ||
+        (parser->buf[parser->pos] == '\r'))
+        return 0;
     i = 0;
     while (vallist[i].name != NULL)
     {
@@ -415,7 +419,7 @@ int LbIniValueGetNamedEnum(struct TbIniParser *parser, const struct TbNamedEnum 
         }
         i++;
     }
-    return 0;
+    return -1;
 }
 
 const char *LbNamedEnumGetName(const struct TbNamedEnum nelist[], int num)

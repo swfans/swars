@@ -1262,10 +1262,10 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         sposy = posy;
         scanline = lbDisplay.GraphicsScreenWidth;
         if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0) {
-            sposx = sprite->SWidth + posx - 1;
+            sposx = posx + sprite->SWidth - 1;
         }
         if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_VERTIC) != 0) {
-            sposy = sprite->SHeight + posy - 1;
+            sposy = posy + sprite->SHeight - 1;
             scanline = -lbDisplay.GraphicsScreenWidth;
         }
         xstep = &xsteps_array[2 * sposx];

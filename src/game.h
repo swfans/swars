@@ -191,15 +191,15 @@ struct InGame {
     ubyte AutoResearch;
     ubyte GameOver;
     struct Scanner Scanner; // offset=0x0C
-    long Credits;
-    ulong fld_unkC4B;
+    long Credits; // offset=0x473 (on original Scanner struct)
+    ulong fld_unkC4B;	// offset=0x477
     short fld_unkC4F;
     short MissionStatus;
     long Flags;
     ushort fld_unkC57;
     short fld_unkC59;
     short draw_unknprop_01;
-    short Rocket1[WEP_ROCKETS_FIRED_LIMIT];
+    short Rocket1[WEP_ROCKETS_FIRED_LIMIT];	// offset=0x489
     short NextRocket;
     short TrainMode;
     short MyGroup;
@@ -221,7 +221,7 @@ struct InGame {
     sbyte PanelPermutation;
     ubyte TrenchcoatPreference;
     ubyte MissionNo;
-    short fld_unkCA6;
+    short fld_unkCA6;	// offset=0x4D2
     short fld_unkCA8;
     ubyte fld_unkCAA;
     ubyte PalType;

@@ -411,7 +411,6 @@ extern ulong SCANNER_keep_arcs;
 extern long scanner_blink; // = 1;
 
 extern struct scanstr3 SCANNER_arcpoint[20];
-extern TbPixel SCANNER_people_colours[15];
 
 void SCANNER_process_special_input(void)
 {

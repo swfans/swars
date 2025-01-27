@@ -21,6 +21,7 @@
 
 #include "bftypes.h"
 #include "game_bstype.h"
+#include "guiboxes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,8 +40,8 @@ enum PanelType {
     PanT_NONE = 0,
     PanT_AgentBadge,
     PanT_AgentMood,
-    PanT_UNKN03,
-    PanT_UNKN04,
+    PanT_AgentHealth,
+    PanT_AgentEnergy,
     PanT_AgentWeapon,
     PanT_AgentMedi,
     PanT_UNKN07,
@@ -49,34 +50,57 @@ enum PanelType {
     PanT_Grouping,
 };
 
+enum PanelFlags {
+    PanF_ENABLED = 0x0001,
+    PanF_SPRITES_IN_LINE_HORIZ = 0x0020,
+    PanF_SPRITES_IN_LINE_VERTC = 0x0040,
+    PanF_SPR_TOGGLED_ON = 0x0080,
+    PanF_RESIZE_MIDDLE_SPR = 0x0100,
+    PanF_REPOSITION_HORIZ = 0x0200,
+    PanF_REPOSITION_VERTC = 0x0400,
+    PanF_REPOSITION_WITH_PARENT = 0x0800,
+    PanF_STRECH_TO_PARENT_SIZE = 0x1000,
+    PanF_REPOSITION_TO_AFTER = 0x2000,
+};
+
 enum PanelShift {
-    PaSh_AGENT_PANEL_TO_NUMBER = 0,
+    PaSh_AGENT_UNUSED0 = 0,
     PaSh_AGENT_WEAPON_TO_LIST = 4,
-    PaSh_GROUP_PANE_TO_THERMAL_BOX = 5,
-    PaSh_GROUP_PANE_TO_THERMAL_SPR = 6,
-    PaSh_GROUP_PANE_AGENTS = 7,
-    PaSh_WEP_CURR_BTN_TO_SYMBOL = 10,
-    PaSh_WEP_FRST_BTN_TO_SYMBOL = 11,
-    PaSh_WEP_NEXT_BTN_TO_SYMBOL = 12,
-    PaSh_WEP_CURR_BTN_TO_DECOR =  13,
-    PaSh_WEP_FRST_BTN_TO_DECOR = 14,
-    PaSh_WEP_NEXT_BTN_TO_DECOR = 15,
-    PaSh_WEP_NEXT_DISTANCE = 16,
-    PaSh_WEP_CURR_BUTTON_AREA = 17,
-    PaSh_WEP_NEXT_BUTTON_AREA = 18,
+    PaSh_GROUP_PANE_TO_THERMAL_BOX = 11,
+    PaSh_GROUP_PANE_TO_THERMAL_SPR = 12,
+    PaSh_GROUP_PANE_AGENTS = 13,
+    PaSh_WEP_CURR_BTN_TO_SYMBOL = 16,
+    PaSh_WEP_FRST_BTN_TO_SYMBOL = 17,
+    PaSh_WEP_NEXT_BTN_TO_SYMBOL = 18,
+    PaSh_WEP_CURR_BTN_TO_DECOR =  19,
+    PaSh_WEP_FRST_BTN_TO_DECOR = 20,
+    PaSh_WEP_NEXT_BTN_TO_DECOR = 21,
+    PaSh_WEP_NEXT_DISTANCE = 22,
+    PaSh_WEP_CURR_BUTTON_AREA = 23,
+    PaSh_WEP_NEXT_BUTTON_AREA = 24,
+    PaSh_WEP_FOURPACK_BASE_SH = 25,
+    PaSh_WEP_FOURPACK_SIZE = 26,
+    PaSh_WEP_FOURPACK_SLOTS = 27,
 };
 
 struct GamePanel
 {
-  short X;
-  short Y;
-  short Spr;
-  ushort Width;
-  ushort Height;
-  ushort Use;
-  ushort Flags;
-  ubyte ID;
-  ubyte Type;
+    /** Rectange representing area active for mouse events and sprite drawing. */
+    struct ScreenRect pos;
+    /** Rectange representing area of dynamically generated content (text/value/bar). */
+    struct ScreenRect dyn;
+    /** Panel sprite decoration; only first is used, unless flags state otherwise. */
+    short Spr[3];
+    /** Panel sprite decorations to switch to on toggle event, or additional sprites
+     * to draw on top. */
+    short ExtraSpr[3];
+    short OwningPanel;
+    short SprWidth;
+    short SprHeight;
+    ushort Use;
+    ushort Flags;
+    ubyte ID;
+    ubyte Type;
 };
 
 struct Thing;

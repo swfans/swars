@@ -79,6 +79,8 @@ void LbSpriteSetScalingWidthClippedArray(long * xsteps_arr, long x, long swidth,
         w--;
         pwidth += 2;
     } while (w > 0);
+    // Set the first coordiate again to avoid missing first lines on high size factor
+    xsteps_arr[0] = x;
 }
 
 void LbSpriteSetScalingWidthClipped(long x, long swidth, long dwidth, long gwidth)
@@ -120,6 +122,8 @@ void LbSpriteSetScalingWidthSimpleArray(long * xsteps_arr, long x, long swidth, 
       }
       pwidth += 16;
     } while (w > 0);
+    // Set the first coordiate again to avoid missing first lines on high size factor
+    xsteps_arr[0] = x;
 }
 
 void LbSpriteSetScalingWidthSimple(long x, long swidth, long dwidth)
@@ -294,6 +298,7 @@ void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
     scale_up = true;
     if ((dwidth <= swidth) && (dheight <= sheight))
         scale_up = false;
+
     // Checking whether to select simple scaling creation,
     // or more comprehensive one - with clipping
     if ((swidth <= 0) || (dwidth <= 0)) {
@@ -308,6 +313,7 @@ void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
     } else {
         LbSpriteSetScalingWidthSimple(x, swidth, dwidth);
     }
+
     if ((sheight <= 0) || (dheight <= 0)) {
         LOGWARN("tried scaling height %ld -> %ld", sheight, dheight);
         LbSpriteClearScalingHeight();
