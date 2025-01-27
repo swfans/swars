@@ -67,26 +67,30 @@ ubyte draw_ingame_button(struct ScreenButton *p_button, ubyte enabled)
 
     margin = p_button->Border + 1;
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     LbDrawBox(p_button->X - margin, p_button->Y - margin, p_button->Width + 2 * margin, p_button->Height + 2 * margin, p_button->BGColour);
 
-    lbDisplay.DrawFlags = 0x0010;
+    lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
     lbDisplay.DrawColour = colour_lookup[ColLU_WHITE];
     if (enabled || mouse_move_over_box(p_button))
     {
-        LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, lbDisplay.DrawColour);
-        lbDisplay.DrawFlags |= 0x0040;
+        int i;
+        for (i = margin / 2; i >= 0; i--)
+            LbDrawBox(p_button->X + i, p_button->Y + i, p_button->Width - 2 * i, p_button->Height - 2 * i, lbDisplay.DrawColour);
+        lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
     }
     else
     {
         if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3) {
-            lbDisplay.DrawFlags |= 0x0040;
+            lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
             lbDisplay.DrawColour = p_button->Colour;
         }
-        LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, p_button->Colour);
+        int i;
+        for (i = margin / 2; i >= 0; i--)
+            LbDrawBox(p_button->X + i, p_button->Y + i, p_button->Width - 2 * i, p_button->Height - 2 * i, p_button->Colour);
     }
 
-    if (lbDisplay.GraphicsScreenHeight < 400) {
+    if (p_button->Border < 1) {
         text_x = p_button->X + 2 * margin;
         text_y = p_button->Y + 2 * margin;
     } else {
@@ -95,7 +99,7 @@ ubyte draw_ingame_button(struct ScreenButton *p_button, ubyte enabled)
     }
     my_draw_text(text_x, text_y, p_button->Text, 0);
 
-    lbDisplay.DrawFlags &= ~0x0040;
+    lbDisplay.DrawFlags &= ~Lb_TEXT_ONE_COLOR;
 
     return 0;
 }
@@ -177,13 +181,9 @@ TbBool input_slant_box(struct ScreenBox *box, short *target)
 void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
 {
     short cut, stp;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        stp = 1;
-        cut = 25;
-    } else {
-        stp = 2;
-        cut = 50;
-    }
+
+    stp = pop1_sprites_scale;
+    cut = 25 * pop1_sprites_scale;
 
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     LbDrawBox(box->X + 0, box->Y + 0, box->Width - cut, box->Height - cut, colr1);
@@ -216,10 +216,7 @@ void draw_slant_left_arrow_spr(struct ScreenBox *box, TbPixel colr2)
 {
     short stp;
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        stp = 1;
-    else
-        stp = 2;
+    stp = pop1_sprites_scale;
 
     if (mouse_move_over_slant_box(box))
     {
@@ -236,10 +233,7 @@ void draw_slant_right_arrow_spr(struct ScreenBox *box, TbPixel colr2)
 {
     short stp;
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        stp = 1;
-    else
-        stp = 2;
+    stp = pop1_sprites_scale;
 
     if (mouse_move_over_slant_box(box))
     {
@@ -320,12 +314,11 @@ void init_ingame_screen_button(struct ScreenButton *p_button, ushort x, ushort y
 
     init_screen_button(p_button, x, y, text, 0, font, 0, 0);
 
+    border = pop1_sprites_scale - 1;
     if (lbDisplay.GraphicsScreenHeight < 400) {
         line_h = font_height('A');
         text_w = my_string_width(p_button->Text);
-        border = 0;
     } else {
-        border = 1;
         line_h = 2 * font_height('A');
         text_w = 2 * my_string_width(p_button->Text);
     }
