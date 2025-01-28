@@ -22,7 +22,7 @@ AC_CONFIG_MACRO_DIRS([m4])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
-AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_INIT_AUTOMAKE([foreign])
 ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_DEFINE([VER_MAJOR], [ver_major], [Major version number])
