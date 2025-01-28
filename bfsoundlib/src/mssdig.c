@@ -542,7 +542,7 @@ int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
 
 #if defined(DOS)||defined(GO32)
     // Attempt to read DIG_INI file
-    if (!AIL_read_INI(&ini, "DIG.INI"))
+    if (!AIL_read_INI(&ini, "dig.ini"))
     {
         AIL_set_error("Unable to open file DIG.INI.");
         return AIL_NO_INI_FILE;
@@ -550,7 +550,7 @@ int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
 #else
     // Pretend we have a generic driver from DIG_INI
     memset(&ini, 0, sizeof(ini));
-    sprintf(ini.driver_name, "%s", "SB16.DIG");
+    sprintf(ini.driver_name, "%s", "sb16.dig");
 #endif
 
     *digdrv = AIL_install_DIG_driver_file(ini.driver_name,
