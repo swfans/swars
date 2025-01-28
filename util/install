@@ -430,8 +430,8 @@ check_language()
 create_config_ini()
 {
   cat<<EOF >"$TARGET/config.ini"
-CD="D:\\GAME\\"
-InstallDrive="C:\\"
+CD="$SOURCE"
+InstallDrive="$TARGET"
 Language="$LANG_NAME"
 Intro="Max"
 Anims="Max"
