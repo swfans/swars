@@ -1374,7 +1374,7 @@ MDI_DRIVER *AIL_open_XMIDI_driver(uint32_t flags)
     if (mdidrv == NULL)
     {
         if (flags & AIL_OPEN_XMIDI_NULL_DRIVER)
-            mdidrv = AIL2OAL_API_install_MDI_driver_file("NULL.MDI", NULL);
+            mdidrv = AIL2OAL_API_install_MDI_driver_file("null.mdi", NULL);
     }
     if (mdidrv == NULL)
     {

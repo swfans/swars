@@ -643,13 +643,13 @@ bothdone_:	/* 0x0FC300 */
 .section .rodata
 
 aSb16_dig:	/* 0x15F7DC */
-		.string "SB16.DIG"
+		.string "sb16.dig"
 		.align	4
 aSbpro_dig:	/* 0x15F7E8 */
-		.string "SBPRO.DIG"
+		.string "sbpro.dig"
 		.align	4
 aSblaster_dig:	/* 0x15F7F4 */
-		.string "SBLASTER.DIG"
+		.string "sblaster.dig"
 		.align	4
 
 .data

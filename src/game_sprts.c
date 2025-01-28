@@ -270,13 +270,15 @@ TbResult load_sprites_med_font(ubyte **pp_buf, const char *dir)
     char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
     long len;
+    short detail;
     TbResult ret;
 
     p_buf = *pp_buf;
     ret = Lb_OK;
 
+    detail = 1;
     med_font_data = p_buf;
-    sprintf(locstr, "%s/font0-1.dat", dir);
+    sprintf(locstr, "%s/fontc0-%hd.dat", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -284,7 +286,7 @@ TbResult load_sprites_med_font(ubyte **pp_buf, const char *dir)
     }
     p_buf += len;
     med_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/font0-1.tab", dir);
+    sprintf(locstr, "%s/fontc0-%hd.tab", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -313,13 +315,15 @@ TbResult load_sprites_big_font(ubyte **pp_buf, const char *dir)
     char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
     long len;
+    short detail;
     TbResult ret;
 
     p_buf = *pp_buf;
     ret = Lb_OK;
 
+    detail = 2;
     big_font_data = p_buf;
-    sprintf(locstr, "%s/font0-2.dat", dir);
+    sprintf(locstr, "%s/fontc1-%hd.dat", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -327,7 +331,7 @@ TbResult load_sprites_big_font(ubyte **pp_buf, const char *dir)
     }
     p_buf += len;
     big_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/font0-2.tab", dir);
+    sprintf(locstr, "%s/fontc1-%hd.tab", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -366,13 +370,15 @@ TbResult load_sprites_small_med_font(ubyte **pp_buf, const char *dir)
     char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
     long len;
+    short detail;
     TbResult ret;
 
     p_buf = *pp_buf;
     ret = Lb_OK;
 
+    detail = 0;
     small_med_font_data = p_buf;
-    sprintf(locstr, "%s/font0-3.dat", dir);
+    sprintf(locstr, "%s/fontc1-%hd.dat", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -380,7 +386,7 @@ TbResult load_sprites_small_med_font(ubyte **pp_buf, const char *dir)
     }
     p_buf += len;
     small_med_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/font0-3.tab", dir);
+    sprintf(locstr, "%s/fontc1-%hd.tab", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -409,13 +415,15 @@ TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir)
     char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
     long len;
+    short detail;
     TbResult ret;
 
     p_buf = *pp_buf;
     ret = Lb_OK;
 
+    detail = 1;
     med2_font_data = p_buf;
-    sprintf(locstr, "%s/font0-4.dat", dir);
+    sprintf(locstr, "%s/fontc2-%hd.dat", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -423,7 +431,7 @@ TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir)
     }
     p_buf += len;
     med2_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/font0-4.tab", dir);
+    sprintf(locstr, "%s/fontc2-%hd.tab", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -452,13 +460,15 @@ TbResult load_sprites_small2_font(ubyte **pp_buf, const char *dir)
     char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
     long len;
+    short detail;
     TbResult ret;
 
     p_buf = *pp_buf;
     ret = Lb_OK;
 
+    detail = 0;
     small2_font_data = p_buf;
-    sprintf(locstr, "%s/font0-5.dat", dir);
+    sprintf(locstr, "%s/fontc2-%hd.dat", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -466,7 +476,7 @@ TbResult load_sprites_small2_font(ubyte **pp_buf, const char *dir)
     }
     p_buf += len;
     small2_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/font0-5.tab", dir);
+    sprintf(locstr, "%s/fontc2-%hd.tab", dir, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;

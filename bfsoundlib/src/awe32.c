@@ -57,7 +57,7 @@ void FreeAwe32Soundfont(void)
     if (!MusicInstalled || !MusicAble) {
         return;
     }
-    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0) {
+    if (strcasecmp(MusicInstallChoice.driver_name, "sbawe32.mdi") != 0) {
         return;
     }
     if (strcasecmp(MusicType, "w") != 0) {
@@ -85,7 +85,7 @@ void LoadAwe32Soundfont(const char *str)
     if (!MusicInstalled || !MusicAble) {
         return;
     }
-    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0) {
+    if (strcasecmp(MusicInstallChoice.driver_name, "sbawe32.mdi") != 0) {
         sprintf(SoundProgressMessage, "Soundfont - incompatible MIDI driver\n");
         SoundProgressLog(SoundProgressMessage);
         return;
