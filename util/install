@@ -234,11 +234,6 @@ copy_data()
 {
   install_dir "data" || return 1
 
-  for fn in 0-0 0-1 0-2 0-3 0-4 0-5; do
-    install_file "data/font${fn}.dat" || return 1
-    install_file "data/font${fn}.tab" || return 1
-  done
-
   for fn in bgtables.dat tables.dat startgho.dat synghost.tab; do
     install_file "data/${fn}" || return 1
   done
@@ -248,11 +243,6 @@ copy_data()
   done
 
   for fn in icons0-0 w-icons; do
-    install_file "data/${fn}.dat" || return 1
-    install_file "data/${fn}.tab" || return 1
-  done
-
-  for fn in mouse-0 pointers; do
     install_file "data/${fn}.dat" || return 1
     install_file "data/${fn}.tab" || return 1
   done
@@ -271,16 +261,6 @@ copy_data()
   for fn in s z; do
     install_file "data/outro-${fn}.smk" || return 1
     install_file "data/outro-${fn}.raw" || return 1
-  done
-
-  for fn in 0-0 0-1 0-2 1-0 2-0; do
-    install_file "data/panel${fn}.dat" || return 1
-    install_file "data/panel${fn}.tab" || return 1
-  done
-
-  for fn in 0-0 0-1 1-0 1-1 2-0 2-1; do
-    install_file "data/pop${fn}.dat" || return 1
-    install_file "data/pop${fn}.tab" || return 1
   done
 
   for fn in tit nam qot; do
