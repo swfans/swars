@@ -42,6 +42,10 @@ ubyte *pop1_data;
 ubyte *pop1_data_end;
 short pop1_sprites_scale = 1;
 
+struct TbSprite *small_font;
+struct TbSprite *small_font_end;
+ubyte *small_font_data;
+ubyte *small_font_data_end;
 
 /******************************************************************************/
 
@@ -90,33 +94,41 @@ static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_dat_end,
     return ret;
 }
 
-TbResult load_sprites_mouse_pointers_up_to(const char *dir, short styleno, short max_detail)
+static inline TbResult load_any_sprites_up_to(const char *dir, const char *name,
+  ushort min_sprites, struct TbSprite *p_sprites, struct TbSprite *p_sprites_end,
+  ubyte *p_data, ubyte *p_data_end, short *p_scale, short styleno, short max_detail)
 {
-    ushort min_sprites;
     short detail;
     TbResult ret;
 
-    min_sprites = 10;
-    if (pointer_sprites_end - pointer_sprites < min_sprites) {
-        LOGERR("Preallocated area for %d sprites is below expected minimum %d",
-         pointer_sprites_end - pointer_sprites, min_sprites);
+    if (p_sprites_end - p_sprites < min_sprites) {
+        LOGERR("Preallocated area for %d '%s%hu' sprites is below expected minimum %d",
+         p_sprites_end - p_sprites, name, styleno, min_sprites);
     }
     ret = Lb_FAIL;
     for (detail = max_detail; detail >= 0; detail--)
     {
-        ret = load_sprites_with_detail(pointer_data, pointer_data_end,
-          (ubyte *)pointer_sprites, (ubyte *)pointer_sprites_end,
-          dir, "pointr", styleno, detail);
+        ret = load_sprites_with_detail(p_data, p_data_end,
+          (ubyte *)p_sprites, (ubyte *)p_sprites_end,
+          dir, name, styleno, detail);
         if (ret != Lb_FAIL)
             break;
     }
     if (detail < 0) {
-        LOGERR("Some files were not loaded despite trying whole detail levels range");
+        LOGERR("Some '%s%hu' sprites not loaded, tried detail %hu..0",
+          name, styleno, max_detail);
         detail = 0;
     }
-    pointer_sprites_scale = detail + 1;
+    if (p_scale != NULL)
+        *p_scale = detail + 1;
 
     return ret;
+}
+
+TbResult load_sprites_mouse_pointers_up_to(const char *dir, short styleno, short max_detail)
+{
+    return load_any_sprites_up_to(dir, "pointr", 10, pointer_sprites, pointer_sprites_end,
+      pointer_data, pointer_data_end, &pointer_sprites_scale, styleno, max_detail);
 }
 
 void setup_mouse_pointers(void)
@@ -353,6 +365,14 @@ void setup_sprites_big_font(void)
 void reset_sprites_big_font(void)
 {
     LbSpriteReset(big_font, big_font_end, big_font_data);
+}
+
+TbResult load_sprites_small_font_up_to(const char *dir, short max_detail)
+{
+    const short styleno = 0;
+    // TODO there should be 224 min sprites
+    return load_any_sprites_up_to(dir, "fontc", 205, small_font, small_font_end,
+      small_font_data, small_font_data_end, NULL, styleno, max_detail);
 }
 
 void setup_sprites_small_font(void)
@@ -604,31 +624,8 @@ void reset_sprites_fepanel(void)
 
 TbResult load_pop_sprites_up_to(const char *dir, const char *name, short styleno, short max_detail)
 {
-    ushort min_sprites;
-    short detail;
-    TbResult ret;
-
-    min_sprites = 106;
-    if (pop1_sprites_end - pop1_sprites < min_sprites) {
-        LOGERR("Preallocated area for %d sprites is below expected minimum %d",
-         pop1_sprites_end - pop1_sprites, min_sprites);
-    }
-    ret = Lb_FAIL;
-    for (detail = max_detail; detail >= 0; detail--)
-    {
-        ret = load_sprites_with_detail(pop1_data, pop1_data_end,
-          (ubyte *)pop1_sprites, (ubyte *)pop1_sprites_end,
-          dir, name, styleno, detail);
-        if (ret != Lb_FAIL)
-            break;
-    }
-    if (detail < 0) {
-        LOGERR("Some files were not loaded despite trying whole detail levels range");
-        detail = 0;
-    }
-    pop1_sprites_scale = detail + 1;
-
-    return ret;
+    return load_any_sprites_up_to(dir, name, 149, pop1_sprites, pop1_sprites_end,
+      pop1_data, pop1_data_end, &pop1_sprites_scale, styleno, max_detail);
 }
 
 void setup_pop_sprites(void)

@@ -255,7 +255,7 @@ struct TbLoadFiles unk02_load_files[] =
   { "data/mele-0.ani",	(void **)&melement_ani,		(void **)&mele_ani_end,		0, 0, 0 },
   { "data/nsta-0.ani",	(void **)&nstart_ani,		(void **)&nstart_ani_end,	0, 0, 0 },
   { "data/nfra-0.ani",	(void **)&frame,			(void **)&frame_end,		0, 0, 0 },
-  { "data/fontc0-0.dat",(void **)&small_font_data,	(void **)NULL,				0, 0, 0 },
+  { "data/fontc0-0.dat",(void **)&small_font_data,	(void **)&small_font_data_end,0, 0, 0 },
   { "data/fontc0-0.tab",(void **)&small_font,		(void **)&small_font_end,	0, 0, 0 },
   { "data/pointr0-3.dat",(void **)&pointer_data,	(void **)&pointer_data_end,	0, 0, 0 },
   { "data/pointr0-3.tab",(void **)&pointer_sprites,	(void **)&pointer_sprites_end, 0, 0, 0 },
@@ -1804,6 +1804,7 @@ void adjust_mission_engine_to_video_mode(void)
     overall_scale = (get_overall_scale_min() * 295) >> 8;
     load_pop_sprites_for_current_mode();
     load_mouse_pointers_sprites_for_current_mode();
+    load_small_font_for_current_mode();
     render_area_a = render_area_b = \
       get_render_area_for_zoom(user_zoom_min);
     srm_scanner_size_update();
@@ -2256,6 +2257,7 @@ void setup_host(void)
     ingame.PanelPermutation = -2;
     load_pop_sprites_for_current_mode();
     load_mouse_pointers_sprites_for_current_mode();
+    load_small_font_for_current_mode();
     init_memory(mem_game);
 
     init_syndwars();

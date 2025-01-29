@@ -118,6 +118,19 @@ TbResult load_pop_sprites_for_current_mode(void)
     return ret;
 }
 
+TbResult load_small_font_for_current_mode(void)
+{
+    PathInfo *pinfo;
+    short max_detail;
+    TbResult ret;
+
+    max_detail = 0;//TODO pop1_sprites_scale - 1;
+    pinfo = &game_dirs[DirPlace_Data];
+    ret = load_sprites_small_font_up_to(pinfo->directory, max_detail);
+    setup_sprites_small_font();
+    return ret;
+}
+
 //TODO not the best location for agent state update
 void update_dropped_item_under_agent_exists(short agent)
 {
