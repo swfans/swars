@@ -125,7 +125,7 @@ TbResult load_small_font_for_current_mode(void)
     short max_detail;
     TbResult ret;
 
-    max_detail = 0; // TODO pop1_sprites_scale / 2;
+    max_detail = pop1_sprites_scale / 2;
     pinfo = &game_dirs[DirPlace_Data];
     ret = load_sprites_small_font_up_to(pinfo->directory, max_detail);
     setup_sprites_small_font();
