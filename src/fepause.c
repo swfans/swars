@@ -63,7 +63,7 @@ static struct ScreenButton abort_btn;
 ubyte draw_ingame_button(struct ScreenButton *p_button, ubyte enabled)
 {
     short text_x, text_y;
-    short margin;
+    short line_h, text_w, margin;
 
     margin = p_button->Border + 1;
 
@@ -90,13 +90,10 @@ ubyte draw_ingame_button(struct ScreenButton *p_button, ubyte enabled)
             LbDrawBox(p_button->X + i, p_button->Y + i, p_button->Width - 2 * i, p_button->Height - 2 * i, p_button->Colour);
     }
 
-    if (p_button->Border < 1) {
-        text_x = p_button->X + 2 * margin;
-        text_y = p_button->Y + 2 * margin;
-    } else {
-        text_x = p_button->X + (p_button->Width >> 2) + margin;
-        text_y = p_button->Y + (p_button->Height >> 1) - margin;
-    }
+    line_h = font_height('A');
+    text_w = my_string_width(p_button->Text);
+    text_x = p_button->X + 2 * margin + (p_button->Width - (text_w + 4 * margin)) / 2;
+    text_y = p_button->Y + 2 * margin + (p_button->Height - (line_h + 4 * margin)) / 2;
     my_draw_text(text_x, text_y, p_button->Text, 0);
 
     lbDisplay.DrawFlags &= ~Lb_TEXT_ONE_COLOR;
@@ -310,17 +307,18 @@ void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct Scree
 void init_ingame_screen_button(struct ScreenButton *p_button, ushort x, ushort y, const char *text, struct TbSprite *font, int flags)
 {
     short line_h, text_w, border;
-    short margin;
+    short fnt_scale, margin;
 
     init_screen_button(p_button, x, y, text, 0, font, 0, 0);
 
     border = pop1_sprites_scale - 1;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        line_h = font_height('A');
-        text_w = my_string_width(p_button->Text);
-    } else {
-        line_h = 2 * font_height('A');
-        text_w = 2 * my_string_width(p_button->Text);
+    line_h = font_height('A');
+    text_w = my_string_width(p_button->Text);
+    fnt_scale = pop1_sprites_scale / 2 + 1;
+    if (line_h < fnt_scale * 6) { // detail 0 font has height equal 6
+        fnt_scale = (fnt_scale * 6) / line_h;
+        line_h *= fnt_scale;
+        text_w *= fnt_scale;
     }
 
     p_button->Border = border;

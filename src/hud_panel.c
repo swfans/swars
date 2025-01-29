@@ -26,6 +26,7 @@
 #include "bfplanar.h"
 #include "bfscreen.h"
 #include "bfsprite.h"
+#include "bftext.h"
 #include "bfutility.h"
 #include "ssampply.h"
 
@@ -124,7 +125,7 @@ TbResult load_small_font_for_current_mode(void)
     short max_detail;
     TbResult ret;
 
-    max_detail = 0;//TODO pop1_sprites_scale - 1;
+    max_detail = 0; // TODO pop1_sprites_scale / 2;
     pinfo = &game_dirs[DirPlace_Data];
     ret = load_sprites_small_font_up_to(pinfo->directory, max_detail);
     setup_sprites_small_font();
@@ -273,52 +274,62 @@ void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int
 int SCANNER_text_draw(const char *text, int start_x, int height)
 {
     const ubyte *str;
-    struct TbSprite *p_spr;
-    int x;
+    int x, y;
+    short fnt_height, height_base;
     ubyte sel_c1;
-    ubyte ch;
-    TbPixel col;
 
+    lbFontPtr = small_font;
+    fnt_height = font_height('A');
+     // detail 0 font has height equal 6
+    height_base = 9 * fnt_height / 6;
+    y = 0;
     str = (const ubyte *)text;
     sel_c1 = SCANNER_colour[0];
     x = start_x;
-    if (lbDisplay.GraphicsScreenHeight >= 400)
+    if (height != height_base)
     {
-      int chr_width, chr_height;
+        while (*str != '\0')
+        {
+            struct TbSprite *p_spr;
+            int chr_width, chr_height;
+            ubyte ch;
+            TbPixel col;
 
-      while (*str != '\0')
-      {
-        if (*str == '\1') {
-          str++;
-          sel_c1 = *str;
-        } else {
-          ch = my_char_to_upper(*str);
-          col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
-          p_spr = &small_font[ch - 31];
-          chr_width = p_spr->SWidth * height / 9;
-          chr_height = p_spr->SHeight * height / 9;
-          LbSpriteDrawScaledOneColour(x, 2, p_spr, chr_width, chr_height, col);
-          x += chr_width;
+            if (*str == '\1') {
+              str++;
+              sel_c1 = *str;
+            } else {
+              ch = my_char_to_upper(*str);
+              col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
+              p_spr = &lbFontPtr[ch - 31];
+              chr_width = p_spr->SWidth * height / height_base;
+              chr_height = p_spr->SHeight * height / height_base;
+              LbSpriteDrawScaledOneColour(x, y, p_spr, chr_width, chr_height, col);
+              x += chr_width;
+            }
+            str++;
         }
-        str++;
-      }
     }
     else
     {
-      while (*str != '\0')
-      {
-        if (*str == '\1') {
-          str++;
-          sel_c1 = *str;
-        } else {
-          ch = my_char_to_upper(*str);
-          col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
-          p_spr = &small_font[ch - 31];
-          LbSpriteDrawOneColour(x, 1, p_spr, col);
-          x += p_spr->SWidth;
+        while (*str != '\0')
+        {
+            struct TbSprite *p_spr;
+            ubyte ch;
+            TbPixel col;
+
+            if (*str == '\1') {
+              str++;
+              sel_c1 = *str;
+            } else {
+              ch = my_char_to_upper(*str);
+              col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
+              p_spr = &lbFontPtr[ch - 31];
+              LbSpriteDrawOneColour(x, y, p_spr, col);
+              x += p_spr->SWidth;
+            }
+            str++;
         }
-        str++;
-      }
     }
     return x;
 }
