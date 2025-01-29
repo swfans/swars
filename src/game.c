@@ -2325,12 +2325,14 @@ void read_user_settings(void)
     if ((fh == INVALID_FILE) && (strlen(login_name) > 0))
     {
         get_user_settings_fname(fname, "");
-        fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+        if (LbFileExists(fname))
+            fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
         read_mortal_salt_backup = true;
     }
 
     if (fh == INVALID_FILE)
     {
+        LOGSYNC("Build-in defaults used, as could not open \"%s\" file", fname);
         set_default_user_settings();
         read_mortal_salt_backup = true;
     } else

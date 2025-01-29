@@ -59,6 +59,13 @@ static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_dat_end,
     long len;
     TbResult ret;
 
+    sprintf(locstr, "%s/%s%hu-%hu.tab", dir, name, styleno, detail);
+    if (!LbFileExists(locstr)) {
+        LOGSYNC("Could not find \"%s\" file", locstr);
+        LbMemorySet(p_spr, 0, p_spr_end - p_spr);
+        return Lb_FAIL;
+    }
+
     ret = Lb_SUCCESS;
 
     sprintf(locstr, "%s/%s%hu-%hu.dat", dir, name, styleno, detail);
