@@ -526,10 +526,13 @@ void draw_pause_volume_bar(struct ScreenBox *p_box1, struct ScreenBox *p_box2, s
     if (*p_target) // Draw slider box filling
     {
         struct ScreenBox box4;
-        box4.X = p_box1->X + 2;
-        box4.Y = p_box1->Y + 2;
-        box4.Width = (p_box1->Width - 6) * (*p_target) / 322;
-        box4.Height = p_box1->Height - 4;
+        short stp;
+
+        stp = pop1_sprites_scale+1;
+        box4.X = p_box1->X + 1 * stp;
+        box4.Y = p_box1->Y + 1 * stp;
+        box4.Width = (p_box1->Width - 3 * stp) * (*p_target) / 322;
+        box4.Height = p_box1->Height - 2 * stp;
         draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
     }
 }
