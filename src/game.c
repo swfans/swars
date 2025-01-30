@@ -176,6 +176,8 @@ extern long gamep_unknval_16;
 extern ushort netgame_agent_pos_x[8][4];
 extern ushort netgame_agent_pos_z[8][4];
 
+extern char *data_15319c;
+
 extern long dword_155010;
 extern long dword_155014;
 extern long dword_155018;
@@ -186,6 +188,7 @@ extern short word_1552F8;
 
 extern long dword_176CBC;
 
+extern char unknmsg_str[100];
 extern short word_1774E8[2 * 150];
 
 extern ushort word_1A7330[1000];
@@ -1297,7 +1300,7 @@ void draw_hud(int dcthing)
             }
         }
 
-        if (pktrec_mode != 2)
+        if (pktrec_mode != PktR_PLAYBACK)
         {
           draw_hud_target_mouse(dcthing);
         }
@@ -3403,9 +3406,11 @@ short test_missions(ubyte flag)
         res = -1;
         for (i = 0; i < playable_agents; i++)
         {
+            PlayerInfo *p_locplayer;
             struct Thing *p_agent;
 
-            p_agent = players[local_player_no].MyAgent[i];
+            p_locplayer = &players[local_player_no];
+            p_agent = p_locplayer->MyAgent[i];
             if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD)) {
                 res = 0;
                 break;
@@ -3482,7 +3487,11 @@ void game_setup(void)
     setup_sprites_small_font();
     load_peep_type_stats();
     load_campaigns();
-    players[local_player_no].MissionAgents = 0x0F;
+    {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+        p_locplayer->MissionAgents = 0x0F;
+    }
     debug_trace_setup(-1);
     if ( is_single_game || cmdln_param_bcg )
     {
@@ -3572,9 +3581,11 @@ void compute_scanner_zoom(void)
 
 void show_game_engine(void)
 {
+    PlayerInfo *p_locplayer;
     short dcthing;
 
-    dcthing = players[local_player_no].DirectControl[0];
+    p_locplayer = &players[local_player_no];
+    dcthing = p_locplayer->DirectControl[0];
     process_view_inputs(dcthing);// inlined call gengine_ctrl
 
     compute_scanner_zoom();
@@ -4957,7 +4968,11 @@ void campaign_new_game_prepare(void)
 
     screentype = SCRT_99;
     game_system_screen = 0;
-    players[local_player_no].MissionAgents = 0x0F;
+    {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+        p_locplayer->MissionAgents = 0x0F;
+    }
     init_weapon_text();
     load_city_data(0);
     load_city_txt();
@@ -6057,7 +6072,11 @@ void show_menu_screen_st0(void)
     LbColourTablesLoad(display_palette, "data/bgtables.dat");
     LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
     init_screen_boxes();
-    players[local_player_no].MissionAgents = 0x0f;
+    {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+        p_locplayer->MissionAgents = 0x0f;
+    }
     load_city_data(0);
     load_city_txt();
 
@@ -7167,10 +7186,281 @@ void draw_game(void)
     }
 }
 
+ubyte critical_action_input(void)
+{
+    ubyte ret;
+    asm volatile ("call ASM_critical_action_input\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+ubyte process_send_person(ushort player, int i)
+{
+    ubyte ret;
+    asm volatile ("call ASM_process_send_person\n"
+        : "=r" (ret) : "a" (player), "d" (i));
+    return ret;
+}
+
+short get_next_player_agent(ushort player)
+{
+    short ret;
+    asm volatile ("call ASM_get_next_player_agent\n"
+        : "=r" (ret) : "a" (player));
+    return ret;
+}
+
+void input_packet_playback(void)
+{
+    PlayerInfo *p_locplayer;
+    struct Packet *p_pckt;
+    struct Thing *p_agent;
+
+    p_locplayer = &players[local_player_no];
+    p_pckt = &packets[local_player_no];
+
+    if (lbKeyOn[KC_ESCAPE] && (lbShift == 1))
+    {
+        lbKeyOn[KC_ESCAPE] = 0;
+        if (critical_action_input())
+        {
+            exit_game = 1;
+            p_pckt->Action = 2;
+        }
+    }
+    do_scroll_map();
+    do_rotate_map();
+    if (lbKeyOn[KC_1])
+    {
+        p_agent = p_locplayer->MyAgent[0];
+        ingame.TrackX = p_agent->X >> 8;
+        ingame.TrackZ = p_agent->Z >> 8;
+        engn_xc = ingame.TrackX;
+        engn_zc = ingame.TrackZ;
+    }
+    if (lbKeyOn[KC_2])
+    {
+        p_agent = p_locplayer->MyAgent[1];
+        ingame.TrackX = p_agent->X >> 8;
+        ingame.TrackZ = p_agent->Z >> 8;
+        engn_xc = ingame.TrackX;
+        engn_zc = ingame.TrackZ;
+    }
+    if (lbKeyOn[KC_3])
+    {
+        p_agent = p_locplayer->MyAgent[2];
+        ingame.TrackX = p_agent->X >> 8;
+        ingame.TrackZ = p_agent->Z >> 8;
+        engn_xc = ingame.TrackX;
+        engn_zc = ingame.TrackZ;
+    }
+    if (lbKeyOn[KC_4])
+    {
+        p_agent = p_locplayer->MyAgent[3];
+        ingame.TrackX = p_agent->X >> 8;
+        ingame.TrackZ = p_agent->Z >> 8;
+        engn_xc = ingame.TrackX;
+        engn_zc = ingame.TrackZ;
+    }
+}
+
+void input_mission_cheats(void)
+{
+    if ((ingame.UserFlags & UsrF_Cheats) != 0 && lbKeyOn[KC_C] && lbShift == KMod_ALT)
+    {
+        lbKeyOn[KC_C] = 0;
+        mission_result = 1;
+    }
+    if ((ingame.UserFlags & UsrF_Cheats) != 0 && lbKeyOn[KC_F] && lbShift == KMod_ALT)
+    {
+        lbKeyOn[KC_F] = 0;
+        mission_result = -1;
+    }
+}
+
+void draw_mission_concluded(void)
+{
+    uint tm;
+    uint tm_h, tm_m, tm_s;
+
+    tm = (dos_clock() - ingame.fld_unkC91) / 100;
+    if (ingame.fld_unkCB5)
+    {
+        sprintf(unknmsg_str, "%s %s: %s ", gui_strings[638], gui_strings[635 + ingame.MissionStatus], scroll_text);
+        data_15319c = unknmsg_str;
+    }
+    else
+    {
+        tm_h = tm / 3600;
+        tm_m = tm / 60;
+        tm_s = tm % 60;
+        switch (language_3str[0])
+        {
+        case 'e':
+        default:
+            sprintf(unknmsg_str, "%s %s %s Time %02d:%02d:%02d", gui_strings[638],
+              gui_strings[635 + ingame.MissionStatus], gui_strings[639],
+              tm_h, tm_m % 60, tm_s);
+            break;
+        case 'f':
+            sprintf(unknmsg_str, "%s %s %s Heure %02d:%02d:%02d", gui_strings[638],
+              gui_strings[635 + ingame.MissionStatus], gui_strings[639],
+              tm_h, tm_m % 60, tm_s);
+            break;
+        case 'g':
+            sprintf(unknmsg_str, "%s %s %s Zeit %02d:%02d:%02d", gui_strings[638],
+              gui_strings[635 + ingame.MissionStatus], gui_strings[639],
+              tm_h, tm_m % 60, tm_s);
+            break;
+        case 'i':
+            sprintf(unknmsg_str, "%s %s %s Tempo %02d:%02d:%02d", gui_strings[638],
+              gui_strings[635 + ingame.MissionStatus], gui_strings[639],
+              tm_h, tm_m % 60, tm_s);
+            break;
+        case 's':
+            if (language_3str[1] == 'p')
+              sprintf(unknmsg_str, "%s %s %s Tiempo %02d:%02d:%02d", gui_strings[638],
+                gui_strings[635 + ingame.MissionStatus], gui_strings[639],
+                tm_h, tm_m % 60, tm_s);
+            else
+              sprintf(unknmsg_str, "%s %s %s Tid %02d:%02d:%02d",  gui_strings[638],
+                gui_strings[635 + ingame.MissionStatus], gui_strings[639],
+                tm_h, tm_m % 60, tm_s);
+            break;
+        }
+        data_15319c = unknmsg_str;
+        scroll_text = unknmsg_str;
+    }
+    if (lbDisplay.GraphicsScreenHeight < 400)
+    {
+        int y = 25;
+        draw_text_linewrap2b(11, &y, data_15319c);
+    }
+    else
+    {
+        int y = 51;
+        draw_text_linewrap1b(22, &y, data_15319c);
+    }
+}
+
+void input_mission_concluded(void)
+{
+    if ( lbKeyOn[KC_RETURN] || lbKeyOn[KC_SPACE] || (lbKeyOn[KC_ESCAPE] && (lbShift & KMod_SHIFT) == 0))
+    {
+        if ( ingame.MissionStatus != -1 || lbKeyOn[KC_ESCAPE] )
+        {
+          lbKeyOn[KC_ESCAPE] = 0;
+          lbKeyOn[KC_SPACE] = 0;
+          lbKeyOn[KC_RETURN] = 0;
+          ingame.fld_unkC4F = 1;
+        }
+        else
+        {
+          lbKeyOn[KC_R] = 1;
+          lbKeyOn[KC_SPACE] = 0;
+          lbKeyOn[KC_RETURN] = 0;
+        }
+    }
+}
+
 void load_packet(void)
 {
+#if 1
     asm volatile ("call ASM_load_packet\n"
         :  :  : "eax" );
+#else
+    PlayerInfo *p_locplayer;
+    struct Packet *p_pckt;
+    int did_actn;
+
+    p_locplayer = &players[local_player_no];
+    p_pckt = &packets[local_player_no];
+
+    game_graphics_inputs();
+    if (pktrec_mode == PktR_PLAYBACK) // packet replay controls
+    {
+        if (!in_network_game)
+            PacketRecord_Read(p_pckt);
+        input_packet_playback();
+        ingame.MissionStatus = test_missions(0);
+        return;
+    }
+
+    did_actn = 0;
+    if (ingame.DisplayMode == DpM_UNKN_32 || ingame.DisplayMode == DpM_UNKN_3B)
+    {
+        did_actn = do_user_interface();
+        input_mission_cheats();
+        ingame.MissionStatus = test_missions(0);
+        if ((ingame.MissionStatus != 0) && !in_network_game)
+        {
+            draw_mission_concluded();
+            input_mission_concluded();
+            if (ingame.fld_unkC4F == 0)
+            {
+                struct Mission *p_missi;
+                p_missi = &mission_list[ingame.CurrentMission];
+                if (p_missi->WaitToFade != 0)
+                    ingame.fld_unkC4F = p_missi->WaitToFade;
+            }
+        }
+    }
+
+    if (ingame.fld_unkC4F != 0)
+    {
+        if (ingame.fld_unkC4F < 30)
+            change_brightness(-2);
+        ingame.fld_unkC4F--;
+        if (ingame.fld_unkC4F == 0)
+        {
+            init_level_3d(1);
+            if (is_single_game)
+                exit_game = 1;
+            mission_over();
+        }
+    }
+    if (did_actn == 255)
+    {
+        if (is_single_game) {
+            exit_game = 1;
+        } else {
+            init_level_3d(1u);
+            if (ingame.MissionStatus != 1)
+                ingame.MissionStatus = -1;
+            mission_over();
+        }
+    }
+
+    if ((did_actn == 0) || (p_locplayer->DoubleMode != 0))
+    {
+        // TODO remake the inside
+    }
+
+    if (p_locplayer->PanelState[mouser] != 17)
+    {
+        if (lbKeyOn[KC_ESCAPE] && (in_network_game || (ingame.UserFlags & UsrF_Cheats) != 0))
+        {
+            if ((lbShift & KMod_CONTROL) != 0 && !in_network_game)
+            {
+                lbKeyOn[KC_ESCAPE] = 0;
+                exit_game = 1;
+            }
+            else if ((lbShift & KMod_SHIFT) != 0)
+            {
+                lbKeyOn[KC_ESCAPE] = 0;
+                if (in_network_game || critical_action_input()) {
+                    change_brightness(-32);
+                    p_pckt->Action = 2;
+                }
+            }
+        }
+
+        if (pktrec_mode == PktR_RECORD && !in_network_game)
+        {
+            PacketRecord_Write(p_pckt);
+        }
+    }
+#endif
 }
 
 void kill_my_players(PlayerIdx plyr)
@@ -7795,9 +8085,9 @@ void process_packets(void)
     ushort v53;
     PlayerIdx plyr;
 
-    if (pktrec_mode == 0)
+    if (pktrec_mode == PktR_NONE)
         v53 = 4;
-    else if (pktrec_mode <= 2)
+    else if (pktrec_mode <= PktR_PLAYBACK)
         v53 = 1;
 
     if (in_network_game && (net_players_num > 1))

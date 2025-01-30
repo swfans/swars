@@ -373,10 +373,122 @@ void SCANNER_move_objective_info(int width, int height, int end_pos)
     }
 }
 
+void draw_text_linewrap1b(int base_x, int *p_pos_y, const char *text)
+{
+    const char *str;
+    int pos_x, pos_y;
+    int base_shift;
+    TbPixel col2;
+
+    col2 = SCANNER_colour[0];
+    str = text;
+    pos_x = base_x;
+    base_shift = 0;
+    pos_y = *p_pos_y;
+    while (*str != '\0')
+    {
+        if (*str == 32)
+        {
+            const char *sstr;
+            int w;
+
+            w = 0;
+            sstr = str + 1;
+            while (*sstr != '\0')
+            {
+                struct TbSprite *p_spr;
+
+                if (*sstr == 32)
+                    break;
+                p_spr = &small_font[my_char_to_upper(*sstr) - 31];
+                w += p_spr->SWidth;
+                sstr++;
+            }
+            if (pos_x + 2 * w < lbDisplay.PhysicalScreenWidth - 16) {
+                pos_x += 8;
+            } else {
+                pos_x = base_x;
+                pos_y += 12;
+            }
+        }
+        else
+        {
+            struct TbSprite *p_spr;
+            ushort fade_lv;
+
+            fade_lv = 40 - (lbSinTable[128 * ((gameturn + base_shift) & 0xF)] >> 13);
+            p_spr = &small_font[my_char_to_upper(*str) - 31];
+            SCANNER_unkn_func_200(p_spr, pos_x + 1, pos_y + 1, colour_lookup[0]);
+            SCANNER_unkn_func_200(p_spr, pos_x, pos_y, pixmap.fade_table[256 * fade_lv + col2]);
+            pos_x += p_spr->SWidth + p_spr->SWidth;
+        }
+        base_shift++;
+        str++;
+    }
+    pos_y += 12;
+    *p_pos_y = pos_y;
+}
+
+void draw_text_linewrap2b(int base_x, int *p_pos_y, const char *text)
+{
+    const char *str;
+    int pos_x, pos_y;
+    int base_shift;
+    TbPixel col2;
+
+    col2 = SCANNER_colour[0];
+    pos_x = base_x;
+    str = text;
+    pos_y = *p_pos_y;
+    base_shift = 0;
+    while (*str != '\0')
+    {
+        if (*str == 32)
+        {
+            const char *sstr;
+            int w;
+
+            w = 0;
+            sstr = str + 1;
+            while (*sstr != '\0')
+            {
+                struct TbSprite *p_spr;
+
+                if (*sstr == 32)
+                  break;
+                p_spr = &small_font[my_char_to_upper(*sstr) - 31];
+                w += p_spr->SWidth;
+                sstr++;
+            }
+            if (pos_x + w < lbDisplay.PhysicalScreenWidth - 8) {
+                pos_x += 4;
+            } else {
+                pos_x = base_x;
+                pos_y += 6;
+            }
+        }
+        else
+        {
+            struct TbSprite *p_spr;
+            ushort fade_lv;
+
+            fade_lv = 40 - (lbSinTable[128 * ((gameturn + base_shift) & 0xF)] >> 13);
+            p_spr = &small_font[my_char_to_upper(*str) - 31];
+            LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, p_spr, colour_lookup[0]);
+            LbSpriteDrawOneColour(pos_x, pos_y,  p_spr, pixmap.fade_table[256 * fade_lv + col2]);
+            pos_x += p_spr->SWidth;
+        }
+        str++;
+        base_shift++;
+    }
+    pos_y += 6;
+    *p_pos_y = pos_y;
+}
+
 void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
 {
-    int pos_x, pos_y;
     const char *str;
+    int pos_x, pos_y;
     int base_shift;
     TbPixel col2;
 
@@ -385,7 +497,7 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
     pos_y = *p_pos_y;
     col2 = byte_1C5C30[plyr];
     base_shift = -180;
-    while (*str != 0)
+    while (*str != '\0')
     {
         if (*str == 32)
         {
@@ -426,8 +538,8 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
 
 void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
 {
-    int pos_x, pos_y;
     const char *str;
+    int pos_x, pos_y;
     int base_shift;
     TbPixel col2;
 
@@ -436,11 +548,11 @@ void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
     pos_y = *p_pos_y;
     col2 = byte_1C5C30[plyr];
     base_shift = -180;
-    while (*str != 0)
+    while (*str != '\0')
     {
         if (*str == 32)
         {
-            if (font_word_length(str + 1) + pos_x < lbDisplay.PhysicalScreenWidth - 8) {
+            if (pos_x + font_word_length(str + 1) < lbDisplay.PhysicalScreenWidth - 8) {
                 pos_x += 4;
             } else {
                 pos_x = base_x;
