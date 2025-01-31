@@ -5176,11 +5176,12 @@ void do_scroll_map(void)
     long engn_xc_orig, engn_zc_orig;
     ushort md;
     long abase, angle;
-    int dx, dy;
+    int dx, dy, dz;
     int dampr;
 
     dx = 0;
     dy = 0;
+    dz = 0;
     dampr = 10;
     if (ingame.fld_unkCA6)
         track_angle();
@@ -5188,7 +5189,6 @@ void do_scroll_map(void)
     if (p_locplayer->State[0] == 1)
     {
         ushort bitx, bity;
-        int dz;
         // TODO check if this makes sense
         bitx = (p_locplayer->UserInput[0].Bits >> 0);
         bity = (p_locplayer->UserInput[0].Bits >> 8);
@@ -7363,6 +7363,219 @@ void input_mission_concluded(void)
     }
 }
 
+void input_user_control_agent(ushort plyr, short dmuser)
+{
+    PlayerInfo *p_player;
+    struct Packet *p_pckt;
+    void (*loc_build_packet)(struct Packet *, ushort, ulong, long, long, long);
+    struct Thing *p_dcthing;
+    int dx, dy, dz;
+    ThingIdx dcthing;
+
+    p_player = &players[plyr];
+    p_pckt = &packets[plyr];
+
+    switch (dmuser)
+    {
+    case 0:
+        loc_build_packet = build_packet;
+        break;
+    case 1:
+        loc_build_packet = build_packet2;
+        break;
+    case 2:
+        loc_build_packet = build_packet4;
+        break;
+    default:
+        loc_build_packet = build_packet4;
+        break;
+    }
+
+    dcthing = p_player->DirectControl[dmuser];
+
+    if ((dcthing == 0) || (lbShift == KMod_SHIFT))
+    {
+        loc_build_packet(p_pckt, 0, dcthing, 0, 0, 0);
+        return;
+    }
+
+    if ((p_player->UserInput[dmuser].Bits & 0x20000000) != 0)
+    {
+        p_player->UserInput[dmuser].Bits &= ~0x20000000;
+        loc_build_packet(p_pckt, 255u, dcthing, 0, 0, 0);
+        return;
+    }
+
+    if ((p_player->UserInput[dmuser].Bits & 0x40000000) != 0)
+    {
+        p_dcthing = &things[dcthing];
+        if ((p_dcthing->Flag & 0x10000000) != 0)
+        {
+            p_player->UserInput[dmuser].Bits &= ~0x40000000;
+            loc_build_packet(p_pckt, PAct_LEAVE_VEHICLE, dcthing,
+              p_dcthing->U.UPerson.Vehicle, 0, 0);
+            return;
+        }
+    }
+
+    if ((p_player->UserInput[dmuser].Bits & 0x40000000) != 0)
+    {
+        loc_build_packet(p_pckt, PAct_DROP_SELC_WEAPON_SECR, dcthing, 0, 0, 0);
+        return;
+    }
+
+    if ((p_player->UserInput[dmuser].Bits & 0x800000) != 0)
+    {
+        int i, nagents;
+        nagents = 0;
+        for (i = 0; i < playable_agents; i++)
+        {
+            struct Thing *p_agent;
+            p_agent = p_player->MyAgent[i];
+            if ((p_agent->State == 43) || (p_agent->State == 13))
+                nagents++;
+        }
+        if (nagents == playable_agents - 1) {
+            loc_build_packet(p_pckt, PAct_PROTECT_TOGGLE, dcthing, 0, 0,  0);
+        } else {
+            loc_build_packet(p_pckt, PAct_PROTECT_INC, dcthing, 0, 0, 0);
+        }
+    }
+
+    if ((p_player->UserInput[dmuser].Bits & 0x010000) != 0)
+    {
+        p_dcthing = &things[dcthing];
+        if ((p_dcthing->Flag & 0x8000000) != 0)
+        {
+            p_player->UserInput[dmuser].Bits &= ~0x010000;
+            loc_build_packet(p_pckt, PAct_PICKUP, dcthing,
+              p_dcthing->U.UPerson.Vehicle, 0, 0);
+            return;
+        }
+    }
+
+    if ((p_player->UserInput[dmuser].Bits & 0x10000) != 0)
+    {
+        p_dcthing = &things[dcthing];
+        if ((p_dcthing->Flag & 0x1000000) != 0)
+        {
+            p_player->UserInput[dmuser].Bits &= ~0x10000;
+            loc_build_packet(p_pckt, PAct_ENTER_VEHICLE, dcthing,
+              p_dcthing->U.UPerson.Vehicle, 0, 0);
+            return;
+        }
+    }
+
+    if ((p_player->UserInput[dmuser].Bits & 0x400000) != 0 || (p_player->State[dmuser] == 1))
+    {
+        if (process_send_person(plyr, dmuser))
+        {
+            loc_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_ABS,
+              dcthing, engn_xc, 0, engn_zc);
+        }
+        return;
+    }
+
+    if ((p_player->UserInput[dmuser].Bits & 0x100000) != 0)
+    {
+        if (p_player->PrevState[dmuser] != 23)
+        {
+            short next_player;
+            next_player = get_next_player_agent(plyr);
+            loc_build_packet(p_pckt, PAct_SELECT_AGENT,
+              dcthing, next_player, 0, 0);
+        }
+        return;
+    }
+
+    dy = 0;
+    dx = (int)p_player->UserInput[dmuser].DtX * 256;
+    dz = (int)p_player->UserInput[dmuser].DtZ * 256;
+
+    if ((p_player->UserInput[dmuser].Bits & 0x020000) != 0)
+    {
+        p_dcthing = &things[dcthing];
+        if (dx > 0)
+        {
+            short val;
+            val = p_dcthing->U.UPerson.Mood + 10;
+            if (val > 100)
+                val = 100;
+            loc_build_packet(p_pckt, PAct_AGENT_SET_MOOD, dcthing, val, 0, 0);
+            if (!IsSamplePlaying(0, 21, 0))
+                play_sample_using_heap(0, 21, 127, 64, 100, -1, 1);
+            ingame.Flags |= 0x100000;
+            return;
+        }
+
+        if (dx < 0)
+        {
+            short val;
+            val = p_dcthing->U.UPerson.Mood - 10;
+            if (val < -100)
+                val = -100;
+            loc_build_packet(p_pckt, PAct_AGENT_SET_MOOD, dcthing, val, 0, 0);
+            if ( !IsSamplePlaying(0, 21, 0) )
+                play_sample_using_heap(0, 21, 127, 64, 100, -1, 1);
+            ingame.Flags |= 0x100000;
+            return;
+        }
+
+        if (dz < 0)
+        {
+            if (p_player->PrevState[dmuser] != 13)
+            {
+                loc_build_packet(p_pckt, PAct_SELECT_NEXT_WEAPON, dcthing, 0, 0, 0);
+            }
+            return;
+        }
+
+        if (dz > 0)
+        {
+            if (p_player->PrevState[dmuser] != 27)
+            {
+                loc_build_packet(p_pckt, PAct_SELECT_PREV_WEAPON, dcthing, 0, 0, 0);
+            }
+            return;
+        }
+
+        p_player->PrevState[dmuser] = 0;
+        return;
+    }
+
+    if (dx == 0 && dz == 0)
+    {
+        ushort flg;
+        if ((p_player->UserInput[dmuser].Bits & 0x10000) != 0)
+            flg = 0x8000;
+        else
+            flg = 0x0;
+        loc_build_packet(p_pckt, PAct_NONE | flg, dcthing, dx, dy, dz);
+        return;
+    }
+
+    local_to_worldr(&dx, &dy, &dz);
+
+    if ((p_player->UserInput[dmuser].Bits & 0x80000000) == 0)
+    {
+        ushort flg;
+        if ((p_player->UserInput[dmuser].Bits & 0x10000) != 0)
+            flg = 0x8000;
+        else
+            flg = 0x0;
+        loc_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_REL | flg, dcthing, dx, dy, dz);
+    }
+    else
+    {
+        ushort flg;
+        if ((p_player->UserInput[dmuser].Bits & 0x10000) != 0)
+            flg = 0x8000;
+        else
+            flg = 0x0;
+        loc_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_REL_FF | flg, dcthing, dx, dy, dz);
+    }
+}
+
 void load_packet(void)
 {
 #if 1
@@ -7433,7 +7646,21 @@ void load_packet(void)
 
     if ((did_actn == 0) || (p_locplayer->DoubleMode != 0))
     {
-        // TODO remake the inside
+        short dmuser;
+
+        for (dmuser = 0; dmuser < p_locplayer->DoubleMode + 1; dmuser++)
+        {
+            if (p_locplayer->DoubleMode != 0) {
+                ulong md;
+                md = p_locplayer->UserInput[dmuser].ControlMode & 0x1FFF;
+                if (md == 1)
+                    continue;
+            }
+            if (ingame.TrackThing != 0)
+                continue;
+
+            input_user_control_agent(local_player_no, dmuser);
+        }
     }
 
     if (p_locplayer->PanelState[mouser] != 17)
