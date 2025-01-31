@@ -273,7 +273,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
     if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
     {
         p_dcthing = &things[dcthing];
-        if ((p_dcthing->Flag & SpUIn_Unkn08000000) != 0)
+        if ((p_dcthing->Flag & TngF_Unkn08000000) != 0)
         {
             p_player->UserInput[dmuser].Bits &= ~SpUIn_DoTrigger;
             loc_build_packet(p_pckt, PAct_PICKUP, dcthing,
