@@ -2770,7 +2770,7 @@ TbBool process_panel_state(void)
         i = next_buffered_key();
         if (i != 0)
         {
-            if (lbShift & 1)
+            if (lbShift & KMod_SHIFT)
                 i |= 0x0100;
             my_build_packet(p_pckt, PAct_CHAT_MESSAGE_KEY, i, 0, 0, 0);
             return 1;

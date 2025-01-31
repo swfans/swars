@@ -71,7 +71,7 @@ void do_user_input_bits_actions_from_kbd(struct SpecialUserInput *p_usrinp)
         lbKeyOn[kbkeys[GKey_DROP_WEAPON]] = 0;
         p_usrinp->Bits |= SpUIn_DoDropOrGoOut;
     }
-    if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == 2) {
+    if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == KMod_CONTROL) {
         lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
         p_usrinp->Bits |= SpUIn_SelfDestruct;
     }
@@ -107,7 +107,7 @@ void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usri
         p_usrinp->Bits |= SpUIn_ChangeAgent;
     if (lbKeyOn[kbkeys[GKey_GOTO_POINT]]) {
         lbKeyOn[kbkeys[GKey_GOTO_POINT]] = 0;
-        p_usrinp->Bits |= SpUIn_Unkn00400000;
+        p_usrinp->Bits |= SpUIn_GotoPoint;
     }
     if (lbKeyOn[KC_BACKSLASH] || lbKeyOn[kbkeys[GKey_GROUP]]) {
         if (lbKeyOn[KC_BACKSLASH])
@@ -121,7 +121,7 @@ void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usri
         p_usrinp->Bits |= SpUIn_DoDropOrGoOut;
     }
     //TODO why different self destruct?
-    if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == 4) {
+    if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == KMod_ALT) {
         lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
         p_usrinp->Bits |= SpUIn_SelfDestruct;
     }
@@ -137,7 +137,7 @@ void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usri
         p_usrinp->Bits |= SpUIn_ChangeAgent;
     if (jskeys[GKey_GOTO_POINT]
       && (jskeys[GKey_GOTO_POINT] & joy.Buttons[0]) == jskeys[GKey_GOTO_POINT])
-        p_usrinp->Bits |= SpUIn_Unkn00400000;
+        p_usrinp->Bits |= SpUIn_GotoPoint;
     if (jskeys[GKey_GROUP]
       && (jskeys[GKey_GROUP] & joy.Buttons[0]) == jskeys[GKey_GROUP])
         p_usrinp->Bits |= SpUIn_GroupingInc;
@@ -294,7 +294,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
         }
     }
 
-    if ((p_player->UserInput[dmuser].Bits & SpUIn_Unkn00400000) != 0 || (p_player->State[dmuser] == 1))
+    if ((p_player->UserInput[dmuser].Bits & SpUIn_GotoPoint) != 0 || (p_player->State[dmuser] == 1))
     {
         if (process_send_person(plyr, dmuser))
         {

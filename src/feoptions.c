@@ -162,7 +162,7 @@ TbBool input_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
         {
             lbDisplay.LeftButton = 0;
             box->Flags |= GBxFlg_IsRPushed;
-            if ((lbShift & 0x01) != 0)
+            if ((lbShift & KMod_SHIFT) != 0)
                 (*target_ptr)--;
             else
                 (*target_ptr) -= 10;
@@ -196,7 +196,7 @@ TbBool input_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
         {
             lbDisplay.LeftButton = 0;
             box->Flags |= GBxFlg_IsRPushed;
-            if ((lbShift & 0x01) != 0)
+            if ((lbShift & KMod_SHIFT) != 0)
                 (*target_ptr)++;
             else
                 (*target_ptr) += 10;

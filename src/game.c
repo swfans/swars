@@ -7075,7 +7075,7 @@ void input_packet_playback(void)
     p_locplayer = &players[local_player_no];
     p_pckt = &packets[local_player_no];
 
-    if (lbKeyOn[KC_ESCAPE] && (lbShift == 1))
+    if (lbKeyOn[KC_ESCAPE] && (lbShift == KMod_SHIFT))
     {
         lbKeyOn[KC_ESCAPE] = 0;
         if (critical_action_input())

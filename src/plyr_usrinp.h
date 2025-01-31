@@ -39,7 +39,7 @@ enum SpecialUserInputBits {
     /** Switch control to next agent. */
     SpUIn_ChangeAgent      = 0x00100000,
     SpUIn_Unkn00200000     = 0x00200000,
-    SpUIn_Unkn00400000     = 0x00400000,
+    SpUIn_GotoPoint        = 0x00400000,
     /** Increase agents grouping, or dissolve group if at max. */
     SpUIn_GroupingInc      = 0x00800000,
     SpUIn_Unkn01000000     = 0x01000000,
