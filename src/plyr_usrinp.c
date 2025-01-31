@@ -62,9 +62,9 @@ void do_user_input_bits_direction_from_joy(struct SpecialUserInput *p_usrinp, ub
 void do_user_input_bits_actions_from_kbd(struct SpecialUserInput *p_usrinp)
 {
     if (lbKeyOn[kbkeys[GKey_FIRE]])
-        p_usrinp->Bits |= SpUIn_Unkn00010000;
+        p_usrinp->Bits |= SpUIn_DoTrigger;
     if (lbKeyOn[kbkeys[GKey_CHANGE_MD_WP]])
-        p_usrinp->Bits |= SpUIn_Unkn00020000;
+        p_usrinp->Bits |= SpUIn_ChangeMoodOrWep;
     if (lbKeyOn[kbkeys[GKey_CHANGE_AGENT]])
         p_usrinp->Bits |= SpUIn_ChangeAgent;
     if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]]) {
@@ -81,10 +81,10 @@ void do_user_input_bits_actions_from_joy(struct SpecialUserInput *p_usrinp, ubyt
 {
     if (jskeys[GKey_FIRE]
       && (jskeys[GKey_FIRE] & joy.Buttons[channel]) == jskeys[GKey_FIRE])
-        p_usrinp->Bits |= SpUIn_Unkn00010000;
+        p_usrinp->Bits |= SpUIn_DoTrigger;
     if (jskeys[GKey_CHANGE_MD_WP]
       && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[channel]) == jskeys[GKey_CHANGE_MD_WP])
-        p_usrinp->Bits |= SpUIn_Unkn00020000;
+        p_usrinp->Bits |= SpUIn_ChangeMoodOrWep;
     if (jskeys[GKey_DROP_WEAPON]
       && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[channel]) == jskeys[GKey_DROP_WEAPON])
         p_usrinp->Bits |= SpUIn_DoDropOrGoOut;
@@ -100,9 +100,9 @@ void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usri
     //do_user_input_bits_actions_from_joy(p_usrinp);
 
     if (lbKeyOn[kbkeys[GKey_FIRE]])
-        p_usrinp->Bits |= SpUIn_Unkn00010000;
+        p_usrinp->Bits |= SpUIn_DoTrigger;
     if (lbKeyOn[kbkeys[GKey_CHANGE_MD_WP]])
-        p_usrinp->Bits |= SpUIn_Unkn00020000;
+        p_usrinp->Bits |= SpUIn_ChangeMoodOrWep;
     if (lbKeyOn[kbkeys[GKey_CHANGE_AGENT]])
         p_usrinp->Bits |= SpUIn_ChangeAgent;
     if (lbKeyOn[kbkeys[GKey_GOTO_POINT]]) {
@@ -128,10 +128,10 @@ void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usri
 
     if (jskeys[GKey_FIRE]
       && (jskeys[GKey_FIRE] & joy.Buttons[0]) == jskeys[GKey_FIRE])
-        p_usrinp->Bits |= SpUIn_Unkn00010000;
+        p_usrinp->Bits |= SpUIn_DoTrigger;
     if (jskeys[GKey_CHANGE_MD_WP]
       && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[0]) == jskeys[GKey_CHANGE_MD_WP])
-        p_usrinp->Bits |= SpUIn_Unkn00020000;
+        p_usrinp->Bits |= SpUIn_ChangeMoodOrWep;
     if (jskeys[GKey_CHANGE_AGENT]
       && (jskeys[GKey_CHANGE_AGENT] & joy.Buttons[0]) == jskeys[GKey_CHANGE_AGENT])
         p_usrinp->Bits |= SpUIn_ChangeAgent;
@@ -270,24 +270,24 @@ void input_user_control_agent(ushort plyr, short dmuser)
         }
     }
 
-    if ((p_player->UserInput[dmuser].Bits & SpUIn_Unkn00010000) != 0)
+    if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
     {
         p_dcthing = &things[dcthing];
         if ((p_dcthing->Flag & SpUIn_Unkn08000000) != 0)
         {
-            p_player->UserInput[dmuser].Bits &= ~SpUIn_Unkn00010000;
+            p_player->UserInput[dmuser].Bits &= ~SpUIn_DoTrigger;
             loc_build_packet(p_pckt, PAct_PICKUP, dcthing,
               p_dcthing->U.UPerson.Vehicle, 0, 0);
             return;
         }
     }
 
-    if ((p_player->UserInput[dmuser].Bits & SpUIn_Unkn00010000) != 0)
+    if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
     {
         p_dcthing = &things[dcthing];
         if ((p_dcthing->Flag & TngF_InVehicle) != 0)
         {
-            p_player->UserInput[dmuser].Bits &= ~SpUIn_Unkn00010000;
+            p_player->UserInput[dmuser].Bits &= ~SpUIn_DoTrigger;
             loc_build_packet(p_pckt, PAct_ENTER_VEHICLE, dcthing,
               p_dcthing->U.UPerson.Vehicle, 0, 0);
             return;
@@ -318,7 +318,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
     dx = get_agent_move_direction_delta_x(&p_player->UserInput[dmuser]) * 256;
     dz = get_agent_move_direction_delta_z(&p_player->UserInput[dmuser]) * 256;
 
-    if ((p_player->UserInput[dmuser].Bits & SpUIn_Unkn00020000) != 0)
+    if ((p_player->UserInput[dmuser].Bits & SpUIn_ChangeMoodOrWep) != 0)
     {
         p_dcthing = &things[dcthing];
         if (dx > 0)
@@ -372,7 +372,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
     if (dx == 0 && dz == 0)
     {
         ushort flg;
-        if ((p_player->UserInput[dmuser].Bits & SpUIn_Unkn00010000) != 0)
+        if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
             flg = 0x8000;
         else
             flg = 0x0;
@@ -385,7 +385,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
     if ((p_player->UserInput[dmuser].Bits & SpUIn_DoActionFast) != 0)
     {
         ushort flg;
-        if ((p_player->UserInput[dmuser].Bits & SpUIn_Unkn00010000) != 0)
+        if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
             flg = 0x8000;
         else
             flg = 0x0;
@@ -394,7 +394,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
     else
     {
         ushort flg;
-        if ((p_player->UserInput[dmuser].Bits & SpUIn_Unkn00010000) != 0)
+        if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
             flg = 0x8000;
         else
             flg = 0x0;

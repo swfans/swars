@@ -29,8 +29,11 @@ extern "C" {
 #pragma pack(1)
 
 enum SpecialUserInputBits {
-    SpUIn_Unkn00010000     = 0x00010000,
-    SpUIn_Unkn00020000     = 0x00020000,
+    /** Trigger pressed; this can do multiple actions: weapon fire, pickup,
+     *  entering vehicle or move to point. */
+    SpUIn_DoTrigger        = 0x00010000,
+    /** A mode where X axis changes mood, Y axis changes weapon. */
+    SpUIn_ChangeMoodOrWep  = 0x00020000,
     SpUIn_Unkn00040000     = 0x00040000,
     SpUIn_Unkn00080000     = 0x00080000,
     /** Switch control to next agent. */
