@@ -260,7 +260,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
         {
             struct Thing *p_agent;
             p_agent = p_player->MyAgent[i];
-            if ((p_agent->State == 43) || (p_agent->State == 13))
+            if ((p_agent->State == PerSt_PROTECT_PERSON) || (p_agent->State == PerSt_DEAD))
                 nagents++;
         }
         if (nagents == playable_agents - 1) {
@@ -305,7 +305,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
 
     if ((p_player->UserInput[dmuser].Bits & SpUIn_ChangeAgent) != 0)
     {
-        if (p_player->PrevState[dmuser] != 23)
+        if (p_player->PrevState[dmuser] != PAct_SELECT_AGENT)
         {
             short next_player;
             next_player = get_next_player_agent(plyr);
@@ -349,7 +349,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
 
         if (dz < 0)
         {
-            if (p_player->PrevState[dmuser] != 13)
+            if (p_player->PrevState[dmuser] != PAct_SELECT_NEXT_WEAPON)
             {
                 loc_build_packet(p_pckt, PAct_SELECT_NEXT_WEAPON, dcthing, 0, 0, 0);
             }
@@ -358,14 +358,14 @@ void input_user_control_agent(ushort plyr, short dmuser)
 
         if (dz > 0)
         {
-            if (p_player->PrevState[dmuser] != 27)
+            if (p_player->PrevState[dmuser] != PAct_SELECT_PREV_WEAPON)
             {
                 loc_build_packet(p_pckt, PAct_SELECT_PREV_WEAPON, dcthing, 0, 0, 0);
             }
             return;
         }
 
-        p_player->PrevState[dmuser] = 0;
+        p_player->PrevState[dmuser] = PAct_NONE;
         return;
     }
 
