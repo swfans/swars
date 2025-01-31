@@ -7221,7 +7221,7 @@ void input_mission_concluded(void)
 
 void load_packet(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_load_packet\n"
         :  :  : "eax" );
 #else
