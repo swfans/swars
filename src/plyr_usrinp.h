@@ -1,0 +1,89 @@
+/******************************************************************************/
+// Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
+/******************************************************************************/
+/** @file plyr_usrinp.h
+ *     Header file for plyr_usrinp.c.
+ * @par Purpose:
+ *     Players User Input handling.
+ * @par Comment:
+ *     Just a header file - #defines, typedefs, function prototypes etc.
+ * @author   Tomasz Lis
+ * @date     11 Dec 2024 - 01 Feb 2025
+ * @par  Copying and copyrights:
+ *     This program is free software; you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation; either version 2 of the License, or
+ *     (at your option) any later version.
+ */
+/******************************************************************************/
+#ifndef PLYR_USRINP_H
+#define PLYR_USRINP_H
+
+#include "bftypes.h"
+#include "game_bstype.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+/******************************************************************************/
+#pragma pack(1)
+
+enum SpecialUserInputBits {
+    SpUIn_Unkn00010000     = 0x00010000,
+    SpUIn_Unkn00020000     = 0x00020000,
+    SpUIn_Unkn00040000     = 0x00040000,
+    SpUIn_Unkn00080000     = 0x00080000,
+    SpUIn_Unkn00100000     = 0x00100000,
+    SpUIn_Unkn00200000     = 0x00200000,
+    SpUIn_Unkn00400000     = 0x00400000,
+    SpUIn_Unkn00800000     = 0x00800000,
+    SpUIn_Unkn01000000     = 0x01000000,
+    SpUIn_Unkn02000000     = 0x02000000,
+    SpUIn_Unkn04000000     = 0x04000000,
+    SpUIn_Unkn08000000     = 0x08000000,
+    SpUIn_Unkn10000000     = 0x10000000,
+    SpUIn_Unkn30000000     = 0x20000000,
+    SpUIn_Unkn40000000     = 0x40000000,
+    SpUIn_DoActionFast     = 0x80000000,
+};
+
+/** Per-local-player input mapping struct.
+ *
+ * The game allows multiple people to play locally, using different input
+ * devices. This struct allows inputs from each such person to be translated
+ * into universal format, and then used to influence the game world.
+ */
+struct SpecialUserInput
+{
+  ulong Bits;
+  sbyte DtX;
+  sbyte DtZ;
+  ushort Turn; /* from do_user_interface(), this seem to be game turn of last action */
+  ubyte LastDir; /* probably wrong place */
+  ubyte CurDir; /* probably wrong place */
+  ushort MapX[3];
+  ushort MapY[3];
+  ushort MapZ[3];
+  ushort OnFace;
+  ushort ControlMode;
+  ushort MapIndex;
+};
+
+#pragma pack()
+/******************************************************************************/
+void do_user_input_bits_direction_clear(struct SpecialUserInput *p_usrinp);
+void do_user_input_bits_direction_from_kbd(struct SpecialUserInput *p_usrinp);
+void do_user_input_bits_direction_from_joy(struct SpecialUserInput *p_usrinp, ubyte channel);
+
+void do_user_input_bits_actions_from_kbd(struct SpecialUserInput *p_usrinp);
+void do_user_input_bits_actions_from_joy(struct SpecialUserInput *p_usrinp, ubyte channel);
+void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usrinp);
+
+void input_user_control_agent(ushort plyr, short dmuser);
+void update_agent_move_direction_deltas(struct SpecialUserInput *p_usrinp);
+
+/******************************************************************************/
+#ifdef __cplusplus
+}
+#endif
+#endif
