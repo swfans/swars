@@ -33,17 +33,22 @@ enum SpecialUserInputBits {
     SpUIn_Unkn00020000     = 0x00020000,
     SpUIn_Unkn00040000     = 0x00040000,
     SpUIn_Unkn00080000     = 0x00080000,
-    SpUIn_Unkn00100000     = 0x00100000,
+    /** Switch control to next agent. */
+    SpUIn_ChangeAgent      = 0x00100000,
     SpUIn_Unkn00200000     = 0x00200000,
     SpUIn_Unkn00400000     = 0x00400000,
-    SpUIn_Unkn00800000     = 0x00800000,
+    /** Increase agents grouping, or dissolve group if at max. */
+    SpUIn_GroupingInc      = 0x00800000,
     SpUIn_Unkn01000000     = 0x01000000,
     SpUIn_Unkn02000000     = 0x02000000,
     SpUIn_Unkn04000000     = 0x04000000,
     SpUIn_Unkn08000000     = 0x08000000,
     SpUIn_Unkn10000000     = 0x10000000,
-    SpUIn_Unkn30000000     = 0x20000000,
-    SpUIn_Unkn40000000     = 0x40000000,
+    /** Activate agent self-destruct sequence. */
+    SpUIn_SelfDestruct     = 0x20000000,
+    /** Drop weapon, or go out of a vehicle. */
+    SpUIn_DoDropOrGoOut    = 0x40000000,
+    /** Use fast version of the next action (ie. run to target). */
     SpUIn_DoActionFast     = 0x80000000,
 };
 
@@ -74,13 +79,15 @@ struct SpecialUserInput
 void do_user_input_bits_direction_clear(struct SpecialUserInput *p_usrinp);
 void do_user_input_bits_direction_from_kbd(struct SpecialUserInput *p_usrinp);
 void do_user_input_bits_direction_from_joy(struct SpecialUserInput *p_usrinp, ubyte channel);
+short get_agent_move_direction_delta_x(const struct SpecialUserInput *p_usrinp);
+short get_agent_move_direction_delta_z(const struct SpecialUserInput *p_usrinp);
+void update_agent_move_direction_deltas(struct SpecialUserInput *p_usrinp);
 
 void do_user_input_bits_actions_from_kbd(struct SpecialUserInput *p_usrinp);
 void do_user_input_bits_actions_from_joy(struct SpecialUserInput *p_usrinp, ubyte channel);
 void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usrinp);
 
 void input_user_control_agent(ushort plyr, short dmuser);
-void update_agent_move_direction_deltas(struct SpecialUserInput *p_usrinp);
 
 /******************************************************************************/
 #ifdef __cplusplus

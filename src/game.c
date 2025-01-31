@@ -5189,12 +5189,11 @@ void do_scroll_map(void)
     p_locplayer = &players[local_player_no];
     if (p_locplayer->State[0] == 1)
     {
-        ushort bitx, bity;
-        // TODO check if this makes sense
-        bitx = (p_locplayer->UserInput[0].Bits >> 0);
-        bity = (p_locplayer->UserInput[0].Bits >> 8);
-        dx = (bitx & 0xFF) << 8;
-        dz = (bity & 0xFF) << 8;
+        short bitx, bitz;
+        bitx = get_agent_move_direction_delta_x(&p_locplayer->UserInput[0]);
+        bitz = get_agent_move_direction_delta_z(&p_locplayer->UserInput[0]);
+        dx = bitx << 8;
+        dz = bitz << 8;
         local_to_worldr(&dx, &dy, &dz);
         engn_xc += dx;
         engn_zc += dz;
