@@ -7187,15 +7187,15 @@ void draw_mission_concluded(void)
         data_15319c = unknmsg_str;
         scroll_text = unknmsg_str;
     }
-    if (lbDisplay.GraphicsScreenHeight < 400)
     {
-        int y = 25;
-        draw_text_linewrap2b(11, &y, data_15319c);
-    }
-    else
-    {
-        int y = 51;
-        draw_text_linewrap1b(22, &y, data_15319c);
+        int scr_x, scr_y;
+        // TODO the text position should be computed based on position of panels loaded from file
+        scr_x = 11 * pop1_sprites_scale;
+        scr_y = 26 * pop1_sprites_scale;
+        if (lbDisplay.GraphicsScreenHeight < 400)
+            draw_text_linewrap2b(scr_x, &scr_y, data_15319c);
+        else
+            draw_text_linewrap1b(scr_x, &scr_y, data_15319c);
     }
 }
 
