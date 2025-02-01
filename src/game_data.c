@@ -103,6 +103,7 @@ PathInfo game_dirs[] = {
   {"intro",		1},
   {"sound",		1},
   {"data/equip",1},
+  {"qdata/equip",0},
   {"conf",		0},
   {NULL,		0},
 };

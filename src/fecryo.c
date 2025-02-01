@@ -25,6 +25,7 @@
 #include "bftext.h"
 #include "bflib_joyst.h"
 #include "ssampply.h"
+
 #include "specblit.h"
 #include "campaign.h"
 #include "cybmod.h"
@@ -34,6 +35,7 @@
 #include "guiboxes.h"
 #include "guitext.h"
 #include "keyboard.h"
+#include "game_data.h"
 #include "game_sprts.h"
 #include "game.h"
 #include "player.h"
@@ -129,7 +131,7 @@ void init_next_blokey_flic(void)
     struct Campaign *p_campgn;
     struct Animation *p_anim;
     const char *campgn_mark;
-    const char *flic_dir;
+    PathInfo *pinfo;
     ushort cmod, stage;
     int k;
 
@@ -139,7 +141,7 @@ void init_next_blokey_flic(void)
     if (strcmp(campgn_mark, "s") == 0)
         campgn_mark = "m";
 
-    flic_dir = "qdata/equip";
+    pinfo = &game_dirs[DirPlace_QEquip];
 
     stage = 0;
 
@@ -196,7 +198,7 @@ void init_next_blokey_flic(void)
         {
             k = anim_slots[8];
             p_anim = &animations[k];
-            sprintf(p_anim->Filename, "%s/%s%da%d.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            sprintf(p_anim->Filename, "%s/%s%da%d.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
             flic_unkn03(8u);
             play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
             current_frame = 0;
@@ -210,16 +212,16 @@ void init_next_blokey_flic(void)
         switch (cmod)
         {
         case 0:
-            sprintf(p_anim->Filename, "%s/%s%dbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            sprintf(p_anim->Filename, "%s/%s%dbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
             break;
         case 1:
-            sprintf(p_anim->Filename, "%s/%s%dbbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            sprintf(p_anim->Filename, "%s/%s%dbbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
             break;
         case 2:
-            sprintf(p_anim->Filename, "%s/%s%da%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
+            sprintf(p_anim->Filename, "%s/%s%da%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
             break;
         case 3:
-            sprintf(p_anim->Filename, "%s/%s%dl%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
+            sprintf(p_anim->Filename, "%s/%s%dl%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
             break;
         default:
             assert(!"unreachable");
@@ -238,16 +240,16 @@ void init_next_blokey_flic(void)
         switch (cmod)
         {
           case 0:
-            sprintf(p_anim->Filename, "%s/%s%dbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(p_anim->Filename, "%s/%s%dbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
             break;
           case 1:
-            sprintf(p_anim->Filename, "%s/%s%dbbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(p_anim->Filename, "%s/%s%dbbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
             break;
           case 2:
-            sprintf(p_anim->Filename, "%s/%s%da%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            sprintf(p_anim->Filename, "%s/%s%da%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
             break;
           case 3:
-            sprintf(p_anim->Filename, "%s/%s%dl%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
+            sprintf(p_anim->Filename, "%s/%s%dl%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[3]);
             break;
           default:
             assert(!"unreachable");
@@ -271,7 +273,7 @@ void purple_mods_data_to_screen(void)
 {
     struct Campaign *p_campgn;
     const char *campgn_mark;
-    const char *flic_dir;
+    PathInfo *pinfo;
     char str[52];
     short x, y;
     ubyte *buf;
@@ -283,9 +285,8 @@ void purple_mods_data_to_screen(void)
     if (strcmp(campgn_mark, "s") == 0)
         campgn_mark = "";
 
-    flic_dir = "qdata/equip";
-
-    sprintf(str, "%s/bgman%s.dat", flic_dir, campgn_mark);
+    pinfo = &game_dirs[DirPlace_QEquip];
+    sprintf(str, "%s/bgman%s.dat", pinfo->directory, campgn_mark);
 
     buf = back_buffer - PURPLE_MOD_AREA_WIDTH*PURPLE_MOD_AREA_HEIGHT;
     LbFileLoadAt(str, buf);
@@ -334,7 +335,7 @@ void blokey_static_flic_data_to_screen(void)
 {
     struct Campaign *p_campgn;
     const char *campgn_mark;
-    const char *flic_dir;
+    PathInfo *pinfo;
     char str[52];
     ubyte *buf;
     ubyte *o[2];
@@ -346,7 +347,7 @@ void blokey_static_flic_data_to_screen(void)
     if (strcmp(campgn_mark, "s") == 0)
         campgn_mark = "m";
 
-    flic_dir = "qdata/equip";
+    pinfo = &game_dirs[DirPlace_QEquip];
 
     o[1] = back_buffer;
     o[0] = lbDisplay.WScreen;
@@ -362,16 +363,16 @@ void blokey_static_flic_data_to_screen(void)
         switch (cdm)
         {
         case 0:
-            sprintf(str, "%s/%s%db.dat", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(str, "%s/%s%db.dat", pinfo->directory, campgn_mark, flic_mods[0]);
             break;
         case 1:
-            sprintf(str, "%s/%s%dbb.dat", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(str, "%s/%s%dbb.dat", pinfo->directory, campgn_mark, flic_mods[0]);
             break;
         case 2:
-            sprintf(str, "%s/%s%da%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            sprintf(str, "%s/%s%da%d.dat", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
             break;
         case 3:
-            sprintf(str, "%s/%s%dl%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
+            sprintf(str, "%s/%s%dl%d.dat", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[3]);
             break;
         }
 
@@ -392,9 +393,11 @@ void blokey_static_flic_data_to_screen(void)
 
 void update_cybmod_cost_text(void)
 {
+    struct ModDef *mdef;
     int cost;
 
-    cost = 10 * (int)mod_defs[selected_mod + 1].Cost;
+    mdef = &mod_defs[selected_mod + 1];
+    cost = 10 * (int)mdef->Cost;
     sprintf(equip_cost_text, "%d", cost);
 }
 
