@@ -241,28 +241,36 @@ struct InGame {
     long Expenditure;
 };
 
+struct FLCFileHeader {
+    u32 Size;
+    ushort Magic;
+    ushort NumberOfFrames;
+    ushort Width;
+    ushort Height;
+};
+
+struct FLCPrefixChunk {
+    u32 Size;
+    ushort Type;
+};
+
 struct Animation {
-  ubyte *OutBuf;
-  long anfield_4;
-  short Xpos;
-  short Ypos;
-  short anfield_C;
-  ushort Flags;
-  long UnkBuf;
-  long anfield_14;
-  short anfield_18;
-  short anfield_1A;
-  short anfield_1C;
-  short anfield_1E;
-  long Chunk1Size;
-  short Chunk1Type;
-  short anfield_26[5];
-  long anfield_30;
-  long anfield_34;
-  TbFileHandle FileHandle;
-  char Filename[48];
-  short anfield_6C;
-  short Type;
+    ubyte *OutBuf;
+    long anfield_4;
+    short Xpos;
+    short Ypos;
+    short anfield_C;
+    ushort Flags;
+    long UnkBuf;
+    struct FLCFileHeader FLCFileHeader;
+    struct FLCPrefixChunk FLCPrefixChunk;
+    short anfield_26[5];
+    long anfield_30;
+    long anfield_34;
+    TbFileHandle FileHandle;
+    char Filename[48];
+    short anfield_6C;
+    short Type;
 };
 
 #pragma pack()

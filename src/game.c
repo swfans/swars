@@ -565,7 +565,7 @@ void flic_unkn03(ubyte anmtype)
     p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_READ_ONLY);
     if (p_anim->FileHandle != INVALID_FILE)
     {
-        LbFileRead(p_anim->FileHandle, &p_anim->anfield_14, 12);
+        LbFileRead(p_anim->FileHandle, &p_anim->FLCFileHeader, 12);
         p_anim->anfield_4 += 12;
     }
     else
