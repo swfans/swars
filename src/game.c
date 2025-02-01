@@ -2284,10 +2284,87 @@ void setup_host(void)
     flic_unkn03(1u);
 }
 
-void set_default_user_settings(void)
+void set_default_game_keys(void)
 {
-    asm volatile ("call ASM_set_default_user_settings\n"
-        :  :  : "eax" );
+    LbMemorySet(jskeys, 0, sizeof(jskeys));
+    jskeys[GKey_VIEW_SPIN_L] = 64;
+    jskeys[GKey_VIEW_SPIN_R] = 128;
+    jskeys[GKey_FIRE] = 1;
+    jskeys[GKey_CHANGE_MD_WP] = 2;
+    jskeys[GKey_CHANGE_AGENT] = 4;
+    jskeys[GKey_SELF_DESTRUCT] = 15;
+    jskeys[GKey_GROUP] = 32;
+    jskeys[GKey_GOTO_POINT] = 8;
+    jskeys[GKey_DROP_WEAPON] = 16;
+    byte_1C4A9F = 18;
+
+    LbMemorySet(kbkeys, 0, sizeof(kbkeys));
+    kbkeys[GKey_NONE] = KC_UNASSIGNED;
+    kbkeys[GKey_VIEW_SPIN_L] = KC_DELETE;
+    kbkeys[GKey_VIEW_SPIN_R] = KC_PGDOWN;
+    kbkeys[GKey_FIRE] = KC_LCONTROL;
+    kbkeys[GKey_CHANGE_MD_WP] = KC_LALT;
+    kbkeys[GKey_CHANGE_AGENT] = KC_TAB;
+    kbkeys[GKey_UP] = KC_UP;
+    kbkeys[GKey_DOWN] = KC_DOWN;
+    kbkeys[GKey_GOTO_POINT] = KC_RCONTROL;
+    kbkeys[GKey_GROUP] = 86;
+    kbkeys[GKey_LEFT] = KC_LEFT;
+    kbkeys[GKey_ZOOM_OUT] = KC_HOME;
+    kbkeys[GKey_SELF_DESTRUCT] = KC_D;
+    kbkeys[GKey_RIGHT] = KC_RIGHT;
+    kbkeys[GKey_ZOOM_IN] = KC_END;
+    kbkeys[GKey_DROP_WEAPON] = KC_Z;
+    kbkeys[GKey_PAUSE] = KC_P;
+    kbkeys[GKey_VIEW_TILT_U] = KC_INSERT;
+    kbkeys[GKey_SEL_AGENT_1] = KC_1;
+    kbkeys[GKey_SEL_AGENT_2] = KC_2;
+    kbkeys[GKey_KEY_CONTROL] = KC_K;
+    kbkeys[GKey_VIEW_TILT_D] = KC_PGUP;
+    kbkeys[GKey_SEL_AGENT_4] = KC_4;
+    kbkeys[GKey_SEL_AGENT_3] = KC_3;
+}
+
+void set_default_player_control(void)
+{
+    PlayerInfo *p_locplayer;
+    short i;
+
+    p_locplayer = &players[local_player_no];
+    p_locplayer->DoubleMode = 0;
+    for (i = 0; i < 4; i++)
+        p_locplayer->UserInput[i].ControlMode = 1;
+}
+
+void set_default_sfx_settings(void)
+{
+    startscr_samplevol = 322;
+    startscr_midivol = 322;
+    startscr_cdvolume = 228;
+}
+
+void set_default_gfx_settings(void)
+{
+    game_gfx_advanced_lights = 1;
+    game_billboard_movies = 1;
+    game_gfx_deep_radar = 0;
+    game_high_resolution = 1;
+    game_projector_speed = 0;
+    game_perspective = 5;
+}
+
+void set_default_visual_prefernces(void)
+{
+    ingame.PanelPermutation = -2;
+    ingame.TrenchcoatPreference = 0;
+    ingame.DetailLevel = 1;
+    ingame.UseMultiMedia = 0;
+}
+
+void set_default_audio_tracks(void)
+{
+    ingame.DangerTrack = 1;
+    ingame.CDTrack = 2;
 }
 
 void apply_user_settings(void)
@@ -2311,6 +2388,21 @@ void apply_user_settings(void)
     SetSoundMasterVolume(127 * startscr_samplevol / 322);
     SetMusicMasterVolume(127 * startscr_midivol / 322);
     SetCDVolume((70 * (127 * startscr_cdvolume / 322) / 100));
+}
+
+void set_default_user_settings(void)
+{
+#if 0
+    asm volatile ("call ASM_set_default_user_settings\n"
+        :  :  : "eax" );
+#endif
+    set_default_game_keys();
+    set_default_player_control();
+    set_default_sfx_settings();
+    set_default_gfx_settings();
+    set_default_visual_prefernces();
+    set_default_audio_tracks();
+    apply_user_settings();
 }
 
 void read_user_settings(void)
