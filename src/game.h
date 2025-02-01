@@ -254,6 +254,11 @@ struct FLCPrefixChunk {
     ushort Type;
 };
 
+struct FLCFrameDataChunk {
+    u32 Size;
+    ushort Type;
+};
+
 struct Animation {
     ubyte *OutBuf;
     long anfield_4;
@@ -261,10 +266,10 @@ struct Animation {
     short Ypos;
     short FrameNumber;
     ushort Flags;
-    long UnkBuf;
+    ubyte *UnkBuf;
     struct FLCFileHeader FLCFileHeader;
     struct FLCPrefixChunk FLCPrefixChunk;
-    short anfield_26[5];
+    ushort anfield_26[5];
     long anfield_30;
     long anfield_34;
     TbFileHandle FileHandle;

@@ -211,6 +211,8 @@ extern ushort word_1A7330[1000];
 extern ubyte byte_1A7B00[1000];
 extern ubyte byte_1A7EE8[8192];
 extern ubyte billboard_anim_no;
+extern ubyte flic_palette[0x300];
+extern ubyte palette_data[0x300];
 extern ubyte byte_1AAA88;
 extern long dword_1AAB74;
 extern long dword_1AAB78;
@@ -3777,14 +3779,200 @@ void flic_frame(void)
     p_anim->anfield_4 += p_anim->FLCPrefixChunk.Size;
 }
 
-short flic_creation_unkn01(void)
+void anim_show_FLI_SS2(void)
 {
-#if 1
-    short ret;
+    asm volatile ("call ASM_anim_show_FLI_SS2\n"
+        :  : );
+    return;
+}
+
+void anim_show_FLI_BRUN(void)
+{
+    asm volatile ("call ASM_anim_show_FLI_BRUN\n"
+        :  : );
+    return;
+}
+
+void anim_show_FLI_LC(void)
+{
+    asm volatile ("call ASM_anim_show_FLI_LC\n"
+        :  : );
+    return;
+}
+
+ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort animno)
+{
+    struct Animation *p_anim;
+    ubyte *out;
+    ubyte *opal;
+    intptr_t i_frchunk;
+    size_t sz;
+    ushort num_i;
+    int i, n;
+    short num_colors;
+    ubyte pal_change;
+
+    pal_change = 0;
+    i_frchunk = (intptr_t)p_frchunk;
+    p_anim = &animations[animno];
+    if (p_frchunk != NULL)
+        LbMemoryCopy(p_frchunk, p_anim->UnkBuf, 6);
+    p_anim->UnkBuf += 6;
+
+    switch (p_frchunk->Type)
+    {
+    case FLI_COLOUR256:
+        // assuming run on little-endian CPU
+        opal = flic_palette;
+        num_i = 0;
+        if (i_frchunk != -16)
+            LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
+        p_anim->UnkBuf += 2;
+        for (i = 0; i < num_i; i++)
+        {
+            num_colors = 0;
+            if (i_frchunk != -48)
+                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
+            p_anim->UnkBuf++;
+            opal += 3 * num_colors;
+            num_colors = 0;
+            if (i_frchunk != -24)
+                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
+            p_anim->UnkBuf++;
+            if (num_colors == 0)
+                num_colors = 256;
+            for (n = 0; n < num_colors; n++)
+            {
+                if (opal != NULL)
+                    LbMemoryCopy(opal, p_anim->UnkBuf, 3);
+                p_anim->UnkBuf += 3;
+                opal += 3;
+            }
+        }
+        out = palette_data + strlen((char *)palette_data);
+        strcpy((char *)out, "COLOUR256 ");
+        pal_change = 1;
+        break;
+    case FLI_SS2:
+        anim_show_FLI_SS2();
+        out = palette_data + strlen((char *)palette_data);
+        strcpy((char *)out, "SS2 ");
+        break;
+    case FLI_COLOUR:
+        // assuming run on little-endian CPU
+        opal = flic_palette;
+        num_i = 0;
+        if (i_frchunk != -20)
+            LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
+        p_anim->UnkBuf += 2;
+        for (i = 0; i < num_i; i++)
+        {
+            num_colors = 0;
+            if (i_frchunk != -40)
+                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
+            opal += 3 * num_colors;
+            p_anim->UnkBuf++;
+
+            num_colors = 0;
+            if (i_frchunk != -28)
+                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
+            p_anim->UnkBuf++;
+            if (num_colors == 0)
+                num_colors = 256;
+
+            for (n = 0; n < num_colors; n++)
+            {
+                if (opal != NULL)
+                    LbMemoryCopy(opal, p_anim->UnkBuf, 3);
+                p_anim->UnkBuf += 3;
+                opal += 3;
+            }
+        }
+        out = palette_data + strlen((char *)palette_data);
+        strcpy((char *)out, "COLOUR ");
+        pal_change = 1;
+        break;
+    case FLI_LC:
+        anim_show_FLI_LC();
+        out = palette_data + strlen((char *)palette_data);
+        strcpy((char *)out, "LC ");
+        break;
+    case FLI_BLACK:
+        sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
+        LbMemorySet(p_anim->OutBuf, 0, sz);
+        out = palette_data + strlen((char *)palette_data);
+        strcpy((char *)out, "BLACK ");
+        break;
+    case FLI_BRUN:
+        anim_show_FLI_BRUN();
+        out = palette_data + strlen((char *)palette_data);
+        strcpy((char *)out, "BRUN ");
+        break;
+    case FLI_COPY:
+        sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
+        p_frchunk->Size = sz;
+        if (p_anim->OutBuf != 0)
+            LbMemoryCopy(p_anim->OutBuf, p_anim->UnkBuf, sz);
+        p_anim->UnkBuf += sz;
+        out = palette_data + strlen((char *)palette_data);
+        strcpy((char *)out, "COPY ");
+        break;
+    case FLI_PSTAMP:
+        p_anim->UnkBuf += p_frchunk->Size - 6;
+        out = palette_data + strlen((char *)palette_data);
+        strcpy((char *)out, "PSTAMP ");
+        break;
+    default:
+        break;
+    }
+    return pal_change;
+}
+
+void flic_creation_unkn01(void)
+{
+#if 0
     asm volatile ("call ASM_flic_creation_unkn01\n"
-        : "=r" (ret) : );
-    return ret;
+        :  : );
+    return;
 #endif
+    struct FLCFrameDataChunk frchunk;
+    struct Animation *p_anim;
+    uint v50;
+    ushort prefix_type;
+    ushort k;
+    char pal_change;
+
+    pal_change = 0;
+    k = active_anim;
+    p_anim = &animations[k];
+    p_anim->UnkBuf = anim_scratch;
+    palette_data[0] = 0;
+
+    prefix_type = p_anim->FLCPrefixChunk.Type;
+    if (prefix_type == FLI_PREFIX_CHUNK)
+    {
+        p_anim->UnkBuf += p_anim->FLCPrefixChunk.Size - 16;
+        flic_frame();
+        flic_creation_unkn01();
+    }
+    else if (prefix_type == FLI_FRAME_CHUNK)
+    {
+        for (v50 = 0; v50 < p_anim->anfield_26[0]; v50++)
+        {
+            void *last_unkbuf;
+            last_unkbuf = p_anim->UnkBuf;
+            pal_change |= flic_creation_unkn01_sub1(&frchunk, k);
+            p_anim->UnkBuf = last_unkbuf + frchunk.Size;
+        }
+    }
+
+    if (pal_change)
+    {
+        LbScreenWaitVbi();
+        if (byte_1AAA88) {
+            LbPaletteSet(flic_palette);
+        }
+    }
 }
 
 int xdo_next_frame(ubyte slot)
