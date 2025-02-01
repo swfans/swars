@@ -2348,7 +2348,7 @@ void set_default_gfx_settings(void)
     game_gfx_advanced_lights = 1;
     game_billboard_movies = 1;
     game_gfx_deep_radar = 0;
-    game_high_resolution = 1;
+    game_high_resolution = true;
     game_projector_speed = 0;
     game_perspective = 5;
 }
@@ -6793,7 +6793,6 @@ void show_menu_screen(void)
     }
     if (lbDisplay.ScreenMode != screen_mode_menu)
     {
-        game_high_resolution = 0;
         LbMouseReset();
         LbScreenClear(0);
         setup_screen_mode(screen_mode_menu);
