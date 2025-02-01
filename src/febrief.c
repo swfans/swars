@@ -217,10 +217,12 @@ ubyte show_brief_netscan_box(struct ScreenTextBox *box)
 
 void flic_netscan_open_anim(ubyte anim_no)
 {
-    ulong k;
+    struct Animation *p_anim;
+    ushort k;
 
     k = anim_slots[9];
-    sprintf(animations[k].Filename, "data/equip/net%02d.fli", anim_no);
+    p_anim = &animations[k];
+    sprintf(p_anim->Filename, "data/equip/net%02d.fli", anim_no);
     flic_unkn03(9);
 }
 

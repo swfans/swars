@@ -243,26 +243,26 @@ struct InGame {
 
 struct Animation {
   ubyte *OutBuf;
-  long field_4;
-  short PosX;
-  short PosY;
-  short field_C;
+  long anfield_4;
+  short Xpos;
+  short Ypos;
+  short anfield_C;
   ushort Flags;
-  long field_10;
-  long field_14;
-  short field_18;
-  short field_1A[1];
-  short field_1C[1];
-  short field_1E[1];
-  long field_20;
-  short field_24;
-  short field_26[5];
-  long field_30;
-  long field_34;
-  long FileHandle;
+  long UnkBuf;
+  long anfield_14;
+  short anfield_18;
+  short anfield_1A;
+  short anfield_1C;
+  short anfield_1E;
+  long Chunk1Size;
+  short Chunk1Type;
+  short anfield_26[5];
+  long anfield_30;
+  long anfield_34;
+  TbFileHandle FileHandle;
   char Filename[48];
-  short anonymous_15;
-  short field_6E;
+  short anfield_6C;
+  short Type;
 };
 
 #pragma pack()

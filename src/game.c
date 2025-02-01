@@ -191,10 +191,13 @@ extern long dword_176CBC;
 
 extern char unknmsg_str[100];
 extern short word_1774E8[2 * 150];
+extern void *anim_scratch;
 
 extern ushort word_1A7330[1000];
 extern ubyte byte_1A7B00[1000];
 extern ubyte byte_1A7EE8[8192];
+extern ubyte billboard_anim_no;
+extern ubyte byte_1AAA88;
 extern long dword_1AAB74;
 extern long dword_1AAB78;
 extern ushort word_1AABD0;
@@ -265,6 +268,10 @@ struct TbLoadFiles unk02_load_files[] =
   { "data/pointr0-3.tab",(void **)&pointer_sprites,	(void **)&pointer_sprites_end, 0, 0, 0 },
   { "qdata/pal.pal",	(void **)&display_palette,	(void **)NULL,				0, 0, 0 },
   { "",					(void **)NULL, 				(void **)NULL,				0, 0, 0 }
+};
+
+ubyte byte_154BB4[] = {
+  220, 224, 224, 222, 220, 220,
 };
 
 char unk_credits_text_s[] = "";
@@ -442,10 +449,130 @@ void game_setup_stuff(void)
     colour_grey1 = LbPaletteFindColour(display_palette, 16, 16, 16);
 }
 
-void flic_unkn03(ubyte a1)
+void flic_unkn03(ubyte anmtype)
 {
+#if 0
     asm volatile ("call ASM_flic_unkn03\n"
-        : : "a" (a1));
+        : : "a" (anmtype));
+#endif
+    struct Animation *p_anim;
+    PathInfo *pinfo;
+    int k;
+    ushort rnd;
+    ubyte anim_no;
+
+    k = anim_slots[anmtype];
+    p_anim = &animations[k];
+    if (p_anim->FileHandle != INVALID_FILE) {
+        LbFileClose(p_anim->FileHandle);
+        p_anim->FileHandle = INVALID_FILE;
+    }
+    anim_scratch = scratch_buf1;
+
+    k = anim_slots[anmtype];
+    p_anim = &animations[k];
+    p_anim->anfield_C = 0;
+    p_anim->Type = anmtype;
+    p_anim->Flags = 0;
+
+    switch (anmtype)
+    {
+    case 1:
+        p_anim->OutBuf = vec_tmap[4];
+        byte_1AAA88 = 0;
+        p_anim->Flags = 0x20;
+
+        rnd = LbRandomPosShort() & 7;
+        if (rnd <= 0)
+            billboard_anim_no = 1;
+        else if (rnd <= 2)
+            billboard_anim_no = 2;
+        else if (rnd <= 5)
+            billboard_anim_no = 0;
+        else
+            billboard_anim_no = 3;
+
+        if (ingame.VisibleBillboardThing && !in_network_game)
+        {
+            struct Thing *p_thing;
+            p_thing = &things[ingame.VisibleBillboardThing];
+            anim_no = byte_154BB4[billboard_anim_no];
+            rnd = LbRandomPosShort() & 1;
+            play_dist_sample(p_thing, anim_no + rnd, 0x7Fu, 0x40, 100, 0, 1);
+        }
+        pinfo = &game_dirs[DirPlace_QData];
+        sprintf(p_anim->Filename, "%s/demo-1%d.fli", pinfo->directory, (int)billboard_anim_no);
+        billboard_anim_no++;
+        if (billboard_anim_no > 3)
+            billboard_anim_no = 0;
+        break;
+    case 2:
+        byte_1AAA88 = 0;
+        p_anim->OutBuf = vec_tmap[5];
+        break;
+    case 3:
+        byte_1AAA88 = 0;
+        p_anim->OutBuf = vec_tmap[5] + 0x8000;
+        break;
+    case 4:
+        p_anim->Ypos = 0;
+        p_anim->Xpos = 0;
+        byte_1AAA88 = 1;
+        p_anim->OutBuf = vec_tmap[5];
+        p_anim->Flags = 2;
+        pinfo = &game_dirs[DirPlace_Data];
+        sprintf(p_anim->Filename, "%s/intro.fli", pinfo->directory);
+        break;
+    case 5:
+        p_anim->Flags = 2;
+        p_anim->Xpos = 10;
+        p_anim->Ypos = 30;
+        byte_1AAA88 = 0;
+        pinfo = &game_dirs[DirPlace_Data];
+        sprintf(p_anim->Filename, "%s/mcomp.fli", pinfo->directory);
+        break;
+    case 6:
+        p_anim->Xpos = 10;
+        byte_1AAA88 = 0;
+        p_anim->Ypos = 30;
+        p_anim->Flags = 2;
+        pinfo = &game_dirs[DirPlace_Data];
+        sprintf(p_anim->Filename, "%s/mcomp.fli", pinfo->directory);
+        break;
+    case 7:
+        p_anim->Flags = 2;
+        p_anim->Xpos = 10;
+        p_anim->Ypos = 30;
+        byte_1AAA88 = 0;
+        pinfo = &game_dirs[DirPlace_Data];
+        sprintf(p_anim->Filename, "%s/mcomp.fli", pinfo->directory);
+        break;
+    case 8:
+        byte_1AAA88 = 0;
+        p_anim->Flags = 32;
+        p_anim->OutBuf = vec_tmap[5] + 0x8000;
+        break;
+    case 9:
+        byte_1AAA88 = 0;
+        p_anim->OutBuf = vec_tmap[5];
+        break;
+      default:
+        break;
+    }
+
+    k = anim_slots[anmtype];
+    p_anim = &animations[k];
+    p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_READ_ONLY);
+    if (p_anim->FileHandle != INVALID_FILE)
+    {
+        LbFileRead(p_anim->FileHandle, &p_anim->anfield_14, 12);
+        p_anim->anfield_4 += 12;
+    }
+    else
+    {
+        if (anmtype == 1)
+            ingame.Flags &= ~GamF_BillboardMovies;
+    }
 }
 
 void update_danger_music(ubyte a1)

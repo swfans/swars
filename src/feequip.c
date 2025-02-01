@@ -561,6 +561,7 @@ ubyte show_equipment_screen(void)
 void init_weapon_anim(ubyte weapon)
 {
     struct Campaign *p_campgn;
+    struct Animation *p_anim;
     const char *campgn_mark;
     const char *flic_dir;
     ulong k;
@@ -576,12 +577,14 @@ void init_weapon_anim(ubyte weapon)
     if (weapon >= 32)
     {
         k = anim_slots[2];
-        sprintf(animations[k].Filename, "%s/mod-%02d%s.fli", flic_dir, (int)weapon - 32, campgn_mark);
+        p_anim = &animations[k];
+        sprintf(p_anim->Filename, "%s/mod-%02d%s.fli", flic_dir, (int)weapon - 32, campgn_mark);
     }
     else
     {
         k = anim_slots[2];
-        sprintf(animations[k].Filename, "%s/wep-%02d%s.fli", flic_dir, (int)weapon, campgn_mark);
+        p_anim = &animations[k];
+        sprintf(p_anim->Filename, "%s/wep-%02d%s.fli", flic_dir, (int)weapon, campgn_mark);
     }
     flic_unkn03(2);
 }

@@ -127,6 +127,7 @@ ubyte do_cryo_offer_cancel(ubyte click)
 void init_next_blokey_flic(void)
 {
     struct Campaign *p_campgn;
+    struct Animation *p_anim;
     const char *campgn_mark;
     const char *flic_dir;
     ushort cmod, stage;
@@ -194,7 +195,8 @@ void init_next_blokey_flic(void)
         else if (!IsSamplePlaying(0, 134, 0))
         {
             k = anim_slots[8];
-            sprintf(animations[k].Filename, "%s/%s%da%d.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            p_anim = &animations[k];
+            sprintf(p_anim->Filename, "%s/%s%da%d.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
             flic_unkn03(8u);
             play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
             current_frame = 0;
@@ -204,19 +206,20 @@ void init_next_blokey_flic(void)
         break;
     case 1:
         k = anim_slots[3];
+        p_anim = &animations[k];
         switch (cmod)
         {
         case 0:
-            sprintf(animations[k].Filename, "%s/%s%dbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            sprintf(p_anim->Filename, "%s/%s%dbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
             break;
         case 1:
-            sprintf(animations[k].Filename, "%s/%s%dbbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            sprintf(p_anim->Filename, "%s/%s%dbbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
             break;
         case 2:
-            sprintf(animations[k].Filename, "%s/%s%da%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
+            sprintf(p_anim->Filename, "%s/%s%da%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
             break;
         case 3:
-            sprintf(animations[k].Filename, "%s/%s%dl%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
+            sprintf(p_anim->Filename, "%s/%s%dl%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
             break;
         default:
             assert(!"unreachable");
@@ -231,19 +234,20 @@ void init_next_blokey_flic(void)
         break;
     case 2:
         k = anim_slots[3];
+        p_anim = &animations[k];
         switch (cmod)
         {
           case 0:
-            sprintf(animations[k].Filename, "%s/%s%dbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(p_anim->Filename, "%s/%s%dbi.fli", flic_dir, campgn_mark, flic_mods[0]);
             break;
           case 1:
-            sprintf(animations[k].Filename, "%s/%s%dbbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(p_anim->Filename, "%s/%s%dbbi.fli", flic_dir, campgn_mark, flic_mods[0]);
             break;
           case 2:
-            sprintf(animations[k].Filename, "%s/%s%da%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            sprintf(p_anim->Filename, "%s/%s%da%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
             break;
           case 3:
-            sprintf(animations[k].Filename, "%s/%s%dl%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
+            sprintf(p_anim->Filename, "%s/%s%dl%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
             break;
           default:
             assert(!"unreachable");
