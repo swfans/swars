@@ -212,7 +212,7 @@ extern ubyte byte_1A7B00[1000];
 extern ubyte byte_1A7EE8[8192];
 extern ubyte billboard_anim_no;
 extern ubyte flic_palette[0x300];
-extern ubyte palette_data[0x300];
+extern char flic_parse_tags[152];
 extern ubyte byte_1AAA88;
 extern long dword_1AAB74;
 extern long dword_1AAB78;
@@ -3803,7 +3803,7 @@ void anim_show_FLI_LC(void)
 ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort animno)
 {
     struct Animation *p_anim;
-    ubyte *out;
+    char *tag_out;
     ubyte *opal;
     intptr_t i_frchunk;
     size_t sz;
@@ -3849,14 +3849,14 @@ ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort anim
                 opal += 3;
             }
         }
-        out = palette_data + strlen((char *)palette_data);
-        strcpy((char *)out, "COLOUR256 ");
+        tag_out = flic_parse_tags + strlen(flic_parse_tags);
+        strcpy(tag_out, "COLOUR256 ");
         pal_change = 1;
         break;
     case FLI_SS2:
         anim_show_FLI_SS2();
-        out = palette_data + strlen((char *)palette_data);
-        strcpy((char *)out, "SS2 ");
+        tag_out = flic_parse_tags + strlen(flic_parse_tags);
+        strcpy(tag_out, "SS2 ");
         break;
     case FLI_COLOUR:
         // assuming run on little-endian CPU
@@ -3888,25 +3888,25 @@ ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort anim
                 opal += 3;
             }
         }
-        out = palette_data + strlen((char *)palette_data);
-        strcpy((char *)out, "COLOUR ");
+        tag_out = flic_parse_tags + strlen(flic_parse_tags);
+        strcpy(tag_out, "COLOUR ");
         pal_change = 1;
         break;
     case FLI_LC:
         anim_show_FLI_LC();
-        out = palette_data + strlen((char *)palette_data);
-        strcpy((char *)out, "LC ");
+        tag_out = flic_parse_tags + strlen(flic_parse_tags);
+        strcpy(tag_out, "LC ");
         break;
     case FLI_BLACK:
         sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
         LbMemorySet(p_anim->OutBuf, 0, sz);
-        out = palette_data + strlen((char *)palette_data);
-        strcpy((char *)out, "BLACK ");
+        tag_out = flic_parse_tags + strlen(flic_parse_tags);
+        strcpy(tag_out, "BLACK ");
         break;
     case FLI_BRUN:
         anim_show_FLI_BRUN();
-        out = palette_data + strlen((char *)palette_data);
-        strcpy((char *)out, "BRUN ");
+        tag_out = flic_parse_tags + strlen(flic_parse_tags);
+        strcpy(tag_out, "BRUN ");
         break;
     case FLI_COPY:
         sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
@@ -3914,15 +3914,17 @@ ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort anim
         if (p_anim->OutBuf != 0)
             LbMemoryCopy(p_anim->OutBuf, p_anim->UnkBuf, sz);
         p_anim->UnkBuf += sz;
-        out = palette_data + strlen((char *)palette_data);
-        strcpy((char *)out, "COPY ");
+        tag_out = flic_parse_tags + strlen(flic_parse_tags);
+        strcpy(tag_out, "COPY ");
         break;
     case FLI_PSTAMP:
         p_anim->UnkBuf += p_frchunk->Size - 6;
-        out = palette_data + strlen((char *)palette_data);
-        strcpy((char *)out, "PSTAMP ");
+        tag_out = flic_parse_tags + strlen(flic_parse_tags);
+        strcpy(tag_out, "PSTAMP ");
         break;
     default:
+        tag_out = flic_parse_tags + strlen(flic_parse_tags);
+        strcpy(tag_out, "N ");
         break;
     }
     return pal_change;
@@ -3937,7 +3939,7 @@ void flic_creation_unkn01(void)
 #endif
     struct FLCFrameDataChunk frchunk;
     struct Animation *p_anim;
-    uint v50;
+    uint i;
     ushort prefix_type;
     ushort k;
     char pal_change;
@@ -3946,7 +3948,7 @@ void flic_creation_unkn01(void)
     k = active_anim;
     p_anim = &animations[k];
     p_anim->UnkBuf = anim_scratch;
-    palette_data[0] = 0;
+    flic_parse_tags[0] = 0;
 
     prefix_type = p_anim->FLCPrefixChunk.Type;
     if (prefix_type == FLI_PREFIX_CHUNK)
@@ -3957,7 +3959,7 @@ void flic_creation_unkn01(void)
     }
     else if (prefix_type == FLI_FRAME_CHUNK)
     {
-        for (v50 = 0; v50 < p_anim->anfield_26[0]; v50++)
+        for (i = 0; i < p_anim->anfield_26[0]; i++)
         {
             void *last_unkbuf;
             last_unkbuf = p_anim->UnkBuf;
