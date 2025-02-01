@@ -259,7 +259,7 @@ struct Animation {
     long anfield_4;
     short Xpos;
     short Ypos;
-    short anfield_C;
+    short FrameNumber;
     ushort Flags;
     long UnkBuf;
     struct FLCFileHeader FLCFileHeader;

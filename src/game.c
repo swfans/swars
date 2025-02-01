@@ -134,6 +134,20 @@
  */
 #define EXPECTED_LANG_TXT_SIZE 8000
 
+enum FLI_Ani_Consts {
+    FLI_COLOUR256    = 0x0004,
+    FLI_SS2          = 0x0007,
+    FLI_COLOUR       = 0x000B,
+    FLI_LC           = 0x000C,
+    FLI_BLACK        = 0x000D,
+    FLI_BRUN         = 0x000F,
+    FLI_COPY         = 0x0010,
+    FLI_PSTAMP       = 0x0012,
+    FLI_FILE_HEADER  = 0x0AF12,
+    FLI_PREFIX_CHUNK = 0x0F100,
+    FLI_FRAME_CHUNK  = 0x0F1FA,
+};
+
 extern char *fadedat_fname;
 extern unsigned long unkn_buffer_04;
 char session_name[20] = "SWARA";
@@ -200,6 +214,7 @@ extern ubyte billboard_anim_no;
 extern ubyte byte_1AAA88;
 extern long dword_1AAB74;
 extern long dword_1AAB78;
+extern ubyte active_anim;
 extern ushort word_1AABD0;
 
 extern long mech_unkn_tile_x1;
@@ -471,7 +486,7 @@ void flic_unkn03(ubyte anmtype)
 
     k = anim_slots[anmtype];
     p_anim = &animations[k];
-    p_anim->anfield_C = 0;
+    p_anim->FrameNumber = 0;
     p_anim->Type = anmtype;
     p_anim->Flags = 0;
 
@@ -3745,12 +3760,76 @@ void game_setup(void)
     }
 }
 
-int xdo_next_frame(ubyte a1)
+void flic_frame(void)
 {
+    struct Animation *p_anim;
+    ushort k;
+
+    k = active_anim;
+    p_anim = &animations[k];
+    p_anim->anfield_30 = p_anim->anfield_4;
+    LbFileRead(p_anim->FileHandle, &p_anim->FLCPrefixChunk.Size, 16);
+    while (p_anim->FLCPrefixChunk.Type != FLI_FRAME_CHUNK) {
+        LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCPrefixChunk.Size - 16);
+        LbFileRead(p_anim->FileHandle, &p_anim->FLCPrefixChunk.Size, 16);
+    }
+    LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCPrefixChunk.Size - 16);
+    p_anim->anfield_4 += p_anim->FLCPrefixChunk.Size;
+}
+
+short flic_creation_unkn01(void)
+{
+#if 1
+    short ret;
+    asm volatile ("call ASM_flic_creation_unkn01\n"
+        : "=r" (ret) : );
+    return ret;
+#endif
+}
+
+int xdo_next_frame(ubyte slot)
+{
+#if 0
     int ret;
     asm volatile ("call ASM_xdo_next_frame\n"
-        : "=r" (ret) : "a" (a1));
+        : "=r" (ret) : "a" (slot));
     return ret;
+#endif
+    struct Animation *p_anim;
+    ushort k;
+
+    k = anim_slots[slot];
+    active_anim = k;
+    p_anim = &animations[k];
+
+    if (slot >= 2 && slot <= 3)
+    {
+        if (p_anim->FrameNumber == 0) {
+            play_sample_using_heap(0, 135, 127, 64, 100, 0, 3u);
+        } else if (p_anim->FrameNumber == p_anim->FLCFileHeader.NumberOfFrames >> 1) {
+            play_sample_using_heap(0, 115, 127, 64, 100, 0, 3u);
+        }
+    }
+
+    if (p_anim->FrameNumber < p_anim->FLCFileHeader.NumberOfFrames)
+    {
+        if ((p_anim->Flags & 0x02) != 0) {
+            uint pos;
+            pos = p_anim->Xpos + lbDisplay.GraphicsScreenWidth * p_anim->Ypos;
+            p_anim->OutBuf = &lbDisplay.WScreen[pos];
+        }
+        flic_frame();
+        flic_creation_unkn01();
+        p_anim->FrameNumber++;
+        return 0;
+    }
+
+    LbFileClose(p_anim->FileHandle);
+    p_anim->FileHandle = INVALID_FILE;
+    if ((p_anim->Flags & 0x20) != 0) {
+        flic_unkn03(p_anim->Type);
+    }
+    return 1;
 }
 
 void mapwho_unkn01(int a1, int a2)
