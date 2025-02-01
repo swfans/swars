@@ -124,6 +124,8 @@ swars_SOURCES = \
 	festorage.h \
 	feworld.c \
 	feworld.h \
+	flic_ply.c \
+	flic_ply.h \
 	guiboxes.c \
 	guiboxes.h \
 	guigraph.c \

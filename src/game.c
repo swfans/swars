@@ -134,20 +134,6 @@
  */
 #define EXPECTED_LANG_TXT_SIZE 8000
 
-enum FLI_Ani_Consts {
-    FLI_COLOUR256    = 0x0004,
-    FLI_SS2          = 0x0007,
-    FLI_COLOUR       = 0x000B,
-    FLI_LC           = 0x000C,
-    FLI_BLACK        = 0x000D,
-    FLI_BRUN         = 0x000F,
-    FLI_COPY         = 0x0010,
-    FLI_PSTAMP       = 0x0012,
-    FLI_FILE_HEADER  = 0x0AF12,
-    FLI_PREFIX_CHUNK = 0x0F100,
-    FLI_FRAME_CHUNK  = 0x0F1FA,
-};
-
 extern char *fadedat_fname;
 extern unsigned long unkn_buffer_04;
 char session_name[20] = "SWARA";
@@ -205,14 +191,11 @@ extern long dword_176CBC;
 
 extern char unknmsg_str[100];
 extern short word_1774E8[2 * 150];
-extern void *anim_scratch;
 
 extern ushort word_1A7330[1000];
 extern ubyte byte_1A7B00[1000];
 extern ubyte byte_1A7EE8[8192];
 extern ubyte billboard_anim_no;
-extern ubyte flic_palette[0x300];
-extern char flic_parse_tags[152];
 extern ubyte byte_1AAA88;
 extern long dword_1AAB74;
 extern long dword_1AAB78;
@@ -480,9 +463,8 @@ void flic_unkn03(ubyte anmtype)
 
     k = anim_slots[anmtype];
     p_anim = &animations[k];
-    if (p_anim->FileHandle != INVALID_FILE) {
-        LbFileClose(p_anim->FileHandle);
-        p_anim->FileHandle = INVALID_FILE;
+    if (anim_is_opened(p_anim)) {
+        anim_flic_close(p_anim);
     }
     anim_scratch = scratch_buf1;
 
@@ -577,19 +559,13 @@ void flic_unkn03(ubyte anmtype)
         break;
     }
 
-    k = anim_slots[anmtype];
-    p_anim = &animations[k];
-    p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_READ_ONLY);
-    if (p_anim->FileHandle != INVALID_FILE)
-    {
-        LbFileRead(p_anim->FileHandle, &p_anim->FLCFileHeader, 12);
-        p_anim->anfield_4 += 12;
-    }
-    else
+    if (anim_flic_open(p_anim) == Lb_FAIL)
     {
         if (anmtype == 1)
             ingame.Flags &= ~GamF_BillboardMovies;
+        return;
     }
+    p_anim->anfield_4 += 12;
 }
 
 void update_danger_music(ubyte a1)
@@ -3764,160 +3740,10 @@ void game_setup(void)
 
 void flic_frame(void)
 {
-    struct Animation *p_anim;
     ushort k;
 
     k = active_anim;
-    p_anim = &animations[k];
-    p_anim->anfield_30 = p_anim->anfield_4;
-    LbFileRead(p_anim->FileHandle, &p_anim->FLCPrefixChunk.Size, 16);
-    while (p_anim->FLCPrefixChunk.Type != FLI_FRAME_CHUNK) {
-        LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCPrefixChunk.Size - 16);
-        LbFileRead(p_anim->FileHandle, &p_anim->FLCPrefixChunk.Size, 16);
-    }
-    LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCPrefixChunk.Size - 16);
-    p_anim->anfield_4 += p_anim->FLCPrefixChunk.Size;
-}
-
-void anim_show_FLI_SS2(void)
-{
-    asm volatile ("call ASM_anim_show_FLI_SS2\n"
-        :  : );
-    return;
-}
-
-void anim_show_FLI_BRUN(void)
-{
-    asm volatile ("call ASM_anim_show_FLI_BRUN\n"
-        :  : );
-    return;
-}
-
-void anim_show_FLI_LC(void)
-{
-    asm volatile ("call ASM_anim_show_FLI_LC\n"
-        :  : );
-    return;
-}
-
-ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort animno)
-{
-    struct Animation *p_anim;
-    ubyte *opal;
-    intptr_t i_frchunk;
-    size_t sz;
-    ushort num_i;
-    int i, n;
-    short num_colors;
-    ubyte pal_change;
-
-    pal_change = 0;
-    i_frchunk = (intptr_t)p_frchunk;
-    p_anim = &animations[animno];
-    if (p_frchunk != NULL)
-        LbMemoryCopy(p_frchunk, p_anim->UnkBuf, 6);
-    p_anim->UnkBuf += 6;
-
-    switch (p_frchunk->Type)
-    {
-    case FLI_COLOUR256:
-        // assuming run on little-endian CPU
-        opal = flic_palette;
-        num_i = 0;
-        if (i_frchunk != -16)
-            LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
-        p_anim->UnkBuf += 2;
-        for (i = 0; i < num_i; i++)
-        {
-            num_colors = 0;
-            if (i_frchunk != -48)
-                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-            p_anim->UnkBuf++;
-            opal += 3 * num_colors;
-            num_colors = 0;
-            if (i_frchunk != -24)
-                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-            p_anim->UnkBuf++;
-            if (num_colors == 0)
-                num_colors = 256;
-            for (n = 0; n < num_colors; n++)
-            {
-                if (opal != NULL)
-                    LbMemoryCopy(opal, p_anim->UnkBuf, 3);
-                p_anim->UnkBuf += 3;
-                opal += 3;
-            }
-        }
-        strncat(flic_parse_tags, "COLOUR256 ", sizeof(flic_parse_tags)-1);
-        pal_change = 1;
-        break;
-    case FLI_SS2:
-        anim_show_FLI_SS2();
-        strncat(flic_parse_tags, "SS2 ", sizeof(flic_parse_tags)-1);
-        break;
-    case FLI_COLOUR:
-        // assuming run on little-endian CPU
-        opal = flic_palette;
-        num_i = 0;
-        if (i_frchunk != -20)
-            LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
-        p_anim->UnkBuf += 2;
-        for (i = 0; i < num_i; i++)
-        {
-            num_colors = 0;
-            if (i_frchunk != -40)
-                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-            opal += 3 * num_colors;
-            p_anim->UnkBuf++;
-
-            num_colors = 0;
-            if (i_frchunk != -28)
-                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-            p_anim->UnkBuf++;
-            if (num_colors == 0)
-                num_colors = 256;
-
-            for (n = 0; n < num_colors; n++)
-            {
-                if (opal != NULL)
-                    LbMemoryCopy(opal, p_anim->UnkBuf, 3);
-                p_anim->UnkBuf += 3;
-                opal += 3;
-            }
-        }
-        strncat(flic_parse_tags, "COLOUR ", sizeof(flic_parse_tags)-1);
-        pal_change = 1;
-        break;
-    case FLI_LC:
-        anim_show_FLI_LC();
-        strncat(flic_parse_tags, "LC ", sizeof(flic_parse_tags)-1);
-        break;
-    case FLI_BLACK:
-        sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
-        LbMemorySet(p_anim->OutBuf, 0, sz);
-        strncat(flic_parse_tags, "BLACK ", sizeof(flic_parse_tags)-1);
-        break;
-    case FLI_BRUN:
-        anim_show_FLI_BRUN();
-        strncat(flic_parse_tags, "BRUN ", sizeof(flic_parse_tags)-1);
-        break;
-    case FLI_COPY:
-        sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
-        p_frchunk->Size = sz;
-        if (p_anim->OutBuf != 0)
-            LbMemoryCopy(p_anim->OutBuf, p_anim->UnkBuf, sz);
-        p_anim->UnkBuf += sz;
-        strncat(flic_parse_tags, "COPY ", sizeof(flic_parse_tags)-1);
-        break;
-    case FLI_PSTAMP:
-        p_anim->UnkBuf += p_frchunk->Size - 6;
-        strncat(flic_parse_tags, "PSTAMP ", sizeof(flic_parse_tags)-1);
-        break;
-    default:
-        strncat(flic_parse_tags, "N ", sizeof(flic_parse_tags)-1);
-        break;
-    }
-    return pal_change;
+    anim_show_prep_next_frame(&animations[k]);
 }
 
 void flic_creation_unkn01(void)
@@ -3927,42 +3753,17 @@ void flic_creation_unkn01(void)
         :  : );
     return;
 #endif
-    struct FLCFrameDataChunk frchunk;
-    struct Animation *p_anim;
-    uint i;
-    ushort prefix_type;
     ushort k;
-    char pal_change;
+    ubyte pal_change;
 
-    pal_change = 0;
     k = active_anim;
-    p_anim = &animations[k];
-    p_anim->UnkBuf = anim_scratch;
-    flic_parse_tags[0] = 0;
-
-    prefix_type = p_anim->FLCPrefixChunk.Type;
-    if (prefix_type == FLI_PREFIX_CHUNK)
-    {
-        p_anim->UnkBuf += p_anim->FLCPrefixChunk.Size - 16;
-        flic_frame();
-        flic_creation_unkn01();
-    }
-    else if (prefix_type == FLI_FRAME_CHUNK)
-    {
-        for (i = 0; i < p_anim->anfield_26[0]; i++)
-        {
-            void *last_unkbuf;
-            last_unkbuf = p_anim->UnkBuf;
-            pal_change |= flic_creation_unkn01_sub1(&frchunk, k);
-            p_anim->UnkBuf = last_unkbuf + frchunk.Size;
-        }
-    }
+    pal_change = anim_show_frame(&animations[k]);
 
     if (pal_change)
     {
         LbScreenWaitVbi();
         if (byte_1AAA88) {
-            LbPaletteSet(flic_palette);
+            LbPaletteSet(anim_palette);
         }
     }
 }
@@ -4004,8 +3805,7 @@ int xdo_next_frame(ubyte slot)
         return 0;
     }
 
-    LbFileClose(p_anim->FileHandle);
-    p_anim->FileHandle = INVALID_FILE;
+    anim_flic_close(p_anim);
     if ((p_anim->Flags & 0x20) != 0) {
         flic_unkn03(p_anim->Type);
     }

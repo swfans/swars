@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "bffile.h"
+#include "flic_ply.h"
 #include "globals.h"
 #include "scanner.h"
 #include "people.h"
@@ -239,43 +240,6 @@ struct InGame {
     ushort UserFlags;
     long CashAtStart;
     long Expenditure;
-};
-
-struct FLCFileHeader {
-    u32 Size;
-    ushort Magic;
-    ushort NumberOfFrames;
-    ushort Width;
-    ushort Height;
-};
-
-struct FLCPrefixChunk {
-    u32 Size;
-    ushort Type;
-};
-
-struct FLCFrameDataChunk {
-    u32 Size;
-    ushort Type;
-};
-
-struct Animation {
-    ubyte *OutBuf;
-    long anfield_4;
-    short Xpos;
-    short Ypos;
-    short FrameNumber;
-    ushort Flags;
-    ubyte *UnkBuf;
-    struct FLCFileHeader FLCFileHeader;
-    struct FLCPrefixChunk FLCPrefixChunk;
-    ushort anfield_26[5];
-    long anfield_30;
-    long anfield_34;
-    TbFileHandle FileHandle;
-    char Filename[48];
-    short anfield_6C;
-    short Type;
 };
 
 #pragma pack()
