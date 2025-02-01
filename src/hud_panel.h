@@ -130,7 +130,7 @@ void draw_new_panel(void);
 
 TbResult load_pop_sprites_for_current_mode(void);
 
-TbResult load_small_font_for_current_mode(void);
+TbResult load_small_font_for_current_ingame_mode(void);
 
 /** Returns if a game panel is active, considering the target which it controls.
  */

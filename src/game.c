@@ -495,8 +495,8 @@ void flic_unkn03(ubyte anmtype)
     switch (anmtype)
     {
     case 1:
-        p_anim->OutBuf = vec_tmap[4];
         byte_1AAA88 = 0;
+        p_anim->OutBuf = vec_tmap[4];
         p_anim->Flags = 0x20;
 
         rnd = LbRandomPosShort() & 7;
@@ -532,41 +532,41 @@ void flic_unkn03(ubyte anmtype)
         p_anim->OutBuf = vec_tmap[5] + 0x8000;
         break;
     case 4:
+        byte_1AAA88 = 1;
         p_anim->Ypos = 0;
         p_anim->Xpos = 0;
-        byte_1AAA88 = 1;
         p_anim->OutBuf = vec_tmap[5];
-        p_anim->Flags = 2;
+        p_anim->Flags = 0x02;
         pinfo = &game_dirs[DirPlace_Data];
         sprintf(p_anim->Filename, "%s/intro.fli", pinfo->directory);
         break;
     case 5:
-        p_anim->Flags = 2;
+        byte_1AAA88 = 0;
+        p_anim->Flags = 0x02;
         p_anim->Xpos = 10;
         p_anim->Ypos = 30;
-        byte_1AAA88 = 0;
         pinfo = &game_dirs[DirPlace_Data];
         sprintf(p_anim->Filename, "%s/mcomp.fli", pinfo->directory);
         break;
     case 6:
-        p_anim->Xpos = 10;
         byte_1AAA88 = 0;
+        p_anim->Xpos = 10;
         p_anim->Ypos = 30;
-        p_anim->Flags = 2;
+        p_anim->Flags = 0x02;
         pinfo = &game_dirs[DirPlace_Data];
         sprintf(p_anim->Filename, "%s/mcomp.fli", pinfo->directory);
         break;
     case 7:
-        p_anim->Flags = 2;
+        byte_1AAA88 = 0;
+        p_anim->Flags = 0x02;
         p_anim->Xpos = 10;
         p_anim->Ypos = 30;
-        byte_1AAA88 = 0;
         pinfo = &game_dirs[DirPlace_Data];
         sprintf(p_anim->Filename, "%s/mcomp.fli", pinfo->directory);
         break;
     case 8:
         byte_1AAA88 = 0;
-        p_anim->Flags = 32;
+        p_anim->Flags = 0x20;
         p_anim->OutBuf = vec_tmap[5] + 0x8000;
         break;
     case 9:
@@ -1952,7 +1952,7 @@ void adjust_mission_engine_to_video_mode(void)
     overall_scale = (get_overall_scale_min() * 295) >> 8;
     load_pop_sprites_for_current_mode();
     load_mouse_pointers_sprites_for_current_mode();
-    load_small_font_for_current_mode();
+    load_small_font_for_current_ingame_mode();
     render_area_a = render_area_b = \
       get_render_area_for_zoom(user_zoom_min);
     srm_scanner_size_update();
@@ -2405,7 +2405,7 @@ void setup_host(void)
     ingame.PanelPermutation = -2;
     load_pop_sprites_for_current_mode();
     load_mouse_pointers_sprites_for_current_mode();
-    load_small_font_for_current_mode();
+    load_small_font_for_current_ingame_mode();
     init_memory(mem_game);
 
     init_syndwars();
@@ -7192,6 +7192,7 @@ void show_menu_screen(void)
         LbMouseReset();
         LbScreenClear(0);
         setup_screen_mode(screen_mode_menu);
+        load_small_font_for_current_purple_mode();
         reload_background();
         my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     }

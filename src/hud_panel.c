@@ -119,7 +119,7 @@ TbResult load_pop_sprites_for_current_mode(void)
     return ret;
 }
 
-TbResult load_small_font_for_current_mode(void)
+TbResult load_small_font_for_current_ingame_mode(void)
 {
     PathInfo *pinfo;
     short max_detail;
