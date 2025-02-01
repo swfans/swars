@@ -3803,7 +3803,6 @@ void anim_show_FLI_LC(void)
 ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort animno)
 {
     struct Animation *p_anim;
-    char *tag_out;
     ubyte *opal;
     intptr_t i_frchunk;
     size_t sz;
@@ -3849,14 +3848,12 @@ ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort anim
                 opal += 3;
             }
         }
-        tag_out = flic_parse_tags + strlen(flic_parse_tags);
-        strcpy(tag_out, "COLOUR256 ");
+        strncat(flic_parse_tags, "COLOUR256 ", sizeof(flic_parse_tags)-1);
         pal_change = 1;
         break;
     case FLI_SS2:
         anim_show_FLI_SS2();
-        tag_out = flic_parse_tags + strlen(flic_parse_tags);
-        strcpy(tag_out, "SS2 ");
+        strncat(flic_parse_tags, "SS2 ", sizeof(flic_parse_tags)-1);
         break;
     case FLI_COLOUR:
         // assuming run on little-endian CPU
@@ -3888,25 +3885,21 @@ ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort anim
                 opal += 3;
             }
         }
-        tag_out = flic_parse_tags + strlen(flic_parse_tags);
-        strcpy(tag_out, "COLOUR ");
+        strncat(flic_parse_tags, "COLOUR ", sizeof(flic_parse_tags)-1);
         pal_change = 1;
         break;
     case FLI_LC:
         anim_show_FLI_LC();
-        tag_out = flic_parse_tags + strlen(flic_parse_tags);
-        strcpy(tag_out, "LC ");
+        strncat(flic_parse_tags, "LC ", sizeof(flic_parse_tags)-1);
         break;
     case FLI_BLACK:
         sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
         LbMemorySet(p_anim->OutBuf, 0, sz);
-        tag_out = flic_parse_tags + strlen(flic_parse_tags);
-        strcpy(tag_out, "BLACK ");
+        strncat(flic_parse_tags, "BLACK ", sizeof(flic_parse_tags)-1);
         break;
     case FLI_BRUN:
         anim_show_FLI_BRUN();
-        tag_out = flic_parse_tags + strlen(flic_parse_tags);
-        strcpy(tag_out, "BRUN ");
+        strncat(flic_parse_tags, "BRUN ", sizeof(flic_parse_tags)-1);
         break;
     case FLI_COPY:
         sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
@@ -3914,17 +3907,14 @@ ubyte flic_creation_unkn01_sub1(struct FLCFrameDataChunk *p_frchunk, ushort anim
         if (p_anim->OutBuf != 0)
             LbMemoryCopy(p_anim->OutBuf, p_anim->UnkBuf, sz);
         p_anim->UnkBuf += sz;
-        tag_out = flic_parse_tags + strlen(flic_parse_tags);
-        strcpy(tag_out, "COPY ");
+        strncat(flic_parse_tags, "COPY ", sizeof(flic_parse_tags)-1);
         break;
     case FLI_PSTAMP:
         p_anim->UnkBuf += p_frchunk->Size - 6;
-        tag_out = flic_parse_tags + strlen(flic_parse_tags);
-        strcpy(tag_out, "PSTAMP ");
+        strncat(flic_parse_tags, "PSTAMP ", sizeof(flic_parse_tags)-1);
         break;
     default:
-        tag_out = flic_parse_tags + strlen(flic_parse_tags);
-        strcpy(tag_out, "N ");
+        strncat(flic_parse_tags, "N ", sizeof(flic_parse_tags)-1);
         break;
     }
     return pal_change;
@@ -7187,6 +7177,7 @@ void show_menu_screen(void)
     default:
         break;
     }
+
     if (lbDisplay.ScreenMode != screen_mode_menu)
     {
         LbMouseReset();
