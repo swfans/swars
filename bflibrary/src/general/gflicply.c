@@ -17,13 +17,15 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bfflicply.h"
+#include "bfflic.h"
 
 #include <stdlib.h>
 #include "bfmemut.h"
 
 /******************************************************************************/
-extern char anim_parse_tags[152];
+char anim_parse_tags[152];
+ubyte anim_palette[0x300];
+void *anim_scratch;
 
 void anim_show_FLI_SS2(struct Animation *p_anim)
 {

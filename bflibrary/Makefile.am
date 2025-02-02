@@ -14,7 +14,7 @@ libbullfrog_a_headers_src = \
   include/bfendian.h \
   include/bfexe_key.h \
   include/bffile.h \
-  include/bfflicply.h \
+  include/bfflic.h \
   include/bffnuniq.h \
   include/bffont.h \
   include/bfgentab.h \
@@ -74,6 +74,7 @@ libbullfrog_a_SOURCES = \
   src/general/gexe_key.c \
   src/general/gfile.c \
   src/general/gflicply.c \
+  src/general/gflicrec.c \
   src/general/gfnuniq.c \
   src/general/gfont.c \
   src/general/ggenf.c \
