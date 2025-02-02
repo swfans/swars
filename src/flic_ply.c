@@ -129,12 +129,12 @@ void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_ch
     ubyte *out;
     intptr_t i_chunk;
     ushort w, h;
-    short num_w;
 
     i_chunk = (intptr_t)p_chunk;
     out = p_anim->OutBuf;
     for (h = 0; h < p_anim->FLCFileHeader.Height; h++)
     {
+        short num_w;
         ubyte *oout;
 
         oout = out;
@@ -178,11 +178,77 @@ void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_ch
 
 void anim_show_FLI_LC(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_anim_show_FLI_LC_NP\n"
         :  : );
     return;
 #endif
+    ubyte *out;
+    intptr_t i_chunk;
+    ushort h, num_h;
+    ubyte w, num_w;
+
+    i_chunk = (intptr_t)p_chunk;
+    num_h = 0;
+    if (i_chunk != -12)
+        LbMemoryCopy(&num_h, p_anim->UnkBuf, 2);
+    p_anim->UnkBuf += 2;
+    out = &p_anim->OutBuf[num_h * p_anim->FLCFileHeader.Width];
+
+    if (i_chunk != -12)
+        LbMemoryCopy(&num_h, p_anim->UnkBuf, 2);
+    p_anim->UnkBuf += 2;
+
+    for (h = 0; h < num_h; h++)
+    {
+        ubyte *oout;
+
+        oout = out;
+        if (i_chunk != -20)
+            LbMemoryCopy(&num_w, p_anim->UnkBuf, 1);
+        p_anim->UnkBuf += 1;
+
+        for (w = 0; w < num_w; w++)
+        {
+            short num_w;
+            ubyte num_skip;
+            sbyte num_copy;
+
+            if (i_chunk != -16)
+                LbMemoryCopy(&num_skip, p_anim->UnkBuf, 1);
+            oout += num_skip;
+
+            p_anim->UnkBuf += 1;
+            if (i_chunk != -24)
+                LbMemoryCopy(&num_copy, p_anim->UnkBuf, 1);
+            p_anim->UnkBuf += 1;
+            num_w = num_copy;
+            if (num_w >= 0)
+            {
+                if (num_w > 0)
+                {
+                    LbMemoryCopy(oout, p_anim->UnkBuf, num_w);
+                    p_anim->UnkBuf += num_w;
+                    oout += num_w;
+                }
+            }
+            else
+            {
+                ubyte dt_dup;
+
+                num_copy = abs(num_w);
+
+                dt_dup = 0;
+                if (i_chunk != -28)
+                    LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 1);
+                p_anim->UnkBuf++;
+
+                LbMemorySet(oout, dt_dup, num_copy);
+                oout += num_copy;
+            }
+        }
+        out += p_anim->FLCFileHeader.Width;
+    }
 }
 
 ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_frchunk)
