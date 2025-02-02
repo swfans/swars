@@ -62,6 +62,7 @@ void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chu
                 ubyte num_skip;
                 sbyte num_copy;
 
+                // first value is the amount of transparent pixels
                 num_skip = 0;
                 if (i_chunk != -24)
                     LbMemoryCopy(&num_skip, p_anim->UnkBuf, 1);
@@ -100,16 +101,16 @@ void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chu
                 }
             }
         }
-        else
+        else // line control
         {
-            if ((entry & 0x4000) != 0)
+            if ((entry & 0x4000) != 0) // transparent amount of output lines
             {
                 ushort n;
                 n = p_anim->FLCFileHeader.Width * (abs(entry) - 1);
                 i--;
                 out += n;
             }
-            else
+            else // fill last pixel in line
             {
                 out[p_anim->FLCFileHeader.Width - 1] = (ubyte)entry;
             }
@@ -148,19 +149,20 @@ void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_ch
             p_anim->UnkBuf += 1;
 
             num_w = num_copy;
-            if (num_w >= 0)
+            if (num_w >= 0) // positive = duplicate next byte by the amount
             {
               if (num_w > 0)
               {
                 ubyte dt_dup;
 
+                dt_dup = 0;
                 if (i_chunk != -12)
                     LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 1);
                 p_anim->UnkBuf += 1;
                 LbMemorySet(oout, dt_dup, num_w);
               }
             }
-            else
+            else // negative = copy the amount
             {
               num_copy = abs(num_w);
               if (oout != 0)
