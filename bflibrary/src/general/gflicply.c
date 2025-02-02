@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file flic_ply.c
+/** @file gflicply.c
  *     Animation playback support in Autodesk FLIC format.
  * @par Purpose:
  *     Implements functions decoding frames of FLIC animation into a buffer.
@@ -17,7 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "flic_ply.h"
+#include "bfflicply.h"
 
 #include <stdlib.h>
 #include "bfmemut.h"
@@ -25,23 +25,20 @@
 /******************************************************************************/
 extern char anim_parse_tags[152];
 
-void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk)
+void anim_show_FLI_SS2(struct Animation *p_anim)
 {
-#if 0
-    asm volatile ("call ASM_anim_show_FLI_SS2_NP\n"
-        :  : );
-    return;
-#endif
     ubyte *out;
-    intptr_t i_chunk;
+    intptr_t i_inject;
     ushort i, num_i;
 
-    i_chunk = (intptr_t)p_chunk;
+    // Error injection mechanism for testing
+    i_inject = (intptr_t)p_anim->OutBuf;
+
     num_i = 0;
-    if (i_chunk != -16)
+    if (i_inject != -16)
         LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
-    out = p_anim->OutBuf;
     p_anim->UnkBuf += 2;
+    out = p_anim->OutBuf;
 
     for (i = 0; i < num_i; i++)
     {
@@ -51,7 +48,7 @@ void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chu
 
         oout = out;
         entry = 0;
-        if (i_chunk != -20)
+        if (i_inject != -20)
             LbMemoryCopy(&entry, p_anim->UnkBuf, 2);
         p_anim->UnkBuf += 2;
 
@@ -64,13 +61,13 @@ void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chu
 
                 // first value is the amount of transparent pixels
                 num_skip = 0;
-                if (i_chunk != -24)
+                if (i_inject != -24)
                     LbMemoryCopy(&num_skip, p_anim->UnkBuf, 1);
                 p_anim->UnkBuf += 1;
                 oout += num_skip;
 
                 num_copy = 0;
-                if (i_chunk != -28)
+                if (i_inject != -28)
                     LbMemoryCopy(&num_copy, p_anim->UnkBuf, 1);
                 p_anim->UnkBuf += 1;
                 if (num_copy >= 0) // positive = amount to copy is x 2
@@ -89,7 +86,7 @@ void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chu
                     ushort dt_dup;
 
                     dt_dup = 0;
-                    if (i_chunk != -8)
+                    if (i_inject != -8)
                         LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 2);
                     p_anim->UnkBuf += 2;
                     num_k = abs(num_copy);
@@ -119,19 +116,17 @@ void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chu
     }
 }
 
-void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk)
+void anim_show_FLI_BRUN(struct Animation *p_anim)
 {
-#if 0
-    asm volatile ("call ASM_anim_show_FLI_BRUN_NP\n"
-        :  : );
-    return;
-#endif
     ubyte *out;
-    intptr_t i_chunk;
+    intptr_t i_inject;
     ushort w, h;
 
-    i_chunk = (intptr_t)p_chunk;
+    // Error injection mechanism for testing
+    i_inject = (intptr_t)p_anim->OutBuf;
+
     out = p_anim->OutBuf;
+
     for (h = 0; h < p_anim->FLCFileHeader.Height; h++)
     {
         short num_w;
@@ -144,7 +139,7 @@ void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_ch
             sbyte num_copy;
 
             num_copy = 0;
-            if (i_chunk != -16)
+            if (i_inject != -16)
                 LbMemoryCopy(&num_copy, p_anim->UnkBuf, 1);
             p_anim->UnkBuf += 1;
 
@@ -156,7 +151,7 @@ void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_ch
                 ubyte dt_dup;
 
                 dt_dup = 0;
-                if (i_chunk != -12)
+                if (i_inject != -12)
                     LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 1);
                 p_anim->UnkBuf += 1;
                 LbMemorySet(oout, dt_dup, num_w);
@@ -165,8 +160,7 @@ void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_ch
             else // negative = copy the amount
             {
               num_copy = abs(num_w);
-              if (oout != 0)
-                  LbMemoryCopy(oout, p_anim->UnkBuf, num_copy);
+              LbMemoryCopy(oout, p_anim->UnkBuf, num_copy);
               p_anim->UnkBuf += num_copy;
             }
             num_w = num_copy;
@@ -176,26 +170,23 @@ void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_ch
     }
 }
 
-void anim_show_FLI_LC(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk)
+void anim_show_FLI_LC(struct Animation *p_anim)
 {
-#if 0
-    asm volatile ("call ASM_anim_show_FLI_LC_NP\n"
-        :  : );
-    return;
-#endif
     ubyte *out;
-    intptr_t i_chunk;
+    intptr_t i_inject;
     ushort h, num_h;
     ubyte w, num_w;
 
-    i_chunk = (intptr_t)p_chunk;
+    // Error injection mechanism for testing
+    i_inject = (intptr_t)p_anim->OutBuf;
+
     num_h = 0;
-    if (i_chunk != -12)
+    if (i_inject != -12)
         LbMemoryCopy(&num_h, p_anim->UnkBuf, 2);
     p_anim->UnkBuf += 2;
     out = &p_anim->OutBuf[num_h * p_anim->FLCFileHeader.Width];
 
-    if (i_chunk != -12)
+    if (i_inject != -12)
         LbMemoryCopy(&num_h, p_anim->UnkBuf, 2);
     p_anim->UnkBuf += 2;
 
@@ -204,7 +195,7 @@ void anim_show_FLI_LC(struct Animation *p_anim, struct FLCFrameDataChunk *p_chun
         ubyte *oout;
 
         oout = out;
-        if (i_chunk != -20)
+        if (i_inject != -20)
             LbMemoryCopy(&num_w, p_anim->UnkBuf, 1);
         p_anim->UnkBuf += 1;
 
@@ -214,12 +205,12 @@ void anim_show_FLI_LC(struct Animation *p_anim, struct FLCFrameDataChunk *p_chun
             ubyte num_skip;
             sbyte num_copy;
 
-            if (i_chunk != -16)
+            if (i_inject != -16)
                 LbMemoryCopy(&num_skip, p_anim->UnkBuf, 1);
             oout += num_skip;
 
             p_anim->UnkBuf += 1;
-            if (i_chunk != -24)
+            if (i_inject != -24)
                 LbMemoryCopy(&num_copy, p_anim->UnkBuf, 1);
             p_anim->UnkBuf += 1;
             num_w = num_copy;
@@ -239,7 +230,7 @@ void anim_show_FLI_LC(struct Animation *p_anim, struct FLCFrameDataChunk *p_chun
                 num_copy = abs(num_w);
 
                 dt_dup = 0;
-                if (i_chunk != -28)
+                if (i_inject != -28)
                     LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 1);
                 p_anim->UnkBuf++;
 
@@ -260,7 +251,6 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
     int i, n;
     short num_colors;
     ubyte pal_change;
-    struct FLCFrameDataChunk chunk;
 
     pal_change = 0;
     i_frchunk = (intptr_t)p_frchunk;
@@ -302,7 +292,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         pal_change = 1;
         break;
     case FLI_SS2:
-        anim_show_FLI_SS2(p_anim, &chunk);
+        anim_show_FLI_SS2(p_anim);
         strncat(anim_parse_tags, "SS2 ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_COLOUR:
@@ -339,7 +329,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         pal_change = 1;
         break;
     case FLI_LC:
-        anim_show_FLI_LC(p_anim, &chunk);
+        anim_show_FLI_LC(p_anim);
         strncat(anim_parse_tags, "LC ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_BLACK:
@@ -348,7 +338,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         strncat(anim_parse_tags, "BLACK ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_BRUN:
-        anim_show_FLI_BRUN(p_anim, &chunk);
+        anim_show_FLI_BRUN(p_anim);
         strncat(anim_parse_tags, "BRUN ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_COPY:
@@ -373,13 +363,13 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
 void anim_show_prep_next_frame(struct Animation *p_anim)
 {
     p_anim->anfield_30 = p_anim->anfield_4;
-    LbFileRead(p_anim->FileHandle, &p_anim->FLCPrefixChunk.Size, 16);
-    while (p_anim->FLCPrefixChunk.Type != FLI_FRAME_CHUNK) {
-        LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCPrefixChunk.Size - 16);
-        LbFileRead(p_anim->FileHandle, &p_anim->FLCPrefixChunk.Size, 16);
+    LbFileRead(p_anim->FileHandle, &p_anim->FLCFrameChunk.Size, 16);
+    while (p_anim->FLCFrameChunk.Type != FLI_FRAME_CHUNK) {
+        LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
+        LbFileRead(p_anim->FileHandle, &p_anim->FLCFrameChunk.Size, 16);
     }
-    LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCPrefixChunk.Size - 16);
-    p_anim->anfield_4 += p_anim->FLCPrefixChunk.Size;
+    LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
+    p_anim->anfield_4 += p_anim->FLCFrameChunk.Size;
 }
 
 ubyte anim_show_frame(struct Animation *p_anim)
@@ -393,16 +383,16 @@ ubyte anim_show_frame(struct Animation *p_anim)
     p_anim->UnkBuf = anim_scratch;
     anim_parse_tags[0] = 0;
 
-    prefix_type = p_anim->FLCPrefixChunk.Type;
+    prefix_type = p_anim->FLCFrameChunk.Type;
     if (prefix_type == FLI_PREFIX_CHUNK)
     {
-        p_anim->UnkBuf += p_anim->FLCPrefixChunk.Size - 16;
+        p_anim->UnkBuf += p_anim->FLCFrameChunk.Size - 16;
         anim_show_prep_next_frame(p_anim);
         anim_show_frame(p_anim); // recurrence
     }
     else if (prefix_type == FLI_FRAME_CHUNK)
     {
-        for (i = 0; i < p_anim->anfield_26[0]; i++)
+        for (i = 0; i < p_anim->FLCFrameChunk.Chunks; i++)
         {
             void *last_unkbuf;
             last_unkbuf = p_anim->UnkBuf;

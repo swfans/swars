@@ -451,20 +451,32 @@ void game_setup_stuff(void)
 
 void anim_show_FLI_SS2_NP(void)
 {
-    struct FLCFrameDataChunk chunk;
-    anim_show_FLI_SS2(&animations[active_anim], &chunk);
+#if 0
+    asm volatile ("call ASM_anim_show_FLI_SS2_NP\n"
+        :  : );
+    return;
+#endif
+    anim_show_FLI_SS2(&animations[active_anim]);
 }
 
 void anim_show_FLI_BRUN_NP(void)
 {
-    struct FLCFrameDataChunk chunk;
-    anim_show_FLI_BRUN(&animations[active_anim], &chunk);
+#if 0
+    asm volatile ("call ASM_anim_show_FLI_BRUN_NP\n"
+        :  : );
+    return;
+#endif
+    anim_show_FLI_BRUN(&animations[active_anim]);
 }
 
 void anim_show_FLI_LC_NP(void)
 {
-    struct FLCFrameDataChunk chunk;
-    anim_show_FLI_LC(&animations[active_anim], &chunk);
+#if 0
+    asm volatile ("call ASM_anim_show_FLI_LC_NP\n"
+        :  : );
+    return;
+#endif
+    anim_show_FLI_LC(&animations[active_anim]);
 }
 
 void flic_unkn03(ubyte anmtype)

@@ -5,7 +5,7 @@
 #include <stddef.h>
 
 #include "bffile.h"
-#include "flic_ply.h"
+#include "bfflicply.h"
 #include "globals.h"
 #include "scanner.h"
 #include "people.h"

@@ -2,8 +2,8 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file flic_ply.h
- *     Header file for flic_ply.c.
+/** @file bfflicply.h
+ *     Header file for gflicply.c.
  * @par Purpose:
  *     Animation playback support in Autodesk FLIC format.
  * @par Comment:
@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef FLIC_PLY_H
-#define FLIC_PLY_H
+#ifndef BFFLICPLY_H
+#define BFFLICPLY_H
 
 #include "bftypes.h"
 #include "bffile.h"
@@ -57,6 +57,13 @@ struct FLCPrefixChunk {
     ushort Type;
 };
 
+struct FLCFrameChunk {
+    u32 Size;
+    ushort Type;
+    ushort Chunks;
+    ubyte Reserved_0[8];
+};
+
 struct FLCFrameDataChunk {
     u32 Size;
     ushort Type;
@@ -71,8 +78,7 @@ struct Animation {
     ushort Flags;
     ubyte *UnkBuf;
     struct FLCFileHeader FLCFileHeader;
-    struct FLCPrefixChunk FLCPrefixChunk;
-    ushort anfield_26[5];
+    struct FLCFrameChunk FLCFrameChunk;
     long anfield_30;
     long anfield_34;
     TbFileHandle FileHandle;
@@ -93,10 +99,10 @@ TbResult anim_flic_open(struct Animation *p_anim);
 TbBool anim_is_opened(struct Animation *p_anim);
 void anim_flic_close(struct Animation *p_anim);
 
-// Would be best to not keep that as external interface
-void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk);
-void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk);
-void anim_show_FLI_LC(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk);
+// Low level interface
+void anim_show_FLI_SS2(struct Animation *p_anim);
+void anim_show_FLI_BRUN(struct Animation *p_anim);
+void anim_show_FLI_LC(struct Animation *p_anim);
 
 /******************************************************************************/
 #ifdef __cplusplus
