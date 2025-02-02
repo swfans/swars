@@ -19,30 +19,121 @@
 /******************************************************************************/
 #include "flic_ply.h"
 
+#include <stdlib.h>
 #include "bfmemut.h"
 
 /******************************************************************************/
 extern char anim_parse_tags[152];
 
-void anim_show_FLI_SS2(void)
+void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk)
 {
-    asm volatile ("call ASM_anim_show_FLI_SS2\n"
+#if 0
+    asm volatile ("call ASM_anim_show_FLI_SS2_NP\n"
         :  : );
     return;
+#endif
+    ubyte *out;
+    intptr_t i_chunk;
+    ushort i, num_i;
+
+    i_chunk = (intptr_t)p_chunk;
+    num_i = 0;
+    if (i_chunk != -16)
+        LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
+    out = p_anim->OutBuf;
+    p_anim->UnkBuf += 2;
+
+    for (i = 0; i < num_i; i++)
+    {
+        ubyte *oout;
+        short entry;
+        ushort n;
+
+        oout = out;
+        entry = 0;
+        if (i_chunk != -20)
+            LbMemoryCopy(&entry, p_anim->UnkBuf, 2);
+        p_anim->UnkBuf += 2;
+
+        if ((entry & 0x8000) == 0)
+        {
+            for (n = 0; n < entry; n++)
+            {
+                ubyte num_skip;
+                sbyte num_copy;
+
+                num_skip = 0;
+                if (i_chunk != -24)
+                    LbMemoryCopy(&num_skip, p_anim->UnkBuf, 1);
+                p_anim->UnkBuf += 1;
+                oout += num_skip;
+
+                num_copy = 0;
+                if (i_chunk != -28)
+                    LbMemoryCopy(&num_copy, p_anim->UnkBuf, 1);
+                p_anim->UnkBuf += 1;
+                if (num_copy >= 0) // positive = amount to copy is x 2
+                {
+                    ushort num_k;
+                    num_k = 2 * num_copy;
+                    if (num_k > 0) {
+                        LbMemoryCopy(oout, p_anim->UnkBuf, num_k);
+                        p_anim->UnkBuf += num_k;
+                        oout += num_k;
+                    }
+                }
+                else // negative = amount to duplicate next bytes is x 2
+                {
+                    ushort k, num_k;
+                    ushort dt_dup;
+
+                    dt_dup = 0;
+                    if (i_chunk != -8)
+                        LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 2);
+                    p_anim->UnkBuf += 2;
+                    num_k = abs(num_copy);
+                    for (k = 0; k < num_k; k++)
+                    {
+                        *((ushort *)oout) = dt_dup;
+                        oout += 2;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if ((entry & 0x4000) != 0)
+            {
+                ushort n;
+                n = p_anim->FLCFileHeader.Width * (abs(entry) - 1);
+                i--;
+                out += n;
+            }
+            else
+            {
+                out[p_anim->FLCFileHeader.Width - 1] = (ubyte)entry;
+            }
+        }
+        out += p_anim->FLCFileHeader.Width;
+    }
 }
 
-void anim_show_FLI_BRUN(void)
+void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk)
 {
-    asm volatile ("call ASM_anim_show_FLI_BRUN\n"
+#if 1
+    asm volatile ("call ASM_anim_show_FLI_BRUN_NP\n"
         :  : );
     return;
+#endif
 }
 
-void anim_show_FLI_LC(void)
+void anim_show_FLI_LC(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk)
 {
-    asm volatile ("call ASM_anim_show_FLI_LC\n"
+#if 1
+    asm volatile ("call ASM_anim_show_FLI_LC_NP\n"
         :  : );
     return;
+#endif
 }
 
 ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_frchunk)
@@ -54,6 +145,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
     int i, n;
     short num_colors;
     ubyte pal_change;
+    struct FLCFrameDataChunk chunk;
 
     pal_change = 0;
     i_frchunk = (intptr_t)p_frchunk;
@@ -95,7 +187,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         pal_change = 1;
         break;
     case FLI_SS2:
-        anim_show_FLI_SS2();
+        anim_show_FLI_SS2(p_anim, &chunk);
         strncat(anim_parse_tags, "SS2 ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_COLOUR:
@@ -132,7 +224,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         pal_change = 1;
         break;
     case FLI_LC:
-        anim_show_FLI_LC();
+        anim_show_FLI_LC(p_anim, &chunk);
         strncat(anim_parse_tags, "LC ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_BLACK:
@@ -141,7 +233,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         strncat(anim_parse_tags, "BLACK ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_BRUN:
-        anim_show_FLI_BRUN();
+        anim_show_FLI_BRUN(p_anim, &chunk);
         strncat(anim_parse_tags, "BRUN ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_COPY:

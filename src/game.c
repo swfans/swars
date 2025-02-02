@@ -449,6 +449,24 @@ void game_setup_stuff(void)
     colour_grey1 = LbPaletteFindColour(display_palette, 16, 16, 16);
 }
 
+void anim_show_FLI_SS2_NP(void)
+{
+    struct FLCFrameDataChunk chunk;
+    anim_show_FLI_SS2(&animations[active_anim], &chunk);
+}
+
+void anim_show_FLI_BRUN_NP(void)
+{
+    struct FLCFrameDataChunk chunk;
+    anim_show_FLI_BRUN(&animations[active_anim], &chunk);
+}
+
+void anim_show_FLI_LC_NP(void)
+{
+    struct FLCFrameDataChunk chunk;
+    anim_show_FLI_LC(&animations[active_anim], &chunk);
+}
+
 void flic_unkn03(ubyte anmtype)
 {
 #if 0

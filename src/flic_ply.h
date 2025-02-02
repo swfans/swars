@@ -92,6 +92,12 @@ ubyte anim_show_frame(struct Animation *p_anim);
 TbResult anim_flic_open(struct Animation *p_anim);
 TbBool anim_is_opened(struct Animation *p_anim);
 void anim_flic_close(struct Animation *p_anim);
+
+// Would be best to not keep that as external interface
+void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk);
+void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk);
+void anim_show_FLI_LC(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
