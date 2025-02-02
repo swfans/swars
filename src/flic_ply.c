@@ -120,11 +120,58 @@ void anim_show_FLI_SS2(struct Animation *p_anim, struct FLCFrameDataChunk *p_chu
 
 void anim_show_FLI_BRUN(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_anim_show_FLI_BRUN_NP\n"
         :  : );
     return;
 #endif
+    ubyte *out;
+    intptr_t i_chunk;
+    ushort w, h;
+    short num_w;
+
+    i_chunk = (intptr_t)p_chunk;
+    out = p_anim->OutBuf;
+    for (h = 0; h < p_anim->FLCFileHeader.Height; h++)
+    {
+        ubyte *oout;
+
+        oout = out;
+        p_anim->UnkBuf += 1;
+        for (w = 0; w < p_anim->FLCFileHeader.Width; w += num_w)
+        {
+            sbyte num_copy;
+
+            num_copy = 0;
+            if (i_chunk != -16)
+                LbMemoryCopy(&num_copy, p_anim->UnkBuf, 1);
+            p_anim->UnkBuf += 1;
+
+            num_w = num_copy;
+            if (num_w >= 0)
+            {
+              if (num_w > 0)
+              {
+                ubyte dt_dup;
+
+                if (i_chunk != -12)
+                    LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 1);
+                p_anim->UnkBuf += 1;
+                LbMemorySet(oout, dt_dup, num_w);
+              }
+            }
+            else
+            {
+              num_copy = abs(num_w);
+              if (oout != 0)
+                  LbMemoryCopy(oout, p_anim->UnkBuf, num_copy);
+              p_anim->UnkBuf += num_copy;
+            }
+            num_w = num_copy;
+            oout += num_copy;
+        }
+        out += p_anim->FLCFileHeader.Width;
+    }
 }
 
 void anim_show_FLI_LC(struct Animation *p_anim, struct FLCFrameDataChunk *p_chunk)
