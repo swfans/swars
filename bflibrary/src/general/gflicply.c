@@ -20,12 +20,28 @@
 #include "bfflic.h"
 
 #include <stdlib.h>
+#include "bffile.h"
 #include "bfmemut.h"
 
 /******************************************************************************/
 char anim_parse_tags[152];
 ubyte anim_palette[0x300];
 void *anim_scratch;
+
+/**
+ * Reads the data from FLI animation.
+ * @return Returns false on error, true on success.
+ */
+static TbBool anim_read_data(struct Animation *p_anim, void *buf, u32 size)
+{
+	if (buf == NULL) {
+		LbFileSeek(p_anim->FileHandle, size, Lb_FILE_SEEK_CURRENT);
+		return true;
+	} else if (LbFileRead(p_anim->FileHandle, buf, size) == size) {
+		return true;
+	}
+	return false;
+}
 
 void anim_show_FLI_SS2(struct Animation *p_anim)
 {
@@ -365,12 +381,15 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
 void anim_show_prep_next_frame(struct Animation *p_anim)
 {
     p_anim->anfield_30 = p_anim->anfield_4;
-    LbFileRead(p_anim->FileHandle, &p_anim->FLCFrameChunk.Size, 16);
+    anim_read_data(p_anim, &p_anim->FLCFrameChunk, 16);
     while (p_anim->FLCFrameChunk.Type != FLI_FRAME_CHUNK) {
-        LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
-        LbFileRead(p_anim->FileHandle, &p_anim->FLCFrameChunk.Size, 16);
+        anim_read_data(p_anim, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
+        if (!anim_read_data(p_anim, &p_anim->FLCFrameChunk, 16)) {
+            p_anim->FLCFrameChunk.Size = 16;
+            break;
+        }
     }
-    LbFileRead(p_anim->FileHandle, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
+    anim_read_data(p_anim, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
     p_anim->anfield_4 += p_anim->FLCFrameChunk.Size;
 }
 
@@ -411,7 +430,9 @@ TbResult anim_flic_open(struct Animation *p_anim)
     if (p_anim->FileHandle == INVALID_FILE)
         return Lb_FAIL;
 
-    LbFileRead(p_anim->FileHandle, &p_anim->FLCFileHeader, 12);
+    if (!anim_read_data(p_anim, &p_anim->FLCFileHeader, 12)) {
+        p_anim->FLCFileHeader.Size = 0;
+    }
     return Lb_SUCCESS;
 }
 
