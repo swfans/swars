@@ -8319,7 +8319,7 @@ void update_unkn_changing_colors(void)
     if (unkn_changing_color_counter1 & 0x01)
         col1 = colour_lookup[ColLU_YELLOW];
     else
-        col1 = colour_lookup[0];
+        col1 = colour_lookup[ColLU_UNKN0];
     unkn_changing_color_1 = col1;
 
     if (unkn_changing_color_counter1 & 0x01)
