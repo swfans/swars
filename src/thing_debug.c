@@ -49,7 +49,9 @@ int dword_1DC7A4 = 0;
 short word_1DC7A0 = 0;
 short word_1DC7A2 = 0;
 
+extern ushort word_1DC898;
 extern ushort word_1DC8CE;
+extern ubyte byte_1DC89C[0x30];
 
 s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilterParams *params)
 {
@@ -269,9 +271,38 @@ int select_thing_for_debug(short x, short y, short z, short ttype)
 
 void count_fnavs(TbBool a1)
 {
+/*
     asm volatile (
       "call ASM_count_fnavs\n"
         : : "a" (a1));
+*/
+    if (!a1)
+    {
+        byte_1DC89C[word_1DC898] = 0;
+        word_1DC898++;
+        return;
+    }
+    if ((ingame.Flags & GamF_Unkn0200) != 0)
+    {
+        ushort i;
+        TbPixel col;
+
+        for (i = 0; i < word_1DC898; i++)
+        {
+            short scr_x, scr_y, w, h;
+
+            w = 23 * (pop1_sprites_scale + 1) / 2;
+            h = 3 * (pop1_sprites_scale + 1) / 2;
+            scr_x = lbDisplay.GraphicsScreenWidth - 29 * (pop1_sprites_scale + 1) / 2;
+            scr_y = lbDisplay.GraphicsScreenHeight - (29 + 6 * i) * (pop1_sprites_scale + 1) / 2;
+            if (byte_1DC89C[i])
+                col = colour_lookup[3];
+            else
+                col = colour_lookup[2];
+            LbDrawBox(scr_x, scr_y, w, h, col);
+        }
+    }
+    word_1DC898 = 0;
 }
 
 void navi_onscreen_debug(TbBool a1)
@@ -288,17 +319,11 @@ void navi_onscreen_debug(TbBool a1)
         for (i = 0; i < word_1DC8CE; i++)
         {
             short scr_x, scr_y, w, h;
-            if (lbDisplay.GraphicsScreenHeight < 400) {
-                w = 25;
-                h = 5;
-                scr_x = lbDisplay.GraphicsScreenWidth - 60 / 2;
-                scr_y = lbDisplay.GraphicsScreenHeight - (60 + 12 * i) / 2;
-            } else {
-                w = 50;
-                h = 10;
-                scr_x = lbDisplay.GraphicsScreenWidth - 60;
-                scr_y = lbDisplay.GraphicsScreenHeight - (60 + 12 * i);
-            }
+
+            w = 25 * (pop1_sprites_scale + 1) / 2;
+            h = 5 * (pop1_sprites_scale + 1) / 2;
+            scr_x = lbDisplay.GraphicsScreenWidth - 30 * (pop1_sprites_scale + 1) / 2;
+            scr_y = lbDisplay.GraphicsScreenHeight - (30 + 6 * i) * (pop1_sprites_scale + 1) / 2;
             LbDrawBox(scr_x, scr_y, w, h, colour_lookup[ColLU_BLUE]);
         }
     }
