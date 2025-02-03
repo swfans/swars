@@ -388,6 +388,8 @@ struct TngUPerson
   ubyte ComRange;
   ubyte BumpMode; // within Thing, pos=92
   ubyte BumpCount;
+  /** Index of a thing under this one (item available for pickup or vehicle).
+   */
   short Vehicle;
   /** Index of a next thing in a linked list of passengers.
    */

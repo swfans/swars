@@ -784,6 +784,12 @@ TbBool read_missions_conf_info(int num)
     char *p_str;
 
     sprintf(conf_fname, "%s" FS_SEP_STR "miss%03d.ini", "conf", num);
+    if (!LbFileExists(conf_fname)) {
+        LOGSYNC("Could not find '%s' file", conf_fname);
+        p_campgn = &campaigns[num];
+        LbMemorySet(p_campgn, 0, sizeof(struct Campaign));
+        return false;
+    }
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
         conf_len = LbFileLengthHandle(conf_fh);
@@ -794,7 +800,7 @@ TbBool read_missions_conf_info(int num)
         LOGSYNC("Processing '%s' file, %d bytes", conf_fname, conf_len);
         LbFileClose(conf_fh);
     } else {
-        LOGSYNC("Could not open '%s' file.", conf_fname);
+        LOGSYNC("Could not open '%s' file", conf_fname);
         conf_buf = LbMemoryAlloc(16);
         conf_len = 0;
     }

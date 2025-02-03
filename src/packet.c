@@ -147,4 +147,18 @@ void PacketRecord_OpenRead(void)
           fname, head.levelno, (int)p_missi->LevelNo);
 }
 
+void PacketRecord_Read(struct Packet *p_pckt)
+{
+    asm volatile (
+      "call ASM_PacketRecord_Read\n"
+        : : "a" (p_pckt));
+}
+
+void PacketRecord_Write(struct Packet *p_pckt)
+{
+    asm volatile (
+      "call ASM_PacketRecord_Write\n"
+        : : "a" (p_pckt));
+}
+
 /******************************************************************************/

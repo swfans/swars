@@ -59,6 +59,7 @@ ubyte ac_show_title_box(struct ScreenTextBox *box);
 
 void init_system_menu_boxes(void);
 void init_global_boxes(void);
+TbResult load_small_font_for_current_purple_mode(void);
 
 /** Re-enables a button from system menu, moving the following buttons down.
  */

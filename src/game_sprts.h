@@ -37,6 +37,7 @@ extern ubyte *pointer_data_end;
 extern struct TbSprite *small_font;
 extern struct TbSprite *small_font_end;
 extern ubyte *small_font_data;
+extern ubyte *small_font_data_end;
 
 extern struct TbSprite *small2_font;
 extern struct TbSprite *small2_font_end;
@@ -125,6 +126,10 @@ TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
 void setup_sprites_fe_mouse_pointers(void);
 void reset_sprites_fe_mouse_pointers(void);
 
+/** Loads small font sprites for given detail level.
+ * Requires the sprite buffers to be already allocated.
+ */
+TbResult load_sprites_small_font_up_to(const char *dir, short max_detail);
 void setup_sprites_small_font(void);
 void reset_sprites_small_font(void);
 

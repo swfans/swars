@@ -9,9 +9,9 @@
 !define LEVELS_PKG_MD5 "bbf821b463613993c1d53ba7017abc06"
 
 ; Version number and file name for gfx package
-!define GFX_VERSION "1.0.3.171"
-!define GFX_PACKAGE "swars-gfx-1_0_3_171"
-!define GFX_PKG_MD5 "2ea3df9b6da0f6a03ff967e9cdc46783"
+!define GFX_VERSION "1.0.3.175"
+!define GFX_PACKAGE "swars-gfx-1_0_3_175"
+!define GFX_PKG_MD5 "a5732642f4e5161847f09f70c30570e3"
 
 ; Version number and file name for sfx package
 !define SFX_VERSION "1.0.0.22"

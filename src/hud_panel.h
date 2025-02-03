@@ -123,9 +123,14 @@ extern short gui_scale;
 
 int SCANNER_objective_info_height(void);
 
+void draw_text_linewrap1b(int base_x, int *p_pos_y, const char *text);
+void draw_text_linewrap2b(int base_x, int *p_pos_y, const char *text);
+
 void draw_new_panel(void);
 
 TbResult load_pop_sprites_for_current_mode(void);
+
+TbResult load_small_font_for_current_ingame_mode(void);
 
 /** Returns if a game panel is active, considering the target which it controls.
  */

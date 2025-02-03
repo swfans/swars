@@ -23,6 +23,7 @@
 #include "game_bstype.h"
 #include "cybmod.h"
 #include "weapon.h"
+#include "plyr_usrinp.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,22 +46,6 @@ struct AgentInfo {
     char RandomName[CRYO_PODS_MAX_COUNT];
     struct WeaponsFourPack FourPacks[CRYO_PODS_MAX_COUNT];
     ubyte NumAgents;
-};
-
-struct SpecialUserInput
-{
-  long Bits;
-  char DtX;
-  char DtZ;
-  ushort Turn; /* from do_user_interface(), this seem to be game turn of last action */
-  ubyte LastDir; /* probably wrong place */
-  ubyte CurDir; /* probably wrong place */
-  ushort MapX[3];
-  ushort MapY[3];
-  ushort MapZ[3];
-  ushort OnFace;
-  ushort ControlMode;
-  ushort MapIndex;
 };
 
 typedef struct {

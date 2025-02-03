@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "bffile.h"
+#include "bfflic.h"
 #include "globals.h"
 #include "scanner.h"
 #include "people.h"
@@ -239,30 +240,6 @@ struct InGame {
     ushort UserFlags;
     long CashAtStart;
     long Expenditure;
-};
-
-struct Animation {
-  ubyte *OutBuf;
-  long field_4;
-  short PosX;
-  short PosY;
-  short field_C;
-  ushort Flags;
-  long field_10;
-  long field_14;
-  short field_18;
-  short field_1A[1];
-  short field_1C[1];
-  short field_1E[1];
-  long field_20;
-  short field_24;
-  short field_26[5];
-  long field_30;
-  long field_34;
-  long FileHandle;
-  char Filename[48];
-  short anonymous_15;
-  short field_6E;
 };
 
 #pragma pack()
@@ -547,6 +524,9 @@ void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 void ingame_palette_reload(void);
 void game_set_cam_track_thing_xz(ThingIdx thing);
 TbBool game_cam_tracked_thing_is_player_agent(void);
+
+void local_to_worldr(int *dx, int *dy, int *dz);
+ubyte process_send_person(ushort player, int i);
 
 #ifdef __cplusplus
 };

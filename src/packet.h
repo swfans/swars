@@ -139,6 +139,8 @@ void build_packet4(struct Packet *packet, ushort type, ulong param1, long x, lon
 void PacketRecord_Close(void);
 void PacketRecord_OpenWrite(void);
 void PacketRecord_OpenRead(void);
+void PacketRecord_Read(struct Packet *p_pckt);
+void PacketRecord_Write(struct Packet *p_pckt);
 /******************************************************************************/
 #ifdef __cplusplus
 }

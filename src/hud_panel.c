@@ -26,6 +26,7 @@
 #include "bfplanar.h"
 #include "bfscreen.h"
 #include "bfsprite.h"
+#include "bftext.h"
 #include "bfutility.h"
 #include "ssampply.h"
 
@@ -115,6 +116,19 @@ TbResult load_pop_sprites_for_current_mode(void)
     ret = load_pop_sprites_up_to(pinfo->directory, name, styleno, max_detail);
     setup_pop_sprites();
     size_panels_for_detail(pop1_sprites_scale - 1);
+    return ret;
+}
+
+TbResult load_small_font_for_current_ingame_mode(void)
+{
+    PathInfo *pinfo;
+    short max_detail;
+    TbResult ret;
+
+    max_detail = pop1_sprites_scale / 2;
+    pinfo = &game_dirs[DirPlace_Data];
+    ret = load_sprites_small_font_up_to(pinfo->directory, max_detail);
+    setup_sprites_small_font();
     return ret;
 }
 
@@ -260,52 +274,62 @@ void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int
 int SCANNER_text_draw(const char *text, int start_x, int height)
 {
     const ubyte *str;
-    struct TbSprite *p_spr;
-    int x;
+    int x, y;
+    short fnt_height, height_base;
     ubyte sel_c1;
-    ubyte ch;
-    TbPixel col;
 
+    lbFontPtr = small_font;
+    fnt_height = font_height('A');
+     // detail 0 font has height equal 6
+    height_base = 9 * fnt_height / 6;
+    y = 0;
     str = (const ubyte *)text;
     sel_c1 = SCANNER_colour[0];
     x = start_x;
-    if (lbDisplay.GraphicsScreenHeight >= 400)
+    if (height != height_base)
     {
-      int chr_width, chr_height;
+        while (*str != '\0')
+        {
+            struct TbSprite *p_spr;
+            int chr_width, chr_height;
+            ubyte ch;
+            TbPixel col;
 
-      while (*str != '\0')
-      {
-        if (*str == '\1') {
-          str++;
-          sel_c1 = *str;
-        } else {
-          ch = my_char_to_upper(*str);
-          col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
-          p_spr = &small_font[ch - 31];
-          chr_width = p_spr->SWidth * height / 9;
-          chr_height = p_spr->SHeight * height / 9;
-          LbSpriteDrawScaledOneColour(x, 2, p_spr, chr_width, chr_height, col);
-          x += chr_width;
+            if (*str == '\1') {
+              str++;
+              sel_c1 = *str;
+            } else {
+              ch = my_char_to_upper(*str);
+              col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
+              p_spr = &lbFontPtr[ch - 31];
+              chr_width = p_spr->SWidth * height / height_base;
+              chr_height = p_spr->SHeight * height / height_base;
+              LbSpriteDrawScaledOneColour(x, y, p_spr, chr_width, chr_height, col);
+              x += chr_width;
+            }
+            str++;
         }
-        str++;
-      }
     }
     else
     {
-      while (*str != '\0')
-      {
-        if (*str == '\1') {
-          str++;
-          sel_c1 = *str;
-        } else {
-          ch = my_char_to_upper(*str);
-          col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
-          p_spr = &small_font[ch - 31];
-          LbSpriteDrawOneColour(x, 1, p_spr, col);
-          x += p_spr->SWidth;
+        while (*str != '\0')
+        {
+            struct TbSprite *p_spr;
+            ubyte ch;
+            TbPixel col;
+
+            if (*str == '\1') {
+              str++;
+              sel_c1 = *str;
+            } else {
+              ch = my_char_to_upper(*str);
+              col = pixmap.fade_table[56 * PALETTE_8b_COLORS + sel_c1];
+              p_spr = &lbFontPtr[ch - 31];
+              LbSpriteDrawOneColour(x, y, p_spr, col);
+              x += p_spr->SWidth;
+            }
+            str++;
         }
-        str++;
-      }
     }
     return x;
 }
@@ -349,10 +373,122 @@ void SCANNER_move_objective_info(int width, int height, int end_pos)
     }
 }
 
+void draw_text_linewrap1b(int base_x, int *p_pos_y, const char *text)
+{
+    const char *str;
+    int pos_x, pos_y;
+    int base_shift;
+    TbPixel col2;
+
+    col2 = SCANNER_colour[0];
+    str = text;
+    pos_x = base_x;
+    base_shift = 0;
+    pos_y = *p_pos_y;
+    while (*str != '\0')
+    {
+        if (*str == 32)
+        {
+            const char *sstr;
+            int w;
+
+            w = 0;
+            sstr = str + 1;
+            while (*sstr != '\0')
+            {
+                struct TbSprite *p_spr;
+
+                if (*sstr == 32)
+                    break;
+                p_spr = &small_font[my_char_to_upper(*sstr) - 31];
+                w += p_spr->SWidth;
+                sstr++;
+            }
+            if (pos_x + 2 * w < lbDisplay.PhysicalScreenWidth - 16) {
+                pos_x += 8;
+            } else {
+                pos_x = base_x;
+                pos_y += 12;
+            }
+        }
+        else
+        {
+            struct TbSprite *p_spr;
+            ushort fade_lv;
+
+            fade_lv = 40 - (lbSinTable[128 * ((gameturn + base_shift) & 0xF)] >> 13);
+            p_spr = &small_font[my_char_to_upper(*str) - 31];
+            SCANNER_unkn_func_200(p_spr, pos_x + 1, pos_y + 1, colour_lookup[0]);
+            SCANNER_unkn_func_200(p_spr, pos_x, pos_y, pixmap.fade_table[256 * fade_lv + col2]);
+            pos_x += p_spr->SWidth + p_spr->SWidth;
+        }
+        base_shift++;
+        str++;
+    }
+    pos_y += 12;
+    *p_pos_y = pos_y;
+}
+
+void draw_text_linewrap2b(int base_x, int *p_pos_y, const char *text)
+{
+    const char *str;
+    int pos_x, pos_y;
+    int base_shift;
+    TbPixel col2;
+
+    col2 = SCANNER_colour[0];
+    pos_x = base_x;
+    str = text;
+    pos_y = *p_pos_y;
+    base_shift = 0;
+    while (*str != '\0')
+    {
+        if (*str == 32)
+        {
+            const char *sstr;
+            int w;
+
+            w = 0;
+            sstr = str + 1;
+            while (*sstr != '\0')
+            {
+                struct TbSprite *p_spr;
+
+                if (*sstr == 32)
+                  break;
+                p_spr = &small_font[my_char_to_upper(*sstr) - 31];
+                w += p_spr->SWidth;
+                sstr++;
+            }
+            if (pos_x + w < lbDisplay.PhysicalScreenWidth - 8) {
+                pos_x += 4;
+            } else {
+                pos_x = base_x;
+                pos_y += 6;
+            }
+        }
+        else
+        {
+            struct TbSprite *p_spr;
+            ushort fade_lv;
+
+            fade_lv = 40 - (lbSinTable[128 * ((gameturn + base_shift) & 0xF)] >> 13);
+            p_spr = &small_font[my_char_to_upper(*str) - 31];
+            LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, p_spr, colour_lookup[0]);
+            LbSpriteDrawOneColour(pos_x, pos_y,  p_spr, pixmap.fade_table[256 * fade_lv + col2]);
+            pos_x += p_spr->SWidth;
+        }
+        str++;
+        base_shift++;
+    }
+    pos_y += 6;
+    *p_pos_y = pos_y;
+}
+
 void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
 {
-    int pos_x, pos_y;
     const char *str;
+    int pos_x, pos_y;
     int base_shift;
     TbPixel col2;
 
@@ -361,7 +497,7 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
     pos_y = *p_pos_y;
     col2 = byte_1C5C30[plyr];
     base_shift = -180;
-    while (*str != 0)
+    while (*str != '\0')
     {
         if (*str == 32)
         {
@@ -402,8 +538,8 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
 
 void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
 {
-    int pos_x, pos_y;
     const char *str;
+    int pos_x, pos_y;
     int base_shift;
     TbPixel col2;
 
@@ -412,11 +548,11 @@ void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
     pos_y = *p_pos_y;
     col2 = byte_1C5C30[plyr];
     base_shift = -180;
-    while (*str != 0)
+    while (*str != '\0')
     {
         if (*str == 32)
         {
-            if (font_word_length(str + 1) + pos_x < lbDisplay.PhysicalScreenWidth - 8) {
+            if (pos_x + font_word_length(str + 1) < lbDisplay.PhysicalScreenWidth - 8) {
                 pos_x += 4;
             } else {
                 pos_x = base_x;
@@ -2634,7 +2770,7 @@ TbBool process_panel_state(void)
         i = next_buffered_key();
         if (i != 0)
         {
-            if (lbShift & 1)
+            if (lbShift & KMod_SHIFT)
                 i |= 0x0100;
             my_build_packet(p_pckt, PAct_CHAT_MESSAGE_KEY, i, 0, 0, 0);
             return 1;

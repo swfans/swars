@@ -115,9 +115,12 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 
     if ( !LbFileExists(fname) )
     {
-        LOGERR("file does not exist: \"%s\"", fname);
         if ( mode == Lb_FILE_MODE_READ_ONLY )
+        {
+            LOGERR("file does not exist: \"%s\"", fname);
             return INVALID_FILE;
+        }
+        LOGSYNC("file does not exist: \"%s\"", fname);
         if ( mode == Lb_FILE_MODE_OLD )
             mode = Lb_FILE_MODE_NEW;
     }

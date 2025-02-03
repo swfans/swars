@@ -26,12 +26,14 @@
 #include "bfmouse.h"
 #include "bfutility.h"
 #include "bflib_joyst.h"
+
 #include "campaign.h"
 #include "display.h"
 #include "femail.h"
 #include "feresearch.h"
 #include "guiboxes.h"
 #include "guitext.h"
+#include "game_data.h"
 #include "game_speed.h"
 #include "game_sprts.h"
 #include "game.h"
@@ -1271,6 +1273,19 @@ void show_mission_loading_screen(void)
 
     loading_INITIATING_box.Flags = GBxFlg_Unkn0001;
     wait_for_sound_sample_finish(118);
+}
+
+TbResult load_small_font_for_current_purple_mode(void)
+{
+    PathInfo *pinfo;
+    short max_detail;
+    TbResult ret;
+
+    max_detail = 0;//UNKN_sprites_scale / 2;
+    pinfo = &game_dirs[DirPlace_Data];
+    ret = load_sprites_small_font_up_to(pinfo->directory, max_detail);
+    setup_sprites_small_font();
+    return ret;
 }
 
 /******************************************************************************/

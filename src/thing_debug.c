@@ -31,6 +31,7 @@
 #include "display.h"
 #include "engintrns.h"
 #include "game.h"
+#include "game_sprts.h"
 #include "pathtrig.h"
 #include "scandraw.h"
 #include "thing_search.h"
@@ -595,15 +596,9 @@ void things_debug_hud(void)
     if (thing == 0)
         return;
 
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        scr_x = 30;
-        scr_y = 30;
-        ln = 15;
-    } else {
-        scr_x = 60;
-        scr_y = 60;
-        ln = 15;
-    }
+    scr_x = 16 * pop1_sprites_scale;
+    scr_y = 30 * pop1_sprites_scale;
+    ln = 15;
 
     if (thing < 0)
     {
