@@ -79,6 +79,9 @@ void screen_switch_to_custom_buffer(struct ScreenBufBkp *bkp,
   TbPixel *buf, short width, short height);
 void screen_load_backup_buffer(struct ScreenBufBkp *bkp);
 
+void update_unkn_changing_colors(void);
+void setup_color_lookups(void);
+
 const char * SWResourceMapping(short index);
 void swap_wscreen(void);
 void show_black_screen(void);
