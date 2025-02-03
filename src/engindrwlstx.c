@@ -89,6 +89,9 @@ extern ubyte byte_1C844E;
 
 extern ubyte byte_1DB2E9;
 
+TbPixel deep_radar_surface_col = 0xd8;
+TbPixel deep_radar_line_col = 0x64;
+
 sbyte byte_153014[] = {
   1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
