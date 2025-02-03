@@ -32,7 +32,7 @@ void *anim_scratch;
  * Reads the data from FLI animation.
  * @return Returns false on error, true on success.
  */
-static TbBool anim_read_data(struct Animation *p_anim, void *buf, u32 size)
+TbBool anim_read_data(struct Animation *p_anim, void *buf, u32 size)
 {
 	if (buf == NULL) {
 		LbFileSeek(p_anim->FileHandle, size, Lb_FILE_SEEK_CURRENT);

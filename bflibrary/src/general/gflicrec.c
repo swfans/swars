@@ -19,9 +19,13 @@
 /******************************************************************************/
 #include "bfflic.h"
 
+#include <stdlib.h>
 #include "bffile.h"
 #include "bfmemut.h"
+#include "privbflog.h"
 /******************************************************************************/
+
+TbBool anim_read_data(struct Animation *p_anim, void *buf, u32 size);
 
 /**
  * Writes the data into FLI animation.
@@ -198,7 +202,7 @@ u32 anim_make_FLI_BRUN(struct Animation *p_anim, ubyte *screenbuf)
  * Compress data into FLI's SS2 block.
  * @return Returns packed size of the block which was compressed.
  */
-u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int interline)
+u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int scanline)
 {
     ubyte *blk_begin;
     ubyte *cbuf;
@@ -243,8 +247,8 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
             if (2 * k == p_anim->FLCFileHeader.Width)
             {
                 wend--;
-                cbf += interline;
-                pbf += interline;
+                cbf += scanline;
+                pbf += scanline;
                 continue;
             }
             if ( w > 0 ) {
@@ -323,8 +327,8 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
                 }
             }
         }
-        cbuf += interline;
-        pbuf += interline;
+        cbuf += scanline;
+        pbuf += scanline;
     }
 
     if (p_anim->FLCFileHeader.Height+wend == 0) {
@@ -350,7 +354,7 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
  * Compress data into FLI's LC block.
  * @return Returns packed size of the block which was compressed.
  */
-u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int interline)
+u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int scanline)
 {
     ubyte *blk_begin;
     ubyte *cbuf;
@@ -383,8 +387,8 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
         }
         if (wend != p_anim->FLCFileHeader.Width)
             break;
-        cbuf += interline;
-        pbuf += interline;
+        cbuf += scanline;
+        pbuf += scanline;
     }
     if (hend != 0) {
         hend = p_anim->FLCFileHeader.Height - hend;
@@ -400,8 +404,8 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
             }
             if (wend != p_anim->FLCFileHeader.Width)
                 break;
-            cbuf -= interline;
-            pbuf -= interline;
+            cbuf -= scanline;
+            pbuf -= scanline;
         }
         hdim = h - hend;
         blksize = p_anim->FLCFileHeader.Width * hend;
@@ -499,8 +503,8 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
                     }
                 }
             }
-            cbuf += interline;
-            pbuf += interline;
+            cbuf += scanline;
+            pbuf += scanline;
         }
     } else {
         *(short *)p_anim->UnkBuf = 0;
@@ -516,6 +520,83 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
         p_anim->UnkBuf++;
     }
     return p_anim->UnkBuf - blk_begin;
+}
+
+/*
+ * Returns size of the FLI movie frame buffer, for given width
+ * and height of animation. The buffer of returned size is big enough
+ * to store one frame of any kind (any compression).
+ */
+u32 anim_buffer_size(int width, int height, int bpp)
+{
+    int n;
+    n = (bpp >> 3);
+    if (bpp % 8) n++;
+    return abs(width)*abs(height)*n + 32767;
+}
+
+TbResult anim_make_open(struct Animation *p_anim, int width, int height, int bpp, uint flags)
+{
+    if (flags & p_anim->Flags) {
+        LOGERR("Cannot record anim");
+        return Lb_FAIL;
+    }
+    if (flags & 0x01) {
+        LOGSYNC("Record new anim, '%s'", p_anim->Filename);
+        LbMemorySet(p_anim, 0, sizeof(struct Animation));
+        p_anim->Flags |= flags;
+
+        p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_NEW);
+        if (p_anim->FileHandle == INVALID_FILE) {
+            LOGERR("Cannot open movie file");
+            return Lb_FAIL;
+        }
+        p_anim->FLCFileHeader.Magic = 0xAF12;
+        p_anim->FLCFileHeader.NumberOfFrames = 0;
+        p_anim->FLCFileHeader.Width = width;
+        p_anim->FLCFileHeader.Height = height;
+#if defined(LB_ENABLE_FLIC_FULL_HEADER)
+        p_anim->FLCFileHeader.dsize = 128;
+        p_anim->FLCFileHeader.Depth = bpp;
+        p_anim->FLCFileHeader.Flags = 3;
+        p_anim->FLCFileHeader.FrameSpeed = 57;
+        p_anim->FLCFileHeader.Created = 0;
+        p_anim->FLCFileHeader.Creator = 0x464C4942;//'BILF'
+        p_anim->FLCFileHeader.Updated = 0;
+        p_anim->FLCFileHeader.Updater = 0x464C4942;
+        p_anim->FLCFileHeader.AspectX = 6;
+        p_anim->FLCFileHeader.AspectY = 5;
+        p_anim->FLCFileHeader.Reserved2 = 0;
+        LbMemorySet(p_anim->FLCFileHeader.Reserved3, 0, sizeof(p_anim->FLCFileHeader.Reserved3));
+        p_anim->FLCFileHeader.OffsetFrame1 = 0;
+        p_anim->FLCFileHeader.OffsetFrame2 = 0;
+        LbMemorySet(p_anim->FLCFileHeader.Reserved4, 0, sizeof(p_anim->FLCFileHeader.Reserved4));
+#endif
+        if (!anim_write_data(p_anim, &p_anim->FLCFileHeader, sizeof(struct FLCFileHeader))) {
+            LOGERR("Anim write error");
+            LbFileClose(p_anim->FileHandle);
+            return Lb_FAIL;
+        }
+        LbMemorySet(anim_palette, -1, sizeof(anim_palette));
+    }
+    if (flags & 0x02)  {
+        LOGSYNC("Resume recording, \"%s\" file",p_anim->Filename);
+        p_anim->Flags |= flags;
+        p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_OLD);
+        if (p_anim->FileHandle == INVALID_FILE) {
+            return Lb_FAIL;
+        }
+        // Reading header
+        if (!anim_read_data(p_anim, &p_anim->FLCFileHeader, sizeof(struct FLCFileHeader))) {
+            LOGERR("Anim header read error");
+            LbFileClose(p_anim->FileHandle);
+            return Lb_FAIL;
+        }
+        // TODO unfinished
+        LbFileClose(p_anim->FileHandle);
+        return Lb_FAIL;
+    }
+    return Lb_SUCCESS;
 }
 
 /******************************************************************************/

@@ -50,6 +50,22 @@ struct FLCFileHeader {
     ushort NumberOfFrames;
     ushort Width;
     ushort Height;
+#if defined(LB_ENABLE_FLIC_FULL_HEADER)
+	ushort Depth;
+	ushort Flags;
+	u32 FrameSpeed;
+	short Reserved2;
+	u32 Created;
+	u32 Creator;
+	u32 Updated;
+	u32 Updater;
+	short AspectX;
+	short AspectY;
+	ubyte Reserved3[38];
+	u32 OffsetFrame1;
+	u32 OffsetFrame2;
+	ubyte Reserved4[40];
+#endif
 };
 
 struct FLCPrefixChunk {
