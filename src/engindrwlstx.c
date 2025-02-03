@@ -48,6 +48,7 @@
 #include "game_sprts.h"
 #include "game.h"
 #include "player.h"
+#include "scandraw.h"
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -86,8 +87,6 @@ extern short word_1A5836;
 extern long sprite_over_16x16;
 
 extern ubyte byte_1C844E;
-
-extern ubyte byte_1DB2E9;
 
 TbPixel deep_radar_surface_col = 0xd8;
 TbPixel deep_radar_line_col = 0x64;

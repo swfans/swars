@@ -121,8 +121,30 @@ void SCANNER_init(void)
 
 void SCANNER_set_colour(ubyte col)
 {
+#if 0
     asm volatile ("call ASM_SCANNER_set_colour\n"
         :  : "a" ((long)col));
+#endif
+    switch (col)
+    {
+    case 1:
+        SCANNER_colour[0] = 40;
+        SCANNER_colour[1] = 68;
+        SCANNER_colour[2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + 20];
+        SCANNER_colour[4] = 40;
+        SCANNER_colour[3] = 32;
+        break;
+    case 2:
+        SCANNER_colour[0] = 20;
+        SCANNER_colour[1] = 68;
+        SCANNER_colour[2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + 20];
+        SCANNER_colour[4] = 20;
+        SCANNER_colour[3] = colour_lookup[ColLU_CYAN];
+        break;
+    default:
+        break;
+    }
+    byte_1DB2E9 = col;
 }
 
 void SCANNER_fill_in(void)
