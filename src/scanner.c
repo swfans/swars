@@ -82,28 +82,28 @@ void SCANNER_init_bbpoints(void)
 
 void SCANNER_init_people_colours(void)
 {
-    SCANNER_people_colours[1] =
+    SCANNER_people_colours[SubTT_PERS_AGENT] =
       pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[ColLU_RED]];
-    SCANNER_people_colours[6] =
+    SCANNER_people_colours[SubTT_PERS_MERCENARY] =
       pixmap.fade_table[10 * PALETTE_8b_COLORS + colour_lookup[ColLU_PINK]];
-    SCANNER_people_colours[8] =
+    SCANNER_people_colours[SubTT_PERS_POLICE] =
       pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[ColLU_BLUE]];
-    SCANNER_people_colours[10] =
+    SCANNER_people_colours[SubTT_PERS_SCIENTIST] =
       pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[ColLU_YELLOW]];
-    SCANNER_people_colours[3] =
+    SCANNER_people_colours[SubTT_PERS_PUNK_F] =
       pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[ColLU_GREEN]];
-    SCANNER_people_colours[9] = SCANNER_people_colours[3];
-    SCANNER_people_colours[2] =
+    SCANNER_people_colours[SubTT_PERS_PUNK_M] = SCANNER_people_colours[SubTT_PERS_PUNK_F];
+    SCANNER_people_colours[SubTT_PERS_ZEALOT] =
       pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[ColLU_WHITE]];
-    SCANNER_people_colours[12] = SCANNER_people_colours[2];
-    SCANNER_people_colours[7] =  SCANNER_people_colours[2];
-    SCANNER_people_colours[11] =
+    SCANNER_people_colours[SubTT_PERS_HIGH_PRIEST] = SCANNER_people_colours[SubTT_PERS_ZEALOT];
+    SCANNER_people_colours[SubTT_PERS_MECH_SPIDER] =  SCANNER_people_colours[SubTT_PERS_ZEALOT];
+    SCANNER_people_colours[SubTT_PERS_SHADY_M] =
       pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[ColLU_GREYMD]];
-    SCANNER_people_colours[4] =
+    SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M] =
       pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[ColLU_GREYMD]];
-    SCANNER_people_colours[5] =  SCANNER_people_colours[4];
-    SCANNER_people_colours[13] = SCANNER_people_colours[4];
-    SCANNER_people_colours[14] = SCANNER_people_colours[4];
+    SCANNER_people_colours[SubTT_PERS_WHITE_BRUN_F] =  SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M];
+    SCANNER_people_colours[SubTT_PERS_WHIT_BLOND_F] = SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M];
+    SCANNER_people_colours[SubTT_PERS_LETH_JACKT_M] = SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M];
 }
 
 void SCANNER_init(void)
