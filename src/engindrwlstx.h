@@ -81,8 +81,8 @@ extern struct SortLine *game_sort_lines;
 extern struct SortLine *p_current_sort_line;
 extern ushort next_sort_line;
 
-extern ubyte deep_radar_surface_col;
-extern ubyte deep_radar_line_col;
+extern TbPixel deep_radar_surface_col;
+extern TbPixel deep_radar_line_col;
 
 extern ushort next_special_face;
 extern ushort next_special_face4;

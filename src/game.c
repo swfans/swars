@@ -216,10 +216,6 @@ extern long dword_1DC88C;
 extern long dword_1DC890;
 extern long dword_1DC894;
 
-extern ubyte unkn_changing_color_1;
-extern ubyte unkn_changing_color_2;
-extern ulong unkn_changing_color_counter1;
-
 extern short brightness;
 
 //TODO this is not an extern only because I was unable to locate it in asm
@@ -2686,12 +2682,6 @@ ubyte save_user_settings(void)
     LbFileWrite(fh, &save_mortal_salt, sizeof(save_mortal_salt));
     LbFileClose(fh);
     return 0;
-}
-
-void setup_color_lookups(void)
-{
-    asm volatile ("call ASM_setup_color_lookups\n"
-        :  :  : "eax" );
 }
 
 void init_engine(void)
@@ -8309,24 +8299,6 @@ void joy_input(void)
 {
     asm volatile ("call ASM_joy_input\n"
         :  :  : "eax" );
-}
-
-void update_unkn_changing_colors(void)
-{
-    ubyte col1, col2;
-
-    unkn_changing_color_counter1++;
-    if (unkn_changing_color_counter1 & 0x01)
-        col1 = colour_lookup[ColLU_YELLOW];
-    else
-        col1 = colour_lookup[0];
-    unkn_changing_color_1 = col1;
-
-    if (unkn_changing_color_counter1 & 0x01)
-        col2 = colour_lookup[ColLU_RED];
-    else
-        col2 = colour_lookup[ColLU_WHITE];
-    unkn_changing_color_2 = col2;
 }
 
 /** Orbital station explosion code.

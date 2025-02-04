@@ -452,7 +452,7 @@ void SCANNER_dnt_SCANNER_dw070_update(ushort flags1)
         n2_cand = nm_shft >> 16;
     }
 
-    if ( (flags1 & 0x04) != 0 )
+    if ((flags1 & 0x04) != 0)
     {
         nm_prec = (s64)SCANNER_dw070 << 16;
         nm_shft = -(nm_prec / SCANNER_dw068);
@@ -1511,8 +1511,8 @@ TbPixel SCANNER_thing_colour(struct Thing *p_thing)
     case TT_PERSON:
         if ((p_thing->Flag & TngF_Persuaded) != 0)
             col = colour_lookup[ColLU_YELLOW];
-        else if ( (p_thing->Flag & TngF_PlayerAgent) != 0 && p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD)
-            col = SCANNER_people_colours[4];
+        else if ((p_thing->Flag & TngF_PlayerAgent) != 0 && p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD)
+            col = SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M];
         else
             col = SCANNER_people_colours[p_thing->SubType];
         break;
