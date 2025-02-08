@@ -111,6 +111,10 @@ extern void *anim_scratch;
 void anim_show_prep_next_frame(struct Animation *p_anim);
 ubyte anim_show_frame(struct Animation *p_anim);
 
+void anim_flic_init(struct Animation *p_anim, short anmtype, ushort flags);
+void anim_flic_set_output(struct Animation *p_anim, ubyte *obuf,
+  short x, short y, ushort flags);
+void anim_flic_set_fname(struct Animation *p_anim, const char *format, ...);
 TbResult anim_flic_open(struct Animation *p_anim);
 TbBool anim_is_opened(struct Animation *p_anim);
 void anim_flic_close(struct Animation *p_anim);

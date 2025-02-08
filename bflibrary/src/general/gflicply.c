@@ -20,6 +20,8 @@
 #include "bfflic.h"
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
 #include "bffile.h"
 #include "bfmemut.h"
 
@@ -422,6 +424,35 @@ ubyte anim_show_frame(struct Animation *p_anim)
         }
     }
     return pal_change;
+}
+
+void anim_flic_init(struct Animation *p_anim, short anmtype, ushort flags)
+{
+    LbMemorySet(p_anim, '\0', sizeof(struct Animation));
+    p_anim->FrameNumber = 0;
+    p_anim->Type = anmtype;
+    p_anim->Flags = flags;
+}
+
+void anim_flic_set_output(struct Animation *p_anim, ubyte *obuf, short x, short y, ushort flags)
+{
+    p_anim->Ypos = x;
+    p_anim->Xpos = y;
+    p_anim->OutBuf = obuf;
+    p_anim->Flags |= flags;
+}
+
+void anim_flic_set_fname(struct Animation *p_anim, const char *format, ...)
+{
+    va_list val;
+
+    if (format) {
+        va_start(val, format);
+        vsprintf(p_anim->Filename, format, val);
+        va_end(val);
+    } else {
+        LbMemorySet(p_anim->Filename, 0, sizeof(p_anim->Filename));
+    }
 }
 
 TbResult anim_flic_open(struct Animation *p_anim)
