@@ -23,9 +23,11 @@
 #include "bfmath.h"
 #include "bfmemut.h"
 #include "bfscrcopy.h"
+
 #include "campaign.h"
 #include "femail.h"
 #include "femain.h"
+#include "game_data.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "purpldrw.h"
@@ -215,15 +217,19 @@ ubyte show_brief_netscan_box(struct ScreenTextBox *box)
     return 0;
 }
 
-void flic_netscan_open_anim(ubyte anim_no)
+void flic_netscan_open_anim(ubyte netno)
 {
     struct Animation *p_anim;
-    ushort k;
+    PathInfo *pinfo;
+    int k;
+    ubyte anmtype;
 
-    k = anim_slots[9];
+    anmtype = 9;
+    k = anim_slots[anmtype];
     p_anim = &animations[k];
-    sprintf(p_anim->Filename, "data/equip/net%02d.fli", anim_no);
-    flic_unkn03(9);
+    pinfo = &game_dirs[DirPlace_Equip];
+    anim_flic_set_fname(p_anim, "%s/net%02d.fli", pinfo->directory, netno);
+    flic_unkn03(anmtype);
 }
 
 void purple_unkn2_data_to_screen(void)

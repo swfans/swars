@@ -24,6 +24,7 @@
 #include "bfmemut.h"
 #include "bfscrcopy.h"
 #include "bflib_joyst.h"
+
 #include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
@@ -31,6 +32,7 @@
 #include "campaign.h"
 #include "cybmod.h"
 #include "game_sprts.h"
+#include "game_data.h"
 #include "game.h"
 #include "keyboard.h"
 #include "player.h"
@@ -563,7 +565,7 @@ void init_weapon_anim(ubyte weapon)
     struct Campaign *p_campgn;
     struct Animation *p_anim;
     const char *campgn_mark;
-    const char *flic_dir;
+    PathInfo *pinfo;
     ulong k;
 
     p_campgn = &campaigns[background_type];
@@ -572,19 +574,19 @@ void init_weapon_anim(ubyte weapon)
     if (strcmp(campgn_mark, "s") == 0)
         campgn_mark = "";
 
-    flic_dir = "data/equip";
+    pinfo = &game_dirs[DirPlace_Equip];
 
     if (weapon >= 32)
     {
         k = anim_slots[2];
         p_anim = &animations[k];
-        sprintf(p_anim->Filename, "%s/mod-%02d%s.fli", flic_dir, (int)weapon - 32, campgn_mark);
+        sprintf(p_anim->Filename, "%s/mod-%02d%s.fli", pinfo->directory, (int)weapon - 32, campgn_mark);
     }
     else
     {
         k = anim_slots[2];
         p_anim = &animations[k];
-        sprintf(p_anim->Filename, "%s/wep-%02d%s.fli", flic_dir, (int)weapon, campgn_mark);
+        sprintf(p_anim->Filename, "%s/wep-%02d%s.fli", pinfo->directory, (int)weapon, campgn_mark);
     }
     flic_unkn03(2);
 }
