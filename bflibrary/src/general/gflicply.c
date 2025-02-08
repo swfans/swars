@@ -428,7 +428,7 @@ ubyte anim_show_frame(struct Animation *p_anim)
 
 void anim_flic_init(struct Animation *p_anim, short anmtype, ushort flags)
 {
-    LbMemorySet(p_anim, '\0', sizeof(struct Animation));
+    LbMemorySet(p_anim, '\0', offsetof(struct Animation, Filename));
     p_anim->FrameNumber = 0;
     p_anim->Type = anmtype;
     p_anim->Flags = flags;
