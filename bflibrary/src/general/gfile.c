@@ -30,8 +30,9 @@
 
 long LbFileLengthRnc(const char *fname)
 {
+    long flength;
     TbFileHandle handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-    if ( handle == -1 )
+    if (handle == INVALID_FILE)
         return -1;
     LOGDBG("%s: file opened", fname);
     unsigned char buffer[RNC_HEADER_LEN+1];
@@ -41,7 +42,6 @@ long LbFileLengthRnc(const char *fname)
         LbFileClose(handle);
         return -1;
     }
-    long flength;
     if (blong(buffer+0) == RNC_SIGNATURE)
     {
         flength = blong(buffer+4);
@@ -58,13 +58,13 @@ long LbFileLengthRnc(const char *fname)
 long LbFileLoadAt(const char *fname, void *buffer)
 {
     long filelength = LbFileLengthRnc(fname);
-    TbFileHandle handle = -1;
+    TbFileHandle handle = INVALID_FILE;
     if (filelength != -1)
     {
         handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
     }
     int read_status = -1;
-    if (handle != -1)
+    if (handle != INVALID_FILE)
     {
         read_status = LbFileRead(handle, buffer, filelength);
         LbFileClose(handle);
@@ -96,7 +96,7 @@ long LbFileSaveAt(const char *fname, const void *buffer, ulong len)
     int result;
 
     handle = LbFileOpen(fname, Lb_FILE_MODE_NEW);
-    if ( handle == -1 )
+    if (handle == INVALID_FILE)
         return -1;
     result = LbFileWrite(handle,buffer,len);
     LbFileClose(handle);
