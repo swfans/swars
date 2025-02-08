@@ -262,18 +262,57 @@ void anim_show_FLI_LC(struct Animation *p_anim)
     }
 }
 
-ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_frchunk)
+void anim_show_FLI_COLOUR256(struct Animation *p_anim)
 {
     ubyte *opal;
-    intptr_t i_frchunk;
-    size_t sz;
+    intptr_t i_inject;
     ushort num_i;
     int i, n;
-    short num_colors;
+
+    // Error injection mechanism for testing
+    i_inject = (intptr_t)p_anim->OutBuf;
+
+    // assuming run on little-endian CPU
+    opal = anim_palette;
+    num_i = 0;
+    if (i_inject != -16)
+        LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
+    p_anim->UnkBuf += 2;
+
+    for (i = 0; i < num_i; i++)
+    {
+        short num_colors;
+
+        num_colors = 0;
+        if (i_inject != -48)
+            LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
+        p_anim->UnkBuf++;
+        opal += 3 * num_colors;
+
+        num_colors = 0;
+        if (i_inject != -24)
+            LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
+        p_anim->UnkBuf++;
+
+        if (num_colors == 0)
+            num_colors = 256;
+
+        for (n = 0; n < num_colors; n++)
+        {
+            if (opal != NULL)
+                LbMemoryCopy(opal, p_anim->UnkBuf, 3);
+            p_anim->UnkBuf += 3;
+            opal += 3;
+        }
+    }
+}
+
+ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_frchunk)
+{
+    size_t sz;
     ubyte pal_change;
 
     pal_change = 0;
-    i_frchunk = (intptr_t)p_frchunk;
     if (p_frchunk != NULL)
         LbMemoryCopy(p_frchunk, p_anim->UnkBuf, 6);
     p_anim->UnkBuf += 6;
@@ -281,33 +320,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
     switch (p_frchunk->Type)
     {
     case FLI_COLOUR256:
-        // assuming run on little-endian CPU
-        opal = anim_palette;
-        num_i = 0;
-        if (i_frchunk != -16)
-            LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
-        p_anim->UnkBuf += 2;
-        for (i = 0; i < num_i; i++)
-        {
-            num_colors = 0;
-            if (i_frchunk != -48)
-                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-            p_anim->UnkBuf++;
-            opal += 3 * num_colors;
-            num_colors = 0;
-            if (i_frchunk != -24)
-                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-            p_anim->UnkBuf++;
-            if (num_colors == 0)
-                num_colors = 256;
-            for (n = 0; n < num_colors; n++)
-            {
-                if (opal != NULL)
-                    LbMemoryCopy(opal, p_anim->UnkBuf, 3);
-                p_anim->UnkBuf += 3;
-                opal += 3;
-            }
-        }
+        anim_show_FLI_COLOUR256(p_anim);
         strncat(anim_parse_tags, "COLOUR256 ", sizeof(anim_parse_tags)-1);
         pal_change = 1;
         break;
@@ -316,35 +329,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         strncat(anim_parse_tags, "SS2 ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_COLOUR:
-        // assuming run on little-endian CPU
-        opal = anim_palette;
-        num_i = 0;
-        if (i_frchunk != -20)
-            LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
-        p_anim->UnkBuf += 2;
-        for (i = 0; i < num_i; i++)
-        {
-            num_colors = 0;
-            if (i_frchunk != -40)
-                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-            opal += 3 * num_colors;
-            p_anim->UnkBuf++;
-
-            num_colors = 0;
-            if (i_frchunk != -28)
-                LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-            p_anim->UnkBuf++;
-            if (num_colors == 0)
-                num_colors = 256;
-
-            for (n = 0; n < num_colors; n++)
-            {
-                if (opal != NULL)
-                    LbMemoryCopy(opal, p_anim->UnkBuf, 3);
-                p_anim->UnkBuf += 3;
-                opal += 3;
-            }
-        }
+        anim_show_FLI_COLOUR256(p_anim); // reuse implementation
         strncat(anim_parse_tags, "COLOUR ", sizeof(anim_parse_tags)-1);
         pal_change = 1;
         break;
@@ -374,7 +359,9 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         strncat(anim_parse_tags, "PSTAMP ", sizeof(anim_parse_tags)-1);
         break;
     default:
-        strncat(anim_parse_tags, "N ", sizeof(anim_parse_tags)-1);
+        sz = strlen(anim_parse_tags);
+        snprintf(anim_parse_tags + sz, sizeof(anim_parse_tags)-sz-1,
+          "N%04x ", (uint)p_frchunk->Type);
         break;
     }
     return pal_change;
