@@ -49,10 +49,15 @@ void anim_show_FLI_SS2(struct Animation *p_anim)
 {
     ubyte *out;
     intptr_t i_inject;
+    short scanln;
     ushort i, num_i;
 
     // Error injection mechanism for testing
     i_inject = (intptr_t)p_anim->OutBuf;
+
+    scanln = p_anim->Scanline;
+    if (scanln == 0)
+        scanln = p_anim->FLCFileHeader.Width;
 
     num_i = 0;
     if (i_inject != -16)
@@ -123,16 +128,16 @@ void anim_show_FLI_SS2(struct Animation *p_anim)
             if ((entry & 0x4000) != 0) // transparent amount of output lines
             {
                 ushort n;
-                n = p_anim->FLCFileHeader.Width * (abs(entry) - 1);
+                n = scanln * (abs(entry) - 1);
                 i--;
                 out += n;
             }
             else // fill last pixel in line
             {
-                out[p_anim->FLCFileHeader.Width - 1] = (ubyte)entry;
+                out[scanln - 1] = (ubyte)entry;
             }
         }
-        out += p_anim->FLCFileHeader.Width;
+        out += scanln;
     }
 }
 
@@ -140,10 +145,15 @@ void anim_show_FLI_BRUN(struct Animation *p_anim)
 {
     ubyte *out;
     intptr_t i_inject;
+    short scanln;
     ushort w, h;
 
     // Error injection mechanism for testing
     i_inject = (intptr_t)p_anim->OutBuf;
+
+    scanln = p_anim->Scanline;
+    if (scanln == 0)
+        scanln = p_anim->FLCFileHeader.Width;
 
     out = p_anim->OutBuf;
 
@@ -186,7 +196,7 @@ void anim_show_FLI_BRUN(struct Animation *p_anim)
             num_w = num_copy;
             oout += num_copy;
         }
-        out += p_anim->FLCFileHeader.Width;
+        out += scanln;
     }
 }
 
@@ -194,17 +204,22 @@ void anim_show_FLI_LC(struct Animation *p_anim)
 {
     ubyte *out;
     intptr_t i_inject;
+    short scanln;
     ushort h, num_h;
     ubyte w, num_w;
 
     // Error injection mechanism for testing
     i_inject = (intptr_t)p_anim->OutBuf;
 
+    scanln = p_anim->Scanline;
+    if (scanln == 0)
+        scanln = p_anim->FLCFileHeader.Width;
+
     num_h = 0;
     if (i_inject != -12)
         LbMemoryCopy(&num_h, p_anim->UnkBuf, 2);
     p_anim->UnkBuf += 2;
-    out = &p_anim->OutBuf[num_h * p_anim->FLCFileHeader.Width];
+    out = &p_anim->OutBuf[num_h * scanln];
 
     if (i_inject != -12)
         LbMemoryCopy(&num_h, p_anim->UnkBuf, 2);
@@ -258,7 +273,24 @@ void anim_show_FLI_LC(struct Animation *p_anim)
                 oout += num_copy;
             }
         }
-        out += p_anim->FLCFileHeader.Width;
+        out += scanln;
+    }
+}
+
+void anim_show_FLI_BLACK(struct Animation *p_anim)
+{
+    ubyte *out;
+    short i, scanln;
+
+    scanln = p_anim->Scanline;
+    if (scanln == 0)
+        scanln = p_anim->FLCFileHeader.Width;
+    out = p_anim->OutBuf;
+
+    for (i = 0; i < p_anim->FLCFileHeader.Height; i++)
+    {
+        LbMemorySet(out, 0, p_anim->FLCFileHeader.Width);
+        out += scanln;
     }
 }
 
@@ -338,8 +370,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         strncat(anim_parse_tags, "LC ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_BLACK:
-        sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
-        LbMemorySet(p_anim->OutBuf, 0, sz);
+        anim_show_FLI_BLACK(p_anim);
         strncat(anim_parse_tags, "BLACK ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_BRUN:
@@ -419,13 +450,15 @@ void anim_flic_init(struct Animation *p_anim, short anmtype, ushort flags)
     p_anim->FrameNumber = 0;
     p_anim->Type = anmtype;
     p_anim->Flags = flags;
+    p_anim->FileHandle = INVALID_FILE;
 }
 
-void anim_flic_set_output(struct Animation *p_anim, ubyte *obuf, short x, short y, ushort flags)
+void anim_flic_set_output(struct Animation *p_anim, ubyte *obuf, short x, short y, short scanln, ushort flags)
 {
     p_anim->Ypos = x;
     p_anim->Xpos = y;
     p_anim->OutBuf = obuf;
+    p_anim->Scanline = scanln;
     p_anim->Flags |= flags;
 }
 

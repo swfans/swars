@@ -99,7 +99,7 @@ struct Animation {
     long anfield_34;
     TbFileHandle FileHandle;
     char Filename[48];
-    short anfield_6C;
+    short Scanline;
     short Type;
 };
 
@@ -113,7 +113,7 @@ ubyte anim_show_frame(struct Animation *p_anim);
 
 void anim_flic_init(struct Animation *p_anim, short anmtype, ushort flags);
 void anim_flic_set_output(struct Animation *p_anim, ubyte *obuf,
-  short x, short y, ushort flags);
+  short x, short y, short scanln, ushort flags);
 void anim_flic_set_fname(struct Animation *p_anim, const char *format, ...);
 TbResult anim_flic_open(struct Animation *p_anim);
 TbBool anim_is_opened(struct Animation *p_anim);

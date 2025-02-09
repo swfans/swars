@@ -452,7 +452,10 @@ void anim_show_FLI_SS2_NP(void)
         :  : );
     return;
 #endif
-    anim_show_FLI_SS2(&animations[active_anim]);
+    struct Animation *p_anim;
+
+    p_anim = &animations[active_anim];
+    anim_show_FLI_SS2(p_anim);
 }
 
 void anim_show_FLI_BRUN_NP(void)
@@ -462,7 +465,10 @@ void anim_show_FLI_BRUN_NP(void)
         :  : );
     return;
 #endif
-    anim_show_FLI_BRUN(&animations[active_anim]);
+    struct Animation *p_anim;
+
+    p_anim = &animations[active_anim];
+    anim_show_FLI_BRUN(p_anim);
 }
 
 void anim_show_FLI_LC_NP(void)
@@ -472,7 +478,10 @@ void anim_show_FLI_LC_NP(void)
         :  : );
     return;
 #endif
-    anim_show_FLI_LC(&animations[active_anim]);
+    struct Animation *p_anim;
+
+    p_anim = &animations[active_anim];
+    anim_show_FLI_LC(p_anim);
 }
 
 void flic_unkn03(ubyte anmtype)
@@ -500,7 +509,7 @@ void flic_unkn03(ubyte anmtype)
     {
     case 1:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[4], 0, 0, 0x20);
+        anim_flic_set_output(p_anim, vec_tmap[4], 0, 0, 0, 0x20);
 
         rnd = LbRandomPosShort() & 7;
         if (rnd <= 0)
@@ -528,43 +537,43 @@ void flic_unkn03(ubyte anmtype)
         break;
     case 2:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 0, 0, 0x00);
+        anim_flic_set_output(p_anim, vec_tmap[5], 0, 0, 0, 0x00);
         break;
     case 3:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0x00);
+        anim_flic_set_output(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0, 0x00);
         break;
     case 4:
         byte_1AAA88 = 1;
-        anim_flic_set_output(p_anim, vec_tmap[5], 0, 0, 0x02);
+        anim_flic_set_output(p_anim, vec_tmap[5], 0, 0, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "intro");
         break;
     case 5:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 10, 30, 0x02);
+        anim_flic_set_output(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
     case 6:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 10, 30, 0x02);
+        anim_flic_set_output(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
     case 7:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 10, 30, 0x02);
+        anim_flic_set_output(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
     case 8:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0x20);
+        anim_flic_set_output(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0, 0x20);
         break;
     case 9:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 0, 0, 0x00);
+        anim_flic_set_output(p_anim, vec_tmap[5], 0, 0, 0, 0x00);
         break;
       default:
         break;
