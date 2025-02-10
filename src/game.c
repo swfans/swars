@@ -579,7 +579,7 @@ void flic_unkn03(ubyte anmtype)
         break;
     }
 
-    if (anim_flic_open(p_anim) == Lb_FAIL)
+    if (anim_flic_show_open(p_anim) == Lb_FAIL)
     {
         if (anmtype == 1)
             ingame.Flags &= ~GamF_BillboardMovies;
@@ -3752,21 +3752,8 @@ void game_setup(void)
     }
 }
 
-void flic_frame(void)
-{
-    ushort k;
-
-    k = active_anim;
-    anim_show_prep_next_frame(&animations[k]);
-}
-
 void flic_creation_unkn01(void)
 {
-#if 0
-    asm volatile ("call ASM_flic_creation_unkn01\n"
-        :  : );
-    return;
-#endif
     ushort k;
     ubyte pal_change;
 
@@ -3784,12 +3771,6 @@ void flic_creation_unkn01(void)
 
 int xdo_next_frame(ubyte slot)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_xdo_next_frame\n"
-        : "=r" (ret) : "a" (slot));
-    return ret;
-#endif
     struct Animation *p_anim;
     ushort k;
 
@@ -3808,12 +3789,7 @@ int xdo_next_frame(ubyte slot)
 
     if (p_anim->FrameNumber < p_anim->FLCFileHeader.NumberOfFrames)
     {
-        if ((p_anim->Flags & 0x02) != 0) {
-            uint pos;
-            pos = p_anim->Xpos + lbDisplay.GraphicsScreenWidth * p_anim->Ypos;
-            p_anim->FrameBuffer = &lbDisplay.WScreen[pos];
-        }
-        flic_frame();
+        anim_show_prep_next_frame(p_anim, lbDisplay.WScreen);
         flic_creation_unkn01();
         p_anim->FrameNumber++;
         return 0;
