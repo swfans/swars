@@ -398,9 +398,14 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
     return pal_change;
 }
 
-void anim_show_prep_next_frame(struct Animation *p_anim)
+void anim_show_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf)
 {
-    p_anim->anfield_30 = p_anim->anfield_4; // TODO we should probably free anfield_30
+    if (((p_anim->Flags & 0x02) != 0) && (frmbuf != NULL)) {
+        uint pos;
+        pos = p_anim->Xpos + p_anim->Scanline * p_anim->Ypos;
+        p_anim->FrameBuffer = frmbuf + pos;
+    }
+
     anim_read_data(p_anim, &p_anim->FLCFrameChunk, 16);
     while (p_anim->FLCFrameChunk.Type != FLI_FRAME_CHUNK) {
         anim_read_data(p_anim, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
@@ -428,7 +433,7 @@ ubyte anim_show_frame(struct Animation *p_anim)
     if (prefix_type == FLI_PREFIX_CHUNK)
     {
         p_anim->ChunkBuf += p_anim->FLCFrameChunk.Size - 16;
-        anim_show_prep_next_frame(p_anim);
+        anim_show_prep_next_frame(p_anim, NULL);
         anim_show_frame(p_anim); // recurrence
     }
     else if (prefix_type == FLI_FRAME_CHUNK)
@@ -453,13 +458,16 @@ void anim_flic_init(struct Animation *p_anim, short anmtype, ushort flags)
     p_anim->FileHandle = INVALID_FILE;
 }
 
-void anim_flic_set_frame_buffer(struct Animation *p_anim, ubyte *obuf, short x, short y, short scanln, ushort flags)
+void anim_flic_set_frame_buffer(struct Animation *p_anim, ubyte *frmbuf, short x, short y, short scanln, ushort flags)
 {
+    uint pos;
+
     p_anim->Ypos = x;
     p_anim->Xpos = y;
-    p_anim->FrameBuffer = obuf;
     p_anim->Scanline = scanln;
     p_anim->Flags |= flags;
+    pos = p_anim->Xpos + p_anim->Scanline * p_anim->Ypos;
+    p_anim->FrameBuffer = frmbuf + pos;
 }
 
 void anim_flic_set_fname(struct Animation *p_anim, const char *format, ...)
@@ -475,7 +483,7 @@ void anim_flic_set_fname(struct Animation *p_anim, const char *format, ...)
     }
 }
 
-TbResult anim_flic_open(struct Animation *p_anim)
+TbResult anim_flic_show_open(struct Animation *p_anim)
 {
     p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_READ_ONLY);
     if (p_anim->FileHandle == INVALID_FILE)

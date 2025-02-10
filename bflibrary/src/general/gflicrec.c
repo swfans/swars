@@ -47,6 +47,28 @@ TbBool anim_store_data(struct Animation *p_anim, void *p_buf, u32 size)
     return true;
 }
 
+/**
+ * Make copy of the current frame buffer to previous frame buffer.
+ * @return Returns false on error, true on success.
+ */
+TbBool anim_update_prev_frame(struct Animation *p_anim)
+{
+    ubyte *sbuf;
+    ubyte *obuf;
+    short h;
+
+    sbuf = p_anim->FrameBuffer;
+    obuf = p_anim->PvFrameBuf;
+
+    for (h = p_anim->FLCFileHeader.Height; h > 0; h--)
+    {
+        LbMemoryCopy(obuf, sbuf, p_anim->FLCFileHeader.Width);
+        obuf += p_anim->FLCFileHeader.Width;
+        sbuf += p_anim->Scanline;
+    }
+    return true;
+}
+
 u32 anim_make_FLI_COPY(struct Animation *p_anim)
 {
     ubyte *blk_begin;
@@ -204,7 +226,7 @@ u32 anim_make_FLI_BRUN(struct Animation *p_anim)
         }
         sbuf += p_anim->Scanline;
     }
-    // Make the block size even
+    // Make the block size even (req. by FLI spec)
     if ((intptr_t)p_anim->ChunkBuf & 1) {
         *p_anim->ChunkBuf = '\0';
         p_anim->ChunkBuf++;
@@ -216,7 +238,7 @@ u32 anim_make_FLI_BRUN(struct Animation *p_anim)
  * Compress data into FLI's SS2 block.
  * @return Returns packed size of the block which was compressed.
  */
-u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int scanline)
+u32 anim_make_FLI_SS2(struct Animation *p_anim)
 {
     ubyte *blk_begin;
     ubyte *cbuf;
@@ -230,8 +252,8 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
     short ndiff;
     short wend;
     short wendt;
-    cbuf = curdat;
-    pbuf = prvdat;
+    cbuf = p_anim->FrameBuffer;
+    pbuf = p_anim->PvFrameBuf;
     ushort *lines_count;
     ushort *pckt_count;
 
@@ -261,8 +283,8 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
             if (2 * k == p_anim->FLCFileHeader.Width)
             {
                 wend--;
-                cbf += scanline;
-                pbf += scanline;
+                cbf += p_anim->Scanline;
+                pbf += p_anim->Scanline;
                 continue;
             }
             if ( w > 0 ) {
@@ -341,8 +363,8 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
                 }
             }
         }
-        cbuf += scanline;
-        pbuf += scanline;
+        cbuf += p_anim->Scanline;
+        pbuf += p_anim->Scanline;
     }
 
     if (p_anim->FLCFileHeader.Height+wend == 0) {
@@ -356,7 +378,7 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
         p_anim->ChunkBuf -= 2;
         (*lines_count)--;
     }
-    // Make the block size even
+    // Make the block size even (req. by FLI spec)
     if ((intptr_t)p_anim->ChunkBuf & 1) {
         *p_anim->ChunkBuf = '\0';
         p_anim->ChunkBuf++;
@@ -368,7 +390,7 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
  * Compress data into FLI's LC block.
  * @return Returns packed size of the block which was compressed.
  */
-u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int scanline)
+u32 anim_make_FLI_LC(struct Animation *p_anim)
 {
     ubyte *blk_begin;
     ubyte *cbuf;
@@ -388,8 +410,8 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
     int blksize;
 
     blk_begin = p_anim->ChunkBuf;
-    cbuf = curdat;
-    pbuf = prvdat;
+    cbuf = p_anim->FrameBuffer;
+    pbuf = p_anim->PvFrameBuf;
     for (hend = p_anim->FLCFileHeader.Height; hend > 0;  hend--)
     {
         wend = 0;
@@ -401,14 +423,14 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
         }
         if (wend != p_anim->FLCFileHeader.Width)
             break;
-        cbuf += scanline;
-        pbuf += scanline;
+        cbuf += p_anim->Scanline;
+        pbuf += p_anim->Scanline;
     }
     if (hend != 0) {
         hend = p_anim->FLCFileHeader.Height - hend;
         blksize = p_anim->FLCFileHeader.Width * (p_anim->FLCFileHeader.Height - 1);
-        cbuf = curdat + blksize;
-        pbuf = prvdat + blksize;
+        cbuf = p_anim->FrameBuffer + blksize;
+        pbuf = p_anim->PvFrameBuf + blksize;
         for (h = p_anim->FLCFileHeader.Height; h > 0; h--) {
             wend = 0;
             for (w = p_anim->FLCFileHeader.Width; w > 0; w--) {
@@ -418,13 +440,13 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
             }
             if (wend != p_anim->FLCFileHeader.Width)
                 break;
-            cbuf -= scanline;
-            pbuf -= scanline;
+            cbuf -= p_anim->Scanline;
+            pbuf -= p_anim->Scanline;
         }
         hdim = h - hend;
         blksize = p_anim->FLCFileHeader.Width * hend;
-        cbuf = curdat + blksize;
-        pbuf = prvdat + blksize;
+        cbuf = p_anim->FrameBuffer + blksize;
+        pbuf = p_anim->PvFrameBuf + blksize;
         *(ushort *)p_anim->ChunkBuf = hend;
         p_anim->ChunkBuf += 2;
         *(ushort *)p_anim->ChunkBuf = hdim;
@@ -517,8 +539,8 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
                     }
                 }
             }
-            cbuf += scanline;
-            pbuf += scanline;
+            cbuf += p_anim->Scanline;
+            pbuf += p_anim->Scanline;
         }
     } else {
         *(short *)p_anim->ChunkBuf = 0;
@@ -528,7 +550,7 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
         *(sbyte *)p_anim->ChunkBuf = 0;
         p_anim->ChunkBuf++;
     }
-    // Make the block size even
+    // Make the block size even (req. by FLI spec)
     if ((intptr_t)p_anim->ChunkBuf & 1) {
         *p_anim->ChunkBuf = '\0';
         p_anim->ChunkBuf++;
@@ -549,7 +571,7 @@ u32 anim_buffer_size(int width, int height, int bpp)
     return abs(width)*abs(height)*n + 32767;
 }
 
-TbResult anim_make_open(struct Animation *p_anim, int width, int height, int bpp, uint flags)
+TbResult anim_flic_make_open(struct Animation *p_anim, int width, int height, int bpp, uint flags)
 {
     if (flags & p_anim->Flags) {
         LOGERR("Cannot record anim");
@@ -610,6 +632,137 @@ TbResult anim_make_open(struct Animation *p_anim, int width, int height, int bpp
         return Lb_FAIL;
     }
     return Lb_SUCCESS;
+}
+
+void anim_make_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf)
+{
+    u32 max_chunk_size;
+    int width, height, depth;
+
+    if (((p_anim->Flags & 0x02) != 0) && (frmbuf != NULL)) {
+        uint pos;
+        pos = p_anim->Xpos + p_anim->Scanline * p_anim->Ypos;
+        p_anim->FrameBuffer = frmbuf + pos;
+    }
+
+    width = p_anim->FLCFileHeader.Width;
+    height = p_anim->FLCFileHeader.Height;
+    p_anim->ChunkBuf = anim_scratch;
+#if defined(LB_ENABLE_FLIC_FULL_HEADER)
+    depth = p_anim->FLCFileHeader.Depth;
+#else
+    depth = 8;
+#endif
+    max_chunk_size = anim_buffer_size(width, height, depth);
+    LbMemorySet(anim_scratch, 0, max_chunk_size);
+
+    // Store frame chunk
+    p_anim->FLCFrameChunk.Type = FLI_FRAME_CHUNK;
+    p_anim->FLCFrameChunk.Chunks = 0;
+    p_anim->FLCFrameChunk.Size = 0;
+    LbMemorySet(p_anim->FLCFrameChunk.Reserved_0, 0, sizeof(p_anim->FLCFrameChunk.Reserved_0));
+}
+
+TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
+{
+    struct FLCFrameDataChunk lochunk;
+    struct FLCFrameDataChunk *p_fdthunk;
+    ubyte *dataptr;
+    s32 brun_size, lc_size, ss2_size;
+
+    LOGDBG("Starting");
+    // Store frame header filled by `prep_next_frame`
+    anim_store_data(p_anim, &p_anim->FLCFrameChunk, sizeof(struct FLCFrameChunk));
+
+    // Store zeroed out chunk
+    lochunk.Type = 0;
+    lochunk.Size = 0;
+    anim_store_data(p_anim, &lochunk, sizeof(struct FLCFrameDataChunk));
+    // Remember where chunk header starts
+    p_fdthunk = (struct FLCFrameDataChunk *)p_anim->ChunkBuf;
+
+#if defined(LB_ENABLE_FLIC_FULL_HEADER)
+    if (p_anim->FrameNumber == 0) {
+        p_anim->FLCFileHeader.OffsetFrame1 = p_anim->FLCFileHeader.Size;
+    } else if (p_anim->FrameNumber == 1) {
+        p_anim->FLCFileHeader.OffsetFrame2 = p_anim->FLCFileHeader.Size;
+    }
+#endif
+    if (anim_make_FLI_COLOUR256(p_anim, palette)) {
+        p_anim->FLCFrameChunk.Chunks++;
+        p_fdthunk->Type = FLI_COLOUR256;
+        p_fdthunk->Size = p_anim->ChunkBuf - (ubyte *)p_fdthunk;
+
+        // Store zeroed out chunk
+        lochunk.Type = 0;
+        lochunk.Size = 0;
+        anim_store_data(p_anim, &lochunk, sizeof(struct FLCFrameDataChunk));
+        // Remember where chunk header starts
+        p_fdthunk = (struct FLCFrameDataChunk *)p_anim->ChunkBuf;
+    }
+    int scrpoints = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
+    if (p_anim->FrameNumber == 0) {
+        if (anim_make_FLI_BRUN(p_anim)) {
+            p_anim->FLCFrameChunk.Chunks++;
+            p_fdthunk->Type = FLI_BRUN;
+        } else {
+            anim_make_FLI_COPY(p_anim);
+            p_anim->FLCFrameChunk.Chunks++;
+            p_fdthunk->Type = FLI_COPY;
+        }
+    } else {
+        // Determining the best compression method
+        dataptr = p_anim->ChunkBuf;
+        brun_size = anim_make_FLI_BRUN(p_anim);
+        LbMemorySet(dataptr, 0, brun_size);
+        p_anim->ChunkBuf = dataptr;
+        ss2_size = anim_make_FLI_SS2(p_anim);
+        LbMemorySet(dataptr, 0, ss2_size);
+        p_anim->ChunkBuf = dataptr;
+        lc_size = anim_make_FLI_LC(p_anim);
+        if ((lc_size < ss2_size) && (lc_size < brun_size)) {
+            // Store the LC compressed data
+            p_anim->FLCFrameChunk.Chunks++;
+            p_fdthunk->Type = FLI_LC;
+        } else if (ss2_size < brun_size) {
+            // Clear the LC compressed data
+            LbMemorySet(dataptr, 0, lc_size);
+            p_anim->ChunkBuf = dataptr;
+            // Compress with SS2 method
+            anim_make_FLI_SS2(p_anim);
+            p_anim->FLCFrameChunk.Chunks++;
+            p_fdthunk->Type = FLI_SS2;
+        } else if (brun_size < scrpoints + 16) {
+            // Clear the LC compressed data
+            LbMemorySet(dataptr, 0, lc_size);
+            p_anim->ChunkBuf = dataptr;
+            // Compress with BRUN method
+            anim_make_FLI_BRUN(p_anim);
+            p_anim->FLCFrameChunk.Chunks++;
+            p_fdthunk->Type = FLI_BRUN;
+        } else {
+            // Clear the LC compressed data
+            LbMemorySet(dataptr, 0, lc_size);
+            p_anim->ChunkBuf = dataptr;
+            // Store uncompressed frame data
+            anim_make_FLI_COPY(p_anim);
+            p_anim->FLCFrameChunk.Chunks++;
+            p_fdthunk->Type = FLI_COPY;
+        }
+    }
+    p_fdthunk->Size = p_anim->ChunkBuf - (ubyte *)p_fdthunk;
+    p_anim->FLCFrameChunk.Size = p_anim->ChunkBuf - (ubyte *)anim_scratch;
+    if (!anim_write_data(p_anim, anim_scratch, p_anim->ChunkBuf - (ubyte *)anim_scratch)) {
+        LOGNO("Finished frame with error");
+        return false;
+    }
+    anim_update_prev_frame(p_anim);
+    LbMemoryCopy(anim_palette, palette, sizeof(anim_palette));
+    p_anim->FLCFileHeader.NumberOfFrames++;
+    p_anim->FrameNumber++;
+    p_anim->FLCFileHeader.Size += p_anim->ChunkBuf - (ubyte *)anim_scratch;
+    LOGNO("Finished frame ok");
+    return true;
 }
 
 /******************************************************************************/

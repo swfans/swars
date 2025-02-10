@@ -132,19 +132,21 @@ struct Animation {
 extern ubyte anim_palette[0x300];
 extern void *anim_scratch;
 
-void anim_show_prep_next_frame(struct Animation *p_anim);
-ubyte anim_show_frame(struct Animation *p_anim);
-
 void anim_flic_init(struct Animation *p_anim, short anmtype, ushort flags);
 void anim_flic_set_frame_buffer(struct Animation *p_anim, ubyte *obuf,
   short x, short y, short scanln, ushort flags);
 void anim_flic_set_fname(struct Animation *p_anim, const char *format, ...);
-TbResult anim_flic_open(struct Animation *p_anim);
 TbBool anim_is_opened(struct Animation *p_anim);
 void anim_flic_close(struct Animation *p_anim);
 
-TbResult anim_make_open(struct Animation *p_anim, int width, int height,
+TbResult anim_flic_show_open(struct Animation *p_anim);
+void anim_show_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf);
+ubyte anim_show_frame(struct Animation *p_anim);
+
+TbResult anim_flic_make_open(struct Animation *p_anim, int width, int height,
   int bpp, uint flags);
+void anim_make_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf);
+TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette);
 
 // Low level interface
 void anim_show_FLI_SS2(struct Animation *p_anim);
