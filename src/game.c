@@ -509,7 +509,7 @@ void flic_unkn03(ubyte anmtype)
     {
     case 1:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[4], 0, 0, 0, 0x20);
+        anim_flic_set_frame_buffer(p_anim, vec_tmap[4], 0, 0, 0, 0x20);
 
         rnd = LbRandomPosShort() & 7;
         if (rnd <= 0)
@@ -537,43 +537,43 @@ void flic_unkn03(ubyte anmtype)
         break;
     case 2:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 0, 0, 0, 0x00);
+        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 0, 0, 0, 0x00);
         break;
     case 3:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0, 0x00);
+        anim_flic_set_frame_buffer(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0, 0x00);
         break;
     case 4:
         byte_1AAA88 = 1;
-        anim_flic_set_output(p_anim, vec_tmap[5], 0, 0, 0, 0x02);
+        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 0, 0, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "intro");
         break;
     case 5:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
+        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
     case 6:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
+        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
     case 7:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
+        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
     case 8:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0, 0x20);
+        anim_flic_set_frame_buffer(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0, 0x20);
         break;
     case 9:
         byte_1AAA88 = 0;
-        anim_flic_set_output(p_anim, vec_tmap[5], 0, 0, 0, 0x00);
+        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 0, 0, 0, 0x00);
         break;
       default:
         break;
@@ -3811,7 +3811,7 @@ int xdo_next_frame(ubyte slot)
         if ((p_anim->Flags & 0x02) != 0) {
             uint pos;
             pos = p_anim->Xpos + lbDisplay.GraphicsScreenWidth * p_anim->Ypos;
-            p_anim->OutBuf = &lbDisplay.WScreen[pos];
+            p_anim->FrameBuffer = &lbDisplay.WScreen[pos];
         }
         flic_frame();
         flic_creation_unkn01();
