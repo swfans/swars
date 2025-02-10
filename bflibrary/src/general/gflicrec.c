@@ -42,19 +42,28 @@ TbBool anim_write_data(struct Animation *p_anim, void *p_buf, u32 size)
  */
 TbBool anim_store_data(struct Animation *p_anim, void *p_buf, u32 size)
 {
-    LbMemoryCopy(p_anim->UnkBuf, p_buf, size);
-    p_anim->UnkBuf += size;
+    LbMemoryCopy(p_anim->ChunkBuf, p_buf, size);
+    p_anim->ChunkBuf += size;
     return true;
 }
 
-u32 anim_make_FLI_COPY(struct Animation *p_anim, ubyte *screenbuf)
+u32 anim_make_FLI_COPY(struct Animation *p_anim)
 {
-    int scrpoints;
+    ubyte *blk_begin;
+    ubyte *sbuf;
+    short h;
 
-    scrpoints = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
-    LbMemoryCopy(p_anim->UnkBuf, screenbuf, scrpoints);
-    p_anim->UnkBuf += scrpoints;
-    return scrpoints;
+    blk_begin = p_anim->ChunkBuf;
+    sbuf = p_anim->FrameBuffer;
+
+    for (h = p_anim->FLCFileHeader.Height; h > 0; h--)
+    {
+        LbMemoryCopy(p_anim->ChunkBuf, sbuf, p_anim->FLCFileHeader.Width);
+        p_anim->ChunkBuf += p_anim->FLCFileHeader.Width;
+        sbuf += p_anim->Scanline;
+    }
+
+    return (p_anim->ChunkBuf - (ubyte *)blk_begin);
 }
 
 u32 anim_make_FLI_COLOUR256(struct Animation *p_anim, ubyte *palette)
@@ -68,8 +77,8 @@ u32 anim_make_FLI_COLOUR256(struct Animation *p_anim, ubyte *palette)
     if (memcmp(anim_palette, palette, 768) == 0) {
         return 0;
     }
-    change_count = (ushort *)p_anim->UnkBuf;
-    p_anim->UnkBuf += 2;
+    change_count = (ushort *)p_anim->ChunkBuf;
+    p_anim->ChunkBuf += 2;
 
     change_chunk_len = 0;
     kept_chunk_len = 0;
@@ -89,44 +98,48 @@ u32 anim_make_FLI_COLOUR256(struct Animation *p_anim, ubyte *palette)
             kept_chunk_len++;
         } else {
             if (!change_chunk_len) {
-                *p_anim->UnkBuf = kept_chunk_len;
+                *p_anim->ChunkBuf = kept_chunk_len;
                 kept_chunk_len = 0;
-                p_anim->UnkBuf++;
-                kept_count = (ubyte *)p_anim->UnkBuf;
-                p_anim->UnkBuf++;
+                p_anim->ChunkBuf++;
+                kept_count = (ubyte *)p_anim->ChunkBuf;
+                p_anim->ChunkBuf++;
             }
             ++change_chunk_len;
-            *p_anim->UnkBuf = 4 * srcpal[0];
-            p_anim->UnkBuf++;
-            *p_anim->UnkBuf = 4 * srcpal[1];
-            p_anim->UnkBuf++;
-            *p_anim->UnkBuf = 4 * srcpal[2];
-            p_anim->UnkBuf++;
+            *p_anim->ChunkBuf = 4 * srcpal[0];
+            p_anim->ChunkBuf++;
+            *p_anim->ChunkBuf = 4 * srcpal[1];
+            p_anim->ChunkBuf++;
+            *p_anim->ChunkBuf = 4 * srcpal[2];
+            p_anim->ChunkBuf++;
             ++(*kept_count);
         }
         if (change_chunk_len == 1) {
             ++(*change_count);
         }
     }
-    return (p_anim->UnkBuf - (ubyte *)change_count);
+    return (p_anim->ChunkBuf - (ubyte *)change_count);
 }
 
 /**
  * Compress data into FLI's BRUN block (8-bit Run-Length compression).
  * @return Returns packed size of the block which was compressed.
  */
-u32 anim_make_FLI_BRUN(struct Animation *p_anim, ubyte *screenbuf)
+u32 anim_make_FLI_BRUN(struct Animation *p_anim)
 {
     ubyte *blk_begin;
-    short w;
-    short h;
     ubyte *sbuf;
+    short h;
 
-    blk_begin = p_anim->UnkBuf;
-    sbuf = screenbuf;
+    blk_begin = p_anim->ChunkBuf;
+    sbuf = p_anim->FrameBuffer;
+
     for (h = p_anim->FLCFileHeader.Height; h > 0; h--)
     {
-        p_anim->UnkBuf++;
+        ubyte *ssbuf;
+        short w;
+
+        ssbuf = sbuf;
+        p_anim->ChunkBuf++;
         for (w = p_anim->FLCFileHeader.Width; w > 0; )
         {
             short count;
@@ -136,7 +149,7 @@ u32 anim_make_FLI_BRUN(struct Animation *p_anim, ubyte *screenbuf)
             // Counting size of RLE block
             for (k = 1; w > 1; k++)
             {
-                if (sbuf[k] != sbuf[0])
+                if (ssbuf[k] != ssbuf[0])
                     break;
                 if (count == 127)
                     break;
@@ -150,11 +163,11 @@ u32 anim_make_FLI_BRUN(struct Animation *p_anim, ubyte *screenbuf)
                     count++;
                     w--;
                 }
-                *p_anim->UnkBuf = (sbyte)count;
-                p_anim->UnkBuf++;
-                *p_anim->UnkBuf = sbuf[0];
-                p_anim->UnkBuf++;
-                sbuf += count;
+                *p_anim->ChunkBuf = (sbyte)count;
+                p_anim->ChunkBuf++;
+                *p_anim->ChunkBuf = ssbuf[0];
+                p_anim->ChunkBuf++;
+                ssbuf += count;
             }
             else
             {
@@ -164,9 +177,9 @@ u32 anim_make_FLI_BRUN(struct Animation *p_anim, ubyte *screenbuf)
                     // Find the next block of at least 4 same pixels
                     for (k = 0; w > 0; k++)
                     {
-                        if ((sbuf[k+1] == sbuf[k]) &&
-                          (sbuf[k+2] == sbuf[k]) &&
-                          (sbuf[k+3] == sbuf[k]))
+                        if ((ssbuf[k+1] == ssbuf[k]) &&
+                          (ssbuf[k+2] == ssbuf[k]) &&
+                          (ssbuf[k+3] == ssbuf[k]))
                             break;
                         if (count == -127)
                             break;
@@ -181,21 +194,22 @@ u32 anim_make_FLI_BRUN(struct Animation *p_anim, ubyte *screenbuf)
                 }
                 if (count != 0)
                 {
-                    *p_anim->UnkBuf = (sbyte)count;
-                    p_anim->UnkBuf++;
-                    LbMemoryCopy(p_anim->UnkBuf, sbuf, -count);
-                    sbuf -= count;
-                    p_anim->UnkBuf -= count;
+                    *p_anim->ChunkBuf = (sbyte)count;
+                    p_anim->ChunkBuf++;
+                    LbMemoryCopy(p_anim->ChunkBuf, ssbuf, -count);
+                    ssbuf -= count;
+                    p_anim->ChunkBuf -= count;
                 }
             }
         }
+        sbuf += p_anim->Scanline;
     }
     // Make the block size even
-    if ((intptr_t)p_anim->UnkBuf & 1) {
-        *p_anim->UnkBuf = '\0';
-        p_anim->UnkBuf++;
+    if ((intptr_t)p_anim->ChunkBuf & 1) {
+        *p_anim->ChunkBuf = '\0';
+        p_anim->ChunkBuf++;
     }
-    return (p_anim->UnkBuf - blk_begin);
+    return (p_anim->ChunkBuf - blk_begin);
 }
 
 /**
@@ -221,10 +235,10 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
     ushort *lines_count;
     ushort *pckt_count;
 
-    blk_begin = p_anim->UnkBuf;
-    lines_count = (ushort *)p_anim->UnkBuf;
-    p_anim->UnkBuf += 2;
-    pckt_count = (ushort *)p_anim->UnkBuf;
+    blk_begin = p_anim->ChunkBuf;
+    lines_count = (ushort *)p_anim->ChunkBuf;
+    p_anim->ChunkBuf += 2;
+    pckt_count = (ushort *)p_anim->ChunkBuf;
 
     wend = 0;
     for (h = p_anim->FLCFileHeader.Height; h > 0; h--)
@@ -232,8 +246,8 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
         cbf = cbuf;
         pbf = pbuf;
         if (wend == 0) {
-            pckt_count = (ushort *)p_anim->UnkBuf;
-            p_anim->UnkBuf += 2;
+            pckt_count = (ushort *)p_anim->ChunkBuf;
+            p_anim->ChunkBuf += 2;
             (*lines_count)++;
         }
         for (w = p_anim->FLCFileHeader.Width; w > 0; )
@@ -254,16 +268,16 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
             if ( w > 0 ) {
                 if (wend != 0) {
                     (*pckt_count) = wend;
-                    pckt_count = (ushort *)p_anim->UnkBuf;
-                    p_anim->UnkBuf += 2;
+                    pckt_count = (ushort *)p_anim->ChunkBuf;
+                    p_anim->ChunkBuf += 2;
                 }
                 wendt = 2*k;
                 wend = wendt;
                 while (wend > 255) {
-                    *(ubyte *)p_anim->UnkBuf = 255;
-                    p_anim->UnkBuf++;
-                    *(ubyte *)p_anim->UnkBuf = 0;
-                    p_anim->UnkBuf++;
+                    *(ubyte *)p_anim->ChunkBuf = 255;
+                    p_anim->ChunkBuf++;
+                    *(ubyte *)p_anim->ChunkBuf = 0;
+                    p_anim->ChunkBuf++;
                     wend -= 255;
                     (*pckt_count)++;
                 }
@@ -286,12 +300,12 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
                         nsame++;
                         w -= 2;
                     }
-                    *(ubyte *)p_anim->UnkBuf = wend;
-                    p_anim->UnkBuf++;
-                    *(ubyte *)p_anim->UnkBuf = -nsame;
-                    p_anim->UnkBuf++;
-                    *(ushort *)p_anim->UnkBuf = *(ushort *)cbf;
-                    p_anim->UnkBuf+=2;
+                    *(ubyte *)p_anim->ChunkBuf = wend;
+                    p_anim->ChunkBuf++;
+                    *(ubyte *)p_anim->ChunkBuf = -nsame;
+                    p_anim->ChunkBuf++;
+                    *(ushort *)p_anim->ChunkBuf = *(ushort *)cbf;
+                    p_anim->ChunkBuf+=2;
                     pbf += 2*nsame;
                     cbf += 2*nsame;
                     wend = 0;
@@ -313,12 +327,12 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
                         }
                     }
                     if (ndiff > 0) {
-                        *(ubyte *)p_anim->UnkBuf = wend;
-                        p_anim->UnkBuf++;
-                        *(ubyte *)p_anim->UnkBuf = ndiff;
-                        p_anim->UnkBuf++;
-                        LbMemoryCopy(p_anim->UnkBuf, cbf, 2 * ndiff);
-                        p_anim->UnkBuf += 2 * ndiff;
+                        *(ubyte *)p_anim->ChunkBuf = wend;
+                        p_anim->ChunkBuf++;
+                        *(ubyte *)p_anim->ChunkBuf = ndiff;
+                        p_anim->ChunkBuf++;
+                        LbMemoryCopy(p_anim->ChunkBuf, cbf, 2 * ndiff);
+                        p_anim->ChunkBuf += 2 * ndiff;
                         pbf += 2 * ndiff;
                         cbf += 2 * ndiff;
                         wend = 0;
@@ -334,20 +348,20 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, in
     if (p_anim->FLCFileHeader.Height+wend == 0) {
         (*lines_count) = 1;
         (*pckt_count) = 1;
-        *(ubyte *)p_anim->UnkBuf = 0;
-        p_anim->UnkBuf++;
-        *(ubyte *)p_anim->UnkBuf = 0;
-        p_anim->UnkBuf++;
+        *(ubyte *)p_anim->ChunkBuf = 0;
+        p_anim->ChunkBuf++;
+        *(ubyte *)p_anim->ChunkBuf = 0;
+        p_anim->ChunkBuf++;
     } else if (wend != 0) {
-        p_anim->UnkBuf -= 2;
+        p_anim->ChunkBuf -= 2;
         (*lines_count)--;
     }
     // Make the block size even
-    if ((intptr_t)p_anim->UnkBuf & 1) {
-        *p_anim->UnkBuf = '\0';
-        p_anim->UnkBuf++;
+    if ((intptr_t)p_anim->ChunkBuf & 1) {
+        *p_anim->ChunkBuf = '\0';
+        p_anim->ChunkBuf++;
     }
-    return p_anim->UnkBuf - blk_begin;
+    return p_anim->ChunkBuf - blk_begin;
 }
 
 /**
@@ -373,7 +387,7 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
     short ndiff;
     int blksize;
 
-    blk_begin = p_anim->UnkBuf;
+    blk_begin = p_anim->ChunkBuf;
     cbuf = curdat;
     pbuf = prvdat;
     for (hend = p_anim->FLCFileHeader.Height; hend > 0;  hend--)
@@ -411,15 +425,15 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
         blksize = p_anim->FLCFileHeader.Width * hend;
         cbuf = curdat + blksize;
         pbuf = prvdat + blksize;
-        *(ushort *)p_anim->UnkBuf = hend;
-        p_anim->UnkBuf += 2;
-        *(ushort *)p_anim->UnkBuf = hdim;
-        p_anim->UnkBuf += 2;
+        *(ushort *)p_anim->ChunkBuf = hend;
+        p_anim->ChunkBuf += 2;
+        *(ushort *)p_anim->ChunkBuf = hdim;
+        p_anim->ChunkBuf += 2;
 
         for (h = hdim; h>0; h--) {
             cbf = cbuf;
             pbf = pbuf;
-            outptr = p_anim->UnkBuf++;
+            outptr = p_anim->ChunkBuf++;
             for (w=p_anim->FLCFileHeader.Width; w>0; ) {
                 for ( wend=0; w>0; wend++) {
                     if ( cbf[wend] != pbf[wend]) break;
@@ -429,10 +443,10 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
                 if (p_anim->FLCFileHeader.Width == wend) continue;
                 if ( w <= 0 ) break;
                 while ( wend > 255 ) {
-                    *(ubyte *)p_anim->UnkBuf = 255;
-                    p_anim->UnkBuf++;
-                    *(ubyte *)p_anim->UnkBuf = 0;
-                    p_anim->UnkBuf++;
+                    *(ubyte *)p_anim->ChunkBuf = 255;
+                    p_anim->ChunkBuf++;
+                    *(ubyte *)p_anim->ChunkBuf = 0;
+                    p_anim->ChunkBuf++;
                     wend -= 255;
                     (*(ubyte *)outptr)++;
                 }
@@ -454,18 +468,18 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
                     nsame--;
                 }
                 if ( nsame ) {
-                    if ( nsame != -127 ) {
+                    if (nsame != -127) {
                         nsame--;
                         w--;
                     }
-                    *(ubyte *)p_anim->UnkBuf = wend;
-                    p_anim->UnkBuf++;
-                    *(ubyte *)p_anim->UnkBuf = nsame;
-                    p_anim->UnkBuf++;
-                    *(ubyte *)p_anim->UnkBuf = cbf[0];
+                    *(ubyte *)p_anim->ChunkBuf = wend;
+                    p_anim->ChunkBuf++;
+                    *(ubyte *)p_anim->ChunkBuf = nsame;
+                    p_anim->ChunkBuf++;
+                    *(ubyte *)p_anim->ChunkBuf = cbf[0];
                     cbf -= nsame;
                     pbf -= nsame;
-                    p_anim->UnkBuf++;
+                    p_anim->ChunkBuf++;
                     (*(ubyte *)outptr)++;
                 } else {
                     if (w == 1) {
@@ -491,12 +505,12 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
                         }
                     }
                     if (ndiff != 0) {
-                        *(ubyte *)p_anim->UnkBuf = wend;
-                        p_anim->UnkBuf++;
-                        *(ubyte *)p_anim->UnkBuf = ndiff;
-                        p_anim->UnkBuf++;
-                        LbMemoryCopy(p_anim->UnkBuf, cbf, ndiff);
-                        p_anim->UnkBuf += ndiff;
+                        *(ubyte *)p_anim->ChunkBuf = wend;
+                        p_anim->ChunkBuf++;
+                        *(ubyte *)p_anim->ChunkBuf = ndiff;
+                        p_anim->ChunkBuf++;
+                        LbMemoryCopy(p_anim->ChunkBuf, cbf, ndiff);
+                        p_anim->ChunkBuf += ndiff;
                         cbf += ndiff;
                         pbf += ndiff;
                         (*(ubyte *)outptr)++;
@@ -507,19 +521,19 @@ u32 anim_make_FLI_LC(struct Animation *p_anim, ubyte *curdat, ubyte *prvdat, int
             pbuf += scanline;
         }
     } else {
-        *(short *)p_anim->UnkBuf = 0;
-        p_anim->UnkBuf += 2;
-        *(short *)p_anim->UnkBuf = 1;
-        p_anim->UnkBuf += 2;
-        *(sbyte *)p_anim->UnkBuf = 0;
-        p_anim->UnkBuf++;
+        *(short *)p_anim->ChunkBuf = 0;
+        p_anim->ChunkBuf += 2;
+        *(short *)p_anim->ChunkBuf = 1;
+        p_anim->ChunkBuf += 2;
+        *(sbyte *)p_anim->ChunkBuf = 0;
+        p_anim->ChunkBuf++;
     }
     // Make the block size even
-    if ((intptr_t)p_anim->UnkBuf & 1) {
-        *p_anim->UnkBuf = '\0';
-        p_anim->UnkBuf++;
+    if ((intptr_t)p_anim->ChunkBuf & 1) {
+        *p_anim->ChunkBuf = '\0';
+        p_anim->ChunkBuf++;
     }
-    return p_anim->UnkBuf - blk_begin;
+    return p_anim->ChunkBuf - blk_begin;
 }
 
 /*
@@ -543,7 +557,6 @@ TbResult anim_make_open(struct Animation *p_anim, int width, int height, int bpp
     }
     if (flags & 0x01) {
         LOGSYNC("Record new anim, '%s'", p_anim->Filename);
-        LbMemorySet(p_anim, 0, sizeof(struct Animation));
         p_anim->Flags |= flags;
 
         p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_NEW);

@@ -53,7 +53,7 @@ void anim_show_FLI_SS2(struct Animation *p_anim)
     ushort i, num_i;
 
     // Error injection mechanism for testing
-    i_inject = (intptr_t)p_anim->OutBuf;
+    i_inject = (intptr_t)p_anim->FrameBuffer;
 
     scanln = p_anim->Scanline;
     if (scanln == 0)
@@ -61,9 +61,9 @@ void anim_show_FLI_SS2(struct Animation *p_anim)
 
     num_i = 0;
     if (i_inject != -16)
-        LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
-    p_anim->UnkBuf += 2;
-    out = p_anim->OutBuf;
+        LbMemoryCopy(&num_i, p_anim->ChunkBuf, 2);
+    p_anim->ChunkBuf += 2;
+    out = p_anim->FrameBuffer;
 
     for (i = 0; i < num_i; i++)
     {
@@ -74,8 +74,8 @@ void anim_show_FLI_SS2(struct Animation *p_anim)
         oout = out;
         entry = 0;
         if (i_inject != -20)
-            LbMemoryCopy(&entry, p_anim->UnkBuf, 2);
-        p_anim->UnkBuf += 2;
+            LbMemoryCopy(&entry, p_anim->ChunkBuf, 2);
+        p_anim->ChunkBuf += 2;
 
         if ((entry & 0x8000) == 0)
         {
@@ -87,21 +87,21 @@ void anim_show_FLI_SS2(struct Animation *p_anim)
                 // first value is the amount of transparent pixels
                 num_skip = 0;
                 if (i_inject != -24)
-                    LbMemoryCopy(&num_skip, p_anim->UnkBuf, 1);
-                p_anim->UnkBuf += 1;
+                    LbMemoryCopy(&num_skip, p_anim->ChunkBuf, 1);
+                p_anim->ChunkBuf += 1;
                 oout += num_skip;
 
                 num_copy = 0;
                 if (i_inject != -28)
-                    LbMemoryCopy(&num_copy, p_anim->UnkBuf, 1);
-                p_anim->UnkBuf += 1;
+                    LbMemoryCopy(&num_copy, p_anim->ChunkBuf, 1);
+                p_anim->ChunkBuf += 1;
                 if (num_copy >= 0) // positive = amount to copy is x 2
                 {
                     ushort num_k;
                     num_k = 2 * num_copy;
                     if (num_k > 0) {
-                        LbMemoryCopy(oout, p_anim->UnkBuf, num_k);
-                        p_anim->UnkBuf += num_k;
+                        LbMemoryCopy(oout, p_anim->ChunkBuf, num_k);
+                        p_anim->ChunkBuf += num_k;
                         oout += num_k;
                     }
                 }
@@ -112,8 +112,8 @@ void anim_show_FLI_SS2(struct Animation *p_anim)
 
                     dt_dup = 0;
                     if (i_inject != -8)
-                        LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 2);
-                    p_anim->UnkBuf += 2;
+                        LbMemoryCopy(&dt_dup, p_anim->ChunkBuf, 2);
+                    p_anim->ChunkBuf += 2;
                     num_k = abs(num_copy);
                     for (k = 0; k < num_k; k++)
                     {
@@ -149,13 +149,13 @@ void anim_show_FLI_BRUN(struct Animation *p_anim)
     ushort w, h;
 
     // Error injection mechanism for testing
-    i_inject = (intptr_t)p_anim->OutBuf;
+    i_inject = (intptr_t)p_anim->FrameBuffer;
 
     scanln = p_anim->Scanline;
     if (scanln == 0)
         scanln = p_anim->FLCFileHeader.Width;
 
-    out = p_anim->OutBuf;
+    out = p_anim->FrameBuffer;
 
     for (h = 0; h < p_anim->FLCFileHeader.Height; h++)
     {
@@ -163,15 +163,15 @@ void anim_show_FLI_BRUN(struct Animation *p_anim)
         ubyte *oout;
 
         oout = out;
-        p_anim->UnkBuf += 1;
+        p_anim->ChunkBuf += 1;
         for (w = 0; w < p_anim->FLCFileHeader.Width; w += num_w)
         {
             sbyte num_copy;
 
             num_copy = 0;
             if (i_inject != -16)
-                LbMemoryCopy(&num_copy, p_anim->UnkBuf, 1);
-            p_anim->UnkBuf += 1;
+                LbMemoryCopy(&num_copy, p_anim->ChunkBuf, 1);
+            p_anim->ChunkBuf += 1;
 
             num_w = num_copy;
             if (num_w >= 0) // positive = duplicate next byte by the amount
@@ -182,16 +182,16 @@ void anim_show_FLI_BRUN(struct Animation *p_anim)
 
                 dt_dup = 0;
                 if (i_inject != -12)
-                    LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 1);
-                p_anim->UnkBuf += 1;
+                    LbMemoryCopy(&dt_dup, p_anim->ChunkBuf, 1);
+                p_anim->ChunkBuf += 1;
                 LbMemorySet(oout, dt_dup, num_w);
               }
             }
             else // negative = copy the amount
             {
               num_copy = abs(num_w);
-              LbMemoryCopy(oout, p_anim->UnkBuf, num_copy);
-              p_anim->UnkBuf += num_copy;
+              LbMemoryCopy(oout, p_anim->ChunkBuf, num_copy);
+              p_anim->ChunkBuf += num_copy;
             }
             num_w = num_copy;
             oout += num_copy;
@@ -209,7 +209,7 @@ void anim_show_FLI_LC(struct Animation *p_anim)
     ubyte w, num_w;
 
     // Error injection mechanism for testing
-    i_inject = (intptr_t)p_anim->OutBuf;
+    i_inject = (intptr_t)p_anim->FrameBuffer;
 
     scanln = p_anim->Scanline;
     if (scanln == 0)
@@ -217,13 +217,13 @@ void anim_show_FLI_LC(struct Animation *p_anim)
 
     num_h = 0;
     if (i_inject != -12)
-        LbMemoryCopy(&num_h, p_anim->UnkBuf, 2);
-    p_anim->UnkBuf += 2;
-    out = &p_anim->OutBuf[num_h * scanln];
+        LbMemoryCopy(&num_h, p_anim->ChunkBuf, 2);
+    p_anim->ChunkBuf += 2;
+    out = &p_anim->FrameBuffer[num_h * scanln];
 
     if (i_inject != -12)
-        LbMemoryCopy(&num_h, p_anim->UnkBuf, 2);
-    p_anim->UnkBuf += 2;
+        LbMemoryCopy(&num_h, p_anim->ChunkBuf, 2);
+    p_anim->ChunkBuf += 2;
 
     for (h = 0; h < num_h; h++)
     {
@@ -231,8 +231,8 @@ void anim_show_FLI_LC(struct Animation *p_anim)
 
         oout = out;
         if (i_inject != -20)
-            LbMemoryCopy(&num_w, p_anim->UnkBuf, 1);
-        p_anim->UnkBuf += 1;
+            LbMemoryCopy(&num_w, p_anim->ChunkBuf, 1);
+        p_anim->ChunkBuf += 1;
 
         for (w = 0; w < num_w; w++)
         {
@@ -241,20 +241,20 @@ void anim_show_FLI_LC(struct Animation *p_anim)
             sbyte num_copy;
 
             if (i_inject != -16)
-                LbMemoryCopy(&num_skip, p_anim->UnkBuf, 1);
+                LbMemoryCopy(&num_skip, p_anim->ChunkBuf, 1);
             oout += num_skip;
 
-            p_anim->UnkBuf += 1;
+            p_anim->ChunkBuf += 1;
             if (i_inject != -24)
-                LbMemoryCopy(&num_copy, p_anim->UnkBuf, 1);
-            p_anim->UnkBuf += 1;
+                LbMemoryCopy(&num_copy, p_anim->ChunkBuf, 1);
+            p_anim->ChunkBuf += 1;
             num_w = num_copy;
             if (num_w >= 0)
             {
                 if (num_w > 0)
                 {
-                    LbMemoryCopy(oout, p_anim->UnkBuf, num_w);
-                    p_anim->UnkBuf += num_w;
+                    LbMemoryCopy(oout, p_anim->ChunkBuf, num_w);
+                    p_anim->ChunkBuf += num_w;
                     oout += num_w;
                 }
             }
@@ -266,8 +266,8 @@ void anim_show_FLI_LC(struct Animation *p_anim)
 
                 dt_dup = 0;
                 if (i_inject != -28)
-                    LbMemoryCopy(&dt_dup, p_anim->UnkBuf, 1);
-                p_anim->UnkBuf++;
+                    LbMemoryCopy(&dt_dup, p_anim->ChunkBuf, 1);
+                p_anim->ChunkBuf++;
 
                 LbMemorySet(oout, dt_dup, num_copy);
                 oout += num_copy;
@@ -285,7 +285,7 @@ void anim_show_FLI_BLACK(struct Animation *p_anim)
     scanln = p_anim->Scanline;
     if (scanln == 0)
         scanln = p_anim->FLCFileHeader.Width;
-    out = p_anim->OutBuf;
+    out = p_anim->FrameBuffer;
 
     for (i = 0; i < p_anim->FLCFileHeader.Height; i++)
     {
@@ -302,14 +302,14 @@ void anim_show_FLI_COLOUR256(struct Animation *p_anim)
     int i, n;
 
     // Error injection mechanism for testing
-    i_inject = (intptr_t)p_anim->OutBuf;
+    i_inject = (intptr_t)p_anim->FrameBuffer;
 
     // assuming run on little-endian CPU
     opal = anim_palette;
     num_i = 0;
     if (i_inject != -16)
-        LbMemoryCopy(&num_i, p_anim->UnkBuf, 2);
-    p_anim->UnkBuf += 2;
+        LbMemoryCopy(&num_i, p_anim->ChunkBuf, 2);
+    p_anim->ChunkBuf += 2;
 
     for (i = 0; i < num_i; i++)
     {
@@ -317,14 +317,14 @@ void anim_show_FLI_COLOUR256(struct Animation *p_anim)
 
         num_colors = 0;
         if (i_inject != -48)
-            LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-        p_anim->UnkBuf++;
+            LbMemoryCopy(&num_colors, p_anim->ChunkBuf, 1);
+        p_anim->ChunkBuf++;
         opal += 3 * num_colors;
 
         num_colors = 0;
         if (i_inject != -24)
-            LbMemoryCopy(&num_colors, p_anim->UnkBuf, 1);
-        p_anim->UnkBuf++;
+            LbMemoryCopy(&num_colors, p_anim->ChunkBuf, 1);
+        p_anim->ChunkBuf++;
 
         if (num_colors == 0)
             num_colors = 256;
@@ -332,24 +332,24 @@ void anim_show_FLI_COLOUR256(struct Animation *p_anim)
         for (n = 0; n < num_colors; n++)
         {
             if (opal != NULL)
-                LbMemoryCopy(opal, p_anim->UnkBuf, 3);
-            p_anim->UnkBuf += 3;
+                LbMemoryCopy(opal, p_anim->ChunkBuf, 3);
+            p_anim->ChunkBuf += 3;
             opal += 3;
         }
     }
 }
 
-ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_frchunk)
+ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_fdthunk)
 {
     size_t sz;
     ubyte pal_change;
 
     pal_change = 0;
-    if (p_frchunk != NULL)
-        LbMemoryCopy(p_frchunk, p_anim->UnkBuf, 6);
-    p_anim->UnkBuf += 6;
+    if (p_fdthunk != NULL)
+        LbMemoryCopy(p_fdthunk, p_anim->ChunkBuf, 6);
+    p_anim->ChunkBuf += 6;
 
-    switch (p_frchunk->Type)
+    switch (p_fdthunk->Type)
     {
     case FLI_COLOUR256:
         anim_show_FLI_COLOUR256(p_anim);
@@ -379,20 +379,20 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         break;
     case FLI_COPY:
         sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
-        p_frchunk->Size = sz;
-        if (p_anim->OutBuf != 0)
-            LbMemoryCopy(p_anim->OutBuf, p_anim->UnkBuf, sz);
-        p_anim->UnkBuf += sz;
+        p_fdthunk->Size = sz;
+        if (p_anim->FrameBuffer != 0)
+            LbMemoryCopy(p_anim->FrameBuffer, p_anim->ChunkBuf, sz);
+        p_anim->ChunkBuf += sz;
         strncat(anim_parse_tags, "COPY ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_PSTAMP:
-        p_anim->UnkBuf += p_frchunk->Size - 6;
+        p_anim->ChunkBuf += p_fdthunk->Size - 6;
         strncat(anim_parse_tags, "PSTAMP ", sizeof(anim_parse_tags)-1);
         break;
     default:
         sz = strlen(anim_parse_tags);
         snprintf(anim_parse_tags + sz, sizeof(anim_parse_tags)-sz-1,
-          "N%04x ", (uint)p_frchunk->Type);
+          "N%04x ", (uint)p_fdthunk->Type);
         break;
     }
     return pal_change;
@@ -400,7 +400,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
 
 void anim_show_prep_next_frame(struct Animation *p_anim)
 {
-    p_anim->anfield_30 = p_anim->anfield_4;
+    p_anim->anfield_30 = p_anim->anfield_4; // TODO we should probably free anfield_30
     anim_read_data(p_anim, &p_anim->FLCFrameChunk, 16);
     while (p_anim->FLCFrameChunk.Type != FLI_FRAME_CHUNK) {
         anim_read_data(p_anim, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
@@ -415,19 +415,19 @@ void anim_show_prep_next_frame(struct Animation *p_anim)
 
 ubyte anim_show_frame(struct Animation *p_anim)
 {
-    struct FLCFrameDataChunk frchunk;
+    struct FLCFrameDataChunk fdthunk;
     uint i;
     ushort prefix_type;
     ubyte pal_change;
 
     pal_change = 0;
-    p_anim->UnkBuf = anim_scratch;
+    p_anim->ChunkBuf = anim_scratch;
     anim_parse_tags[0] = 0;
 
     prefix_type = p_anim->FLCFrameChunk.Type;
     if (prefix_type == FLI_PREFIX_CHUNK)
     {
-        p_anim->UnkBuf += p_anim->FLCFrameChunk.Size - 16;
+        p_anim->ChunkBuf += p_anim->FLCFrameChunk.Size - 16;
         anim_show_prep_next_frame(p_anim);
         anim_show_frame(p_anim); // recurrence
     }
@@ -436,9 +436,9 @@ ubyte anim_show_frame(struct Animation *p_anim)
         for (i = 0; i < p_anim->FLCFrameChunk.Chunks; i++)
         {
             void *last_unkbuf;
-            last_unkbuf = p_anim->UnkBuf;
-            pal_change |= anim_show_FLI_FRAME(p_anim, &frchunk);
-            p_anim->UnkBuf = last_unkbuf + frchunk.Size;
+            last_unkbuf = p_anim->ChunkBuf;
+            pal_change |= anim_show_FLI_FRAME(p_anim, &fdthunk);
+            p_anim->ChunkBuf = last_unkbuf + fdthunk.Size;
         }
     }
     return pal_change;
@@ -453,11 +453,11 @@ void anim_flic_init(struct Animation *p_anim, short anmtype, ushort flags)
     p_anim->FileHandle = INVALID_FILE;
 }
 
-void anim_flic_set_output(struct Animation *p_anim, ubyte *obuf, short x, short y, short scanln, ushort flags)
+void anim_flic_set_frame_buffer(struct Animation *p_anim, ubyte *obuf, short x, short y, short scanln, ushort flags)
 {
     p_anim->Ypos = x;
     p_anim->Xpos = y;
-    p_anim->OutBuf = obuf;
+    p_anim->FrameBuffer = obuf;
     p_anim->Scanline = scanln;
     p_anim->Flags |= flags;
 }
