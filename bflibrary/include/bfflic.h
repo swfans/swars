@@ -139,6 +139,18 @@ void anim_flic_set_fname(struct Animation *p_anim, const char *format, ...);
 TbBool anim_is_opened(struct Animation *p_anim);
 void anim_flic_close(struct Animation *p_anim);
 
+/** Returns size of the FLI movie frame buffer.
+ * Gives size for given width, height and colour depth of the animation.
+ * The buffer of returned size is big enough to store one uncompressed frame.
+ */
+u32 anim_frame_size(int width, int height, int depth);
+
+/** Returns size of the FLI movie scratch buffer required.
+ * The buffer of returned size is big enough
+ * to store one frame of any kind (any compression).
+ */
+u32 anim_buffer_size(int width, int height, int depth);
+
 TbResult anim_flic_show_open(struct Animation *p_anim);
 void anim_show_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf);
 ubyte anim_show_frame(struct Animation *p_anim);

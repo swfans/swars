@@ -96,6 +96,9 @@ u32 anim_make_FLI_COLOUR256(struct Animation *p_anim, ubyte *palette)
     short change_chunk_len;
     short kept_chunk_len;
 
+    if (palette == NULL) {
+        return 0;
+    }
     if (memcmp(anim_palette, palette, 768) == 0) {
         return 0;
     }
@@ -558,16 +561,16 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
     return p_anim->ChunkBuf - blk_begin;
 }
 
-/*
- * Returns size of the FLI movie frame buffer, for given width
- * and height of animation. The buffer of returned size is big enough
- * to store one frame of any kind (any compression).
- */
-u32 anim_buffer_size(int width, int height, int bpp)
+u32 anim_frame_size(int width, int height, int depth)
+{
+    return abs(width) * abs(height) * ((depth + 7) / 8);
+}
+
+u32 anim_buffer_size(int width, int height, int depth)
 {
     int n;
-    n = (bpp >> 3);
-    if (bpp % 8) n++;
+    n = (depth >> 3);
+    if (depth % 8) n++;
     return abs(width)*abs(height)*n + 32767;
 }
 
@@ -647,14 +650,15 @@ void anim_make_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf)
 
     width = p_anim->FLCFileHeader.Width;
     height = p_anim->FLCFileHeader.Height;
-    p_anim->ChunkBuf = anim_scratch;
 #if defined(LB_ENABLE_FLIC_FULL_HEADER)
     depth = p_anim->FLCFileHeader.Depth;
 #else
     depth = 8;
 #endif
+    p_anim->PvFrameBuf = anim_scratch;
+    p_anim->ChunkBuf = anim_scratch + anim_frame_size(width, height, depth);
     max_chunk_size = anim_buffer_size(width, height, depth);
-    LbMemorySet(anim_scratch, 0, max_chunk_size);
+    LbMemorySet(p_anim->ChunkBuf, 0, max_chunk_size);
 
     // Store frame chunk
     p_anim->FLCFrameChunk.Type = FLI_FRAME_CHUNK;
@@ -667,7 +671,6 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
 {
     struct FLCFrameDataChunk lochunk;
     struct FLCFrameDataChunk *p_fdthunk;
-    ubyte *dataptr;
     s32 brun_size, lc_size, ss2_size;
 
     LOGDBG("Starting");
@@ -711,6 +714,7 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
             p_fdthunk->Type = FLI_COPY;
         }
     } else {
+        ubyte *dataptr;
         // Determining the best compression method
         dataptr = p_anim->ChunkBuf;
         brun_size = anim_make_FLI_BRUN(p_anim);
@@ -751,16 +755,31 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
         }
     }
     p_fdthunk->Size = p_anim->ChunkBuf - (ubyte *)p_fdthunk;
-    p_anim->FLCFrameChunk.Size = p_anim->ChunkBuf - (ubyte *)anim_scratch;
-    if (!anim_write_data(p_anim, anim_scratch, p_anim->ChunkBuf - (ubyte *)anim_scratch)) {
-        LOGNO("Finished frame with error");
-        return false;
+    {
+        ubyte *chunk_buf_start;
+        int width, height, depth;
+
+        width = p_anim->FLCFileHeader.Width;
+        height = p_anim->FLCFileHeader.Height;
+#if defined(LB_ENABLE_FLIC_FULL_HEADER)
+        depth = p_anim->FLCFileHeader.Depth;
+#else
+        depth = 8;
+#endif
+        chunk_buf_start = anim_scratch + anim_frame_size(width, height, depth);
+
+        p_anim->FLCFrameChunk.Size = p_anim->ChunkBuf - chunk_buf_start;
+        if (!anim_write_data(p_anim, chunk_buf_start, p_anim->FLCFrameChunk.Size)) {
+            LOGNO("Finished frame with error");
+            return false;
+        }
     }
     anim_update_prev_frame(p_anim);
-    LbMemoryCopy(anim_palette, palette, sizeof(anim_palette));
+    if (palette != NULL)
+        LbMemoryCopy(anim_palette, palette, sizeof(anim_palette));
     p_anim->FLCFileHeader.NumberOfFrames++;
     p_anim->FrameNumber++;
-    p_anim->FLCFileHeader.Size += p_anim->ChunkBuf - (ubyte *)anim_scratch;
+    p_anim->FLCFileHeader.Size += p_anim->FLCFrameChunk.Size;
     LOGNO("Finished frame ok");
     return true;
 }
