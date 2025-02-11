@@ -484,6 +484,29 @@ void anim_show_FLI_LC_NP(void)
     anim_show_FLI_LC(p_anim);
 }
 
+ubyte *anim_type_get_output_buffer(ubyte anmtype)
+{
+    switch (anmtype)
+    {
+    case 0:
+    default:
+        return lbDisplay.WScreen;
+    case 1:
+        return vec_tmap[4];
+    case 2:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 9:
+        return vec_tmap[5];
+    case 3:
+    case 8:
+        return vec_tmap[5] + 0x8000;
+    }
+}
+
+
 void flic_unkn03(ubyte anmtype)
 {
 #if 0
@@ -491,6 +514,7 @@ void flic_unkn03(ubyte anmtype)
         : : "a" (anmtype));
 #endif
     struct Animation *p_anim;
+    ubyte *frmbuf;
     PathInfo *pinfo;
     int k;
     ushort rnd;
@@ -504,12 +528,13 @@ void flic_unkn03(ubyte anmtype)
 
     anim_scratch = scratch_buf1;
     anim_flic_init(p_anim, anmtype, 0x00);
+    frmbuf = anim_type_get_output_buffer(anmtype);
 
     switch (anmtype)
     {
     case 1:
         byte_1AAA88 = 0;
-        anim_flic_set_frame_buffer(p_anim, vec_tmap[4], 0, 0, 0, 0x20);
+        anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x20);
 
         rnd = LbRandomPosShort() & 7;
         if (rnd <= 0)
@@ -537,43 +562,43 @@ void flic_unkn03(ubyte anmtype)
         break;
     case 2:
         byte_1AAA88 = 0;
-        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 0, 0, 0, 0x00);
+        anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
     case 3:
         byte_1AAA88 = 0;
-        anim_flic_set_frame_buffer(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0, 0x00);
+        anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
     case 4:
         byte_1AAA88 = 1;
-        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 0, 0, 0, 0x02);
+        anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "intro");
         break;
     case 5:
         byte_1AAA88 = 0;
-        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
+        anim_flic_set_frame_buffer(p_anim, frmbuf, 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
     case 6:
         byte_1AAA88 = 0;
-        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
+        anim_flic_set_frame_buffer(p_anim, frmbuf, 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
     case 7:
         byte_1AAA88 = 0;
-        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 10, 30, 0, 0x02);
+        anim_flic_set_frame_buffer(p_anim, frmbuf, 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
     case 8:
         byte_1AAA88 = 0;
-        anim_flic_set_frame_buffer(p_anim, vec_tmap[5] + 0x8000, 0, 0, 0, 0x20);
+        anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x20);
         break;
     case 9:
         byte_1AAA88 = 0;
-        anim_flic_set_frame_buffer(p_anim, vec_tmap[5], 0, 0, 0, 0x00);
+        anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
       default:
         break;
@@ -3789,7 +3814,7 @@ int xdo_next_frame(ubyte slot)
 
     if (p_anim->FrameNumber < p_anim->FLCFileHeader.NumberOfFrames)
     {
-        anim_show_prep_next_frame(p_anim, lbDisplay.WScreen);
+        anim_show_prep_next_frame(p_anim, anim_type_get_output_buffer(p_anim->Type));
         flic_creation_unkn01();
         p_anim->FrameNumber++;
         return 0;
