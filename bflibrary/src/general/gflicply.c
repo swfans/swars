@@ -22,8 +22,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+
 #include "bffile.h"
 #include "bfmemut.h"
+#include "privbflog.h"
 
 /******************************************************************************/
 char anim_parse_tags[152];
@@ -43,6 +45,23 @@ TbBool anim_read_data(struct Animation *p_anim, void *buf, u32 size)
 		return true;
 	}
 	return false;
+}
+
+/**
+ * Writes the updated main header data into FLI animation.
+ * @return Returns false on error, true on success.
+ */
+TbBool anim_rewrite_file_header(struct Animation *p_anim)
+{
+    u32 pvpos, size, wsize;
+
+    pvpos = LbFilePosition(p_anim->FileHandle);
+	LbFileSeek(p_anim->FileHandle, 0, Lb_FILE_SEEK_BEGINNING);
+	p_anim->FLCFileHeader.NumberOfFrames--;
+    size = sizeof(struct FLCFileHeader);
+    wsize = LbFileWrite(p_anim->FileHandle, &p_anim->FLCFileHeader, size);
+	LbFileSeek(p_anim->FileHandle, pvpos, Lb_FILE_SEEK_BEGINNING);
+    return wsize == size;
 }
 
 void anim_show_FLI_SS2(struct Animation *p_anim)
@@ -429,6 +448,7 @@ ubyte anim_show_frame(struct Animation *p_anim)
     p_anim->ChunkBuf = anim_scratch;
     anim_parse_tags[0] = 0;
 
+    LOGDBG("Frame chunk size %d, `%s` file", (int)p_anim->FLCFrameChunk.Size, p_anim->Filename);
     prefix_type = p_anim->FLCFrameChunk.Type;
     if (prefix_type == FLI_PREFIX_CHUNK)
     {
@@ -446,6 +466,7 @@ ubyte anim_show_frame(struct Animation *p_anim)
             p_anim->ChunkBuf = last_unkbuf + fdthunk.Size;
         }
     }
+    LOGDBG("Chunks: %s", anim_parse_tags);
     return pal_change;
 }
 
@@ -458,7 +479,8 @@ void anim_flic_init(struct Animation *p_anim, short anmtype, ushort flags)
     p_anim->FileHandle = INVALID_FILE;
 }
 
-void anim_flic_set_frame_buffer(struct Animation *p_anim, ubyte *frmbuf, short x, short y, short scanln, ushort flags)
+void anim_flic_set_frame_buffer(struct Animation *p_anim, ubyte *frmbuf,
+  short x, short y, short scanln, ushort flags)
 {
     uint pos;
 
@@ -486,12 +508,18 @@ void anim_flic_set_fname(struct Animation *p_anim, const char *format, ...)
 TbResult anim_flic_show_open(struct Animation *p_anim)
 {
     p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_READ_ONLY);
-    if (p_anim->FileHandle == INVALID_FILE)
+    if (p_anim->FileHandle == INVALID_FILE) {
         return Lb_FAIL;
+    }
 
     if (!anim_read_data(p_anim, &p_anim->FLCFileHeader, 12)) {
+        LOGERR("Header read failed, `%s` file", p_anim->Filename);
         p_anim->FLCFileHeader.Size = 0;
     }
+    LOGDBG("Frame count %d, res %dx%d, `%s` file",
+      (int)p_anim->FLCFileHeader.NumberOfFrames,
+      (int)p_anim->FLCFileHeader.Height, (int)p_anim->FLCFileHeader.Width,
+      p_anim->Filename);
     return Lb_SUCCESS;
 }
 
@@ -502,6 +530,9 @@ TbBool anim_is_opened(struct Animation *p_anim)
 
 void anim_flic_close(struct Animation *p_anim)
 {
+    if ((p_anim->Flags & (0x01|0x02)) != 0) {
+        anim_rewrite_file_header(p_anim);
+    }
     LbFileClose(p_anim->FileHandle);
     p_anim->FileHandle = INVALID_FILE;
 }

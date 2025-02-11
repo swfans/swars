@@ -24,6 +24,7 @@
 #include "bfmemut.h"
 #include "privbflog.h"
 /******************************************************************************/
+extern char anim_parse_tags[152];
 
 TbBool anim_read_data(struct Animation *p_anim, void *buf, u32 size);
 
@@ -581,12 +582,12 @@ TbResult anim_flic_make_open(struct Animation *p_anim, int width, int height, in
         return Lb_FAIL;
     }
     if (flags & 0x01) {
-        LOGSYNC("Record new anim, '%s'", p_anim->Filename);
+        LOGSYNC("Record new anim, '%s' file", p_anim->Filename);
         p_anim->Flags |= flags;
 
         p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_NEW);
         if (p_anim->FileHandle == INVALID_FILE) {
-            LOGERR("Cannot open movie file");
+            LOGERR("Cannot open anim file");
             return Lb_FAIL;
         }
         p_anim->FLCFileHeader.Magic = 0xAF12;
@@ -594,9 +595,9 @@ TbResult anim_flic_make_open(struct Animation *p_anim, int width, int height, in
         p_anim->FLCFileHeader.Width = width;
         p_anim->FLCFileHeader.Height = height;
 #if defined(LB_ENABLE_FLIC_FULL_HEADER)
-        p_anim->FLCFileHeader.dsize = 128;
+        p_anim->FLCFileHeader.Size = 128;
         p_anim->FLCFileHeader.Depth = bpp;
-        p_anim->FLCFileHeader.Flags = 3;
+        p_anim->FLCFileHeader.Flags = 0x03;
         p_anim->FLCFileHeader.FrameSpeed = 57;
         p_anim->FLCFileHeader.Created = 0;
         p_anim->FLCFileHeader.Creator = 0x464C4942;//'BILF'
@@ -618,7 +619,7 @@ TbResult anim_flic_make_open(struct Animation *p_anim, int width, int height, in
         LbMemorySet(anim_palette, -1, sizeof(anim_palette));
     }
     if (flags & 0x02)  {
-        LOGSYNC("Resume recording, \"%s\" file",p_anim->Filename);
+        LOGSYNC("Resume recording, '%s' file",p_anim->Filename);
         p_anim->Flags |= flags;
         p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_OLD);
         if (p_anim->FileHandle == INVALID_FILE) {
@@ -674,15 +675,16 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
     s32 brun_size, lc_size, ss2_size;
 
     LOGDBG("Starting");
-    // Store frame header filled by `prep_next_frame`
+    anim_parse_tags[0] = 0;
+    // Store frame header initially filled by `prep_next_frame`
     anim_store_data(p_anim, &p_anim->FLCFrameChunk, sizeof(struct FLCFrameChunk));
 
+    // Remember where chunk header starts
+    p_fdthunk = (struct FLCFrameDataChunk *)p_anim->ChunkBuf;
     // Store zeroed out chunk
     lochunk.Type = 0;
     lochunk.Size = 0;
     anim_store_data(p_anim, &lochunk, sizeof(struct FLCFrameDataChunk));
-    // Remember where chunk header starts
-    p_fdthunk = (struct FLCFrameDataChunk *)p_anim->ChunkBuf;
 
 #if defined(LB_ENABLE_FLIC_FULL_HEADER)
     if (p_anim->FrameNumber == 0) {
@@ -695,23 +697,26 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
         p_anim->FLCFrameChunk.Chunks++;
         p_fdthunk->Type = FLI_COLOUR256;
         p_fdthunk->Size = p_anim->ChunkBuf - (ubyte *)p_fdthunk;
+        strncat(anim_parse_tags, "COLOUR256 ", sizeof(anim_parse_tags)-1);
 
+        // Remember where chunk header starts
+        p_fdthunk = (struct FLCFrameDataChunk *)p_anim->ChunkBuf;
         // Store zeroed out chunk
         lochunk.Type = 0;
         lochunk.Size = 0;
         anim_store_data(p_anim, &lochunk, sizeof(struct FLCFrameDataChunk));
-        // Remember where chunk header starts
-        p_fdthunk = (struct FLCFrameDataChunk *)p_anim->ChunkBuf;
     }
     int scrpoints = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
     if (p_anim->FrameNumber == 0) {
         if (anim_make_FLI_BRUN(p_anim)) {
             p_anim->FLCFrameChunk.Chunks++;
             p_fdthunk->Type = FLI_BRUN;
+            strncat(anim_parse_tags, "BRUN ", sizeof(anim_parse_tags)-1);
         } else {
             anim_make_FLI_COPY(p_anim);
             p_anim->FLCFrameChunk.Chunks++;
             p_fdthunk->Type = FLI_COPY;
+            strncat(anim_parse_tags, "COPY ", sizeof(anim_parse_tags)-1);
         }
     } else {
         ubyte *dataptr;
@@ -728,6 +733,7 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
             // Store the LC compressed data
             p_anim->FLCFrameChunk.Chunks++;
             p_fdthunk->Type = FLI_LC;
+            strncat(anim_parse_tags, "LC ", sizeof(anim_parse_tags)-1);
         } else if (ss2_size < brun_size) {
             // Clear the LC compressed data
             LbMemorySet(dataptr, 0, lc_size);
@@ -736,6 +742,7 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
             anim_make_FLI_SS2(p_anim);
             p_anim->FLCFrameChunk.Chunks++;
             p_fdthunk->Type = FLI_SS2;
+            strncat(anim_parse_tags, "SS2 ", sizeof(anim_parse_tags)-1);
         } else if (brun_size < scrpoints + 16) {
             // Clear the LC compressed data
             LbMemorySet(dataptr, 0, lc_size);
@@ -744,6 +751,7 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
             anim_make_FLI_BRUN(p_anim);
             p_anim->FLCFrameChunk.Chunks++;
             p_fdthunk->Type = FLI_BRUN;
+            strncat(anim_parse_tags, "BRUN ", sizeof(anim_parse_tags)-1);
         } else {
             // Clear the LC compressed data
             LbMemorySet(dataptr, 0, lc_size);
@@ -752,9 +760,11 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
             anim_make_FLI_COPY(p_anim);
             p_anim->FLCFrameChunk.Chunks++;
             p_fdthunk->Type = FLI_COPY;
+            strncat(anim_parse_tags, "COPY ", sizeof(anim_parse_tags)-1);
         }
     }
     p_fdthunk->Size = p_anim->ChunkBuf - (ubyte *)p_fdthunk;
+    LOGDBG("Chunks: %s", anim_parse_tags);
     {
         ubyte *chunk_buf_start;
         int width, height, depth;
@@ -769,8 +779,10 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
         chunk_buf_start = anim_scratch + anim_frame_size(width, height, depth);
 
         p_anim->FLCFrameChunk.Size = p_anim->ChunkBuf - chunk_buf_start;
+        LbMemoryCopy(chunk_buf_start, &p_anim->FLCFrameChunk, sizeof(struct FLCFrameChunk));
+
         if (!anim_write_data(p_anim, chunk_buf_start, p_anim->FLCFrameChunk.Size)) {
-            LOGNO("Finished frame with error");
+            LOGDBG("Finished frame with error");
             return false;
         }
     }
