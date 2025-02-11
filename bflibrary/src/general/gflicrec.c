@@ -581,7 +581,7 @@ TbResult anim_flic_make_open(struct Animation *p_anim, int width, int height, in
         LOGERR("Cannot record anim");
         return Lb_FAIL;
     }
-    if (flags & 0x01) {
+    if ((flags & AniFlg_RECORD) != 0) {
         LOGSYNC("Record new anim, '%s' file", p_anim->Filename);
         p_anim->Flags |= flags;
 
@@ -618,22 +618,37 @@ TbResult anim_flic_make_open(struct Animation *p_anim, int width, int height, in
         }
         LbMemorySet(anim_palette, -1, sizeof(anim_palette));
     }
-    if (flags & 0x02)  {
+    if ((flags & AniFlg_APPEND) != 0)  {
         LOGSYNC("Resume recording, '%s' file",p_anim->Filename);
         p_anim->Flags |= flags;
         p_anim->FileHandle = LbFileOpen(p_anim->Filename, Lb_FILE_MODE_OLD);
         if (p_anim->FileHandle == INVALID_FILE) {
+            LOGERR("Cannot open anim file");
             return Lb_FAIL;
         }
         // Reading header
         if (!anim_read_data(p_anim, &p_anim->FLCFileHeader, sizeof(struct FLCFileHeader))) {
             LOGERR("Anim header read error");
             LbFileClose(p_anim->FileHandle);
+            p_anim->FileHandle = INVALID_FILE;
             return Lb_FAIL;
         }
-        // TODO unfinished
-        LbFileClose(p_anim->FileHandle);
-        return Lb_FAIL;
+
+        if (!anim_read_data(p_anim, &p_anim->FLCFileHeader, sizeof(struct FLCFileHeader))) {
+            LOGERR("Header read failed, `%s` file", p_anim->Filename);
+            p_anim->FLCFileHeader.Size = 0;
+            LbFileClose(p_anim->FileHandle);
+            p_anim->FileHandle = INVALID_FILE;
+            return Lb_FAIL;
+        }
+        LOGDBG("Frame count %d, res %dx%d, `%s` file",
+          (int)p_anim->FLCFileHeader.NumberOfFrames,
+          (int)p_anim->FLCFileHeader.Height, (int)p_anim->FLCFileHeader.Width,
+          p_anim->Filename);
+
+        // Note that we do not support appending to files with PREFIX header
+        LbFileSeek(p_anim->FileHandle, 0, Lb_FILE_SEEK_END);
+        p_anim->FrameNumber = p_anim->FLCFileHeader.NumberOfFrames;
     }
     return Lb_SUCCESS;
 }
@@ -643,7 +658,7 @@ void anim_make_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf)
     u32 max_chunk_size;
     int width, height, depth;
 
-    if (((p_anim->Flags & 0x02) != 0) && (frmbuf != NULL)) {
+    if (((p_anim->Flags & AniFlg_APPEND) != 0) && (frmbuf != NULL)) {
         uint pos;
         pos = p_anim->Xpos + p_anim->Scanline * p_anim->Ypos;
         p_anim->FrameBuffer = frmbuf + pos;

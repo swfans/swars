@@ -45,6 +45,11 @@ enum FLI_Ani_Consts {
     FLI_SEGMENT_TABLE= 0x0F1FB,
 };
 
+enum AnimationFlags {
+    AniFlg_RECORD    = 0x0001, /**< The animation is being recorded rather than played. */
+    AniFlg_APPEND    = 0x0002, /**< The new recorded frames are to be appended at end of existing file. */
+};
+
 struct FLCFileHeader {
     u32 Size;
     ushort Magic;

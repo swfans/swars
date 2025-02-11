@@ -417,14 +417,8 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
     return pal_change;
 }
 
-void anim_show_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf)
+void anim_flic_find_next_frame_chunk(struct Animation *p_anim)
 {
-    if (((p_anim->Flags & 0x02) != 0) && (frmbuf != NULL)) {
-        uint pos;
-        pos = p_anim->Xpos + p_anim->Scanline * p_anim->Ypos;
-        p_anim->FrameBuffer = frmbuf + pos;
-    }
-
     anim_read_data(p_anim, &p_anim->FLCFrameChunk, 16);
     while (p_anim->FLCFrameChunk.Type != FLI_FRAME_CHUNK) {
         anim_read_data(p_anim, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
@@ -435,6 +429,16 @@ void anim_show_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf)
     }
     anim_read_data(p_anim, anim_scratch, p_anim->FLCFrameChunk.Size - 16);
     p_anim->anfield_4 += p_anim->FLCFrameChunk.Size;
+}
+
+void anim_show_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf)
+{
+    if (((p_anim->Flags & AniFlg_APPEND) != 0) && (frmbuf != NULL)) {
+        uint pos;
+        pos = p_anim->Xpos + p_anim->Scanline * p_anim->Ypos;
+        p_anim->FrameBuffer = frmbuf + pos;
+    }
+    anim_flic_find_next_frame_chunk(p_anim);
 }
 
 ubyte anim_show_frame(struct Animation *p_anim)
@@ -512,7 +516,7 @@ TbResult anim_flic_show_open(struct Animation *p_anim)
         return Lb_FAIL;
     }
 
-    if (!anim_read_data(p_anim, &p_anim->FLCFileHeader, 12)) {
+    if (!anim_read_data(p_anim, &p_anim->FLCFileHeader, sizeof(struct FLCFileHeader))) {
         LOGERR("Header read failed, `%s` file", p_anim->Filename);
         p_anim->FLCFileHeader.Size = 0;
     }
@@ -530,7 +534,7 @@ TbBool anim_is_opened(struct Animation *p_anim)
 
 void anim_flic_close(struct Animation *p_anim)
 {
-    if ((p_anim->Flags & (0x01|0x02)) != 0) {
+    if ((p_anim->Flags & (AniFlg_RECORD|AniFlg_APPEND)) != 0) {
         anim_rewrite_file_header(p_anim);
     }
     LbFileClose(p_anim->FileHandle);
