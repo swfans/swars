@@ -614,6 +614,7 @@ TbResult anim_flic_make_open(struct Animation *p_anim, int width, int height, in
         if (!anim_write_data(p_anim, &p_anim->FLCFileHeader, sizeof(struct FLCFileHeader))) {
             LOGERR("Anim write error");
             LbFileClose(p_anim->FileHandle);
+            p_anim->FileHandle = INVALID_FILE;
             return Lb_FAIL;
         }
         LbMemorySet(anim_palette, -1, sizeof(anim_palette));
