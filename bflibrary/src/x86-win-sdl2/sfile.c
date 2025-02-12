@@ -266,7 +266,7 @@ long LbFileLength(const char *fname)
 
     fhandle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
     result = fhandle;
-    if (fhandle != -1) {
+    if (fhandle != INVALID_FILE) {
       result = filelength(fhandle);
       LbFileClose(fhandle);
     }

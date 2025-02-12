@@ -158,7 +158,7 @@ long LbFileLength(const char *fname)
   TbFileHandle handle;
   handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
   long result = handle;
-  if ( handle != -1 )
+  if (handle != INVALID_FILE)
   {
     result = filelength(handle);
     LbFileClose(handle);
