@@ -690,7 +690,7 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
     struct FLCFrameDataChunk *p_fdthunk;
     s32 scrpoints, brun_size, lc_size, ss2_size;
 
-    LOGDBG("Starting");
+    LOGDBG("Start making frame %d", (int)p_anim->FrameNumber);
     anim_parse_tags[0] = 0;
     // Store frame header initially filled by `prep_next_frame`
     anim_store_data(p_anim, &p_anim->FLCFrameChunk, sizeof(struct FLCFrameChunk));

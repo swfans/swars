@@ -514,6 +514,7 @@ void anim_flic_set_frame_buffer(struct Animation *p_anim, ubyte *frmbuf,
     if (((p_anim->Flags & AniFlg_RECORD) != 0) || ((p_anim->Flags & AniFlg_APPEND) != 0))
     {
         if (((p_anim->Flags & AniFlg_ALL_DELTA) != 0) && (p_anim->FrameNumber == 0)) {
+            LOGDBG("Recording start in delata mode");
             p_anim->PvFrameBuf = anim_scratch;
             anim_update_prev_frame(p_anim);
         }
