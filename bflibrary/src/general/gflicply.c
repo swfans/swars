@@ -32,6 +32,8 @@ char anim_parse_tags[152];
 ubyte anim_palette[0x300];
 void *anim_scratch;
 
+TbBool anim_update_prev_frame(struct Animation *p_anim);
+
 /**
  * Reads the data from FLI animation.
  * @return Returns false on error, true on success.
@@ -509,6 +511,13 @@ void anim_flic_set_frame_buffer(struct Animation *p_anim, ubyte *frmbuf,
     p_anim->Flags |= flags;
     pos = p_anim->Xpos + p_anim->Scanline * p_anim->Ypos;
     p_anim->FrameBuffer = frmbuf + pos;
+    if (((p_anim->Flags & AniFlg_RECORD) != 0) || ((p_anim->Flags & AniFlg_APPEND) != 0))
+    {
+        if (((p_anim->Flags & AniFlg_ALL_DELTA) != 0) && (p_anim->FrameNumber == 0)) {
+            p_anim->PvFrameBuf = anim_scratch;
+            anim_update_prev_frame(p_anim);
+        }
+    }
 }
 
 void anim_flic_set_fname(struct Animation *p_anim, const char *format, ...)
