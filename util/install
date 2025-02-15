@@ -3,9 +3,10 @@
 show_usage()
 {
   cat<<EOF >&2
-Usage: $0 [OPTIONS] -f SOURCE -t TARGET
+Usage: $0 [OPTIONS] -d DEVICE -f SOURCE -t TARGET
 
 Available options:
+  -d DEVICE read audio tracks from DEVICE (e.g. /dev/sr0)
   -f PATH  copy data from PATH (e.g. /media/cdrom)
   -t PATH  copy data to PATH (e.g. /usr/local/share/swars)
 
@@ -25,6 +26,7 @@ fi
 
 WITH_MUSIC="yes"
 OWN_TARGET="no"
+DEVICE=""
 SOURCE=""
 TARGET=""
 LANG="eng"
@@ -41,10 +43,13 @@ SFX_VERSION="1.0.0.22"
 SFX_PACKAGE="swars-sfx-1_0_0_22"
 SFX_PKG_MD5="f222a89bfe0a2c931394c2ae25508a6d"
 
-OPTS="f:t:Ml:h"
+OPTS="d:f:t:Ml:h"
 
 while getopts "$OPTS" arg; do
   case "$arg" in
+    d)
+      DEVICE="$OPTARG"
+      ;;
     f)
       SOURCE="$OPTARG"
       ;;
@@ -73,9 +78,10 @@ check_music_tools()
   fi
 
   CDPARANOIA=`which cdparanoia`
+  FLAC=`which flac`
   OGGENC=`which oggenc`
 
-  if [ -z "$CDPARANOIA" ] || [ -z "$OGGENC" ]; then
+  if [ -z "$CDPARANOIA" ] || [ -z "$FLAC" ] || [ -z "$OGGENC" ]; then
     cat<<EOF >&2
 You don't have the tools needed to copy the music.  Please ensure that you
 have 'cdparanoia' and 'oggenc' (from vorbis-tools) in your path or run with
@@ -171,10 +177,13 @@ copy_music()
   for track_number in 1 2 3; do
     local cd_number=$(($track_number+1))
     local track_wav="$TARGET/music/track_$track_number.wav"
+    local track_flac="$TARGET/music/track_$track_number.flac"
     local track_ogg="$TARGET/music/track_$track_number.ogg"
-    "$CDPARANOIA" "$cd_number" "$track_wav" || return 1
+    "$CDPARANOIA" -d "$DEVICE" "$cd_number" "$track_wav" || return 1
+    "$FLAC" -8 "$track_wav" || return 1
     "$OGGENC" -b 192 "$track_wav" || return 1
     rm -vf "$track_wav" || return 1
+    chmod 0644 "$track_flac" || return 1
     chmod 0644 "$track_ogg" || return 1
   done
 
@@ -421,8 +430,8 @@ check_language()
 create_config_ini()
 {
   cat<<EOF >"$TARGET/config.ini"
-CD="D:\\GAME\\"
-InstallDrive="C:\\"
+CD="$SOURCE"
+InstallDrive="$TARGET"
 Language="$LANG_NAME"
 Intro="Max"
 Anims="Max"
