@@ -567,6 +567,7 @@ void init_weapon_anim(ubyte weapon)
     const char *campgn_mark;
     PathInfo *pinfo;
     ulong k;
+    ubyte anmtype;
 
     p_campgn = &campaigns[background_type];
     campgn_mark = p_campgn->ProjectorFnMk;
@@ -576,19 +577,20 @@ void init_weapon_anim(ubyte weapon)
 
     pinfo = &game_dirs[DirPlace_Equip];
 
+    anmtype = AniT_EQVIEW;
     if (weapon >= 32)
     {
-        k = anim_slots[2];
+        k = anim_slots[anmtype];
         p_anim = &animations[k];
-        sprintf(p_anim->Filename, "%s/mod-%02d%s.fli", pinfo->directory, (int)weapon - 32, campgn_mark);
+        anim_flic_set_fname(p_anim, "%s/mod-%02d%s.fli", pinfo->directory, (int)weapon - 32, campgn_mark);
     }
     else
     {
-        k = anim_slots[2];
+        k = anim_slots[anmtype];
         p_anim = &animations[k];
-        sprintf(p_anim->Filename, "%s/wep-%02d%s.fli", pinfo->directory, (int)weapon, campgn_mark);
+        anim_flic_set_fname(p_anim, "%s/wep-%02d%s.fli", pinfo->directory, (int)weapon, campgn_mark);
     }
-    flic_unkn03(2);
+    flic_unkn03(anmtype);
 }
 
 void weapon_flic_data_to_screen(void)

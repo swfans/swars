@@ -488,24 +488,62 @@ ubyte *anim_type_get_output_buffer(ubyte anmtype)
 {
     switch (anmtype)
     {
-    case 0:
+    case AniT_FULLSCREEN:
     default:
         return lbDisplay.WScreen;
-    case 1:
+    case AniT_BILLBOARD:
         return vec_tmap[4];
-    case 2:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 9:
+    case AniT_EQVIEW:
+    case AniT_UNKN4:
+    case AniT_UNKN5:
+    case AniT_UNKN6:
+    case AniT_UNKN7:
+    case AniT_NETSCAN:
         return vec_tmap[5];
-    case 3:
-    case 8:
+    case AniT_UNKN3:
+    case AniT_UNKN8:
         return vec_tmap[5] + 0x8000;
     }
 }
 
+void anim_billboard_select_rand(void)
+{
+    ushort rnd;
+
+    rnd = LbRandomPosShort() & 7;
+    if (rnd <= 0)
+        billboard_anim_no = 1;
+    else if (rnd <= 2)
+        billboard_anim_no = 2;
+    else if (rnd <= 5)
+        billboard_anim_no = 0;
+    else
+        billboard_anim_no = 3;
+}
+
+void anim_billboard_select_next(void)
+{
+    billboard_anim_no++;
+    if (billboard_anim_no > 3)
+        billboard_anim_no = 0;
+}
+
+void anim_billboard_broadcast_sound(void)
+{
+    struct Thing *p_thing;
+    ushort rnd;
+    ubyte smpl_no;
+
+    if (in_network_game)
+        return;
+    if (ingame.VisibleBillboardThing == 0)
+        return;
+
+    p_thing = &things[ingame.VisibleBillboardThing];
+    smpl_no = byte_154BB4[billboard_anim_no];
+    rnd = LbRandomPosShort() & 1;
+    play_dist_sample(p_thing, smpl_no + rnd, 0x7Fu, 0x40, 100, 0, 1);
+}
 
 void flic_unkn03(ubyte anmtype)
 {
@@ -517,8 +555,6 @@ void flic_unkn03(ubyte anmtype)
     ubyte *frmbuf;
     PathInfo *pinfo;
     int k;
-    ushort rnd;
-    ubyte anim_no;
 
     k = anim_slots[anmtype];
     p_anim = &animations[k];
@@ -532,71 +568,52 @@ void flic_unkn03(ubyte anmtype)
 
     switch (anmtype)
     {
-    case 1:
+    case AniT_BILLBOARD:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x20);
-
-        rnd = LbRandomPosShort() & 7;
-        if (rnd <= 0)
-            billboard_anim_no = 1;
-        else if (rnd <= 2)
-            billboard_anim_no = 2;
-        else if (rnd <= 5)
-            billboard_anim_no = 0;
-        else
-            billboard_anim_no = 3;
-
-        if (ingame.VisibleBillboardThing && !in_network_game)
-        {
-            struct Thing *p_thing;
-            p_thing = &things[ingame.VisibleBillboardThing];
-            anim_no = byte_154BB4[billboard_anim_no];
-            rnd = LbRandomPosShort() & 1;
-            play_dist_sample(p_thing, anim_no + rnd, 0x7Fu, 0x40, 100, 0, 1);
-        }
+        anim_billboard_select_rand();
+        anim_billboard_broadcast_sound();
         pinfo = &game_dirs[DirPlace_QData];
         anim_flic_set_fname(p_anim, "%s/%s-1%d.fli", pinfo->directory, "demo", (int)billboard_anim_no);
-        billboard_anim_no++;
-        if (billboard_anim_no > 3)
-            billboard_anim_no = 0;
+        anim_billboard_select_next();
         break;
-    case 2:
+    case AniT_EQVIEW:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
-    case 3:
+    case AniT_UNKN3:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
-    case 4:
+    case AniT_UNKN4:
         byte_1AAA88 = 1;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "intro");
         break;
-    case 5:
+    case AniT_UNKN5:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
-    case 6:
+    case AniT_UNKN6:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
-    case 7:
+    case AniT_UNKN7:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
-    case 8:
+    case AniT_UNKN8:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x20);
         break;
-    case 9:
+    case AniT_NETSCAN:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
@@ -606,7 +623,7 @@ void flic_unkn03(ubyte anmtype)
 
     if (anim_flic_show_open(p_anim) == Lb_FAIL)
     {
-        if (anmtype == 1)
+        if (anmtype == AniT_BILLBOARD)
             ingame.Flags &= ~GamF_BillboardMovies;
         return;
     }
@@ -2446,7 +2463,7 @@ void setup_host(void)
         PacketRecord_OpenRead();
     }
     play_intro();
-    flic_unkn03(1u);
+    flic_unkn03(AniT_BILLBOARD);
 }
 
 void set_default_game_keys(void)

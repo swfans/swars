@@ -132,8 +132,9 @@ void init_next_blokey_flic(void)
     struct Animation *p_anim;
     const char *campgn_mark;
     PathInfo *pinfo;
-    ushort cmod, stage;
     int k;
+    ushort cmod, stage;
+    ubyte anmtype;
 
     p_campgn = &campaigns[background_type];
     campgn_mark = p_campgn->ProjectorFnMk;
@@ -189,6 +190,7 @@ void init_next_blokey_flic(void)
     switch (stage)
     {
     case 0:
+        anmtype = AniT_UNKN8;
         if (!byte_1DDC40)
         {
             byte_1DDC40 = 1;
@@ -196,10 +198,10 @@ void init_next_blokey_flic(void)
         }
         else if (!IsSamplePlaying(0, 134, 0))
         {
-            k = anim_slots[8];
+            k = anim_slots[anmtype];
             p_anim = &animations[k];
-            sprintf(p_anim->Filename, "%s/%s%da%d.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
-            flic_unkn03(8u);
+            anim_flic_set_fname(p_anim, "%s/%s%da%d.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
+            flic_unkn03(anmtype);
             play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
             current_frame = 0;
             new_current_drawing_mod = 4;
@@ -207,27 +209,28 @@ void init_next_blokey_flic(void)
         }
         break;
     case 1:
-        k = anim_slots[3];
+        anmtype = AniT_UNKN3;
+        k = anim_slots[anmtype];
         p_anim = &animations[k];
         switch (cmod)
         {
         case 0:
-            sprintf(p_anim->Filename, "%s/%s%dbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
+            anim_flic_set_fname(p_anim, "%s/%s%dbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
             break;
         case 1:
-            sprintf(p_anim->Filename, "%s/%s%dbbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
+            anim_flic_set_fname(p_anim, "%s/%s%dbbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
             break;
         case 2:
-            sprintf(p_anim->Filename, "%s/%s%da%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
+            anim_flic_set_fname(p_anim, "%s/%s%da%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
             break;
         case 3:
-            sprintf(p_anim->Filename, "%s/%s%dl%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
+            anim_flic_set_fname(p_anim, "%s/%s%dl%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
             break;
         default:
             assert(!"unreachable");
             break;
         }
-        flic_unkn03(3);
+        flic_unkn03(anmtype);
         new_current_drawing_mod = cmod;
         mod_draw_states[cmod] |= 0x02;
         cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
@@ -235,27 +238,28 @@ void init_next_blokey_flic(void)
         byte_1DDC40 = 0;
         break;
     case 2:
-        k = anim_slots[3];
+        anmtype = AniT_UNKN3;
+        k = anim_slots[anmtype];
         p_anim = &animations[k];
         switch (cmod)
         {
           case 0:
-            sprintf(p_anim->Filename, "%s/%s%dbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
+            anim_flic_set_fname(p_anim, "%s/%s%dbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
             break;
           case 1:
-            sprintf(p_anim->Filename, "%s/%s%dbbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
+            anim_flic_set_fname(p_anim, "%s/%s%dbbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
             break;
           case 2:
-            sprintf(p_anim->Filename, "%s/%s%da%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
+            anim_flic_set_fname(p_anim, "%s/%s%da%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
             break;
           case 3:
-            sprintf(p_anim->Filename, "%s/%s%dl%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[3]);
+            anim_flic_set_fname(p_anim, "%s/%s%dl%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[3]);
             break;
           default:
             assert(!"unreachable");
             break;
         }
-        flic_unkn03(3);
+        flic_unkn03(anmtype);
         new_current_drawing_mod = cmod;
         mod_draw_states[cmod] |= 0x01;
         mod_draw_states[cmod] &= ~0x08;

@@ -224,7 +224,7 @@ void flic_netscan_open_anim(ubyte netno)
     int k;
     ubyte anmtype;
 
-    anmtype = 9;
+    anmtype = AniT_NETSCAN;
     k = anim_slots[anmtype];
     p_anim = &animations[k];
     pinfo = &game_dirs[DirPlace_Equip];

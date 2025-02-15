@@ -104,6 +104,19 @@ enum DisplayModes {
   DpM_UNKN_3B = 0x3B,
 };
 
+enum AnimType {
+  AniT_FULLSCREEN = 0,
+  AniT_BILLBOARD = 1,
+  AniT_EQVIEW = 2,
+  AniT_UNKN3 = 3,
+  AniT_UNKN4 = 4,
+  AniT_UNKN5 = 5,
+  AniT_UNKN6 = 6,
+  AniT_UNKN7 = 7,
+  AniT_UNKN8 = 8,
+  AniT_NETSCAN = 9,
+};
+
 enum PacketRecordMode {
   PktR_NONE = 0x0,
   PktR_RECORD = 0x1,
