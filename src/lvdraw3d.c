@@ -737,7 +737,7 @@ void func_2e440(void)
         dword_176CC0 += fifties_per_gameturn;
         if (dword_176CC0 > 80) {
             dword_176CC0 = 0;
-            xdo_next_frame(1);
+            xdo_next_frame(AniSl_BILLBOARD);
         }
     }
     angXZ = (engn_anglexz >> 5) & 0x7FF;

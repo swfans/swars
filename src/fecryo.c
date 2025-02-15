@@ -134,7 +134,7 @@ void init_next_blokey_flic(void)
     PathInfo *pinfo;
     int k;
     ushort cmod, stage;
-    ubyte anmtype;
+    ubyte anislot;
 
     p_campgn = &campaigns[background_type];
     campgn_mark = p_campgn->ProjectorFnMk;
@@ -190,7 +190,7 @@ void init_next_blokey_flic(void)
     switch (stage)
     {
     case 0:
-        anmtype = AniT_UNKN8;
+        anislot = AniSl_UNKN8;
         if (!byte_1DDC40)
         {
             byte_1DDC40 = 1;
@@ -198,10 +198,10 @@ void init_next_blokey_flic(void)
         }
         else if (!IsSamplePlaying(0, 134, 0))
         {
-            k = anim_slots[anmtype];
+            k = anim_slots[anislot];
             p_anim = &animations[k];
             anim_flic_set_fname(p_anim, "%s/%s%da%d.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
-            flic_unkn03(anmtype);
+            flic_unkn03(anislot);
             play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
             current_frame = 0;
             new_current_drawing_mod = 4;
@@ -209,8 +209,8 @@ void init_next_blokey_flic(void)
         }
         break;
     case 1:
-        anmtype = AniT_UNKN3;
-        k = anim_slots[anmtype];
+        anislot = AniSl_UNKN3;
+        k = anim_slots[anislot];
         p_anim = &animations[k];
         switch (cmod)
         {
@@ -230,7 +230,7 @@ void init_next_blokey_flic(void)
             assert(!"unreachable");
             break;
         }
-        flic_unkn03(anmtype);
+        flic_unkn03(anislot);
         new_current_drawing_mod = cmod;
         mod_draw_states[cmod] |= 0x02;
         cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
@@ -238,8 +238,8 @@ void init_next_blokey_flic(void)
         byte_1DDC40 = 0;
         break;
     case 2:
-        anmtype = AniT_UNKN3;
-        k = anim_slots[anmtype];
+        anislot = AniSl_UNKN3;
+        k = anim_slots[anislot];
         p_anim = &animations[k];
         switch (cmod)
         {
@@ -259,7 +259,7 @@ void init_next_blokey_flic(void)
             assert(!"unreachable");
             break;
         }
-        flic_unkn03(anmtype);
+        flic_unkn03(anislot);
         new_current_drawing_mod = cmod;
         mod_draw_states[cmod] |= 0x01;
         mod_draw_states[cmod] &= ~0x08;
@@ -314,7 +314,7 @@ void blokey_flic_data_to_screen(void)
     ushort dy, dx;
 
     cdm = current_drawing_mod;
-    iline = unkn_buffer_05 + 0x8000;
+    iline = anim_type_get_output_buffer(AniSl_UNKN3);
     dx = cryo_blokey_box.X + 63 + equip_blokey_pos[cdm].X;
     dy = cryo_blokey_box.Y + 1 + equip_blokey_pos[cdm].Y;
     oline = &lbDisplay.WScreen[dx + lbDisplay.GraphicsScreenWidth * dy];
@@ -380,7 +380,7 @@ void blokey_static_flic_data_to_screen(void)
             break;
         }
 
-        buf = unkn_buffer_05 + 0x8000;
+        buf = anim_type_get_output_buffer(AniSl_UNKN3);
         len = LbFileLoadAt(str, buf);
         if (len < 4) {
             LbMemorySet(buf, 0, equip_blokey_static_width[cdm] * equip_blokey_static_height[cdm]);
@@ -736,7 +736,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
         }
         else
         {
-            xdo_next_frame(2);
+            xdo_next_frame(AniSl_EQVIEW);
             draw_flic_purple_list(ac_weapon_flic_data_to_screen);
         }
         if (lbDisplay.LeftButton)

@@ -104,17 +104,17 @@ enum DisplayModes {
   DpM_UNKN_3B = 0x3B,
 };
 
-enum AnimType {
-  AniT_FULLSCREEN = 0,
-  AniT_BILLBOARD = 1,
-  AniT_EQVIEW = 2,
-  AniT_UNKN3 = 3,
-  AniT_UNKN4 = 4,
-  AniT_UNKN5 = 5,
-  AniT_UNKN6 = 6,
-  AniT_UNKN7 = 7,
-  AniT_UNKN8 = 8,
-  AniT_NETSCAN = 9,
+enum AnimSlot {
+  AniSl_FULLSCREEN = 0,
+  AniSl_BILLBOARD = 1,
+  AniSl_EQVIEW = 2,
+  AniSl_UNKN3 = 3,
+  AniSl_UNKN4 = 4,
+  AniSl_UNKN5 = 5,
+  AniSl_UNKN6 = 6,
+  AniSl_UNKN7 = 7,
+  AniSl_UNKN8 = 8,
+  AniSl_NETSCAN = 9,
 };
 
 enum PacketRecordMode {
@@ -408,7 +408,6 @@ extern char *weapon_text;
 
 extern ubyte *save_game_buffer;
 extern char save_active_desc[28];
-extern ubyte *unkn_buffer_05;
 extern ubyte scientists_lost;
 extern ulong new_mods_researched;
 extern ulong new_weapons_researched;
@@ -449,7 +448,6 @@ extern struct LevelDef level_def;
 extern long dword_17710C;
 extern long dword_177110;
 extern ubyte mouser;
-extern ubyte *dword_1AA280;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;
 
@@ -540,6 +538,8 @@ TbBool game_cam_tracked_thing_is_player_agent(void);
 
 void local_to_worldr(int *dx, int *dy, int *dz);
 ubyte process_send_person(ushort player, int i);
+
+ubyte *anim_type_get_output_buffer(ubyte anislot);
 
 #ifdef __cplusplus
 };

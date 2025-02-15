@@ -222,21 +222,23 @@ void flic_netscan_open_anim(ubyte netno)
     struct Animation *p_anim;
     PathInfo *pinfo;
     int k;
-    ubyte anmtype;
+    ubyte anislot;
 
-    anmtype = AniT_NETSCAN;
-    k = anim_slots[anmtype];
+    anislot = AniSl_NETSCAN;
+    k = anim_slots[anislot];
     p_anim = &animations[k];
     pinfo = &game_dirs[DirPlace_Equip];
     anim_flic_set_fname(p_anim, "%s/net%02d.fli", pinfo->directory, netno);
-    flic_unkn03(anmtype);
+    flic_unkn03(anislot);
 }
 
 void purple_unkn2_data_to_screen(void)
 {
+    ubyte *buf;
+    buf = anim_type_get_output_buffer(AniSl_NETSCAN);
     LbScreenSetGraphicsWindow(brief_graphical_box.X + 1, brief_graphical_box.Y + 1,
       brief_graphical_box.Width - 2, brief_graphical_box.Height - 2);
-    LbScreenCopy(unkn_buffer_05, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
+    LbScreenCopy(buf, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
 }
@@ -463,7 +465,7 @@ ubyte show_citymap_box(struct ScreenBox *box)
     {
         if (!netscan_objectives[selected_netscan_objective].AnimNo)
             byte_1C47D9 = 0;
-        if (xdo_next_frame(9))
+        if (xdo_next_frame(AniSl_NETSCAN))
             byte_1C47D9 = 0;
         draw_flic_purple_list(ac_purple_unkn2_data_to_screen);
     }

@@ -135,7 +135,6 @@
 #define EXPECTED_LANG_TXT_SIZE 8000
 
 extern char *fadedat_fname;
-extern unsigned long unkn_buffer_04;
 char session_name[20] = "SWARA";
 
 extern ulong stored_l3d_next_object[1];
@@ -484,24 +483,24 @@ void anim_show_FLI_LC_NP(void)
     anim_show_FLI_LC(p_anim);
 }
 
-ubyte *anim_type_get_output_buffer(ubyte anmtype)
+ubyte *anim_type_get_output_buffer(ubyte anislot)
 {
-    switch (anmtype)
+    switch (anislot)
     {
-    case AniT_FULLSCREEN:
+    case AniSl_FULLSCREEN:
     default:
         return lbDisplay.WScreen;
-    case AniT_BILLBOARD:
+    case AniSl_BILLBOARD:
         return vec_tmap[4];
-    case AniT_EQVIEW:
-    case AniT_UNKN4:
-    case AniT_UNKN5:
-    case AniT_UNKN6:
-    case AniT_UNKN7:
-    case AniT_NETSCAN:
+    case AniSl_EQVIEW:
+    case AniSl_UNKN4:
+    case AniSl_UNKN5:
+    case AniSl_UNKN6:
+    case AniSl_UNKN7:
+    case AniSl_NETSCAN:
         return vec_tmap[5];
-    case AniT_UNKN3:
-    case AniT_UNKN8:
+    case AniSl_UNKN3:
+    case AniSl_UNKN8:
         return vec_tmap[5] + 0x8000;
     }
 }
@@ -545,30 +544,30 @@ void anim_billboard_broadcast_sound(void)
     play_dist_sample(p_thing, smpl_no + rnd, 0x7Fu, 0x40, 100, 0, 1);
 }
 
-void flic_unkn03(ubyte anmtype)
+void flic_unkn03(ubyte anislot)
 {
 #if 0
     asm volatile ("call ASM_flic_unkn03\n"
-        : : "a" (anmtype));
+        : : "a" (anislot));
 #endif
     struct Animation *p_anim;
     ubyte *frmbuf;
     PathInfo *pinfo;
     int k;
 
-    k = anim_slots[anmtype];
+    k = anim_slots[anislot];
     p_anim = &animations[k];
     if (anim_is_opened(p_anim)) {
         anim_flic_close(p_anim);
     }
 
     anim_scratch = scratch_buf1;
-    anim_flic_init(p_anim, anmtype, 0x00);
-    frmbuf = anim_type_get_output_buffer(anmtype);
+    anim_flic_init(p_anim, anislot, 0x00);
+    frmbuf = anim_type_get_output_buffer(anislot);
 
-    switch (anmtype)
+    switch (anislot)
     {
-    case AniT_BILLBOARD:
+    case AniSl_BILLBOARD:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x20);
         anim_billboard_select_rand();
@@ -577,43 +576,43 @@ void flic_unkn03(ubyte anmtype)
         anim_flic_set_fname(p_anim, "%s/%s-1%d.fli", pinfo->directory, "demo", (int)billboard_anim_no);
         anim_billboard_select_next();
         break;
-    case AniT_EQVIEW:
+    case AniSl_EQVIEW:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
-    case AniT_UNKN3:
+    case AniSl_UNKN3:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
-    case AniT_UNKN4:
+    case AniSl_UNKN4:
         byte_1AAA88 = 1;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "intro");
         break;
-    case AniT_UNKN5:
+    case AniSl_UNKN5:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
-    case AniT_UNKN6:
+    case AniSl_UNKN6:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
-    case AniT_UNKN7:
+    case AniSl_UNKN7:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 10, 30, 0, 0x02);
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
-    case AniT_UNKN8:
+    case AniSl_UNKN8:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x20);
         break;
-    case AniT_NETSCAN:
+    case AniSl_NETSCAN:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
@@ -623,7 +622,7 @@ void flic_unkn03(ubyte anmtype)
 
     if (anim_flic_show_open(p_anim) == Lb_FAIL)
     {
-        if (anmtype == AniT_BILLBOARD)
+        if (anislot == AniSl_BILLBOARD)
             ingame.Flags &= ~GamF_BillboardMovies;
         return;
     }
@@ -1733,7 +1732,7 @@ void process_engine_unk3(void)
             if (!in_network_game && ((ingame.Flags & GamF_Unkn00040000) != 0))
             {
                 ingame.Flags &= ~GamF_Unkn00040000;
-                xdo_next_frame(1);
+                xdo_next_frame(AniSl_BILLBOARD);
             }
         }
     }
@@ -2272,7 +2271,7 @@ void setup_debug_obj_trace(void)
     debug_trace_place(0);
 }
 
-void BAT_unknsub_20(int a1, int a2, int a3, int a4, unsigned long a5)
+void BAT_unknsub_20(int a1, int a2, int a3, int a4, ubyte *a5)
 {
     asm volatile (
       "push %4\n"
@@ -2420,7 +2419,7 @@ TbResult prep_multicolor_sprites(void)
 
 void setup_host(void)
 {
-    BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
+    BAT_unknsub_20(0, 0, 0, 0, vec_tmap[4] + 41024);
     smack_malloc_setup();
     LOGDBG("&setup_host() = 0x%lx", (ulong)setup_host);
     setup_initial_screen_mode();
@@ -2463,7 +2462,7 @@ void setup_host(void)
         PacketRecord_OpenRead();
     }
     play_intro();
-    flic_unkn03(AniT_BILLBOARD);
+    flic_unkn03(AniSl_BILLBOARD);
 }
 
 void set_default_game_keys(void)
@@ -3811,16 +3810,16 @@ void flic_creation_unkn01(void)
     }
 }
 
-int xdo_next_frame(ubyte slot)
+int xdo_next_frame(ubyte anislot)
 {
     struct Animation *p_anim;
     ushort k;
 
-    k = anim_slots[slot];
+    k = anim_slots[anislot];
     active_anim = k;
     p_anim = &animations[k];
 
-    if (slot >= 2 && slot <= 3)
+    if (anislot >= AniSl_EQVIEW && anislot <= AniSl_UNKN3)
     {
         if (p_anim->FrameNumber == 0) {
             play_sample_using_heap(0, 135, 127, 64, 100, 0, 3u);
@@ -6274,7 +6273,7 @@ void show_menu_screen_st0(void)
 
     init_brief_screen_scanner();
 
-    save_game_buffer = unkn_buffer_05;
+    save_game_buffer = vec_tmap[5];
 
     net_system_init0();
 }
@@ -6962,8 +6961,8 @@ void show_load_and_prep_mission(void)
         generate_shadows_for_multicolor_sprites();
         adjust_mission_engine_to_video_mode();
 
-        flic_unkn03(1);
-        xdo_next_frame(1);
+        flic_unkn03(AniSl_BILLBOARD);
+        xdo_next_frame(AniSl_BILLBOARD);
 
         if ( in_network_game )
         {

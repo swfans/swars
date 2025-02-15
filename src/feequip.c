@@ -567,7 +567,7 @@ void init_weapon_anim(ubyte weapon)
     const char *campgn_mark;
     PathInfo *pinfo;
     ulong k;
-    ubyte anmtype;
+    ubyte anislot;
 
     p_campgn = &campaigns[background_type];
     campgn_mark = p_campgn->ProjectorFnMk;
@@ -577,30 +577,32 @@ void init_weapon_anim(ubyte weapon)
 
     pinfo = &game_dirs[DirPlace_Equip];
 
-    anmtype = AniT_EQVIEW;
+    anislot = AniSl_EQVIEW;
     if (weapon >= 32)
     {
-        k = anim_slots[anmtype];
+        k = anim_slots[anislot];
         p_anim = &animations[k];
         anim_flic_set_fname(p_anim, "%s/mod-%02d%s.fli", pinfo->directory, (int)weapon - 32, campgn_mark);
     }
     else
     {
-        k = anim_slots[anmtype];
+        k = anim_slots[anislot];
         p_anim = &animations[k];
         anim_flic_set_fname(p_anim, "%s/wep-%02d%s.fli", pinfo->directory, (int)weapon, campgn_mark);
     }
-    flic_unkn03(anmtype);
+    flic_unkn03(anislot);
 }
 
 void weapon_flic_data_to_screen(void)
 {
+    ubyte *buf;
     short w, h;
 
     w = equip_display_box.Width - 8;
     h = w * 7 / 10;
+    buf = anim_type_get_output_buffer(AniSl_EQVIEW);
     LbScreenSetGraphicsWindow(equip_display_box.X + 4, equip_display_box.Y + 4, w, h);
-    LbScreenCopy(unkn_buffer_05, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
+    LbScreenCopy(buf, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
 }
@@ -707,7 +709,6 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
         stridx = 65;
     draw_text_property_lv(&categ_box, gui_strings[stridx]);
 
-
     draw_discrete_rects_bar_lv(&power_box, weapon_damage[selected_weapon], 8, byte_155175);
     draw_discrete_rects_bar_lv(&range_box, weapon_range[selected_weapon], 8, byte_155181);
     draw_discrete_rects_bar_lv(&energ_box, weapon_nrg[selected_weapon], 8, byte_155175);
@@ -736,7 +737,7 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
     }
     else
     {
-        xdo_next_frame(2);
+        xdo_next_frame(AniSl_EQVIEW);
         draw_flic_purple_list(ac_weapon_flic_data_to_screen);
     }
 
