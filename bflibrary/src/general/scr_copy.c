@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file scr_copy.asm
+/** @file scr_copy.c
  *     Implementation of related functions.
  * @par Purpose:
  *     Unknown.
@@ -57,6 +57,25 @@ void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ushort height)
         LbI_XMemCopy(d, s, lbDisplay.GraphicsWindowWidth);
         s += lbDisplay.GraphicsWindowWidth;
         d += lbDisplay.GraphicsWindowWidth + shift;
+    }
+}
+
+void LbScreenSave(TbPixel *sourceBuf, TbPixel *destBuf, ushort height)
+{
+    ubyte *s;
+    ubyte *d;
+    short shift;
+    short h;
+
+    s = sourceBuf;
+    d = destBuf;
+    shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
+    {
+        LbI_XMemCopy(d, s, lbDisplay.GraphicsWindowWidth);
+        s += lbDisplay.GraphicsWindowWidth + shift;
+        d += lbDisplay.GraphicsWindowWidth;
     }
 }
 
