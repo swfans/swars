@@ -48,6 +48,7 @@ enum FLI_Ani_Consts {
 enum AnimationFlags {
     AniFlg_RECORD    = 0x0001, /**< The animation is being recorded rather than played. */
     AniFlg_APPEND    = 0x0002, /**< The new recorded frames are to be appended at end of existing file. */
+    AniFlg_ALL_DELTA = 0x0004, /**< The recorded frames are all delta frames, there is no static background. */
 };
 
 struct FLCFileHeader {

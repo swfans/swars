@@ -688,7 +688,7 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
 {
     struct FLCFrameDataChunk lochunk;
     struct FLCFrameDataChunk *p_fdthunk;
-    s32 brun_size, lc_size, ss2_size;
+    s32 scrpoints, brun_size, lc_size, ss2_size;
 
     LOGDBG("Starting");
     anim_parse_tags[0] = 0;
@@ -722,8 +722,35 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
         lochunk.Size = 0;
         anim_store_data(p_anim, &lochunk, sizeof(struct FLCFrameDataChunk));
     }
-    int scrpoints = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
-    if (p_anim->FrameNumber == 0) {
+    scrpoints = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
+    if ((p_anim->Flags & AniFlg_ALL_DELTA) != 0)
+    {
+        ubyte *dataptr;
+        // Determining the best compression method
+        dataptr = p_anim->ChunkBuf;
+        p_anim->ChunkBuf = dataptr;
+        ss2_size = anim_make_FLI_SS2(p_anim);
+        LbMemorySet(dataptr, 0, ss2_size);
+        p_anim->ChunkBuf = dataptr;
+        lc_size = anim_make_FLI_LC(p_anim);
+        if (lc_size < ss2_size) {
+            // Store the LC compressed data
+            p_anim->FLCFrameChunk.Chunks++;
+            p_fdthunk->Type = FLI_LC;
+            strncat(anim_parse_tags, "LC ", sizeof(anim_parse_tags)-1);
+        } else {
+            // Clear the LC compressed data
+            LbMemorySet(dataptr, 0, lc_size);
+            p_anim->ChunkBuf = dataptr;
+            // Compress with SS2 method
+            anim_make_FLI_SS2(p_anim);
+            p_anim->FLCFrameChunk.Chunks++;
+            p_fdthunk->Type = FLI_SS2;
+            strncat(anim_parse_tags, "SS2 ", sizeof(anim_parse_tags)-1);
+        }
+    }
+    else if (p_anim->FrameNumber == 0)
+    {
         if (anim_make_FLI_BRUN(p_anim)) {
             p_anim->FLCFrameChunk.Chunks++;
             p_fdthunk->Type = FLI_BRUN;
@@ -734,7 +761,9 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
             p_fdthunk->Type = FLI_COPY;
             strncat(anim_parse_tags, "COPY ", sizeof(anim_parse_tags)-1);
         }
-    } else {
+    }
+    else
+    {
         ubyte *dataptr;
         // Determining the best compression method
         dataptr = p_anim->ChunkBuf;

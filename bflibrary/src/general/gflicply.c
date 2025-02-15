@@ -313,6 +313,25 @@ void anim_show_FLI_BLACK(struct Animation *p_anim)
     }
 }
 
+void anim_show_FLI_COPY(struct Animation *p_anim)
+{
+    ubyte *out;
+    short i, scanln;
+
+    scanln = p_anim->Scanline;
+    if (scanln == 0)
+        scanln = p_anim->FLCFileHeader.Width;
+    out = p_anim->FrameBuffer;
+
+    for (i = 0; i < p_anim->FLCFileHeader.Height; i++)
+    {
+        if (p_anim->FrameBuffer != NULL)
+            LbMemoryCopy(out, p_anim->ChunkBuf, p_anim->FLCFileHeader.Width);
+        p_anim->ChunkBuf += p_anim->FLCFileHeader.Width;
+        out += scanln;
+    }
+}
+
 void anim_show_FLI_COLOUR256(struct Animation *p_anim)
 {
     ubyte *opal;
@@ -397,11 +416,7 @@ ubyte anim_show_FLI_FRAME(struct Animation *p_anim, struct FLCFrameDataChunk *p_
         strncat(anim_parse_tags, "BRUN ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_COPY:
-        sz = p_anim->FLCFileHeader.Height * p_anim->FLCFileHeader.Width;
-        p_fdthunk->Size = sz;
-        if (p_anim->FrameBuffer != 0)
-            LbMemoryCopy(p_anim->FrameBuffer, p_anim->ChunkBuf, sz);
-        p_anim->ChunkBuf += sz;
+        anim_show_FLI_COPY(p_anim);
         strncat(anim_parse_tags, "COPY ", sizeof(anim_parse_tags)-1);
         break;
     case FLI_PSTAMP:
