@@ -409,6 +409,9 @@ ubyte cryo_blokey_mod_level(ubyte cdm)
     PlayerInfo *p_locplayer;
     ubyte cybmod_lv;
 
+    if (selected_agent < 0)
+        return 0;
+
     switch (cdm)
     {
     case 0:
@@ -501,7 +504,10 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
     cx = box->X + 4;
     cy = box->Y + 20;
     hline = font_height('A');
-    //if (selected_agent != -1) -- this is always set to 0..4
+
+    if (selected_agent < 0)
+        return 0;
+
     {
         ubyte cdm;
 
@@ -570,7 +576,9 @@ TbBool cybmod_available_for_purchase(short mtype)
       && ((login_control__State != 5) || mod_tech_level[mtype] > login_control__TechLevel))
         return false;
 
-    //if (selected_agent != -1) -- this is always set to 0..4
+    if (selected_agent < 0)
+        return false;
+
     if (selected_agent == 4)
     {
         ushort plagent;

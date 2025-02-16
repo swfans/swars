@@ -278,6 +278,10 @@ TbBool player_cryo_transfer_weapon_between_agents(ushort from_cryo_no,
 const char *get_cryo_agent_name(ushort cryo_no)
 {
     ushort rndname;
+
+    if (selected_agent < 0)
+        return gui_strings[536];
+
     rndname = cryo_agents.RandomName[cryo_no];
     if (background_type == 1)
     {

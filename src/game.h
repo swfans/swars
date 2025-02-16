@@ -460,7 +460,7 @@ extern ushort replay_intro_timer;
 extern ubyte show_alert;
 extern sbyte mo_weapon;
 
-extern ubyte selected_agent;
+extern sbyte selected_agent;
 
 extern int mouse_map_x;
 extern int mouse_map_y;

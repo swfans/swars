@@ -339,7 +339,7 @@ void draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate)
       shape->PtX[2] + 1, shape->PtY[1] - 3, 56);
     lbDisplay.DrawFlags = 0;
     flashy_draw_purple_shape(shape);
-    if (/*(selected_agent >= 0) && */(selected_agent < 4))
+    if ((selected_agent >= 0) && (selected_agent < 4))
     {
         const char *name;
         lbFontPtr = med_font;
@@ -727,6 +727,9 @@ void switch_shared_equip_screen_buttons_to_equip(void)
  */
 ubyte equip_offer_can_buy_or_sell(ubyte weapon)
 {
+    if (selected_agent < 0)
+        return 0;
+
     if (selected_agent == 4) // All agents selected
     {
         short i;
@@ -961,39 +964,42 @@ void draw_weapon_slot(short x, short y)
 
 void draw_fourpack_slots(short x, short y, ubyte fp)
 {
-  ubyte fpcount;
+    ubyte fpcount;
 
-  fpcount = 4;
-  if (selected_agent != 4)
-  {
-      fpcount = cryo_agents.FourPacks[selected_agent].Amount[fp];
-  }
-  else
-  {
-      short plagent, plagent_count;
+    if (selected_agent < 0)
+        return;
 
-      plagent_count = min(4,cryo_agents.NumAgents);
-      for (plagent = 0; plagent < plagent_count; plagent++)
-      {
-          if (cryo_agents.FourPacks[plagent].Amount[fp] < fpcount)
-              fpcount = cryo_agents.FourPacks[plagent].Amount[fp];
-      }
-  }
+    fpcount = 4;
+    if (selected_agent != 4)
+    {
+        fpcount = cryo_agents.FourPacks[selected_agent].Amount[fp];
+    }
+    else
+    {
+        short plagent, plagent_count;
 
-  lbDisplay.DrawFlags = 0;
-  draw_box_purple_list(x + 28, y + 8, 4u, 4u, 174);
+        plagent_count = min(4,cryo_agents.NumAgents);
+        for (plagent = 0; plagent < plagent_count; plagent++)
+        {
+            if (cryo_agents.FourPacks[plagent].Amount[fp] < fpcount)
+                fpcount = cryo_agents.FourPacks[plagent].Amount[fp];
+        }
+    }
 
-  if (fpcount == 1)
-      lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-  draw_box_purple_list(x + 28, y + 30, 4u, 4u, 174);
+    lbDisplay.DrawFlags = 0;
+    draw_box_purple_list(x + 28, y + 8, 4u, 4u, 174);
 
-  if (fpcount == 2)
-      lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-  draw_box_purple_list(x + 150, y + 8, 4u, 4u, 174);
+    if (fpcount == 1)
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+    draw_box_purple_list(x + 28, y + 30, 4u, 4u, 174);
 
-  if (fpcount == 3)
-      lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-  draw_box_purple_list(x + 150, y + 30, 4u, 4u, 174);
+    if (fpcount == 2)
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+    draw_box_purple_list(x + 150, y + 8, 4u, 4u, 174);
+
+    if (fpcount == 3)
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+    draw_box_purple_list(x + 150, y + 30, 4u, 4u, 174);
 }
 
 void show_weapon_slot(short scr_x, short scr_y, short weptype)
@@ -1064,7 +1070,7 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
         copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, p_box->Height + 6);
     }
 
-    if (selected_agent == -1)
+    if (selected_agent < 0)
         return 0;
 
     scr_y = p_box->Y + 5;
