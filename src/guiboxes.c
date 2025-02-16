@@ -232,18 +232,42 @@ void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, us
         : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed));
 }
 
-void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed, struct TbSprite *font, int textspeed)
+void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
+  ushort width, ushort height, int drawspeed, struct TbSprite *p_font, ushort textspeed)
 {
+#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
       "push %5\n"
       "push %4\n"
       "call ASM_init_screen_text_box\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (font), "g" (textspeed));
+        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (p_font), "g" (textspeed));
+#endif
+    p_box->Flags = GBxFlg_Unkn0001;
+    p_box->DrawFn = ac_flashy_draw_purple_text_box;
+    p_box->Text = 0;
+    p_box->LineSpacing = 4;
+    p_box->DrawTextFn = NULL;
+    p_box->Buttons[0] = 0;
+    p_box->Infos[0] = 0;
+    p_box->Infos[1] = 0;
+    p_box->field_3E = 0x38F7; // these look like two colors?
+    p_box->ScrollWindowOffset = 0;
+    p_box->BGColour = 0;
+    p_box->Lines = 0;
+    p_box->X = x;
+    p_box->Y = y;
+    p_box->Height = height;
+    p_box->DrawSpeed = drawspeed;
+    p_box->Font = p_font;
+    p_box->TextSpeed = textspeed;
+    p_box->Width = width;
+    p_box->ScrollWindowHeight = p_box->Height - 31;
 }
 
-void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
+void init_screen_button(struct ScreenButton *p_box, ushort x, ushort y,
+  const char *text, int drawspeed, struct TbSprite *p_font, int textspeed, int flags)
 {
 #if 0
     asm volatile (
@@ -252,34 +276,35 @@ void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char
       "push %5\n"
       "push %4\n"
       "call ASM_init_screen_button\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (text), "g" (drawspeed), "g" (font), "g" (textspeed), "g" (flags));
+        : : "a" (p_box), "d" (x), "b" (y), "c" (text), "g" (drawspeed), "g" (p_font), "g" (textspeed), "g" (flags));
 #endif
-    lbFontPtr = font;
-    box->Y = y;
-    box->Width = my_string_width(text) + 4;
-    box->Height = font_height('A') + 6;
-    box->DrawSpeed = drawspeed;
-    box->Font = font;
-    box->Flags = flags | 0x01;
+    lbFontPtr = p_font;
+    p_box->Y = y;
+    p_box->Width = my_string_width(text) + 4;
+    p_box->Height = font_height('A') + 6;
+    p_box->DrawSpeed = drawspeed;
+    p_box->Font = p_font;
+    p_box->Flags = flags | GBxFlg_Unkn0001;
     if ((flags & 0x80) != 0)
-        x -= box->Width;
-    box->X = x;
-    box->DrawFn = ac_flashy_draw_purple_button;
-    box->DrawTextFn = ac_button_text;
-    box->CallBackFn = 0;
-    box->Border = 1;
-    box->Colour = 0xAE;
-    box->BGColour = 0xF3;
-    box->AccelKey = 0;
-    box->Text = text;
-    box->TextSpeed = textspeed;
+        x -= p_box->Width;
+    p_box->X = x;
+    p_box->DrawFn = ac_flashy_draw_purple_button;
+    p_box->DrawTextFn = ac_button_text;
+    p_box->CallBackFn = 0;
+    p_box->Border = 1;
+    p_box->Colour = 0xAE;
+    p_box->BGColour = 0xF3;
+    p_box->AccelKey = 0;
+    p_box->Text = text;
+    p_box->TextSpeed = textspeed;
     if (*text != '\0')
-        box->AccelKey = lbAsciiToInkey[*(ubyte *)text];
-    box->Radio = 0;
-    box->RadioValue = 0;
+        p_box->AccelKey = lbAsciiToInkey[*(ubyte *)text];
+    p_box->Radio = 0;
+    p_box->RadioValue = 0;
 }
 
-void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort width, const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
+void init_screen_info_box(struct ScreenInfoBox *p_box, ushort x, ushort y, ushort width,
+  const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
 {
     asm volatile (
       "push %9\n"
@@ -289,7 +314,7 @@ void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort 
       "push %5\n"
       "push %4\n"
       "call ASM_init_screen_info_box\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
+        : : "a" (p_box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
 }
 
 /******************************************************************************/

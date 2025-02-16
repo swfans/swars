@@ -1154,7 +1154,7 @@ void init_equip_screen_boxes(void)
     equip_all_agents_button.Width = 165;
     equip_all_agents_button.RadioValue = 4;
     equip_all_agents_button.Flags |= GBxFlg_RadioBtn;
-    equip_all_agents_button.Radio = &selected_agent;
+    equip_all_agents_button.Radio = (ubyte *)&selected_agent;
 
     start_x = (scr_w - weapon_slots.Width - equip_list_box.Width - equip_name_box.Width - 32) / 2;
 

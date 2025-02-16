@@ -30,6 +30,8 @@ extern "C" {
 
 struct TbSprite;
 struct ScreenShape;
+struct ScreenBox;
+struct ScreenTextBox;
 struct ScreenButton;
 
 #pragma pack()
@@ -44,11 +46,15 @@ void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour);
 void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, TbPixel colour);
 void draw_hotspot_purple_list(int x, int y);
 ubyte flashy_draw_purple_shape(struct ScreenShape *shape);
+ubyte flashy_draw_purple_box(struct ScreenBox *p_box);
+ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box);
 void draw_flic_purple_list(void (*fn)());
 void draw_noise_box_purple_list(int x, int y, ulong width, ulong height);
 
 // Watcom calling convention - do not call from C
+ubyte ac_flashy_draw_purple_box(struct ScreenBox *p_box);
 ubyte ac_flashy_draw_purple_button(struct ScreenButton *button);
+ubyte ac_flashy_draw_purple_text_box(struct ScreenTextBox *p_box);
 ubyte ac_button_text(struct ScreenButton *button);
 
 /******************************************************************************/

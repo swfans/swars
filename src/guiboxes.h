@@ -292,9 +292,9 @@ TbResult ApDrawSlantBox(short x, short y, ushort w, ushort h, TbPixel col);
 
 void init_screen_box(struct ScreenBox *box, ushort x, ushort y,
   ushort width, ushort height, int drawspeed);
-void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y,
+void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
   ushort width, ushort height, int drawspeed,
-  struct TbSprite *font, int textspeed);
+  struct TbSprite *p_font, ushort textspeed);
 void init_screen_button(struct ScreenButton *box, ushort x, ushort y,
   const char *text, int drawspeed,
   struct TbSprite *font, int textspeed, int flags);

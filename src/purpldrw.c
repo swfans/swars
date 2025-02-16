@@ -118,6 +118,22 @@ ubyte flashy_draw_purple_shape(struct ScreenShape *shape)
     return ret;
 }
 
+ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_flashy_draw_purple_box\n"
+        : "=r" (ret) : "a" (p_box));
+    return ret;
+}
+
+ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_flashy_draw_purple_text_box\n"
+        : "=r" (ret) : "a" (p_box));
+    return ret;
+}
+
 ubyte flashy_draw_purple_button(struct ScreenButton *button)
 {
     ubyte ret;
