@@ -1011,7 +1011,7 @@ void show_weapon_slot(short scr_x, short scr_y, short weptype)
     }
 
     lbDisplay.DrawFlags = 0;
-    if (mo_weapon == -1)
+    if ((mo_weapon == -1) && lbDisplay.LeftButton)
     {
         if (mouse_down_over_box_coords(scr_x, scr_y, scr_x + 181, scr_y + 42))
         {
@@ -1021,7 +1021,7 @@ void show_weapon_slot(short scr_x, short scr_y, short weptype)
         }
     }
 
-    if (mo_weapon != -1 && !lbDisplay.MLeftButton)
+    if ((mo_weapon != -1) && !lbDisplay.MLeftButton)
     {
         if (mouse_move_over_box_coords(scr_x, scr_y, scr_x + 181, scr_y + 42))
         {
@@ -1047,7 +1047,7 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
 #endif
     short scr_x, scr_y;
     short slot;
-    short weapon;
+    short weptype;
 
     scr_x = p_box->X + 5;
     if ((p_box->Flags & GBxFlg_Unkn1000) == 0)
@@ -1069,7 +1069,7 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
 
     scr_y = p_box->Y + 5;
     slot = 0;
-    for (weapon = 1; weapon < WEP_TYPES_COUNT; weapon++)
+    for (weptype = 1; weptype < WEP_TYPES_COUNT; weptype++)
     {
         TbBool has_weapon;
 
@@ -1078,19 +1078,19 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
 
         if (selected_agent == 4)
         {
-          has_weapon = player_agent_has_weapon(local_player_no, 0, weapon)
-            && player_agent_has_weapon(local_player_no, 1, weapon)
-            && player_agent_has_weapon(local_player_no, 2, weapon)
-            && player_agent_has_weapon(local_player_no, 3, weapon);
+          has_weapon = player_agent_has_weapon(local_player_no, 0, weptype)
+            && player_agent_has_weapon(local_player_no, 1, weptype)
+            && player_agent_has_weapon(local_player_no, 2, weptype)
+            && player_agent_has_weapon(local_player_no, 3, weptype);
         }
         else
         {
-          has_weapon = player_agent_has_weapon(local_player_no, selected_agent, weapon);
+          has_weapon = player_agent_has_weapon(local_player_no, selected_agent, weptype);
         }
 
         if (has_weapon)
         {
-            show_weapon_slot(scr_x, scr_y, weapon);
+            show_weapon_slot(scr_x, scr_y, weptype);
             slot++;
             scr_y += 44;
         }
