@@ -688,9 +688,8 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                         else
                            lvstr_id = 75;
                         sprintf(cybmod_name_text, "%s %s %d", gui_strings[mdstr_id], gui_strings[lvstr_id], modlv);
-                        sprintf(equip_cost_text, "%d", 10 * mod_defs[mtype].Cost);
-                        equip_offer_buy_button.Text = gui_strings[436];
-                        equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
+                        switch_equip_offer_to_buy();
+                        update_cybmod_cost_text();
                         cryp_display_box_redraw(&cryo_cybmod_list_box);
                   }
                   if (selected_mod == mtype - 1) {

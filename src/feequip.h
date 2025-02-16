@@ -61,6 +61,7 @@ void update_cybmod_cost_text(void);
 
 void switch_shared_equip_screen_buttons_to_equip(void);
 void switch_equip_offer_to_buy(void);
+void switch_equip_offer_to_sell(void);
 void check_buy_sell_button(void);
 void init_weapon_anim(ubyte weapon);
 void display_box_content_state_switch(void);

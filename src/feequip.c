@@ -140,6 +140,12 @@ void switch_equip_offer_to_buy(void)
     equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
 }
 
+void switch_equip_offer_to_sell(void)
+{
+    equip_offer_buy_button.Text = gui_strings[407];
+    equip_offer_buy_button.CallBackFn = ac_sell_equipment;
+}
+
 void set_flag02_equipment_screen_boxes(void)
 {
     short i;
@@ -910,9 +916,8 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
                 selected_weapon = weapon;
                 equip_display_box_redraw(&equip_display_box);
                 equip_name_box_redraw(&equip_name_box);
-                equip_offer_buy_button.Text = gui_strings[436];
-                equip_offer_buy_button.CallBackFn = do_equip_offer_buy;
-                sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Cost);
+                switch_equip_offer_to_buy();
+                update_equip_cost_text();
             }
         }
 
@@ -946,7 +951,7 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
 
 void draw_weapon_slot(short x, short y)
 {
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     draw_box_purple_list(x, y, 0x9Au, 0xFu, 243);
     draw_box_purple_list(x + 27, y + 15, 0x7Fu, 0xCu, 243);
     draw_box_purple_list(x + 27, y + 27, 0x9Au, 0xFu, 243);
@@ -979,100 +984,56 @@ void draw_fourpack_slots(short x, short y, ubyte fp)
   draw_box_purple_list(x + 28, y + 8, 4u, 4u, 174);
 
   if (fpcount == 1)
-      lbDisplay.DrawFlags = 0x0004;
+      lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
   draw_box_purple_list(x + 28, y + 30, 4u, 4u, 174);
 
   if (fpcount == 2)
-      lbDisplay.DrawFlags = 0x0004;
+      lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
   draw_box_purple_list(x + 150, y + 8, 4u, 4u, 174);
 
   if (fpcount == 3)
-      lbDisplay.DrawFlags = 0x0004;
+      lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
   draw_box_purple_list(x + 150, y + 30, 4u, 4u, 174);
 }
 
-void show_weapon_slot(short scr_x, short scr_y, short weapon)
+void show_weapon_slot(short scr_x, short scr_y, short weptype)
 {
+    ushort fp;
+
     lbDisplay.DrawColour = 174;
-    lbDisplay.DrawFlags = 0x8000 | 0x0040;
-    draw_sprite_purple_list(scr_x, scr_y, &unk1_sprites[weapon - 1 + 1]);
+    lbDisplay.DrawFlags = 0x8000 | Lb_TEXT_ONE_COLOR;
+    draw_sprite_purple_list(scr_x, scr_y, &unk1_sprites[weptype - 1 + 1]);
     lbDisplay.DrawFlags &= ~0x8000;
-    switch (weapon)
-    {
-    case 6:
-        draw_fourpack_slots(scr_x, scr_y, 2);
-        break;
-    case 12:
-        draw_fourpack_slots(scr_x, scr_y, 0);
-        break;
-    case 13:
-        draw_fourpack_slots(scr_x, scr_y, 1);
-        break;
-    case 11:
-        draw_fourpack_slots(scr_x, scr_y, 4);
-        break;
-    case 10:
-        draw_fourpack_slots(scr_x, scr_y, 3);
-        break;
-    default:
-        break;
+
+    fp = weapon_fourpack_index(weptype);
+    if (fp < WFRPK_COUNT) {
+        draw_fourpack_slots(scr_x, scr_y, fp);
     }
 
     lbDisplay.DrawFlags = 0;
     if (mo_weapon == -1)
     {
-            int v12, v13, v14, v15;
-            v12 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-            if ( v12 >= scr_x)
-            {
-              v13 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-              if ( v13 < (scr_x) + 181 )
-              {
-                v14 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-                if ( v14 >= (short)scr_y )
-                {
-                  v15 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-                  if ( v15 < (short)scr_y + 42 && lbDisplay.LeftButton )
-                  {
-                    lbDisplay.LeftButton = 0;
-                    mo_weapon = weapon - 1;
-                    mo_from_agent = selected_agent;
-                  }
-                }
-              }
-            }
+        if (mouse_down_over_box_coords(scr_x, scr_y, scr_x + 181, scr_y + 42))
+        {
+            lbDisplay.LeftButton = 0;
+            mo_weapon = weptype - 1;
+            mo_from_agent = selected_agent;
+        }
     }
 
     if (mo_weapon != -1 && !lbDisplay.MLeftButton)
     {
-            int MMouseX, v17, v18, v19;
-            if ( lbDisplay.ScreenMode == 1 )
-              MMouseX = 2 * lbDisplay.MMouseX;
-            else
-              MMouseX = lbDisplay.MMouseX;
-            if ( MMouseX >= scr_x)
-            {
-              v17 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-              if ( v17 < (scr_x) + 181 )
-              {
-                v18 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-                if ( v18 >= scr_y )
-                {
-                  v19 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-                  if ( v19 < scr_y + 42 )
-                  {
-                    selected_weapon = weapon - 1;
-                    equip_offer_buy_button.Text = gui_strings[407];
-                    equip_offer_buy_button.CallBackFn = sell_equipment;
-                    sprintf(equip_cost_text, "%d", (100 * weapon_defs[selected_weapon + 1].Cost) >> 1);
-                    equip_name_box_redraw(&equip_name_box);
-                    equip_display_box_redraw(&equip_display_box);
-                  }
-                }
-              }
-            }
-            if (weapon - 1 >= mo_weapon)
-              mo_weapon = -1;
+        if (mouse_move_over_box_coords(scr_x, scr_y, scr_x + 181, scr_y + 42))
+        {
+            selected_weapon = weptype - 1;
+            switch_equip_offer_to_sell();
+            update_equip_cost_text();
+            equip_name_box_redraw(&equip_name_box);
+            equip_display_box_redraw(&equip_display_box);
+        }
+        if (weptype - 1 >= mo_weapon) {
+            mo_weapon = -1;
+        }
     }
 }
 
