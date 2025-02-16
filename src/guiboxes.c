@@ -252,7 +252,8 @@ void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
     p_box->Buttons[0] = 0;
     p_box->Infos[0] = 0;
     p_box->Infos[1] = 0;
-    p_box->field_3E = 0x38F7; // these look like two colors?
+    p_box->Colour1 = 0xF7;
+    p_box->Colour2 = 0x38;
     p_box->ScrollWindowOffset = 0;
     p_box->BGColour = 0;
     p_box->Lines = 0;

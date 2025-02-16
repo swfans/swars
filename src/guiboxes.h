@@ -178,14 +178,12 @@ struct ScreenTextBox {
   ubyte (*DrawFn)(struct ScreenTextBox *box);
   ubyte (*DrawTextFn)(struct ScreenTextBox *box);
   struct ScreenButton *Buttons[2];
-  short Infos[2];
-  //struct ScreenInfoBox *Infos[2];
-  ushort TextTopLine;
-  ushort field_36;
+  struct ScreenInfoBox *Infos[2];
   ushort field_38;
   short TextFadePos;
   ushort Flags;
-  ushort field_3E;
+  ubyte Colour1;
+  ubyte Colour2;
   ubyte BGColour;
   ubyte LineHeight;
   ubyte field_42;

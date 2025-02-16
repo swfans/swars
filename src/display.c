@@ -315,12 +315,17 @@ ubyte font_height(uchar c)
     return ret;
 }
 
-ulong my_string_width(const char *text)
+u32 my_string_width(const char *text)
 {
     int ret;
     asm volatile ("call ASM_my_string_width\n"
         : "=r" (ret) : "a" (text));
     return ret;
+}
+
+u32 my_str_len(const char *t)
+{
+    return strlen(t);
 }
 
 void change_brightness(short val)

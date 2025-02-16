@@ -86,7 +86,8 @@ const char * SWResourceMapping(short index);
 void swap_wscreen(void);
 void show_black_screen(void);
 void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h);
-ulong my_string_width(const char *text);
+u32 my_string_width(const char *text);
+u32 my_str_len(const char *t);
 ubyte font_height(uchar c);
 
 void change_brightness(short val);

@@ -18,12 +18,30 @@
 /******************************************************************************/
 #include "purpldrw.h"
 
+#include "bfkeybd.h"
 #include "bfscreen.h"
+#include "bfsprite.h"
+#include "bftext.h"
+#include "poly.h"
+#include "bflib_joyst.h"
+#include "ssampply.h"
 
-#include "purpldrwlst.h"
+#include "display.h"
+#include "game.h"
+#include "game_sprts.h"
 #include "guiboxes.h"
+#include "guitext.h"
+#include "purpldrwlst.h"
+#include "sound.h"
 #include "swlog.h"
 /******************************************************************************/
+// TODO avoid referring to a specific box
+extern struct ScreenTextBox brief_netscan_box;
+
+extern long dword_1DC5FC;
+extern long dword_1DC600;
+extern long dword_1DC624;
+extern long dword_1DC628;
 
 void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour)
 {
@@ -82,11 +100,24 @@ void draw_text_purple_list2(int x, int y, const char *text, ushort line)
         : : "a" (x), "d" (y), "b" (text), "c" (line));
 }
 
-void draw_sprite_purple_list(int x, int y, struct TbSprite *sprite)
+void draw_sprite_purple_list(int x, int y, struct TbSprite *p_sprite)
 {
+#if 0
     asm volatile (
       "call ASM_draw_sprite_purple_list\n"
-        : : "a" (x), "d" (y), "b" (sprite));
+        : : "a" (x), "d" (y), "b" (p_sprite));
+#endif
+    struct PurpleDrawItem *pditem;
+
+    pditem = &purple_draw_list[purple_draw_index];
+    purple_draw_index++;
+
+    pditem->U.Sprite.Sprite = p_sprite;
+    pditem->U.Sprite.Colour = lbDisplay.DrawColour;
+    pditem->Flags = lbDisplay.DrawFlags;
+    pditem->U.Sprite.X = lbDisplay.GraphicsWindowX + x;
+    pditem->U.Sprite.Y = lbDisplay.GraphicsWindowY + y;
+    pditem->Type = PuDT_SPRITE;
 }
 
 void draw_trig_purple_list(long x2, long y2, long x3, long y3)
@@ -128,10 +159,12 @@ ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
 
 ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 {
+#if 1
     ubyte ret;
     asm volatile ("call ASM_flashy_draw_purple_text_box\n"
         : "=r" (ret) : "a" (p_box));
     return ret;
+#endif
 }
 
 ubyte flashy_draw_purple_button(struct ScreenButton *button)
