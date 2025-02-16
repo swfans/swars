@@ -23,6 +23,7 @@
 #include "bfkeybd.h"
 #include "bfmemut.h"
 #include "bfscrcopy.h"
+#include "bfutility.h"
 #include "bflib_joyst.h"
 
 #include "femain.h"
@@ -632,7 +633,6 @@ void equip_display_box_redraw(struct ScreenTextBox *p_box)
         p_box->Flags |= GBxFlg_Unkn0080;
         // Re-add scroll bars
         p_box->Flags |= GBxFlg_RadioBtn;
-        p_box->ScrollWindowHeight = 117;
 
         p_box->Lines = 0;
         if (selected_weapon + 1 < 1)
@@ -654,7 +654,6 @@ void equip_display_box_redraw(struct ScreenTextBox *p_box)
     {
         // Remove scroll bars
         p_box->Flags &= ~GBxFlg_RadioBtn;
-        p_box->ScrollWindowHeight = -2;
 
         init_weapon_anim(selected_weapon + 1 - 1);
         // Negative value saves the background before starting animation
@@ -945,14 +944,197 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
     return 0;
 }
 
+void draw_weapon_slot(short x, short y)
+{
+    lbDisplay.DrawFlags = 0x0004;
+    draw_box_purple_list(x, y, 0x9Au, 0xFu, 243);
+    draw_box_purple_list(x + 27, y + 15, 0x7Fu, 0xCu, 243);
+    draw_box_purple_list(x + 27, y + 27, 0x9Au, 0xFu, 243);
+    draw_triangle_purple_list(x + 1, y + 15, x + 27, y + 15, x + 27, y + 41, 243);
+    draw_triangle_purple_list(x + 154, y, x + 181, y + 27, x + 154, y + 27, 243);
+}
+
+void draw_fourpack_slots(short x, short y, ubyte fp)
+{
+  ubyte fpcount;
+
+  fpcount = 4;
+  if (selected_agent != 4)
+  {
+      fpcount = cryo_agents.FourPacks[selected_agent].Amount[fp];
+  }
+  else
+  {
+      short plagent, plagent_count;
+
+      plagent_count = min(4,cryo_agents.NumAgents);
+      for (plagent = 0; plagent < plagent_count; plagent++)
+      {
+          if (cryo_agents.FourPacks[plagent].Amount[fp] < fpcount)
+              fpcount = cryo_agents.FourPacks[plagent].Amount[fp];
+      }
+  }
+
+  lbDisplay.DrawFlags = 0;
+  draw_box_purple_list(x + 28, y + 8, 4u, 4u, 174);
+
+  if (fpcount == 1)
+      lbDisplay.DrawFlags = 0x0004;
+  draw_box_purple_list(x + 28, y + 30, 4u, 4u, 174);
+
+  if (fpcount == 2)
+      lbDisplay.DrawFlags = 0x0004;
+  draw_box_purple_list(x + 150, y + 8, 4u, 4u, 174);
+
+  if (fpcount == 3)
+      lbDisplay.DrawFlags = 0x0004;
+  draw_box_purple_list(x + 150, y + 30, 4u, 4u, 174);
+}
+
+void show_weapon_slot(short scr_x, short scr_y, short weapon)
+{
+    lbDisplay.DrawColour = 174;
+    lbDisplay.DrawFlags = 0x8000 | 0x0040;
+    draw_sprite_purple_list(scr_x, scr_y, &unk1_sprites[weapon - 1 + 1]);
+    lbDisplay.DrawFlags &= ~0x8000;
+    switch (weapon)
+    {
+    case 6:
+        draw_fourpack_slots(scr_x, scr_y, 2);
+        break;
+    case 12:
+        draw_fourpack_slots(scr_x, scr_y, 0);
+        break;
+    case 13:
+        draw_fourpack_slots(scr_x, scr_y, 1);
+        break;
+    case 11:
+        draw_fourpack_slots(scr_x, scr_y, 4);
+        break;
+    case 10:
+        draw_fourpack_slots(scr_x, scr_y, 3);
+        break;
+    default:
+        break;
+    }
+
+    lbDisplay.DrawFlags = 0;
+    if (mo_weapon == -1)
+    {
+            int v12, v13, v14, v15;
+            v12 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+            if ( v12 >= scr_x)
+            {
+              v13 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+              if ( v13 < (scr_x) + 181 )
+              {
+                v14 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+                if ( v14 >= (short)scr_y )
+                {
+                  v15 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+                  if ( v15 < (short)scr_y + 42 && lbDisplay.LeftButton )
+                  {
+                    lbDisplay.LeftButton = 0;
+                    mo_weapon = weapon - 1;
+                    mo_from_agent = selected_agent;
+                  }
+                }
+              }
+            }
+    }
+
+    if (mo_weapon != -1 && !lbDisplay.MLeftButton)
+    {
+            int MMouseX, v17, v18, v19;
+            if ( lbDisplay.ScreenMode == 1 )
+              MMouseX = 2 * lbDisplay.MMouseX;
+            else
+              MMouseX = lbDisplay.MMouseX;
+            if ( MMouseX >= scr_x)
+            {
+              v17 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+              if ( v17 < (scr_x) + 181 )
+              {
+                v18 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+                if ( v18 >= scr_y )
+                {
+                  v19 = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+                  if ( v19 < scr_y + 42 )
+                  {
+                    selected_weapon = weapon - 1;
+                    equip_offer_buy_button.Text = gui_strings[407];
+                    equip_offer_buy_button.CallBackFn = sell_equipment;
+                    sprintf(equip_cost_text, "%d", (100 * weapon_defs[selected_weapon + 1].Cost) >> 1);
+                    equip_name_box_redraw(&equip_name_box);
+                    equip_display_box_redraw(&equip_display_box);
+                  }
+                }
+              }
+            }
+            if (weapon - 1 >= mo_weapon)
+              mo_weapon = -1;
+    }
+}
+
 ubyte show_weapon_slots(struct ScreenBox *p_box)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_weapon_slots\n"
         : "=r" (ret) : "a" (p_box));
     return ret;
 #endif
+    short scr_x, scr_y;
+    short slot;
+    short weapon;
+
+    scr_x = p_box->X + 5;
+    if ((p_box->Flags & GBxFlg_Unkn1000) == 0)
+    {
+        short slot;
+
+        scr_y = p_box->Y + 5;
+        for (slot = 0; slot < 6; slot++)
+        {
+            draw_weapon_slot(scr_x, scr_y);
+            scr_y += 44;
+        }
+        p_box->Flags |= 0x1000;
+        copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, p_box->Height + 6);
+    }
+
+    if (selected_agent == -1)
+        return 0;
+
+    scr_y = p_box->Y + 5;
+    slot = 0;
+    for (weapon = 1; weapon < WEP_TYPES_COUNT; weapon++)
+    {
+        TbBool has_weapon;
+
+        if (slot >= 6)
+            break;
+
+        if (selected_agent == 4)
+        {
+          has_weapon = player_agent_has_weapon(local_player_no, 0, weapon)
+            && player_agent_has_weapon(local_player_no, 1, weapon)
+            && player_agent_has_weapon(local_player_no, 2, weapon)
+            && player_agent_has_weapon(local_player_no, 3, weapon);
+        }
+        else
+        {
+          has_weapon = player_agent_has_weapon(local_player_no, selected_agent, weapon);
+        }
+
+        if (has_weapon)
+        {
+            show_weapon_slot(scr_x, scr_y, weapon);
+            slot++;
+            scr_y += 44;
+        }
+    }
+    return 0;
 }
 
 void init_equip_screen_boxes(void)
