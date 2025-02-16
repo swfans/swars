@@ -56,7 +56,7 @@ enum GUIBoxFlags {
   GBxFlg_Unkn0020 = 0x0020,
   GBxFlg_Unkn0040 = 0x0040,
   GBxFlg_Unkn0080 = 0x0080,
-  GBxFlg_RadioBtn = 0x0100,
+  GBxFlg_RadioBtn = 0x0100,		/**< Seem to be used for more than marking one of exclusive radio buttons */
   GBxFlg_IsMouseOver = 0x0200,
   GBxFlg_IsPushed = 0x0400,
   GBxFlg_IsRPushed = 0x0800,

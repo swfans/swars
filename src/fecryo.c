@@ -63,7 +63,6 @@ extern ubyte cheat_research_cybmods;
 extern char byte_1C495C[20];
 extern ubyte byte_1C4978;
 extern ubyte byte_1C4979;
-extern ubyte byte_1C4AA0;
 
 // Shared with equip screen
 extern char equip_cost_text[20];
@@ -600,6 +599,30 @@ TbBool cybmod_available_for_purchase(short mtype)
     return true;
 }
 
+TbBool cybmod_has_display_anim(ubyte mod)
+{
+    return (1 << (mod - 1) < 0x1000);
+}
+
+void display_box_content_mod_start(struct ScreenTextBox *p_box)
+{
+    if ((display_box_content == DiBoxCt_TEXT) || !cybmod_has_display_anim(selected_mod + 1))
+    {
+        p_box->TextFadePos = -5;
+        p_box->Text = &weapon_text[cybmod_text_index[selected_mod]];
+        p_box->field_38 = 0;
+        p_box->Lines = 0;
+        p_box->Flags |= GBxFlg_Unkn0080;
+        lbFontPtr = small_font;
+        p_box->BGColour = byte_197160 + font_height('A');
+        lbFontPtr = p_box->Font;
+    }
+    else
+    {
+        init_weapon_anim(selected_mod + 32);
+    }
+}
+
 ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 {
     ubyte modstrings[5];
@@ -668,21 +691,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                         sprintf(equip_cost_text, "%d", 10 * mod_defs[mtype].Cost);
                         equip_offer_buy_button.Text = gui_strings[436];
                         equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
-                        if (byte_1C4AA0 || (1 << selected_mod >= 0x1000))
-                        {
-                            box->TextFadePos = -5;
-                            box->field_38 = 0;
-                            box->Text = &weapon_text[cybmod_text_index[selected_mod]];
-                            box->Lines = 0;
-                            box->Flags |= GBxFlg_Unkn0080;
-                            lbFontPtr = small_font;
-                            box->BGColour = byte_197160 + font_height('A');
-                            lbFontPtr = box->Font;
-                        }
-                        else
-                        {
-                          init_weapon_anim(selected_mod + 32);
-                        }
+                        display_box_content_mod_start(&cryo_cybmod_list_box);
                   }
                   if (selected_mod == mtype - 1) {
                       lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
@@ -727,7 +736,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
         // Add control hotspot for the view / description switch
         draw_hotspot_purple_list(box->X + box->Width / 2, box->Y + 104);
 
-        if (byte_1C4AA0 || (1 << selected_mod >= 0x1000))
+        if ((display_box_content == DiBoxCt_TEXT) || !cybmod_has_display_anim(selected_mod + 1))
         {
             lbFontPtr = small_font;
             my_set_text_window(box->X + 4, box->ScrollWindowOffset + box->Y + 4,
@@ -745,22 +754,8 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
               box->Y + 4, box->X + box->Width - 4, box->Y + 4 + 140))
             {
                 lbDisplay.LeftButton = 0;
-                byte_1C4AA0 = byte_1C4AA0 == 0;
-                if (byte_1C4AA0 || (1 << selected_mod >= 0x1000))
-                {
-                    box->TextFadePos = -5;
-                    box->Text = &weapon_text[cybmod_text_index[selected_mod]];
-                    box->field_38 = 0;
-                    box->Lines = 0;
-                    box->Flags |= GBxFlg_Unkn0080;
-                    lbFontPtr = small_font;
-                    box->BGColour = byte_197160 + font_height('A');
-                    lbFontPtr = box->Font;
-                }
-                else
-                {
-                    init_weapon_anim(selected_mod + 32);
-                }
+                display_box_content_state_switch();
+                display_box_content_mod_start(&cryo_cybmod_list_box);
             }
         }
         //equip_offer_buy_button.DrawFn(&equip_offer_buy_button); -- incompatible calling convention

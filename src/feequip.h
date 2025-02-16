@@ -27,6 +27,11 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum DisplayBoxContentTypes {
+  DiBoxCt_ANIM = 0,		/**< Shows animation presentation of the selected item */
+  DiBoxCt_TEXT,			/**< Shows verbose text description the selected item */
+};
+
 struct ScreenShape;
 struct ScreenBoxBase;
 
@@ -35,6 +40,7 @@ struct ScreenBoxBase;
 // TODO for this variable the first weapon is 0 instead of 1
 // to be fixed to define variables in the same way everywhere
 extern sbyte selected_weapon;
+extern ubyte display_box_content;
 
 ubyte show_equipment_screen(void);
 
@@ -57,6 +63,7 @@ void switch_shared_equip_screen_buttons_to_equip(void);
 void switch_equip_offer_to_buy(void);
 void check_buy_sell_button(void);
 void init_weapon_anim(ubyte weapon);
+void display_box_content_state_switch(void);
 
 void init_equip_screen_boxes(void);
 void reset_equip_screen_boxes_flags(void);
