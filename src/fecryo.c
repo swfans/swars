@@ -604,7 +604,7 @@ TbBool cybmod_has_display_anim(ubyte mod)
     return (1 << (mod - 1) < 0x1000);
 }
 
-void display_box_content_mod_start(struct ScreenTextBox *p_box)
+void cryp_display_box_redraw(struct ScreenTextBox *p_box)
 {
     if ((display_box_content == DiBoxCt_TEXT) || !cybmod_has_display_anim(selected_mod + 1))
     {
@@ -691,7 +691,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                         sprintf(equip_cost_text, "%d", 10 * mod_defs[mtype].Cost);
                         equip_offer_buy_button.Text = gui_strings[436];
                         equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
-                        display_box_content_mod_start(&cryo_cybmod_list_box);
+                        cryp_display_box_redraw(&cryo_cybmod_list_box);
                   }
                   if (selected_mod == mtype - 1) {
                       lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
@@ -755,7 +755,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
             {
                 lbDisplay.LeftButton = 0;
                 display_box_content_state_switch();
-                display_box_content_mod_start(&cryo_cybmod_list_box);
+                cryp_display_box_redraw(&cryo_cybmod_list_box);
             }
         }
         //equip_offer_buy_button.DrawFn(&equip_offer_buy_button); -- incompatible calling convention
