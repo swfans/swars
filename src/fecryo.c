@@ -622,7 +622,7 @@ void cryp_display_box_redraw(struct ScreenTextBox *p_box)
         p_box->Lines = 0;
         p_box->Flags |= GBxFlg_Unkn0080;
         lbFontPtr = small_font;
-        p_box->BGColour = byte_197160 + font_height('A');
+        p_box->LineHeight = byte_197160 + font_height('A');
         lbFontPtr = p_box->Font;
     }
     else
@@ -950,7 +950,7 @@ ubyte show_cryo_chamber_screen(void)
             }
         }
         cryo_cybmod_list_box.Flags |= GBxFlg_Unkn0080;
-        cryo_cybmod_list_box.BGColour = 0;
+        cryo_cybmod_list_box.LineHeight = 0;
         refresh_equip_list = 0;
     }
 
@@ -1056,7 +1056,7 @@ void init_cryo_screen_boxes(void)
 
     init_screen_text_box(&cryo_agent_list_box, 7u, 122u, 196u, 303, 6,
         small_med_font, 1);
-    cryo_agent_list_box.BGColour = 25;
+    cryo_agent_list_box.LineHeight = 25;
     cryo_agent_list_box.DrawTextFn = ac_show_cryo_agent_list;
     cryo_agent_list_box.ScrollWindowOffset += 27;
     cryo_agent_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);

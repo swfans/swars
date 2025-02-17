@@ -252,12 +252,12 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
     }
     lbFontPtr = p_box->Font;
     byte_197160 = p_box->LineSpacing;
-    if (p_box->BGColour == 0)
-        p_box->BGColour = byte_197160 + font_height('A');
+    if (p_box->LineHeight == 0)
+        p_box->LineHeight = byte_197160 + font_height('A');
     {
         short text_window_w;
         text_window_w = text_window_y2 - text_window_y1 - 1;
-        unk_per_line = (text_window_w + 2) / p_box->BGColour;
+        unk_per_line = (text_window_w + 2) / p_box->LineHeight;
     }
 
     box_w = p_box->Width - 1;
@@ -437,7 +437,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         {
             lbDisplay.DrawFlags = 0x0004;
             draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
-                p_box->Width + 6, p_box->Height + 6, p_box->Colour2);
+                p_box->Width + 6, p_box->Height + 6, p_box->BGColour);
             lbDisplay.DrawFlags = 0x0010;
             draw_box_purple_list(p_box->X, p_box->Y,
                 p_box->Width, p_box->Height, p_box->Colour1);
@@ -480,7 +480,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         if ((p_box->Flags & 0x0004) == 0) {
             lbDisplay.DrawFlags = 0x0004;
             draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
-                p_box->Width + 6, p_box->Height + 6, p_box->Colour2);
+                p_box->Width + 6, p_box->Height + 6, p_box->BGColour);
             lbDisplay.DrawFlags = 0x0010;
             draw_box_purple_list(p_box->X, p_box->Y, p_box->Width, p_box->Height, p_box->Colour1);
             lbDisplay.DrawFlags = 0;
@@ -573,13 +573,13 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
     {
         lbDisplay.DrawFlags = 0x0004;
         draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
-            p_box->Width - 10, p_box->Height + 6, p_box->Colour2);
+            p_box->Width - 10, p_box->Height + 6, p_box->BGColour);
         draw_box_purple_list(p_box->X + p_box->Width - 5,  p_box->Y - 3,
-            8, p_box->Height + 6, p_box->Colour2);
+            8, p_box->Height + 6, p_box->BGColour);
         draw_box_purple_list(p_box->X + p_box->Width - 13, p_box->Y - 3,
-            8, p_box->ScrollWindowOffset + 7, p_box->Colour2);
+            8, p_box->ScrollWindowOffset + 7, p_box->BGColour);
         draw_box_purple_list(p_box->X + p_box->Width - 13, p_box->Y + p_box->ScrollWindowHeight + 6 + p_box->ScrollWindowOffset,
-            8, p_box->Height - p_box->ScrollWindowHeight - 3 - p_box->ScrollWindowOffset, p_box->Colour2);
+            8, p_box->Height - p_box->ScrollWindowHeight - 3 - p_box->ScrollWindowOffset, p_box->BGColour);
         lbDisplay.DrawFlags = 0x0010;
         draw_box_purple_list(p_box->X, p_box->Y, p_box->Width, (ushort)p_box->Height, p_box->Colour1);
         lbDisplay.DrawFlags = 0;

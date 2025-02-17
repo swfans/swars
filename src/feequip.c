@@ -1138,7 +1138,7 @@ void init_equip_screen_boxes(void)
     equip_list_head_box.Text = gui_strings[408];
     equip_list_head_box.Font = med_font;
     equip_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
-    equip_list_box.BGColour = fepanel_sprites[15].SHeight + 3;
+    equip_list_box.LineHeight = fepanel_sprites[15].SHeight + 3;
     equip_list_box.ScrollWindowHeight -= 27;
 
     lbFontPtr = med2_font;

@@ -623,7 +623,7 @@ ubyte show_mission_screen(void)
                 brief_mission_text_box.Font = small_font;
               }
               brief_mission_text_box.Lines = 0;
-              brief_mission_text_box.BGColour = 0;
+              brief_mission_text_box.LineHeight = 0;
               brief_mission_text_box.Flags |= GBxFlg_Unkn0080;
             }
           }

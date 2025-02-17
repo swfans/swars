@@ -183,9 +183,9 @@ struct ScreenTextBox {
   short TextFadePos;
   ushort Flags;
   ubyte Colour1;
-  ubyte Colour2;
   ubyte BGColour;
   ubyte LineHeight;
+  ubyte field_41;
   ubyte field_42;
   ubyte field_43;
 };
