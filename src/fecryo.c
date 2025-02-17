@@ -777,7 +777,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 
         if (selected_mod == -1)
         {
-            equip_cost_box.Flags = (GBxFlg_Unkn0008|GBxFlg_Unkn0001);
+            equip_cost_box.Flags = (GBxFlg_NoBkCopy|GBxFlg_Unkn0001);
             equip_offer_buy_button.Flags |= GBxFlg_Unkn0001;
             cryo_offer_cancel_button.Flags |= GBxFlg_Unkn0001;
         }

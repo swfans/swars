@@ -50,8 +50,8 @@ enum GUIBoxFlags {
   GBxFlg_NONE = 0x0000,
   GBxFlg_Unkn0001 = 0x0001,
   GBxFlg_Unkn0002 = 0x0002,
-  GBxFlg_Unkn0004 = 0x0004,
-  GBxFlg_Unkn0008 = 0x0008,
+  GBxFlg_BkCopied = 0x0004,		/**< Background with static part of the component was stored for reuse */
+  GBxFlg_NoBkCopy = 0x0008,		/**< Do not store background static part */
   GBxFlg_Unkn0010 = 0x0010,
   GBxFlg_Unkn0020 = 0x0020,
   GBxFlg_Unkn0040 = 0x0040,
@@ -60,7 +60,7 @@ enum GUIBoxFlags {
   GBxFlg_IsMouseOver = 0x0200,
   GBxFlg_IsPushed = 0x0400,
   GBxFlg_IsRPushed = 0x0800,
-  GBxFlg_Unkn1000 = 0x1000,
+  GBxFlg_TextCopied = 0x1000,	/**< Text on the box became static and was stored for reuse */
   GBxFlg_TextRight = 0x2000,	/**< Align the text within the box to the right */
   GBxFlg_TextCenter = 0x4000,	/**< Center the text within the box */
   GBxFlg_BkgndDrawn = 0x8000,	/**< Whether static background of the box has been already drawn. */

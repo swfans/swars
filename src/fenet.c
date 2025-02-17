@@ -405,7 +405,7 @@ ubyte show_net_benefits_box(struct ScreenBox *box)
     ubyte drawn = true;
 
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
-    if ((box->Flags & GBxFlg_Unkn1000) == 0)
+    if ((box->Flags & GBxFlg_TextCopied) == 0)
     {
         lbFontPtr = med2_font;
         draw_text_purple_list2(30, 1, gui_strings[401], 0);
@@ -416,7 +416,7 @@ ubyte show_net_benefits_box(struct ScreenBox *box)
         lbDisplay.DrawFlags = 0;
         copy_box_purple_list(box->X - 3, box->Y - 3,
             box->Width + 6, box->Height + 6);
-        box->Flags |= GBxFlg_Unkn1000;
+        box->Flags |= GBxFlg_TextCopied;
     }
 
     show_net_benefits_sub2(box->X + 8, box->Y + 16, byte_155175);

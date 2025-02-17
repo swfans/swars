@@ -98,8 +98,8 @@ void set_flag01_storage_screen_boxes(void)
 
 void clear_someflags_storage_screen_boxes(void)
 {
-    storage_header_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_Unkn0004);
-    storage_slots_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_Unkn0004);
+    storage_header_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_BkCopied);
+    storage_slots_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_BkCopied);
 }
 
 /******************************************************************************/

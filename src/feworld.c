@@ -92,11 +92,11 @@ ubyte do_unkn2_ACCEPT(ubyte click)
     return ret;
 }
 
-ubyte show_world_city_info_box(struct ScreenTextBox *box)
+ubyte show_world_city_info_box(struct ScreenTextBox *p_box)
 {
     ubyte ret;
     asm volatile ("call ASM_show_world_city_info_box\n"
-        : "=r" (ret) : "a" (box));
+        : "=r" (ret) : "a" (p_box));
     return ret;
 }
 

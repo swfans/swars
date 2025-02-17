@@ -678,7 +678,7 @@ void reset_system_menu_boxes_flags(void)
 
 void clear_someflags_system_menu_screen_boxes(void)
 {
-    unkn13_SYSTEM_button.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_Unkn0004);
+    unkn13_SYSTEM_button.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_BkCopied);
 }
 
 void draw_app_icon_hilight(short x, short y, ubyte iconid, ubyte aframe)
@@ -1262,7 +1262,7 @@ void show_mission_loading_screen(void)
         //loading_INITIATING_box.DrawFn(&loading_INITIATING_box); -- incompatible calling convention
         asm volatile ("call *%1\n"
             : : "a" (&loading_INITIATING_box), "g" (loading_INITIATING_box.DrawFn));
-        if ((loading_INITIATING_box.Flags & GBxFlg_Unkn1000) != 0)
+        if ((loading_INITIATING_box.Flags & GBxFlg_TextCopied) != 0)
             finished++;
         draw_purple_screen();
 

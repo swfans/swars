@@ -857,10 +857,33 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
 
 ubyte show_weapon_name(struct ScreenTextBox *box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_weapon_name\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#endif
+    short scr_x, scr_y;
+    short text_w, text_h;
+
+    if (((box->Flags & GBxFlg_Unkn0080) != 0) && (box->Timer != 255))
+    {
+        box->TextFadePos = -5;
+        box->Flags &= ~GBxFlg_Unkn0080;
+    }
+    if (box->Text == NULL)
+        return 0;
+
+    lbFontPtr = box->Font;
+    text_w = my_string_width(box->Text);
+    text_h = font_height('A');
+    scr_x = box->X + ((box->Width - text_w) >> 1);
+    scr_y = box->Y + ((box->Height - text_h) >> 1);
+    my_set_text_window(scr_x, scr_y, 640u, scr_y + text_h);
+    flashy_draw_text(0, 0, box->Text, box->TextSpeed,
+      box->field_38, &box->TextFadePos, 0);
+
+    return 0;
 }
 
 ubyte show_weapon_list(struct ScreenTextBox *box)
@@ -1056,7 +1079,7 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
     short weptype;
 
     scr_x = p_box->X + 5;
-    if ((p_box->Flags & GBxFlg_Unkn1000) == 0)
+    if ((p_box->Flags & GBxFlg_TextCopied) == 0)
     {
         short slot;
 
@@ -1066,8 +1089,8 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
             draw_weapon_slot(scr_x, scr_y);
             scr_y += 44;
         }
-        p_box->Flags |= 0x1000;
         copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, p_box->Height + 6);
+        p_box->Flags |= GBxFlg_TextCopied;
     }
 
     if (selected_agent < 0)
@@ -1127,16 +1150,19 @@ void init_equip_screen_boxes(void)
     weapon_slots.SpecialDrawFn = ac_show_weapon_slots;
     equip_name_box.DrawTextFn = ac_show_weapon_name;
     equip_name_box.Text = unkn41_text;
-    equip_list_box.ScrollWindowOffset += 27;
     equip_name_box.Font = med_font;
-    equip_display_box.DrawTextFn = ac_display_weapon_info;
-    equip_list_box.DrawTextFn = ac_show_weapon_list;
+
     equip_cost_box.Text2 = equip_cost_text;
+    equip_display_box.DrawTextFn = ac_display_weapon_info;
     equip_display_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     equip_display_box.ScrollWindowHeight = 117;
+
     equip_list_head_box.DrawTextFn = ac_show_title_box;
     equip_list_head_box.Text = gui_strings[408];
     equip_list_head_box.Font = med_font;
+
+    equip_list_box.ScrollWindowOffset += 27;
+    equip_list_box.DrawTextFn = ac_show_weapon_list;
     equip_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     equip_list_box.LineHeight = fepanel_sprites[15].SHeight + 3;
     equip_list_box.ScrollWindowHeight -= 27;
@@ -1250,6 +1276,6 @@ void set_flag01_equip_screen_boxes(void)
     equip_all_agents_button.Flags |= GBxFlg_Unkn0001;
     equip_offer_buy_button.Flags |= GBxFlg_Unkn0001;
     if (screentype == SCRT_CRYO)
-        equip_cost_box.Flags |= GBxFlg_Unkn0008;
+        equip_cost_box.Flags |= GBxFlg_NoBkCopy;
 }
 /******************************************************************************/
