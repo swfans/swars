@@ -162,17 +162,17 @@ ubyte flashy_draw_purple_text_box_childeren(struct ScreenTextBox *p_box)
     ushort i;
     ubyte v135;
 
-    if ((p_box->Flags & 0x2000) != 0)
+    if ((p_box->Flags & GBxFlg_TextRight) != 0)
     {
-        lbDisplay.DrawFlags = 0x0080;
+        lbDisplay.DrawFlags = Lb_TEXT_HALIGN_RIGHT;
     }
-    else if ((p_box->Flags & 0x4000) != 0)
+    else if ((p_box->Flags & GBxFlg_TextCenter) != 0)
     {
-        lbDisplay.DrawFlags = 0x0100;
+        lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
     }
 
     v135 = 0;
-    if ((p_box->Flags & 0x1000) == 0)
+    if ((p_box->Flags & GBxFlg_Unkn1000) == 0)
     {
         if (p_box->DrawTextFn != NULL)
         {
@@ -190,10 +190,10 @@ ubyte flashy_draw_purple_text_box_childeren(struct ScreenTextBox *p_box)
             v135 = v84;
         }
 
-        if ( v135 && (p_box->Flags & 0x100) == 0 )
+        if ( v135 && (p_box->Flags & GBxFlg_RadioBtn) == 0 )
         {
               copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, p_box->Height + 6);
-              p_box->Flags |= 0x1000;
+              p_box->Flags |= GBxFlg_Unkn1000;
         }
     }
 
@@ -231,14 +231,14 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 #endif
     short box_w, box_h;
     ushort spr1;
-    short unk_per_line;
+    short lines_visible;
 
     spr1 = 11 + (p_box->Colour1 != 247);
 
     {
         short scr_scroll_w, scr_scroll_h;
 
-        if ((p_box->Flags & 0x100) != 0)
+        if ((p_box->Flags & GBxFlg_RadioBtn) != 0)
             scr_scroll_w = 12;
         else
             scr_scroll_w = 0;
@@ -257,19 +257,19 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
     {
         short text_window_w;
         text_window_w = text_window_y2 - text_window_y1 - 1;
-        unk_per_line = (text_window_w + 2) / p_box->LineHeight;
+        lines_visible = (text_window_w + 2) / p_box->LineHeight;
     }
 
     box_w = p_box->Width - 1;
     box_h = p_box->Height - 1;
 
-    if ((p_box->Flags & 0x01) != 0)
+    if ((p_box->Flags & GBxFlg_Unkn0001) != 0)
     {
         int i;
 
         p_box->Timer = 0;
-        p_box->Flags &= ~(0x01|0x80);
-        p_box->Flags |= 0x80;
+        p_box->Flags &= ~(GBxFlg_Unkn0001|GBxFlg_Unkn0080);
+        p_box->Flags |= GBxFlg_Unkn0080;
 
         for (i = 0; i < 2; i++)
         {
@@ -278,20 +278,20 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
             p_button = p_box->Buttons[i];
             if (p_button != NULL)
-                p_button->Flags |= 0x01;
+                p_button->Flags |= GBxFlg_Unkn0001;
 
             p_info = p_box->Infos[i];
             if (p_info != NULL)
-                p_info->Flags |= 0x01;
+                p_info->Flags |= GBxFlg_Unkn0001;
         }
     }
 
-    if ((p_box->Flags & 0x02) != 0)
+    if ((p_box->Flags & GBxFlg_Unkn0002) != 0)
     {
         const char *p_text;
         int i;
 
-        p_box->Flags &= ~(0x02|0x01);
+        p_box->Flags &= ~(GBxFlg_Unkn0002|GBxFlg_Unkn0001);
         p_box->Timer = -1;
 
         p_text = p_box->Text;
@@ -307,11 +307,11 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
             p_button = p_box->Buttons[i];
             if (p_button != NULL)
-                p_button->Flags |= 0x0002;
+                p_button->Flags |= GBxFlg_Unkn0002;
 
             p_info = p_box->Infos[i];
             if (p_info != NULL)
-                p_info->Flags |= 0x02;
+                p_info->Flags |= GBxFlg_Unkn0002;
         }
     }
 
@@ -327,7 +327,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         scr_x2 = proj_origin.X + (advance * (p_box->X + box_w - proj_origin.X)) / 24;
         scr_y2 = proj_origin.Y + (advance * (p_box->Y + box_h - proj_origin.Y)) / 24;
 
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x1, scr_y1, p_box->Colour1);
         draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x2, scr_y2, p_box->Colour1);
         lbDisplay.DrawFlags = 0;
@@ -427,38 +427,38 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         return 2;
     }
 
-    if ((p_box->Flags & 0x0100) == 0)
+    if ((p_box->Flags & GBxFlg_RadioBtn) == 0)
     {
-        if ((p_box->Flags & 0x0080) != 0) {
+        if ((p_box->Flags & GBxFlg_Unkn0080) != 0) {
             p_box->TextFadePos = -5;
-            p_box->Flags &= ~0x0080;
+            p_box->Flags &= ~GBxFlg_Unkn0080;
         }
-        if ((p_box->Flags & 0x0004) == 0)
+        if ((p_box->Flags & GBxFlg_Unkn0004) == 0)
         {
-            lbDisplay.DrawFlags = 0x0004;
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
             draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
                 p_box->Width + 6, p_box->Height + 6, p_box->BGColour);
-            lbDisplay.DrawFlags = 0x0010;
+            lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
             draw_box_purple_list(p_box->X, p_box->Y,
                 p_box->Width, p_box->Height, p_box->Colour1);
             lbDisplay.DrawFlags = 0;
-            if ((p_box->Flags & 0x08) == 0)
+            if ((p_box->Flags & GBxFlg_Unkn0008) == 0)
             {
                 copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, p_box->Height + 6);
-                p_box->Flags |= 0x0004;
+                p_box->Flags |= GBxFlg_Unkn0004;
             }
         }
         flashy_draw_purple_text_box_childeren(p_box);
         return 3;
     }
 
-    if ((p_box->Flags & 0x0080) != 0)
+    if ((p_box->Flags & GBxFlg_Unkn0080) != 0)
     {
         if (p_box->Lines == 0) {
             p_box->Lines = my_count_lines(p_box->Text);
         }
-        p_box->ScrollBarSize = p_box->ScrollWindowHeight * unk_per_line / p_box->Lines;
-        if ((p_box->ScrollBarSize < p_box->ScrollWindowHeight) || ((p_box->Flags & 0x0200) != 0))
+        p_box->ScrollBarSize = p_box->ScrollWindowHeight * lines_visible / p_box->Lines;
+        if ((p_box->ScrollBarSize < p_box->ScrollWindowHeight) || ((p_box->Flags & GBxFlg_IsMouseOver) != 0))
         {
             if (p_box->ScrollBarSize >= p_box->ScrollWindowHeight)
                 p_box->ScrollBarSize = p_box->ScrollWindowHeight;
@@ -466,32 +466,32 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         }
         else
         {
-            p_box->Flags &= ~0x100;
+            p_box->Flags &= ~GBxFlg_RadioBtn;
         }
         p_box->field_38 = 0;
-        p_box->Flags &= ~(0x0400|0x0080);
+        p_box->Flags &= ~(GBxFlg_IsPushed|GBxFlg_Unkn0080);
         if (p_box->Timer != 255) {
             p_box->TextFadePos = -5;
         }
     }
 
-    if ((p_box->Flags & 0x0100) == 0)
+    if ((p_box->Flags & GBxFlg_RadioBtn) == 0)
     {
-        if ((p_box->Flags & 0x0004) == 0) {
-            lbDisplay.DrawFlags = 0x0004;
+        if ((p_box->Flags & GBxFlg_Unkn0004) == 0) {
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
             draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
                 p_box->Width + 6, p_box->Height + 6, p_box->BGColour);
-            lbDisplay.DrawFlags = 0x0010;
+            lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
             draw_box_purple_list(p_box->X, p_box->Y, p_box->Width, p_box->Height, p_box->Colour1);
             lbDisplay.DrawFlags = 0;
             copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, p_box->Height + 6);
-            p_box->Flags |= 0x0004;
+            p_box->Flags |= GBxFlg_Unkn0004;
         }
         flashy_draw_purple_text_box_childeren(p_box);
         return 3;
     }
 
-    if (lbDisplay.MLeftButton && ((p_box->Flags & 0x0400) != 0))
+    if (lbDisplay.MLeftButton && ((p_box->Flags & GBxFlg_IsPushed) != 0))
     {
         p_box->ScrollBarPos = mouse_move_position_vertical_scrollbar_over_text_box(p_box);
         p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
@@ -511,7 +511,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
             {
                 int delta;
                 lbDisplay.LeftButton = 0;
-                delta = p_box->ScrollBarPos - (unk_per_line - 1) * p_box->ScrollWindowHeight / p_box->Lines;
+                delta = p_box->ScrollBarPos - (lines_visible - 1) * p_box->ScrollWindowHeight / p_box->Lines;
                 if (delta < 0)
                     delta = 0;
                 else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
@@ -527,7 +527,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
             {
                 int delta;
                 lbDisplay.LeftButton = 0;
-                delta = p_box->ScrollBarPos + (unk_per_line - 1) * p_box->ScrollWindowHeight / p_box->Lines;
+                delta = p_box->ScrollBarPos + (lines_visible - 1) * p_box->ScrollWindowHeight / p_box->Lines;
                 if (delta < 0)
                     delta = 0;
                 else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
@@ -541,7 +541,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
     // Using keyboard to scroll
     if (mouse_move_over_rect(p_box->X, p_box->X + p_box->Width, p_box->Y, p_box->Y + p_box->Height)
       && (lbKeyOn[KC_UP] || lbKeyOn[KC_DOWN] || lbKeyOn[KC_PGUP] || lbKeyOn[KC_PGDOWN])
-      && ((p_box->Flags & 0x0400) == 0))
+      && ((p_box->Flags & GBxFlg_IsPushed) == 0))
     {
         int delta;
 
@@ -554,9 +554,9 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
         delta = 0;
         if (lbKeyOn[KC_PGDOWN])
-            delta = p_box->ScrollWindowHeight * (unk_per_line - 1) / p_box->Lines;
+            delta = p_box->ScrollWindowHeight * (lines_visible - 1) / p_box->Lines;
         else if (lbKeyOn[KC_PGUP])
-            delta = - (unk_per_line - 1) * p_box->ScrollWindowHeight / p_box->Lines;
+            delta = - (lines_visible - 1) * p_box->ScrollWindowHeight / p_box->Lines;
         p_box->ScrollBarPos += delta;
 
         delta = p_box->ScrollBarPos;
@@ -569,9 +569,9 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         p_box->field_38 = p_box->ScrollBarPos * p_box->Lines / p_box->ScrollWindowHeight;
     }
 
-    if ((p_box->Flags & 0x0004) == 0)
+    if ((p_box->Flags & GBxFlg_Unkn0004) == 0)
     {
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
             p_box->Width - 10, p_box->Height + 6, p_box->BGColour);
         draw_box_purple_list(p_box->X + p_box->Width - 5,  p_box->Y - 3,
@@ -580,23 +580,24 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
             8, p_box->ScrollWindowOffset + 7, p_box->BGColour);
         draw_box_purple_list(p_box->X + p_box->Width - 13, p_box->Y + p_box->ScrollWindowHeight + 6 + p_box->ScrollWindowOffset,
             8, p_box->Height - p_box->ScrollWindowHeight - 3 - p_box->ScrollWindowOffset, p_box->BGColour);
-        lbDisplay.DrawFlags = 0x0010;
+        lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
         draw_box_purple_list(p_box->X, p_box->Y, p_box->Width, (ushort)p_box->Height, p_box->Colour1);
         lbDisplay.DrawFlags = 0;
 
-        if ((p_box->Flags & 0x0008) == 0)
+        if ((p_box->Flags & GBxFlg_Unkn0008) == 0)
         {
             copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, (ushort)p_box->Height + 6);
-            p_box->Flags |= 0x0004;
+            p_box->Flags |= GBxFlg_Unkn0004;
         }
     }
 
-    if (((p_box->Flags & 0x0100) != 0) && (p_box->ScrollBarPos >= 0))
+    // Grab the scroll bar handle
+    if (((p_box->Flags & GBxFlg_RadioBtn) != 0) && (p_box->ScrollBarPos >= 0))
     {
         ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        lbDisplay.DrawFlags = 0x0004;
-        if (((p_box->Flags & 0x0400) != 0) || ((ms_x >= p_box->X + p_box->Width - 12) && (ms_x <= p_box->X + p_box->Width - 6)
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        if (((p_box->Flags & GBxFlg_IsPushed) != 0) || ((ms_x >= p_box->X + p_box->Width - 12) && (ms_x <= p_box->X + p_box->Width - 6)
           && (ms_y >= p_box->Y + 5 + p_box->ScrollWindowOffset + p_box->ScrollBarPos)
           && (ms_y <= p_box->Y + 5 + p_box->ScrollWindowOffset + p_box->ScrollBarSize + p_box->ScrollBarPos)))
         {
@@ -604,7 +605,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
             if (lbDisplay.LeftButton)
             {
                 lbDisplay.LeftButton = 0;
-                p_box->Flags |= 0x0400;
+                p_box->Flags |= GBxFlg_IsPushed;
                 ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
                 p_box->GrabPos = ms_y - p_box->ScrollBarPos;
                 play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
@@ -614,27 +615,30 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
           6, p_box->ScrollBarSize, 174);
         lbDisplay.DrawFlags = 0;
     }
-    lbDisplay.DrawFlags = 0x0004;
 
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    struct ScreenBox scroll_arrow_up_box;
+    struct ScreenBox scroll_arrow_dn_box;
 
-    if ((ms_x >= p_box->X + p_box->Width - 13) && (ms_x <= p_box->X + p_box->Width - 5)
-      && (ms_y >= p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 9)
-      && (ms_y <  p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 18))
+    init_screen_box(&scroll_arrow_up_box, p_box->X + p_box->Width - 13,
+      p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 9,
+      8, 9, p_box->DrawSpeed);
+
+    init_screen_box(&scroll_arrow_dn_box, p_box->X + p_box->Width - 13,
+      p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 18,
+      8, 9, p_box->DrawSpeed);
+
+    // Input from up arrow in bottom part of the scroll bar
+    if (mouse_move_over_box(&scroll_arrow_up_box))
     {
-        // Up arrow in bottom part of the scroll bar
-        struct TbSprite *p_spr;
         int delta;
-        short scr_x, scr_y;
 
         if (lbDisplay.MLeftButton || joy.Buttons[0])
         {
             if (lbDisplay.LeftButton)
                 play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
             lbDisplay.LeftButton = 0;
-            p_box->Flags |= 0x0800;
-            lbDisplay.DrawFlags = 0;
+            p_box->Flags |= GBxFlg_IsRPushed;
+            scroll_arrow_up_box.Flags |= GBxFlg_IsRPushed;
 
             p_box->ScrollBarPos -= p_box->ScrollWindowHeight / p_box->Lines;
             delta = p_box->ScrollBarPos;
@@ -646,44 +650,11 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
             p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
         }
-
-        if (p_box->Text != NULL)
-            lbDisplay.DrawFlags |= 0x8000;
-
-        p_spr = &unk3_sprites[9];
-        scr_x = p_box->X + p_box->Width - 13;
-        scr_y = p_box->Y + p_box->ScrollWindowHeight + 9 + p_box->ScrollWindowOffset;
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-
-        lbDisplay.DrawFlags = 0;
-        p_spr = &unk3_sprites[13];
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-
-        lbDisplay.DrawFlags = 0x0004;
-    }
-    else
-    {
-        struct TbSprite *p_spr;
-        short scr_x, scr_y;
-
-        if (p_box->Text != NULL)
-            lbDisplay.DrawFlags |= 0x8000;
-
-        p_spr = &unk3_sprites[9];
-        scr_x = p_box->X + p_box->Width - 13;
-        scr_y = p_box->Y + p_box->ScrollWindowHeight + 9 + p_box->ScrollWindowOffset;
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-
-        lbDisplay.DrawFlags &= ~0x8000;
     }
 
-    if ((ms_x >= p_box->X + p_box->Width - 13) && (ms_x <= p_box->X + p_box->Width - 5)
-      && (ms_y >= p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 18)
-      && (ms_y <  p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 27))
+    // Input from down arrow in bottom part of the scroll bar
+    if (mouse_move_over_box(&scroll_arrow_dn_box))
     {
-        // Down arrow in bottom part of the scroll bar
-        struct TbSprite *p_spr;
-        short scr_x, scr_y;
         int delta;
 
         if (lbDisplay.MLeftButton || joy.Buttons[0])
@@ -691,8 +662,8 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
             if (lbDisplay.LeftButton)
                 play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
             lbDisplay.LeftButton = 0;
-            p_box->Flags |= 0x0800;
-            lbDisplay.DrawFlags = 0;
+            p_box->Flags |= GBxFlg_IsRPushed;
+            scroll_arrow_dn_box.Flags |= GBxFlg_IsRPushed;
 
             p_box->ScrollBarPos += p_box->ScrollWindowHeight / p_box->Lines;
             delta = p_box->ScrollBarPos;
@@ -704,37 +675,53 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
             p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
         }
-
-        if (p_box->Text != NULL)
-            lbDisplay.DrawFlags |= 0x8000;
-
-        p_spr = &unk3_sprites[10];
-        scr_x = p_box->X + p_box->Width - 13;
-        scr_y = p_box->Y + p_box->ScrollWindowHeight + 18 + p_box->ScrollWindowOffset;
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-
-        lbDisplay.DrawFlags = 0;
-        p_spr = &unk3_sprites[14];
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-    }
-    else
-    {
-        struct TbSprite *p_spr;
-        short scr_x, scr_y;
-
-        if (p_box->Text != NULL)
-            lbDisplay.DrawFlags |= 0x8000;
-
-        p_spr = &unk3_sprites[10];
-        scr_x = p_box->X + p_box->Width - 13;
-        scr_y = p_box->Y + p_box->ScrollWindowHeight + 18 + p_box->ScrollWindowOffset;
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-
-        lbDisplay.DrawFlags = 0;
     }
 
     if (!lbDisplay.MLeftButton && !joy.Buttons[0])
-        p_box->Flags &= ~0x0C00;
+        p_box->Flags &= ~(GBxFlg_IsRPushed|GBxFlg_IsPushed);
+
+    // Redraw scroll arrows
+    {
+        struct TbSprite *p_spr;
+
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        if ((scroll_arrow_up_box.Flags & GBxFlg_IsRPushed) != 0)
+            lbDisplay.DrawFlags = 0;
+        if (p_box->Text != NULL)
+            lbDisplay.DrawFlags |= 0x8000;
+
+        p_spr = &unk3_sprites[9];
+        draw_sprite_purple_list(scroll_arrow_up_box.X, scroll_arrow_up_box.Y, p_spr);
+
+        lbDisplay.DrawFlags = 0;
+
+        if (mouse_move_over_box(&scroll_arrow_up_box))
+        {
+            p_spr = &unk3_sprites[13];
+            draw_sprite_purple_list(scroll_arrow_up_box.X, scroll_arrow_up_box.Y, p_spr);
+        }
+    }
+
+    {
+        struct TbSprite *p_spr;
+
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        if ((scroll_arrow_dn_box.Flags & GBxFlg_IsRPushed) != 0)
+            lbDisplay.DrawFlags = 0;
+        if (p_box->Text != NULL)
+            lbDisplay.DrawFlags |= 0x8000;
+
+        p_spr = &unk3_sprites[10];
+        draw_sprite_purple_list(scroll_arrow_dn_box.X, scroll_arrow_dn_box.Y, p_spr);
+
+        lbDisplay.DrawFlags = 0;
+
+        if (mouse_move_over_box(&scroll_arrow_dn_box))
+        {
+            p_spr = &unk3_sprites[14];
+            draw_sprite_purple_list(scroll_arrow_dn_box.X, scroll_arrow_dn_box.Y, p_spr);
+        }
+    }
 
     flashy_draw_purple_text_box_childeren(p_box);
     return 3;
