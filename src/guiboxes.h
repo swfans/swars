@@ -171,7 +171,7 @@ struct ScreenTextBox {
   ushort ScrollBarSize;
   short ScrollWindowHeight;
   short ScrollWindowOffset;
-  ushort GrabPos;
+  short GrabPos;
   ushort Lines;
   const char *Text;
   struct TbSprite *Font;

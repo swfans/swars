@@ -142,7 +142,7 @@ short mouse_move_position_vertical_over_bar_coords(short y, short h)
 {
     short ms_y;
 
-    ms_y = lbDisplay.MMouseX;
+    ms_y = lbDisplay.MMouseY;
     return (ms_y - y);
 }
 

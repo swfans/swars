@@ -499,6 +499,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
     int ms_x, ms_y;
 
+    // Clicking the scroll bar area but below or above the lighter handle
     ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
     if ((ms_x >= p_box->X + p_box->Width - 12) && (ms_x <= p_box->Width + p_box->X - 6))
     {
@@ -537,6 +538,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         }
     }
 
+    // Using keyboard to scroll
     if (mouse_move_over_rect(p_box->X, p_box->X + p_box->Width, p_box->Y, p_box->Y + p_box->Height)
       && (lbKeyOn[KC_UP] || lbKeyOn[KC_DOWN] || lbKeyOn[KC_PGUP] || lbKeyOn[KC_PGDOWN])
       && ((p_box->Flags & 0x0400) == 0))
@@ -617,25 +619,11 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
     ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
     ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
 
-    if ((ms_x < p_box->X + p_box->Width - 13) || (ms_x > p_box->X + p_box->Width - 5)
-      || (ms_y < p_box->Y + p_box->ScrollWindowOffset + p_box->ScrollWindowHeight + 9)
-      || (ms_y >= p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 18))
+    if ((ms_x >= p_box->X + p_box->Width - 13) && (ms_x <= p_box->X + p_box->Width - 5)
+      && (ms_y >= p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 9)
+      && (ms_y <  p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 18))
     {
-        struct TbSprite *p_spr;
-        short scr_x, scr_y;
-
-        if (p_box->Text != NULL)
-            lbDisplay.DrawFlags |= 0x8000;
-
-        p_spr = &unk3_sprites[9];
-        scr_x = p_box->X + p_box->Width - 13;
-        scr_y = p_box->Y + p_box->ScrollWindowHeight + 9 + p_box->ScrollWindowOffset;
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-
-        lbDisplay.DrawFlags &= ~0x8000;
-    }
-    else
-    {
+        // Up arrow in bottom part of the scroll bar
         struct TbSprite *p_spr;
         int delta;
         short scr_x, scr_y;
@@ -661,23 +649,19 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
         if (p_box->Text != NULL)
             lbDisplay.DrawFlags |= 0x8000;
+
         p_spr = &unk3_sprites[9];
-        scr_x = p_box->Width + p_box->X - 13;
+        scr_x = p_box->X + p_box->Width - 13;
         scr_y = p_box->Y + p_box->ScrollWindowHeight + 9 + p_box->ScrollWindowOffset;
         draw_sprite_purple_list(scr_x, scr_y, p_spr);
 
         lbDisplay.DrawFlags = 0;
         p_spr = &unk3_sprites[13];
-        scr_x = p_box->X + p_box->Width - 13;
-        scr_y = p_box->Y + p_box->ScrollWindowHeight + 9 + p_box->ScrollWindowOffset;
         draw_sprite_purple_list(scr_x, scr_y, p_spr);
 
         lbDisplay.DrawFlags = 0x0004;
     }
-
-    if ((ms_x < p_box->X + p_box->Width - 13) || (ms_x > p_box->X + p_box->Width - 5)
-      || (ms_y < p_box->ScrollWindowOffset + p_box->Y + p_box->ScrollWindowHeight + 18)
-      || (ms_y >= p_box->ScrollWindowHeight + p_box->Y + p_box->ScrollWindowOffset + 27))
+    else
     {
         struct TbSprite *p_spr;
         short scr_x, scr_y;
@@ -685,15 +669,19 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         if (p_box->Text != NULL)
             lbDisplay.DrawFlags |= 0x8000;
 
-        p_spr = &unk3_sprites[10];
+        p_spr = &unk3_sprites[9];
         scr_x = p_box->X + p_box->Width - 13;
-        scr_y = p_box->Y + p_box->ScrollWindowHeight + 18 + p_box->ScrollWindowOffset;
+        scr_y = p_box->Y + p_box->ScrollWindowHeight + 9 + p_box->ScrollWindowOffset;
         draw_sprite_purple_list(scr_x, scr_y, p_spr);
 
-        lbDisplay.DrawFlags = 0;
+        lbDisplay.DrawFlags &= ~0x8000;
     }
-    else
+
+    if ((ms_x >= p_box->X + p_box->Width - 13) && (ms_x <= p_box->X + p_box->Width - 5)
+      && (ms_y >= p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 18)
+      && (ms_y <  p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 27))
     {
+        // Down arrow in bottom part of the scroll bar
         struct TbSprite *p_spr;
         short scr_x, scr_y;
         int delta;
@@ -727,9 +715,22 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
         lbDisplay.DrawFlags = 0;
         p_spr = &unk3_sprites[14];
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+    }
+    else
+    {
+        struct TbSprite *p_spr;
+        short scr_x, scr_y;
+
+        if (p_box->Text != NULL)
+            lbDisplay.DrawFlags |= 0x8000;
+
+        p_spr = &unk3_sprites[10];
         scr_x = p_box->X + p_box->Width - 13;
         scr_y = p_box->Y + p_box->ScrollWindowHeight + 18 + p_box->ScrollWindowOffset;
         draw_sprite_purple_list(scr_x, scr_y, p_spr);
+
+        lbDisplay.DrawFlags = 0;
     }
 
     if (!lbDisplay.MLeftButton && !joy.Buttons[0])
