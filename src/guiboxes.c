@@ -138,6 +138,14 @@ short mouse_move_position_horizonal_over_bar_coords(short x, short w)
     return (ms_x - x);
 }
 
+short mouse_move_position_vertical_over_bar_coords(short y, short h)
+{
+    short ms_y;
+
+    ms_y = lbDisplay.MMouseX;
+    return (ms_y - y);
+}
+
 short mouse_down_position_horizonal_over_bar_coords(short x, short w)
 {
     short ms_x;
@@ -146,57 +154,69 @@ short mouse_down_position_horizonal_over_bar_coords(short x, short w)
     return (ms_x - x);
 }
 
-TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box)
+TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *p_box)
 {
-    return (x >= box->X) && (x <= box->X + box->Width)
-        && (y >= box->Y) && (y <= box->Y + box->Height);
+    return (x >= p_box->X) && (x <= p_box->X + p_box->Width)
+        && (y >= p_box->Y) && (y <= p_box->Y + p_box->Height);
 }
 
-TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *box)
+TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *p_box)
 {
-    if ((x >= box->X) && (x <= box->X + box->Width + box->Height)
-        && (y >= box->Y) && (y <= box->Y + box->Height))
+    if ((x >= p_box->X) && (x <= p_box->X + p_box->Width + p_box->Height)
+        && (y >= p_box->Y) && (y <= p_box->Y + p_box->Height))
     {
         short dx, dy, hh, hw;
-        hh = box->Height >> 1;
-        hw = box->Height + box->Width;
-        dx = x - box->X;
-        dy = y - box->Y;
+        hh = p_box->Height >> 1;
+        hw = p_box->Height + p_box->Width;
+        dx = x - p_box->X;
+        dy = y - p_box->Y;
         return (dy + dx >= hh) && (dy + dx <= hw);
     }
     return false;
 }
 
-TbBool mouse_move_over_box_base(struct ScreenBoxBase *box)
+TbBool mouse_move_over_box_base(struct ScreenBoxBase *p_box)
 {
     short ms_x, ms_y;
 
     ms_x = lbDisplay.MMouseX;
     ms_y = lbDisplay.MMouseY;
-    return is_over_box_base(ms_x, ms_y, box);
+    return is_over_box_base(ms_x, ms_y, p_box);
 }
 
-TbBool mouse_down_over_box_base(struct ScreenBoxBase *box)
+TbBool mouse_down_over_box_base(struct ScreenBoxBase *p_box)
 {
     short ms_x, ms_y;
 
     ms_x = lbDisplay.MouseX;
     ms_y = lbDisplay.MouseY;
-    return is_over_box_base(ms_x, ms_y, box);
+    return is_over_box_base(ms_x, ms_y, p_box);
 }
 
-TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box)
+TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *p_box)
 {
     short ms_x, ms_y;
 
     ms_x = lbDisplay.MMouseX;
     ms_y = lbDisplay.MMouseY;
-    return is_over_slant_box_base(ms_x, ms_y, box);
+    return is_over_slant_box_base(ms_x, ms_y, p_box);
 }
 
-short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *box)
+short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *p_box)
 {
-    return mouse_move_position_horizonal_over_bar_coords(box->X, box->Width);
+    return mouse_move_position_horizonal_over_bar_coords(p_box->X, p_box->Width);
+}
+
+short mouse_move_position_vertical_scrollbar_over_text_box(struct ScreenTextBox *p_box)
+{
+    short pos;
+
+    pos = mouse_move_position_vertical_over_bar_coords(p_box->GrabPos, p_box->Height);
+    if (pos < 0)
+        pos = 0;
+    else if (pos + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
+        pos = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
+    return pos;
 }
 
 short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)

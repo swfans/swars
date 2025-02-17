@@ -157,14 +157,586 @@ ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
     return ret;
 }
 
+ubyte flashy_draw_purple_text_box_childeren(struct ScreenTextBox *p_box)
+{
+    ushort i;
+    ubyte v135;
+
+    if ((p_box->Flags & 0x2000) != 0)
+    {
+        lbDisplay.DrawFlags = 0x0080;
+    }
+    else if ((p_box->Flags & 0x4000) != 0)
+    {
+        lbDisplay.DrawFlags = 0x0100;
+    }
+
+    v135 = 0;
+    if ((p_box->Flags & 0x1000) == 0)
+    {
+        if (p_box->DrawTextFn != NULL)
+        {
+            ubyte v84;
+            //v84 = p_box->DrawTextFn(p_box); -- incompatible calling convention
+            asm volatile ("call *%2\n"
+              : "=r" (v84) : "a" (p_box), "g" (p_box->DrawTextFn));
+            v135 = v84;
+        }
+        else if (p_box->Text != NULL)
+        {
+            ubyte v84;
+            v84 = flashy_draw_text(0,  0, p_box->Text, p_box->TextSpeed, p_box->field_38,
+                  &p_box->TextFadePos, p_box->DrawTextFn != NULL);
+            v135 = v84;
+        }
+
+        if ( v135 && (p_box->Flags & 0x100) == 0 )
+        {
+              copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, p_box->Height + 6);
+              p_box->Flags |= 0x1000;
+        }
+    }
+
+    lbDisplay.DrawFlags = 0;
+    for (i = 0; i < 2; i++)
+    {
+          struct ScreenButton *p_button;
+          struct ScreenInfoBox *p_info;
+
+          p_button = p_box->Buttons[i];
+          if (p_button != NULL) {
+              ubyte drawn;
+              //p_button->DrawFn(p_button); -- incompatible calling convention
+              asm volatile ("call *%2\n"
+                  : "=r" (drawn) : "a" (p_button), "g" (p_button->DrawFn));
+          }
+          p_info = p_box->Infos[i];
+          if (p_info != NULL) {
+              ubyte drawn;
+              //p_info->DrawFn(p_info); -- incompatible calling convention
+              asm volatile ("call *%2\n"
+                  : "=r" (drawn) : "a" (p_info), "g" (p_info->DrawFn));
+          }
+    }
+    return v135;
+}
+
 ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile ("call ASM_flashy_draw_purple_text_box\n"
         : "=r" (ret) : "a" (p_box));
     return ret;
 #endif
+    short box_w, box_h;
+    ushort spr1;
+    short unk_per_line;
+
+    spr1 = 11 + (p_box->Colour1 != 247);
+
+    {
+        short scr_scroll_w, scr_scroll_h;
+
+        if ((p_box->Flags & 0x100) != 0)
+            scr_scroll_w = 12;
+        else
+            scr_scroll_w = 0;
+
+        if ((p_box->Buttons[0] != NULL) || (p_box->Infos[0] != NULL) || (p_box == &brief_netscan_box))
+            scr_scroll_h = p_box->ScrollWindowHeight + 2;
+        else
+            scr_scroll_h = p_box->ScrollWindowHeight + 23;
+
+        my_set_text_window(p_box->X + 4, p_box->ScrollWindowOffset + p_box->Y + 4, p_box->Width - 8 - scr_scroll_w, scr_scroll_h);
+    }
+    lbFontPtr = p_box->Font;
+    byte_197160 = p_box->LineSpacing;
+    if (p_box->BGColour == 0)
+        p_box->BGColour = byte_197160 + font_height('A');
+    {
+        short text_window_w;
+        text_window_w = text_window_y2 - text_window_y1 - 1;
+        unk_per_line = (text_window_w + 2) / p_box->BGColour;
+    }
+
+    box_w = p_box->Width - 1;
+    box_h = p_box->Height - 1;
+
+    if ((p_box->Flags & 0x01) != 0)
+    {
+        int i;
+
+        p_box->Timer = 0;
+        p_box->Flags &= ~(0x01|0x80);
+        p_box->Flags |= 0x80;
+
+        for (i = 0; i < 2; i++)
+        {
+            struct ScreenButton *p_button;
+            struct ScreenInfoBox *p_info;
+
+            p_button = p_box->Buttons[i];
+            if (p_button != NULL)
+                p_button->Flags |= 0x01;
+
+            p_info = p_box->Infos[i];
+            if (p_info != NULL)
+                p_info->Flags |= 0x01;
+        }
+    }
+
+    if ((p_box->Flags & 0x02) != 0)
+    {
+        const char *p_text;
+        int i;
+
+        p_box->Flags &= ~(0x02|0x01);
+        p_box->Timer = -1;
+
+        p_text = p_box->Text;
+        if (p_text != NULL)
+            p_box->TextFadePos = my_str_len(p_text);
+        else
+            p_box->TextFadePos = -5;
+
+        for (i = 0; i < 2; i++)
+        {
+            struct ScreenButton *p_button;
+            struct ScreenInfoBox *p_info;
+
+            p_button = p_box->Buttons[i];
+            if (p_button != NULL)
+                p_button->Flags |= 0x0002;
+
+            p_info = p_box->Infos[i];
+            if (p_info != NULL)
+                p_info->Flags |= 0x02;
+        }
+    }
+
+    if (p_box->Timer <= 24)
+    {
+        struct TbSprite *p_spr;
+        int scr_x1, scr_y1, scr_x2, scr_y2;
+        ushort advance;
+
+        advance = p_box->Timer;
+        scr_x1 = proj_origin.X + (advance * (p_box->X - proj_origin.X)) / 24;
+        scr_y1 = proj_origin.Y + (advance * (p_box->Y - proj_origin.Y)) / 24;
+        scr_x2 = proj_origin.X + (advance * (p_box->X + box_w - proj_origin.X)) / 24;
+        scr_y2 = proj_origin.Y + (advance * (p_box->Y + box_h - proj_origin.Y)) / 24;
+
+        lbDisplay.DrawFlags = 0x0004;
+        draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x1, scr_y1, p_box->Colour1);
+        draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x2, scr_y2, p_box->Colour1);
+        lbDisplay.DrawFlags = 0;
+
+        p_spr = &unk3_sprites[spr1];
+        draw_sprite_purple_list(scr_x1 - 1, scr_y1 - 1, p_spr);
+        draw_sprite_purple_list(scr_x2 - 1, scr_y2 - 1, p_spr);
+
+        p_box->Timer += p_box->DrawSpeed;
+        return 0;
+    }
+
+    if (p_box->Timer <= 72)
+    {
+        if (!IsSamplePlaying(0, 4, 0))
+            play_sample_using_heap(0, 110, 127, 64, 100, 0, 1u);
+    }
+
+    if (p_box->Timer <= 48)
+    {
+        struct TbSprite *p_spr;
+        short scr_x, scr_y;
+        ushort advance;
+
+        advance = ((p_box->Timer - 24) * box_w) / 24;
+        vec_colour = p_box->Colour1;
+        dword_1DC5FC = p_box->X + advance;
+        dword_1DC600 = p_box->Y;
+        dword_1DC624 = dword_1DC5FC - 15;
+        if (dword_1DC624 < p_box->X)
+            dword_1DC624 = p_box->X;
+        dword_1DC628 = p_box->Y;
+        draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
+        draw_line_purple_list(p_box->X, dword_1DC600, dword_1DC5FC, dword_1DC628, p_box->Colour1);
+
+        dword_1DC5FC = p_box->X + box_w - advance;
+        dword_1DC600 = p_box->Y + box_h;
+        dword_1DC624 = dword_1DC5FC + 15;
+        if (dword_1DC624 > p_box->X + box_w)
+            dword_1DC624 = p_box->X + box_w;
+        dword_1DC628 = p_box->Y + box_h;
+        draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
+        draw_line_purple_list(dword_1DC5FC, dword_1DC600, p_box->X + box_w, dword_1DC628, p_box->Colour1);
+
+        p_spr = &unk3_sprites[spr1];
+        scr_x = p_box->X + advance - 1;
+        scr_y = p_box->Y - 1;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+        scr_x = p_box->X + box_w - advance - 1;
+        scr_y = p_box->Y + p_box->Height - 2;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+
+        p_box->Timer += p_box->DrawSpeed;
+        return 0;
+    }
+
+    if (p_box->Timer <= 72)
+    {
+        struct TbSprite *p_spr;
+        short scr_x, scr_y;
+        ushort advance;
+
+        advance = ((p_box->Timer - 48) * box_h) / 24;
+        vec_colour = p_box->Colour1;
+        dword_1DC5FC = p_box->X + box_w;
+        dword_1DC600 = p_box->Y + advance;
+        dword_1DC624 = p_box->X + box_w;
+        dword_1DC628 = dword_1DC600 - 15;
+        if (dword_1DC628 < p_box->Y)
+            dword_1DC628 = p_box->Y;
+        draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
+        draw_line_purple_list(dword_1DC5FC, p_box->Y, dword_1DC624, dword_1DC600, p_box->Colour1);
+
+        dword_1DC5FC = p_box->X;
+        dword_1DC600 = p_box->Y + box_h - advance;
+        dword_1DC624 = p_box->X;
+        dword_1DC628 = dword_1DC600 + 15;
+        if (dword_1DC628 > p_box->Y + box_h)
+            dword_1DC628 = p_box->Y + box_h;
+        draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
+        draw_line_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, p_box->Y + box_h, p_box->Colour1);
+
+        p_spr = &unk3_sprites[spr1];
+        scr_x = p_box->X - 1;
+        scr_y = p_box->Y + box_h - advance - 1;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+        scr_x = p_box->X + p_box->Width - 2;
+        scr_y = p_box->Y + advance - 1;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+
+        draw_line_purple_list(p_box->X, p_box->Y,
+            p_box->X + box_w, p_box->Y, p_box->Colour1);
+        draw_line_purple_list(p_box->X, p_box->Y + box_h,
+            p_box->X + box_w, p_box->Y + box_h, p_box->Colour1);
+
+        p_box->Timer += p_box->DrawSpeed;
+        return 2;
+    }
+
+    if ((p_box->Flags & 0x0100) == 0)
+    {
+        if ((p_box->Flags & 0x0080) != 0) {
+            p_box->TextFadePos = -5;
+            p_box->Flags &= ~0x0080;
+        }
+        if ((p_box->Flags & 0x0004) == 0)
+        {
+            lbDisplay.DrawFlags = 0x0004;
+            draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
+                p_box->Width + 6, p_box->Height + 6, p_box->Colour2);
+            lbDisplay.DrawFlags = 0x0010;
+            draw_box_purple_list(p_box->X, p_box->Y,
+                p_box->Width, p_box->Height, p_box->Colour1);
+            lbDisplay.DrawFlags = 0;
+            if ((p_box->Flags & 0x08) == 0)
+            {
+                copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, p_box->Height + 6);
+                p_box->Flags |= 0x0004;
+            }
+        }
+        flashy_draw_purple_text_box_childeren(p_box);
+        return 3;
+    }
+
+    if ((p_box->Flags & 0x0080) != 0)
+    {
+        if (p_box->Lines == 0) {
+            p_box->Lines = my_count_lines(p_box->Text);
+        }
+        p_box->ScrollBarSize = p_box->ScrollWindowHeight * unk_per_line / p_box->Lines;
+        if ((p_box->ScrollBarSize < p_box->ScrollWindowHeight) || ((p_box->Flags & 0x0200) != 0))
+        {
+            if (p_box->ScrollBarSize >= p_box->ScrollWindowHeight)
+                p_box->ScrollBarSize = p_box->ScrollWindowHeight;
+            p_box->ScrollBarPos = 0;
+        }
+        else
+        {
+            p_box->Flags &= ~0x100;
+        }
+        p_box->field_38 = 0;
+        p_box->Flags &= ~(0x0400|0x0080);
+        if (p_box->Timer != 255) {
+            p_box->TextFadePos = -5;
+        }
+    }
+
+    if ((p_box->Flags & 0x0100) == 0)
+    {
+        if ((p_box->Flags & 0x0004) == 0) {
+            lbDisplay.DrawFlags = 0x0004;
+            draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
+                p_box->Width + 6, p_box->Height + 6, p_box->Colour2);
+            lbDisplay.DrawFlags = 0x0010;
+            draw_box_purple_list(p_box->X, p_box->Y, p_box->Width, p_box->Height, p_box->Colour1);
+            lbDisplay.DrawFlags = 0;
+            copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, p_box->Height + 6);
+            p_box->Flags |= 0x0004;
+        }
+        flashy_draw_purple_text_box_childeren(p_box);
+        return 3;
+    }
+
+    if (lbDisplay.MLeftButton && ((p_box->Flags & 0x0400) != 0))
+    {
+        p_box->ScrollBarPos = mouse_move_position_vertical_scrollbar_over_text_box(p_box);
+        p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+    }
+
+    int ms_x, ms_y;
+
+    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    if ((ms_x >= p_box->X + p_box->Width - 12) && (ms_x <= p_box->Width + p_box->X - 6))
+    {
+        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        if ((ms_y >= p_box->Y + p_box->ScrollWindowOffset + 5)
+          && (ms_y < p_box->Y + p_box->ScrollWindowOffset + p_box->ScrollBarPos + 5))
+        {
+            if (lbDisplay.LeftButton)
+            {
+                int delta;
+                lbDisplay.LeftButton = 0;
+                delta = p_box->ScrollBarPos - (unk_per_line - 1) * p_box->ScrollWindowHeight / p_box->Lines;
+                if (delta < 0)
+                    delta = 0;
+                else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
+                    delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
+                p_box->ScrollBarPos = delta;
+                p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+            }
+        }
+        else if ((ms_y > p_box->Y + p_box->ScrollWindowOffset + p_box->ScrollBarPos + 5 + p_box->ScrollBarSize)
+          && (ms_y < p_box->Y + p_box->ScrollWindowOffset + p_box->ScrollWindowHeight + 6))
+        {
+            if (lbDisplay.LeftButton)
+            {
+                int delta;
+                lbDisplay.LeftButton = 0;
+                delta = p_box->ScrollBarPos + (unk_per_line - 1) * p_box->ScrollWindowHeight / p_box->Lines;
+                if (delta < 0)
+                    delta = 0;
+                else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
+                    delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
+                p_box->ScrollBarPos = delta;
+                p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+            }
+        }
+    }
+
+    if (mouse_move_over_rect(p_box->X, p_box->X + p_box->Width, p_box->Y, p_box->Y + p_box->Height)
+      && (lbKeyOn[KC_UP] || lbKeyOn[KC_DOWN] || lbKeyOn[KC_PGUP] || lbKeyOn[KC_PGDOWN])
+      && ((p_box->Flags & 0x0400) == 0))
+    {
+        int delta;
+
+        delta = 0;
+        if (lbKeyOn[KC_DOWN])
+            delta = p_box->ScrollWindowHeight / p_box->Lines;
+        else if (lbKeyOn[KC_UP])
+            delta = - p_box->ScrollWindowHeight / p_box->Lines;
+        p_box->ScrollBarPos += delta;
+
+        delta = 0;
+        if (lbKeyOn[KC_PGDOWN])
+            delta = p_box->ScrollWindowHeight * (unk_per_line - 1) / p_box->Lines;
+        else if (lbKeyOn[KC_PGUP])
+            delta = - (unk_per_line - 1) * p_box->ScrollWindowHeight / p_box->Lines;
+        p_box->ScrollBarPos += delta;
+
+        delta = p_box->ScrollBarPos;
+        if (delta < 0)
+            delta = 0;
+        else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
+            delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
+        p_box->ScrollBarPos = delta;
+
+        p_box->field_38 = p_box->ScrollBarPos * p_box->Lines / p_box->ScrollWindowHeight;
+    }
+
+    if ((p_box->Flags & 0x0004) == 0)
+    {
+        lbDisplay.DrawFlags = 0x0004;
+        draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
+            p_box->Width - 10, p_box->Height + 6, p_box->Colour2);
+        draw_box_purple_list(p_box->X + p_box->Width - 5,  p_box->Y - 3,
+            8, p_box->Height + 6, p_box->Colour2);
+        draw_box_purple_list(p_box->X + p_box->Width - 13, p_box->Y - 3,
+            8, p_box->ScrollWindowOffset + 7, p_box->Colour2);
+        draw_box_purple_list(p_box->X + p_box->Width - 13, p_box->Y + p_box->ScrollWindowHeight + 6 + p_box->ScrollWindowOffset,
+            8, p_box->Height - p_box->ScrollWindowHeight - 3 - p_box->ScrollWindowOffset, p_box->Colour2);
+        lbDisplay.DrawFlags = 0x0010;
+        draw_box_purple_list(p_box->X, p_box->Y, p_box->Width, (ushort)p_box->Height, p_box->Colour1);
+        lbDisplay.DrawFlags = 0;
+
+        if ((p_box->Flags & 0x0008) == 0)
+        {
+            copy_box_purple_list(p_box->X - 3, p_box->Y - 3, p_box->Width + 6, (ushort)p_box->Height + 6);
+            p_box->Flags |= 0x0004;
+        }
+    }
+
+    if (((p_box->Flags & 0x0100) != 0) && (p_box->ScrollBarPos >= 0))
+    {
+        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        lbDisplay.DrawFlags = 0x0004;
+        if (((p_box->Flags & 0x0400) != 0) || ((ms_x >= p_box->X + p_box->Width - 12) && (ms_x <= p_box->X + p_box->Width - 6)
+          && (ms_y >= p_box->Y + 5 + p_box->ScrollWindowOffset + p_box->ScrollBarPos)
+          && (ms_y <= p_box->Y + 5 + p_box->ScrollWindowOffset + p_box->ScrollBarSize + p_box->ScrollBarPos)))
+        {
+            lbDisplay.DrawFlags = 0;
+            if (lbDisplay.LeftButton)
+            {
+                lbDisplay.LeftButton = 0;
+                p_box->Flags |= 0x0400;
+                ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+                p_box->GrabPos = ms_y - p_box->ScrollBarPos;
+                play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
+            }
+        }
+        draw_box_purple_list(p_box->X + p_box->Width - 12, p_box->Y + 5 + p_box->ScrollBarPos + p_box->ScrollWindowOffset,
+          6, p_box->ScrollBarSize, 174);
+        lbDisplay.DrawFlags = 0;
+    }
+    lbDisplay.DrawFlags = 0x0004;
+
+    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+
+    if ((ms_x < p_box->X + p_box->Width - 13) || (ms_x > p_box->X + p_box->Width - 5)
+      || (ms_y < p_box->Y + p_box->ScrollWindowOffset + p_box->ScrollWindowHeight + 9)
+      || (ms_y >= p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 18))
+    {
+        struct TbSprite *p_spr;
+        short scr_x, scr_y;
+
+        if (p_box->Text != NULL)
+            lbDisplay.DrawFlags |= 0x8000;
+
+        p_spr = &unk3_sprites[9];
+        scr_x = p_box->X + p_box->Width - 13;
+        scr_y = p_box->Y + p_box->ScrollWindowHeight + 9 + p_box->ScrollWindowOffset;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+
+        lbDisplay.DrawFlags &= ~0x8000;
+    }
+    else
+    {
+        struct TbSprite *p_spr;
+        int delta;
+        short scr_x, scr_y;
+
+        if (lbDisplay.MLeftButton || joy.Buttons[0])
+        {
+            if (lbDisplay.LeftButton)
+                play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
+            lbDisplay.LeftButton = 0;
+            p_box->Flags |= 0x0800;
+            lbDisplay.DrawFlags = 0;
+
+            p_box->ScrollBarPos -= p_box->ScrollWindowHeight / p_box->Lines;
+            delta = p_box->ScrollBarPos;
+            if (delta < 0)
+                delta = 0;
+            else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
+                delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
+            p_box->ScrollBarPos = delta;
+
+            p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+        }
+
+        if (p_box->Text != NULL)
+            lbDisplay.DrawFlags |= 0x8000;
+        p_spr = &unk3_sprites[9];
+        scr_x = p_box->Width + p_box->X - 13;
+        scr_y = p_box->Y + p_box->ScrollWindowHeight + 9 + p_box->ScrollWindowOffset;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+
+        lbDisplay.DrawFlags = 0;
+        p_spr = &unk3_sprites[13];
+        scr_x = p_box->X + p_box->Width - 13;
+        scr_y = p_box->Y + p_box->ScrollWindowHeight + 9 + p_box->ScrollWindowOffset;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+
+        lbDisplay.DrawFlags = 0x0004;
+    }
+
+    if ((ms_x < p_box->X + p_box->Width - 13) || (ms_x > p_box->X + p_box->Width - 5)
+      || (ms_y < p_box->ScrollWindowOffset + p_box->Y + p_box->ScrollWindowHeight + 18)
+      || (ms_y >= p_box->ScrollWindowHeight + p_box->Y + p_box->ScrollWindowOffset + 27))
+    {
+        struct TbSprite *p_spr;
+        short scr_x, scr_y;
+
+        if (p_box->Text != NULL)
+            lbDisplay.DrawFlags |= 0x8000;
+
+        p_spr = &unk3_sprites[10];
+        scr_x = p_box->X + p_box->Width - 13;
+        scr_y = p_box->Y + p_box->ScrollWindowHeight + 18 + p_box->ScrollWindowOffset;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+
+        lbDisplay.DrawFlags = 0;
+    }
+    else
+    {
+        struct TbSprite *p_spr;
+        short scr_x, scr_y;
+        int delta;
+
+        if (lbDisplay.MLeftButton || joy.Buttons[0])
+        {
+            if (lbDisplay.LeftButton)
+                play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
+            lbDisplay.LeftButton = 0;
+            p_box->Flags |= 0x0800;
+            lbDisplay.DrawFlags = 0;
+
+            p_box->ScrollBarPos += p_box->ScrollWindowHeight / p_box->Lines;
+            delta = p_box->ScrollBarPos;
+            if (delta < 0)
+                delta = 0;
+            else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
+                delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
+            p_box->ScrollBarPos = delta;
+
+            p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+        }
+
+        if (p_box->Text != NULL)
+            lbDisplay.DrawFlags |= 0x8000;
+
+        p_spr = &unk3_sprites[10];
+        scr_x = p_box->X + p_box->Width - 13;
+        scr_y = p_box->Y + p_box->ScrollWindowHeight + 18 + p_box->ScrollWindowOffset;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+
+        lbDisplay.DrawFlags = 0;
+        p_spr = &unk3_sprites[14];
+        scr_x = p_box->X + p_box->Width - 13;
+        scr_y = p_box->Y + p_box->ScrollWindowHeight + 18 + p_box->ScrollWindowOffset;
+        draw_sprite_purple_list(scr_x, scr_y, p_spr);
+    }
+
+    if (!lbDisplay.MLeftButton && !joy.Buttons[0])
+        p_box->Flags &= ~0x0C00;
+
+    flashy_draw_purple_text_box_childeren(p_box);
+    return 3;
 }
 
 ubyte flashy_draw_purple_button(struct ScreenButton *button)
