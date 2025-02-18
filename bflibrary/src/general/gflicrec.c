@@ -249,6 +249,8 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim)
     ubyte *pbuf;
     ubyte *cbf;
     ubyte *pbf;
+    ushort *lines_count;
+    ushort *pckt_count;
     short h;
     short w;
     short k;
@@ -258,8 +260,6 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim)
     short wendt;
     cbuf = p_anim->FrameBuffer;
     pbuf = p_anim->PvFrameBuf;
-    ushort *lines_count;
-    ushort *pckt_count;
 
     blk_begin = p_anim->ChunkBuf;
     lines_count = (ushort *)p_anim->ChunkBuf;
@@ -371,7 +371,7 @@ u32 anim_make_FLI_SS2(struct Animation *p_anim)
         pbuf += p_anim->Scanline;
     }
 
-    if (p_anim->FLCFileHeader.Height+wend == 0) {
+    if (p_anim->FLCFileHeader.Height + wend == 0) {
         (*lines_count) = 1;
         (*pckt_count) = 1;
         *(ubyte *)p_anim->ChunkBuf = 0;
@@ -401,7 +401,6 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
     ubyte *pbuf;
     ubyte *cbf;
     ubyte *pbf;
-    ubyte *npcktptr;
     short h;
     short w;
     short hend;
@@ -464,11 +463,13 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
 
         for (h = hdim; h > 0; h--)
         {
+            ubyte *pckt_count;
+
             cbf = cbuf;
             pbf = pbuf;
             // Remember pointer to amount of encoded packets within line
-            npcktptr = p_anim->ChunkBuf;
-            *npcktptr = 0;
+            pckt_count = p_anim->ChunkBuf;
+            *pckt_count = 0;
             p_anim->ChunkBuf++;
             for (w = p_anim->FLCFileHeader.Width; w > 0; )
             {
@@ -491,7 +492,7 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
                     *(ubyte *)p_anim->ChunkBuf = 0;
                     p_anim->ChunkBuf++;
                     wend -= 255;
-                    (*(ubyte *)npcktptr)++;
+                    (*(ubyte *)pckt_count)++;
                 }
                 // Now the remaining empty pixel count is guaranteed to fit one byte
                 cbf += wendt;
@@ -548,7 +549,7 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
                     cbf -= nsame;
                     pbf -= nsame;
                     p_anim->ChunkBuf++;
-                    (*(ubyte *)npcktptr)++;
+                    (*(ubyte *)pckt_count)++;
                 } else {
                     if (w == 1) {
                         ndiff = nsame + 1;
@@ -601,7 +602,7 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
                         p_anim->ChunkBuf += ndiff;
                         cbf += ndiff;
                         pbf += ndiff;
-                        (*(ubyte *)npcktptr)++;
+                        (*(ubyte *)pckt_count)++;
                     }
                 }
             }
@@ -806,6 +807,7 @@ TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette)
             p_fdthunk->Type = FLI_LC;
             strncat(anim_parse_tags, "LC ", sizeof(anim_parse_tags)-1);
         } else {
+            // TODO the SS2 is a 16-bit chunk format, can we really use it for delta animations?
             // Clear the LC compressed data
             LbMemorySet(dataptr, 0, lc_size);
             p_anim->ChunkBuf = dataptr;
