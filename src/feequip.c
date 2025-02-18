@@ -633,37 +633,36 @@ TbBool weapon_has_display_anim(ubyte weapon)
 
 void equip_display_box_redraw(struct ScreenTextBox *p_box)
 {
-    if ((display_box_content == DiBoxCt_TEXT) || !weapon_has_display_anim(selected_weapon + 1))
+    const char *text;
+    ubyte real_dbcontent;
+
+    real_dbcontent = weapon_has_display_anim(selected_weapon + 1) ? display_box_content : DiBoxCt_TEXT;
+    switch (real_dbcontent)
     {
-        const char *text;
+    case DiBoxCt_TEXT:
         p_box->Flags |= GBxFlg_Unkn0080;
         // Re-add scroll bars
         p_box->Flags |= GBxFlg_RadioBtn;
 
         p_box->Lines = 0;
-        if (selected_weapon + 1 < 1)
-        {
+        if (selected_weapon + 1 < 1) {
             text = NULL;
-        }
-        else if (is_research_weapon_completed(selected_weapon + 1) || (login_control__State != 6))
-        {
+        } else if (is_research_weapon_completed(selected_weapon + 1) || (login_control__State != 6)) {
             text = &weapon_text[weapon_text_index[selected_weapon]];
-        }
-        else
-        {
+        } else {
             text = gui_strings[536];
         }
         p_box->Text = text;
         p_box->TextFadePos = -5;
-    }
-    else
-    {
+        break;
+    case DiBoxCt_ANIM:
         // Remove scroll bars
         p_box->Flags &= ~GBxFlg_RadioBtn;
 
         init_weapon_anim(selected_weapon + 1 - 1);
         // Negative value saves the background before starting animation
         p_box->TextFadePos = -1;
+        break;
     }
 }
 
@@ -692,7 +691,7 @@ void equip_name_box_redraw(struct ScreenTextBox *p_box)
     p_box->TextFadePos = -5;
 }
 
-TbBool input_display_box_content(struct ScreenTextBox *p_box)
+TbBool input_display_box_content_wep(struct ScreenTextBox *p_box)
 {
     if (mouse_down_over_box_coords(p_box->X + 4,
       p_box->Y + 4, p_box->X + p_box->Width - 4, p_box->Y + 4 + 140))
@@ -769,12 +768,18 @@ void display_box_content_state_switch(void)
     case DiBoxCt_ANIM:
         display_box_content = DiBoxCt_TEXT;
         break;
+    default:
+        display_box_content = DiBoxCt_ANIM;
+        break;
     }
 }
 
-void draw_display_box_content(struct ScreenTextBox *p_box)
+void draw_display_box_content_wep(struct ScreenTextBox *p_box)
 {
-    switch (display_box_content)
+    ubyte real_dbcontent;
+
+    real_dbcontent = weapon_has_display_anim(selected_weapon + 1) ? display_box_content : DiBoxCt_TEXT;
+    switch (real_dbcontent)
     {
     case DiBoxCt_TEXT:
         lbFontPtr = p_box->Font;
@@ -784,8 +789,8 @@ void draw_display_box_content(struct ScreenTextBox *p_box)
           &p_box->TextFadePos, 0);
         break;
     case DiBoxCt_ANIM:
-        if (equip_display_box.TextFadePos < 0)
-            equip_display_box.TextFadePos = 0;
+        if (p_box->TextFadePos < 0)
+            p_box->TextFadePos = 0;
         else
             xdo_next_frame(AniSl_EQVIEW);
         draw_flic_purple_list(ac_weapon_flic_data_to_screen);
@@ -849,8 +854,8 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
 
     // Add control hotspot for the view / description switch
     draw_hotspot_purple_list(box->X + box->Width / 2, box->Y + 104);
-    draw_display_box_content(box);
-    input_display_box_content(box);
+    draw_display_box_content_wep(box);
+    input_display_box_content_wep(box);
 
     return 0;
 }

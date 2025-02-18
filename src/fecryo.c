@@ -116,10 +116,19 @@ ubyte equip_blokey_static_width[] = {
 
 ubyte do_cryo_offer_cancel(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_cryo_offer_cancel\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    selected_mod = -1;
+    cybmod_name_text[0] = 0;
+    refresh_equip_list = 1;
+    cryo_cybmod_list_box.Flags |= 0x0080;
+    // Re-add scroll bars
+    cryo_cybmod_list_box.Flags |= GBxFlg_RadioBtn;
+    return 0;
 }
 
 #define PURPLE_MOD_AREA_WIDTH 139
@@ -612,23 +621,75 @@ TbBool cybmod_has_display_anim(ubyte mod)
     return (1 << (mod - 1) < 0x1000);
 }
 
-void cryp_display_box_redraw(struct ScreenTextBox *p_box)
+void cryo_display_box_redraw(struct ScreenTextBox *p_box)
 {
-    if ((display_box_content == DiBoxCt_TEXT) || !cybmod_has_display_anim(selected_mod + 1))
+    ubyte real_dbcontent;
+
+    real_dbcontent = cybmod_has_display_anim(selected_mod + 1) ? display_box_content : DiBoxCt_TEXT;
+    switch (real_dbcontent)
     {
-        p_box->TextFadePos = -5;
-        p_box->Text = &weapon_text[cybmod_text_index[selected_mod]];
+    case DiBoxCt_TEXT:
+        p_box->Flags |= GBxFlg_Unkn0080;
+        // Re-add scroll bars
+        p_box->Flags |= GBxFlg_RadioBtn;
+
         p_box->field_38 = 0;
         p_box->Lines = 0;
-        p_box->Flags |= GBxFlg_Unkn0080;
+        p_box->Text = &weapon_text[cybmod_text_index[selected_mod]];
         lbFontPtr = small_font;
         p_box->LineHeight = byte_197160 + font_height('A');
         lbFontPtr = p_box->Font;
-    }
-    else
-    {
+        p_box->TextFadePos = -5;
+        break;
+    case DiBoxCt_ANIM:
+        // Remove scroll bars
+        p_box->Flags &= ~GBxFlg_RadioBtn;
+
         init_weapon_anim(selected_mod + 32);
+        // Negative value saves the background before starting animation
+        p_box->TextFadePos = -1;
+        break;
     }
+}
+
+void draw_display_box_content_mod(struct ScreenTextBox *p_box)
+{
+    ubyte real_dbcontent;
+
+    real_dbcontent = cybmod_has_display_anim(selected_mod + 1) ? display_box_content : DiBoxCt_TEXT;
+    switch (real_dbcontent)
+    {
+    case DiBoxCt_TEXT:
+        lbFontPtr = small_font;
+        my_set_text_window(p_box->X + 4, p_box->ScrollWindowOffset + p_box->Y + 4,
+          p_box->Width - 20, p_box->ScrollWindowHeight + 23);
+        flashy_draw_text(0, 0, p_box->Text, p_box->TextSpeed, p_box->field_38,
+          &p_box->TextFadePos, 0);
+        break;
+    case DiBoxCt_ANIM:
+        if (p_box->TextFadePos < 0)
+            p_box->TextFadePos = 0;
+        else
+            xdo_next_frame(AniSl_EQVIEW);
+        draw_flic_purple_list(ac_weapon_flic_data_to_screen);
+        break;
+    }
+}
+
+TbBool input_display_box_content_mod(struct ScreenTextBox *p_box)
+{
+    if (mouse_down_over_box_coords(p_box->X + 4,
+      p_box->Y + 4, p_box->X + p_box->Width - 4, p_box->Y + 4 + 140))
+    {
+        if (lbDisplay.LeftButton)
+        {
+            lbDisplay.LeftButton = 0;
+            display_box_content_state_switch();
+                cryo_display_box_redraw(p_box);
+            return true;
+        }
+    }
+    return false;
 }
 
 ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
@@ -698,7 +759,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                         sprintf(cybmod_name_text, "%s %s %d", gui_strings[mdstr_id], gui_strings[lvstr_id], modlv);
                         switch_equip_offer_to_buy();
                         update_cybmod_cost_text();
-                        cryp_display_box_redraw(&cryo_cybmod_list_box);
+                        cryo_display_box_redraw(&cryo_cybmod_list_box);
                   }
                   if (selected_mod == mtype - 1) {
                       lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
@@ -742,29 +803,9 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 
         // Add control hotspot for the view / description switch
         draw_hotspot_purple_list(box->X + box->Width / 2, box->Y + 104);
+        draw_display_box_content_mod(box);
+        input_display_box_content_mod(box);
 
-        if ((display_box_content == DiBoxCt_TEXT) || !cybmod_has_display_anim(selected_mod + 1))
-        {
-            lbFontPtr = small_font;
-            my_set_text_window(box->X + 4, box->ScrollWindowOffset + box->Y + 4,
-              box->Width - 20, box->ScrollWindowHeight + 23);
-            flashy_draw_text(0, 0, box->Text, box->TextSpeed, box->field_38, &box->TextFadePos, 0);
-        }
-        else
-        {
-            xdo_next_frame(AniSl_EQVIEW);
-            draw_flic_purple_list(ac_weapon_flic_data_to_screen);
-        }
-        if (lbDisplay.LeftButton)
-        {
-            if (mouse_down_over_box_coords(box->X + 4,
-              box->Y + 4, box->X + box->Width - 4, box->Y + 4 + 140))
-            {
-                lbDisplay.LeftButton = 0;
-                display_box_content_state_switch();
-                cryp_display_box_redraw(&cryo_cybmod_list_box);
-            }
-        }
         //equip_offer_buy_button.DrawFn(&equip_offer_buy_button); -- incompatible calling convention
         asm volatile ("call *%1\n"
             : : "a" (&equip_offer_buy_button), "g" (equip_offer_buy_button.DrawFn));

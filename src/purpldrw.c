@@ -40,6 +40,7 @@
 extern struct ScreenTextBox brief_netscan_box;
 extern struct ScreenTextBox world_city_info_box;
 extern struct ScreenTextBox equip_display_box;
+extern struct ScreenTextBox cryo_cybmod_list_box;
 
 extern long dword_1DC5FC;
 extern long dword_1DC600;
@@ -250,7 +251,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
     spr1 = 11 + (p_box->Colour1 != 247);
 
-    text_remains_dynamic = (p_box == &world_city_info_box) || (p_box == &equip_display_box);
+    text_remains_dynamic = (p_box == &world_city_info_box) || (p_box == &equip_display_box) || (p_box == &cryo_cybmod_list_box);
 
     {
         short scr_scroll_w, scr_scroll_h;
