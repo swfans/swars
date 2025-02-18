@@ -568,18 +568,10 @@ ubyte show_equipment_screen(void)
 
 void init_weapon_anim(ubyte weapon)
 {
-    struct Campaign *p_campgn;
     struct Animation *p_anim;
-    const char *campgn_mark;
     PathInfo *pinfo;
     ulong k;
     ubyte anislot;
-
-    p_campgn = &campaigns[background_type];
-    campgn_mark = p_campgn->ProjectorFnMk;
-    // TODO FNAMES the convention with mark char is broken for "s"
-    if (strcmp(campgn_mark, "s") == 0)
-        campgn_mark = "";
 
     pinfo = &game_dirs[DirPlace_Equip];
 
@@ -588,7 +580,7 @@ void init_weapon_anim(ubyte weapon)
     {
         k = anim_slots[anislot];
         p_anim = &animations[k];
-        anim_flic_set_fname(p_anim, "%s/mod-%02d%s.fli", pinfo->directory, (int)weapon - 32, campgn_mark);
+        anim_flic_set_fname(p_anim, "%s/mod-%02d.fli", pinfo->directory, (int)weapon - 32);
     }
     else
     {
