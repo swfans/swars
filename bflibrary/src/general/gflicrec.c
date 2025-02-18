@@ -401,7 +401,7 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
     ubyte *pbuf;
     ubyte *cbf;
     ubyte *pbf;
-    ubyte *outptr;
+    ubyte *npcktptr;
     short h;
     short w;
     short hend;
@@ -416,6 +416,7 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
     blk_begin = p_anim->ChunkBuf;
     cbuf = p_anim->FrameBuffer;
     pbuf = p_anim->PvFrameBuf;
+    // Find first line with differences
     for (hend = p_anim->FLCFileHeader.Height; hend > 0;  hend--)
     {
         wend = 0;
@@ -430,11 +431,14 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
         cbuf += p_anim->Scanline;
         pbuf += p_anim->Scanline;
     }
-    if (hend != 0) {
+    if (hend != 0)
+    {
+        // Recompute to get first line with differences
         hend = p_anim->FLCFileHeader.Height - hend;
         blksize = p_anim->FLCFileHeader.Width * (p_anim->FLCFileHeader.Height - 1);
         cbuf = p_anim->FrameBuffer + blksize;
         pbuf = p_anim->PvFrameBuf + blksize;
+        // Find last line with differences
         for (h = p_anim->FLCFileHeader.Height; h > 0; h--) {
             wend = 0;
             for (w = p_anim->FLCFileHeader.Width; w > 0; w--) {
@@ -451,62 +455,100 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
         blksize = p_anim->FLCFileHeader.Width * hend;
         cbuf = p_anim->FrameBuffer + blksize;
         pbuf = p_anim->PvFrameBuf + blksize;
+        // Store amount of empty lines to skip
         *(ushort *)p_anim->ChunkBuf = hend;
         p_anim->ChunkBuf += 2;
+        // Store amount of following encoded lines
         *(ushort *)p_anim->ChunkBuf = hdim;
         p_anim->ChunkBuf += 2;
 
-        for (h = hdim; h>0; h--) {
+        for (h = hdim; h > 0; h--)
+        {
             cbf = cbuf;
             pbf = pbuf;
-            outptr = p_anim->ChunkBuf++;
-            for (w=p_anim->FLCFileHeader.Width; w>0; ) {
-                for ( wend=0; w>0; wend++) {
-                    if ( cbf[wend] != pbf[wend]) break;
+            // Remember pointer to amount of encoded packets within line
+            npcktptr = p_anim->ChunkBuf;
+            *npcktptr = 0;
+            p_anim->ChunkBuf++;
+            for (w = p_anim->FLCFileHeader.Width; w > 0; )
+            {
+                // Skip identical pixels at line start
+                for (wend = 0; w > 0; wend++) {
+                    if (cbf[wend] != pbf[wend]) break;
                     w--;
                 }
                 wendt = wend;
+                // If whole line was identical, move to next one
                 if (p_anim->FLCFileHeader.Width == wend) continue;
-                if ( w <= 0 ) break;
-                while ( wend > 255 ) {
+                // If all pixels until EOLN were identical, finish packets for this line
+                if (w <= 0) break;
+                // Store empty pixel counts above 255 as separate packets
+                while (wend > 255) {
+                    // Store packet skip pixels count
                     *(ubyte *)p_anim->ChunkBuf = 255;
                     p_anim->ChunkBuf++;
+                    // Store packet RLE pixels count
                     *(ubyte *)p_anim->ChunkBuf = 0;
                     p_anim->ChunkBuf++;
                     wend -= 255;
-                    (*(ubyte *)outptr)++;
+                    (*(ubyte *)npcktptr)++;
                 }
+                // Now the remaining empty pixel count is guaranteed to fit one byte
                 cbf += wendt;
                 pbf += wendt;
+                // Count consecutive identical pixels
                 k = 0;
                 nsame = 0;
-                while (w > 1) {
-                    if (nsame == -127)
-                        break;
-                    if ((cbf[k+0] == pbf[k+0]) &&
-                      (cbf[k+1] == pbf[k+1]) &&
-                      (cbf[k+2] == pbf[k+2]))
-                        break;
-                    if (cbf[k+1] != cbf[0])
-                        break;
-                    w--;
-                    k++;
-                    nsame--;
+                // If not in delta mode, store pixels again if it decreases encoded size
+                if ((p_anim->Flags & AniFlg_ALL_DELTA) == 0)
+                {
+                    while (w > 1) {
+                        if (nsame == -127) // We can store up to 127 in one packet
+                            break;
+                        // If 3 pixels in a row did not changed from previous frame, stop counting
+                        if ((cbf[k+0] == pbf[k+0]) &&
+                          (cbf[k+1] == pbf[k+1]) &&
+                          (cbf[k+2] == pbf[k+2]))
+                            break;
+                        if (cbf[k+1] != cbf[0])
+                            break;
+                        w--;
+                        k++;
+                        nsame--;
+                    }
+                }
+                else // Delta only mode - never store unchanged pixels
+                {
+                    while (w > 1) {
+                        if (nsame == -127) // We can store up to 127 in one packet
+                            break;
+                        // If even one pixel did not changed from previous frame, stop counting
+                        if (cbf[k+0] == pbf[k+0])
+                            break;
+                        if (cbf[k+1] != cbf[0])
+                            break;
+                        w--;
+                        k++;
+                        nsame--;
+                    }
                 }
                 if ( nsame ) {
                     if (nsame != -127) {
                         nsame--;
                         w--;
                     }
+                    // Store packet skip pixels count
                     *(ubyte *)p_anim->ChunkBuf = wend;
                     p_anim->ChunkBuf++;
+                    // Store packet RLE pixels count (negative count means replicate)
                     *(ubyte *)p_anim->ChunkBuf = nsame;
                     p_anim->ChunkBuf++;
+                    // Store packet RLE pixel value
                     *(ubyte *)p_anim->ChunkBuf = cbf[0];
                     cbf -= nsame;
                     pbf -= nsame;
                     p_anim->ChunkBuf++;
-                    (*(ubyte *)outptr)++;
+                    (*(ubyte *)npcktptr)++;
                 } else {
                     if (w == 1) {
                         ndiff = nsame + 1;
@@ -514,20 +556,40 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
                     } else {
                         k = 0;
                         ndiff = 0;
-                        while (w != 0) {
-                            if (ndiff == 127)
-                                break;
-                            if ((cbf[k+0] == pbf[k+0]) &&
-                              (cbf[k+1] == pbf[k+1]) &&
-                              (cbf[k+2] == pbf[k+2]))
-                                break;
-                            if ((cbf[k+1] == cbf[k+0]) &&
-                              (cbf[k+2] == cbf[k+0]) &&
-                              (cbf[k+3] == cbf[k+0]))
-                                break;
-                            w--;
-                            k++;
-                            ndiff++;
+                        // If not in delta mode, store pixels again if it decreases encoded size
+                        if ((p_anim->Flags & AniFlg_ALL_DELTA) == 0)
+                        {
+                            while (w != 0) {
+                                if (ndiff == 127)
+                                    break;
+                                if ((cbf[k+0] == pbf[k+0]) &&
+                                  (cbf[k+1] == pbf[k+1]) &&
+                                  (cbf[k+2] == pbf[k+2]))
+                                    break;
+                                if ((cbf[k+1] == cbf[k+0]) &&
+                                  (cbf[k+2] == cbf[k+0]) &&
+                                  (cbf[k+3] == cbf[k+0]))
+                                    break;
+                                w--;
+                                k++;
+                                ndiff++;
+                            }
+                        }
+                        else // Delta only mode - never store unchanged pixels
+                        {
+                            while (w != 0) {
+                                if (ndiff == 127)
+                                    break;
+                                if (cbf[k+0] == pbf[k+0])
+                                    break;
+                                if ((cbf[k+1] == cbf[k+0]) &&
+                                  (cbf[k+2] == cbf[k+0]) &&
+                                  (cbf[k+3] == cbf[k+0]))
+                                    break;
+                                w--;
+                                k++;
+                                ndiff++;
+                            }
                         }
                     }
                     if (ndiff != 0) {
@@ -539,18 +601,23 @@ u32 anim_make_FLI_LC(struct Animation *p_anim)
                         p_anim->ChunkBuf += ndiff;
                         cbf += ndiff;
                         pbf += ndiff;
-                        (*(ubyte *)outptr)++;
+                        (*(ubyte *)npcktptr)++;
                     }
                 }
             }
             cbuf += p_anim->Scanline;
             pbuf += p_anim->Scanline;
         }
-    } else {
+    }
+    else // All lines were identical - empty frame
+    {
+        // Store amount of empty lines to skip
         *(short *)p_anim->ChunkBuf = 0;
         p_anim->ChunkBuf += 2;
+        // Store amount of following encoded lines
         *(short *)p_anim->ChunkBuf = 1;
         p_anim->ChunkBuf += 2;
+        // Store amount of encoded packets within line
         *(sbyte *)p_anim->ChunkBuf = 0;
         p_anim->ChunkBuf++;
     }
