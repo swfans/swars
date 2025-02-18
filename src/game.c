@@ -2489,7 +2489,7 @@ void set_default_game_keys(void)
     kbkeys[GKey_UP] = KC_UP;
     kbkeys[GKey_DOWN] = KC_DOWN;
     kbkeys[GKey_GOTO_POINT] = KC_RCONTROL;
-    kbkeys[GKey_GROUP] = 86;
+    kbkeys[GKey_GROUP] = KC_OEM_102;
     kbkeys[GKey_LEFT] = KC_LEFT;
     kbkeys[GKey_ZOOM_OUT] = KC_HOME;
     kbkeys[GKey_SELF_DESTRUCT] = KC_D;

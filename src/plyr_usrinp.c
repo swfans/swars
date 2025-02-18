@@ -109,6 +109,7 @@ void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usri
         lbKeyOn[kbkeys[GKey_GOTO_POINT]] = 0;
         p_usrinp->Bits |= SpUIn_GotoPoint;
     }
+    // TODO remove hard-coded BACKSLASH and make sure GKey_GROUP works for all keyboard layouts
     if (lbKeyOn[KC_BACKSLASH] || lbKeyOn[kbkeys[GKey_GROUP]]) {
         if (lbKeyOn[KC_BACKSLASH])
             lbKeyOn[KC_BACKSLASH] = 0;
@@ -268,6 +269,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
         } else {
             loc_build_packet(p_pckt, PAct_PROTECT_INC, dcthing, 0, 0, 0);
         }
+        return;
     }
 
     if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
