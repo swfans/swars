@@ -594,7 +594,7 @@ void init_weapon_anim(ubyte weapon)
     {
         k = anim_slots[anislot];
         p_anim = &animations[k];
-        anim_flic_set_fname(p_anim, "%s/wep-%02d%s.fli", pinfo->directory, (int)weapon, campgn_mark);
+        anim_flic_set_fname(p_anim, "%s/wep-%02d.fli", pinfo->directory, (int)weapon);
     }
     flic_unkn03(anislot);
 }
