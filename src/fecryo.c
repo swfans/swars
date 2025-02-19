@@ -837,11 +837,37 @@ TbBool input_display_box_content_mod(struct ScreenTextBox *p_box)
     return false;
 }
 
+const char *cryo_cybmod_list_item_name_text(ushort mtype)
+{
+    ubyte modgrp;
+    ushort mdstr_id;
+
+    modgrp = cybmod_group_type(mtype);
+    mdstr_id = 70 + byte_1551F4[modgrp];
+    return gui_strings[mdstr_id];
+}
+
+const char *cryo_cybmod_list_item_level_text(ushort mtype)
+{
+    char *text;
+    ubyte modlv;
+    ushort lvstr_id;
+
+    modlv = cybmod_version(mtype);
+
+    if (cybmod_group_type(mtype) != MODGRP_EPIDERM)
+        lvstr_id = 76;
+    else
+        lvstr_id = 75;
+    sprintf(byte_1C495C, "%s %d", gui_strings[lvstr_id], modlv);
+    text = (char *)back_buffer + text_buf_pos;
+    text_buf_pos += strlen(byte_1C495C) + 1;
+    strcpy(text, byte_1C495C);
+    return text;
+}
+
 ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 {
-    ubyte modstrings[5];
-
-    memcpy(modstrings, byte_1551F4, 5);
     struct ScreenBoxBase power_box = {box->X + 8, box->Y + 152, 192, 17};
     struct ScreenBoxBase resil_box = {box->X + 8, box->Y + 177, 192, 17};
     struct ScreenBoxBase addit_box = {box->X + 8, box->Y + 200, 192, 19};
@@ -889,9 +915,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                 return 0;
             if (cybmod_available_for_purchase(mtype))
             {
-                  char *text;
-                  ubyte modgrp, modlv;
-                  ushort mdstr_id, lvstr_id;
+                  const char *text;
 
                   if (mouse_down_over_box_coords(text_window_x1, cy + text_window_y1 - 1,
                     text_window_x2, cy + text_window_y1 + 1 + text_h))
@@ -908,23 +932,15 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                   } else {
                       lbDisplay.DrawFlags = 0;
                   }
+
+                  text = cryo_cybmod_list_item_name_text(mtype);
                   lbDisplay.DrawFlags |= 0x8000;
-                  modgrp = cybmod_group_type(mtype);
-                  modlv = cybmod_version(mtype);
-                  mdstr_id = 70 + modstrings[modgrp];
-                  draw_text_purple_list2(3, cy + 1, gui_strings[mdstr_id], 0);
+                  draw_text_purple_list2(3, cy + 1, text, 0);
                   lbDisplay.DrawFlags &= ~(0x8000|Lb_TEXT_HALIGN_RIGHT);
 
+                  text = cryo_cybmod_list_item_level_text(mtype);
                   lbDisplay.DrawFlags |= Lb_TEXT_HALIGN_RIGHT;
-                  if (cybmod_group_type(mtype) != MODGRP_EPIDERM)
-                      lvstr_id = 76;
-                  else
-                      lvstr_id = 75;
-                  sprintf(byte_1C495C, "%s %d", gui_strings[lvstr_id], modlv);
-                  text = (char *)back_buffer + text_buf_pos;
-                  strcpy(text, byte_1C495C);
                   draw_text_purple_list2(-1, cy + 1, text, 0);
-                  text_buf_pos += strlen(byte_1C495C) + 1;
                   lbDisplay.DrawFlags = 0;
 
                   cy += text_h + box->LineSpacing;
