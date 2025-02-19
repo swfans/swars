@@ -113,6 +113,7 @@ TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon);
 TbBool player_cryo_remove_weapon_one(ushort cryo_no, ubyte weapon);
 TbBool player_cryo_transfer_weapon_between_agents(ushort from_cryo_no,
   ushort to_cryo_no, ubyte weapon);
+TbBool player_cryo_add_cybmod(ushort cryo_no, ubyte cybmod);
 const char *get_cryo_agent_name(ushort cryo_no);
 void remove_agent(ubyte cryo_no);
 void add_agent(ulong weapons, ushort mods);

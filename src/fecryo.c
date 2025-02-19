@@ -175,20 +175,11 @@ ubyte do_equip_offer_buy_cybmod(ubyte click)
         nagent = selected_agent;
 
         if (ingame.Credits - cost < 0)
-            return 0;
-
-        if (!check_mod_allowed_to_flags(&cryo_agents.Mods[nagent], selected_mod + 1)) {
             added = false;
-        } else {
-            add_mod_to_flags(&cryo_agents.Mods[nagent], selected_mod + 1);
-            added = true;
-        }
+        else
+            added = player_cryo_add_cybmod(nagent, selected_mod + 1);
 
         if (added) {
-            PlayerInfo *p_player;
-            p_player = &players[local_player_no];
-            add_mod_to_flags(&p_player->Mods[nagent], selected_mod + 1);
-
             mod_draw_update_on_change(selected_mod + 1);
         }
 
@@ -211,18 +202,9 @@ ubyte do_equip_offer_buy_cybmod(ubyte click)
             if (ingame.Credits - cost < 0)
                 break;
 
-            if (!check_mod_allowed_to_flags(&cryo_agents.Mods[nagent], selected_mod + 1)) {
-                added = false;
-            } else {
-                add_mod_to_flags(&cryo_agents.Mods[nagent], selected_mod + 1);
-                added = true;
-            }
+            added = player_cryo_add_cybmod(nagent, selected_mod + 1);
 
             if (added) {
-                PlayerInfo *p_player;
-                p_player = &players[local_player_no];
-                add_mod_to_flags(&p_player->Mods[nagent], selected_mod + 1);
-
                 mod_draw_update_on_change(selected_mod + 1);
             }
 
@@ -234,16 +216,19 @@ ubyte do_equip_offer_buy_cybmod(ubyte click)
         }
     }
 
-    if ((login_control__State == 5) && ((unkn_flags_08 & 0x08) != 0)) {
-        net_players_copy_cryo();
+    if (nbought > 0)
+    {
+        if ((login_control__State == 5) && ((unkn_flags_08 & 0x08) != 0)) {
+            net_players_copy_cryo();
+        }
+        selected_mod = -1;
+        cybmod_name_text[0] = 0;
+        cryo_cybmod_list_box.Text = 0;
+        cryo_cybmod_list_box.Flags |= 0x0080;
+        // Re-add scroll bars
+        cryo_cybmod_list_box.Flags |= GBxFlg_RadioBtn;
+        refresh_equip_list = 1;
     }
-    selected_mod = -1;
-    cybmod_name_text[0] = 0;
-    cryo_cybmod_list_box.Text = 0;
-    cryo_cybmod_list_box.Flags |= 0x0080;
-    // Re-add scroll bars
-    cryo_cybmod_list_box.Flags |= GBxFlg_RadioBtn;
-    refresh_equip_list = 1;
 
     return (nbought > 0);
 }

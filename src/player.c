@@ -241,6 +241,23 @@ TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon)
     return added;
 }
 
+TbBool player_cryo_add_cybmod(ushort cryo_no, ubyte cybmod)
+{
+    if (!check_mod_allowed_to_flags(&cryo_agents.Mods[cryo_no], cybmod))
+        return false;
+
+    add_mod_to_flags(&cryo_agents.Mods[cryo_no], cybmod);
+
+    if (cryo_no < 4) {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+
+        add_mod_to_flags(&p_locplayer->Mods[cryo_no], cybmod);
+    }
+
+    return true;
+}
+
 TbBool player_cryo_remove_weapon_one(ushort cryo_no, ubyte weapon)
 {
     TbBool rmved;

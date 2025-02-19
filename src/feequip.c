@@ -154,9 +154,11 @@ ubyte do_equip_offer_buy_weapon(ubyte click)
         }
     }
 
-    if ((login_control__State == 5 && (unkn_flags_08 & 0x08) != 0) && (nbought > 0))
+    if (nbought > 0)
     {
-        net_players_copy_equip_and_cryo();
+        if ((login_control__State == 5 && (unkn_flags_08 & 0x08) != 0)) {
+            net_players_copy_equip_and_cryo();
+        }
     }
     return (nbought > 0);
 }
