@@ -6993,6 +6993,27 @@ void mouse_sprite_animate(void)
     }
 }
 
+void net_players_copy_cryo(void)
+{
+    network_players[local_player_no].Type = 14;
+}
+
+void net_players_copy_equip_and_cryo(void)
+{
+    network_players[local_player_no].Type = 14;
+    net_unkn_func_33();
+    network_players[local_player_no].Type = 15;
+    gameturn++;
+}
+
+void net_players_copy_equip_and_cryo_now(void)
+{
+    network_players[local_player_no].Type = 14;
+    net_unkn_func_33();
+    network_players[local_player_no].Type = 15;
+    net_unkn_func_33();
+}
+
 void show_menu_screen(void)
 {
     switch (data_1c498d)
@@ -7127,10 +7148,7 @@ void show_menu_screen(void)
         local_player_no = LbNetworkPlayerNumber();
         net_players_num = LbNetworkSessionNumberPlayers();
         switch_net_screen_boxes_to_initiate();
-        network_players[local_player_no].Type = 14;
-        net_unkn_func_33();
-        network_players[local_player_no].Type = 15;
-        net_unkn_func_33();
+        net_players_copy_equip_and_cryo_now();
         init_net_players();
     }
     if (data_1c498f && lbDisplay.LeftButton)

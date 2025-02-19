@@ -405,6 +405,56 @@ ubyte cybmod_level(union Mod *p_umod, ubyte mgroup)
     return lv;
 }
 
+TbBool check_mod_allowed_to_flags(union Mod *p_umod, ushort mtype)
+{
+    ushort mgroup;
+
+    mgroup = cybmod_group_type(mtype);
+
+    switch (mgroup)
+    {
+    case MODGRP_LEGS:
+        if (cybmod_legs_level(p_umod) == cybmod_version(mtype))
+            return false;
+        if (cybmod_version(mtype) - (int)cybmod_chest_level(p_umod) > 1)
+            return false;
+        if (cybmod_chest_level(p_umod) < 1)
+            return false;
+        break;
+    case MODGRP_ARMS:
+        if (cybmod_arms_level(p_umod) == cybmod_version(mtype))
+            return false;
+        if (cybmod_version(mtype) - (int)cybmod_chest_level(p_umod) > 1)
+            return false;
+        if (cybmod_chest_level(p_umod) < 1)
+            return false;
+        break;
+    case MODGRP_CHEST:
+        if (cybmod_chest_level(p_umod) == cybmod_version(mtype))
+            return false;
+        if (cybmod_legs_level(p_umod) - (int)cybmod_version(mtype) > 1)
+            return false;
+        if (cybmod_arms_level(p_umod) - (int)cybmod_version(mtype) > 1)
+            return false;
+        if (cybmod_brain_level(p_umod) - (int)cybmod_version(mtype) > 1)
+            return false;
+        break;
+    case MODGRP_BRAIN:
+        if (cybmod_brain_level(p_umod) == cybmod_version(mtype))
+            return false;
+        if (cybmod_version(mtype) - (int)cybmod_chest_level(p_umod) > 1)
+            return false;
+        if (cybmod_chest_level(p_umod) < 1)
+            return false;
+        break;
+    case MODGRP_EPIDERM:
+        if (cybmod_skin_level(p_umod) == cybmod_version(mtype))
+            return false;
+        break;
+    }
+    return true;
+}
+
 void add_mod_to_flags(union Mod *p_umod, ushort mtype)
 {
     switch (cybmod_group_type(mtype))

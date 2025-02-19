@@ -131,6 +131,123 @@ ubyte do_cryo_offer_cancel(ubyte click)
     return 0;
 }
 
+TbBool mod_draw_update_on_change(ushort mtype)
+{
+    switch (cybmod_group_type(mtype))
+    {
+    case MODGRP_LEGS:
+        mod_draw_states[3] |= 0x08;
+        update_flic_mods(flic_mods);
+        break;
+    case MODGRP_ARMS:
+        mod_draw_states[2] |= 0x08;
+        update_flic_mods(flic_mods);
+        break;
+    case MODGRP_CHEST:
+        mod_draw_states[0] |= 0x08;
+        update_flic_mods(flic_mods);
+        break;
+    case MODGRP_BRAIN:
+        mod_draw_states[1] |= 0x08;
+        update_flic_mods(flic_mods);
+        break;
+    default:
+        return false;
+    }
+    return true;
+}
+
+ubyte do_equip_offer_buy_cybmod(ubyte click)
+{
+    struct ModDef *mdef;
+    ubyte nbought;
+
+    mdef = &mod_defs[selected_mod + 1];
+    nbought = 0;
+
+    if (selected_agent != 4)
+    {
+        long cost;
+        short nagent;
+        TbBool added;
+
+        cost = 10 * mdef->Cost;
+        nagent = selected_agent;
+
+        if (ingame.Credits - cost < 0)
+            return 0;
+
+        if (!check_mod_allowed_to_flags(&cryo_agents.Mods[nagent], selected_mod + 1)) {
+            added = false;
+        } else {
+            add_mod_to_flags(&cryo_agents.Mods[nagent], selected_mod + 1);
+            added = true;
+        }
+
+        if (added) {
+            PlayerInfo *p_player;
+            p_player = &players[local_player_no];
+            add_mod_to_flags(&p_player->Mods[nagent], selected_mod + 1);
+
+            mod_draw_update_on_change(selected_mod + 1);
+        }
+
+        if (added) {
+            ingame.Expenditure += cost;
+            ingame.Credits -= cost;
+            nbought++;
+        }
+    }
+    else
+    {
+        long cost;
+        short nagent;
+        TbBool added;
+
+        cost = 10 * mdef->Cost;
+
+        for (nagent = 0; nagent < 4; nagent++)
+        {
+            if (ingame.Credits - cost < 0)
+                break;
+
+            if (!check_mod_allowed_to_flags(&cryo_agents.Mods[nagent], selected_mod + 1)) {
+                added = false;
+            } else {
+                add_mod_to_flags(&cryo_agents.Mods[nagent], selected_mod + 1);
+                added = true;
+            }
+
+            if (added) {
+                PlayerInfo *p_player;
+                p_player = &players[local_player_no];
+                add_mod_to_flags(&p_player->Mods[nagent], selected_mod + 1);
+
+                mod_draw_update_on_change(selected_mod + 1);
+            }
+
+            if (added) {
+                ingame.Credits -= cost;
+                ingame.Expenditure += cost;
+                nbought++;
+            }
+        }
+    }
+
+    if ((login_control__State == 5) && ((unkn_flags_08 & 0x08) != 0)) {
+        net_players_copy_cryo();
+    }
+    selected_mod = -1;
+    cybmod_name_text[0] = 0;
+    cryo_cybmod_list_box.Text = 0;
+    cryo_cybmod_list_box.Flags |= 0x0080;
+    // Re-add scroll bars
+    cryo_cybmod_list_box.Flags |= GBxFlg_RadioBtn;
+    refresh_equip_list = 1;
+
+    return (nbought > 0);
+}
+
 #define PURPLE_MOD_AREA_WIDTH 139
 #define PURPLE_MOD_AREA_HEIGHT 295
 

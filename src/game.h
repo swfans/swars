@@ -541,6 +541,10 @@ ubyte process_send_person(ushort player, int i);
 
 ubyte *anim_type_get_output_buffer(ubyte anislot);
 
+void net_unkn_func_33(void);
+void net_players_copy_equip_and_cryo(void);
+void net_players_copy_cryo(void);
+
 #ifdef __cplusplus
 };
 #endif

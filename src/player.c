@@ -231,7 +231,7 @@ TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon)
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];
 #if 0
-        // TODO re-ebable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
+        // TODO re-enable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
         weapons_add_one(&p_locplayer->Weapons[cryo_no], &p_player->FourPacks[cryo_no], weapon);
 #else
         // Copying all weapons will work as well
@@ -253,7 +253,7 @@ TbBool player_cryo_remove_weapon_one(ushort cryo_no, ubyte weapon)
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];
 #if 0
-        // TODO re-ebable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
+        // TODO re-enable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
         weapons_remove_one(&p_locplayer->Weapons[cryo_no], &p_player->FourPacks[cryo_no], weapon);
 #else
         // Copying all weapons will work as well

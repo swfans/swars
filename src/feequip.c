@@ -27,6 +27,7 @@
 #include "bflib_joyst.h"
 
 #include "femain.h"
+#include "game_speed.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -36,6 +37,7 @@
 #include "game_data.h"
 #include "game.h"
 #include "keyboard.h"
+#include "network.h"
 #include "player.h"
 #include "purpldrw.h"
 #include "purpldrwlst.h"
@@ -94,12 +96,104 @@ ubyte ac_select_all_agents(ubyte click);
 void ac_weapon_flic_data_to_screen(void);
 ubyte ac_do_equip_all_agents_set(ubyte click);
 
+ubyte do_equip_offer_buy_cybmod(ubyte click);
+
+ubyte do_equip_offer_buy_weapon(ubyte click)
+{
+    struct WeaponDef *wdef;
+        short nagent;
+    ubyte nbought;
+
+    wdef = &weapon_defs[selected_weapon + 1];
+    nbought = 0;
+
+    if (selected_agent != 4)
+    {
+        long cost;
+        TbBool added;
+
+        cost = 100 * wdef->Cost;
+        nagent = selected_agent;
+
+        if (ingame.Credits - cost < 0)
+            added = false;
+        else if (!free_slot(nagent, selected_weapon))
+            added = false;
+        else
+            added = player_cryo_add_weapon_one(nagent, selected_weapon + 1);
+
+        if (added) {
+            ingame.Credits -= cost;
+            ingame.Expenditure += cost;
+            nbought++;
+        }
+    }
+    else
+    {
+        long cost;
+        short nagent;
+        TbBool added;
+
+        cost = 100 * wdef->Cost;
+
+        for (nagent = 0; nagent < 4; nagent++)
+        {
+            if (ingame.Credits - cost < 0)
+                break;
+
+            if (!free_slot(nagent, selected_weapon))
+                added = false;
+            else
+                added = player_cryo_add_weapon_one(nagent, selected_weapon + 1);
+
+            if (added) {
+                ingame.Credits -= cost;
+                ingame.Expenditure += cost;
+                nbought++;
+            }
+        }
+    }
+
+    if ((login_control__State == 5 && (unkn_flags_08 & 0x08) != 0) && (nbought > 0))
+    {
+        net_players_copy_equip_and_cryo();
+    }
+    return (nbought > 0);
+}
+
 ubyte do_equip_offer_buy(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_equip_offer_buy\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    ubyte done;
+
+    if (selected_agent == -1) {
+        return 0;
+    }
+
+    if ((login_control__State == 5) && ((unkn_flags_08 & 0x08) != 0))
+    {
+        if ((login_control__State != 6) && (LbNetworkPlayerNumber() != net_host_player_no))
+            return 0;
+    }
+
+    switch (screentype)
+    {
+    case SCRT_EQUIP:
+        done = do_equip_offer_buy_weapon(click);
+        break;
+    case SCRT_CRYO:
+        done = do_equip_offer_buy_cybmod(click);
+        break;
+    default:
+        done = 0;
+        break;
+    }
+    return done;
 }
 
 ubyte sell_equipment(ubyte click)

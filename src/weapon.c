@@ -717,6 +717,41 @@ TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, us
     return true;
 }
 
+/** Add one weapon to player-controlled person in-game.
+ * Player struct contains dumb own array rather than uniform WeaponsFourPack, so it requires
+ * this special function. To be removed when possible.
+ */
+TbBool weapons_add_one_for_player(ulong *p_weapons,
+  ubyte p_plfourpacks[][4], ushort plagent, ushort wtype)
+{
+    ushort fp;
+    TbBool is_first;
+
+    if (number_of_set_bits(*p_weapons) >= WEAPONS_CARRIED_MAX_COUNT)
+        return false;
+
+    is_first = ((*p_weapons & (1 << (wtype-1))) == 0);
+
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        if ((!is_first) && (p_plfourpacks[fp][plagent] > 3))
+            return false;
+
+        if (is_first)
+            p_plfourpacks[fp][plagent] = 1;
+        else
+            p_plfourpacks[fp][plagent]++;
+    } else {
+        if (!is_first)
+            return false;
+    }
+
+    if (is_first)
+        *p_weapons |= (1 << (wtype-1));
+
+    return true;
+}
+
 void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks)
 {
     ushort wtype;
