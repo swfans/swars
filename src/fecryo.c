@@ -770,6 +770,7 @@ void draw_display_box_content_mod(struct ScreenTextBox *p_box)
         break;
     case DiBoxCt_ANIM:
         if (p_box->TextFadePos < 0)
+            // Mark that we should start animation frames the next time
             p_box->TextFadePos = 0;
         else
             xdo_next_frame(AniSl_EQVIEW);
@@ -806,10 +807,10 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
     if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        draw_box_purple_list(text_window_x1, text_window_y1,
-          text_window_x2 - text_window_x1 + 1, text_window_y2 - text_window_y1 + 1, 56);
+        // Highlight behind both power_box and resil_box
         draw_box_purple_list(box->X + 4, box->Y + 149, box->Width - 8, 48, 56);
-        draw_box_purple_list(box->X + 4, box->Y + 210, box->Width - 8, 13, 56);
+        // Highlight in bottom part of additiional info box
+        draw_box_purple_list(addit_box.X - 4, addit_box.Y + 10, addit_box.Width + 8, addit_box.Height - 10 + 4, 56);
 
         draw_discrete_rects_bar_bk(&power_box, gui_strings[432], byte_155174);
         draw_discrete_rects_bar_bk(&resil_box, gui_strings[433], byte_155180);
@@ -832,6 +833,11 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
         ushort mtype;
         short text_h;
         short cy;
+
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        // Highlight behind the main list
+        draw_box_purple_list(text_window_x1, text_window_y1,
+          text_window_x2 - text_window_x1 + 1, text_window_y2 - text_window_y1 + 1, 56);
 
         cy = 3;
         text_h = font_height('A');

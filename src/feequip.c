@@ -878,6 +878,7 @@ void draw_display_box_content_wep(struct ScreenTextBox *p_box)
         break;
     case DiBoxCt_ANIM:
         if (p_box->TextFadePos < 0)
+            // Mark that we should start animation frames the next time
             p_box->TextFadePos = 0;
         else
             xdo_next_frame(AniSl_EQVIEW);
