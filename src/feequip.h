@@ -46,6 +46,7 @@ ubyte show_equipment_screen(void);
 
 ubyte flashy_draw_draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate);
 void draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate);
+void equip_update_for_selected_weapon(void);
 
 void draw_text_property_bk(struct ScreenBoxBase *box, const char *text);
 void draw_text_property_lv(struct ScreenBoxBase *box, const char *text);

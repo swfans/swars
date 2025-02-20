@@ -240,7 +240,7 @@ void build_building(struct Thing *p_thing)
 {
     struct SingleObject *p_sobj;
 
-    if ((ingame.DisplayMode == DpM_UNKN_32) && (lbKeyOn[KC_B]))
+    if ((ingame.DisplayMode == DpM_ENGINEPLY) && (lbKeyOn[KC_B]))
         return;
     if (gameturn == p_thing->U.UObject.DrawTurn)
         return;

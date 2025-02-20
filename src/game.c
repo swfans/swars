@@ -362,7 +362,7 @@ void load_prim_quad(void)
     read_primveh_obj(primvehobj_fname, 1);
     read_textwalk();
     byte_19EC6F = 1;
-    ingame.DisplayMode = DpM_UNKN_37;
+    ingame.DisplayMode = DpM_PURPLEMNU;
     if (cmdln_param_bcg == 99)
         test_open(99);
     if (cmdln_param_bcg == 100)
@@ -2182,7 +2182,7 @@ void game_graphics_inputs(void)
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
-    if ((ingame.DisplayMode != DpM_UNKN_32) &&
+    if ((ingame.DisplayMode != DpM_ENGINEPLY) &&
         (ingame.DisplayMode != DpM_UNKN_3B))
         return;
     if (in_network_game && p_locplayer->PanelState[mouser] != 17)
@@ -3541,7 +3541,7 @@ void init_game(ubyte reload)
     init_player();
     debug_trace_setup(4);
     execute_commands = 1;
-    ingame.DisplayMode = DpM_UNKN_32;
+    ingame.DisplayMode = DpM_ENGINEPLY;
     debug_trace_setup(5);
 }
 
@@ -3780,7 +3780,7 @@ void game_setup(void)
         prep_single_mission();
     }
     if (in_network_game || cmdln_param_bcg)
-      ingame.DisplayMode = DpM_UNKN_37;
+      ingame.DisplayMode = DpM_PURPLEMNU;
     debug_trace_setup(2);
     switch (cmdln_colour_tables)
     {
@@ -5169,7 +5169,7 @@ void mission_over(void)
 {
     ubyte misend;
 
-    ingame.DisplayMode = DpM_UNKN_37;
+    ingame.DisplayMode = DpM_PURPLEMNU;
     LbMouseChangeSprite(0);
     StopCD();
     StopAllSamples();
@@ -5431,13 +5431,13 @@ void reload_background(void)
         }
     }
 
-    if (screentype == SCRT_EQUIP && selected_weapon != -1)
+    if (screentype == SCRT_EQUIP)
     {
-        init_weapon_anim(selected_weapon + 1 - 1);
+        equip_update_for_selected_weapon();
     }
-    if (screentype == SCRT_CRYO && selected_mod != -1)
+    if (screentype == SCRT_CRYO)
     {
-        init_weapon_anim(selected_mod + 32);
+        cryo_update_for_selected_cybmod();
     }
 }
 
@@ -7363,10 +7363,10 @@ void draw_game(void)
     case DpM_UNKN_1:
         // No action
         break;
-    case DpM_UNKN_32:
+    case DpM_ENGINEPLY:
         show_game_screen();
         break;
-    case DpM_UNKN_37:
+    case DpM_PURPLEMNU:
         show_menu_screen();
         break;
     case DpM_UNKN_3A:
@@ -7571,7 +7571,7 @@ void load_packet(void)
     }
 
     did_actn = 0;
-    if (ingame.DisplayMode == DpM_UNKN_32 || ingame.DisplayMode == DpM_UNKN_3B)
+    if (ingame.DisplayMode == DpM_ENGINEPLY || ingame.DisplayMode == DpM_UNKN_3B)
     {
         did_actn = do_user_interface();
         input_mission_cheats();
@@ -7913,7 +7913,7 @@ void net_player_leave(PlayerIdx plyr)
     kill_my_players(plyr);
     if ((plyr == net_host_player_no) || (plyr == local_player_no) || (nsvc.I.Type != 1))
     {
-        ingame.DisplayMode = DpM_UNKN_37;
+        ingame.DisplayMode = DpM_PURPLEMNU;
         StopCD();
         StopAllSamples();
         SetMusicVolume(100, 0);
@@ -8369,7 +8369,7 @@ void game_process(void)
             navi2_unkn_counter_max = navi2_unkn_counter;
         if (keyboard_mode_direct)
             input_char = LbKeyboard();
-        if (ingame.DisplayMode == DpM_UNKN_37) {
+        if (ingame.DisplayMode == DpM_PURPLEMNU) {
             LOGDBG("id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
         }
         input();
@@ -8381,17 +8381,17 @@ void game_process(void)
           ((ingame.Flags & GamF_ThermalView) != 0) )
             LbPaletteSet(display_palette);
         active_flags_general_unkn01 = ingame.Flags;
-        if ((ingame.DisplayMode == DpM_UNKN_32)
+        if ((ingame.DisplayMode == DpM_ENGINEPLY)
           || (ingame.DisplayMode == DpM_UNKN_1)
           || (ingame.DisplayMode == DpM_UNKN_3B))
             process_things();
         if (debug_hud_things)
             things_debug_hud();
-        if (ingame.DisplayMode != DpM_UNKN_37)
+        if (ingame.DisplayMode != DpM_PURPLEMNU)
             process_packets();
         joy_input();
 
-        if (ingame.DisplayMode == DpM_UNKN_37)
+        if (ingame.DisplayMode == DpM_PURPLEMNU)
         {
             game_update();
             swap_wscreen();

@@ -822,8 +822,8 @@ void draw_display_box_content_mod(struct ScreenTextBox *p_box)
 
 TbBool input_display_box_content_mod(struct ScreenTextBox *p_box)
 {
-    if (mouse_down_over_box_coords(p_box->X + 4,
-      p_box->Y + 4, p_box->X + p_box->Width - 4, p_box->Y + 4 + 140))
+    if (mouse_down_over_box_coords(p_box->X + 4, p_box->Y + 4,
+      p_box->X + p_box->Width - 4, p_box->Y + 4 + 140))
     {
         if (lbDisplay.LeftButton)
         {

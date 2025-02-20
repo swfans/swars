@@ -356,7 +356,7 @@ void process_engine_unk2(void)
     int scr_x, scr_y;
     int map_dxc, map_dzc;
 
-    if (ingame.DisplayMode == DpM_UNKN_32)
+    if (ingame.DisplayMode == DpM_ENGINEPLY)
       offs_y = overall_scale * engn_yc >> 8;
     else
       offs_y = 0;
@@ -378,7 +378,7 @@ void process_engine_unk2(void)
 
     mouse_map_x = engn_xc + map_dxc;
     mouse_map_z = engn_zc + map_dzc;
-    if (ingame.DisplayMode == DpM_UNKN_32)
+    if (ingame.DisplayMode == DpM_ENGINEPLY)
         calc_mouse_pos();
     setup_engine_nullsub4();
 }

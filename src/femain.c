@@ -610,8 +610,9 @@ static void global_credits_box_draw(void)
     lbDisplay.DrawFlags = 0;
     draw_text_purple_list2(tx, 3, text, 0);
 
+    text = misc_text[1];
     lbFontPtr = small_font;
-    draw_text_purple_list2(111, 5, misc_text[1], 0);
+    draw_text_purple_list2(111, 5, text, 0);
 }
 
 static void global_citydrop_box_draw(void)
