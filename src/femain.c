@@ -81,6 +81,7 @@ extern ubyte byte_1C4980;
 extern ubyte byte_1C4984[];
 extern short word_1C498A;
 extern ubyte byte_1C498C;
+extern ubyte enter_game;
 
 extern short word_1C6F3E;
 extern short word_1C6F40;
@@ -285,10 +286,14 @@ void show_sysmenu_screen(void)
 
 ubyte do_sysmnu_button(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_sysmnu_button\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    enter_game = 1;
+    return 1;
 }
 
 void init_system_menu_boxes(void)

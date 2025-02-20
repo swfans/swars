@@ -55,9 +55,9 @@ void queue_up_new_mail(ubyte emtype, short missi)
     newmail_store[i].RecvMonth = global_date.Month;
     newmail_store[i].RecvYear = global_date.Year;
     if (emtype != 1)
-        newmail_store[i].Flag = 2;
+        newmail_store[i].Flag = 0x02;
     else
-        newmail_store[i].Flag = 1;
+        newmail_store[i].Flag = 0x01;
     new_mail++;
 }
 

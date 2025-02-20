@@ -177,7 +177,7 @@ void equip_display_box_redraw(struct ScreenTextBox *p_box)
 
         init_weapon_anim(selected_weapon + 1 - 1);
         // Negative value saves the background before starting animation
-        p_box->TextFadePos = -1;
+        p_box->TextFadePos = -2;
         break;
     }
 }
@@ -897,7 +897,7 @@ void draw_display_box_content_wep(struct ScreenTextBox *p_box)
     case DiBoxCt_ANIM:
         if (p_box->TextFadePos < 0)
             // Mark that we should start animation frames the next time
-            p_box->TextFadePos = 0;
+            p_box->TextFadePos++;
         else
             xdo_next_frame(AniSl_EQVIEW);
         draw_flic_purple_list(ac_weapon_flic_data_to_screen);
