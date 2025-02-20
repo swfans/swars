@@ -60,7 +60,6 @@ extern ubyte byte_155180; // = 109;
 extern ubyte byte_155181[];
 extern ubyte byte_1551F4[5];
 extern ubyte cheat_research_cybmods;
-extern char byte_1C495C[20];
 extern ubyte byte_1C4978;
 extern ubyte byte_1C4979;
 
@@ -837,7 +836,9 @@ TbBool input_display_box_content_mod(struct ScreenTextBox *p_box)
     return false;
 }
 
-const char *cryo_cybmod_list_item_name_text(ushort mtype)
+/** Get global text pointer to a mod group name string.
+ */
+static const char *cryo_gtext_cybmod_list_item_name(ushort mtype)
 {
     ubyte modgrp;
     ushort mdstr_id;
@@ -847,9 +848,12 @@ const char *cryo_cybmod_list_item_name_text(ushort mtype)
     return gui_strings[mdstr_id];
 }
 
-const char *cryo_cybmod_list_item_level_text(ushort mtype)
+/** Get global text pointer to a mod level string.
+ * @see loctext_to_gtext()
+ */
+static const char *cryo_gtext_cybmod_list_item_level(ushort mtype)
 {
-    char *text;
+    char locstr[48];
     ubyte modlv;
     ushort lvstr_id;
 
@@ -859,11 +863,8 @@ const char *cryo_cybmod_list_item_level_text(ushort mtype)
         lvstr_id = 76;
     else
         lvstr_id = 75;
-    sprintf(byte_1C495C, "%s %d", gui_strings[lvstr_id], modlv);
-    text = (char *)back_buffer + text_buf_pos;
-    text_buf_pos += strlen(byte_1C495C) + 1;
-    strcpy(text, byte_1C495C);
-    return text;
+    sprintf(locstr, "%s %d", gui_strings[lvstr_id], modlv);
+    return loctext_to_gtext(locstr);
 }
 
 ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
@@ -933,12 +934,12 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                       lbDisplay.DrawFlags = 0;
                   }
 
-                  text = cryo_cybmod_list_item_name_text(mtype);
+                  text = cryo_gtext_cybmod_list_item_name(mtype);
                   lbDisplay.DrawFlags |= 0x8000;
                   draw_text_purple_list2(3, cy + 1, text, 0);
                   lbDisplay.DrawFlags &= ~(0x8000|Lb_TEXT_HALIGN_RIGHT);
 
-                  text = cryo_cybmod_list_item_level_text(mtype);
+                  text = cryo_gtext_cybmod_list_item_level(mtype);
                   lbDisplay.DrawFlags |= Lb_TEXT_HALIGN_RIGHT;
                   draw_text_purple_list2(-1, cy + 1, text, 0);
                   lbDisplay.DrawFlags = 0;

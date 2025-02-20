@@ -61,6 +61,13 @@ void init_system_menu_boxes(void);
 void init_global_boxes(void);
 TbResult load_small_font_for_current_purple_mode(void);
 
+/** Converts any kind of text pointer to a global text pointer.
+ *
+ * Global text pointers are pointers within scratch buffers, valid for
+ * whole drawing the current frame. Such pointers can be used in drawlists.
+ */
+const char *loctext_to_gtext(const char *ltext);
+
 /** Re-enables a button from system menu, moving the following buttons down.
  */
 void sysmnu_button_enable(int btnno, int count);

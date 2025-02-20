@@ -449,6 +449,40 @@ void global_date_tick(void)
     }
 }
 
+const char *loctext_to_gtext(const char *ltext)
+{
+    char *gtext;
+    u32 len;
+
+    len = strlen(ltext) + 1;
+    gtext = (char *)back_buffer + text_buf_pos;
+    text_buf_pos += len;
+    LbMemoryCopy(gtext, ltext, len);
+
+    return gtext;
+}
+
+/** Get global text pointer to a current date string.
+ * @see loctext_to_gtext()
+ */
+static const char *main_gtext_current_date(void)
+{
+    char locstr[48];
+
+    // Draw current date
+    sprintf(locstr, "%02d:%02d:%02d", (int)global_date.Day,
+      (int)global_date.Month, (int)global_date.Year);
+
+    return loctext_to_gtext(locstr);
+}
+
+/** Get global text pointer to a current calendar string.
+ */
+static const char *main_gtext_current_calendar(void)
+{
+    return misc_text[3];
+}
+
 void global_date_inputs(void)
 {
     if ((ingame.UserFlags & UsrF_Cheats) != 0)
@@ -462,8 +496,7 @@ void global_date_inputs(void)
 
 static void global_date_box_draw(void)
 {
-    char *text;
-    char locstr[50];
+    const char *text;
     short cx, cy;
 
     cx = global_top_bar_box.X + 63;
@@ -475,27 +508,56 @@ static void global_date_box_draw(void)
     draw_box_purple_list(cx + 1, cy + 1, 79, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
-    // Draw current date
-    sprintf(locstr, "%02d:%02d:%02d", (int)global_date.Day,
-      (int)global_date.Month, (int)global_date.Year);
 
+    text = main_gtext_current_date();
     lbFontPtr = small_med_font;
     my_set_text_window(cx + 1, cy + 1, 79, global_top_bar_box.Height - 2);
-    text = (char *)back_buffer + text_buf_pos;
-    strcpy(text, locstr);
     draw_text_purple_list2(3, 3, text, 0);
 
+    text = main_gtext_current_calendar();
     lbFontPtr = small_font;
-    text_buf_pos += strlen(locstr) + 1;
-    draw_text_purple_list2(66, 5, misc_text[3], 0);
+    draw_text_purple_list2(66, 5, text, 0);
 
+}
+
+/** Get global text pointer to a current time string.
+ * @see loctext_to_gtext()
+ */
+static const char *main_gtext_current_time(void)
+{
+    char locstr[48];
+
+    // Draw current time
+    if (global_date.Hour == 0)
+        sprintf(locstr, "%02d:%02d", 12, (int)global_date.Minute);
+    else if (global_date.Hour > 12)
+        sprintf(locstr, "%02d:%02d", (int)global_date.Hour - 12, (int)global_date.Minute);
+    else
+        sprintf(locstr, "%02d:%02d", (int)global_date.Hour, (int)global_date.Minute);
+
+    return loctext_to_gtext(locstr);
+}
+
+/** Get global text pointer to a current time string.
+ * @see loctext_to_gtext()
+ */
+static const char *main_gtext_current_part_of_day(void)
+{
+    char locstr[48];
+    const char *subtext;
+
+    if (global_date.Hour >= 12)
+          subtext = "PM";
+    else
+          subtext = "AM";
+    sprintf(locstr, "%s", subtext);
+
+    return loctext_to_gtext(locstr);
 }
 
 static void global_time_box_draw(void)
 {
-    char *text;
-    const char *subtext;
-    char locstr[50];
+    const char *text;
     short cx, cy;
 
     cx = global_top_bar_box.X + 4;
@@ -507,40 +569,23 @@ static void global_time_box_draw(void)
     draw_box_purple_list(cx + 1, cy + 1, 57, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
-    // Draw current time
-    if (global_date.Hour == 0)
-        sprintf(locstr, "%02d:%02d", 12, (int)global_date.Minute);
-    else if (global_date.Hour > 12)
-        sprintf(locstr, "%02d:%02d", (int)global_date.Hour - 12, (int)global_date.Minute);
-    else
-        sprintf(locstr, "%02d:%02d", (int)global_date.Hour, (int)global_date.Minute);
-
+    text = main_gtext_current_time();
     lbFontPtr = small_med_font;
     my_set_text_window(cx + 1, cy + 1, 57, global_top_bar_box.Height - 2);
-    text = (char *)back_buffer + text_buf_pos;
-    strcpy(text, locstr);
     draw_text_purple_list2(3, 3, text, 0);
-    text_buf_pos += strlen(locstr) + 1;
 
-    if (global_date.Hour >= 12)
-          subtext = "PM";
-    else
-          subtext = "AM";
-    sprintf(locstr, "%s", subtext);
-
+    text = main_gtext_current_part_of_day();
     lbFontPtr = small_font;
-    text = (char *)back_buffer + text_buf_pos;
-    strcpy(text, locstr);
-    text_buf_pos += strlen(locstr) + 1;
     draw_text_purple_list2(43, 5, text, 0);
 }
 
 static void global_credits_box_draw(void)
 {
-    char *text;
+    const char *text;
+    char *lzstr;
     uint n;
     uint usedlen;
-    char locstr[50];
+    char locstr[48];
     short tx;
     short cx, cy;
 
@@ -552,40 +597,39 @@ static void global_credits_box_draw(void)
     lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
     draw_box_purple_list(cx + 1, cy + 1, 119, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
-
-    // Draw credits amount
-    lbFontPtr = small_med_font;
     my_set_text_window(cx + 1, cy + 1, 119, global_top_bar_box.Height - 2);
-    tx = 3;
 
+    // Divide locstr into two parts: store credits in first, leading zeros in second
     sprintf(locstr, "%ld", ingame.Credits);
 
-    // Leading zeros are half transparent
+    // Fill leading zeros; drawn separately as these are half transparent
     usedlen = strlen(locstr) + 1;
-    text = (char *)back_buffer + text_buf_pos;
+    lzstr = locstr + 24;
     for (n = 0; n < 12 - (usedlen - 1); n++) {
-        text[n] = '0';
+        lzstr[n] = '0';
     }
-    text[n] = '\0';
-    text_buf_pos += n + 1;
+    lzstr[n] = '\0';
 
+    // Draw leading zeros
+    text = loctext_to_gtext(lzstr);
+    lbFontPtr = small_med_font;
+    tx = 3;
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     draw_text_purple_list2(tx, 3, text, 0);
-    lbDisplay.DrawFlags = 0;
-    tx += LbTextStringWidth(text);
 
     // Now the actual credits amount
-    text = (char *)back_buffer + text_buf_pos;
-    strcpy(text, locstr);
+    tx += LbTextStringWidth(text);
+    text = loctext_to_gtext(locstr);
+    lbDisplay.DrawFlags = 0;
     draw_text_purple_list2(tx, 3, text, 0);
+
     lbFontPtr = small_font;
-    text_buf_pos += strlen(locstr) + 1;
     draw_text_purple_list2(111, 5, misc_text[1], 0);
 }
 
 static void global_citydrop_box_draw(void)
 {
-    char *text;
+    const char *text;
     uint n;
     const char *subtext;
     char locstr[50];
@@ -611,16 +655,14 @@ static void global_citydrop_box_draw(void)
         subtext = (char *)&memload[n];
     }
     sprintf(locstr, "%s: %s", gui_strings[446], subtext);
-    text = (char *)back_buffer + text_buf_pos;
-    strcpy(text, locstr);
-    text_buf_pos += strlen(locstr) + 1;
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(3, 3, text, 0);
 }
 
 static void global_techlevel_box_draw(void)
 {
-    char *text;
-    char locstr[50];
+    const char *text;
+    char locstr[48];
     short cx, cy;
 
     cx = global_top_bar_box.X + 352;
@@ -636,19 +678,12 @@ static void global_techlevel_box_draw(void)
     my_set_text_window(cx + 1, cy + 1, 154, global_top_bar_box.Height - 2);
 
     sprintf(locstr, "%s: %d", gui_strings[447], login_control__TechLevel);
-    text = (char *)back_buffer + text_buf_pos;
-    strcpy(text, locstr);
-    text_buf_pos += strlen(locstr) + 1;
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(3, 3, text, 0);
 }
 
 void show_date_time(void)
 {
-#if 0
-    asm volatile ("call ASM_show_date_time\n"
-        :  :  : "eax" );
-    return;
-#endif
     global_date_box_draw();
     global_time_box_draw();
 
@@ -951,8 +986,8 @@ TbBool get_purple_app_unread_email_icon_inputs(short cx, short cy)
 void draw_purple_app_email_icon(short cx, short cy, short bri)
 {
     struct TbSprite *spr;
-    char locstr[52];
-    char *text;
+    char locstr[48];
+    const char *text;
     short iconid;
     short tx;
 
@@ -992,27 +1027,22 @@ void draw_purple_app_email_icon(short cx, short cy, short bri)
 
     lbFontPtr = med2_font;
     sprintf(locstr, "%d", brief_store[bri].RefNum);
+    text = loctext_to_gtext(locstr);
     tx = (35 - LbTextStringWidth(locstr)) >> 1;
-    text = (char*) back_buffer + text_buf_pos;
-    strcpy(text, locstr);
-    text_buf_pos += strlen(locstr) + 1;
     draw_text_purple_list2(tx, 10, text, 0);
 
     lbFontPtr = small2_font;
     sprintf(locstr, "%02d/%02d", (int) brief_store[bri].RecvDay,
         (int) brief_store[bri].RecvMonth);
+    text = loctext_to_gtext(locstr);
     tx = (35 - LbTextStringWidth(locstr)) >> 1;
-    text = (char*) back_buffer + text_buf_pos;
-    strcpy(text, locstr);
     draw_text_purple_list2(tx, 23, text, 0);
-    text_buf_pos += strlen(locstr) + 1;
-    sprintf(locstr, "%02dNC", (int) brief_store[bri].RecvYear);
 
+    sprintf(locstr, "%02dNC", (int) brief_store[bri].RecvYear);
+    text = loctext_to_gtext(locstr);
     tx = (35 - LbTextStringWidth(locstr)) >> 1;
-    text = (char*) back_buffer + text_buf_pos;
-    strcpy(text, locstr);
-    text_buf_pos += strlen(locstr) + 1;
     draw_text_purple_list2(tx, 30, text, 0);
+
     draw_text_purple_list2(4, 37, gui_strings[375], 0);
     lbDisplay.DrawFlags = 0;
 }
