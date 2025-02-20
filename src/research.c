@@ -19,11 +19,12 @@
 #include "research.h"
 
 #include "bfutility.h"
+
 #include "weapon.h"
 #include "cybmod.h"
-#include "display.h"
 #include "feresearch.h"
 #include "game.h"
+#include "guitext.h"
 #include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -32,18 +33,18 @@ short scientists_per_group = 4;
 short weapon_donate_research_incr_permil = 125;
 short research_progress_rtc_minutes = 0;
 
-void load_scientist_lost_reason(ushort reason_no)
+void load_scientist_lost_reason(ushort reason_no, ubyte *scratch_buf)
 {
     int totlen;
     char *s;
     char c;
     ushort i;
 
-    totlen = load_file_alltext("lost.txt", back_buffer + text_buf_pos);
+    totlen = load_file_alltext("lost.txt", scratch_buf);
     if (totlen == -1) {
         return;
     }
-    s = (char *)(back_buffer + text_buf_pos);
+    s = (char *)scratch_buf;
     for (i = 0; i != reason_no; i++)
     {
         do

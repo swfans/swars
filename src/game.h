@@ -429,7 +429,6 @@ extern ubyte data_1c4990;
 extern ubyte data_1c4991;
 extern ubyte data_1c4aa2;
 extern ubyte start_into_mission;
-extern ulong text_buf_pos;
 extern ubyte edit_flag;
 extern ubyte change_screen;
 extern ubyte restore_savegame;

@@ -449,19 +449,6 @@ void global_date_tick(void)
     }
 }
 
-const char *loctext_to_gtext(const char *ltext)
-{
-    char *gtext;
-    u32 len;
-
-    len = strlen(ltext) + 1;
-    gtext = (char *)back_buffer + text_buf_pos;
-    text_buf_pos += len;
-    LbMemoryCopy(gtext, ltext, len);
-
-    return gtext;
-}
-
 /** Get global text pointer to a current date string.
  * @see loctext_to_gtext()
  */

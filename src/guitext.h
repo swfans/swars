@@ -35,8 +35,16 @@ extern "C" {
 extern char *gui_strings[STRINGS_MAX];
 extern char *gui_strings_data;
 extern char *gui_strings_data_end;
+extern ulong text_buf_pos;
 
 void snprint_dh_time_duration(char *out, ulong outlen, long ndays, short nhours);
+
+/** Converts any kind of text pointer to a global text pointer.
+ *
+ * Global text pointers are pointers within scratch buffers, valid for
+ * whole drawing the current frame. Such pointers can be used in drawlists.
+ */
+const char *loctext_to_gtext(const char *ltext);
 
 void read_strings_file(void);
 TbBool create_strings_list(char **strings, char *strings_data, char *strings_data_end);

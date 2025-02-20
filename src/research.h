@@ -58,7 +58,7 @@ extern short scientists_per_group;
 extern short weapon_donate_research_incr_permil;
 extern short research_progress_rtc_minutes;
 
-void load_scientist_lost_reason(ushort reason_no);
+void load_scientist_lost_reason(ushort reason_no, ubyte *scratch_buf);
 
 int research_daily_progress_for_type(ubyte rstype);
 int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_funding);

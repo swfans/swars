@@ -704,7 +704,7 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
         {
             ubyte cybmod_lv;
             char locstr[54];
-            char *text;
+            const char *text;
 
             cybmod_lv = cryo_blokey_mod_level(cdm);
 
@@ -717,18 +717,18 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
                 continue;
             }
 
+            text = gui_strings[70 + cdm];
             lbDisplay.DrawColour = 247;
-            draw_text_purple_list2(cx, cy, gui_strings[70 + cdm], 0);
+            draw_text_purple_list2(cx, cy, text, 0);
             cy += hline + 3;
+
             if (cdm == 3)
                 snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[75], cybmod_lv);
             else
                 snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[76], cybmod_lv);
-            text = (char *)back_buffer + text_buf_pos;
-            strcpy(text, locstr);
+            text = loctext_to_gtext(locstr);
             draw_text_purple_list2(cx, cy, text, 0);
             lbDisplay.DrawFlags = 0;
-            text_buf_pos += strlen(locstr) + 1;
             if (cdm == 3)
             {
                 lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;

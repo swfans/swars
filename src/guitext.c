@@ -21,6 +21,9 @@
 
 #include "bffile.h"
 #include "bfmemory.h"
+#include "bfmemut.h"
+
+#include "display.h"
 #include "swlog.h"
 /******************************************************************************/
 char *gui_strings_data;
@@ -42,6 +45,19 @@ void snprint_dh_time_duration(char *out, ulong outlen, long ndays, short nhours)
     }
 
     snprintf(out, outlen, "%ld %s %hd %s", ndays, gui_strings[days_strid], nhours, gui_strings[hours_strid]);
+}
+
+const char *loctext_to_gtext(const char *ltext)
+{
+    char *gtext;
+    u32 len;
+
+    len = strlen(ltext) + 1;
+    gtext = (char *)back_buffer + text_buf_pos;
+    text_buf_pos += len;
+    LbMemoryCopy(gtext, ltext, len);
+
+    return gtext;
 }
 
 /** Read file with all the language-specific texts.
