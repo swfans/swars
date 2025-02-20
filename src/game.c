@@ -273,6 +273,8 @@ char unk_credits_text_s[] = "";
 char unk_credits_text_z[] = "";
 char unk_credits_text_p[] = "";
 
+ubyte reload_menu_flag = false;
+
 void ac_purple_unkn1_data_to_screen(void);
 
 short arctan(int dx, int dz)
@@ -3779,8 +3781,10 @@ void game_setup(void)
     {
         prep_single_mission();
     }
-    if (in_network_game || cmdln_param_bcg)
-      ingame.DisplayMode = DpM_PURPLEMNU;
+    if (in_network_game || cmdln_param_bcg) {
+        ingame.DisplayMode = DpM_PURPLEMNU;
+        reload_menu_flag = true;
+    }
     debug_trace_setup(2);
     switch (cmdln_colour_tables)
     {
@@ -5170,6 +5174,8 @@ void mission_over(void)
     ubyte misend;
 
     ingame.DisplayMode = DpM_PURPLEMNU;
+    reload_menu_flag = true;
+
     LbMouseChangeSprite(0);
     StopCD();
     StopAllSamples();
@@ -7014,6 +7020,56 @@ void net_players_copy_equip_and_cryo_now(void)
     net_unkn_func_33();
 }
 
+void menu_screen_reload(void)
+{
+    load_small_font_for_current_purple_mode();
+    reload_background();
+}
+
+void menu_screen_redraw(void)
+{
+    mo_weapon = -1;
+    reload_background_flag = 1;
+    if (screentype == SCRT_WORLDMAP)
+    {
+        open_brief = old_mission_brief;
+        activate_cities(0);
+    }
+    else if (screentype == SCRT_MISSION)
+    {
+        activate_cities(open_brief);
+    }
+
+    reset_brief_screen_boxes_flags();
+    reset_heading_screen_boxes_flags();
+    reset_debrief_screen_boxes_flags();
+    reset_net_screen_boxes_flags();
+    reset_world_screen_boxes_flags();
+    reset_login_screen_boxes_flags();
+    reset_controls_screen_boxes_flags();
+    reset_storage_screen_boxes_flags();
+    reset_cryo_screen_boxes_flags();
+    reset_equip_screen_boxes_flags();
+    reset_research_screen_boxes_flags();
+    reset_system_menu_boxes_flags();
+
+    reset_options_screen_boxes_flags();
+
+    set_flag01_storage_screen_boxes();
+    set_flag01_login_screen_boxes();
+    set_flag01_main_screen_boxes();
+    set_flag01_cryo_screen_boxes();
+    set_flag01_research_screen_boxes();
+    set_flag01_net_screen_boxes();
+    set_flag01_equip_screen_boxes();
+    set_flag01_controls_screen_boxes();
+    set_flag01_brief_screen_boxes();
+    set_flag01_world_screen_boxes();
+
+    if (!game_projector_speed && screentype != SCRT_99)
+        play_sample_using_heap(0, 113, 127, 64, 100, 0, 3u);
+}
+
 void show_menu_screen(void)
 {
     switch (data_1c498d)
@@ -7035,8 +7091,13 @@ void show_menu_screen(void)
         LbMouseReset();
         LbScreenClear(0);
         setup_screen_mode(screen_mode_menu);
-        load_small_font_for_current_purple_mode();
-        reload_background();
+        reload_menu_flag = 1;
+    }
+
+    if (reload_menu_flag)
+    {
+        reload_menu_flag = 0;
+        menu_screen_reload();
         my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     }
 
@@ -7210,7 +7271,7 @@ void show_menu_screen(void)
         {
             mod_draw_states[i] = 0;
             if (0 != flic_mods[i])
-                mod_draw_states[i] = 8;
+                mod_draw_states[i] = 0x08;
         }
         current_drawing_mod = 0;
         new_current_drawing_mod = 0;
@@ -7257,47 +7318,8 @@ void show_menu_screen(void)
 
     if (redraw_screen_flag && !edit_flag)
     {
-        mo_weapon = -1;
         redraw_screen_flag = 0;
-        reload_background_flag = 1;
-        if (screentype == SCRT_WORLDMAP)
-        {
-            open_brief = old_mission_brief;
-            activate_cities(0);
-        }
-        else if (screentype == SCRT_MISSION)
-        {
-            activate_cities(open_brief);
-        }
-
-        reset_brief_screen_boxes_flags();
-        reset_heading_screen_boxes_flags();
-        reset_debrief_screen_boxes_flags();
-        reset_net_screen_boxes_flags();
-        reset_world_screen_boxes_flags();
-        reset_login_screen_boxes_flags();
-        reset_controls_screen_boxes_flags();
-        reset_storage_screen_boxes_flags();
-        reset_cryo_screen_boxes_flags();
-        reset_equip_screen_boxes_flags();
-        reset_research_screen_boxes_flags();
-        reset_system_menu_boxes_flags();
-
-        reset_options_screen_boxes_flags();
-
-        set_flag01_storage_screen_boxes();
-        set_flag01_login_screen_boxes();
-        set_flag01_main_screen_boxes();
-        set_flag01_cryo_screen_boxes();
-        set_flag01_research_screen_boxes();
-        set_flag01_net_screen_boxes();
-        set_flag01_equip_screen_boxes();
-        set_flag01_controls_screen_boxes();
-        set_flag01_brief_screen_boxes();
-        set_flag01_world_screen_boxes();
-
-        if (!game_projector_speed && screentype != SCRT_99)
-            play_sample_using_heap(0, 113, 127, 64, 100, 0, 3u);
+        menu_screen_redraw();
     }
 
     mouse_sprite_animate();
