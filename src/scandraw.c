@@ -752,10 +752,59 @@ void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour
 
 void draw_map_flat_circle(short cor_x, short cor_y, short cor_z, short radius, TbPixel colour)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_draw_map_flat_circle\n"
         : : "a" (cor_x), "d" (cor_y), "b" (cor_z), "c" (radius), "g" (colour));
+#endif
+    struct EnginePoint ep1;
+    struct EnginePoint ep2;
+    int cir_cor_x, cir_cor_z;
+    int cir_nxt_x, cir_nxt_z;
+    ushort slice;
+
+    cir_cor_x = cor_x;
+    cir_cor_z = cor_z + radius;
+    for (slice = 1; slice < 0x40; slice++)
+    {
+        short cir_dt_x, cir_dt_z;
+        cir_dt_x = (radius * lbSinTable[slice * 2 * LbFPMath_PI / 0x40]) >> 16;
+        cir_dt_z = (radius * lbSinTable[LbFPMath_PI/2 + slice * 2*LbFPMath_PI / 0x40]) >> 16;
+        cir_nxt_x = cor_x + cir_dt_x;
+        cir_nxt_z = cor_z + cir_dt_z;
+
+        ep1.X3d = cir_cor_x - engn_xc;
+        ep1.Y3d = cor_y - engn_yc;
+        ep1.Z3d = cir_cor_z - engn_zc;
+        ep1.Flags = 0;
+        transform_point(&ep1);
+        ep2.X3d = cir_nxt_x - engn_xc;
+        ep2.Y3d = cor_y - engn_yc;
+        ep2.Z3d = cir_nxt_z - engn_zc;
+        ep2.Flags = 0;
+        transform_point(&ep2);
+        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+
+        cir_cor_x = cir_nxt_x;
+        cir_cor_z = cir_nxt_z;
+    }
+    {
+        cir_nxt_x = cor_x;
+        cir_nxt_z = cor_z + radius;
+
+        ep1.X3d = cir_cor_x - engn_xc;
+        ep1.Y3d = cor_y - engn_yc;
+        ep1.Z3d = cir_cor_z - engn_zc;
+        ep1.Flags = 0;
+        transform_point(&ep1);
+        ep2.X3d = cir_nxt_x - engn_xc;
+        ep2.Y3d = cor_y - engn_yc;
+        ep2.Z3d = cir_nxt_z - engn_zc;
+        ep2.Flags = 0;
+        transform_point(&ep2);
+        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+    }
 }
 
 void draw_map_flat_rect(int cor_x, int cor_y, int cor_z, int size_x, int size_z, TbPixel colour)
