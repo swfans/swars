@@ -643,8 +643,98 @@ void update_flic_mods(ubyte *mods)
 
 void draw_body_mods(void)
 {
+#if 0
     asm volatile ("call ASM_draw_body_mods\n"
         :  :  : "eax" );
+#endif
+    int i;
+    TbBool done, still_playing;
+
+    current_drawing_mod = new_current_drawing_mod;
+    if ((lbKeyOn[KC_SPACE] || game_projector_speed) && (cryo_blokey_box.Flags & 0x0100) == 0)
+    {
+        lbKeyOn[KC_SPACE] = 0;
+        draw_flic_purple_list(purple_mods_data_to_screen);
+        draw_flic_purple_list(blokey_static_flic_data_to_screen);
+        update_flic_mods(old_flic_mods);
+        update_flic_mods(flic_mods);
+        for (i = 0; i < 4 ; i++)
+            mod_draw_states[i] = 0;
+        new_current_drawing_mod = 0;
+        current_drawing_mod = 0;
+        current_frame = 0;
+        cryo_blokey_box.Flags |= 0x0100;
+    }
+    if ((mod_draw_states[0] & 0x08) != 0)
+    {
+        if ((mod_draw_states[1] & 0x04) != 0)
+            mod_draw_states[1] |= 0x08;
+        if ((mod_draw_states[2] & 0x04) != 0)
+            mod_draw_states[2] |= 0x08;
+        if ((mod_draw_states[3] & 0x04) != 0)
+            mod_draw_states[3] |= 0x08;
+    }
+
+    still_playing = 0;
+
+    if (!still_playing)
+    {
+        for (i = 0; i < 4; i++)
+        {
+            if ((mod_draw_states[i] & 0x01) == 0)
+                continue;
+            done = xdo_next_frame(AniSl_UNKN3);
+            still_playing = 1;
+            draw_flic_purple_list(blokey_flic_data_to_screen);
+            if (done != 0)
+            {
+                mod_draw_states[i] &= ~(0x01|0x04);
+                mod_draw_states[i] |= 0x04;
+                if (old_flic_mods[i] != flic_mods[i])
+                    mod_draw_states[i] |= (0x08 | 0x04);
+                copy_box_purple_list(cryo_blokey_box.X - 3, cryo_blokey_box.Y - 3,
+                  cryo_blokey_box.Width + 6, cryo_blokey_box.Height + 6);
+            }
+            break;
+        }
+    }
+
+    if (!still_playing)
+    {
+        for (i = 0; i < 4; i++)
+        {
+            if ((mod_draw_states[i] & 0x02) == 0)
+                continue;
+            done = xdo_next_frame(AniSl_UNKN3);
+            still_playing = 1;
+            draw_flic_purple_list(blokey_flic_data_to_screen);
+            if (done)
+            {
+                mod_draw_states[i] &= ~(0x02|0x04);
+                if (flic_mods[i])
+                    mod_draw_states[i] |= 0x08;
+                copy_box_purple_list(cryo_blokey_box.X - 3, cryo_blokey_box.Y - 3,
+                  cryo_blokey_box.Width + 6, cryo_blokey_box.Height + 6);
+            }
+        }
+    }
+
+    if (!still_playing && (current_drawing_mod == 4))
+    {
+        done = xdo_next_frame(AniSl_UNKN8);
+        still_playing = !done;
+        current_frame++;
+        if (current_frame == 26) {
+            play_sample_using_heap(0, 127, 127, 64, 100, 0, 1);
+        } else if (current_frame == 52) {
+            current_frame = 0;
+            play_sample_using_heap(0, 126, 127, 64, 100, 0, 1);
+        }
+        draw_flic_purple_list(blokey_flic_data_to_screen);
+    }
+    if (!still_playing) {
+        init_next_blokey_flic();
+    }
 }
 
 void reset_mod_draw_states_flag08(void)

@@ -784,8 +784,8 @@ void weapon_flic_data_to_screen(void)
     p_anim = &animations[k];
 
     LbScreenSetGraphicsWindow(equip_display_box.X + 4, equip_display_box.Y + 4, w, h);
-    // Frame zero means animation didn't started yet; use the opportunity to copy clean
-    // background to the animation playback buffer
+    // Frame zero means animation didn't started yet; use the opportunity to copy
+    // clean background to the animation playback buffer
     if (p_anim->FrameNumber == 0) {
         LbScreenSave(lbDisplay.GraphicsWindowPtr, p_anim->FrameBuffer,
             lbDisplay.GraphicsWindowHeight);
