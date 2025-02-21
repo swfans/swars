@@ -10,6 +10,7 @@ Available options:
   -t PATH  copy data to PATH (e.g. /usr/local/share/swars)
 
   -M       do not copy music
+  -d DEVICE read audio tracks from DEVICE (e.g. /dev/sr0)
   -l LANG  choose language LANG
 
   -h       print usage information
@@ -25,6 +26,7 @@ fi
 
 WITH_MUSIC="yes"
 OWN_TARGET="no"
+DEVICE=""
 SOURCE=""
 TARGET=""
 LANG="eng"
@@ -41,7 +43,7 @@ SFX_VERSION="1.0.0.22"
 SFX_PACKAGE="swars-sfx-1_0_0_22"
 SFX_PKG_MD5="f222a89bfe0a2c931394c2ae25508a6d"
 
-OPTS="f:t:Ml:h"
+OPTS="f:t:Md:l:h"
 
 while getopts "$OPTS" arg; do
   case "$arg" in
@@ -53,6 +55,9 @@ while getopts "$OPTS" arg; do
       ;;
     M)
       WITH_MUSIC="no"
+      ;;
+    d)
+      DEVICE="$OPTARG"
       ;;
     l)
       LANG="$OPTARG"
@@ -94,7 +99,7 @@ check_source()
     exit 1
   fi
   if ! [ -d "$SOURCE" ]; then
-    echo "$SOURCE doesn't exist!" >&2
+    echo "Source directory '$SOURCE' does not exist!" >&2
     return 1
   fi
 
@@ -103,7 +108,7 @@ check_source()
     return 0
   fi
 
-  echo "$SOURCE does not contain the data from the game!" >&2
+  echo "Source directory '$SOURCE' does not contain the data from the game!" >&2
   return 1
 }
 
@@ -118,7 +123,7 @@ check_target()
     local file_count=`ls "$TARGET" | wc -l | sed 's/[^0-9]//g'` || return 1
 
     if [ "x$file_count" != "x0" ]; then
-      echo "The target directory is not empty!" >&2
+      echo "Target directory '$TARGET' is not empty!" >&2
       return 1
     fi
   fi
@@ -172,7 +177,11 @@ copy_music()
     local cd_number=$(($track_number+1))
     local track_wav="$TARGET/music/track_$track_number.wav"
     local track_ogg="$TARGET/music/track_$track_number.ogg"
-    "$CDPARANOIA" "$cd_number" "$track_wav" || return 1
+    if [ -z "$DEVICE" ]; then
+      "$CDPARANOIA" "$cd_number" "$track_wav" || return 1
+    else
+      "$CDPARANOIA" -d "$DEVICE" "$cd_number" "$track_wav" || return 1
+    fi
     "$OGGENC" -b 192 "$track_wav" || return 1
     rm -vf "$track_wav" || return 1
     chmod 0644 "$track_ogg" || return 1
