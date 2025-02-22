@@ -532,35 +532,53 @@ void purple_mods_data_to_screen(void)
         o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 }
 
+/** A variant of LbScreenCopy() which treats pixel value 0 as transparency.
+ */
+void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height)
+{
+    ubyte *s;
+    ubyte *d;
+    short shift;
+    short w, h;
+
+    s = sourceBuf;
+    d = destBuf;
+    shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
+    {
+        for (w = 0; w < lbDisplay.GraphicsWindowWidth; w++)
+        {
+            if (*s != '\0')
+                *d = *s;
+            s++;
+            d++;
+        }
+        d += shift;
+    }
+}
+
 void blokey_flic_data_to_screen(void)
 {
-    ubyte *iline;
-    ubyte *oline;
     ubyte *inp;
-    ubyte *o;
-    ushort dy, dx;
+    short scr_x, scr_y;
+    short w, h;
     ubyte cdm;
 
     cdm = current_drawing_mod;
-    iline = anim_type_get_output_buffer(AniSl_UNKN3);
-    dx = cryo_blokey_box.X + 63 + equip_blokey_pos[cdm].X;
-    dy = cryo_blokey_box.Y + 1 + equip_blokey_pos[cdm].Y;
-    oline = &lbDisplay.WScreen[dx + lbDisplay.GraphicsScreenWidth * dy];
+    scr_x = cryo_blokey_box.X + 63 + equip_blokey_pos[cdm].X;
+    scr_y = cryo_blokey_box.Y + 1 + equip_blokey_pos[cdm].Y;
+    w = equip_blokey_width[cdm];
+    h = equip_blokey_height[cdm];
+    inp = anim_type_get_output_buffer(AniSl_UNKN3);
 
-    for (dy = 0; dy < equip_blokey_height[cdm]; dy++)
-    {
-        inp = iline;
-        o = oline;
-        for (dx = 0; dx < equip_blokey_width[cdm]; dx++)
-        {
-            if (*inp != '\0')
-                *o = *inp;
-            inp++;
-            o++;
-        }
-        oline += lbDisplay.GraphicsScreenWidth;
-        iline += equip_blokey_width[cdm];
-    }
+    LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
+
+    ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
+        lbDisplay.GraphicsWindowHeight);
+
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
+        lbDisplay.GraphicsScreenHeight);
 }
 
 void blokey_static_flic_data_to_screen(void)
