@@ -41,13 +41,13 @@ TbBool anim_update_prev_frame(struct Animation *p_anim);
  */
 TbBool anim_read_data(struct Animation *p_anim, void *buf, u32 size)
 {
-	if (buf == NULL) {
-		LbFileSeek(p_anim->FileHandle, size, Lb_FILE_SEEK_CURRENT);
-		return true;
-	} else if (LbFileRead(p_anim->FileHandle, buf, size) == size) {
-		return true;
-	}
-	return false;
+    if (buf == NULL) {
+        LbFileSeek(p_anim->FileHandle, size, Lb_FILE_SEEK_CURRENT);
+        return true;
+    } else if (LbFileRead(p_anim->FileHandle, buf, size) == size) {
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -59,11 +59,11 @@ TbBool anim_rewrite_file_header(struct Animation *p_anim)
     u32 pvpos, size, wsize;
 
     pvpos = LbFilePosition(p_anim->FileHandle);
-	LbFileSeek(p_anim->FileHandle, 0, Lb_FILE_SEEK_BEGINNING);
-	p_anim->FLCFileHeader.NumberOfFrames--;
+    LbFileSeek(p_anim->FileHandle, 0, Lb_FILE_SEEK_BEGINNING);
+    p_anim->FLCFileHeader.NumberOfFrames--;
     size = sizeof(struct FLCFileHeader);
     wsize = LbFileWrite(p_anim->FileHandle, &p_anim->FLCFileHeader, size);
-	LbFileSeek(p_anim->FileHandle, pvpos, Lb_FILE_SEEK_BEGINNING);
+    LbFileSeek(p_anim->FileHandle, pvpos, Lb_FILE_SEEK_BEGINNING);
     return wsize == size;
 }
 
@@ -550,6 +550,16 @@ TbResult anim_flic_show_open(struct Animation *p_anim)
       (int)p_anim->FLCFileHeader.NumberOfFrames,
       (int)p_anim->FLCFileHeader.Height, (int)p_anim->FLCFileHeader.Width,
       p_anim->Filename);
+    return Lb_SUCCESS;
+}
+
+TbResult anim_flic_show_replay(struct Animation *p_anim)
+{
+    if (p_anim->FileHandle == INVALID_FILE) {
+        return Lb_FAIL;
+    }
+    LbFileSeek(p_anim->FileHandle, sizeof(struct FLCFileHeader), Lb_FILE_SEEK_BEGINNING);
+    p_anim->FrameNumber = 0;
     return Lb_SUCCESS;
 }
 

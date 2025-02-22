@@ -163,6 +163,7 @@ ubyte anim_show_frame(struct Animation *p_anim);
 
 TbResult anim_flic_make_open(struct Animation *p_anim, int width, int height,
   int bpp, uint flags);
+TbResult anim_flic_show_replay(struct Animation *p_anim);
 void anim_make_prep_next_frame(struct Animation *p_anim, ubyte *frmbuf);
 TbBool anim_make_next_frame(struct Animation *p_anim, ubyte *palette);
 
