@@ -27,6 +27,16 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum ModDrawStateFlags {
+    ModDSt_Unkn01	= 0x01,
+    ModDSt_Unkn02	= 0x02,
+    ModDSt_Unkn04	= 0x04,
+    ModDSt_Unkn08	= 0x08,
+    ModDSt_Unkn10	= 0x10,
+    ModDSt_Unkn20	= 0x20,
+    ModDSt_Unkn40	= 0x40,
+    ModDSt_Unkn80	= 0x80,
+};
 
 #pragma pack()
 /******************************************************************************/
@@ -39,6 +49,8 @@ void cryo_update_for_selected_cybmod(void);
 void init_cryo_screen_boxes(void);
 void reset_cryo_screen_boxes_flags(void);
 void set_flag01_cryo_screen_boxes(void);
+
+void set_mod_draw_states_flag08(void);
 
 void switch_shared_equip_screen_buttons_to_cybmod(void);
 

@@ -501,7 +501,7 @@ ubyte *anim_type_get_output_buffer(ubyte anislot)
     case AniSl_UNKN7:
     case AniSl_NETSCAN:
         return vec_tmap[5];
-    case AniSl_UNKN3:
+    case AniSl_CYBORG_STAT:
     case AniSl_UNKN8:
         return vec_tmap[5] + 0x8000;
     }
@@ -582,7 +582,7 @@ void flic_unkn03(ubyte anislot)
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
-    case AniSl_UNKN3:
+    case AniSl_CYBORG_STAT:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
@@ -3823,7 +3823,7 @@ int xdo_next_frame(ubyte anislot)
     active_anim = k;
     p_anim = &animations[k];
 
-    if (anislot >= AniSl_EQVIEW && anislot <= AniSl_UNKN3)
+    if (anislot >= AniSl_EQVIEW && anislot <= AniSl_CYBORG_STAT)
     {
         if (p_anim->FrameNumber == 0) {
             play_sample_using_heap(0, 135, 127, 64, 100, 0, 3u);
@@ -6524,10 +6524,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
                 if (screentype == SCRT_CRYO)
                 {
                     update_flic_mods(flic_mods);
-                    for (i = 0; i < 4; i++) {
-                        if (flic_mods[i] != old_flic_mods[i])
-                            mod_draw_states[i] |= 0x08;
-                    }
+                    set_mod_draw_states_flag08();
                 }
             }
         } else {
@@ -6568,10 +6565,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         if (screentype == SCRT_CRYO)
         {
             update_flic_mods(flic_mods);
-            for (i = 0; i < 4; i++) {
-                if (flic_mods[i] != old_flic_mods[i])
-                    mod_draw_states[i] |= 0x08;
-            }
+            set_mod_draw_states_flag08();
         }
         break;
     case 14:
@@ -6587,10 +6581,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
             if (net_host_player_no != netplyr)
             {
                 update_flic_mods(flic_mods);
-                for (i = 0; i < 4; i++) {
-                    if (flic_mods[i] != old_flic_mods[i])
-                        mod_draw_states[i] |= 0x08;
-                }
+                set_mod_draw_states_flag08();
             }
         }
         else if ((unkn_flags_08 & 0x08) == 0)
@@ -7271,7 +7262,7 @@ void show_menu_screen(void)
         {
             mod_draw_states[i] = 0;
             if (0 != flic_mods[i])
-                mod_draw_states[i] = 0x08;
+                mod_draw_states[i] = ModDSt_Unkn08;
         }
         current_drawing_mod = 0;
         new_current_drawing_mod = 0;

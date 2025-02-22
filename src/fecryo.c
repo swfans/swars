@@ -227,19 +227,19 @@ TbBool mod_draw_update_on_change(ushort mtype)
     switch (cybmod_group_type(mtype))
     {
     case MODGRP_LEGS:
-        mod_draw_states[3] |= 0x08;
+        mod_draw_states[3] |= ModDSt_Unkn08;
         update_flic_mods(flic_mods);
         break;
     case MODGRP_ARMS:
-        mod_draw_states[2] |= 0x08;
+        mod_draw_states[2] |= ModDSt_Unkn08;
         update_flic_mods(flic_mods);
         break;
     case MODGRP_CHEST:
-        mod_draw_states[0] |= 0x08;
+        mod_draw_states[0] |= ModDSt_Unkn08;
         update_flic_mods(flic_mods);
         break;
     case MODGRP_BRAIN:
-        mod_draw_states[1] |= 0x08;
+        mod_draw_states[1] |= ModDSt_Unkn08;
         update_flic_mods(flic_mods);
         break;
     default:
@@ -374,8 +374,8 @@ void init_next_blokey_flic(void)
     {
         for (cmod = 1; cmod < 4; cmod = (cmod+1) % 4)
         {
-            if (((mod_draw_states[cmod] & 0x08) != 0) &&
-              ((mod_draw_states[cmod] & 0x04) != 0)) {
+            if (((mod_draw_states[cmod] & ModDSt_Unkn08) != 0) &&
+              ((mod_draw_states[cmod] & ModDSt_Unkn04) != 0)) {
                 stage = 1;
                 break;
             }
@@ -388,8 +388,8 @@ void init_next_blokey_flic(void)
     {
         for (cmod = 0; cmod < 4; cmod++)
         {
-            if (((mod_draw_states[cmod] & 0x08) != 0) &&
-              ((mod_draw_states[cmod] & 0x04) == 0) &&
+            if (((mod_draw_states[cmod] & ModDSt_Unkn08) != 0) &&
+              ((mod_draw_states[cmod] & ModDSt_Unkn04) == 0) &&
               (flic_mods[cmod] != 0)) {
                 stage = 2;
                 break;
@@ -435,7 +435,7 @@ void init_next_blokey_flic(void)
         }
         break;
     case 1:
-        anislot = AniSl_UNKN3;
+        anislot = AniSl_CYBORG_STAT;
         k = anim_slots[anislot];
         p_anim = &animations[k];
         switch (cmod)
@@ -459,13 +459,13 @@ void init_next_blokey_flic(void)
         flic_unkn03(anislot);
         flic_clear_output_buffer(anislot);
         new_current_drawing_mod = cmod;
-        mod_draw_states[cmod] |= 0x02;
+        mod_draw_states[cmod] |= ModDSt_Unkn02;
         play_sample_using_heap(0, 132, 127, 64, 100, 0, 3);
         cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
         byte_1DDC40 = 0;
         break;
     case 2:
-        anislot = AniSl_UNKN3;
+        anislot = AniSl_CYBORG_STAT;
         k = anim_slots[anislot];
         p_anim = &animations[k];
         switch (cmod)
@@ -489,8 +489,8 @@ void init_next_blokey_flic(void)
         flic_unkn03(anislot);
         flic_clear_output_buffer(anislot);
         new_current_drawing_mod = cmod;
-        mod_draw_states[cmod] |= 0x01;
-        mod_draw_states[cmod] &= ~0x08;
+        mod_draw_states[cmod] |= ModDSt_Unkn01;
+        mod_draw_states[cmod] &= ~ModDSt_Unkn08;
         old_flic_mods[cmod] = flic_mods[cmod];
         cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
         byte_1DDC40 = 0;
@@ -570,7 +570,7 @@ void blokey_flic_data_to_screen(void)
     scr_y = cryo_blokey_box.Y + 1 + equip_blokey_pos[cdm].Y;
     w = equip_blokey_width[cdm];
     h = equip_blokey_height[cdm];
-    inp = anim_type_get_output_buffer(AniSl_UNKN3);
+    inp = anim_type_get_output_buffer(AniSl_CYBORG_STAT);
 
     LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
@@ -626,7 +626,7 @@ void blokey_static_flic_data_to_screen(void)
             break;
         }
 
-        buf = anim_type_get_output_buffer(AniSl_UNKN3);
+        buf = anim_type_get_output_buffer(AniSl_CYBORG_STAT);
         len = LbFileLoadAt(str, buf);
         if (len < 4) {
             LbMemorySet(buf, 0, equip_blokey_static_width[cdm] * equip_blokey_static_height[cdm]);
@@ -637,7 +637,7 @@ void blokey_static_flic_data_to_screen(void)
         copy_buffer_to_double_bufs_with_trans(buf, equip_blokey_static_width[cdm], equip_blokey_static_height[cdm],
           o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, 0);
 
-        mod_draw_states[cdm] = 0x04;
+        mod_draw_states[cdm] = ModDSt_Unkn04;
     }
 }
 
@@ -714,14 +714,14 @@ void draw_body_mods(void)
         current_frame = 0;
         cryo_blokey_box.Flags |= 0x0100;
     }
-    if ((mod_draw_states[0] & 0x08) != 0)
+    if ((mod_draw_states[0] & ModDSt_Unkn08) != 0)
     {
-        if ((mod_draw_states[1] & 0x04) != 0)
-            mod_draw_states[1] |= 0x08;
-        if ((mod_draw_states[2] & 0x04) != 0)
-            mod_draw_states[2] |= 0x08;
-        if ((mod_draw_states[3] & 0x04) != 0)
-            mod_draw_states[3] |= 0x08;
+        if ((mod_draw_states[1] & ModDSt_Unkn04) != 0)
+            mod_draw_states[1] |= ModDSt_Unkn08;
+        if ((mod_draw_states[2] & ModDSt_Unkn04) != 0)
+            mod_draw_states[2] |= ModDSt_Unkn08;
+        if ((mod_draw_states[3] & ModDSt_Unkn04) != 0)
+            mod_draw_states[3] |= ModDSt_Unkn08;
     }
 
     still_playing = 0;
@@ -730,17 +730,17 @@ void draw_body_mods(void)
     {
         for (i = 0; i < 4; i++)
         {
-            if ((mod_draw_states[i] & 0x01) == 0)
+            if ((mod_draw_states[i] & ModDSt_Unkn01) == 0)
                 continue;
-            done = xdo_next_frame(AniSl_UNKN3);
+            done = xdo_next_frame(AniSl_CYBORG_STAT);
             still_playing = 1;
             draw_flic_purple_list(blokey_flic_data_to_screen);
             if (done != 0)
             {
-                mod_draw_states[i] &= ~(0x01|0x04);
-                mod_draw_states[i] |= 0x04;
+                mod_draw_states[i] &= ~(ModDSt_Unkn01 | ModDSt_Unkn04);
+                mod_draw_states[i] |= ModDSt_Unkn04;
                 if (old_flic_mods[i] != flic_mods[i])
-                    mod_draw_states[i] |= (0x08 | 0x04);
+                    mod_draw_states[i] |= (ModDSt_Unkn08 | ModDSt_Unkn04);
                 copy_box_purple_list(cryo_blokey_box.X - 3, cryo_blokey_box.Y - 3,
                   cryo_blokey_box.Width + 6, cryo_blokey_box.Height + 6);
             }
@@ -752,16 +752,16 @@ void draw_body_mods(void)
     {
         for (i = 0; i < 4; i++)
         {
-            if ((mod_draw_states[i] & 0x02) == 0)
+            if ((mod_draw_states[i] & ModDSt_Unkn02) == 0)
                 continue;
-            done = xdo_next_frame(AniSl_UNKN3);
+            done = xdo_next_frame(AniSl_CYBORG_STAT);
             still_playing = 1;
             draw_flic_purple_list(blokey_flic_data_to_screen);
             if (done)
             {
-                mod_draw_states[i] &= ~(0x02|0x04);
+                mod_draw_states[i] &= ~(ModDSt_Unkn02 | ModDSt_Unkn04);
                 if (flic_mods[i])
-                    mod_draw_states[i] |= 0x08;
+                    mod_draw_states[i] |= ModDSt_Unkn08;
                 copy_box_purple_list(cryo_blokey_box.X - 3, cryo_blokey_box.Y - 3,
                   cryo_blokey_box.Width + 6, cryo_blokey_box.Height + 6);
             }
@@ -793,7 +793,7 @@ void reset_mod_draw_states_flag08(void)
     {
         mod_draw_states[cdm] = 0;
         if (flic_mods[cdm] != 0)
-            mod_draw_states[cdm] |= 0x08;
+            mod_draw_states[cdm] |= ModDSt_Unkn08;
     }
 }
 
@@ -803,7 +803,7 @@ void set_mod_draw_states_flag08(void)
     for (cdm = 0; cdm < 4; cdm++)
     {
         if (old_flic_mods[cdm] != flic_mods[cdm])
-            mod_draw_states[cdm] |= 0x08;
+            mod_draw_states[cdm] |= ModDSt_Unkn08;
     }
 }
 

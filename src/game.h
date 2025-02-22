@@ -108,7 +108,7 @@ enum AnimSlot {
   AniSl_FULLSCREEN = 0,
   AniSl_BILLBOARD = 1,
   AniSl_EQVIEW = 2,
-  AniSl_UNKN3 = 3,
+  AniSl_CYBORG_STAT = 3,
   AniSl_UNKN4 = 4,
   AniSl_UNKN5 = 5,
   AniSl_UNKN6 = 6,
