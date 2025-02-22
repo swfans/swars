@@ -350,158 +350,7 @@ void flic_clear_output_buffer(ubyte anislot)
 #define PURPLE_MOD_AREA_WIDTH 139
 #define PURPLE_MOD_AREA_HEIGHT 295
 
-void init_next_blokey_flic(void)
-{
-    struct Campaign *p_campgn;
-    struct Animation *p_anim;
-    const char *campgn_mark;
-    PathInfo *pinfo;
-    int k;
-    ushort cmod, stage;
-    ubyte anislot;
-
-    p_campgn = &campaigns[background_type];
-    campgn_mark = p_campgn->ProjectorFnMk;
-    // TODO FNAMES the convention with mark char is broken for "s"
-    if (strcmp(campgn_mark, "s") == 0)
-        campgn_mark = "m";
-
-    pinfo = &game_dirs[DirPlace_QEquip];
-
-    stage = 0;
-
-    if (stage == 0)
-    {
-        for (cmod = 1; cmod < 4; cmod = (cmod+1) % 4)
-        {
-            if (((mod_draw_states[cmod] & ModDSt_Unkn08) != 0) &&
-              ((mod_draw_states[cmod] & ModDSt_Unkn04) != 0)) {
-                stage = 1;
-                break;
-            }
-            if (cmod == 0)
-                break;
-        }
-    }
-
-    if (stage == 0)
-    {
-        for (cmod = 0; cmod < 4; cmod++)
-        {
-            if (((mod_draw_states[cmod] & ModDSt_Unkn08) != 0) &&
-              ((mod_draw_states[cmod] & ModDSt_Unkn04) == 0) &&
-              (flic_mods[cmod] != 0)) {
-                stage = 2;
-                break;
-            }
-        }
-    }
-
-    if (stage == 0)
-    {
-        if (current_drawing_mod == 4) {
-            stage = 3;
-        } else
-        for (cmod = 0; cmod < 4; cmod++)
-        {
-            if (flic_mods[cmod] == 0) {
-                stage = 3;
-                break;
-            }
-        }
-    }
-
-    switch (stage)
-    {
-    case 0:
-        anislot = AniSl_UNKN8;
-        if (!byte_1DDC40)
-        {
-            byte_1DDC40 = 1;
-            play_sample_using_heap(0, 134, 127, 64, 100, 0, 3u);
-        }
-        else if (!IsSamplePlaying(0, 134, 0))
-        {
-            k = anim_slots[anislot];
-            p_anim = &animations[k];
-            anim_flic_set_fname(p_anim, "%s/%s%da%d.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
-
-            flic_unkn03(anislot);
-            flic_clear_output_buffer(anislot);
-            play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
-            current_frame = 0;
-            new_current_drawing_mod = 4;
-            byte_1DDC40 = 0;
-        }
-        break;
-    case 1:
-        anislot = AniSl_CYBORG_INOUT;
-        k = anim_slots[anislot];
-        p_anim = &animations[k];
-        switch (cmod)
-        {
-        case 0:
-            anim_flic_set_fname(p_anim, "%s/%s%dbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
-            break;
-        case 1:
-            anim_flic_set_fname(p_anim, "%s/%s%dbbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
-            break;
-        case 2:
-            anim_flic_set_fname(p_anim, "%s/%s%da%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
-            break;
-        case 3:
-            anim_flic_set_fname(p_anim, "%s/%s%dl%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
-            break;
-        default:
-            assert(!"unreachable");
-            break;
-        }
-        flic_unkn03(anislot);
-        flic_clear_output_buffer(anislot);
-        new_current_drawing_mod = cmod;
-        mod_draw_states[cmod] |= ModDSt_ModAnimOut;
-        play_sample_using_heap(0, 132, 127, 64, 100, 0, 3);
-        cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
-        byte_1DDC40 = 0;
-        break;
-    case 2:
-        anislot = AniSl_CYBORG_INOUT;
-        k = anim_slots[anislot];
-        p_anim = &animations[k];
-        switch (cmod)
-        {
-          case 0:
-            anim_flic_set_fname(p_anim, "%s/%s%dbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
-            break;
-          case 1:
-            anim_flic_set_fname(p_anim, "%s/%s%dbbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
-            break;
-          case 2:
-            anim_flic_set_fname(p_anim, "%s/%s%da%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
-            break;
-          case 3:
-            anim_flic_set_fname(p_anim, "%s/%s%dl%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[3]);
-            break;
-          default:
-            assert(!"unreachable");
-            break;
-        }
-        flic_unkn03(anislot);
-        flic_clear_output_buffer(anislot);
-        new_current_drawing_mod = cmod;
-        mod_draw_states[cmod] |= ModDSt_ModAnimIn;
-        mod_draw_states[cmod] &= ~ModDSt_Unkn08;
-        old_flic_mods[cmod] = flic_mods[cmod];
-        cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
-        byte_1DDC40 = 0;
-        break;
-    case 3:
-        // No further action
-        break;
-    }
-}
-
-void sprint_cryo_cuborg_mods_static_fname(char *str, ubyte part)
+void sprint_cryo_cyborg_mods_static_fname(char *str, ubyte part)
 {
     struct Campaign *p_campgn;
     const char *campgn_mark;
@@ -546,6 +395,184 @@ void sprint_cryo_cuborg_mods_static_fname(char *str, ubyte part)
     }
 }
 
+void cryo_cyborg_mods_anim_set_fname(ubyte anislot, ubyte part, ubyte stage)
+{
+    struct Campaign *p_campgn;
+    struct Animation *p_anim;
+    const char *campgn_mark;
+    PathInfo *pinfo;
+    int k;
+
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    // TODO FNAMES the convention with mark char is broken for "s"
+    if (strcmp(campgn_mark, "s") == 0)
+        campgn_mark = "m";
+
+    k = anim_slots[anislot];
+    p_anim = &animations[k];
+
+    pinfo = &game_dirs[DirPlace_QEquip];
+
+    switch (stage)
+    {
+    case ModDSt_BRT:
+        anim_flic_set_fname(p_anim, "%s/%s%da%d.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
+        break;
+    case ModDSt_OUT:
+        switch (part)
+        {
+        case ModDPt_CHEST:
+            anim_flic_set_fname(p_anim, "%s/%s%dbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
+            break;
+        case ModDPt_BRAIN:
+            anim_flic_set_fname(p_anim, "%s/%s%dbbo.fli", pinfo->directory, campgn_mark, old_flic_mods[0]);
+            break;
+        case ModDPt_ARMS:
+            anim_flic_set_fname(p_anim, "%s/%s%da%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
+            break;
+        case ModDPt_LEGS:
+            anim_flic_set_fname(p_anim, "%s/%s%dl%do.fli", pinfo->directory, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
+            break;
+        default:
+            assert(!"unreachable");
+            break;
+        }
+        break;
+    case ModDSt_IN:
+        switch (part)
+        {
+          case ModDPt_CHEST:
+            anim_flic_set_fname(p_anim, "%s/%s%dbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
+            break;
+          case ModDPt_BRAIN:
+            anim_flic_set_fname(p_anim, "%s/%s%dbbi.fli", pinfo->directory, campgn_mark, flic_mods[0]);
+            break;
+          case ModDPt_ARMS:
+            anim_flic_set_fname(p_anim, "%s/%s%da%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
+            break;
+          case ModDPt_LEGS:
+            anim_flic_set_fname(p_anim, "%s/%s%dl%di.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[3]);
+            break;
+          default:
+            assert(!"unreachable");
+            break;
+        }
+        break;
+    case 3:
+        // No animation
+        break;
+    }
+}
+
+ubyte cryo_cyborg_mods_anim_get_stage(ubyte *p_part)
+{
+    ubyte part, stage;
+
+    stage = ModDSt_BRT;
+
+    if (stage == ModDSt_BRT)
+    {
+        for (part = 1; part < 4; part = (part+1) % 4)
+        {
+            if (((mod_draw_states[part] & ModDSt_Unkn08) != 0) &&
+              ((mod_draw_states[part] & ModDSt_Unkn04) != 0)) {
+                stage = ModDSt_OUT;
+                break;
+            }
+            if (part == 0)
+                break;
+        }
+    }
+
+    if (stage == ModDSt_BRT)
+    {
+        for (part = 0; part < 4; part++)
+        {
+            if (((mod_draw_states[part] & ModDSt_Unkn08) != 0) &&
+              ((mod_draw_states[part] & ModDSt_Unkn04) == 0) &&
+              (flic_mods[part] != 0)) {
+                stage = ModDSt_IN;
+                break;
+            }
+        }
+    }
+
+    if (stage == ModDSt_BRT)
+    {
+        if (current_drawing_mod == 4) {
+            part = current_drawing_mod;
+            stage = 3;
+        } else
+        for (part = 0; part < 4; part++)
+        {
+            if (flic_mods[part] == 0) {
+                stage = ModDSt_END;
+                break;
+            }
+        }
+    }
+
+    *p_part = part;
+    return stage;
+}
+
+void init_next_blokey_flic(void)
+{
+    ubyte part, stage;
+    ubyte anislot;
+
+    stage = cryo_cyborg_mods_anim_get_stage(&part);
+
+    switch (stage)
+    {
+    case ModDSt_BRT:
+        anislot = AniSl_UNKN8;
+        if (!byte_1DDC40)
+        {
+            byte_1DDC40 = 1;
+            play_sample_using_heap(0, 134, 127, 64, 100, 0, 3u);
+        }
+        else if (!IsSamplePlaying(0, 134, 0))
+        {
+            cryo_cyborg_mods_anim_set_fname(anislot, part, stage);
+            flic_unkn03(anislot);
+            flic_clear_output_buffer(anislot);
+            play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
+            current_frame = 0;
+            new_current_drawing_mod = 4;
+            byte_1DDC40 = 0;
+        }
+        break;
+    case ModDSt_OUT:
+        anislot = AniSl_CYBORG_INOUT;
+        cryo_cyborg_mods_anim_set_fname(anislot, part, stage);
+        flic_unkn03(anislot);
+        flic_clear_output_buffer(anislot);
+        new_current_drawing_mod = part;
+        mod_draw_states[part] |= ModDSt_ModAnimOut;
+        play_sample_using_heap(0, 132, 127, 64, 100, 0, 3);
+        cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
+        byte_1DDC40 = 0;
+        break;
+    case ModDSt_IN:
+        anislot = AniSl_CYBORG_INOUT;
+        cryo_cyborg_mods_anim_set_fname(anislot, part, stage);
+        flic_unkn03(anislot);
+        flic_clear_output_buffer(anislot);
+        new_current_drawing_mod = part;
+        mod_draw_states[part] |= ModDSt_ModAnimIn;
+        mod_draw_states[part] &= ~ModDSt_Unkn08;
+        old_flic_mods[part] = flic_mods[part];
+        cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
+        byte_1DDC40 = 0;
+        break;
+    case ModDSt_END:
+        // No further action
+        break;
+    }
+}
+
 void purple_mods_data_to_screen(void)
 {
     short x, y;
@@ -556,7 +583,7 @@ void purple_mods_data_to_screen(void)
     buf = back_buffer - PURPLE_MOD_AREA_WIDTH*PURPLE_MOD_AREA_HEIGHT;
     {
         char locstr[52];
-        sprint_cryo_cuborg_mods_static_fname(locstr, ModDPt_BKGND);
+        sprint_cryo_cyborg_mods_static_fname(locstr, ModDPt_BKGND);
         len = LbFileLoadAt(locstr, buf);
     }
     if (len < 4) {
@@ -641,7 +668,7 @@ void blokey_static_flic_data_to_screen(void)
         buf = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
         {
             char locstr[52];
-            sprint_cryo_cuborg_mods_static_fname(locstr, cdm);
+            sprint_cryo_cyborg_mods_static_fname(locstr, cdm);
             len = LbFileLoadAt(locstr, buf);
         }
         if (len < 4) {

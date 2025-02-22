@@ -46,6 +46,13 @@ enum ModDrawPart {
     ModDPt_BKGND	= 4,
 };
 
+enum ModDrawStage {
+    ModDSt_BRT	= 0, /**< breathing animation */
+    ModDSt_OUT	= 1, /**< drawing out a mod */
+    ModDSt_IN	= 2, /**< drawing in a mod */
+    ModDSt_END	= 3, /**< not animating */
+};
+
 #pragma pack()
 /******************************************************************************/
 extern sbyte selected_mod;
