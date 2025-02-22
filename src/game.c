@@ -502,8 +502,10 @@ ubyte *anim_type_get_output_buffer(ubyte anislot)
     case AniSl_NETSCAN:
         return vec_tmap[5];
     case AniSl_CYBORG_INOUT:
-    case AniSl_UNKN8:
+    case AniSl_CYBORG_BRTH:
         return vec_tmap[5] + 0x8000;
+    case AniSl_BKGND:
+        return vec_tmap[4] + 0x8000;
     }
 }
 
@@ -610,7 +612,7 @@ void flic_unkn03(ubyte anislot)
         pinfo = &game_dirs[DirPlace_Data];
         anim_flic_set_fname(p_anim, "%s/%s.fli", pinfo->directory, "mcomp");
         break;
-    case AniSl_UNKN8:
+    case AniSl_CYBORG_BRTH:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x20);
         break;
@@ -2421,7 +2423,7 @@ TbResult prep_multicolor_sprites(void)
 
 void setup_host(void)
 {
-    BAT_unknsub_20(0, 0, 0, 0, vec_tmap[4] + 41024);
+    BAT_unknsub_20(0, 0, 0, 0, vec_tmap[4] + 160 * 256 + 64);
     smack_malloc_setup();
     LOGDBG("&setup_host() = 0x%lx", (ulong)setup_host);
     setup_initial_screen_mode();
@@ -3849,6 +3851,7 @@ int xdo_next_frame(ubyte anislot)
 int xdo_prev_frame(ubyte anislot)
 {
     struct Animation *p_anim;
+    ubyte *bkgbuf;
     ubyte *frmbuf;
     uint i, rq_frame;
     ushort k;
@@ -3862,8 +3865,12 @@ int xdo_prev_frame(ubyte anislot)
     else
         rq_frame = p_anim->FrameNumber - 1;
 
+    frmbuf = anim_type_get_output_buffer(p_anim->Type);
+    bkgbuf = anim_type_get_output_buffer(AniSl_BKGND);
+
     if (rq_frame == 0)
     {
+        LbMemoryCopy(frmbuf, bkgbuf, p_anim->FLCFileHeader.Width * p_anim->FLCFileHeader.Height);
         anim_flic_close(p_anim);
         if ((p_anim->Flags & 0x20) != 0) {
             flic_unkn03(p_anim->Type);
@@ -3871,9 +3878,8 @@ int xdo_prev_frame(ubyte anislot)
         return 1;
     }
 
-    frmbuf = anim_type_get_output_buffer(p_anim->Type);
     anim_flic_show_replay(p_anim);
-    //TODO copy background to frame buffer
+    LbMemoryCopy(frmbuf, bkgbuf, p_anim->FLCFileHeader.Width * p_anim->FLCFileHeader.Height);
     anim_show_prep_next_frame(p_anim, frmbuf);
     anim_show_draw_next_frame(p_anim);
     for (i = 1; i < rq_frame; i++)
@@ -7294,13 +7300,7 @@ void show_menu_screen(void)
 
         update_cybmod_cost_text();
         redraw_screen_flag = 1;
-        int i;
-        for (i = 0; i < 4; i++)
-        {
-            mod_draw_states[i] = 0;
-            if (0 != flic_mods[i])
-                mod_draw_states[i] = ModDSt_Unkn08;
-        }
+        reset_mod_draw_states_flag08();
         current_drawing_mod = 0;
         new_current_drawing_mod = 0;
         edit_flag = 0;

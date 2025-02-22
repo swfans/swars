@@ -66,6 +66,7 @@ void reset_cryo_screen_boxes_flags(void);
 void set_flag01_cryo_screen_boxes(void);
 
 void set_mod_draw_states_flag08(void);
+void reset_mod_draw_states_flag08(void);
 
 void switch_shared_equip_screen_buttons_to_cybmod(void);
 

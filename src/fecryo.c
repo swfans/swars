@@ -320,37 +320,10 @@ ubyte do_equip_offer_buy_cybmod(ubyte click)
     return (nbought > 0);
 }
 
-/** Clears output buffer of the animation at given slot.
- *
- * The animation must be opened, but its frame buffer
- * doesn't have to be set for this function to work.
- */
-void flic_clear_output_buffer(ubyte anislot)
-{
-    struct Animation *p_anim;
-    int k;
-
-    k = anim_slots[anislot];
-    p_anim = &animations[k];
-    if (anim_is_opened(p_anim))
-    {
-        ubyte *obuf;
-        short h;
-
-        obuf = anim_type_get_output_buffer(p_anim->Type);
-
-        for (h = p_anim->FLCFileHeader.Height; h > 0; h--)
-        {
-            LbMemorySet(obuf, '\0', p_anim->FLCFileHeader.Width);
-            obuf += p_anim->FLCFileHeader.Width;
-        }
-    }
-}
-
 #define PURPLE_MOD_AREA_WIDTH 139
 #define PURPLE_MOD_AREA_HEIGHT 295
 
-void sprint_cryo_cyborg_mods_static_fname(char *str, ubyte part)
+void sprint_cryo_cyborg_mods_static_fname(char *str, ubyte part, ubyte *mods_arr)
 {
     struct Campaign *p_campgn;
     const char *campgn_mark;
@@ -367,22 +340,22 @@ void sprint_cryo_cyborg_mods_static_fname(char *str, ubyte part)
     case ModDPt_CHEST:
         if (strcmp(campgn_mark, "s") == 0)
             campgn_mark = "m";
-        sprintf(str, "%s/%s%db.dat", pinfo->directory, campgn_mark, flic_mods[0]);
+        sprintf(str, "%s/%s%db.dat", pinfo->directory, campgn_mark, mods_arr[0]);
         break;
     case ModDPt_BRAIN:
         if (strcmp(campgn_mark, "s") == 0)
             campgn_mark = "m";
-        sprintf(str, "%s/%s%dbb.dat", pinfo->directory, campgn_mark, flic_mods[0]);
+        sprintf(str, "%s/%s%dbb.dat", pinfo->directory, campgn_mark, mods_arr[0]);
         break;
     case ModDPt_ARMS:
         if (strcmp(campgn_mark, "s") == 0)
             campgn_mark = "m";
-        sprintf(str, "%s/%s%da%d.dat", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
+        sprintf(str, "%s/%s%da%d.dat", pinfo->directory, campgn_mark, mods_arr[0], mods_arr[2]);
         break;
     case ModDPt_LEGS:
         if (strcmp(campgn_mark, "s") == 0)
             campgn_mark = "m";
-        sprintf(str, "%s/%s%dl%d.dat", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[3]);
+        sprintf(str, "%s/%s%dl%d.dat", pinfo->directory, campgn_mark, mods_arr[0], mods_arr[3]);
         break;
     case ModDPt_BKGND:
         if (strcmp(campgn_mark, "s") == 0)
@@ -465,6 +438,103 @@ void cryo_cyborg_mods_anim_set_fname(ubyte anislot, ubyte part, ubyte stage)
     }
 }
 
+/** Clears output buffer of the animation at given slot.
+ *
+ * The animation must be opened, but its frame buffer
+ * doesn't have to be set for this function to work.
+ */
+void flic_clear_output_buffer(ubyte anislot)
+{
+    struct Animation *p_anim;
+    int k;
+
+    k = anim_slots[anislot];
+    p_anim = &animations[k];
+    if (anim_is_opened(p_anim))
+    {
+        ubyte *obuf;
+        short h;
+
+        obuf = anim_type_get_output_buffer(p_anim->Type);
+
+        for (h = p_anim->FLCFileHeader.Height; h > 0; h--)
+        {
+            LbMemorySet(obuf, '\0', p_anim->FLCFileHeader.Width);
+            obuf += p_anim->FLCFileHeader.Width;
+        }
+    }
+}
+
+/** Background fill output buffer of the animation at given slot.
+ */
+void flic_bkgnd_fill_output_buffer_anim_out(ubyte anislot, ubyte part)
+{
+    struct Animation *p_anim;
+    int k;
+
+    k = anim_slots[anislot];
+    p_anim = &animations[k];
+    if (anim_is_opened(p_anim))
+    {
+        char locstr[52];
+        ubyte *obuf;
+        ubyte *bkgbuf;
+        long len;
+        short h;
+        ubyte bkg_part;
+
+        bkgbuf = anim_type_get_output_buffer(AniSl_BKGND);
+        obuf = anim_type_get_output_buffer(p_anim->Type);
+
+        {
+            ubyte *ldbuf;
+            // Load the whole background to obuf
+            bkg_part = ModDPt_BKGND;
+            ldbuf = obuf;
+            sprint_cryo_cyborg_mods_static_fname(locstr, bkg_part, old_flic_mods);
+            len = LbFileLoadAt(locstr, ldbuf);
+            if (len < 4) {
+                LbMemorySet(ldbuf, 0, PURPLE_MOD_AREA_WIDTH * PURPLE_MOD_AREA_HEIGHT);
+            }
+        }
+        if ((part == ModDPt_BRAIN) || (part == ModDPt_ARMS) || (part == ModDPt_LEGS))
+        {
+            ubyte *ldbuf;
+            ubyte *blbuf;
+
+            // The background is missing chest mod; load it to bkgbuf
+            bkg_part = ModDPt_CHEST;
+            ldbuf = bkgbuf;
+            sprint_cryo_cyborg_mods_static_fname(locstr, bkg_part, old_flic_mods);
+            len = LbFileLoadAt(locstr, ldbuf);
+            if (len < 4) {
+                LbMemorySet(ldbuf, 0, PURPLE_MOD_AREA_WIDTH * PURPLE_MOD_AREA_HEIGHT);
+            }
+            // Blit the chest mod onto our background in obuf
+            blbuf = obuf;
+            blbuf += equip_blokey_pos[bkg_part].X - equip_blokey_pos[ModDPt_BKGND].X;
+            blbuf += (equip_blokey_pos[bkg_part].Y - equip_blokey_pos[ModDPt_BKGND].Y) * equip_blokey_width[ModDPt_BKGND];
+            for (h = equip_blokey_height[bkg_part]; h > 0; h--)
+            {
+                LbMemoryCopy(blbuf, ldbuf, equip_blokey_width[bkg_part]);
+                blbuf += equip_blokey_width[ModDPt_BKGND];
+                ldbuf += equip_blokey_width[bkg_part];
+            }
+        }
+
+        // Now blit bart of the background which we care about to the bkgbuf
+        bkg_part = ModDPt_BKGND;
+        obuf += equip_blokey_pos[part].X - equip_blokey_pos[bkg_part].X;
+        obuf += (equip_blokey_pos[part].Y - equip_blokey_pos[bkg_part].Y) * equip_blokey_width[bkg_part];
+        for (h = equip_blokey_height[part]; h > 0; h--)
+        {
+            LbMemoryCopy(bkgbuf, obuf, equip_blokey_width[part]);
+            obuf += equip_blokey_width[bkg_part];
+            bkgbuf += equip_blokey_width[part];
+        }
+    }
+}
+
 ubyte cryo_cyborg_mods_anim_get_stage(ubyte *p_part)
 {
     ubyte part, stage;
@@ -527,7 +597,7 @@ void init_next_blokey_flic(void)
     switch (stage)
     {
     case ModDSt_BRT:
-        anislot = AniSl_UNKN8;
+        anislot = AniSl_CYBORG_BRTH;
         if (!byte_1DDC40)
         {
             byte_1DDC40 = 1;
@@ -548,7 +618,7 @@ void init_next_blokey_flic(void)
         anislot = AniSl_CYBORG_INOUT;
         cryo_cyborg_mods_anim_set_fname(anislot, part, stage);
         flic_unkn03(anislot);
-        flic_clear_output_buffer(anislot);
+        flic_bkgnd_fill_output_buffer_anim_out(anislot, part);
         new_current_drawing_mod = part;
         mod_draw_states[part] |= ModDSt_ModAnimOut;
         play_sample_using_heap(0, 132, 127, 64, 100, 0, 3);
@@ -583,7 +653,7 @@ void purple_mods_data_to_screen(void)
     buf = back_buffer - PURPLE_MOD_AREA_WIDTH*PURPLE_MOD_AREA_HEIGHT;
     {
         char locstr[52];
-        sprint_cryo_cyborg_mods_static_fname(locstr, ModDPt_BKGND);
+        sprint_cryo_cyborg_mods_static_fname(locstr, ModDPt_BKGND, flic_mods);
         len = LbFileLoadAt(locstr, buf);
     }
     if (len < 4) {
@@ -668,7 +738,7 @@ void blokey_static_flic_data_to_screen(void)
         buf = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
         {
             char locstr[52];
-            sprint_cryo_cyborg_mods_static_fname(locstr, cdm);
+            sprint_cryo_cyborg_mods_static_fname(locstr, cdm, flic_mods);
             len = LbFileLoadAt(locstr, buf);
         }
         if (len < 4) {
@@ -803,7 +873,7 @@ void draw_body_mods(void)
             if (done)
             {
                 mod_draw_states[cdm] &= ~(ModDSt_ModAnimOut | ModDSt_Unkn04);
-                if (flic_mods[cdm])
+                if (flic_mods[cdm] != 0)
                     mod_draw_states[cdm] |= ModDSt_Unkn08;
                 copy_box_purple_list(cryo_blokey_box.X - 3, cryo_blokey_box.Y - 3,
                   cryo_blokey_box.Width + 6, cryo_blokey_box.Height + 6);
@@ -813,7 +883,7 @@ void draw_body_mods(void)
 
     if (!still_playing && (current_drawing_mod == 4))
     {
-        done = xdo_next_frame(AniSl_UNKN8);
+        done = xdo_next_frame(AniSl_CYBORG_BRTH);
         still_playing = !done;
         current_frame++;
         if (current_frame == 26) {
