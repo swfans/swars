@@ -28,14 +28,22 @@ extern "C" {
 #pragma pack(1)
 
 enum ModDrawStateFlags {
-    ModDSt_Unkn01	= 0x01,
-    ModDSt_Unkn02	= 0x02,
+    ModDSt_ModAnimIn	= 0x01,	/**< cybernetic mod insertion animation plays */
+    ModDSt_ModAnimOut	= 0x02,	/**< cybernetic mod removal animation plays */
     ModDSt_Unkn04	= 0x04,
     ModDSt_Unkn08	= 0x08,
     ModDSt_Unkn10	= 0x10,
     ModDSt_Unkn20	= 0x20,
     ModDSt_Unkn40	= 0x40,
     ModDSt_Unkn80	= 0x80,
+};
+
+enum ModDrawPart {
+    ModDPt_CHEST	= 0,
+    ModDPt_BRAIN	= 1,
+    ModDPt_ARMS		= 2,
+    ModDPt_LEGS		= 3,
+    ModDPt_BKGND	= 4,
 };
 
 #pragma pack()

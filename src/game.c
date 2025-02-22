@@ -501,7 +501,7 @@ ubyte *anim_type_get_output_buffer(ubyte anislot)
     case AniSl_UNKN7:
     case AniSl_NETSCAN:
         return vec_tmap[5];
-    case AniSl_CYBORG_STAT:
+    case AniSl_CYBORG_INOUT:
     case AniSl_UNKN8:
         return vec_tmap[5] + 0x8000;
     }
@@ -582,7 +582,7 @@ void flic_unkn03(ubyte anislot)
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
-    case AniSl_CYBORG_STAT:
+    case AniSl_CYBORG_INOUT:
         byte_1AAA88 = 0;
         anim_flic_set_frame_buffer(p_anim, frmbuf, 0, 0, 0, 0x00);
         break;
@@ -3797,13 +3797,12 @@ void game_setup(void)
     }
 }
 
-void flic_creation_unkn01(void)
+void anim_show_draw_next_frame(struct Animation *p_anim)
 {
-    ushort k;
     ubyte pal_change;
 
-    k = active_anim;
-    pal_change = anim_show_frame(&animations[k]);
+    pal_change = anim_show_frame(p_anim);
+    p_anim->FrameNumber++;
 
     if (pal_change)
     {
@@ -3823,7 +3822,7 @@ int xdo_next_frame(ubyte anislot)
     active_anim = k;
     p_anim = &animations[k];
 
-    if (anislot >= AniSl_EQVIEW && anislot <= AniSl_CYBORG_STAT)
+    if (anislot >= AniSl_EQVIEW && anislot <= AniSl_CYBORG_INOUT)
     {
         if (p_anim->FrameNumber == 0) {
             play_sample_using_heap(0, 135, 127, 64, 100, 0, 3u);
@@ -3832,19 +3831,57 @@ int xdo_next_frame(ubyte anislot)
         }
     }
 
-    if (p_anim->FrameNumber < p_anim->FLCFileHeader.NumberOfFrames)
+    if (p_anim->FrameNumber >= p_anim->FLCFileHeader.NumberOfFrames)
     {
-        anim_show_prep_next_frame(p_anim, anim_type_get_output_buffer(p_anim->Type));
-        flic_creation_unkn01();
-        p_anim->FrameNumber++;
-        return 0;
+        anim_flic_close(p_anim);
+        if ((p_anim->Flags & 0x20) != 0) {
+            flic_unkn03(p_anim->Type);
+        }
+        return 1;
     }
 
-    anim_flic_close(p_anim);
-    if ((p_anim->Flags & 0x20) != 0) {
-        flic_unkn03(p_anim->Type);
+    anim_show_prep_next_frame(p_anim, anim_type_get_output_buffer(p_anim->Type));
+    anim_show_draw_next_frame(p_anim);
+
+    return 0;
+}
+
+int xdo_prev_frame(ubyte anislot)
+{
+    struct Animation *p_anim;
+    ubyte *frmbuf;
+    uint i, rq_frame;
+    ushort k;
+
+    k = anim_slots[anislot];
+    active_anim = k;
+    p_anim = &animations[k];
+
+    if (p_anim->FrameNumber == 0)
+        rq_frame = p_anim->FLCFileHeader.NumberOfFrames;
+    else
+        rq_frame = p_anim->FrameNumber - 1;
+
+    if (rq_frame == 0)
+    {
+        anim_flic_close(p_anim);
+        if ((p_anim->Flags & 0x20) != 0) {
+            flic_unkn03(p_anim->Type);
+        }
+        return 1;
     }
-    return 1;
+
+    frmbuf = anim_type_get_output_buffer(p_anim->Type);
+    anim_flic_show_replay(p_anim);
+    //TODO copy background to frame buffer
+    anim_show_prep_next_frame(p_anim, frmbuf);
+    anim_show_draw_next_frame(p_anim);
+    for (i = 1; i < rq_frame; i++)
+    {
+        anim_show_prep_next_frame(p_anim, NULL);
+        anim_show_draw_next_frame(p_anim);
+    }
+    return 0;
 }
 
 void mapwho_unkn01(int a1, int a2)

@@ -107,8 +107,8 @@ enum DisplayModes {
 enum AnimSlot {
   AniSl_FULLSCREEN = 0,
   AniSl_BILLBOARD = 1,
-  AniSl_EQVIEW = 2,
-  AniSl_CYBORG_STAT = 3,
+  AniSl_EQVIEW = 2,	/**< equipment (weapon or mod) presentation in buy/sell window */
+  AniSl_CYBORG_INOUT = 3,	/**< cyborg mod insertion or removal anim */
   AniSl_UNKN4 = 4,
   AniSl_UNKN5 = 5,
   AniSl_UNKN6 = 6,
@@ -503,7 +503,18 @@ void game_process(void);
 void game_reset(void);
 void host_reset(void);
 void free_texturemaps(void);
-int xdo_next_frame(ubyte a1);
+
+/** Decode and draw next frame of the animation.
+ */
+int xdo_next_frame(ubyte anislot);
+
+/** Decode and draw previous frame of the animation.
+ *
+ * Note that printing a previous frame of the FLI file requires
+ * decoding all frames from start - these files do not use
+ * bi-directional FLIC format.
+ */
+int xdo_prev_frame(ubyte anislot);
 
 void flic_unkn03(ubyte a1);
 
