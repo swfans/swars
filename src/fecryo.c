@@ -320,6 +320,33 @@ ubyte do_equip_offer_buy_cybmod(ubyte click)
     return (nbought > 0);
 }
 
+/** Clears output buffer of the animation at given slot.
+ *
+ * The animation must be opened, but its frame buffer
+ * doesn't have to be set for this function to work.
+ */
+void flic_clear_output_buffer(ubyte anislot)
+{
+    struct Animation *p_anim;
+    int k;
+
+    k = anim_slots[anislot];
+    p_anim = &animations[k];
+    if (anim_is_opened(p_anim))
+    {
+        ubyte *obuf;
+        short h;
+
+        obuf = anim_type_get_output_buffer(p_anim->Type);
+
+        for (h = p_anim->FLCFileHeader.Height; h > 0; h--)
+        {
+            LbMemorySet(obuf, '\0', p_anim->FLCFileHeader.Width);
+            obuf += p_anim->FLCFileHeader.Width;
+        }
+    }
+}
+
 #define PURPLE_MOD_AREA_WIDTH 139
 #define PURPLE_MOD_AREA_HEIGHT 295
 
@@ -398,7 +425,9 @@ void init_next_blokey_flic(void)
             k = anim_slots[anislot];
             p_anim = &animations[k];
             anim_flic_set_fname(p_anim, "%s/%s%da%d.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
+
             flic_unkn03(anislot);
+            flic_clear_output_buffer(anislot);
             play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
             current_frame = 0;
             new_current_drawing_mod = 4;
@@ -428,10 +457,11 @@ void init_next_blokey_flic(void)
             break;
         }
         flic_unkn03(anislot);
+        flic_clear_output_buffer(anislot);
         new_current_drawing_mod = cmod;
         mod_draw_states[cmod] |= 0x02;
-        cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
         play_sample_using_heap(0, 132, 127, 64, 100, 0, 3);
+        cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
         byte_1DDC40 = 0;
         break;
     case 2:
@@ -457,6 +487,7 @@ void init_next_blokey_flic(void)
             break;
         }
         flic_unkn03(anislot);
+        flic_clear_output_buffer(anislot);
         new_current_drawing_mod = cmod;
         mod_draw_states[cmod] |= 0x01;
         mod_draw_states[cmod] &= ~0x08;
@@ -503,12 +534,12 @@ void purple_mods_data_to_screen(void)
 
 void blokey_flic_data_to_screen(void)
 {
-    ubyte cdm;
     ubyte *iline;
     ubyte *oline;
     ubyte *inp;
     ubyte *o;
     ushort dy, dx;
+    ubyte cdm;
 
     cdm = current_drawing_mod;
     iline = anim_type_get_output_buffer(AniSl_UNKN3);
@@ -758,15 +789,67 @@ void set_mod_draw_states_flag08(void)
     }
 }
 
-ubyte show_cryo_blokey(struct ScreenBox *box)
+ubyte draw_body_mods_names(struct ScreenBox *p_box)
 {
     short cx, cy;
     short hline;
+    ubyte cdm;
 
-    if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
+    cx = p_box->X + 4;
+    cy = p_box->Y + 20;
+    hline = font_height('A');
+
+    for (cdm = 0; cdm < 5; cdm++)
+    {
+        ubyte cybmod_lv;
+        char locstr[54];
+        const char *text;
+
+        cybmod_lv = cryo_blokey_mod_level(cdm);
+
+        if (cybmod_lv == 0)
+        {
+            if (cdm == 3)
+                cy += 2 * hline + 70;
+            else
+                cy += 2 * hline + 37;
+            continue;
+        }
+
+        text = gui_strings[70 + cdm];
+        lbDisplay.DrawColour = 247;
+        draw_text_purple_list2(cx, cy, text, 0);
+        cy += hline + 3;
+
+        if (cdm == 3)
+            snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[75], cybmod_lv);
+        else
+            snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[76], cybmod_lv);
+        text = loctext_to_gtext(locstr);
+        draw_text_purple_list2(cx, cy, text, 0);
+        lbDisplay.DrawFlags = 0;
+        if (cdm == 3)
+        {
+            lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
+            draw_box_purple_list(cx, cy + hline + 3, 40, 40, lbDisplay.DrawColour);
+            draw_sprite_purple_list(cx + 1, cy + hline + 4, &sprites_Icons0_0[163 + cybmod_lv]);
+            lbDisplay.DrawFlags = 0;
+            cy += hline + 67;
+        }
+        else
+        {
+            cy += hline + 34;
+        }
+    }
+    return 0;
+}
+
+ubyte show_cryo_blokey(struct ScreenBox *p_box)
+{
+    if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         draw_flic_purple_list(purple_mods_data_to_screen);
-        box->Flags |= GBxFlg_BkgndDrawn;
+        p_box->Flags |= GBxFlg_BkgndDrawn;
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
         reset_mod_draw_states_flag08();
@@ -774,73 +857,25 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
     }
 
     if (word_15511E != selected_agent)
-        box->Flags &= ~GBxFlg_RadioBtn;
+        p_box->Flags &= ~GBxFlg_RadioBtn;
     word_15511E = selected_agent;
     lbFontPtr = small_med_font;
     my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
-    cx = box->X + 4;
-    cy = box->Y + 20;
-    hline = font_height('A');
 
     if (selected_agent < 0)
         return 0;
 
-    {
-        ubyte cdm;
-
-        draw_body_mods();
-        for (cdm = 0; cdm < 5; cdm++)
-        {
-            ubyte cybmod_lv;
-            char locstr[54];
-            const char *text;
-
-            cybmod_lv = cryo_blokey_mod_level(cdm);
-
-            if (cybmod_lv == 0)
-            {
-                if (cdm == 3)
-                    cy += 2 * hline + 70;
-                else
-                    cy += 2 * hline + 37;
-                continue;
-            }
-
-            text = gui_strings[70 + cdm];
-            lbDisplay.DrawColour = 247;
-            draw_text_purple_list2(cx, cy, text, 0);
-            cy += hline + 3;
-
-            if (cdm == 3)
-                snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[75], cybmod_lv);
-            else
-                snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[76], cybmod_lv);
-            text = loctext_to_gtext(locstr);
-            draw_text_purple_list2(cx, cy, text, 0);
-            lbDisplay.DrawFlags = 0;
-            if (cdm == 3)
-            {
-                lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
-                draw_box_purple_list(cx, cy + hline + 3, 40, 40, lbDisplay.DrawColour);
-                draw_sprite_purple_list(cx + 1, cy + hline + 4, &sprites_Icons0_0[163 + cybmod_lv]);
-                lbDisplay.DrawFlags = 0;
-                cy += hline + 67;
-            }
-            else
-            {
-                cy += hline + 34;
-            }
-        }
-    }
+    draw_body_mods();
+    draw_body_mods_names(p_box);
     return 0;
 }
 
-ubyte show_cryo_agent_list(struct ScreenTextBox *box)
+ubyte show_cryo_agent_list(struct ScreenTextBox *p_box)
 {
     ubyte ret;
     asm volatile ("call ASM_show_cryo_agent_list\n"
-        : "=r" (ret) : "a" (box));
+        : "=r" (ret) : "a" (p_box));
     return ret;
 }
 
