@@ -252,7 +252,7 @@ TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
     ret = Lb_OK;
 
     unk3_sprites_data = p_buf;
-    sprintf(locstr, "%s/mouse-%hu.dat", dir, detail);
+    sprintf(locstr, "%s/mouse%hu-%hu.dat", dir, styleno, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;
@@ -260,7 +260,7 @@ TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
     }
     p_buf += len;
     unk3_sprites = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/mouse-%hu.tab", dir, detail);
+    sprintf(locstr, "%s/mouse%hu-%hu.tab", dir, styleno, detail);
     len = LbFileLoadAt(locstr, p_buf);
     if (len == -1) {
         ret = Lb_FAIL;

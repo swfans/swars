@@ -2352,7 +2352,7 @@ TbResult init_read_all_sprite_files(void)
     if (tret == Lb_OK)
         tret = ret;
 
-    ret = load_sprites_fe_mouse_pointers(&p_buf, pinfo->directory, 0, 0);
+    ret = load_sprites_fe_mouse_pointers(&p_buf, pinfo->directory, 0, 1);
     if (tret == Lb_OK)
         tret = ret;
 
