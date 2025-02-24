@@ -37,6 +37,9 @@ extern "C" {
  */
 void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height, TbPixel ckey);
 
+void ApScreenCopyRectColorKey(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort sourceWidth, ushort destWidth, ushort height, TbPixel ckey);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

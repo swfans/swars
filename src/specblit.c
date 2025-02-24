@@ -25,6 +25,31 @@
 #include "swlog.h"
 /******************************************************************************/
 
+void ApScreenCopyRectColorKey(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort sourceWidth, ushort destWidth, ushort height, TbPixel ckey)
+{
+    ubyte *s;
+    ubyte *d;
+    short shift;
+    short w, h;
+
+    s = sourceBuf;
+    d = destBuf;
+    shift = destWidth - sourceWidth;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
+    {
+        for (w = 0; w < sourceWidth; w++)
+        {
+            if (*s != ckey)
+                *d = *s;
+            s++;
+            d++;
+        }
+        d += shift;
+    }
+}
+
 void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height, TbPixel ckey)
 {
     ubyte *s;
