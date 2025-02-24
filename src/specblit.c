@@ -20,8 +20,34 @@
 #include "specblit.h"
 
 #include "bfmemut.h"
+#include "bfscreen.h"
+
 #include "swlog.h"
 /******************************************************************************/
+
+void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height, TbPixel ckey)
+{
+    ubyte *s;
+    ubyte *d;
+    short shift;
+    short w, h;
+
+    s = sourceBuf;
+    d = destBuf;
+    shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
+    {
+        for (w = 0; w < lbDisplay.GraphicsWindowWidth; w++)
+        {
+            if (*s != ckey)
+                *d = *s;
+            s++;
+            d++;
+        }
+        d += shift;
+    }
+}
 
 void * memory_copy_with_skip(void *in_dst, const void *in_src, TbMemSize size, ubyte bskip)
 {

@@ -643,6 +643,77 @@ void init_next_blokey_flic(void)
     }
 }
 
+void blokey_flic_data_to_screen(void)
+{
+    ubyte *inp;
+    short scr_x, scr_y;
+    short w, h;
+    ubyte part;
+
+    part = current_drawing_mod;
+    scr_x = cryo_blokey_box.X + 63 + equip_blokey_pos[part].X;
+    scr_y = cryo_blokey_box.Y + 1 + equip_blokey_pos[part].Y;
+    w = equip_blokey_width[part];
+    h = equip_blokey_height[part];
+    inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
+
+    LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
+
+    ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
+        lbDisplay.GraphicsWindowHeight, 0);
+
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
+        lbDisplay.GraphicsScreenHeight);
+}
+
+void blokey_static_flic_data_to_screen(void)
+{
+    ubyte part;
+
+    for (part = 0; part < 4; part++)
+    {
+        ubyte *inp;
+        ubyte *back_window_ptr;
+        long len;
+        short scr_x, scr_y;
+        short w, h;
+
+        if (flic_mods[part] == 0)
+            continue;
+
+        inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
+        {
+            char locstr[52];
+            sprint_cryo_cyborg_mods_static_fname(locstr, part, flic_mods);
+            len = LbFileLoadAt(locstr, inp);
+        }
+        if (len < 4) {
+            LbMemorySet(inp, 0, equip_blokey_static_width[part] * equip_blokey_static_height[part]);
+        }
+
+        scr_x = cryo_blokey_box.X + 63 + equip_blokey_static_pos[part].X;
+        scr_y = cryo_blokey_box.Y + 1 + equip_blokey_static_pos[part].Y;
+        w = equip_blokey_static_width[part];
+        h = equip_blokey_static_height[part];
+
+        LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
+
+        ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
+            lbDisplay.GraphicsWindowHeight, 0);
+
+        back_window_ptr = back_buffer
+          + lbDisplay.GraphicsScreenWidth*lbDisplay.GraphicsWindowY + lbDisplay.GraphicsWindowX;
+
+        ApScreenCopyColorKey(inp, back_window_ptr,
+            lbDisplay.GraphicsWindowHeight, 0);
+
+        mod_draw_states[part] = ModDSt_Unkn04;
+    }
+
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
+        lbDisplay.GraphicsScreenHeight);
+}
+
 void purple_mods_data_to_screen(void)
 {
     short x, y;
@@ -650,7 +721,7 @@ void purple_mods_data_to_screen(void)
     ubyte *o[2];
     long len;
 
-    buf = back_buffer - PURPLE_MOD_AREA_WIDTH*PURPLE_MOD_AREA_HEIGHT;
+    buf = back_buffer - PURPLE_MOD_AREA_WIDTH * PURPLE_MOD_AREA_HEIGHT;
     {
         char locstr[52];
         sprint_cryo_cyborg_mods_static_fname(locstr, ModDPt_BKGND, flic_mods);
@@ -663,98 +734,15 @@ void purple_mods_data_to_screen(void)
     o[1] = back_buffer;
     o[0] = lbDisplay.WScreen;
 
-    x = cryo_blokey_box.X + 63;
-    y = cryo_blokey_box.Y + 1;
-    copy_buffer_to_double_bufs(buf, PURPLE_MOD_AREA_WIDTH, PURPLE_MOD_AREA_HEIGHT,
-        o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-}
-
-/** A variant of LbScreenCopy() which treats pixel value 0 as transparency.
- */
-void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height)
-{
-    ubyte *s;
-    ubyte *d;
-    short shift;
-    short w, h;
-
-    s = sourceBuf;
-    d = destBuf;
-    shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
-    // Note that source and destination buffers have different line lengths
-    for (h = height; h > 0; h--)
     {
-        for (w = 0; w < lbDisplay.GraphicsWindowWidth; w++)
-        {
-            if (*s != '\0')
-                *d = *s;
-            s++;
-            d++;
-        }
-        d += shift;
+        x = cryo_blokey_box.X + 63;
+        y = cryo_blokey_box.Y + 1;
+        copy_buffer_to_double_bufs(buf, PURPLE_MOD_AREA_WIDTH, PURPLE_MOD_AREA_HEIGHT,
+            o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     }
 }
 
-void blokey_flic_data_to_screen(void)
-{
-    ubyte *inp;
-    short scr_x, scr_y;
-    short w, h;
-    ubyte cdm;
-
-    cdm = current_drawing_mod;
-    scr_x = cryo_blokey_box.X + 63 + equip_blokey_pos[cdm].X;
-    scr_y = cryo_blokey_box.Y + 1 + equip_blokey_pos[cdm].Y;
-    w = equip_blokey_width[cdm];
-    h = equip_blokey_height[cdm];
-    inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
-
-    LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
-
-    ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
-        lbDisplay.GraphicsWindowHeight);
-
-    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
-        lbDisplay.GraphicsScreenHeight);
-}
-
-void blokey_static_flic_data_to_screen(void)
-{
-    ubyte *buf;
-    ubyte *o[2];
-    ubyte cdm;
-
-    o[1] = back_buffer;
-    o[0] = lbDisplay.WScreen;
-
-    for (cdm = 0; cdm < 4; cdm++)
-    {
-        long len;
-        short x, y;
-
-        if (flic_mods[cdm] == 0)
-            continue;
-
-        buf = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
-        {
-            char locstr[52];
-            sprint_cryo_cyborg_mods_static_fname(locstr, cdm, flic_mods);
-            len = LbFileLoadAt(locstr, buf);
-        }
-        if (len < 4) {
-            LbMemorySet(buf, 0, equip_blokey_static_width[cdm] * equip_blokey_static_height[cdm]);
-        }
-
-        x = cryo_blokey_box.X + 63 + equip_blokey_static_pos[cdm].X;
-        y = cryo_blokey_box.Y + 1 + equip_blokey_static_pos[cdm].Y;
-        copy_buffer_to_double_bufs_with_trans(buf, equip_blokey_static_width[cdm], equip_blokey_static_height[cdm],
-          o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, 0);
-
-        mod_draw_states[cdm] = ModDSt_Unkn04;
-    }
-}
-
-ubyte cryo_blokey_mod_level(ubyte cdm)
+ubyte cryo_blokey_mod_level(ubyte part)
 {
     PlayerInfo *p_locplayer;
     ubyte cybmod_lv;
@@ -762,7 +750,7 @@ ubyte cryo_blokey_mod_level(ubyte cdm)
     if (selected_agent < 0)
         return 0;
 
-    switch (cdm)
+    switch (part)
     {
     case 0:
         cybmod_lv = flic_mods[1];
@@ -809,7 +797,7 @@ void draw_body_mods(void)
     asm volatile ("call ASM_draw_body_mods\n"
         :  :  : "eax" );
 #endif
-    int cdm;
+    int part;
     TbBool done, still_playing;
 
     current_drawing_mod = new_current_drawing_mod;
@@ -820,8 +808,8 @@ void draw_body_mods(void)
         draw_flic_purple_list(blokey_static_flic_data_to_screen);
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
-        for (cdm = 0; cdm < 4; cdm++)
-            mod_draw_states[cdm] = 0;
+        for (part = 0; part < 4; part++)
+            mod_draw_states[part] = 0;
         new_current_drawing_mod = 0;
         current_drawing_mod = 0;
         current_frame = 0;
@@ -841,19 +829,19 @@ void draw_body_mods(void)
 
     if (!still_playing)
     {
-        for (cdm = 0; cdm < 4; cdm++)
+        for (part = 0; part < 4; part++)
         {
-            if ((mod_draw_states[cdm] & ModDSt_ModAnimIn) == 0)
+            if ((mod_draw_states[part] & ModDSt_ModAnimIn) == 0)
                 continue;
             done = xdo_next_frame(AniSl_CYBORG_INOUT);
             still_playing = 1;
             draw_flic_purple_list(blokey_flic_data_to_screen);
             if (done != 0)
             {
-                mod_draw_states[cdm] &= ~(ModDSt_ModAnimIn | ModDSt_Unkn04);
-                mod_draw_states[cdm] |= ModDSt_Unkn04;
-                if (old_flic_mods[cdm] != flic_mods[cdm])
-                    mod_draw_states[cdm] |= (ModDSt_Unkn08 | ModDSt_Unkn04);
+                mod_draw_states[part] &= ~(ModDSt_ModAnimIn | ModDSt_Unkn04);
+                mod_draw_states[part] |= ModDSt_Unkn04;
+                if (old_flic_mods[part] != flic_mods[part])
+                    mod_draw_states[part] |= (ModDSt_Unkn08 | ModDSt_Unkn04);
                 copy_box_purple_list(cryo_blokey_box.X - 3, cryo_blokey_box.Y - 3,
                   cryo_blokey_box.Width + 6, cryo_blokey_box.Height + 6);
             }
@@ -863,18 +851,18 @@ void draw_body_mods(void)
 
     if (!still_playing)
     {
-        for (cdm = 0; cdm < 4; cdm++)
+        for (part = 0; part < 4; part++)
         {
-            if ((mod_draw_states[cdm] & ModDSt_ModAnimOut) == 0)
+            if ((mod_draw_states[part] & ModDSt_ModAnimOut) == 0)
                 continue;
             done = xdo_prev_frame(AniSl_CYBORG_INOUT);
             still_playing = 1;
             draw_flic_purple_list(blokey_flic_data_to_screen);
             if (done)
             {
-                mod_draw_states[cdm] &= ~(ModDSt_ModAnimOut | ModDSt_Unkn04);
-                if (flic_mods[cdm] != 0)
-                    mod_draw_states[cdm] |= ModDSt_Unkn08;
+                mod_draw_states[part] &= ~(ModDSt_ModAnimOut | ModDSt_Unkn04);
+                if (flic_mods[part] != 0)
+                    mod_draw_states[part] |= ModDSt_Unkn08;
                 copy_box_purple_list(cryo_blokey_box.X - 3, cryo_blokey_box.Y - 3,
                   cryo_blokey_box.Width + 6, cryo_blokey_box.Height + 6);
             }
@@ -901,22 +889,22 @@ void draw_body_mods(void)
 
 void reset_mod_draw_states_flag08(void)
 {
-    ushort cdm;
-    for (cdm = 0; cdm < 4; cdm++)
+    ushort part;
+    for (part = 0; part < 4; part++)
     {
-        mod_draw_states[cdm] = 0;
-        if (flic_mods[cdm] != 0)
-            mod_draw_states[cdm] |= ModDSt_Unkn08;
+        mod_draw_states[part] = 0;
+        if (flic_mods[part] != 0)
+            mod_draw_states[part] |= ModDSt_Unkn08;
     }
 }
 
 void set_mod_draw_states_flag08(void)
 {
-    ushort cdm;
-    for (cdm = 0; cdm < 4; cdm++)
+    ushort part;
+    for (part = 0; part < 4; part++)
     {
-        if (old_flic_mods[cdm] != flic_mods[cdm])
-            mod_draw_states[cdm] |= ModDSt_Unkn08;
+        if (old_flic_mods[part] != flic_mods[part])
+            mod_draw_states[part] |= ModDSt_Unkn08;
     }
 }
 
@@ -924,42 +912,42 @@ ubyte draw_body_mods_names(struct ScreenBox *p_box)
 {
     short cx, cy;
     short hline;
-    ubyte cdm;
+    ubyte part;
 
     cx = p_box->X + 4;
     cy = p_box->Y + 20;
     hline = font_height('A');
 
-    for (cdm = 0; cdm < 5; cdm++)
+    for (part = 0; part < 5; part++)
     {
         ubyte cybmod_lv;
         char locstr[54];
         const char *text;
 
-        cybmod_lv = cryo_blokey_mod_level(cdm);
+        cybmod_lv = cryo_blokey_mod_level(part);
 
         if (cybmod_lv == 0)
         {
-            if (cdm == 3)
+            if (part == 3)
                 cy += 2 * hline + 70;
             else
                 cy += 2 * hline + 37;
             continue;
         }
 
-        text = gui_strings[70 + cdm];
+        text = gui_strings[70 + part];
         lbDisplay.DrawColour = 247;
         draw_text_purple_list2(cx, cy, text, 0);
         cy += hline + 3;
 
-        if (cdm == 3)
+        if (part == 3)
             snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[75], cybmod_lv);
         else
             snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[76], cybmod_lv);
         text = loctext_to_gtext(locstr);
         draw_text_purple_list2(cx, cy, text, 0);
         lbDisplay.DrawFlags = 0;
-        if (cdm == 3)
+        if (part == 3)
         {
             lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
             draw_box_purple_list(cx, cy + hline + 3, 40, 40, lbDisplay.DrawColour);
