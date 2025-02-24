@@ -643,6 +643,44 @@ void init_next_blokey_flic(void)
     }
 }
 
+void purple_mods_data_to_screen(void)
+{
+    ubyte *inp;
+    ubyte *back_window_ptr;
+    long len;
+    short scr_x, scr_y;
+    short w, h;
+
+    scr_x = cryo_blokey_box.X + 63;
+    scr_y = cryo_blokey_box.Y + 1;
+    w = PURPLE_MOD_AREA_WIDTH;
+    h = PURPLE_MOD_AREA_HEIGHT;
+
+    inp = back_buffer - w * h;
+    {
+        char locstr[52];
+        sprint_cryo_cyborg_mods_static_fname(locstr, ModDPt_BKGND, flic_mods);
+        len = LbFileLoadAt(locstr, inp);
+    }
+    if (len < 4) {
+        LbMemorySet(inp, 0, w * h);
+    }
+
+    LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
+
+    ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
+        lbDisplay.GraphicsWindowHeight, 0);
+
+    back_window_ptr = back_buffer
+      + lbDisplay.GraphicsScreenWidth*lbDisplay.GraphicsWindowY + lbDisplay.GraphicsWindowX;
+
+    ApScreenCopyColorKey(inp, back_window_ptr,
+        lbDisplay.GraphicsWindowHeight, 0);
+
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
+        lbDisplay.GraphicsScreenHeight);
+}
+
 void blokey_flic_data_to_screen(void)
 {
     ubyte *inp;
@@ -681,6 +719,11 @@ void blokey_static_flic_data_to_screen(void)
         if (flic_mods[part] == 0)
             continue;
 
+        scr_x = cryo_blokey_box.X + 63 + equip_blokey_static_pos[part].X;
+        scr_y = cryo_blokey_box.Y + 1 + equip_blokey_static_pos[part].Y;
+        w = equip_blokey_static_width[part];
+        h = equip_blokey_static_height[part];
+
         inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
         {
             char locstr[52];
@@ -688,13 +731,8 @@ void blokey_static_flic_data_to_screen(void)
             len = LbFileLoadAt(locstr, inp);
         }
         if (len < 4) {
-            LbMemorySet(inp, 0, equip_blokey_static_width[part] * equip_blokey_static_height[part]);
+            LbMemorySet(inp, 0, w * h);
         }
-
-        scr_x = cryo_blokey_box.X + 63 + equip_blokey_static_pos[part].X;
-        scr_y = cryo_blokey_box.Y + 1 + equip_blokey_static_pos[part].Y;
-        w = equip_blokey_static_width[part];
-        h = equip_blokey_static_height[part];
 
         LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
@@ -712,34 +750,6 @@ void blokey_static_flic_data_to_screen(void)
 
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
-}
-
-void purple_mods_data_to_screen(void)
-{
-    short x, y;
-    ubyte *buf;
-    ubyte *o[2];
-    long len;
-
-    buf = back_buffer - PURPLE_MOD_AREA_WIDTH * PURPLE_MOD_AREA_HEIGHT;
-    {
-        char locstr[52];
-        sprint_cryo_cyborg_mods_static_fname(locstr, ModDPt_BKGND, flic_mods);
-        len = LbFileLoadAt(locstr, buf);
-    }
-    if (len < 4) {
-        LbMemorySet(buf, 0, PURPLE_MOD_AREA_WIDTH * PURPLE_MOD_AREA_HEIGHT);
-    }
-
-    o[1] = back_buffer;
-    o[0] = lbDisplay.WScreen;
-
-    {
-        x = cryo_blokey_box.X + 63;
-        y = cryo_blokey_box.Y + 1;
-        copy_buffer_to_double_bufs(buf, PURPLE_MOD_AREA_WIDTH, PURPLE_MOD_AREA_HEIGHT,
-            o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-    }
 }
 
 ubyte cryo_blokey_mod_level(ubyte part)

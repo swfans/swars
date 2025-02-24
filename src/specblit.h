@@ -37,12 +37,6 @@ extern "C" {
  */
 void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height, TbPixel ckey);
 
-void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
-    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight);
-
-void copy_buffer_to_double_bufs_with_trans(ubyte *ibuf, ushort iwidth, ushort iheight,
-    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight, ubyte trans_col);
-
 /******************************************************************************/
 #ifdef __cplusplus
 }
