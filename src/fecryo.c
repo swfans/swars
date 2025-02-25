@@ -439,6 +439,29 @@ void cryo_cyborg_mods_anim_set_fname(ubyte anislot, ubyte part, ubyte stage)
     }
 }
 
+void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *framebuf)
+{
+    ubyte part;
+
+    part = ModDPt_BKGND;
+    {
+        long len;
+        short w, h;
+
+        w = equip_blokey_width[part];
+        h = equip_blokey_height[part];
+
+        {
+            char locstr[52];
+            sprint_cryo_cyborg_mods_static_fname(locstr, part, flic_mods);
+            len = LbFileLoadAt(locstr, framebuf);
+        }
+        if (len < 4) {
+            LbMemorySet(framebuf, 0, w * h);
+        }
+    }
+}
+
 void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *framebuf, ubyte *scratchbuf, ubyte *mods_arr)
 {
     short frame_w;
@@ -515,29 +538,14 @@ void flic_bkgnd_fill_output_buffer_anim_out(ubyte anislot, ubyte skip_part)
     p_anim = &animations[k];
     if (anim_is_opened(p_anim))
     {
-        char locstr[52];
         ubyte *obuf;
         ubyte *bkgbuf;
-        long len;
         ubyte bkgn_part;
 
         bkgbuf = anim_type_get_output_buffer(AniSl_BKGND);
         obuf = anim_type_get_output_buffer(p_anim->Type);
 
-        {
-            ubyte *ldbuf;
-            short frame_w, frame_h;
-            // Load the whole background to obuf
-            bkgn_part = ModDPt_BKGND;
-            frame_w = equip_blokey_width[bkgn_part];
-            frame_h = equip_blokey_height[bkgn_part];
-            ldbuf = obuf;
-            sprint_cryo_cyborg_mods_static_fname(locstr, bkgn_part, old_flic_mods);
-            len = LbFileLoadAt(locstr, ldbuf);
-            if (len < 4) {
-                LbMemorySet(ldbuf, 0, frame_w * frame_h);
-            }
-        }
+        cryo_cyborg_mods_blokey_bkgnd_to_buffer(obuf);
         cryo_cyborg_mods_blokey_static_to_buffer(obuf, bkgbuf, old_flic_mods);
 
         // Now blit part of the background which we care about to the bkgbuf,
@@ -663,7 +671,6 @@ void purple_mods_data_to_screen(void)
 {
     ubyte *inp;
     ubyte *back_window_ptr;
-    long len;
     short scr_x, scr_y;
     short w, h;
 
@@ -674,14 +681,7 @@ void purple_mods_data_to_screen(void)
 
     inp = back_buffer - w * h;
     // TODO should not read files from within drawlist - alter to fill an input buffer before drawlist execution
-    {
-        char locstr[52];
-        sprint_cryo_cyborg_mods_static_fname(locstr, ModDPt_BKGND, flic_mods);
-        len = LbFileLoadAt(locstr, inp);
-    }
-    if (len < 4) {
-        LbMemorySet(inp, 0, w * h);
-    }
+    cryo_cyborg_mods_blokey_bkgnd_to_buffer(inp);
 
     LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
@@ -731,7 +731,6 @@ void blokey_static_flic_data_to_screen(void)
     {
         ubyte *inp;
         ubyte *back_window_ptr;
-        long len;
         short scr_x, scr_y;
         short w, h;
 
@@ -744,14 +743,7 @@ void blokey_static_flic_data_to_screen(void)
         h = equip_blokey_static_height[part];
 
         inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
-        {
-            char locstr[52];
-            sprint_cryo_cyborg_mods_static_fname(locstr, part, flic_mods);
-            len = LbFileLoadAt(locstr, inp);
-        }
-        if (len < 4) {
-            LbMemorySet(inp, 0, w * h);
-        }
+        cryo_cyborg_mods_blokey_bkgnd_to_buffer(inp);
 
         LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
