@@ -27,6 +27,12 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum BriefCityMapContentKinds {
+    BriCtM_AUTO_SCANNER, /**< Scanner which allows auto-switching to other content */
+    BriCtM_SCANNER,	/**< Scanner forced by a click on other content */
+    BriCtM_ANIM,	/**< Animation plays */
+};
+
 #pragma pack()
 /******************************************************************************/
 void reveal_netscan_objective(short nsobv);

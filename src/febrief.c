@@ -56,7 +56,7 @@ extern sbyte selected_netscan_objective;// = -1;
 extern char unkn39_text[];
 
 extern ubyte brief_state_city_selected;
-extern ubyte byte_1C47D9;
+extern ubyte brief_citymap_content;// = BriCtM_AUTO_SCANNER;
 
 /** Amount of cities available in brief of a selected mail message.
  */
@@ -408,32 +408,32 @@ ubyte input_citymap_scanner(struct ScreenBox *box)
     return ret;
 }
 
-ubyte show_citymap_box(struct ScreenBox *box)
+ubyte show_citymap_box(struct ScreenBox *p_box)
 {
     ubyte anim_no;
 
     if (selected_city_id == -1)
     {
         brief_state_city_selected = 0;
-        byte_1C47D9 = 0;
+        brief_citymap_content = BriCtM_AUTO_SCANNER;
         selected_netscan_objective = -1;
     }
     if (selected_netscan_objective != byte_1C47E4)
-        byte_1C47D9 = 0;
+        brief_citymap_content = BriCtM_AUTO_SCANNER;
     byte_1C47E4 = selected_netscan_objective;
-    if (!byte_1C47D9 && (selected_netscan_objective != -1))
+    if ((brief_citymap_content == BriCtM_AUTO_SCANNER) && (selected_netscan_objective != -1))
     {
         anim_no = netscan_objectives[selected_netscan_objective].AnimNo;
         if (anim_no) {
-            byte_1C47D9 = 1;
+            brief_citymap_content = BriCtM_ANIM;
             flic_netscan_open_anim(anim_no);
         }
     }
     if (!brief_state_city_selected)
     {
         lbFontPtr = small_med_font;
-        my_set_text_window(box->X + 4, box->Y + 4,
-            box->Width - 8, box->Height - 8);
+        my_set_text_window(p_box->X + 4, p_box->Y + 4,
+            p_box->Width - 8, p_box->Height - 8);
         lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
         draw_text_purple_list2(0, 0, gui_strings[483], 0);
         *brief_NETSCAN_COST_box.Text2 = 0;
@@ -443,8 +443,8 @@ ubyte show_citymap_box(struct ScreenBox *box)
         count_selectable_cities();
         if (mail_num_active_cities != 1)
         {
-            show_citymap_city_selection(box);
-            input_citymap_city_selection(box);
+            show_citymap_city_selection(p_box);
+            input_citymap_city_selection(p_box);
         }
         if (selected_city_id != -1)
         {
@@ -461,28 +461,39 @@ ubyte show_citymap_box(struct ScreenBox *box)
         }
     }
 
-    if (byte_1C47D9)
+    if (brief_citymap_content == BriCtM_ANIM)
     {
-        if (!netscan_objectives[selected_netscan_objective].AnimNo)
-            byte_1C47D9 = 0;
+        if (mouse_move_over_box(p_box))
+        {
+            if (lbDisplay.LeftButton)
+            {
+                brief_citymap_content = BriCtM_SCANNER;
+            }
+        }
+        anim_no = netscan_objectives[selected_netscan_objective].AnimNo;
+        if (anim_no == 0)
+            brief_citymap_content = BriCtM_AUTO_SCANNER;
         if (xdo_next_frame(AniSl_NETSCAN))
-            byte_1C47D9 = 0;
+            brief_citymap_content = BriCtM_AUTO_SCANNER;
         draw_flic_purple_list(ac_purple_unkn2_data_to_screen);
     }
     else if (brief_state_city_selected)
     {
-        if (mouse_move_over_box(box))
+        if (mouse_move_over_box(p_box))
         {
-            input_citymap_scanner(box);
+            input_citymap_scanner(p_box);
         }
         draw_flic_purple_list(ac_SCANNER_data_to_screen);
         if (mail_num_active_cities != 1)
-            draw_hotspot_purple_list(box->X + (box->Width >> 1), box->Y + (box->Height >> 1));
-        if (mouse_move_over_box(box))
+            draw_hotspot_purple_list(p_box->X + (p_box->Width >> 1), p_box->Y + (p_box->Height >> 1));
+        if (mouse_move_over_box(p_box))
         {
-            if (lbDisplay.LeftButton && (mail_num_active_cities != 1))
+            if (lbDisplay.LeftButton)
             {
-                brief_state_city_selected = 0;
+                if (brief_citymap_content == BriCtM_SCANNER)
+                    brief_citymap_content = BriCtM_AUTO_SCANNER;
+                else if (mail_num_active_cities != 1)
+                    brief_state_city_selected = 0;
             }
         }
     }
