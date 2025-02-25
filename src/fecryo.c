@@ -321,9 +321,6 @@ ubyte do_equip_offer_buy_cybmod(ubyte click)
     return (nbought > 0);
 }
 
-#define PURPLE_MOD_AREA_WIDTH 139
-#define PURPLE_MOD_AREA_HEIGHT 295
-
 void sprint_cryo_cyborg_mods_static_fname(char *str, ubyte part, ubyte *mods_arr)
 {
     struct Campaign *p_campgn;
@@ -676,8 +673,8 @@ void purple_mods_data_to_screen(void)
 
     scr_x = cryo_blokey_box.X + 63;
     scr_y = cryo_blokey_box.Y + 1;
-    w = PURPLE_MOD_AREA_WIDTH;
-    h = PURPLE_MOD_AREA_HEIGHT;
+    w = equip_blokey_width[ModDPt_BKGND];
+    h = equip_blokey_height[ModDPt_BKGND];
 
     inp = back_buffer - w * h;
     // TODO should not read files from within drawlist - alter to fill an input buffer before drawlist execution
