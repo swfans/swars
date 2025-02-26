@@ -448,11 +448,6 @@ void game_setup_stuff(void)
 
 void anim_show_FLI_SS2_NP(void)
 {
-#if 0
-    asm volatile ("call ASM_anim_show_FLI_SS2_NP\n"
-        :  : );
-    return;
-#endif
     struct Animation *p_anim;
 
     p_anim = &animations[active_anim];
@@ -461,11 +456,6 @@ void anim_show_FLI_SS2_NP(void)
 
 void anim_show_FLI_BRUN_NP(void)
 {
-#if 0
-    asm volatile ("call ASM_anim_show_FLI_BRUN_NP\n"
-        :  : );
-    return;
-#endif
     struct Animation *p_anim;
 
     p_anim = &animations[active_anim];
@@ -474,11 +464,6 @@ void anim_show_FLI_BRUN_NP(void)
 
 void anim_show_FLI_LC_NP(void)
 {
-#if 0
-    asm volatile ("call ASM_anim_show_FLI_LC_NP\n"
-        :  : );
-    return;
-#endif
     struct Animation *p_anim;
 
     p_anim = &animations[active_anim];

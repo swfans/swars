@@ -90,11 +90,11 @@ struct ScreenPoint equip_blokey_pos[] = {
     { 0,  0},
 };
 
-ubyte equip_blokey_height[] = {
-    197,  50, 148, 197, 197,
+short equip_blokey_height[] = {
+    197,  50, 148, 197, 295,
 };
 
-ubyte equip_blokey_width[] = {
+short equip_blokey_width[] = {
     93, 47, 139, 93, 139,
 };
 
@@ -106,11 +106,11 @@ struct ScreenPoint equip_blokey_static_pos[] = {
     { 0,  0},
 };
 
-ubyte equip_blokey_static_height[] = {
-    197, 50, 148, 197, 197,
+short equip_blokey_static_height[] = {
+    197, 50, 148, 197, 295,
 };
 
-ubyte equip_blokey_static_width[] = {
+short equip_blokey_static_width[] = {
      93, 47, 139, 93, 139,
 };
 
