@@ -24,6 +24,7 @@
 #include "bfplanar.h"
 #include "bfsprite.h"
 #include "bfmouse.h"
+#include "bfutility.h"
 
 #include "display.h"
 #include "game_data.h"
@@ -61,17 +62,16 @@ extern struct TbSprite *pointer_sprites;
 TbResult load_mouse_pointers_sprites_for_current_mode(void)
 {
     PathInfo *pinfo;
-    ushort detail;
+    short max_detail;
     TbResult ret;
 
     pinfo = &game_dirs[DirPlace_Data];
-    detail = lbDisplay.GraphicsScreenHeight / 400;
+    max_detail = min(lbDisplay.GraphicsScreenHeight / 192, lbDisplay.GraphicsScreenWidth / 320);
+    if (max_detail > 0)
+        max_detail--;
 
-    ret = load_sprites_mouse_pointers(pinfo->directory, 0, detail);
+    ret = load_sprites_mouse_pointers_up_to(pinfo->directory, 0, max_detail);
     setup_mouse_pointers();
-    if (ret == Lb_FAIL) {
-        LOGERR("Some files were not loaded successfully");
-    }
     return ret;
 }
 

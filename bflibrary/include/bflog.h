@@ -112,6 +112,11 @@ TbResult LbErrorLogSetup(const char *directory, const char *filename, ubyte flag
  */
 TbResult LbErrorLogReset(void);
 
+/**
+ * Return whether the error log is set up and ready to accept messages.
+ */
+TbBool LbErrorLogReady(void);
+
 #ifdef __cplusplus
 };
 #endif

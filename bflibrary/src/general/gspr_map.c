@@ -195,7 +195,7 @@ static inline void LbSpriteDrawLineTrRemap(const char **sp, unsigned char **r, s
 /** @internal
  * Draw whole transparent sprite with remapped colours.
  */
-static inline TbResult LbSpriteDrawTrRemap(const char *sp,short sprWd,short sprHt,
+TbResult LbSpriteDrawTrRemap(const char *sp,short sprWd,short sprHt,
         unsigned char *r,const unsigned char *cmap,int nextRowDelta,short left,const TbBool mirror)
 {
     unsigned char *nextRow;
@@ -283,7 +283,7 @@ static inline void LbSpriteDrawLineSlRemap(const char **sp, unsigned char **r, s
 /** @internal
  * Draw whole solid sprite with remapped colours.
  */
-static inline TbResult LbSpriteDrawSlRemap(const char *sp,short sprWd,short sprHt,
+TbResult LbSpriteDrawSlRemap(const char *sp,short sprWd,short sprHt,
         unsigned char *r,const unsigned char *cmap,int nextRowDelta,short left,const TbBool mirror)
 {
     unsigned char *nextRow;
@@ -387,7 +387,7 @@ static inline void LbSpriteDrawLineFCRemap(const char **sp, unsigned char **r, s
  * @param mirror
  * @return
  */
-static inline TbResult LbSpriteDrawFCRemap(const char *sp,short sprWd,short sprHt,unsigned char *r,
+TbResult LbSpriteDrawFCRemap(const char *sp,short sprWd,short sprHt,unsigned char *r,
     const unsigned char *cmap,int nextRowDelta,short left,const TbBool mirror)
 {
     unsigned char *nextRow;

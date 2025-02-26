@@ -3,7 +3,7 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file bfscrcopy.h
- *     Header file for scr_copy.asm.
+ *     Header file for scr_copy.c.
  * @par Purpose:
  *     Unknown.
  * @par Comment:
@@ -42,8 +42,27 @@ void LbScreenCopyBox(TbPixel *sourceBuf, TbPixel *destBuf,
  * Given source buffer with width equal to GraphicsWindow, and destination
  * buffer with width equal to GraphicsScreen, and the height,
  * it copies given amount of lines of one buffer to the other.
+ *
+ * @param sourceBuf The GraphicsWindow sized buffer to copy from
+ * @param destBuf The GraphicsScreen sized buffer to copy into
+ * @param height Amount of lines to copy (the GraphicsWindow height is ignored
+ *     in favour of this value)
  */
 void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ushort height);
+
+/** Saves part of buffer of size equal to GraphicsScreen to one of GraphicsWindow.
+ *
+ * This function does a similar but opposite copy operation to LbScreenCopy().
+ * Given source buffer with width equal to GraphicsScreen, and destination
+ * buffer with width equal to GraphicsWindow, and the height,
+ * it copies given amount of lines of one buffer to the other.
+ *
+ * @param sourceBuf The GraphicsScreen sized buffer to copy from
+ * @param destBuf The GraphicsWindow sized buffer to copy into
+ * @param height Amount of lines to copy (the GraphicsWindow height is ignored
+ *     in favour of this value)
+ */
+void LbScreenSave(TbPixel *sourceBuf, TbPixel *destBuf, ushort height);
 
 #ifdef __cplusplus
 };

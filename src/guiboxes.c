@@ -52,6 +52,25 @@ TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x
         && y >= box_y1 && y <= box_y2;
 }
 
+TbBool boxes_intersect(short box1_x, short box1_y, short box1_w, short box1_h,
+  short box2_x, short box2_y, short box2_w, short box2_h)
+{
+    if ((box1_x + box1_w < box2_x) || (box1_x > box2_x + box2_w))
+        return false;
+    if ((box1_y + box1_h < box2_y) || (box1_y > box2_y + box2_h))
+        return false;
+    return true;
+}
+
+TbBool base_boxes_intersect(struct ScreenBoxBase *box1, struct ScreenBoxBase *box2)
+{
+    if ((box1->X + box1->Width < box2->X) || (box1->X > box2->X + box2->Width))
+        return false;
+    if ((box1->Y + box1->Height < box2->Y) || (box1->Y > box2->Y + box2->Height))
+        return false;
+    return true;
+}
+
 TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2)
 {
     short ms_x, ms_y;
@@ -119,6 +138,14 @@ short mouse_move_position_horizonal_over_bar_coords(short x, short w)
     return (ms_x - x);
 }
 
+short mouse_move_position_vertical_over_bar_coords(short y, short h)
+{
+    short ms_y;
+
+    ms_y = lbDisplay.MMouseY;
+    return (ms_y - y);
+}
+
 short mouse_down_position_horizonal_over_bar_coords(short x, short w)
 {
     short ms_x;
@@ -127,57 +154,69 @@ short mouse_down_position_horizonal_over_bar_coords(short x, short w)
     return (ms_x - x);
 }
 
-TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box)
+TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *p_box)
 {
-    return (x >= box->X) && (x <= box->X + box->Width)
-        && (y >= box->Y) && (y <= box->Y + box->Height);
+    return (x >= p_box->X) && (x <= p_box->X + p_box->Width)
+        && (y >= p_box->Y) && (y <= p_box->Y + p_box->Height);
 }
 
-TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *box)
+TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *p_box)
 {
-    if ((x >= box->X) && (x <= box->X + box->Width + box->Height)
-        && (y >= box->Y) && (y <= box->Y + box->Height))
+    if ((x >= p_box->X) && (x <= p_box->X + p_box->Width + p_box->Height)
+        && (y >= p_box->Y) && (y <= p_box->Y + p_box->Height))
     {
         short dx, dy, hh, hw;
-        hh = box->Height >> 1;
-        hw = box->Height + box->Width;
-        dx = x - box->X;
-        dy = y - box->Y;
+        hh = p_box->Height >> 1;
+        hw = p_box->Height + p_box->Width;
+        dx = x - p_box->X;
+        dy = y - p_box->Y;
         return (dy + dx >= hh) && (dy + dx <= hw);
     }
     return false;
 }
 
-TbBool mouse_move_over_box_base(struct ScreenBoxBase *box)
+TbBool mouse_move_over_box_base(struct ScreenBoxBase *p_box)
 {
     short ms_x, ms_y;
 
     ms_x = lbDisplay.MMouseX;
     ms_y = lbDisplay.MMouseY;
-    return is_over_box_base(ms_x, ms_y, box);
+    return is_over_box_base(ms_x, ms_y, p_box);
 }
 
-TbBool mouse_down_over_box_base(struct ScreenBoxBase *box)
+TbBool mouse_down_over_box_base(struct ScreenBoxBase *p_box)
 {
     short ms_x, ms_y;
 
     ms_x = lbDisplay.MouseX;
     ms_y = lbDisplay.MouseY;
-    return is_over_box_base(ms_x, ms_y, box);
+    return is_over_box_base(ms_x, ms_y, p_box);
 }
 
-TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box)
+TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *p_box)
 {
     short ms_x, ms_y;
 
     ms_x = lbDisplay.MMouseX;
     ms_y = lbDisplay.MMouseY;
-    return is_over_slant_box_base(ms_x, ms_y, box);
+    return is_over_slant_box_base(ms_x, ms_y, p_box);
 }
 
-short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *box)
+short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *p_box)
 {
-    return mouse_move_position_horizonal_over_bar_coords(box->X, box->Width);
+    return mouse_move_position_horizonal_over_bar_coords(p_box->X, p_box->Width);
+}
+
+short mouse_move_position_vertical_scrollbar_over_text_box(struct ScreenTextBox *p_box)
+{
+    short pos;
+
+    pos = mouse_move_position_vertical_over_bar_coords(p_box->GrabPos, p_box->Height);
+    if (pos < 0)
+        pos = 0;
+    else if (pos + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
+        pos = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
+    return pos;
 }
 
 short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
@@ -213,18 +252,43 @@ void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, us
         : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed));
 }
 
-void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed, struct TbSprite *font, int textspeed)
+void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
+  ushort width, ushort height, int drawspeed, struct TbSprite *p_font, ushort textspeed)
 {
+#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
       "push %5\n"
       "push %4\n"
       "call ASM_init_screen_text_box\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (font), "g" (textspeed));
+        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (p_font), "g" (textspeed));
+#endif
+    p_box->Flags = GBxFlg_Unkn0001;
+    p_box->DrawFn = ac_flashy_draw_purple_text_box;
+    p_box->Text = 0;
+    p_box->LineSpacing = 4;
+    p_box->DrawTextFn = NULL;
+    p_box->Buttons[0] = 0;
+    p_box->Infos[0] = 0;
+    p_box->Infos[1] = 0;
+    p_box->Colour1 = 0xF7;
+    p_box->BGColour = 0x38;
+    p_box->ScrollWindowOffset = 0;
+    p_box->LineHeight = 0;
+    p_box->Lines = 0;
+    p_box->X = x;
+    p_box->Y = y;
+    p_box->Height = height;
+    p_box->DrawSpeed = drawspeed;
+    p_box->Font = p_font;
+    p_box->TextSpeed = textspeed;
+    p_box->Width = width;
+    p_box->ScrollWindowHeight = p_box->Height - 31;
 }
 
-void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
+void init_screen_button(struct ScreenButton *p_box, ushort x, ushort y,
+  const char *text, int drawspeed, struct TbSprite *p_font, int textspeed, int flags)
 {
 #if 0
     asm volatile (
@@ -233,34 +297,35 @@ void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char
       "push %5\n"
       "push %4\n"
       "call ASM_init_screen_button\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (text), "g" (drawspeed), "g" (font), "g" (textspeed), "g" (flags));
+        : : "a" (p_box), "d" (x), "b" (y), "c" (text), "g" (drawspeed), "g" (p_font), "g" (textspeed), "g" (flags));
 #endif
-    lbFontPtr = font;
-    box->Y = y;
-    box->Width = my_string_width(text) + 4;
-    box->Height = font_height('A') + 6;
-    box->DrawSpeed = drawspeed;
-    box->Font = font;
-    box->Flags = flags | 0x01;
+    lbFontPtr = p_font;
+    p_box->Y = y;
+    p_box->Width = my_string_width(text) + 4;
+    p_box->Height = font_height('A') + 6;
+    p_box->DrawSpeed = drawspeed;
+    p_box->Font = p_font;
+    p_box->Flags = flags | GBxFlg_Unkn0001;
     if ((flags & 0x80) != 0)
-        x -= box->Width;
-    box->X = x;
-    box->DrawFn = ac_flashy_draw_purple_button;
-    box->DrawTextFn = ac_button_text;
-    box->CallBackFn = 0;
-    box->Border = 1;
-    box->Colour = 0xAE;
-    box->BGColour = 0xF3;
-    box->AccelKey = 0;
-    box->Text = text;
-    box->TextSpeed = textspeed;
+        x -= p_box->Width;
+    p_box->X = x;
+    p_box->DrawFn = ac_flashy_draw_purple_button;
+    p_box->DrawTextFn = ac_button_text;
+    p_box->CallBackFn = 0;
+    p_box->Border = 1;
+    p_box->Colour = 0xAE;
+    p_box->BGColour = 0xF3;
+    p_box->AccelKey = 0;
+    p_box->Text = text;
+    p_box->TextSpeed = textspeed;
     if (*text != '\0')
-        box->AccelKey = lbAsciiToInkey[*(ubyte *)text];
-    box->Radio = 0;
-    box->RadioValue = 0;
+        p_box->AccelKey = lbAsciiToInkey[*(ubyte *)text];
+    p_box->Radio = 0;
+    p_box->RadioValue = 0;
 }
 
-void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort width, const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
+void init_screen_info_box(struct ScreenInfoBox *p_box, ushort x, ushort y, ushort width,
+  const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
 {
     asm volatile (
       "push %9\n"
@@ -270,7 +335,7 @@ void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort 
       "push %5\n"
       "push %4\n"
       "call ASM_init_screen_info_box\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
+        : : "a" (p_box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
 }
 
 /******************************************************************************/

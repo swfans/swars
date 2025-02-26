@@ -7,7 +7,7 @@
 #include "bfanywnd.h"
 
 enum ColourLookUp {
-    ColLU_UNKN0     = 0, // black?
+    ColLU_BLACK     = 0,
     ColLU_WHITE,
     ColLU_RED,
     ColLU_GREEN,
@@ -18,7 +18,8 @@ enum ColourLookUp {
     ColLU_GREYLT,//looks more like another white
     ColLU_GREYMD,
     ColLU_GREYDK,
-    ColLU_MULTI,
+    ColLU_BLINK_YLW_BLK,
+    ColLU_BLINK_RED_WHT,
 };
 
 struct ScreenBufBkp {
@@ -38,9 +39,20 @@ extern TbScreenMode screen_mode_fmvid_hi;
 
 extern ubyte game_high_resolution;
 
+extern ubyte *display_palette;
+
 extern ubyte *back_buffer;
 extern TbPixel fade_unaffected_colours[];
 extern TbPixel colour_lookup[];
+extern ulong unkn_changing_color_counter1;
+extern long dword_1AA270;
+
+extern TbPixel colour_mix_lookup[];
+extern TbPixel colour_sel_grey[];
+extern TbPixel colour_sel_green[];
+extern TbPixel colour_sel_blue[];
+extern TbPixel colour_sel_red[];
+extern TbPixel colour_sel_purple[];
 
 extern TbPixel colour_grey1;
 extern TbPixel colour_grey2;
@@ -67,11 +79,15 @@ void screen_switch_to_custom_buffer(struct ScreenBufBkp *bkp,
   TbPixel *buf, short width, short height);
 void screen_load_backup_buffer(struct ScreenBufBkp *bkp);
 
+void update_unkn_changing_colors(void);
+void setup_color_lookups(void);
+
 const char * SWResourceMapping(short index);
 void swap_wscreen(void);
 void show_black_screen(void);
 void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h);
-ulong my_string_width(const char *text);
+u32 my_string_width(const char *text);
+u32 my_str_len(const char *t);
 ubyte font_height(uchar c);
 
 void change_brightness(short val);

@@ -59,7 +59,7 @@ void init_storage_screen_boxes(void)
     storage_slots_box.ScrollWindowHeight = 208;
     storage_slots_box.Lines = 99;
     storage_slots_box.Flags |= GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
-    storage_slots_box.BGColour = 26;
+    storage_slots_box.LineHeight = 26;
     storage_slots_box.ScrollWindowOffset += 27;
 
     init_screen_button(&storage_LOAD_button, 219u, 405u,
@@ -98,8 +98,8 @@ void set_flag01_storage_screen_boxes(void)
 
 void clear_someflags_storage_screen_boxes(void)
 {
-    storage_header_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_Unkn0004);
-    storage_slots_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_Unkn0004);
+    storage_header_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_BkCopied);
+    storage_slots_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_BkCopied);
 }
 
 /******************************************************************************/

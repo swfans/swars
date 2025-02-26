@@ -63,39 +63,40 @@ static struct ScreenButton abort_btn;
 ubyte draw_ingame_button(struct ScreenButton *p_button, ubyte enabled)
 {
     short text_x, text_y;
-    short margin;
+    short line_h, text_w, margin;
 
     margin = p_button->Border + 1;
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     LbDrawBox(p_button->X - margin, p_button->Y - margin, p_button->Width + 2 * margin, p_button->Height + 2 * margin, p_button->BGColour);
 
-    lbDisplay.DrawFlags = 0x0010;
+    lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
     lbDisplay.DrawColour = colour_lookup[ColLU_WHITE];
     if (enabled || mouse_move_over_box(p_button))
     {
-        LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, lbDisplay.DrawColour);
-        lbDisplay.DrawFlags |= 0x0040;
+        int i;
+        for (i = margin / 2; i >= 0; i--)
+            LbDrawBox(p_button->X + i, p_button->Y + i, p_button->Width - 2 * i, p_button->Height - 2 * i, lbDisplay.DrawColour);
+        lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
     }
     else
     {
         if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3) {
-            lbDisplay.DrawFlags |= 0x0040;
+            lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
             lbDisplay.DrawColour = p_button->Colour;
         }
-        LbDrawBox(p_button->X, p_button->Y, p_button->Width, p_button->Height, p_button->Colour);
+        int i;
+        for (i = margin / 2; i >= 0; i--)
+            LbDrawBox(p_button->X + i, p_button->Y + i, p_button->Width - 2 * i, p_button->Height - 2 * i, p_button->Colour);
     }
 
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        text_x = p_button->X + 2 * margin;
-        text_y = p_button->Y + 2 * margin;
-    } else {
-        text_x = p_button->X + (p_button->Width >> 2) + margin;
-        text_y = p_button->Y + (p_button->Height >> 1) - margin;
-    }
+    line_h = font_height('A');
+    text_w = my_string_width(p_button->Text);
+    text_x = p_button->X + 2 * margin + (p_button->Width - (text_w + 4 * margin)) / 2;
+    text_y = p_button->Y + 2 * margin + (p_button->Height - (line_h + 4 * margin)) / 2;
     my_draw_text(text_x, text_y, p_button->Text, 0);
 
-    lbDisplay.DrawFlags &= ~0x0040;
+    lbDisplay.DrawFlags &= ~Lb_TEXT_ONE_COLOR;
 
     return 0;
 }
@@ -177,13 +178,9 @@ TbBool input_slant_box(struct ScreenBox *box, short *target)
 void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
 {
     short cut, stp;
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        stp = 1;
-        cut = 25;
-    } else {
-        stp = 2;
-        cut = 50;
-    }
+
+    stp = pop1_sprites_scale;
+    cut = 25 * pop1_sprites_scale;
 
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     LbDrawBox(box->X + 0, box->Y + 0, box->Width - cut, box->Height - cut, colr1);
@@ -201,8 +198,10 @@ void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
     LbDrawLine(box->X + 0, box->Y + 0, box->X + 0, box->Y + box->Height - cut - stp, colr1);
     LbDrawLine(box->X + box->Width, box->Y + cut, box->X + box->Width, box->Y + box->Height - stp, colr1);
     LbDrawLine(box->X + cut, box->Y + box->Height - stp, box->X + box->Width, box->Y + box->Height - stp, colr1);
-    LbDrawLine(box->X + box->Width - cut, box->Y + 0, box->X + box->Width, box->Y + cut, colr1);
-    LbDrawLine(box->X + stp, box->Y + box->Height - cut, box->X + cut, box->Height + cut + stp, colr1);
+    LbDrawLine(box->X + box->Width - cut, box->Y + 0,
+      box->X + box->Width, box->Y + cut, colr1);
+    LbDrawLine(box->X + stp, box->Y + box->Height - cut,
+      box->X + cut, box->Y + box->Height - stp, colr1);
 }
 
 void draw_slant_box(struct ScreenBox *box, TbPixel colr2)
@@ -214,10 +213,7 @@ void draw_slant_left_arrow_spr(struct ScreenBox *box, TbPixel colr2)
 {
     short stp;
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        stp = 1;
-    else
-        stp = 2;
+    stp = pop1_sprites_scale;
 
     if (mouse_move_over_slant_box(box))
     {
@@ -234,10 +230,7 @@ void draw_slant_right_arrow_spr(struct ScreenBox *box, TbPixel colr2)
 {
     short stp;
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        stp = 1;
-    else
-        stp = 2;
+    stp = pop1_sprites_scale;
 
     if (mouse_move_over_slant_box(box))
     {
@@ -261,10 +254,8 @@ void draw_slant_left_arrow(struct ScreenBox *box, TbPixel colr2)
     else
         colour = colr2;
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        stp = 1;
-    else
-        stp = 2;
+    // We expect the rect to be a multiplication of 4x9; so we use height only
+    stp = (box->Height + 4) / 9;
 
     x = box->X;
     y = box->Y - stp;
@@ -284,10 +275,8 @@ void draw_slant_right_arrow(struct ScreenBox *box, TbPixel colr2)
     else
         colour = colr2;
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        stp = 1;
-    else
-        stp = 2;
+    // We expect the rect to be a multiplication of 4x9; so we use height only
+    stp = (box->Height + 4) / 9;
 
     x = box->X;
     y = box->Y - stp;
@@ -318,18 +307,18 @@ void init_slider_with_arrows_centered(struct ScreenBox *slider_box, struct Scree
 void init_ingame_screen_button(struct ScreenButton *p_button, ushort x, ushort y, const char *text, struct TbSprite *font, int flags)
 {
     short line_h, text_w, border;
-    short margin;
+    short fnt_scale, margin;
 
     init_screen_button(p_button, x, y, text, 0, font, 0, 0);
 
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        line_h = font_height('A');
-        text_w = my_string_width(p_button->Text);
-        border = 0;
-    } else {
-        border = 1;
-        line_h = 2 * font_height('A');
-        text_w = 2 * my_string_width(p_button->Text);
+    border = pop1_sprites_scale - 1;
+    line_h = font_height('A');
+    text_w = my_string_width(p_button->Text);
+    fnt_scale = pop1_sprites_scale / 2 + 1;
+    if (line_h < fnt_scale * 6) { // detail 0 font has height equal 6
+        fnt_scale = (fnt_scale * 6) / line_h;
+        line_h *= fnt_scale;
+        text_w *= fnt_scale;
     }
 
     p_button->Border = border;
@@ -355,17 +344,10 @@ void init_pause_screen_boxes(void)
         ingame_boxes_colr2 = 35;
     }
 
-    if (lbDisplay.GraphicsScreenHeight < 400) {
-        pause_main_box.Width = 233;
-        pause_main_box.Height = 122;
-        cutin_w = 5;
-        slider_h = 9;
-    } else {
-        pause_main_box.Width = 466;
-        pause_main_box.Height = 244;
-        cutin_w = 10;
-        slider_h = 18;
-    }
+    pause_main_box.Width = 233 * pop1_sprites_scale;
+    pause_main_box.Height = 122 * pop1_sprites_scale;
+    cutin_w = 5 * pop1_sprites_scale;
+    slider_h = 9 * pop1_sprites_scale;
 
     pause_main_box.X = (lbDisplay.GraphicsScreenWidth - pause_main_box.Width) / 2;
     pause_main_box.Y = (lbDisplay.GraphicsScreenHeight - pause_main_box.Height) / 2;
@@ -542,10 +524,13 @@ void draw_pause_volume_bar(struct ScreenBox *p_box1, struct ScreenBox *p_box2, s
     if (*p_target) // Draw slider box filling
     {
         struct ScreenBox box4;
-        box4.X = p_box1->X + 2;
-        box4.Y = p_box1->Y + 2;
-        box4.Width = (p_box1->Width - 6) * (*p_target) / 322;
-        box4.Height = p_box1->Height - 4;
+        short stp;
+
+        stp = pop1_sprites_scale+1;
+        box4.X = p_box1->X + 1 * stp;
+        box4.Y = p_box1->Y + 1 * stp;
+        box4.Width = (p_box1->Width - 3 * stp) * (*p_target) / 322;
+        box4.Height = p_box1->Height - 2 * stp;
         draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
     }
 }

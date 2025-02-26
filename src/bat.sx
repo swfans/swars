@@ -33,7 +33,7 @@
 .global EXPORT_SYMBOL(colour_lookup);
 .global EXPORT_SYMBOL(things);
 .global EXPORT_SYMBOL(local_player_no);
-.global EXPORT_SYMBOL(unkn_buffer_04);
+.global EXPORT_SYMBOL(vec_tmap);
 .global EXPORT_SYMBOL(ingame);
 .global EXPORT_SYMBOL(playable_agents);
 
@@ -905,7 +905,7 @@ GLOBAL_FUNC (ASM_BAT_unknsub_20)	/* 0xDDB64 */
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%al
 		mov    %al,data_1e2713
 		mov    EXPORT_SYMBOL(colour_lookup)+0x09,%al
-		mov    EXPORT_SYMBOL(unkn_buffer_04),%edi
+		mov    EXPORT_SYMBOL(vec_tmap)+16,%edi
 		mov    %al,data_1e2714
 		mov    EXPORT_SYMBOL(colour_lookup)+0x05,%al
 		mov    %edx,data_1e26d8

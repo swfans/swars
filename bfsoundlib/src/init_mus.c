@@ -79,7 +79,7 @@ sbyte AllocateMusicBankMemory(void)
         TbFileHandle fh;
         long pos;
 
-        sprintf(full_music_data_path, "%s/MUSIC.DAT", SoundDataPath);
+        sprintf(full_music_data_path, "%s/music.dat", SoundDataPath);
         fh = LbFileOpen(full_music_data_path, Lb_FILE_MODE_READ_ONLY);
         if (fh == INVALID_FILE)
             return -1;
@@ -248,7 +248,7 @@ int InitMusicDriverFromOS(void)
         SoundProgressLog(SoundProgressMessage);
         // Fill DOS driver information with something which makes sense
         memset(&MusicInstallChoice, 0, sizeof(MusicInstallChoice));
-        sprintf(MusicInstallChoice.driver_name, "%s", "OPL3.MDI");
+        sprintf(MusicInstallChoice.driver_name, "%s", "opl3.mdi");
     }
     return 1;
 }
@@ -284,25 +284,25 @@ int InitMusicDriver(void)
  */
 int DetermineMusicType(void)
 {
-    if (strcasecmp(MusicInstallChoice.driver_name, "ADLIB.MDI") == 0) {
+    if (strcasecmp(MusicInstallChoice.driver_name, "adlib.mdi") == 0) {
         sprintf(MusicType, "f");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "ADLIBG.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "adlibg.mdi") == 0) {
         sprintf(MusicType, "f");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "OPL3.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "opl3.mdi") == 0) {
         sprintf(MusicType, "f");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "PAS.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "pas.mdi") == 0) {
         sprintf(MusicType, "f");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "PASPLUS.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "pasplus.mdi") == 0) {
         sprintf(MusicType, "f");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "SBLASTER.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "sblaster.mdi") == 0) {
         sprintf(MusicType, "f");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "SBPRO1.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "sbpro1.mdi") == 0) {
         sprintf(MusicType, "f");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "SBPRO2.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "sbpro2.mdi") == 0) {
         sprintf(MusicType, "f");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "ESFM.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "esfm.mdi") == 0) {
         sprintf(MusicType, "f");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "sbawe32.mdi") == 0) {
         sprintf(MusicType, "w");
         MusicInstalled = 1;
         LoadAwe32Soundfont("Bullfrog");
@@ -315,13 +315,13 @@ int DetermineMusicType(void)
             sprintf(SoundProgressMessage, "BF38 - awe32 soundfont not found\n");
             SoundProgressLog(SoundProgressMessage);
         }
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "MPU401.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "mpu401.mdi") == 0) {
         sprintf(MusicType, "g");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "SNDSCAPE.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "sndscape.mdi") == 0) {
         sprintf(MusicType, "g");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "ULTRA.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "ultra.mdi") == 0) {
         sprintf(MusicType, "g");
-    } else if (strcasecmp(MusicInstallChoice.driver_name, "MT32MPU.MDI") == 0) {
+    } else if (strcasecmp(MusicInstallChoice.driver_name, "mt32mpu.mdi") == 0) {
         sprintf(MusicType, "r");
     } else if (!AIL_MDI_driver_type(MusicDriver)) {
         sprintf(MusicType, "g");
@@ -345,34 +345,32 @@ int InitMusicBanks(void)
         return 0;
     }
 
-    sprintf(SoundProgressMessage, "BF40 - music%s bank allocation", MusicType);
+    sprintf(SoundProgressMessage, "BF40 - 'music%s' bank allocation begin\n", MusicType);
     SoundProgressLog(SoundProgressMessage);
 
     music_allocated = AllocateMusicBankMemory();
     if ((strcasecmp(MusicType, "w") == 0) && (music_allocated == -2))
     {
-        sprintf(SoundProgressMessage, " - not present in music.dat\n");
+        sprintf(SoundProgressMessage, "BF40 - 'music%s' bank not present in 'music.dat'\n", MusicType);
         SoundProgressLog(SoundProgressMessage);
         sprintf(MusicType, "g");
-        sprintf(SoundProgressMessage, "BF40A - music%s bank allocation", MusicType);
-        SoundProgressLog(SoundProgressMessage);
         music_allocated = AllocateMusicBankMemory();
     }
     if (music_allocated <= 0)
     {
         if (music_allocated == 0) {
-            sprintf(SoundProgressMessage, " - cannot allocate\n");
+            sprintf(SoundProgressMessage, "BF40 - 'music%s' bank cannot allocate\n", MusicType);
             SoundProgressLog(SoundProgressMessage);
         } else if (music_allocated == -1) {
-            sprintf(SoundProgressMessage, " - no music.dat\n");
+            sprintf(SoundProgressMessage, "BF40 - 'music%s' bank empty as cannot open 'music.dat'\n", MusicType);
             SoundProgressLog(SoundProgressMessage);
         } else if (music_allocated == -2) {
-            sprintf(SoundProgressMessage, " - not present in music.dat\n");
+            sprintf(SoundProgressMessage, "BF40 - 'music%s' bank not present in 'music.dat'\n", MusicType);
             SoundProgressLog(SoundProgressMessage);
         }
         return -1;
     }
-    sprintf(SoundProgressMessage, " - allocation successful\n");
+    sprintf(SoundProgressMessage, "BF40 - 'music%s' bank allocation successful\n", MusicType);
     SoundProgressLog(SoundProgressMessage);
     return 1;
 }
@@ -404,18 +402,18 @@ void InitMusic(void)
     if (!AutoScanForSoundHardware)
         AIL_set_preference(AIL_SCAN_FOR_HARDWARE, 0);
 
-    snprintf(locnoext, sizeof(locnoext), "%s/SAMPLE", SoundDataPath);
+    snprintf(locnoext, sizeof(locnoext), "%s/sample", SoundDataPath);
     AIL_set_GTL_filename_prefix(locnoext);
 
     snprintf(locfname, sizeof(locfname),"%s.ad", locnoext);
     if (!fm_instrument_file_exists(locfname)) {
-        sprintf(SoundProgressMessage, "BF26 - sample.ad not found\n");
+        sprintf(SoundProgressMessage, "BF26 - 'sample.ad' not found\n");
         SoundProgressLog(SoundProgressMessage);
     }
 
     snprintf(locfname, sizeof(locfname), "%s.opl", locnoext);
     if (!fm_instrument_file_exists(locfname)) {
-        sprintf(SoundProgressMessage, "BF27 - sample.opl not found\n");
+        sprintf(SoundProgressMessage, "BF27 - 'sample.opl' not found\n");
         SoundProgressLog(SoundProgressMessage);
     }
 

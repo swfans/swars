@@ -58,7 +58,7 @@ int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
     }
     locstr[i] = '\0';
 
-    sprintf(locfname, "%s.IDX", wadfile);
+    sprintf(locfname, "%s.idx", wadfile);
     fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
         return -1;
@@ -71,7 +71,7 @@ int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
     if (nread != sizeof(struct WADIndexEntry))
         return -1;
 
-    sprintf(locfname, "%s.WAD", wadfile);
+    sprintf(locfname, "%s.wad", wadfile);
     fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
         return -1;

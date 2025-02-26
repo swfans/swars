@@ -20,9 +20,12 @@
 
 #include <string.h>
 #include "bftext.h"
+#include "bfmemut.h"
 #include "bfsprite.h"
 #include "bfscreen.h"
+
 #include "guiboxes.h"
+#include "guitext.h"
 #include "display.h"
 #include "game.h"
 #include "purpldrw.h"
@@ -33,7 +36,7 @@ extern struct TbSprite *sprites_Icons0_0;
 
 void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max, int tot_values)
 {
-    char str[8];
+    char locstr[16];
     int i;
     int ax_val;
     int cy;
@@ -43,7 +46,7 @@ void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max
     for (i = 0; i < tot_values; i++)
     {
         int twidth;
-        char *text;
+        const char *text;
         ulong spr_id;
         struct TbSprite *spr;
 
@@ -53,11 +56,9 @@ void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max
         else
             spr_id = 145;
         spr = &sprites_Icons0_0[spr_id];
-        sprintf(str, "%d", ax_val);
-        twidth = LbTextStringWidth(str) + spr->SWidth;
-        strcpy((char *)(back_buffer + text_buf_pos), str);
-        text = (char *)(back_buffer + text_buf_pos);
-        text_buf_pos += strlen(str) + 1;
+        sprintf(locstr, "%d", ax_val);
+        twidth = LbTextStringWidth(locstr) + spr->SWidth;
+        text = loctext_to_gtext(locstr);
         draw_text_purple_list2(x - twidth - 1, cy, text, 0);
         cy += height / tot_values;
         ax_val -= (ax_max - ax_min) / tot_values;
@@ -66,7 +67,7 @@ void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max
 
 void draw_chartxy_axis_x_values(int x, int y, int width, int ax_min, int ax_max, int tot_values)
 {
-    char str[8];
+    char locstr[16];
     int i;
     int ax_val;
     int cx;
@@ -76,7 +77,7 @@ void draw_chartxy_axis_x_values(int x, int y, int width, int ax_min, int ax_max,
     for (i = 0; i < tot_values; i++)
     {
         int twidth;
-        char *text;
+        const char *text;
         ulong spr_id;
         struct TbSprite *spr;
         int final_x;
@@ -87,11 +88,9 @@ void draw_chartxy_axis_x_values(int x, int y, int width, int ax_min, int ax_max,
         else
             spr_id = 147;
         spr = &sprites_Icons0_0[spr_id];
-        sprintf(str, "%d", ax_val);
-        twidth = LbTextStringWidth(str);
-        strcpy((char *)(back_buffer + text_buf_pos), str);
-        text = (char *)(back_buffer + text_buf_pos);
-        text_buf_pos += strlen(str) + 1;
+        sprintf(locstr, "%d", ax_val);
+        twidth = LbTextStringWidth(locstr);
+        text = loctext_to_gtext(locstr);
         if (ax_val == 1)
             final_x = cx - (twidth - 2) + 3;
         else

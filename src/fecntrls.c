@@ -113,7 +113,7 @@ void set_flag01_controls_screen_boxes(void)
 
 void clear_someflags_controls_screen_boxes(void)
 {
-    controls_keylist_box.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_Unkn0004);
+    controls_keylist_box.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_BkCopied);
 }
 
 /******************************************************************************/

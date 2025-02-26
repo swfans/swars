@@ -1619,7 +1619,7 @@ MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
 {
     // Since both Windows and old DOS API should work, there is no reason
     // not to call the DOS initialization here
-    return AIL2OAL_API_install_MDI_driver_file("OPL3.MDI", NULL);
+    return AIL2OAL_API_install_MDI_driver_file("opl3.mdi", NULL);
 }
 
 void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv)

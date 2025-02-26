@@ -26,11 +26,19 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
-    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight);
+/** A variant of LbScreenCopy() which treats given pixel value as transparency.
+ *
+ * @param sourceBuf Buffer to copy from, with line size equal GraphicsWindowWidth.
+ * @param destBuf Pointer to a place in destination buffer to write into,
+ *   with line size equal GraphicsScreenWidth.
+ * @param height Amount of lines to copy.
+ * @param ckey Color key value which should be skipped, leaving the original
+ *   content of destination buffer at these pixels.
+ */
+void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height, TbPixel ckey);
 
-void copy_buffer_to_double_bufs_with_trans(ubyte *ibuf, ushort iwidth, ushort iheight,
-    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight, ubyte trans_col);
+void ApScreenCopyRectColorKey(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort sourceWidth, ushort destWidth, ushort height, TbPixel ckey);
 
 /******************************************************************************/
 #ifdef __cplusplus

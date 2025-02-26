@@ -115,9 +115,12 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 
     if ( !LbFileExists(fname) )
     {
-        LOGERR("file does not exist: \"%s\"", fname);
         if ( mode == Lb_FILE_MODE_READ_ONLY )
+        {
+            LOGERR("file does not exist: \"%s\"", fname);
             return INVALID_FILE;
+        }
+        LOGSYNC("file does not exist: \"%s\"", fname);
         if ( mode == Lb_FILE_MODE_OLD )
             mode = Lb_FILE_MODE_NEW;
     }
@@ -263,7 +266,7 @@ long LbFileLength(const char *fname)
 
     fhandle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
     result = fhandle;
-    if (fhandle != -1) {
+    if (fhandle != INVALID_FILE) {
       result = filelength(fhandle);
       LbFileClose(fhandle);
     }

@@ -3,6 +3,12 @@ conf_DATA = \
 	cities.ini \
 	cybmods.ini \
 	people.ini \
+	panel0-0.ini \
+	panel0-1.ini \
+	panel0-3.ini \
+	pop0-0.ini \
+	pop0-1.ini \
+	pop0-3.ini \
 	rules.ini \
 	weapons.ini \
 	miss000.ini \

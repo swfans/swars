@@ -34,7 +34,7 @@ extern "C" {
 struct Objective;
 struct NetscanObjective;
 
-struct BigBlip
+struct BigBlip // sizeof=12
 {
   long X;
   long Z;
@@ -44,7 +44,7 @@ struct BigBlip
   ubyte Counter;
 };
 
-struct Arc
+struct Arc // sizeof=20
 {
   long X1;
   long Z1;
@@ -56,7 +56,7 @@ struct Arc
   ubyte Counter;
 };
 
-struct Scanner
+struct Scanner // sizeof=0x467 (before resize)
 {
   long X1; // offset=ingame+0x00C
   long Y1;
@@ -83,6 +83,7 @@ extern long *SCANNER_width;
 extern ubyte SCANNER_data[256][256];
 extern ushort SCANNER_base_zoom_factor;
 extern ushort SCANNER_user_zoom_factor;
+extern ubyte SCANNER_scale_dots;
 
 extern short waft_table2[32];
 extern short waft_table[32];

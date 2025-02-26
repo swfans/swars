@@ -21,6 +21,7 @@
 #include "bftext.h"
 #include "bffont.h"
 #include "bfutility.h"
+
 #include "campaign.h"
 #include "display.h"
 #include "guiboxes.h"
@@ -121,7 +122,7 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
   struct DebriefReport *p_rep, ubyte research_ln, ubyte scilost_ln)
 {
     struct MissionStatus *p_mistat;
-    char *text;
+    const char *text;
     char locstr[40];
     short fheight, lnheight, sepheight;
     short x, y;
@@ -142,50 +143,38 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
 
     // Reference no
     snprintf(locstr, sizeof(locstr), "%hd", p_rep->RefNo);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
     snprintf(locstr, sizeof(locstr), "%s", gui_strings[635 + p_rep->Status]);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
     snprint_dh_time_duration(locstr, sizeof(locstr),
       p_mistat->CityDays, p_mistat->CityHours);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
     snprint_dh_time_duration(locstr, sizeof(locstr),
       p_mistat->Days, p_mistat->Hours);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
     y += sepheight;
 
     // Income
     snprintf(locstr, sizeof(locstr), "%ld C", p_rep->Income);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
     // Expenditure
     snprintf(locstr, sizeof(locstr), "%ld C", p_rep->Expenditure);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 }
 
@@ -284,7 +273,7 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
 {
     short fheight, lnheight, sepheight;
     short x, y;
-    char *text;
+    const char *text;
     char locstr[80];
 
     lbDisplay.DrawFlags = 0;
@@ -304,10 +293,7 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
         locstr[0] = '\0';
         snprint_concat_comma_separated_weapons_list(locstr, sizeof(locstr), p_rep->WeaponsResearched);
         snprint_concat_comma_separated_cybmods_list(locstr, sizeof(locstr), p_rep->ModsResearched);
-
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        text_buf_pos += strlen(text) + 1;
+        text = loctext_to_gtext(locstr);
 
         // If cannot fit in expected num of lines, use smaller font
         if (LbTextStringWidth(text) > research_ln * (box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X))
@@ -320,9 +306,7 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
     if (scilost_ln > 0)
     {
         snprintf(locstr, sizeof(locstr), "%d: %s", p_rep->ScientistsLost, scientist_lost_reason);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        text_buf_pos += strlen(text) + 1;
+        text = loctext_to_gtext(locstr);
 
         if (LbTextStringWidth(text) > scilost_ln * (box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X)) {
             // Cannot fit in expected num of lines - divide the text into
@@ -376,7 +360,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
         ingame.Expenditure = 0;
 
         if (p_rep->ScientistsLost > 0) {
-            load_scientist_lost_reason(p_rep->SciLostReason);
+            load_scientist_lost_reason(p_rep->SciLostReason, back_buffer + text_buf_pos);
         }
     }
 
@@ -462,7 +446,7 @@ void draw_mission_people_stats_vals_column(struct ScreenBox *box,
   struct DebriefReport *p_rep)
 {
     struct MissionStatus *p_mistat;
-    char *text;
+    const char *text;
     char locstr[40];
     int fheight, lnheight;
     short x, y;
@@ -478,68 +462,52 @@ void draw_mission_people_stats_vals_column(struct ScreenBox *box,
     p_mistat = &mission_status[p_rep->BriefNo];
 
     snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.CivsPersuaded);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
     snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.SecurityPersuaded);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
     snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.EnemiesPersuaded);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
     y += lnheight;
 
     snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.CivsKilled);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
     snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.SecurityKilled);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
     snprintf(locstr, sizeof(locstr), "%d", p_mistat->SP.EnemiesKilled);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
     y += lnheight;
 
     snprintf(locstr, sizeof(locstr), "%d", p_mistat->AgentsLost);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 
     snprintf(locstr, sizeof(locstr), "%d", p_mistat->AgentsGained);
-    text = (char *)(back_buffer + text_buf_pos);
-    strcpy(text, locstr);
+    text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
-    text_buf_pos += strlen(text) + 1;
     y += lnheight;
 }
 
 void draw_mission_mp_players_names_column(struct ScreenBox *box,
   struct DebriefReport *p_rep)
 {
-    char *text;
+    const char *text;
     char locstr[40];
     int fheight, lnheight;
     PlayerIdx plyr;
@@ -577,14 +545,13 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
             word_1C4856[k] += word_1C4846[plyr];
 
         snprintf(locstr, sizeof(locstr), "%d", used_num);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
+        text = loctext_to_gtext(locstr);
         textw = my_string_width(text);
         draw_text_purple_list2(x1 - textw, y, text, 0);
         x2 = 140 + 40 * (used_num - 1);
         draw_text_purple_list2(x2 - textw, lnheight, text, 0);
-        text_buf_pos += strlen(text) + 1;
-        draw_text_purple_list2(x3, y, unkn2_names[plyr], 0);
+        text = unkn2_names[plyr];
+        draw_text_purple_list2(x3, y, text, 0);
         y += lnheight;
 
         used_num++;
@@ -594,7 +561,7 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
 void draw_mission_mp_players_vals_column(struct ScreenBox *box,
   struct DebriefReport *p_rep)
 {
-    char *text;
+    const char *text;
     char locstr[40];
     int fheight, lnheight;
     short x, y;
@@ -629,11 +596,9 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
             if (k == i)
                 lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
             snprintf(locstr, sizeof(locstr), "%d", (int)p_mistat->MP.AgentsKilled[k]);
-            text = (char *)(back_buffer + text_buf_pos);
-            strcpy(text, locstr);
+            text = loctext_to_gtext(locstr);
             textw = my_string_width(text);
             draw_text_purple_list2(x - textw, y, text, 0);
-            text_buf_pos += strlen(text) + 1;
             if (k == i)
                 lbDisplay.DrawFlags &= ~Lb_TEXT_ONE_COLOR;
             x += 40;
@@ -641,11 +606,9 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
         lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
 
         snprintf(locstr, sizeof(locstr), "%d", word_1C4846[i]);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
+        text = loctext_to_gtext(locstr);
         textw = my_string_width(text);
         draw_text_purple_list2(x - textw, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
 
         k = byte_1C5C28[i];
         if (k != 0)
@@ -655,10 +618,8 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
             x += LbTextCharWidth('/') + 1;
 
             snprintf(locstr, sizeof(locstr), "%d", word_1C4856[k]);
-            text = (char *)(back_buffer + text_buf_pos);
-            strcpy(text, locstr);
+            text = loctext_to_gtext(locstr);
             draw_text_purple_list2(x, y, text, 0);
-            text_buf_pos += strlen(text) + 1;
         }
         lbDisplay.DrawFlags &= ~Lb_TEXT_ONE_COLOR;
         y += lnheight;
@@ -679,11 +640,9 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
         plyr = (players[k].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
         n = stats_mp_count_players_agents_killed(plyr);
         snprintf(locstr, sizeof(locstr), "%d", n);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
+        text = loctext_to_gtext(locstr);
         textw = my_string_width(text);
         draw_text_purple_list2(x - textw, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
         x += 40;
     }
     lbDisplay.DrawFlags &= ~Lb_TEXT_ONE_COLOR;

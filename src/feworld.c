@@ -92,11 +92,11 @@ ubyte do_unkn2_ACCEPT(ubyte click)
     return ret;
 }
 
-ubyte show_world_city_info_box(struct ScreenTextBox *box)
+ubyte show_world_city_info_box(struct ScreenTextBox *p_box)
 {
     ubyte ret;
     asm volatile ("call ASM_show_world_city_info_box\n"
-        : "=r" (ret) : "a" (box));
+        : "=r" (ret) : "a" (p_box));
     return ret;
 }
 
@@ -391,6 +391,8 @@ void draw_world_cities_names(struct ScreenBox *box)
         if ((cities[city].Flags & (CitF_Unkn10|CitF_Unkn01)) || (byte_15511C == 2)
            || (city == unkn_city_no) || ((px >= 0) && (py >= 0) && (px <= 3) && (py <= 3)))
         {
+            const char *text;
+
             if ((px > 3) || (py > 3))
             {
                 cities[city].Flags &= ~CitF_Unkn08;
@@ -409,7 +411,7 @@ void draw_world_cities_names(struct ScreenBox *box)
 
             lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
             landmap_8BC = my_string_width(locstr);
-            strcpy((char *)back_buffer + text_buf_pos, locstr);
+            text = loctext_to_gtext(locstr);
 
             if (cities[city].X + 5 + landmap_8BC < box->Width - 2) {
                 px = cities[city].X + 5;
@@ -418,8 +420,7 @@ void draw_world_cities_names(struct ScreenBox *box)
                 px = cities[city].X - 3 - landmap_8BC;
                 py = cities[city].Y - 3;
             }
-            draw_text_purple_list2(px, py, (char *)back_buffer + text_buf_pos, 0);
-            text_buf_pos += strlen(locstr) + 1;
+            draw_text_purple_list2(px, py, text, 0);
             lbDisplay.DrawFlags = 0;
         }
         else

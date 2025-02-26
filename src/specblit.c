@@ -20,61 +20,58 @@
 #include "specblit.h"
 
 #include "bfmemut.h"
+#include "bfscreen.h"
+
 #include "swlog.h"
 /******************************************************************************/
 
-void * memory_copy_with_skip(void *in_dst, const void *in_src, TbMemSize size, ubyte bskip)
+void ApScreenCopyRectColorKey(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort sourceWidth, ushort destWidth, ushort height, TbPixel ckey)
 {
-    const ubyte *s;
+    ubyte *s;
     ubyte *d;
-    d = in_dst;
-    s = in_src;
-    for (; size > 0; size--)
+    short shift;
+    short w, h;
+
+    s = sourceBuf;
+    d = destBuf;
+    shift = destWidth - sourceWidth;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
     {
-        if (*s != bskip)
-            *d = *s;
-        s++;
-        d++;
+        for (w = 0; w < sourceWidth; w++)
+        {
+            if (*s != ckey)
+                *d = *s;
+            s++;
+            d++;
+        }
+        d += shift;
     }
-    return in_dst;
 }
 
-/** Copy given rect buffer to the same position at two larger buffers.
- */
-void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
-    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight)
+void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height, TbPixel ckey)
 {
-    long pos;
-    short h;
+    ubyte *s;
+    ubyte *d;
+    short shift;
+    short w, h;
 
-    pos = y * owidth + x;
-    for (h = 0; h < iheight; h++)
+    s = sourceBuf;
+    d = destBuf;
+    shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
     {
-        LbMemoryCopy(&obufs[0][pos], ibuf, iwidth);
-        LbMemoryCopy(&obufs[1][pos], ibuf, iwidth);
-        ibuf += iwidth;
-        pos += owidth;
+        for (w = 0; w < lbDisplay.GraphicsWindowWidth; w++)
+        {
+            if (*s != ckey)
+                *d = *s;
+            s++;
+            d++;
+        }
+        d += shift;
     }
 }
-
-/** Copy given rect buffer to the same position at two larger buffers, skipping
- * pixels with transparency color.
- */
-void copy_buffer_to_double_bufs_with_trans(ubyte *ibuf, ushort iwidth, ushort iheight,
-    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight, ubyte trans_col)
-{
-    long pos;
-    short h;
-
-    pos = y * owidth + x;
-    for (h = 0; h < iheight; h++)
-    {
-        memory_copy_with_skip(&obufs[0][pos], ibuf, iwidth, trans_col);
-        memory_copy_with_skip(&obufs[1][pos], ibuf, iwidth, trans_col);
-        ibuf += iwidth;
-        pos += owidth;
-    }
-}
-
 
 /******************************************************************************/

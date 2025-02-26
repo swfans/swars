@@ -757,7 +757,7 @@ data_15aad4:
 data_15aad8:
 		.long	0x0
 GLOBAL (GTL_prefix)				/* 0x15AADC */
-		.string "SAMPLE"
+		.string "sample"
 		.fill   0x79
 GLOBAL (MDI_entry)				/* 0x15ab5c */
 		.long	0x0

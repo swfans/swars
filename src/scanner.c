@@ -18,26 +18,43 @@
 /******************************************************************************/
 #include "scanner.h"
 
+#include "bfgentab.h"
+#include "bfmath.h"
 #include "bfutility.h"
+
+#include "app_sprite.h"
 #include "bigmap.h"
 #include "campaign.h"
+#include "display.h"
 #include "player.h"
 #include "thing.h"
 #include "thing_search.h"
 #include "game.h"
 #include "game_speed.h"
 #include "lvobjctv.h"
-#include "display.h"
+#include "scandraw.h"
 #include "swlog.h"
+/******************************************************************************/
+#pragma pack(1)
+
+struct BbpAdds {
+    s32 du;
+    s32 dv;
+};
+
+#pragma pack()
+
 /******************************************************************************/
 
 extern ushort signal_count;
 extern ulong turn_last; // = 999;
 extern ulong SCANNER_keep_arcs;
 extern ulong dword_1DB1A0;
+extern struct BbpAdds SCANNER_bbpadds[16];
 
 ushort SCANNER_base_zoom_factor = 180;
 ushort SCANNER_user_zoom_factor = 192;
+ubyte SCANNER_scale_dots = true;
 
 void SCANNER_set_zoom(int zoom)
 {
@@ -49,16 +66,85 @@ void SCANNER_set_zoom(int zoom)
         ingame.Scanner.Zoom = zoom;
 }
 
+void SCANNER_init_bbpoints(void)
+{
+    int angle, k;
+    int i;
+
+    k = 0;
+    for (i = 0; i < 16; i++, k += 2048)
+    {
+      angle = (k >> 4);
+      SCANNER_bbpadds[i+1].du = lbSinTable[angle] >> 2;
+      SCANNER_bbpadds[i+1].dv = lbSinTable[angle + 512] >> 2;
+    }
+}
+
+void SCANNER_init_people_colours(void)
+{
+    SCANNER_people_colours[SubTT_PERS_AGENT] =
+      pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[ColLU_RED]];
+    SCANNER_people_colours[SubTT_PERS_MERCENARY] =
+      pixmap.fade_table[10 * PALETTE_8b_COLORS + colour_lookup[ColLU_PINK]];
+    SCANNER_people_colours[SubTT_PERS_POLICE] =
+      pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[ColLU_BLUE]];
+    SCANNER_people_colours[SubTT_PERS_SCIENTIST] =
+      pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[ColLU_YELLOW]];
+    SCANNER_people_colours[SubTT_PERS_PUNK_F] =
+      pixmap.fade_table[24 * PALETTE_8b_COLORS + colour_lookup[ColLU_GREEN]];
+    SCANNER_people_colours[SubTT_PERS_PUNK_M] = SCANNER_people_colours[SubTT_PERS_PUNK_F];
+    SCANNER_people_colours[SubTT_PERS_ZEALOT] =
+      pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[ColLU_WHITE]];
+    SCANNER_people_colours[SubTT_PERS_HIGH_PRIEST] = SCANNER_people_colours[SubTT_PERS_ZEALOT];
+    SCANNER_people_colours[SubTT_PERS_MECH_SPIDER] =  SCANNER_people_colours[SubTT_PERS_ZEALOT];
+    SCANNER_people_colours[SubTT_PERS_SHADY_M] =
+      pixmap.fade_table[40 * PALETTE_8b_COLORS + colour_lookup[ColLU_GREYMD]];
+    SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M] =
+      pixmap.fade_table[32 * PALETTE_8b_COLORS + colour_lookup[ColLU_GREYMD]];
+    SCANNER_people_colours[SubTT_PERS_WHITE_BRUN_F] =  SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M];
+    SCANNER_people_colours[SubTT_PERS_WHIT_BLOND_F] = SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M];
+    SCANNER_people_colours[SubTT_PERS_LETH_JACKT_M] = SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M];
+}
+
 void SCANNER_init(void)
 {
+#if 0
     asm volatile ("call ASM_SCANNER_init\n"
         :  :  : "eax" );
+#else
+    SCANNER_init_palette_bright();
+    SCANNER_init_bbpoints();
+    SCANNER_init_bright_limit_table();
+    SCANNER_init_people_colours();
+#endif
 }
 
 void SCANNER_set_colour(ubyte col)
 {
+#if 0
     asm volatile ("call ASM_SCANNER_set_colour\n"
         :  : "a" ((long)col));
+#endif
+    switch (col)
+    {
+    case 1:
+        SCANNER_colour[0] = 40;
+        SCANNER_colour[1] = 68;
+        SCANNER_colour[2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + 20];
+        SCANNER_colour[4] = 40;
+        SCANNER_colour[3] = 32;
+        break;
+    case 2:
+        SCANNER_colour[0] = 20;
+        SCANNER_colour[1] = 68;
+        SCANNER_colour[2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + 20];
+        SCANNER_colour[4] = 20;
+        SCANNER_colour[3] = colour_lookup[ColLU_CYAN];
+        break;
+    default:
+        break;
+    }
+    byte_1DB2E9 = col;
 }
 
 void SCANNER_fill_in(void)

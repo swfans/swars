@@ -32,7 +32,9 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 extern ubyte SCANNER_colour[5];
+extern ubyte byte_1DB2E9;
 extern ubyte byte_1C5C30[8];
+extern TbPixel SCANNER_people_colours[15];
 
 void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ, ubyte colour);
 void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour);

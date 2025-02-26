@@ -34,6 +34,8 @@ enum DirPlacement {
     DirPlace_Intro,
     DirPlace_Sound,
     DirPlace_Equip,
+    DirPlace_QEquip,
+    DirPlace_Config,
     DirPlace_None,
 };
 
@@ -64,10 +66,23 @@ extern MemSystem mem_game[];
 
 /******************************************************************************/
 
+/** Returns absolute path to user files directory for the application.
+ */
 const char *GetDirectoryUser(void);
+
+/** Returns path (absolute or relative) to HDD-stored files for the application.
+ */
 const char *GetDirectoryHdd(void);
+
+/** Returns absolute path to CD-stored files for the application.
+ */
 const char *GetDirectoryCd(void);
 
+/** Prepares global base paths and sets up path transformation on file open.
+ *
+ * After this call, any files to be opened can use "/" as separator and
+ * relative paths within the game folder.
+ */
 void setup_file_names(void);
 
 int get_highest_used_packet_record_no(int campgn, int missi);

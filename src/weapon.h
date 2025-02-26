@@ -182,6 +182,10 @@ TbBool weapons_remove_one_for_player(ulong *p_weapons,
 
 TbBool weapons_add_one(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
+
+TbBool weapons_add_one_for_player(ulong *p_weapons,
+  ubyte p_plfourpacks[][4], ushort plagent, ushort wtype);
+
 void sanitize_weapon_quantities(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks);
 

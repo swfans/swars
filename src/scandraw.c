@@ -411,7 +411,6 @@ extern ulong SCANNER_keep_arcs;
 extern long scanner_blink; // = 1;
 
 extern struct scanstr3 SCANNER_arcpoint[20];
-extern TbPixel SCANNER_people_colours[15];
 
 void SCANNER_process_special_input(void)
 {
@@ -453,7 +452,7 @@ void SCANNER_dnt_SCANNER_dw070_update(ushort flags1)
         n2_cand = nm_shft >> 16;
     }
 
-    if ( (flags1 & 0x04) != 0 )
+    if ((flags1 & 0x04) != 0)
     {
         nm_prec = (s64)SCANNER_dw070 << 16;
         nm_shft = -(nm_prec / SCANNER_dw068);
@@ -680,7 +679,7 @@ void SCANNER_draw_new_transparent_map(void)
     dt_x = (ingame.Scanner.X2 - ingame.Scanner.X1) >> 1;
     dt_y = (ingame.Scanner.Y2 - ingame.Scanner.Y1) >> 1;
     sh_y = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle]) >> 8;
-    sh_x = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle + 512]) >> 8;
+    sh_x = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle + LbFPMath_PI/2]) >> 8;
 
     SCANNER_dw07C = sh_y << 16;
     SCANNER_dw080 = sh_x << 16;
@@ -753,10 +752,59 @@ void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour
 
 void draw_map_flat_circle(short cor_x, short cor_y, short cor_z, short radius, TbPixel colour)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_draw_map_flat_circle\n"
         : : "a" (cor_x), "d" (cor_y), "b" (cor_z), "c" (radius), "g" (colour));
+#endif
+    struct EnginePoint ep1;
+    struct EnginePoint ep2;
+    int cir_cor_x, cir_cor_z;
+    int cir_nxt_x, cir_nxt_z;
+    ushort slice;
+
+    cir_cor_x = cor_x;
+    cir_cor_z = cor_z + radius;
+    for (slice = 1; slice < 0x40; slice++)
+    {
+        short cir_dt_x, cir_dt_z;
+        cir_dt_x = (radius * lbSinTable[slice * 2 * LbFPMath_PI / 0x40]) >> 16;
+        cir_dt_z = (radius * lbSinTable[LbFPMath_PI/2 + slice * 2*LbFPMath_PI / 0x40]) >> 16;
+        cir_nxt_x = cor_x + cir_dt_x;
+        cir_nxt_z = cor_z + cir_dt_z;
+
+        ep1.X3d = cir_cor_x - engn_xc;
+        ep1.Y3d = cor_y - engn_yc;
+        ep1.Z3d = cir_cor_z - engn_zc;
+        ep1.Flags = 0;
+        transform_point(&ep1);
+        ep2.X3d = cir_nxt_x - engn_xc;
+        ep2.Y3d = cor_y - engn_yc;
+        ep2.Z3d = cir_nxt_z - engn_zc;
+        ep2.Flags = 0;
+        transform_point(&ep2);
+        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+
+        cir_cor_x = cir_nxt_x;
+        cir_cor_z = cir_nxt_z;
+    }
+    {
+        cir_nxt_x = cor_x;
+        cir_nxt_z = cor_z + radius;
+
+        ep1.X3d = cir_cor_x - engn_xc;
+        ep1.Y3d = cor_y - engn_yc;
+        ep1.Z3d = cir_cor_z - engn_zc;
+        ep1.Flags = 0;
+        transform_point(&ep1);
+        ep2.X3d = cir_nxt_x - engn_xc;
+        ep2.Y3d = cor_y - engn_yc;
+        ep2.Z3d = cir_nxt_z - engn_zc;
+        ep2.Flags = 0;
+        transform_point(&ep2);
+        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+    }
 }
 
 void draw_map_flat_rect(int cor_x, int cor_y, int cor_z, int size_x, int size_z, TbPixel colour)
@@ -1105,7 +1153,15 @@ ushort SCANNER_scale_size(short base_size)
 {
     short sz;
 
-    sz = base_size * (450 - ingame.Scanner.Zoom) / 192;
+    if (!SCANNER_scale_dots)
+        return base_size;
+    // For lower resolutions, keep the smaller size for wider zoom range
+    // This assumes the game is played on a large monitor - in such case,
+    // switching to larger dots doesn't look that good
+    if (lbDisplay.GraphicsScreenHeight < 600)
+        sz = base_size * (450 - ingame.Scanner.Zoom) / 208;
+    else
+        sz = base_size * (450 - ingame.Scanner.Zoom) / 192;
     if (sz > 15)
         sz = 15;
     else if (sz < 1)
@@ -1189,8 +1245,8 @@ void SCANNER_draw_orientation_arrow(int pos_x1, int pos_y1, int range, int angle
 
     x1 = ((range * lbSinTable[angle]) >> 16) + pos_x1;
     len_y = (range * lbSinTable[angle]) >> 19;
-    y1 = ((range * -lbSinTable[angle + 512]) >> 16) + pos_y1;
-    len_x = (range * -lbSinTable[angle + 512]) >> 19;
+    y1 = ((range * -lbSinTable[angle + LbFPMath_PI/2]) >> 16) + pos_y1;
+    len_x = (range * -lbSinTable[angle + LbFPMath_PI/2]) >> 19;
     x2 = x1 - len_y;
     y2 = y1 - len_x;
     LbDrawLine(x1, y1, x2 - len_x, y2 + len_y, colour_lookup[ColLU_WHITE]);
@@ -1504,8 +1560,8 @@ TbPixel SCANNER_thing_colour(struct Thing *p_thing)
     case TT_PERSON:
         if ((p_thing->Flag & TngF_Persuaded) != 0)
             col = colour_lookup[ColLU_YELLOW];
-        else if ( (p_thing->Flag & TngF_PlayerAgent) != 0 && p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD)
-            col = SCANNER_people_colours[4];
+        else if ((p_thing->Flag & TngF_PlayerAgent) != 0 && p_thing->U.UPerson.CurrentWeapon == WEP_CLONESHLD)
+            col = SCANNER_people_colours[SubTT_PERS_BRIEFCASE_M];
         else
             col = SCANNER_people_colours[p_thing->SubType];
         break;
@@ -1709,7 +1765,7 @@ void SCANNER_draw_signals(void)
         dt_x = (ingame.Scanner.X2 - ingame.Scanner.X1) >> 1;
         dt_y = (ingame.Scanner.Y2 - ingame.Scanner.Y1) >> 1;
         sh_y = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle]) >> 8;
-        sh_x = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle + 512]) >> 8;
+        sh_x = (ingame.Scanner.Zoom * lbSinTable[ingame.Scanner.Angle + LbFPMath_PI/2]) >> 8;
         pos_x1 = ingame.Scanner.X1 + dt_x;
         pos_y1 = ingame.Scanner.Y1 + dt_y;
         if (dt_x >= dt_y)

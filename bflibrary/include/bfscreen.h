@@ -70,13 +70,24 @@ typedef enum ScreenMode TbScreenMode;
 typedef struct TbSprite TbSprite;
 
 enum TbDrawFlags {
+    /** while drawing sprites, flip them horizontally (left-to-right) */
     Lb_SPRITE_FLIP_HORIZ   = 0x0001,
+    /** while drawing sprites, flip them vertically (top-to-bottom) */
     Lb_SPRITE_FLIP_VERTIC  = 0x0002,
+    /** while drawing sprites, use transparency with sprite data in
+     * upper part of the color mixing array */
     Lb_SPRITE_TRANSPAR4    = 0x0004,
+    /** while drawing sprites, use transparency with sprite data in
+     * lower part of the color mixing array */
     Lb_SPRITE_TRANSPAR8    = 0x0008,
+    /** while drawing sprites and shapes, draw the outline shape only */
     Lb_SPRITE_OUTLINE      = 0x0010,
+    /** while drawing text, horizontally align to left of provided coordinates */
     Lb_TEXT_HALIGN_LEFT    = 0x0020,
+    /** while drawing text or sprites, ignore original colors and use DrawColour
+     * instead */
     Lb_TEXT_ONE_COLOR      = 0x0040,
+    /** while drawing text, horizontally align to right of provided coordinates */
     Lb_TEXT_HALIGN_RIGHT   = 0x0080,
     Lb_TEXT_HALIGN_CENTER  = 0x0100,
     Lb_TEXT_HALIGN_JUSTIFY = 0x0200,

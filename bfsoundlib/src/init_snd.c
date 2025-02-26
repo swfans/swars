@@ -176,7 +176,7 @@ int AllocateSoundBankMemory(ushort snd_type)
     ushort tpno;
     long dat_size, tab_size;
 
-    sprintf(full_sound_data_path, "%s/SOUND.DAT", SoundDataPath);
+    sprintf(full_sound_data_path, "%s/sound.dat", SoundDataPath);
     fh = LbFileOpen(full_sound_data_path, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE) {
         return -1;
@@ -366,7 +366,7 @@ int InitSoundDriverFromOS(void)
     SoundProgressLog(SoundProgressMessage);
     // Fill DOS driver information with something which makes sense
     memset(&SoundInstallChoice, 0, sizeof(SoundInstallChoice));
-    sprintf(SoundInstallChoice.driver_name, "%s", "SB16.DIG");
+    sprintf(SoundInstallChoice.driver_name, "%s", "sb16.dig");
     return 1;
 }
 

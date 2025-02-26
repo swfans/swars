@@ -231,7 +231,7 @@ TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon)
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];
 #if 0
-        // TODO re-ebable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
+        // TODO re-enable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
         weapons_add_one(&p_locplayer->Weapons[cryo_no], &p_player->FourPacks[cryo_no], weapon);
 #else
         // Copying all weapons will work as well
@@ -239,6 +239,23 @@ TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon)
 #endif
     }
     return added;
+}
+
+TbBool player_cryo_add_cybmod(ushort cryo_no, ubyte cybmod)
+{
+    if (!check_mod_allowed_to_flags(&cryo_agents.Mods[cryo_no], cybmod))
+        return false;
+
+    add_mod_to_flags(&cryo_agents.Mods[cryo_no], cybmod);
+
+    if (cryo_no < 4) {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+
+        add_mod_to_flags(&p_locplayer->Mods[cryo_no], cybmod);
+    }
+
+    return true;
 }
 
 TbBool player_cryo_remove_weapon_one(ushort cryo_no, ubyte weapon)
@@ -253,7 +270,7 @@ TbBool player_cryo_remove_weapon_one(ushort cryo_no, ubyte weapon)
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];
 #if 0
-        // TODO re-ebable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
+        // TODO re-enable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
         weapons_remove_one(&p_locplayer->Weapons[cryo_no], &p_player->FourPacks[cryo_no], weapon);
 #else
         // Copying all weapons will work as well
@@ -278,6 +295,10 @@ TbBool player_cryo_transfer_weapon_between_agents(ushort from_cryo_no,
 const char *get_cryo_agent_name(ushort cryo_no)
 {
     ushort rndname;
+
+    if (selected_agent < 0)
+        return gui_strings[536];
+
     rndname = cryo_agents.RandomName[cryo_no];
     if (background_type == 1)
     {

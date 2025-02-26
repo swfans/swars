@@ -27,6 +27,31 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum ModDrawStateFlags {
+    ModDSt_ModAnimIn	= 0x01,	/**< cybernetic mod insertion animation plays */
+    ModDSt_ModAnimOut	= 0x02,	/**< cybernetic mod removal animation plays */
+    ModDSt_Unkn04	= 0x04,
+    ModDSt_Unkn08	= 0x08,
+    ModDSt_Unkn10	= 0x10,
+    ModDSt_Unkn20	= 0x20,
+    ModDSt_Unkn40	= 0x40,
+    ModDSt_Unkn80	= 0x80,
+};
+
+enum ModDrawPart {
+    ModDPt_CHEST	= 0,
+    ModDPt_BRAIN	= 1,
+    ModDPt_ARMS		= 2,
+    ModDPt_LEGS		= 3,
+    ModDPt_BKGND	= 4,
+};
+
+enum ModDrawStage {
+    ModDSt_BRT	= 0, /**< breathing animation */
+    ModDSt_OUT	= 1, /**< drawing out a mod */
+    ModDSt_IN	= 2, /**< drawing in a mod */
+    ModDSt_END	= 3, /**< not animating */
+};
 
 #pragma pack()
 /******************************************************************************/
@@ -34,10 +59,14 @@ extern sbyte selected_mod;
 
 ubyte show_cryo_chamber_screen(void);
 void update_flic_mods(ubyte *mods);
+void cryo_update_for_selected_cybmod(void);
 
 void init_cryo_screen_boxes(void);
 void reset_cryo_screen_boxes_flags(void);
 void set_flag01_cryo_screen_boxes(void);
+
+void set_mod_draw_states_flag08(void);
+void reset_mod_draw_states_flag08(void);
 
 void switch_shared_equip_screen_buttons_to_cybmod(void);
 

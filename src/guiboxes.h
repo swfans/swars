@@ -50,25 +50,34 @@ enum GUIBoxFlags {
   GBxFlg_NONE = 0x0000,
   GBxFlg_Unkn0001 = 0x0001,
   GBxFlg_Unkn0002 = 0x0002,
-  GBxFlg_Unkn0004 = 0x0004,
-  GBxFlg_Unkn0008 = 0x0008,
+  GBxFlg_BkCopied = 0x0004,		/**< Background with static part of the component was stored for reuse */
+  GBxFlg_NoBkCopy = 0x0008,		/**< Do not store background static part */
   GBxFlg_Unkn0010 = 0x0010,
   GBxFlg_Unkn0020 = 0x0020,
   GBxFlg_Unkn0040 = 0x0040,
   GBxFlg_Unkn0080 = 0x0080,
-  GBxFlg_RadioBtn = 0x0100,
+  GBxFlg_RadioBtn = 0x0100,		/**< Seem to be used for more than marking one of exclusive radio buttons */
   GBxFlg_IsMouseOver = 0x0200,
   GBxFlg_IsPushed = 0x0400,
   GBxFlg_IsRPushed = 0x0800,
-  GBxFlg_Unkn1000 = 0x1000,
+  GBxFlg_TextCopied = 0x1000,	/**< Text on the box became static and was stored for reuse */
   GBxFlg_TextRight = 0x2000,	/**< Align the text within the box to the right */
   GBxFlg_TextCenter = 0x4000,	/**< Center the text within the box */
   GBxFlg_BkgndDrawn = 0x8000,	/**< Whether static background of the box has been already drawn. */
 };
 
+/** Point on the screen surface. */
 struct ScreenPoint {
 	short X;
 	short Y;
+};
+
+/** Rectangle on the screen surface. */
+struct ScreenRect {
+	short X;
+	short Y;
+    ushort Width;
+    ushort Height;
 };
 
 /** Base to which every Screen Box/Button/Text can be casted.
@@ -162,23 +171,21 @@ struct ScreenTextBox {
   ushort ScrollBarSize;
   short ScrollWindowHeight;
   short ScrollWindowOffset;
-  ushort GrabPos;
+  short GrabPos;
   ushort Lines;
   const char *Text;
   struct TbSprite *Font;
   ubyte (*DrawFn)(struct ScreenTextBox *box);
   ubyte (*DrawTextFn)(struct ScreenTextBox *box);
   struct ScreenButton *Buttons[2];
-  short Infos[2];
-  //struct ScreenInfoBox *Infos[2];
-  ushort TextTopLine;
-  ushort field_36;
+  struct ScreenInfoBox *Infos[2];
   ushort field_38;
   short TextFadePos;
   ushort Flags;
-  ushort field_3E;
+  ubyte Colour1;
   ubyte BGColour;
   ubyte LineHeight;
+  ubyte field_41;
   ubyte field_42;
   ubyte field_43;
 };
@@ -214,6 +221,16 @@ TbBool over_box(short x, short y, short box_x, short box_y, short box_w, short b
 /** Returns if given position is over given box with coords (incl. borders).
  */
 TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
+
+/** Returns if given two boxes have a common part (incl. borders).
+ */
+TbBool boxes_intersect(short box1_x, short box1_y, short box1_w, short box1_h,
+  short box2_x, short box2_y, short box2_w, short box2_h);
+
+/** Returns if given two boxes have a common part (incl. borders).
+ */
+#define screen_boxes_intersect(box1, box2) base_boxes_intersect((struct ScreenBoxBase *)box1, (struct ScreenBoxBase *)box2)
+TbBool base_boxes_intersect(struct ScreenBoxBase *box1, struct ScreenBoxBase *box2);
 
 /** Returns if current mouse move position is over given box with coords (incl. borders).
  */
@@ -266,6 +283,8 @@ short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *box);
 #define mouse_move_y_coord_over_box(box) mouse_move_y_coord_over_box_base((struct ScreenBoxBase *)box)
 short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box);
 
+short mouse_move_position_vertical_scrollbar_over_text_box(struct ScreenTextBox *p_box);
+
 /** Draws slant box / kicked box / parallellogram skewed 45 deg.
  * This function is like a extension to bflibrary API, but it's defined on application side.
  */
@@ -273,9 +292,9 @@ TbResult ApDrawSlantBox(short x, short y, ushort w, ushort h, TbPixel col);
 
 void init_screen_box(struct ScreenBox *box, ushort x, ushort y,
   ushort width, ushort height, int drawspeed);
-void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y,
+void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
   ushort width, ushort height, int drawspeed,
-  struct TbSprite *font, int textspeed);
+  struct TbSprite *p_font, ushort textspeed);
 void init_screen_button(struct ScreenButton *box, ushort x, ushort y,
   const char *text, int drawspeed,
   struct TbSprite *font, int textspeed, int flags);

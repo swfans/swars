@@ -73,7 +73,7 @@ and then add the neccessary data files. The steps are:
    directory where build commands were executed, to copy built files into the
    *\<TARGET\>* installation folder you've chosen.
 
-If all went well, you can now play the game.
+If all went well, you can now [start the game](#starting-the-game).
 
 ### Installing on Mac OS X
 
@@ -99,6 +99,8 @@ You can create the bundle by following these instructions:
    `Syndicate Wars.app` in the current directory.
 5. If you want there to be a pretty icon for the bundle, copy `res/swars.icns`
    to `Syndicate Wars.app/Contents/Resources`.
+
+When all is done, you can [start the game](#starting-the-game).
 
 ### Installing on Windows
 
@@ -143,7 +145,33 @@ If you've decided on the hand-compilation option, proceed with the following ste
    yourself, you already have all the tools neccessary for that install command
    to work.
 
-You can now launch `swars.exe` and have fun!
+You can now [start the game](#starting-the-game).
+
+## Starting the game
+
+The original game should be started with parameters to play normally. While
+with SW Port this is no longer mandatory, the parameters can still be used,
+and many new ones are actually available. The typical command line for running
+on bash-like shell is:
+
+```
+./swars -w -g
+```
+
+If running on Windows, the command line above should work as well. Though more
+Windows-centric way of doing that is:
+
+
+```
+swars.exe /w /g
+```
+
+The game will start with intro animation, and then present you with a menu where
+you can start playing.
+
+In case something doesn't work, check `error.log` file generated while the game
+was starting. There is also a troubleshooting page on the
+[wiki page of the project repo](https://github.com/swfans/swars/wiki).
 
 ## Building
 

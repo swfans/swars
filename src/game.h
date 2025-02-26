@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "bffile.h"
+#include "bfflic.h"
 #include "globals.h"
 #include "scanner.h"
 #include "people.h"
@@ -92,15 +93,29 @@ enum DisplayModes {
   DpM_UNKN_1 = 0x1,
   DpM_2 = 0x2,
   DpM_31 = 0x31,
-  DpM_UNKN_32 = 0x32,
+  DpM_ENGINEPLY = 0x32,
   DpM_UNKN_33 = 0x33,
   DpM_34 = 0x34,
   DpM_36 = 0x36,
-  DpM_UNKN_37 = 0x37,
+  DpM_PURPLEMNU = 0x37,
   DpM_38 = 0x38,
   DpM_39 = 0x39,
   DpM_UNKN_3A = 0x3A,
   DpM_UNKN_3B = 0x3B,
+};
+
+enum AnimSlot {
+  AniSl_FULLSCREEN = 0,
+  AniSl_BILLBOARD = 1,
+  AniSl_EQVIEW = 2,	/**< equipment (weapon or mod) presentation in buy/sell window */
+  AniSl_CYBORG_INOUT = 3,	/**< cyborg mod insertion or removal anim */
+  AniSl_UNKN4 = 4,
+  AniSl_UNKN5 = 5,
+  AniSl_UNKN6 = 6,
+  AniSl_UNKN7 = 7,
+  AniSl_CYBORG_BRTH = 8,
+  AniSl_NETSCAN = 9,
+  AniSl_BKGND = 10,	/**< background buffer for some transparent menu animations */
 };
 
 enum PacketRecordMode {
@@ -191,15 +206,15 @@ struct InGame {
     ubyte AutoResearch;
     ubyte GameOver;
     struct Scanner Scanner; // offset=0x0C
-    long Credits;
-    ulong fld_unkC4B;
+    long Credits; // offset=0x473 (on original Scanner struct)
+    ulong fld_unkC4B;	// offset=0x477
     short fld_unkC4F;
     short MissionStatus;
     long Flags;
     ushort fld_unkC57;
     short fld_unkC59;
     short draw_unknprop_01;
-    short Rocket1[WEP_ROCKETS_FIRED_LIMIT];
+    short Rocket1[WEP_ROCKETS_FIRED_LIMIT];	// offset=0x489
     short NextRocket;
     short TrainMode;
     short MyGroup;
@@ -221,7 +236,7 @@ struct InGame {
     sbyte PanelPermutation;
     ubyte TrenchcoatPreference;
     ubyte MissionNo;
-    short fld_unkCA6;
+    short fld_unkCA6;	// offset=0x4D2
     short fld_unkCA8;
     ubyte fld_unkCAA;
     ubyte PalType;
@@ -239,30 +254,6 @@ struct InGame {
     ushort UserFlags;
     long CashAtStart;
     long Expenditure;
-};
-
-struct Animation {
-  ubyte *OutBuf;
-  long field_4;
-  short PosX;
-  short PosY;
-  short field_C;
-  ushort Flags;
-  long field_10;
-  long field_14;
-  short field_18;
-  short field_1A[1];
-  short field_1C[1];
-  short field_1E[1];
-  long field_20;
-  short field_24;
-  short field_26[5];
-  long field_30;
-  long field_34;
-  long FileHandle;
-  char Filename[48];
-  short anonymous_15;
-  short field_6E;
 };
 
 #pragma pack()
@@ -418,7 +409,6 @@ extern char *weapon_text;
 
 extern ubyte *save_game_buffer;
 extern char save_active_desc[28];
-extern ubyte *unkn_buffer_05;
 extern ubyte scientists_lost;
 extern ulong new_mods_researched;
 extern ulong new_weapons_researched;
@@ -440,7 +430,6 @@ extern ubyte data_1c4990;
 extern ubyte data_1c4991;
 extern ubyte data_1c4aa2;
 extern ubyte start_into_mission;
-extern ulong text_buf_pos;
 extern ubyte edit_flag;
 extern ubyte change_screen;
 extern ubyte restore_savegame;
@@ -459,7 +448,6 @@ extern struct LevelDef level_def;
 extern long dword_17710C;
 extern long dword_177110;
 extern ubyte mouser;
-extern ubyte *dword_1AA280;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;
 
@@ -472,7 +460,7 @@ extern ushort replay_intro_timer;
 extern ubyte show_alert;
 extern sbyte mo_weapon;
 
-extern ubyte selected_agent;
+extern sbyte selected_agent;
 
 extern int mouse_map_x;
 extern int mouse_map_y;
@@ -506,7 +494,11 @@ void game_handle_sdl_events (void);
 void game_update (void);
 int game_hacky_update(void);
 void game_quit (void);
+
+/** File name transform function, to be used only for DOS calls simulation.
+ */
 void game_transform_path (const char *file_name, char *result);
+
 const char *game_get_data_path (void);
 const char *game_get_user_path (void);
 
@@ -516,7 +508,18 @@ void game_process(void);
 void game_reset(void);
 void host_reset(void);
 void free_texturemaps(void);
-int xdo_next_frame(ubyte a1);
+
+/** Decode and draw next frame of the animation.
+ */
+int xdo_next_frame(ubyte anislot);
+
+/** Decode and draw previous frame of the animation.
+ *
+ * Note that printing a previous frame of the FLI file requires
+ * decoding all frames from start - these files do not use
+ * bi-directional FLIC format.
+ */
+int xdo_prev_frame(ubyte anislot);
 
 void flic_unkn03(ubyte a1);
 
@@ -547,6 +550,15 @@ void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
 void ingame_palette_reload(void);
 void game_set_cam_track_thing_xz(ThingIdx thing);
 TbBool game_cam_tracked_thing_is_player_agent(void);
+
+void local_to_worldr(int *dx, int *dy, int *dz);
+ubyte process_send_person(ushort player, int i);
+
+ubyte *anim_type_get_output_buffer(ubyte anislot);
+
+void net_unkn_func_33(void);
+void net_players_copy_equip_and_cryo(void);
+void net_players_copy_cryo(void);
 
 #ifdef __cplusplus
 };

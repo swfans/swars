@@ -24,6 +24,7 @@
 #include "bfdir.h"
 #include "bffnuniq.h"
 #include "bfstrut.h"
+
 #include "campaign.h"
 #include "command.h"
 #include "engindrwlstm.h"
@@ -49,7 +50,6 @@ static char data_path_user[DISKPATH_SIZE] = "";
 static char data_path_hdd[DISKPATH_SIZE] = "";
 static char game_dir_savegame[] = "qdata/savegame";
 static char game_dir_screenshots[] = "qdata/screenshots";
-static char game_file_text_dat[] = "data/text.dat";
 
 /******************************************************************************/
 
@@ -104,6 +104,8 @@ PathInfo game_dirs[] = {
   {"intro",		1},
   {"sound",		1},
   {"data/equip",1},
+  {"qdata/equip",0},
+  {"conf",		0},
   {NULL,		0},
 };
 
@@ -187,7 +189,7 @@ GetDirPlaceFromPath(const char *fname)
 }
 
 static void
-replace_backslash_with_fs_separator(char *path)
+replace_fs_separator_to_native(char *path)
 {
     size_t n;
     for (n = 0; path[n] != '\0'; n++)
@@ -201,8 +203,7 @@ replace_backslash_with_fs_separator(char *path)
     }
 }
 
-void
-SyndFileNameTransform(char *out_fname, const char *inp_fname)
+void SyndFileNameTransform(char *out_fname, const char *inp_fname)
 {
     char fs_fname[DISKPATH_SIZE];
     int dir_place;
@@ -228,23 +229,23 @@ SyndFileNameTransform(char *out_fname, const char *inp_fname)
 
     // Special file name switch for using language-specific files from CD
     if ( (dir_place == DirPlace_Data) && game_dirs[dir_place].use_cd &&
-      (strcasecmp(inp_fname, game_file_text_dat) == 0) ) {
+      (strcasecmp(inp_fname, "data/text.dat") == 0) ) {
+        // we can use '/' as separators here - these are converted later
         snprintf(fs_fname, DISKPATH_SIZE, "language/%s/text.dat", language_3str);
     } else {
         strncpy(fs_fname, inp_fname, DISKPATH_SIZE);
     }
     // Switch the input folder separators to proper ones for current os
-    replace_backslash_with_fs_separator(fs_fname);
+    replace_fs_separator_to_native(fs_fname);
     // Add base path only if the input one is not absolute
     if (fs_fname[0] == FS_SEP || (strlen(fs_fname) >= 2 && fs_fname[1] == ':')) {
-        snprintf (out_fname, DISKPATH_SIZE, "%s", fs_fname);
+        snprintf (out_fname, FILENAME_MAX-1, "%s", fs_fname);
     } else {
-        snprintf(out_fname, DISKPATH_SIZE, "%s" FS_SEP_STR "%s", base_dir, fs_fname);
+        snprintf(out_fname, FILENAME_MAX-1, "%s" FS_SEP_STR "%s", base_dir, fs_fname);
     }
 }
 
-void
-setup_file_names(void)
+void setup_file_names(void)
 {
     lbFileNameTransform = SyndFileNameTransform;
     // This fills the path variable; for user, it also creates the folder

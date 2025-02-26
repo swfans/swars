@@ -152,7 +152,7 @@ int LbIniValueGetLongInt(struct TbIniParser *parser, long *dst);
  *
  * @param parser The parser state defining input buffer and current position.
  * @param vallist Array of named enumerations, ended with empty entry.
- * @return Gives enumeration item number, or 0 if not found.
+ * @return Gives enumeration item number, 0 if no word in input, -1 if word not recognized.
  */
 int LbIniValueGetNamedEnum(struct TbIniParser *parser, const struct TbNamedEnum vallist[]);
 

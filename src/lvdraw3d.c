@@ -137,7 +137,7 @@ ubyte lvdraw_fill_bound_points(struct TbPoint *bound_pts)
 
     angXZ = (engn_anglexz >> 5) & 0x7FF;
     sin_angl = lbSinTable[angXZ];
-    cos_angl = lbSinTable[angXZ + 512];
+    cos_angl = lbSinTable[angXZ + LbFPMath_PI/2];
 
     fctr_x1 = (dword_152E58 * render_area_a * cos_angl) >> 16;
     fctr_z2 = (dword_152E58 * render_area_a * -sin_angl) >> 16;
@@ -737,7 +737,7 @@ void func_2e440(void)
         dword_176CC0 += fifties_per_gameturn;
         if (dword_176CC0 > 80) {
             dword_176CC0 = 0;
-            xdo_next_frame(1);
+            xdo_next_frame(AniSl_BILLBOARD);
         }
     }
     angXZ = (engn_anglexz >> 5) & 0x7FF;

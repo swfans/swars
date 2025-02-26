@@ -18,7 +18,6 @@
 /******************************************************************************/
 #include "people.h"
 
-#include "pepgroup.h"
 #include "bfmath.h"
 #include "bfmemory.h"
 #include "bffile.h"
@@ -26,6 +25,7 @@
 #include "bfutility.h"
 #include "ssampply.h"
 
+#include "pepgroup.h"
 #include "bigmap.h"
 #include "building.h"
 #include "command.h"
@@ -33,6 +33,7 @@
 #include "drawtext.h"
 #include "enginsngobjs.h"
 #include "game.h"
+#include "game_data.h"
 #include "game_speed.h"
 #include "game_sprani.h"
 #include "lvobjctv.h"
@@ -209,17 +210,20 @@ extern short word_1AA394;
 
 void read_people_conf_file(void)
 {
+    char conf_fname[DISKPATH_SIZE];
+    PathInfo *pinfo;
+    char *conf_buf;
     TbFileHandle conf_fh;
     TbBool done;
     int i;
     long k;
     int cmd_num;
-    char *conf_buf;
     struct TbIniParser parser;
-    char *conf_fname = "conf" FS_SEP_STR "people.ini";
     int conf_len;
     int peep_count, ptype;
 
+    pinfo = &game_dirs[DirPlace_Config];
+    snprintf(conf_fname, DISKPATH_SIZE-1, "%s/people.ini", pinfo->directory);
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
         conf_len = LbFileLengthHandle(conf_fh);
@@ -411,11 +415,13 @@ void read_people_conf_file(void)
 
 void load_peep_type_stats_bin(void)
 {
-    char locstr[52];
+    char defs_fname[DISKPATH_SIZE];
+    PathInfo *pinfo;
     TbFileHandle fp;
 
-    sprintf(locstr, "%s" FS_SEP_STR "peepdefs.dat", "data");
-    fp = LbFileOpen(locstr, 2u);
+    pinfo = &game_dirs[DirPlace_Data];
+    snprintf(defs_fname, DISKPATH_SIZE-1, "%s/peepdefs.dat", pinfo->directory);
+    fp = LbFileOpen(defs_fname, Lb_FILE_MODE_READ_ONLY);
     if (fp != INVALID_FILE)
     {
         LbFileRead(fp, peep_type_stats, 12 * sizeof(struct PeepStat));
@@ -3226,7 +3232,7 @@ ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 
             angle = (dt_angle + p_vehicle->U.UVehicle.AngleY) & 0x7FF;
             radius = p_vehicle->Radius;
-            sh_z = -(radius * lbSinTable[angle + 512]) >> 16;
+            sh_z = -(radius * lbSinTable[angle + LbFPMath_PI/2]) >> 16;
             sh_x = (radius * lbSinTable[angle]) >> 16;
 
             cor_x = (p_person->X >> 8) + sh_x;

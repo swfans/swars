@@ -48,6 +48,7 @@
 #include "game_sprts.h"
 #include "game.h"
 #include "player.h"
+#include "scandraw.h"
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -87,7 +88,8 @@ extern long sprite_over_16x16;
 
 extern ubyte byte_1C844E;
 
-extern ubyte byte_1DB2E9;
+TbPixel deep_radar_surface_col = 0xd8;
+TbPixel deep_radar_line_col = 0x64;
 
 sbyte byte_153014[] = {
   1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -3345,9 +3347,9 @@ void number_player(struct Thing *p_person, ubyte n)
     }
     else
     {
-        shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + 512] >> 14;
+        shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + LbFPMath_PI/2] >> 14;
         if ((p_person->Flag2 & TgF2_Unkn00080000) == 0)
-            shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + 512] >> 15;
+            shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + LbFPMath_PI/2] >> 15;
     }
     shift_y = 0;
 

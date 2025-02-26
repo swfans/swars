@@ -21,7 +21,9 @@
 #include "bffile.h"
 #include "bfini.h"
 #include "bfmemory.h"
+
 #include "enginzoom.h"
+#include "game_data.h"
 #include "hud_target.h"
 #include "research.h"
 #include "scanner.h"
@@ -42,12 +44,14 @@ const struct TbNamedEnum rules_conf_engine_cmnds[] = {
 
 enum RulesScannerConfigCmd {
     RScanrCmd_BaseZoomFactor = 1,
-    RScanrCmd_UserZoomFactor = 2,
+    RScanrCmd_UserZoomFactor,
+    RScanrCmd_ScaleDotsCircles,
 };
 
 const struct TbNamedEnum rules_conf_scanner_cmnds[] = {
   {"BaseZoomFactor",RScanrCmd_BaseZoomFactor},
   {"UserZoomFactor",RScanrCmd_UserZoomFactor},
+  {"ScaleDotsCircles",RScanrCmd_ScaleDotsCircles},
   {NULL,			0},
 };
 
@@ -92,18 +96,20 @@ const struct TbNamedEnum rules_conf_any_bool[] = {
 
 TbBool read_rules_file(void)
 {
+    //char locbuf[320];
+    char conf_fname[DISKPATH_SIZE];
+    PathInfo *pinfo;
+    char *conf_buf;
     TbFileHandle conf_fh;
     TbBool done;
     int i;
     long k;
-    char *conf_buf;
     struct TbIniParser parser;
-    //char locbuf[320];
-    char conf_fname[80];
     int conf_len;
     short zoom_min, zoom_max;
 
-    sprintf(conf_fname, "%s" FS_SEP_STR "rules.ini", "conf");
+    pinfo = &game_dirs[DirPlace_Config];
+    snprintf(conf_fname, DISKPATH_SIZE-1, "%s/rules.ini", pinfo->directory);
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
         conf_len = LbFileLengthHandle(conf_fh);
@@ -208,6 +214,15 @@ TbBool read_rules_file(void)
             }
             SCANNER_user_zoom_factor = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)SCANNER_user_zoom_factor);
+            break;
+        case RScanrCmd_ScaleDotsCircles:
+            i = LbIniValueGetNamedEnum(&parser, rules_conf_any_bool);
+            if (i <= 0) {
+                CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            SCANNER_scale_dots = (i == 1);
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)SCANNER_scale_dots);
             break;
         case 0: // comment
             break;

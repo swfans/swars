@@ -742,6 +742,8 @@ Delete '$INSTDIR\conf\miss099.ini'
 Delete '$INSTDIR\conf\people.ini'
 Delete '$INSTDIR\conf\rules.ini'
 Delete '$INSTDIR\conf\weapons.ini'
+Delete $INSTDIR\conf\panel*.ini
+Delete $INSTDIR\conf\pop*.ini
 
 
 Delete '$INSTDIR\conf\Tone_000\000_Acoustic_Grand_Piano.pat'
