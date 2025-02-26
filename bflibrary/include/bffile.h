@@ -124,6 +124,8 @@ typedef struct TbFileFind TbFileFind;
 typedef void (*FileNameTransform)(char *out_fname, const char *inp_fname);
 
 /** Callback to be used for transforming all file names before opening.
+ *
+ * The callback can assume the output buffer to be FILENAME_MAX long.
  */
 extern FileNameTransform lbFileNameTransform;
 
