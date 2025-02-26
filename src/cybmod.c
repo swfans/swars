@@ -22,6 +22,8 @@
 #include "bfmemory.h"
 #include "bffile.h"
 #include "bfini.h"
+
+#include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
 struct ModDef mod_defs[] = {
@@ -82,17 +84,20 @@ const struct TbNamedEnum cybmods_conf_mod_cmds[] = {
 
 void read_cybmods_conf_file(void)
 {
+    char conf_fname[DISKPATH_SIZE];
+    PathInfo *pinfo;
+    char *conf_buf;
     TbFileHandle conf_fh;
     TbBool done;
     int i;
     long k;
     int cmd_num;
-    char *conf_buf;
     struct TbIniParser parser;
-    char *conf_fname = "conf" FS_SEP_STR "cybmods.ini";
     int conf_len;
     int mods_count, mtype;
 
+    pinfo = &game_dirs[DirPlace_Config];
+    snprintf(conf_fname, DISKPATH_SIZE-1, "%s/cybmods.ini", pinfo->directory);
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
         conf_len = LbFileLengthHandle(conf_fh);

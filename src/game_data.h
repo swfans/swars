@@ -70,6 +70,11 @@ const char *GetDirectoryUser(void);
 const char *GetDirectoryHdd(void);
 const char *GetDirectoryCd(void);
 
+/** Prepares global base paths and sets up path transformation on file open.
+ *
+ * After this call, any files to be opened can use "/" as separator and
+ * relative paths within the game folder.
+ */
 void setup_file_names(void);
 
 int get_highest_used_packet_record_no(int campgn, int missi);

@@ -26,10 +26,12 @@
 #include "bfstrut.h"
 #include "bfutility.h"
 #include "bfini.h"
+
 #include "campaign.h"
 #include "femail.h"
-#include "guitext.h"
 #include "game.h"
+#include "game_data.h"
+#include "guitext.h"
 #include "lvobjctv.h"
 #include "wadfile.h"
 #include "swlog.h"
@@ -176,12 +178,14 @@ void save_city_single_conf(TbFileHandle fh, struct City *p_city, char *buf)
 
 void save_cities_conf_file(void)
 {
-    TbFileHandle fh;
     char locbuf[320];
-    char conf_fname[80];
+    char conf_fname[DISKPATH_SIZE];
+    PathInfo *pinfo;
+    TbFileHandle fh;
     int i;
 
-    sprintf(conf_fname, "%s" FS_SEP_STR "cities.ini", "conf");
+    pinfo = &game_dirs[DirPlace_Config];
+    snprintf(conf_fname, DISKPATH_SIZE-1, "%s/cities.ini", pinfo->directory);
     fh = LbFileOpen(conf_fname, Lb_FILE_MODE_NEW);
     if (fh == INVALID_FILE) {
         LOGERR("Could not create '%s' file.", conf_fname);
@@ -236,17 +240,19 @@ void load_city_data(ubyte type)
  */
 void read_cities_conf_file(void)
 {
+    char conf_fname[DISKPATH_SIZE];
+    PathInfo *pinfo;
+    char *conf_buf;
     TbFileHandle conf_fh;
     TbBool done;
     int i, n;
     long k;
-    char *conf_buf;
     struct TbIniParser parser;
-    char conf_fname[80];
     int conf_len;
     int city_id;
 
-    sprintf(conf_fname, "%s" FS_SEP_STR "cities.ini", "conf");
+    pinfo = &game_dirs[DirPlace_Config];
+    snprintf(conf_fname, DISKPATH_SIZE-1, "%s/cities.ini", pinfo->directory);
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
         conf_len = LbFileLengthHandle(conf_fh);

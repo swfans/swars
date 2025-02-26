@@ -27,6 +27,7 @@
 #include "bfsprite.h"
 
 #include "game.h"
+#include "game_data.h"
 #include "game_sprts.h"
 #include "hud_panel.h"
 #include "swlog.h"
@@ -466,17 +467,19 @@ void size_panels_for_detail(short detail)
 
 TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
 {
+    PathInfo *pinfo;
     TbFileHandle conf_fh;
     TbBool done;
     int i, n;
     long k, m;
     char *conf_buf;
     struct TbIniParser parser;
-    char conf_fname[80];
+    char conf_fname[DISKPATH_SIZE];
     int conf_len;
     short pop_panel_count, panel;
 
-    sprintf(conf_fname, "%s" FS_SEP_STR "%s%hu-%hu.ini", "conf", name, styleno, detail);
+    pinfo = &game_dirs[DirPlace_Config];
+    snprintf(conf_fname, DISKPATH_SIZE-1, "%s/%s%hu-%hu.ini", pinfo->directory, name, styleno, detail);
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
         conf_len = LbFileLengthHandle(conf_fh);
