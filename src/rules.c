@@ -21,7 +21,9 @@
 #include "bffile.h"
 #include "bfini.h"
 #include "bfmemory.h"
+
 #include "enginzoom.h"
+#include "game_data.h"
 #include "hud_target.h"
 #include "research.h"
 #include "scanner.h"
@@ -94,18 +96,20 @@ const struct TbNamedEnum rules_conf_any_bool[] = {
 
 TbBool read_rules_file(void)
 {
+    //char locbuf[320];
+    char conf_fname[DISKPATH_SIZE];
+    PathInfo *pinfo;
+    char *conf_buf;
     TbFileHandle conf_fh;
     TbBool done;
     int i;
     long k;
-    char *conf_buf;
     struct TbIniParser parser;
-    //char locbuf[320];
-    char conf_fname[80];
     int conf_len;
     short zoom_min, zoom_max;
 
-    sprintf(conf_fname, "%s" FS_SEP_STR "rules.ini", "conf");
+    pinfo = &game_dirs[DirPlace_Config];
+    snprintf(conf_fname, DISKPATH_SIZE-1, "%s/rules.ini", pinfo->directory);
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
         conf_len = LbFileLengthHandle(conf_fh);

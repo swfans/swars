@@ -30,6 +30,7 @@
 #include "thing.h"
 #include "player.h"
 #include "game.h"
+#include "game_data.h"
 #include "game_speed.h"
 #include "thing_search.h"
 #include "wadfile.h"
@@ -128,6 +129,8 @@ const struct TbNamedEnum weapons_conf_weapon_cmds[] = {
 
 void read_weapons_conf_file(void)
 {
+    char conf_fname[DISKPATH_SIZE];
+    PathInfo *pinfo;
     TbFileHandle conf_fh;
     TbBool done;
     int i;
@@ -135,10 +138,11 @@ void read_weapons_conf_file(void)
     int cmd_num;
     char *conf_buf;
     struct TbIniParser parser;
-    char *conf_fname = "conf" FS_SEP_STR "weapons.ini";
     int conf_len;
     int weapons_count, wtype;
 
+    pinfo = &game_dirs[DirPlace_Config];
+    snprintf(conf_fname, DISKPATH_SIZE-1, "%s/weapons.ini", pinfo->directory);
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
         conf_len = LbFileLengthHandle(conf_fh);

@@ -66,8 +66,16 @@ extern MemSystem mem_game[];
 
 /******************************************************************************/
 
+/** Returns absolute path to user files directory for the application.
+ */
 const char *GetDirectoryUser(void);
+
+/** Returns path (absolute or relative) to HDD-stored files for the application.
+ */
 const char *GetDirectoryHdd(void);
+
+/** Returns absolute path to CD-stored files for the application.
+ */
 const char *GetDirectoryCd(void);
 
 /** Prepares global base paths and sets up path transformation on file open.
