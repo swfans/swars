@@ -6240,6 +6240,20 @@ ubyte do_user_interface(void)
     return 0;
 }
 
+void init_menu_screen_colors_and_sprites(void)
+{
+    init_read_all_sprite_files();
+    LbMouseChangeSpriteOffset(0, 0);
+    LbFileLoadAt("data/s-proj.pal", display_palette);
+    // Colour tables should be loaded when we can provide palette data
+    LbColourTablesLoad(display_palette, "data/bgtables.dat");
+    LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
+    show_black_screen();
+    LbPaletteSet(display_palette);
+    show_black_screen();
+    reload_background();
+}
+
 void show_menu_screen_st0(void)
 {
     debug_trace_place(16);
@@ -6272,38 +6286,32 @@ void show_menu_screen_st0(void)
         purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + pos);
     }
 
-    init_read_all_sprite_files();
     ingame.Credits = 50000;
 
-    debug_trace_place(17);
-    LbColourTablesLoad(display_palette, "data/bgtables.dat");
-    LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
-    init_screen_boxes();
+    global_date.Day = 2;
+    global_date.Year = 74;
+    global_date.Month = 6;
+
     {
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];
         p_locplayer->MissionAgents = 0x0f;
     }
+
+    debug_trace_place(17);
+    init_menu_screen_colors_and_sprites();
+
+    debug_trace_place(18);
+    init_screen_boxes();
     load_city_data(0);
     load_city_txt();
 
-    debug_trace_place(18);
+    debug_trace_place(19);
     if ( in_network_game )
         screentype = SCRT_LOGIN;
     else
         screentype = SCRT_MAINMENU;
     data_1c498d = 1;
-
-    debug_trace_place(19);
-    LbFileLoadAt("data/s-proj.pal", display_palette);
-    show_black_screen();
-    show_black_screen();
-    LbPaletteSet(display_palette);
-    reload_background();
-
-    global_date.Day = 2;
-    global_date.Year = 74;
-    global_date.Month = 6;
 
     init_brief_screen_scanner();
 
@@ -6801,22 +6809,14 @@ void show_menu_screen_st2(void)
       }
     }
 
-    LbColourTablesLoad(display_palette, "data/bgtables.dat");
-    LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
-    init_read_all_sprite_files();
     init_weapon_text();
     load_city_txt();
+
+    init_menu_screen_colors_and_sprites();
+
     data_1c498d = 1;
-    LbMouseChangeSpriteOffset(0, 0);
-    LbFileLoadAt("data/s-proj.pal", display_palette);
 
     update_options_screen_state();
-
-    show_black_screen();
-    show_black_screen();
-    LbPaletteSet(display_palette);
-    reload_background();
-
     init_brief_screen_scanner();
 
     if (new_mail)
