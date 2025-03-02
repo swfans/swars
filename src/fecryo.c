@@ -436,14 +436,36 @@ void cryo_cyborg_mods_anim_set_fname(ubyte anislot, ubyte part, ubyte stage)
     }
 }
 
-void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *framebuf)
+/** Returns scanline width for given RAW image width.
+ *
+ * RAW images are padded, meaning amount of bytes between lines
+ * is not neccessarily equal to image width.
+ */
+short raw_file_scanline(short w)
 {
-    long len;
-    short w, h;
+    return w;
+}
+
+void cryo_cyborg_mods_blokey_bkgnd_clear(ubyte *framebuf)
+{
+    short h, scanln;
     ubyte part;
 
     part = ModDPt_BKGND;
-    w = equip_blokey_width[part];
+    scanln = raw_file_scanline(equip_blokey_width[part]);
+    h = equip_blokey_height[part];
+
+    LbMemorySet(framebuf, 0, scanln * h);
+}
+
+void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *framebuf)
+{
+    long len;
+    short h, scanln;
+    ubyte part;
+
+    part = ModDPt_BKGND;
+    scanln = raw_file_scanline(equip_blokey_width[part]);
     h = equip_blokey_height[part];
 
     {
@@ -452,7 +474,7 @@ void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *framebuf)
         len = LbFileLoadAt(locstr, framebuf);
     }
     if (len < 4) {
-        LbMemorySet(framebuf, 0, w * h);
+        LbMemorySet(framebuf, 0, scanln * h);
     }
 }
 
@@ -476,10 +498,10 @@ void cryo_cyborg_mods_blokey_static_part_to_buffer(ubyte *partbuf, ubyte *mods_a
 
 void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *framebuf, ubyte *scratchbuf, ubyte *mods_arr)
 {
-    short frame_w;
+    short frame_scanln;
     ubyte part;
 
-    frame_w = equip_blokey_width[ModDPt_BKGND];
+    frame_scanln = raw_file_scanline(equip_blokey_width[ModDPt_BKGND]);
 
     for (part = 0; part < 4; part++)
     {
@@ -498,8 +520,8 @@ void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *framebuf, ubyte *scratchbuf
         ldbuf = scratchbuf;
         blbuf = framebuf;
         blbuf += (equip_blokey_pos[part].X - equip_blokey_pos[ModDPt_BKGND].X);
-        blbuf += (equip_blokey_pos[part].Y - equip_blokey_pos[ModDPt_BKGND].Y) * frame_w;
-        ApScreenCopyRectColorKey(ldbuf, blbuf, w, frame_w, h, 0);
+        blbuf += (equip_blokey_pos[part].Y - equip_blokey_pos[ModDPt_BKGND].Y) * frame_scanln;
+        ApScreenCopyRectColorKey(ldbuf, blbuf, w, frame_scanln, h, 0);
     }
 }
 
@@ -670,6 +692,8 @@ void init_next_blokey_flic(void)
     }
 }
 
+/** Read cyborg mod screen background and blit on both screen and back buffer.
+ */
 void purple_mods_data_to_screen(void)
 {
     ubyte *inp;
@@ -701,6 +725,8 @@ void purple_mods_data_to_screen(void)
         lbDisplay.GraphicsScreenHeight);
 }
 
+/** Blit a color keyed frame of cyborg animation from buffer to screen.
+ */
 void blokey_flic_data_to_screen(void)
 {
     ubyte *inp;
