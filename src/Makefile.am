@@ -4,6 +4,8 @@ bindir = $(prefix)/$(PACKAGE)
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
+	app_gengh.c \
+	app_gentab.h \
 	app_spr_init.c \
 	ap_gspr_map.c \
 	ap_spr_smap.c \
