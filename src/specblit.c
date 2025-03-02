@@ -21,7 +21,9 @@
 
 #include "bfmemut.h"
 #include "bfscreen.h"
+#include "bfscrcopy.h"
 
+#include "app_sprite.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -50,7 +52,8 @@ void ApScreenCopyRectColorKey(TbPixel *sourceBuf, TbPixel *destBuf,
     }
 }
 
-void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height, TbPixel ckey)
+void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort height, TbPixel ckey)
 {
     ubyte *s;
     ubyte *d;
@@ -74,4 +77,98 @@ void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height, T
     }
 }
 
+void ApScreenCopyTrans1LR(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort height, const ubyte *transmap)
+{
+    ubyte *s;
+    ubyte *d;
+    short shift;
+    short w, h;
+
+    s = sourceBuf;
+    d = destBuf;
+    shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
+    {
+        for (w = 0; w < lbDisplay.GraphicsWindowWidth; w++)
+        {
+            // App-specific code starts
+            unsigned int pxmap;
+            pxmap = ((*d) << 8) | ((*(const ubyte *)s));
+            *d = transmap[pxmap];
+            // App-specific code ends
+            s++;
+            d++;
+        }
+        d += shift;
+    }
+}
+
+void ApScreenCopyTrans2LR(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort height, const ubyte *transmap)
+{
+    ubyte *s;
+    ubyte *d;
+    short shift;
+    short w, h;
+
+    s = sourceBuf;
+    d = destBuf;
+    shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
+    {
+        for (w = 0; w < lbDisplay.GraphicsWindowWidth; w++)
+        {
+            // App-specific code starts
+            unsigned int pxmap;
+            pxmap = ((*d)) | ((*(const ubyte *)s) << 8);
+            *d = transmap[pxmap];
+            // App-specific code ends
+            s++;
+            d++;
+        }
+        d += shift;
+    }
+}
+
+void ApScreenCopyRemap(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort height, const ubyte *transmap)
+{
+    if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) != 0)
+    {
+        if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
+        {
+            //not implemented ApScreenCopyTrans1RL(sourceBuf, destBuf, height, transmap);
+        }
+        else
+        {
+            ApScreenCopyTrans1LR(sourceBuf, destBuf, height, transmap);
+        }
+    }
+    else
+    if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR8) != 0)
+    {
+        if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
+        {
+            //not implemented ApScreenCopyTrans2RL(sourceBuf, destBuf, height, transmap);
+        }
+        else
+        {
+            ApScreenCopyTrans2LR(sourceBuf, destBuf, height, transmap);
+        }
+    }
+    else
+    {
+        if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
+        {
+            //not implemented ApScreenCopySolidRL(sourceBuf, destBuf, height);
+        }
+        else
+        {
+            LbScreenCopy(sourceBuf, destBuf, height);
+        }
+    }
+}
 /******************************************************************************/

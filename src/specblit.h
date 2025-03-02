@@ -40,6 +40,9 @@ void ApScreenCopyColorKey(TbPixel *sourceBuf, TbPixel *destBuf, ushort height, T
 void ApScreenCopyRectColorKey(TbPixel *sourceBuf, TbPixel *destBuf,
   ushort sourceWidth, ushort destWidth, ushort height, TbPixel ckey);
 
+void ApScreenCopyRemap(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort height, const ubyte *transmap);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
