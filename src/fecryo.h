@@ -64,6 +64,7 @@ void cryo_update_for_selected_cybmod(void);
 void init_cryo_screen_boxes(void);
 void reset_cryo_screen_boxes_flags(void);
 void set_flag01_cryo_screen_boxes(void);
+uint cryo_cyborg_framebuf_max_size(void);
 
 void set_mod_draw_states_flag08(void);
 void reset_mod_draw_states_flag08(void);

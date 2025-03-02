@@ -1408,8 +1408,8 @@ TbResult init_read_all_sprite_files(void)
     if (tret == Lb_OK)
         tret = ret;
 
-    // TODO why adding this without remembering previous pointer?
-    p_buf += 41005;
+    // No pointer stored to frame buffer - use back_buffer minus size
+    p_buf += cryo_cyborg_framebuf_max_size();
     back_buffer = p_buf;
 
     setup_sprites_icons();

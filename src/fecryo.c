@@ -21,6 +21,7 @@
 #include <assert.h>
 #include "bfkeybd.h"
 #include "bfmemut.h"
+#include "bfscrcopy.h"
 #include "bfsprite.h"
 #include "bftext.h"
 #include "bflib_joyst.h"
@@ -446,6 +447,21 @@ short raw_file_scanline(short w)
     return w;
 }
 
+uint cryo_cyborg_framebuf_max_size(void)
+{
+    short h, scanln;
+
+    h = equip_blokey_height[ModDPt_BKGND];
+    scanln = raw_file_scanline(equip_blokey_width[ModDPt_BKGND]);
+
+    return scanln * h;
+}
+
+inline static ubyte *cryo_cyborg_framebuf_back_ptr(void)
+{
+    return back_buffer - cryo_cyborg_framebuf_max_size();
+}
+
 void cryo_cyborg_mods_blokey_bkgnd_clear(ubyte *framebuf)
 {
     short h, scanln;
@@ -694,10 +710,9 @@ void init_next_blokey_flic(void)
 
 /** Read cyborg mod screen background and blit on both screen and back buffer.
  */
-void purple_mods_data_to_screen(void)
+void blokey_bkgnd_data_to_screen(void)
 {
     ubyte *inp;
-    ubyte *back_window_ptr;
     short scr_x, scr_y;
     short w, h;
 
@@ -706,7 +721,7 @@ void purple_mods_data_to_screen(void)
     w = equip_blokey_width[ModDPt_BKGND];
     h = equip_blokey_height[ModDPt_BKGND];
 
-    inp = back_buffer - w * h;
+    inp = cryo_cyborg_framebuf_back_ptr();
     // TODO should not read files from within drawlist - alter to fill an input buffer before drawlist execution
     cryo_cyborg_mods_blokey_bkgnd_to_buffer(inp);
 
@@ -715,14 +730,11 @@ void purple_mods_data_to_screen(void)
     ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
         lbDisplay.GraphicsWindowHeight, 0);
 
-    back_window_ptr = back_buffer
-      + lbDisplay.GraphicsScreenWidth*lbDisplay.GraphicsWindowY + lbDisplay.GraphicsWindowX;
-
-    ApScreenCopyColorKey(inp, back_window_ptr,
-        lbDisplay.GraphicsWindowHeight, 0);
-
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
+
+    LbScreenCopyBox(lbDisplay.WScreen, back_buffer,
+        scr_x, scr_y, scr_x, scr_y, w, h);
 }
 
 /** Blit a color keyed frame of cyborg animation from buffer to screen.
@@ -854,7 +866,7 @@ void draw_body_mods(void)
     if ((lbKeyOn[KC_SPACE] || game_projector_speed) && (cryo_blokey_box.Flags & 0x0100) == 0)
     {
         lbKeyOn[KC_SPACE] = 0;
-        draw_flic_purple_list(purple_mods_data_to_screen);
+        draw_flic_purple_list(blokey_bkgnd_data_to_screen);
         draw_flic_purple_list(blokey_static_flic_data_to_screen);
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
@@ -1017,7 +1029,7 @@ ubyte show_cryo_blokey(struct ScreenBox *p_box)
 {
     if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
-        draw_flic_purple_list(purple_mods_data_to_screen);
+        draw_flic_purple_list(blokey_bkgnd_data_to_screen);
         p_box->Flags |= GBxFlg_BkgndDrawn;
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
