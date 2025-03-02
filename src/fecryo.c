@@ -438,24 +438,39 @@ void cryo_cyborg_mods_anim_set_fname(ubyte anislot, ubyte part, ubyte stage)
 
 void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *framebuf)
 {
+    long len;
+    short w, h;
     ubyte part;
 
     part = ModDPt_BKGND;
+    w = equip_blokey_width[part];
+    h = equip_blokey_height[part];
+
     {
-        long len;
-        short w, h;
+        char locstr[52];
+        sprint_cryo_cyborg_mods_static_fname(locstr, part, flic_mods);
+        len = LbFileLoadAt(locstr, framebuf);
+    }
+    if (len < 4) {
+        LbMemorySet(framebuf, 0, w * h);
+    }
+}
 
-        w = equip_blokey_width[part];
-        h = equip_blokey_height[part];
+void cryo_cyborg_mods_blokey_static_part_to_buffer(ubyte *partbuf, ubyte *mods_arr, ubyte part)
+{
+    long len;
+    short w, h;
 
-        {
-            char locstr[52];
-            sprint_cryo_cyborg_mods_static_fname(locstr, part, flic_mods);
-            len = LbFileLoadAt(locstr, framebuf);
-        }
-        if (len < 4) {
-            LbMemorySet(framebuf, 0, w * h);
-        }
+    w = equip_blokey_width[part];
+    h = equip_blokey_height[part];
+
+    {
+        char locstr[52];
+        sprint_cryo_cyborg_mods_static_fname(locstr, part, mods_arr);
+        len = LbFileLoadAt(locstr, partbuf);
+    }
+    if (len < 4) {
+        LbMemorySet(partbuf, 0, w * h);
     }
 }
 
@@ -470,7 +485,6 @@ void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *framebuf, ubyte *scratchbuf
     {
         ubyte *ldbuf;
         ubyte *blbuf;
-        long len;
         short w, h;
 
         if (mods_arr[part] == 0)
@@ -478,15 +492,7 @@ void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *framebuf, ubyte *scratchbuf
 
         w = equip_blokey_width[part];
         h = equip_blokey_height[part];
-
-        {
-            char locstr[52];
-            sprint_cryo_cyborg_mods_static_fname(locstr, part, mods_arr);
-            len = LbFileLoadAt(locstr, scratchbuf);
-        }
-        if (len < 4) {
-            LbMemorySet(scratchbuf, 0, w * h);
-        }
+        cryo_cyborg_mods_blokey_static_part_to_buffer(scratchbuf, mods_arr, part);
 
         // Blit the current part image onto framebuf
         ldbuf = scratchbuf;
@@ -740,7 +746,7 @@ void blokey_static_flic_data_to_screen(void)
         h = equip_blokey_static_height[part];
 
         inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
-        cryo_cyborg_mods_blokey_bkgnd_to_buffer(inp);
+        cryo_cyborg_mods_blokey_static_part_to_buffer(inp, flic_mods, part);
 
         LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
