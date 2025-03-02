@@ -24,14 +24,15 @@
 #include "bfscreen.h"
 #include "privbflog.h"
 
-static void ghost_table_generate(const ubyte *pal, short intens, ubyte *table)
+static void ghost_table_generate(const ubyte *pal, short mix_ratio,
+  short intens_r, short intens_g, short intens_b, ubyte *table)
 {
     int i, k;
     const ubyte *colr_i;
     const ubyte *colr_k;
     ubyte *tbl_o;
 
-    tbl_o = pixmap.ghost_table;
+    tbl_o = table;
     colr_i = pal;
     for (i = 0; i < PALETTE_8b_COLORS; i++)
     {
@@ -44,10 +45,13 @@ static void ghost_table_generate(const ubyte *pal, short intens, ubyte *table)
         for (k = 0; k < PALETTE_8b_COLORS; k++)
         {
             int rk, gk, bk;
-            rk = intens * (colr_k[0] - ri) / 100;
-            gk = intens * (colr_k[1] - gi) / 100;
-            bk = intens * (colr_k[2] - bi) / 100;
-            *tbl_o = LbPaletteFindColour(pal, rk + ri, gk + gi, bk + bi);
+            rk = mix_ratio * (colr_k[0] - ri) / 100;
+            gk = mix_ratio * (colr_k[1] - gi) / 100;
+            bk = mix_ratio * (colr_k[2] - bi) / 100;
+            *tbl_o = LbPaletteFindColour(pal,
+              intens_r * (rk + ri) / 100,
+              intens_g * (gk + gi) / 100,
+              intens_b * (bk + bi) / 100);
             colr_k += 3;
             tbl_o++;
         }
@@ -55,7 +59,7 @@ static void ghost_table_generate(const ubyte *pal, short intens, ubyte *table)
     }
 }
 
-static void ghost_table_symmetrize(const ubyte *pal, short intens, ubyte *table)
+static void ghost_table_symmetrize(const ubyte *pal, short mix_ratio, ubyte *table)
 {
     int i, k;
 
@@ -71,7 +75,36 @@ static void ghost_table_symmetrize(const ubyte *pal, short intens, ubyte *table)
     }
 }
 
-TbResult LbGhostTableGenerate(const ubyte *pal, short intens, const char *fname)
+TbResult LbExtraGhostTableGenerate(const ubyte *pal, short mix_ratio,
+  short intens_r, short intens_g, short intens_b, ubyte *table, const char *fname)
+{
+    TbBool generate = false;
+
+    if (fname == NULL) {
+        LOGSYNC("Generating colour ghosting requested");
+        generate = true;
+    }
+    else if (LbFileLoadAt(fname, table) !=
+      PALETTE_8b_COLORS * PALETTE_8b_COLORS) {
+        LOGSYNC("Generating extra colour ghosting, as saved file is invalid");
+        generate = true;
+    }
+
+    if (generate) {
+        ghost_table_generate(pal, mix_ratio, intens_r, intens_g, intens_b, table);
+    }
+
+    if (generate && (fname != NULL)) {
+        if (LbFileSaveAt(fname, table,
+          PALETTE_8b_COLORS * PALETTE_8b_COLORS) == Lb_FAIL) {
+            LOGERR("%s: Re-save extra colour ghosting file failed", fname);
+            return Lb_FAIL;
+        }
+    }
+    return Lb_SUCCESS;
+}
+
+TbResult LbGhostTableGenerate(const ubyte *pal, short mix_ratio, const char *fname)
 {
     TbBool generate = false;
 
@@ -86,7 +119,7 @@ TbResult LbGhostTableGenerate(const ubyte *pal, short intens, const char *fname)
     }
 
     if (generate) {
-        ghost_table_generate(pal, intens, pixmap.ghost_table);
+        ghost_table_generate(pal, mix_ratio, 100, 100, 100, pixmap.ghost_table);
     }
 
     if (generate && (fname != NULL)) {
@@ -100,16 +133,16 @@ TbResult LbGhostTableGenerate(const ubyte *pal, short intens, const char *fname)
     return Lb_SUCCESS;
 }
 
-TbResult LbGhostTableLoad(const ubyte *pal, short intens, const char *fname)
+TbResult LbGhostTableLoad(const ubyte *pal, short mix_ratio, const char *fname)
 {
     long len;
 
     len = LbFileLoadAt(fname, pixmap.ghost_table);
     lbDisplay.GlassMap = pixmap.ghost_table;
 
-    // At 50% intensity, the palette should be diagonally symmetrical.
-    if (intens == 50) {
-        ghost_table_symmetrize(pal, intens, pixmap.ghost_table);
+    // At 50% mix ratio, the palette should be diagonally symmetrical.
+    if (mix_ratio == 50) {
+        ghost_table_symmetrize(pal, mix_ratio, pixmap.ghost_table);
     }
     if (len != PALETTE_8b_COLORS * PALETTE_8b_COLORS) {
         if (len == Lb_FAIL) {
