@@ -198,7 +198,7 @@ void cryo_update_for_selected_cybmod(void)
 
     if (selected_mod == -1) // No mod selected
     {
-        cryo_cybmod_list_box.Flags |= 0x0080;
+        cryo_cybmod_list_box.Flags |= GBxFlg_Unkn0080;
         // Re-add scroll bars
         cryo_cybmod_list_box.Flags |= GBxFlg_RadioBtn;
         cryo_cybmod_list_box.Text = NULL;
@@ -222,6 +222,27 @@ ubyte do_cryo_offer_cancel(ubyte click)
     cryo_update_for_selected_cybmod();
     refresh_equip_list = 1;
     return 0;
+}
+
+void reset_mod_draw_states_flag08(void)
+{
+    ushort part;
+    for (part = 0; part < 4; part++)
+    {
+        mod_draw_states[part] = 0;
+        if (flic_mods[part] != 0)
+            mod_draw_states[part] |= ModDSt_Unkn08;
+    }
+}
+
+void set_mod_draw_states_flag08(void)
+{
+    ushort part;
+    for (part = 0; part < 4; part++)
+    {
+        if (old_flic_mods[part] != flic_mods[part])
+            mod_draw_states[part] |= ModDSt_Unkn08;
+    }
 }
 
 TbBool mod_draw_update_on_change(ushort mtype)
@@ -708,7 +729,12 @@ void init_next_blokey_flic(void)
     }
 }
 
-/** Read cyborg mod screen background and blit on both screen and back buffer.
+/** Blit cyborg mod screen background to screen and back buffer.
+ *
+ * Requires the additive background image to be already loaded
+ * into framebuf_back buffer. Should be executed once per screen
+ * refresh - in consecutive frames, the background from back_buffer
+ * is used, and this function updates the content of back buffer.
  */
 void blokey_bkgnd_data_to_screen(void)
 {
@@ -722,8 +748,6 @@ void blokey_bkgnd_data_to_screen(void)
     h = equip_blokey_height[ModDPt_BKGND];
 
     inp = cryo_cyborg_framebuf_back_ptr();
-    // TODO should not read files from within drawlist - alter to fill an input buffer before drawlist execution
-    cryo_cyborg_mods_blokey_bkgnd_to_buffer(inp);
 
     LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
@@ -733,6 +757,8 @@ void blokey_bkgnd_data_to_screen(void)
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
 
+    // Copy to back buffer - the back buffer should contain background shape,
+    // but any mods on it should be redrawn each frame
     LbScreenCopyBox(lbDisplay.WScreen, back_buffer,
         scr_x, scr_y, scr_x, scr_y, w, h);
 }
@@ -853,6 +879,11 @@ void update_flic_mods(ubyte *mods)
         : : "a" (mods));
 }
 
+/** Draws body mods, either images or anims, on pre-drawn background.
+ *
+ * A background with person outline is expected to be already drawn
+ * when this function is called. This function draws the actual mods only.
+ */
 void draw_blokey_body_mods(void)
 {
 #if 0
@@ -866,10 +897,12 @@ void draw_blokey_body_mods(void)
     if ((lbKeyOn[KC_SPACE] || game_projector_speed) && (cryo_blokey_box.Flags & GBxFlg_RadioBtn) == 0)
     {
         lbKeyOn[KC_SPACE] = 0;
+        //TODO get rid of background blitting at this point
         draw_flic_purple_list(blokey_bkgnd_data_to_screen);
         draw_flic_purple_list(blokey_static_flic_data_to_screen);
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
+
         for (part = 0; part < 4; part++)
             mod_draw_states[part] = 0;
         new_current_drawing_mod = 0;
@@ -949,27 +982,6 @@ void draw_blokey_body_mods(void)
     }
 }
 
-void reset_mod_draw_states_flag08(void)
-{
-    ushort part;
-    for (part = 0; part < 4; part++)
-    {
-        mod_draw_states[part] = 0;
-        if (flic_mods[part] != 0)
-            mod_draw_states[part] |= ModDSt_Unkn08;
-    }
-}
-
-void set_mod_draw_states_flag08(void)
-{
-    ushort part;
-    for (part = 0; part < 4; part++)
-    {
-        if (old_flic_mods[part] != flic_mods[part])
-            mod_draw_states[part] |= ModDSt_Unkn08;
-    }
-}
-
 ubyte draw_blokey_body_mods_names(struct ScreenBox *p_box)
 {
     short cx, cy;
@@ -1025,16 +1037,31 @@ ubyte draw_blokey_body_mods_names(struct ScreenBox *p_box)
     return 0;
 }
 
+/** Draws cryo agent with his cybernetic mods.
+ * The general frow is:
+ * - store additive background (shape of the agent) in framebuf_back
+ * - draw the background within drawlist, update back_buffer with
+ *   the background image
+ * - clear framebuf_back and store color keyed images/frames with mods
+ *   into that buffer
+ * - continue updating and blitting colour keyed framebuf_back
+ *   on each frame
+ */
 ubyte show_cryo_blokey(struct ScreenBox *p_box)
 {
     if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
+        ubyte *inp;
+
         draw_flic_purple_list(blokey_bkgnd_data_to_screen);
         p_box->Flags |= GBxFlg_BkgndDrawn;
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
         reset_mod_draw_states_flag08();
         current_drawing_mod = 0;
+
+        inp = cryo_cyborg_framebuf_back_ptr();
+        cryo_cyborg_mods_blokey_bkgnd_to_buffer(inp);
     }
 
     if (word_15511E != selected_agent)

@@ -33,6 +33,7 @@
 #include "campaign.h"
 #include "display.h"
 #include "femail.h"
+#include "fecryo.h"
 #include "feresearch.h"
 #include "guiboxes.h"
 #include "guitext.h"
