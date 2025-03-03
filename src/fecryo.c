@@ -853,17 +853,17 @@ void update_flic_mods(ubyte *mods)
         : : "a" (mods));
 }
 
-void draw_body_mods(void)
+void draw_blokey_body_mods(void)
 {
 #if 0
-    asm volatile ("call ASM_draw_body_mods\n"
+    asm volatile ("call ASM_draw_blokey_body_mods\n"
         :  :  : "eax" );
 #endif
     int part;
     TbBool done, still_playing;
 
     current_drawing_mod = new_current_drawing_mod;
-    if ((lbKeyOn[KC_SPACE] || game_projector_speed) && (cryo_blokey_box.Flags & 0x0100) == 0)
+    if ((lbKeyOn[KC_SPACE] || game_projector_speed) && (cryo_blokey_box.Flags & GBxFlg_RadioBtn) == 0)
     {
         lbKeyOn[KC_SPACE] = 0;
         draw_flic_purple_list(blokey_bkgnd_data_to_screen);
@@ -875,7 +875,7 @@ void draw_body_mods(void)
         new_current_drawing_mod = 0;
         current_drawing_mod = 0;
         current_frame = 0;
-        cryo_blokey_box.Flags |= 0x0100;
+        cryo_blokey_box.Flags |= GBxFlg_RadioBtn;
     }
     if ((mod_draw_states[0] & ModDSt_Unkn08) != 0)
     {
@@ -970,7 +970,7 @@ void set_mod_draw_states_flag08(void)
     }
 }
 
-ubyte draw_body_mods_names(struct ScreenBox *p_box)
+ubyte draw_blokey_body_mods_names(struct ScreenBox *p_box)
 {
     short cx, cy;
     short hline;
@@ -1047,8 +1047,8 @@ ubyte show_cryo_blokey(struct ScreenBox *p_box)
     if (selected_agent < 0)
         return 0;
 
-    draw_body_mods();
-    draw_body_mods_names(p_box);
+    draw_blokey_body_mods();
+    draw_blokey_body_mods_names(p_box);
     return 0;
 }
 
