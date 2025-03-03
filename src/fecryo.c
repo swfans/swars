@@ -757,7 +757,7 @@ void init_next_blokey_flic(void)
  */
 void blokey_bkgnd_data_to_screen(void)
 {
-    ubyte *inp;
+    TbPixel *p_inp;
     short scr_x, scr_y;
     short w, h;
 
@@ -766,11 +766,11 @@ void blokey_bkgnd_data_to_screen(void)
     w = equip_blokey_width[ModDPt_BKGND];
     h = equip_blokey_height[ModDPt_BKGND];
 
-    inp = cryo_cyborg_framebuf_back_ptr();
+    p_inp = cryo_cyborg_framebuf_back_ptr();
 
     LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
-    ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
+    ApScreenCopyColorKey(p_inp, lbDisplay.GraphicsWindowPtr,
         lbDisplay.GraphicsWindowHeight, 0);
 
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
@@ -808,84 +808,52 @@ void blokey_flic_data_to_screen(void)
         lbDisplay.GraphicsScreenHeight);
 }
 
+void blokey_static_flic_framebuf_back_make(void);
+
 void blokey_static_flic_data_to_screen(void)
 {
-    ubyte part;
+    TbPixel *p_inp;
+    short scr_x, scr_y;
+    short w, h;
 
-    // TODO should not read files from within drawlist - alter to fill an input buffer before drawlist execution
-    for (part = 0; part < 4; part++)
-    {
-        ubyte *inp;
-        ubyte *back_window_ptr;
-        short scr_x, scr_y;
-        short w, h;
+    // TODO fill the buffer outside of drawlist
+    blokey_static_flic_framebuf_back_make();
 
-        if (flic_mods[part] == 0)
-            continue;
+    scr_x = cryo_blokey_box.X + 63;
+    scr_y = cryo_blokey_box.Y + 1;
+    w = equip_blokey_width[ModDPt_BKGND];
+    h = equip_blokey_height[ModDPt_BKGND];
 
-        scr_x = cryo_blokey_box.X + 63 + equip_blokey_static_pos[part].X;
-        scr_y = cryo_blokey_box.Y + 1 + equip_blokey_static_pos[part].Y;
-        w = equip_blokey_static_width[part];
-        h = equip_blokey_static_height[part];
+    p_inp = cryo_cyborg_framebuf_back_ptr();
 
-        inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
-        cryo_cyborg_mods_blokey_static_part_to_buffer(inp, flic_mods, part);
+    LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
-        LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
-
-        ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
-            lbDisplay.GraphicsWindowHeight, 0);
-
-        back_window_ptr = back_buffer
-          + lbDisplay.GraphicsScreenWidth*lbDisplay.GraphicsWindowY + lbDisplay.GraphicsWindowX;
-
-        ApScreenCopyColorKey(inp, back_window_ptr,
-            lbDisplay.GraphicsWindowHeight, 0);
-
-        mod_draw_states[part] = ModDSt_Unkn04;
-    }
+    ApScreenCopyColorKey(p_inp, lbDisplay.GraphicsWindowPtr,
+        lbDisplay.GraphicsWindowHeight, 0);
 
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
+
+    // TODO REMOVE back buffer copy of mods foreground
+    LbScreenCopyBox(lbDisplay.WScreen, back_buffer,
+        scr_x, scr_y, scr_x, scr_y, w, h);
 }
 
 void blokey_static_flic_framebuf_back_make(void)
 {
-    ubyte *p_framebuf;
+    TbPixel *p_framebuf;
+    TbPixel *p_scratch;
     ubyte part;
 
     p_framebuf = cryo_cyborg_framebuf_back_ptr();
+    p_scratch = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
     cryo_cyborg_mods_blokey_bkgnd_clear(p_framebuf);
+    cryo_cyborg_mods_blokey_static_to_buffer(p_framebuf, p_scratch, flic_mods);
 
     for (part = 0; part < 4; part++)
     {
-        ubyte *inp;
-        ubyte *back_window_ptr;
-        short scr_x, scr_y;
-        short w, h;
-
         if (flic_mods[part] == 0)
             continue;
-
-        scr_x = cryo_blokey_box.X + 63 + equip_blokey_static_pos[part].X;
-        scr_y = cryo_blokey_box.Y + 1 + equip_blokey_static_pos[part].Y;
-        w = equip_blokey_static_width[part];
-        h = equip_blokey_static_height[part];
-
-        inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
-        cryo_cyborg_mods_blokey_static_part_to_buffer(inp, flic_mods, part);
-
-        LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
-
-        ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
-            lbDisplay.GraphicsWindowHeight, 0);
-
-        back_window_ptr = back_buffer
-          + lbDisplay.GraphicsScreenWidth*lbDisplay.GraphicsWindowY + lbDisplay.GraphicsWindowX;
-
-        ApScreenCopyColorKey(inp, back_window_ptr,
-            lbDisplay.GraphicsWindowHeight, 0);
-
         mod_draw_states[part] = ModDSt_Unkn04;
     }
 }
@@ -985,6 +953,12 @@ void draw_blokey_body_mods(void)
         lbKeyOn[KC_SPACE] = 0;
         //TODO get rid of background blitting at this point
         draw_flic_purple_list(blokey_bkgnd_data_to_screen);
+        {
+            ubyte *inp;
+            inp = cryo_cyborg_framebuf_back_ptr();
+            cryo_cyborg_mods_blokey_bkgnd_to_buffer(inp);
+        }
+        //TODO blit the static data on every frame
         draw_flic_purple_list(blokey_static_flic_data_to_screen);
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
