@@ -155,6 +155,25 @@ void update_cybmod_name_text(void)
     sprintf(cybmod_name_text, "%s %s %d", gui_strings[mdstr_id], gui_strings[lvstr_id], modlv);
 }
 
+/** Get global text pointer to a mod level string.
+ * @see loctext_to_gtext()
+ */
+static const char *cryo_gtext_cybmod_list_item_level(ushort mtype)
+{
+    char locstr[48];
+    ubyte modlv;
+    ushort lvstr_id;
+
+    modlv = cybmod_version(mtype);
+
+    if (cybmod_group_type(mtype) != MODGRP_EPIDERM)
+        lvstr_id = 76;
+    else
+        lvstr_id = 75;
+    sprintf(locstr, "%s %d", gui_strings[lvstr_id], modlv);
+    return loctext_to_gtext(locstr);
+}
+
 TbBool cybmod_has_display_anim(ubyte mod)
 {
     return (1 << (mod - 1) < 0x1000);
@@ -830,47 +849,114 @@ void blokey_static_flic_data_to_screen(void)
         lbDisplay.GraphicsScreenHeight);
 }
 
-ubyte cryo_blokey_mod_level(ubyte part)
+void blokey_static_flic_framebuf_back_make(void)
+{
+    ubyte *p_framebuf;
+    ubyte part;
+
+    p_framebuf = cryo_cyborg_framebuf_back_ptr();
+    cryo_cyborg_mods_blokey_bkgnd_clear(p_framebuf);
+
+    for (part = 0; part < 4; part++)
+    {
+        ubyte *inp;
+        ubyte *back_window_ptr;
+        short scr_x, scr_y;
+        short w, h;
+
+        if (flic_mods[part] == 0)
+            continue;
+
+        scr_x = cryo_blokey_box.X + 63 + equip_blokey_static_pos[part].X;
+        scr_y = cryo_blokey_box.Y + 1 + equip_blokey_static_pos[part].Y;
+        w = equip_blokey_static_width[part];
+        h = equip_blokey_static_height[part];
+
+        inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
+        cryo_cyborg_mods_blokey_static_part_to_buffer(inp, flic_mods, part);
+
+        LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
+
+        ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
+            lbDisplay.GraphicsWindowHeight, 0);
+
+        back_window_ptr = back_buffer
+          + lbDisplay.GraphicsScreenWidth*lbDisplay.GraphicsWindowY + lbDisplay.GraphicsWindowX;
+
+        ApScreenCopyColorKey(inp, back_window_ptr,
+            lbDisplay.GraphicsWindowHeight, 0);
+
+        mod_draw_states[part] = ModDSt_Unkn04;
+    }
+}
+
+ushort cryo_ordpart_to_mod_type(ubyte ordpart, ubyte mver)
+{
+    ushort mgroup;
+
+    switch (ordpart)
+    {
+    default:
+    case 0:
+        mgroup = MODGRP_BRAIN;
+        break;
+    case 1:
+        mgroup = MODGRP_ARMS;
+        break;
+    case 2:
+        mgroup = MODGRP_CHEST;
+        break;
+    case 3:
+        mgroup = MODGRP_EPIDERM;
+        break;
+    case 4:
+        mgroup = MODGRP_LEGS;
+        break;
+    }
+    return cybmod_type(mgroup, mver);
+}
+
+ubyte cryo_blokey_mod_level(ubyte ordpart)
 {
     PlayerInfo *p_locplayer;
-    ubyte cybmod_lv;
+    ubyte mver;
 
     if (selected_agent < 0)
         return 0;
 
-    switch (part)
+    switch (ordpart)
     {
     case 0:
-        cybmod_lv = flic_mods[1];
+        mver = flic_mods[ModDPt_BRAIN];
         break;
     case 1:
-        cybmod_lv = flic_mods[2];
+        mver = flic_mods[ModDPt_ARMS];
         break;
     case 2:
-        cybmod_lv = flic_mods[0];
+        mver = flic_mods[ModDPt_CHEST];
         break;
     case 3:
         p_locplayer = &players[local_player_no];
         if (selected_agent == 4)
         {
-            cybmod_lv = cybmod_skin_level(&p_locplayer->Mods[0]);
-            if ((cybmod_skin_level(&p_locplayer->Mods[1]) != cybmod_lv)
-              || (cybmod_skin_level(&p_locplayer->Mods[2]) != cybmod_lv)
-              || (cybmod_skin_level(&p_locplayer->Mods[3]) != cybmod_lv))
+            mver = cybmod_skin_level(&p_locplayer->Mods[0]);
+            if ((cybmod_skin_level(&p_locplayer->Mods[1]) != mver)
+              || (cybmod_skin_level(&p_locplayer->Mods[2]) != mver)
+              || (cybmod_skin_level(&p_locplayer->Mods[3]) != mver))
             {
-              cybmod_lv = 0;
+              mver = 0;
             }
         }
         else
         {
-            cybmod_lv = cybmod_skin_level(&p_locplayer->Mods[selected_agent]);
+            mver = cybmod_skin_level(&p_locplayer->Mods[selected_agent]);
         }
         break;
     case 4:
-        cybmod_lv = flic_mods[3];
+        mver = flic_mods[ModDPt_LEGS];
         break;
     }
-    return cybmod_lv;
+    return mver;
 }
 
 void update_flic_mods(ubyte *mods)
@@ -986,46 +1072,41 @@ ubyte draw_blokey_body_mods_names(struct ScreenBox *p_box)
 {
     short cx, cy;
     short hline;
-    ubyte part;
+    ubyte ordpart;
 
     cx = p_box->X + 4;
     cy = p_box->Y + 20;
     hline = font_height('A');
 
-    for (part = 0; part < 5; part++)
+    for (ordpart = 0; ordpart < 5; ordpart++)
     {
-        ubyte cybmod_lv;
-        char locstr[54];
         const char *text;
+        ubyte mver;
 
-        cybmod_lv = cryo_blokey_mod_level(part);
+        mver = cryo_blokey_mod_level(ordpart);
 
-        if (cybmod_lv == 0)
+        if (mver == 0)
         {
-            if (part == 3)
+            if (ordpart == 3)
                 cy += 2 * hline + 70;
             else
                 cy += 2 * hline + 37;
             continue;
         }
 
-        text = gui_strings[70 + part];
+        text = gui_strings[70 + ordpart];
         lbDisplay.DrawColour = 247;
         draw_text_purple_list2(cx, cy, text, 0);
         cy += hline + 3;
 
-        if (part == 3)
-            snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[75], cybmod_lv);
-        else
-            snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[76], cybmod_lv);
-        text = loctext_to_gtext(locstr);
+        text = cryo_gtext_cybmod_list_item_level(cryo_ordpart_to_mod_type(ordpart, mver));
         draw_text_purple_list2(cx, cy, text, 0);
         lbDisplay.DrawFlags = 0;
-        if (part == 3)
+        if (ordpart == 3)
         {
             lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
             draw_box_purple_list(cx, cy + hline + 3, 40, 40, lbDisplay.DrawColour);
-            draw_sprite_purple_list(cx + 1, cy + hline + 4, &sprites_Icons0_0[163 + cybmod_lv]);
+            draw_sprite_purple_list(cx + 1, cy + hline + 4, &sprites_Icons0_0[163 + mver]);
             lbDisplay.DrawFlags = 0;
             cy += hline + 67;
         }
@@ -1179,25 +1260,6 @@ static const char *cryo_gtext_cybmod_list_item_name(ushort mtype)
     modgrp = cybmod_group_type(mtype);
     mdstr_id = 70 + byte_1551F4[modgrp];
     return gui_strings[mdstr_id];
-}
-
-/** Get global text pointer to a mod level string.
- * @see loctext_to_gtext()
- */
-static const char *cryo_gtext_cybmod_list_item_level(ushort mtype)
-{
-    char locstr[48];
-    ubyte modlv;
-    ushort lvstr_id;
-
-    modlv = cybmod_version(mtype);
-
-    if (cybmod_group_type(mtype) != MODGRP_EPIDERM)
-        lvstr_id = 76;
-    else
-        lvstr_id = 75;
-    sprintf(locstr, "%s %d", gui_strings[lvstr_id], modlv);
-    return loctext_to_gtext(locstr);
 }
 
 ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
