@@ -862,20 +862,6 @@ void blokey_flic_framebuf_back_blit(void)
     cryo_cyborg_mods_blokey_fli_frame_to_buffer(p_framebuf, part);
 }
 
-void blokey_static_flic_framebuf_breathe_back_reload(void)
-{
-    ubyte loc_flic_mods[5];
-    TbPixel *p_framebuf;
-    TbPixel *p_scratch;
-
-    LbMemorySet(loc_flic_mods, 0, sizeof(loc_flic_mods));
-    loc_flic_mods[ModDPt_LEGS] = flic_mods[ModDPt_LEGS];
-
-    p_framebuf = cryo_cyborg_framebuf_back_ptr();
-    p_scratch = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
-    cryo_cyborg_mods_blokey_static_to_buffer(p_framebuf, p_scratch, loc_flic_mods);
-}
-
 ushort cryo_ordpart_to_mod_type(ubyte ordpart, ubyte mver)
 {
     ushort mgroup;
@@ -1035,8 +1021,6 @@ void draw_blokey_body_mods(void)
     if (!still_playing && (current_drawing_mod == ModDPt_BREATH))
     {
         done = xdo_next_frame(AniSl_CYBORG_BRTH);
-        if (current_frame == 0)
-            blokey_static_flic_framebuf_breathe_back_reload();
         blokey_flic_framebuf_back_blit();
         still_playing = !done;
         current_frame++;
