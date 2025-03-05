@@ -43,7 +43,8 @@ enum ModDrawPart {
     ModDPt_BRAIN	= 1,
     ModDPt_ARMS		= 2,
     ModDPt_LEGS		= 3,
-    ModDPt_BKGND	= 4,
+    ModDPt_BREATH	= 4,
+    ModDPt_BKGND	= 5,
 };
 
 enum ModDrawStage {
