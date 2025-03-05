@@ -83,38 +83,13 @@ ubyte ac_do_cryo_all_agents_set(ubyte click);
 void ac_weapon_flic_data_to_screen(void);
 ubyte ac_do_equip_offer_buy(ubyte click);
 
-struct ScreenPoint equip_blokey_pos[] = {
-    {23,  0},
-    {46,  0},
-    { 0, 49},
-    {23, 98},
-    { 0,  0},
-    { 0,  0},
-};
-
-short equip_blokey_height[] = {
-    197,  50, 148, 197, 197, 295,
-};
-
-short equip_blokey_width[] = {
-    93, 47, 139, 93, 139, 139,
-};
-
-struct ScreenPoint equip_blokey_static_pos[] = {
-    {23,  0},
-    {46,  0},
-    { 0, 49},
-    {23, 98},
-    { 0,  0},
-    { 0,  0},
-};
-
-short equip_blokey_static_height[] = {
-    197, 50, 148, 197, 295,
-};
-
-short equip_blokey_static_width[] = {
-     93, 47, 139, 93, 139,
+struct ScreenRect equip_blokey_rect[] = {
+    {23,  0,  93, 197},
+    {46,  0,  47,  50},
+    { 0, 49, 139, 148},
+    {23, 98,  93, 197},
+    { 0,  0, 139, 197},
+    { 0,  0, 139, 295},
 };
 
 void update_cybmod_cost_text(void)
@@ -247,7 +222,7 @@ ubyte do_cryo_offer_cancel(ubyte click)
 
 void reset_mod_draw_states_flag08(void)
 {
-    ushort part;
+    ubyte part;
     for (part = 0; part < 4; part++)
     {
         mod_draw_states[part] = 0;
@@ -258,7 +233,7 @@ void reset_mod_draw_states_flag08(void)
 
 void set_mod_draw_states_flag08(void)
 {
-    ushort part;
+    ubyte part;
     for (part = 0; part < 4; part++)
     {
         if (old_flic_mods[part] != flic_mods[part])
@@ -494,8 +469,8 @@ uint cryo_cyborg_framebuf_max_size(void)
 {
     short h, scanln;
 
-    h = equip_blokey_height[ModDPt_BKGND];
-    scanln = raw_file_scanline(equip_blokey_width[ModDPt_BKGND]);
+    h = equip_blokey_rect[ModDPt_BKGND].Height;
+    scanln = raw_file_scanline(equip_blokey_rect[ModDPt_BKGND].Width);
 
     return scanln * h;
 }
@@ -511,8 +486,8 @@ void cryo_cyborg_mods_blokey_bkgnd_clear(ubyte *framebuf)
     ubyte part;
 
     part = ModDPt_BKGND;
-    scanln = raw_file_scanline(equip_blokey_width[part]);
-    h = equip_blokey_height[part];
+    scanln = raw_file_scanline(equip_blokey_rect[part].Width);
+    h = equip_blokey_rect[part].Height;
 
     LbMemorySet(framebuf, 0, scanln * h);
 }
@@ -524,8 +499,8 @@ void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *framebuf)
     ubyte part;
 
     part = ModDPt_BKGND;
-    scanln = raw_file_scanline(equip_blokey_width[part]);
-    h = equip_blokey_height[part];
+    scanln = raw_file_scanline(equip_blokey_rect[part].Width);
+    h = equip_blokey_rect[part].Height;
 
     {
         char locstr[52];
@@ -542,8 +517,8 @@ void cryo_cyborg_mods_blokey_static_part_to_buffer(ubyte *p_partbuf, ubyte *p_mo
     long len;
     short w, h;
 
-    w = equip_blokey_width[part];
-    h = equip_blokey_height[part];
+    w = equip_blokey_rect[part].Width;
+    h = equip_blokey_rect[part].Height;
 
     {
         char locstr[52];
@@ -560,7 +535,7 @@ void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *p_framebuf, ubyte *p_scratc
     short frame_scanln;
     ubyte part;
 
-    frame_scanln = raw_file_scanline(equip_blokey_width[ModDPt_BKGND]);
+    frame_scanln = raw_file_scanline(equip_blokey_rect[ModDPt_BKGND].Width);
 
     for (part = 0; part < 4; part++)
     {
@@ -571,15 +546,15 @@ void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *p_framebuf, ubyte *p_scratc
         if (p_mods_arr[part] == 0)
             continue;
 
-        w = equip_blokey_width[part];
-        h = equip_blokey_height[part];
+        w = equip_blokey_rect[part].Width;
+        h = equip_blokey_rect[part].Height;
         cryo_cyborg_mods_blokey_static_part_to_buffer(p_scratchbuf, p_mods_arr, part);
 
         // Blit the current part image onto framebuf
         p_ldbuf = p_scratchbuf;
         p_blbuf = p_framebuf;
-        p_blbuf += (equip_blokey_pos[part].X - equip_blokey_pos[ModDPt_BKGND].X);
-        p_blbuf += (equip_blokey_pos[part].Y - equip_blokey_pos[ModDPt_BKGND].Y) * frame_scanln;
+        p_blbuf += (equip_blokey_rect[part].X - equip_blokey_rect[ModDPt_BKGND].X);
+        p_blbuf += (equip_blokey_rect[part].Y - equip_blokey_rect[ModDPt_BKGND].Y) * frame_scanln;
         ApScreenCopyRectColorKey(p_ldbuf, p_blbuf, w, frame_scanln, h, 0);
     }
 }
@@ -588,21 +563,21 @@ void cryo_cyborg_mods_blokey_fli_frame_to_buffer(ubyte *p_framebuf, ubyte part)
 {
     short frame_scanln;
 
-    frame_scanln = raw_file_scanline(equip_blokey_width[ModDPt_BKGND]);
+    frame_scanln = raw_file_scanline(equip_blokey_rect[ModDPt_BKGND].Width);
 
     {
         ubyte *p_ldbuf;
         ubyte *p_blbuf;
         short w, h;
 
-        w = equip_blokey_width[part];
-        h = equip_blokey_height[part];
+        w = equip_blokey_rect[part].Width;
+        h = equip_blokey_rect[part].Height;
 
         // Blit the current part image onto framebuf
         p_ldbuf = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
         p_blbuf = p_framebuf;
-        p_blbuf += (equip_blokey_pos[part].X - equip_blokey_pos[ModDPt_BKGND].X);
-        p_blbuf += (equip_blokey_pos[part].Y - equip_blokey_pos[ModDPt_BKGND].Y) * frame_scanln;
+        p_blbuf += (equip_blokey_rect[part].X - equip_blokey_rect[ModDPt_BKGND].X);
+        p_blbuf += (equip_blokey_rect[part].Y - equip_blokey_rect[ModDPt_BKGND].Y) * frame_scanln;
         ApScreenCopyRectColorKey(p_ldbuf, p_blbuf, w, frame_scanln, h, 0);
     }
 }
@@ -658,10 +633,10 @@ void flic_bkgnd_fill_output_buffer_anim_out(ubyte anislot, ubyte skip_part)
         // Now blit part of the background which we care about to the bkgbuf,
         // knowing we will play "out" anim for skip_part using that buffer
         bkgn_part = ModDPt_BKGND;
-        obuf += equip_blokey_pos[skip_part].X - equip_blokey_pos[bkgn_part].X;
-        obuf += (equip_blokey_pos[skip_part].Y - equip_blokey_pos[bkgn_part].Y) * equip_blokey_width[bkgn_part];
-        ApScreenCopyRectColorKey(obuf, bkgbuf, equip_blokey_width[bkgn_part],
-          equip_blokey_width[skip_part], equip_blokey_height[skip_part], 0);
+        obuf += equip_blokey_rect[skip_part].X - equip_blokey_rect[bkgn_part].X;
+        obuf += (equip_blokey_rect[skip_part].Y - equip_blokey_rect[bkgn_part].Y) * equip_blokey_rect[bkgn_part].Width;
+        ApScreenCopyRectColorKey(obuf, bkgbuf, equip_blokey_rect[bkgn_part].Width,
+          equip_blokey_rect[skip_part].Width, equip_blokey_rect[skip_part].Height, 0);
     }
 }
 
@@ -789,8 +764,8 @@ void blokey_bkgnd_data_to_screen(void)
 
     scr_x = cryo_blokey_box.X + 63;
     scr_y = cryo_blokey_box.Y + 1;
-    w = equip_blokey_width[ModDPt_BKGND];
-    h = equip_blokey_height[ModDPt_BKGND];
+    w = equip_blokey_rect[ModDPt_BKGND].Width;
+    h = equip_blokey_rect[ModDPt_BKGND].Height;
 
     p_inp = cryo_cyborg_framebuf_back_ptr();
 
@@ -818,8 +793,8 @@ void blokey_flic_data_to_screen(void)
 
     scr_x = cryo_blokey_box.X + 63;
     scr_y = cryo_blokey_box.Y + 1;
-    w = equip_blokey_width[ModDPt_BKGND];
-    h = equip_blokey_height[ModDPt_BKGND];
+    w = equip_blokey_rect[ModDPt_BKGND].Width;
+    h = equip_blokey_rect[ModDPt_BKGND].Height;
 
     p_inp = cryo_cyborg_framebuf_back_ptr();
 
@@ -1087,7 +1062,8 @@ ubyte draw_blokey_body_mods_names(struct ScreenBox *p_box)
 }
 
 /** Draws cryo agent with his cybernetic mods.
- * The general frow is:
+ *
+ * The general flow is:
  * - store additive background (shape of the agent) in framebuf_back
  * - draw the background within drawlist, update back_buffer with
  *   the background image
