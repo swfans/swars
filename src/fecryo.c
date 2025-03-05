@@ -475,12 +475,20 @@ uint cryo_cyborg_framebuf_max_size(void)
     return scanln * h;
 }
 
+/** Get the buffer containing transparent image of cyborg mods,
+ *  or their background.
+ *
+ * FLIC file frames and static images of mods are merged togethrer
+ * on this buffer.
+ * During initial part of cyborg view rectangle drawing, the same
+ * buffer is also used for storing cyborg shape background.
+ */
 inline static ubyte *cryo_cyborg_framebuf_back_ptr(void)
 {
     return back_buffer - cryo_cyborg_framebuf_max_size();
 }
 
-void cryo_cyborg_mods_blokey_bkgnd_clear(ubyte *framebuf)
+void cryo_cyborg_mods_blokey_bkgnd_clear(ubyte *p_framebuf)
 {
     short h, scanln;
     ubyte part;
@@ -489,10 +497,10 @@ void cryo_cyborg_mods_blokey_bkgnd_clear(ubyte *framebuf)
     scanln = raw_file_scanline(equip_blokey_rect[part].Width);
     h = equip_blokey_rect[part].Height;
 
-    LbMemorySet(framebuf, 0, scanln * h);
+    LbMemorySet(p_framebuf, 0, scanln * h);
 }
 
-void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *framebuf)
+void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *p_framebuf)
 {
     long len;
     short h, scanln;
@@ -505,10 +513,10 @@ void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *framebuf)
     {
         char locstr[52];
         sprint_cryo_cyborg_mods_static_fname(locstr, part, flic_mods);
-        len = LbFileLoadAt(locstr, framebuf);
+        len = LbFileLoadAt(locstr, p_framebuf);
     }
     if (len < 4) {
-        LbMemorySet(framebuf, 0, scanln * h);
+        LbMemorySet(p_framebuf, 0, scanln * h);
     }
 }
 
