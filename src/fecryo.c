@@ -552,7 +552,7 @@ void cryo_cyborg_mods_blokey_static_part_to_buffer(ubyte *partbuf, ubyte *mods_a
     }
 }
 
-void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *framebuf, ubyte *scratchbuf, ubyte *mods_arr)
+void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *p_framebuf, ubyte *p_scratchbuf, ubyte *p_mods_arr)
 {
     short frame_scanln;
     ubyte part;
@@ -561,23 +561,46 @@ void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *framebuf, ubyte *scratchbuf
 
     for (part = 0; part < 4; part++)
     {
-        ubyte *ldbuf;
-        ubyte *blbuf;
+        ubyte *p_ldbuf;
+        ubyte *p_blbuf;
         short w, h;
 
-        if (mods_arr[part] == 0)
+        if (p_mods_arr[part] == 0)
             continue;
 
         w = equip_blokey_width[part];
         h = equip_blokey_height[part];
-        cryo_cyborg_mods_blokey_static_part_to_buffer(scratchbuf, mods_arr, part);
+        cryo_cyborg_mods_blokey_static_part_to_buffer(p_scratchbuf, p_mods_arr, part);
 
         // Blit the current part image onto framebuf
-        ldbuf = scratchbuf;
-        blbuf = framebuf;
-        blbuf += (equip_blokey_pos[part].X - equip_blokey_pos[ModDPt_BKGND].X);
-        blbuf += (equip_blokey_pos[part].Y - equip_blokey_pos[ModDPt_BKGND].Y) * frame_scanln;
-        ApScreenCopyRectColorKey(ldbuf, blbuf, w, frame_scanln, h, 0);
+        p_ldbuf = p_scratchbuf;
+        p_blbuf = p_framebuf;
+        p_blbuf += (equip_blokey_pos[part].X - equip_blokey_pos[ModDPt_BKGND].X);
+        p_blbuf += (equip_blokey_pos[part].Y - equip_blokey_pos[ModDPt_BKGND].Y) * frame_scanln;
+        ApScreenCopyRectColorKey(p_ldbuf, p_blbuf, w, frame_scanln, h, 0);
+    }
+}
+
+void cryo_cyborg_mods_blokey_fli_frame_to_buffer(ubyte *p_framebuf, ubyte part)
+{
+    short frame_scanln;
+
+    frame_scanln = raw_file_scanline(equip_blokey_width[ModDPt_BKGND]);
+
+    {
+        ubyte *p_ldbuf;
+        ubyte *p_blbuf;
+        short w, h;
+
+        w = equip_blokey_width[part];
+        h = equip_blokey_height[part];
+
+        // Blit the current part image onto framebuf
+        p_ldbuf = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
+        p_blbuf = p_framebuf;
+        p_blbuf += (equip_blokey_pos[part].X - equip_blokey_pos[ModDPt_BKGND].X);
+        p_blbuf += (equip_blokey_pos[part].Y - equip_blokey_pos[ModDPt_BKGND].Y) * frame_scanln;
+        ApScreenCopyRectColorKey(p_ldbuf, p_blbuf, w, frame_scanln, h, 0);
     }
 }
 
@@ -782,33 +805,35 @@ void blokey_bkgnd_data_to_screen(void)
         scr_x, scr_y, scr_x, scr_y, w, h);
 }
 
+void blokey_static_flic_framebuf_back_reload(void);
+void blokey_flic_framebuf_back_blit(void);
+
 /** Blit a color keyed frame of cyborg animation from buffer to screen.
  */
 void blokey_flic_data_to_screen(void)
 {
-    ubyte *inp;
+    TbPixel *p_inp;
     short scr_x, scr_y;
     short w, h;
-    ubyte part;
 
-    part = current_drawing_mod;
-    scr_x = cryo_blokey_box.X + 63 + equip_blokey_pos[part].X;
-    scr_y = cryo_blokey_box.Y + 1 + equip_blokey_pos[part].Y;
-    w = equip_blokey_width[part];
-    h = equip_blokey_height[part];
+    // TODO fill the buffer outside of drawlist
+    blokey_flic_framebuf_back_blit();
 
-    inp = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
+    scr_x = cryo_blokey_box.X + 63;
+    scr_y = cryo_blokey_box.Y + 1;
+    w = equip_blokey_width[ModDPt_BKGND];
+    h = equip_blokey_height[ModDPt_BKGND];
+
+    p_inp = cryo_cyborg_framebuf_back_ptr();
 
     LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
-    ApScreenCopyColorKey(inp, lbDisplay.GraphicsWindowPtr,
+    ApScreenCopyColorKey(p_inp, lbDisplay.GraphicsWindowPtr,
         lbDisplay.GraphicsWindowHeight, 0);
 
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
 }
-
-void blokey_static_flic_framebuf_back_reload(void);
 
 void blokey_static_flic_data_to_screen(void)
 {
@@ -856,6 +881,17 @@ void blokey_static_flic_framebuf_back_reload(void)
             continue;
         mod_draw_states[part] = ModDSt_Unkn04;
     }
+}
+
+void blokey_flic_framebuf_back_blit(void)
+{
+    TbPixel *p_framebuf;
+    ubyte part;
+
+    part = current_drawing_mod;
+    p_framebuf = cryo_cyborg_framebuf_back_ptr();
+
+    cryo_cyborg_mods_blokey_fli_frame_to_buffer(p_framebuf, part);
 }
 
 ushort cryo_ordpart_to_mod_type(ubyte ordpart, ubyte mver)
