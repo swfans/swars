@@ -808,7 +808,7 @@ void blokey_flic_data_to_screen(void)
         lbDisplay.GraphicsScreenHeight);
 }
 
-void blokey_static_flic_framebuf_back_make(void);
+void blokey_static_flic_framebuf_back_reload(void);
 
 void blokey_static_flic_data_to_screen(void)
 {
@@ -817,7 +817,7 @@ void blokey_static_flic_data_to_screen(void)
     short w, h;
 
     // TODO fill the buffer outside of drawlist
-    blokey_static_flic_framebuf_back_make();
+    blokey_static_flic_framebuf_back_reload();
 
     scr_x = cryo_blokey_box.X + 63;
     scr_y = cryo_blokey_box.Y + 1;
@@ -839,7 +839,7 @@ void blokey_static_flic_data_to_screen(void)
         scr_x, scr_y, scr_x, scr_y, w, h);
 }
 
-void blokey_static_flic_framebuf_back_make(void)
+void blokey_static_flic_framebuf_back_reload(void)
 {
     TbPixel *p_framebuf;
     TbPixel *p_scratch;
@@ -940,10 +940,6 @@ void update_flic_mods(ubyte *mods)
  */
 void draw_blokey_body_mods(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_blokey_body_mods\n"
-        :  :  : "eax" );
-#endif
     int part;
     TbBool done, still_playing;
 
