@@ -3720,8 +3720,7 @@ int xdo_next_frame(ubyte anislot)
 int xdo_prev_frame(ubyte anislot)
 {
     struct Animation *p_anim;
-    ubyte *bkgbuf;
-    ubyte *frmbuf;
+    ubyte *p_frmbuf;
     uint i, rq_frame;
     ushort k;
 
@@ -3734,12 +3733,11 @@ int xdo_prev_frame(ubyte anislot)
     else
         rq_frame = p_anim->FrameNumber - 1;
 
-    frmbuf = anim_type_get_output_buffer(p_anim->Type);
-    bkgbuf = anim_type_get_output_buffer(AniSl_BKGND);
+    p_frmbuf = anim_type_get_output_buffer(p_anim->Type);
 
     if (rq_frame == 0)
     {
-        LbMemoryCopy(frmbuf, bkgbuf, p_anim->FLCFileHeader.Width * p_anim->FLCFileHeader.Height);
+        LbMemorySet(p_frmbuf, 0, p_anim->FLCFileHeader.Width * p_anim->FLCFileHeader.Height);
         anim_flic_close(p_anim);
         if ((p_anim->Flags & 0x20) != 0) {
             flic_unkn03(p_anim->Type);
@@ -3748,8 +3746,8 @@ int xdo_prev_frame(ubyte anislot)
     }
 
     anim_flic_show_replay(p_anim);
-    LbMemoryCopy(frmbuf, bkgbuf, p_anim->FLCFileHeader.Width * p_anim->FLCFileHeader.Height);
-    anim_show_prep_next_frame(p_anim, frmbuf);
+    LbMemorySet(p_frmbuf, 0, p_anim->FLCFileHeader.Width * p_anim->FLCFileHeader.Height);
+    anim_show_prep_next_frame(p_anim, p_frmbuf);
     anim_show_draw_next_frame(p_anim);
     for (i = 1; i < rq_frame; i++)
     {
