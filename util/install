@@ -35,9 +35,9 @@ LEVELS_VERSION="1.0.1.25"
 LEVELS_PACKAGE="swars-levels-1_0_1_25"
 LEVELS_PKG_MD5="bbf821b463613993c1d53ba7017abc06"
 
-GFX_VERSION="1.0.3.195"
-GFX_PACKAGE="swars-gfx-1_0_3_195"
-GFX_PKG_MD5="0dac5bf614c8921c8441c788e1e6620f"
+GFX_VERSION="1.0.3.202"
+GFX_PACKAGE="swars-gfx-1_0_3_202"
+GFX_PKG_MD5="7a980f3aab26bbfa9b080395b8f8d370"
 
 SFX_VERSION="1.0.0.22"
 SFX_PACKAGE="swars-sfx-1_0_0_22"
@@ -320,19 +320,6 @@ copy_data()
   done
 
   install_dir "qdata/equip" || return 1
-
-  for fn in bgman bgmanz; do
-    install_file "qdata/equip/${fn}.dat" || return 1
-  done
-
-  for fn in m1a1 m1a2 m2a1 m2a2 m2a3 m3a1 m3a2 m3a3 z1a1 z1a2 z2a1 z2a2 z2a3 z3a1 z3a2 z3a3; do
-    install_file "qdata/equip/${fn}.dat" || return 1
-    install_file "qdata/equip/${fn}.fli" || return 1
-  done
-
-  for fn in m1b m1bb m1l1 m1l2 m2b m2bb m2l1 m2l2 m2l3 m3b m3bb m3l1 m3l2 m3l3 z1b z1bb z1l1 z1l2 z2b z2bb z2l1 z2l2 z2l3 z3b z3bb z3l1 z3l2 z3l3; do
-    install_file "qdata/equip/${fn}.dat" || return 1
-  done
 
   install_dir "levels" || return 1
 
