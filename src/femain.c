@@ -1410,7 +1410,7 @@ TbResult init_read_all_sprite_files(void)
         tret = ret;
 
     // No pointer stored to frame buffer - use back_buffer minus size
-    p_buf += cryo_cyborg_framebuf_max_size();
+    p_buf += cryo_cyborg_part_buf_max_size();
     back_buffer = p_buf;
 
     setup_sprites_icons();

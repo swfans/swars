@@ -24,6 +24,7 @@
 #include "bfscrcopy.h"
 #include "bfsprite.h"
 #include "bftext.h"
+#include "bfutility.h"
 #include "bflib_joyst.h"
 #include "ssampply.h"
 
@@ -465,27 +466,53 @@ short raw_file_scanline(short w)
     return w;
 }
 
-uint cryo_cyborg_framebuf_max_size(void)
+uint cryo_cyborg_part_buf_max_size(void)
 {
+    uint len;
     short h, scanln;
+    ubyte part;
+
+    len = 0;
+    for (part = 0; part < 4; part++)
+    {
+        h = equip_blokey_rect[part].Height;
+        scanln = raw_file_scanline(equip_blokey_rect[part].Width);
+        len += scanln * h;
+    }
 
     h = equip_blokey_rect[ModDPt_BKGND].Height;
     scanln = raw_file_scanline(equip_blokey_rect[ModDPt_BKGND].Width);
 
-    return scanln * h;
+    return max(len, (uint)(scanln * h));
 }
 
-/** Get the buffer containing transparent image of cyborg mods,
+/** Get the buffer containing transparent images of cyborg mods,
  *  or their background.
  *
- * FLIC file frames and static images of mods are merged togethrer
- * on this buffer.
+ * For each mod, either FLIC file frame or static image is stored
+ * in this buffer.
  * During initial part of cyborg view rectangle drawing, the same
  * buffer is also used for storing cyborg shape background.
  */
-inline static ubyte *cryo_cyborg_framebuf_back_ptr(void)
+inline static ubyte *cryo_cyborg_part_buf_ptr(ubyte target_part)
 {
-    return back_buffer - cryo_cyborg_framebuf_max_size();
+    ubyte *p_buf;
+    ubyte part;
+    p_buf = back_buffer - cryo_cyborg_part_buf_max_size();
+
+    if (target_part >= ModDPt_BREATH)
+        return p_buf;
+
+    for (part = 0; part < target_part; part++)
+    {
+        short h, scanln;
+
+        h = equip_blokey_rect[part].Height;
+        scanln = raw_file_scanline(equip_blokey_rect[part].Width);
+        p_buf += scanln * h;
+    }
+
+    return p_buf;
 }
 
 void cryo_cyborg_mods_blokey_bkgnd_clear(ubyte *p_framebuf)
@@ -775,7 +802,7 @@ void blokey_bkgnd_data_to_screen(void)
     w = equip_blokey_rect[ModDPt_BKGND].Width;
     h = equip_blokey_rect[ModDPt_BKGND].Height;
 
-    p_inp = cryo_cyborg_framebuf_back_ptr();
+    p_inp = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
 
     LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
@@ -804,7 +831,7 @@ void blokey_flic_data_to_screen(void)
     w = equip_blokey_rect[ModDPt_BKGND].Width;
     h = equip_blokey_rect[ModDPt_BKGND].Height;
 
-    p_inp = cryo_cyborg_framebuf_back_ptr();
+    p_inp = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
 
     LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
 
@@ -821,7 +848,7 @@ void blokey_static_flic_framebuf_back_reload(void)
     TbPixel *p_scratch;
     ubyte part;
 
-    p_framebuf = cryo_cyborg_framebuf_back_ptr();
+    p_framebuf = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
     p_scratch = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
     cryo_cyborg_mods_blokey_bkgnd_clear(p_framebuf);
     cryo_cyborg_mods_blokey_static_to_buffer(p_framebuf, p_scratch, flic_mods);
@@ -840,7 +867,7 @@ void blokey_flic_framebuf_back_blit(void)
     ubyte part;
 
     part = current_drawing_mod;
-    p_framebuf = cryo_cyborg_framebuf_back_ptr();
+    p_framebuf = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
 
     cryo_cyborg_mods_blokey_fli_frame_to_buffer(p_framebuf, part);
 }
@@ -1084,7 +1111,7 @@ ubyte show_cryo_blokey(struct ScreenBox *p_box)
 {
     if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
-        ubyte *inp;
+        ubyte *p_inp;
 
         draw_flic_purple_list(blokey_bkgnd_data_to_screen);
         p_box->Flags |= GBxFlg_BkgndDrawn;
@@ -1093,8 +1120,8 @@ ubyte show_cryo_blokey(struct ScreenBox *p_box)
         reset_mod_draw_states_flag08();
         current_drawing_mod = ModDPt_CHEST;
 
-        inp = cryo_cyborg_framebuf_back_ptr();
-        cryo_cyborg_mods_blokey_bkgnd_to_buffer(inp);
+        p_inp = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
+        cryo_cyborg_mods_blokey_bkgnd_to_buffer(p_inp);
         return 0;
     }
 
