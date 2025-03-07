@@ -46,6 +46,9 @@ void ApScreenCopyRemap(TbPixel *sourceBuf, TbPixel *destBuf,
 void ApScreenCopyRect(TbPixel *sourceBuf, TbPixel *destBuf,
   ushort sourceWidth, ushort destWidth, ushort height);
 
+void ApScreenSetRect(TbPixel *destBuf, TbPixel px,
+  ushort setWidth, ushort destWidth, ushort height);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

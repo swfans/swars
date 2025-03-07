@@ -465,7 +465,7 @@ void cryo_cyborg_mods_anim_set_fname(ubyte anislot, ubyte part, ubyte stage)
  */
 short raw_file_scanline(short w)
 {
-    return w;
+    return (w + 3) & ~3;
 }
 
 uint cryo_cyborg_part_buf_max_size(void)
@@ -556,8 +556,11 @@ void cryo_cyborg_part_buf_blokey_bkgnd_load(void)
     h = equip_blokey_rect[part].Height;
 
     {
-        char locstr[52];
-        sprint_cryo_cyborg_mods_static_fname(locstr, part, flic_mods);
+        char locstr[DISKPATH_SIZE];
+        PathInfo *pinfo;
+
+        pinfo = &game_dirs[DirPlace_QEquip];
+        sprintf(locstr, "%s/bgman.raw", pinfo->directory);
         len = LbFileLoadAt(locstr, p_partbuf);
     }
     if (len < 4) {
@@ -589,6 +592,9 @@ void cryo_cyborg_part_buf_blokey_static_load(ubyte *p_mods_arr, ubyte part)
     }
     partbuf_scanln = raw_file_scanline(w);
 
+    // Fill buffer padding with colour key (transparent colour)
+    if (partbuf_scanln != w)
+        ApScreenSetRect(p_partbuf + w, 0,  partbuf_scanln - w, partbuf_scanln, h);
     // Blit the current part image onto part buffer
     ApScreenCopyRect(p_scratch, p_partbuf, w, partbuf_scanln, h);
 }
@@ -610,6 +616,10 @@ void cryo_cyborg_part_buf_blokey_fli_frame_copy(ubyte part, ubyte anislot)
     p_partbuf = cryo_cyborg_part_buf_ptr(part);
     partbuf_scanln = raw_file_scanline(w);
 
+    // Fill buffer padding with colour key (transparent colour)
+    if (partbuf_scanln != w)
+        ApScreenSetRect(p_partbuf + w, 0,  partbuf_scanln - w, partbuf_scanln, h);
+    // Blit the current animation frame buffer onto part buffer
     ApScreenCopyRect(p_flicbuf, p_partbuf, w, partbuf_scanln, h);
 }
 
@@ -794,19 +804,21 @@ void blokey_bkgnd_data_to_screen(void)
 {
     TbPixel *p_inp;
     short scr_x, scr_y;
-    short w, h;
+    short h, scanln;
 
     scr_x = cryo_blokey_box.X + 63;
     scr_y = cryo_blokey_box.Y + 1;
-    w = equip_blokey_rect[ModDPt_BKGND].Width;
+    scanln = raw_file_scanline(equip_blokey_rect[ModDPt_BKGND].Width);
     h = equip_blokey_rect[ModDPt_BKGND].Height;
 
     p_inp = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
 
-    LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
+    LbScreenSetGraphicsWindow(scr_x, scr_y, scanln, h);
 
-    ApScreenCopyColorKey(p_inp, lbDisplay.GraphicsWindowPtr,
-        lbDisplay.GraphicsWindowHeight, 0);
+    lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
+    ApScreenCopyRemap(p_inp, lbDisplay.GraphicsWindowPtr,
+        lbDisplay.GraphicsWindowHeight, appixmap.ghost_add_table);
+    lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR8;
 
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
@@ -814,7 +826,7 @@ void blokey_bkgnd_data_to_screen(void)
     // Copy to back buffer - the back buffer should contain background shape,
     // but any mods on it should be redrawn each frame
     LbScreenCopyBox(lbDisplay.WScreen, back_buffer,
-        scr_x, scr_y, scr_x, scr_y, w, h);
+        scr_x, scr_y, scr_x, scr_y, scanln, h);
 }
 
 /** Blit all color keyed cyborg parts from part buffer to screen.

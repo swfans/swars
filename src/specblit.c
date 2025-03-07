@@ -28,6 +28,20 @@
 #include "swlog.h"
 /******************************************************************************/
 
+void ApScreenSetRect(TbPixel *destBuf, TbPixel px,
+  ushort setWidth, ushort destWidth, ushort height)
+{
+    ubyte *d;
+    short h;
+
+    d = destBuf;
+    for (h = height; h > 0; h--)
+    {
+        LbMemorySet(d, px, min(destWidth,setWidth));
+        d += destWidth;
+    }
+}
+
 void ApScreenCopyRect(TbPixel *sourceBuf, TbPixel *destBuf,
   ushort sourceWidth, ushort destWidth, ushort height)
 {
