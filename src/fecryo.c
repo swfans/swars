@@ -28,6 +28,8 @@
 #include "bflib_joyst.h"
 #include "ssampply.h"
 
+#include "app_gentab.h"
+#include "app_sprite.h"
 #include "specblit.h"
 #include "campaign.h"
 #include "cybmod.h"
@@ -571,7 +573,7 @@ void cryo_cyborg_part_buf_blokey_static_load(ubyte *p_mods_arr, ubyte part)
     short partbuf_scanln;
     short w, h;
 
-    p_scratch = anim_type_get_output_buffer(AniSl_BKGND);
+    p_scratch = anim_type_get_output_buffer(AniSl_SCRATCH);
     p_partbuf = cryo_cyborg_part_buf_ptr(part);
 
     w = equip_blokey_rect[part].Width;
@@ -718,6 +720,13 @@ ubyte cryo_cyborg_mods_anim_get_stage(ubyte *p_part)
     return stage;
 }
 
+/** Prepares for playback of the next FLIC animation.
+ *
+ * Note that this function is called while the drawitem to draw
+ * the last frame is still in drawlist. That means animation
+ * frame buffer can be modified by this function, but the parts
+ * buffers need to be left unchanged.
+ */
 void init_next_blokey_flic(void)
 {
     ubyte part, stage;

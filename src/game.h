@@ -115,7 +115,7 @@ enum AnimSlot {
   AniSl_UNKN7 = 7,
   AniSl_CYBORG_BRTH = 8,
   AniSl_NETSCAN = 9,
-  AniSl_BKGND = 10,	/**< background buffer for some transparent menu animations */
+  AniSl_SCRATCH = 10,	/**< scratch buffer for some transparent menu animations */
 };
 
 enum PacketRecordMode {

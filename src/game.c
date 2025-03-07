@@ -489,7 +489,7 @@ ubyte *anim_type_get_output_buffer(ubyte anislot)
     case AniSl_CYBORG_INOUT:
     case AniSl_CYBORG_BRTH:
         return vec_tmap[5] + 0x8000;
-    case AniSl_BKGND:
+    case AniSl_SCRATCH:
         return vec_tmap[4] + 0x8000;
     }
 }
