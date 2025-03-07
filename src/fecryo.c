@@ -344,43 +344,23 @@ ubyte do_equip_offer_buy_cybmod(ubyte click)
 
 void sprint_cryo_cyborg_mods_static_fname(char *str, ubyte part, ubyte *p_mods_arr)
 {
-    struct Campaign *p_campgn;
-    const char *campgn_mark;
     PathInfo *pinfo;
-
-    p_campgn = &campaigns[background_type];
-    // TODO FNAMES the convention with mark char is broken for "s"
-    campgn_mark = p_campgn->ProjectorFnMk;
 
     pinfo = &game_dirs[DirPlace_QEquip];
 
     switch (part)
     {
     case ModDPt_CHEST:
-        if (strcmp(campgn_mark, "s") == 0)
-            campgn_mark = "m";
-        sprintf(str, "%s/%s%db.dat", pinfo->directory, campgn_mark, p_mods_arr[0]);
+        sprintf(str, "%s/m%db.raw", pinfo->directory, p_mods_arr[0]);
         break;
     case ModDPt_BRAIN:
-        if (strcmp(campgn_mark, "s") == 0)
-            campgn_mark = "m";
-        sprintf(str, "%s/%s%dbb.dat", pinfo->directory, campgn_mark, p_mods_arr[0]);
+        sprintf(str, "%s/m%dbb.raw", pinfo->directory, p_mods_arr[0]);
         break;
     case ModDPt_ARMS:
-        if (strcmp(campgn_mark, "s") == 0)
-            campgn_mark = "m";
-        sprintf(str, "%s/%s%da%d.dat", pinfo->directory, campgn_mark, p_mods_arr[0], p_mods_arr[2]);
+        sprintf(str, "%s/m%da%d.raw", pinfo->directory, p_mods_arr[0], p_mods_arr[2]);
         break;
     case ModDPt_LEGS:
-        if (strcmp(campgn_mark, "s") == 0)
-            campgn_mark = "m";
-        sprintf(str, "%s/%s%dl%d.dat", pinfo->directory, campgn_mark, p_mods_arr[0], p_mods_arr[3]);
-        break;
-    case ModDPt_BKGND:
-    case ModDPt_BREATH:
-        if (strcmp(campgn_mark, "s") == 0)
-            campgn_mark = "";
-        sprintf(str, "%s/bgman%s.dat", pinfo->directory, campgn_mark);
+        sprintf(str, "%s/m%dl%d.raw", pinfo->directory, p_mods_arr[0], p_mods_arr[3]);
         break;
     default:
         str[0] = '\0';
@@ -390,17 +370,9 @@ void sprint_cryo_cyborg_mods_static_fname(char *str, ubyte part, ubyte *p_mods_a
 
 void cryo_cyborg_mods_anim_set_fname(ubyte anislot, ubyte part, ubyte stage)
 {
-    struct Campaign *p_campgn;
     struct Animation *p_anim;
-    const char *campgn_mark;
     PathInfo *pinfo;
     int k;
-
-    p_campgn = &campaigns[background_type];
-    campgn_mark = p_campgn->ProjectorFnMk;
-    // TODO FNAMES the convention with mark char is broken for "s"
-    if (strcmp(campgn_mark, "s") == 0)
-        campgn_mark = "m";
 
     k = anim_slots[anislot];
     p_anim = &animations[k];
@@ -410,7 +382,7 @@ void cryo_cyborg_mods_anim_set_fname(ubyte anislot, ubyte part, ubyte stage)
     switch (stage)
     {
     case ModDSt_BRT:
-        anim_flic_set_fname(p_anim, "%s/%s%da%d.fli", pinfo->directory, campgn_mark, flic_mods[0], flic_mods[2]);
+        anim_flic_set_fname(p_anim, "%s/m%da%d.fli", pinfo->directory, flic_mods[0], flic_mods[2]);
         break;
     case ModDSt_OUT:
         switch (part)
@@ -573,30 +545,26 @@ void cryo_cyborg_part_buf_blokey_static_load(ubyte *p_mods_arr, ubyte part)
     TbPixel *p_scratch;
     TbPixel *p_partbuf;
     long len;
-    short partbuf_scanln;
-    short w, h;
+    short h, scanln;
 
     p_scratch = anim_type_get_output_buffer(AniSl_SCRATCH);
     p_partbuf = cryo_cyborg_part_buf_ptr(part);
 
-    w = equip_blokey_rect[part].Width;
+    scanln = raw_file_scanline(equip_blokey_rect[part].Width);
     h = equip_blokey_rect[part].Height;
 
+    // Read the raw image; we expect its lines to already be padded
     {
-        char locstr[52];
+        char locstr[DISKPATH_SIZE];
         sprint_cryo_cyborg_mods_static_fname(locstr, part, p_mods_arr);
         len = LbFileLoadAt(locstr, p_scratch);
     }
     if (len < 4) {
-        LbMemorySet(p_scratch, 0, w * h);
+        LbMemorySet(p_scratch, 0, scanln * h);
     }
-    partbuf_scanln = raw_file_scanline(w);
 
-    // Fill buffer padding with colour key (transparent colour)
-    if (partbuf_scanln != w)
-        ApScreenSetRect(p_partbuf + w, 0,  partbuf_scanln - w, partbuf_scanln, h);
     // Blit the current part image onto part buffer
-    ApScreenCopyRect(p_scratch, p_partbuf, w, partbuf_scanln, h);
+    ApScreenCopyRect(p_scratch, p_partbuf, scanln, scanln, h);
 }
 
 /** Copy image data from given animation slot buffer to part buffer.
