@@ -486,20 +486,24 @@ uint cryo_cyborg_part_buf_max_size(void)
     return max(len, (uint)(scanln * h));
 }
 
-/** Get the buffer containing transparent images of cyborg mods,
+/** Get the buffer containing colour keyed images of cyborg mods,
  *  or their background.
  *
  * For each mod, either FLIC file frame or static image is stored
  * in this buffer.
  * During initial part of cyborg view rectangle drawing, the same
  * buffer is also used for storing cyborg shape background.
+ * A third mode of using the buffer comes in during breathing
+ * animation. At that time, the buffer stores two parts:
+ * chest+brain+arms, and separately legs.
  */
 inline static ubyte *cryo_cyborg_part_buf_ptr(ubyte target_part)
 {
-    ubyte *p_buf;
+    TbPixel *p_buf;
     ubyte part;
     p_buf = back_buffer - cryo_cyborg_part_buf_max_size();
 
+    // For breathing animation, reuse chest+brain+arms area
     if (target_part >= ModDPt_BREATH)
         return p_buf;
 
@@ -515,42 +519,60 @@ inline static ubyte *cryo_cyborg_part_buf_ptr(ubyte target_part)
     return p_buf;
 }
 
-void cryo_cyborg_mods_blokey_bkgnd_clear(ubyte *p_framebuf)
+/** Clear part buffer content for given part.
+ */
+void cryo_cyborg_part_buf_clear(ubyte part)
 {
+    TbPixel *p_partbuf;
     short h, scanln;
-    ubyte part;
 
-    part = ModDPt_BKGND;
+    p_partbuf = cryo_cyborg_part_buf_ptr(part);
+
     scanln = raw_file_scanline(equip_blokey_rect[part].Width);
     h = equip_blokey_rect[part].Height;
 
-    LbMemorySet(p_framebuf, 0, scanln * h);
+    LbMemorySet(p_partbuf, 0, scanln * h);
 }
 
-void cryo_cyborg_mods_blokey_bkgnd_to_buffer(ubyte *p_framebuf)
+/** Load cyborg shape background into part buffer.
+ *
+ * The background occupies the buffers for all parts,
+ * so it cannot be used at the same time as individual
+ * part buffers.
+ */
+void cryo_cyborg_part_buf_blokey_bkgnd_load(void)
 {
+    TbPixel *p_partbuf;
     long len;
     short h, scanln;
     ubyte part;
 
     part = ModDPt_BKGND;
+    p_partbuf = cryo_cyborg_part_buf_ptr(part);
+
     scanln = raw_file_scanline(equip_blokey_rect[part].Width);
     h = equip_blokey_rect[part].Height;
 
     {
         char locstr[52];
         sprint_cryo_cyborg_mods_static_fname(locstr, part, flic_mods);
-        len = LbFileLoadAt(locstr, p_framebuf);
+        len = LbFileLoadAt(locstr, p_partbuf);
     }
     if (len < 4) {
-        LbMemorySet(p_framebuf, 0, scanln * h);
+        LbMemorySet(p_partbuf, 0, scanln * h);
     }
 }
 
-void cryo_cyborg_mods_blokey_static_part_to_buffer(ubyte *p_partbuf, ubyte *p_mods_arr, ubyte part)
+void cryo_cyborg_part_buf_blokey_static_load(ubyte *p_mods_arr, ubyte part)
 {
+    TbPixel *p_scratch;
+    TbPixel *p_partbuf;
     long len;
+    short partbuf_scanln;
     short w, h;
+
+    p_scratch = anim_type_get_output_buffer(AniSl_BKGND);
+    p_partbuf = cryo_cyborg_part_buf_ptr(part);
 
     w = equip_blokey_rect[part].Width;
     h = equip_blokey_rect[part].Height;
@@ -558,62 +580,55 @@ void cryo_cyborg_mods_blokey_static_part_to_buffer(ubyte *p_partbuf, ubyte *p_mo
     {
         char locstr[52];
         sprint_cryo_cyborg_mods_static_fname(locstr, part, p_mods_arr);
-        len = LbFileLoadAt(locstr, p_partbuf);
+        len = LbFileLoadAt(locstr, p_scratch);
     }
     if (len < 4) {
-        LbMemorySet(p_partbuf, 0, w * h);
+        LbMemorySet(p_scratch, 0, w * h);
     }
+    partbuf_scanln = raw_file_scanline(w);
+
+    // Blit the current part image onto part buffer
+    ApScreenCopyRect(p_scratch, p_partbuf, w, partbuf_scanln, h);
 }
 
-void cryo_cyborg_mods_blokey_static_to_buffer(ubyte *p_framebuf, ubyte *p_scratchbuf, ubyte *p_mods_arr)
+void cryo_cyborg_part_buf_blokey_fli_frame_copy(ubyte part)
 {
-    short frame_scanln;
-    ubyte part;
+    TbPixel *p_flicbuf;
+    TbPixel *p_partbuf;
+    short partbuf_scanln;
+    short w, h;
 
-    frame_scanln = raw_file_scanline(equip_blokey_rect[ModDPt_BKGND].Width);
+    w = equip_blokey_rect[part].Width;
+    h = equip_blokey_rect[part].Height;
+
+    // Blit the current part image onto framebuf
+    p_flicbuf = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
+    p_partbuf = cryo_cyborg_part_buf_ptr(part);
+    partbuf_scanln = raw_file_scanline(w);
+
+    ApScreenCopyRect(p_flicbuf, p_partbuf, w, partbuf_scanln, h);
+}
+
+void cryo_cyborg_part_buf_blokey_static_clear_all(void)
+{
+    ubyte part;
 
     for (part = 0; part < 4; part++)
     {
-        ubyte *p_ldbuf;
-        ubyte *p_blbuf;
-        short w, h;
-
-        if (p_mods_arr[part] == 0)
-            continue;
-
-        w = equip_blokey_rect[part].Width;
-        h = equip_blokey_rect[part].Height;
-        cryo_cyborg_mods_blokey_static_part_to_buffer(p_scratchbuf, p_mods_arr, part);
-
-        // Blit the current part image onto framebuf
-        p_ldbuf = p_scratchbuf;
-        p_blbuf = p_framebuf;
-        p_blbuf += (equip_blokey_rect[part].X - equip_blokey_rect[ModDPt_BKGND].X);
-        p_blbuf += (equip_blokey_rect[part].Y - equip_blokey_rect[ModDPt_BKGND].Y) * frame_scanln;
-        ApScreenCopyRectColorKey(p_ldbuf, p_blbuf, w, frame_scanln, h, 0);
+        cryo_cyborg_part_buf_clear(part);
     }
 }
 
-void cryo_cyborg_mods_blokey_fli_frame_to_buffer(ubyte *p_framebuf, ubyte part)
+void cryo_cyborg_part_buf_blokey_static_load_all(ubyte *p_mods_arr)
 {
-    short frame_scanln;
+    ubyte part;
 
-    frame_scanln = raw_file_scanline(equip_blokey_rect[ModDPt_BKGND].Width);
-
+    for (part = 0; part < 4; part++)
     {
-        ubyte *p_ldbuf;
-        ubyte *p_blbuf;
-        short w, h;
+        if (p_mods_arr[part] == 0)
+            continue;
 
-        w = equip_blokey_rect[part].Width;
-        h = equip_blokey_rect[part].Height;
-
-        // Blit the current part image onto framebuf
-        p_ldbuf = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
-        p_blbuf = p_framebuf;
-        p_blbuf += (equip_blokey_rect[part].X - equip_blokey_rect[ModDPt_BKGND].X);
-        p_blbuf += (equip_blokey_rect[part].Y - equip_blokey_rect[ModDPt_BKGND].Y) * frame_scanln;
-        ApScreenCopyRectColorKey(p_ldbuf, p_blbuf, w, frame_scanln, h, 0);
+        cryo_cyborg_part_buf_blokey_static_load(p_mods_arr, part);
     }
 }
 
@@ -662,8 +677,8 @@ void flic_bkgnd_fill_output_buffer_anim_out(ubyte anislot, ubyte skip_part)
         bkgbuf = anim_type_get_output_buffer(AniSl_BKGND);
         obuf = anim_type_get_output_buffer(p_anim->Type);
 
-        cryo_cyborg_mods_blokey_bkgnd_to_buffer(obuf);
-        cryo_cyborg_mods_blokey_static_to_buffer(obuf, bkgbuf, old_flic_mods);
+        cryo_cyborg_part_buf_blokey_bkgnd_load();
+        cryo_cyborg_part_buf_blokey_static_load_all(old_flic_mods);
 
         // Now blit part of the background which we care about to the bkgbuf,
         // knowing we will play "out" anim for skip_part using that buffer
@@ -818,25 +833,72 @@ void blokey_bkgnd_data_to_screen(void)
         scr_x, scr_y, scr_x, scr_y, w, h);
 }
 
-/** Blit a color keyed frame of cyborg animation from buffer to screen.
+/** Blit all color keyed cyborg parts from part buffer to screen.
  */
-void blokey_flic_data_to_screen(void)
+void blokey_part_buf_static_data_to_screen(void)
 {
-    TbPixel *p_inp;
-    short scr_x, scr_y;
-    short w, h;
+    short scr_base_x, scr_base_y;
+    ubyte part;
 
-    scr_x = cryo_blokey_box.X + 63;
-    scr_y = cryo_blokey_box.Y + 1;
-    w = equip_blokey_rect[ModDPt_BKGND].Width;
-    h = equip_blokey_rect[ModDPt_BKGND].Height;
+    scr_base_x = cryo_blokey_box.X + 63;
+    scr_base_y = cryo_blokey_box.Y + 1;
 
-    p_inp = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
+    for (part = 0; part < 4; part++)
+    {
+        TbPixel *p_inp;
+        short scr_x, scr_y;
+        short scanln, h;
 
-    LbScreenSetGraphicsWindow(scr_x, scr_y, w, h);
+        scr_x = scr_base_x + equip_blokey_rect[part].X;
+        scr_y = scr_base_y + equip_blokey_rect[part].Y;
+        scanln = raw_file_scanline(equip_blokey_rect[part].Width);
+        h = equip_blokey_rect[part].Height;
 
-    ApScreenCopyColorKey(p_inp, lbDisplay.GraphicsWindowPtr,
-        lbDisplay.GraphicsWindowHeight, 0);
+        p_inp = cryo_cyborg_part_buf_ptr(part);
+
+        LbScreenSetGraphicsWindow(scr_x, scr_y, scanln, h);
+
+        ApScreenCopyColorKey(p_inp, lbDisplay.GraphicsWindowPtr,
+            lbDisplay.GraphicsWindowHeight, 0);
+    }
+
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
+        lbDisplay.GraphicsScreenHeight);
+}
+
+/** Blit color keyed breathing cyborg parts from part buffer to screen.
+ *
+ * While static parts are all separate, breathing parts consist
+ * of two elements: chest+head+arms, and legs.
+ */
+void blokey_part_buf_breath_data_to_screen(void)
+{
+    static ubyte ordered_parts[] = { ModDPt_LEGS, ModDPt_BREATH };
+    short scr_base_x, scr_base_y;
+    ubyte ordno;
+
+    scr_base_x = cryo_blokey_box.X + 63;
+    scr_base_y = cryo_blokey_box.Y + 1;
+
+    for (ordno = 0; ordno < sizeof(ordered_parts)/sizeof(ordered_parts[0]); ordno++)
+    {
+        TbPixel *p_inp;
+        short scr_x, scr_y;
+        short scanln, h;
+
+        ubyte part = ordered_parts[ordno];
+        scr_x = scr_base_x + equip_blokey_rect[part].X;
+        scr_y = scr_base_y + equip_blokey_rect[part].Y;
+        scanln = raw_file_scanline(equip_blokey_rect[part].Width);
+        h = equip_blokey_rect[part].Height;
+
+        p_inp = cryo_cyborg_part_buf_ptr(part);
+
+        LbScreenSetGraphicsWindow(scr_x, scr_y, scanln, h);
+
+        ApScreenCopyColorKey(p_inp, lbDisplay.GraphicsWindowPtr,
+            lbDisplay.GraphicsWindowHeight, 0);
+    }
 
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
@@ -844,14 +906,10 @@ void blokey_flic_data_to_screen(void)
 
 void blokey_static_flic_framebuf_back_reload(void)
 {
-    TbPixel *p_framebuf;
-    TbPixel *p_scratch;
     ubyte part;
 
-    p_framebuf = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
-    p_scratch = anim_type_get_output_buffer(AniSl_CYBORG_INOUT);
-    cryo_cyborg_mods_blokey_bkgnd_clear(p_framebuf);
-    cryo_cyborg_mods_blokey_static_to_buffer(p_framebuf, p_scratch, flic_mods);
+    cryo_cyborg_part_buf_blokey_static_clear_all();
+    cryo_cyborg_part_buf_blokey_static_load_all(flic_mods);
 
     for (part = 0; part < 4; part++)
     {
@@ -859,17 +917,6 @@ void blokey_static_flic_framebuf_back_reload(void)
             continue;
         mod_draw_states[part] = ModDSt_Unkn04;
     }
-}
-
-void blokey_flic_framebuf_back_blit(void)
-{
-    TbPixel *p_framebuf;
-    ubyte part;
-
-    part = current_drawing_mod;
-    p_framebuf = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
-
-    cryo_cyborg_mods_blokey_fli_frame_to_buffer(p_framebuf, part);
 }
 
 ushort cryo_ordpart_to_mod_type(ubyte ordpart, ubyte mver)
@@ -972,7 +1019,6 @@ void draw_blokey_body_mods(void)
         current_frame = 0;
         cryo_blokey_box.Flags |= GBxFlg_RadioBtn;
     }
-    draw_flic_purple_list(blokey_flic_data_to_screen);
 
     if ((mod_draw_states[0] & ModDSt_Unkn08) != 0)
     {
@@ -993,7 +1039,7 @@ void draw_blokey_body_mods(void)
             if ((mod_draw_states[part] & ModDSt_ModAnimIn) == 0)
                 continue;
             done = xdo_next_frame(AniSl_CYBORG_INOUT);
-            blokey_flic_framebuf_back_blit();
+            cryo_cyborg_part_buf_blokey_fli_frame_copy(current_drawing_mod);
             still_playing = 1;
             if (done != 0)
             {
@@ -1015,7 +1061,7 @@ void draw_blokey_body_mods(void)
             if ((mod_draw_states[part] & ModDSt_ModAnimOut) == 0)
                 continue;
             done = xdo_prev_frame(AniSl_CYBORG_INOUT);
-            blokey_flic_framebuf_back_blit();
+            cryo_cyborg_part_buf_blokey_fli_frame_copy(current_drawing_mod);
             still_playing = 1;
             if (done)
             {
@@ -1028,10 +1074,17 @@ void draw_blokey_body_mods(void)
         }
     }
 
+    // If not drawing breathing animation, then draw static parts
+    if (still_playing || (current_drawing_mod != ModDPt_BREATH))
+    {
+        draw_flic_purple_list(blokey_part_buf_static_data_to_screen);
+    }
+
     if (!still_playing && (current_drawing_mod == ModDPt_BREATH))
     {
         done = xdo_next_frame(AniSl_CYBORG_BRTH);
-        blokey_flic_framebuf_back_blit();
+        cryo_cyborg_part_buf_blokey_fli_frame_copy(current_drawing_mod);
+        draw_flic_purple_list(blokey_part_buf_breath_data_to_screen);
         still_playing = !done;
         current_frame++;
         if (current_frame == 26) {
@@ -1111,8 +1164,6 @@ ubyte show_cryo_blokey(struct ScreenBox *p_box)
 {
     if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
-        ubyte *p_inp;
-
         draw_flic_purple_list(blokey_bkgnd_data_to_screen);
         p_box->Flags |= GBxFlg_BkgndDrawn;
         update_flic_mods(old_flic_mods);
@@ -1120,8 +1171,7 @@ ubyte show_cryo_blokey(struct ScreenBox *p_box)
         reset_mod_draw_states_flag08();
         current_drawing_mod = ModDPt_CHEST;
 
-        p_inp = cryo_cyborg_part_buf_ptr(ModDPt_BKGND);
-        cryo_cyborg_mods_blokey_bkgnd_to_buffer(p_inp);
+        cryo_cyborg_part_buf_blokey_bkgnd_load();
         return 0;
     }
 

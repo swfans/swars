@@ -22,10 +22,29 @@
 #include "bfmemut.h"
 #include "bfscreen.h"
 #include "bfscrcopy.h"
+#include "bfutility.h"
 
 #include "app_sprite.h"
 #include "swlog.h"
 /******************************************************************************/
+
+void ApScreenCopyRect(TbPixel *sourceBuf, TbPixel *destBuf,
+  ushort sourceWidth, ushort destWidth, ushort height)
+{
+    ubyte *s;
+    ubyte *d;
+    short h;
+
+    s = sourceBuf;
+    d = destBuf;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
+    {
+        LbMemoryCopy(d, s, min(destWidth,sourceWidth));
+        s += sourceWidth;
+        d += destWidth;
+    }
+}
 
 void ApScreenCopyRectColorKey(TbPixel *sourceBuf, TbPixel *destBuf,
   ushort sourceWidth, ushort destWidth, ushort height, TbPixel ckey)
