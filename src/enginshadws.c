@@ -274,11 +274,11 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     transform_shpoint(&sp4, cor4_x, cor4_y - 8 * engn_yc, cor4_z);
 
     face = next_special_face4;
-    if (face >= mem_game[25].N)
+    if (face + 1 > mem_game[25].N)
         return;
 
     pt = next_screen_point;
-    if (pt + 4 >= mem_game[30].N)
+    if (pt + 4 > mem_game[30].N)
         return;
 
     next_special_face4++;

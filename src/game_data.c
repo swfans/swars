@@ -321,141 +321,104 @@ void adjust_memory_use(void)
     ulong total;
 
     total = 0;
+
+    // Bezier points are only used when editing maps
+    assert((i = get_memory_ptr_index((void **)&bezier_pts)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 1;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_objectives)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 1;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&spare_map_buffer)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 1;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_used_objectives)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 1000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_floor_tiles)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 1124;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_draw_list)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 2500;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_sort_sprites)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 1000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_sort_lines)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 700;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_screen_point_pool)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 18000; // every face and every face4 needs a few
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&prim_object_points)) != -1);
+    if ((ingame.LowerMemoryUse == 1) && (is_single_game || cmdln_param_bcg))
+        mem_game[i].N = 2000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&prim_object_faces)) != -1);
+    if ((ingame.LowerMemoryUse == 1) && (is_single_game || cmdln_param_bcg))
+        mem_game[i].N = 2000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&prim_object_faces4)) != -1);
+    if ((ingame.LowerMemoryUse == 1) && (is_single_game || cmdln_param_bcg))
+        mem_game[i].N = 2000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_object_faces)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 11000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_object_faces4)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 11000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_objects)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 1500;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_full_lights)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 1000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_col_vects_list)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 16000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
+    assert((i = get_memory_ptr_index((void **)&game_col_vects)) != -1);
+    if (ingame.LowerMemoryUse == 1)
+        mem_game[i].N = 9000;
+    total += mem_game[i].ESize * mem_game[i].N;
+
     if (ingame.LowerMemoryUse == 1)
     {
-        assert((i = get_memory_ptr_index((void **)&bezier_pts)) != -1);
-        mem_game[i].N = 1;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_objectives)) != -1);
-        mem_game[i].N = 1;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&spare_map_buffer)) != -1);
-        mem_game[i].N = 1;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_used_objectives)) != -1);
-        mem_game[i].N = 1000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_floor_tiles)) != -1);
-        mem_game[i].N = 1124;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_draw_list)) != -1);
-        mem_game[i].N = 2500;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_sort_sprites)) != -1);
-        mem_game[i].N = 1000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_sort_lines)) != -1);
-        mem_game[i].N = 700;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_screen_point_pool)) != -1);
-        mem_game[i].N = 3000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&prim_object_points)) != -1);
-        if ( is_single_game || cmdln_param_bcg )
-            mem_game[i].N = 2000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&prim_object_faces)) != -1);
-        if ( is_single_game || cmdln_param_bcg )
-            mem_game[i].N = 2000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&prim_object_faces4)) != -1);
-        if ( is_single_game || cmdln_param_bcg )
-            mem_game[i].N = 2000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_object_faces)) != -1);
-        mem_game[i].N = 11000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_object_faces4)) != -1);
-        mem_game[i].N = 11000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_objects)) != -1);
-        mem_game[i].N = 1500;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_full_lights)) != -1);
-        mem_game[i].N = 1000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_col_vects_list)) != -1);
-        mem_game[i].N = 16000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_col_vects)) != -1);
-        mem_game[i].N = 9000;
-        total += mem_game[i].ESize * mem_game[i].N;
-
         engine_mem_alloc_size = (2000000 + total + 0xFFFF) & ~0xFFFF;
         game_perspective = 5;
     } else
     {
-        assert((i = get_memory_ptr_index((void **)&bezier_pts)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_objectives)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&spare_map_buffer)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_used_objectives)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_floor_tiles)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_draw_list)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_sort_sprites)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_sort_lines)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_screen_point_pool)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&prim_object_points)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&prim_object_faces)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&prim_object_faces4)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_object_faces)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_object_faces4)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_objects)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_full_lights)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_col_vects_list)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
-        assert((i = get_memory_ptr_index((void **)&game_col_vects)) != -1);
-        total += mem_game[i].ESize * mem_game[i].N;
-
         engine_mem_alloc_size = (2850000 + total + 0xFFFF) & ~0xFFFF;
     }
     LOGSYNC("Set engine_mem_alloc_size=%u total=%lu", engine_mem_alloc_size, total);

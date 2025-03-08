@@ -609,13 +609,14 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, shor
     }
 
     pt = next_screen_point;
-    if (pt > mem_game[30].N - 5)
+    if (pt + 4 > mem_game[30].N)
         return NULL;
-    next_screen_point += 4;
 
     face = next_special_face4;
-    if (face > mem_game[25].N - 1)
+    if (face + 1 > mem_game[25].N)
         return NULL;
+
+    next_screen_point += 4;
     next_special_face4++;
 
     p_face4 = &game_special_object_faces4[face];
@@ -930,6 +931,10 @@ void draw_bang(struct SimpleThing *p_pow)
     draw_bang_phwoar(p_pow);
 }
 
+/**
+ *
+ * Before this call, the caller needs to ensure there is a free screen point.
+ */
 static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp, int offset_x, int offset_y, int offset_z, ushort mat, ushort pt)
 {
     struct SinglePoint *p_snpoint;
@@ -961,6 +966,8 @@ static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp, int offset_
         transform_shpoint(p_sp, dxc, dyc - 8 * engn_yc, dzc);
 
         pt = next_screen_point;
+        next_screen_point++;
+
         p_specpt = &game_screen_point_pool[pt];
         p_specpt->X = p_sp->X;
         p_specpt->Y = p_sp->Y;
@@ -968,7 +975,6 @@ static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp, int offset_
 
         p_snpoint->PointOffset = pt;
         p_snpoint->Flags = p_sp->Flags;
-        next_screen_point++;
     }
 }
 
@@ -1071,7 +1077,8 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
         struct SingleObjectFace3 *p_face;
         int depth_max, bckt;
 
-        if (next_screen_point > mem_game[30].N - 5)
+        // each transform_rot_object_shpoint() call could reserve a point
+        if (next_screen_point + 4 > mem_game[30].N)
             break;
 
         p_face = &game_object_faces[face];
@@ -1105,7 +1112,6 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
         }
 
         ubyte ditype;
-        dword_176D68++;
         if ((p_face->GFlags & 0x80u) == 0)
             ditype = 7;
         else
@@ -1113,7 +1119,9 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
         bckt = depth_max + 5000 - 250;
         if (bckt_max < bckt)
             bckt_max = bckt;
-        draw_item_add(ditype, face, bckt);
+        dword_176D68++;
+        if (!draw_item_add(ditype, face, bckt))
+            break;
     }
 
     faces_num = point_object->NumbFaces4;
@@ -1126,7 +1134,7 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
         struct SingleObjectFace4 *p_face4;
         int depth_max, bckt;
 
-        if (next_screen_point > mem_game[30].N - 5)
+        if (next_screen_point + 5 > mem_game[30].N)
             break;
 
         p_face4 = &game_object_faces4[face];
@@ -1174,8 +1182,8 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
         if (bckt_max < bckt)
             bckt_max = bckt;
         dword_176D68++;
-
-        draw_item_add(ditype, face, bckt);
+        if (!draw_item_add(ditype, face, bckt))
+            break;
     }
 
     // Plasma jumps when a vehicle got influenced by explosion or is crashing
@@ -1255,7 +1263,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleOb
         struct SingleObjectFace3 *p_face;
         int depth_max, bckt;
 
-        if (next_screen_point > mem_game[30].N - 5)
+        if (next_screen_point + 4 > mem_game[30].N)
             break;
 
         p_face = &game_object_faces[face];
@@ -1286,12 +1294,13 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleOb
         }
 
         ubyte ditype;
-        dword_176D68++;
-        ditype = 1;
+        ditype = DrIT_Unkn1;
         bckt = depth_max + 5000 - 150;
         if (bckt_max < bckt)
-           bckt_max = bckt;
-        draw_item_add(ditype, face, bckt);
+            bckt_max = bckt;
+        dword_176D68++;
+        if (!draw_item_add(ditype, face, bckt))
+            break;
     }
 
     faces_num = point_object->NumbFaces4;
@@ -1322,7 +1331,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleOb
         struct SingleObjectFace4 *p_face4;
         int depth_max, bckt;
 
-        if (next_screen_point > mem_game[30].N - 5)
+        if (next_screen_point + 5 > mem_game[30].N)
             break;
 
         p_face4 = &game_object_faces4[face];
@@ -1364,8 +1373,8 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleOb
         if (bckt_max < bckt)
             bckt_max = bckt;
         dword_176D68++;
-
-        draw_item_add(ditype, face, bckt);
+        if (!draw_item_add(ditype, face, bckt))
+            break;
     }
 
     return bckt_max;
@@ -1383,6 +1392,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
     int face;
     int snpoint;
     int obj_x, obj_y, obj_z;
+    int points_num;
     short depth_shift;
     TbBool starts_below_window;
 
@@ -1414,6 +1424,12 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
     if ((point_object->field_1C & 0x0100) != 0 && (word_1552F8 != 5))
         obj_y += waft_table[gameturn & 0x1F];
 
+    // Make sure we have enough free points to start drawing the object
+    points_num = point_object->EndPoint - point_object->StartPoint;
+    if (next_screen_point + 1 * points_num > mem_game[30].N)
+        return 0;
+
+
     for (snpoint = point_object->StartPoint; snpoint <= point_object->EndPoint; snpoint++)
     {
         struct SinglePoint *p_snpoint;
@@ -1422,9 +1438,6 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
 
         p_snpoint = &game_object_points[snpoint];
         int specpt;
-
-        if (next_screen_point > mem_game[30].N - 5)
-            break;
 
         dxc = p_snpoint->X + obj_x;
         dzc = p_snpoint->Z + obj_z;
@@ -1515,8 +1528,8 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 if (bckt_max < bckt)
                     bckt_max = bckt;
                 dword_176D68++;
-
-                draw_item_add(ditype, face, bckt);
+                if (!draw_item_add(ditype, face, bckt))
+                    break;
             }
             else
             {
@@ -1566,8 +1579,8 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 if (bckt_max < bckt)
                     bckt_max = bckt;
                 dword_176D68++;
-
-                draw_item_add(ditype, face, bckt);
+                if (!draw_item_add(ditype, face, bckt))
+                    break;
             }
         }
     }
@@ -1628,8 +1641,8 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 if (bckt_max < bckt)
                     bckt_max = bckt;
                 dword_176D68++;
-
-                draw_item_add(ditype, face, bckt);
+                if (!draw_item_add(ditype, face, bckt))
+                    break;
             }
         }
     }
@@ -1757,7 +1770,7 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, stru
         p_face4->PointNo[0] = pt4 + 2;
         p_face4->PointNo[1] = pt4 + 1;
         p_face4->PointNo[2] = pt3;
-        p_face4->PointNo[3] = pt4;
+        p_face4->PointNo[3] = pt4 + 0;
         p_face4->Shade0 = bright1;
         p_face4->Shade1 = bright1;
         p_face4->Shade3 = bright1;
@@ -1767,7 +1780,7 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, stru
 
         p_specpt1 = &game_screen_point_pool[pt4 + 2];
         p_specpt2 = &game_screen_point_pool[pt4 + 1];
-        p_specpt4 = &game_screen_point_pool[pt4];
+        p_specpt4 = &game_screen_point_pool[pt4 + 0];
 
         p_specpt4->X = cur_x;
         p_specpt4->Y = cur_y;
@@ -1778,7 +1791,8 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, stru
 
         pt4 += 3;
 
-        draw_item_add(DrIT_Unkn12, face, bckt);
+        if (!draw_item_add(DrIT_Unkn12, face, bckt))
+            break;
 
         cur_x = nxt_x;
         cur_y = nxt_y;
