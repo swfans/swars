@@ -149,13 +149,18 @@ You can now [start the game](#starting-the-game).
 
 ## Starting the game
 
-The original game should be started with parameters to play normally. While
+The original game needed to be started with parameters to play normally. While
 with SW Port this is no longer mandatory, the parameters can still be used,
-and many new ones are actually available. The typical command line for running
-on bash-like shell is:
+and many new ones are actually available. The executable can be run with
+`--help` parameter to show a short description of all aprameters.
+
+Parameter `-w` (used in the original game) is not recommended when running on
+new hardware.
+
+The typical command line for running SW Port on bash-like shell is:
 
 ```
-./swars -w -g
+./swars -g
 ```
 
 If running on Windows, the command line above should work as well. Though more
@@ -163,7 +168,7 @@ Windows-centric way of doing that is:
 
 
 ```
-swars.exe /w /g
+swars.exe /g
 ```
 
 The game will start with intro animation, and then present you with a menu where
