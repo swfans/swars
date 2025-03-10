@@ -45,6 +45,9 @@ extern struct SynTime global_date;
 extern struct SynTime research_curr_wep_date;
 extern struct SynTime research_curr_mod_date;
 
+short get_fe_max_detail_for_screen_res(short screen_width, short screen_height);
+void reload_background(void);
+
 void show_main_screen(void);
 void init_main_screen_boxes(void);
 void set_flag01_main_screen_boxes(void);

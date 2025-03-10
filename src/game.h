@@ -523,8 +523,6 @@ int xdo_prev_frame(ubyte anislot);
 
 void flic_unkn03(ubyte a1);
 
-void reload_background(void);
-
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);
 void read_user_settings(void);

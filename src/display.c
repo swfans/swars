@@ -5,12 +5,14 @@
 
 #include "display.h"
 
+#include "bffile.h"
 #include "bfscreen.h"
 #include "bfscrsurf.h"
 #include "bfpalette.h"
 #include "bfsprite.h"
 #include "bftext.h"
 #include "bfmouse.h"
+#include "bfplanar.h"
 #include "bfutility.h"
 #include "poly.h"
 
@@ -219,6 +221,36 @@ void show_black_screen(void)
     if (!was_locked)
         LbScreenUnlock();
     swap_wscreen();
+}
+
+void cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
+{
+    short cx, cy;
+
+    for (cy = y; cy < y+h; cy += spr->SHeight)
+    {
+        for (cx = x; cx < x+w; cx += spr->SWidth) {
+            LbSpriteDraw(cx, cy, spr);
+        }
+    }
+}
+
+void cover_screen_rect_with_raw_file(short x, short y, ushort w, ushort h, const char *fname)
+{
+    struct SSurface surf;
+    struct TbRect srect;
+    ubyte *inp_buf;
+
+    LbSetRect(&srect, 0, 0, w, h);
+    LbScreenSurfaceInit(&surf);
+    LbScreenSurfaceCreate(&surf, w, h);
+    inp_buf = LbScreenSurfaceLock(&surf);
+    LbFileLoadAt(fname, inp_buf);
+    LbScreenSurfaceUnlock(&surf);
+    LbScreenUnlock();
+    LbScreenSurfaceBlit(&surf, x, y, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
+    LbScreenSurfaceRelease(&surf);
+    LbScreenLock();
 }
 
 void update_unkn_changing_colors(void)

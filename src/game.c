@@ -678,36 +678,6 @@ void update_danger_music(ubyte a1)
     ingame.fld_unkC8B = 0;
 }
 
-void cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
-{
-    short cx, cy;
-
-    for (cy = y; cy < y+h; cy += spr->SHeight)
-    {
-        for (cx = x; cx < x+w; cx += spr->SWidth) {
-            LbSpriteDraw(cx, cy, spr);
-        }
-    }
-}
-
-void cover_screen_rect_with_raw_file(short x, short y, ushort w, ushort h, const char *fname)
-{
-    struct SSurface surf;
-    struct TbRect srect;
-    ubyte *inp_buf;
-
-    LbSetRect(&srect, 0, 0, w, h);
-    LbScreenSurfaceInit(&surf);
-    LbScreenSurfaceCreate(&surf, w, h);
-    inp_buf = LbScreenSurfaceLock(&surf);
-    LbFileLoadAt(fname, inp_buf);
-    LbScreenSurfaceUnlock(&surf);
-    LbScreenUnlock();
-    LbScreenSurfaceBlit(&surf, x, y, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
-    LbScreenSurfaceRelease(&surf);
-    LbScreenLock();
-}
-
 void ingame_palette_load(int pal_id)
 {
     char locstr[DISKPATH_SIZE];
@@ -5289,72 +5259,6 @@ void init_screen_boxes(void)
     init_cryo_screen_boxes();
     init_research_screen_boxes();
     init_equip_screen_shapes();
-}
-
-void reload_background(void)
-{
-    struct ScreenBufBkp bkp;
-
-    proj_origin.X = lbDisplay.GraphicsScreenWidth / 2 - 1;
-    proj_origin.Y = ((480 * 143) >> 8) + 1;
-    if (screentype == SCRT_MAINMENU || screentype == SCRT_LOGIN || restore_savegame)
-    {
-        screen_switch_to_custom_buffer(&bkp, back_buffer,
-          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-
-        cover_screen_rect_with_sprite(0, 0, lbDisplay.GraphicsScreenWidth,
-          lbDisplay.GraphicsScreenHeight, &sprites_Icons0_0[168]);
-
-        screen_load_backup_buffer(&bkp);
-    }
-    else
-    {
-        struct Campaign *p_campgn;
-        char str[52];
-        const char *campgn_mark;
-        const char *bkdata_dir;
-
-        p_campgn = &campaigns[background_type];
-        campgn_mark = p_campgn->ProjectorFnMk;
-        bkdata_dir = "qdata";
-
-        sprintf(str, "%s/%s-proj.dat", bkdata_dir, campgn_mark);
-
-        if ((lbDisplay.GraphicsScreenWidth == 640) &&
-          (lbDisplay.GraphicsScreenHeight == 480))
-        {
-            // If resolution matches, load the background in a simplified way
-            LbFileLoadAt(str, back_buffer);
-        }
-        else
-        {
-            short raw_w, raw_h;
-            short x, y;
-
-            raw_w = 640;
-            raw_h = 480;
-            x = (lbDisplay.GraphicsScreenWidth - raw_w) / 2;
-            y = 0;
-
-            screen_switch_to_custom_buffer(&bkp, back_buffer,
-              lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-
-            LbScreenClear(0);
-            // TODO menu scaling, maybe?
-            cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, str);
-
-            screen_load_backup_buffer(&bkp);
-        }
-    }
-
-    if (screentype == SCRT_EQUIP)
-    {
-        equip_update_for_selected_weapon();
-    }
-    if (screentype == SCRT_CRYO)
-    {
-        cryo_update_for_selected_cybmod();
-    }
 }
 
 void players_init_control_mode(void)

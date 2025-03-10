@@ -90,20 +90,27 @@ TbBool panel_for_speciifc_agent(short panel)
       p_panel->Type == PanT_AgentMedi || p_panel->Type == PanT_AgentWeapon);
 }
 
+short get_panel_max_detail_for_screen_res(short screen_width, short screen_height)
+{
+    short i, max_detail;
+    max_detail = 0;
+    for (i = 0; i <= MAX_SUPPORTED_SCREEN_HEIGHT/180; i++) {
+        if ((320 * (i+1) > screen_width) || (180 * (i+1) > screen_height))
+            break;
+        max_detail = i;
+    }
+    return max_detail;
+}
+
 TbResult load_pop_sprites_for_current_mode(void)
 {
     PathInfo *pinfo;
     const char *name;
     short styleno;
-    short i, max_detail;
+    short max_detail;
     TbResult ret;
 
-    max_detail = 0;
-    for (i = 0; i <= MAX_SUPPORTED_SCREEN_HEIGHT/180; i++) {
-        if ((320 * (i+1) > lbDisplay.GraphicsScreenWidth) || (180 * (i+1) > lbDisplay.GraphicsScreenHeight))
-            break;
-        max_detail = i;
-    }
+    max_detail = get_panel_max_detail_for_screen_res(lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
     pinfo = &game_dirs[DirPlace_Data];
     if (ingame.PanelPermutation >= 0) {

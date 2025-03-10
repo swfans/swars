@@ -32,6 +32,7 @@
 #include "app_sprite.h"
 #include "campaign.h"
 #include "display.h"
+#include "feequip.h"
 #include "femail.h"
 #include "fecryo.h"
 #include "feresearch.h"
@@ -125,6 +126,95 @@ void syntime_inc_day(struct SynTime *tm)
             tm->Month = 1;
             tm->Year %= 100;
         }
+    }
+}
+
+short get_fe_max_detail_for_screen_res(short screen_width, short screen_height)
+{
+    short i, max_detail;
+    max_detail = 0;
+    for (i = 0; i <= MAX_SUPPORTED_SCREEN_HEIGHT/180; i++) {
+        if ((320 * (i+1) > screen_width) || (240 * (i+1) > screen_height))
+            break;
+        max_detail = i;
+    }
+    return max_detail;
+}
+
+TbResult load_fe_background_up_to(const char *dir, const char *name, short styleno, short max_detail)
+{
+    char locstr[DISKPATH_SIZE];
+    short raw_w, raw_h;
+    short x, y;
+    short detail;
+
+    //TODO try from max detail to 0
+    detail = 1;
+    // Background raw image has extra 3/5 of both dimensions for aspect ratio compensation
+    raw_w = 320 * (detail + 1) * 8 / 5;
+    raw_h = 240 * (detail + 1) * 8 / 5;
+    x = (lbDisplay.GraphicsScreenWidth - raw_w) / 2;
+    y = (lbDisplay.GraphicsScreenHeight - raw_h) / 2;
+
+    sprintf(locstr, "%s/%s%hd-%hd.raw", dir, name, styleno, detail);
+    cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, locstr);
+    return Lb_OK;
+}
+
+TbResult load_fe_background_for_current_mode(void)
+{
+    char locname[16];
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
+    PathInfo *pinfo;
+    TbResult ret;
+    short max_detail;
+
+    max_detail = get_fe_max_detail_for_screen_res(lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+
+    pinfo = &game_dirs[DirPlace_QData];
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    sprintf(locname, "proj-%s", campgn_mark);
+
+    ret = load_fe_background_up_to(pinfo->directory, locname, 0, max_detail);
+    return ret;
+}
+
+void reload_background(void)
+{
+    struct ScreenBufBkp bkp;
+
+    proj_origin.X = lbDisplay.GraphicsScreenWidth / 2 - 1;
+    proj_origin.Y = ((480 * 143) >> 8) + 1;
+    if (screentype == SCRT_MAINMENU || screentype == SCRT_LOGIN || restore_savegame)
+    {
+        screen_switch_to_custom_buffer(&bkp, back_buffer,
+          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+
+        cover_screen_rect_with_sprite(0, 0, lbDisplay.GraphicsScreenWidth,
+          lbDisplay.GraphicsScreenHeight, &sprites_Icons0_0[168]);
+
+        screen_load_backup_buffer(&bkp);
+    }
+    else
+    {
+        screen_switch_to_custom_buffer(&bkp, back_buffer,
+          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+
+        LbScreenClear(0);
+        load_fe_background_for_current_mode();
+
+        screen_load_backup_buffer(&bkp);
+    }
+
+    if (screentype == SCRT_EQUIP)
+    {
+        equip_update_for_selected_weapon();
+    }
+    if (screentype == SCRT_CRYO)
+    {
+        cryo_update_for_selected_cybmod();
     }
 }
 
