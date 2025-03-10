@@ -141,24 +141,48 @@ short get_fe_max_detail_for_screen_res(short screen_width, short screen_height)
     return max_detail;
 }
 
-TbResult load_fe_background_up_to(const char *dir, const char *name, short styleno, short max_detail)
+TbResult load_raw_to_screen_with_detail(const char *dir,
+  const char *name, short raw_w, short raw_h, short styleno, short detail)
 {
     char locstr[DISKPATH_SIZE];
-    short raw_w, raw_h;
     short x, y;
-    short detail;
 
-    //TODO try from max detail to 0
-    detail = 1;
-    // Background raw image has extra 3/5 of both dimensions for aspect ratio compensation
-    raw_w = 320 * (detail + 1) * 8 / 5;
-    raw_h = 240 * (detail + 1) * 8 / 5;
     x = (lbDisplay.GraphicsScreenWidth - raw_w) / 2;
     y = (lbDisplay.GraphicsScreenHeight - raw_h) / 2;
 
     sprintf(locstr, "%s/%s%hd-%hd.raw", dir, name, styleno, detail);
     cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, locstr);
     return Lb_OK;
+}
+
+TbResult load_fe_background_up_to(const char *dir, const char *name,
+  short *p_scale, short styleno, short max_detail)
+{
+    short detail;
+    short raw_w, raw_h;
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    for (detail = max_detail; detail >= 0; detail--)
+    {
+        // Background raw image has extra 3/5 of both dimensions for aspect ratio compensation
+        raw_w = 320 * (detail + 1) * 8 / 5;
+        raw_h = 240 * (detail + 1) * 8 / 5;
+
+        ret = load_raw_to_screen_with_detail(dir, name, raw_w, raw_h,
+          styleno, detail);
+        if (ret != Lb_FAIL)
+            break;
+    }
+    if (detail < 0) {
+        LOGERR("Some '%s%hu' raw images not loaded, tried detail %hu..0",
+          name, styleno, max_detail);
+        detail = 0;
+    }
+    if (p_scale != NULL)
+        *p_scale = detail + 1;
+
+    return ret;
 }
 
 TbResult load_fe_background_for_current_mode(void)
@@ -177,7 +201,7 @@ TbResult load_fe_background_for_current_mode(void)
     campgn_mark = p_campgn->ProjectorFnMk;
     sprintf(locname, "proj-%s", campgn_mark);
 
-    ret = load_fe_background_up_to(pinfo->directory, locname, 0, max_detail);
+    ret = load_fe_background_up_to(pinfo->directory, locname, NULL, 0, max_detail);
     return ret;
 }
 
