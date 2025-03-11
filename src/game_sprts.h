@@ -117,12 +117,19 @@ TbResult load_sprites_wicons(ubyte **pp_buf, const char *dir);
 void setup_sprites_wicons(void);
 void reset_sprites_wicons(void);
 
+/** Loads panel sprites for frontend menu use.
+ *
+ * Panels are normally used in game. But few of their sprites are also
+ * re-used for the frontend menus. The sprites need to be recolored to
+ * match the frontend palette; we require sprites of detail one level
+ * smaller than the expected menu detail.
+ */
 TbResult load_sprites_fepanel(ubyte **pp_buf, const char *dir);
 void setup_sprites_fepanel(void);
 void reset_sprites_fepanel(void);
 
 TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
-  const char *dir, ushort styleno, ushort detail);
+  const char *dir, short styleno, short detail);
 void setup_sprites_fe_mouse_pointers(void);
 void reset_sprites_fe_mouse_pointers(void);
 
