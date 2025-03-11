@@ -49,17 +49,24 @@ ubyte *small_font_data_end;
 
 /******************************************************************************/
 
-/** Load sprites of given style and detail, to a preallocated area.
+/** Load sprites of given style and detail, to a preallocated area of specific size.
+ *
+ * Loads files to areas between given start and end pointers. Expects the loaded
+ * files to fit before the given end pointers.
+ * For DAT file, decreases the end pointer, setting it to the end of loaded data.
+ * For TAB file, clears any extra area above loaded data until the end pointer.
+ *
+ * The end pointers are expected to be initially set to max supported data size.
  */
-static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_dat_end,
+static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte **pp_dat_end,
   ubyte *p_spr, ubyte *p_spr_end, const char *dir, const char *name,
-  ushort styleno, ushort detail)
+  short styleno, short detail)
 {
     char locstr[DISKPATH_SIZE];
     long len;
     TbResult ret;
 
-    sprintf(locstr, "%s/%s%hu-%hu.tab", dir, name, styleno, detail);
+    sprintf(locstr, "%s/%s%hd-%hd.tab", dir, name, styleno, detail);
     if (!LbFileExists(locstr)) {
         LOGSYNC("Could not find \"%s\" file", locstr);
         LbMemorySet(p_spr, 0, p_spr_end - p_spr);
@@ -68,31 +75,34 @@ static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_dat_end,
 
     ret = Lb_SUCCESS;
 
-    sprintf(locstr, "%s/%s%hu-%hu.dat", dir, name, styleno, detail);
+    sprintf(locstr, "%s/%s%hd-%hd.dat", dir, name, styleno, detail);
     len = LbFileLoadAt(locstr, p_dat);
     if (len == -1) {
         ret = Lb_FAIL;
         len = 0;
     }
-    else if (p_dat + len > p_dat_end) {
+    else if (p_dat + len > (*pp_dat_end)) {
         ret = Lb_OK;
         LOGERR("Load caused overflow, file \"%s\"", locstr);
     }
+    else {
+        *pp_dat_end = p_dat + len;
+    }
 
-    sprintf(locstr, "%s/%s%hu-%hu.tab", dir, name, styleno, detail);
+    sprintf(locstr, "%s/%s%hd-%hd.tab", dir, name, styleno, detail);
     len = LbFileLoadAt(locstr, p_spr);
     if (len == -1) {
         ret = Lb_FAIL;
         LbMemorySet(p_spr, 0, p_spr_end - p_spr);
     }
     else if (p_spr + len > p_spr_end) {
-        ret = Lb_OK;
+        if (ret == Lb_SUCCESS) ret = Lb_OK;
         LOGERR("Load caused overflow, file \"%s\"", locstr);
         // Clear the overflown data
         LbMemorySet(p_spr + len, 0, p_spr + len - p_spr_end);
     }
     else if (p_spr + len < p_spr_end) {
-        ret = Lb_OK;
+        if (ret == Lb_SUCCESS) ret = Lb_OK;
         // If loaded file is smaller than allocated space, clear the rest; we do not access
         // data pointer for zero-sized sprites, so this is enough as safety measure
         LbMemorySet(p_spr + len, 0, p_spr_end - p_spr - len);
@@ -109,20 +119,23 @@ static inline TbResult load_any_sprites_up_to(const char *dir, const char *name,
     TbResult ret;
 
     if (p_sprites_end - p_sprites < min_sprites) {
-        LOGERR("Preallocated area for %d '%s%hu' sprites is below expected minimum %d",
+        LOGERR("Preallocated area for %d '%s%hd' sprites is below expected minimum %d",
          p_sprites_end - p_sprites, name, styleno, min_sprites);
     }
     ret = Lb_FAIL;
     for (detail = max_detail; detail >= 0; detail--)
     {
-        ret = load_sprites_with_detail(p_data, p_data_end,
+        ubyte *loc_data_end;
+
+        loc_data_end = p_data_end;
+        ret = load_sprites_with_detail(p_data, &loc_data_end,
           (ubyte *)p_sprites, (ubyte *)p_sprites_end,
           dir, name, styleno, detail);
         if (ret != Lb_FAIL)
             break;
     }
     if (detail < 0) {
-        LOGERR("Some '%s%hu' sprites not loaded, tried detail %hu..0",
+        LOGERR("Some '%s%hd' sprites not loaded, tried detail %hd..0",
           name, styleno, max_detail);
         detail = 0;
     }
@@ -377,8 +390,7 @@ void reset_sprites_big_font(void)
 TbResult load_sprites_small_font_up_to(const char *dir, short max_detail)
 {
     const short styleno = 0;
-    // TODO there should be 224 min sprites
-    return load_any_sprites_up_to(dir, "fontc", 205, small_font, small_font_end,
+    return load_any_sprites_up_to(dir, "fontc", 224, small_font, small_font_end,
       small_font_data, small_font_data_end, NULL, styleno, max_detail);
 }
 

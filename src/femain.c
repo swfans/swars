@@ -146,13 +146,14 @@ TbResult load_raw_to_screen_with_detail(const char *dir,
 {
     char locstr[DISKPATH_SIZE];
     short x, y;
+    TbResult ret;
 
     x = (lbDisplay.GraphicsScreenWidth - raw_w) / 2;
     y = (lbDisplay.GraphicsScreenHeight - raw_h) / 2;
 
     sprintf(locstr, "%s/%s%hd-%hd.raw", dir, name, styleno, detail);
-    cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, locstr);
-    return Lb_OK;
+    ret = cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, locstr);
+    return ret;
 }
 
 TbResult load_fe_background_up_to(const char *dir, const char *name,
@@ -1381,7 +1382,7 @@ void init_global_boxes(void)
     global_top_bar_box.Y = 4;
     start_x = (scr_w - global_apps_bar_box.Width) / 2;
     global_apps_bar_box.X = start_x;
-    global_apps_bar_box.Y = 432;
+    global_apps_bar_box.Y = lbDisplay.GraphicsWindowHeight - global_apps_bar_box.Height;
 }
 
 void show_mission_loading_screen(void)

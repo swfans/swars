@@ -223,34 +223,43 @@ void show_black_screen(void)
     swap_wscreen();
 }
 
-void cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
+TbResult cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
 {
     short cx, cy;
+    TbResult ret;
 
+    ret = Lb_FAIL;
     for (cy = y; cy < y+h; cy += spr->SHeight)
     {
         for (cx = x; cx < x+w; cx += spr->SWidth) {
-            LbSpriteDraw(cx, cy, spr);
+            ret = LbSpriteDraw(cx, cy, spr);
         }
     }
+    return ret;
 }
 
-void cover_screen_rect_with_raw_file(short x, short y, ushort w, ushort h, const char *fname)
+TbResult cover_screen_rect_with_raw_file(short x, short y, ushort w, ushort h, const char *fname)
 {
     struct SSurface surf;
     struct TbRect srect;
     ubyte *inp_buf;
+    TbResult ret;
 
     LbSetRect(&srect, 0, 0, w, h);
     LbScreenSurfaceInit(&surf);
     LbScreenSurfaceCreate(&surf, w, h);
     inp_buf = LbScreenSurfaceLock(&surf);
-    LbFileLoadAt(fname, inp_buf);
+    ret = LbFileLoadAt(fname, inp_buf);
     LbScreenSurfaceUnlock(&surf);
+    if (ret == Lb_FAIL) {
+        LbScreenSurfaceRelease(&surf);
+        return ret;
+    }
     LbScreenUnlock();
-    LbScreenSurfaceBlit(&surf, x, y, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
+    ret = LbScreenSurfaceBlit(&surf, x, y, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
     LbScreenSurfaceRelease(&surf);
     LbScreenLock();
+    return ret;
 }
 
 void update_unkn_changing_colors(void)
