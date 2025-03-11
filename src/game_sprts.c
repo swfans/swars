@@ -169,34 +169,26 @@ void reset_mouse_pointers(void)
 
 TbResult load_sprites_icons(ubyte **pp_buf, const char *dir)
 {
-    char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
-    long len;
+    ushort min_sprites;
+    short detail;
     TbResult ret;
 
+    min_sprites = 170;
+    detail = 0;
     p_buf = *pp_buf;
-    ret = Lb_OK;
-
-    sprites_Icons0_0_data = p_buf;
-    sprintf(locstr, "%s/icons0-0.dat", dir);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    p_buf += len;
     sprites_Icons0_0 = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/icons0-0.tab", dir);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 32 * sizeof(struct TbSprite);
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
+    p_buf += min_sprites * sizeof(struct TbSprite);
     sprites_Icons0_0_end = (struct TbSprite *)p_buf;
+    sprites_Icons0_0_data = p_buf;
+    p_buf += min_sprites * 4096 * (detail + 1);
 
-    *pp_buf = p_buf;
+    ret = load_sprites_with_detail(sprites_Icons0_0_data, &p_buf,
+      (ubyte *)sprites_Icons0_0, (ubyte *)sprites_Icons0_0_end, dir, "icons", 0, detail);
+
+    if (ret != Lb_FAIL)
+        *pp_buf = p_buf;
+
     return ret;
 }
 
