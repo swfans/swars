@@ -1487,7 +1487,7 @@ TbResult init_read_all_sprite_files(void)
     if (tret == Lb_OK)
         tret = ret;
 
-    ret = load_sprites_fepanel(&p_buf, pinfo->directory);
+    ret = load_sprites_fepanel(&p_buf, pinfo->directory, 0, 0);
     if (tret == Lb_OK)
         tret = ret;
 
@@ -1507,11 +1507,11 @@ TbResult init_read_all_sprite_files(void)
     if (tret == Lb_OK)
         tret = ret;
 
-    ret = load_sprites_med2_font(&p_buf, pinfo->directory);
+    ret = load_sprites_med2_font(&p_buf, pinfo->directory, 2, 1);
     if (tret == Lb_OK)
         tret = ret;
 
-    ret = load_sprites_small2_font(&p_buf, pinfo->directory);
+    ret = load_sprites_small2_font(&p_buf, pinfo->directory, 2, 0);
     if (tret == Lb_OK)
         tret = ret;
 

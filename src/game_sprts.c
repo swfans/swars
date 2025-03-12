@@ -403,15 +403,14 @@ void reset_sprites_small_med_font(void)
     LbSpriteReset(small_med_font, small_med_font_end, small_med_font_data);
 }
 
-TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_med2_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
     ubyte *p_buf;
     ushort min_sprites;
-    short max_detail;
     TbResult ret;
 
     min_sprites = 224;
-    max_detail = 1;
     p_buf = *pp_buf;
     med2_font = (struct TbSprite *)p_buf;
     p_buf += min_sprites * sizeof(struct TbSprite);
@@ -420,7 +419,7 @@ TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir)
     p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
     ret = load_any_sprites_up_to(dir, "fontc", min_sprites, med2_font, med2_font_end,
-      med2_font_data, &p_buf, NULL, 2, max_detail);
+      med2_font_data, &p_buf, NULL, styleno, max_detail);
 
     if (ret != Lb_FAIL)
         *pp_buf = p_buf;
@@ -438,15 +437,14 @@ void reset_sprites_med2_font(void)
     LbSpriteReset(med2_font, med2_font_end, med2_font_data);
 }
 
-TbResult load_sprites_small2_font(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_small2_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
     ubyte *p_buf;
     ushort min_sprites;
-    short max_detail;
     TbResult ret;
 
     min_sprites = 224;
-    max_detail = 0;
     p_buf = *pp_buf;
     small2_font = (struct TbSprite *)p_buf;
     p_buf += min_sprites * sizeof(struct TbSprite);
@@ -455,7 +453,7 @@ TbResult load_sprites_small2_font(ubyte **pp_buf, const char *dir)
     p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
     ret = load_any_sprites_up_to(dir, "fontc", min_sprites, small2_font, small2_font_end,
-      small2_font_data, &p_buf, NULL, 2, max_detail);
+      small2_font_data, &p_buf, NULL, styleno, max_detail);
 
     if (ret != Lb_FAIL)
         *pp_buf = p_buf;
@@ -533,15 +531,14 @@ void debug_multicolor_sprite(int idx)
     LOGDBG("m_sprites: %s", strdata);
 }
 
-TbResult load_sprites_fepanel(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_fepanel(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
     ubyte *p_buf;
     ushort min_sprites;
-    short max_detail;
     TbResult ret;
 
     min_sprites = 150;
-    max_detail = 0;
     p_buf = *pp_buf;
     fepanel_sprites = (struct TbSprite *)p_buf;
     p_buf += min_sprites * sizeof(struct TbSprite);
@@ -550,7 +547,7 @@ TbResult load_sprites_fepanel(ubyte **pp_buf, const char *dir)
     p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
     ret = load_any_sprites_up_to(dir, "panel", min_sprites, fepanel_sprites, fepanel_sprites_end,
-      fepanel_sprites_data, &p_buf, NULL, 0, max_detail);
+      fepanel_sprites_data, &p_buf, NULL, styleno, max_detail);
 
     if (ret != Lb_FAIL)
         *pp_buf = p_buf;

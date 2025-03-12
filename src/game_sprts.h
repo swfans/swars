@@ -125,7 +125,8 @@ void reset_sprites_wicons(void);
  * match the frontend palette; we require sprites of detail one level
  * smaller than the expected menu detail.
  */
-TbResult load_sprites_fepanel(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_fepanel(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_fepanel(void);
 void reset_sprites_fepanel(void);
 
@@ -151,7 +152,8 @@ TbResult load_sprites_med_font(ubyte **pp_buf,
 void setup_sprites_med_font(void);
 void reset_sprites_med_font(void);
 
-TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_med2_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_med2_font(void);
 void reset_sprites_med2_font(void);
 
@@ -160,7 +162,8 @@ TbResult load_sprites_big_font(ubyte **pp_buf,
 void setup_sprites_big_font(void);
 void reset_sprites_big_font(void);
 
-TbResult load_sprites_small2_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_small2_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_small2_font(void);
 void reset_sprites_small2_font(void);
 
