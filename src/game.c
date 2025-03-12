@@ -6786,7 +6786,7 @@ void mouse_sprite_animate(void)
     {
       if (++mouse_sprite_anim_frame > 7)
           mouse_sprite_anim_frame = 0;
-      LbMouseChangeSprite(&unk3_sprites[mouse_sprite_anim_frame + 1]);
+      LbMouseChangeSprite(&fe_mouseptr_sprites[mouse_sprite_anim_frame + 1]);
     }
 }
 

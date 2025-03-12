@@ -59,17 +59,17 @@ extern struct TbSprite *big_font;
 extern struct TbSprite *big_font_end;
 extern ubyte *big_font_data;
 
-extern struct TbSprite *sprites_Icons0_0;
-extern struct TbSprite *sprites_Icons0_0_end;
-extern ubyte *sprites_Icons0_0_data;
+extern struct TbSprite *fe_icons0_sprites;
+extern struct TbSprite *fe_icons0_sprites_end;
+extern ubyte *fe_icons0_sprites_data;
 
 extern struct TbSprite *unk1_sprites;
 extern struct TbSprite *unk1_sprites_end;
 extern ubyte *unk1_sprites_data;
 
-extern struct TbSprite *unk3_sprites;
-extern struct TbSprite *unk3_sprites_end;
-extern ubyte *unk3_sprites_data;
+extern struct TbSprite *fe_mouseptr_sprites;
+extern struct TbSprite *fe_mouseptr_sprites_end;
+extern ubyte *fe_mouseptr_sprites_data;
 
 /** Panel sprites, but loaded for front-end menu purposes.
  * The main purpose is to get small weapon sprites.

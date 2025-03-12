@@ -65,7 +65,7 @@ extern ubyte byte_1C4975;
 extern ubyte byte_1C4976;
 
 extern ubyte mo_from_agent;
-extern struct TbSprite *sprites_Icons0_0;
+extern struct TbSprite *fe_icons0_sprites;
 
 extern char unkn41_text[];
 extern char equip_cost_text[20];
@@ -379,17 +379,17 @@ void draw_agent_panel_shape(struct ScreenShape *shape, ushort spridx, ubyte gbst
         lbDisplay.DrawFlags = 0;
     }
     draw_sprite_purple_list(shape->PtX[0] - 59, shape->PtY[2] - 3,
-      &sprites_Icons0_0[139]);
+      &fe_icons0_sprites[139]);
     if ((gbstate == GBxSta_HLIGHT2) || (gbstate == GBxSta_HLIGHT1)) {
         lbDisplay.DrawFlags = 0;
     }
     if (gbstate == GBxSta_HLIGHT2) {
         draw_sprite_purple_list(shape->PtX[0] - 59, shape->PtY[2] - 3,
-          &sprites_Icons0_0[144]);
+          &fe_icons0_sprites[144]);
     }
     lbDisplay.DrawFlags |= 0x8000;
     draw_sprite_purple_list(shape->PtX[1] - 16, shape->PtY[1] + 8,
-      &sprites_Icons0_0[spridx]);
+      &fe_icons0_sprites[spridx]);
     lbDisplay.DrawFlags &= ~0x8000;
 
     lbDisplay.DrawFlags = 0;

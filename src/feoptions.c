@@ -47,7 +47,7 @@ extern short word_1C4866[3];
 
 extern short textpos[10];
 
-extern struct TbSprite *sprites_Icons0_0;
+extern struct TbSprite *fe_icons0_sprites;
 
 // Shared with other screens
 extern struct ScreenBox controls_keylist_box;
@@ -148,7 +148,7 @@ void draw_vert_slider_left_arrow(struct ScreenBox *box)
     {
         lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
-    draw_sprite_purple_list(box->X, box->Y, &sprites_Icons0_0[108]);
+    draw_sprite_purple_list(box->X, box->Y, &fe_icons0_sprites[108]);
 }
 
 TbBool input_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
@@ -182,7 +182,7 @@ void draw_vert_slider_right_arrow(struct ScreenBox *box)
     {
         lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
-    draw_sprite_purple_list(box->X - 7, box->Y, &sprites_Icons0_0[109]);
+    draw_sprite_purple_list(box->X - 7, box->Y, &fe_icons0_sprites[109]);
 }
 
 TbBool input_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)

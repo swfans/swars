@@ -44,7 +44,7 @@ extern struct ScreenButton world_info_ACCEPT_button;
 extern struct ScreenButton world_info_CANCEL_button;
 extern struct ScreenBox world_landmap_box;
 
-extern struct TbSprite *sprites_Icons0_0;
+extern struct TbSprite *fe_icons0_sprites;
 
 extern short word_155110[6];
 extern ubyte byte_15511C;// = 1;
@@ -117,7 +117,7 @@ TbBool draw_world_landmass_projector_startup(struct ScreenBox *box)
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_line_purple_list(proj_origin.X, proj_origin.Y, x2, y2, 174);
         lbDisplay.DrawFlags = 0;
-        draw_sprite_purple_list(x2 - 1, y2 - 1, &unk3_sprites[12]);
+        draw_sprite_purple_list(x2 - 1, y2 - 1, &fe_mouseptr_sprites[12]);
 
         tx = box->Timer2 * (word_1C48A2[i] + box->X - proj_origin.X);
         ty = box->Timer2 * (word_1C48AE[i] + box->Y - proj_origin.Y);
@@ -127,7 +127,7 @@ TbBool draw_world_landmass_projector_startup(struct ScreenBox *box)
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_line_purple_list(proj_origin.X, proj_origin.Y, x2, y2, 174);
         lbDisplay.DrawFlags = 0;
-        draw_sprite_purple_list(x2 - 1, y2 - 1, &unk3_sprites[12]);
+        draw_sprite_purple_list(x2 - 1, y2 - 1, &fe_mouseptr_sprites[12]);
     }
     box->Timer2 += box->DrawSpeed;
     return (box->Timer2 >= 24);
@@ -269,13 +269,13 @@ TbBool draw_world_landmass_projector(struct ScreenBox *box)
             if (px != 0)
             {
                 draw_sprite_purple_list(box->X + px - 1, box->Y + py - 1,
-                  &unk3_sprites[12]);
+                  &fe_mouseptr_sprites[12]);
             }
             px = arr[k - tmc + 0];
             py = arr[k - tmc + 1];
             if (px)
                 draw_sprite_purple_list(box->X + px - 1, box->Y + py - 1,
-                  &unk3_sprites[12]);
+                  &fe_mouseptr_sprites[12]);
         }
     }
     box->Timer2 += 2 * tm_mul;
@@ -364,9 +364,9 @@ void draw_world_cities_names(struct ScreenBox *box)
         {
             short w, dim;
 
-            draw_sprite_purple_list(cities[city].X - 1, cities[city].Y - 1, &unk3_sprites[12]);
+            draw_sprite_purple_list(cities[city].X - 1, cities[city].Y - 1, &fe_mouseptr_sprites[12]);
             if ((cities[city].Flags & CitF_Unkn20) != 0)
-                draw_sprite_purple_list(cities[city].X - 4, cities[city].Y - 14, &sprites_Icons0_0[169]);
+                draw_sprite_purple_list(cities[city].X - 4, cities[city].Y - 14, &fe_icons0_sprites[169]);
             w = 4 - (gameturn & 3);
             dim = 2 * w + 1;
             if ((cities[city].Flags & CitF_Unkn01) != 0)

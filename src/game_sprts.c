@@ -180,14 +180,14 @@ TbResult load_sprites_icons(ubyte **pp_buf, const char *dir)
     min_sprites = 170;
     detail = 1;
     p_buf = *pp_buf;
-    sprites_Icons0_0 = (struct TbSprite *)p_buf;
+    fe_icons0_sprites = (struct TbSprite *)p_buf;
     p_buf += min_sprites * sizeof(struct TbSprite);
-    sprites_Icons0_0_end = (struct TbSprite *)p_buf;
-    sprites_Icons0_0_data = p_buf;
+    fe_icons0_sprites_end = (struct TbSprite *)p_buf;
+    fe_icons0_sprites_data = p_buf;
     p_buf += min_sprites * 4096 * (detail + 1);
 
-    ret = load_sprites_with_detail(sprites_Icons0_0_data, &p_buf,
-      (ubyte *)sprites_Icons0_0, (ubyte *)sprites_Icons0_0_end, dir, "icons", 0, detail);
+    ret = load_sprites_with_detail(fe_icons0_sprites_data, &p_buf,
+      (ubyte *)fe_icons0_sprites, (ubyte *)fe_icons0_sprites_end, dir, "icons", 0, detail);
 
     if (ret != Lb_FAIL)
         *pp_buf = p_buf;
@@ -197,12 +197,12 @@ TbResult load_sprites_icons(ubyte **pp_buf, const char *dir)
 
 void setup_sprites_icons(void)
 {
-    LbSpriteSetup(sprites_Icons0_0, sprites_Icons0_0_end, sprites_Icons0_0_data);
+    LbSpriteSetup(fe_icons0_sprites, fe_icons0_sprites_end, fe_icons0_sprites_data);
 }
 
 void reset_sprites_icons(void)
 {
-    LbSpriteReset(sprites_Icons0_0, sprites_Icons0_0_end, sprites_Icons0_0_data);
+    LbSpriteReset(fe_icons0_sprites, fe_icons0_sprites_end, fe_icons0_sprites_data);
 }
 
 TbResult load_sprites_wicons(ubyte **pp_buf, const char *dir)
@@ -257,14 +257,14 @@ TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
 
     min_sprites = 15;
     p_buf = *pp_buf;
-    unk3_sprites = (struct TbSprite *)p_buf;
+    fe_mouseptr_sprites = (struct TbSprite *)p_buf;
     p_buf += min_sprites * sizeof(struct TbSprite);
-    unk3_sprites_end = (struct TbSprite *)p_buf;
-    unk3_sprites_data = p_buf;
+    fe_mouseptr_sprites_end = (struct TbSprite *)p_buf;
+    fe_mouseptr_sprites_data = p_buf;
     p_buf += min_sprites * 4096 * (detail + 1);
 
-    ret = load_sprites_with_detail(unk3_sprites_data, &p_buf,
-      (ubyte *)unk3_sprites, (ubyte *)unk3_sprites_end, dir, "mouse", styleno, detail);
+    ret = load_sprites_with_detail(fe_mouseptr_sprites_data, &p_buf,
+      (ubyte *)fe_mouseptr_sprites, (ubyte *)fe_mouseptr_sprites_end, dir, "mouse", styleno, detail);
 
     if (ret != Lb_FAIL)
         *pp_buf = p_buf;
@@ -274,12 +274,12 @@ TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
 
 void setup_sprites_fe_mouse_pointers(void)
 {
-    LbSpriteSetup(unk3_sprites, unk3_sprites_end, unk3_sprites_data);
+    LbSpriteSetup(fe_mouseptr_sprites, fe_mouseptr_sprites_end, fe_mouseptr_sprites_data);
 }
 
 void reset_sprites_fe_mouse_pointers(void)
 {
-    LbSpriteReset(unk3_sprites, unk3_sprites_end, unk3_sprites_data);
+    LbSpriteReset(fe_mouseptr_sprites, fe_mouseptr_sprites_end, fe_mouseptr_sprites_data);
 }
 
 TbResult load_sprites_med_font(ubyte **pp_buf, const char *dir)
