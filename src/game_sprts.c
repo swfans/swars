@@ -174,20 +174,21 @@ TbResult load_sprites_icons(ubyte **pp_buf, const char *dir)
 {
     ubyte *p_buf;
     ushort min_sprites;
-    short detail;
+    short max_detail;
     TbResult ret;
 
     min_sprites = 170;
-    detail = 1;
+    max_detail = 1;
     p_buf = *pp_buf;
     fe_icons0_sprites = (struct TbSprite *)p_buf;
     p_buf += min_sprites * sizeof(struct TbSprite);
     fe_icons0_sprites_end = (struct TbSprite *)p_buf;
     fe_icons0_sprites_data = p_buf;
-    p_buf += min_sprites * 4096 * (detail + 1);
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    ret = load_sprites_with_detail(fe_icons0_sprites_data, &p_buf,
-      (ubyte *)fe_icons0_sprites, (ubyte *)fe_icons0_sprites_end, dir, "icons", 0, detail);
+    ret = load_any_sprites_up_to(dir, "icons", min_sprites,
+      fe_icons0_sprites, fe_icons0_sprites_end,
+      fe_icons0_sprites_data, &p_buf, NULL, 0, max_detail);
 
     if (ret != Lb_FAIL)
         *pp_buf = p_buf;
@@ -249,7 +250,7 @@ void reset_sprites_wicons(void)
 }
 
 TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
-  const char *dir, short styleno, short detail)
+  const char *dir, short styleno, short max_detail)
 {
     ubyte *p_buf;
     ushort min_sprites;
@@ -261,10 +262,11 @@ TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
     p_buf += min_sprites * sizeof(struct TbSprite);
     fe_mouseptr_sprites_end = (struct TbSprite *)p_buf;
     fe_mouseptr_sprites_data = p_buf;
-    p_buf += min_sprites * 4096 * (detail + 1);
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    ret = load_sprites_with_detail(fe_mouseptr_sprites_data, &p_buf,
-      (ubyte *)fe_mouseptr_sprites, (ubyte *)fe_mouseptr_sprites_end, dir, "mouse", styleno, detail);
+    ret = load_any_sprites_up_to(dir, "mouse", min_sprites,
+      fe_mouseptr_sprites, fe_mouseptr_sprites_end,
+      fe_mouseptr_sprites_data, &p_buf, NULL, styleno, max_detail);
 
     if (ret != Lb_FAIL)
         *pp_buf = p_buf;

@@ -129,7 +129,7 @@ void setup_sprites_fepanel(void);
 void reset_sprites_fepanel(void);
 
 TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
-  const char *dir, short styleno, short detail);
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_fe_mouse_pointers(void);
 void reset_sprites_fe_mouse_pointers(void);
 
