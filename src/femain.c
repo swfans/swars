@@ -70,7 +70,7 @@ extern struct ScreenButton alert_OK_button;
 
 extern struct ScreenTextBox loading_INITIATING_box;
 
-extern struct TbSprite *fe_icons0_sprites;
+extern struct TbSprite *fe_icons_sprites;
 
 extern ubyte byte_155124[];
 extern ubyte byte_15512C[];
@@ -218,7 +218,7 @@ void reload_background(void)
           lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
         cover_screen_rect_with_sprite(0, 0, lbDisplay.GraphicsScreenWidth,
-          lbDisplay.GraphicsScreenHeight, &fe_icons0_sprites[168]);
+          lbDisplay.GraphicsScreenHeight, &fe_icons_sprites[168]);
 
         screen_load_backup_buffer(&bkp);
     }
@@ -833,10 +833,10 @@ void draw_app_icon_hilight(short x, short y, ubyte iconid, ubyte aframe)
     struct TbSprite *spr;
 
     lbDisplay.DrawFlags |= 0x8000;
-    spr = &fe_icons0_sprites[aframe + byte_155124[iconid] + byte_15512C[iconid]];
+    spr = &fe_icons_sprites[aframe + byte_155124[iconid] + byte_15512C[iconid]];
     draw_sprite_purple_list(x, y, spr);
     lbDisplay.DrawFlags = 0;
-    spr = &fe_icons0_sprites[aframe + byte_155124[iconid]];
+    spr = &fe_icons_sprites[aframe + byte_155124[iconid]];
     draw_sprite_purple_list(x, y, spr);
     lbDisplay.DrawFlags = 0;
 }
@@ -846,7 +846,7 @@ void draw_app_icon_normal(short x, short y, ubyte iconid, ubyte aframe)
     struct TbSprite *spr;
 
     lbDisplay.DrawFlags |= 0x8000;
-    spr = &fe_icons0_sprites[aframe + byte_155124[iconid] + byte_15512C[iconid]];
+    spr = &fe_icons_sprites[aframe + byte_155124[iconid] + byte_15512C[iconid]];
     draw_sprite_purple_list(x, y, spr);
     lbDisplay.DrawFlags = 0;
 }
@@ -859,7 +859,7 @@ void draw_unread_email_icon(short x, short y, ubyte aframe)
     switch (aframe)
     {
     case 1:
-        spr = &fe_icons0_sprites[79];
+        spr = &fe_icons_sprites[79];
         draw_sprite_purple_list(x, y, spr);
         break;
     case 2:
@@ -868,14 +868,14 @@ void draw_unread_email_icon(short x, short y, ubyte aframe)
     case 3:
     case 4:
     case 5:
-        spr = &fe_icons0_sprites[77 + aframe];
+        spr = &fe_icons_sprites[77 + aframe];
         draw_sprite_purple_list(x, y, spr);
         lbDisplay.DrawFlags = 0;
-        spr = &fe_icons0_sprites[96 + aframe];
+        spr = &fe_icons_sprites[96 + aframe];
         draw_sprite_purple_list(x, y, spr);
         break;
     case 6:
-        spr = &fe_icons0_sprites[82];
+        spr = &fe_icons_sprites[82];
         draw_sprite_purple_list(x, y, spr);
         lbDisplay.DrawFlags = 0;
         break;
@@ -899,7 +899,7 @@ void draw_purple_app_utility_icon(short cx, short cy, short iconid)
 {
     struct TbSprite *spr;
 
-    spr = &fe_icons0_sprites[byte_155124[iconid]];
+    spr = &fe_icons_sprites[byte_155124[iconid]];
     if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
     {
         if ((byte_1C497E & (1 << iconid)) == 0) {
@@ -943,7 +943,7 @@ TbBool get_purple_app_utility_icon_inputs(short cx, short cy, short iconid)
 {
     struct TbSprite *spr;
 
-    spr = &fe_icons0_sprites[byte_155124[iconid]];
+    spr = &fe_icons_sprites[byte_155124[iconid]];
     if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
     {
         if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
@@ -993,7 +993,7 @@ void draw_purple_app_unread_email_icon(short cx, short cy)
 {
     struct TbSprite *spr;
 
-    spr = &fe_icons0_sprites[79];
+    spr = &fe_icons_sprites[79];
     if ((lbKeyOn[KC_RETURN]
         && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
             || screentype != SCRT_SYSMENU) && !edit_flag)
@@ -1036,7 +1036,7 @@ TbBool get_purple_app_unread_email_icon_inputs(short cx, short cy)
     struct TbSprite *spr;
     const char *subtext;
 
-    spr = &fe_icons0_sprites[79];
+    spr = &fe_icons_sprites[79];
     if ((lbKeyOn[KC_RETURN]
         && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
             || screentype != SCRT_SYSMENU) && !edit_flag)
@@ -1105,7 +1105,7 @@ void draw_purple_app_email_icon(short cx, short cy, short bri)
 
     iconid = bri - word_1C6F40;
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-    spr = &fe_icons0_sprites[102];
+    spr = &fe_icons_sprites[102];
     if (mouse_move_over_rect(cx, cx + spr->SWidth + 1, cy,
         cy + 1 + spr->SHeight))
     {
@@ -1163,7 +1163,7 @@ TbBool get_purple_app_email_icon_inputs(short cx, short cy, short bri)
 {
     struct TbSprite *spr;
 
-    spr = &fe_icons0_sprites[102];
+    spr = &fe_icons_sprites[102];
     if (mouse_move_over_rect(cx, cx + spr->SWidth + 1, cy,
         cy + 1 + spr->SHeight))
     {
@@ -1246,7 +1246,7 @@ void show_purple_apps_selection_bar(void)
         if (is_purple_apps_utility_space_reserved(iconid))
         {
             struct TbSprite *spr;
-            spr = &fe_icons0_sprites[byte_155124[iconid]];
+            spr = &fe_icons_sprites[byte_155124[iconid]];
             cx += spr->SWidth + 3;
         }
     }
@@ -1261,7 +1261,7 @@ void show_purple_apps_selection_bar(void)
     // Show email icons in bottom right
     {
         struct TbSprite *spr;
-        spr = &fe_icons0_sprites[102];
+        spr = &fe_icons_sprites[102];
         cx = global_apps_bar_box.X + global_apps_bar_box.Width - spr->SWidth;
     }
 
@@ -1274,7 +1274,7 @@ void show_purple_apps_selection_bar(void)
 
         {
             struct TbSprite *spr;
-            spr = &fe_icons0_sprites[102];
+            spr = &fe_icons_sprites[102];
             cx -= spr->SWidth + 3;
         }
     }
@@ -1300,7 +1300,7 @@ TbBool get_purple_apps_selection_bar_inputs(void)
         if (is_purple_apps_utility_space_reserved(iconid))
         {
             struct TbSprite *spr;
-            spr = &fe_icons0_sprites[byte_155124[iconid]];
+            spr = &fe_icons_sprites[byte_155124[iconid]];
             cx += spr->SWidth + 3;
         }
     }
@@ -1315,7 +1315,7 @@ TbBool get_purple_apps_selection_bar_inputs(void)
     // Get inputs from email icons in bottom right
     {
         struct TbSprite *spr;
-        spr = &fe_icons0_sprites[102];
+        spr = &fe_icons_sprites[102];
         cx = global_apps_bar_box.X + global_apps_bar_box.Width - spr->SWidth;
     }
 
@@ -1328,7 +1328,7 @@ TbBool get_purple_apps_selection_bar_inputs(void)
 
         {
             struct TbSprite *spr;
-            spr = &fe_icons0_sprites[102];
+            spr = &fe_icons_sprites[102];
             cx -= spr->SWidth + 3;
         }
     }
@@ -1479,7 +1479,7 @@ TbResult init_read_all_sprite_files(void)
     p_buf = (ubyte *)&purple_draw_list[750];
     tret = Lb_OK;
 
-    ret = load_sprites_icons(&p_buf, pinfo->directory);
+    ret = load_sprites_fe_icons(&p_buf, pinfo->directory, 0, 1);
     if (tret == Lb_OK)
         tret = ret;
 
@@ -1495,15 +1495,15 @@ TbResult init_read_all_sprite_files(void)
     if (tret == Lb_OK)
         tret = ret;
 
-    ret = load_sprites_med_font(&p_buf, pinfo->directory);
+    ret = load_sprites_med_font(&p_buf, pinfo->directory, 0, 1);
     if (tret == Lb_OK)
         tret = ret;
 
-    ret = load_sprites_big_font(&p_buf, pinfo->directory);
+    ret = load_sprites_big_font(&p_buf, pinfo->directory, 1, 2);
     if (tret == Lb_OK)
         tret = ret;
 
-    ret = load_sprites_small_med_font(&p_buf, pinfo->directory);
+    ret = load_sprites_small_med_font(&p_buf, pinfo->directory, 1, 0);
     if (tret == Lb_OK)
         tret = ret;
 

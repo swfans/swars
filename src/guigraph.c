@@ -32,7 +32,7 @@
 #include "purpldrwlst.h"
 #include "swlog.h"
 /******************************************************************************/
-extern struct TbSprite *fe_icons0_sprites;
+extern struct TbSprite *fe_icons_sprites;
 
 void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max, int tot_values)
 {
@@ -55,7 +55,7 @@ void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max
             spr_id = 146;
         else
             spr_id = 145;
-        spr = &fe_icons0_sprites[spr_id];
+        spr = &fe_icons_sprites[spr_id];
         sprintf(locstr, "%d", ax_val);
         twidth = LbTextStringWidth(locstr) + spr->SWidth;
         text = loctext_to_gtext(locstr);
@@ -87,7 +87,7 @@ void draw_chartxy_axis_x_values(int x, int y, int width, int ax_min, int ax_max,
             spr_id = 146;
         else
             spr_id = 147;
-        spr = &fe_icons0_sprites[spr_id];
+        spr = &fe_icons_sprites[spr_id];
         sprintf(locstr, "%d", ax_val);
         twidth = LbTextStringWidth(locstr);
         text = loctext_to_gtext(locstr);
@@ -109,7 +109,7 @@ void draw_chartxy_axis_y_grid(int x, int y, int width, int height, int tot_value
 
     {
         lbDisplay.DrawFlags = 0;
-        spr = &fe_icons0_sprites[145];
+        spr = &fe_icons_sprites[145];
         draw_sprite_purple_list(x - spr->SWidth + 1, y + height, spr);
     }
 
@@ -125,7 +125,7 @@ void draw_chartxy_axis_y_grid(int x, int y, int width, int height, int tot_value
             spr_id = 146;
         else
             spr_id = 145;
-        spr = &fe_icons0_sprites[spr_id];
+        spr = &fe_icons_sprites[spr_id];
         draw_sprite_purple_list(x - spr->SWidth - 1, cy, spr);
         cy += height / tot_values;
     }
@@ -149,7 +149,7 @@ void draw_chartxy_axis_x_grid(int x, int y, int width, int height, int tot_value
 
     {
         lbDisplay.DrawFlags = 0;
-        spr = &fe_icons0_sprites[147];
+        spr = &fe_icons_sprites[147];
         draw_sprite_purple_list(64 - spr->SWidth + 1, y + height, spr);
     }
 
@@ -166,7 +166,7 @@ void draw_chartxy_axis_x_grid(int x, int y, int width, int height, int tot_value
             spr_id = 146;
         else
             spr_id = 147;
-        spr = &fe_icons0_sprites[spr_id];
+        spr = &fe_icons_sprites[spr_id];
         draw_sprite_purple_list(cx - spr->SWidth + 1, y + height + 2, spr);
     }
 }

@@ -44,7 +44,7 @@ extern struct ScreenButton world_info_ACCEPT_button;
 extern struct ScreenButton world_info_CANCEL_button;
 extern struct ScreenBox world_landmap_box;
 
-extern struct TbSprite *fe_icons0_sprites;
+extern struct TbSprite *fe_icons_sprites;
 
 extern short word_155110[6];
 extern ubyte byte_15511C;// = 1;
@@ -366,7 +366,7 @@ void draw_world_cities_names(struct ScreenBox *box)
 
             draw_sprite_purple_list(cities[city].X - 1, cities[city].Y - 1, &fe_mouseptr_sprites[12]);
             if ((cities[city].Flags & CitF_Unkn20) != 0)
-                draw_sprite_purple_list(cities[city].X - 4, cities[city].Y - 14, &fe_icons0_sprites[169]);
+                draw_sprite_purple_list(cities[city].X - 4, cities[city].Y - 14, &fe_icons_sprites[169]);
             w = 4 - (gameturn & 3);
             dim = 2 * w + 1;
             if ((cities[city].Flags & CitF_Unkn01) != 0)

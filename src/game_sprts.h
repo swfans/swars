@@ -59,9 +59,9 @@ extern struct TbSprite *big_font;
 extern struct TbSprite *big_font_end;
 extern ubyte *big_font_data;
 
-extern struct TbSprite *fe_icons0_sprites;
-extern struct TbSprite *fe_icons0_sprites_end;
-extern ubyte *fe_icons0_sprites_data;
+extern struct TbSprite *fe_icons_sprites;
+extern struct TbSprite *fe_icons_sprites_end;
+extern ubyte *fe_icons_sprites_data;
 
 extern struct TbSprite *unk1_sprites;
 extern struct TbSprite *unk1_sprites_end;
@@ -109,7 +109,8 @@ void setup_mouse_pointers(void);
  */
 void reset_mouse_pointers(void);
 
-TbResult load_sprites_icons(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_fe_icons(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_icons(void);
 void reset_sprites_icons(void);
 
@@ -140,11 +141,13 @@ TbResult load_sprites_small_font_up_to(const char *dir, short max_detail);
 void setup_sprites_small_font(void);
 void reset_sprites_small_font(void);
 
-TbResult load_sprites_small_med_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_small_med_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_small_med_font(void);
 void reset_sprites_small_med_font(void);
 
-TbResult load_sprites_med_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_med_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_med_font(void);
 void reset_sprites_med_font(void);
 
@@ -152,7 +155,8 @@ TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir);
 void setup_sprites_med2_font(void);
 void reset_sprites_med2_font(void);
 
-TbResult load_sprites_big_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_big_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_big_font(void);
 void reset_sprites_big_font(void);
 

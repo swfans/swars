@@ -76,7 +76,7 @@ extern struct ScreenButton equip_offer_buy_button;
 extern struct ScreenButton equip_all_agents_button;
 extern struct ScreenShape unk11_menu[5];
 
-extern struct TbSprite *fe_icons0_sprites;
+extern struct TbSprite *fe_icons_sprites;
 
 ubyte ac_do_cryo_offer_cancel(ubyte click);
 ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
@@ -1112,7 +1112,7 @@ ubyte draw_blokey_body_mods_names(struct ScreenBox *p_box)
         {
             lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
             draw_box_purple_list(cx, cy + hline + 3, 40, 40, lbDisplay.DrawColour);
-            draw_sprite_purple_list(cx + 1, cy + hline + 4, &fe_icons0_sprites[163 + mver]);
+            draw_sprite_purple_list(cx + 1, cy + hline + 4, &fe_icons_sprites[163 + mver]);
             lbDisplay.DrawFlags = 0;
             cy += hline + 67;
         }
