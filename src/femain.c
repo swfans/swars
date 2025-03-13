@@ -1475,13 +1475,16 @@ TbResult init_read_all_sprite_files(void)
     ubyte *p_buf;
     TbResult tret, ret;
 
-    pinfo = &game_dirs[DirPlace_Data];
     p_buf = (ubyte *)&purple_draw_list[750];
     tret = Lb_OK;
+
+    pinfo = &game_dirs[DirPlace_LangData];
 
     ret = load_sprites_fe_icons(&p_buf, pinfo->directory, 0, 1);
     if (tret == Lb_OK)
         tret = ret;
+
+    pinfo = &game_dirs[DirPlace_Data];
 
     ret = load_sprites_wicons(&p_buf, pinfo->directory);
     if (tret == Lb_OK)

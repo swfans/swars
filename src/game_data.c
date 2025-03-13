@@ -58,7 +58,7 @@ MemSystem mem_game[] = {
   { "my_big_map",		(void **)&game_my_big_map,		18u, 16513, 0, 0, 0 },
   { "textures",			(void **)&game_textures,		18u, 4512, 0, 0, 0 },
   { "face_textures",	(void **)&game_face_textures,	16u, 4000, 0, 0, 0 },
-  { "object_points",	(void **)&game_object_points,    10u, 20000, 0, 0, 0 },
+  { "object_points",	(void **)&game_object_points,	10u, 20000, 0, 0, 0 },
   { "object_faces",		(void **)&game_object_faces,	32u, 15000, 0, 0, 0 },
   { "objects",			(void **)&game_objects,			36u, 2000, 0, 0, 0 },
   { "quick_lights",		(void **)&game_quick_lights,	6u, 64000, 0, 0, 0 },
