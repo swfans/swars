@@ -4075,12 +4075,12 @@ void save_crypto_docrypt(ubyte *save_buf, u32 save_buf_len)
     }
 }
 
-TbBool save_game_decrypt_and_verify(u32 fmtver, int hash_type, ubyte *save_buf, u32 save_buf_len, u32 decrypt_verify)
+TbBool save_game_decrypt_and_verify(u32 fmtver, TbBool simple_salt, ubyte *save_buf, u32 save_buf_len, u32 decrypt_verify)
 {
     if (fmtver >= 9)
     {
         // Decrypt the file
-        save_crypto_make_hashtable(hash_type);
+        save_crypto_make_hashtable(simple_salt);
         save_crypto_docrypt(save_buf, save_buf_len);
     }
 
@@ -4091,13 +4091,13 @@ TbBool save_game_decrypt_and_verify(u32 fmtver, int hash_type, ubyte *save_buf, 
     return true;
 }
 
-u32 save_game_encrypt(u32 fmtver, int hash_type, ubyte *save_buf, u32 save_buf_len)
+u32 save_game_encrypt(u32 fmtver, TbBool simple_salt, ubyte *save_buf, u32 save_buf_len)
 {
     u32 decrypt_verify;
 
     decrypt_verify = save_buffer_hash(save_buf, save_buf_len);
 
-    save_crypto_make_hashtable(hash_type);
+    save_crypto_make_hashtable(simple_salt);
     save_crypto_docrypt(save_buf, save_buf_len);
 
     return decrypt_verify;
@@ -4105,14 +4105,14 @@ u32 save_game_encrypt(u32 fmtver, int hash_type, ubyte *save_buf, u32 save_buf_l
 
 ubyte load_game(int slot, char *desc)
 {
-    char str[52];
+    char locstr[52];
     u32 gblen, fmtver, decrypt_verify;
     TbFileHandle fh;
     TbBool ok;
 
-    get_saved_game_fname(str, slot);
+    get_saved_game_fname(locstr, slot);
 
-    fh = LbFileOpen(str, Lb_FILE_MODE_READ_ONLY);
+    fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
         return 1;
     LbFileRead(fh, desc, 25);
@@ -4122,12 +4122,14 @@ ubyte load_game(int slot, char *desc)
     LbFileRead(fh, &decrypt_verify, 4);
     LbFileClose(fh);
 
-    ok = save_game_decrypt_and_verify(fmtver, slot, save_game_buffer, gblen, decrypt_verify);
+    ok = save_game_decrypt_and_verify(fmtver, slot != 0, save_game_buffer, gblen, decrypt_verify);
     if (!ok) return 2;
 
-    memcpy(&ingame.Credits, &save_game_buffer[0], sizeof(ingame.Credits));
+    gblen = 0;
+    memcpy(&ingame.Credits, &save_game_buffer[gblen], sizeof(ingame.Credits));
+    assert(sizeof(ingame.Credits) == 4);
+    gblen += sizeof(ingame.Credits);
 
-    gblen = 4;
     if (fmtver >= 5)
     {
         ushort cryo_no;
@@ -5211,7 +5213,7 @@ int save_game_write(ubyte slot, char *desc)
     TbFileHandle fh;
     u32 gblen, fmtver;
     u32 decrypt_verify;
-    int hash_type;
+    TbBool simple_salt;
     int i;
 
     fmtver = 12;
@@ -5326,8 +5328,8 @@ int save_game_write(ubyte slot, char *desc)
         resave_salt_to_keys();
     }
 
-    hash_type = ((ingame.Flags & 0x10) == 0);
-    decrypt_verify = save_game_encrypt(fmtver, hash_type, save_game_buffer, gblen);
+    simple_salt = ((ingame.Flags & 0x10) == 0);
+    decrypt_verify = save_game_encrypt(fmtver, simple_salt, save_game_buffer, gblen);
 
     if ((ingame.Flags & 0x10) != 0)
         sprintf(locstr, "qdata/savegame/synwarsm.sav");
@@ -5397,7 +5399,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 
     campaign_new_game_prepare();
 
-    if( save_game_write(0, save_active_desc)) {
+    if (save_game_write(0, save_active_desc)) {
         show_alert = 1;
         sprintf(alert_text, "%s", gui_strings[566]);
     }
