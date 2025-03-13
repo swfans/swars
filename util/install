@@ -35,9 +35,9 @@ LEVELS_VERSION="1.0.1.25"
 LEVELS_PACKAGE="swars-levels-1_0_1_25"
 LEVELS_PKG_MD5="bbf821b463613993c1d53ba7017abc06"
 
-GFX_VERSION="1.0.3.208"
-GFX_PACKAGE="swars-gfx-1_0_3_208"
-GFX_PKG_MD5="b2914afca4a48d88d865a8472b72d201"
+GFX_VERSION="1.0.3.217"
+GFX_PACKAGE="swars-gfx-1_0_3_217"
+GFX_PKG_MD5="8b674fec7f50b82706f3e879b88065f1"
 
 SFX_VERSION="1.0.0.22"
 SFX_PACKAGE="swars-sfx-1_0_0_22"
@@ -257,7 +257,7 @@ copy_data()
     install_file "data/${fn}" || return 1
   done
 
-  for fn in icons0-0 w-icons; do
+  for fn in w-icons; do
     install_file "data/${fn}.dat" || return 1
     install_file "data/${fn}.tab" || return 1
   done
