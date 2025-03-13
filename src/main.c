@@ -523,6 +523,7 @@ main (int argc, char **argv)
         return 1;
 
     read_conf_file();
+    setup_language_file_names();
 
     display_set_full_screen(cmdln_fullscreen);
     display_set_lowres_stretch(cmdln_lores_stretch);

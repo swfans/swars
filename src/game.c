@@ -698,6 +698,7 @@ void ingame_palette_reload(void)
 void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
 {
     const char *fname;
+    PathInfo *pinfo;
     struct Campaign *p_campgn;
 
     fname = NULL;
@@ -706,8 +707,9 @@ void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
     case MPly_Intro:
         // Intro name is hard-coded, as it is played before any campaign is loaded
         fname = "intro.smk";
+        pinfo = &game_dirs[DirPlace_LangData];
         if (game_dirs[DirPlace_Sound].use_cd == 1)
-            sprintf(fnbuf, "%slanguage/%s/%s", cd_drive, language_3str, fname);
+            sprintf(fnbuf, "%s%s/%s", cd_drive, pinfo->directory, fname);
         else
             sprintf(fnbuf, "intro/%s", fname);
         break;
@@ -735,8 +737,9 @@ void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
             if (current_map == 46)
             {
                 fname = "syn_ele.smk";
+                pinfo = &game_dirs[DirPlace_LangData];
                 if (game_dirs[DirPlace_Data].use_cd == 1)
-                    sprintf(fnbuf, "%slanguage/%s/%s", cd_drive, language_3str, fname);
+                    sprintf(fnbuf, "%s%s/%s", cd_drive, pinfo->directory, fname);
                 else
                     sprintf(fnbuf, "data/%s", fname);
             }
@@ -750,8 +753,9 @@ void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
             if (current_map == 46)
             {
                 fname = "chu_ele.smk";
+                pinfo = &game_dirs[DirPlace_LangData];
                 if (game_dirs[DirPlace_Data].use_cd == 1)
-                    sprintf(fnbuf, "%slanguage/%s/%s", cd_drive, language_3str, fname);
+                    sprintf(fnbuf, "%s%s/%s", cd_drive, pinfo->directory, fname);
                 else
                     sprintf(fnbuf, "data/%s", fname);
             }
