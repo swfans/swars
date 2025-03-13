@@ -16,6 +16,7 @@
 #include "bfpalette.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
+#include "bfstrut.h"
 #include "bffile.h"
 #include "bffont.h"
 #include "bfgentab.h"
@@ -2433,6 +2434,38 @@ void set_default_user_settings(void)
     apply_user_settings();
 }
 
+void resave_salt_to_keys(void)
+{
+    TbFileHandle fh;
+    int i;
+
+    fh = LbFileOpen("qdata/keys.dat", Lb_FILE_MODE_OLD);
+    if (fh == INVALID_FILE)
+    {
+        return;
+    }
+    i = sizeof(save_mortal_salt);
+    LbFileSeek(fh, -i, Lb_FILE_SEEK_END);
+    LbFileWrite(fh, &save_mortal_salt, i);
+    LbFileClose(fh);
+}
+
+void reload_salt_from_keys(void)
+{
+    TbFileHandle fh;
+    int i;
+
+    fh = LbFileOpen("qdata/keys.dat", Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE)
+    {
+        return;
+    }
+    i = sizeof(save_mortal_salt);
+    LbFileSeek(fh, -i, Lb_FILE_SEEK_END);
+    LbFileRead(fh, &save_mortal_salt, i);
+    LbFileClose(fh);
+}
+
 void read_user_settings(void)
 {
     char fname[52];
@@ -2504,14 +2537,7 @@ void read_user_settings(void)
     if (read_mortal_salt_backup)
     {
         // Read mortal game encryption salt from backup
-        fh = LbFileOpen("qdata/keys.dat", Lb_FILE_MODE_READ_ONLY);
-        if (fh != INVALID_FILE)
-        {
-            i = sizeof(save_mortal_salt);
-            LbFileSeek(fh, -i, Lb_FILE_SEEK_END);
-            LbFileRead(fh, &save_mortal_salt, i);
-            LbFileClose(fh);
-        }
+        reload_salt_from_keys();
     }
 
     i = -1;
@@ -5281,21 +5307,11 @@ int save_game_write(ubyte slot, char *desc)
 
     if (((ingame.Flags & 0x10) != 0) || (desc[0] == '\0'))
     {
-        switch (background_type)
-        {
-        case 0:
-            sprintf(desc, "SYNDICATE %02d:%02d:%02d NC",
-              global_date.Day, global_date.Month, global_date.Year);
-            break;
-        case 1:
-            sprintf(desc, "CHURCH %02d:%02d:%02d NC",
-              global_date.Day, global_date.Month, global_date.Year);
-            break;
-        case 2:
-            sprintf(desc, "UNGUIDED %02d:%02d:%02d NC",
-              global_date.Day, global_date.Month, global_date.Year);
-            break;
-        }
+        struct Campaign *p_campgn;
+        p_campgn = &campaigns[background_type];
+        sprintf(desc, "%s %02d:%02d:%02d NC", p_campgn->TextName,
+          global_date.Day, global_date.Month, global_date.Year);
+        LbStringToUpper(desc);
     }
   
     while ((gblen & 7) != 0)
@@ -5305,15 +5321,9 @@ int save_game_write(ubyte slot, char *desc)
     }
 
     if ((ingame.Flags & 0x10) != 0)
-    {                                             // inlined call resave_salt_to_keys
+    {
         save_mortal_salt = time(0);
-        fh = LbFileOpen("qdata/keys.dat", Lb_FILE_MODE_OLD);
-        if (fh != INVALID_FILE)
-        {
-            LbFileSeek(fh, -sizeof(save_mortal_salt), Lb_FILE_SEEK_END);
-            LbFileWrite(fh, &save_mortal_salt, sizeof(save_mortal_salt));
-            LbFileClose(fh);
-        }
+        resave_salt_to_keys();
     }
 
     hash_type = ((ingame.Flags & 0x10) == 0);
