@@ -23,7 +23,7 @@
 #include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
-extern ushort buckets[BUCKETS_COUNT];
+ushort buckets[BUCKETS_COUNT];
 
 TbBool draw_item_add(ubyte ditype, ushort offset, int bckt)
 {

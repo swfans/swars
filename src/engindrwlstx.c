@@ -88,6 +88,21 @@ extern long sprite_over_16x16;
 
 extern ubyte byte_1C844E;
 
+struct DrawItem *game_draw_list;
+struct DrawItem *p_current_draw_item;
+ushort next_draw_item;
+
+struct SpecialPoint *game_screen_point_pool;
+ushort next_screen_point;
+
+struct SortSprite *game_sort_sprites;
+struct SortSprite *p_current_sort_sprite;
+ushort next_sort_sprite;
+
+struct SortLine *game_sort_lines;
+struct SortLine *p_current_sort_line;
+ushort next_sort_line;
+
 TbPixel deep_radar_surface_col = 0xd8;
 TbPixel deep_radar_line_col = 0x64;
 

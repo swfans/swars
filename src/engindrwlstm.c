@@ -271,7 +271,7 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
 
     scr_depth = sp.Depth - radius;
     if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0))
-        scr_depth = 10000;
+        scr_depth += BUCKETS_COUNT;
 
     p_sspr = draw_item_add_sprite(DrIT_Unkn3, scr_depth + 5000);
     if (p_sspr == NULL)
@@ -350,13 +350,13 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
         if ((p_thing->Flag2 & TgF2_InsideBuilding) != 0) {
             if ((p_thing->Flag & TngF_Destroyed) != 0)
                 return;
-            scr_depth += 10000;
+            scr_depth += BUCKETS_COUNT;
         }
     }
     else
     {
         if ((p_thing->Flag2 & TgF2_InsideBuilding) != 0)
-            scr_depth = 10000;
+            scr_depth += BUCKETS_COUNT;
     }
 
     p_sspr = draw_item_add_sprite(DrIT_Unkn13, scr_depth + 5000);
