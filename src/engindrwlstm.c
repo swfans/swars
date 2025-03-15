@@ -494,20 +494,8 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
 }
 
 struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, short y2,
-  int w1, int w2, int col, int sort_key, int flag) // short sort_key, ushort flag)
+  int w1, int w2, int col, int sort_key, ushort flag)
 {
-#if 0
-    struct SingleObjectFace4 *ret;
-    asm volatile (
-      "push %8\n"
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_build_polygon_slice\n"
-        : "=r" (ret) : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (w1), "g" (w2), "g" (col), "g" (sort_key), "g" (flag));
-    return ret;
-#endif
     struct SingleObjectFace4 *p_face4;
     struct SpecialPoint *p_specpt;
     int dx, dy;
@@ -1590,9 +1578,10 @@ void draw_vehicle_health(struct Thing *p_thing)
     p_sspr->PThing = p_thing;
 }
 
-void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
+void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
+  struct SingleFloorTexture *p_tex, int col, int bright1, int bright2, int sort_key)
 {
-#if 0
+#if 1
     asm volatile (
       "push %9\n"
       "push %8\n"
@@ -1600,10 +1589,15 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, stru
       "push %6\n"
       "push %5\n"
       "push %4\n"
-      "call ASM_build_polygon_circle\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (r1), "g" (r2), "g" (flag), "g" (p_tex), "g" (col), "g" (bright1), "g" (bright2));
+      "call ASM_build_polygon_circle_2d\n"
+        : : "a" (x1), "d" (y1), "b" (r1), "c" (r2), "g" (flag), "g" (p_tex), "g" (col), "g" (bright1), "g" (bright2), "g" (sort_key));
     return;
 #endif
+}
+
+void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
+  struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
+{
     int pp_X, pp_Y;
     int bckt;
     int scrad1;

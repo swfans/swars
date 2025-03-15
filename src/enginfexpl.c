@@ -45,11 +45,6 @@ void animate_explode(void)
 
 void draw_explode(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_explode\n"
-        :  :  : "eax" );
-    return;
-#endif
     ushort exface;
 
     if (next_ex_face != 0)
