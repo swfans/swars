@@ -1534,7 +1534,6 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
     if (next_screen_point + 1 * points_num > mem_game[30].N)
         return 0;
 
-
     for (snpoint = point_object->StartPoint; snpoint <= point_object->EndPoint; snpoint++)
     {
         struct SinglePoint *p_snpoint;
