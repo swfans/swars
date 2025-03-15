@@ -551,12 +551,6 @@ void build_stasis_pod(struct SimpleThing *p_sthing)
 
 short draw_thing_object(struct Thing *p_thing)
 {
-#if 0
-    short ret;
-    asm volatile ("call ASM_draw_thing_object\n"
-        : "=r" (ret) : "a" (p_thing));
-    return ret;
-#endif
     struct SimpleThing *p_sthing;
 
     p_sthing = (struct SimpleThing *)p_thing;

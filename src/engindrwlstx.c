@@ -126,13 +126,6 @@ ubyte byte_15399C[] = {
 
 void draw_unkn1_scaled_alpha_sprite(ushort frm, int scr_x, int scr_y, ushort scale, ushort alpha)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_unkn1_scaled_alpha_sprite\n"
-        : : "a" (fr), "d" (scr_x), "b" (scr_y), "c" (scale), "g" (alpha));
-    return;
-#endif
     struct Frame *p_frm;
     struct Element *p_el;
     int pos_x, pos_y;
@@ -195,13 +188,6 @@ void draw_unkn1_scaled_alpha_sprite(ushort frm, int scr_x, int scr_y, ushort sca
 void draw_unkn2_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
   ubyte bri)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_unkn2_scaled_alpha_sprite\n"
-        : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" ((uint)bri));
-    return;
-#endif
     struct Frame *p_frm;
     struct Element *p_elem;
     int max_x, max_y;
@@ -2921,12 +2907,6 @@ void draw_object_face4_reflect(ushort face4)
  */
 void draw_shrapnel(ushort shrap)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_shrapnel\n"
-        : : "a" (shrap));
-    return;
-#endif
     struct Shrapnel *p_shrap;
     struct PolyPoint point3;
     struct PolyPoint point2;
@@ -2978,12 +2958,6 @@ void draw_shrapnel(ushort shrap)
  */
 void draw_phwoar(ushort ph)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_phwoar\n"
-        : : "a" (ph));
-    return;
-#endif
     struct Phwoar *p_phwoar;
     struct Element *p_elem;
     ushort el;
@@ -3233,12 +3207,6 @@ void draw_object_face3_deep_rdr(ushort face)
 
 void draw_fire_flame(ushort flm)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_fire_flame\n"
-        : : "a" (flm));
-    return;
-#endif
     struct FireFlame *p_flame;
     struct SpecialPoint *p_scrpoint;
 

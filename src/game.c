@@ -5197,12 +5197,6 @@ void init_variables(void)
 
 int save_game_write(ubyte slot, char *desc)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_save_game_write\n"
-        : "=r" (ret) : "a" (slot), "d" (desc));
-    return ret;
-#endif
     char locstr[32];
     PlayerInfo *p_locplyr;
     TbFileHandle fh;

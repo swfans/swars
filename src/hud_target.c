@@ -137,11 +137,6 @@ void draw_target_vehicle(struct Thing *p_vehicle)
 
 void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
 {
-#if 0
-    asm volatile ("call ASM_draw_hud_health_bar\n"
-        : : "a" (x), "d" (y), "b" (p_thing));
-    return;
-#endif
     int dx, dy;
     int hp_per_px, val_cur;
     int h_total, h_cur, h_ext, w;
@@ -194,11 +189,6 @@ void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
 
 void draw_hud_shield_bar(int x, int y, struct Thing *p_thing)
 {
-#if 0
-    asm volatile ("call ASM_draw_hud_shield_bar\n"
-        : : "a" (x), "d" (y), "b" (p_thing));
-    return;
-#endif
     int dx, dy;
     int sp_per_px;
     int h_total, h_cur, w;
