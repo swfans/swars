@@ -63,6 +63,8 @@ extern short word_1AA5F6;
 extern short word_1AA5F8;
 extern short word_1AA5FA;
 
+extern ushort zig_zag[55];
+
 ubyte byte_152EF0[] = {
    0, 10,  5, 10,  7,  7,  8, 10,
   10, 10,  5,  7,  5,  7,  7,  0,
@@ -599,6 +601,7 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, shor
 void build_wobble_line(int x1, int y1, int z1,
  int x2, int y2, int z2, struct SimpleThing *p_sthing, int itime)
 {
+#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
@@ -606,6 +609,128 @@ void build_wobble_line(int x1, int y1, int z1,
       "push %4\n"
       "call ASM_build_wobble_line\n"
         : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (p_sthing), "g" (itime));
+    return;
+#endif
+    int prc_x1, prc_y1, prc_z1;
+    int prc_x2, prc_y2, prc_z2;
+    int dt_x, dt_y, dt_z;
+    int tot_dist;
+    int num_steps, step;
+    int prc_cur_x2, prc_cur_y2;
+    TbBool is_player;
+
+    prc_x1 = x1 << 7;
+    prc_y1 = y1 << 7;
+    prc_z1 = z1 << 7;
+    prc_x2 = x2 << 7;
+    prc_y2 = y2 << 7;
+    prc_z2 = z2 << 7;
+
+    tot_dist = LbSqrL((prc_y2 - prc_y1) * (prc_y2 - prc_y1) + (prc_x2 - prc_x1) * (prc_x2 - prc_x1));
+    if (tot_dist <= 0)
+        return;
+
+    is_player = 0;
+    num_steps = (tot_dist / 10) >> 7;
+    if ((p_sthing != NULL) && (p_sthing->Flag & TngF_PlayerAgent) != 0)
+    {
+        is_player = 1;
+        num_steps *= 2;
+    }
+    if (num_steps < 1)
+        num_steps = 1;
+
+    dt_x = (prc_x2 - prc_x1) / num_steps;
+    dt_y = (prc_y2 - prc_y1) / num_steps;
+    dt_z = (prc_z2 - prc_z1) / num_steps;
+
+    prc_cur_x2 = prc_x1;
+    prc_cur_y2 = prc_y1;
+    for (step = 1; step < num_steps + 1; step++)
+    {
+        struct SortLine *p_sline;
+        int prc_cur_x1, prc_cur_y1;
+        int shift;
+        int bckt;
+
+        prc_cur_x1 = prc_cur_x2;
+        prc_cur_y1 = prc_cur_y2;
+        prc_y1 += dt_y;
+        prc_x1 += dt_x;
+        prc_z1 += dt_z;
+
+        if (!is_player)
+        {
+            shift = ((LbRandomPosShort() % 16) << 7) - 1024;
+            prc_cur_x2 = prc_x1 + ((shift * overall_scale) >> 8);
+            shift = ((LbRandomPosShort() % 16) << 7) - 1024;
+            prc_cur_y2 = prc_y1 + ((shift * overall_scale) >> 8);
+        }
+        else if (step == 1)
+        {
+            shift = ((zig_zag[(gameturn + x1) & 0x1F] & 7) << 7) - 512;
+            prc_cur_x1 = prc_cur_x2 + ((overall_scale * shift) >> 8);
+            shift = ((zig_zag[(gameturn + y1) & 0x1F] & 7) << 7) - 512;
+            prc_cur_y1 = prc_cur_y2 + ((shift * overall_scale) >> 8);
+            shift = ((LbRandomPosShort() & 7) << 7) - 512;
+            prc_cur_x2 = prc_x1 + ((shift * overall_scale) >> 8);
+            shift = ((LbRandomPosShort() & 7) << 7) - 512;
+            prc_cur_y2 = prc_y1 + ((shift * overall_scale) >> 8);
+        }
+        else if (step == num_steps)
+        {
+            shift = ((zig_zag[(gameturn + x2) & 0x1F] & 7) << 7) - 512;
+            prc_cur_x2 = prc_x1 + ((shift * overall_scale) >> 8);
+            shift = ((zig_zag[(y2 + gameturn) & 0x1F] & 7) << 7) - 512;
+            prc_cur_y2 = prc_y1 + ((shift * overall_scale) >> 8);
+        }
+
+        if ((prc_x1 < 0) || (prc_x1 >> 7 >= lbDisplay.GraphicsScreenWidth) || (prc_y1 < 0) || (prc_y1 >> 7 >= lbDisplay.GraphicsScreenHeight))
+            continue;
+
+        bckt = (prc_z1 >> 7) + 5000;
+        if (bckt < 0)
+          bckt = 0;
+        if (bckt >= 10000)
+          bckt = 9999;
+
+        p_sline = draw_item_add_line(DrIT_Unkn11, bckt);
+        if (p_sline == NULL)
+            break;
+
+        p_sline->X1 = prc_cur_x1 >> 7;
+        p_sline->Y1 = prc_cur_y1 >> 7;
+        p_sline->X2 = prc_cur_x2 >> 7;
+        p_sline->Y2 = prc_cur_y2 >> 7;
+        if (is_player && (p_sthing->Timer1 < 1))
+            p_sline->Flags = 0x02;
+        else
+            p_sline->Flags = 0x01;
+
+        if ((itime & 0xFF) < 100)
+        {
+            p_sline->Col = colour_lookup[4];
+            p_sline->Shade = 32 + ((prc_cur_x1 + itime + step) & 0x1F);
+        }
+        else if ((itime & 0xFF) < 110)
+        {
+            p_sline->Col = colour_lookup[1];
+            p_sline->Shade = 32;
+            p_sline->Flags = 0;
+        }
+        else if ((itime & 0xFF) < 142)
+        {
+            p_sline->Col = colour_lookup[4];
+            p_sline->Shade = 32 + (31 - (itime - 110));
+            p_sline->Flags = 0;
+        }
+        else
+        {
+            p_sline->Col = colour_lookup[4];
+            p_sline->Shade = 32 + ((prc_cur_x1 + itime + step) & 0x1F);
+            p_sline->Flags = 0;
+        }
+    }
 }
 
 ushort shrapnel_get_child_type_not_3(struct Shrapnel *p_shraparnt)
