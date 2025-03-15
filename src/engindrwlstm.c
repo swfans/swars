@@ -29,6 +29,7 @@
 #include "engindrwlstx.h"
 #include "enginfloor.h"
 #include "enginsngobjs.h"
+#include "enginsngtxtr.h"
 #include "enginshrapn.h"
 #include "engintrns.h"
 #include "game.h"
@@ -80,7 +81,7 @@ struct SortLine *draw_item_add_line(ubyte ditype, int bckt)
 {
     struct SortLine *p_sline;
 
-    if (next_sort_line >= mem_game[33].N)
+    if (next_sort_line + 1 > mem_game[33].N)
         return NULL;
 
     p_sline = p_current_sort_line;
@@ -103,7 +104,7 @@ struct SortSprite *draw_item_add_sprite(ubyte ditype, int bckt)
 {
     struct SortSprite *p_sspr;
 
-    if (next_sort_sprite >= mem_game[32].N)
+    if (next_sort_sprite + 1 > mem_game[32].N)
         return NULL;
 
     p_sspr = p_current_sort_sprite;
@@ -149,7 +150,7 @@ struct FloorTile *draw_item_add_floor_tile(ubyte ditype, int bckt)
 {
     struct FloorTile *p_floortl;
 
-    if (next_floor_tile >= mem_game[26].N)
+    if (next_floor_tile + 1 > mem_game[26].N)
         return NULL;
 
     p_floortl = &game_floor_tiles[next_floor_tile];
@@ -175,7 +176,7 @@ ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
     if ((sp2.Flags & sp1.Flags & 0xF) != 0)
         return 0;
 
-    bckt = sp1.Depth + 5000;
+    bckt = BUCKET_MID + sp1.Depth;
 
     sline = next_sort_line;
     p_sline = draw_item_add_line(DrIT_Unkn11, bckt);
@@ -218,7 +219,7 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
     if ((sp3.Flags & sp1.Flags & 0xF) != 0)
         return;
 
-    p_sline = draw_item_add_line(DrIT_Unkn11, sp1.Depth + 5000);
+    p_sline = draw_item_add_line(DrIT_Unkn11, BUCKET_MID + sp1.Depth);
     if (p_sline == NULL)
         return;
 
@@ -246,7 +247,7 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
     if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0))
         scr_depth += BUCKETS_COUNT;
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn3, scr_depth + 5000);
+    p_sspr = draw_item_add_sprite(DrIT_Unkn3, BUCKET_MID + scr_depth);
     if (p_sspr == NULL)
         return;
 
@@ -272,7 +273,7 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
 
     scr_depth = sp.Depth - radius - 100;
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn15, scr_depth + 5000);
+    p_sspr = draw_item_add_sprite(DrIT_Unkn15, BUCKET_MID + scr_depth);
     if (p_sspr == NULL)
         return;
 
@@ -314,7 +315,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
             scr_depth += BUCKETS_COUNT;
     }
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn13, scr_depth + 5000);
+    p_sspr = draw_item_add_sprite(DrIT_Unkn13, BUCKET_MID + scr_depth);
     if (p_sspr == NULL)
         return;
 
@@ -329,7 +330,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     if (((p_thing->Flag2 & TgF2_InsideBuilding) != 0) || p_thing->U.UPerson.OnFace || (p_thing->SubType == SubTT_PERS_MECH_SPIDER))
         return;
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn19, scr_depth + 5000 - 200);
+    p_sspr = draw_item_add_sprite(DrIT_Unkn19, BUCKET_MID + scr_depth - 200);
     if (p_sspr == NULL)
         return;
 
@@ -360,7 +361,7 @@ void FIRE_draw_fire(struct SimpleThing *p_sthing)
         transform_shpoint(&sp, x, y - 8 * engn_yc, z);
 
         p_flame->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_points(DrIT_Unkn25, flm, sp.Depth + 5000 - 50, 1);
+        p_scrpoint = draw_item_add_points(DrIT_Unkn25, flm, BUCKET_MID + sp.Depth - 50, 1);
         if (p_scrpoint == NULL)
             break;
 
@@ -389,7 +390,7 @@ void draw_bang_phwoar(struct SimpleThing *p_pow)
         transform_shpoint(&sp, x, y - 8 * engn_yc, z);
 
         p_phwoar->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_points(DrIT_Unkn21, phw, sp.Depth + 5000 - 100, 1);
+        p_scrpoint = draw_item_add_points(DrIT_Unkn21, phw, BUCKET_MID + sp.Depth - 100, 1);
         if (p_scrpoint == NULL)
             break;
 
@@ -475,7 +476,7 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
             scr_depth = sp1.Depth;
 
         p_shrapnel->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_points(DrIT_Unkn20, shrap, scr_depth + 5000, 3);
+        p_scrpoint = draw_item_add_points(DrIT_Unkn20, shrap, BUCKET_MID + scr_depth, 3);
         if (p_scrpoint == NULL)
             break;
 
@@ -688,11 +689,7 @@ void build_wobble_line(int x1, int y1, int z1,
         if ((prc_x1 < 0) || (prc_x1 >> 7 >= lbDisplay.GraphicsScreenWidth) || (prc_y1 < 0) || (prc_y1 >> 7 >= lbDisplay.GraphicsScreenHeight))
             continue;
 
-        bckt = (prc_z1 >> 7) + 5000;
-        if (bckt < 0)
-          bckt = 0;
-        if (bckt >= 10000)
-          bckt = 9999;
+        bckt = BUCKET_MID + (prc_z1 >> 7);
 
         p_sline = draw_item_add_line(DrIT_Unkn11, bckt);
         if (p_sline == NULL)
@@ -790,6 +787,96 @@ void draw_bang_wobble_line(struct SimpleThing *p_pow)
 
         build_wobble_line(sp1.X, sp1.Y, sp1.Depth, sp2.X, sp2.Y, sp2.Depth, 0, 10);
     }
+}
+
+struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
+{
+#if 0
+    struct SingleObjectFace4 *ret;
+    asm volatile (
+      "call ASM_build_glare\n"
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (r1));
+    return ret;
+#endif
+    struct EnginePoint ep;
+    struct SpecialPoint *p_scrpoint;
+    struct SingleObjectFace4 *p_face4;
+    struct SingleFloorTexture *p_sftex;
+    int pp_X, pp_Y, pp_Z;
+    int scaled_r;
+    int bckt;
+    uint sftex;
+    ushort face;
+    ushort pt;
+
+    ep.X3d = x1 - engn_xc;
+    ep.Z3d = z1 - engn_zc;
+    ep.Y3d = y1 - (engn_yc >> 3);
+    ep.Flags = 0;
+    transform_point(&ep);
+
+    pp_X = ep.pp.X;
+    pp_Z = ep.Z3d - 16 * r1;
+    pp_Y = ep.pp.Y;
+
+    bckt = BUCKET_MID + pp_Z;
+
+    scaled_r = (r1 * overall_scale) >> 8;
+
+    if ((ep.pp.X + scaled_r < 0) || (ep.pp.X - scaled_r > vec_window_width))
+        return NULL;
+
+    if ((ep.pp.Y + scaled_r < 0) || (ep.pp.Y - scaled_r > vec_window_height))
+        return NULL;
+
+    pt = next_screen_point;
+    if (pt + 4 > mem_game[30].N)
+        return NULL;
+    next_screen_point += 4;
+
+    p_scrpoint = &game_screen_point_pool[pt + 0];
+    p_scrpoint->X = pp_X - scaled_r;
+    p_scrpoint->Y = pp_Y - scaled_r;
+    p_scrpoint = &game_screen_point_pool[pt + 1];
+    p_scrpoint->X = pp_X + scaled_r;
+    p_scrpoint->Y = pp_Y - scaled_r;
+    p_scrpoint = &game_screen_point_pool[pt + 2];
+    p_scrpoint->X = pp_X + scaled_r;
+    p_scrpoint->Y = pp_Y + scaled_r;
+    p_scrpoint = &game_screen_point_pool[pt + 2];
+    p_scrpoint->X = pp_X - scaled_r;
+    p_scrpoint->Y = pp_Y + scaled_r;
+
+    sftex = tnext_floor_texture;
+    tnext_floor_texture += 1;
+    p_sftex = &game_textures[sftex];
+    p_sftex->TMapX1 = 96;
+    p_sftex->TMapY1 = 96;
+    p_sftex->TMapX2 = 127;
+    p_sftex->TMapY2 = 96;
+    p_sftex->TMapX4 = 127;
+    p_sftex->TMapY4 = 127;
+    p_sftex->TMapX3 = 96;
+    p_sftex->TMapY3 = 127;
+    p_sftex->Page = 4;
+
+    face = next_special_face4;
+    if (face + 1 > mem_game[25].N)
+        return NULL;
+    next_special_face4++;
+
+    p_face4 = &game_special_object_faces4[face];
+    p_face4->Texture = sftex;
+    p_face4->PointNo[0] = pt + 0;
+    p_face4->PointNo[1] = pt + 1;
+    p_face4->PointNo[3] = pt + 2;
+    p_face4->PointNo[2] = pt + 3;
+    p_face4->Flags = 0x08 | 0x01;
+    p_face4->GFlags = 1;
+
+    draw_item_add(DrIT_Unkn12, face, bckt);
+
+    return p_face4;
 }
 
 void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour)
@@ -898,7 +985,7 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
           int cor_x1, cor_y1;
           int bckt;
 
-          bckt = (scr_depth >> 8) + 5000 - 641;
+          bckt = BUCKET_MID + (scr_depth >> 8) - 641;
           if ((itime < 0) || (colour == colour_lookup[ColLU_GREEN]))
               bckt -= 400;
 
@@ -1148,7 +1235,7 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
             ditype = 7;
         else
             ditype = 17;
-        bckt = depth_max + 5000 - 250;
+        bckt = BUCKET_MID + depth_max - 250;
         if (bckt_max < bckt)
             bckt_max = bckt;
         dword_176D68++;
@@ -1210,7 +1297,7 @@ short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObj
             ditype = DrIT_Unkn16;
         else
             ditype = DrIT_Unkn18;
-        bckt = depth_max + 5000 - 250;
+        bckt = BUCKET_MID + depth_max - 250;
         if (bckt_max < bckt)
             bckt_max = bckt;
         dword_176D68++;
@@ -1319,7 +1406,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleOb
 
         ubyte ditype;
         ditype = DrIT_Unkn1;
-        bckt = depth_max + 5000 - 150;
+        bckt = BUCKET_MID + depth_max - 150;
         if (bckt_max < bckt)
             bckt_max = bckt;
         dword_176D68++;
@@ -1393,7 +1480,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleOb
 
         ubyte ditype;
         ditype = DrIT_Unkn9;
-        bckt = depth_max + 5000 - 250;
+        bckt = BUCKET_MID + depth_max - 250;
         if (bckt_max < bckt)
             bckt_max = bckt;
         dword_176D68++;
@@ -1542,7 +1629,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
 
                 ubyte ditype;
                 ditype = DrIT_Unkn14;
-                bckt = depth_max + 5000;
+                bckt = BUCKET_MID + depth_max;
                 if (bckt_max < bckt)
                     bckt_max = bckt;
                 dword_176D68++;
@@ -1593,7 +1680,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                     ditype = DrIT_Unkn23;
                 else
                     ditype = DrIT_Unkn9;
-                bckt = depth_shift + depth_max + 5000;
+                bckt = BUCKET_MID + depth_shift + depth_max;
                 if (bckt_max < bckt)
                     bckt_max = bckt;
                 dword_176D68++;
@@ -1655,7 +1742,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                     ditype = DrIT_Unkn24;
                 else
                     ditype = DrIT_Unkn1;
-                bckt = depth_shift + depth_max + 5000;
+                bckt = BUCKET_MID + depth_shift + depth_max;
                 if (bckt_max < bckt)
                     bckt_max = bckt;
                 dword_176D68++;
@@ -1681,7 +1768,7 @@ void draw_vehicle_health(struct Thing *p_thing)
     transform_shpoint(&sp, x, y - 8 * engn_yc, z);
 
     scr_depth = sp.Depth - 2 * p_thing->Radius;
-    bckt = scr_depth + 5000;
+    bckt = BUCKET_MID + scr_depth;
     p_sspr = draw_item_add_sprite(DrIT_Unkn22, bckt);
     if (p_sspr == NULL)
         return;
@@ -1762,7 +1849,7 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
         nxt_y = y1 + ((scrad1 * sin_angl) >> 16);
 
         face = next_special_face4;
-        if (face >= mem_game[25].N)
+        if (face + 1 > mem_game[25].N)
             break;
         next_special_face4++;
 
@@ -1821,7 +1908,7 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
 
         pp_X = ep.pp.X;
         pp_Y = ep.pp.Y;
-        bckt = ep.Z3d - 16 * r1 + 5000;
+        bckt = BUCKET_MID + ep.Z3d - 16 * r1;
     }
 
     scrad1 = (overall_scale * r1) >> 8;
@@ -1874,7 +1961,7 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
         nxt_y = pp_Y + ((scrad1 * sin_angl) >> 16);
 
         face = next_special_face4;
-        if (face >= mem_game[25].N)
+        if (face + 1 > mem_game[25].N)
             break;
         next_special_face4++;
 

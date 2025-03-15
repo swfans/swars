@@ -33,6 +33,8 @@ extern "C" {
  */
 #define BUCKETS_COUNT 10000
 
+#define BUCKET_MID (BUCKETS_COUNT / 2)
+
 /** Max amount of draw list elements within a bucket.
  */
 #define BUCKET_ITEMS_MAX 2000

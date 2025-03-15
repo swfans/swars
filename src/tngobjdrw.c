@@ -23,10 +23,13 @@
 #include "bigmap.h"
 #include "building.h"
 #include "display.h"
+#include "enginbckt.h"
 #include "engindrwlstm.h"
+#include "engindrwlstx.h"
 #include "enginshadws.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
+#include "engintrns.h"
 #include "enginzoom.h"
 #include "game.h"
 #include "game_speed.h"
@@ -180,15 +183,6 @@ void build_person(struct Thing *p_thing)
       PRCCOORD_TO_YCOORD(p_thing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
       frame, p_thing->Radius, bri);
-}
-
-struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
-{
-    struct SingleObjectFace4 *ret;
-    asm volatile (
-      "call ASM_build_glare\n"
-        : "=r" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (r1));
-    return ret;
 }
 
 void build_rocket(struct Thing *p_thing)

@@ -138,7 +138,7 @@ void draw_explode(void)
                 break;
 
             dword_176D68++;
-            draw_item_add(DrIT_Unkn5, exface, depth_max + 5000);
+            draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
             break;
         case 3:
         case 4:
@@ -204,7 +204,7 @@ void draw_explode(void)
                 break;
 
             dword_176D68++;
-            draw_item_add(DrIT_Unkn5, exface, depth_max + 5000);
+            draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
             break;
         case 5:
         case 6:
@@ -270,7 +270,7 @@ void draw_explode(void)
                 break;
 
             dword_176D68++;
-            draw_item_add(DrIT_Unkn5, exface, depth_max + 5000);
+            draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
             break;
         case 0:
         default:
