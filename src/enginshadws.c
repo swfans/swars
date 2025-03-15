@@ -195,11 +195,6 @@ void draw_person_shadow(ushort face)
 
 void draw_vehicle_shadow(ushort veh, ushort sort)
 {
-#if 0
-    asm volatile ("call ASM_draw_vehicle_shadow\n"
-        : : "a" (veh), "d" (sort));
-    return;
-#endif
     struct ShEnginePoint sp1, sp2, sp3, sp4;
     struct M31 vec_inp;
     struct M31 vec_rot;

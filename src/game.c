@@ -1665,11 +1665,6 @@ TbBool get_engine_inputs(void)
 
 void process_engine_unk3(void)
 {
-#if 0
-    asm volatile ("call ASM_process_engine_unk3\n"
-        :  :  : "eax" );
-    return;
-#endif
     PlayerInfo *p_locplayer;
 
     get_engine_inputs();
