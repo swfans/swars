@@ -1581,7 +1581,7 @@ void draw_vehicle_health(struct Thing *p_thing)
 void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
   struct SingleFloorTexture *p_tex, int col, int bright1, int bright2, int sort_key)
 {
-#if 1
+#if 0
     asm volatile (
       "push %9\n"
       "push %8\n"
@@ -1593,6 +1593,98 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
         : : "a" (x1), "d" (y1), "b" (r1), "c" (r2), "g" (flag), "g" (p_tex), "g" (col), "g" (bright1), "g" (bright2), "g" (sort_key));
     return;
 #endif
+    int pt3, pt4;
+    int scrad1;
+    int cur_x, cur_y;
+    short angle, dt_angle, angle_detail;
+
+    pt4 = next_screen_point;
+    scrad1 = (overall_scale * r1) >> 8;
+    angle_detail = 128;
+    if ((scrad1 + x1 < 0) || (x1 - scrad1 > vec_window_width) || (scrad1 + y1 < 0) || (y1 - scrad1 > vec_window_height))
+        return;
+
+    if (scrad1 > 150)
+        angle_detail = 16;
+    else if (scrad1 > 50)
+        angle_detail = 32;
+    else if (scrad1 > 10)
+        angle_detail = 64;
+
+    cur_x = scrad1 + x1;
+    cur_y = y1;
+    pt4 = next_screen_point;
+    pt3 = pt4;
+    pt4++;
+
+    {
+        struct SpecialPoint *p_specpt3;
+        p_specpt3 = &game_screen_point_pool[pt3];
+        p_specpt3->X = x1;
+        p_specpt3->Y = y1;
+    }
+
+    dt_angle = 2 * angle_detail;
+    angle = dt_angle;
+    while (angle <= 2048)
+    {
+        struct SingleObjectFace4 *p_face4;
+        struct SpecialPoint *p_specpt1;
+        struct SpecialPoint *p_specpt2;
+        struct SpecialPoint *p_specpt4;
+        int nxt_x, nxt_y;
+        int sin_angl, half_angl, cos_angl;
+        int hlf_y, hlf_x;
+        ushort face;
+
+        half_angl = angle - angle_detail;
+        cos_angl = lbSinTable[(half_angl & 0x7FF) + LbFPMath_PI/2];
+        sin_angl = lbSinTable[(half_angl & 0x7FF)];
+        hlf_x = x1 + ((scrad1 * cos_angl) >> 16);
+        hlf_y = y1 + ((scrad1 * sin_angl) >> 16);
+        cos_angl = lbSinTable[(angle & 0x7FF) + LbFPMath_PI/2];
+        sin_angl = lbSinTable[angle & 0x7FF];
+        nxt_x = x1 + ((scrad1 * cos_angl) >> 16);
+        nxt_y = y1 + ((scrad1 * sin_angl) >> 16);
+
+        face = next_special_face4;
+        if (face >= mem_game[25].N)
+            break;
+        next_special_face4++;
+
+        p_face4 = &game_special_object_faces4[face];
+        p_face4->Flags = 17;
+        p_face4->PointNo[0] = pt4 + 2;
+        p_face4->PointNo[1] = pt4 + 1;
+        p_face4->PointNo[2] = pt3;
+        p_face4->PointNo[3] = pt4 + 0;
+        p_face4->Shade0 = bright1;
+        p_face4->Shade1 = bright1;
+        p_face4->Shade3 = bright1;
+        p_face4->Shade2 = bright2;
+        p_face4->GFlags = 0;
+        p_face4->ExCol = col;
+
+        p_specpt1 = &game_screen_point_pool[pt4 + 2];
+        p_specpt2 = &game_screen_point_pool[pt4 + 1];
+        p_specpt4 = &game_screen_point_pool[pt4 + 0];
+        pt4 += 3;
+
+        p_specpt4->X = cur_x;
+        p_specpt4->Y = cur_y;
+        p_specpt2->X = hlf_x;
+        p_specpt2->Y = hlf_y;
+        p_specpt1->X = nxt_x;
+        p_specpt1->Y = nxt_y;
+
+        if (!draw_item_add(DrIT_Unkn12, face, sort_key))
+            break;
+
+        cur_x = nxt_x;
+        cur_y = nxt_y;
+        angle += dt_angle;
+    }
+    next_screen_point = pt4;
 }
 
 void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
@@ -1657,11 +1749,13 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
         int hlf_y, hlf_x;
         ushort face;
 
+        half_angl = angle - angle_detail;
+        cos_angl = lbSinTable[(half_angl & 0x7FF) + LbFPMath_PI/2];
+        sin_angl = lbSinTable[(half_angl & 0x7FF)];
+        hlf_x = pp_X + ((scrad1 * cos_angl) >> 16);
+        hlf_y = pp_Y + ((scrad1 * sin_angl) >> 16);
         cos_angl = lbSinTable[(angle & 0x7FF) + LbFPMath_PI/2];
         sin_angl = lbSinTable[angle & 0x7FF];
-        half_angl = (angle - angle_detail) & 0x7FF;
-        hlf_x = pp_X + ((scrad1 * lbSinTable[half_angl + LbFPMath_PI/2]) >> 16);
-        hlf_y = pp_Y + ((scrad1 * lbSinTable[half_angl]) >> 16);
         nxt_x = pp_X + ((scrad1 * cos_angl) >> 16);
         nxt_y = pp_Y + ((scrad1 * sin_angl) >> 16);
 
@@ -1686,6 +1780,7 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
         p_specpt1 = &game_screen_point_pool[pt4 + 2];
         p_specpt2 = &game_screen_point_pool[pt4 + 1];
         p_specpt4 = &game_screen_point_pool[pt4 + 0];
+        pt4 += 3;
 
         p_specpt4->X = cur_x;
         p_specpt4->Y = cur_y;
@@ -1693,8 +1788,6 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
         p_specpt2->Y = hlf_y;
         p_specpt1->X = nxt_x;
         p_specpt1->Y = nxt_y;
-
-        pt4 += 3;
 
         if (!draw_item_add(DrIT_Unkn12, face, bckt))
             break;
