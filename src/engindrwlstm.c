@@ -794,17 +794,6 @@ void draw_bang_wobble_line(struct SimpleThing *p_pow)
 
 void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour)
 {
-#if 0
-    asm volatile (
-      "push %8\n"
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_build_laser\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (itime), "g" (p_owner), "g" (colour));
-    return;
-#endif
     struct EnginePoint ep1, ep2;
     ubyte flg;
     int scr_x, scr_y, scr_depth;
