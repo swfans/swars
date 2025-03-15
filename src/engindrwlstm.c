@@ -843,7 +843,7 @@ struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
     p_scrpoint = &game_screen_point_pool[pt + 2];
     p_scrpoint->X = pp_X + scaled_r;
     p_scrpoint->Y = pp_Y + scaled_r;
-    p_scrpoint = &game_screen_point_pool[pt + 2];
+    p_scrpoint = &game_screen_point_pool[pt + 3];
     p_scrpoint->X = pp_X - scaled_r;
     p_scrpoint->Y = pp_Y + scaled_r;
 
@@ -1105,7 +1105,7 @@ static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp, int offset_
     }
 }
 
-short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
+int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
 {
     int i, bckt_max;
     int face_beg, face;

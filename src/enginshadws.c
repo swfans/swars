@@ -210,7 +210,7 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     short cor4_x, cor4_y, cor4_z;
     ushort face, pt;
     short sftex;
-    short bckt;
+    int bckt;
 
     p_vehicle = &things[veh];
     p_shtextr = &shadowtexture[p_vehicle->StartFrame];
