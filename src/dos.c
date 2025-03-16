@@ -18,7 +18,7 @@
 #include "dos.h"
 #include "game.h"
 #include "util.h"
-#include "windows.h"
+#include "oswindws.h"
 
 #ifdef __unix__
 # include <unistd.h>

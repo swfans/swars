@@ -1,5 +1,5 @@
-#ifndef WINDOWS_H
-#define WINDOWS_H
+#ifndef OSWINDWS_H
+#define OSWINDWS_H
 
 #ifdef WIN32
 #include <time.h>
@@ -11,4 +11,4 @@ bool sys_get_data_path (char *buffer, size_t size);
 
 #endif /* WIN32 */
 
-#endif /* WINDOWS_H */
+#endif /* OSWINDWS_H */

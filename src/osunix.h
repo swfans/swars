@@ -1,5 +1,5 @@
-#ifndef UNIX_H
-#define UNIX_H
+#ifndef OSUNIX_H
+#define OSUNIX_H
 
 #ifdef __unix__
 

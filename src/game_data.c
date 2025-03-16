@@ -41,9 +41,9 @@
 #include "lvfiles.h"
 #include "swlog.h"
 #include "tngcolisn.h"
-#include "unix.h"
+#include "osunix.h"
+#include "oswindws.h"
 #include "vehtraffic.h"
-#include "windows.h"
 #include "dos.h"
 
 static char data_path_user[DISKPATH_SIZE] = "";

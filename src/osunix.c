@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #include "bffile.h"
-#include "unix.h"
+#include "osunix.h"
 #include "util.h"
 
 void
