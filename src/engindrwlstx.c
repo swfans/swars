@@ -613,14 +613,6 @@ void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
   ubyte bri, ubyte angle)
 {
 #if 0
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_sorted_sprite1b\n"
-        : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" (bri), "g" (angle));
-    return;
-#endif
-#if 0
     debug_check_unkn_sprite_size(__FILE__, __LINE__);
 #endif
 
@@ -2010,13 +2002,6 @@ void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte bright)
 
 void draw_sort_sprite1c_sub(ushort frm, short x, short y, ubyte bright, ushort scale)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_sort_sprite1c_sub\n"
-        : : "a" (frm), "d" (x), "b" (y), "c" (bright), "g" (scale));
-    return;
-#endif
     int sscale;
     ubyte bri;
 
