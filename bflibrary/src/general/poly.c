@@ -23,10 +23,15 @@
 #include "poly_gp.h"
 #include "poly_trigp.h"
 #include "poly_trigr.h"
+#include "bfconfig.h"
 #include "bfgentab.h"
 #include "bfmemut.h"
 #include "bfpalette.h"
 #include "privbflog.h"
+
+#if defined(LB_POLY_RENDER_TIME_CHECK)
+#  include "bftime.h"
+#endif
 
 ubyte *poly_screen;
 
@@ -64,6 +69,10 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
     ubyte start_type;
     struct TrigLocalPrep tlp;
     struct TrigLocalRend tlr;
+#if defined(LB_POLY_RENDER_TIME_CHECK)
+    TbClockMSec exec_tm;
+    TbClockMSec start_tm = LbTimerClock();
+#endif
 
     LOGNO("Pa(%ld,%ld,%ld)", point_a->X, point_a->Y, point_a->S);
     LOGNO("Pb(%ld,%ld,%ld)", point_b->X, point_b->Y, point_b->S);
@@ -216,6 +225,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
     }
 
     LOGNO("end");
+#if defined(LB_POLY_RENDER_TIME_CHECK)
+    exec_tm = LbTimerClock() - start_tm;
+    if (exec_tm > 10) {
+       LOGWARN("Pa(%ld,%ld,%ld) Pb(%ld,%ld,%ld) Pc(%ld,%ld,%ld) mode %d exec time %d ms",
+        point_a->X, point_a->Y, point_a->S, point_b->X, point_b->Y, point_b->S,
+        point_c->X, point_c->Y, point_c->S,(int)vec_mode, (int)exec_tm);
+    }
+#endif
 }
 
 void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c)

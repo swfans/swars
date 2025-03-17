@@ -64,6 +64,16 @@ AS_IF([test "$lb_mouse_move_ratio" = "yes"], [
         [Define to 1 if the bflibrary should support MouseMoveRatio properties within lbDisplay])
 ])
 
+AC_ARG_ENABLE([lb-poly-render-time-check],
+    AS_HELP_STRING([--enable-lb-poly-render-time-check],
+        [make the bflibrary log a warning on exceptionally long polygon render]),
+    [lb_poly_render_time_check=$enableval], [lb_poly_render_time_check=no])
+
+AS_IF([test "$lb_poly_render_time_check" = "yes"], [
+    AC_DEFINE([POLY_RENDER_TIME_CHECK], 1,
+        [Define to 1 if the bflibrary should log a warning on exceptionally long polygon render])
+])
+
 # Checks for programs.
 
 AC_PROG_CC
