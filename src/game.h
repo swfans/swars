@@ -115,7 +115,7 @@ enum AnimSlot {
   AniSl_UNKN7 = 7,
   AniSl_CYBORG_BRTH = 8,
   AniSl_NETSCAN = 9,
-  AniSl_BKGND = 10,	/**< background buffer for some transparent menu animations */
+  AniSl_SCRATCH = 10,	/**< scratch buffer for some transparent menu animations */
 };
 
 enum PacketRecordMode {
@@ -522,8 +522,6 @@ int xdo_next_frame(ubyte anislot);
 int xdo_prev_frame(ubyte anislot);
 
 void flic_unkn03(ubyte a1);
-
-void reload_background(void);
 
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);

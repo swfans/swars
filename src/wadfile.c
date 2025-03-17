@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "bftypes.h"
+
 #include "campaign.h"
 #include "game_data.h"
 #include "game.h"
@@ -87,12 +88,14 @@ int load_file_alltext(const char *filename, void *outbuf)
     char wadfile[DISKPATH_SIZE];
     struct Campaign *p_campgn;
     const char *campgn_mark;
+    PathInfo *pinfo;
 
+    pinfo = &game_dirs[DirPlace_LangData];
     p_campgn = &campaigns[background_type];
     campgn_mark = p_campgn->TextFnMk;
-    LOGNO("Load \"%s\" from lang=\"%s\" mark=\"%s\"", filename, language_3str, campgn_mark);
+    LOGNO("Load \"%s\" from wad dir=\"%s\" mark=\"%s\"", filename, pinfo->directory, campgn_mark);
 
-    snprintf(wadfile, DISKPATH_SIZE, "language/%s/alltext-%s", language_3str, campgn_mark);
+    snprintf(wadfile, DISKPATH_SIZE, "%s/alltext-%s", pinfo->directory, campgn_mark);
     return load_file_wad(filename, wadfile, outbuf);
 }
 

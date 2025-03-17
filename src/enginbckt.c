@@ -23,12 +23,24 @@
 #include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
-extern ushort buckets[BUCKETS_COUNT];
+#define DEBUG_DRAWLIST_BUCKETS_LIMITS 0
+
+ushort buckets[BUCKETS_COUNT];
 
 TbBool draw_item_add(ubyte ditype, ushort offset, int bckt)
 {
     struct DrawItem *p_dritm;
-
+#if DEBUG_DRAWLIST_BUCKETS_LIMITS
+    static int bckt_min = INT32_MAX;
+    static int bckt_max = 0;
+    if ((bckt < bckt_min) || (bckt > bckt_max)) {
+        if (bckt < bckt_min)
+            bckt_min = bckt;
+        if (bckt > bckt_max)
+            bckt_max = bckt;
+        LOGSYNC("Drawlist buckets range %d..%d", bckt_min, bckt_max);
+    }
+#endif
     if (bckt < 1)
         bckt = 1;
     if (bckt >= BUCKETS_COUNT)

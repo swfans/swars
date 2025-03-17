@@ -59,17 +59,17 @@ extern struct TbSprite *big_font;
 extern struct TbSprite *big_font_end;
 extern ubyte *big_font_data;
 
-extern struct TbSprite *sprites_Icons0_0;
-extern struct TbSprite *sprites_Icons0_0_end;
-extern ubyte *sprites_Icons0_0_data;
+extern struct TbSprite *fe_icons_sprites;
+extern struct TbSprite *fe_icons_sprites_end;
+extern ubyte *fe_icons_sprites_data;
 
 extern struct TbSprite *unk1_sprites;
 extern struct TbSprite *unk1_sprites_end;
 extern ubyte *unk1_sprites_data;
 
-extern struct TbSprite *unk3_sprites;
-extern struct TbSprite *unk3_sprites_end;
-extern ubyte *unk3_sprites_data;
+extern struct TbSprite *fe_mouseptr_sprites;
+extern struct TbSprite *fe_mouseptr_sprites_end;
+extern ubyte *fe_mouseptr_sprites_data;
 
 /** Panel sprites, but loaded for front-end menu purposes.
  * The main purpose is to get small weapon sprites.
@@ -109,7 +109,8 @@ void setup_mouse_pointers(void);
  */
 void reset_mouse_pointers(void);
 
-TbResult load_sprites_icons(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_fe_icons(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_icons(void);
 void reset_sprites_icons(void);
 
@@ -117,12 +118,20 @@ TbResult load_sprites_wicons(ubyte **pp_buf, const char *dir);
 void setup_sprites_wicons(void);
 void reset_sprites_wicons(void);
 
-TbResult load_sprites_fepanel(ubyte **pp_buf, const char *dir);
+/** Loads panel sprites for frontend menu use.
+ *
+ * Panels are normally used in game. But few of their sprites are also
+ * re-used for the frontend menus. The sprites need to be recolored to
+ * match the frontend palette; we require sprites of detail one level
+ * smaller than the expected menu detail.
+ */
+TbResult load_sprites_fepanel(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_fepanel(void);
 void reset_sprites_fepanel(void);
 
 TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
-  const char *dir, ushort styleno, ushort detail);
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_fe_mouse_pointers(void);
 void reset_sprites_fe_mouse_pointers(void);
 
@@ -133,23 +142,28 @@ TbResult load_sprites_small_font_up_to(const char *dir, short max_detail);
 void setup_sprites_small_font(void);
 void reset_sprites_small_font(void);
 
-TbResult load_sprites_small_med_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_small_med_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_small_med_font(void);
 void reset_sprites_small_med_font(void);
 
-TbResult load_sprites_med_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_med_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_med_font(void);
 void reset_sprites_med_font(void);
 
-TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_med2_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_med2_font(void);
 void reset_sprites_med2_font(void);
 
-TbResult load_sprites_big_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_big_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_big_font(void);
 void reset_sprites_big_font(void);
 
-TbResult load_sprites_small2_font(ubyte **pp_buf, const char *dir);
+TbResult load_sprites_small2_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail);
 void setup_sprites_small2_font(void);
 void reset_sprites_small2_font(void);
 

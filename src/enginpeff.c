@@ -23,7 +23,9 @@
 #include "bfpixel.h"
 #include "bfscreen.h"
 #include "bfutility.h"
+
 #include "display.h"
+#include "enginbckt.h"
 #include "engintrns.h"
 #include "game_speed.h"
 #include "scanner.h"
@@ -100,8 +102,8 @@ void draw_falling_rain(int bckt)
     seed_bkp = lbSeed;
     scanln = lbDisplay.GraphicsScreenWidth;
 
-    icol = (10000 - bckt) / 416 << 7;
-    shift_y = gameturn * (10000 - bckt);
+    icol = (BUCKETS_COUNT - bckt) / 416 << 7;
+    shift_y = gameturn * (BUCKETS_COUNT - bckt);
     limit_y = 236 - (bckt >> 5);
     if (limit_y < 20)
         return;
@@ -172,10 +174,10 @@ void draw_falling_snow(int bckt)
         shift1 = waft_table[(bckt + gameturn) & 0x1F];
         // Moving with full background speed would be >> 19, dividing by half to make rotation look beter
         x = (shift1 >> (speed + 1)) + ((engn_zc * lbSinTable[angXZs]) >> 20) - ((engn_xc * lbSinTable[angXZc]) >> 20) + LbRandomAnyShort();
-        shift2 = (10000 - bckt) * gameturn;
+        shift2 = (BUCKETS_COUNT - bckt) * gameturn;
         y = (shift2 >> (12 - speed/2)) + ((engn_xc * lbSinTable[angXZs]) >> 20) + ((engn_zc * lbSinTable[angXZc]) >> 20) + LbRandomAnyShort();
         lbDisplay.DrawFlags = 0x0004;
-        draw_static_dot((x * m) % scanln, (y % height) * m, m, m, 128 * ((10000 - bckt) / 416) + colour_lookup[ColLU_WHITE]);
+        draw_static_dot((x * m) % scanln, (y % height) * m, m, m, 128 * ((BUCKETS_COUNT - bckt) / 416) + colour_lookup[ColLU_WHITE]);
         lbSeed = seed_bkp;
         lbDisplay.DrawFlags = 0;
     }

@@ -624,4 +624,12 @@ ushort cybmod_version(ushort mtype)
     return ((mtype-1) % 3) + 1;
 }
 
+ushort cybmod_type(ushort mgroup, ushort mver)
+{
+    ushort mtype;
+    // the mver is already counted from 1, so no +1 needed
+    mtype = (mgroup * 3) + mver;
+    return mtype;
+}
+
 /******************************************************************************/

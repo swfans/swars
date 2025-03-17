@@ -46,13 +46,19 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
 void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity);
 void FIRE_draw_fire(struct SimpleThing *p_sthing);
 void draw_bang(struct SimpleThing *p_pow);
-short draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing);
+
+/** Adds primitives for a rotated 3D object to drawlist.
+ *
+ * @return Gives max depth value shifted to bucket index.
+ */
+int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing);
 short draw_rot_object2(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing);
 short draw_object(int x, int y, int z, struct SingleObject *point_object);
 void draw_vehicle_health(struct Thing *p_thing);
 
 void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag, struct SingleFloorTexture *p_tex, int col, int bright1, int bright2);
 void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour);
+struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1);
 
 // Lowest level functions, to be used only if previous ones really do not match
 

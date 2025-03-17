@@ -195,11 +195,6 @@ void draw_person_shadow(ushort face)
 
 void draw_vehicle_shadow(ushort veh, ushort sort)
 {
-#if 0
-    asm volatile ("call ASM_draw_vehicle_shadow\n"
-        : : "a" (veh), "d" (sort));
-    return;
-#endif
     struct ShEnginePoint sp1, sp2, sp3, sp4;
     struct M31 vec_inp;
     struct M31 vec_rot;
@@ -215,7 +210,7 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     short cor4_x, cor4_y, cor4_z;
     ushort face, pt;
     short sftex;
-    short bckt;
+    int bckt;
 
     p_vehicle = &things[veh];
     p_shtextr = &shadowtexture[p_vehicle->StartFrame];
@@ -274,11 +269,11 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     transform_shpoint(&sp4, cor4_x, cor4_y - 8 * engn_yc, cor4_z);
 
     face = next_special_face4;
-    if (face >= mem_game[25].N)
+    if (face + 1 > mem_game[25].N)
         return;
 
     pt = next_screen_point;
-    if (pt + 4 >= mem_game[30].N)
+    if (pt + 4 > mem_game[30].N)
         return;
 
     next_special_face4++;

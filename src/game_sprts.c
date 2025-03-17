@@ -49,17 +49,24 @@ ubyte *small_font_data_end;
 
 /******************************************************************************/
 
-/** Load sprites of given style and detail, to a preallocated area.
+/** Load sprites of given style and detail, to a preallocated area of specific size.
+ *
+ * Loads files to areas between given start and end pointers. Expects the loaded
+ * files to fit before the given end pointers.
+ * For DAT file, decreases the end pointer, setting it to the end of loaded data.
+ * For TAB file, clears any extra area above loaded data until the end pointer.
+ *
+ * The end pointers are expected to be initially set to max supported data size.
  */
-static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_dat_end,
+static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte **pp_dat_end,
   ubyte *p_spr, ubyte *p_spr_end, const char *dir, const char *name,
-  ushort styleno, ushort detail)
+  short styleno, short detail)
 {
     char locstr[DISKPATH_SIZE];
     long len;
     TbResult ret;
 
-    sprintf(locstr, "%s/%s%hu-%hu.tab", dir, name, styleno, detail);
+    sprintf(locstr, "%s/%s%hd-%hd.tab", dir, name, styleno, detail);
     if (!LbFileExists(locstr)) {
         LOGSYNC("Could not find \"%s\" file", locstr);
         LbMemorySet(p_spr, 0, p_spr_end - p_spr);
@@ -68,31 +75,34 @@ static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_dat_end,
 
     ret = Lb_SUCCESS;
 
-    sprintf(locstr, "%s/%s%hu-%hu.dat", dir, name, styleno, detail);
+    sprintf(locstr, "%s/%s%hd-%hd.dat", dir, name, styleno, detail);
     len = LbFileLoadAt(locstr, p_dat);
     if (len == -1) {
         ret = Lb_FAIL;
         len = 0;
     }
-    else if (p_dat + len > p_dat_end) {
+    else if (p_dat + len > (*pp_dat_end)) {
         ret = Lb_OK;
-        LOGERR("Load caused overflow, file \"%s\"", locstr);
+        LOGERR("Load caused overflow by %d bytes, file \"%s\"", p_dat + len - (*pp_dat_end), locstr);
+    }
+    else {
+        *pp_dat_end = p_dat + len;
     }
 
-    sprintf(locstr, "%s/%s%hu-%hu.tab", dir, name, styleno, detail);
+    sprintf(locstr, "%s/%s%hd-%hd.tab", dir, name, styleno, detail);
     len = LbFileLoadAt(locstr, p_spr);
     if (len == -1) {
         ret = Lb_FAIL;
         LbMemorySet(p_spr, 0, p_spr_end - p_spr);
     }
     else if (p_spr + len > p_spr_end) {
-        ret = Lb_OK;
-        LOGERR("Load caused overflow, file \"%s\"", locstr);
+        if (ret == Lb_SUCCESS) ret = Lb_OK;
+        LOGERR("Load caused overflow by %d bytes, file \"%s\"", p_spr + len - p_spr_end, locstr);
         // Clear the overflown data
         LbMemorySet(p_spr + len, 0, p_spr + len - p_spr_end);
     }
     else if (p_spr + len < p_spr_end) {
-        ret = Lb_OK;
+        if (ret == Lb_SUCCESS) ret = Lb_OK;
         // If loaded file is smaller than allocated space, clear the rest; we do not access
         // data pointer for zero-sized sprites, so this is enough as safety measure
         LbMemorySet(p_spr + len, 0, p_spr_end - p_spr - len);
@@ -103,26 +113,31 @@ static inline TbResult load_sprites_with_detail(ubyte *p_dat, ubyte *p_dat_end,
 
 static inline TbResult load_any_sprites_up_to(const char *dir, const char *name,
   ushort min_sprites, struct TbSprite *p_sprites, struct TbSprite *p_sprites_end,
-  ubyte *p_data, ubyte *p_data_end, short *p_scale, short styleno, short max_detail)
+  ubyte *p_data, ubyte **pp_data_end, short *p_scale, short styleno, short max_detail)
 {
     short detail;
     TbResult ret;
 
     if (p_sprites_end - p_sprites < min_sprites) {
-        LOGERR("Preallocated area for %d '%s%hu' sprites is below expected minimum %d",
+        LOGERR("Preallocated area for %d '%s%hd' sprites is below expected minimum %d",
          p_sprites_end - p_sprites, name, styleno, min_sprites);
     }
     ret = Lb_FAIL;
     for (detail = max_detail; detail >= 0; detail--)
     {
-        ret = load_sprites_with_detail(p_data, p_data_end,
+        ubyte *loc_data_end;
+
+        loc_data_end = *pp_data_end;
+        ret = load_sprites_with_detail(p_data, &loc_data_end,
           (ubyte *)p_sprites, (ubyte *)p_sprites_end,
           dir, name, styleno, detail);
-        if (ret != Lb_FAIL)
+        if (ret != Lb_FAIL) {
+            *pp_data_end = loc_data_end;
             break;
+        }
     }
     if (detail < 0) {
-        LOGERR("Some '%s%hu' sprites not loaded, tried detail %hu..0",
+        LOGERR("Some '%s%hd' sprites not loaded, tried detail %hd..0",
           name, styleno, max_detail);
         detail = 0;
     }
@@ -134,8 +149,9 @@ static inline TbResult load_any_sprites_up_to(const char *dir, const char *name,
 
 TbResult load_sprites_mouse_pointers_up_to(const char *dir, short styleno, short max_detail)
 {
+    ubyte *loc_data_end = pointer_data_end;
     return load_any_sprites_up_to(dir, "pointr", 10, pointer_sprites, pointer_sprites_end,
-      pointer_data, pointer_data_end, &pointer_sprites_scale, styleno, max_detail);
+      pointer_data, &loc_data_end, &pointer_sprites_scale, styleno, max_detail);
 }
 
 void setup_mouse_pointers(void)
@@ -154,47 +170,39 @@ void reset_mouse_pointers(void)
     LbSpriteReset(pointer_sprites, pointer_sprites_end, pointer_data);
 }
 
-TbResult load_sprites_icons(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_fe_icons(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
-    long len;
+    ushort min_sprites;
     TbResult ret;
 
+    min_sprites = 170;
     p_buf = *pp_buf;
-    ret = Lb_OK;
+    fe_icons_sprites = (struct TbSprite *)p_buf;
+    p_buf += min_sprites * sizeof(struct TbSprite);
+    fe_icons_sprites_end = (struct TbSprite *)p_buf;
+    fe_icons_sprites_data = p_buf;
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    sprites_Icons0_0_data = p_buf;
-    sprintf(locstr, "%s/icons0-0.dat", dir);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    p_buf += len;
-    sprites_Icons0_0 = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/icons0-0.tab", dir);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 32 * sizeof(struct TbSprite);
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
-    sprites_Icons0_0_end = (struct TbSprite *)p_buf;
+    ret = load_any_sprites_up_to(dir, "icons", min_sprites,
+      fe_icons_sprites, fe_icons_sprites_end,
+      fe_icons_sprites_data, &p_buf, NULL, styleno, max_detail);
 
-    *pp_buf = p_buf;
+    if (ret != Lb_FAIL)
+        *pp_buf = p_buf;
+
     return ret;
 }
 
 void setup_sprites_icons(void)
 {
-    LbSpriteSetup(sprites_Icons0_0, sprites_Icons0_0_end, sprites_Icons0_0_data);
+    LbSpriteSetup(fe_icons_sprites, fe_icons_sprites_end, fe_icons_sprites_data);
 }
 
 void reset_sprites_icons(void)
 {
-    LbSpriteReset(sprites_Icons0_0, sprites_Icons0_0_end, sprites_Icons0_0_data);
+    LbSpriteReset(fe_icons_sprites, fe_icons_sprites_end, fe_icons_sprites_data);
 }
 
 TbResult load_sprites_wicons(ubyte **pp_buf, const char *dir)
@@ -241,81 +249,61 @@ void reset_sprites_wicons(void)
 }
 
 TbResult load_sprites_fe_mouse_pointers(ubyte **pp_buf,
-  const char *dir, ushort styleno, ushort detail)
+  const char *dir, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
-    long len;
+    ushort min_sprites;
     TbResult ret;
 
+    min_sprites = 15;
     p_buf = *pp_buf;
-    ret = Lb_OK;
+    fe_mouseptr_sprites = (struct TbSprite *)p_buf;
+    p_buf += min_sprites * sizeof(struct TbSprite);
+    fe_mouseptr_sprites_end = (struct TbSprite *)p_buf;
+    fe_mouseptr_sprites_data = p_buf;
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    unk3_sprites_data = p_buf;
-    sprintf(locstr, "%s/mouse%hu-%hu.dat", dir, styleno, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    p_buf += len;
-    unk3_sprites = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/mouse%hu-%hu.tab", dir, styleno, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 32 * sizeof(struct TbSprite);
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
-    unk3_sprites_end = (struct TbSprite *)p_buf;
+    ret = load_any_sprites_up_to(dir, "mouse", min_sprites,
+      fe_mouseptr_sprites, fe_mouseptr_sprites_end,
+      fe_mouseptr_sprites_data, &p_buf, NULL, styleno, max_detail);
 
-    *pp_buf = p_buf;
+    if (ret != Lb_FAIL)
+        *pp_buf = p_buf;
+
     return ret;
 }
 
 void setup_sprites_fe_mouse_pointers(void)
 {
-    LbSpriteSetup(unk3_sprites, unk3_sprites_end, unk3_sprites_data);
+    LbSpriteSetup(fe_mouseptr_sprites, fe_mouseptr_sprites_end, fe_mouseptr_sprites_data);
 }
 
 void reset_sprites_fe_mouse_pointers(void)
 {
-    LbSpriteReset(unk3_sprites, unk3_sprites_end, unk3_sprites_data);
+    LbSpriteReset(fe_mouseptr_sprites, fe_mouseptr_sprites_end, fe_mouseptr_sprites_data);
 }
 
-TbResult load_sprites_med_font(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_med_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
-    long len;
-    short detail;
+    ushort min_sprites;
     TbResult ret;
 
+    min_sprites = 224;
     p_buf = *pp_buf;
-    ret = Lb_OK;
-
-    detail = 1;
-    med_font_data = p_buf;
-    sprintf(locstr, "%s/fontc0-%hd.dat", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    p_buf += len;
     med_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/fontc0-%hd.tab", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
+    p_buf += min_sprites * sizeof(struct TbSprite);
     med_font_end = (struct TbSprite *)p_buf;
+    med_font_data = p_buf;
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    *pp_buf = p_buf;
+    ret = load_any_sprites_up_to(dir, "fontc", min_sprites, med_font, med_font_end,
+      med_font_data, &p_buf, NULL, styleno, max_detail);
+
+    if (ret != Lb_FAIL)
+        *pp_buf = p_buf;
+
     return ret;
 }
 
@@ -329,38 +317,27 @@ void reset_sprites_med_font(void)
     LbSpriteReset(med_font, med_font_end, med_font_data);
 }
 
-TbResult load_sprites_big_font(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_big_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
-    long len;
-    short detail;
+    ushort min_sprites;
     TbResult ret;
 
+    min_sprites = 224;
     p_buf = *pp_buf;
-    ret = Lb_OK;
-
-    detail = 2;
-    big_font_data = p_buf;
-    sprintf(locstr, "%s/fontc1-%hd.dat", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    p_buf += len;
     big_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/fontc1-%hd.tab", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
+    p_buf += min_sprites * sizeof(struct TbSprite);
     big_font_end = (struct TbSprite *)p_buf;
+    big_font_data = p_buf;
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    *pp_buf = p_buf;
+    ret = load_any_sprites_up_to(dir, "fontc", min_sprites, big_font, big_font_end,
+      big_font_data, &p_buf, NULL, styleno, max_detail);
+
+    if (ret != Lb_FAIL)
+        *pp_buf = p_buf;
+
     return ret;
 }
 
@@ -376,10 +353,10 @@ void reset_sprites_big_font(void)
 
 TbResult load_sprites_small_font_up_to(const char *dir, short max_detail)
 {
+    ubyte *loc_data_end = small_font_data_end;
     const short styleno = 0;
-    // TODO there should be 224 min sprites
-    return load_any_sprites_up_to(dir, "fontc", 205, small_font, small_font_end,
-      small_font_data, small_font_data_end, NULL, styleno, max_detail);
+    return load_any_sprites_up_to(dir, "fontc", 224, small_font, small_font_end,
+      small_font_data, &loc_data_end, NULL, styleno, max_detail);
 }
 
 void setup_sprites_small_font(void)
@@ -392,38 +369,27 @@ void reset_sprites_small_font(void)
     LbSpriteReset(small_font, small_font_end, small_font_data);
 }
 
-TbResult load_sprites_small_med_font(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_small_med_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
-    long len;
-    short detail;
+    ushort min_sprites;
     TbResult ret;
 
+    min_sprites = 224;
     p_buf = *pp_buf;
-    ret = Lb_OK;
-
-    detail = 0;
-    small_med_font_data = p_buf;
-    sprintf(locstr, "%s/fontc1-%hd.dat", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    p_buf += len;
     small_med_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/fontc1-%hd.tab", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
+    p_buf += min_sprites * sizeof(struct TbSprite);
     small_med_font_end = (struct TbSprite *)p_buf;
+    small_med_font_data = p_buf;
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    *pp_buf = p_buf;
+    ret = load_any_sprites_up_to(dir, "fontc", min_sprites, small_med_font, small_med_font_end,
+      small_med_font_data, &p_buf, NULL, styleno, max_detail);
+
+    if (ret != Lb_FAIL)
+        *pp_buf = p_buf;
+
     return ret;
 }
 
@@ -437,38 +403,27 @@ void reset_sprites_small_med_font(void)
     LbSpriteReset(small_med_font, small_med_font_end, small_med_font_data);
 }
 
-TbResult load_sprites_med2_font(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_med2_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
-    long len;
-    short detail;
+    ushort min_sprites;
     TbResult ret;
 
+    min_sprites = 224;
     p_buf = *pp_buf;
-    ret = Lb_OK;
-
-    detail = 1;
-    med2_font_data = p_buf;
-    sprintf(locstr, "%s/fontc2-%hd.dat", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    p_buf += len;
     med2_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/fontc2-%hd.tab", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
+    p_buf += min_sprites * sizeof(struct TbSprite);
     med2_font_end = (struct TbSprite *)p_buf;
+    med2_font_data = p_buf;
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    *pp_buf = p_buf;
+    ret = load_any_sprites_up_to(dir, "fontc", min_sprites, med2_font, med2_font_end,
+      med2_font_data, &p_buf, NULL, styleno, max_detail);
+
+    if (ret != Lb_FAIL)
+        *pp_buf = p_buf;
+
     return ret;
 }
 
@@ -482,38 +437,27 @@ void reset_sprites_med2_font(void)
     LbSpriteReset(med2_font, med2_font_end, med2_font_data);
 }
 
-TbResult load_sprites_small2_font(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_small2_font(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
-    long len;
-    short detail;
+    ushort min_sprites;
     TbResult ret;
 
+    min_sprites = 224;
     p_buf = *pp_buf;
-    ret = Lb_OK;
-
-    detail = 0;
-    small2_font_data = p_buf;
-    sprintf(locstr, "%s/fontc2-%hd.dat", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    p_buf += len;
     small2_font = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/fontc2-%hd.tab", dir, detail);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 128 * sizeof(struct TbSprite);
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
+    p_buf += min_sprites * sizeof(struct TbSprite);
     small2_font_end = (struct TbSprite *)p_buf;
+    small2_font_data = p_buf;
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    *pp_buf = p_buf;
+    ret = load_any_sprites_up_to(dir, "fontc", min_sprites, small2_font, small2_font_end,
+      small2_font_data, &p_buf, NULL, styleno, max_detail);
+
+    if (ret != Lb_FAIL)
+        *pp_buf = p_buf;
+
     return ret;
 }
 
@@ -572,6 +516,7 @@ void debug_multicolor_sprite(int idx)
     char *str;
     struct TbSprite *spr;
     unsigned char *ptr;
+
     spr = &m_sprites[idx];
     str = strdata;
     sprintf(str, "spr %d width %d height %d ptr 0x%lx data",
@@ -586,36 +531,27 @@ void debug_multicolor_sprite(int idx)
     LOGDBG("m_sprites: %s", strdata);
 }
 
-TbResult load_sprites_fepanel(ubyte **pp_buf, const char *dir)
+TbResult load_sprites_fepanel(ubyte **pp_buf,
+  const char *dir, short styleno, short max_detail)
 {
-    char locstr[DISKPATH_SIZE];
     ubyte *p_buf;
-    long len;
+    ushort min_sprites;
     TbResult ret;
 
+    min_sprites = 150;
     p_buf = *pp_buf;
-    ret = Lb_OK;
-
-    fepanel_sprites_data = p_buf;
-    sprintf(locstr, "%s/panel0-0.dat", dir);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 0;
-    }
-    p_buf += len;
     fepanel_sprites = (struct TbSprite *)p_buf;
-    sprintf(locstr, "%s/panel0-0.tab", dir);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 32 * sizeof(struct TbSprite);
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
+    p_buf += min_sprites * sizeof(struct TbSprite);
     fepanel_sprites_end = (struct TbSprite *)p_buf;
+    fepanel_sprites_data = p_buf;
+    p_buf += min_sprites * 4096 * (max_detail + 1) * (max_detail + 1);
 
-    *pp_buf = p_buf;
+    ret = load_any_sprites_up_to(dir, "panel", min_sprites, fepanel_sprites, fepanel_sprites_end,
+      fepanel_sprites_data, &p_buf, NULL, styleno, max_detail);
+
+    if (ret != Lb_FAIL)
+        *pp_buf = p_buf;
+
     return ret;
 }
 
@@ -631,8 +567,9 @@ void reset_sprites_fepanel(void)
 
 TbResult load_pop_sprites_up_to(const char *dir, const char *name, short styleno, short max_detail)
 {
-    return load_any_sprites_up_to(dir, name, 149, pop1_sprites, pop1_sprites_end,
-      pop1_data, pop1_data_end, &pop1_sprites_scale, styleno, max_detail);
+    ubyte *loc_data_end = pop1_data_end;
+    return load_any_sprites_up_to(dir, name, 150, pop1_sprites, pop1_sprites_end,
+      pop1_data, &loc_data_end, &pop1_sprites_scale, styleno, max_detail);
 }
 
 void setup_pop_sprites(void)

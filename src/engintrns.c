@@ -256,11 +256,6 @@ int transform_shpoint_y(int dxc, int dyc, int dzc)
 
 void process_engine_unk1(void)
 {
-#if 0
-    asm volatile ("call ASM_process_engine_unk1\n"
-        :  :  : "eax" );
-    return;
-#endif
     int angle;
 
     dword_176D4C = 0;
@@ -284,11 +279,6 @@ void setup_engine_nullsub4(void)
 
 void calc_mouse_pos(void)
 {
-#if 0
-    asm volatile ("call ASM_calc_mouse_pos\n"
-        :  :  : "eax" );
-    return;
-#endif
     int cor_dx, cor_dy, cor_dz;
     int fctr_xz;
     int chk_x, chk_y, chk_z;
@@ -346,11 +336,6 @@ void transform_screen_to_map_isometric(int *dxc, int *dzc, int scr_x, int scr_y)
 
 void process_engine_unk2(void)
 {
-#if 0
-    asm volatile ("call ASM_process_engine_unk2\n"
-        :  :  : "eax" );
-    return;
-#endif
     short msx, msy;
     int offs_y;
     int scr_x, scr_y;

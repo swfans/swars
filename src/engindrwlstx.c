@@ -88,6 +88,21 @@ extern long sprite_over_16x16;
 
 extern ubyte byte_1C844E;
 
+struct DrawItem *game_draw_list;
+struct DrawItem *p_current_draw_item;
+ushort next_draw_item;
+
+struct SpecialPoint *game_screen_point_pool;
+ushort next_screen_point;
+
+struct SortSprite *game_sort_sprites;
+struct SortSprite *p_current_sort_sprite;
+ushort next_sort_sprite;
+
+struct SortLine *game_sort_lines;
+struct SortLine *p_current_sort_line;
+ushort next_sort_line;
+
 TbPixel deep_radar_surface_col = 0xd8;
 TbPixel deep_radar_line_col = 0x64;
 
@@ -111,13 +126,6 @@ ubyte byte_15399C[] = {
 
 void draw_unkn1_scaled_alpha_sprite(ushort frm, int scr_x, int scr_y, ushort scale, ushort alpha)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_unkn1_scaled_alpha_sprite\n"
-        : : "a" (fr), "d" (scr_x), "b" (scr_y), "c" (scale), "g" (alpha));
-    return;
-#endif
     struct Frame *p_frm;
     struct Element *p_el;
     int pos_x, pos_y;
@@ -180,13 +188,6 @@ void draw_unkn1_scaled_alpha_sprite(ushort frm, int scr_x, int scr_y, ushort sca
 void draw_unkn2_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
   ubyte bri)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_unkn2_scaled_alpha_sprite\n"
-        : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" ((uint)bri));
-    return;
-#endif
     struct Frame *p_frm;
     struct Element *p_elem;
     int max_x, max_y;
@@ -611,14 +612,6 @@ void debug_check_unkn_sprite_size(const char *src_fname, int src_line)
 void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
   ubyte bri, ubyte angle)
 {
-#if 0
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_sorted_sprite1b\n"
-        : : "a" (frv), "d" (frm), "b" (x), "c" (y), "g" (bri), "g" (angle));
-    return;
-#endif
 #if 0
     debug_check_unkn_sprite_size(__FILE__, __LINE__);
 #endif
@@ -2009,13 +2002,6 @@ void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte bright)
 
 void draw_sort_sprite1c_sub(ushort frm, short x, short y, ubyte bright, ushort scale)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_sort_sprite1c_sub\n"
-        : : "a" (frm), "d" (x), "b" (y), "c" (bright), "g" (scale));
-    return;
-#endif
     int sscale;
     ubyte bri;
 
@@ -2906,12 +2892,6 @@ void draw_object_face4_reflect(ushort face4)
  */
 void draw_shrapnel(ushort shrap)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_shrapnel\n"
-        : : "a" (shrap));
-    return;
-#endif
     struct Shrapnel *p_shrap;
     struct PolyPoint point3;
     struct PolyPoint point2;
@@ -2963,12 +2943,6 @@ void draw_shrapnel(ushort shrap)
  */
 void draw_phwoar(ushort ph)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_phwoar\n"
-        : : "a" (ph));
-    return;
-#endif
     struct Phwoar *p_phwoar;
     struct Element *p_elem;
     ushort el;
@@ -3218,12 +3192,6 @@ void draw_object_face3_deep_rdr(ushort face)
 
 void draw_fire_flame(ushort flm)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_fire_flame\n"
-        : : "a" (flm));
-    return;
-#endif
     struct FireFlame *p_flame;
     struct SpecialPoint *p_scrpoint;
 

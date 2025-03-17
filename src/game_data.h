@@ -35,7 +35,10 @@ enum DirPlacement {
     DirPlace_Sound,
     DirPlace_Equip,
     DirPlace_QEquip,
+    DirPlace_LangData,
     DirPlace_Config,
+    DirPlace_Savegame,
+    DirPlace_Scrnshots,
     DirPlace_None,
 };
 
@@ -84,6 +87,10 @@ const char *GetDirectoryCd(void);
  * relative paths within the game folder.
  */
 void setup_file_names(void);
+
+/** Final part of setup_file_names(), called after language is set.
+ */
+void setup_language_file_names(void);
 
 int get_highest_used_packet_record_no(int campgn, int missi);
 void get_packet_record_fname(char *fname, int campgn, int missi, int file_no);

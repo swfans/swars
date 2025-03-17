@@ -78,7 +78,8 @@ enum TbDrawFlags {
      * upper part of the color mixing array */
     Lb_SPRITE_TRANSPAR4    = 0x0004,
     /** while drawing sprites, use transparency with sprite data in
-     * lower part of the color mixing array */
+     * lower part of the color mixing array; order of colors only matters
+     * if color ghosting table is non-symmtrical (uses mix ratio other than 50%) */
     Lb_SPRITE_TRANSPAR8    = 0x0008,
     /** while drawing sprites and shapes, draw the outline shape only */
     Lb_SPRITE_OUTLINE      = 0x0010,

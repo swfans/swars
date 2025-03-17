@@ -4,6 +4,8 @@ bindir = $(prefix)/$(PACKAGE)
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
+	app_gengh.c \
+	app_gentab.h \
 	app_spr_init.c \
 	ap_gspr_map.c \
 	ap_spr_smap.c \
@@ -217,8 +219,8 @@ swars_SOURCES = \
 	tngobjdrw.h \
 	timer.c \
 	timer.h \
-	unix.c \
-	unix.h \
+	osunix.c \
+	osunix.h \
 	util.c \
 	util.h \
 	vehicle.c \
@@ -229,8 +231,8 @@ swars_SOURCES = \
 	wadfile.h \
 	weapon.c \
 	weapon.h \
-	windows.c \
-	windows.h \
+	oswindws.c \
+	oswindws.h \
 	wrcities.c \
 	wrcities.h
 

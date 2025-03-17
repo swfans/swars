@@ -112,6 +112,7 @@ ubyte cybmod_level(union Mod *p_umod, ubyte mgroup);
 ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype);
 ushort cybmod_group_type(ushort mtype);
 ushort cybmod_version(ushort mtype);
+ushort cybmod_type(ushort mgroup, ushort mver);
 
 TbBool check_mod_allowed_to_flags(union Mod *p_umod, ushort mtype);
 void add_mod_to_flags(union Mod *p_umod, ushort mtype);

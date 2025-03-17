@@ -350,7 +350,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x2, scr_y2, p_box->Colour1);
         lbDisplay.DrawFlags = 0;
 
-        p_spr = &unk3_sprites[spr1];
+        p_spr = &fe_mouseptr_sprites[spr1];
         draw_sprite_purple_list(scr_x1 - 1, scr_y1 - 1, p_spr);
         draw_sprite_purple_list(scr_x2 - 1, scr_y2 - 1, p_spr);
 
@@ -390,7 +390,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
         draw_line_purple_list(dword_1DC5FC, dword_1DC600, p_box->X + box_w, dword_1DC628, p_box->Colour1);
 
-        p_spr = &unk3_sprites[spr1];
+        p_spr = &fe_mouseptr_sprites[spr1];
         scr_x = p_box->X + advance - 1;
         scr_y = p_box->Y - 1;
         draw_sprite_purple_list(scr_x, scr_y, p_spr);
@@ -428,7 +428,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
         draw_line_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, p_box->Y + box_h, p_box->Colour1);
 
-        p_spr = &unk3_sprites[spr1];
+        p_spr = &fe_mouseptr_sprites[spr1];
         scr_x = p_box->X - 1;
         scr_y = p_box->Y + box_h - advance - 1;
         draw_sprite_purple_list(scr_x, scr_y, p_spr);
@@ -716,14 +716,14 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         if (p_box->Text != NULL)
             lbDisplay.DrawFlags |= 0x8000;
 
-        p_spr = &unk3_sprites[9];
+        p_spr = &fe_mouseptr_sprites[9];
         draw_sprite_purple_list(scroll_arrow_up_box.X, scroll_arrow_up_box.Y, p_spr);
 
         lbDisplay.DrawFlags = 0;
 
         if (mouse_move_over_box(&scroll_arrow_up_box))
         {
-            p_spr = &unk3_sprites[13];
+            p_spr = &fe_mouseptr_sprites[13];
             draw_sprite_purple_list(scroll_arrow_up_box.X, scroll_arrow_up_box.Y, p_spr);
         }
 
@@ -733,14 +733,14 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         if (p_box->Text != NULL)
             lbDisplay.DrawFlags |= 0x8000;
 
-        p_spr = &unk3_sprites[10];
+        p_spr = &fe_mouseptr_sprites[10];
         draw_sprite_purple_list(scroll_arrow_dn_box.X, scroll_arrow_dn_box.Y, p_spr);
 
         lbDisplay.DrawFlags = 0;
 
         if (mouse_move_over_box(&scroll_arrow_dn_box))
         {
-            p_spr = &unk3_sprites[14];
+            p_spr = &fe_mouseptr_sprites[14];
             draw_sprite_purple_list(scroll_arrow_dn_box.X, scroll_arrow_dn_box.Y, p_spr);
         }
     }

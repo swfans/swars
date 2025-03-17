@@ -472,7 +472,7 @@ void lvdraw_do_floor(void)
             dpthalt += 200;
 
             ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
-            p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
+            p_floortl = draw_item_add_floor_tile(ditype, BUCKET_MID + depth + dpthalt);
             if (p_floortl == NULL)
                 break;
 
@@ -651,7 +651,7 @@ void lvdraw_do_floor_flyby(int cor_z_beg, int ranges_x_len, struct Range *smrang
             }
 
             ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
-            p_floortl = draw_item_add_floor_tile(ditype, depth + 5000 + dpthalt);
+            p_floortl = draw_item_add_floor_tile(ditype, BUCKET_MID + depth + dpthalt);
             if (p_floortl == NULL)
                 break;
 
@@ -707,11 +707,6 @@ void lvdraw_do_floor_flyby(int cor_z_beg, int ranges_x_len, struct Range *smrang
 
 void func_2e440(void)
 {
-#if 0
-    asm volatile ("call ASM_func_2e440\n"
-        :  :  : "eax" );
-    return;
-#endif
     int angXZ;
     ubyte slt_zmin;
 

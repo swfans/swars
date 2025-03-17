@@ -43,7 +43,8 @@ enum ModDrawPart {
     ModDPt_BRAIN	= 1,
     ModDPt_ARMS		= 2,
     ModDPt_LEGS		= 3,
-    ModDPt_BKGND	= 4,
+    ModDPt_BREATH	= 4,
+    ModDPt_BKGND	= 5,
 };
 
 enum ModDrawStage {
@@ -64,6 +65,13 @@ void cryo_update_for_selected_cybmod(void);
 void init_cryo_screen_boxes(void);
 void reset_cryo_screen_boxes_flags(void);
 void set_flag01_cryo_screen_boxes(void);
+
+/** Returns size of the cyborg parts buffer.
+ *
+ * The buffer must be large enough to hold either cyborg background,
+ * or all cyborg parts.
+ */
+uint cryo_cyborg_part_buf_max_size(void);
 
 void set_mod_draw_states_flag08(void);
 void reset_mod_draw_states_flag08(void);

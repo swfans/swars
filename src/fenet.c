@@ -56,7 +56,7 @@ extern ubyte byte_155174; // = 166;
 extern ubyte byte_155175[];
 extern ubyte byte_155180; // = 109;
 extern ubyte byte_155181[];
-extern struct TbSprite *sprites_Icons0_0;
+extern struct TbSprite *fe_icons_sprites;
 
 ubyte ac_do_net_protocol_option(ubyte click);
 ubyte ac_do_net_unkn40(ubyte click);
@@ -163,7 +163,7 @@ void show_net_benefits_sub1(short x0, short y0, TbPixel colour)
         struct TbSprite *p_sprite;
         short delta;
 
-        p_sprite = &sprites_Icons0_0[spridx];
+        p_sprite = &fe_icons_sprites[spridx];
         lbDisplay.DrawColour = colour;
         draw_sprite_purple_list(dx, dy, p_sprite);
         if (i < 2)
@@ -198,7 +198,7 @@ void show_net_benefits_sub2(short x0, short y0, TbPixel *colours)
         struct TbSprite *p_sprite;
         short delta;
 
-        p_sprite = &sprites_Icons0_0[spridx];
+        p_sprite = &fe_icons_sprites[spridx];
         if (i < login_control__TechLevel)
         {
             lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
@@ -257,7 +257,7 @@ void show_net_benefits_sub3(struct ScreenBox *box)
         }
         lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
-    draw_sprite_purple_list(box1.X, box1.Y, &sprites_Icons0_0[108]);
+    draw_sprite_purple_list(box1.X, box1.Y, &fe_icons_sprites[108]);
 }
 
 void show_net_benefits_sub4(struct ScreenBox *box)
@@ -283,7 +283,7 @@ void show_net_benefits_sub4(struct ScreenBox *box)
         }
         lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
-    draw_sprite_purple_list(box2.X - 7, box2.Y, &sprites_Icons0_0[109]);
+    draw_sprite_purple_list(box2.X - 7, box2.Y, &fe_icons_sprites[109]);
 }
 
 ulong sub_CCE8C(sbyte change)
@@ -308,7 +308,7 @@ void show_net_benefits_sub5(short x0, short y0, TbPixel *colours)
         struct TbSprite *p_sprite;
         short delta;
 
-        p_sprite = &sprites_Icons0_0[spridx];
+        p_sprite = &fe_icons_sprites[spridx];
         if (login_control__Money >= dword_155750[i])
         {
             lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
@@ -370,7 +370,7 @@ void show_net_benefits_sub6(struct ScreenBox *box)
     }
     lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
     lbDisplay.DrawColour = 87;
-    draw_sprite_purple_list(box1.X, box1.Y, &sprites_Icons0_0[108]);
+    draw_sprite_purple_list(box1.X, box1.Y, &fe_icons_sprites[108]);
 }
 
 void show_net_benefits_sub7(struct ScreenBox *box)
@@ -396,7 +396,7 @@ void show_net_benefits_sub7(struct ScreenBox *box)
     }
     lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
     lbDisplay.DrawColour = 87;
-    draw_sprite_purple_list(box2.X - 7, box2.Y, &sprites_Icons0_0[109]);
+    draw_sprite_purple_list(box2.X - 7, box2.Y, &fe_icons_sprites[109]);
 }
 
 

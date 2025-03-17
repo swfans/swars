@@ -85,6 +85,12 @@ void setup_color_lookups(void);
 const char * SWResourceMapping(short index);
 void swap_wscreen(void);
 void show_black_screen(void);
+TbResult cover_screen_rect_with_sprite(short x, short y,
+  ushort w, ushort h, struct TbSprite *spr);
+TbResult cover_screen_rect_with_raw_file(short x, short y,
+  ushort w, ushort h, const char *fname);
+
+
 void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h);
 u32 my_string_width(const char *text);
 u32 my_str_len(const char *t);
