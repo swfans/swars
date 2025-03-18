@@ -532,9 +532,39 @@ int save_game_write(ubyte slot, char *desc)
     return 0;
 }
 
+void load_save_slot_names(void)
+{
+    char locstr[DISKPATH_SIZE];
+    int i;
+
+    for (i = 0; i < 8; i++)
+    {
+        TbFileHandle fh;
+        int slot;
+
+        slot = save_slot_base + i;
+        get_saved_game_fname(locstr, slot);
+
+        if (!LbFileExists(locstr)) {
+            save_slot_names[i][0] = '\0';
+            continue;
+        }
+
+        fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
+        if (fh == INVALID_FILE) {
+            save_slot_names[i][0] = '\0';
+            continue;
+        }
+
+        if (LbFileRead(fh, save_slot_names[i], 25) != 25)
+            save_slot_names[i][0] = '\0';
+        LbFileClose(fh);
+    }
+}
+
 ubyte load_game(int slot, char *desc)
 {
-    char locstr[52];
+    char locstr[DISKPATH_SIZE];
     u32 gblen, fmtver, decrypt_verify;
     TbFileHandle fh;
     TbBool ok;

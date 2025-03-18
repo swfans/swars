@@ -32,6 +32,10 @@ extern ubyte *save_game_buffer;
 extern char save_active_desc[28];
 extern char login_name[16];
 
+extern short save_slot; // = -1;
+extern char save_slot_names[8][25];
+extern long save_slot_base;
+
 /******************************************************************************/
 
 void read_user_settings(void);

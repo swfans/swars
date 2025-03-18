@@ -155,9 +155,6 @@ extern int data_1c8428;
 extern const char *primvehobj_fname;
 extern unsigned char textwalk_data[640];
 
-extern short save_slot; // = -1;
-extern char save_slot_names[8][25];
-extern long save_slot_base;
 extern short word_1C6E08;
 extern short word_1C6E0A;
 
