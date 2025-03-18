@@ -43,7 +43,9 @@ extern short startscr_cdvolume;
 
 
 void set_default_sfx_settings(void);
-void apply_user_sfx_settings(void);
+void sfx_apply_samplevol(void);
+void sfx_apply_midivol(void);
+void sfx_apply_cdvolume(void);
 void fill_ail_sample_ids(void);
 void monitor_all_samples(void);
 

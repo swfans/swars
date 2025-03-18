@@ -232,7 +232,9 @@ void apply_user_settings(void)
         ingame.Flags &= ~GamF_DeepRadar;
 
     bang_set_detail(ingame.DetailLevel == 0);
-    apply_user_sfx_settings();
+    sfx_apply_samplevol();
+    sfx_apply_midivol();
+    sfx_apply_cdvolume();
 }
 
 void set_default_user_settings(void)
