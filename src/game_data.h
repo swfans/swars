@@ -27,18 +27,18 @@ extern "C" {
 /******************************************************************************/
 
 enum DirPlacement {
-    DirPlace_Data = 0,
-    DirPlace_QData,
-    DirPlace_Maps,
-    DirPlace_Levels,
-    DirPlace_Intro,
-    DirPlace_Sound,
-    DirPlace_Equip,
-    DirPlace_QEquip,
-    DirPlace_LangData,
-    DirPlace_Config,
-    DirPlace_Savegame,
-    DirPlace_Scrnshots,
+    DirPlace_Data = 0,	/**< Normal data directory; files for which read speed can be low */
+    DirPlace_QData,		/**< Quick data dir; files expected to be accessible without much delay */
+    DirPlace_Maps,		/**< Map files storage directory */
+    DirPlace_Levels,	/**< Level files storage directory */
+    DirPlace_Intro,		/**< Directory with game intro animations */
+    DirPlace_Sound,		/**< Directory with sound banks and sound driver config */
+    DirPlace_Equip,		/**< Normal data directory for equip/mods frontend screen */
+    DirPlace_QEquip,	/**< Quick data directory for equip/mods  frontend screen */
+    DirPlace_LangData,	/**< Directory with language-specific data */
+    DirPlace_Config,	/**< Directory with configuration files which can be altred by user */
+    DirPlace_Savegame,	/**< Saved games directory; needs write access */
+    DirPlace_Scrnshots,	/**< Screenshots and movies directory; needs write access */
     DirPlace_None,
 };
 
