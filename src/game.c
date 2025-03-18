@@ -532,10 +532,6 @@ void anim_billboard_broadcast_sound(void)
 
 void flic_unkn03(ubyte anislot)
 {
-#if 0
-    asm volatile ("call ASM_flic_unkn03\n"
-        : : "a" (anislot));
-#endif
     struct Animation *p_anim;
     ubyte *frmbuf;
     PathInfo *pinfo;
