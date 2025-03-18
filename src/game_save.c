@@ -189,12 +189,13 @@ void resave_salt_to_keys(void)
         return;
     }
     i = sizeof(save_mortal_salt);
-    LbFileSeek(fh, -i, Lb_FILE_SEEK_END);
+    // Add salts at end, storing all salts ever used with this copy
+    LbFileSeek(fh, 0, Lb_FILE_SEEK_END);
     LbFileWrite(fh, &save_mortal_salt, i);
     LbFileClose(fh);
 }
 
-void reload_salt_from_keys(void)
+TbResult reload_salt_from_keys(void)
 {
     char locstr[DISKPATH_SIZE];
     PathInfo *pinfo;
@@ -203,15 +204,20 @@ void reload_salt_from_keys(void)
 
     pinfo = &game_dirs[DirPlace_Savegame];
     snprintf(locstr, sizeof(locstr), "%s/keys.dat", pinfo->directory);
+    if (!LbFileExists(locstr))
+    {
+        return Lb_FAIL;
+    }
     fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
     {
-        return;
+        return Lb_FAIL;
     }
     i = sizeof(save_mortal_salt);
     LbFileSeek(fh, -i, Lb_FILE_SEEK_END);
     LbFileRead(fh, &save_mortal_salt, i);
     LbFileClose(fh);
+    return Lb_SUCCESS;
 }
 
 void apply_user_settings(void)
