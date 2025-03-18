@@ -2429,10 +2429,14 @@ void set_default_user_settings(void)
 
 void resave_salt_to_keys(void)
 {
+    char locstr[DISKPATH_SIZE];
+    PathInfo *pinfo;
     TbFileHandle fh;
     int i;
 
-    fh = LbFileOpen("qdata/keys.dat", Lb_FILE_MODE_OLD);
+    pinfo = &game_dirs[DirPlace_Savegame];
+    snprintf(locstr, sizeof(locstr), "%s/keys.dat", pinfo->directory);
+    fh = LbFileOpen(locstr, Lb_FILE_MODE_OLD);
     if (fh == INVALID_FILE)
     {
         return;
@@ -2445,10 +2449,14 @@ void resave_salt_to_keys(void)
 
 void reload_salt_from_keys(void)
 {
+    char locstr[DISKPATH_SIZE];
+    PathInfo *pinfo;
     TbFileHandle fh;
     int i;
 
-    fh = LbFileOpen("qdata/keys.dat", Lb_FILE_MODE_READ_ONLY);
+    pinfo = &game_dirs[DirPlace_Savegame];
+    snprintf(locstr, sizeof(locstr), "%s/keys.dat", pinfo->directory);
+    fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
     {
         return;
