@@ -13,6 +13,7 @@
 #include "guitext.h"
 #include "game.h"
 #include "game_data.h"
+#include "game_save.h"
 #include "lvfiles.h"
 #include "lvobjctv.h"
 #include "network.h"

@@ -126,6 +126,7 @@ TbBool player_agent_is_alive(PlayerIdx plyr, ushort plagent);
 TbBool player_agent_is_executing_commands(PlayerIdx plyr, ushort plagent);
 short player_agent_weapon_delay(PlayerIdx plyr, ushort plagent, ubyte weapon);
 ThingIdx direct_control_thing_for_player(PlayerIdx plyr);
+void set_default_player_control(void);
 void player_target_clear(PlayerIdx plyr);
 /******************************************************************************/
 #ifdef __cplusplus

@@ -1,10 +1,10 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file game_speed.h
- *     Header file for game_speed.c.
+/** @file game_save.h
+ *     Header file for game_save.c.
  * @par Purpose:
- *     Control of the game speed.
+ *     Loading and saving the game and user profile.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
@@ -16,35 +16,29 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef GAME_SPEED_H
-#define GAME_SPEED_H
+#ifndef GAME_SAVE_H
+#define GAME_SAVE_H
 
 #include "bftypes.h"
-#include "game_bstype.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /******************************************************************************/
 
+extern ulong save_mortal_salt;
+
+extern ubyte *save_game_buffer;
+extern char save_active_desc[28];
+extern char login_name[16];
+
 /******************************************************************************/
-extern ulong curr_tick_time;
-extern ulong prev_tick_time;
-extern GameTurn gameturn;
-extern GameTurn prev_gameturn;
-extern ulong turns_delta;
-extern ushort fifties_per_gameturn;
 
-/** Amount of frames per second drawn by the game, and also aount of game
- * turns per second. */
-extern ushort game_num_fps;
+void read_user_settings(void);
+TbBool save_user_settings(void);
 
-TbBool get_speed_control_inputs(void);
-
-void wait_next_gameturn(void);
-
-TbBool display_needs_redraw_this_turn(void);
-void update_tick_time(void);
+int save_game_write(ubyte slot, char *desc);
+ubyte load_game(int slot, char *desc);
 
 /******************************************************************************/
 #ifdef __cplusplus

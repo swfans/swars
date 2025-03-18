@@ -339,6 +339,17 @@ ThingIdx direct_control_thing_for_player(PlayerIdx plyr)
     return dcthing;
 }
 
+void set_default_player_control(void)
+{
+    PlayerInfo *p_locplayer;
+    short i;
+
+    p_locplayer = &players[local_player_no];
+    p_locplayer->DoubleMode = 0;
+    for (i = 0; i < 4; i++)
+        p_locplayer->UserInput[i].ControlMode = 1;
+}
+
 void player_target_clear(PlayerIdx plyr)
 {
     PlayerInfo *p_player;

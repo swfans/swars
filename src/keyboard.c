@@ -21,7 +21,10 @@
 #include <stdint.h>
 
 #include "keyboard.h"
+
+#include "bfmemut.h"
 #include "bfkeybd.h"
+
 #include "game.h"
 
 /******************************************************************************/
@@ -138,4 +141,46 @@ void init_buffered_keys(void)
 {
     LbKeyboardCustomHandler(KEventBufferedKeysUpdate);
 }
+
+void set_default_game_keys(void)
+{
+    LbMemorySet(jskeys, 0, sizeof(jskeys));
+    jskeys[GKey_VIEW_SPIN_L] = 64;
+    jskeys[GKey_VIEW_SPIN_R] = 128;
+    jskeys[GKey_FIRE] = 1;
+    jskeys[GKey_CHANGE_MD_WP] = 2;
+    jskeys[GKey_CHANGE_AGENT] = 4;
+    jskeys[GKey_SELF_DESTRUCT] = 15;
+    jskeys[GKey_GROUP] = 32;
+    jskeys[GKey_GOTO_POINT] = 8;
+    jskeys[GKey_DROP_WEAPON] = 16;
+    byte_1C4A9F = 18;
+
+    LbMemorySet(kbkeys, 0, sizeof(kbkeys));
+    kbkeys[GKey_NONE] = KC_UNASSIGNED;
+    kbkeys[GKey_VIEW_SPIN_L] = KC_DELETE;
+    kbkeys[GKey_VIEW_SPIN_R] = KC_PGDOWN;
+    kbkeys[GKey_FIRE] = KC_LCONTROL;
+    kbkeys[GKey_CHANGE_MD_WP] = KC_LALT;
+    kbkeys[GKey_CHANGE_AGENT] = KC_TAB;
+    kbkeys[GKey_UP] = KC_UP;
+    kbkeys[GKey_DOWN] = KC_DOWN;
+    kbkeys[GKey_GOTO_POINT] = KC_RCONTROL;
+    kbkeys[GKey_GROUP] = KC_OEM_102;
+    kbkeys[GKey_LEFT] = KC_LEFT;
+    kbkeys[GKey_ZOOM_OUT] = KC_HOME;
+    kbkeys[GKey_SELF_DESTRUCT] = KC_D;
+    kbkeys[GKey_RIGHT] = KC_RIGHT;
+    kbkeys[GKey_ZOOM_IN] = KC_END;
+    kbkeys[GKey_DROP_WEAPON] = KC_Z;
+    kbkeys[GKey_PAUSE] = KC_P;
+    kbkeys[GKey_VIEW_TILT_U] = KC_INSERT;
+    kbkeys[GKey_SEL_AGENT_1] = KC_1;
+    kbkeys[GKey_SEL_AGENT_2] = KC_2;
+    kbkeys[GKey_KEY_CONTROL] = KC_K;
+    kbkeys[GKey_VIEW_TILT_D] = KC_PGUP;
+    kbkeys[GKey_SEL_AGENT_4] = KC_4;
+    kbkeys[GKey_SEL_AGENT_3] = KC_3;
+}
+
 /******************************************************************************/
