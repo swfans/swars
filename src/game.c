@@ -124,8 +124,6 @@
 
 #include "timer.h"
 
-#define SAVEGAME_PATH "qdata/savegame/"
-
 /** Expected sizes for font DAT/TAB files for resolution 320x200.
  * Each file has 205 sprites, TAB has 6 bytes per entry, DAT varies to use empirical value.
  */
@@ -8415,15 +8413,7 @@ void game_quit(void)
 void
 game_transform_path_full(const char *file_name, char *buffer, size_t size)
 {
-    if (strncasecmp (file_name, SAVEGAME_PATH,
-             sizeof (SAVEGAME_PATH) - 1) == 0)
-    {
-        snprintf (buffer, size, "%s" FS_SEP_STR "%s", GetDirectoryUser(),
-          file_name + sizeof (SAVEGAME_PATH) - 1);
-        return;
-    }
-
-    /* abort on absolute paths */
+    /* skip adding main folder on absolute paths */
     if (file_name[0] == '\\' || file_name[0] == '/'
         || (strlen (file_name) >= 2 && file_name[1] == ':'))
     {
