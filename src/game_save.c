@@ -542,7 +542,7 @@ void load_save_slot_names(void)
         TbFileHandle fh;
         int slot;
 
-        slot = save_slot_base + i;
+        slot = save_slot_base + i + 1;
         get_saved_game_fname(locstr, slot);
 
         if (!LbFileExists(locstr)) {

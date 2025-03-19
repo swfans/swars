@@ -5889,7 +5889,7 @@ void show_menu_screen_st2(void)
       {
             screentype = SCRT_MAINMENU;
             if ((ingame.Flags & GamF_MortalGame) != 0) {
-                char fname[52];
+                char fname[DISKPATH_SIZE];
                 get_saved_game_fname(fname, 0);
                 LbFileDelete(fname);
             }
