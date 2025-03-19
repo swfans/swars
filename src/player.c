@@ -359,4 +359,10 @@ void player_target_clear(PlayerIdx plyr)
     p_player->TargetType = 0;
 }
 
+void kill_my_players(PlayerIdx plyr)
+{
+    asm volatile ("call ASM_kill_my_players\n"
+        : : "a" (plyr));
+}
+
 /******************************************************************************/

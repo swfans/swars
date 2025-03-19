@@ -45,6 +45,8 @@ enum PacketActions
     PAct_AGENT_GOTO_GND_PT_ABS = 0xB,
     PAct_AGENT_GOTO_GND_PT_REL = 0xC,
     PAct_SELECT_NEXT_WEAPON = 0xD,
+    /** Player controlled person drops a currently wielded weapon,
+     * so that it lays secured. */
     PAct_DROP_SELC_WEAPON_SECR = 0xE,
     PAct_F = 0xF,
     PAct_PICKUP = 0x10,

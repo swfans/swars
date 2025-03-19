@@ -4,8 +4,8 @@
 /** @file plyr_usrinp.c
  *     Players User Input handling.
  * @par Purpose:
- *     Implement functions for storing user input and then applying it
- *     to the game world.
+ *     Implement functions for storing user input and building packets
+ *     which will later influence the game world.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis

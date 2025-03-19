@@ -128,6 +128,7 @@ short player_agent_weapon_delay(PlayerIdx plyr, ushort plagent, ubyte weapon);
 ThingIdx direct_control_thing_for_player(PlayerIdx plyr);
 void set_default_player_control(void);
 void player_target_clear(PlayerIdx plyr);
+void kill_my_players(PlayerIdx plyr);
 /******************************************************************************/
 #ifdef __cplusplus
 }
