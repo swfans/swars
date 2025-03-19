@@ -101,13 +101,11 @@ void trig_render_md00(struct TrigLocalRend *tlr)
         }
         else
         {
-            TbBool pY_overflow;
             if (pY > vec_window_width)
                 pY = vec_window_width;
-            pY_overflow = __OFSUBS__(pY, pX);
-            pY = pY - pX;
-            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+            if (pY <= pX)
                 continue;
+            pY = pY - pX;
             o = &o_ln[pX];
         }
         memset(o, col, pY);
@@ -156,15 +154,13 @@ void trig_render_md01(struct TrigLocalRend *tlr)
         }
         else
         {
-            TbBool pY_overflow;
             short colH;
 
             if (pY > vec_window_width)
               pY = vec_window_width;
-            pY_overflow = __OFSUBS__(pY, pX);
-            pY = pY - pX;
-            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+            if (pY <= pX)
                 continue;
+            pY = pY - pX;
             o += pX;
             colH = pp->S >> 16;
             pS = pp->S;
@@ -238,14 +234,12 @@ void trig_render_md02(struct TrigLocalRend *tlr)
         else
         {
             short colL, colH;
-            TbBool pY_overflow;
 
             if (pY > vec_window_width)
                 pY = vec_window_width;
-            pY_overflow = __OFSUBS__(pY, pX);
-            pY = pY - pX;
-            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+            if (pY <= pX)
                 continue;
+            pY = pY - pX;
             o += pX;
             pU = __ROL4__(pp->V, 16);
             colH = pU;
@@ -323,14 +317,12 @@ void trig_render_md03(struct TrigLocalRend *tlr)
         else
         {
             short colL, colH;
-            TbBool pY_overflow;
 
             if (pY > vec_window_width)
                 pY = vec_window_width;
-            pY_overflow = __OFSUBS__(pY, pX);
-            pY = pY - pX;
-            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+            if (pY <= pX)
                 continue;
+            pY = pY - pX;
             o += pX;
             pU = __ROL4__(pp->V, 16);
             colH = pU;
@@ -410,14 +402,12 @@ void trig_render_md04(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            TbBool pY_overflow;
 
             if (pY > vec_window_width)
                 pY = vec_window_width;
-            pY_overflow = __OFSUBS__(pY, pX);
-            pY = pY - pX;
-            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+            if (pY <= pX)
                 continue;
+            pY = pY - pX;
             o += pX;
             colL = vec_colour;
             pU = pp->S;
@@ -511,14 +501,12 @@ void trig_render_md05(struct TrigLocalRend *tlr)
         {
             ulong factorA, factorB;
             ushort colL, colH;
-            TbBool pY_overflow;
 
             if (pY > vec_window_width)
                 pY = vec_window_width;
-            pY_overflow = __OFSUBS__(pY, pX);
-            pY = pY - pX;
-            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+            if (pY <= pX)
                 continue;
+            pY = pY - pX;
             o_ln += pX;
             factorA = __ROL4__(pp->U, 16);
             factorB = __ROL4__(pp->V, 16);
@@ -727,14 +715,12 @@ void trig_render_md07(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( (ubyte)(((pYa & 0x8000u) != 0) ^ pY_overflow) | ((ushort)pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -816,14 +802,12 @@ void trig_render_md08(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( (ubyte)(((pYa & 0x8000u) != 0) ^ pY_overflow) | ((ushort)pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -905,14 +889,12 @@ void trig_render_md09(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if (((pYa < 0) ^ pY_overflow) | (pYa == 0))
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -998,14 +980,12 @@ void trig_render_md10(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( (ubyte)(((pYa & 0x8000u) != 0) ^ pY_overflow) | ((ushort)pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -1089,14 +1069,12 @@ void trig_render_md12(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( (ubyte)(((pYa & 0x8000u) != 0) ^ pY_overflow) | ((ushort)pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -1177,14 +1155,12 @@ void trig_render_md13(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( (ubyte)(((pYa & 0x8000u) != 0) ^ pY_overflow) | ((ushort)pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -1249,14 +1225,11 @@ void trig_render_md14(struct TrigLocalRend *tlr)
         }
         else
         {
-            ubyte pY_overflow;
-
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( ((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o = &o_ln[pXa];
         }
 
@@ -1298,14 +1271,11 @@ void trig_render_md15(struct TrigLocalRend *tlr)
         }
         else
         {
-            ubyte pY_overflow;
-
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( ((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o = &o_ln[pXa];
         }
 
@@ -1363,14 +1333,12 @@ void trig_render_md16(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( ((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             colL = vec_colour;
             factorA = pp->S;
@@ -1443,15 +1411,12 @@ void trig_render_md17(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if (((pYa < 0) ^ pY_overflow) | (pYa == 0))
+            if (pYa <= pXa)
                 continue;
-
+            pYa -= pXa;
             o += pXa;
             colL = vec_colour;
             factorA = pp->S;
@@ -1525,14 +1490,12 @@ void trig_render_md18(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_carry;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_carry = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( ((pYa < 0) ^ pY_carry) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -1610,14 +1573,12 @@ void trig_render_md19(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( ((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -1701,14 +1662,12 @@ void trig_render_md20(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( ((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -1797,14 +1756,12 @@ void trig_render_md21(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( ((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -1887,14 +1844,12 @@ void trig_render_md22(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if ( ((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -1975,14 +1930,12 @@ void trig_render_md23(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if (((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -2069,14 +2022,12 @@ void trig_render_md24(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if (((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -2170,14 +2121,12 @@ void trig_render_md25(struct TrigLocalRend *tlr)
         else
         {
             ushort colL, colH;
-            ubyte pY_overflow;
 
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa = pYa - pXa;
-            if (((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
             colH = factorA;
@@ -2253,7 +2202,6 @@ void trig_render_md26(struct TrigLocalRend *tlr)
         ulong factorB, factorD;
         long factorA;
         ulong factorC;
-        ubyte pY_overflow;
         ushort colM;
 
         pXa = pp->X >> 16;
@@ -2281,10 +2229,9 @@ void trig_render_md26(struct TrigLocalRend *tlr)
         {
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            pY_overflow = __OFSUBS__(pYa, pXa);
-            pYa -= pXa;
-            if (((pYa < 0) ^ pY_overflow) | (pYa == 0))
+            if (pYa <= pXa)
                 continue;
+            pYa -= pXa;
             o += pXa;
             factorA = __ROL4__(pp->U, 16);
             factorB = __ROL4__(pp->V, 16);
