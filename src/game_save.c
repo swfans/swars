@@ -717,8 +717,8 @@ ubyte load_game(int slot, char *desc)
             if (weapons_has_weapon(p_locplayer->Weapons[i], WEP_CRAZYGAS))
                 p_locplayer->FourPacks[WFRPK_CRAZYGAS][i] = 1;
 
-            p_locplayer->field_19A[i] = 0;
-            p_locplayer->field_1A2[i] = 0;
+            p_locplayer->UserVX[i] = 0;
+            p_locplayer->UserVZ[i] = 0;
         }
 
         for (agent = 0; agent < 32; agent++)

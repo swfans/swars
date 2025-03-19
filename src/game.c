@@ -2654,9 +2654,9 @@ void init_level(void)
         p_player = &players[plyr_no];
         for (mouser = 0; mouser < 4; mouser++)
         {
-            p_player->field_19A[mouser] = 0;
-            p_player->field_E8[mouser] = 0;
-            p_player->field_1A2[mouser] = 0;
+            p_player->UserVX[mouser] = 0;
+            p_player->UserVY[mouser] = 0;
+            p_player->UserVZ[mouser] = 0;
             p_player->SpecialItems[mouser] = 0;
             p_player->PanelItem[mouser] = 0;
             p_player->PanelState[mouser] = 0;

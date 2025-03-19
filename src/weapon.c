@@ -1326,9 +1326,9 @@ void process_weapon_recoil(struct Thing *p_person)
         plagent = p_person->U.UPerson.ComCur & 3;
         p_player = &players[plyr];
         p_person->U.UPerson.ComTimer = -1;
-        p_person->VX = p_player->field_19A[plagent];
-        p_person->VY = p_player->field_E8[plagent];
-        p_person->VZ = p_player->field_1A2[plagent];
+        p_person->VX = p_player->UserVX[plagent];
+        p_person->VY = p_player->UserVY[plagent];
+        p_person->VZ = p_player->UserVZ[plagent];
     }
     else if ((p_person->Flag & (TngF_Unkn20000000|TngF_Persuaded)) == (TngF_Unkn20000000|TngF_Persuaded))
     {
