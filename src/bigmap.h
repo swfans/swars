@@ -134,6 +134,27 @@ short get_mapwho_thing_index(short tile_x, short tile_z);
 void init_search_spiral(void);
 int alt_at_point(short x, short z);
 
+/** Computes length of vector defined by given 3 coordinates.
+ * Uses some simplifications, but is fast. Requires the resulting
+ * length to fit in 32-bit value, but accepts both map coords and precise coords.
+ */
+u32 map_distance_deltas_fast(int dt_x, int dt_y, int dt_z);
+
+/** Computes length of vector defined by two 3D points.
+ * Uses some simplifications, but is fast. Requires the givn values
+ * to be map coords - they can not exceed 15-bit.
+ */
+u32 map_distance_coords_fast(short pt1_x, short pt1_y, short pt1_z,
+  short pt2_x, short pt2_y, short pt2_z);
+
+/** Given two points, alters the target one to be within given range.
+ * Uses some simplifications, but is fast. Requires the givn values
+ * to be map coords - they can not exceed 15-bit. Good for computing
+ * speed or weapon firing distance, if the values are map coords.
+ */
+void map_limit_distance_to_target_fast(short base_x, short base_y, short base_z,
+  short *targ_x, short *targ_y, short *targ_z, int range_limit);
+
 /** Returns maximal change of altitude between corners of given tile.
  */
 int alt_change_at_tile(short tile_x, short tile_z, int *change_xz);
