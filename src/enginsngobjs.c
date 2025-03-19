@@ -173,6 +173,24 @@ int alt_change_at_face(short face, int *change_xz)
     return best_dy;
 }
 
+int get_height_on_face(int x, int z, ushort face)
+{
+    int ret;
+    asm volatile (
+      "call ASM_get_height_on_face\n"
+        : "=r" (ret) : "a" (x), "d" (z), "b" (face));
+    return ret;
+}
+
+int get_height_on_face_quad(int x, int z, ushort face)
+{
+    int ret;
+    asm volatile (
+      "call ASM_get_height_on_face_quad\n"
+        : "=r" (ret) : "a" (x), "d" (z), "b" (face));
+    return ret;
+}
+
 /** Checks if a face should not be allowed to walk on due to sharp slope.
  *
  * To do such check during gameplay, SingleObjectFace flags should be

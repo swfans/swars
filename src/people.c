@@ -32,6 +32,7 @@
 #include "display.h"
 #include "drawtext.h"
 #include "enginsngobjs.h"
+#include "engintrns.h"
 #include "game.h"
 #include "game_data.h"
 #include "game_speed.h"
@@ -1509,6 +1510,24 @@ void set_person_animmode_run(struct Thing *p_person)
 {
     asm volatile ("call ASM_set_person_animmode_run\n"
         : : "a" (p_person));
+}
+
+ushort build_navigate_path(struct Thing *p_thing, int x, int z, int face)
+{
+    ushort ret;
+    asm volatile (
+      "call ASM_build_navigate_path\n"
+        : "=r" (ret) : "a" (p_thing), "d" (x), "b" (z), "c" (face));
+    return ret;
+}
+
+ushort build_navigate_path_to_person(struct Thing *p_thing, struct Thing *p_thing_to)
+{
+    ushort ret;
+    asm volatile (
+      "call ASM_build_navigate_path_to_person\n"
+        : "=r" (ret) : "a" (p_thing), "d" (p_thing_to));
+    return ret;
 }
 
 void build_navigate_path_to_face(struct Thing *p_thing, short face)
@@ -3445,6 +3464,13 @@ void person_catch_ferry(struct Thing *p_person)
     p_person->U.UPerson.Vehicle = veh;
 }
 
+void alert_peeps(int x, int y, int z, struct Thing *p_madman)
+{
+    asm volatile (
+      "call ASM_alert_peeps\n"
+        : : "a" (x), "d" (y), "b" (z), "c" (p_madman));
+}
+
 void person_attempt_to_leave_ferry(struct Thing *p_person)
 {
 #if 0
@@ -3492,10 +3518,137 @@ void person_attempt_to_leave_ferry(struct Thing *p_person)
 
 void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint fast_flag)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_thing_shoot_at_point\n"
         : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (fast_flag));
+    return;
+#endif
+    PlayerInfo *p_player;
+    int dtx, dty, dtz;
+    int dist_x, dist_z;
+    int dist;
+    int weapon_range;
+    short face;
+    PlayerIdx plyr;
+    ushort plagent;
+    ushort angle;
+
+    face = 0;
+    if ((fast_flag & 0x02) != 0)
+    {
+        int height;
+
+        face = y;
+        if (y <= 0)
+            height = get_height_on_face_quad(x << 8, z << 8, -y);
+        else
+            height = get_height_on_face(x << 8, z << 8, y);
+        y = (height >> 8) + 20;
+    }
+
+    p_thing->Flag |= 0x0800;
+    if ((p_thing->Flag & 0x10000000) != 0)
+        things[p_thing->U.UPerson.Vehicle].Flag |= 0x01000000;
+
+    if ((p_thing->Flag & (0x40000000|0x0200|0x0002)) != 0)
+        return;
+
+    if ((p_thing->Flag2 & 0x0001) != 0)
+        finalise_razor_wire(p_thing);
+
+    if (p_thing->State == PerSt_DROP_ITEM || p_thing->State == PerSt_PICKUP_ITEM ||
+      p_thing->State == PerSt_DEAD || p_thing->State == PerSt_DIEING)
+        return;
+    if ((p_thing->Flag & 0x0002) != 0)
+        return;
+
+    angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_thing->X),
+      PRCCOORD_TO_MAPCOORD(p_thing->Z), x, z);
+    change_player_angle(p_thing, (((angle + 128) >> 8) + 8) & 7);
+
+    p_thing->PTarget = 0;
+    p_thing->Flag |= 0x20000000|0x0800;
+
+    dtx = x - PRCCOORD_TO_MAPCOORD(p_thing->X);
+    dty = y - PRCCOORD_TO_MAPCOORD(p_thing->Y);
+    dtz = z - PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    dist_z = abs(dtz);
+    dist_x = abs(dtx);
+    if (dist_x >= dist_z)
+        dist = (dist_z >> 7) + (dist_z >> 2) + dist_x - (dist_x >> 5) - (dist_x >> 7) + (dist_z >> 3) + (dist_z >> 6);
+    else
+        dist = (dist_x >> 6) + (dist_x >> 2) + dist_z - (dist_z >> 5) - (dist_z >> 7) + (dist_x >> 3) + (dist_x >> 7);
+
+    plyr = p_thing->U.UPerson.ComCur >> 2;
+    plagent = p_thing->U.UPerson.ComCur & 3;
+    p_player = &players[plyr];
+
+    if ((p_thing->Flag & 0x2000) != 0)
+    {
+        p_player->SpecialItems[0] = x;
+        p_player->SpecialItems[1] = y;
+        p_player->SpecialItems[2] = z;
+    }
+    weapon_range = get_weapon_range(p_thing);
+    if (dist > weapon_range)
+    {
+        if (dist == 0)
+          dist = 1;
+        x = PRCCOORD_TO_MAPCOORD(p_thing->X) + dtx * weapon_range / dist;
+        y = PRCCOORD_TO_MAPCOORD(p_thing->Y) + dty * weapon_range / dist;
+        z = PRCCOORD_TO_MAPCOORD(p_thing->Z) + dtz * weapon_range / dist;
+    }
+
+    if ((p_thing->Flag2 & 0x1000000) == 0)
+        alert_peeps(x, y, z, p_thing);
+
+    if ((p_thing->Flag & 0x2000) != 0)
+    {
+        p_player->field_19A[plagent] = x;
+        p_player->field_1A2[plagent] = z;
+        p_player->field_E8[plagent] = y;
+    }
+    else
+    {
+        p_thing->VX = x;
+        p_thing->VY = y;
+        p_thing->VZ = z;
+        p_thing->State = 0;
+    }
+
+    switch (p_thing->U.UPerson.CurrentWeapon)
+    {
+    case WEP_RAZORWIRE:
+        init_lay_razor(p_thing, x, y, z, 0);
+        if ((fast_flag & 0x02) == 0)
+        {
+            build_navigate_path(p_thing, x, z, 0);
+            p_player->GotoFace = 0;
+        } else
+        {
+            build_navigate_path_to_face_xz(p_thing, -face, x, z);
+            p_player->GotoFace = face;
+        }
+        break;
+    case WEP_EXPLWIRE:
+        init_lay_razor(p_thing, x, y, z, 1);
+        if ((fast_flag & 0x02) == 0)
+        {
+            build_navigate_path(p_thing, x, z, 0);
+            p_player->GotoFace = 0;
+        } else
+        {
+            build_navigate_path_to_face_xz(p_thing, -face, x, z);
+            p_player->GotoFace = face;
+        }
+        break;
+    }
+
+    if ((fast_flag & 0x01) != 0) {
+        set_person_animmode_run(p_thing);
+    }
 }
 
 void call_protect(struct Thing *p_thing, ushort plyr)

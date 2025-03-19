@@ -456,7 +456,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
         }
         break;
-    case PAct_DROP_HELD_WEAPON_SECR: // player controlled person drops one of held weapons, so that it lays secured
+    case PAct_DROP_HELD_WEAPON_SECR:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING)
             break;

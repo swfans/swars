@@ -2834,13 +2834,13 @@ GLOBAL_FUNC(ASM_show_goto_point)	/* 0x020938 */
 		jle    jump_20aae
 		mov    data_1a63d8(%ebx),%bx
 		and    $0xffff,%ebx
-		call   get_height_on_face
+		call   ac_get_height_on_face
 		jmp    jump_20ad3
 	jump_20aae:
 		mov    data_1a63d8(%ebx),%bx
 		neg    %ebx
 		and    $0xffff,%ebx
-		call   get_height_on_face_quad
+		call   ac_get_height_on_face_quad
 		jmp    jump_20ad3
 	jump_20ac4:
 		mov    -0x2(%esp),%eax
@@ -29118,7 +29118,7 @@ scare_civs:	/* 0x047BD4 */
 
 
 /*----------------------------------------------------------------*/
-alert_peeps:	/* 0x047D40 */
+GLOBAL_FUNC(ASM_alert_peeps)	/* 0x047D40 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -37665,11 +37665,11 @@ do_person_gotothingindex:	/* 0x04DC14 */
 		mov    0x98(%edx),%edx
 		sar    $0x10,%ebx
 		sar    $0x10,%edx
-		call   build_navigate_path
+		call   ac_build_navigate_path
 		jmp    jump_4de5b
 	jump_4de54:
 		mov    %esi,%eax
-		call   build_navigate_path_to_person
+		call   ac_build_navigate_path_to_person
 	jump_4de5b:
 		and    $0xffff,%eax
 		je     jump_4e16d
@@ -38109,7 +38109,7 @@ GLOBAL_FUNC(ASM_person_goto_point)	/* 0x04E178 */
 		xor    %ecx,%ecx
 		sar    $0x10,%ebx
 		sar    $0x10,%edx
-		call   build_navigate_path
+		call   ac_build_navigate_path
 		mov    0x4a(%esi),%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
@@ -39417,7 +39417,7 @@ set_get_item:	/* 0x04F208 */
 		xor    %ecx,%ecx
 		sar    $0x10,%ebx
 		sar    $0x10,%edx
-		call   build_navigate_path
+		call   ac_build_navigate_path
 		pop    %esi
 		pop    %ecx
 		pop    %ebx
@@ -40949,7 +40949,7 @@ GLOBAL_FUNC(ASM_person_init_plant_mine)	/* 0x050140 */
 		mov    %esi,%eax
 		xor    %ecx,%ecx
 		sar    $0x10,%ebx
-		call   build_navigate_path
+		call   ac_build_navigate_path
 	jump_501b3:
 		testb  $0x40,0x44(%esi)
 		jne    jump_501e7
@@ -51513,7 +51513,7 @@ GLOBAL_FUNC(ASM_thing_goto_point)	/* 0x05811C */
 		mov    %esi,%eax
 		xor    %ecx,%ecx
 		movw   $0x0,0x4c(%esi)
-		call   build_navigate_path
+		call   ac_build_navigate_path
 		testb  $0x8,0x46(%esi)
 		je     jump_5830e
 		xor    %eax,%eax
@@ -51895,7 +51895,7 @@ GLOBAL_FUNC(ASM_thing_goto_point_on_face)	/* 0x05841C */
 
 
 /*----------------------------------------------------------------*/
-init_lay_razor:	/* 0x058704 */
+GLOBAL_FUNC(ASM_init_lay_razor)	/* 0x058704 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		mov    %eax,%esi
@@ -51953,7 +51953,7 @@ GLOBAL_FUNC(ASM_thing_shoot_at_point)	/* 0x058770 */
 		sar    $0x10,%eax
 		shl    $0x8,%edx
 		shl    $0x8,%eax
-		call   get_height_on_face
+		call   ac_get_height_on_face
 		jmp    jump_587d6
 	jump_587b6:
 		mov    0x1a(%esp),%edx
@@ -51965,7 +51965,7 @@ GLOBAL_FUNC(ASM_thing_shoot_at_point)	/* 0x058770 */
 		sar    $0x10,%eax
 		shl    $0x8,%edx
 		shl    $0x8,%eax
-		call   get_height_on_face_quad
+		call   ac_get_height_on_face_quad
 	jump_587d6:
 		sar    $0x8,%eax
 		add    $0x14,%eax
@@ -52212,7 +52212,7 @@ GLOBAL_FUNC(ASM_thing_shoot_at_point)	/* 0x058770 */
 		mov    %esi,%ecx
 		sar    $0x10,%ebx
 		sar    $0x10,%eax
-		call   alert_peeps
+		call   ac_alert_peeps
 	jump_58ab7:
 		testb  $0x20,0xd(%esi)
 		jne    jump_58ae2
@@ -52294,7 +52294,7 @@ GLOBAL_FUNC(ASM_thing_shoot_at_point)	/* 0x058770 */
 		sar    $0x10,%edi
 		mov    %ebp,%ecx
 		mov    %edi,%edx
-		call   init_lay_razor
+		call   ac_init_lay_razor
 		testb  $0x2,0x30(%esp)
 		je     jump_58c04
 		mov    0x14(%esp),%eax
@@ -52323,7 +52323,7 @@ GLOBAL_FUNC(ASM_thing_shoot_at_point)	/* 0x058770 */
 		mov    %edi,%edx
 		mov    %esi,%eax
 		xor    %ecx,%ecx
-		call   build_navigate_path
+		call   ac_build_navigate_path
 		xor    %eax,%eax
 		mov    0x54(%esi),%ax
 		sar    $0x2,%eax
@@ -52351,7 +52351,7 @@ GLOBAL_FUNC(ASM_thing_shoot_at_point)	/* 0x058770 */
 		sar    $0x10,%edi
 		mov    %ebp,%ecx
 		mov    %edi,%edx
-		call   init_lay_razor
+		call   ac_init_lay_razor
 		testb  $0x2,0x30(%esp)
 		je     jump_58ca5
 		mov    0x14(%esp),%eax
@@ -52379,7 +52379,7 @@ GLOBAL_FUNC(ASM_thing_shoot_at_point)	/* 0x058770 */
 		mov    %edi,%edx
 		mov    %esi,%eax
 		xor    %ecx,%ecx
-		call   build_navigate_path
+		call   ac_build_navigate_path
 		xor    %ebx,%ebx
 		mov    0x54(%esi),%bx
 		sar    $0x2,%ebx
@@ -59209,7 +59209,7 @@ GLOBAL_FUNC(ASM_search_object_for_qface)	/* 0x05DB4C */
 
 
 /*----------------------------------------------------------------*/
-get_height_on_face:	/* 0x05DD7C */
+GLOBAL_FUNC(ASM_get_height_on_face)	/* 0x05DD7C */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -59406,7 +59406,7 @@ get_height_on_face:	/* 0x05DD7C */
 
 
 /*----------------------------------------------------------------*/
-get_height_on_face_quad:	/* 0x05DF9C */
+GLOBAL_FUNC(ASM_get_height_on_face_quad)	/* 0x05DF9C */
 /*----------------------------------------------------------------*/
 		and    $0xffff,%ebx
 		mov    %eax,%eax
@@ -150569,7 +150569,7 @@ set_xz_for_tri:	/* 0x0BFC10 */
 
 
 /*----------------------------------------------------------------*/
-build_navigate_path_to_person:	/* 0x0BFD00 */
+GLOBAL_FUNC(ASM_build_navigate_path_to_person)	/* 0x0BFD00 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -150661,7 +150661,7 @@ build_navigate_path_to_person:	/* 0x0BFD00 */
 		xor    %ecx,%ecx
 		movswl %ax,%edx
 		mov    %esi,%eax
-		call   build_navigate_path
+		call   ac_build_navigate_path
 		add    $0x18,%esp
 		pop    %ebp
 		pop    %edi
@@ -151416,7 +151416,7 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_face_xz)	/* 0x0C04C8 */
 
 
 /*----------------------------------------------------------------*/
-build_navigate_path:	/* 0x0C06D0 */
+GLOBAL_FUNC(ASM_build_navigate_path)	/* 0x0C06D0 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi

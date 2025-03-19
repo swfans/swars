@@ -67,6 +67,8 @@ enum PacketActions
     PAct_GET_ITEM = 0x1F,
     PAct_PLANT_MINE_AT_GND_PT = 0x20,
     PAct_SELECT_SPECIFIC_WEAPON = 0x21,
+    /** Player controlled person drops one of held weapons,
+     * so that it lays secured. */
     PAct_DROP_HELD_WEAPON_SECR = 0x22,
     PAct_AGENT_SET_MOOD = 0x23,
     PAct_GO_ENTER_VEHICLE = 0x24,
