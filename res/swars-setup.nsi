@@ -31,13 +31,14 @@ LangString STR_CHOOSE_DRIVE 1033 "Choose the CD-ROM drive"
 LangString STR_CHOOSE_LANG 1033 "Choose the language"
 
 ; --------------------
-; VARIABLES: 13
+; VARIABLES: 14
 
 Var selected_lang_text
 Var selected_lang_abbr
 Var inst_src_lang_dir
 Var selected_menu_shortcut
 Var selected_desk_shortcut
+Var portable_install
 Var selected_music
 Var gog_path
 Var update_path
@@ -110,6 +111,7 @@ FunctionEnd
 
 
 Section "Syndicate Wars Game" Section_0
+  SectionIn RO
   ; AddSize 4176
   SetOutPath $INSTDIR
   Call CopyGameFilesFromCD
@@ -120,7 +122,9 @@ Section "Syndicate Wars Game" Section_0
   Call InstallConfFile
   IfErrors inst_game_fail
   ${EndIf}
-  Call InstallRegistry
+  ${If} $portable_install == 0
+   Call InstallRegistry
+  ${EndIf}
   IfErrors inst_game_fail
   File "${BUILDENV_PKG_DIR}\swars.exe"
   File "${BUILDENV_PKG_DIR}\libgcc_s_dw2-1.dll"
@@ -281,6 +285,17 @@ Function BrowseButtonClicked
     ${EndIf}
 FunctionEnd
 
+Function BrowseButtonClickedUpdate
+       ; Create a directory picker dialog to choose a directory
+
+    nsDialogs::SelectFolderDialog /NOUNLOAD "Select Syndicate Wars Install Directory" "$update_path" 
+    Pop $3
+    ${If} $0 != error
+        ${NSD_SetText} $1 "$3"
+        StrCpy $update_path "$3"
+    ${EndIf}
+FunctionEnd
+
 Function GOGInstallLeave
 ;MessageBox MB_ICONEXCLAMATION|MB_OK "gog path is $gog_path"
 ${If} $gog_path == ""
@@ -299,19 +314,22 @@ Function GOGInstallAdditional
   ${NSD_CreateGroupBox} 21u 18u 249u 109u "Additional game settings"
   Pop $0
   
-  ${NSD_CreateCheckbox} 37u 55u 134u 15u "Create a shortcut on the desktop"
+  ${NSD_CreateCheckbox} 37u 32u 160u 15u "Portable Install"
+  Pop $7
+  
+  ${NSD_CreateCheckbox} 37u 62u 134u 15u "Create a shortcut on the desktop"
   Pop $1
 
-  ${NSD_CreateCheckbox} 37u 41u 160u 15u "Create an entry in the Start Menu"
+  ${NSD_CreateCheckbox} 37u 46u 160u 15u "Create an entry in the Start Menu"
   Pop $2
-
+  
   ${NSD_SetState} $1 ${BST_CHECKED}
   ${NSD_SetState} $2 ${BST_CHECKED}
-
-  ${NSD_CreateLabel} 37u 75u 118u 12u "Select GOG version language:"
+ 
+  ${NSD_CreateLabel} 37u 85u 118u 12u "Select GOG version language:"
   Pop $6
 
-  ${NSD_CreateComboBox} 37u 90u 125u 21u ""
+  ${NSD_CreateComboBox} 37u 100u 125u 21u ""
   Pop $5
 
   ${NSD_CB_AddString} $5 "English"
@@ -332,7 +350,8 @@ Function GOGInstallAdditionalLeave
   
   ${NSD_GetState} $1 $3  ; Get state of Checkbox 1
   ${NSD_GetState} $2 $4  ; Get state of Checkbox 2
-
+  ${NSD_GetState} $7 $8  ; Get state of Checkbox 3
+  
   ${If} $3 <> ${BST_CHECKED}
     StrCpy $selected_desk_shortcut "0"
   ${EndIf}
@@ -349,7 +368,15 @@ Function GOGInstallAdditionalLeave
     StrCpy $selected_menu_shortcut "1"
   ${EndIf}
 
-   ${NSD_GetText} $5 $selected_lang_text
+  ${If} $7 <> ${BST_CHECKED}
+    StrCpy $portable_install "1"
+  ${EndIf}
+  
+  ${If} $7 <> ${BST_UNCHECKED}
+    StrCpy $portable_install "0"
+  ${EndIf}
+
+  ${NSD_GetText} $5 $selected_lang_text
 
   ;MessageBox MB_ICONEXCLAMATION|MB_OK "Desktop state is $selected_desk_shortcut"
   ;MessageBox MB_ICONEXCLAMATION|MB_OK "language is $selected_lang_text"
@@ -370,7 +397,7 @@ ReadRegStr $update_path HKLM "Software\Syndicate Wars\CurrentVersion" "InstallPa
     nsDialogs::Create 1018
     Pop $0
 
-    ${NSD_CreateGroupBox} 5% 20u 90% 60% "Syndicate Wars existing install folder"
+    ${NSD_CreateGroupBox} 5% 20u 90% 70% "Syndicate Wars existing install folder"
     Pop $0
 
         ${NSD_CreateDirRequest} 15% 35u 49% 12u $update_path
@@ -378,17 +405,26 @@ ReadRegStr $update_path HKLM "Software\Syndicate Wars\CurrentVersion" "InstallPa
 
         ${NSD_CreateBrowseButton} 65% 35u 20% 12u "Browse..."
         Pop $0
-        ${NSD_OnClick} $0 BrowseButtonClicked
+        ${NSD_OnClick} $0 BrowseButtonClickedUpdate
   
 		${NSD_CreateLabel} 20u 54u 118u 12u "Additional install options:"
     
-		${NSD_CreateCheckbox} 37u 65u 134u 15u "Create a shortcut on the desktop"
+		
+		${NSD_CreateCheckbox} 37u 65u 160u 15u "Portable Install"
+		Pop $7
+	
+		${NSD_CreateCheckbox} 37u 80u 134u 15u "Create a shortcut on the desktop"
 		Pop $5
 
-		${NSD_CreateCheckbox} 37u 80u 160u 15u "Create an entry in the Start Menu"
+		${NSD_CreateCheckbox} 37u 95u 160u 15u "Create an entry in the Start Menu"
 		Pop $6
 
-    
+	${If} $update_path == ""
+		  ${NSD_SetState} $7 ${BST_CHECKED}
+	${Else}
+		  ${NSD_SetState} $7 ${BST_UNCHECKED}
+    ${Endif}
+	
   nsDialogs::Show
 FunctionEnd
 
@@ -401,6 +437,7 @@ ${EndIf}
 
   ${NSD_GetState} $5 $3  ; Get state of Checkbox for desktop icon
   ${NSD_GetState} $6 $4  ; Get state of Checkbox for startmenu entry
+  ${NSD_GetState} $7 $8  ; Get state of Checkbox for Portable Install
 
   ${If} $3 <> ${BST_CHECKED}
     StrCpy $selected_desk_shortcut "0"
@@ -416,6 +453,14 @@ ${EndIf}
   
   ${If} $4 <> ${BST_UNCHECKED}
     StrCpy $selected_menu_shortcut "1"
+  ${EndIf}
+  
+  ${If} $8 <> ${BST_CHECKED}
+    StrCpy $portable_install "0"
+  ${EndIf}
+  
+  ${If} $8 <> ${BST_UNCHECKED}
+     StrCpy $portable_install "1"
   ${EndIf}
 
 StrCpy $selected_music 1 ; Never try and rip music if we're doing an update
@@ -486,8 +531,9 @@ langcd_lngswitch:
   StrCmp $selected_lang_text "Swedish" langcd_lng_swe
   StrCmp $selected_lang_text "Japanese" langcd_lng_jap
 langncd_store:
-  !insertmacro INSTALLOPTIONS_READ $selected_menu_shortcut "lang_n_cdrom.ini" "Field 4" State
-  !insertmacro INSTALLOPTIONS_READ $selected_desk_shortcut "lang_n_cdrom.ini" "Field 5" State
+  !insertmacro INSTALLOPTIONS_READ $portable_install "lang_n_cdrom.ini" "Field 4" State
+  !insertmacro INSTALLOPTIONS_READ $selected_menu_shortcut "lang_n_cdrom.ini" "Field 5" State
+  !insertmacro INSTALLOPTIONS_READ $selected_desk_shortcut "lang_n_cdrom.ini" "Field 6" State
   Return
 
 langncd_no_lang:
