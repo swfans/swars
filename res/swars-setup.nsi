@@ -38,6 +38,7 @@ Var selected_lang_abbr
 Var inst_src_lang_dir
 Var selected_menu_shortcut
 Var selected_desk_shortcut
+Var portable_install
 Var selected_music
 Var gog_path
 Var update_path
