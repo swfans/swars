@@ -372,4 +372,42 @@ void quick_crater(int x, int z, int size)
         :  : "a" (x), "d" (z), "b" (size));
 }
 
+u32 map_distance_deltas_fast(int dt_x, int dt_y, int dt_z)
+{
+    u32 ln_x, ln_z, dist;
+
+    ln_x = abs(dt_x);
+    ln_z = abs(dt_z);
+    if (ln_x >= ln_z)
+        dist = ln_x + (ln_z >> 2) + (ln_z >> 3) + (ln_z >> 6) + (ln_z >> 7) - (ln_x >> 5) - (ln_x >> 7);
+    else
+        dist = ln_z + (ln_x >> 2) + (ln_x >> 3) + (ln_x >> 6) + (ln_x >> 7) - (ln_z >> 5) - (ln_z >> 7);
+
+    return dist;
+}
+
+u32 map_distance_coords_fast(short pt1_x, short pt1_y, short pt1_z, short pt2_x, short pt2_y, short pt2_z)
+{
+    return map_distance_deltas_fast(pt2_x - pt1_x, pt2_y - pt1_y, pt2_z - pt1_z);
+}
+
+void map_limit_distance_to_target_fast(short base_x, short base_y, short base_z,
+  short *targ_x, short *targ_y, short *targ_z, int range_limit)
+{
+    int dt_x, dt_y, dt_z;
+    int dist;
+
+    dt_x = *targ_x - base_x;
+    dt_y = *targ_y - base_y;
+    dt_z = *targ_z - base_z;
+    dist = map_distance_deltas_fast(dt_x, dt_y, dt_z);
+    if (dist <= range_limit)
+        return;
+    if (dist == 0)
+        dist = 1;
+    *targ_x = base_x + dt_x * range_limit / dist;
+    *targ_y = base_y + dt_y * range_limit / dist;
+    *targ_z = base_z + dt_z * range_limit / dist;
+}
+
 /******************************************************************************/

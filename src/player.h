@@ -35,6 +35,7 @@ extern "C" {
 
 #define CRYO_PODS_MAX_COUNT 32
 #define AGENTS_SQUAD_MAX_COUNT 4
+#define MOUSER_USERS_MAX_COUNT 4
 
 struct Thing;
 
@@ -49,14 +50,10 @@ struct AgentInfo {
 };
 
 typedef struct {
-  struct SpecialUserInput UserInput[3];
-  char field_66[2];
-  int field_68[4];
-  int field_78;
-  int field_7C[2];
-  int field_84;
-    ulong DirectControl[AGENTS_SQUAD_MAX_COUNT]; /* offs=0x88 */
-    ulong ControlPad;
+    /** Per-mouser agent input control parameters */
+    struct SpecialUserInput UserInput[MOUSER_USERS_MAX_COUNT];
+    u32 DirectControl[MOUSER_USERS_MAX_COUNT]; /* offs=0x88 */
+    u32 ControlPad;
     /* Pointers to agents in the squad of this player.
      * These are guaranteed treference a valid thing (non-NULL),
      * but if an agent is not in use, the reference may be
@@ -65,8 +62,8 @@ typedef struct {
      */
     struct Thing *MyAgent[AGENTS_SQUAD_MAX_COUNT];
     ubyte PrevWeapon[AGENTS_SQUAD_MAX_COUNT];  /* offs=0xAC */
-    ubyte PanelState[4];
-    ubyte PanelItem[4];
+    ubyte PanelState[MOUSER_USERS_MAX_COUNT];
+    ubyte PanelItem[MOUSER_USERS_MAX_COUNT];
     ushort Dummy98; /* offs=0xB8 */
     ubyte Dummy97;
     ubyte MissionAgents;
@@ -79,9 +76,9 @@ typedef struct {
     ubyte PlayerNo;
     ulong Weapons[AGENTS_SQUAD_MAX_COUNT];
     union Mod Mods[AGENTS_SQUAD_MAX_COUNT];
-  short field_E8[3];
-  short field_EE;
-    short SpecialItems[4];
+    /** Per-mouser agent command param value Y */
+    short UserVY[MOUSER_USERS_MAX_COUNT];
+    short SpecialItems[MOUSER_USERS_MAX_COUNT];
     short GotoFace;
     ushort PanelTimer;
     short PanelX;
@@ -91,8 +88,10 @@ typedef struct {
     short TargetType;
     ubyte FourPacks[5][AGENTS_SQUAD_MAX_COUNT];
     ubyte WepDelays[AGENTS_SQUAD_MAX_COUNT][32];
-  ushort field_19A[4];
-  ushort field_1A2[4];
+    /** Per-mouser agent command param value X */
+    short UserVX[MOUSER_USERS_MAX_COUNT];
+    /** Per-mouser agent command param value Z */
+    short UserVZ[MOUSER_USERS_MAX_COUNT];
 } PlayerInfo;
 
 
@@ -126,7 +125,9 @@ TbBool player_agent_is_alive(PlayerIdx plyr, ushort plagent);
 TbBool player_agent_is_executing_commands(PlayerIdx plyr, ushort plagent);
 short player_agent_weapon_delay(PlayerIdx plyr, ushort plagent, ubyte weapon);
 ThingIdx direct_control_thing_for_player(PlayerIdx plyr);
+void set_default_player_control(void);
 void player_target_clear(PlayerIdx plyr);
+void kill_my_players(PlayerIdx plyr);
 /******************************************************************************/
 #ifdef __cplusplus
 }

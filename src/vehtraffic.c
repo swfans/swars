@@ -310,9 +310,9 @@ void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
 
         if (nxstatn > 0)
         {
-            int cux, cuy, cuz, nxx, nxy, nxz, dy, faxz;
+            int cux, cuy, cuz, nxx, nxy, nxz, faxz;
             struct Thing *p_nxstation;
-            int dx, dz;
+            int dt_x, dt_y, dt_z;
 
             p_nxstation = &things[nxstatn];
             cux = (p_station->X >> 8) - 5 * p_station->U.UObject.OffX;
@@ -322,15 +322,12 @@ void update_vehicle_elevation(struct Thing *p_vehicle, short statn)
             cuy = (p_station->Y >> 3) + 3840;
             nxy = (p_nxstation->Y >> 3) + 3840;
 
-            dx = abs(cux - nxx);
-            dy = (cuy - nxy) >> 5;
-            dz = abs(cuz - nxz);
-            if (dx >= dz)
-                faxz = dx + (dz >> 2) + (dz >> 3) - (dx >> 5) + (dz >> 6) - (dx >> 7) + (dz >> 7);
-            else
-                faxz = dz + (dx >> 2) + (dx >> 3) - (dz >> 5) + (dx >> 6) + (dx >> 7) - (dz >> 7);
-            angleX = arctan(abs(dy), faxz) - 1024;
-            if (dy < 0)
+            dt_x = (cux - nxx);
+            dt_y = (cuy - nxy) >> 5;
+            dt_z = (cuz - nxz);
+            faxz = map_distance_deltas_fast(dt_x, dt_y, dt_z);
+            angleX = arctan(abs(dt_y), faxz) - 1024;
+            if (dt_y < 0)
                 angleX = -angleX;
             p_vehicle->Y += (cuy - p_vehicle->Y) >> 3;
         }

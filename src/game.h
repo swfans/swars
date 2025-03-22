@@ -261,7 +261,6 @@ struct InGame {
 extern char session_name[20];
 extern char user_name[50];
 extern char unkn2_names[8][16];
-extern char login_name[16];
 
 extern ubyte in_network_game;
 extern ubyte is_single_game;
@@ -363,7 +362,6 @@ extern ubyte byte_1C6DDC[5];
 extern ushort word_1C8446;
 extern ushort unkn3de_len;
 extern ubyte byte_19EC6F;
-extern ulong save_mortal_salt;
 
 extern ushort weapon_text_index[32];
 extern ushort cybmod_text_index[16];
@@ -396,9 +394,6 @@ extern char *people_credits_groups[];
 
 extern ubyte playable_agents;
 
-extern ubyte save_crypto_tables_state[3];
-extern ubyte save_crypto_data_state[3];
-
 extern char *mission_briefing_text;
 #define mission_briefing_text_len 16384
 
@@ -407,8 +402,6 @@ extern sbyte mission_result;
 extern char *weapon_text;
 #define weapon_text_len 32768
 
-extern ubyte *save_game_buffer;
-extern char save_active_desc[28];
 extern ubyte scientists_lost;
 extern ulong new_mods_researched;
 extern ulong new_weapons_researched;
@@ -525,7 +518,6 @@ void flic_unkn03(ubyte a1);
 
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);
-void read_user_settings(void);
 
 TbBool player_try_spend_money(long cost);
 TbBool is_unkn_current_player(void);
@@ -544,6 +536,7 @@ void unkn_lights_processing(void);
 void bang_set_detail(int a1);
 int sub_73C64(char *a1, ubyte a2);
 void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7);
+void show_goto_point(uint flag);
 
 void ingame_palette_reload(void);
 void game_set_cam_track_thing_xz(ThingIdx thing);
@@ -557,6 +550,10 @@ ubyte *anim_type_get_output_buffer(ubyte anislot);
 void net_unkn_func_33(void);
 void net_players_copy_equip_and_cryo(void);
 void net_players_copy_cryo(void);
+
+void set_default_gfx_settings(void);
+void set_default_visual_prefernces(void);
+void set_default_audio_tracks(void);
 
 #ifdef __cplusplus
 };

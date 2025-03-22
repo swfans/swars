@@ -203,6 +203,9 @@ TbBool face_is_blocking_walk(short face);
 
 void unkn_object_shift_03(ushort objectno);
 void unkn_object_shift_02(int norm1, int norm2, ushort objectno);
+
+int get_height_on_face(int x, int z, ushort face);
+int get_height_on_face_quad(int x, int z, ushort face);
 /******************************************************************************/
 #ifdef __cplusplus
 }

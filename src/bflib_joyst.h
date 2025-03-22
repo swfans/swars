@@ -94,6 +94,7 @@ extern struct DevInput joy;
 
 int JoySetInterrupt(short val);
 int joy_func_065(struct DevInput *dinp);
+int joy_func_067(struct DevInput *dinp, int a2);
 int joy_driver_init(void);
 int joy_driver_shutdown(void);
 

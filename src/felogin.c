@@ -28,6 +28,7 @@
 #include "femail.h"
 #include "femain.h"
 #include "feoptions.h"
+#include "game_save.h"
 #include "game_sprts.h"
 #include "game.h"
 #include "keyboard.h"

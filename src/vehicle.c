@@ -29,6 +29,7 @@
 #include "enginpriobjs.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
+#include "engintrns.h"
 #include "game.h"
 #include "game_speed.h"
 #include "matrix.h"
@@ -874,11 +875,6 @@ void move_flying_vehicle(struct Thing *p_vehicle)
 {
     asm volatile ("call ASM_move_flying_vehicle\n"
         : : "a" (p_vehicle));
-}
-
-short angle_between_points(int x1, int z1, int x2, int z2)
-{
-  return LbArcTanAngle(x2 - x1, z1 - z2);
 }
 
 void process_tank_turret(struct Thing *p_tank)

@@ -1062,6 +1062,14 @@ void finalise_razor_wire(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void init_lay_razor(struct Thing *p_thing, short x, short y, short z, int flag)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_init_lay_razor\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (flag));
+}
+
 void update_razor_wire(struct Thing *p_person)
 {
     asm volatile ("call ASM_update_razor_wire\n"
@@ -1318,48 +1326,37 @@ void process_weapon_recoil(struct Thing *p_person)
         plagent = p_person->U.UPerson.ComCur & 3;
         p_player = &players[plyr];
         p_person->U.UPerson.ComTimer = -1;
-        p_person->VX = p_player->field_19A[plagent];
-        p_person->VY = p_player->field_E8[plagent];
-        p_person->VZ = p_player->field_1A2[plagent];
+        p_person->VX = p_player->UserVX[plagent];
+        p_person->VY = p_player->UserVY[plagent];
+        p_person->VZ = p_player->UserVZ[plagent];
     }
     else if ((p_person->Flag & (TngF_Unkn20000000|TngF_Persuaded)) == (TngF_Unkn20000000|TngF_Persuaded))
     {
         PlayerInfo *p_player;
         struct Thing *p_owner;
         ushort plyr;
-        int vel_x, vel_z, vel_y;
-        int dt_x, dt_z, dt_y, range;
-        int ln_x, ln_z, dist;
+        short cor_x, cor_y, cor_z;
+        short src_x, src_y, src_z;
+        int range;
 
         p_owner = &things[p_person->Owner];
         plyr = (p_owner->U.UPerson.ComCur & 0x1C) >> 2;
         p_player = &players[plyr];
-        range = get_weapon_range(p_person);
-        vel_x = p_player->SpecialItems[0];
-        vel_y = p_player->SpecialItems[1];
-        vel_z = p_player->SpecialItems[2];
+        cor_x = p_player->SpecialItems[0];
+        cor_y = p_player->SpecialItems[1];
+        cor_z = p_player->SpecialItems[2];
 
-        dt_x = vel_x - (p_person->X >> 8);
-        dt_y = vel_y - (p_person->Y >> 8);
-        dt_z = vel_z - (p_person->Z >> 8);
-        ln_z = abs(dt_z);
-        ln_x = abs(dt_x);
-        if (ln_x >= ln_z)
-            dist = ln_x + (ln_z >> 2) + (ln_z >> 3) + (ln_z >> 6) + (ln_z >> 7) - (ln_x >> 5) - (ln_x >> 7);
-        else
-            dist = ln_z + (ln_x >> 2) + (ln_x >> 3) + (ln_x >> 6) + (ln_x >> 7) - (ln_z >> 5) - (ln_z >> 7);
-        if (dist > range)
-        {
-            if (dist == 0)
-                dist = 1;
-            vel_x = (p_person->X >> 8) + range * dt_x / dist;
-            vel_y = (p_person->Y >> 8) + range * dt_y / dist;
-            vel_z = (p_person->Z >> 8) + range * dt_z / dist;
-        }
+        range = get_weapon_range(p_person);
+        src_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+        src_y = PRCCOORD_TO_MAPCOORD(p_person->Y);
+        src_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+        map_limit_distance_to_target_fast(src_x, src_y, src_z,
+          &cor_x, &cor_y, &cor_z, range);
+
         p_person->U.UPerson.ComTimer = -1;
-        p_person->VX = vel_x;
-        p_person->VY = vel_y;
-        p_person->VZ = vel_z;
+        p_person->VX = cor_x;
+        p_person->VY = cor_y;
+        p_person->VZ = cor_z;
     }
 }
 

@@ -49,8 +49,6 @@
 static char data_path_user[DISKPATH_SIZE] = "";
 static char data_path_hdd[DISKPATH_SIZE] = "";
 static char game_dir_language[64] = "language/eng";
-static char game_dir_savegame[] = "qdata/savegame";
-static char game_dir_screenshots[] = "qdata/screenshots";
 
 /******************************************************************************/
 
@@ -108,8 +106,8 @@ PathInfo game_dirs[] = {
   {"qdata/equip",0},
   {game_dir_language,	0},
   {"conf",		0},
-  {game_dir_savegame,	0},
-  {game_dir_screenshots,0},
+  {"qdata/savegame",	0},
+  {"qdata/screenshots",0},
   {NULL,		0},
 };
 
@@ -118,16 +116,19 @@ GetDirectoryUser(void)
 {
     if (data_path_user[0] == '\0')
     {
+        PathInfo *pinfo;
+
         if (!sys_get_user_path(data_path_user, sizeof(data_path_user)))
         {
             snprintf(data_path_user, sizeof(data_path_user), ".");
         }
         LOGDBG("Dir for user files '%s'", data_path_user);
-        //char path_create[DISKPATH_SIZE];
-        //snprintf(path_create, sizeof(path_create), "%s/%s", data_path_user, game_dir_savegame);
-        LbDirectoryMake(game_dir_savegame, true);
-        //snprintf(path_create, sizeof(path_create), "%s/%s", data_path_user, game_dir_screenshots);
-        LbDirectoryMake(game_dir_screenshots, true);
+
+        pinfo = &game_dirs[DirPlace_Savegame];
+        LbDirectoryMake(pinfo->directory, true);
+
+        pinfo = &game_dirs[DirPlace_Scrnshots];
+        LbDirectoryMake(pinfo->directory, true);
     }
     return data_path_user;
 }
@@ -215,10 +216,7 @@ void SyndFileNameTransform(char *out_fname, const char *inp_fname)
 
     // Figure out whether the base folder should be data folder, user folder or CD
     dir_place = GetDirPlaceFromPath(inp_fname);
-    if ( (dir_place == DirPlace_QData) && (strncasecmp(inp_fname, game_dir_savegame, strlen(game_dir_savegame)) == 0) ) {
-        base_dir = GetDirectoryUser();
-    }
-    else if ( (dir_place == DirPlace_QData) && (strncasecmp(inp_fname, game_dir_screenshots, strlen(game_dir_screenshots)) == 0) ) {
+    if ((dir_place == DirPlace_Savegame) || (dir_place == DirPlace_Scrnshots)) {
         base_dir = GetDirectoryUser();
     }
     else if (dir_place != DirPlace_None) {

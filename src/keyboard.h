@@ -77,5 +77,7 @@ ubyte is_key_pressed(TbKeyCode key, TbKeyMods kmodif);
  */
 void clear_key_pressed(TbKeyCode key);
 
+void set_default_game_keys(void);
+
 #endif
 /******************************************************************************/

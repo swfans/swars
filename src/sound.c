@@ -11,6 +11,7 @@
 #include "bfmemut.h"
 #include "bfmusic.h"
 #include "bfsound.h"
+#include "bfaudio.h"
 #include "bfscd.h"
 #include "ailss.h"
 #include "aila.h"
@@ -36,6 +37,40 @@ extern TbFileHandle sound_file; // = INVALID_FILE;
 extern struct HeapMgrHeader *hmhead;
 extern long samples_in_bank;
 extern struct SampleTable *sample_table;
+
+void set_default_sfx_settings(void)
+{
+    startscr_samplevol = 322;
+    startscr_midivol = 322;
+    startscr_cdvolume = 228;
+}
+
+void sfx_apply_samplevol(void)
+{
+    if (startscr_samplevol < 0)
+        startscr_samplevol = 0;
+    if (startscr_samplevol > 322)
+        startscr_samplevol = 322;
+    SetSoundMasterVolume(127 * startscr_samplevol / 322);
+}
+
+void sfx_apply_midivol(void)
+{
+    if (startscr_midivol < 0)
+        startscr_midivol = 0;
+    if (startscr_midivol > 322)
+        startscr_midivol = 322;
+    SetMusicMasterVolume(127 * startscr_midivol / 322);
+}
+
+void sfx_apply_cdvolume(void)
+{
+    if (startscr_cdvolume < 0)
+        startscr_cdvolume = 0;
+    if (startscr_cdvolume > 322)
+        startscr_cdvolume = 322;
+    SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+}
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)
 {

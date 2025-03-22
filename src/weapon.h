@@ -233,6 +233,8 @@ short process_persuadertron(struct Thing *p_person, ubyte target_select, ushort 
 int gun_out_anim(struct Thing *p_person, ubyte shoot_flag);
 
 s32 laser_hit_at(s32 x1, s32 y1, s32 z1, s32 *x2, s32 *y2, s32 *z2, struct Thing *p_shot);
+void finalise_razor_wire(struct Thing *p_person);
+void init_lay_razor(struct Thing *p_thing, short x, short y, short z, int flag);
 
 /******************************************************************************/
 #ifdef __cplusplus

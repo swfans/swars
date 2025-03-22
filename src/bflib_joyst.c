@@ -713,6 +713,14 @@ int joy_func_065(struct DevInput *dinp)
     return 1;
 }
 
+int joy_func_067(struct DevInput *dinp, int a2)
+{
+    int ret;
+    asm volatile ("call ASM_joy_func_067\n"
+        : "=r" (ret) : "a" (dinp), "d" (a2));
+    return ret;
+}
+
 /** Gravis Grip joystick driver initialization.
  *
  * GrIP joystick support library initialization.

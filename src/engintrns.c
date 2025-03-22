@@ -28,6 +28,11 @@
 #define SCREEN_POINT_COORD_MIN (-MAX_SUPPORTED_SCREEN_WIDTH)
 #define SCREEN_POINT_COORD_MAX (2 * MAX_SUPPORTED_SCREEN_WIDTH)
 
+short angle_between_points(int x1, int z1, int x2, int z2)
+{
+  return LbArcTanAngle(x2 - x1, z1 - z2);
+}
+
 void transform_point(struct EnginePoint *p_ep)
 {
 #if 0
