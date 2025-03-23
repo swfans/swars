@@ -31,7 +31,7 @@ TbBool test_memory(void)
     void *p;
 
     if (MockBaseInitialise() != Lb_SUCCESS) {
-        LOGERR("bullfrog Library initialization failed");
+        LOGERR("bullfrog library initialization failed");
         return false;
     }
     LbMemorySetup();
