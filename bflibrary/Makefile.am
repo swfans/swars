@@ -92,6 +92,7 @@ libbullfrog_a_SOURCES = \
   src/general/gscreen.c \
   src/general/gsprite.c \
   src/general/gspr_col.c \
+  src/general/gspr_enc.c \
   src/general/gspr_map.c \
   src/general/gspr_std.c \
   src/general/gstrut.c \

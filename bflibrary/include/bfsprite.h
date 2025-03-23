@@ -209,6 +209,15 @@ TbResult LbSpriteDrawScaledRemap(long xpos, long ypos, const TbSprite *sprite,
     ((sprite)->SWidth * un_per_px + 8) / 16, \
     ((sprite)->SHeight * un_per_px + 8) / 16, cmap)
 
+/**
+ * Encodes draw window area into a sprite.
+ *
+ * @param p_spr The sprite struct to be filled.
+ * @param p_spr_data Destination buffer to be used.
+ * @return Length of the sprite data.
+ */
+int LbScreenSpriteEncode(TbSprite *p_spr, TbSpriteData p_spr_data);
+
 #ifdef __cplusplus
 };
 #endif
