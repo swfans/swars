@@ -60,6 +60,47 @@ void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ushort height)
     }
 }
 
+/** @internal
+ *  Draw part of sprite line.
+ *
+ * @param buf_out
+ * @param buf_inp
+ * @param buf_len
+ * @param mirror
+ */
+static inline void LbDrawBufferFCRemap(TbPixel **buf_out, const TbPixel *buf_inp,
+        const int buf_len, const TbPixel *cmap)
+{
+    int i;
+
+    for (i = 0; i < buf_len; i++)
+    {
+        **buf_out = cmap[*(const ubyte *)buf_inp];
+        buf_inp++;
+        (*buf_out)++;
+    }
+}
+
+void LbScreenCopyRemap(TbPixel *sourceBuf, TbPixel *destBuf, ushort height,
+  const TbPixel *cmap)
+{
+    ubyte *s;
+    ubyte *d;
+    short shift;
+    short h;
+
+    s = sourceBuf;
+    d = destBuf;
+    shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
+    {
+        LbDrawBufferFCRemap(&d, s, lbDisplay.GraphicsWindowWidth, cmap);
+        s += lbDisplay.GraphicsWindowWidth;
+        d += shift;
+    }
+}
+
 void LbScreenSave(TbPixel *sourceBuf, TbPixel *destBuf, ushort height)
 {
     ubyte *s;
