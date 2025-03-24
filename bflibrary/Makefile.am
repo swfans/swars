@@ -170,6 +170,7 @@ check_PROGRAMS = \
   bflib_test_pogpol \
   bflib_test_poline \
   bflib_test_potrig \
+  bflib_test_sprdrw \
   bflib_test_tringl
 
 bflib_test_math_SOURCES = \
@@ -250,6 +251,24 @@ bflib_test_potrig_CPPFLAGS = \
 nodist_EXTRA_bflib_test_potrig_SOURCES = dummy.cxx
 
 bflib_test_potrig_LDADD = \
+  -L$(builddir) -lbullfrog
+
+
+bflib_test_sprdrw_SOURCES = \
+  tests/mock_mouse.c \
+  tests/mock_palette.c \
+  tests/mock_screen.c \
+  tests/mock_windows.c \
+  tests/helpers_screen.c \
+  tests/bflib_test_sprdrw.c
+
+bflib_test_sprdrw_CPPFLAGS = \
+  -I$(top_srcdir)/include -I$(builddir)/include
+
+# Pretending to contain c++ source so that Automake select c++ linker
+nodist_EXTRA_bflib_test_sprdrw_SOURCES = dummy.cxx
+
+bflib_test_sprdrw_LDADD = \
   -L$(builddir) -lbullfrog
 
 
