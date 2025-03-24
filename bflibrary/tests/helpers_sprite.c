@@ -19,6 +19,7 @@
 /******************************************************************************/
 #include <string.h>
 #include "helpers_sprite.h"
+#include "bfanywnd.h"
 #include "bfpalette.h"
 #include "bfutility.h"
 #include "bftstlog.h"
@@ -27,10 +28,50 @@ static struct TbAnyWindow sprites1_list[] = {
     {0, 0, 0, 0, NULL,},
 };
 
-void generate_example_sprites_from_png(int sprfile_no, const ubyte *pal,
+void get_example_sprites_file_name(int sprfile_no, char *fname)
+{
+    switch (sprfile_no)
+    {
+    case 1:
+        strcpy(fname, "referenc/spr_devpac-mans16.png");
+        break;
+    default:
+        fname[0] = '\0';
+        break;
+    }
+}
+
+TbScreenMode get_example_sprites_screen_mode(int sprfile_no)
+{
+    char locstr[64];
+    ulong img_width, img_height, img_bpp;
+    ulong flags;
+
+    switch (sprfile_no)
+    {
+    case 1:
+        img_width = 320;
+        img_height = 1024;
+        img_bpp = 8;
+        break;
+    default:
+        img_width = 4;
+        img_height = 4;
+        img_bpp = 8;
+        break;
+    }
+
+    sprintf(locstr, "%lux%lux%lu", img_width, img_height, img_bpp);
+    if (img_bpp <= 8)
+        flags = Lb_VF_PALETTE;
+    else
+        flags = Lb_VF_RGBCOLOUR;
+    return LbRegisterVideoMode(locstr, img_width, img_height, img_bpp, flags);
+}
+
+void generate_example_sprites_from_screen(int sprfile_no, const ubyte *pal,
   ubyte *p_dat, TbSprite *p_tab)
 {
-    const char *img_fname;
     TbSprite *p_spr;
     struct TbAnyWindow *p_wnd;
     int tot_sprites, i;
@@ -38,18 +79,15 @@ void generate_example_sprites_from_png(int sprfile_no, const ubyte *pal,
     switch (sprfile_no)
     {
     case 1:
-        img_fname = "referenc/spr_devpac-mans16.png";
         tot_sprites = sizeof(sprites1_list)/sizeof(sprites1_list[0]);
-        p_wnd = &sprites1_list[i];
+        p_wnd = &sprites1_list[0];
         break;
     default:
-        img_fname = NULL;
         tot_sprites = 0;
         p_wnd = NULL;
         break;
     }
-    // Load the sprite image
- 
+
     // Convert each area into a sprite
     p_spr = p_tab;
     for (i = 0; i < tot_sprites; i++)
@@ -63,6 +101,19 @@ void generate_example_sprites_from_png(int sprfile_no, const ubyte *pal,
         p_wnd++;
     }
 
+}
+
+void palette_remap_to_screen(TbPixel *p_remap, const TbPixel *p_altpal)
+{
+    int i;
+    for (i = 0; i < PALETTE_8b_COLORS; i++)
+    {
+        ubyte r, g, b;
+        r = p_altpal[3*i + 0];
+        g = p_altpal[3*i + 1];
+        b = p_altpal[3*i + 2];
+        p_remap[i] = LbPaletteFindColour(lbDisplay.Palette, r, g, b);
+    }
 }
 
 /******************************************************************************/

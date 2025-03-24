@@ -259,7 +259,7 @@ bflib_test_sprdrw_SOURCES = \
   tests/mock_palette.c \
   tests/mock_screen.c \
   tests/mock_windows.c \
-  tests/helpers_screen.c \
+  tests/helpers_sprite.c \
   tests/bflib_test_sprdrw.c
 
 bflib_test_sprdrw_CPPFLAGS = \

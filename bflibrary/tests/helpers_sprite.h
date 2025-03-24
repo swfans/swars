@@ -22,14 +22,18 @@
 
 #include "bftypes.h"
 #include "bfsprite.h"
+#include "bfscreen.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void generate_example_sprites_from_png(int sprfile_no, const ubyte *pal,
+void get_example_sprites_file_name(int sprfile_no, char *fname);
+TbScreenMode get_example_sprites_screen_mode(int sprfile_no);
+void palette_remap_to_screen(TbPixel *p_remap, const TbPixel *p_altpal);
+
+void generate_example_sprites_from_screen(int sprfile_no, const ubyte *pal,
   ubyte *p_dat, TbSprite *p_tab);
-void raw_to_sprite(short X, short Y, ushort Width, ushort Height, ubyte *Raw);
 
 #ifdef __cplusplus
 };

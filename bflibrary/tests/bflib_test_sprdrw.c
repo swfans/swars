@@ -51,10 +51,12 @@ TbBool test_spritedraw(void)
     ubyte ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
     TbScreenModeInfo *mdinfo;
-    TbScreenMode mode = Lb_SCREEN_MODE_640_480_8;
+    TbScreenMode mode;
     ubyte *texmap;
     TbPixel *ref_buffer;
     ulong picno;
+    int sprfile_no = 1;
+    int len;
 
     if (LbErrorLogSetup(NULL, "tst_sprdrw.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
         LOGERR("execution log setup failed");
@@ -67,13 +69,46 @@ TbBool test_spritedraw(void)
     }
     LbMemorySetup();
 
-    mdinfo = LbScreenGetModeInfo(mode);
-
     // Prepare a palette, and colour tables for it
     make_general_palette(pal);
     LbFileSaveAt("tst_gp.pal", &pal, sizeof(pal));
     LbColourTablesGenerate(pal, unaffected_colours, "tst_gptbl.dat");
 
+    mode = get_example_sprites_screen_mode(sprfile_no);
+    mdinfo = LbScreenGetModeInfo(mode);
+    if (MockScreenSetupAnyMode(mode, mdinfo->Width, mdinfo->Height, pal) != Lb_SUCCESS) {
+        LOGERR("mock screen initialization failed");
+        return false;
+    }
+
+    MockScreenLock();
+
+    { // Read image file containing sprites
+        char loc_fname[64];
+        ubyte colour_remap[PALETTE_8b_COLORS];
+        ulong ref_width, ref_height;
+
+        ref_buffer = malloc(mdinfo->Width * (mdinfo->Height + 1) * 1);
+        get_example_sprites_file_name(sprfile_no, loc_fname);
+        memset(ref_pal, 0, PALETTE_8b_SIZE);
+        LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
+        if ((ref_width != mdinfo->Width) || (ref_height != mdinfo->Height)) {
+            LOGERR("%s: unexpected sprites image size", loc_fname);
+            return false;
+        }
+        palette_remap_to_screen(colour_remap, ref_pal);
+        LbScreenCopyRemap(ref_buffer, lbDisplay.WScreen, lbDisplay.GraphicsWindowHeight,
+          colour_remap);
+        free(ref_buffer);
+    }
+
+    //len = generate_example_sprites_from_screen(sprfile_no, pal, ubyte *p_dat, TbSprite *p_tab);
+
+    MockScreenUnlock();
+    MockScreenReset();
+
+    mode = Lb_SCREEN_MODE_640_480_8;
+    mdinfo = LbScreenGetModeInfo(mode);
     if (MockScreenSetupAnyMode(mode, mdinfo->Width, mdinfo->Height, pal) != Lb_SUCCESS) {
         LOGERR("mock screen initialization failed");
         return false;
@@ -83,9 +118,6 @@ TbBool test_spritedraw(void)
 
     texmap = LbMemoryAlloc(256*256*1);
     LbMemorySet(texmap, 0, 256*256*1);
-
-    setup_vecs(lbDisplay.WScreen, texmap, lbDisplay.PhysicalScreenWidth,
-        lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
 
     ref_buffer = malloc(mdinfo->Width * mdinfo->Height * (lbEngineBPP+7) / 8);
     if (ref_buffer == NULL) {
