@@ -69,38 +69,57 @@ TbScreenMode get_example_sprites_screen_mode(int sprfile_no)
     return LbRegisterVideoMode(locstr, img_width, img_height, img_bpp, flags);
 }
 
-void generate_example_sprites_from_screen(int sprfile_no, const ubyte *pal,
+int get_example_sprites_total_count(int sprfile_no)
+{
+    int tot_sprites;
+
+    switch (sprfile_no)
+    {
+    case 1:
+        tot_sprites = sizeof(sprites1_list)/sizeof(sprites1_list[0]);
+        break;
+    default:
+        tot_sprites = 0;
+        break;
+    }
+
+    return tot_sprites;
+}
+
+int generate_example_sprites_from_screen(int sprfile_no, const ubyte *pal,
   ubyte *p_dat, TbSprite *p_tab)
 {
     TbSprite *p_spr;
+    ubyte *p_sprdt;
     struct TbAnyWindow *p_wnd;
     int tot_sprites, i;
 
     switch (sprfile_no)
     {
     case 1:
-        tot_sprites = sizeof(sprites1_list)/sizeof(sprites1_list[0]);
         p_wnd = &sprites1_list[0];
         break;
     default:
-        tot_sprites = 0;
         p_wnd = NULL;
         break;
     }
+    tot_sprites = get_example_sprites_total_count(sprfile_no);
 
     // Convert each area into a sprite
     p_spr = p_tab;
+    p_sprdt = p_dat;
     for (i = 0; i < tot_sprites; i++)
     {
         int len;
 
         LbScreenSetGraphicsWindow(p_wnd->x, p_wnd->y, p_wnd->width, p_wnd->height);
-        len = LbScreenSpriteEncode(p_spr, p_dat);
-        p_dat += len;
+        len = LbScreenSpriteEncode(p_spr, p_sprdt);
+        p_sprdt += len;
         p_spr++;
         p_wnd++;
     }
 
+    return p_sprdt - p_dat;
 }
 
 void palette_remap_to_screen(TbPixel *p_remap, const TbPixel *p_altpal)

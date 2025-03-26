@@ -30,6 +30,7 @@
 #include "bfpalcrss.h"
 #include "bffile.h"
 #include "bfpng.h"
+#include "bfscrcopy.h"
 #include "bfgentab.h"
 #include "bfutility.h"
 #include "bftstlog.h"
@@ -52,10 +53,12 @@ TbBool test_spritedraw(void)
     TbPixel unaffected_colours[] = {0,};
     TbScreenModeInfo *mdinfo;
     TbScreenMode mode;
-    ubyte *texmap;
+    ubyte *p_sprdata;
+    TbSprite *p_sprlist;
     TbPixel *ref_buffer;
     ulong picno;
     int sprfile_no = 1;
+    int tot_sprites;
     int len;
 
     if (LbErrorLogSetup(NULL, "tst_sprdrw.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
@@ -102,7 +105,16 @@ TbBool test_spritedraw(void)
         free(ref_buffer);
     }
 
-    //len = generate_example_sprites_from_screen(sprfile_no, pal, ubyte *p_dat, TbSprite *p_tab);
+    tot_sprites = get_example_sprites_total_count(sprfile_no);
+    len = (tot_sprites+1) * 8192;
+    p_sprdata = LbMemoryAlloc(len);
+    LbMemorySet(p_sprdata, 0, len);
+
+    len = (tot_sprites+1) * sizeof(TbSprite);
+    p_sprlist = (TbSprite *)LbMemoryAlloc(len);
+    LbMemorySet(p_sprlist, 0, len);
+
+    len = generate_example_sprites_from_screen(sprfile_no, pal, p_sprdata, p_sprlist);
 
     MockScreenUnlock();
     MockScreenReset();
@@ -115,9 +127,6 @@ TbBool test_spritedraw(void)
     }
 
     MockScreenLock();
-
-    texmap = LbMemoryAlloc(256*256*1);
-    LbMemorySet(texmap, 0, 256*256*1);
 
     ref_buffer = malloc(mdinfo->Width * mdinfo->Height * (lbEngineBPP+7) / 8);
     if (ref_buffer == NULL) {
@@ -134,6 +143,8 @@ TbBool test_spritedraw(void)
 
         LbScreenClear(0);
         lbSeed = seeds[picno];
+
+        LbSpriteDraw(88, 88, &p_sprlist[0]);
 #if 0
         test_sprite_draw_random_sprites(pal, mdinfo->Height);
 
@@ -161,7 +172,7 @@ TbBool test_spritedraw(void)
 #endif
     }
 
-    LbMemoryFree(texmap);
+    LbMemoryFree(p_sprdata);
     free(ref_buffer);
 
     MockScreenUnlock();

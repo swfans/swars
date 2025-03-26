@@ -30,9 +30,10 @@ extern "C" {
 
 void get_example_sprites_file_name(int sprfile_no, char *fname);
 TbScreenMode get_example_sprites_screen_mode(int sprfile_no);
+int get_example_sprites_total_count(int sprfile_no);
 void palette_remap_to_screen(TbPixel *p_remap, const TbPixel *p_altpal);
 
-void generate_example_sprites_from_screen(int sprfile_no, const ubyte *pal,
+int generate_example_sprites_from_screen(int sprfile_no, const ubyte *pal,
   ubyte *p_dat, TbSprite *p_tab);
 
 #ifdef __cplusplus
