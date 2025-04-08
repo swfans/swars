@@ -678,7 +678,7 @@ extract_gfx_files:
  nsisunz::Unzip  "$PLUGINSDIR\${GFX_PACKAGE}.zip" "$PLUGINSDIR\"
  CopyFiles /SILENT $PLUGINSDIR\SWARS\data\* $INSTDIR\data
  CopyFiles /SILENT $PLUGINSDIR\SWARS\qdata\* $INSTDIR\qdata
- CopyFiles /SILENT $PLUGINSDIR\SWARS\langauge\* $INSTDIR\language
+ CopyFiles /SILENT $PLUGINSDIR\SWARS\language\* $INSTDIR\language
 
     ;Update sound files from swars-sfx repository
 
