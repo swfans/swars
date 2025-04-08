@@ -50,6 +50,22 @@ void LbScreenCopyBox(TbPixel *sourceBuf, TbPixel *destBuf,
  */
 void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ushort height);
 
+/** Copies buffer of GraphicsWindow size to GraphicsScreen, with colour remap.
+ *
+ * Given source buffer with width equal to GraphicsWindow, and destination
+ * buffer with width equal to GraphicsScreen, and the height,
+ * it copies given amount of lines of one buffer to the other.
+ * Each pixel is remapped using given table before writing.
+ *
+ * @param sourceBuf The GraphicsWindow sized buffer to copy from
+ * @param destBuf The GraphicsScreen sized buffer to copy into
+ * @param height Amount of lines to copy (the GraphicsWindow height is ignored
+ *     in favour of this value)
+ * @param cmap Colour remap table
+ */
+void LbScreenCopyRemap(TbPixel *sourceBuf, TbPixel *destBuf, ushort height,
+  const TbPixel *cmap);
+
 /** Saves part of buffer of size equal to GraphicsScreen to one of GraphicsWindow.
  *
  * This function does a similar but opposite copy operation to LbScreenCopy().

@@ -167,7 +167,7 @@ TbBool test_trig(void)
     }
 
     if (MockBaseInitialise() != Lb_SUCCESS) {
-        LOGERR("bullfrog Library initialization failed");
+        LOGERR("bullfrog library initialization failed");
         return false;
     }
     LbMemorySetup();
@@ -180,7 +180,7 @@ TbBool test_trig(void)
     LbColourTablesGenerate(pal, unaffected_colours, "tst_gptbl.dat");
 
     if (MockScreenSetupAnyMode(mode, mdinfo->Width, mdinfo->Height, pal) != Lb_SUCCESS) {
-        LOGERR("bullfrog Library initialization failed");
+        LOGERR("mock screen initialization failed");
         return false;
     }
 

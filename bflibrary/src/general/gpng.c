@@ -98,9 +98,12 @@ TbResult LbPngRead(FILE *img_fh, ubyte *out_buffer,
     if ((color_type == PNG_COLOR_TYPE_PALETTE) && (bit_depth <= 8)) {
         // If the file uses colour palette, get it
         png_colorp palette;
+        u32 ret;
         int num;
 
-        png_get_PLTE(png, info, &palette, &num);
+        ret = png_get_PLTE(png, info, &palette, &num);
+        if (ret != PNG_INFO_PLTE)
+            goto err;
         palette_from_png(pal, palette, num);
     } else {
         // Other file formats are not supported

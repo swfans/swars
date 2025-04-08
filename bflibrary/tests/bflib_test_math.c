@@ -42,7 +42,7 @@ TbBool test_sqrtl(void)
     ulong x;
 
     if (MockZeroBaseInitialise() != Lb_SUCCESS) {
-        LOGERR("bullfrog Library initialization failed");
+        LOGERR("bullfrog library initialization failed");
         return false;
     }
     m = 1;

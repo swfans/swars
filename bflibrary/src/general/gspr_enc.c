@@ -116,7 +116,7 @@ int LbScreenSpriteEncode(TbSprite *p_spr, TbSpriteData p_spr_data)
     p_spr->SWidth = lbDisplay.GraphicsWindowWidth;
     p_spr->SHeight = lbDisplay.GraphicsWindowHeight;
     assert(p_spr->SWidth == lbDisplay.GraphicsWindowWidth);
-    assert(p_spr->SHeight = lbDisplay.GraphicsWindowHeight);
+    assert(p_spr->SHeight == lbDisplay.GraphicsWindowHeight);
     p_spr->Data = p_spr_data;
 
     return LbSpriteEncode(lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsScreenWidth, transcol, p_spr);
