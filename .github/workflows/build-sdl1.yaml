@@ -14,10 +14,10 @@ on:
 
 jobs:
   ubuntu-gcc:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: "Linux Ubuntu SDL1"
     container:
-      image: ubuntu:20.04
+      image: ubuntu:22.04
     env:
       DEBIAN_FRONTEND: noninteractive
       TZ: Etc/UTC
