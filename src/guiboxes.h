@@ -99,11 +99,11 @@ struct ScreenButton {
     const char *Text;
     struct TbSprite *Font;
     ubyte (*DrawFn)(struct ScreenButton *btn);
-    ubyte (*DrawTextFn)();
+    ubyte (*DrawTextFn)(struct ScreenButton *btn);
     ubyte (*CallBackFn)(ubyte click);
     ubyte *Radio;
     ushort TextTopLine;
-    ushort TextFadePos;
+    short TextFadePos;
     ushort Flags;
     ubyte DrawSpeed;
     ubyte Timer;
@@ -144,8 +144,8 @@ struct ScreenInfoBox { // sizeof=43
     char *Text2;
 	struct TbSprite *Font1;
 	struct TbSprite *Font2;
-	ubyte (*DrawFn)();
-	ubyte (*DrawTextFn)();
+	ubyte (*DrawFn)(struct ScreenInfoBox *box);
+	ubyte (*DrawTextFn)(struct ScreenInfoBox *box);
     short TextFadePos1;
     short TextFadePos2;
     ushort Flags;

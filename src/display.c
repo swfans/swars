@@ -10,6 +10,7 @@
 #include "bfscrsurf.h"
 #include "bfpalette.h"
 #include "bfsprite.h"
+#include "bffont.h"
 #include "bftext.h"
 #include "bfmouse.h"
 #include "bfplanar.h"
@@ -343,17 +344,52 @@ void setup_color_lookups(void)
 
 void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h)
 {
+#if 0
     asm volatile (
       "call ASM_my_set_text_window\n"
         : : "a" (x1), "d" (y1), "b" (w), "c" (h));
+#endif
+    text_window_x1 = x1;
+    text_window_y1 = y1;
+    text_window_x2 = x1 + w - 1;
+    text_window_y2 = y1 + h - 1;
 }
 
 ubyte font_height(uchar c)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_font_height\n"
         : "=r" (ret) : "a" (c));
     return ret;
+#endif
+    if (lbFontPtr == small_font || lbFontPtr == small2_font)
+    {
+        return LbSprFontCharHeight(lbFontPtr, c) - 1;
+    }
+    else if (lbFontPtr == small_med_font)
+    {
+        if (c < 97 || c > 122)
+        {
+          return LbSprFontCharHeight(lbFontPtr, c) - 2;
+        }
+        else
+        {
+          return LbSprFontCharHeight(lbFontPtr, c);
+        }
+    }
+    else if (lbFontPtr == med_font || lbFontPtr == med2_font)
+    {
+        return LbSprFontCharHeight(lbFontPtr, c) - 2;
+    }
+    else if (lbFontPtr == big_font)
+    {
+         return LbSprFontCharHeight(lbFontPtr, c) - 4;
+    }
+    else
+    {
+        return LbSprFontCharHeight(lbFontPtr, c);
+    }
 }
 
 u32 my_string_width(const char *text)

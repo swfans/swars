@@ -63,6 +63,11 @@ extern long engn_yc;
 extern long engn_zc;
 extern long engn_anglexz;
 
+extern ushort text_window_x1;
+extern ushort text_window_y1;
+extern ushort text_window_x2;
+extern ushort text_window_y2;
+
 // TODO move engine texture atlas to separate file
 extern ubyte *vec_tmap[18];
 
