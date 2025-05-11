@@ -103,7 +103,7 @@ struct ScreenButton {
     ubyte (*CallBackFn)(ubyte click);
     ubyte *Radio;
     ushort TextTopLine;
-    ushort TextFadePos;
+    short TextFadePos;
     ushort Flags;
     ubyte DrawSpeed;
     ubyte Timer;
