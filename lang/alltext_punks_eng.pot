@@ -77,7 +77,7 @@ msgstr ""
 #: mission.brief.mail19.par1.h mission.brief.mail21.par1.h
 #: mission.brief.mail23.par1.h mission.brief.mail25.par1.h
 #: mission.brief.mail26.par1.h mission.brief.mail27.par1.h
-#: mission.brief.mail30.par1.h
+#: mission.brief.mail30.par1.h mission.brief.mail30.par1.h
 msgctxt "mission brief email header"
 msgid "Mission Objectives:"
 msgstr ""
@@ -374,7 +374,7 @@ msgstr ""
 #: mission.brief.mail17.par2.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Kill Eurocorp scientist and recover briefcase"
+"1. Kill Eurocorp scientist and recover location of our imprisoned scientist ally"
 msgstr ""
 
 #: mission.brief.mail17.par3.c2
@@ -386,7 +386,7 @@ msgstr ""
 #: mission.brief.mail17.par4.c2
 msgctxt "mission brief email orders"
 msgid ""
-"Hint: Eurocorp will lock the scientists' prison if under attack"
+"Hint: Eurocorp will likely kill the scientist once they know we are coming. Time is of the essence"
 msgstr ""
 
 #: mission.brief.mail17.par5.c2
@@ -562,29 +562,56 @@ msgctxt "mission brief tactical information"
 msgid "Secondary Scientist target"
 msgstr ""
 
-#: mission.title:69
+#: mission.title:8
 msgctxt "mission title"
-msgid "Trash Church"
+msgid "Reformation"
 msgstr ""
 
 #: mission.brief.mail27.par2.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Kill All Zealots"
+"1. Destroy Church Buildings"
 msgstr ""
 
 #: mission.brief.mail27.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
+"2. Kill All Zealots"
+msgstr ""
+
+#: mission.brief.mail27.map25.level4:1
+msgctxt "mission brief tactical information"
+msgid "Zealot church locations"
+msgstr ""
+
+#: mission.brief.mail27.map25.level4:2
+msgctxt "mission brief tactical information"
+msgid "Known collusion between zealots and local police"
+msgstr ""
+
+#: mission.title:69
+msgctxt "mission title"
+msgid "Trash Church"
+msgstr ""
+
+#: mission.brief.mail28.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"1. Kill All Zealots"
+msgstr ""
+
+#: mission.brief.mail28.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
 "2. Destroy Building"
 msgstr ""
 
-#: mission.brief.mail27.map36.level4:1
+#: mission.brief.mail28.map36.level4:1
 msgctxt "mission brief tactical information"
 msgid "Zealot cathedral location"
 msgstr ""
 
-#: mission.brief.mail27.map36.level4:2
+#: mission.brief.mail28.map36.level4:2
 msgctxt "mission brief tactical information"
 msgid "Unguided reinforcements hiding in bar"
 msgstr ""
