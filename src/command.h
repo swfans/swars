@@ -291,7 +291,7 @@ enum PersonCommandFlags
     */
   PCmdF_IsUntil = 0x0004,
   /** The command has its function reverted.
-   * Reverting command is usually used to revert loop conditions, but some commands can
+   * Reverting command is usually used to invert loop / wait conditions, but some commands can
    * also be toggled / reverted, like PING command.
    */
   PCmdF_RevertFunct = 0x0008,
