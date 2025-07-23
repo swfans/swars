@@ -368,18 +368,19 @@ Function GOGInstallAdditionalLeave
     StrCpy $selected_menu_shortcut "1"
   ${EndIf}
 
-  ${If} $7 <> ${BST_CHECKED}
-    StrCpy $portable_install "1"
+  ${If} $8 <> ${BST_CHECKED}
+    StrCpy $portable_install "0"
   ${EndIf}
   
-  ${If} $7 <> ${BST_UNCHECKED}
-    StrCpy $portable_install "0"
+  ${If} $8 <> ${BST_UNCHECKED}
+    StrCpy $portable_install "1"
   ${EndIf}
 
   ${NSD_GetText} $5 $selected_lang_text
 
   ;MessageBox MB_ICONEXCLAMATION|MB_OK "Desktop state is $selected_desk_shortcut"
   ;MessageBox MB_ICONEXCLAMATION|MB_OK "language is $selected_lang_text"
+  ;MessageBox MB_ICONEXCLAMATION|MB_OK "Portable install is $portable_install"
 
 FunctionEnd
 
