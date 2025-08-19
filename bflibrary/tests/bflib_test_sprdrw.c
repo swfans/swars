@@ -28,6 +28,7 @@
 #include "bfmemut.h"
 #include "bfpalette.h"
 #include "bfpalcrss.h"
+#include "bfplanar.h"
 #include "bffile.h"
 #include "bfpng.h"
 #include "bfscrcopy.h"
@@ -42,7 +43,95 @@
 # undef main
 #endif
 
+enum DrawSprFuncType {
+    DrwSprFn_Normal,
+    DrwSprFn_OneColour,
+    DrwSprFn_Remap,
+};
+
 /******************************************************************************/
+
+/** Test drawing random sprites using the LbSpriteDraw(Normal/OneColour/Remap)() functions.
+ * @pal 256-colour palette buffer
+ * @res_h Scaling factor in form of horizonal resolution
+ * @drwtype Type of the draw function to use (Normal/OneColour/Remap)
+ * @p_sprlist Sprites list pointer
+ * @amount Amount of sprites to draw
+ * @tot_sprites Count of sprites in the list
+ */
+void test_sprite_draw_random_sprites(const ubyte *pal, short res_h, ubyte drwtype, TbSprite *p_sprlist, int amount, int tot_sprites)
+{
+    int i, scale;
+    TbPixel colour;
+    ubyte *cmap;
+
+    scale = 16 * res_h / 480;
+
+    cmap = NULL;
+    if (drwtype == DrwSprFn_Remap)
+    {
+        //TODO fill the colour map array; maybe invert colours? or just shuffle r/g/b?
+    }
+
+    for (i = 0; i < amount; i++)
+    {
+        struct TbPoint point_a;
+        TbSprite *p_spr;
+        ushort rnd;
+
+        rnd = LbRandomAnyShort();
+        if (drwtype == DrwSprFn_OneColour)
+        {
+            // Random colour (used only for OneColor draw type)
+            colour = LbPaletteFindColour(pal, (rnd >> 0) & 0x3f,
+              (rnd >> 5) & 0x3f, (rnd >> 10) & 0x3f);
+        }
+
+        // Random draw flags
+        lbDisplay.DrawFlags = 0;
+        switch ((rnd >> 6) & 3)
+        {
+        case 1:
+            lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+            break;
+        case 2:
+        case 3:
+            lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
+            break;
+        default:
+            break;
+        }
+        if (((rnd >> 4) & 3) == 0)
+            lbDisplay.DrawFlags |= Lb_SPRITE_OUTLINE;
+
+        // Random positions
+        {
+            rnd = LbRandomAnyShort();
+            point_a.x = ((rnd >> 0) & 1023) - (1023 - 640) / 2;
+            point_a.y = ((rnd >> 6) &  511) - (511 - 480) / 2;
+        }
+        {
+            rnd = LbRandomAnyShort();
+            p_spr = &p_sprlist[rnd % tot_sprites];
+        }
+
+        point_a.x = (scale * point_a.x) >> 4;
+        point_a.y = (scale * point_a.y) >> 4;
+
+        switch (drwtype)
+        {
+        case DrwSprFn_Normal:
+            LbSpriteDraw(point_a.x, point_a.y, p_spr);
+            break;
+        case DrwSprFn_OneColour:
+            LbSpriteDrawOneColour(point_a.x, point_a.y, p_spr, colour);
+            break;
+        case DrwSprFn_Remap:
+            LbSpriteDrawRemap(point_a.x, point_a.y, p_spr, cmap);
+            break;
+        }
+    }
+}
 
 TbBool test_spritedraw(void)
 {
@@ -105,15 +194,18 @@ TbBool test_spritedraw(void)
         free(ref_buffer);
     }
 
+    // Allocate memory for DAT part
     tot_sprites = get_example_sprites_total_count(sprfile_no);
     len = (tot_sprites+1) * 8192;
     p_sprdata = LbMemoryAlloc(len);
     LbMemorySet(p_sprdata, 0, len);
 
+    // Allocate memory for TAB part
     len = (tot_sprites+1) * sizeof(TbSprite);
     p_sprlist = (TbSprite *)LbMemoryAlloc(len);
     LbMemorySet(p_sprlist, 0, len);
 
+    // Generate sprites from bitmap data
     len = generate_example_sprites_from_screen(sprfile_no, pal, p_sprdata, p_sprlist);
 
     MockScreenUnlock();
@@ -144,10 +236,9 @@ TbBool test_spritedraw(void)
         LbScreenClear(0);
         lbSeed = seeds[picno];
 
-        LbSpriteDraw(88, 88, &p_sprlist[0]);
-#if 0
-        test_sprite_draw_random_sprites(pal, mdinfo->Height);
+        test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_Normal, p_sprlist, 2000, tot_sprites);
 
+#if 0
         sprintf(loc_fname, "referenc/tst_sprdrw%lu_rf.png", picno);
         LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
         if ((ref_width != mdinfo->Width) || (ref_height != mdinfo->Height)) {
