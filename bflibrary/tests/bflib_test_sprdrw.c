@@ -35,6 +35,7 @@
 #include "bfgentab.h"
 #include "bfutility.h"
 #include "bftstlog.h"
+#include "insspr.h"
 
 #include <SDL.h>
 
@@ -63,14 +64,17 @@ void test_sprite_draw_random_sprites(const ubyte *pal, short res_h, ubyte drwtyp
 {
     int i, scale;
     TbPixel colour;
-    ubyte *cmap;
+    ubyte cmap[PALETTE_8b_COLORS];
 
     scale = 16 * res_h / 480;
 
-    cmap = NULL;
     if (drwtype == DrwSprFn_Remap)
     {
-        //TODO fill the colour map array; maybe invert colours? or just shuffle r/g/b?
+        for (i = 0; i < PALETTE_8b_COLORS; i++)
+        {
+            cmap[i] = LbPaletteFindColour(pal, 0x3f - pal[3*i+0],
+              0x3f - pal[3*i+1], 0x3f - pal[3*i+2]);
+        }
     }
 
     for (i = 0; i < amount; i++)
@@ -133,6 +137,134 @@ void test_sprite_draw_random_sprites(const ubyte *pal, short res_h, ubyte drwtyp
     }
 }
 
+/** Test drawing random sprites using the LbSpriteDrawScaled(Normal/OneColour/Remap)() functions.
+ * @pal 256-colour palette buffer
+ * @res_h Scaling factor in form of horizonal resolution
+ * @drwtype Type of the draw function to use (Normal/OneColour/Remap)
+ * @p_sprlist Sprites list pointer
+ * @amount Amount of sprites to draw
+ * @tot_sprites Count of sprites in the list
+ */
+void test_sprite_draw_random_sprites_scaled(const ubyte *pal, short res_h, ubyte drwtype, TbSprite *p_sprlist, int amount, int tot_sprites)
+{
+    int i, scale;
+    TbPixel colour;
+    ubyte cmap[PALETTE_8b_COLORS];
+
+    scale = 16 * res_h / 480;
+
+    if (drwtype == DrwSprFn_Remap)
+    {
+        for (i = 0; i < PALETTE_8b_COLORS; i++)
+        {
+            cmap[i] = LbPaletteFindColour(pal, 0x3f - pal[3*i+0],
+              0x3f - pal[3*i+1], 0x3f - pal[3*i+2]);
+        }
+    }
+
+    for (i = 0; i < amount; i++)
+    {
+        struct TbPoint point_a, size_a;
+        TbSprite *p_spr;
+        ushort rnd;
+
+        rnd = LbRandomAnyShort();
+        if (drwtype == DrwSprFn_OneColour)
+        {
+            // Random colour (used only for OneColor draw type)
+            colour = LbPaletteFindColour(pal, (rnd >> 0) & 0x3f,
+              (rnd >> 5) & 0x3f, (rnd >> 10) & 0x3f);
+        }
+
+        // Random draw flags
+        lbDisplay.DrawFlags = 0;
+        switch ((rnd >> 6) & 3)
+        {
+        case 1:
+            lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+            break;
+        case 2:
+        case 3:
+            lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
+            break;
+        default:
+            break;
+        }
+        if (((rnd >> 4) & 3) == 0)
+            lbDisplay.DrawFlags |= Lb_SPRITE_OUTLINE;
+
+        // Random positions
+        {
+            rnd = LbRandomAnyShort();
+            point_a.x = ((rnd >> 0) & 1023) - (1023 - 640) / 2;
+            point_a.y = ((rnd >> 6) &  511) - (511 - 480) / 2;
+        }
+        {
+            rnd = LbRandomAnyShort();
+            p_spr = &p_sprlist[rnd % tot_sprites];
+
+            rnd = LbRandomAnyShort();
+            if (i < amount/64) // small part of 1/4 - enlarge with huge scale, similar proportions
+            {
+                int scale;
+
+                scale = ((rnd >> 0) & 127);
+                size_a.x = (p_spr->SWidth * (scale + scale/(((rnd >> 6) & 15) + 1))) + 1;
+                size_a.y = (p_spr->SHeight * (scale + scale/(((rnd >> 10) & 15) + 1))) + 1;
+            }
+            else if (i < amount/4) // 1/4 enlarge without too much deviation in proportions
+            {
+                int scale;
+
+                scale = ((rnd >> 0) & 7);
+                size_a.x = (p_spr->SWidth * (scale + scale/(((rnd >> 6) & 3) + 1))) + 1;
+                size_a.y = (p_spr->SHeight * (scale + scale/(((rnd >> 10) & 3) + 1))) + 1;
+            }
+            else if (i < 2*amount/4) // 1/4 - completely random sizes mith moderate maximum
+            {
+                size_a.x = ((rnd >> 0) & 127) + 1;
+                size_a.y = ((rnd >> 6) & 127) + 1;
+            }
+            else if (i < 3*amount/4) // 1/4 - reduce size without too much deviation in proportions
+            {
+                int scale;
+
+                scale = ((rnd >> 0) & 15);
+                if (scale < 1)
+                    scale = 1;
+                size_a.x = (p_spr->SWidth  / (scale + scale/(((rnd >>  6) & 3) + 1)));
+                size_a.y = (p_spr->SHeight / (scale + scale/(((rnd >> 10) & 3) + 1)));
+            }
+            else // 1/4 - enlarge or reduce size with aspect ratio kept
+            {
+                int scale;
+
+                scale = ((rnd >> 0) & 63);
+                size_a.x = ((p_spr->SWidth * scale) >> 3) + 1;
+                size_a.y = ((p_spr->SHeight * scale) >> 3) + 1;
+            }
+        }
+
+        point_a.x = (scale * point_a.x) >> 4;
+        point_a.y = (scale * point_a.y) >> 4;
+        size_a.x = (scale * size_a.x) >> 4;
+        size_a.y = (scale * size_a.y) >> 4;
+
+        switch (drwtype)
+        {
+        case DrwSprFn_Normal:
+            LbSpriteDrawScaled(point_a.x, point_a.y, p_spr, size_a.x, size_a.y);
+            break;
+        case DrwSprFn_OneColour:
+            LbSpriteDrawScaledOneColour(point_a.x, point_a.y, p_spr, size_a.x, size_a.y, colour);
+            break;
+        case DrwSprFn_Remap:
+            LbSpriteDrawScaledRemap(point_a.x, point_a.y, p_spr, size_a.x, size_a.y, cmap);
+            break;
+        }
+    }
+}
+
 TbBool test_spritedraw(void)
 {
     static ulong seeds[] = {0x0, 0xD15C1234, 0xD15C0000, 0xD15C0005, 0xD15C000F, 0xD15C03DC,
@@ -165,6 +297,7 @@ TbBool test_spritedraw(void)
     make_general_palette(pal);
     LbFileSaveAt("tst_gp.pal", &pal, sizeof(pal));
     LbColourTablesGenerate(pal, unaffected_colours, "tst_gptbl.dat");
+    render_ghost = &pixmap.ghost_table[0*PALETTE_8b_COLORS];
 
     mode = get_example_sprites_screen_mode(sprfile_no);
     mdinfo = LbScreenGetModeInfo(mode);
@@ -183,9 +316,12 @@ TbBool test_spritedraw(void)
         ref_buffer = malloc(mdinfo->Width * (mdinfo->Height + 1) * 1);
         get_example_sprites_file_name(sprfile_no, loc_fname);
         memset(ref_pal, 0, PALETTE_8b_SIZE);
-        LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
+        if (LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal) != Lb_SUCCESS) {
+            LOGERR("%s: unable to load PNG with sprites", loc_fname);
+            return false;
+        }
         if ((ref_width != mdinfo->Width) || (ref_height != mdinfo->Height)) {
-            LOGERR("%s: unexpected sprites image size", loc_fname);
+            LOGERR("%s: unexpected sprites image size, %lux%lu", loc_fname, ref_width, ref_height);
             return false;
         }
         palette_remap_to_screen(colour_remap, ref_pal);
@@ -237,6 +373,8 @@ TbBool test_spritedraw(void)
         lbSeed = seeds[picno];
 
         test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_Normal, p_sprlist, 2000, tot_sprites);
+        //test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_OneColour, p_sprlist, 2000, tot_sprites);
+        //test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_Remap, p_sprlist, 2000, tot_sprites);
 
 #if 0
         sprintf(loc_fname, "referenc/tst_sprdrw%lu_rf.png", picno);
@@ -246,7 +384,46 @@ TbBool test_spritedraw(void)
             return false;
         }
 #endif
-        sprintf(loc_fname, "tst_sprdrw%lu.png", picno);
+        sprintf(loc_fname, "tst_sprdrwon%lu.png", picno);
+        LbPngSaveScreen(loc_fname, lbDisplay.WScreen, pal, true);
+#if 0
+        // compare image with reference
+        maxpos = 0;
+        maxdiff = LbImageBuffersMaxDifference(lbDisplay.WScreen, pal, ref_buffer,
+          ref_pal, mdinfo->Width * mdinfo->Height, &maxpos);
+       if (maxdiff > 12) {
+            LOGERR("%s: high pixel difference to reference (%ld) at (%lu,%lu)",
+              loc_fname, maxdiff, maxpos % mdinfo->Width, maxpos / mdinfo->Width);
+            return false;
+        }
+        LOGSYNC("%s: acceptable pixel difference to reference (%ld) at (%lu,%lu)",
+            loc_fname, maxdiff, maxpos % mdinfo->Width, maxpos / mdinfo->Width);
+#endif
+    }
+
+    for (picno = 1; picno < sizeof(seeds)/sizeof(seeds[0]); picno++)
+    {
+        char loc_fname[64];
+        ulong ref_width, ref_height;
+        long maxdiff;
+        ulong maxpos;
+
+        LbScreenClear(0);
+        lbSeed = seeds[picno];
+
+        test_sprite_draw_random_sprites_scaled(pal, mdinfo->Height, DrwSprFn_Normal, p_sprlist, 200, tot_sprites);
+        //test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_OneColour, p_sprlist, 2000, tot_sprites);
+        //test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_Remap, p_sprlist, 2000, tot_sprites);
+
+#if 0
+        sprintf(loc_fname, "referenc/tst_sprdrw%lu_rf.png", picno);
+        LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
+        if ((ref_width != mdinfo->Width) || (ref_height != mdinfo->Height)) {
+            LOGERR("%s: unexpected reference image size", loc_fname);
+            return false;
+        }
+#endif
+        sprintf(loc_fname, "tst_sprdrwsn%lu.png", picno);
         LbPngSaveScreen(loc_fname, lbDisplay.WScreen, pal, true);
 #if 0
         // compare image with reference
