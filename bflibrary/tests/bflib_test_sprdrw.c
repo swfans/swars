@@ -265,18 +265,81 @@ void test_sprite_draw_random_sprites_scaled(const ubyte *pal, short res_h, ubyte
     }
 }
 
+/** Generate sprite data for testing sprites.
+ *
+ */
+TbBool test_spritedraw_generate(int sprfile_no, ubyte *pal, ubyte **pp_sprdata, TbSprite **pp_sprlist, int *p_tot_sprites)
+{
+    TbPixel *sprite_screen;
+    TbScreenModeInfo *mdinfo;
+    TbScreenMode mode;
+    int len;
+
+    mode = get_example_sprites_screen_mode(sprfile_no);
+    mdinfo = LbScreenGetModeInfo(mode);
+    if (MockScreenSetupAnyMode(mode, mdinfo->Width, mdinfo->Height, pal) != Lb_SUCCESS) {
+        LOGERR("mock screen initialization failed");
+        return false;
+    }
+
+    MockScreenLock();
+
+    { // Read image file containing sprites
+        char loc_fname[64];
+        ubyte ref_pal[PALETTE_8b_SIZE];
+        ubyte colour_remap[PALETTE_8b_COLORS];
+        ulong ref_width, ref_height;
+
+        sprite_screen = malloc(mdinfo->Width * (mdinfo->Height + 1) * 1);
+        get_example_sprites_file_name(sprfile_no, loc_fname);
+        memset(ref_pal, 0, PALETTE_8b_SIZE);
+        if (LbPngLoad(loc_fname, sprite_screen, &ref_width, &ref_height, ref_pal) != Lb_SUCCESS) {
+            LOGERR("%s: unable to load PNG with sprites", loc_fname);
+            return false;
+        }
+        if ((ref_width != mdinfo->Width) || (ref_height != mdinfo->Height)) {
+            LOGERR("%s: unexpected sprites image size, %lux%lu", loc_fname, ref_width, ref_height);
+            return false;
+        }
+        palette_remap_to_screen(colour_remap, ref_pal);
+        LbScreenCopyRemap(sprite_screen, lbDisplay.WScreen, lbDisplay.GraphicsWindowHeight,
+          colour_remap);
+        free(sprite_screen);
+    }
+
+    // Allocate memory for DAT part
+    *p_tot_sprites = get_example_sprites_total_count(sprfile_no);
+    len = ((*p_tot_sprites) + 1) * 8192;
+    *pp_sprdata = LbMemoryAlloc(len);
+    LbMemorySet(*pp_sprdata, 0, len);
+
+    // Allocate memory for TAB part
+    len = ((*p_tot_sprites) + 1) * sizeof(TbSprite);
+    *pp_sprlist = (TbSprite *)LbMemoryAlloc(len);
+    LbMemorySet(*pp_sprlist, 0, len);
+
+    // Generate sprites from bitmap data
+    len = generate_example_sprites_from_screen(sprfile_no, pal, *pp_sprdata, *pp_sprlist);
+
+    MockScreenUnlock();
+    MockScreenReset();
+
+    return true;
+}
+
+
 TbBool test_spritedraw(void)
 {
     static ulong seeds[] = {0x0, 0xD15C1234, 0xD15C0000, 0xD15C0005, 0xD15C000F, 0xD15C03DC,
-      0xD15C07DF, 0xD15CE896, 0xB00710FA, };
+      0xD15C07DF, 0xD15CE896, 0xB00710FA, 0x37733773, };
     ubyte pal[PALETTE_8b_SIZE];
     ubyte ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
-    TbScreenModeInfo *mdinfo;
-    TbScreenMode mode;
     ubyte *p_sprdata;
     TbSprite *p_sprlist;
     TbPixel *ref_buffer;
+    TbScreenModeInfo *mdinfo;
+    TbScreenMode mode;
     ulong picno;
     int sprfile_no = 1;
     int tot_sprites;
@@ -299,53 +362,10 @@ TbBool test_spritedraw(void)
     LbColourTablesGenerate(pal, unaffected_colours, "tst_gptbl.dat");
     render_ghost = &pixmap.ghost_table[0*PALETTE_8b_COLORS];
 
-    mode = get_example_sprites_screen_mode(sprfile_no);
-    mdinfo = LbScreenGetModeInfo(mode);
-    if (MockScreenSetupAnyMode(mode, mdinfo->Width, mdinfo->Height, pal) != Lb_SUCCESS) {
-        LOGERR("mock screen initialization failed");
+    // Generate sprite DAT/TAB loaded data to test
+    if (!test_spritedraw_generate(sprfile_no, pal, &p_sprdata, &p_sprlist, &tot_sprites)) {
         return false;
     }
-
-    MockScreenLock();
-
-    { // Read image file containing sprites
-        char loc_fname[64];
-        ubyte colour_remap[PALETTE_8b_COLORS];
-        ulong ref_width, ref_height;
-
-        ref_buffer = malloc(mdinfo->Width * (mdinfo->Height + 1) * 1);
-        get_example_sprites_file_name(sprfile_no, loc_fname);
-        memset(ref_pal, 0, PALETTE_8b_SIZE);
-        if (LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal) != Lb_SUCCESS) {
-            LOGERR("%s: unable to load PNG with sprites", loc_fname);
-            return false;
-        }
-        if ((ref_width != mdinfo->Width) || (ref_height != mdinfo->Height)) {
-            LOGERR("%s: unexpected sprites image size, %lux%lu", loc_fname, ref_width, ref_height);
-            return false;
-        }
-        palette_remap_to_screen(colour_remap, ref_pal);
-        LbScreenCopyRemap(ref_buffer, lbDisplay.WScreen, lbDisplay.GraphicsWindowHeight,
-          colour_remap);
-        free(ref_buffer);
-    }
-
-    // Allocate memory for DAT part
-    tot_sprites = get_example_sprites_total_count(sprfile_no);
-    len = (tot_sprites+1) * 8192;
-    p_sprdata = LbMemoryAlloc(len);
-    LbMemorySet(p_sprdata, 0, len);
-
-    // Allocate memory for TAB part
-    len = (tot_sprites+1) * sizeof(TbSprite);
-    p_sprlist = (TbSprite *)LbMemoryAlloc(len);
-    LbMemorySet(p_sprlist, 0, len);
-
-    // Generate sprites from bitmap data
-    len = generate_example_sprites_from_screen(sprfile_no, pal, p_sprdata, p_sprlist);
-
-    MockScreenUnlock();
-    MockScreenReset();
 
     mode = Lb_SCREEN_MODE_640_480_8;
     mdinfo = LbScreenGetModeInfo(mode);
@@ -368,17 +388,32 @@ TbBool test_spritedraw(void)
         ulong ref_width, ref_height;
         long maxdiff;
         ulong maxpos;
+        ubyte drwtype;
+
+        switch ((picno-1) % 3)
+        {
+        case 0:
+            drwtype = DrwSprFn_Normal;
+            break;
+        case 1:
+            drwtype = DrwSprFn_OneColour;
+            break;
+        case 2:
+            drwtype = DrwSprFn_Remap;
+            break;
+        }
 
         LbScreenClear(0);
         lbSeed = seeds[picno];
 
-        test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_Normal, p_sprlist, 2000, tot_sprites);
-        //test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_OneColour, p_sprlist, 2000, tot_sprites);
-        //test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_Remap, p_sprlist, 2000, tot_sprites);
+        test_sprite_draw_random_sprites(pal, mdinfo->Height, drwtype, p_sprlist, 2000, tot_sprites);
 
 #if 0
         sprintf(loc_fname, "referenc/tst_sprdrw%lu_rf.png", picno);
-        LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
+        if (LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal) != Lb_SUCCESS) {
+            LOGERR("%s: unable to load reference PNG", loc_fname);
+            return false;
+        }
         if ((ref_width != mdinfo->Width) || (ref_height != mdinfo->Height)) {
             LOGERR("%s: unexpected reference image size", loc_fname);
             return false;
@@ -407,17 +442,32 @@ TbBool test_spritedraw(void)
         ulong ref_width, ref_height;
         long maxdiff;
         ulong maxpos;
+        ubyte drwtype;
+
+        switch ((picno-1) % 3)
+        {
+        case 0:
+            drwtype = DrwSprFn_Normal;
+            break;
+        case 1:
+            drwtype = DrwSprFn_OneColour;
+            break;
+        case 2:
+            drwtype = DrwSprFn_Remap;
+            break;
+        }
 
         LbScreenClear(0);
         lbSeed = seeds[picno];
 
-        test_sprite_draw_random_sprites_scaled(pal, mdinfo->Height, DrwSprFn_Normal, p_sprlist, 200, tot_sprites);
-        //test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_OneColour, p_sprlist, 2000, tot_sprites);
-        //test_sprite_draw_random_sprites(pal, mdinfo->Height, DrwSprFn_Remap, p_sprlist, 2000, tot_sprites);
+        test_sprite_draw_random_sprites_scaled(pal, mdinfo->Height, drwtype, p_sprlist, 200, tot_sprites);
 
 #if 0
         sprintf(loc_fname, "referenc/tst_sprdrw%lu_rf.png", picno);
-        LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
+        if (LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal) != Lb_SUCCESS) {
+            LOGERR("%s: unable to load reference PNG", loc_fname);
+            return false;
+        }
         if ((ref_width != mdinfo->Width) || (ref_height != mdinfo->Height)) {
             LOGERR("%s: unexpected reference image size", loc_fname);
             return false;
