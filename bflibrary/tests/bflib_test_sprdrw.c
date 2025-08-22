@@ -343,7 +343,6 @@ TbBool test_spritedraw(void)
     ulong picno;
     int sprfile_no = 1;
     int tot_sprites;
-    int len;
 
     if (LbErrorLogSetup(NULL, "tst_sprdrw.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
         LOGERR("execution log setup failed");
@@ -408,8 +407,7 @@ TbBool test_spritedraw(void)
 
         test_sprite_draw_random_sprites(pal, mdinfo->Height, drwtype, p_sprlist, 2000, tot_sprites);
 
-#if 0
-        sprintf(loc_fname, "referenc/tst_sprdrw%lu_rf.png", picno);
+        sprintf(loc_fname, "referenc/tst_sprdrwon%lu_rf.png", picno);
         if (LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal) != Lb_SUCCESS) {
             LOGERR("%s: unable to load reference PNG", loc_fname);
             return false;
@@ -418,10 +416,10 @@ TbBool test_spritedraw(void)
             LOGERR("%s: unexpected reference image size", loc_fname);
             return false;
         }
-#endif
+
         sprintf(loc_fname, "tst_sprdrwon%lu.png", picno);
         LbPngSaveScreen(loc_fname, lbDisplay.WScreen, pal, true);
-#if 0
+
         // compare image with reference
         maxpos = 0;
         maxdiff = LbImageBuffersMaxDifference(lbDisplay.WScreen, pal, ref_buffer,
@@ -433,7 +431,6 @@ TbBool test_spritedraw(void)
         }
         LOGSYNC("%s: acceptable pixel difference to reference (%ld) at (%lu,%lu)",
             loc_fname, maxdiff, maxpos % mdinfo->Width, maxpos / mdinfo->Width);
-#endif
     }
 
     for (picno = 1; picno < sizeof(seeds)/sizeof(seeds[0]); picno++)
@@ -462,8 +459,7 @@ TbBool test_spritedraw(void)
 
         test_sprite_draw_random_sprites_scaled(pal, mdinfo->Height, drwtype, p_sprlist, 200, tot_sprites);
 
-#if 0
-        sprintf(loc_fname, "referenc/tst_sprdrw%lu_rf.png", picno);
+        sprintf(loc_fname, "referenc/tst_sprdrwsn%lu_rf.png", picno);
         if (LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal) != Lb_SUCCESS) {
             LOGERR("%s: unable to load reference PNG", loc_fname);
             return false;
@@ -472,10 +468,10 @@ TbBool test_spritedraw(void)
             LOGERR("%s: unexpected reference image size", loc_fname);
             return false;
         }
-#endif
+
         sprintf(loc_fname, "tst_sprdrwsn%lu.png", picno);
         LbPngSaveScreen(loc_fname, lbDisplay.WScreen, pal, true);
-#if 0
+
         // compare image with reference
         maxpos = 0;
         maxdiff = LbImageBuffersMaxDifference(lbDisplay.WScreen, pal, ref_buffer,
@@ -487,7 +483,6 @@ TbBool test_spritedraw(void)
         }
         LOGSYNC("%s: acceptable pixel difference to reference (%ld) at (%lu,%lu)",
             loc_fname, maxdiff, maxpos % mdinfo->Width, maxpos / mdinfo->Width);
-#endif
     }
 
     LbMemoryFree(p_sprdata);
