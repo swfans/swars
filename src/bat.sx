@@ -1911,7 +1911,7 @@ BAT_unknsub_27:	/* 0x0DE7C0 */
 		and    $0xff,%edx
 		cmp    $0x7,%edx
 		jne    jump_de88a
-		orb    $0x40,EXPORT_SYMBOL(ingame)+0x481 # ingame.Flags+2
+		orb    $0x40,EXPORT_SYMBOL(ingame)+0x931 # ingame.Flags+2
 		mov    $0x1,%eax
 		jmp    jump_de8ce
 	jump_de87f:
@@ -1941,7 +1941,7 @@ BAT_unknsub_27:	/* 0x0DE7C0 */
 		cmp    %edx,%edi
 		jle    jump_de7f8
 	jump_de8c5:
-		andb   $0xbf,EXPORT_SYMBOL(ingame)+0x481 # ingame.Flags+2
+		andb   $0xbf,EXPORT_SYMBOL(ingame)+0x931 # ingame.Flags+2
 		xor    %eax,%eax
 	jump_de8ce:
 		mov    %esi,EXPORT_SYMBOL(sthings)
@@ -3159,14 +3159,14 @@ func_df554:
 		mov    $0x1,%edx
 		mov    $0x2,%edi
 		xor    %ebp,%ebp
-		mov    EXPORT_SYMBOL(ingame)+0x4eb,%bh # ingame.UserFlags
+		mov    EXPORT_SYMBOL(ingame)+0x99b,%bh # ingame.UserFlags
 		mov    %ebp,data_1e2ca4
 		or     $0x1,%bh
 		mov    %edx,data_1e26fc
 		mov    %edx,data_1e2700
 		mov    %ebp,data_1e2708
 		mov    %edi,data_1e2704
-		mov    %bh,EXPORT_SYMBOL(ingame)+0x4eb # ingame.UserFlags
+		mov    %bh,EXPORT_SYMBOL(ingame)+0x99b # ingame.UserFlags
 		mov    $0x5a,%ebx
 		mov    %ebp,data_1e27c0(%eax)
 		mov    %ebx,data_1e26f0
