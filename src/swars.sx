@@ -56524,7 +56524,7 @@ do_shockwave:	/* 0x05B598 */
 
 
 /*----------------------------------------------------------------*/
-check_for_radius_hit_person:	/* 0x05BBE0 */
+GLOBAL_FUNC(ASM_check_for_radius_hit_person)	/* 0x05BBE0 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -57176,7 +57176,7 @@ bul_path_end:	/* 0x05C1C0 */
 		mov    (%esi),%eax
 		shl    $0x8,%ebx
 		shl    $0x8,%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		test   %eax,%eax
 		je     jump_5c3b3
 		mov    0x50(%esp),%edx
@@ -57428,7 +57428,7 @@ GLOBAL_FUNC(ASM_laser_hit_at)	/* 0x05C4C8 */
 		mov    (%edi),%eax
 		shl    $0x8,%edx
 		shl    $0x8,%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		test   %eax,%eax
 		je     jump_5c64c
 		xor    %edx,%edx
@@ -159763,7 +159763,7 @@ process_drift_smoke:	/* 0x0C71CC */
 		push   $0x0
 		mov    0x12(%esi),%cx
 		mov    0x18(%esi),%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_c740b
@@ -159820,7 +159820,7 @@ process_drift_smoke:	/* 0x0C71CC */
 		push   $0x0
 		mov    0x18(%esi),%eax
 		mov    0x12(%esi),%cx
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%ebx
 		test   %eax,%eax
 		je     jump_c7637
@@ -160143,7 +160143,7 @@ process_napalm_flame:	/* 0x0C7678 */
 		push   $0x0
 		mov    0x18(%esi),%eax
 		mov    0x12(%esi),%cx
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%edx
 		mov    %eax,%ebx
 		test   %eax,%eax
@@ -160416,7 +160416,7 @@ process_flame1:	/* 0x0C7A80 */
 		push   $0x0
 		mov    0x18(%esi),%eax
 		mov    0x12(%esi),%cx
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%edx
 		mov    %eax,%ebx
 		test   %eax,%eax
@@ -162632,7 +162632,7 @@ GLOBAL_FUNC(ASM_process_rocket)	/* 0x0C9100 */
 		push   %eax
 		mov    0x1c(%esi),%edx
 		mov    0x18(%esi),%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%edi
 		test   %eax,%eax
 		je     jump_c95d7
@@ -163333,7 +163333,7 @@ GLOBAL_FUNC(ASM_process_mine)	/* 0x0C9ADC */
 		push   %eax
 		mov    0x1c(%esi),%edx
 		mov    0x18(%esi),%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		test   %eax,%eax
 		je     jump_c9c6c
 		movw   $0x0,0x28(%esi)
@@ -164949,7 +164949,7 @@ find_and_time_travel:	/* 0x0CAE78 */
 		push   $0x0
 		mov    0x14(%eax),%cx
 		mov    0x18(%eax),%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%esi
 		test   %eax,%eax
 		je     jump_caf43

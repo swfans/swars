@@ -860,4 +860,17 @@ ThingIdx search_for_ferry(short X, short Y, short Z, ushort R)
     return thing;
 }
 
+struct Thing *check_for_radius_hit_person(int x, int y, int z,
+        int radius, struct Thing *p_owner, int flag, int skip)
+{
+    struct Thing *ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_check_for_radius_hit_person\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (radius), "g" (p_owner), "g" (flag), "g" (skip));
+    return ret;
+}
+
 /******************************************************************************/
