@@ -203,29 +203,26 @@ int LoadSounds(ubyte bank_no)
     ushort tpno;
     ushort banks_per_tpno[9];
 
-    sprintf(SoundProgressMessage, "BF42 - load sound bank %d\n", bank_no);
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Sound bank", "start load bank %d", bank_no);
 
     if (!SoundInstalled || !SoundAble || (CurrentSoundBank == bank_no) || DisableLoadSounds)
     {
-        if (!SoundInstalled)
-            sprintf(SoundProgressMessage, "BF47 - load sound bank - failed - Sound not installed\n");
-        else if (!SoundAble)
-            sprintf(SoundProgressMessage, "BF47 - load sound bank - failed - SoundAble = 0\n");
-        else if (DisableLoadSounds)
-            sprintf(SoundProgressMessage, "BF47 - load sound bank - failed - LoadSounds disabled\n");
-        else
-            sprintf(SoundProgressMessage, "BF47 - load sound bank - failed - already loaded\n");
-
-        SoundProgressLog(SoundProgressMessage);
+        if (!SoundInstalled) {
+            SNDLOGSYNC("Sound bank", "sound not installed");
+        } else if (!SoundAble) {
+            SNDLOGSYNC("Sound bank", "not SoundAble");
+        } else if (DisableLoadSounds) {
+            SNDLOGSYNC("Sound bank", "LoadSounds disabled");
+        } else {
+            SNDLOGSYNC("Sound bank", "already loaded");
+        }
         return 1;
     }
 
     StopAllSamples();
     fh = LbFileOpen(full_sound_data_path, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE) {
-        sprintf(SoundProgressMessage, "BF46 - load sound bank - failed - no sound.dat\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Sound bank", "no 'sound.dat'");
         return 1;
     }
 
@@ -238,29 +235,25 @@ int LoadSounds(ubyte bank_no)
     tpno = GetSoundTpNo(SoundType);
     if (tpno >= 255) {
         LbFileClose(fh);
-        sprintf(SoundProgressMessage, "BF43 - load sound bank - failed - bad sound type\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Sound bank", "bad sound type");
         return 1;
     }
 
     if (bank_no + 1 > banks_per_tpno[tpno]) {
         LbFileClose(fh);
-        sprintf(SoundProgressMessage, "BF43 - load sound bank - failed - bank not found\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Sound bank", "bank not found");
         return 1;
     }
     LbFileSeek(fh, 144 * bank_no, 1u);
 
     if (!load_sound_bank(fh, tpno)) {
         LbFileClose(fh);
-        sprintf(SoundProgressMessage, "BF44 - load sound bank - failed - cannot allocate\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Sound bank", "cannot allocate");
         return 1;
     }
     CurrentSoundBank = bank_no;
     LbFileClose(fh);
-    sprintf(SoundProgressMessage, "BF45 - load sound bank - passed\n");
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Sound bank", "load bank passed");
     return 0;
 }
 
