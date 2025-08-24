@@ -1005,7 +1005,27 @@ short new_thing_building_clone(struct Thing *p_clthing,
 void build_same_type_headers(void);
 short get_thing_same_type_head(short ttype, short subtype);
 
+/** Tells whether center of given thing is located on map within given circle.
+ *
+ * For this function to return true, the thing needs to be within given circle
+ * to at least half its depth - the center needs to be within.
+ */
 TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R);
+
+/** Tells whether some part of given thing is located on map within given circle.
+ *
+ * For this function to return true, it is enough that the thing intersects
+ * the circle only a little. Even a small intersection is enough.
+ */
+TbBool thing_intersects_circle(ThingIdx thing, short X, short Z, ushort R);
+
+/** Tells whether some part of given thing is located on map within given cylinder.
+ *
+ * A version of thing_intersects_circle() which does 3D coordinates comparison.
+ * For this function to return true, it is enough that the thing intersects
+ * the cylinder only a little. Even a small intersection is enough.
+ */
+TbBool thing_intersects_cylinder(ThingIdx thing, short X, short Y, short Z, ushort R, ushort H);
 
 struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop);
 
