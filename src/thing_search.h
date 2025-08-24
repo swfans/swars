@@ -110,7 +110,7 @@ ThingIdx search_things_for_uniqueid(short index, ubyte flag);
  */
 ThingIdx search_things_for_any_including_offmap_nearest_within_circle(short X, short Z, ushort R);
 
-struct Thing *check_for_radius_hit_person(int x, int y, int z,
+struct Thing *check_for_radius_hit_person(int prc_x, int prc_y, int prc_z,
         int radius, struct Thing *p_owner, int flag, int skip);
 
 /******************************************************************************/

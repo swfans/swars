@@ -862,7 +862,7 @@ ThingIdx search_for_ferry(short X, short Y, short Z, ushort R)
     return thing;
 }
 
-struct Thing *check_for_radius_hit_person(int x, int y, int z,
+struct Thing *check_for_radius_hit_person(int prc_x, int prc_y, int prc_z,
         int radius, struct Thing *p_owner, int flag, int skip)
 {
 #if 0
@@ -872,22 +872,25 @@ struct Thing *check_for_radius_hit_person(int x, int y, int z,
       "push %6\n"
       "push %5\n"
       "call ASM_check_for_radius_hit_person\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (radius), "g" (p_owner), "g" (flag), "g" (skip));
+        : "=r" (ret) : "a" (prc_x), "d" (prc_y), "b" (prc_z), "c" (radius), "g" (p_owner), "g" (flag), "g" (skip));
     return ret;
 #else
     ThingIdx thing;
-    long radius_sq;
     short dtx, dtz;
+    int cor_x, cor_y, cor_z;
 
-    radius_sq = radius * radius;
+    cor_x = PRCCOORD_TO_MAPCOORD(prc_x);
+    cor_y = PRCCOORD_TO_MAPCOORD(prc_y);
+    cor_z = PRCCOORD_TO_MAPCOORD(prc_z);
+
     for (dtx = -1; dtx <= 1; dtx++)
     {
       for (dtz = -1; dtz <= 1; dtz++)
       {
         uint tile_x, tile_z;
 
-        tile_x = (x >> 16) + dtx;
-        tile_z = (z >> 16) + dtz;
+        tile_x = MAPCOORD_TO_TILE(cor_x) + dtx;
+        tile_z = MAPCOORD_TO_TILE(cor_z) + dtz;
         if ((tile_x >= MAP_TILE_WIDTH) || (tile_z >= MAP_TILE_HEIGHT))
             continue;
         thing = game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x].Child;
@@ -900,19 +903,13 @@ struct Thing *check_for_radius_hit_person(int x, int y, int z,
               p_sthing = &sthings[thing];
               if (p_sthing->Type == SmTT_STATIC && (p_sthing->Flag & TngF_Destroyed) == 0 && p_sthing->Frame != 1008)
               {
-                int dist_x, dist_y, dist_z;
-
-                dist_x = (p_sthing->X - x) >> 8;
-                dist_y = (p_sthing->Y - y) >> 8;
-                dist_z = (p_sthing->Z - z) >> 8;
-                if ((dist_y < 25) && (dist_y > -25)
-                  && (dist_z * dist_z + dist_x * dist_x < radius_sq + p_sthing->Radius * p_sthing->Radius)
-                  && (--skip < 0))
-                {
-                  if ((p_sthing->StartFrame <= 1004) || (p_sthing->StartFrame >= 1008))
-                    return (struct Thing *)p_sthing;
-                  set_static_on_fire(p_sthing);
-                }
+                  if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                      if (--skip < 0) {
+                          if ((p_sthing->StartFrame <= 1004) || (p_sthing->StartFrame >= 1008))
+                              return (struct Thing *)p_sthing;
+                          set_static_on_fire(p_sthing);
+                      }
+                  }
               }
               thing = p_sthing->Next;
             }
@@ -931,71 +928,47 @@ struct Thing *check_for_radius_hit_person(int x, int y, int z,
                 if ( ((1 << (p_thing->U.UPerson.EffectiveGroup & 0x7F)) & war_flags[group & 0x7F].Truce) == 0
                   && (p_thing->Type == TT_PERSON) && (p_thing != p_owner))
                 {
-                  if ((p_thing->State != PerSt_DEAD) && (p_thing->State != PerSt_PERSON_BURNING) && (p_thing->Flag & TngF_Destroyed) == 0)
-                  {
-                    int dist_x, dist_y, dist_z;
-
-                    dist_x = (p_thing->X - x) >> 8;
-                    dist_y = (p_thing->Y - y) >> 8;
-                    dist_z = (p_thing->Z - z) >> 8;
-                    if ((dist_y < 25) && (dist_y > -25)
-                      && (radius_sq + p_thing->Radius * p_thing->Radius > dist_z * dist_z + dist_x * dist_x) && (--skip < 0))
+                    if ((p_thing->State != PerSt_DEAD) && (p_thing->State != PerSt_PERSON_BURNING) && (p_thing->Flag & TngF_Destroyed) == 0)
                     {
-                      return p_thing;
+                        if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                            if (--skip < 0)
+                                return p_thing;
+                        }
                     }
-                  }
                 }
                 if (--skip < 0)
                 {
-                  if ( flag )
+                  if (flag)
                   {
                     if ((p_thing->Type == TT_VEHICLE) && (p_thing->State != VehSt_UNKN_D)
                       && (p_owner == NULL || p_thing->ThingOffset != p_owner->U.UPerson.Vehicle))
                     {
-                      int dist_x, dist_y, dist_z;
-
-                      dist_x = (p_thing->X - x) >> 8;
-                      dist_y = (p_thing->Y - y) >> 8;
-                      dist_z = (p_thing->Z - z) >> 8;
-                      if ((dist_y < 25) && (dist_y > -105)
-                        && (radius_sq + p_thing->Radius * p_thing->Radius > dist_z * dist_z + dist_x * dist_x) && (--skip < 0))
-                      {
-                        return p_thing;
-                      }
+                        if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                            if (--skip < 0)
+                                return p_thing;
+                        }
                     }
                   }
                 }
-                if ( flag )
+                if (flag)
                 {
-                  if ((p_thing->Type == TT_BUILDING) && (p_thing->SubType == SubTT_BLD_MGUN) && ((p_thing->Flag & TngF_Destroyed) == 0))
-                  {
-                      int dist_x, dist_y, dist_z;
-
-                      dist_x = (p_thing->X - x) >> 8;
-                      dist_y = (p_thing->Y - y) >> 8;
-                      dist_z = (p_thing->Z - z) >> 8;
-                      if ((dist_y < 25) && (dist_y > -105)
-                        && (radius_sq + p_thing->Radius * p_thing->Radius > dist_z * dist_z + dist_x * dist_x) && (--skip < 0))
+                    if ((p_thing->Type == TT_BUILDING) && (p_thing->SubType == SubTT_BLD_MGUN) && ((p_thing->Flag & TngF_Destroyed) == 0))
                     {
-                      return p_thing;
+                        if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                            if (--skip < 0)
+                                return p_thing;
+                        }
                     }
-                  }
                 }
-                if ( flag )
+                if (flag)
                 {
-                  if ((p_thing->Type == TT_MINE) && (p_thing->SubType == 48) && (p_thing->Flag & TngF_Destroyed) == 0 && (p_thing->State != 13))
-                  {
-                      int dist_x, dist_y, dist_z;
-
-                      dist_x = (p_thing->X - x) >> 8;
-                      dist_y = (p_thing->Y - y) >> 8;
-                      dist_z = (p_thing->Z - z) >> 8;
-                    if ((dist_y < 25) && (dist_y > -25)
-                      && (radius_sq + p_thing->Radius * p_thing->Radius > dist_z * dist_z + dist_x * dist_x) && (--skip < 0))
+                    if ((p_thing->Type == TT_MINE) && (p_thing->SubType == 48) && (p_thing->Flag & TngF_Destroyed) == 0 && (p_thing->State != 13))
                     {
-                      return p_thing;
+                        if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                            if (--skip < 0)
+                                return p_thing;
+                        }
                     }
-                  }
                 }
               }
               thing = p_thing->Next;
