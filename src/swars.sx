@@ -6309,8 +6309,8 @@ GLOBAL_FUNC(ASM_check_mouse_over_face)	/* 0x24A2C */
 		cmp    $0x1,%cx
 		je     jump_25061
 	jump_25089:
-		mov    %ebp,mouse_map_x
-		mov    %edi,mouse_map_z
+		mov    %ebp,EXPORT_SYMBOL(mouse_map_x)
+		mov    %edi,EXPORT_SYMBOL(mouse_map_z)
 	jump_25095:
 		add    $0x70,%esp
 		pop    %ebp
@@ -15297,7 +15297,7 @@ func_3adf0:
 		add    %eax,%eax
 		mov    %eax,%edx
 		shl    $0x2,%eax
-		mov    mouse_map_z,%ebx
+		mov    EXPORT_SYMBOL(mouse_map_z),%ebx
 		sub    %edx,%eax
 		push   %ebx
 		mov    data_1a63de(%eax),%eax
@@ -15320,7 +15320,7 @@ func_3adf0:
 		mov    EXPORT_SYMBOL(players)+0x088(%edx,%eax,4),%ebx # players[0].DirectControl[0]
 		lea    0x0(,%esi,4),%eax
 		sub    %esi,%eax
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    %eax,%esi
 		mov    $packets,%eax
 		shl    $0x4,%esi
@@ -15340,13 +15340,13 @@ func_3adf0:
 		mov    gameturn,%cx
 		and    $0x7f,%ch
 		mov    %cx,EXPORT_SYMBOL(players)+0x006(%edx) # players[0].UserInput[0].Turn
-		mov    mouse_map_z,%edx
+		mov    EXPORT_SYMBOL(mouse_map_z),%edx
 		mov    data_1a63de(%eax),%eax
 		push   %edx
 		sar    $0x10,%eax
 		push   %eax
 		lea    0x0(,%esi,4),%eax
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		sub    %esi,%eax
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		shl    $0x4,%eax
@@ -15370,14 +15370,14 @@ func_3adf0:
 		and    $0xffff,%edx
 		jmp    *%cs:vtable_3a9e8(,%edx,4)
 	jump_3af76:
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		test   %ecx,%ecx
 		jle    jump_3b596
 		mov    %ecx,%eax
 		sar    $0x8,%eax
 		cmp    $0x80,%eax
 		jge    jump_3b596
-		mov    mouse_map_z,%esi
+		mov    EXPORT_SYMBOL(mouse_map_z),%esi
 		test   %esi,%esi
 		jle    jump_3b596
 		mov    %esi,%eax
@@ -15421,12 +15421,12 @@ func_3adf0:
 		add    $packets,%eax
 		cmp    $0x7,%ebp
 		jae    jump_3b06d
-		mov    mouse_map_z,%ebp
+		mov    EXPORT_SYMBOL(mouse_map_z),%ebp
 		xor    %ecx,%ecx
 		push   %ebp
 		mov    %cx,EXPORT_SYMBOL(players)+0x006(%edx) # players[0].UserInput[0].Turn
 		movswl %si,%edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		push   %edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		mov    $0x28,%edx
@@ -15442,12 +15442,12 @@ func_3adf0:
 		ret
 	jump_3b06d:
 		mov    gameturn,%cx
-		mov    mouse_map_z,%edi
+		mov    EXPORT_SYMBOL(mouse_map_z),%edi
 		and    $0x7f,%ch
 		push   %edi
 		mov    %cx,EXPORT_SYMBOL(players)+0x006(%edx) # players[0].UserInput[0].Turn
 		movswl %si,%edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		push   %edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		mov    $0xb,%edx
@@ -15534,22 +15534,22 @@ func_3adf0:
 		sar    $0x10,%esi
 		cmp    $0x3,%esi
 		jne    jump_3b1e0
-		mov    mouse_map_z,%edi
+		mov    EXPORT_SYMBOL(mouse_map_z),%edi
 		mov    data_1a63de(%edx),%edx
 		push   %edi
 		sar    $0x10,%edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		push   %edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		mov    $0x3b,%edx
 		jmp    jump_3b1fc
 	jump_3b1e0:
-		mov    mouse_map_z,%esi
+		mov    EXPORT_SYMBOL(mouse_map_z),%esi
 		push   %esi
 		movswl %cx,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x2e,%edx
 	jump_3b1fc:
 		call   ac_my_build_packet
@@ -15570,22 +15570,22 @@ func_3adf0:
 		sar    $0x10,%esi
 		cmp    $0x3,%esi
 		jne    jump_3b254
-		mov    mouse_map_z,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_z),%ecx
 		mov    data_1a63de(%edx),%edx
 		push   %ecx
 		sar    $0x10,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x3a,%edx
 		jmp    jump_3b270
 	jump_3b254:
-		mov    mouse_map_z,%edx
+		mov    EXPORT_SYMBOL(mouse_map_z),%edx
 		push   %edx
 		movswl %cx,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x20,%edx
 	jump_3b270:
 		call   ac_my_build_packet
@@ -15639,22 +15639,22 @@ func_3adf0:
 		sar    $0x10,%esi
 		cmp    $0x3,%esi
 		jne    jump_3b32d
-		mov    mouse_map_z,%edi
+		mov    EXPORT_SYMBOL(mouse_map_z),%edi
 		mov    data_1a63de(%edx),%edx
 		push   %edi
 		sar    $0x10,%edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		push   %edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		mov    $0x39,%edx
 		jmp    jump_3b349
 	jump_3b32d:
-		mov    mouse_map_z,%esi
+		mov    EXPORT_SYMBOL(mouse_map_z),%esi
 		push   %esi
 		movswl %cx,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x2f,%edx
 	jump_3b349:
 		call   ac_my_build_packet
@@ -15675,22 +15675,22 @@ func_3adf0:
 		sar    $0x10,%esi
 		cmp    $0x3,%esi
 		jne    jump_3b3a1
-		mov    mouse_map_z,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_z),%ecx
 		mov    data_1a63de(%edx),%edx
 		push   %ecx
 		sar    $0x10,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x38,%edx
 		jmp    jump_3b3bd
 	jump_3b3a1:
-		mov    mouse_map_z,%ebp
+		mov    EXPORT_SYMBOL(mouse_map_z),%ebp
 		push   %ebp
 		movswl %cx,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x1a,%edx
 	jump_3b3bd:
 		call   ac_my_build_packet
@@ -15755,14 +15755,14 @@ func_3adf0:
 		add    $packets,%eax
 		cmp    $0x3,%esi
 		jne    jump_3b4c3
-		mov    mouse_map_z,%ebx
+		mov    EXPORT_SYMBOL(mouse_map_z),%ebx
 		push   %ebx
 		mov    data_1a63de(%edx),%ebx
 		sar    $0x10,%ebx
 		push   %ebx
 		xor    %ebx,%ebx
 		mov    mouser,%bl
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    EXPORT_SYMBOL(players)+0x088(%edx,%ebx,4),%ebx # players[0].DirectControl[0]
 		mov    $0x38,%edx
 		call   ac_my_build_packet
@@ -15799,20 +15799,20 @@ func_3adf0:
 		pop    %ebx
 		ret
 	jump_3b4ff:
-		mov    mouse_map_x,%ebp
+		mov    EXPORT_SYMBOL(mouse_map_x),%ebp
 		test   %ebp,%ebp
 		jle    jump_3b596
 		mov    %ebp,%eax
 		sar    $0x8,%eax
 		cmp    $0x80,%eax
 		jge    jump_3b596
-		mov    mouse_map_z,%eax
+		mov    EXPORT_SYMBOL(mouse_map_z),%eax
 		test   %eax,%eax
 		jle    jump_3b596
 		sar    $0x8,%eax
 		cmp    $0x80,%eax
 		jge    jump_3b596
-		mov    mouse_map_z,%edx
+		mov    EXPORT_SYMBOL(mouse_map_z),%edx
 		xor    %ebx,%ebx
 		push   %edx
 		movswl %di,%eax
@@ -79905,7 +79905,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		jne    jump_75066
 		mov    $0x1,%edi
 		mov    EXPORT_SYMBOL(vec_tmap),%edx
-		mov    tex00dat_fname,%eax
+		mov    EXPORT_SYMBOL(tex00dat_fname),%eax
 		mov    %di,EXPORT_SYMBOL(gamep_scene_effect_type)
 		call   ac_LbFileLoadAt
 		push   $0x2
@@ -79926,7 +79926,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		call   ac_stop_sample_using_heap
 	jump_7507c:
 		mov    EXPORT_SYMBOL(vec_tmap),%edx
-		mov    tex00dat_fname,%eax
+		mov    EXPORT_SYMBOL(tex00dat_fname),%eax
 		call   ac_LbFileLoadAt
 		push   $0x2
 		mov    $0x40,%ecx
@@ -184906,25 +184906,7 @@ GLOBAL (head_my_path)	/* 0x1531A6 */
 GLOBAL (word_1531DA)	/* 0x1531DA */
 		.ascii  "\x01\x00"
 
-GLOBAL (next_unkn_full_light)	/* 0x15322A */
-		.ascii  "\x01\x00"
-		.ascii  "\xa6\x2e\x09\x00"
-GLOBAL (next_local_mat)	/* 0x153230 */
-		.ascii  "\x01\x00"
-GLOBAL (next_special_face)	/* 0x153232 */
-		.ascii  "\x01\x00"
-GLOBAL (next_special_face4)	/* 0x153234 */
-		.ascii  "\x01\x00"
-		.short  0x0
-GLOBAL (mouse_map_x)	/* 0x153238 */
-		.ascii  "\x00\x32"
-		.short  0x0
-GLOBAL (mouse_map_z)	/* 0x15323C */
-		.ascii  "\x00\x32\x00\x00"
-GLOBAL (net_players_num)	/* 0x153244 */
-		.ascii  "\x01\x00\x00\x00"
-
-tex00dat_fname:	/* 0x153278 */
+GLOBAL (tex00dat_fname)	/* 0x153278 */
 		.long   aDataTex00_dat
 
 palette_fname_fmt:	/* 0x1532D8 */
@@ -186979,8 +186961,6 @@ GLOBAL (word_1A5834)
 		.short  0x0
 GLOBAL (word_1A5836)
 		.short  0x0
-GLOBAL (mouse_map_y)	/* 0x1A5838 */
-		.fill   0x8
 
 GLOBAL (small2_font)	/* 0x1A5850 */
 		.long	0x0

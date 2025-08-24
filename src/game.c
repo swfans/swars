@@ -188,6 +188,10 @@ extern long dword_155010;
 extern long dword_155014;
 extern long dword_155018;
 
+int mouse_map_x = 0x3200;
+int mouse_map_y = 0;
+int mouse_map_z = 0x3200;
+
 extern short last_map_for_lights_func_11;
 
 extern short word_1552F8;

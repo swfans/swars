@@ -55,7 +55,7 @@ struct UnkFLight { // sizeof=0x0A
 #pragma pack()
 /******************************************************************************/
 
-extern ushort next_unkn_full_light;
+ushort next_unkn_full_light = 1;
 extern struct UnkFLight unkn_full_lights[50];
 
 ubyte debug_log_things = 0;

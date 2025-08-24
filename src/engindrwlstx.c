@@ -61,6 +61,9 @@ extern ushort tnext_sort_sprite;
 //extern ushort tnext_special_face;
 extern ushort tnext_special_face4;
 
+ushort next_special_face = 1;
+ushort next_special_face4 = 1;
+
 extern long dword_176CC4;
 extern long unkn1_pos_x;
 extern long unkn1_pos_y;
