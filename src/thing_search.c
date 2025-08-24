@@ -23,6 +23,7 @@
 #include "bigmap.h"
 #include "building.h"
 #include "people.h"
+#include "pepgroup.h"
 #include "swlog.h"
 #include "thing.h"
 #include "vehicle.h"

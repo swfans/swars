@@ -30111,7 +30111,7 @@ GLOBAL_FUNC(ASM_person_hit_by_bullet)	/* 0x048868 */
 		test   %eax,%eax
 		jg     jump_488af
 		mov    %esi,%eax
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_488af:
 		mov    $0x64,%eax
 		add    $0x10,%esp
@@ -56832,7 +56832,7 @@ GLOBAL_FUNC(ASM_check_for_radius_hit_person)	/* 0x05BBE0 */
 		jle    jump_5c04a
 		cmp    $0x3f0,%edi
 		jge    jump_5c04a
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_5bf9e:
 		movswl %cx,%eax
 		imul   $0x3c,%eax,%eax
@@ -70569,7 +70569,7 @@ vtable_67604:
 
 
 /*----------------------------------------------------------------*/
-set_static_on_fire:	/* 0x067614 */
+GLOBAL_FUNC(ASM_set_static_on_fire)	/* 0x067614 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -81950,7 +81950,7 @@ check_tank_collision:	/* 0x076638 */
 		test   %eax,%eax
 		je     jump_768d8
 		mov    %ebx,%eax
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_768d8:
 		test   %esi,%esi
 		jne    jump_7691b
@@ -105943,7 +105943,7 @@ unkstruct03_do_iteration:	/* 0x08907C */
 		mov    EXPORT_SYMBOL(sthings),%eax
 		add    %ebx,%eax
 		mov    %edx,0x1c(%eax)
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_8946e:
 		movswl %si,%eax
 		imul   $0x3c,%eax,%eax
@@ -159465,7 +159465,7 @@ napalm_person:	/* 0x0C6FB0 */
 		test   %eax,%eax
 		jg     jump_c718b
 		mov    %esi,%eax
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 		jmp    jump_c718b
 	jump_c6ffc:
 		xor    %eax,%eax
@@ -178774,7 +178774,7 @@ GLOBAL_FUNC(ASM_FIRE_process_flame)	/* 0x0DAAB8 */
 		testb  $0x2,0xc(%edx)
 		jne    jump_dabcd
 		mov    %edx,%eax
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_dabcd:
 		mov    (%edx),%eax
 	jump_dabcf:
