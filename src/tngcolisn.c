@@ -29,6 +29,9 @@
 #include "thing.h"
 /******************************************************************************/
 
+ushort next_col_vect = 1;
+ushort next_vects_list = 1;
+
 void set_dome_col(struct Thing *p_building, ubyte flag)
 {
     struct ColVectList *p_cvlist;

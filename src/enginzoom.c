@@ -35,6 +35,9 @@ extern long dword_176D84;
 extern long dword_176D88;
 extern long dword_176D8C;
 
+ushort render_area_a = 24;
+ushort render_area_b = 24;
+
 short user_zoom_min = 127;
 short user_zoom_max = 260;
 

@@ -30,6 +30,7 @@
 #include "bigmap.h"
 #include "campaign.h"
 #include "drawtext.h"
+#include "lvfiles.h"
 #include "thing.h"
 #include "thing_search.h"
 #include "pepgroup.h"
@@ -245,6 +246,9 @@ const struct TbNamedEnum missions_conf_netscan_objctv_params[] = {
 
 struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
 ushort next_mission_netscan_objective;
+
+ushort next_objective = 1;
+ushort next_used_objective = 1;
 
 extern ulong dword_1C8460;
 extern ulong dword_1C8464;

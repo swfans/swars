@@ -138,6 +138,14 @@
 extern char *fadedat_fname;
 char session_name[20] = "SWARA";
 
+char user_name[50] = "TEMP";
+
+long dword_153194 = 0x100;
+
+ushort word_1531E0 = 1;
+
+ushort next_mission = 1;
+
 extern ulong stored_l3d_next_object[1];
 extern ulong stored_l3d_next_object_face[1];
 extern ulong stored_l3d_next_object_face4[1];
@@ -161,6 +169,8 @@ extern short word_1C6E0A;
 
 extern long dword_1DDECC;
 
+ulong engine_mem_alloc_size = 5900000;
+
 extern struct GamePanel unknstrct7_arr2[];
 
 extern long gamep_unknval_10;
@@ -174,8 +184,6 @@ extern long gamep_unknval_16;
 extern ushort netgame_agent_pos_x[8][4];
 extern ushort netgame_agent_pos_z[8][4];
 
-extern char *data_15319c;
-
 extern long dword_155010;
 extern long dword_155014;
 extern long dword_155018;
@@ -188,6 +196,8 @@ extern long dword_176CBC;
 
 extern char unknmsg_str[100];
 extern short word_1774E8[2 * 150];
+
+char *data_15319c = unknmsg_str;
 
 extern ushort word_1A7330[1000];
 extern ubyte byte_1A7B00[1000];

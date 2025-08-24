@@ -231,6 +231,8 @@ struct CommandDef command_defs[] = {
     {NULL,							NULL,				CmDF_None },
 };
 
+ushort next_command = 1;
+
 void snprint_command(char *buf, ulong buflen, ushort cmd)
 {
     struct Command *p_cmd;

@@ -60,6 +60,8 @@ extern long dword_1DC36C;
  */
 sbyte agent_with_mouse_over_weapon = -1;
 
+ubyte byte_153198 = 1;
+
 /** Momentary flags - filled and used only while updating the panel, then forgitten.
  */
 enum PanelMomentaryFlags {

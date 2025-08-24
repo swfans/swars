@@ -26,6 +26,16 @@
 #include "swlog.h"
 /******************************************************************************/
 
+ushort next_normal = 1;
+
+ushort next_object_point = 1;
+
+ushort next_object_face = 1;
+
+ushort next_object_face4 = 1;
+
+ushort next_object = 1;
+
 void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface,
   struct SingleObjectFace3OldV7 *p_oldobjface, ulong fmtver)
 {

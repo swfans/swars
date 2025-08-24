@@ -27,6 +27,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct Objective;
+
 struct QuickLoad {
     ushort *Numb;
     void **Ptr;
@@ -50,6 +52,8 @@ struct LevelMisc { // sizeof=22
 /******************************************************************************/
 extern struct LevelMisc *game_level_miscs;
 extern TbBool level_deep_fix;
+extern struct Objective *game_used_lvl_objectives;
+extern ushort next_used_lvl_objective;
 
 
 TbResult load_mad_pc(ushort mapno);
