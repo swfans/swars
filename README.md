@@ -282,7 +282,7 @@ to build the executable using the same way as for UNIX systems, with bash and au
 First install the dependencies - mingw32, since we need 32-bit toolchain:
 
 ```
-pacman -S mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
+pacman -S mingw-w64-i686-binutils mingw-w64-i686-autotools mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
 pacman -S mingw-w64-i686-libpng
 pacman -S mingw-w64-i686-SDL2
 pacman -S mingw-w64-i686-openal
