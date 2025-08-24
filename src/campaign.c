@@ -1132,7 +1132,7 @@ void read_missions_conf_file(int num)
 #undef COMMAND_TEXT
     for (missi = 0; missi < next_mission; missi++)
     {
-        char sect_name[16];
+        char sect_name[32];
         struct Mission *p_missi;
 
         p_missi = &mission_list[missi];

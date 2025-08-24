@@ -204,7 +204,7 @@ void read_weapons_conf_file(void)
 
     for (wtype = 0; wtype < weapons_count; wtype++)
     {
-        char sect_name[16];
+        char sect_name[32];
         struct WeaponDef *wdef;
         struct WeaponDefAdd *wdefa;
 

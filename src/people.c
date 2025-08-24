@@ -285,7 +285,7 @@ void read_people_conf_file(void)
 #undef COMMAND_TEXT
     for (ptype = 0; ptype < peep_count; ptype++)
     {
-        char sect_name[16];
+        char sect_name[32];
         struct PeepStat *p_pestat;
         struct PeepStatAdd *p_pestata;
 
