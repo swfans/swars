@@ -26,6 +26,7 @@
 #include "pepgroup.h"
 #include "swlog.h"
 #include "thing.h"
+#include "thing_fire.h"
 #include "vehicle.h"
 #include "weapon.h"
 
@@ -864,6 +865,7 @@ ThingIdx search_for_ferry(short X, short Y, short Z, ushort R)
 struct Thing *check_for_radius_hit_person(int x, int y, int z,
         int radius, struct Thing *p_owner, int flag, int skip)
 {
+#if 0
     struct Thing *ret;
     asm volatile (
       "push %7\n"
@@ -872,6 +874,137 @@ struct Thing *check_for_radius_hit_person(int x, int y, int z,
       "call ASM_check_for_radius_hit_person\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (radius), "g" (p_owner), "g" (flag), "g" (skip));
     return ret;
+#else
+    ThingIdx thing;
+    long radius_sq;
+    short dtx, dtz;
+
+    radius_sq = radius * radius;
+    for (dtx = -1; dtx <= 1; dtx++)
+    {
+      for (dtz = -1; dtz <= 1; dtz++)
+      {
+        uint tile_x, tile_z;
+
+        tile_x = (x >> 16) + dtx;
+        tile_z = (z >> 16) + dtz;
+        if ((tile_x >= MAP_TILE_WIDTH) || (tile_z >= MAP_TILE_HEIGHT))
+            continue;
+        thing = game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x].Child;
+        while (thing != 0)
+        {
+            if (thing <= 0)
+            {
+              struct SimpleThing *p_sthing;
+
+              p_sthing = &sthings[thing];
+              if (p_sthing->Type == SmTT_STATIC && (p_sthing->Flag & TngF_Destroyed) == 0 && p_sthing->Frame != 1008)
+              {
+                int dist_x, dist_y, dist_z;
+
+                dist_x = (p_sthing->X - x) >> 8;
+                dist_y = (p_sthing->Y - y) >> 8;
+                dist_z = (p_sthing->Z - z) >> 8;
+                if ((dist_y < 25) && (dist_y > -25)
+                  && (dist_z * dist_z + dist_x * dist_x < radius_sq + p_sthing->Radius * p_sthing->Radius)
+                  && (--skip < 0))
+                {
+                  if ((p_sthing->StartFrame <= 1004) || (p_sthing->StartFrame >= 1008))
+                    return (struct Thing *)p_sthing;
+                  set_static_on_fire(p_sthing);
+                }
+              }
+              thing = p_sthing->Next;
+            }
+            else
+            {
+              struct Thing *p_thing;
+              ushort group;
+
+              p_thing = &things[thing];
+              if (p_owner != NULL)
+                  group = p_owner->U.UPerson.EffectiveGroup;
+              else
+                  group = 99;
+              if ((p_thing->U.UPerson.EffectiveGroup != group) || (group >= 100))
+              {
+                if ( ((1 << (p_thing->U.UPerson.EffectiveGroup & 0x7F)) & war_flags[group & 0x7F].Truce) == 0
+                  && (p_thing->Type == TT_PERSON) && (p_thing != p_owner))
+                {
+                  if ((p_thing->State != PerSt_DEAD) && (p_thing->State != PerSt_PERSON_BURNING) && (p_thing->Flag & TngF_Destroyed) == 0)
+                  {
+                    int dist_x, dist_y, dist_z;
+
+                    dist_x = (p_thing->X - x) >> 8;
+                    dist_y = (p_thing->Y - y) >> 8;
+                    dist_z = (p_thing->Z - z) >> 8;
+                    if ((dist_y < 25) && (dist_y > -25)
+                      && (radius_sq + p_thing->Radius * p_thing->Radius > dist_z * dist_z + dist_x * dist_x) && (--skip < 0))
+                    {
+                      return p_thing;
+                    }
+                  }
+                }
+                if (--skip < 0)
+                {
+                  if ( flag )
+                  {
+                    if ((p_thing->Type == TT_VEHICLE) && (p_thing->State != VehSt_UNKN_D)
+                      && (p_owner == NULL || p_thing->ThingOffset != p_owner->U.UPerson.Vehicle))
+                    {
+                      int dist_x, dist_y, dist_z;
+
+                      dist_x = (p_thing->X - x) >> 8;
+                      dist_y = (p_thing->Y - y) >> 8;
+                      dist_z = (p_thing->Z - z) >> 8;
+                      if ((dist_y < 25) && (dist_y > -105)
+                        && (radius_sq + p_thing->Radius * p_thing->Radius > dist_z * dist_z + dist_x * dist_x) && (--skip < 0))
+                      {
+                        return p_thing;
+                      }
+                    }
+                  }
+                }
+                if ( flag )
+                {
+                  if ((p_thing->Type == TT_BUILDING) && (p_thing->SubType == SubTT_BLD_MGUN) && ((p_thing->Flag & TngF_Destroyed) == 0))
+                  {
+                      int dist_x, dist_y, dist_z;
+
+                      dist_x = (p_thing->X - x) >> 8;
+                      dist_y = (p_thing->Y - y) >> 8;
+                      dist_z = (p_thing->Z - z) >> 8;
+                      if ((dist_y < 25) && (dist_y > -105)
+                        && (radius_sq + p_thing->Radius * p_thing->Radius > dist_z * dist_z + dist_x * dist_x) && (--skip < 0))
+                    {
+                      return p_thing;
+                    }
+                  }
+                }
+                if ( flag )
+                {
+                  if ((p_thing->Type == TT_MINE) && (p_thing->SubType == 48) && (p_thing->Flag & TngF_Destroyed) == 0 && (p_thing->State != 13))
+                  {
+                      int dist_x, dist_y, dist_z;
+
+                      dist_x = (p_thing->X - x) >> 8;
+                      dist_y = (p_thing->Y - y) >> 8;
+                      dist_z = (p_thing->Z - z) >> 8;
+                    if ((dist_y < 25) && (dist_y > -25)
+                      && (radius_sq + p_thing->Radius * p_thing->Radius > dist_z * dist_z + dist_x * dist_x) && (--skip < 0))
+                    {
+                      return p_thing;
+                    }
+                  }
+                }
+              }
+              thing = p_thing->Next;
+            }
+        }
+      }
+    }
+    return NULL;
+#endif
 }
 
 /******************************************************************************/
