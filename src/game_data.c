@@ -39,6 +39,7 @@
 #include "game.h"
 #include "lvfiles.h"
 #include "lvobjctv.h"
+#include "lvwalk.h"
 #include "swlog.h"
 #include "tngcolisn.h"
 #include "osunix.h"

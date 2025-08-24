@@ -60662,7 +60662,7 @@ GLOBAL_FUNC(ASM_find_and_set_connected_face)	/* 0x05EC6C */
 		shl    $0x5,%edx
 		mov    0x1a(%edx,%eax,1),%ecx
 		sar    $0x10,%ecx
-		mov    game_walk_headers,%eax
+		mov    EXPORT_SYMBOL(game_walk_headers),%eax
 		shl    $0x2,%ecx
 		jmp    jump_5ecbe
 	jump_5ec9d:
@@ -60674,7 +60674,7 @@ GLOBAL_FUNC(ASM_find_and_set_connected_face)	/* 0x05EC6C */
 		shl    $0x3,%edx
 		mov    0x20(%edx,%eax,1),%eax
 		sar    $0x10,%eax
-		mov    game_walk_headers,%ecx
+		mov    EXPORT_SYMBOL(game_walk_headers),%ecx
 		shl    $0x2,%eax
 	jump_5ecbe:
 		add    %eax,%ecx
@@ -89780,7 +89780,7 @@ GLOBAL_FUNC(ASM_train_unkn_st20_func_1)	/* 0x07BF7C */
 		mov    0x20(%edx,%eax,1),%eax
 		sar    $0x10,%eax
 		lea    0x0(,%eax,4),%edx
-		mov    game_walk_headers,%eax
+		mov    EXPORT_SYMBOL(game_walk_headers),%eax
 		lea    (%eax,%edx,1),%edi
 		movzwl 0x2(%edi),%ebp
 		lea    0x0(,%ebp,2),%eax
@@ -89817,7 +89817,7 @@ GLOBAL_FUNC(ASM_train_unkn_st20_func_1)	/* 0x07BF7C */
 		mov    game_object_faces4,%ecx
 		mov    0x20(%ecx,%eax,1),%ecx
 		sar    $0x10,%ecx
-		mov    game_walk_headers,%eax
+		mov    EXPORT_SYMBOL(game_walk_headers),%eax
 		shl    $0x2,%ecx
 		add    %eax,%ecx
 		xor    %edx,%edx
@@ -184906,10 +184906,6 @@ GLOBAL (head_my_path)	/* 0x1531A6 */
 GLOBAL (word_1531DA)	/* 0x1531DA */
 		.ascii  "\x01\x00"
 
-GLOBAL (next_walk_header)	/* 0x153226 */
-		.ascii  "\x01\x00"
-GLOBAL (next_walk_item)		/* 0x153228 */
-		.ascii  "\x01\x00"
 GLOBAL (next_unkn_full_light)	/* 0x15322A */
 		.ascii  "\x01\x00"
 		.ascii  "\xa6\x2e\x09\x00"

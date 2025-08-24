@@ -162,6 +162,8 @@ swars_SOURCES = \
 	lvobjctv.h \
 	lvfiles.c \
 	lvfiles.h \
+	lvwalk.c \
+	lvwalk.h \
 	main.c \
 	matrix.c \
 	matrix.h \
