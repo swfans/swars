@@ -38819,7 +38819,7 @@ GLOBAL_FUNC(ASM_person_pickup)	/* 0x04EB0C */
 		xor    %edx,%edx
 		sar    $0x10,%ecx
 		mov    0x2c(%edi),%dx
-		call   give_take_me_weapon
+		call   ac_give_take_me_weapon
 		mov    0x14(%edi),%eax
 		sar    $0x10,%eax
 		call   ac_remove_sthing
@@ -39780,7 +39780,7 @@ vtable_4f598:
 
 
 /*----------------------------------------------------------------*/
-give_take_me_weapon:	/* 0x04F5B8 */
+GLOBAL_FUNC(ASM_give_take_me_weapon)	/* 0x04F5B8 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -41014,7 +41014,7 @@ plant_mine:	/* 0x0501F0 */
 		mov    0x9c(%esi),%edx
 		mov    %esi,%eax
 		sar    $0x10,%edx
-		call   give_take_me_weapon
+		call   ac_give_take_me_weapon
 		xor    %ecx,%ecx
 		mov    0x99(%esi),%cl
 		mov    $0x1,%eax
@@ -41187,7 +41187,7 @@ GLOBAL_FUNC(ASM_person_drop_item)	/* 0x0502F8 */
 		sar    $0x10,%ecx
 		sar    $0x10,%edx
 		mov    %esi,%eax
-		call   give_take_me_weapon
+		call   ac_give_take_me_weapon
 		xor    %ecx,%ecx
 		mov    0x99(%esi),%cl
 		mov    $0x1,%eax
@@ -43615,7 +43615,7 @@ GLOBAL_FUNC(ASM_player_weapon_time)	/* 0x052290 */
 
 
 /*----------------------------------------------------------------*/
-set_player_weapon_turn:	/* 0x052384 */
+GLOBAL_FUNC(ASM_set_player_weapon_turn)	/* 0x052384 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -157279,7 +157279,7 @@ func_c575e:
 		mov    0x14(%esi),%ecx
 		mov    %esi,%eax
 		sar    $0x10,%ecx
-		call   give_take_me_weapon
+		call   ac_give_take_me_weapon
 		mov    %esi,%eax
 		call   ac_init_air_strike
 		jmp    func_c5a48
@@ -157519,7 +157519,7 @@ func_c5a48:
 		xor    %edx,%edx
 		mov    %esi,%eax
 		mov    0x58(%esi),%dx
-		call   set_player_weapon_turn
+		call   ac_set_player_weapon_turn
 	jump_c5a72:
 		pop    %edi
 		pop    %esi

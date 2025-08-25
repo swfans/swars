@@ -1179,9 +1179,24 @@ void init_grenade(struct Thing *p_owner, ushort gtype)
         : : "a" (p_owner), "d" (gtype));
 }
 
+void give_take_me_weapon(struct Thing *p_person, int item, int giveortake, short id)
+{
+    asm volatile (
+      "call ASM_give_take_me_weapon\n"
+        : : "a" (p_person), "d" (item), "b" (giveortake), "c" (id));
+}
+
+ushort set_player_weapon_turn(struct Thing *p_person, ushort time)
+{
+    ushort ret;
+    asm volatile ("call ASM_set_player_weapon_turn\n"
+        : "=r" (ret) : "a" (p_person), "d" (time));
+    return ret;
+}
+
 void init_fire_weapon(struct Thing *p_person)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_init_fire_weapon\n"
         : : "a" (p_person));
 #else
@@ -1314,8 +1329,6 @@ void init_fire_weapon(struct Thing *p_person)
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
                 person_weapons_remove_one(p_person, WEP_NUCLGREN);
-                if (!person_carries_weapon(p_person, WEP_NUCLGREN))
-                    person_weapons_reset_previous(p_person);
             }
             p_person->U.UPerson.Energy -= wdef->EnergyUsed;
             init_grenade(p_person, 3);
@@ -1334,8 +1347,6 @@ void init_fire_weapon(struct Thing *p_person)
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
                 person_weapons_remove_one(p_person, WEP_CRAZYGAS);
-                if (!person_carries_weapon(p_person, WEP_CRAZYGAS))
-                    person_weapons_reset_previous(p_person);
             }
             p_person->U.UPerson.Energy -= wdef->EnergyUsed;
             init_grenade(p_person, 4);
@@ -1348,8 +1359,6 @@ void init_fire_weapon(struct Thing *p_person)
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
                 person_weapons_remove_one(p_person, WEP_KOGAS);
-                if (!person_carries_weapon(p_person, WEP_KOGAS))
-                    person_weapons_reset_previous(p_person);
             }
             p_person->U.UPerson.Energy -= wdef->EnergyUsed;
             init_grenade(p_person, 5);
@@ -1445,8 +1454,6 @@ void init_fire_weapon(struct Thing *p_person)
             //TODO all other consumables are kept if NPC uses them; why do we break the rule for IFF?
             { // Remove weapon even if it is NPC
                 person_weapons_remove_one(p_person, WEP_CEREBUSIFF);
-                if (!person_carries_weapon(p_person, WEP_CEREBUSIFF))
-                    person_weapons_reset_previous(p_person);
             }
             p_person->U.UPerson.Energy -= wdef->EnergyUsed;
             p_person->Flag &= ~TngF_WepCharging;
@@ -1836,14 +1843,20 @@ TbBool person_weapons_remove_one(struct Thing *p_person, ushort weptype)
         p_player = &players[plyr];
     }
 
-    if (p_person->U.UPerson.CurrentWeapon == weptype)
-        p_person->U.UPerson.CurrentWeapon = WEP_NULL;
-
     if (p_player != NULL)
         //TODO replace  with weapons_remove_one() call, when FourPacks have unified format
         done = weapons_remove_one_for_player(&p_person->U.UPerson.WeaponsCarried, p_player->FourPacks, plagent, weptype);
     else
         done = weapons_remove_one_from_npc(&p_person->U.UPerson.WeaponsCarried, weptype);
+
+    // If the weapon got depleted, remove it from all properties
+    if (!person_carries_weapon(p_person, weptype)) {
+        if (p_person->U.UPerson.CurrentWeapon == weptype)
+            p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+        if ((p_player != NULL) && (p_player->PrevWeapon[plagent] == weptype))
+            person_weapons_reset_previous(p_person);
+    }
+
     return done;
 }
 
