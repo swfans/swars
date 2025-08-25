@@ -157,6 +157,17 @@ TbBool weapon_is_self_affecting(ushort weptype);
  */
 TbBool weapon_is_consumable(ushort wtype);
 
+/** Returns if a weapon has ability to charge before firing, to deal more damage.
+ */
+TbBool weapon_can_be_charged(ushort wtype);
+
+/** Returns if a weapon fire can be delayed to achieve target lock.
+ *
+ * Weapons with targetting cannot be charged, as these functions
+ * use the same resources and same player controls.
+ */
+TbBool weapon_has_targetting(ushort wtype);
+
 /** Returns panel sprite index to be used to represent the weapon.
  */
 ushort weapon_sprite_index(ushort wtype, TbBool enabled);

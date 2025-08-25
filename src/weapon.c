@@ -616,6 +616,12 @@ TbBool weapon_has_targetting(ushort wtype)
     return (wtype == WEP_RAP);
 }
 
+TbBool weapon_can_be_charged(ushort wtype)
+{
+    return (wtype == WEP_LASER) || (wtype == WEP_ELLASER)
+      || (wtype == WEP_BEAM) || (wtype == WEP_QDEVASTATOR);
+}
+
 TbBool weapons_has_weapon(ulong weapons, ushort wtype)
 {
     ulong wepflg = 1 << (wtype-1);
@@ -1203,9 +1209,11 @@ void init_fire_weapon(struct Thing *p_person)
     struct WeaponDef *wdef;
     int plagent;
     struct Thing *p_target;
+    ushort wtype;
     short i;
 
-    wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
+    wtype = p_person->U.UPerson.CurrentWeapon;
+    wdef = &weapon_defs[wtype];
     if ((p_person->Flag & TngF_Unkn0001) != 0)
         return;
 
@@ -1219,19 +1227,25 @@ void init_fire_weapon(struct Thing *p_person)
     }
     if (p_person->U.UPerson.Energy <= wdef->EnergyUsed)
     {
-        if (p_person->U.UPerson.CurrentWeapon == WEP_MINIGUN)
+        if (wtype == WEP_MINIGUN)
             play_dist_sample(p_person, (p_person->U.UPerson.ComCur & 3) + 88, 0x7Fu, 0x40u, 100, 0, 2);
     }
     else
     {
         if (!in_network_game && !is_single_game && (p_person->Flag & TngF_PlayerAgent) != 0
-          && !is_research_weapon_completed(p_person->U.UPerson.CurrentWeapon)
-          && (LbRandomAnyShort() % 17 < 4))
+          && !is_research_weapon_completed(wtype) && (LbRandomAnyShort() % 17 < 4))
         {
+            // Deplete energy to the level which is barely enough for the shot
+            // After the shot takes its energy, the level remaining will be near zero
             p_person->U.UPerson.Energy = wdef->EnergyUsed + 1;
         }
 
-        switch (p_person->U.UPerson.CurrentWeapon)
+        if (weapon_can_be_charged(wtype)) {
+            p_person->Flag |= TngF_WepCharging;
+            p_person->U.UPerson.WeaponTimer = 0;
+        }
+
+        switch (wtype)
         {
         case WEP_UZI:
             p_person->U.UPerson.Energy -= wdef->EnergyUsed;
@@ -1291,7 +1305,6 @@ void init_fire_weapon(struct Thing *p_person)
             p_person->Flag2 |= TgF2_Unkn0200;
             break;
         case WEP_LASER:
-            p_person->Flag |= TngF_WepCharging;
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
                 p_target = p_person->PTarget;
@@ -1301,12 +1314,10 @@ void init_fire_weapon(struct Thing *p_person)
                         p_person->Flag2 |= TngF_Unkn00200000;
                 }
             }
-            p_person->U.UPerson.WeaponTimer = 0;
             if ((p_person->Flag & TngF_Unkn1000) != 0)
                 play_dist_sample(p_person, 7u, 0x7Fu, 0x40u, 100, -1, 3);
             break;
         case WEP_ELLASER:
-            p_person->Flag |= TngF_WepCharging;
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
                 p_target = p_person->PTarget;
@@ -1316,7 +1327,6 @@ void init_fire_weapon(struct Thing *p_person)
                         p_person->Flag2 |= TngF_Unkn00200000;
                 }
             }
-            p_person->U.UPerson.WeaponTimer = 0;
             if (((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
               && ((p_person->Flag & TngF_Unkn1000) != 0))
                 play_dist_sample(p_person, 7u, 0x7Fu, 0x40u, 100, -1, 3);
@@ -1368,19 +1378,11 @@ void init_fire_weapon(struct Thing *p_person)
                 choose_best_weapon_for_range(p_person, 1280);
             break;
         case WEP_ELEMINE:
-            if ((p_person->Flag2  & TgF2_Unkn00800000) == 0)
-            {
-                p_person->Flag2 |= TgF2_Unkn00800000;
-                person_init_drop(p_person, WEP_ELEMINE);
-                p_person->U.UPerson.Energy -= wdef->EnergyUsed;
-                p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
-            }
-            break;
         case WEP_EXPLMINE:
-            if ((p_person->Flag2  & TgF2_Unkn00800000) == 0)
+            if ((p_person->Flag2 & TgF2_Unkn00800000) == 0)
             {
                 p_person->Flag2 |= TgF2_Unkn00800000;
-                person_init_drop(p_person, WEP_EXPLMINE);
+                person_init_drop(p_person, wtype);
                 p_person->U.UPerson.Energy -= wdef->EnergyUsed;
                 p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
             }
@@ -1407,7 +1409,6 @@ void init_fire_weapon(struct Thing *p_person)
             init_air_strike(p_person);
             break;
         case WEP_BEAM:
-            p_person->Flag |= TngF_WepCharging;
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
                 p_target = p_person->PTarget;
@@ -1417,12 +1418,10 @@ void init_fire_weapon(struct Thing *p_person)
                         p_person->Flag2 |= TngF_Unkn00200000;
                 }
             }
-            p_person->U.UPerson.WeaponTimer = 0;
             if ((p_person->Flag & TngF_Unkn1000) != 0)
                 play_dist_sample(p_person, 7u, 0x7Fu, 0x40u, 100, -1, 3);
             break;
         case WEP_QDEVASTATOR:
-            p_person->Flag |= TngF_WepCharging;
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
                 p_target = p_person->PTarget;
@@ -1432,7 +1431,6 @@ void init_fire_weapon(struct Thing *p_person)
                         p_person->Flag2 |= TngF_Unkn00200000;
                 }
             }
-            p_person->U.UPerson.WeaponTimer = 0;
             if ((p_person->Flag & TngF_Unkn1000) != 0)
                 play_dist_sample(p_person, 7u, 0x7Fu, 0x40u, 100, -1, 3);
             break;
