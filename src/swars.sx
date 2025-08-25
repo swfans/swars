@@ -152345,7 +152345,7 @@ weapon_sweep:	/* 0x0C1AC8 */
 
 
 /*----------------------------------------------------------------*/
-init_uzi:	/* 0x0C1C0C */
+GLOBAL_FUNC(ASM_init_uzi)	/* 0x0C1C0C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -152715,7 +152715,7 @@ init_uzi:	/* 0x0C1C0C */
 
 
 /*----------------------------------------------------------------*/
-init_long_range:	/* 0x0C2078 */
+GLOBAL_FUNC(ASM_init_long_range)	/* 0x0C2078 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -153080,7 +153080,7 @@ init_long_range:	/* 0x0C2078 */
 
 
 /*----------------------------------------------------------------*/
-init_minigun:	/* 0x0C24C4 */
+GLOBAL_FUNC(ASM_init_minigun)	/* 0x0C24C4 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -153628,7 +153628,7 @@ create_stasis_pod:	/* 0x0C2A00 */
 
 
 /*----------------------------------------------------------------*/
-init_time_gun:	/* 0x0C2AE0 */
+GLOBAL_FUNC(ASM_init_time_gun)	/* 0x0C2AE0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -153765,7 +153765,7 @@ init_time_gun:	/* 0x0C2AE0 */
 
 
 /*----------------------------------------------------------------*/
-init_stasis_gun:	/* 0x0C2C6C */
+GLOBAL_FUNC(ASM_init_stasis_gun)	/* 0x0C2C6C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -153953,7 +153953,7 @@ init_stasis_gun:	/* 0x0C2C6C */
 
 
 /*----------------------------------------------------------------*/
-init_c_iff:	/* 0x0C2E8C */
+GLOBAL_FUNC(ASM_init_c_iff)	/* 0x0C2E8C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -154045,7 +154045,7 @@ init_c_iff:	/* 0x0C2E8C */
 
 
 /*----------------------------------------------------------------*/
-init_flamer:	/* 0x0C303C */
+GLOBAL_FUNC(ASM_init_flamer)	/* 0x0C303C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -156495,7 +156495,7 @@ GLOBAL_FUNC(ASM_init_laser_beam)	/* 0x0C48CC */
 
 
 /*----------------------------------------------------------------*/
-init_air_strike:	/* 0x0C4E2C */
+GLOBAL_FUNC(ASM_init_air_strike)	/* 0x0C4E2C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -156977,7 +156977,7 @@ func_c533c:
 		mov    %esi,%eax
 		mov    %dx,0x96(%esi)
 		mov    $0x3,%edx
-		call   init_grenade
+		call   ac_init_grenade
 		push   $0x2
 		push   $0x0
 		mov    $0x40,%ecx
@@ -157018,7 +157018,7 @@ func_c5453:
 	jump_c5486:
 		mov    %esi,%eax
 		movb   $0x1,0x78(%esi)
-		call   init_uzi
+		call   ac_init_uzi
 		mov    0x4(%edi),%ax
 		mov    %ax,0x58(%esi)
 		testb  $0x2,0x45(%esi)
@@ -157078,7 +157078,7 @@ func_c54f8:
 	jump_c5522:
 		mov    %esi,%eax
 		movb   $0x3,0x78(%esi)
-		call   init_minigun
+		call   ac_init_minigun
 		mov    0x4(%edi),%ax
 		mov    %ax,0x58(%esi)
 		testb  $0x2,0x45(%esi)
@@ -157117,7 +157117,7 @@ func_c557c:
 		sub    %eax,%ecx
 		mov    %esi,%eax
 		mov    %cx,0x96(%esi)
-		call   init_flamer
+		call   ac_init_flamer
 		mov    0x56(%esi),%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
@@ -157204,7 +157204,7 @@ func_c5675:
 		and    $0xfb,%bh
 		mov    %esi,%eax
 		mov    %bh,0xd(%esi)
-		call   init_time_gun
+		call   ac_init_time_gun
 		mov    0x4(%edi),%ax
 		mov    %ax,0x58(%esi)
 		jmp    func_c5a48
@@ -157220,7 +157220,7 @@ func_c56a1:
 		and    $0xfb,%cl
 		mov    %esi,%eax
 		mov    %cl,0xd(%esi)
-		call   init_stasis_gun
+		call   ac_init_stasis_gun
 		mov    0x4(%edi),%ax
 		mov    %ax,0x58(%esi)
 		jmp    func_c5a48
@@ -157238,7 +157238,7 @@ func_c56cd:
 		mov    %dx,0x96(%esi)
 		mov    %esi,%eax
 		mov    %bh,0xd(%esi)
-		call   init_c_iff
+		call   ac_init_c_iff
 		mov    0x4(%edi),%ax
 		mov    0xa7(%esi),%cl
 		movb   $0x0,0x99(%esi)
@@ -157281,7 +157281,7 @@ func_c575e:
 		sar    $0x10,%ecx
 		call   give_take_me_weapon
 		mov    %esi,%eax
-		call   init_air_strike
+		call   ac_init_air_strike
 		jmp    func_c5a48
 
 
@@ -157348,7 +157348,7 @@ func_c5781:
 		sub    %eax,%ebx
 		mov    %esi,%eax
 		mov    %bx,0x96(%esi)
-		call   init_grenade
+		call   ac_init_grenade
 		push   $0x2
 		push   $0x0
 		mov    $0x40,%ecx
@@ -157430,7 +157430,7 @@ func_c5898:
 		mov    %esi,%eax
 		mov    %dx,0x96(%esi)
 		mov    $0x5,%edx
-		call   init_grenade
+		call   ac_init_grenade
 		push   $0x2
 		push   $0x0
 		mov    $0x40,%ecx
@@ -157470,7 +157470,7 @@ func_c59af:
 	jump_c59e2:
 		mov    %esi,%eax
 		movb   $0x1,0x78(%esi)
-		call   init_long_range
+		call   ac_init_long_range
 		push   $0x3
 		mov    $0x40,%ecx
 		mov    $0x7f,%ebx
@@ -161289,7 +161289,7 @@ init_v_rocket:	/* 0x0C8218 */
 
 
 /*----------------------------------------------------------------*/
-init_grenade:	/* 0x0C84D0 */
+GLOBAL_FUNC(ASM_init_grenade)	/* 0x0C84D0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

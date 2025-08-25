@@ -229,6 +229,7 @@ void check_persons_target(struct Thing *p_person);
 void check_persons_target2(struct Thing *p_person);
 void process_stamina(struct Thing *p_person);
 void process_person(struct Thing *p_person);
+void process_random_speech(struct Thing *p_person, ubyte a2);
 
 /** Bring killed person back to life.
  */

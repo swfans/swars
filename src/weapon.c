@@ -32,6 +32,7 @@
 #include "game.h"
 #include "game_data.h"
 #include "game_speed.h"
+#include "research.h"
 #include "thing_search.h"
 #include "wadfile.h"
 #include "sound.h"
@@ -1122,6 +1123,60 @@ void init_laser_q_sep(struct Thing *p_owner, ushort size)
     init_laser_guided(p_owner, size);
     init_laser_guided(p_owner, size);
     init_laser_beam(p_owner, size, 0x14u);
+}
+
+void init_uzi(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_uzi\n"
+        : : "a" (p_owner));
+}
+
+void init_minigun(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_minigun\n"
+        : : "a" (p_owner));
+}
+
+void init_flamer(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_flamer\n"
+        : : "a" (p_owner));
+}
+
+void init_long_range(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_long_range\n"
+        : : "a" (p_owner));
+}
+
+void init_air_strike(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_air_strike\n"
+        : : "a" (p_owner));
+}
+
+void init_stasis_gun(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_stasis_gun\n"
+        : : "a" (p_owner));
+}
+
+void init_time_gun(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_time_gun\n"
+        : : "a" (p_owner));
+}
+
+void init_c_iff(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_c_iff\n"
+        : : "a" (p_owner));
+}
+
+void init_grenade(struct Thing *p_owner, ushort gtype)
+{
+    asm volatile ("call ASM_init_grenade\n"
+        : : "a" (p_owner), "d" (gtype));
 }
 
 void init_fire_weapon(struct Thing *p_person)
