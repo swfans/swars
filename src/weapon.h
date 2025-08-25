@@ -149,6 +149,14 @@ const char *weapon_codename(ushort wtype);
  */
 TbBool weapon_is_deployed_at_wielder_pos(ushort wtype);
 
+/** Returns if the weapon is targeted at / affects the wielding person.
+ */
+TbBool weapon_is_self_affecting(ushort weptype);
+
+/** Returns if a weapon has limited amount of uses before disappearing.
+ */
+TbBool weapon_is_consumable(ushort wtype);
+
 /** Returns panel sprite index to be used to represent the weapon.
  */
 ushort weapon_sprite_index(ushort wtype, TbBool enabled);

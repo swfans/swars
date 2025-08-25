@@ -572,6 +572,11 @@ TbBool weapon_is_breaking_will(ushort weptype)
     return (weptype == WEP_PERSUADRTRN) || (weptype == WEP_PERSUADER2);
 }
 
+TbBool weapon_is_self_affecting(ushort weptype)
+{
+    return (weptype == WEP_MEDI1) || (weptype == WEP_MEDI2) || (weptype == WEP_CLONESHLD);
+}
+
 ushort weapon_fourpack_index(ushort wtype)
 {
     switch (wtype)
@@ -588,6 +593,21 @@ ushort weapon_fourpack_index(ushort wtype)
         return WFRPK_CRAZYGAS;
     }
     return WFRPK_COUNT;
+}
+
+TbBool weapon_is_consumable(ushort wtype)
+{
+    ushort fp;
+
+    if ((wtype == WEP_AIRSTRIKE) || (wtype == WEP_CEREBUSIFF)
+      || (wtype == WEP_MEDI1) || (wtype == WEP_MEDI2))
+        return true;
+
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT)
+        return true;
+
+    return false;
 }
 
 TbBool weapon_has_targetting(ushort wtype)
@@ -1673,14 +1693,12 @@ void process_weapon_continuous_fire(struct Thing *p_person)
     }
 }
 
-void process_wielded_weapon(struct Thing *p_person)
+void process_weapon_wield_affecting_area(struct Thing *p_person, ushort wtype)
 {
     ThingIdx targtng;
     ushort energy_rq;
-    struct WeaponDef *wdef;
-    short wepTurn;
 
-    switch (p_person->U.UPerson.CurrentWeapon)
+    switch (wtype)
     {
     case WEP_SOULGUN:
         if ((p_person->Health < 2 * p_person->U.UPerson.MaxHealth) &&
@@ -1714,14 +1732,111 @@ void process_wielded_weapon(struct Thing *p_person)
     default:
         break;
     }
+}
+
+void weapon_init_shot(struct Thing *p_person, ushort wtype)
+{
+    switch (wtype)
+    {
+    case WEP_LASER:
+        if (p_person->SubType == SubTT_PERS_MECH_SPIDER)
+            init_laser_6shot(p_person, p_person->U.UPerson.WeaponTimer);
+        else
+            init_laser(p_person, p_person->U.UPerson.WeaponTimer);
+        stop_sample_using_heap(p_person->ThingOffset, 7);
+        stop_sample_using_heap(p_person->ThingOffset, 52);
+        play_dist_sample(p_person, 18, 0x7F, 0x40, 100, 0, 3);
+        break;
+    case WEP_ELLASER:
+        init_laser_elec(p_person, p_person->U.UPerson.WeaponTimer);
+        stop_sample_using_heap(p_person->ThingOffset, 7);
+        stop_sample_using_heap(p_person->ThingOffset, 52);
+        if ((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
+            play_dist_sample(p_person, 6, 0x7F, 0x40, 100, 0, 3);
+        break;
+    case WEP_RAP:
+        init_rocket(p_person);
+        stop_sample_using_heap(p_person->ThingOffset, 7);
+        stop_sample_using_heap(p_person->ThingOffset, 52);
+        break;
+    case WEP_BEAM:
+         init_laser_beam(p_person, p_person->U.UPerson.WeaponTimer, 17);
+         stop_sample_using_heap(p_person->ThingOffset, 7);
+         stop_sample_using_heap(p_person->ThingOffset, 52);
+         play_dist_sample(p_person, 5, 0x7F, 0x40, 100, 0, 3);
+        break;
+    case WEP_QDEVASTATOR:
+        init_laser_q_sep(p_person, p_person->U.UPerson.WeaponTimer);
+        stop_sample_using_heap(p_person->ThingOffset, 7);
+        stop_sample_using_heap(p_person->ThingOffset, 52);
+        play_dist_sample(p_person, 28, 0x7F, 0x40, 100, 0, 3);
+        break;
+    default:
+        break;
+    }
+}
+
+void weapon_set_refire_turn(struct Thing *p_person, ushort wtype)
+{
+    struct WeaponDef *wdef;
+
+    wdef = &weapon_defs[wtype];
+
+    int i;
+    short reFireShift;
+
+    reFireShift = 0;
+    if (p_person->U.UPerson.WeaponTimer >= 5)
+    {
+        i = p_person->U.UPerson.WeaponTimer - 3;
+        set_person_weapon_turn(p_person, i);
+    }
+    else
+    {
+        i = p_person->U.UPerson.WeaponTimer;
+        set_person_weapon_turn(p_person, i);
+        p_person->U.UPerson.WeaponTimer = 5;
+        reFireShift = 5 - i;
+    }
+
+    switch (wtype)
+    {
+    case WEP_LASER:
+        if (p_person->SubType == SubTT_PERS_MECH_SPIDER)
+            p_person->U.UPerson.WeaponTurn = 1;
+        else
+            p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
+        break;
+    case WEP_RAP:
+    case WEP_ELLASER:
+    case WEP_BEAM:
+    case WEP_QDEVASTATOR:
+        p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
+        break;
+    default:
+        break;
+    }
+    // We probably updated WeaponTurn, now do the update properly
+    set_person_weapon_turn(p_person, p_person->U.UPerson.WeaponTurn);
+}
+
+void process_wielded_weapon(struct Thing *p_person)
+{
+    struct WeaponDef *wdef;
+    short wepTurn;
+    ushort wtype;
+
+    process_weapon_wield_affecting_area(p_person, p_person->U.UPerson.CurrentWeapon);
 
     process_clone_disguise(p_person);
 
-    wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
+    wtype = p_person->U.UPerson.CurrentWeapon;
+    wdef = &weapon_defs[wtype];
     wepTurn = p_person->U.UPerson.WeaponTurn;
     if ((wepTurn == 0) || (wepTurn < wdef->ReFireDelay - 6))
         p_person->U.UPerson.FrameId.Version[4] = 0;
-    switch (p_person->U.UPerson.CurrentWeapon)
+
+    switch (wtype)
     {
     case WEP_EXPLWIRE:
         if ((p_person->Flag2 & TgF2_Unkn0001) == 0)
@@ -1798,7 +1913,7 @@ void process_wielded_weapon(struct Thing *p_person)
 
     if ((p_person->Flag & TngF_Unkn0400) != 0)
     {
-        if (p_person->U.UPerson.CurrentWeapon != 5)
+        if (p_person->U.UPerson.CurrentWeapon != WEP_RAP)
         {
             if (p_person->U.UPerson.WeaponTimer > 15)
                 p_person->U.UPerson.WeaponTimer = 15;
@@ -1864,76 +1979,14 @@ void process_wielded_weapon(struct Thing *p_person)
 
         if ((p_person->Flag & TngF_Unkn0800) == 0)
         {
-            int i;
-            short reFireShift;
-
-            reFireShift = 0;
-            if (p_person->U.UPerson.WeaponTimer >= 5)
-            {
-                i = p_person->U.UPerson.WeaponTimer - 3;
-                set_person_weapon_turn(p_person, i);
-            }
-            else
-            {
-                i = p_person->U.UPerson.WeaponTimer;
-                set_person_weapon_turn(p_person, i);
-                p_person->U.UPerson.WeaponTimer = 5;
-                reFireShift = 5 - i;
-            }
             process_weapon_recoil(p_person);
 
-            wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
-            switch (p_person->U.UPerson.CurrentWeapon)
-            {
-            case WEP_LASER:
-                if (p_person->SubType == SubTT_PERS_MECH_SPIDER)
-                {
-                    init_laser_6shot(p_person, p_person->U.UPerson.WeaponTimer);
-                    p_person->U.UPerson.WeaponTurn = 1;
-                }
-                else
-                {
-                    init_laser(p_person, p_person->U.UPerson.WeaponTimer);
-                    p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
-                }
-                stop_sample_using_heap(p_person->ThingOffset, 7);
-                stop_sample_using_heap(p_person->ThingOffset, 52);
-                play_dist_sample(p_person, 18, 0x7F, 0x40, 100, 0, 3);
-                break;
-            case WEP_ELLASER:
-                init_laser_elec(p_person, p_person->U.UPerson.WeaponTimer);
-                stop_sample_using_heap(p_person->ThingOffset, 7);
-                stop_sample_using_heap(p_person->ThingOffset, 52);
-                if ((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
-                    play_dist_sample(p_person, 6, 0x7F, 0x40, 100, 0, 3);
-                p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
-                break;
-            case WEP_RAP:
+            weapon_init_shot(p_person, p_person->U.UPerson.CurrentWeapon);
+
+            if (wtype == WEP_RAP)
                 p_person->U.UPerson.Energy -= wdef->EnergyUsed;
-                init_rocket(p_person);
-                stop_sample_using_heap(p_person->ThingOffset, 7);
-                stop_sample_using_heap(p_person->ThingOffset, 52);
-                p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
-                break;
-            case WEP_BEAM:
-                 init_laser_beam(p_person, p_person->U.UPerson.WeaponTimer, 17);
-                 stop_sample_using_heap(p_person->ThingOffset, 7);
-                 stop_sample_using_heap(p_person->ThingOffset, 52);
-                 play_dist_sample(p_person, 5, 0x7F, 0x40, 100, 0, 3);
-                 p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
-                break;
-            case WEP_QDEVASTATOR:
-                init_laser_q_sep(p_person, p_person->U.UPerson.WeaponTimer);
-                stop_sample_using_heap(p_person->ThingOffset, 7);
-                stop_sample_using_heap(p_person->ThingOffset, 52);
-                play_dist_sample(p_person, 28, 0x7F, 0x40, 100, 0, 3);
-                p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
-                break;
-            default:
-                break;
-            }
-            // We probably updated WeaponTurn, now do the update properly
-            set_person_weapon_turn(p_person, p_person->U.UPerson.WeaponTurn);
+
+            weapon_set_refire_turn(p_person, wtype);
 
             p_person->Flag &= ~TngF_Unkn0400;
             if ((p_person->U.UPerson.WeaponTimer > 5)
