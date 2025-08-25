@@ -49,7 +49,9 @@ swars_SOURCES = \
 	config.h \
 	bmbang.c \
 	bmbang.h \
-	bat.sx \
+	bat_s.sx \
+	bat.c \
+	bat.h \
 	bigmap.c \
 	bigmap.h \
 	building.c \

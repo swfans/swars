@@ -37,6 +37,7 @@
 #include "bfscd.h"
 
 #include "linksmk.h"
+#include "bat.h"
 #include "bmbang.h"
 #include "svesa.h"
 #include "swlog.h"
@@ -3674,12 +3675,6 @@ void gproc3_unknsub2(void)
     unkn_flags_01 = bkp_unkn_flags_01;
 
     process_engine_unk1();
-}
-
-void BAT_play(void)
-{
-    asm volatile ("call ASM_BAT_play\n"
-        :  :  : "eax" );
 }
 
 ubyte change_panel_permutation(ubyte click)
