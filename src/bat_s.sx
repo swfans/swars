@@ -39,7 +39,7 @@
 
 
 /*----------------------------------------------------------------*/
-BAT_draw_char:	/* 0x0DCF40 */
+GLOBAL_FUNC(ASM_BAT_draw_char)	/* 0x0DCF40 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -534,7 +534,7 @@ func_dd637:
 		sub    $0x100,%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 		mov    0x10(%esi),%esi
 		test   %esi,%esi
 		jne    jump_dd866
@@ -562,7 +562,7 @@ func_dd684:
 		sub    $0x100,%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 		mov    0x10(%esi),%esi
 		test   %esi,%esi
 		jne    jump_dd866
@@ -590,7 +590,7 @@ func_dd6d1:
 		sub    $0x100,%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 		mov    0x10(%esi),%esi
 		test   %esi,%esi
 		jne    jump_dd866
@@ -618,7 +618,7 @@ func_dd71e:
 		sub    $0x100,%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 		mov    0x10(%esi),%esi
 		test   %esi,%esi
 		jne    jump_dd866
@@ -646,7 +646,7 @@ func_dd76b:
 		sub    $0x100,%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 		mov    0x10(%esi),%esi
 		test   %esi,%esi
 		jne    jump_dd866
@@ -674,7 +674,7 @@ func_dd7b8:
 		sub    $0x100,%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 		push   $0x3
 		push   $0x0
 		mov    $0x40,%ecx
@@ -710,7 +710,7 @@ func_dd81d:
 		sub    $0x100,%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_dd85a:
 		mov    0x10(%esi),%esi
 		test   %esi,%esi
@@ -2127,7 +2127,7 @@ breakout_func_de991:
 		movsbl %al,%ebx
 		mov    0xc0(%esp),%cl
 		mov    %edi,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_deae2:
 		mov    0x1(%esi),%ah
 		inc    %esi
@@ -2167,7 +2167,7 @@ breakout_func_de991:
 		mov    %edi,%eax
 		mov    0xcc(%esp),%cl
 		mov    $0x1,%edx
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_deb54:
 		mov    0x1(%esi),%bl
 		inc    %esi
@@ -2241,7 +2241,7 @@ breakout_func_de991:
 		xor    %ecx,%ecx
 		movsbl (%esi),%ebx
 		mov    0xc4(%esp),%cl
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_dec2b:
 		mov    0x1(%esi),%ch
 		inc    %esi
@@ -2397,7 +2397,7 @@ func_ded40:
 		movsbl %ah,%ebx
 		mov    0xc8(%esp),%cl
 		mov    %edi,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_dee39:
 		mov    0x1(%esi),%dl
 		inc    %esi
@@ -2437,7 +2437,7 @@ func_ded40:
 		xor    %ecx,%ecx
 		mov    %edi,%eax
 		mov    0xd4(%esp),%cl
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_deeab:
 		mov    0x1(%esi),%bh
 		inc    %esi
@@ -2618,7 +2618,7 @@ func_deffc:
 		movsbl %al,%ebx
 		mov    0xd8(%esp),%cl
 		mov    %edi,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df0f6:
 		mov    0x1(%esi),%ah
 		inc    %esi
@@ -2658,7 +2658,7 @@ func_deffc:
 		mov    %edi,%eax
 		mov    0xdc(%esp),%cl
 		mov    $0x1,%edx
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df174:
 		mov    0x1(%esi),%bl
 		inc    %esi
@@ -2701,7 +2701,7 @@ func_deffc:
 		xor    %ecx,%ecx
 		movsbl (%esi),%ebx
 		mov    0xe0(%esp),%cl
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df1fc:
 		mov    0x1(%esi),%ch
 		inc    %esi
@@ -2840,7 +2840,7 @@ func_df2e0:
 		xor    %ecx,%ecx
 		movsbl (%esi),%ebx
 		mov    0xe4(%esp),%cl
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df3ce:
 		mov    0x1(%esi),%al
 		inc    %esi
@@ -2880,7 +2880,7 @@ func_df2e0:
 		mov    %edi,%eax
 		mov    0xe8(%esp),%cl
 		mov    $0x1,%edx
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df44c:
 		mov    0x1(%esi),%dh
 		inc    %esi
@@ -2927,7 +2927,7 @@ func_df2e0:
 		xor    %ecx,%ecx
 		mov    %edi,%eax
 		mov    0xec(%esp),%cl
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df4e3:
 		mov    0x1(%esi),%cl
 		inc    %esi
@@ -3002,7 +3002,7 @@ func_df554:
 		mov    %edi,%eax
 		mov    0xf0(%esp),%cl
 		mov    $0xa,%edx
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df5c4:
 		mov    0x1(%esi),%dh
 		inc    %esi
@@ -3026,7 +3026,7 @@ func_df554:
 		xor    %ecx,%ecx
 		mov    %edi,%eax
 		mov    0xf4(%esp),%cl
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df60e:
 		mov    0x1(%esi),%cl
 		inc    %esi
@@ -3050,7 +3050,7 @@ func_df554:
 		movsbl %al,%ebx
 		mov    0xf8(%esp),%cl
 		mov    %edi,%eax
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df657:
 		mov    0x1(%esi),%ah
 		inc    %esi
@@ -3074,7 +3074,7 @@ func_df554:
 		mov    %edi,%eax
 		mov    0xd0(%esp),%cl
 		mov    $0x26,%edx
-		call   BAT_draw_char
+		call   ac_BAT_draw_char
 	jump_df6a1:
 		mov    0x1(%esi),%bl
 		inc    %esi
