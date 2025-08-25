@@ -180,6 +180,10 @@ TbBool weapons_remove_one_from_npc(ulong *p_weapons, ushort wtype);
 TbBool weapons_remove_one(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
 
+/** Reset previously selected weapon visible in the players panel.
+ */
+void person_weapons_reset_previous(struct Thing *p_person);
+
 /** Remove one weapon from player-controlled person in-game.
  * Player struct contains dumb own array rather than uniform WeaponsFourPack, so it requires
  * this special function.

@@ -1126,8 +1126,289 @@ void init_laser_q_sep(struct Thing *p_owner, ushort size)
 
 void init_fire_weapon(struct Thing *p_person)
 {
+#if 1
     asm volatile ("call ASM_init_fire_weapon\n"
         : : "a" (p_person));
+#else
+    struct WeaponDef *wdef;
+    int plagent;
+    struct Thing *p_target;
+    short i;
+
+    wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
+    if ((p_person->Flag & TngF_Unkn0001) != 0)
+        return;
+
+    if (((gameturn + p_person->ThingOffset) & 0x7F) == 0)
+        process_random_speech(p_person, 1);
+
+    if ((p_person->Type != TT_MINE) && ((p_person->State == PerSt_WAIT) || (p_person->State == PerSt_NONE)) )
+    {
+        p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 1);
+        reset_person_frame(p_person);
+    }
+    if (p_person->U.UPerson.Energy <= wdef->EnergyUsed)
+    {
+        if (p_person->U.UPerson.CurrentWeapon == WEP_MINIGUN)
+            play_dist_sample(p_person, (p_person->U.UPerson.ComCur & 3) + 88, 0x7Fu, 0x40u, 100, 0, 2);
+    }
+    else
+    {
+        if (!in_network_game && !is_single_game && (p_person->Flag & TngF_PlayerAgent) != 0
+          && !is_research_weapon_completed(p_person->U.UPerson.CurrentWeapon)
+          && (LbRandomAnyShort() % 17 < 4))
+        {
+            p_person->U.UPerson.Energy = wdef->EnergyUsed + 1;
+        }
+
+        switch (p_person->U.UPerson.CurrentWeapon)
+        {
+        case WEP_UZI:
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            p_person->Flag &= ~TngF_WepCharging;
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                p_target = p_person->PTarget;
+                if (p_target != NULL)
+                {
+                    if ((p_target->Flag & TngF_Destroyed) == 0)
+                        p_person->Flag2 |= TngF_Unkn00200000;
+                }
+            }
+            p_person->U.UPerson.FrameId.Version[4] = 1;
+            init_uzi(p_person);
+            p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            if ((p_person->Flag2 & TgF2_Unkn0200) == 0)
+            {
+                if ((p_person->Flag & TngF_PlayerAgent) != 0)
+                    i = 0;
+                else
+                    i = 10;
+
+                if ((p_person->Flag & TngF_PlayerAgent) != 0)
+                    plagent = p_person->U.UPerson.ComCur & 3;
+                else
+                    plagent = 0;
+
+                play_dist_sample(p_person, 80 + plagent, 0x7Fu, 0x40u, 100 + i, -1, 3);
+            }
+            p_person->Flag2 |= TgF2_Unkn0200;
+            break;
+        case WEP_MINIGUN:
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            p_person->Flag &= ~TngF_WepCharging;
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                p_target = p_person->PTarget;
+                if (p_target != NULL)
+                {
+                    if ((p_target->Flag & TngF_Destroyed) == 0)
+                        p_person->Flag2 |= TngF_Unkn00200000;
+                }
+            }
+            p_person->U.UPerson.FrameId.Version[4] = 3;
+            init_minigun(p_person);
+            p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            if ((p_person->Flag2 & TgF2_Unkn0200) == 0)
+            {
+                if ((p_person->Flag & TngF_PlayerAgent) != 0)
+                    plagent = p_person->U.UPerson.ComCur & 3;
+                else
+                    plagent = 0;
+
+                play_dist_sample(p_person, 84 + plagent, 0x7Fu, 0x40u, 100, -1, 3);
+            }
+            p_person->Flag2 |= TgF2_Unkn0200;
+            break;
+        case WEP_LASER:
+            p_person->Flag |= TngF_WepCharging;
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                p_target = p_person->PTarget;
+                if (p_target != NULL)
+                {
+                    if ((p_target->Flag & TngF_Destroyed) == 0)
+                        p_person->Flag2 |= TngF_Unkn00200000;
+                }
+            }
+            p_person->U.UPerson.WeaponTimer = 0;
+            if ((p_person->Flag & TngF_Unkn1000) != 0)
+                play_dist_sample(p_person, 7u, 0x7Fu, 0x40u, 100, -1, 3);
+            break;
+        case WEP_ELLASER:
+            p_person->Flag |= TngF_WepCharging;
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                p_target = p_person->PTarget;
+                if (p_target != NULL)
+                {
+                    if ((p_target->Flag & TngF_Destroyed) == 0)
+                        p_person->Flag2 |= TngF_Unkn00200000;
+                }
+            }
+            p_person->U.UPerson.WeaponTimer = 0;
+            if (((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
+              && ((p_person->Flag & TngF_Unkn1000) != 0))
+                play_dist_sample(p_person, 7u, 0x7Fu, 0x40u, 100, -1, 3);
+            break;
+        case WEP_RAP:
+            p_person->U.UPerson.WeaponTimer = 0;
+            p_person->Flag |= 0x0400;
+            break;
+        case WEP_NUCLGREN:
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                person_weapons_remove_one(p_person, WEP_NUCLGREN);
+                if (!person_carries_weapon(p_person, WEP_NUCLGREN))
+                    person_weapons_reset_previous(p_person);
+            }
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            init_grenade(p_person, 3);
+            play_dist_sample(p_person, 0x24u, 0x7Fu, 0x40u, 100, 0, 2);
+            p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            if ((p_person->Flag & TngF_PlayerAgent) == 0)
+                choose_best_weapon_for_range(p_person, 1280);
+            break;
+        case WEP_FLAMER:
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            init_flamer(p_person);
+            if (p_person->U.UPerson.WeaponTurn == 0)
+                p_person->U.UPerson.WeaponTurn = 10;
+            break;
+        case WEP_CRAZYGAS:
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                person_weapons_remove_one(p_person, WEP_CRAZYGAS);
+                if (!person_carries_weapon(p_person, WEP_CRAZYGAS))
+                    person_weapons_reset_previous(p_person);
+            }
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            init_grenade(p_person, 4);
+            play_dist_sample(p_person, 0x24u, 0x7Fu, 0x40u, 100, 0, 2);
+            p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            if ((p_person->Flag & TngF_PlayerAgent) == 0)
+                choose_best_weapon_for_range(p_person, 1280);
+            break;
+        case WEP_KOGAS:
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                person_weapons_remove_one(p_person, WEP_KOGAS);
+                if (!person_carries_weapon(p_person, WEP_KOGAS))
+                    person_weapons_reset_previous(p_person);
+            }
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            init_grenade(p_person, 5);
+            play_dist_sample(p_person, 0x24u, 0x7Fu, 0x40u, 100, 0, 2);
+            p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            if ((p_person->Flag & TngF_PlayerAgent) == 0)
+                choose_best_weapon_for_range(p_person, 1280);
+            break;
+        case WEP_ELEMINE:
+            if ((p_person->Flag2  & TgF2_Unkn00800000) == 0)
+            {
+                p_person->Flag2 |= TgF2_Unkn00800000;
+                person_init_drop(p_person, WEP_ELEMINE);
+                p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+                p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            }
+            break;
+        case WEP_EXPLMINE:
+            if ((p_person->Flag2  & TgF2_Unkn00800000) == 0)
+            {
+                p_person->Flag2 |= TgF2_Unkn00800000;
+                person_init_drop(p_person, WEP_EXPLMINE);
+                p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+                p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            }
+            break;
+        case WEP_LONGRANGE:
+            p_person->Flag &= ~TngF_WepCharging;
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                p_target = p_person->PTarget;
+                if (p_target != NULL)
+                {
+                    if ((p_target->Flag & TngF_Destroyed) == 0)
+                        p_person->Flag2 |= TngF_Unkn00200000;
+                }
+            }
+            p_person->U.UPerson.FrameId.Version[4] = 1;
+            init_long_range(p_person);
+            p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            play_dist_sample(p_person, 0x21u, 0x7Fu, 0x40u, 100, 0, 3);
+            break;
+        case WEP_AIRSTRIKE:
+            give_take_me_weapon(p_person, WEP_AIRSTRIKE, -1, p_person->ThingOffset);
+            init_air_strike(p_person);
+            break;
+        case WEP_BEAM:
+            p_person->Flag |= TngF_WepCharging;
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                p_target = p_person->PTarget;
+                if (p_target != NULL)
+                {
+                    if ((p_target->Flag & TngF_Destroyed) == 0)
+                        p_person->Flag2 |= TngF_Unkn00200000;
+                }
+            }
+            p_person->U.UPerson.WeaponTimer = 0;
+            if ((p_person->Flag & TngF_Unkn1000) != 0)
+                play_dist_sample(p_person, 7u, 0x7Fu, 0x40u, 100, -1, 3);
+            break;
+        case WEP_QDEVASTATOR:
+            p_person->Flag |= TngF_WepCharging;
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            {
+                p_target = p_person->PTarget;
+                if (p_target != NULL)
+                {
+                    if ((p_target->Flag & TngF_Destroyed) == 0)
+                        p_person->Flag2 |= TngF_Unkn00200000;
+                }
+            }
+            p_person->U.UPerson.WeaponTimer = 0;
+            if ((p_person->Flag & TngF_Unkn1000) != 0)
+                play_dist_sample(p_person, 7u, 0x7Fu, 0x40u, 100, -1, 3);
+            break;
+        case WEP_STASISFLD:
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            p_person->Flag &= ~TngF_WepCharging;
+            p_person->U.UPerson.FrameId.Version[4] = 1;
+            init_stasis_gun(p_person);
+            p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            break;
+        case WEP_TIMEGUN:
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            p_person->Flag &= ~TngF_WepCharging;
+            p_person->U.UPerson.FrameId.Version[4] = 1;
+            init_time_gun(p_person);
+            p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            break;
+        case WEP_CEREBUSIFF:
+            //TODO all other consumables are kept if NPC uses them; why do we break the rule for IFF?
+            { // Remove weapon even if it is NPC
+                person_weapons_remove_one(p_person, WEP_CEREBUSIFF);
+                if (!person_carries_weapon(p_person, WEP_CEREBUSIFF))
+                    person_weapons_reset_previous(p_person);
+            }
+            p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+            p_person->Flag &= ~TngF_WepCharging;
+            p_person->U.UPerson.FrameId.Version[4] = 1;
+            init_c_iff(p_person);
+            p_person->U.UPerson.FrameId.Version[4] = 0;
+            p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+            break;
+        default:
+          break;
+        }
+    }
+    if (((p_person->Flag & TngF_WepCharging) == 0) && (p_person->U.UPerson.CurrentWeapon != WEP_FLAMER))
+        p_person->Flag &= ~TngF_Unkn20000000;
+    if ((p_person->Flag & TngF_PlayerAgent) != 0)
+        set_player_weapon_turn(p_person, p_person->U.UPerson.WeaponTurn);
+#endif
 }
 
 void init_clone_disguise(struct Thing *p_person)
@@ -1509,6 +1790,27 @@ TbBool person_weapons_remove_one(struct Thing *p_person, ushort weptype)
     else
         done = weapons_remove_one_from_npc(&p_person->U.UPerson.WeaponsCarried, weptype);
     return done;
+}
+
+void person_weapons_reset_previous(struct Thing *p_person)
+{
+    PlayerInfo *p_player;
+    ushort plagent;
+
+    p_player = NULL;
+    plagent = 0;
+    if ((p_person->Flag & TngF_PlayerAgent) != 0)
+    {
+        PlayerIdx plyr;
+        plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+        plagent = p_person->U.UPerson.ComCur & 3;
+        p_player = &players[plyr];
+    }
+
+    if (p_player != NULL) {
+        p_player->PrevWeapon[plagent] = find_nth_weapon_held(p_person->ThingOffset, 1);
+    }
+
 }
 
 void process_automedkit(struct Thing *p_person)
