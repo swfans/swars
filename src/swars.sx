@@ -44824,7 +44824,7 @@ func_52d3d:  /* case 3 */
 		mov    %esi,%eax
 		call   ac_init_fire_weapon
 	jump_53294:
-		testb  $0x4,0xd(%esi) /* p_person->Flag & TngF_Unkn0400 */
+		testb  $0x4,0xd(%esi) /* p_person->Flag & TngF_WepCharging */
 		je     jump_536c0
 		xor    %eax,%eax
 		mov    0x99(%esi),%al

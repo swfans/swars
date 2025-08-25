@@ -106,7 +106,7 @@ enum ThingFlags {
     TngF_Unkn0080     = 0x0080,
     TngF_Unkn0100     = 0x0100,
     TngF_StationrSht  = 0x0200,
-    TngF_Unkn0400     = 0x0400,
+    TngF_WepCharging  = 0x0400,
     TngF_Unkn0800     = 0x0800,
     TngF_Unkn1000     = 0x1000,
     TngF_PlayerAgent  = 0x2000,
@@ -416,6 +416,9 @@ struct TngUPerson
   ushort SpecialOwner;
   ushort WorkPlace;
   ushort LeisurePlace;
+  /** The weapon timer is used for both re-fire delay
+   * and weapon overcharging.
+   */
   short WeaponTimer;
   short Target2;
   short MaxShieldEnergy;

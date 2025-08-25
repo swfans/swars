@@ -1444,20 +1444,34 @@ void set_person_weapon_turn(struct Thing *p_person, short n_turn)
     }
 }
 
-void process_clone_disguise(struct Thing *p_person)
+void weapon_consume_energy(struct Thing *p_person, ushort wtype)
 {
     struct WeaponDef *wdef;
     short en_used;
 
+    wdef = &weapon_defs[wtype];
+
+    switch (wtype)
+    {
+    case WEP_CLONESHLD:
+        if (in_network_game)
+            en_used = wdef->EnergyUsed >> 1;
+        else
+            en_used = wdef->EnergyUsed;
+        break;
+    default:
+        en_used = wdef->EnergyUsed;
+        break;
+    }
+    p_person->U.UPerson.Energy -= en_used;
+}
+
+void process_clone_disguise(struct Thing *p_person)
+{
     if ((p_person->Flag2 & TgF2_Unkn00400000) == 0)
         return;
 
-    wdef = &weapon_defs[WEP_CLONESHLD];
-    if (in_network_game)
-        en_used = wdef->EnergyUsed >> 1;
-    else
-        en_used = wdef->EnergyUsed;
-    p_person->U.UPerson.Energy -= en_used;
+    weapon_consume_energy(p_person, WEP_CLONESHLD);
 
     if (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->U.UPerson.Energy < 0))
         p_person->U.UPerson.CurrentWeapon = WEP_NULL;
@@ -1776,61 +1790,11 @@ void weapon_init_shot(struct Thing *p_person, ushort wtype)
     }
 }
 
-void weapon_set_refire_turn(struct Thing *p_person, ushort wtype)
-{
-    struct WeaponDef *wdef;
-
-    wdef = &weapon_defs[wtype];
-
-    int i;
-    short reFireShift;
-
-    reFireShift = 0;
-    if (p_person->U.UPerson.WeaponTimer >= 5)
-    {
-        i = p_person->U.UPerson.WeaponTimer - 3;
-        set_person_weapon_turn(p_person, i);
-    }
-    else
-    {
-        i = p_person->U.UPerson.WeaponTimer;
-        set_person_weapon_turn(p_person, i);
-        p_person->U.UPerson.WeaponTimer = 5;
-        reFireShift = 5 - i;
-    }
-
-    switch (wtype)
-    {
-    case WEP_LASER:
-        if (p_person->SubType == SubTT_PERS_MECH_SPIDER)
-            p_person->U.UPerson.WeaponTurn = 1;
-        else
-            p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
-        break;
-    case WEP_RAP:
-    case WEP_ELLASER:
-    case WEP_BEAM:
-    case WEP_QDEVASTATOR:
-        p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
-        break;
-    default:
-        break;
-    }
-    // We probably updated WeaponTurn, now do the update properly
-    set_person_weapon_turn(p_person, p_person->U.UPerson.WeaponTurn);
-}
-
-void process_wielded_weapon(struct Thing *p_person)
+void process_wielded_weapon_fire(struct Thing *p_person, ushort wtype)
 {
     struct WeaponDef *wdef;
     short wepTurn;
-    ushort wtype;
 
-    process_weapon_wield_affecting_area(p_person, p_person->U.UPerson.CurrentWeapon);
-
-    process_clone_disguise(p_person);
-
-    wtype = p_person->U.UPerson.CurrentWeapon;
     wdef = &weapon_defs[wtype];
     wepTurn = p_person->U.UPerson.WeaponTurn;
     if ((wepTurn == 0) || (wepTurn < wdef->ReFireDelay - 6))
@@ -1842,7 +1806,7 @@ void process_wielded_weapon(struct Thing *p_person)
         if ((p_person->Flag2 & TgF2_Unkn0001) == 0)
         {
             if ((p_person->Flag & TngF_Unkn0800) != 0)
-                init_razor_wire(p_person, 1u);
+                init_razor_wire(p_person, 1);
         }
         else if (((p_person->Flag & TngF_Unkn0800) != 0)
             || ((p_person->Flag2 & TgF2_Unkn0004) != 0))
@@ -1902,18 +1866,81 @@ void process_wielded_weapon(struct Thing *p_person)
         }
         break;
     default:
-        if (((p_person->Flag & TngF_Unkn0800) != 0) && (p_person->U.UPerson.CurrentWeapon & 0xFF)
-            && (p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & TngF_Unkn0400) == 0))
+        if (((p_person->Flag & TngF_Unkn0800) != 0) && (p_person->U.UPerson.CurrentWeapon != WEP_NULL)
+            && (p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & TngF_WepCharging) == 0))
         {
             process_weapon_recoil(p_person);
             init_fire_weapon(p_person);
         }
         break;
     }
+}
 
-    if ((p_person->Flag & TngF_Unkn0400) != 0)
+void weapon_inc_timer(struct Thing *p_person, ushort wtype)
+{
+    p_person->U.UPerson.WeaponTimer++;
+    if (wtype == WEP_RAP)
+        p_person->U.UPerson.WeaponTimer++;
+}
+
+void weapon_set_timer_for_refire(struct Thing *p_person, ushort wtype)
+{
+    struct WeaponDef *wdef;
+    int i;
+    short reFireShift;
+
+    wdef = &weapon_defs[wtype];
+
+    reFireShift = 0;
+    if (p_person->U.UPerson.WeaponTimer >= 5)
     {
-        if (p_person->U.UPerson.CurrentWeapon != WEP_RAP)
+        i = p_person->U.UPerson.WeaponTimer - 3;
+        set_person_weapon_turn(p_person, i);
+    }
+    else
+    {
+        i = p_person->U.UPerson.WeaponTimer;
+        set_person_weapon_turn(p_person, i);
+        p_person->U.UPerson.WeaponTimer = 5;
+        reFireShift = 5 - i;
+    }
+
+    switch (wtype)
+    {
+    case WEP_LASER:
+        if (p_person->SubType == SubTT_PERS_MECH_SPIDER)
+            p_person->U.UPerson.WeaponTurn = 1;
+        else
+            p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
+        break;
+    case WEP_RAP:
+    case WEP_ELLASER:
+    case WEP_BEAM:
+    case WEP_QDEVASTATOR:
+        p_person->U.UPerson.WeaponTurn = reFireShift + wdef->ReFireDelay;
+        break;
+    default:
+        break;
+    }
+    // We probably updated WeaponTurn, now do the update properly
+    set_person_weapon_turn(p_person, p_person->U.UPerson.WeaponTurn);
+}
+
+void process_wielded_weapon(struct Thing *p_person)
+{
+    ushort wtype;
+
+    wtype = p_person->U.UPerson.CurrentWeapon;
+
+    process_weapon_wield_affecting_area(p_person, wtype);
+
+    process_clone_disguise(p_person);
+
+    process_wielded_weapon_fire(p_person, wtype);
+
+    if ((p_person->Flag & TngF_WepCharging) != 0)
+    {
+        if (!weapon_has_targetting(wtype))
         {
             if (p_person->U.UPerson.WeaponTimer > 15)
                 p_person->U.UPerson.WeaponTimer = 15;
@@ -1921,7 +1948,7 @@ void process_wielded_weapon(struct Thing *p_person)
                 p_person->U.UPerson.Energy -= 8;
         }
 
-        switch (p_person->U.UPerson.CurrentWeapon)
+        switch (wtype)
         {
         case WEP_LASER:
             p_person->U.UPerson.FrameId.Version[4] = 2;
@@ -1946,9 +1973,7 @@ void process_wielded_weapon(struct Thing *p_person)
                 SetSamplePitch(p_person->ThingOffset, 7,
                     2 * p_person->U.UPerson.WeaponTimer + 100);
             }
-            p_person->U.UPerson.WeaponTimer++;
-            if (p_person->U.UPerson.CurrentWeapon == WEP_RAP)
-                p_person->U.UPerson.WeaponTimer++;
+            weapon_inc_timer(p_person, wtype);
 
             if ((p_person->Flag & (TngF_Unkn20000000|TngF_PlayerAgent)) != (TngF_Unkn20000000|TngF_PlayerAgent))
             {
@@ -1973,7 +1998,7 @@ void process_wielded_weapon(struct Thing *p_person)
                         p_person->Flag &= ~TngF_Unkn0800;
                 }
             }
-            if ((p_person->U.UPerson.CurrentWeapon == WEP_RAP) && (p_person->PTarget == NULL))
+            if (weapon_has_targetting(wtype) && (p_person->PTarget == NULL))
                 p_person->U.UPerson.WeaponTimer = 0;
         }
 
@@ -1981,16 +2006,16 @@ void process_wielded_weapon(struct Thing *p_person)
         {
             process_weapon_recoil(p_person);
 
-            weapon_init_shot(p_person, p_person->U.UPerson.CurrentWeapon);
+            weapon_init_shot(p_person, wtype);
 
             if (wtype == WEP_RAP)
-                p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+                weapon_consume_energy(p_person, wtype);
 
-            weapon_set_refire_turn(p_person, wtype);
+            weapon_set_timer_for_refire(p_person, wtype);
 
-            p_person->Flag &= ~TngF_Unkn0400;
+            p_person->Flag &= ~TngF_WepCharging;
             if ((p_person->U.UPerson.WeaponTimer > 5)
-              && (p_person->U.UPerson.CurrentWeapon != WEP_RAP))
+              && (wtype != WEP_RAP))
                 p_person->Flag |= TngF_StationrSht;
         }
     }
@@ -2018,7 +2043,7 @@ void process_weapon(struct Thing *p_person)
         p_target = p_owner->PTarget;
         if (p_target != NULL)
         {
-            if ((p_target->State == PerSt_DEAD) && (p_owner->Flag & (TngF_Unkn0400|TngF_Unkn0800)) != 0)
+            if ((p_target->State == PerSt_DEAD) && (p_owner->Flag & (TngF_WepCharging|TngF_Unkn0800)) != 0)
             {
                 p_person->Flag |= TngF_Unkn0800;
                 p_person->PTarget = p_target;

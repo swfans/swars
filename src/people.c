@@ -3933,7 +3933,7 @@ void person_wait(struct Thing *p_person)
         reset_person_frame(p_person);
     }
     p_person->Flag &= ~TngF_Unkn0001;
-    if (((p_person->Flag & TngF_Unkn0400) != 0) || (p_person->U.UPerson.WeaponTurn != 0))
+    if (((p_person->Flag & TngF_WepCharging) != 0) || (p_person->U.UPerson.WeaponTurn != 0))
     {
         if (p_person->U.UPerson.AnimMode == 14 || p_person->U.UPerson.AnimMode == 15)
         {
@@ -4047,7 +4047,7 @@ void person_persuade_person(struct Thing *p_person)
     else
         weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
 
-    if (((p_person->Flag & (TngF_Unkn0800|TngF_Unkn0400)) != 0) &&
+    if (((p_person->Flag & (TngF_Unkn0800|TngF_WepCharging)) != 0) &&
       (p_person->U.UPerson.WeaponTimer > 5)) {
         p_person->Flag &= ~TngF_Unkn0800;
     }
@@ -4182,7 +4182,7 @@ void person_destroy_building(struct Thing *p_person)
     struct Thing *p_target;
     TbBool in_range;
 
-    if (((p_person->Flag & (TngF_Unkn0800|TngF_Unkn0400)) != 0) &&
+    if (((p_person->Flag & (TngF_Unkn0800|TngF_WepCharging)) != 0) &&
       (p_person->U.UPerson.WeaponTimer > 5))
         p_person->Flag &= ~TngF_Unkn0800;
 
