@@ -1220,15 +1220,17 @@ void init_fire_weapon(struct Thing *p_person)
     if (((gameturn + p_person->ThingOffset) & 0x7F) == 0)
         process_random_speech(p_person, 1);
 
-    if ((p_person->Type != TT_MINE) && ((p_person->State == PerSt_WAIT) || (p_person->State == PerSt_NONE)) )
+    if ((p_person->Type != TT_MINE) && ((p_person->State == PerSt_WAIT) || (p_person->State == PerSt_NONE)))
     {
         p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 1);
         reset_person_frame(p_person);
     }
     if (p_person->U.UPerson.Energy <= wdef->EnergyUsed)
     {
-        if (wtype == WEP_MINIGUN)
-            play_dist_sample(p_person, (p_person->U.UPerson.ComCur & 3) + 88, 0x7Fu, 0x40u, 100, 0, 2);
+        if (wtype == WEP_MINIGUN) {
+            plagent = p_person->U.UPerson.ComCur & 3;
+            play_dist_sample(p_person, 88 + plagent, 0x7Fu, 0x40u, 100, 0, 2);
+        }
     }
     else
     {
@@ -1240,7 +1242,7 @@ void init_fire_weapon(struct Thing *p_person)
             p_person->U.UPerson.Energy = wdef->EnergyUsed + 1;
         }
 
-        if (weapon_can_be_charged(wtype)) {
+        if (weapon_can_be_charged(wtype) || weapon_has_targetting(wtype)) {
             p_person->Flag |= TngF_WepCharging;
             p_person->U.UPerson.WeaponTimer = 0;
         }
@@ -1332,13 +1334,12 @@ void init_fire_weapon(struct Thing *p_person)
                 play_dist_sample(p_person, 7u, 0x7Fu, 0x40u, 100, -1, 3);
             break;
         case WEP_RAP:
-            p_person->U.UPerson.WeaponTimer = 0;
-            p_person->Flag |= 0x0400;
+            // Targetted shots are created somewhere else
             break;
         case WEP_NUCLGREN:
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
-                person_weapons_remove_one(p_person, WEP_NUCLGREN);
+                person_weapons_remove_one(p_person, wtype);
             }
             p_person->U.UPerson.Energy -= wdef->EnergyUsed;
             init_grenade(p_person, 3);
@@ -1356,7 +1357,7 @@ void init_fire_weapon(struct Thing *p_person)
         case WEP_CRAZYGAS:
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
-                person_weapons_remove_one(p_person, WEP_CRAZYGAS);
+                person_weapons_remove_one(p_person, wtype);
             }
             p_person->U.UPerson.Energy -= wdef->EnergyUsed;
             init_grenade(p_person, 4);
@@ -1368,7 +1369,7 @@ void init_fire_weapon(struct Thing *p_person)
         case WEP_KOGAS:
             if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
-                person_weapons_remove_one(p_person, WEP_KOGAS);
+                person_weapons_remove_one(p_person, wtype);
             }
             p_person->U.UPerson.Energy -= wdef->EnergyUsed;
             init_grenade(p_person, 5);
@@ -1405,7 +1406,7 @@ void init_fire_weapon(struct Thing *p_person)
             play_dist_sample(p_person, 0x21u, 0x7Fu, 0x40u, 100, 0, 3);
             break;
         case WEP_AIRSTRIKE:
-            give_take_me_weapon(p_person, WEP_AIRSTRIKE, -1, p_person->ThingOffset);
+            give_take_me_weapon(p_person, wtype, -1, p_person->ThingOffset);
             init_air_strike(p_person);
             break;
         case WEP_BEAM:
