@@ -40,6 +40,18 @@ struct BreakoutLevel {
     ubyte field_4[120];
 };
 
+struct BATItem;
+
+struct BATItem {
+    int UnkDw0;
+    int UnkDw1;
+    int UnkDw2[4];
+    int UnkDw6;
+    int UnkDw7;
+    struct BATItem *UnkDw8;
+    struct BATItem **UnkDw9;
+};
+
 #pragma pack()
 
 extern int BAT_data_1e26e8;
@@ -57,12 +69,14 @@ extern ubyte BAT_data_1e271c[120];
 extern int BAT_paddle_x;
 extern int BAT_data_1e2798;
 extern ubyte BAT_byte_1e279c;
-extern char BAT_btarr_1e27a0[32];
+extern void *BAT_btarr_1e27a0[8];
 extern void *BAT_dwarr_1e27c0[312];
-extern void *BAT_ptr_1e2ca0;
-extern int BAT_data_1e2ca4;
+extern struct BATItem *BAT_ptr_1e2ca0;
+extern struct BATItem *BAT_data_1e2ca4;
 extern int BAT_data_1e2ca8;
+extern ubyte BAT_btarr_1e2cbc[16];
 extern void *BAT_dwarr_1e2ccc[92];
+extern void *BAT_ptr_1e2e3c;
 extern int BAT_data_1e2e40;
 
 extern struct BreakoutLevel BAT_levels[];
