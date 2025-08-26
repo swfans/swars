@@ -35,6 +35,14 @@
 
 #pragma pack(1)
 
+/** Minigame screen line width.
+ *
+ * To allow the output buffer to be used as texture, it needs to have
+ * size which is compatible with textures. The actual size which we will
+ * utilize can be smaller.
+ */
+#define BAT_SCREEN_LINE_WIDTH 256
+
 struct BreakoutLevel {
     char *level;
     ubyte field_4[120];
@@ -81,11 +89,58 @@ extern int BAT_data_1e2e40;
 
 extern struct BreakoutLevel BAT_levels[];
 
+static void BAT_screen_clear(int width, int height)
+{
+    ubyte *o;
+    int y;
+
+    o = BAT_screen;
+    for (y = 0; y < height; y++)
+    {
+        memset(o, 0, width);
+        o += BAT_SCREEN_LINE_WIDTH;
+    }
+}
+
+static void BAT_draw_remainig_lives(int pos_x, int pos_y)
+{
+    ubyte *o;
+    int y;
+
+    o = BAT_screen + pos_y * BAT_SCREEN_LINE_WIDTH + pos_x;
+    for (y = 0; y < BAT_data_1e2704; y++, o -= 5)
+    {
+          TbPixel px;
+
+          px = BAT_byte_1e279c;
+          o[1] = px;
+          o[2] = px;
+          o[3] = px;
+          o[4] = px;
+    }
+}
+
 void BAT_draw_char(int x, int y, char chr, ubyte col)
 {
     asm volatile (
       "call ASM_BAT_draw_char\n"
         : : "a" (x), "d" (y), "b" (chr), "c" (col));
+}
+
+void BAT_input_paddle(void)
+{
+    int ms_x;
+
+    if ( lbDisplay.ScreenMode == 1 )
+        ms_x = 2 * lbDisplay.MMouseX;
+    else
+        ms_x = lbDisplay.MMouseX;
+    BAT_paddle_x = ((ms_x - 320) >> 2) + 48;
+
+    if (BAT_data_1e2798 < BAT_data_1e2798 + 1)
+        BAT_paddle_x = BAT_data_1e2798 + 1;
+    if (BAT_data_1e2798 + BAT_paddle_x > 95)
+        BAT_paddle_x = 95 - BAT_data_1e2798;
 }
 
 int BAT_unknsub_27(void)
@@ -97,7 +152,7 @@ int BAT_unknsub_27(void)
     return ret;
 }
 
-void BAT_print(short pos_x, short pos_y, const char *str, ubyte coll)
+static void BAT_print(short pos_x, short pos_y, const char *str, ubyte coll)
 {
     char chr;
     ubyte colour;
@@ -149,46 +204,23 @@ void BAT_play(void)
     asm volatile ("call ASM_BAT_play\n"
         :  :  : "eax" );
 #else
-  int v0;
-  int i;
-  int v2;
   int v3;
-  ubyte *v4;
-  int j;
-  int ms_x;
   int v7;
-  int v14;
-  ubyte *v15;
-  char v16;
-  int v17;
   int v22;
   struct BATItem *v25;
   struct BATItem *v26;
   struct BATItem *v27;
   struct BATItem *v28;
   char v29;
-  ubyte *v30;
-  int k;
-  int v39;
-  ubyte *m;
-  char v41;
   int v42;
   int n;
   int v44;
-  ubyte *v45;
-  int ii;
-  int v54;
-  ubyte *v55;
-  char v56;
-  int v57;
   char *v58;
   struct BATItem *v61;
   struct BATItem *v62;
   struct BATItem *v63;
   struct BATItem *v64;
   char v65;
-  ubyte *v66;
-  int jj;
   int v75;
   ubyte *v76;
   char v77;
@@ -197,8 +229,6 @@ void BAT_play(void)
   int v82;
   int kk;
   int v84;
-  ubyte *v85;
-  int mm;
   char *v87;
   char *v90;
   char *v93;
@@ -206,17 +236,12 @@ void BAT_play(void)
   ushort plagent;
   struct Thing *v100;
   char v101;
-  int v102;
-  int nn;
-  int v104;
   int v105;
   int v106;
   struct BATItem *v107;
   int v109;
   int i1;
   int v111;
-  ubyte *v112;
-  int i2;
   int v114;
   struct BATItem *v115;
   int v116;
@@ -231,16 +256,16 @@ void BAT_play(void)
     case 0:
       if (BAT_unknsub_27())
       {
+        int v0, i, v2;
+
         v0 = 12;
         BAT_state = 1;
         BAT_data_1e26f0 = 90;
         for ( i = 0; i < 10; ++i )
         {
           v2 = v0;
-          v3 = 12 * i;
-          do
-            BAT_data_1e271c[v3++] = 0x80;
-          while ( v3 != v0 );
+          for (v3 = 12 * i; v3 != v0; v3++)
+            BAT_data_1e271c[v3] = 0x80;
           v0 += 12;
         }
         BAT_data_1e2708 = v2 ^ v3;
@@ -248,23 +273,12 @@ void BAT_play(void)
         BAT_data_1e2704 = 2;
       }
       return;
+
     case 1:
-      v4 = BAT_screen;
-      for ( j = 0; j < 64; ++j )
-      {
-        memset(v4, 0, 96u);
-        v4 += 256;
-      }
-      --BAT_data_1e26f0;
-      if ( lbDisplay.ScreenMode == 1 )
-        ms_x = 2 * lbDisplay.MMouseX;
-      else
-        ms_x = lbDisplay.MMouseX;
-      BAT_paddle_x = ((ms_x - 320) >> 2) + 48;
-      if (((ms_x - 320) >> 2) + 48 - BAT_data_1e2798 < 1)
-          BAT_paddle_x = BAT_data_1e2798 + 1;
-      if (BAT_data_1e2798 + BAT_paddle_x > 95)
-          BAT_paddle_x = 95 - BAT_data_1e2798;
+      BAT_screen_clear(96, 64);
+      BAT_data_1e26f0--;
+      BAT_input_paddle();
+
       if (BAT_data_1e26f0 > 60)
       {
           v7 = 32 - 2 * (90 - BAT_data_1e26f0);
@@ -285,16 +299,8 @@ void BAT_play(void)
       BAT_print(1, 1, locstr, 1);
       sprintf(locstr, "%d", BAT_data_1e2700);
       BAT_print(48 - 2 * strlen(locstr), 1, locstr, 1);
-      v15 = BAT_screen + 602;
-      for (v14 = 0; v14 < BAT_data_1e2704; v14++)
-      {
-          v15 -= 5;
-          v16 = BAT_byte_1e279c;
-          v15[6] = BAT_byte_1e279c;
-          v15[7] = v16;
-          v15[8] = v16;
-          v15[9] = v16;
-      }
+
+      BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
 
@@ -359,40 +365,20 @@ void BAT_play(void)
         BAT_state = 2;
       goto LABEL_190;
     case 2:
-      v30 = BAT_screen;
-      for ( k = 0; k < 64; ++k )
-      {
-        memset(v30, 0, 0x60u);
-        v30 += 256;
-      }
-      if ( lbDisplay.ScreenMode == 1 )
-        ms_x = 2 * lbDisplay.MMouseX;
-      else
-        ms_x = lbDisplay.MMouseX;
-      BAT_paddle_x = ((ms_x - 320) >> 2) + 48;
-      if (((ms_x - 320) >> 2) + 48 - BAT_data_1e2798 < 1)
-          BAT_paddle_x = BAT_data_1e2798 + 1;
-      if (BAT_data_1e2798 + BAT_paddle_x > 95)
-          BAT_paddle_x = 95 - BAT_data_1e2798;
+      BAT_screen_clear(96, 64);
+      BAT_input_paddle();
+
       BAT_unknsub_22();
       BAT_unknsub_22();
       BAT_unknsub_22();
       BAT_unknsub_22();
       breakout_play_sub1();
+
       sprintf(locstr, "%d", BAT_data_1e2708);
       BAT_print(1, 1, locstr, 1);
       sprintf(locstr, "%d", BAT_data_1e2700);
       BAT_print(48 - 2 * strlen(locstr), 1, locstr, 1);
-      v39 = 0;
-      for ( m = BAT_screen + 602; v39 < BAT_data_1e2704; m -= 5 )
-      {
-        v41 = BAT_byte_1e279c;
-        m[1] = BAT_byte_1e279c;
-        m[2] = v41;
-        m[3] = v41;
-        ++v39;
-        m[4] = v41;
-      }
+      BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
       if (!BAT_data_1e2ca4)
@@ -434,45 +420,18 @@ void BAT_play(void)
       }
       goto LABEL_190;
     case 3:
-      v45 = BAT_screen;
-      for ( ii = 0; ii < 64; ++ii )
-      {
-        memset(v45, 0, 0x60u);
-        v45 += 256;
-      }
+      BAT_screen_clear(96, 64);
       --BAT_data_1e26f4;
-      if ( lbDisplay.ScreenMode == 1 )
-        ms_x = 2 * lbDisplay.MMouseX;
-      else
-        ms_x = lbDisplay.MMouseX;
-      BAT_paddle_x = ((ms_x - 320) >> 2) + 48;
-      if ( ((ms_x - 320) >> 2) + 48 - BAT_data_1e2798 < 1 )
-        BAT_paddle_x = BAT_data_1e2798 + 1;
-      if ( BAT_data_1e2798 + BAT_paddle_x > 95 )
-        BAT_paddle_x = 95 - BAT_data_1e2798;
+      BAT_input_paddle();
+
       breakout_play_sub1();
+
       sprintf(locstr, "%d", BAT_data_1e2708);
       BAT_print(1, 1, locstr, 1);
       sprintf(locstr, "%d", BAT_data_1e2700);
       BAT_print(48 - 2 * strlen(locstr), 1, locstr, 1);
 
-      v54 = 0;
-      v55 = BAT_screen + 602;
-      if ( BAT_data_1e2704 > 0 )
-      {
-        do
-        {
-          v55 -= 5;
-          v56 = BAT_byte_1e279c;
-          v55[6] = BAT_byte_1e279c;
-          v55[7] = v56;
-          v57 = BAT_data_1e2704;
-          v55[8] = v56;
-          ++v54;
-          v55[9] = v56;
-        }
-        while ( v54 < v57 );
-      }
+      BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
       v58 = "BAD LUCK!";
@@ -529,21 +488,9 @@ void BAT_play(void)
         BAT_state = 2;
       goto LABEL_190;
     case 4:
-      v66 = BAT_screen;
-      for ( jj = 0; jj < 64; ++jj )
-      {
-        memset(v66, 0, 0x60u);
-        v66 += 256;
-      }
-      if ( lbDisplay.ScreenMode == 1 )
-        ms_x = 2 * lbDisplay.MMouseX;
-      else
-        ms_x = lbDisplay.MMouseX;
-      BAT_paddle_x = ((ms_x - 320) >> 2) + 48;
-      if (((ms_x - 320) >> 2) + 48 - BAT_data_1e2798 < 1)
-        BAT_paddle_x = BAT_data_1e2798 + 1;
-      if (BAT_data_1e2798 + BAT_paddle_x > 95)
-        BAT_paddle_x = 95 - BAT_data_1e2798;
+      BAT_screen_clear(96, 64);
+      BAT_input_paddle();
+
       breakout_play_sub1();
       sprintf(locstr, "%d", BAT_data_1e2708);
       BAT_print(1, 1, locstr, 1);
@@ -591,12 +538,8 @@ void BAT_play(void)
       }
       goto LABEL_190;
     case 5:
-      v85 = BAT_screen;
-      for ( mm = 0; mm < 64; ++mm )
-      {
-        memset(v85, 0, 0x60u);
-        v85 += 256;
-      }
+      BAT_screen_clear(96, 64);
+
       v87 = "CONGRATULATIONS";
       BAT_print(18, 10, v87, 5);
       v90 = "BONUS GAME COMPLETE";
@@ -618,13 +561,13 @@ void BAT_play(void)
       }
       if (!BAT_data_1e26ec)
       {
+        int v102, nn, v104;
+
         v102 = 12;
         for ( nn = 0; nn < 10; ++nn )
         {
-          v104 = 12 * nn;
-          do
-            BAT_data_1e271c[v104++] = 0x80;
-          while ( v104 != v102 );
+          for (v104 = 12 * nn; v104 < v102; v104++)
+            BAT_data_1e271c[v104] = 0x80;
           v102 += 12;
         }
         v106 = 0;
@@ -662,12 +605,8 @@ LABEL_190:
           while ( v111 != v109 );
           v109 += 12;
         }
-        v112 = BAT_screen;
-        for ( i2 = 0; i2 < 64; ++i2 )
-        {
-          memset(v112, 0, 0x60u);
-          v112 += 256;
-        }
+        BAT_screen_clear(96, 64);
+
         BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
         BAT_dwarr_1e27c0[1] = &BAT_ptr_1e2ca0;
         v115 = (struct BATItem *)&BAT_btarr_1e27a0[10];
