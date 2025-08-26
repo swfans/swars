@@ -41,6 +41,9 @@
  */
 #define BAT_SCREEN_LINE_WIDTH 256
 
+#define BAT_SCREEN_WIDTH 96
+#define BAT_SCREEN_HEIGHT 64
+
 #define BAT_BRICK_COLUMNS 12
 #define BAT_BRICK_ROWS 10
 
@@ -70,18 +73,18 @@ extern int BAT_data_1e26f4;
 extern int BAT_data_1e26f8;
 extern int BAT_state;
 extern int BAT_levelno;
-extern int BAT_data_1e2704;
+extern int BAT_num_lives;
 extern int BAT_score;
 extern int BAT_data_1e270c;
 extern ubyte *BAT_screen;
 extern ubyte BAT_data_1e271c[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 extern int BAT_paddle_x;
 extern int BAT_data_1e2798;
-extern ubyte BAT_byte_1e279c;
+extern TbPixel BAT_lives_colour;
 extern void *BAT_btarr_1e27a0[320];
 extern struct BATItem *BAT_ptr_1e2ca0;
 extern struct BATItem *BAT_data_1e2ca4;
-extern int BAT_ball_colour;
+extern TbPixel BAT_ball_colour;
 extern ubyte BAT_btarr_1e2cbc[16];
 extern void *BAT_dwarr_1e2ccc[92];
 extern void *BAT_ptr_1e2e3c;
@@ -89,17 +92,22 @@ extern int BAT_data_1e2e40;
 
 extern struct BreakoutLevel BAT_levels[];
 
-static void BAT_screen_clear(int width, int height)
+static void BAT_screen_clear_rect(int beg_x, int beg_y, int end_x, int end_y)
 {
     ubyte *o;
     int y;
 
-    o = BAT_screen;
-    for (y = 0; y < height; y++)
+    o = BAT_screen + beg_y * BAT_SCREEN_LINE_WIDTH;
+    for (y = beg_y; y < end_y; y++)
     {
-        memset(o, 0, width);
+        memset(o + beg_x, 0, end_x - beg_x);
         o += BAT_SCREEN_LINE_WIDTH;
     }
+}
+
+static void BAT_screen_clear(void)
+{
+    BAT_screen_clear_rect(0, 0, BAT_SCREEN_WIDTH, BAT_SCREEN_HEIGHT);
 }
 
 static void BAT_draw_remainig_lives(int pos_x, int pos_y)
@@ -108,15 +116,15 @@ static void BAT_draw_remainig_lives(int pos_x, int pos_y)
     int y;
 
     o = BAT_screen + pos_y * BAT_SCREEN_LINE_WIDTH + pos_x;
-    for (y = 0; y < BAT_data_1e2704; y++, o -= 5)
+    for (y = 0; y < BAT_num_lives; y++, o -= 5)
     {
-          TbPixel px;
+        TbPixel px;
 
-          px = BAT_byte_1e279c;
-          o[1] = px;
-          o[2] = px;
-          o[3] = px;
-          o[4] = px;
+        px = BAT_lives_colour;
+        o[1] = px;
+        o[2] = px;
+        o[3] = px;
+        o[4] = px;
     }
 }
 
@@ -145,11 +153,12 @@ static void BAT_print(short pos_x, short pos_y, const char *str, ubyte coll)
 
 static void BAT_draw_score_and_level(void)
 {
-    char locstr[64];
+    char locstr[32];
+
     sprintf(locstr, "%d", BAT_score);
     BAT_print(1, 1, locstr, ColLU_WHITE);
     sprintf(locstr, "%d", BAT_levelno);
-    BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
+    BAT_print(BAT_SCREEN_WIDTH / 2 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
 }
 
 static void BAT_draw_win_message(void)
@@ -166,15 +175,40 @@ static void BAT_draw_win_message(void)
     BAT_print(34, 38, str, ColLU_WHITE);
 }
 
+static void BAT_draw_lost_life_message(void)
+{
+    const char *str;
+
+    str = "BAD LUCK!";
+    BAT_print(30, 52, str, 8);
+}
+
+static void BAT_draw_game_over_message(void)
+{
+    const char *str;
+
+    str = "GAME OVER";
+    BAT_print(30, 52, str, 8);
+}
+
+static void BAT_draw_level_intro_text(void)
+{
+    char locstr[64];
+
+    if (BAT_data_1e26f0 < 60)
+          sprintf(locstr, "%s", BAT_levels[BAT_levelno - 1].lv_name);
+    else
+          sprintf(locstr, "ENTERING LEVEL : %d", BAT_levelno);
+    BAT_print(BAT_SCREEN_WIDTH / 2 - 2 * strlen(locstr) + 1, 52, locstr, 8);
+}
+
 static void BAT_input_paddle(void)
 {
-    int ms_x;
+    int ms_x, scr_x;
 
-    if ( lbDisplay.ScreenMode == 1 )
-        ms_x = 2 * lbDisplay.MMouseX;
-    else
-        ms_x = lbDisplay.MMouseX;
-    BAT_paddle_x = ((ms_x - 320) >> 2) + 48;
+    ms_x = lbDisplay.MMouseX;
+    scr_x = lbDisplay.GraphicsScreenWidth;
+    BAT_paddle_x = BAT_SCREEN_WIDTH / 2 + ((ms_x - scr_x/2) * BAT_SCREEN_WIDTH) / (scr_x / 2);
 
     if (BAT_paddle_x < BAT_data_1e2798 + 1)
         BAT_paddle_x = BAT_data_1e2798 + 1;
@@ -189,7 +223,7 @@ static void BAT_input_level(void)
       if (lbKeyOn[KC_N] && lbShift == KMod_SHIFT)
       {
           BAT_data_1e270c = 0;
-          BAT_data_1e2704++;
+          BAT_num_lives++;
       }
 }
 
@@ -274,34 +308,6 @@ void BAT_play(void)
     asm volatile ("call ASM_BAT_play\n"
         :  :  : "eax" );
 #else
-  int v22;
-  struct BATItem *v25;
-  struct BATItem *v26;
-  struct BATItem *v27;
-  struct BATItem *v28;
-  char v29;
-  char *v58;
-  struct BATItem *v61;
-  struct BATItem *v62;
-  struct BATItem *v63;
-  struct BATItem *v64;
-  char v65;
-  int v75;
-  ubyte *v76;
-  char v77;
-  int v78;
-  char *v79;
-  int v105;
-  struct BATItem *v107;
-  int v114;
-  struct BATItem *v115;
-  int v116;
-  int v118;
-  char *v119;
-  int v120;
-  char *v121;
-  char locstr[64];
-
   switch (BAT_state)
   {
     case 0:
@@ -312,12 +318,12 @@ void BAT_play(void)
         BAT_level_clear();
         BAT_score = 0;
         BAT_levelno = 1;
-        BAT_data_1e2704 = 2;
+        BAT_num_lives = 2;
       }
       return;
 
     case 1:
-      BAT_screen_clear(96, 64);
+      BAT_screen_clear();
       BAT_data_1e26f0--;
       BAT_input_paddle();
       BAT_ball_colour_fade();
@@ -326,15 +332,17 @@ void BAT_play(void)
       BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
-
-      if (BAT_data_1e26f0 < 60)
-          sprintf(locstr, "%s", BAT_levels[BAT_levelno - 1].lv_name);
-      else
-          sprintf(locstr, "ENTERING LEVEL : %d", BAT_levelno);
-      BAT_print(48 - 2 * strlen(locstr) + 1, 52, locstr, 8);
+      BAT_draw_level_intro_text();
 
       if (BAT_data_1e26f0 == 60)
       {
+        int v22;
+        struct BATItem *v25;
+        struct BATItem *v26;
+        struct BATItem *v27;
+        struct BATItem *v28;
+        char v29;
+
         breakout_func_ddae0(BAT_levelno);
         BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
         BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
@@ -388,7 +396,7 @@ void BAT_play(void)
         BAT_state = 2;
       goto LABEL_190;
     case 2:
-      BAT_screen_clear(96, 64);
+      BAT_screen_clear();
       BAT_input_paddle();
 
       BAT_unknsub_22();
@@ -427,24 +435,22 @@ void BAT_play(void)
       }
       goto LABEL_190;
     case 3:
-      BAT_screen_clear(96, 64);
+      BAT_screen_clear();
       BAT_data_1e26f4--;
       BAT_input_paddle();
 
       breakout_play_sub1();
-
       BAT_draw_score_and_level();
       BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
-      v58 = "BAD LUCK!";
-      BAT_print(30, 52, v58, 8);
+      BAT_draw_lost_life_message();
 
       if ( BAT_data_1e26f4 == 50 )
       {
-        if (BAT_data_1e2704)
+        if (BAT_num_lives)
         {
-          --BAT_data_1e2704;
+          --BAT_num_lives;
         }
         else
         {
@@ -454,6 +460,12 @@ void BAT_play(void)
       }
       if ( BAT_data_1e26f4 == 40 )
       {
+        struct BATItem *v61;
+        struct BATItem *v62;
+        struct BATItem *v63;
+        struct BATItem *v64;
+        char v65;
+
         v61 = BAT_ptr_1e2ca0;
         if ( v61 )
         {
@@ -491,33 +503,15 @@ void BAT_play(void)
         BAT_state = 2;
       goto LABEL_190;
     case 4:
-      BAT_screen_clear(96, 64);
+      BAT_screen_clear();
       BAT_input_paddle();
 
       breakout_play_sub1();
       BAT_draw_score_and_level();
-
-      v75 = 0;
-      v76 = BAT_screen + 602;
-      if ( BAT_data_1e2704 > 0 )
-      {
-        do
-        {
-          v76 -= 5;
-          v77 = BAT_byte_1e279c;
-          v76[6] = BAT_byte_1e279c;
-          v76[7] = v77;
-          v78 = BAT_data_1e2704;
-          v76[8] = v77;
-          ++v75;
-          v76[9] = v77;
-        }
-        while ( v75 < v78 );
-      }
+      BAT_draw_remainig_lives(90, 2);
       breakout_play_sub2();
       BAT_unknsub_21();
-      v79 = "GAME OVER";
-      BAT_print(30, 52, v79, 8);
+      BAT_draw_game_over_message();
 
       if (!BAT_data_1e26f8)
       {
@@ -526,15 +520,18 @@ void BAT_play(void)
         BAT_data_1e26f0 = 90;
         BAT_levelno = 1;
         BAT_score = 0;
-        BAT_data_1e2704 = 2;
+        BAT_num_lives = 2;
       }
       goto LABEL_190;
     case 5:
-      BAT_screen_clear(96, 64);
+      BAT_screen_clear();
       BAT_draw_win_message();
       player_agents_add_random_epidermises(&players[local_player_no]);
       if (!BAT_data_1e26ec)
       {
+        int v105;
+        struct BATItem *v107;
+
         BAT_level_clear();
         BAT_ptr_1e2ca0 = (struct BATItem *)&BAT_btarr_1e27a0[0];
         v107 = (struct BATItem *)&BAT_btarr_1e27a0[10];
@@ -550,7 +547,7 @@ void BAT_play(void)
         BAT_state = 1;
         BAT_levelno = 1;
         BAT_score = 0;
-        BAT_data_1e2704 = 2;
+        BAT_num_lives = 2;
         ingame.UserFlags |= 0x01;
         BAT_btarr_1e27a0[10 * v105 + 8] = 0;
         BAT_data_1e26f0 = 90;
@@ -560,9 +557,17 @@ void BAT_play(void)
 LABEL_190:
       if (!BAT_unknsub_27())
       {
+        int v114;
+        struct BATItem *v115;
+        int v116;
+        int v118;
+        char *v119;
+        int v120;
+        char *v121;
+
         BAT_state = 0;
         BAT_level_clear();
-        BAT_screen_clear(96, 64);
+        BAT_screen_clear();
 
         BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
         BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
