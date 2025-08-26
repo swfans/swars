@@ -23,14 +23,12 @@
 #include "bfkeybd.h"
 #include "bfmemut.h"
 #include "bfscreen.h"
-#include "bfutility.h"
 
 #include "display.h"
 #include "game.h"
 #include "player.h"
 #include "sound.h"
 #include "swlog.h"
-#include "thing.h"
 /******************************************************************************/
 
 #pragma pack(1)
@@ -83,7 +81,7 @@ extern ubyte BAT_byte_1e279c;
 extern void *BAT_btarr_1e27a0[320];
 extern struct BATItem *BAT_ptr_1e2ca0;
 extern struct BATItem *BAT_data_1e2ca4;
-extern int BAT_data_1e2ca8;
+extern int BAT_ball_colour;
 extern ubyte BAT_btarr_1e2cbc[16];
 extern void *BAT_dwarr_1e2ccc[92];
 extern void *BAT_ptr_1e2e3c;
@@ -129,6 +127,45 @@ void BAT_draw_char(int x, int y, char chr, ubyte col)
         : : "a" (x), "d" (y), "b" (chr), "c" (col));
 }
 
+static void BAT_print(short pos_x, short pos_y, const char *str, ubyte coll)
+{
+    char chr;
+    ubyte colour;
+
+    colour = colour_lookup[coll];
+    chr = *str;
+    while (chr != '\0')
+    {
+        if (chr != ' ')
+            BAT_draw_char(pos_x, pos_y, chr, colour);
+        chr = *++str;
+        pos_x += 4;
+    }
+}
+
+static void BAT_draw_score_and_level(void)
+{
+    char locstr[64];
+    sprintf(locstr, "%d", BAT_score);
+    BAT_print(1, 1, locstr, ColLU_WHITE);
+    sprintf(locstr, "%d", BAT_levelno);
+    BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
+}
+
+static void BAT_draw_win_message(void)
+{
+    const char *str;
+
+    str = "CONGRATULATIONS";
+    BAT_print(18, 10, str, ColLU_YELLOW);
+    str = "BONUS GAME COMPLETE";
+    BAT_print(10, 16, str, ColLU_YELLOW);
+    str = "BONUS ITEM";
+    BAT_print(28, 30, str, ColLU_WHITE);
+    str = "AWARDED";
+    BAT_print(34, 38, str, ColLU_WHITE);
+}
+
 static void BAT_input_paddle(void)
 {
     int ms_x;
@@ -166,9 +203,36 @@ static void BAT_level_set_rect(int beg_c, int beg_r, int end_c, int end_r, ubyte
     }
 }
 
-int BAT_level_clear(void)
+static void BAT_level_clear(void)
 {
     BAT_level_set_rect(0, 0, BAT_BRICK_COLUMNS, BAT_BRICK_ROWS, 0x80);
+}
+
+void BAT_unknsub_22(void)
+{
+    asm volatile ("call ASM_BAT_unknsub_22\n"
+        :  :  : "eax" );
+}
+
+static void BAT_ball_colour_fade(void)
+{
+    int fade_lv;
+
+    if (BAT_data_1e26f0 > 60)
+    {
+        fade_lv = 32 - 2 * (90 - BAT_data_1e26f0);
+        if (fade_lv < 0)
+            fade_lv = 0;
+        BAT_ball_colour = pixmap.fade_table[256 * fade_lv + colour_lookup[1]];
+        BAT_unknsub_22();
+        BAT_unknsub_22();
+        BAT_unknsub_22();
+        BAT_unknsub_22();
+    }
+    else
+    {
+        BAT_ball_colour = colour_lookup[1];
+    }
 }
 
 int BAT_unknsub_27(void)
@@ -180,31 +244,9 @@ int BAT_unknsub_27(void)
     return ret;
 }
 
-static void BAT_print(short pos_x, short pos_y, const char *str, ubyte coll)
-{
-    char chr;
-    ubyte colour;
-
-    colour = colour_lookup[coll];
-    chr = *str;
-    while (chr != '\0')
-    {
-        if (chr != ' ')
-            BAT_draw_char(pos_x, pos_y, chr, colour);
-        chr = *++str;
-        pos_x += 4;
-    }
-}
-
 void BAT_unknsub_21(void)
 {
     asm volatile ("call ASM_BAT_unknsub_21\n"
-        :  :  : "eax" );
-}
-
-void BAT_unknsub_22(void)
-{
-    asm volatile ("call ASM_BAT_unknsub_22\n"
         :  :  : "eax" );
 }
 
@@ -232,7 +274,6 @@ void BAT_play(void)
     asm volatile ("call ASM_BAT_play\n"
         :  :  : "eax" );
 #else
-  int v7;
   int v22;
   struct BATItem *v25;
   struct BATItem *v26;
@@ -250,13 +291,6 @@ void BAT_play(void)
   char v77;
   int v78;
   char *v79;
-  char *v87;
-  char *v90;
-  char *v93;
-  char *v96;
-  ushort plagent;
-  struct Thing *v100;
-  char v101;
   int v105;
   struct BATItem *v107;
   int v114;
@@ -286,28 +320,9 @@ void BAT_play(void)
       BAT_screen_clear(96, 64);
       BAT_data_1e26f0--;
       BAT_input_paddle();
-
-      if (BAT_data_1e26f0 > 60)
-      {
-          v7 = 32 - 2 * (90 - BAT_data_1e26f0);
-          if (v7 < 0)
-            v7 = 0;
-          BAT_data_1e2ca8 = pixmap.fade_table[256 * v7 + colour_lookup[1]];
-          BAT_unknsub_22();
-          BAT_unknsub_22();
-          BAT_unknsub_22();
-          BAT_unknsub_22();
-      }
-      else
-      {
-        BAT_data_1e2ca8 = colour_lookup[1];
-      }
+      BAT_ball_colour_fade();
       breakout_play_sub1();
-      sprintf(locstr, "%d", BAT_score);
-      BAT_print(1, 1, locstr, ColLU_WHITE);
-      sprintf(locstr, "%d", BAT_levelno);
-      BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
-
+      BAT_draw_score_and_level();
       BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
@@ -381,11 +396,7 @@ void BAT_play(void)
       BAT_unknsub_22();
       BAT_unknsub_22();
       breakout_play_sub1();
-
-      sprintf(locstr, "%d", BAT_score);
-      BAT_print(1, 1, locstr, ColLU_WHITE);
-      sprintf(locstr, "%d", BAT_levelno);
-      BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
+      BAT_draw_score_and_level();
       BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
@@ -422,11 +433,7 @@ void BAT_play(void)
 
       breakout_play_sub1();
 
-      sprintf(locstr, "%d", BAT_score);
-      BAT_print(1, 1, locstr, ColLU_WHITE);
-      sprintf(locstr, "%d", BAT_levelno);
-      BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
-
+      BAT_draw_score_and_level();
       BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
@@ -488,10 +495,7 @@ void BAT_play(void)
       BAT_input_paddle();
 
       breakout_play_sub1();
-      sprintf(locstr, "%d", BAT_score);
-      BAT_print(1, 1, locstr, ColLU_WHITE);
-      sprintf(locstr, "%d", BAT_levelno);
-      BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
+      BAT_draw_score_and_level();
 
       v75 = 0;
       v76 = BAT_screen + 602;
@@ -527,26 +531,8 @@ void BAT_play(void)
       goto LABEL_190;
     case 5:
       BAT_screen_clear(96, 64);
-
-      v87 = "CONGRATULATIONS";
-      BAT_print(18, 10, v87, ColLU_YELLOW);
-      v90 = "BONUS GAME COMPLETE";
-      BAT_print(10, 16, v90, ColLU_YELLOW);
-      v93 = "BONUS ITEM";
-      BAT_print(28, 30, v93, ColLU_WHITE);
-      v96 = "AWARDED";
-      BAT_print(34, 38, v96, ColLU_WHITE);
-
-      for (plagent = 0; plagent < playable_agents; plagent++)
-      {
-        v100 = players[local_player_no].MyAgent[plagent];
-        if ( !(v100->U.UPerson.UMod.Mods >> 12) )
-        {
-          v101 = LbRandomAnyShort();
-          v100->U.UPerson.UMod.Mods &= 0x0FFF;
-          v100->U.UPerson.UMod.Mods |= (((v101 & 3) + 1) & 0xF) << 12;
-        }
-      }
+      BAT_draw_win_message();
+      player_agents_add_random_epidermises(&players[local_player_no]);
       if (!BAT_data_1e26ec)
       {
         BAT_level_clear();

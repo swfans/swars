@@ -1153,7 +1153,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_21)	/* 0x0DDCF8 */
 		shl    $0x8,%eax
 		xor    %ebx,%ebx
 		add    %edx,%eax
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca8),%dl
+		mov    EXPORT_SYMBOL(BAT_ball_colour),%dl
 		mov    %dl,%bl
 		mov    EXPORT_SYMBOL(pixmap)+0x1400(%ebx),%dh # pixmap.fade_table[0x1400+?]
 		mov    %dh,-0x101(%eax)
@@ -2079,7 +2079,7 @@ breakout_func_de991:
 		jg     jump_dea42
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%al
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca8)
+		mov    %eax,EXPORT_SYMBOL(BAT_ball_colour)
 		jmp    jump_dea8a
 	jump_dea42:
 		mov    $0x5a,%eax
@@ -2097,7 +2097,7 @@ breakout_func_de991:
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%dl
 		mov    EXPORT_SYMBOL(pixmap)(%edx,%eax,1),%al # pixmap.fade_table[?]
 		and    $0xff,%eax
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca8)
+		mov    %eax,EXPORT_SYMBOL(BAT_ball_colour)
 		call   ac_BAT_unknsub_22
 		call   ac_BAT_unknsub_22
 		call   ac_BAT_unknsub_22
@@ -3560,7 +3560,7 @@ GLOBAL (BAT_ptr_1e2ca0)	/* 0x_1e2ca0 */
 		.long	0x0
 GLOBAL (BAT_data_1e2ca4)	/* 0x1e2ca4 */
 		.long	0x0
-GLOBAL (BAT_data_1e2ca8)	/* 0x1e2ca8 */
+GLOBAL (BAT_ball_colour)	/* 0x1e2ca8 */
 		.long	0x0
 data_1e2cac:
 		.long	0x0

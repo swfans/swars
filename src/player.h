@@ -118,6 +118,7 @@ void remove_agent(ubyte cryo_no);
 void add_agent(ulong weapons, ushort mods);
 
 void player_agents_init_prev_weapon(PlayerIdx plyr);
+void player_agents_add_random_epidermises(PlayerInfo *p_player);
 void player_agent_update_prev_weapon(struct Thing *p_agent);
 short player_agent_current_or_prev_weapon(PlayerIdx plyr, ushort plagent);
 TbBool player_agent_has_weapon(PlayerIdx plyr, ushort plagent, ubyte weapon);
