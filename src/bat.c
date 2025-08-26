@@ -77,8 +77,7 @@ extern ubyte BAT_data_1e271c[120];
 extern int BAT_paddle_x;
 extern int BAT_data_1e2798;
 extern ubyte BAT_byte_1e279c;
-extern void *BAT_btarr_1e27a0[8];
-extern void *BAT_dwarr_1e27c0[312];
+extern void *BAT_btarr_1e27a0[320];
 extern struct BATItem *BAT_ptr_1e2ca0;
 extern struct BATItem *BAT_data_1e2ca4;
 extern int BAT_data_1e2ca8;
@@ -314,15 +313,15 @@ void BAT_play(void)
       {
         breakout_func_ddae0(BAT_data_1e2700);
         BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
-        BAT_dwarr_1e27c0[1] = &BAT_ptr_1e2ca0;
+        BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
 
         for (v22 = 0; v22 < 31; v22++)
         {
-          BAT_dwarr_1e27c0[10 * v22] = &BAT_dwarr_1e27c0[10 * v22 + 2];
-          BAT_dwarr_1e27c0[10 * v22 + 10 + 1] = &BAT_dwarr_1e27c0[10 * v22];
+          BAT_btarr_1e27a0[10 * v22 + 8] = &BAT_btarr_1e27a0[10 * v22 + 10];
+          BAT_btarr_1e27a0[10 * v22 + 10 + 9] = &BAT_btarr_1e27a0[10 * v22 + 8];
         }
         BAT_data_1e2ca4 = 0;
-        BAT_dwarr_1e27c0[10 * v22] = 0;
+        BAT_btarr_1e27a0[10 * v22 + 8] = 0;
 
         v25 = BAT_ptr_1e2ca0;
         if ( v25 )
@@ -571,13 +570,13 @@ void BAT_play(void)
           v102 += 12;
         }
         v106 = 0;
-        BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
+        BAT_ptr_1e2ca0 = (struct BATItem *)&BAT_btarr_1e27a0[0];
         v107 = (struct BATItem *)&BAT_btarr_1e27a0[10];
-        BAT_dwarr_1e27c0[1] = &BAT_ptr_1e2ca0;
+        BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
         for (v105 = 0; v105 < 31; v105++)
         {
-          BAT_dwarr_1e27c0[v106] = v107;
-          BAT_dwarr_1e27c0[10 * v105 + 10 + 1] = &BAT_btarr_1e27a0[10 * v105 + 8];
+          BAT_btarr_1e27a0[10 * v105 + 8] = v107;
+          BAT_btarr_1e27a0[10 * v105 + 10 + 9] = &BAT_btarr_1e27a0[10 * v105 + 8];
           v107 += 1;
         }
 
@@ -587,7 +586,7 @@ void BAT_play(void)
         BAT_data_1e2708 = 0;
         BAT_data_1e2704 = 2;
         ingame.UserFlags |= 0x01;
-        BAT_dwarr_1e27c0[v106] = 0;
+        BAT_btarr_1e27a0[10 * v105 + 8] = 0;
         BAT_data_1e26f0 = 90;
       }
       goto LABEL_190;
@@ -608,13 +607,13 @@ LABEL_190:
         BAT_screen_clear(96, 64);
 
         BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
-        BAT_dwarr_1e27c0[1] = &BAT_ptr_1e2ca0;
+        BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
         v115 = (struct BATItem *)&BAT_btarr_1e27a0[10];
         v116 = 0;
         for (v114 = 0; v114 < 31; v114++)
         {
-          BAT_dwarr_1e27c0[v116] = v115;
-          BAT_dwarr_1e27c0[10 * v114 + 10 + 1] = &BAT_btarr_1e27a0[v116 + 8];
+          BAT_btarr_1e27a0[v116+ 8] = v115;
+          BAT_btarr_1e27a0[10 * v114 + 10 + 9] = &BAT_btarr_1e27a0[v116 + 8];
           v116 += 10;
           v115 += 1;
         }
@@ -622,7 +621,7 @@ LABEL_190:
         BAT_data_1e2ca4 = 0;
         BAT_ptr_1e2e3c = BAT_btarr_1e2cbc;
         BAT_dwarr_1e2ccc[1] = &BAT_ptr_1e2e3c;
-        BAT_dwarr_1e27c0[v116] = 0;
+        BAT_btarr_1e27a0[v116 + 8] = 0;
         v119 = &BAT_btarr_1e2cbc[24]; // access beyond size?
         v120 = 0;
         do
