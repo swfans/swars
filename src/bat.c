@@ -43,9 +43,12 @@
  */
 #define BAT_SCREEN_LINE_WIDTH 256
 
+#define BAT_BRICK_COLUMNS 12
+#define BAT_BRICK_ROWS 10
+
 struct BreakoutLevel {
-    char *level;
-    ubyte field_4[120];
+    char *lv_name;
+    ubyte field_4[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 };
 
 struct BATItem;
@@ -68,12 +71,12 @@ extern int BAT_data_1e26f0;
 extern int BAT_data_1e26f4;
 extern int BAT_data_1e26f8;
 extern int BAT_state;
-extern int BAT_data_1e2700;
+extern int BAT_levelno;
 extern int BAT_data_1e2704;
-extern int BAT_data_1e2708;
+extern int BAT_score;
 extern int BAT_data_1e270c;
 extern ubyte *BAT_screen;
-extern ubyte BAT_data_1e271c[120];
+extern ubyte BAT_data_1e271c[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 extern int BAT_paddle_x;
 extern int BAT_data_1e2798;
 extern ubyte BAT_byte_1e279c;
@@ -126,7 +129,7 @@ void BAT_draw_char(int x, int y, char chr, ubyte col)
         : : "a" (x), "d" (y), "b" (chr), "c" (col));
 }
 
-void BAT_input_paddle(void)
+static void BAT_input_paddle(void)
 {
     int ms_x;
 
@@ -136,10 +139,36 @@ void BAT_input_paddle(void)
         ms_x = lbDisplay.MMouseX;
     BAT_paddle_x = ((ms_x - 320) >> 2) + 48;
 
-    if (BAT_data_1e2798 < BAT_data_1e2798 + 1)
+    if (BAT_paddle_x < BAT_data_1e2798 + 1)
         BAT_paddle_x = BAT_data_1e2798 + 1;
-    if (BAT_data_1e2798 + BAT_paddle_x > 95)
+    if (BAT_paddle_x + BAT_data_1e2798 > 95)
         BAT_paddle_x = 95 - BAT_data_1e2798;
+}
+
+/** Inputs active only during a level play.
+ */
+static void BAT_input_level(void)
+{
+      if (lbKeyOn[KC_N] && lbShift == KMod_SHIFT)
+      {
+          BAT_data_1e270c = 0;
+          BAT_data_1e2704++;
+      }
+}
+
+static void BAT_level_set_rect(int beg_c, int beg_r, int end_c, int end_r, ubyte val)
+{
+    int c, r;
+    for (r = beg_r; r < end_r; r++)
+    {
+        for (c = beg_c; c < end_c; c++)
+            BAT_data_1e271c[BAT_BRICK_COLUMNS * r + c] = val;
+    }
+}
+
+int BAT_level_clear(void)
+{
+    BAT_level_set_rect(0, 0, BAT_BRICK_COLUMNS, BAT_BRICK_ROWS, 0x80);
 }
 
 int BAT_unknsub_27(void)
@@ -203,7 +232,6 @@ void BAT_play(void)
     asm volatile ("call ASM_BAT_play\n"
         :  :  : "eax" );
 #else
-  int v3;
   int v7;
   int v22;
   struct BATItem *v25;
@@ -211,9 +239,6 @@ void BAT_play(void)
   struct BATItem *v27;
   struct BATItem *v28;
   char v29;
-  int v42;
-  int n;
-  int v44;
   char *v58;
   struct BATItem *v61;
   struct BATItem *v62;
@@ -225,9 +250,6 @@ void BAT_play(void)
   char v77;
   int v78;
   char *v79;
-  int v82;
-  int kk;
-  int v84;
   char *v87;
   char *v90;
   char *v93;
@@ -236,11 +258,7 @@ void BAT_play(void)
   struct Thing *v100;
   char v101;
   int v105;
-  int v106;
   struct BATItem *v107;
-  int v109;
-  int i1;
-  int v111;
   int v114;
   struct BATItem *v115;
   int v116;
@@ -255,20 +273,11 @@ void BAT_play(void)
     case 0:
       if (BAT_unknsub_27())
       {
-        int v0, i, v2;
-
-        v0 = 12;
         BAT_state = 1;
         BAT_data_1e26f0 = 90;
-        for ( i = 0; i < 10; ++i )
-        {
-          v2 = v0;
-          for (v3 = 12 * i; v3 != v0; v3++)
-            BAT_data_1e271c[v3] = 0x80;
-          v0 += 12;
-        }
-        BAT_data_1e2708 = v2 ^ v3;
-        BAT_data_1e2700 = 1;
+        BAT_level_clear();
+        BAT_score = 0;
+        BAT_levelno = 1;
         BAT_data_1e2704 = 2;
       }
       return;
@@ -294,24 +303,24 @@ void BAT_play(void)
         BAT_data_1e2ca8 = colour_lookup[1];
       }
       breakout_play_sub1();
-      sprintf(locstr, "%d", BAT_data_1e2708);
-      BAT_print(1, 1, locstr, 1);
-      sprintf(locstr, "%d", BAT_data_1e2700);
-      BAT_print(48 - 2 * strlen(locstr), 1, locstr, 1);
+      sprintf(locstr, "%d", BAT_score);
+      BAT_print(1, 1, locstr, ColLU_WHITE);
+      sprintf(locstr, "%d", BAT_levelno);
+      BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
 
       BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
 
       if (BAT_data_1e26f0 < 60)
-          sprintf(locstr, "%s", BAT_levels[BAT_data_1e2700 - 1].level);
+          sprintf(locstr, "%s", BAT_levels[BAT_levelno - 1].lv_name);
       else
-          sprintf(locstr, "ENTERING LEVEL : %d", BAT_data_1e2700);
+          sprintf(locstr, "ENTERING LEVEL : %d", BAT_levelno);
       BAT_print(48 - 2 * strlen(locstr) + 1, 52, locstr, 8);
 
       if (BAT_data_1e26f0 == 60)
       {
-        breakout_func_ddae0(BAT_data_1e2700);
+        breakout_func_ddae0(BAT_levelno);
         BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
         BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
 
@@ -373,10 +382,10 @@ void BAT_play(void)
       BAT_unknsub_22();
       breakout_play_sub1();
 
-      sprintf(locstr, "%d", BAT_data_1e2708);
-      BAT_print(1, 1, locstr, 1);
-      sprintf(locstr, "%d", BAT_data_1e2700);
-      BAT_print(48 - 2 * strlen(locstr), 1, locstr, 1);
+      sprintf(locstr, "%d", BAT_score);
+      BAT_print(1, 1, locstr, ColLU_WHITE);
+      sprintf(locstr, "%d", BAT_levelno);
+      BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
       BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
       breakout_play_sub2();
@@ -386,14 +395,10 @@ void BAT_play(void)
         BAT_data_1e26f4 = 80;
         play_sample_using_heap(0, 73, 127, 64, 100, 0, 3u);
       }
-      if (lbKeyOn[KC_N] && lbShift == KMod_SHIFT)
-      {
-          BAT_data_1e270c = 0;
-          BAT_data_1e2704++;
-      }
+      BAT_input_level();
       if (!BAT_data_1e270c)
       {
-        if (BAT_data_1e2700 == 10)
+        if (BAT_levelno == 10)
         {
           BAT_state = 5;
           BAT_data_1e26ec = 150;
@@ -405,30 +410,22 @@ void BAT_play(void)
           BAT_state = 1;
           BAT_data_1e26f0 = 90;
         }
-        v42 = 12;
-        for (n = 0; n < 10; n++)
-        {
-          v44 = 12 * n;
-          do
-            BAT_data_1e271c[v44++] = 0x80;
-          while ( v44 != v42 );
-          v42 += 12;
-        }
-        ++BAT_data_1e2700;
+        BAT_level_clear();
+        BAT_levelno++;
         play_sample_using_heap(0, 70, 127, 64, 100, 0, 3u);
       }
       goto LABEL_190;
     case 3:
       BAT_screen_clear(96, 64);
-      --BAT_data_1e26f4;
+      BAT_data_1e26f4--;
       BAT_input_paddle();
 
       breakout_play_sub1();
 
-      sprintf(locstr, "%d", BAT_data_1e2708);
-      BAT_print(1, 1, locstr, 1);
-      sprintf(locstr, "%d", BAT_data_1e2700);
-      BAT_print(48 - 2 * strlen(locstr), 1, locstr, 1);
+      sprintf(locstr, "%d", BAT_score);
+      BAT_print(1, 1, locstr, ColLU_WHITE);
+      sprintf(locstr, "%d", BAT_levelno);
+      BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
 
       BAT_draw_remainig_lives(90, 2);
       BAT_unknsub_21();
@@ -491,10 +488,10 @@ void BAT_play(void)
       BAT_input_paddle();
 
       breakout_play_sub1();
-      sprintf(locstr, "%d", BAT_data_1e2708);
-      BAT_print(1, 1, locstr, 1);
-      sprintf(locstr, "%d", BAT_data_1e2700);
-      BAT_print(48 - 2 * strlen(locstr), 1, locstr, 1);
+      sprintf(locstr, "%d", BAT_score);
+      BAT_print(1, 1, locstr, ColLU_WHITE);
+      sprintf(locstr, "%d", BAT_levelno);
+      BAT_print(48 - 2 * strlen(locstr), 1, locstr, ColLU_WHITE);
 
       v75 = 0;
       v76 = BAT_screen + 602;
@@ -520,19 +517,11 @@ void BAT_play(void)
 
       if (!BAT_data_1e26f8)
       {
-        v82 = 12;
-        for ( kk = 0; kk < 10; ++kk )
-        {
-          v84 = 12 * kk;
-          do
-            BAT_data_1e271c[v84++] = 0x80;
-          while ( v84 != v82 );
-          v82 += 12;
-        }
+        BAT_level_clear();
         BAT_state = 1;
         BAT_data_1e26f0 = 90;
-        BAT_data_1e2700 = 1;
-        BAT_data_1e2708 = 0;
+        BAT_levelno = 1;
+        BAT_score = 0;
         BAT_data_1e2704 = 2;
       }
       goto LABEL_190;
@@ -540,13 +529,13 @@ void BAT_play(void)
       BAT_screen_clear(96, 64);
 
       v87 = "CONGRATULATIONS";
-      BAT_print(18, 10, v87, 5);
+      BAT_print(18, 10, v87, ColLU_YELLOW);
       v90 = "BONUS GAME COMPLETE";
-      BAT_print(10, 16, v90, 5);
+      BAT_print(10, 16, v90, ColLU_YELLOW);
       v93 = "BONUS ITEM";
-      BAT_print(28, 30, v93, 1);
+      BAT_print(28, 30, v93, ColLU_WHITE);
       v96 = "AWARDED";
-      BAT_print(34, 38, v96, 1);
+      BAT_print(34, 38, v96, ColLU_WHITE);
 
       for (plagent = 0; plagent < playable_agents; plagent++)
       {
@@ -560,16 +549,7 @@ void BAT_play(void)
       }
       if (!BAT_data_1e26ec)
       {
-        int v102, nn, v104;
-
-        v102 = 12;
-        for ( nn = 0; nn < 10; ++nn )
-        {
-          for (v104 = 12 * nn; v104 < v102; v104++)
-            BAT_data_1e271c[v104] = 0x80;
-          v102 += 12;
-        }
-        v106 = 0;
+        BAT_level_clear();
         BAT_ptr_1e2ca0 = (struct BATItem *)&BAT_btarr_1e27a0[0];
         v107 = (struct BATItem *)&BAT_btarr_1e27a0[10];
         BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
@@ -582,8 +562,8 @@ void BAT_play(void)
 
         BAT_data_1e2ca4 = 0;
         BAT_state = 1;
-        BAT_data_1e2700 = 1;
-        BAT_data_1e2708 = 0;
+        BAT_levelno = 1;
+        BAT_score = 0;
         BAT_data_1e2704 = 2;
         ingame.UserFlags |= 0x01;
         BAT_btarr_1e27a0[10 * v105 + 8] = 0;
@@ -594,16 +574,8 @@ void BAT_play(void)
 LABEL_190:
       if (!BAT_unknsub_27())
       {
-        v109 = 12;
         BAT_state = 0;
-        for ( i1 = 0; i1 < 10; ++i1 )
-        {
-          v111 = 12 * i1;
-          do
-            BAT_data_1e271c[v111++] = 0x80;
-          while ( v111 != v109 );
-          v109 += 12;
-        }
+        BAT_level_clear();
         BAT_screen_clear(96, 64);
 
         BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
