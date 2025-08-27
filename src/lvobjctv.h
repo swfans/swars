@@ -121,7 +121,7 @@ struct NetscanObjective { // sizeof = 20
 #pragma pack()
 /******************************************************************************/
 extern struct Objective *game_used_objectives;
-extern ushort next_used_objective; // = 1;
+extern ushort next_used_objective;
 extern struct Objective *game_objectives;
 extern ushort next_objective;
 

@@ -139,9 +139,7 @@ ubyte load_music_bank(TbFileHandle fh, ubyte bankId)
     format_music();
     init_music_bank_songs();
 
-    sprintf(SoundProgressMessage, "BF113 - loaded music bank %d, %d songs\n",
-            (int)bankId, (int)NumberOfSongs);
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Music bank", "loaded bank %d, %d songs", (int)bankId, (int)NumberOfSongs);
 
     MusicAble = true;
     return 1;
@@ -155,30 +153,25 @@ int LoadMusic(ushort bankNo)
     ushort nbanks[4];
     ubyte bankId;
 
-    sprintf(SoundProgressMessage, "BF48 - load music bank %d\n", bankNo);
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Music bank", "load bank %d", bankNo);
 
     if (!MusicInstalled) {
-        sprintf(SoundProgressMessage, "BF53 - load music bank - failed - music not installed\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Music bank", "cannot load - music not installed");
         return 1;
     }
     if (!MusicAble) {
-        sprintf(SoundProgressMessage, "BF53 - load music bank - failed - MusicAble = 0\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Music bank", "cannot load - not MusicAble");
         return 1;
     }
     if (DisableLoadMusic) {
-        sprintf(SoundProgressMessage, "BF53 - load music bank - failed - LoadMusic Disabled = 0\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Music bank", "cannot load - LoadMusic Disabled");
         return 1;
     }
 
     StopMusic();
     fh = LbFileOpen(full_music_data_path, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE) {
-        sprintf(SoundProgressMessage, "BF52 - load music bank - failed - no music.dat\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Music bank", "cannot load - no 'music.dat'");
         return 1;
     }
 
@@ -215,8 +208,7 @@ int LoadMusic(ushort bankNo)
 
     if (bankNo + 1 > nbanks[bankId]) {
         LbFileClose(fh);
-        sprintf(SoundProgressMessage, "BF49 - load music bank - failed - bank %d not found\n", (int)bankId);
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Music bank", "cannot load - bank %d not found", (int)bankId);
         return 1;
     }
 
@@ -225,14 +217,12 @@ int LoadMusic(ushort bankNo)
     // Load the music tracks and info on each track
     if (!load_music_bank(fh, bankId)) {
         LbFileClose(fh);
-        sprintf(SoundProgressMessage, "BF50 - load music bank - failed - cannot allocate\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Music bank", "cannot load - allocate unsuccessful");
         return 1;
     }
 
     LbFileClose(fh);
-    sprintf(SoundProgressMessage, "BF51 - load music bank - passed\n");
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Music bank", "load bank passed");
     return 0;
 }
 

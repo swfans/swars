@@ -201,8 +201,7 @@ int AllocateSoundBankMemory(ushort snd_type)
     }
 
     SfxData = LbMemoryAlloc(dat_size + 256);
-    sprintf(SoundProgressMessage, "  Sound Data size = %ld  ", dat_size + 256);
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Sound bank", "Sound Data size = %ld", dat_size + 256);
     Sfx = LbMemoryAlloc(tab_size + 256);
 
     if ((SfxData == NULL) ||  (Sfx == NULL)) {
@@ -225,30 +224,25 @@ void DetermineSoundType(void)
 
     while ( 1 )
     {
-        sprintf(SoundProgressMessage, "BF19 - %d", SoundType);
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGSYNC("Sound bank", "Sound Type %d", SoundType);
 
         ret = AllocateSoundBankMemory(SoundType);
         if (ret > 0) {
             // Success - accept the current SoundType
-            sprintf(SoundProgressMessage, " - allocation successful\n");
-            SoundProgressLog(SoundProgressMessage);
+            SNDLOGSYNC("Sound bank", "allocation successful");
             return;
         }
         else if (ret == -1) {
             // If bank file is missing, no need to check anything further - all SoundTypes would fail
-            sprintf(SoundProgressMessage, " - no sound.dat\n");
-            SoundProgressLog(SoundProgressMessage);
+            SNDLOGFAIL("Sound bank", "no 'sound.dat'");
             SoundType = 0;
             return;
         }
         else if (ret == -2) {
-            sprintf(SoundProgressMessage, " - not present in sound.dat\n");
-            SoundProgressLog(SoundProgressMessage);
+            SNDLOGERR("Sound bank", "not present in 'sound.dat'");
         }
         else if (ret == 0) {
-            sprintf(SoundProgressMessage, " - cannot allocate\n");
-            SoundProgressLog(SoundProgressMessage);
+            SNDLOGERR("Sound bank", "cannot allocate");
         }
         // Selected SoundType failed to load - try lower quality
         tpno = GetSoundTpNo(SoundType);
@@ -295,19 +289,16 @@ int InitSoundDriverFromEnvMDS(void)
         char drvfile[24];
         struct SNDCARD_IO_PARMS iop;
 
-        sprintf(SoundProgressMessage, "BF8  - MDSOUND environment active\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGSYNC("Sound init", "MDSOUND environment active");
         sscanf(envsound, "%s %hx %hd %hd %hd", drvfile, &iop.IO, &iop.IRQ, &iop.DMA_8_bit, &iop.DMA_16_bit);
         SoundDriver = AIL_install_DIG_driver_file(drvfile, &iop);
         if (!SoundDriver)
         {
-            sprintf(SoundProgressMessage, "BF9  - MDSOUND environment driver installation - failed\n");
-            SoundProgressLog(SoundProgressMessage);
+            SNDLOGFAIL("Sound init", "MDSOUND environment driver installation unsuccessful");
             DoFreeSound();
             return -1;
         }
-        sprintf(SoundProgressMessage, "BF10 - MDSOUND environment driver installation - passed\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGSYNC("Sound init", "MDSOUND environment driver installation passed");
         memset(&SoundInstallChoice, 0, sizeof(SoundInstallChoice));
         sprintf(SoundInstallChoice.driver_name, "%s", drvfile);
         SoundInstallChoice.IO = iop;
@@ -321,32 +312,25 @@ int InitSoundDriverFromDigINI(void)
     if (!AIL_read_INI(&SoundInstallChoice, FullDIG_INIPath))
     {
         sprintf(SoundInstallChoice.driver_name, "none");
-        sprintf(SoundProgressMessage, "BF15 - Search for DIG.INI - failed\n");
-        SoundProgressLog(SoundProgressMessage);
-        sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Sound init", "search for DIG.INI unsuccessful");
+        SNDLOGERR(" -- AIL", "%s", AIL_API_last_error());
         return -1;
     }
-    sprintf(SoundProgressMessage, "BF11 - Search for DIG.INI - passed   \n");
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Sound init", "search for DIG.INI passed");
     if (strcasecmp(SoundInstallChoice.driver_name, "none") == 0)
     {
-        sprintf(SoundProgressMessage, "BF12 - user requests no sound in SETSOUND   \n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGSYNC("Sound init", "user requests no sound in SETSOUND");
         DoFreeSound();
         return 0;
     }
     if (AIL_install_DIG_INI(&SoundDriver) != AIL_INIT_SUCCESS)
     {
-        sprintf(SoundProgressMessage, "BF14 - DIG.INI driver installation - failed\n");
-        SoundProgressLog(SoundProgressMessage);
-        sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Sound init", "DIG.INI driver installation unsuccessful");
+        SNDLOGERR(" -- AIL", "%s", AIL_API_last_error());
         DoFreeSound();
         return -1;
     }
-    sprintf(SoundProgressMessage, "BF13 - DIG.INI driver installation - passed\n");
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Sound init", "DIG.INI driver installation passed");
     return 1;
 }
 
@@ -355,15 +339,12 @@ int InitSoundDriverFromOS(void)
     //TODO AIL_open_digital_driver() would make more sense here; even if it only calls the same inside
     if (AIL_install_DIG_INI(&SoundDriver) != AIL_INIT_SUCCESS)
     {
-        sprintf(SoundProgressMessage, "BF14 - OS provided driver connection - failed\n");
-        SoundProgressLog(SoundProgressMessage);
-        sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Sound init", "OS provided driver connection unsuccessful");
+        SNDLOGERR(" -- AIL", "%s", AIL_API_last_error());
         DoFreeSound();
         return -1;
     }
-    sprintf(SoundProgressMessage, "BF13 - OS provided driver connection - passed\n");
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Sound init", "OS provided driver connection passed");
     // Fill DOS driver information with something which makes sense
     memset(&SoundInstallChoice, 0, sizeof(SoundInstallChoice));
     sprintf(SoundInstallChoice.driver_name, "%s", "sb16.dig");
@@ -384,18 +365,12 @@ void InitAllSamples(void)
 
 void InitSound(void)
 {
-#if 0
-    asm volatile ("call ASM_InitSound\n"
-        :  :  : "eax" );
-#else
     int ret;
 
     if (!SoundAble)
         return;
-    sprintf(SoundProgressMessage, "BF3  - Init sound\n");
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF4  - Default sound type -  %d\n", (int)SoundType);
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Sound init", "start init");
+    SNDLOGSYNC("Sound init", "default sound type -  %d", (int)SoundType);
     if (!SoundType)
     {
         if (!MusicAble)
@@ -404,14 +379,12 @@ void InitSound(void)
             {
                 AILStartupAlreadyInitiated = false;
                 AIL_shutdown();
-                sprintf(SoundProgressMessage, "BF5  - No samples requested - AIL shutdown\n");
-                SoundProgressLog(SoundProgressMessage);
+                SNDLOGSYNC("Sound init", "no samples requested - AIL shutdown");
             }
         }
         SoundAble = false;
         SoundActive = false;
-        sprintf(SoundProgressMessage, "BF6  - No samples requested  \n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGSYNC("Sound init", "no samples requested");
         return;
     }
     EnsureAILStartup();
@@ -442,23 +415,19 @@ void InitSound(void)
 
     if (ret != 1)
     {
-        sprintf(SoundProgressMessage, "BF16 - all dig driver installation attempts failed\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Sound init", "all dig driver installation attempts failed");
         return;
     }
-    sprintf(SoundProgressMessage, "BF18 - determine sound type to be loaded\n");
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Sound init", "determine sound type to be loaded");
     if (DisableLoadSounds)  {
-        sprintf(SoundProgressMessage, "BF19 - LoadSounds disabled\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGSYNC("Sound init", "LoadSounds disabled");
     } else {
         DetermineSoundType();
     }
 
     if (!SoundType)
     {
-        sprintf(SoundProgressMessage, "BF20 - cannot allocate for digital samples\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("Sound init", "cannot allocate for digital samples");
         DoFreeSound();
         return;
     }
@@ -466,7 +435,7 @@ void InitSound(void)
     ret = SetSoundBitsAndRate(SoundType);
     if (ret != 1)
     {
-        sprintf(SoundProgressMessage, "BF19 - Unexpected SoundType - disabling sound\n");
+        SNDLOGFAIL("Sound init", "unexpected SoundType - disabling sound");
         SoundAble = 0;
         SoundActive = 0;
         return;
@@ -476,11 +445,9 @@ void InitSound(void)
     {
         InitAllSamples();
         SoundInstalled = 1;
-        sprintf(SoundProgressMessage, "BF24 - Init sound completed\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGSYNC("Sound init", "init completed");
         SetSoundMasterVolume(CurrentSoundMasterVolume);
     }
-#endif
 }
 
 void FreeSound(void)

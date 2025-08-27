@@ -32,6 +32,8 @@ short frameskip = 0;
 // TODO implement separate turns per second, when drawing frames will get separated from game loop
 ushort game_num_fps = 16;
 
+ushort fifties_per_gameturn = 3;
+
 /******************************************************************************/
 
 void frameskip_clip(void)

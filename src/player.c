@@ -19,6 +19,7 @@
 #include "player.h"
 
 #include <assert.h>
+#include "bfutility.h"
 
 #include "game.h"
 #include "guitext.h"
@@ -93,6 +94,25 @@ void cryo_update_agents_from_player(PlayerInfo *p_player)
             // Removing an agent from cryo shifted all further agents down; account for that
             cryo_no = plagent - nremoved;
             cryo_update_from_player_agent(cryo_no, p_player, plagent);
+        }
+    }
+}
+
+void player_agents_add_random_epidermises(PlayerInfo *p_player)
+{
+    ushort plagent;
+    struct Thing *p_person;
+
+    for (plagent = 0; plagent < playable_agents; plagent++)
+    {
+        p_person = p_player->MyAgent[plagent];
+        if (p_person == NULL)
+            continue;
+        if (cybmod_skin_level(&p_person->U.UPerson.UMod) == 0)
+        {
+            ushort rnd;
+            rnd = LbRandomAnyShort();
+            set_cybmod_skin_level(&p_person->U.UPerson.UMod, 1 + (rnd & 3));
         }
     }
 }

@@ -60,6 +60,8 @@ extern long dword_1DC36C;
  */
 sbyte agent_with_mouse_over_weapon = -1;
 
+ubyte byte_153198 = 1;
+
 /** Momentary flags - filled and used only while updating the panel, then forgitten.
  */
 enum PanelMomentaryFlags {
@@ -2979,7 +2981,7 @@ TbBool check_panel_input(short panel)
                     ushort dcthing;
 
                     dcthing = p_locplayer->DirectControl[mouser];
-                    if ((things[dcthing].Flag & TngF_Unkn0400) == 0)
+                    if ((things[dcthing].Flag & TngF_WepCharging) == 0)
                     {
                         game_set_cam_track_thing_xz(p_agent->ThingOffset);
                         engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);

@@ -27,6 +27,7 @@
 #include "bigmap.h"
 #include "display.h"
 #include "enginsngobjs.h"
+#include "lvwalk.h"
 #include "triangls.h"
 #include "tngcolisn.h"
 #include "game.h"

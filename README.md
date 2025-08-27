@@ -282,7 +282,7 @@ to build the executable using the same way as for UNIX systems, with bash and au
 First install the dependencies - mingw32, since we need 32-bit toolchain:
 
 ```
-pacman -S mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
+pacman -S mingw-w64-i686-binutils mingw-w64-i686-autotools mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
 pacman -S mingw-w64-i686-libpng
 pacman -S mingw-w64-i686-SDL2
 pacman -S mingw-w64-i686-openal
@@ -313,6 +313,12 @@ can separately install `pip` package, and then add any missing modules through i
 To select specific `python3` or `pip` at command line, alter the `PATH` variable,
 like in some commands in later part of the instructions.
 
+If you do not have any Python, then install the one which fits other `i686` tools:
+
+```
+pacman -S mingw-w64-i686-python3 mingw-w64-i686-python-pip
+```
+
 Now as our host is ready, we can start working on the actual `swars` sources.
 We will still have to provide paths to 32-bit configuration - MSYS will prefer
 folders with data for 64-bit building.
@@ -332,6 +338,11 @@ mkdir -p release; cd release
 PATH="/mingw32/bin:$PATH" PKG_CONFIG_PATH="/mingw32/lib/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --prefix=/mingw32
 PATH="/mingw32/bin:$PATH" make V=1
 ```
+
+Depending on versions of packages, your `make` executable may be also called `mingw32-make`.
+Also, the build system may expect to find `python` binary within `mingw32` folder,
+failing to find it if you have it somewhere else. In both cases, just creating a symbolic
+link with name expected by build system will fix the issue.
 
 ### Building on Mac OS X
 

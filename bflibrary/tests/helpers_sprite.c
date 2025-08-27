@@ -24,7 +24,16 @@
 #include "bfutility.h"
 #include "bftstlog.h"
 
+/** Whether to include partial sprites which require stiching together.
+ *
+ * For simple tests, we will get better results by including only sprites
+ * which make up the whole image on its own. Stiching them would require
+ * another layer of processing.
+ */
+#define SPRITE1_INCLUDE_COMPOUND 0
+
 static struct TbAnyWindow sprites1_list[] = {
+#if SPRITE1_INCLUDE_COMPOUND
     {  0,  0, 0, 0, NULL,}, // Torso walk blue
     {  2,  8,11,16, NULL,},
     { 18,  8,11,16, NULL,},
@@ -94,6 +103,7 @@ static struct TbAnyWindow sprites1_list[] = {
     { 81, 83,15,13, NULL,},
     { 97, 83,15,13, NULL,}, // Torso drowning red
     {113, 83,15,13, NULL,},
+#endif
     {130, 77,12,19, NULL,}, // Burned body to ash
     {146, 77,12,19, NULL,},
     {162, 77,12,19, NULL,},
@@ -112,14 +122,17 @@ static struct TbAnyWindow sprites1_list[] = {
     { 52,108, 8,12, NULL,},
     { 68,105, 9,15, NULL,},
     { 82, 99,14,21, NULL,},
+#if SPRITE1_INCLUDE_COMPOUND
     { 99,116,10, 4, NULL,}, // Floor ring
     {114,113,13, 7, NULL,},
     {133,116, 8, 4, NULL,}, // Flag blue
     {149,115, 8, 5, NULL,},
     {165,116, 8, 4, NULL,}, // Flag red
     {181,115, 8, 5, NULL,},
+#endif
     {193,107,15,13, NULL,}, // Golden wings artifact
     {210,107,13,13, NULL,}, // Medusa head
+#if SPRITE1_INCLUDE_COMPOUND
     {227,105,12,15, NULL,}, // Torso walk blue
     {245,114, 4, 6, NULL,}, // Hand up
     {262,112, 3, 8, NULL,},
@@ -129,6 +142,7 @@ static struct TbAnyWindow sprites1_list[] = {
     {  6,137, 2, 7, NULL,},
     { 18,130,11,14, NULL,}, // Torso front no hands blue
     { 34,130,11,14, NULL,}, // Torso front no hands red
+#endif
     { 49,124,12,20, NULL,}, // Person in red salto
     { 64,127,16,17, NULL,},
     { 80,122,16,22, NULL,},
@@ -138,14 +152,16 @@ static struct TbAnyWindow sprites1_list[] = {
     {144,122,16,22, NULL,},
     {161,122, 8,22, NULL,},
     {178,125, 9,19, NULL,},
-    {196,131, 8,13, NULL,}, // Red something L
+#if SPRITE1_INCLUDE_COMPOUND
+    {196,131, 8,13, NULL,}, // Red dress blond woman upside down with head on right
     {210,129,12,15, NULL,}, // Torso punch red
     {226,128,13,16, NULL,}, // Torso swamp run blue
     {244,137,12, 7, NULL,},
     {263,138, 4, 6, NULL,}, // Hand
     {280,136, 3, 8, NULL,},
-    {293,131, 8,13, NULL,}, // Red something R
+    {293,131, 8,13, NULL,}, // Red dress blond woman upside down with head on left
     {307,132,10,12, NULL,}, // Puff smoke
+#endif
     {  1,147,12,21, NULL,}, // Person in blue salto
     { 16,151,16,17, NULL,},
     { 32,146,16,22, NULL,},
@@ -180,12 +196,13 @@ static struct TbAnyWindow sprites1_list[] = {
     {182,185, 5, 8, NULL,},
     {198,187, 5, 6, NULL,},
     {214,189, 5, 4, NULL,},
+#if SPRITE1_INCLUDE_COMPOUND
     {226,188, 8, 5, NULL,}, // Head helmet red
     {242,188, 8, 5, NULL,},
     {258,188, 8, 5, NULL,}, // Head helmet blue
     {274,188, 8, 5, NULL,},
-    {292,179, 9,14, NULL,}, // Red over gold
-    {310,180, 8,13, NULL,},
+    {292,179, 9,14, NULL,}, // Red dress blonde hair woman torso upside down
+    {310,180, 8,13, NULL,}, // Red dress orange hair woman torso upside down
     {  1,207,16,12, NULL,}, // Body sinking blue
     { 17,207,16,12, NULL,},
     { 33,207,16,12, NULL,},
@@ -193,12 +210,15 @@ static struct TbAnyWindow sprites1_list[] = {
     { 65,205,16,14, NULL,},
     { 83,200,14,19, NULL,},
     { 99,200,12,19, NULL,},
+#endif
     {113,210,14, 9, NULL,}, // Guilotine
+#if SPRITE1_INCLUDE_COMPOUND
     {129,208,16,11, NULL,}, // Body sinking red
     {145,208,16,11, NULL,},
     {164,208, 7,11, NULL,}, // Torso armored block red
     {180,208, 9,11, NULL,},
     {196,207,10,12, NULL,},
+#endif
     {209,210,14, 9, NULL,}, // Guilotine
     {225,210,14, 9, NULL,},
     {241,210,14, 9, NULL,},
@@ -283,6 +303,7 @@ static struct TbAnyWindow sprites1_list[] = {
     {228,332,10,10, NULL,},
     {247,336, 7, 7, NULL,},
     {260,333, 9, 9, NULL,},
+#if SPRITE1_INCLUDE_COMPOUND
     {274,335,10,17, NULL,}, // Head with horned helmet
     {292,335,10,17, NULL,},
     {311,333, 6, 9, NULL,},
@@ -309,12 +330,14 @@ static struct TbAnyWindow sprites1_list[] = {
     {  0,396,10,12, NULL,},
     { 16,393,14,15, NULL,},
     { 32,393,16,15, NULL,}, // Dirt cracks
+#endif
     { 48,383,16,25, NULL,}, // Statue
     { 64,395,10,13, NULL,},
     { 80,384,17,24, NULL,},
     { 97,390,15,18, NULL,},
     {112,393,16,15, NULL,}, // Walls
     {128,395,16,13, NULL,},
+#if SPRITE1_INCLUDE_COMPOUND
     {144,376,16,32, NULL,}, // Water wall
     {160,376,16,32, NULL,},
     {176,376,16,32, NULL,},
@@ -379,6 +402,7 @@ static struct TbAnyWindow sprites1_list[] = {
     {242,464,19, 8, NULL,},
     {278,464,24, 8, NULL,},
     {305,464,15, 8, NULL,},
+#endif
     {  2,474,13,24, NULL,}, // Blonde woman walk
     { 19,474,10,24, NULL,},
     { 37,474, 8,24, NULL,},
@@ -419,6 +443,128 @@ static struct TbAnyWindow sprites1_list[] = {
     {280,517, 6, 8, NULL,}, // Lava flyer
     {294,516, 7, 9, NULL,},
     {304,518, 6, 7, NULL,}, // Blue slim thing
+    {  0,527, 6, 8, NULL,},
+    { 15,527, 8, 8, NULL,},
+    { 32,527, 8, 8, NULL,},
+    { 48,527, 8, 8, NULL,},
+    { 64,527, 6, 8, NULL,},
+    { 81,527, 6, 8, NULL,},
+    { 96,527, 7, 8, NULL,},
+    {113,527, 4, 8, NULL,},
+    {128,527, 2, 8, NULL,},
+    {144,527, 4, 8, NULL,},
+    {159,527, 8, 8, NULL,},
+    {176,527, 6, 8, NULL,},
+    {192,527, 8, 8, NULL,},
+    {208,527, 8, 8, NULL,},
+    {224,527, 6, 8, NULL,},
+    {256,527, 7, 8, NULL,},
+    {272,527, 3, 8, NULL,},
+    {288,527, 3, 8, NULL,},
+    {304,527, 4, 8, NULL,},
+    {  0,538, 5, 8, NULL,},
+    { 16,537, 5, 9, NULL,}, // Blue egg
+    { 32,537, 5, 9, NULL,},
+    { 48,537, 4, 9, NULL,},
+    { 65,537,14, 9, NULL,}, // Vulture flying
+    { 79,537,11, 9, NULL,},
+    { 97,537,12, 9, NULL,},
+    {112,537,12, 9, NULL,},
+    {128,537,15, 9, NULL,},
+    {144,537,10, 9, NULL,},
+    {161,537,15, 9, NULL,},
+    {176,537,15, 9, NULL,},
+    {192,537,15, 9, NULL,},
+    {208,537,10, 9, NULL,},
+    {225,537,12, 9, NULL,},
+    {242,537,12, 9, NULL,},
+    {257,537,15, 9, NULL,},
+    {274,537,10, 9, NULL,},
+    {289,537,15, 9, NULL,},
+    {304,537,15, 9, NULL,},
+    {  0,548,15,27, NULL,}, // Barbarian standing
+    { 16,548,15,27, NULL,}, // Barbarian burned to dust
+    { 32,548,15,27, NULL,},
+    { 48,548,15,27, NULL,},
+    { 64,548,15,27, NULL,},
+    { 80,548,15,27, NULL,},
+    { 95,548,15,27, NULL,},
+    {111,548,15,27, NULL,},
+    {127,548,15,27, NULL,},
+    {144,547,16,28, NULL,}, // Barbarian zapped
+    {160,556,14,19, NULL,}, // Barbarian sinking
+    {177,556,15,19, NULL,},
+    {192,556,16,19, NULL,},
+    {209,556,15,19, NULL,},
+    {224,556,16,19, NULL,},
+    {241,556,15,19, NULL,},
+    {256,556,16,19, NULL,},
+    {272,549,15,26, NULL,}, // Barbarian muscle pose
+    {291,547,13,28, NULL,}, // Barbarian stand on hands
+    {304,547,16,28, NULL,}, // Barbarian throwing pose
+    {  0,576,16,18, NULL,}, // Red helmet person sinking
+    { 16,576,15,18, NULL,},
+    { 31,576,15,18, NULL,},
+    { 47,576,15,18, NULL,},
+    { 63,576,15,18, NULL,},
+    { 78,576,15,18, NULL,},
+    { 93,576,13,18, NULL,},
+    {113,576,13,18, NULL,}, // Icons for user actions
+    {129,576,14,18, NULL,},
+    {148,576,11,18, NULL,},
+    {162,576,11,18, NULL,},
+    {177,576,14,18, NULL,},
+    {192,576,16,18, NULL,},
+    {209,576,14,18, NULL,},
+    {225,576,15,18, NULL,},
+    {240,576,14,18, NULL,},
+#if SPRITE1_INCLUDE_COMPOUND
+    {262,589, 3, 5, NULL,}, // Steel armor part?
+    {278,587, 5, 7, NULL,},
+    {294,587, 6, 7, NULL,},
+    {309,587, 8, 7, NULL,},
+    {  5,604, 6, 7, NULL,}, // Blue dress blond hair woman head
+    { 19,600, 8,11, NULL,},
+    { 36,602, 7, 9, NULL,},
+    { 51,605, 7, 6, NULL,},
+    { 68,598, 7,13, NULL,},
+    { 83,600, 8,11, NULL,},
+    { 99,600, 9,11, NULL,},
+    {115,601, 9,10, NULL,},
+    {133,600, 8,11, NULL,},
+    {150,598, 7,13, NULL,},
+    {164,605, 7, 6, NULL,},
+    {181,602, 7, 9, NULL,},
+    {196,600, 8,11, NULL,},
+    {212,604, 7, 7, NULL,},
+    {229,604, 5, 7, NULL,},
+    {245,604, 6, 7, NULL,}, // Blue dress orange hair woman head
+    {259,600, 8,11, NULL,},
+    {277,601, 7,10, NULL,},
+    {295,605, 7, 6, NULL,},
+    {307,598, 8,13, NULL,},
+    {  5,616, 8,11, NULL,},
+    { 19,617, 9,10, NULL,},
+    { 35,616, 9,11, NULL,},
+    { 53,616, 8,11, NULL,},
+    { 68,614, 8,13, NULL,},
+    { 85,620, 7, 7, NULL,},
+    {101,616, 7,11, NULL,},
+    {116,620, 6, 7, NULL,},
+    {133,620, 5, 7, NULL,},
+    {149,623, 5, 4, NULL,}, // Blond hair man head
+    {165,622, 6, 5, NULL,},
+    {181,621, 5, 6, NULL,},
+    {197,622, 5, 5, NULL,},
+    {214,621, 5, 6, NULL,},
+    {229,622, 6, 5, NULL,},
+    {246,623, 5, 4, NULL,},
+    {262,623, 5, 4, NULL,},
+    {277,623, 5, 4, NULL,}, // Yellow hair man head
+    {293,621, 6, 6, NULL,},
+    {310,621, 5, 6, NULL,},
+    // TODO more sprited exist in the input bitmap, should be added here
+#endif
 };
 
 void get_example_sprites_file_name(int sprfile_no, char *fname)

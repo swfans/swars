@@ -1085,7 +1085,7 @@ GLOBAL_FUNC(ASM_draw_sorted_sprite1a)	/* 0x0122FC */
 		jle    jump_1232c
 		movb   $0x30,0x8(%esp)
 	jump_1232c:
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		sar    $0x10,%edx
 		cmp    $0x100,%edx
 		je     jump_12376
@@ -1097,7 +1097,7 @@ GLOBAL_FUNC(ASM_draw_sorted_sprite1a)	/* 0x0122FC */
 		xor    %edx,%edx
 		xor    %ecx,%ecx
 		mov    0x8(%esp),%dl
-		mov    overall_scale,%cx
+		mov    EXPORT_SYMBOL(overall_scale),%cx
 		push   %edx
 		mov    0x2(%esp),%edx
 		sar    $0x10,%ebx
@@ -1216,12 +1216,12 @@ GLOBAL_FUNC (ASM_init_engine)	/* 0x1260C */
 		mov    engn_zc,%ax
 		mov    engn_xc,%dx
 		mov    %ax,ingame__TrackZ
-		mov    render_area_a,%ax
+		mov    EXPORT_SYMBOL(render_area_a),%ax
 		xor    %dl,%dl
 		shl    $0x7,%eax
 		mov    EXPORT_SYMBOL(lbDisplay)+24,%ebx # lbDisplay.PhysicalScreenWidth
 		sub    %eax,%edx
-		mov    render_area_b,%ax
+		mov    EXPORT_SYMBOL(render_area_b),%ax
 		mov    %dx,EXPORT_SYMBOL(word_19CC64)
 		mov    engn_zc,%dx
 		shl    $0x7,%eax
@@ -1320,7 +1320,7 @@ GLOBAL_FUNC(ASM_func_13A78)	/* 0x13a78 */
 		add    %ebx,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		sar    $0x10,%esi
 		sar    $0x10,%edx
 		imul   %edx,%esi
@@ -1900,7 +1900,7 @@ GLOBAL_FUNC(ASM_number_player)	/* 0x01C2CC */
 		add    %ecx,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		mov    0x28(%esp),%ecx
 		sar    $0x10,%edx
 		imul   %edx,%ecx
@@ -2064,7 +2064,7 @@ GLOBAL_FUNC(ASM_number_player)	/* 0x01C2CC */
 		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
 		cmp    $0x1,%eax
 		mov    0x2(%ecx),%edx
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		sar    $0x10,%edx
 		sar    $0x10,%eax
 		imul   %eax,%edx
@@ -2289,7 +2289,7 @@ GLOBAL_FUNC(ASM_draw_target_vehicle)	/* 0x0202C0 */
 		add    %ebp,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		sar    $0x10,%edi
 		sar    $0x10,%edx
 		imul   %edx,%edi
@@ -2559,7 +2559,7 @@ GLOBAL_FUNC(ASM_draw_target_person)	/* 0x020648 */
 		add    %ebx,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		sar    $0x10,%esi
 		sar    $0x10,%edx
 		imul   %edx,%esi
@@ -5602,7 +5602,7 @@ GLOBAL_FUNC(ASM_check_mouse_overvehicle)	/* 0x024758 */
 		add    %esi,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		sar    $0x10,%ebp
 		sar    $0x10,%edx
 		imul   %edx,%ebp
@@ -5753,7 +5753,7 @@ GLOBAL_FUNC(ASM_check_mouse_overvehicle)	/* 0x024758 */
 		xor    %eax,%eax
 		mov    0x14(%ebx),%ax
 		mov    %eax,%esi
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		sar    $0x3,%esi
 		sar    $0x10,%eax
 		imul   %esi,%eax
@@ -6309,8 +6309,8 @@ GLOBAL_FUNC(ASM_check_mouse_over_face)	/* 0x24A2C */
 		cmp    $0x1,%cx
 		je     jump_25061
 	jump_25089:
-		mov    %ebp,mouse_map_x
-		mov    %edi,mouse_map_z
+		mov    %ebp,EXPORT_SYMBOL(mouse_map_x)
+		mov    %edi,EXPORT_SYMBOL(mouse_map_z)
 	jump_25095:
 		add    $0x70,%esp
 		pop    %ebp
@@ -6333,7 +6333,7 @@ GLOBAL_FUNC(ASM_check_mouse_overlap)	/* 0x250A0 */
 		cwtl
 		mov    EXPORT_SYMBOL(game_sort_sprites),%esi
 		shl    $0x4,%eax
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		add    %eax,%esi
 		mov    EXPORT_SYMBOL(word_1A5834)-2,%eax
 		sar    $0x10,%edx
@@ -6516,7 +6516,7 @@ GLOBAL_FUNC(ASM_check_mouse_over_unkn2)
 		shl    $0x4,%eax
 		mov    EXPORT_SYMBOL(word_1A5834)-2,%edi
 		add    %edx,%eax
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		sar    $0x10,%edi
 		sar    $0x10,%edx
 		imul   %edx,%edi
@@ -6671,7 +6671,7 @@ GLOBAL_FUNC(ASM_check_mouse_overlap_corpse)	/* 0x25428 */
 		movswl %ax,%esi
 		mov    EXPORT_SYMBOL(game_sort_sprites),%eax
 		shl    $0x4,%esi
-		mov    render_area_b,%ebx
+		mov    EXPORT_SYMBOL(render_area_b),%ebx
 		add    %eax,%esi
 		mov    EXPORT_SYMBOL(word_1A5834)-2,%eax
 		sar    $0x10,%ebx
@@ -6855,7 +6855,7 @@ GLOBAL_FUNC(ASM_check_mouse_overlap_item)	/* 0x25624 */
 		movswl %ax,%esi
 		mov    EXPORT_SYMBOL(game_sort_sprites),%eax
 		shl    $0x4,%esi
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		add    %eax,%esi
 		mov    EXPORT_SYMBOL(word_1A5834)-2,%eax
 		sar    $0x10,%edx
@@ -7299,7 +7299,7 @@ GLOBAL_FUNC(ASM_draw_person_shadow)	/* 0x026CD0 */
 		mov    0xa0(%esp),%cl
 		mov    %cl,EXPORT_SYMBOL(vec_colour)
 		sar    $0x6,%eax
-		mov    render_area_b,%ecx
+		mov    EXPORT_SYMBOL(render_area_b),%ecx
 		cwtl
 		sar    $0x10,%ecx
 		imul   %ecx,%eax
@@ -9315,7 +9315,7 @@ GLOBAL_FUNC(ASM_draw_object_face4_pole)	/* 0x028800 */
 		shl    $0x10,%eax
 		mov    %eax,0x5c(%esp)
 	jump_288d5:
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		movzwl 0x4(%edx),%ebp
 		sar    $0x10,%eax
 		imul   %eax,%ebp
@@ -11747,7 +11747,7 @@ GLOBAL_FUNC(ASM_draw_sort_sprite_veh_health_bar)	/* 0x02ABE0 */
 		mov    EXPORT_SYMBOL(game_sort_sprites),%edx
 		shl    $0x4,%eax
 		mov    0x8(%edx,%eax,1),%eax
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		mov    0x86(%eax),%bx
 		sar    $0x10,%edx
 		mov    0x3a(%eax),%cx
@@ -11876,7 +11876,7 @@ GLOBAL_FUNC(ASM_transform_point)	/* 0x02B3C0 */
 		add    %ecx,%ebx
 		sar    $0x10,%ebx
 		mov    %ebx,0x1c(%eax)
-		mov    render_area_b,%ebx
+		mov    EXPORT_SYMBOL(render_area_b),%ebx
 		sar    $0x10,%edi
 		sar    $0x10,%ebx
 		imul   %ebx,%edi
@@ -12240,7 +12240,7 @@ GLOBAL_FUNC(ASM_animate_textures)	/* 0x02E318 */
 		sub    $0x4,%esp
 		mov    game_anim_tmaps,%ebx
 		mov    game_textures,%ebp
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		mov    %ax,(%esp)
 		mov    -0x2(%esp),%eax
 		sar    $0x10,%eax
@@ -12352,7 +12352,7 @@ GLOBAL_FUNC(ASM_fill_floor_textures)	/* 0x0301A0 */
 		push   %esi
 		push   %edi
 		mov    EXPORT_SYMBOL(next_floor_texture),%cx
-		mov    prim4_textures_count,%si
+		mov    EXPORT_SYMBOL(prim4_textures_count),%si
 		mov    game_textures,%edi
 		mov    $0x1,%edx
 		cmp    %dx,%cx
@@ -12417,7 +12417,7 @@ GLOBAL_FUNC(ASM_fill_floor_textures)	/* 0x0301A0 */
 		jmp    jump_30217
 	jump_30260:
 		mov    %edi,game_textures
-		mov    %si,prim4_textures_count
+		mov    %si,EXPORT_SYMBOL(prim4_textures_count)
 		mov    %cx,EXPORT_SYMBOL(next_floor_texture)
 		pop    %edi
 		pop    %esi
@@ -12448,27 +12448,27 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		jmp    jump_303f2
 	jump_302b4:
 		mov    $0x2,%ebx
-		mov    $prim_object_points_count,%edx
+		mov    $EXPORT_SYMBOL(prim_object_points_count),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
-		mov    $prim_object_faces_count,%edx
+		mov    $EXPORT_SYMBOL(prim_object_faces_count),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
-		mov    $prim_object_faces4_count,%edx
+		mov    $EXPORT_SYMBOL(prim_object_faces4_count),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
-		mov    $prim_objects_count,%edx
+		mov    $EXPORT_SYMBOL(prim_objects_count),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
-		mov    $prim4_textures_count,%edx
+		mov    $EXPORT_SYMBOL(prim4_textures_count),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
-		mov    $prim_face_textures_count,%edx
+		mov    $EXPORT_SYMBOL(prim_face_textures_count),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
@@ -12476,7 +12476,7 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		xor    %edx,%edx
-		mov    prim_object_points_count,%dx
+		mov    EXPORT_SYMBOL(prim_object_points_count),%dx
 		lea    0x0(,%edx,4),%ebx
 		mov    %ecx,%eax
 		add    %edx,%ebx
@@ -12485,12 +12485,12 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		call   ac_LbFileRead
 		xor    %ebx,%ebx
 		mov    prim_object_faces,%edx
-		mov    prim_object_faces_count,%bx
+		mov    EXPORT_SYMBOL(prim_object_faces_count),%bx
 		mov    %ecx,%eax
 		shl    $0x5,%ebx
 		call   ac_LbFileRead
 		xor    %edx,%edx
-		mov    prim_object_faces4_count,%dx
+		mov    EXPORT_SYMBOL(prim_object_faces4_count),%dx
 		lea    0x0(,%edx,4),%ebx
 		mov    %ecx,%eax
 		add    %edx,%ebx
@@ -12498,7 +12498,7 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		shl    $0x3,%ebx
 		call   ac_LbFileRead
 		xor    %edx,%edx
-		mov    prim_objects_count,%dx
+		mov    EXPORT_SYMBOL(prim_objects_count),%dx
 		lea    0x0(,%edx,8),%ebx
 		mov    %ecx,%eax
 		add    %edx,%ebx
@@ -12506,7 +12506,7 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		shl    $0x2,%ebx
 		call   ac_LbFileRead
 		xor    %edx,%edx
-		mov    prim4_textures_count,%dx
+		mov    EXPORT_SYMBOL(prim4_textures_count),%dx
 		lea    0x0(,%edx,8),%ebx
 		mov    %ecx,%eax
 		add    %edx,%ebx
@@ -12515,7 +12515,7 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		call   ac_LbFileRead
 		xor    %ebx,%ebx
 		mov    prim_face_textures,%edx
-		mov    prim_face_textures_count,%bx
+		mov    EXPORT_SYMBOL(prim_face_textures_count),%bx
 		mov    %ecx,%eax
 		shl    $0x4,%ebx
 		call   ac_LbFileRead
@@ -15297,7 +15297,7 @@ func_3adf0:
 		add    %eax,%eax
 		mov    %eax,%edx
 		shl    $0x2,%eax
-		mov    mouse_map_z,%ebx
+		mov    EXPORT_SYMBOL(mouse_map_z),%ebx
 		sub    %edx,%eax
 		push   %ebx
 		mov    data_1a63de(%eax),%eax
@@ -15320,7 +15320,7 @@ func_3adf0:
 		mov    EXPORT_SYMBOL(players)+0x088(%edx,%eax,4),%ebx # players[0].DirectControl[0]
 		lea    0x0(,%esi,4),%eax
 		sub    %esi,%eax
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    %eax,%esi
 		mov    $packets,%eax
 		shl    $0x4,%esi
@@ -15340,13 +15340,13 @@ func_3adf0:
 		mov    gameturn,%cx
 		and    $0x7f,%ch
 		mov    %cx,EXPORT_SYMBOL(players)+0x006(%edx) # players[0].UserInput[0].Turn
-		mov    mouse_map_z,%edx
+		mov    EXPORT_SYMBOL(mouse_map_z),%edx
 		mov    data_1a63de(%eax),%eax
 		push   %edx
 		sar    $0x10,%eax
 		push   %eax
 		lea    0x0(,%esi,4),%eax
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		sub    %esi,%eax
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		shl    $0x4,%eax
@@ -15370,14 +15370,14 @@ func_3adf0:
 		and    $0xffff,%edx
 		jmp    *%cs:vtable_3a9e8(,%edx,4)
 	jump_3af76:
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		test   %ecx,%ecx
 		jle    jump_3b596
 		mov    %ecx,%eax
 		sar    $0x8,%eax
 		cmp    $0x80,%eax
 		jge    jump_3b596
-		mov    mouse_map_z,%esi
+		mov    EXPORT_SYMBOL(mouse_map_z),%esi
 		test   %esi,%esi
 		jle    jump_3b596
 		mov    %esi,%eax
@@ -15421,12 +15421,12 @@ func_3adf0:
 		add    $packets,%eax
 		cmp    $0x7,%ebp
 		jae    jump_3b06d
-		mov    mouse_map_z,%ebp
+		mov    EXPORT_SYMBOL(mouse_map_z),%ebp
 		xor    %ecx,%ecx
 		push   %ebp
 		mov    %cx,EXPORT_SYMBOL(players)+0x006(%edx) # players[0].UserInput[0].Turn
 		movswl %si,%edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		push   %edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		mov    $0x28,%edx
@@ -15442,12 +15442,12 @@ func_3adf0:
 		ret
 	jump_3b06d:
 		mov    gameturn,%cx
-		mov    mouse_map_z,%edi
+		mov    EXPORT_SYMBOL(mouse_map_z),%edi
 		and    $0x7f,%ch
 		push   %edi
 		mov    %cx,EXPORT_SYMBOL(players)+0x006(%edx) # players[0].UserInput[0].Turn
 		movswl %si,%edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		push   %edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		mov    $0xb,%edx
@@ -15534,22 +15534,22 @@ func_3adf0:
 		sar    $0x10,%esi
 		cmp    $0x3,%esi
 		jne    jump_3b1e0
-		mov    mouse_map_z,%edi
+		mov    EXPORT_SYMBOL(mouse_map_z),%edi
 		mov    data_1a63de(%edx),%edx
 		push   %edi
 		sar    $0x10,%edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		push   %edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		mov    $0x3b,%edx
 		jmp    jump_3b1fc
 	jump_3b1e0:
-		mov    mouse_map_z,%esi
+		mov    EXPORT_SYMBOL(mouse_map_z),%esi
 		push   %esi
 		movswl %cx,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x2e,%edx
 	jump_3b1fc:
 		call   ac_my_build_packet
@@ -15570,22 +15570,22 @@ func_3adf0:
 		sar    $0x10,%esi
 		cmp    $0x3,%esi
 		jne    jump_3b254
-		mov    mouse_map_z,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_z),%ecx
 		mov    data_1a63de(%edx),%edx
 		push   %ecx
 		sar    $0x10,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x3a,%edx
 		jmp    jump_3b270
 	jump_3b254:
-		mov    mouse_map_z,%edx
+		mov    EXPORT_SYMBOL(mouse_map_z),%edx
 		push   %edx
 		movswl %cx,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x20,%edx
 	jump_3b270:
 		call   ac_my_build_packet
@@ -15639,22 +15639,22 @@ func_3adf0:
 		sar    $0x10,%esi
 		cmp    $0x3,%esi
 		jne    jump_3b32d
-		mov    mouse_map_z,%edi
+		mov    EXPORT_SYMBOL(mouse_map_z),%edi
 		mov    data_1a63de(%edx),%edx
 		push   %edi
 		sar    $0x10,%edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		push   %edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		mov    $0x39,%edx
 		jmp    jump_3b349
 	jump_3b32d:
-		mov    mouse_map_z,%esi
+		mov    EXPORT_SYMBOL(mouse_map_z),%esi
 		push   %esi
 		movswl %cx,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x2f,%edx
 	jump_3b349:
 		call   ac_my_build_packet
@@ -15675,22 +15675,22 @@ func_3adf0:
 		sar    $0x10,%esi
 		cmp    $0x3,%esi
 		jne    jump_3b3a1
-		mov    mouse_map_z,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_z),%ecx
 		mov    data_1a63de(%edx),%edx
 		push   %ecx
 		sar    $0x10,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x38,%edx
 		jmp    jump_3b3bd
 	jump_3b3a1:
-		mov    mouse_map_z,%ebp
+		mov    EXPORT_SYMBOL(mouse_map_z),%ebp
 		push   %ebp
 		movswl %cx,%edx
 		mov    EXPORT_SYMBOL(players)+0x088(%ebx),%ebx # players[0].DirectControl[0]
 		push   %edx
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    $0x1a,%edx
 	jump_3b3bd:
 		call   ac_my_build_packet
@@ -15755,14 +15755,14 @@ func_3adf0:
 		add    $packets,%eax
 		cmp    $0x3,%esi
 		jne    jump_3b4c3
-		mov    mouse_map_z,%ebx
+		mov    EXPORT_SYMBOL(mouse_map_z),%ebx
 		push   %ebx
 		mov    data_1a63de(%edx),%ebx
 		sar    $0x10,%ebx
 		push   %ebx
 		xor    %ebx,%ebx
 		mov    mouser,%bl
-		mov    mouse_map_x,%ecx
+		mov    EXPORT_SYMBOL(mouse_map_x),%ecx
 		mov    EXPORT_SYMBOL(players)+0x088(%edx,%ebx,4),%ebx # players[0].DirectControl[0]
 		mov    $0x38,%edx
 		call   ac_my_build_packet
@@ -15799,20 +15799,20 @@ func_3adf0:
 		pop    %ebx
 		ret
 	jump_3b4ff:
-		mov    mouse_map_x,%ebp
+		mov    EXPORT_SYMBOL(mouse_map_x),%ebp
 		test   %ebp,%ebp
 		jle    jump_3b596
 		mov    %ebp,%eax
 		sar    $0x8,%eax
 		cmp    $0x80,%eax
 		jge    jump_3b596
-		mov    mouse_map_z,%eax
+		mov    EXPORT_SYMBOL(mouse_map_z),%eax
 		test   %eax,%eax
 		jle    jump_3b596
 		sar    $0x8,%eax
 		cmp    $0x80,%eax
 		jge    jump_3b596
-		mov    mouse_map_z,%edx
+		mov    EXPORT_SYMBOL(mouse_map_z),%edx
 		xor    %ebx,%ebx
 		push   %edx
 		movswl %di,%eax
@@ -22461,7 +22461,7 @@ GLOBAL_FUNC(ASM_apply_full_light)	/* 0x042BA0 */
 		jmp    jump_42bc6
 	jump_42be2:
 		xor    %eax,%eax
-		mov    render_area_a,%ax
+		mov    EXPORT_SYMBOL(render_area_a),%ax
 		mov    engn_xc,%edx
 		shl    $0x7,%eax
 		mov    0x8(%esp),%ebx
@@ -22473,7 +22473,7 @@ GLOBAL_FUNC(ASM_apply_full_light)	/* 0x042BA0 */
 		cmp    %ebx,%edx
 		jle    jump_42cee
 		xor    %edx,%edx
-		mov    render_area_b,%dx
+		mov    EXPORT_SYMBOL(render_area_b),%dx
 		mov    engn_zc,%ebx
 		shl    $0x7,%edx
 		sub    %edx,%ebx
@@ -22700,7 +22700,7 @@ GLOBAL_FUNC (ASM_generate_shadows_for_multicolor_sprites)	/* 0x042E70 */
 		mov    %edx,0x30(%esp)
 		mov    %dx,0x24(%esp)
 		mov    %eax,0x8(%esp)
-		mov    %si,overall_scale
+		mov    %si,EXPORT_SYMBOL(overall_scale)
 		shl    $0x8,%ebx
 		mov    %edi,0x14(%esp)
 		mov    $0x100,%edx
@@ -30111,7 +30111,7 @@ GLOBAL_FUNC(ASM_person_hit_by_bullet)	/* 0x048868 */
 		test   %eax,%eax
 		jg     jump_488af
 		mov    %esi,%eax
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_488af:
 		mov    $0x64,%eax
 		add    $0x10,%esp
@@ -30685,7 +30685,7 @@ func_48db9:
 		mov    $0x1,%eax
 		xor    %edx,%edx
 		mov    0x8(%esi),%cl
-		mov    female_peep,%dx
+		mov    EXPORT_SYMBOL(female_peep),%dx
 		shl    %cl,%eax
 		test   %eax,%edx
 		je     jump_48f77
@@ -31360,7 +31360,7 @@ GLOBAL_FUNC(ASM_person_hit_razor_wire)	/* 0x049294 */
 		mov    $0x1,%edx
 		xor    %eax,%eax
 		mov    0x8(%edi),%cl
-		mov    female_peep,%ax
+		mov    EXPORT_SYMBOL(female_peep),%ax
 		shl    %cl,%edx
 		test   %edx,%eax
 		je     jump_496b2
@@ -34663,7 +34663,7 @@ GLOBAL_FUNC(ASM_process_wander)	/* 0x04BB8C */
 		je     jump_4bd99
 		movw   $0x0,0xa(%edi)
 	jump_4bd99:
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%edi)
 		mov    0x26(%edi),%eax
 		sar    $0x10,%eax
@@ -35067,7 +35067,7 @@ GLOBAL_FUNC(ASM_process_avoid_group)	/* 0x04C134 */
 	jump_4c1a0:
 		testb  $0x2,0xc(%edx)
 		jne    jump_4c20a
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%edx)
 		mov    0x26(%edx),%eax
 		sar    $0x10,%eax
@@ -37419,7 +37419,7 @@ GLOBAL_FUNC(ASM_person_goto_point_rel)	/* 0x04D9B8 */
 		call   ac_person_move
 		testb  $0x2,0xc(%ebx)
 		jne    jump_4dbb1
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%ebx)
 		mov    0x26(%ebx),%eax
 		sar    $0x10,%eax
@@ -37913,7 +37913,7 @@ do_person_gotothingindex:	/* 0x04DC14 */
 	jump_4e136:
 		testb  $0x2,0xc(%esi)
 		jne    jump_4e16d
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%esi)
 		mov    0x26(%esi),%eax
 		sar    $0x10,%eax
@@ -38369,7 +38369,7 @@ GLOBAL_FUNC(ASM_person_goto_point)	/* 0x04E178 */
 	jump_4e644:
 		mov    %edx,0x34(%esi)
 	jump_4e647:
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%esi)
 		mov    0x26(%esi),%eax
 		sar    $0x10,%eax
@@ -38512,7 +38512,7 @@ GLOBAL_FUNC(ASM_person_wait)	/* 0x04E698 */
 		cmp    $0xf,%eax
 		jne    jump_4e843
 	jump_4e7f2:
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%ecx)
 		mov    0x26(%ecx),%eax
 		sar    $0x10,%eax
@@ -38576,7 +38576,7 @@ GLOBAL_FUNC(ASM_person_dieing)	/* 0x04E894 */
 		push   %edx
 		mov    %eax,%edx
 		movw   $0x28,0x14(%eax)
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%edx)
 		mov    0x26(%edx),%eax
 		sar    $0x10,%eax
@@ -38682,7 +38682,7 @@ GLOBAL_FUNC(ASM_person_dead)	/* 0x04EA2C */
 		mov    0x3f(%edi),%al
 		cmp    $0x1a,%eax
 		jne    jump_4ea8e
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%edi)
 		mov    0x26(%edi),%eax
 		sar    $0x10,%eax
@@ -38753,7 +38753,7 @@ GLOBAL_FUNC(ASM_person_pickup)	/* 0x04EB0C */
 		push   %esi
 		push   %edi
 		mov    %eax,%esi
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%esi)
 		mov    0x26(%esi),%eax
 		sar    $0x10,%eax
@@ -38819,7 +38819,7 @@ GLOBAL_FUNC(ASM_person_pickup)	/* 0x04EB0C */
 		xor    %edx,%edx
 		sar    $0x10,%ecx
 		mov    0x2c(%edi),%dx
-		call   give_take_me_weapon
+		call   ac_give_take_me_weapon
 		mov    0x14(%edi),%eax
 		sar    $0x10,%eax
 		call   ac_remove_sthing
@@ -39780,7 +39780,7 @@ vtable_4f598:
 
 
 /*----------------------------------------------------------------*/
-give_take_me_weapon:	/* 0x04F5B8 */
+GLOBAL_FUNC(ASM_give_take_me_weapon)	/* 0x04F5B8 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -41014,7 +41014,7 @@ plant_mine:	/* 0x0501F0 */
 		mov    0x9c(%esi),%edx
 		mov    %esi,%eax
 		sar    $0x10,%edx
-		call   give_take_me_weapon
+		call   ac_give_take_me_weapon
 		xor    %ecx,%ecx
 		mov    0x99(%esi),%cl
 		mov    $0x1,%eax
@@ -41074,7 +41074,7 @@ GLOBAL_FUNC(ASM_person_drop_item)	/* 0x0502F8 */
 		mov    %eax,%esi
 		testw  $0x202,0xc(%eax)
 		jne    jump_505a9
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%esi)
 		mov    0x26(%esi),%eax
 		sar    $0x10,%eax
@@ -41187,7 +41187,7 @@ GLOBAL_FUNC(ASM_person_drop_item)	/* 0x0502F8 */
 		sar    $0x10,%ecx
 		sar    $0x10,%edx
 		mov    %esi,%eax
-		call   give_take_me_weapon
+		call   ac_give_take_me_weapon
 		xor    %ecx,%ecx
 		mov    0x99(%esi),%cl
 		mov    $0x1,%eax
@@ -43615,7 +43615,7 @@ GLOBAL_FUNC(ASM_player_weapon_time)	/* 0x052290 */
 
 
 /*----------------------------------------------------------------*/
-set_player_weapon_turn:	/* 0x052384 */
+GLOBAL_FUNC(ASM_set_player_weapon_turn)	/* 0x052384 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -44824,7 +44824,7 @@ func_52d3d:  /* case 3 */
 		mov    %esi,%eax
 		call   ac_init_fire_weapon
 	jump_53294:
-		testb  $0x4,0xd(%esi) /* p_person->Flag & TngF_Unkn0400 */
+		testb  $0x4,0xd(%esi) /* p_person->Flag & TngF_WepCharging */
 		je     jump_536c0
 		xor    %eax,%eax
 		mov    0x99(%esi),%al
@@ -45752,7 +45752,7 @@ GLOBAL_FUNC(ASM_person_burning)	/* 0x053D8C */
 		mov    $0x1,%eax
 		xor    %edx,%edx
 		mov    0x8(%esi),%cl
-		mov    female_peep,%dx
+		mov    EXPORT_SYMBOL(female_peep),%dx
 		shl    %cl,%eax
 		test   %eax,%edx
 		je     jump_53e09
@@ -45824,7 +45824,7 @@ GLOBAL_FUNC(ASM_person_burning)	/* 0x053D8C */
 	jump_53eb5:
 		testb  $0x2,0xc(%esi)
 		jne    jump_53f4a
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%esi)
 		mov    0x26(%esi),%eax
 		sar    $0x10,%eax
@@ -45953,7 +45953,7 @@ GLOBAL_FUNC(ASM_person_run_away)	/* 0x053F54 */
 		call   ac_remove_path
 		movw   $0xffff,0x66(%esi)
 	jump_54039:
-		mov    fifties_per_gameturn,%ax
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		sub    %ax,0x28(%esi)
 		mov    0x26(%esi),%eax
 		sar    $0x10,%eax
@@ -46016,7 +46016,7 @@ GLOBAL_FUNC(ASM_person_run_away)	/* 0x053F54 */
 		shl    %cl,%edx
 		xor    %ecx,%ecx
 		mov    gameturn,%eax
-		mov    female_peep,%cx
+		mov    EXPORT_SYMBOL(female_peep),%cx
 		shr    $0x7,%eax
 		test   %edx,%ecx
 		je     jump_540a5
@@ -47606,7 +47606,7 @@ GLOBAL_FUNC(ASM_person_being_persuaded)	/* 0x0553DC */
 		push   %ebx
 		push   %ecx
 		push   %edx
-		mov    fifties_per_gameturn,%dx
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%dx
 		sub    %dx,0x28(%eax)
 		mov    0x26(%eax),%edx
 		sar    $0x10,%edx
@@ -48567,7 +48567,7 @@ GLOBAL_FUNC(ASM_process_knocked_out)	/* 0x055DD8 */
 		push   %ebx
 		push   %ecx
 		push   %edx
-		mov    fifties_per_gameturn,%dx
+		mov    EXPORT_SYMBOL(fifties_per_gameturn),%dx
 		sub    %dx,0x28(%eax)
 		mov    0x26(%eax),%edx
 		sar    $0x10,%edx
@@ -56524,7 +56524,7 @@ do_shockwave:	/* 0x05B598 */
 
 
 /*----------------------------------------------------------------*/
-check_for_radius_hit_person:	/* 0x05BBE0 */
+GLOBAL_FUNC(ASM_check_for_radius_hit_person)	/* 0x05BBE0 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -56832,7 +56832,7 @@ check_for_radius_hit_person:	/* 0x05BBE0 */
 		jle    jump_5c04a
 		cmp    $0x3f0,%edi
 		jge    jump_5c04a
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_5bf9e:
 		movswl %cx,%eax
 		imul   $0x3c,%eax,%eax
@@ -57176,7 +57176,7 @@ bul_path_end:	/* 0x05C1C0 */
 		mov    (%esi),%eax
 		shl    $0x8,%ebx
 		shl    $0x8,%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		test   %eax,%eax
 		je     jump_5c3b3
 		mov    0x50(%esp),%edx
@@ -57428,7 +57428,7 @@ GLOBAL_FUNC(ASM_laser_hit_at)	/* 0x05C4C8 */
 		mov    (%edi),%eax
 		shl    $0x8,%edx
 		shl    $0x8,%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		test   %eax,%eax
 		je     jump_5c64c
 		xor    %edx,%edx
@@ -60662,7 +60662,7 @@ GLOBAL_FUNC(ASM_find_and_set_connected_face)	/* 0x05EC6C */
 		shl    $0x5,%edx
 		mov    0x1a(%edx,%eax,1),%ecx
 		sar    $0x10,%ecx
-		mov    game_walk_headers,%eax
+		mov    EXPORT_SYMBOL(game_walk_headers),%eax
 		shl    $0x2,%ecx
 		jmp    jump_5ecbe
 	jump_5ec9d:
@@ -60674,7 +60674,7 @@ GLOBAL_FUNC(ASM_find_and_set_connected_face)	/* 0x05EC6C */
 		shl    $0x3,%edx
 		mov    0x20(%edx,%eax,1),%eax
 		sar    $0x10,%eax
-		mov    game_walk_headers,%ecx
+		mov    EXPORT_SYMBOL(game_walk_headers),%ecx
 		shl    $0x2,%eax
 	jump_5ecbe:
 		add    %eax,%ecx
@@ -70569,7 +70569,7 @@ vtable_67604:
 
 
 /*----------------------------------------------------------------*/
-set_static_on_fire:	/* 0x067614 */
+GLOBAL_FUNC(ASM_set_static_on_fire)	/* 0x067614 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -71052,7 +71052,7 @@ GLOBAL_FUNC(ASM_build_polygon_circle_2d)	/* 0x067BF0 */
 		mov    EXPORT_SYMBOL(next_screen_point),%si
 		mov    %eax,0x14(%esp)
 		mov    %edx,0x10(%esp)
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		sar    $0x10,%eax
 		imul   %eax,%ebx
 		mov    0x14(%esp),%eax
@@ -71569,7 +71569,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		and    $0x7,%al
 		mov    %eax,%ecx
 		and    $0xffff,%ecx
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		shl    $0x7,%ecx
 		sar    $0x10,%eax
 		sub    $0x200,%ecx
@@ -71594,7 +71594,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		and    $0x7,%al
 		mov    %eax,%edx
 		and    $0xffff,%edx
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		shl    $0x7,%edx
 		sar    $0x10,%eax
 		sub    $0x200,%edx
@@ -71605,7 +71605,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		xor    %ah,%ah
 		and    $0x7,%al
 		and    $0xffff,%eax
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		shl    $0x7,%eax
 		sar    $0x10,%edx
 		sub    $0x200,%eax
@@ -71624,7 +71624,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		and    $0x7,%al
 		mov    %eax,%ebx
 		and    $0xffff,%ebx
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		shl    $0x7,%ebx
 		sar    $0x10,%eax
 		sub    $0x200,%ebx
@@ -71649,7 +71649,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		mov    %edx,%eax
 		sar    $0x1f,%edx
 		idiv   %ebx
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		shl    $0x7,%edx
 		sar    $0x10,%eax
 		sub    $0x400,%edx
@@ -71663,7 +71663,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		mov    %edx,%eax
 		sar    $0x1f,%edx
 		idiv   %ecx
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		shl    $0x7,%edx
 		sar    $0x10,%eax
 		sub    $0x400,%edx
@@ -71907,7 +71907,7 @@ GLOBAL_FUNC(ASM_build_electricity)	/* 0x068D1C */
 		mov    0x26(%edi),%dx
 		add    %eax,%edx
 		mov    data_19ab13(,%edx,2),%esi
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		sar    $0x18,%esi
 		sar    $0x10,%eax
 		imul   %eax,%esi
@@ -72454,7 +72454,7 @@ GLOBAL_FUNC(ASM_build_laser_beam)	/* 0x069A34 */
 		add    %edx,%eax
 		lea    0x0(,%eax,2),%edx
 		mov    data_19ab13(%edx),%ebx
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		sar    $0x18,%ebx
 		sar    $0x10,%eax
 		imul   %eax,%ebx
@@ -73102,7 +73102,7 @@ GLOBAL_FUNC(ASM_build_laser_beam_q)	/* 0x06A2E0 */
 		mov    0x26(%ebx),%dx
 		add    %edx,%eax
 		mov    data_19ab13(,%eax,2),%ebx
-		mov    render_area_b,%edx
+		mov    EXPORT_SYMBOL(render_area_b),%edx
 		sar    $0x18,%ebx
 		sar    $0x10,%edx
 		imul   %edx,%ebx
@@ -74037,7 +74037,7 @@ GLOBAL_FUNC(ASM_build_glare)	/* 0x06B634 */
 		jl     jump_6b6c6
 		movl   $0x270f,0x28(%esp)
 	jump_6b6c6:
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		movswl %cx,%ebx
 		sar    $0x10,%eax
 		imul   %ebx,%eax
@@ -78407,7 +78407,7 @@ GLOBAL_FUNC(ASM_draw_engine_unk3_last)	/* 0x070F94 */
 		mov    0x66(%esp),%edx
 		xor    %eax,%eax
 		sar    $0x10,%edx
-		mov    render_area_a,%ax
+		mov    EXPORT_SYMBOL(render_area_a),%ax
 		sar    $0x8,%edx
 		sar    %eax
 		sub    %eax,%edx
@@ -78419,7 +78419,7 @@ GLOBAL_FUNC(ASM_draw_engine_unk3_last)	/* 0x070F94 */
 		mov    0x66(%esp),%edx
 		xor    %eax,%eax
 		sar    $0x10,%edx
-		mov    render_area_a,%ax
+		mov    EXPORT_SYMBOL(render_area_a),%ax
 		sar    $0x8,%edx
 		sar    %eax
 		add    %eax,%edx
@@ -78430,7 +78430,7 @@ GLOBAL_FUNC(ASM_draw_engine_unk3_last)	/* 0x070F94 */
 		mov    0x6a(%esp),%edx
 		xor    %eax,%eax
 		sar    $0x10,%edx
-		mov    render_area_b,%ax
+		mov    EXPORT_SYMBOL(render_area_b),%ax
 		sar    $0x8,%edx
 		sar    %eax
 		sub    %eax,%edx
@@ -78442,7 +78442,7 @@ GLOBAL_FUNC(ASM_draw_engine_unk3_last)	/* 0x070F94 */
 		mov    0x6a(%esp),%edx
 		xor    %eax,%eax
 		sar    $0x10,%edx
-		mov    render_area_b,%ax
+		mov    EXPORT_SYMBOL(render_area_b),%ax
 		sar    $0x8,%edx
 		sar    %eax
 		add    %eax,%edx
@@ -78762,9 +78762,9 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		mov    %edi,EXPORT_SYMBOL(dword_155018)
 	jump_737db:
 		xor    %eax,%eax
-		mov    render_area_b,%ax
+		mov    EXPORT_SYMBOL(render_area_b),%ax
 		mov    %eax,0x8(%esp)
-		mov    render_area_b,%eax
+		mov    EXPORT_SYMBOL(render_area_b),%eax
 		sar    $0x10,%eax
 		mov    %eax,0x10(%esp)
 		mov    engn_xc,%eax
@@ -78780,12 +78780,12 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		xor    %esi,%esi
 		mov    %eax,0x4(%esp)
 		xor    %eax,%eax
-		mov    render_area_a,%si
+		mov    EXPORT_SYMBOL(render_area_a),%si
 		mov    unkn_flags_01,%al
-		mov    %dx,render_area_a
+		mov    %dx,EXPORT_SYMBOL(render_area_a)
 		mov    %eax,0xc(%esp)
 		xor    %eax,%eax
-		mov    %dx,render_area_b
+		mov    %dx,EXPORT_SYMBOL(render_area_b)
 		mov    %eax,EXPORT_SYMBOL(ingame)+0x92F # ingame.Flags+0
 		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
 		cmp    $0x1,%eax
@@ -78959,7 +78959,7 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		xor    %edx,%edx
 		mov    %bl,unkn_flags_01
 		mov    $0x4000,%ebx
-		mov    %cx,overall_scale
+		mov    %cx,EXPORT_SYMBOL(overall_scale)
 		call   ac_memset
 		subl   $0xa,gameturn
 		call   ac_func_2e440
@@ -78984,9 +78984,9 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		sar    %eax
 		mov    %eax,EXPORT_SYMBOL(dword_176D40)
 		mov    0x8(%esp),%eax
-		mov    %ax,render_area_b
+		mov    %ax,EXPORT_SYMBOL(render_area_b)
 		mov    0x10(%esp),%eax
-		mov    %ax,overall_scale
+		mov    %ax,EXPORT_SYMBOL(overall_scale)
 		mov    (%esp),%eax
 		mov    %eax,engn_xc
 		mov    0x14(%esp),%eax
@@ -78995,7 +78995,7 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		mov    %ebp,EXPORT_SYMBOL(ingame)+0x92F # ingame.Flags+0
 		mov    %eax,EXPORT_SYMBOL(dword_152EEC)
 		mov    0x18(%esp),%eax
-		mov    %si,render_area_a
+		mov    %si,EXPORT_SYMBOL(render_area_a)
 		mov    %eax,engn_yc
 		mov    0xc(%esp),%al
 		mov    %edi,EXPORT_SYMBOL(engn_anglexz)
@@ -79905,7 +79905,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		jne    jump_75066
 		mov    $0x1,%edi
 		mov    EXPORT_SYMBOL(vec_tmap),%edx
-		mov    tex00dat_fname,%eax
+		mov    EXPORT_SYMBOL(tex00dat_fname),%eax
 		mov    %di,EXPORT_SYMBOL(gamep_scene_effect_type)
 		call   ac_LbFileLoadAt
 		push   $0x2
@@ -79926,7 +79926,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		call   ac_stop_sample_using_heap
 	jump_7507c:
 		mov    EXPORT_SYMBOL(vec_tmap),%edx
-		mov    tex00dat_fname,%eax
+		mov    EXPORT_SYMBOL(tex00dat_fname),%eax
 		call   ac_LbFileLoadAt
 		push   $0x2
 		mov    $0x40,%ecx
@@ -79960,9 +79960,9 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		cmp    $0x96,%edx
 		jl     jump_750da
 		mov    $0x1,%eax
-		cmp    next_mission,%ax
+		cmp    EXPORT_SYMBOL(next_mission),%ax
 		jae    jump_75123
-		mov    next_mission,%cx
+		mov    EXPORT_SYMBOL(next_mission),%cx
 		xor    %bl,%bl
 	jump_75109:
 		xor    %edx,%edx
@@ -81950,7 +81950,7 @@ check_tank_collision:	/* 0x076638 */
 		test   %eax,%eax
 		je     jump_768d8
 		mov    %ebx,%eax
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_768d8:
 		test   %esi,%esi
 		jne    jump_7691b
@@ -89780,7 +89780,7 @@ GLOBAL_FUNC(ASM_train_unkn_st20_func_1)	/* 0x07BF7C */
 		mov    0x20(%edx,%eax,1),%eax
 		sar    $0x10,%eax
 		lea    0x0(,%eax,4),%edx
-		mov    game_walk_headers,%eax
+		mov    EXPORT_SYMBOL(game_walk_headers),%eax
 		lea    (%eax,%edx,1),%edi
 		movzwl 0x2(%edi),%ebp
 		lea    0x0(,%ebp,2),%eax
@@ -89817,7 +89817,7 @@ GLOBAL_FUNC(ASM_train_unkn_st20_func_1)	/* 0x07BF7C */
 		mov    game_object_faces4,%ecx
 		mov    0x20(%ecx,%eax,1),%ecx
 		sar    $0x10,%ecx
-		mov    game_walk_headers,%eax
+		mov    EXPORT_SYMBOL(game_walk_headers),%eax
 		shl    $0x2,%ecx
 		add    %eax,%ecx
 		xor    %edx,%edx
@@ -105943,7 +105943,7 @@ unkstruct03_do_iteration:	/* 0x08907C */
 		mov    EXPORT_SYMBOL(sthings),%eax
 		add    %ebx,%eax
 		mov    %edx,0x1c(%eax)
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_8946e:
 		movswl %si,%eax
 		imul   $0x3c,%eax,%eax
@@ -125267,7 +125267,7 @@ GLOBAL_FUNC(ASM_group_not_seen)	/* 0x0A6BD0 */
 		push   %edi
 		mov    %eax,%ecx
 		mov    $0x90000,%eax
-		mov    render_area_b,%esi
+		mov    EXPORT_SYMBOL(render_area_b),%esi
 		mov    %eax,%edx
 		sar    $0x10,%esi
 		sar    $0x1f,%edx
@@ -126349,7 +126349,7 @@ GLOBAL_FUNC (ASM_init_mission_states)	/* 0x0A8EE8 */
 		add    %edx,%edx
 		xor    %edi,%edi
 		mov    data_19f42e(%edx),%ecx
-		mov    next_mission,%di
+		mov    EXPORT_SYMBOL(next_mission),%di
 		sar    $0x10,%ecx
 		cmp    %edi,%ecx
 		jg     jump_a8feb
@@ -126493,7 +126493,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		add    %eax,%eax
 		xor    %edx,%edx
 		mov    data_19f42e(%eax),%ecx
-		mov    next_mission,%dx
+		mov    EXPORT_SYMBOL(next_mission),%dx
 		sar    $0x10,%ecx
 		cmp    %edx,%ecx
 		jle    jump_a90ec
@@ -152345,7 +152345,7 @@ weapon_sweep:	/* 0x0C1AC8 */
 
 
 /*----------------------------------------------------------------*/
-init_uzi:	/* 0x0C1C0C */
+GLOBAL_FUNC(ASM_init_uzi)	/* 0x0C1C0C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -152715,7 +152715,7 @@ init_uzi:	/* 0x0C1C0C */
 
 
 /*----------------------------------------------------------------*/
-init_long_range:	/* 0x0C2078 */
+GLOBAL_FUNC(ASM_init_long_range)	/* 0x0C2078 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -153080,7 +153080,7 @@ init_long_range:	/* 0x0C2078 */
 
 
 /*----------------------------------------------------------------*/
-init_minigun:	/* 0x0C24C4 */
+GLOBAL_FUNC(ASM_init_minigun)	/* 0x0C24C4 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -153628,7 +153628,7 @@ create_stasis_pod:	/* 0x0C2A00 */
 
 
 /*----------------------------------------------------------------*/
-init_time_gun:	/* 0x0C2AE0 */
+GLOBAL_FUNC(ASM_init_time_gun)	/* 0x0C2AE0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -153765,7 +153765,7 @@ init_time_gun:	/* 0x0C2AE0 */
 
 
 /*----------------------------------------------------------------*/
-init_stasis_gun:	/* 0x0C2C6C */
+GLOBAL_FUNC(ASM_init_stasis_gun)	/* 0x0C2C6C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -153953,7 +153953,7 @@ init_stasis_gun:	/* 0x0C2C6C */
 
 
 /*----------------------------------------------------------------*/
-init_c_iff:	/* 0x0C2E8C */
+GLOBAL_FUNC(ASM_init_c_iff)	/* 0x0C2E8C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -154045,7 +154045,7 @@ init_c_iff:	/* 0x0C2E8C */
 
 
 /*----------------------------------------------------------------*/
-init_flamer:	/* 0x0C303C */
+GLOBAL_FUNC(ASM_init_flamer)	/* 0x0C303C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -156495,7 +156495,7 @@ GLOBAL_FUNC(ASM_init_laser_beam)	/* 0x0C48CC */
 
 
 /*----------------------------------------------------------------*/
-init_air_strike:	/* 0x0C4E2C */
+GLOBAL_FUNC(ASM_init_air_strike)	/* 0x0C4E2C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -156977,7 +156977,7 @@ func_c533c:
 		mov    %esi,%eax
 		mov    %dx,0x96(%esi)
 		mov    $0x3,%edx
-		call   init_grenade
+		call   ac_init_grenade
 		push   $0x2
 		push   $0x0
 		mov    $0x40,%ecx
@@ -157018,7 +157018,7 @@ func_c5453:
 	jump_c5486:
 		mov    %esi,%eax
 		movb   $0x1,0x78(%esi)
-		call   init_uzi
+		call   ac_init_uzi
 		mov    0x4(%edi),%ax
 		mov    %ax,0x58(%esi)
 		testb  $0x2,0x45(%esi)
@@ -157078,7 +157078,7 @@ func_c54f8:
 	jump_c5522:
 		mov    %esi,%eax
 		movb   $0x3,0x78(%esi)
-		call   init_minigun
+		call   ac_init_minigun
 		mov    0x4(%edi),%ax
 		mov    %ax,0x58(%esi)
 		testb  $0x2,0x45(%esi)
@@ -157117,7 +157117,7 @@ func_c557c:
 		sub    %eax,%ecx
 		mov    %esi,%eax
 		mov    %cx,0x96(%esi)
-		call   init_flamer
+		call   ac_init_flamer
 		mov    0x56(%esi),%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
@@ -157204,7 +157204,7 @@ func_c5675:
 		and    $0xfb,%bh
 		mov    %esi,%eax
 		mov    %bh,0xd(%esi)
-		call   init_time_gun
+		call   ac_init_time_gun
 		mov    0x4(%edi),%ax
 		mov    %ax,0x58(%esi)
 		jmp    func_c5a48
@@ -157220,7 +157220,7 @@ func_c56a1:
 		and    $0xfb,%cl
 		mov    %esi,%eax
 		mov    %cl,0xd(%esi)
-		call   init_stasis_gun
+		call   ac_init_stasis_gun
 		mov    0x4(%edi),%ax
 		mov    %ax,0x58(%esi)
 		jmp    func_c5a48
@@ -157238,7 +157238,7 @@ func_c56cd:
 		mov    %dx,0x96(%esi)
 		mov    %esi,%eax
 		mov    %bh,0xd(%esi)
-		call   init_c_iff
+		call   ac_init_c_iff
 		mov    0x4(%edi),%ax
 		mov    0xa7(%esi),%cl
 		movb   $0x0,0x99(%esi)
@@ -157279,9 +157279,9 @@ func_c575e:
 		mov    0x14(%esi),%ecx
 		mov    %esi,%eax
 		sar    $0x10,%ecx
-		call   give_take_me_weapon
+		call   ac_give_take_me_weapon
 		mov    %esi,%eax
-		call   init_air_strike
+		call   ac_init_air_strike
 		jmp    func_c5a48
 
 
@@ -157348,7 +157348,7 @@ func_c5781:
 		sub    %eax,%ebx
 		mov    %esi,%eax
 		mov    %bx,0x96(%esi)
-		call   init_grenade
+		call   ac_init_grenade
 		push   $0x2
 		push   $0x0
 		mov    $0x40,%ecx
@@ -157430,7 +157430,7 @@ func_c5898:
 		mov    %esi,%eax
 		mov    %dx,0x96(%esi)
 		mov    $0x5,%edx
-		call   init_grenade
+		call   ac_init_grenade
 		push   $0x2
 		push   $0x0
 		mov    $0x40,%ecx
@@ -157470,7 +157470,7 @@ func_c59af:
 	jump_c59e2:
 		mov    %esi,%eax
 		movb   $0x1,0x78(%esi)
-		call   init_long_range
+		call   ac_init_long_range
 		push   $0x3
 		mov    $0x40,%ecx
 		mov    $0x7f,%ebx
@@ -157519,7 +157519,7 @@ func_c5a48:
 		xor    %edx,%edx
 		mov    %esi,%eax
 		mov    0x58(%esi),%dx
-		call   set_player_weapon_turn
+		call   ac_set_player_weapon_turn
 	jump_c5a72:
 		pop    %edi
 		pop    %esi
@@ -159465,7 +159465,7 @@ napalm_person:	/* 0x0C6FB0 */
 		test   %eax,%eax
 		jg     jump_c718b
 		mov    %esi,%eax
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 		jmp    jump_c718b
 	jump_c6ffc:
 		xor    %eax,%eax
@@ -159763,7 +159763,7 @@ process_drift_smoke:	/* 0x0C71CC */
 		push   $0x0
 		mov    0x12(%esi),%cx
 		mov    0x18(%esi),%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_c740b
@@ -159820,7 +159820,7 @@ process_drift_smoke:	/* 0x0C71CC */
 		push   $0x0
 		mov    0x18(%esi),%eax
 		mov    0x12(%esi),%cx
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%ebx
 		test   %eax,%eax
 		je     jump_c7637
@@ -160143,7 +160143,7 @@ process_napalm_flame:	/* 0x0C7678 */
 		push   $0x0
 		mov    0x18(%esi),%eax
 		mov    0x12(%esi),%cx
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%edx
 		mov    %eax,%ebx
 		test   %eax,%eax
@@ -160416,7 +160416,7 @@ process_flame1:	/* 0x0C7A80 */
 		push   $0x0
 		mov    0x18(%esi),%eax
 		mov    0x12(%esi),%cx
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%edx
 		mov    %eax,%ebx
 		test   %eax,%eax
@@ -161289,7 +161289,7 @@ init_v_rocket:	/* 0x0C8218 */
 
 
 /*----------------------------------------------------------------*/
-init_grenade:	/* 0x0C84D0 */
+GLOBAL_FUNC(ASM_init_grenade)	/* 0x0C84D0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -162632,7 +162632,7 @@ GLOBAL_FUNC(ASM_process_rocket)	/* 0x0C9100 */
 		push   %eax
 		mov    0x1c(%esi),%edx
 		mov    0x18(%esi),%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%edi
 		test   %eax,%eax
 		je     jump_c95d7
@@ -163333,7 +163333,7 @@ GLOBAL_FUNC(ASM_process_mine)	/* 0x0C9ADC */
 		push   %eax
 		mov    0x1c(%esi),%edx
 		mov    0x18(%esi),%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		test   %eax,%eax
 		je     jump_c9c6c
 		movw   $0x0,0x28(%esi)
@@ -164949,7 +164949,7 @@ find_and_time_travel:	/* 0x0CAE78 */
 		push   $0x0
 		mov    0x14(%eax),%cx
 		mov    0x18(%eax),%eax
-		call   check_for_radius_hit_person
+		call   ac_check_for_radius_hit_person
 		mov    %eax,%esi
 		test   %eax,%eax
 		je     jump_caf43
@@ -165711,8 +165711,8 @@ GLOBAL_FUNC (ASM_traffic_unkn_func_01)	/* 0x0CB738 */
 		mov    $0x28,%edx
 		mov    $0x1,%ebx
 		mov    EXPORT_SYMBOL(next_traffic_node),%cx
-		mov    %dx,render_area_b
-		mov    %dx,render_area_a
+		mov    %dx,EXPORT_SYMBOL(render_area_b)
+		mov    %dx,EXPORT_SYMBOL(render_area_a)
 		cmp    %bx,%cx
 		ja     jump_cb77c
 		jmp    jump_cb7a9
@@ -178774,7 +178774,7 @@ GLOBAL_FUNC(ASM_FIRE_process_flame)	/* 0x0DAAB8 */
 		testb  $0x2,0xc(%edx)
 		jne    jump_dabcd
 		mov    %edx,%eax
-		call   set_static_on_fire
+		call   ac_set_static_on_fire
 	jump_dabcd:
 		mov    (%edx),%eax
 	jump_dabcf:
@@ -184898,154 +184898,15 @@ GLOBAL (engn_zc)	/* 0x152EE8 */
 GLOBAL (dword_152EEC)	/* 0x152EEC */
 		.ascii  "\x54\xff\xff\xff"
 
-GLOBAL (next_floor_tile)	/* 0x152F00 */
-		.short  0x1
-		.short  0x0
-ASM_shadowtexture:	/* 0x152F04 */
-		.ascii  "\x2c\x01\xc2\x01\x00\xe6\x14\xfe"
-		.ascii  "\xa4\x01\xbc\x02\x15\xe1\x2a\xfe"
-		.ascii  "\x96\x00\xbc\x02\x8f\xe3\x97\xfe"
-		.ascii  "\xcc\x01\x52\x03\x2b\xe2\x42\xfe"
-		.fill   0x10
-		.ascii  "\xf4\x01\x20\x03\x43\xec\x54\xfe"
-		.ascii  "\x26\x02\x84\x03\x98\xe2\xad\xfe"
-		.ascii  "\xf4\x01\x20\x03\x43\xec\x54\xfe"
-		.ascii  "\xf4\x01\x20\x03\x79\xe4\x8e\xfe"
-		.fill   0x8
-		.ascii  "\xf4\x01\x20\x03\x55\xe8\x5e\xfe"
-		.ascii  "\xf4\x01\x20\x03\x55\xe8\x5e\xfe"
-		.ascii  "\x90\x01\xbc\x02\x43\xec\x54\xfe"
-		.ascii  "\xf4\x01\x20\x03\x5f\xe2\x78\xfe"
-		.fill   0x18
-		.ascii  "\xbc\x02\x84\x03\x43\xec\x54\xfe"
-		.fill   0x10
-		.ascii  "\x2c\x01\xc2\x01\x00\xe6\x14\xfe"
-		.ascii  "\xa4\x01\xbc\x02\x15\xe1\x2a\xfe"
-		.fill   0x8
-		.ascii  "\xf4\x01\x20\x03\x5f\xe2\x78\xfe"
-		.fill   0x48
-GLOBAL (ASM_byte_153014)
-		.ascii  "\x01\x00\x01\x00\x01\x00\x00\x01"
-		.ascii  "\x01\x01\x01\x01\x01\x01\x01\x01"
-		.ascii  "\x01\x01\x01\x01\x01\x01\x01\x01"
-		.ascii  "\x01\x01\x01\x01\x00\x01\x00\x01"
-		.ascii  "\x00\x01\x00\x01\x01\x01\x01\x01"
-		.ascii  "\x01\x01\x01\x01\x01\x00\x00\x01"
-		.ascii  "\x01\x01\x01\x01\x01\x01\x01\x01"
-		.ascii  "\x01\x01\x01\x01\x01\x01\x01\x01"
-
-
-unkn_prop_03:	/* 0x153184 */
-		.long	0x0
-
-GLOBAL (dword_153194)	/* 0x153194 */
-		.ascii  "\x00\x01\x00\x00"
-GLOBAL (byte_153198) /* 0x153198 */
-		.ascii  "\x01\x00\x00\x00"
-GLOBAL (data_15319c)	/* 0x15319c */
-		.long   EXPORT_SYMBOL(unknmsg_str)
-GLOBAL (engine_mem_alloc_size)
-		.long   5900000
-female_peep:	/* 0x1531A4 */
+GLOBAL (female_peep)	/* 0x1531A4 */
 		.ascii  "\x28\x20"
 GLOBAL (head_my_path)	/* 0x1531A6 */
 		.ascii  "\x01\x00"
-GLOBAL (user_name)	/* 0x1531A8 */
-		.string "TEMP"
-		.fill   0x2d
+
 GLOBAL (word_1531DA)	/* 0x1531DA */
 		.ascii  "\x01\x00"
-GLOBAL (next_ex_face)	/* 0x1531DC */
-		.ascii  "\x01\x00\x00\x00"
-GLOBAL (word_1531E0)	/* 0x1531E0 */
-		.ascii  "\x01\x00"
-GLOBAL (prim4_textures_count)	/* 0x1531E2 */
-		.ascii  "\x01\x00"
-GLOBAL (prim_face_textures_count)	/* 0x1531E4 */
-		.ascii  "\x01\x00"
-GLOBAL (prim_object_points_count)	/* 0x1531E6 */
-		.ascii  "\x01\x00"
-GLOBAL (prim_object_faces_count)	/* 0x1531E8 */
-		.ascii  "\x01\x00"
-GLOBAL (prim_object_faces4_count)	/* 0x1531EA */
-		.ascii  "\x01\x00"
-GLOBAL (prim_objects_count)	/* 0x1531EC */
-		.ascii  "\x01\x00"
-GLOBAL (next_traffic_node)	/* 0x1531EE */
-		.ascii  "\x01\x00"
-GLOBAL (next_mission)	/* 0x1531F0 */
-		.ascii  "\x01\x00"
-GLOBAL (fifties_per_gameturn)	/* 0x1531F2 */
-		.ascii  "\x03\x00"
-GLOBAL (next_anim_tmap)		/* 1531f4 */
-		.ascii  "\x0a\x00"
-		.ascii  "\x01\x00"
-GLOBAL (render_area_a)	/* 0x1531F8 */
-		.ascii  "\x18\x00"
-GLOBAL (render_area_b)	/* 0x1531FA */
-		.ascii  "\x18\x00"
-GLOBAL (overall_scale)	/* 0x1531FC */
-		.ascii  "\x00\x01"
-GLOBAL (next_normal)		/* 0x1531fe */
-		.ascii  "\x01\x00"
-GLOBAL (next_quick_light)		/* 0x153200 */
-		.ascii  "\x01\x00"
-GLOBAL (next_full_light)		/* 0x153202 */
-		.ascii  "\x01\x00"
-GLOBAL (next_face_texture)		/* 0x153204 */
-		.ascii  "\x01\x00"
-GLOBAL (next_floor_texture)		/* 0x153206 */
-		.ascii  "\x01\x00"
-data_153208:
-		.ascii  "\xa0\x0f"
-GLOBAL (next_object_point)		/* 0x15320a */
-		.ascii  "\x01\x00"
-GLOBAL (next_object_face)		/* 0x15320c */
-		.ascii  "\x01\x00"
-GLOBAL (next_object_face4)		/* 0x15320e */
-		.ascii  "\x01\x00"
-GLOBAL (next_object)		/* 0x153210 */
-		.ascii  "\x01\x00"
-GLOBAL (next_light_command)		/* 0x153212 */
-		.ascii  "\x01\x00"
-		.ascii  "\x01\x00"
-		.ascii  "\x01\x00"
-		.ascii  "\x01\x00"
-GLOBAL (next_command)	/* 0x15321A */
-		.ascii  "\x01\x00"
-GLOBAL (next_objective)	/* 0x15321c */
-		.ascii  "\x01\x00"
-GLOBAL (next_used_objective)	/* 0x15321E */
-		.ascii  "\x01\x00"
-GLOBAL (next_used_lvl_objective)	/* 0x153220 */
-		.ascii  "\x01\x00"
-GLOBAL (next_col_vect)		/* 0x153222 */
-		.ascii  "\x01\x00"
-GLOBAL (next_vects_list)	/* 0x153224 */
-		.ascii  "\x01\x00"
-GLOBAL (next_walk_header)	/* 0x153226 */
-		.ascii  "\x01\x00"
-GLOBAL (next_walk_item)		/* 0x153228 */
-		.ascii  "\x01\x00"
-GLOBAL (next_unkn_full_light)	/* 0x15322A */
-		.ascii  "\x01\x00"
-		.ascii  "\xa6\x2e\x09\x00"
-GLOBAL (next_local_mat)	/* 0x153230 */
-		.ascii  "\x01\x00"
-GLOBAL (next_special_face)	/* 0x153232 */
-		.ascii  "\x01\x00"
-GLOBAL (next_special_face4)	/* 0x153234 */
-		.ascii  "\x01\x00"
-		.short  0x0
-GLOBAL (mouse_map_x)	/* 0x153238 */
-		.ascii  "\x00\x32"
-		.short  0x0
-GLOBAL (mouse_map_z)	/* 0x15323C */
-		.ascii  "\x00\x32\x00\x00"
-GLOBAL (net_players_num)	/* 0x153244 */
-		.ascii  "\x01\x00\x00\x00"
 
-tex00dat_fname:	/* 0x153278 */
+GLOBAL (tex00dat_fname)	/* 0x153278 */
 		.long   aDataTex00_dat
 
 palette_fname_fmt:	/* 0x1532D8 */
@@ -187100,8 +186961,6 @@ GLOBAL (word_1A5834)
 		.short  0x0
 GLOBAL (word_1A5836)
 		.short  0x0
-GLOBAL (mouse_map_y)	/* 0x1A5838 */
-		.fill   0x8
 
 GLOBAL (small2_font)	/* 0x1A5850 */
 		.long	0x0

@@ -28,7 +28,7 @@
 #include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
-extern ulong next_ex_face;
+ulong next_ex_face = 1;
 
 void init_free_explode_faces(void)
 {

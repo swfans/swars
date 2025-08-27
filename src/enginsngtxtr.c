@@ -22,6 +22,14 @@
 #include "swlog.h"
 /******************************************************************************/
 
+ushort next_anim_tmap = 10;
+
+ushort next_face_texture = 1;
+
+ushort next_floor_texture = 1;
+
+ushort next_local_mat = 1;
+
 /** Checks whether texture with specified index is the only in use within given SingleFloorTexture.
  */
 TbBool floor_texture_is_only_using_index(struct SingleFloorTexture *p_fltextr, int index)

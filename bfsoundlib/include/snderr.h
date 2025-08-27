@@ -30,6 +30,24 @@ extern char SoundProgressMessage[256];
 void InitDebugAudio(void);
 void SoundProgressLog(const char *msg);
 
+#define SNDLOGFAIL(area,format,args...) \
+    { int _mlen; \
+    _mlen = snprintf(SoundProgressMessage, sizeof(SoundProgressMessage), \
+      area " - failed - " format "\n", ## args); \
+    if (_mlen > 1) SoundProgressLog(SoundProgressMessage); }
+
+#define SNDLOGERR(area,format,args...) \
+    { int _mlen; \
+    _mlen = snprintf(SoundProgressMessage, sizeof(SoundProgressMessage), \
+      area " - error - " format "\n", ## args); \
+    if (_mlen > 1) SoundProgressLog(SoundProgressMessage); }
+
+#define SNDLOGSYNC(area,format,args...) \
+    { int _mlen; \
+    _mlen = snprintf(SoundProgressMessage, sizeof(SoundProgressMessage), \
+      area " - " format "\n", ## args); \
+    if (_mlen > 1) SoundProgressLog(SoundProgressMessage); }
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

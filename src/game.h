@@ -177,11 +177,6 @@ struct ColColumn { // sizeof=16
     uint QBits[4];
 };
 
-struct WalkHeader { // sizeof=4
-    ushort Count;
-    ushort StartItem;
-};
-
 struct BezierPt { // sizeof=28
     ubyte field_0[26];
     ushort field_2A;
@@ -314,23 +309,6 @@ extern ubyte game_level_unkn2[40];
 
 extern ushort word_1531E0;
 
-/** Header linking a face to a list of walk items.
- *
- * Some SingleObjectFace* instances have a WalkHeader assigned.
- * If they do, that defines a range of walk items containing
- * neighbor faces, to which it is possible to walk.
- *
- */
-extern struct WalkHeader *game_walk_headers;
-extern ushort next_walk_header;
-
-/** List of faces which can be walked to from a specific face.
- *
- * Each entry is a face index which has at least corner very close
- * to a corner of current face, allowing walking between the faces.
- */
-extern short *game_walk_items;
-extern ushort next_walk_item;
 extern struct ColColumn *game_col_columns;
 extern ushort next_col_column;
 extern struct SingleObjectFace3 *game_special_object_faces;
@@ -339,8 +317,6 @@ extern ubyte *game_user_heap;
 extern struct UnknBezEdit *bezier_pts;
 extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;
-extern struct Objective *game_used_lvl_objectives;
-extern ushort next_used_lvl_objective;
 extern long target_old_frameno;
 extern ushort word_176E38;
 

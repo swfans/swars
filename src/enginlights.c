@@ -22,6 +22,10 @@
 #include "swlog.h"
 /******************************************************************************/
 
+ushort next_quick_light = 1;
+ushort next_full_light = 1;
+ushort next_light_command = 1;
+
 void refresh_old_full_light_format(struct FullLight *p_fulight,
   struct FullLightOldV12 *p_oldfulight, ulong fmtver)
 {

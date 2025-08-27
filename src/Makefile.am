@@ -49,7 +49,9 @@ swars_SOURCES = \
 	config.h \
 	bmbang.c \
 	bmbang.h \
-	bat.sx \
+	bat_s.sx \
+	bat.c \
+	bat.h \
 	bigmap.c \
 	bigmap.h \
 	building.c \
@@ -162,6 +164,8 @@ swars_SOURCES = \
 	lvobjctv.h \
 	lvfiles.c \
 	lvfiles.h \
+	lvwalk.c \
+	lvwalk.h \
 	main.c \
 	matrix.c \
 	matrix.h \
@@ -215,6 +219,8 @@ swars_SOURCES = \
 	thing.h \
 	thing_search.c \
 	thing_search.h \
+	thing_fire.c \
+	thing_fire.h \
 	thing_debug.c \
 	thing_debug_s.sx \
 	tngcolisn.c \

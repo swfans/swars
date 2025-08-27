@@ -23,8 +23,10 @@
 #include "bigmap.h"
 #include "building.h"
 #include "people.h"
+#include "pepgroup.h"
 #include "swlog.h"
 #include "thing.h"
+#include "thing_fire.h"
 #include "vehicle.h"
 #include "weapon.h"
 
@@ -858,6 +860,124 @@ ThingIdx search_for_ferry(short X, short Y, short Z, ushort R)
       TT_VEHICLE, SubTT_VEH_SHIP, bfilter_waiting_stopped, &params);
 
     return thing;
+}
+
+struct Thing *check_for_radius_hit_person(int prc_x, int prc_y, int prc_z,
+        int radius, struct Thing *p_owner, int flag, int skip)
+{
+#if 0
+    struct Thing *ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_check_for_radius_hit_person\n"
+        : "=r" (ret) : "a" (prc_x), "d" (prc_y), "b" (prc_z), "c" (radius), "g" (p_owner), "g" (flag), "g" (skip));
+    return ret;
+#else
+    ThingIdx thing;
+    short dtx, dtz;
+    int cor_x, cor_y, cor_z;
+
+    cor_x = PRCCOORD_TO_MAPCOORD(prc_x);
+    cor_y = PRCCOORD_TO_MAPCOORD(prc_y);
+    cor_z = PRCCOORD_TO_MAPCOORD(prc_z);
+
+    for (dtx = -1; dtx <= 1; dtx++)
+    {
+      for (dtz = -1; dtz <= 1; dtz++)
+      {
+        uint tile_x, tile_z;
+
+        tile_x = MAPCOORD_TO_TILE(cor_x) + dtx;
+        tile_z = MAPCOORD_TO_TILE(cor_z) + dtz;
+        if ((tile_x >= MAP_TILE_WIDTH) || (tile_z >= MAP_TILE_HEIGHT))
+            continue;
+        thing = game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x].Child;
+        while (thing != 0)
+        {
+            if (thing <= 0)
+            {
+              struct SimpleThing *p_sthing;
+
+              p_sthing = &sthings[thing];
+              if (p_sthing->Type == SmTT_STATIC && (p_sthing->Flag & TngF_Destroyed) == 0 && p_sthing->Frame != 1008)
+              {
+                  if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                      if (--skip < 0) {
+                          if ((p_sthing->StartFrame <= 1004) || (p_sthing->StartFrame >= 1008))
+                              return (struct Thing *)p_sthing;
+                          set_static_on_fire(p_sthing);
+                      }
+                  }
+              }
+              thing = p_sthing->Next;
+            }
+            else
+            {
+              struct Thing *p_thing;
+              ushort group;
+
+              p_thing = &things[thing];
+              if (p_owner != NULL)
+                  group = p_owner->U.UPerson.EffectiveGroup;
+              else
+                  group = 99;
+              if ((p_thing->U.UPerson.EffectiveGroup != group) || (group >= 100))
+              {
+                if (!thing_group_have_truce(group, p_thing->U.UPerson.EffectiveGroup)
+                  && (p_thing->Type == TT_PERSON) && (p_thing != p_owner))
+                {
+                    if ((p_thing->State != PerSt_DEAD) && (p_thing->State != PerSt_PERSON_BURNING) && (p_thing->Flag & TngF_Destroyed) == 0)
+                    {
+                        if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                            if (--skip < 0)
+                                return p_thing;
+                        }
+                    }
+                }
+                if (--skip < 0)
+                {
+                  if (flag)
+                  {
+                    if ((p_thing->Type == TT_VEHICLE) && (p_thing->State != VehSt_UNKN_D)
+                      && (p_owner == NULL || p_thing->ThingOffset != p_owner->U.UPerson.Vehicle))
+                    {
+                        if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                            if (--skip < 0)
+                                return p_thing;
+                        }
+                    }
+                  }
+                }
+                if (flag)
+                {
+                    if ((p_thing->Type == TT_BUILDING) && (p_thing->SubType == SubTT_BLD_MGUN) && ((p_thing->Flag & TngF_Destroyed) == 0))
+                    {
+                        if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                            if (--skip < 0)
+                                return p_thing;
+                        }
+                    }
+                }
+                if (flag)
+                {
+                    if ((p_thing->Type == TT_MINE) && (p_thing->SubType == 48) && (p_thing->Flag & TngF_Destroyed) == 0 && (p_thing->State != 13))
+                    {
+                        if (thing_intersects_cylinder(thing, cor_x, cor_y, cor_z, radius, 25)) {
+                            if (--skip < 0)
+                                return p_thing;
+                        }
+                    }
+                }
+              }
+              thing = p_thing->Next;
+            }
+        }
+      }
+    }
+    return NULL;
+#endif
 }
 
 /******************************************************************************/

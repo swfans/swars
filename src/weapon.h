@@ -149,6 +149,25 @@ const char *weapon_codename(ushort wtype);
  */
 TbBool weapon_is_deployed_at_wielder_pos(ushort wtype);
 
+/** Returns if the weapon is targeted at / affects the wielding person.
+ */
+TbBool weapon_is_self_affecting(ushort weptype);
+
+/** Returns if a weapon has limited amount of uses before disappearing.
+ */
+TbBool weapon_is_consumable(ushort wtype);
+
+/** Returns if a weapon has ability to charge before firing, to deal more damage.
+ */
+TbBool weapon_can_be_charged(ushort wtype);
+
+/** Returns if a weapon fire can be delayed to achieve target lock.
+ *
+ * Weapons with targetting cannot be charged, as these functions
+ * use the same resources and same player controls.
+ */
+TbBool weapon_has_targetting(ushort wtype);
+
 /** Returns panel sprite index to be used to represent the weapon.
  */
 ushort weapon_sprite_index(ushort wtype, TbBool enabled);
@@ -171,6 +190,10 @@ TbBool weapons_remove_one_from_npc(ulong *p_weapons, ushort wtype);
  */
 TbBool weapons_remove_one(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
+
+/** Reset previously selected weapon visible in the players panel.
+ */
+void person_weapons_reset_previous(struct Thing *p_person);
 
 /** Remove one weapon from player-controlled person in-game.
  * Player struct contains dumb own array rather than uniform WeaponsFourPack, so it requires

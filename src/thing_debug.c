@@ -816,7 +816,7 @@ void things_debug_hud(void)
             draw_text(scr_x + 40, scr_y + ln*4, "Si", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_Destroyed)
             draw_text(scr_x + 60, scr_y + ln*4, "De", colour_lookup[ColLU_WHITE]);
-        if (p_track_thing->Flag & TngF_Unkn0400)
+        if (p_track_thing->Flag & TngF_WepCharging)
             draw_text(scr_x + 80, scr_y + ln*4, "Ch", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_Unkn0040)
             draw_text(scr_x + 100, scr_y + ln*4, "CI", colour_lookup[ColLU_WHITE]);

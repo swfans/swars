@@ -106,7 +106,7 @@ enum ThingFlags {
     TngF_Unkn0080     = 0x0080,
     TngF_Unkn0100     = 0x0100,
     TngF_StationrSht  = 0x0200,
-    TngF_Unkn0400     = 0x0400,
+    TngF_WepCharging  = 0x0400,
     TngF_Unkn0800     = 0x0800,
     TngF_Unkn1000     = 0x1000,
     TngF_PlayerAgent  = 0x2000,
@@ -416,6 +416,9 @@ struct TngUPerson
   ushort SpecialOwner;
   ushort WorkPlace;
   ushort LeisurePlace;
+  /** The weapon timer is used for both re-fire delay
+   * and weapon overcharging.
+   */
   short WeaponTimer;
   short Target2;
   short MaxShieldEnergy;
@@ -1005,7 +1008,27 @@ short new_thing_building_clone(struct Thing *p_clthing,
 void build_same_type_headers(void);
 short get_thing_same_type_head(short ttype, short subtype);
 
+/** Tells whether center of given thing is located on map within given circle.
+ *
+ * For this function to return true, the thing needs to be within given circle
+ * to at least half its depth - the center needs to be within.
+ */
 TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R);
+
+/** Tells whether some part of given thing is located on map within given circle.
+ *
+ * For this function to return true, it is enough that the thing intersects
+ * the circle only a little. Even a small intersection is enough.
+ */
+TbBool thing_intersects_circle(ThingIdx thing, short X, short Z, ushort R);
+
+/** Tells whether some part of given thing is located on map within given cylinder.
+ *
+ * A version of thing_intersects_circle() which does 3D coordinates comparison.
+ * For this function to return true, it is enough that the thing intersects
+ * the cylinder only a little. Even a small intersection is enough.
+ */
+TbBool thing_intersects_cylinder(ThingIdx thing, short X, short Y, short Z, ushort R, ushort H);
 
 struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop);
 

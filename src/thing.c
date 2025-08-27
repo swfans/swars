@@ -55,7 +55,7 @@ struct UnkFLight { // sizeof=0x0A
 #pragma pack()
 /******************************************************************************/
 
-extern ushort next_unkn_full_light;
+ushort next_unkn_full_light = 1;
 extern struct UnkFLight unkn_full_lights[50];
 
 ubyte debug_log_things = 0;
@@ -1044,6 +1044,59 @@ TbBool thing_is_within_circle(ThingIdx thing, short X, short Z, ushort R)
     }
     r2 = R * R;
     return ((dtZ * dtZ + dtX * dtX) < r2);
+}
+
+TbBool thing_intersects_circle(ThingIdx thing, short X, short Z, ushort R)
+{
+    s32 dtX, dtZ, cyl_r2, tng_r;
+
+    if (thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        dtX = PRCCOORD_TO_MAPCOORD(p_sthing->X) - X;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_sthing->Z) - Z;
+        tng_r = p_sthing->Radius;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        dtX = PRCCOORD_TO_MAPCOORD(p_thing->X) - X;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_thing->Z) - Z;
+        tng_r = p_thing->Radius;
+    }
+    cyl_r2 = R * R;
+    return ((dtZ * dtZ + dtX * dtX) < cyl_r2 + tng_r * tng_r);
+}
+
+TbBool thing_intersects_cylinder(ThingIdx thing, short X, short Y, short Z, ushort R, ushort H)
+{
+    s32 dtX, dtY, dtZ, cyl_r2, tng_r, h_min, h_max;
+
+    if (thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        dtX = PRCCOORD_TO_MAPCOORD(p_sthing->X) - X;
+        dtY = PRCCOORD_TO_MAPCOORD(p_sthing->Y) - Y;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_sthing->Z) - Z;
+        tng_r = p_sthing->Radius;
+        h_min = H;
+        h_max = H;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        dtX = PRCCOORD_TO_MAPCOORD(p_thing->X) - X;
+        dtY = PRCCOORD_TO_MAPCOORD(p_thing->Y) - Y;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_thing->Z) - Z;
+        tng_r = p_thing->Radius;
+        h_min = H;
+        h_max = H;
+        // Things represented by 3D objects require lower minimum
+        if ((p_thing->Type == TT_VEHICLE) || (p_thing->Type == TT_BUILDING)) {
+            h_min += 80;
+        }
+    }
+    cyl_r2 = R * R;
+    return ((dtZ * dtZ + dtX * dtX) < cyl_r2 + tng_r * tng_r)
+        && ((dtY > -h_min) && (dtY < h_max));
 }
 
 void build_same_type_headers(void)

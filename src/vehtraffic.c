@@ -29,6 +29,8 @@
 #include "vehicle.h"
 #include "swlog.h"
 /******************************************************************************/
+ushort next_traffic_node = 1;
+
 extern uint dword_1C8470;
 extern int dword_1C8474[32];
 

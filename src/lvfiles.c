@@ -44,6 +44,7 @@
 #include "game_speed.h"
 #include "game_sprani.h"
 #include "lvobjctv.h"
+#include "lvwalk.h"
 #include "matrix.h"
 #include "building.h"
 #include "pepgroup.h"
@@ -90,6 +91,8 @@ struct QuickLoad quick_load_pc[] = {
   {&next_col_column,	(void **)&game_col_columns,	16, 0},
   {NULL,				NULL,				 0, 0},
 };
+
+ushort next_used_lvl_objective = 1;
 
 void debug_level(const char *text, int player)
 {

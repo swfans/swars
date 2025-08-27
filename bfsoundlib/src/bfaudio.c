@@ -117,11 +117,6 @@ int32_t sound_fake_timer_initialize(void)
 
 void InitAudio(AudioInitOptions *audOpts)
 {
-#if 0
-    asm volatile (
-      "call ASM_InitAudio\n"
-        : : "a" (audOpts));
-#endif
     InitDebugAudio();
 
     sprintf(FullDIG_INIPath, "sound/DIG.INI");
@@ -155,12 +150,9 @@ void InitAudio(AudioInitOptions *audOpts)
         UseCurrentAwe32Soundfont = 1;
     if (audOpts->UseMultiMediaExtensions == 1)
         UseMultiMediaExtensions = 1;
-    sprintf(SoundProgressMessage, "BF1  - MA   %d\n", MusicAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF2  - SA   %d\n", SoundAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF3  - CDA  %d\n", CDAble);
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Init audio", "initial MA   %d", MusicAble);
+    SNDLOGSYNC("Init audio", "initial SA   %d", SoundAble);
+    SNDLOGSYNC("Init audio", "initial CDA  %d", CDAble);
     if (!(audOpts->AbleFlags & 0x01))
         MusicAble = 0;
     if (!(audOpts->AbleFlags & 0x02))
@@ -178,24 +170,18 @@ void InitAudio(AudioInitOptions *audOpts)
     } else if (audOpts->InitRedbookAudio == 2) {
         InitMusicOGG("music");
     } else {
-        sprintf(SoundProgressMessage, "BF101 - cd init - disabled\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGSYNC("Init audio", "cd init - disabled");
         CDAble = false;
     }
 
     if (ive_got_an_sb16)
         prepare_SB16_volumes();
 
-    sprintf(SoundProgressMessage, "BF54 - MA   %d\n", MusicAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF55 - SA   %d\n", SoundAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF55 - CDA  %d\n", CDAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF56 - music driver = %s\n", MusicInstallChoice.driver_name);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF57 - sound driver = %s\n", SoundInstallChoice.driver_name);
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("Init audio", "MA   %d", MusicAble);
+    SNDLOGSYNC("Init audio", "SA   %d", SoundAble);
+    SNDLOGSYNC("Init audio", "CDA  %d", CDAble);
+    SNDLOGSYNC("Init audio", "music driver = %s", MusicInstallChoice.driver_name);
+    SNDLOGSYNC("Init audio", "sound driver = %s", SoundInstallChoice.driver_name);
 }
 
 void FreeAudio(void)

@@ -248,14 +248,18 @@ void ogg_list_music_tracks(void)
     is_da_track[trkno] = false;
     for (trkno++; trkno < CD_TRACKS_MAX_COUNT; trkno++) {
         char file_name[FILENAME_MAX];
+        int len;
 
-        snprintf(file_name, sizeof(file_name),
+        len = snprintf(file_name, sizeof(file_name),
               "%s" FS_SEP_STR "track_%i.ogg",
               music_dir, trkno - 1);
+        if ((len < 1) || (len > (int)sizeof(file_name))) {
+            SNDLOGFAIL("CDA list", "unacceptable music path");
+            break;
+        }
         is_da_track[trkno] = (access(file_name, F_OK) == 0);
         if (!is_da_track[trkno] && trkno > 4) {
-            sprintf(SoundProgressMessage, "BF106 - No CD tracks beyond %d\n", (int)(trkno-1));
-            SoundProgressLog(SoundProgressMessage);
+            SNDLOGSYNC("CDA list", "no CD tracks beyond %d", (int)(trkno-1));
             break;
         }
     }
@@ -275,9 +279,7 @@ void PlayCDAudioTrack(ushort trkno)
     CDCountdown = 5 * (len_sect / 75 / 5) + 5;
     i = GetCDFirst();
     cd_play(i, start_sect, len_sect);
-    sprintf(SoundProgressMessage, "BF103 - "
-        "CDA play track %d sect %lu len %lu\n", (int)trkno, start_sect, len_sect);
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("CDA play", "track %d sect %lu len %lu", (int)trkno, start_sect, len_sect);
 
     CDCount_handle = AIL_register_timer(cbCDCountdown);
     AIL_set_timer_period(CDCount_handle, 5000000);
@@ -289,15 +291,19 @@ void PlayCDAudioTrack(ushort trkno)
 void PlayMusicOGGTrack(ushort trkno)
 {
     char file_name[FILENAME_MAX];
+    int len;
 
-    snprintf(file_name, sizeof(file_name),
+    len = snprintf(file_name, sizeof(file_name),
           "%s" FS_SEP_STR "track_%i.ogg",
           music_dir, trkno - 1);
 
+    if ((len < 1) || (len > (int)sizeof(file_name))) {
+        SNDLOGFAIL("CDA play", "unacceptable music path");
+    }
+
     ogg_vorbis_stream_open(&sound_music_stream, file_name);
     ogg_vorbis_stream_play(&sound_music_stream);
-    sprintf(SoundProgressMessage, "BF103 - CDA play \"%s\"\n", file_name);
-    SoundProgressLog(SoundProgressMessage);
+    SNDLOGSYNC("CDA play", "play '%s'", file_name);
 
     CDCount_handle = AIL_register_timer(cbCDCountdown);
     AIL_set_timer_period(CDCount_handle, 5000000);
@@ -311,8 +317,7 @@ void PlayCDTrack(ushort trkno)
     if (!CDAble)
         return;
     if (!is_daudio_track(trkno)) {
-        sprintf(SoundProgressMessage, "BF103 - No CD audio track %d\n", (int)trkno);
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGSYNC("CDA play", "no CD audio track %d", (int)trkno);
         return;
     }
     if (CurrentCDTrack != 0 && CurrentCDTrack == trkno) {
@@ -412,9 +417,7 @@ void InitRedbook(void)
         InitialCDVolume = GetCDVolume();
         CDType = CDTYP_REAL;
     } else {
-        sprintf(SoundProgressMessage, "BF101 - "
-            "real cd init - failed - CDA disabled\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("CDA init", "real CD Audio disabled");
         CDAble = false;
         CDType = CDTYP_NONE;
     }
@@ -427,9 +430,7 @@ void InitMusicOGG(const char *nmusic_dir)
     strncpy(music_dir, nmusic_dir, sizeof(music_dir));
 
     if (!ogg_vorbis_stream_init(&sound_music_stream)) {
-        sprintf(SoundProgressMessage, "BF101 - "
-            "ogg vorbis stream init - failed - CDA disabled\n");
-        SoundProgressLog(SoundProgressMessage);
+        SNDLOGFAIL("CDA init", "OGG Streamed Audio disabled");
         CDAble = false;
         CDType = CDTYP_NONE;
         return;

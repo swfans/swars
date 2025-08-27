@@ -23,6 +23,11 @@
 #include "swlog.h"
 /******************************************************************************/
 
+ushort prim_object_points_count = 1;
+ushort prim_object_faces_count = 1;
+ushort prim_object_faces4_count = 1;
+ushort prim_objects_count = 1;
+
 void read_primveh_obj(const char *fname, int a2)
 {
     long firstval;
