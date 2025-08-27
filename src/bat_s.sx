@@ -434,7 +434,7 @@ func_dd54c:
 func_dd557:
 /*----------------------------------------------------------------*/
 		xor    %ebp,%ebp
-		mov    %ebp,EXPORT_SYMBOL(BAT_data_1e270c)
+		mov    %ebp,EXPORT_SYMBOL(BAT_blocks_remain)
 		jmp    jump_dd2dd
 	jump_dd564:
 		mov    (%ecx),%eax
@@ -879,7 +879,7 @@ GLOBAL_FUNC(ASM_breakout_func_ddae0)	/* 0xddae0 */
 		inc    %ecx
 		jmp    jump_ddb2e
 	jump_ddb55:
-		mov    %ecx,EXPORT_SYMBOL(BAT_data_1e270c)
+		mov    %ecx,EXPORT_SYMBOL(BAT_blocks_remain)
 		add    $0x8,%esp
 		pop    %edi
 		pop    %esi
@@ -1604,11 +1604,11 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		add    $0x14,%edi
 		push   $0x64
 		mov    %bh,EXPORT_SYMBOL(BAT_data_1e271c)(%eax)
-		mov    EXPORT_SYMBOL(BAT_data_1e270c),%eax
+		mov    EXPORT_SYMBOL(BAT_blocks_remain),%eax
 		mov    $0x40,%ecx
 		dec    %eax
 		mov    $0x7f,%ebx
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e270c)
+		mov    %eax,EXPORT_SYMBOL(BAT_blocks_remain)
 		xor    %eax,%eax
 		mov    %edi,EXPORT_SYMBOL(BAT_score)
 		call   ac_play_sample_using_heap
@@ -1990,7 +1990,7 @@ func_de91e:
 		mov    $0xc,%edi
 		mov    $0x80,%ch
 		mov    %edx,EXPORT_SYMBOL(BAT_state)
-		mov    %ebx,EXPORT_SYMBOL(BAT_data_1e26f0)
+		mov    %ebx,EXPORT_SYMBOL(BAT_level_intro_timer)
 		xor    %ebx,%ebx
 		jmp    jump_de955
 	jump_de94c:
@@ -2039,10 +2039,10 @@ breakout_func_de991:
 		add    $0x100,%ecx
 		cmp    $0x40,%edi
 		jl     jump_de99b
-		mov    EXPORT_SYMBOL(BAT_data_1e26f0),%edx
+		mov    EXPORT_SYMBOL(BAT_level_intro_timer),%edx
 		dec    %edx
 		xor    %eax,%eax
-		mov    %edx,EXPORT_SYMBOL(BAT_data_1e26f0)
+		mov    %edx,EXPORT_SYMBOL(BAT_level_intro_timer)
 		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
 		cmp    $0x1,%eax
 		jne    jump_de9d8
@@ -2074,7 +2074,7 @@ breakout_func_de991:
 		sub    %esi,%edx
 		mov    %edx,EXPORT_SYMBOL(BAT_paddle_x)
 	jump_dea29:
-		mov    EXPORT_SYMBOL(BAT_data_1e26f0),%edi
+		mov    EXPORT_SYMBOL(BAT_level_intro_timer),%edi
 		cmp    $0x3c,%edi
 		jg     jump_dea42
 		xor    %eax,%eax
@@ -2195,7 +2195,7 @@ breakout_func_de991:
 	jump_deb95:
 		call   ac_BAT_unknsub_21
 		call   ac_breakout_play_sub2
-		cmpl   $0x3c,EXPORT_SYMBOL(BAT_data_1e26f0)
+		cmpl   $0x3c,EXPORT_SYMBOL(BAT_level_intro_timer)
 		jl     jump_debb6
 		mov    EXPORT_SYMBOL(BAT_levelno),%ebp
 		push   %ebp
@@ -2249,7 +2249,7 @@ breakout_func_de991:
 		test   %ch,%ch
 		jne    jump_dec0e
 	jump_dec36:
-		cmpl   $0x3c,EXPORT_SYMBOL(BAT_data_1e26f0)
+		cmpl   $0x3c,EXPORT_SYMBOL(BAT_level_intro_timer)
 		jne    jump_ded24
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e27a0),%edx
 		mov    $EXPORT_SYMBOL(BAT_ptr_1e2ca0),%ebx
@@ -2316,7 +2316,7 @@ breakout_func_de991:
 		sub    $0x300,%eax
 		mov    %eax,0x18(%edx)
 	jump_ded24:
-		cmpl   $0x0,EXPORT_SYMBOL(BAT_data_1e26f0)
+		cmpl   $0x0,EXPORT_SYMBOL(BAT_level_intro_timer)
 		jne    jump_df7c8
 		movl   $0x2,EXPORT_SYMBOL(BAT_state)
 		jmp    jump_df7c8
@@ -2478,7 +2478,7 @@ func_ded40:
 		mov    %esi,EXPORT_SYMBOL(BAT_state)
 		push   $0x64
 		mov    $0x40,%ecx
-		mov    %edi,EXPORT_SYMBOL(BAT_data_1e26f4)
+		mov    %edi,EXPORT_SYMBOL(BAT_ball_lost_timer)
 		call   ac_play_sample_using_heap
 	jump_def30:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+49
@@ -2490,10 +2490,10 @@ func_ded40:
 		mov    EXPORT_SYMBOL(BAT_num_lives),%eax
 		xor    %ebp,%ebp
 		inc    %eax
-		mov    %ebp,EXPORT_SYMBOL(BAT_data_1e270c)
+		mov    %ebp,EXPORT_SYMBOL(BAT_blocks_remain)
 		mov    %eax,EXPORT_SYMBOL(BAT_num_lives)
 	jump_def58:
-		mov    EXPORT_SYMBOL(BAT_data_1e270c),%edx
+		mov    EXPORT_SYMBOL(BAT_blocks_remain),%edx
 		test   %edx,%edx
 		jne    jump_df7c8
 		cmpl   $0xa,EXPORT_SYMBOL(BAT_levelno)
@@ -2501,7 +2501,7 @@ func_ded40:
 		mov    $0x5,%edi
 		mov    $0x96,%ebp
 		mov    %edi,EXPORT_SYMBOL(BAT_state)
-		mov    %ebp,EXPORT_SYMBOL(BAT_data_1e26ec)
+		mov    %ebp,EXPORT_SYMBOL(BAT_game_won_timer)
 		call   ac_rand
 		mov    %edx,EXPORT_SYMBOL(BAT_data_1e26e8)
 		jmp    jump_defa8
@@ -2509,7 +2509,7 @@ func_ded40:
 		mov    $0x1,%ecx
 		mov    $0x5a,%esi
 		mov    %ecx,EXPORT_SYMBOL(BAT_state)
-		mov    %esi,EXPORT_SYMBOL(BAT_data_1e26f0)
+		mov    %esi,EXPORT_SYMBOL(BAT_level_intro_timer)
 	jump_defa8:
 		mov    $0xc,%edi
 		mov    $0x80,%bh
@@ -2559,10 +2559,10 @@ func_deffc:
 		add    $0x100,%ecx
 		cmp    $0x40,%edi
 		jl     jump_df009
-		mov    EXPORT_SYMBOL(BAT_data_1e26f4),%edx
+		mov    EXPORT_SYMBOL(BAT_ball_lost_timer),%edx
 		dec    %edx
 		xor    %eax,%eax
-		mov    %edx,EXPORT_SYMBOL(BAT_data_1e26f4)
+		mov    %edx,EXPORT_SYMBOL(BAT_ball_lost_timer)
 		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
 		cmp    $0x1,%eax
 		jne    jump_df043
@@ -2709,7 +2709,7 @@ func_deffc:
 		test   %ch,%ch
 		jne    jump_df1df
 	jump_df207:
-		cmpl   $0x32,EXPORT_SYMBOL(BAT_data_1e26f4)
+		cmpl   $0x32,EXPORT_SYMBOL(BAT_ball_lost_timer)
 		jne    jump_df23a
 		mov    EXPORT_SYMBOL(BAT_num_lives),%edi
 		test   %edi,%edi
@@ -2717,13 +2717,13 @@ func_deffc:
 		mov    $0x4,%eax
 		mov    $0x64,%edx
 		mov    %eax,EXPORT_SYMBOL(BAT_state)
-		mov    %edx,EXPORT_SYMBOL(BAT_data_1e26f8)
+		mov    %edx,EXPORT_SYMBOL(BAT_game_over_timer)
 		jmp    jump_df23a
 	jump_df231:
 		lea    -0x1(%edi),%ebp
 		mov    %ebp,EXPORT_SYMBOL(BAT_num_lives)
 	jump_df23a:
-		cmpl   $0x28,EXPORT_SYMBOL(BAT_data_1e26f4)
+		cmpl   $0x28,EXPORT_SYMBOL(BAT_ball_lost_timer)
 		jne    jump_df2c4
 		mov    EXPORT_SYMBOL(BAT_ptr_1e2ca0),%ecx
 		test   %ecx,%ecx
@@ -2763,7 +2763,7 @@ func_deffc:
 		sub    $0x300,%eax
 		mov    %eax,0x18(%edx)
 	jump_df2c4:
-		cmpl   $0x0,EXPORT_SYMBOL(BAT_data_1e26f4)
+		cmpl   $0x0,EXPORT_SYMBOL(BAT_ball_lost_timer)
 		jne    jump_df7c8
 		movl   $0x2,EXPORT_SYMBOL(BAT_state)
 		jmp    jump_df7c8
@@ -2911,11 +2911,11 @@ func_df2e0:
 		mov    $aBreakoutGameOver,%esi
 		mov    $0x1e,%edi
 		mov    EXPORT_SYMBOL(colour_lookup)+0x08,%al
-		mov    EXPORT_SYMBOL(BAT_data_1e26f8),%ebp
+		mov    EXPORT_SYMBOL(BAT_game_over_timer),%ebp
 		mov    aBreakoutGameOver,%bl
 		dec    %ebp
 		mov    %al,0xec(%esp)
-		mov    %ebp,EXPORT_SYMBOL(BAT_data_1e26f8)
+		mov    %ebp,EXPORT_SYMBOL(BAT_game_over_timer)
 		test   %bl,%bl
 		je     jump_df4ee
 	jump_df4c4:
@@ -2935,7 +2935,7 @@ func_df2e0:
 		test   %cl,%cl
 		jne    jump_df4c4
 	jump_df4ee:
-		cmpl   $0x0,EXPORT_SYMBOL(BAT_data_1e26f8)
+		cmpl   $0x0,EXPORT_SYMBOL(BAT_game_over_timer)
 		jne    jump_df7c8
 		mov    $0xc,%edi
 		mov    $0x80,%bl
@@ -2961,7 +2961,7 @@ func_df2e0:
 		mov    $0x2,%ecx
 		xor    %ebx,%ebx
 		mov    %ebp,EXPORT_SYMBOL(BAT_state)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e26f0)
+		mov    %eax,EXPORT_SYMBOL(BAT_level_intro_timer)
 		mov    %ebp,EXPORT_SYMBOL(BAT_levelno)
 		mov    %ebx,EXPORT_SYMBOL(BAT_score)
 		mov    %ecx,EXPORT_SYMBOL(BAT_num_lives)
@@ -2986,11 +2986,11 @@ func_df554:
 		mov    $aBreakoutCongratulation,%esi
 		mov    $0x12,%edi
 		mov    EXPORT_SYMBOL(colour_lookup)+0x05,%al
-		mov    EXPORT_SYMBOL(BAT_data_1e26ec),%ecx
+		mov    EXPORT_SYMBOL(BAT_game_won_timer),%ecx
 		mov    %al,0xf0(%esp)
 		dec    %ecx
 		mov    aBreakoutCongratulation,%ah
-		mov    %ecx,EXPORT_SYMBOL(BAT_data_1e26ec)
+		mov    %ecx,EXPORT_SYMBOL(BAT_game_won_timer)
 		test   %ah,%ah
 		je     jump_df5cf
 	jump_df5a5:
@@ -3116,7 +3116,7 @@ func_df554:
 		mov    %bx,0x70(%edx)
 		jmp    jump_df6b0
 	jump_df70b:
-		cmpl   $0x0,EXPORT_SYMBOL(BAT_data_1e26ec)
+		cmpl   $0x0,EXPORT_SYMBOL(BAT_game_won_timer)
 		jne    jump_df7c8
 		mov    $0xc,%edi
 		mov    $0x80,%bl
@@ -3169,7 +3169,7 @@ func_df554:
 		mov    %bh,EXPORT_SYMBOL(ingame)+0x99b # ingame.UserFlags
 		mov    $0x5a,%ebx
 		mov    %ebp,EXPORT_SYMBOL(BAT_dwarr_1e27c0)(%eax)
-		mov    %ebx,EXPORT_SYMBOL(BAT_data_1e26f0)
+		mov    %ebx,EXPORT_SYMBOL(BAT_level_intro_timer)
 	jump_df7c8:
 		call   ac_BAT_unknsub_27
 		test   %eax,%eax
@@ -3502,13 +3502,13 @@ GLOBAL (BAT_screen)	/* 0x1e26e4 */
 		.long	0x0
 GLOBAL (BAT_data_1e26e8)	/* 0x1e26e8 */
 		.long	0x0
-GLOBAL (BAT_data_1e26ec)	/* 0x_1e26ec */
+GLOBAL (BAT_game_won_timer)	/* 0x_1e26ec */
 		.long	0x0
-GLOBAL (BAT_data_1e26f0)	/* 0x1e26f0 */
+GLOBAL (BAT_level_intro_timer)	/* 0x1e26f0 */
 		.long	0x0
-GLOBAL (BAT_data_1e26f4)	/* 0x1e26f4 */
+GLOBAL (BAT_ball_lost_timer)	/* 0x1e26f4 */
 		.long	0x0
-GLOBAL (BAT_data_1e26f8)	/* 0x1e26f8 */
+GLOBAL (BAT_game_over_timer)	/* 0x1e26f8 */
 		.long	0x0
 GLOBAL (BAT_state)	/* 0x1e26fc */
 		.long	0x0
@@ -3518,7 +3518,7 @@ GLOBAL (BAT_num_lives)	/* 0x1e2704 */
 		.long	0x0
 GLOBAL (BAT_score)	/* 0x1e2708 */
 		.long	0x0
-GLOBAL (BAT_data_1e270c)	/* 0x1e270c */
+GLOBAL (BAT_blocks_remain)	/* 0x1e270c */
 		.ascii  "\x00\x00\x00"
 data_1e270f:
 		.byte	0x0

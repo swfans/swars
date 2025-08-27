@@ -74,18 +74,27 @@ struct BATUnkn2 {
     struct BATUnkn2 **UnkDw5;
 };
 
+enum BATStates {
+  BATSt_Reset = 0,
+  BATSt_LevelIntro,
+  BATSt_Gameplay,
+  BATSt_BallLost,
+  BATSt_GameOver,
+  BATSt_GameWon,
+};
+
 #pragma pack()
 
 extern int BAT_data_1e26e8;
-extern int BAT_data_1e26ec;
-extern int BAT_data_1e26f0;
-extern int BAT_data_1e26f4;
-extern int BAT_data_1e26f8;
+extern int BAT_game_won_timer;
+extern int BAT_level_intro_timer;
+extern int BAT_ball_lost_timer;
+extern int BAT_game_over_timer;
 extern int BAT_state;
 extern int BAT_levelno;
 extern int BAT_num_lives;
 extern int BAT_score;
-extern int BAT_data_1e270c;
+extern int BAT_blocks_remain;
 extern ubyte *BAT_screen;
 extern ubyte BAT_data_1e271c[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 extern int BAT_paddle_x;
@@ -204,7 +213,7 @@ static void BAT_draw_level_intro_text(void)
 {
     char locstr[64];
 
-    if (BAT_data_1e26f0 < 60)
+    if (BAT_level_intro_timer < 60)
           sprintf(locstr, "%s", BAT_levels[BAT_levelno - 1].lv_name);
     else
           sprintf(locstr, "ENTERING LEVEL : %d", BAT_levelno);
@@ -231,7 +240,7 @@ static void BAT_input_level(void)
 {
       if (lbKeyOn[KC_N] && lbShift == KMod_SHIFT)
       {
-          BAT_data_1e270c = 0;
+          BAT_blocks_remain = 0;
           BAT_num_lives++;
       }
 }
@@ -261,9 +270,9 @@ static void BAT_ball_colour_fade(void)
 {
     int fade_lv;
 
-    if (BAT_data_1e26f0 > 60)
+    if (BAT_level_intro_timer > 60)
     {
-        fade_lv = 32 - 2 * (90 - BAT_data_1e26f0);
+        fade_lv = 32 - 2 * (90 - BAT_level_intro_timer);
         if (fade_lv < 0)
             fade_lv = 0;
         BAT_ball_colour = pixmap.fade_table[256 * fade_lv + colour_lookup[1]];
@@ -310,11 +319,11 @@ void BAT_link_unkstr(void)
 
 void BAT_start_new_game(void)
 {
-    BAT_state = 1;
+    BAT_state = BATSt_LevelIntro;
     BAT_levelno = 1;
     BAT_score = 0;
     BAT_num_lives = 2;
-    BAT_data_1e26f0 = 90;
+    BAT_level_intro_timer = 90;
 }
 
 void BAT_unknitm2(void)
@@ -396,79 +405,84 @@ void BAT_play(void)
     asm volatile ("call ASM_BAT_play\n"
         :  :  : "eax" );
 #else
-  switch (BAT_state)
-  {
-    case 0:
-      if (BAT_unknsub_27())
-      {
-        BAT_start_new_game();
-        BAT_level_clear();
-      }
-      return;
-
-    case 1:
-      BAT_screen_clear();
-      BAT_data_1e26f0--;
-      BAT_input_paddle();
-      BAT_ball_colour_fade();
-      breakout_play_sub1();
-      BAT_draw_score_and_level();
-      BAT_draw_remainig_lives(90, 2);
-      BAT_unknsub_21();
-      breakout_play_sub2();
-      BAT_draw_level_intro_text();
-
-      if (BAT_data_1e26f0 == 60)
-      {
-        breakout_func_ddae0(BAT_levelno);
-        BAT_link_blocks();
-        BAT_unknitm2();
-      }
-      if (BAT_data_1e26f0 == 0)
-        BAT_state = 2;
-      goto LABEL_190;
-    case 2:
-      BAT_screen_clear();
-      BAT_input_paddle();
-
-      BAT_unknsub_22();
-      BAT_unknsub_22();
-      BAT_unknsub_22();
-      BAT_unknsub_22();
-      breakout_play_sub1();
-      BAT_draw_score_and_level();
-      BAT_draw_remainig_lives(90, 2);
-      BAT_unknsub_21();
-      breakout_play_sub2();
-      if (!BAT_data_1e2ca4)
-      {
-        BAT_state = 3;
-        BAT_data_1e26f4 = 80;
-        play_sample_using_heap(0, 73, 127, 64, 100, 0, 3u);
-      }
-      BAT_input_level();
-      if (!BAT_data_1e270c)
-      {
-        if (BAT_levelno == 10)
+    switch (BAT_state)
+    {
+    case BATSt_Reset:
+        if (BAT_unknsub_27())
         {
-          BAT_state = 5;
-          BAT_data_1e26ec = 150;
-          rand();
-          BAT_data_1e26e8 = 0;
+            BAT_start_new_game();
+            BAT_level_clear();
         }
-        else
+        return;
+
+    case BATSt_LevelIntro:
+        BAT_screen_clear();
+        BAT_level_intro_timer--;
+        BAT_input_paddle();
+
+        BAT_ball_colour_fade();
+        breakout_play_sub1();
+        BAT_draw_score_and_level();
+        BAT_draw_remainig_lives(90, 2);
+        BAT_unknsub_21();
+        breakout_play_sub2();
+        BAT_draw_level_intro_text();
+
+        if (BAT_level_intro_timer == 60)
         {
-          BAT_state = 1;
-          BAT_data_1e26f0 = 90;
+            breakout_func_ddae0(BAT_levelno);
+            BAT_link_blocks();
+            BAT_unknitm2();
         }
-        BAT_level_clear();
-        BAT_levelno++;
-        play_sample_using_heap(0, 70, 127, 64, 100, 0, 3u);
-      }
-      goto LABEL_190;
-    case 3:
+        if (BAT_level_intro_timer == 0)
+        {
+            BAT_state = BATSt_Gameplay;
+        }
+        break;
+
+    case BATSt_Gameplay:
+        BAT_screen_clear();
+        BAT_input_paddle();
+
+        BAT_unknsub_22();
+        BAT_unknsub_22();
+        BAT_unknsub_22();
+        BAT_unknsub_22();
+        breakout_play_sub1();
+        BAT_draw_score_and_level();
+        BAT_draw_remainig_lives(90, 2);
+        BAT_unknsub_21();
+        breakout_play_sub2();
+        if (!BAT_data_1e2ca4)
+        {
+            BAT_state = BATSt_BallLost;
+            BAT_ball_lost_timer = 80;
+            play_sample_using_heap(0, 73, 127, 64, 100, 0, 3u);
+        }
+        BAT_input_level();
+        if (BAT_blocks_remain == 0)
+        {
+            if (BAT_levelno == 10)
+            {
+              BAT_state = BATSt_GameWon;
+              BAT_game_won_timer = 150;
+              rand();
+              BAT_data_1e26e8 = 0;
+            }
+            else
+            {
+              BAT_state = BATSt_LevelIntro;
+              BAT_level_intro_timer = 90;
+            }
+            BAT_level_clear();
+            BAT_levelno++;
+            play_sample_using_heap(0, 70, 127, 64, 100, 0, 3u);
+        }
+        break;
+
+    case BATSt_BallLost:
       BAT_screen_clear();
-      BAT_data_1e26f4--;
+      BAT_ball_lost_timer--;
       BAT_input_paddle();
 
       breakout_play_sub1();
@@ -478,27 +492,28 @@ void BAT_play(void)
       breakout_play_sub2();
       BAT_draw_lost_life_message();
 
-      if (BAT_data_1e26f4 == 50)
+      if (BAT_ball_lost_timer == 50)
       {
-        if (BAT_num_lives)
-        {
-          --BAT_num_lives;
-        }
-        else
-        {
-          BAT_state = 4;
-          BAT_data_1e26f8 = 100;
-        }
+          if (BAT_num_lives) {
+            BAT_num_lives--;
+          } else {
+            BAT_state = BATSt_GameOver;
+            BAT_game_over_timer = 100;
+          }
       }
-      if (BAT_data_1e26f4 == 40)
+      if (BAT_ball_lost_timer == 40)
       {
-        BAT_unknitm2();
+          BAT_unknitm2();
       }
-      if (!BAT_data_1e26f4)
-        BAT_state = 2;
-      goto LABEL_190;
-    case 4:
+      if (BAT_ball_lost_timer == 0)
+      {
+          BAT_state = BATSt_Gameplay;
+      }
+      break;
+
+    case BATSt_GameOver:
       BAT_screen_clear();
+      BAT_game_over_timer--;
       BAT_input_paddle();
 
       breakout_play_sub1();
@@ -508,36 +523,40 @@ void BAT_play(void)
       BAT_unknsub_21();
       BAT_draw_game_over_message();
 
-      if (!BAT_data_1e26f8)
+      if (BAT_game_over_timer == 0)
       {
-        BAT_level_clear();
-        BAT_start_new_game();
+          BAT_level_clear();
+          BAT_start_new_game();
       }
-      goto LABEL_190;
-    case 5:
+      break;
+
+    case BATSt_GameWon:
       BAT_screen_clear();
+      BAT_game_won_timer--;
+
       BAT_draw_win_message();
       player_agents_add_random_epidermises(&players[local_player_no]);
-      if (!BAT_data_1e26ec)
+
+      if (BAT_game_won_timer == 0)
       {
-        BAT_level_clear();
-        BAT_link_blocks();
-        BAT_start_new_game();
-        ingame.UserFlags |= 0x01;
+          BAT_level_clear();
+          BAT_link_blocks();
+          BAT_start_new_game();
+          ingame.UserFlags |= 0x01;
       }
-      goto LABEL_190;
+      break;
+
     default:
-LABEL_190:
-      if (!BAT_unknsub_27())
-      {
-        BAT_state = 0;
+      break;
+    }
+    if (!BAT_unknsub_27())
+    {
+        BAT_state = BATSt_Reset;
         BAT_level_clear();
         BAT_screen_clear();
         BAT_link_blocks();
         BAT_link_unkstr();
-      }
-      return;
-  }
+    }
 #endif
 }
 

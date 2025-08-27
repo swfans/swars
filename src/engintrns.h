@@ -77,11 +77,23 @@ extern long dword_176D64;
 
 short angle_between_points(int x1, int z1, int x2, int z2);
 
+/** Transform map coordinates from EnginePoint into screen position.
+ *
+ * Given map coordinates within the game engine, transforms them
+ * to 2D screen coordinated based on the current camera and stores
+ * within a PolyPoint. Depth value is not computed.
+ */
 void transform_point(struct EnginePoint *p_ep);
+
+/** Transform engine map coordinates into screen position within ShEnginePoint.
+ *
+ * Given map coordinates within the game engine, transforms them
+ * to 2D screen coordinated (and depth) based on the current camera.
+ */
 void transform_shpoint(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc);
 void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc);
 
-/** Like transform_shpoint(), but only Y coord is returned.
+/** Transform coordinates Like transform_shpoint(), but only Y coord is returned.
  *
  * If you need both coords, transforming them at the same time is much faster.
  */
