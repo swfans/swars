@@ -317,6 +317,46 @@ void BAT_start_new_game(void)
     BAT_data_1e26f0 = 90;
 }
 
+void BAT_unknitm2(void)
+{
+    struct BATItem *brick_a;
+    struct BATItem *brick_r;
+    struct BATItem *brick_b;
+    ushort rnd;
+
+    brick_a = BAT_ptr_1e2ca0;
+    if (brick_a != NULL)
+    {
+        brick_b = brick_a->UnkDw8;
+        BAT_ptr_1e2ca0 = brick_b;
+        if (brick_b != NULL)
+          brick_b->UnkDw9 = &BAT_ptr_1e2ca0;
+
+        brick_b = BAT_data_1e2ca4;
+        if (brick_b) {
+          brick_a->UnkDw8 = BAT_data_1e2ca4;
+          brick_b->UnkDw9 = &brick_a->UnkDw8;
+        } else {
+          brick_a->UnkDw8 = 0;
+        }
+        brick_a->UnkDw9 = &BAT_data_1e2ca4;
+        BAT_data_1e2ca4 = brick_a;
+        brick_r = brick_a;
+    }
+    else
+    {
+        brick_r = 0;
+    }
+    if ( brick_r )
+    {
+        brick_r->UnkDw0 = 0x3000;
+        brick_r->UnkDw1 = 0x3100;
+        rnd = rand();
+        brick_r->UnkDw7 = 0;
+        brick_r->UnkDw6 = ((rnd & 7) << 8) - 768;
+    }
+}
+
 int BAT_unknsub_27(void)
 {
     int ret;
@@ -380,51 +420,9 @@ void BAT_play(void)
 
       if (BAT_data_1e26f0 == 60)
       {
-        struct BATItem *v25;
-        struct BATItem *v26;
-        struct BATItem *v27;
-        struct BATItem *v28;
-        char v29;
-
         breakout_func_ddae0(BAT_levelno);
         BAT_link_blocks();
-
-        v25 = BAT_ptr_1e2ca0;
-        if ( v25 )
-        {
-          v27 = v25->UnkDw8;
-          BAT_ptr_1e2ca0 = v27;
-          if ( v27 )
-            v27->UnkDw9 = &BAT_ptr_1e2ca0;
-
-          v28 = BAT_data_1e2ca4;
-          if (v28)
-          {
-            v25->UnkDw8 = BAT_data_1e2ca4;
-            v28->UnkDw9 = &v25->UnkDw8;
-            BAT_data_1e2ca4 = v25;
-            v25->UnkDw9 = &BAT_data_1e2ca4;
-          }
-          else
-          {
-            v25->UnkDw9 = &BAT_data_1e2ca4;
-            v25->UnkDw8 = 0;
-            BAT_data_1e2ca4 = v25;
-          }
-          v26 = v25;
-        }
-        else
-        {
-          v26 = 0;
-        }
-        if ( v26 )
-        {
-          v26->UnkDw0 = 0x3000;
-          v26->UnkDw1 = 0x3100;
-          v29 = rand();
-          v26->UnkDw7 = 0;
-          v26->UnkDw6 = ((v29 & 7) << 8) - 768;
-        }
+        BAT_unknitm2();
       }
       if (BAT_data_1e26f0 == 0)
         BAT_state = 2;
@@ -494,44 +492,7 @@ void BAT_play(void)
       }
       if (BAT_data_1e26f4 == 40)
       {
-        struct BATItem *v61;
-        struct BATItem *v62;
-        struct BATItem *v63;
-        struct BATItem *v64;
-        char v65;
-
-        v61 = BAT_ptr_1e2ca0;
-        if ( v61 )
-        {
-          v63 = v61->UnkDw8;
-          BAT_ptr_1e2ca0 = v63;
-          if ( v63 )
-            v63->UnkDw9 = &BAT_ptr_1e2ca0;
-          v64 = BAT_data_1e2ca4;
-          if ( v64 )
-          {
-            v61->UnkDw8 = BAT_data_1e2ca4;
-            v64->UnkDw9 = &v61->UnkDw8;
-            BAT_data_1e2ca4 = v61;
-            v61->UnkDw9 = &BAT_data_1e2ca4;
-          }
-          else
-          {
-            v61->UnkDw9 = &BAT_data_1e2ca4;
-            v61->UnkDw8 = 0;
-            BAT_data_1e2ca4 = v61;
-          }
-          v62 = v61;
-        }
-        else
-        {
-          v62 = 0;
-        }
-        v62->UnkDw0 = 0x3000;
-        v62->UnkDw1 = 0x3100;
-        v65 = rand();
-        v62->UnkDw7 = 0;
-        v62->UnkDw6 = ((v65 & 7) << 8) - 768;
+        BAT_unknitm2();
       }
       if (!BAT_data_1e26f4)
         BAT_state = 2;
