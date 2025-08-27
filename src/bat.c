@@ -64,6 +64,16 @@ struct BATItem {
     struct BATItem **UnkDw9;
 };
 
+struct BATUnkn2;
+
+struct BATUnkn2 {
+    int UnkDw0;
+    int UnkDw1;
+    int UnkDw2[2];
+    struct BATUnkn2 *UnkDw4;
+    struct BATUnkn2 **UnkDw5;
+};
+
 #pragma pack()
 
 extern int BAT_data_1e26e8;
@@ -81,13 +91,12 @@ extern ubyte BAT_data_1e271c[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 extern int BAT_paddle_x;
 extern int BAT_data_1e2798;
 extern TbPixel BAT_lives_colour;
-extern void *BAT_btarr_1e27a0[320];
+extern struct BATItem BAT_btarr_1e27a0[32];
 extern struct BATItem *BAT_ptr_1e2ca0;
 extern struct BATItem *BAT_data_1e2ca4;
 extern TbPixel BAT_ball_colour;
-extern ubyte BAT_btarr_1e2cbc[16];
-extern void *BAT_dwarr_1e2ccc[92];
-extern void *BAT_ptr_1e2e3c;
+extern struct BATUnkn2 BAT_btarr_1e2cbc[16];
+extern struct BATUnkn2 *BAT_ptr_1e2e3c;
 extern int BAT_data_1e2e40;
 
 extern struct BreakoutLevel BAT_levels[];
@@ -269,6 +278,45 @@ static void BAT_ball_colour_fade(void)
     }
 }
 
+void BAT_link_blocks(void)
+{
+    int i;
+
+    BAT_ptr_1e2ca0 = &BAT_btarr_1e27a0[0];
+    BAT_btarr_1e27a0[0].UnkDw9 = &BAT_ptr_1e2ca0;
+    for (i = 0; i < 31; i++)
+    {
+        BAT_btarr_1e27a0[i].UnkDw8 = &BAT_btarr_1e27a0[i + 1];
+        BAT_btarr_1e27a0[i + 1].UnkDw9 = &BAT_btarr_1e27a0[i].UnkDw8;
+    }
+    BAT_btarr_1e27a0[i].UnkDw8 = 0;
+    BAT_data_1e2ca4 = 0;
+}
+
+void BAT_link_unkstr(void)
+{
+    int i;
+
+    BAT_ptr_1e2e3c = &BAT_btarr_1e2cbc[0];
+    BAT_btarr_1e2cbc[0].UnkDw5 = &BAT_ptr_1e2e3c;
+    for (i = 0; i < 15; i++)
+    {
+        BAT_btarr_1e2cbc[i].UnkDw4 = &BAT_btarr_1e2cbc[i + 1];
+        BAT_btarr_1e2cbc[i + 1].UnkDw5 = &BAT_btarr_1e2cbc[i].UnkDw4;
+    }
+    BAT_btarr_1e2cbc[i].UnkDw4 = 0;
+    BAT_data_1e2e40 = 0;
+}
+
+void BAT_start_new_game(void)
+{
+    BAT_state = 1;
+    BAT_levelno = 1;
+    BAT_score = 0;
+    BAT_num_lives = 2;
+    BAT_data_1e26f0 = 90;
+}
+
 int BAT_unknsub_27(void)
 {
     int ret;
@@ -313,12 +361,8 @@ void BAT_play(void)
     case 0:
       if (BAT_unknsub_27())
       {
-        BAT_state = 1;
-        BAT_data_1e26f0 = 90;
+        BAT_start_new_game();
         BAT_level_clear();
-        BAT_score = 0;
-        BAT_levelno = 1;
-        BAT_num_lives = 2;
       }
       return;
 
@@ -336,7 +380,6 @@ void BAT_play(void)
 
       if (BAT_data_1e26f0 == 60)
       {
-        int v22;
         struct BATItem *v25;
         struct BATItem *v26;
         struct BATItem *v27;
@@ -344,16 +387,7 @@ void BAT_play(void)
         char v29;
 
         breakout_func_ddae0(BAT_levelno);
-        BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
-        BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
-
-        for (v22 = 0; v22 < 31; v22++)
-        {
-          BAT_btarr_1e27a0[10 * v22 + 8] = &BAT_btarr_1e27a0[10 * v22 + 10];
-          BAT_btarr_1e27a0[10 * v22 + 10 + 9] = &BAT_btarr_1e27a0[10 * v22 + 8];
-        }
-        BAT_data_1e2ca4 = 0;
-        BAT_btarr_1e27a0[10 * v22 + 8] = 0;
+        BAT_link_blocks();
 
         v25 = BAT_ptr_1e2ca0;
         if ( v25 )
@@ -446,7 +480,7 @@ void BAT_play(void)
       breakout_play_sub2();
       BAT_draw_lost_life_message();
 
-      if ( BAT_data_1e26f4 == 50 )
+      if (BAT_data_1e26f4 == 50)
       {
         if (BAT_num_lives)
         {
@@ -458,7 +492,7 @@ void BAT_play(void)
           BAT_data_1e26f8 = 100;
         }
       }
-      if ( BAT_data_1e26f4 == 40 )
+      if (BAT_data_1e26f4 == 40)
       {
         struct BATItem *v61;
         struct BATItem *v62;
@@ -516,11 +550,7 @@ void BAT_play(void)
       if (!BAT_data_1e26f8)
       {
         BAT_level_clear();
-        BAT_state = 1;
-        BAT_data_1e26f0 = 90;
-        BAT_levelno = 1;
-        BAT_score = 0;
-        BAT_num_lives = 2;
+        BAT_start_new_game();
       }
       goto LABEL_190;
     case 5:
@@ -529,76 +559,21 @@ void BAT_play(void)
       player_agents_add_random_epidermises(&players[local_player_no]);
       if (!BAT_data_1e26ec)
       {
-        int v105;
-        struct BATItem *v107;
-
         BAT_level_clear();
-        BAT_ptr_1e2ca0 = (struct BATItem *)&BAT_btarr_1e27a0[0];
-        v107 = (struct BATItem *)&BAT_btarr_1e27a0[10];
-        BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
-        for (v105 = 0; v105 < 31; v105++)
-        {
-          BAT_btarr_1e27a0[10 * v105 + 8] = v107;
-          BAT_btarr_1e27a0[10 * v105 + 10 + 9] = &BAT_btarr_1e27a0[10 * v105 + 8];
-          v107 += 1;
-        }
-
-        BAT_data_1e2ca4 = 0;
-        BAT_state = 1;
-        BAT_levelno = 1;
-        BAT_score = 0;
-        BAT_num_lives = 2;
+        BAT_link_blocks();
+        BAT_start_new_game();
         ingame.UserFlags |= 0x01;
-        BAT_btarr_1e27a0[10 * v105 + 8] = 0;
-        BAT_data_1e26f0 = 90;
       }
       goto LABEL_190;
     default:
 LABEL_190:
       if (!BAT_unknsub_27())
       {
-        int v114;
-        struct BATItem *v115;
-        int v116;
-        int v118;
-        char *v119;
-        int v120;
-        char *v121;
-
         BAT_state = 0;
         BAT_level_clear();
         BAT_screen_clear();
-
-        BAT_ptr_1e2ca0 = (struct BATItem *)BAT_btarr_1e27a0;
-        BAT_btarr_1e27a0[9] = &BAT_ptr_1e2ca0;
-        v115 = (struct BATItem *)&BAT_btarr_1e27a0[10];
-        v116 = 0;
-        for (v114 = 0; v114 < 31; v114++)
-        {
-          BAT_btarr_1e27a0[v116+ 8] = v115;
-          BAT_btarr_1e27a0[10 * v114 + 10 + 9] = &BAT_btarr_1e27a0[v116 + 8];
-          v116 += 10;
-          v115 += 1;
-        }
-        v118 = 0;
-        BAT_data_1e2ca4 = 0;
-        BAT_ptr_1e2e3c = BAT_btarr_1e2cbc;
-        BAT_dwarr_1e2ccc[1] = &BAT_ptr_1e2e3c;
-        BAT_btarr_1e27a0[v116 + 8] = 0;
-        v119 = &BAT_btarr_1e2cbc[24]; // access beyond size?
-        v120 = 0;
-        do
-        {
-          ++v118;
-          BAT_dwarr_1e2ccc[v120] = v119;
-          v121 = &BAT_btarr_1e2cbc[v120 * 4 + 16];
-          v120 += 6;
-          v119 += 24;
-          BAT_dwarr_1e2ccc[6 * v118 + 1] = v121;
-        }
-        while ( v118 < 15 );
-        BAT_data_1e2e40 = 0;
-        BAT_dwarr_1e2ccc[v120] = 0;
+        BAT_link_blocks();
+        BAT_link_unkstr();
       }
       return;
   }
