@@ -55,12 +55,12 @@ struct BreakoutLevel {
 struct BATItem;
 
 struct BATItem {
-    int UnkDw0;
-    int UnkDw1;
+    int X;
+    int Y;
     int UnkDw2[4];
     int UnkDw6;
     int UnkDw7;
-    struct BATItem *UnkDw8;
+    struct BATItem *ListNext;
     struct BATItem **UnkDw9;
 };
 
@@ -101,8 +101,8 @@ extern int BAT_paddle_x;
 extern int BAT_data_1e2798;
 extern TbPixel BAT_lives_colour;
 extern struct BATItem BAT_btarr_1e27a0[32];
-extern struct BATItem *BAT_ptr_1e2ca0;
-extern struct BATItem *BAT_data_1e2ca4;
+extern struct BATItem *BAT_free_items;
+extern struct BATItem *BAT_balls_head;
 extern TbPixel BAT_ball_colour;
 extern struct BATUnkn2 BAT_btarr_1e2cbc[16];
 extern struct BATUnkn2 *BAT_ptr_1e2e3c;
@@ -291,15 +291,15 @@ void BAT_link_blocks(void)
 {
     int i;
 
-    BAT_ptr_1e2ca0 = &BAT_btarr_1e27a0[0];
-    BAT_btarr_1e27a0[0].UnkDw9 = &BAT_ptr_1e2ca0;
+    BAT_free_items = &BAT_btarr_1e27a0[0];
+    BAT_btarr_1e27a0[0].UnkDw9 = &BAT_free_items;
     for (i = 0; i < 31; i++)
     {
-        BAT_btarr_1e27a0[i].UnkDw8 = &BAT_btarr_1e27a0[i + 1];
-        BAT_btarr_1e27a0[i + 1].UnkDw9 = &BAT_btarr_1e27a0[i].UnkDw8;
+        BAT_btarr_1e27a0[i].ListNext = &BAT_btarr_1e27a0[i + 1];
+        BAT_btarr_1e27a0[i + 1].UnkDw9 = &BAT_btarr_1e27a0[i].ListNext;
     }
-    BAT_btarr_1e27a0[i].UnkDw8 = 0;
-    BAT_data_1e2ca4 = 0;
+    BAT_btarr_1e27a0[i].ListNext = 0;
+    BAT_balls_head = NULL;
 }
 
 void BAT_link_unkstr(void)
@@ -326,43 +326,48 @@ void BAT_start_new_game(void)
     BAT_level_intro_timer = 90;
 }
 
-void BAT_unknitm2(void)
+struct BATItem *new_ball(void)
 {
-    struct BATItem *brick_a;
-    struct BATItem *brick_r;
-    struct BATItem *brick_b;
-    ushort rnd;
+    struct BATItem *curr_item;
+    struct BATItem *next_item;
 
-    brick_a = BAT_ptr_1e2ca0;
-    if (brick_a != NULL)
-    {
-        brick_b = brick_a->UnkDw8;
-        BAT_ptr_1e2ca0 = brick_b;
-        if (brick_b != NULL)
-          brick_b->UnkDw9 = &BAT_ptr_1e2ca0;
+    curr_item = BAT_free_items;
+    if (curr_item == NULL)
+        return NULL;
 
-        brick_b = BAT_data_1e2ca4;
-        if (brick_b) {
-          brick_a->UnkDw8 = BAT_data_1e2ca4;
-          brick_b->UnkDw9 = &brick_a->UnkDw8;
-        } else {
-          brick_a->UnkDw8 = 0;
-        }
-        brick_a->UnkDw9 = &BAT_data_1e2ca4;
-        BAT_data_1e2ca4 = brick_a;
-        brick_r = brick_a;
+    next_item = curr_item->ListNext;
+    BAT_free_items = next_item;
+    if (next_item != NULL)
+        next_item->UnkDw9 = &BAT_free_items;
+
+    next_item = BAT_balls_head;
+    if (next_item != NULL) {
+          curr_item->ListNext = next_item;
+          next_item->UnkDw9 = &curr_item->ListNext;
+    } else {
+          curr_item->ListNext = NULL;
     }
-    else
+    curr_item->UnkDw9 = &BAT_balls_head;
+    BAT_balls_head = curr_item;
+
+    return curr_item;
+}
+
+void BAT_create_starting_ball(void)
+{
+    struct BATItem *ball;
+
+    ball = new_ball();
+
+    if (ball != NULL)
     {
-        brick_r = 0;
-    }
-    if ( brick_r )
-    {
-        brick_r->UnkDw0 = 0x3000;
-        brick_r->UnkDw1 = 0x3100;
+        ushort rnd;
+
+        ball->X = (BAT_SCREEN_WIDTH / 2) << 8;
+        ball->Y = (49) << 8;
         rnd = rand();
-        brick_r->UnkDw7 = 0;
-        brick_r->UnkDw6 = ((rnd & 7) << 8) - 768;
+        ball->UnkDw7 = 0;
+        ball->UnkDw6 = ((rnd & 7) << 8) - 768;
     }
 }
 
@@ -432,7 +437,7 @@ void BAT_play(void)
         {
             breakout_func_ddae0(BAT_levelno);
             BAT_link_blocks();
-            BAT_unknitm2();
+            BAT_create_starting_ball();
         }
         if (BAT_level_intro_timer == 0)
         {
@@ -453,7 +458,7 @@ void BAT_play(void)
         BAT_draw_remainig_lives(90, 2);
         BAT_unknsub_21();
         breakout_play_sub2();
-        if (!BAT_data_1e2ca4)
+        if (BAT_balls_head == NULL)
         {
             BAT_state = BATSt_BallLost;
             BAT_ball_lost_timer = 80;
@@ -503,7 +508,7 @@ void BAT_play(void)
       }
       if (BAT_ball_lost_timer == 40)
       {
-          BAT_unknitm2();
+          BAT_create_starting_ball();
       }
       if (BAT_ball_lost_timer == 0)
       {

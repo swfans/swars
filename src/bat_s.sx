@@ -232,7 +232,7 @@ func_dd31b:
 /*----------------------------------------------------------------*/
 func_dd333:
 /*----------------------------------------------------------------*/
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%eax
+		mov    EXPORT_SYMBOL(BAT_balls_head),%eax
 		test   %eax,%eax
 		je     jump_dd2dd
 	jump_dd33c:
@@ -251,7 +251,7 @@ func_dd333:
 /*----------------------------------------------------------------*/
 func_dd357:
 /*----------------------------------------------------------------*/
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%edx
+		mov    EXPORT_SYMBOL(BAT_balls_head),%edx
 		test   %edx,%edx
 		jne    jump_dd39f
 		jmp    jump_dd2dd
@@ -274,32 +274,32 @@ func_dd357:
 		test   %edx,%edx
 		je     jump_dd2dd
 	jump_dd39f:
-		mov    EXPORT_SYMBOL(BAT_ptr_1e2ca0),%eax
+		mov    EXPORT_SYMBOL(BAT_free_items),%eax
 		test   %eax,%eax
 		jne    jump_dd3ac
 		xor    %ebx,%ebx
 		jmp    jump_dd3f4
 	jump_dd3ac:
 		mov    0x20(%eax),%ebx
-		mov    %ebx,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
+		mov    %ebx,EXPORT_SYMBOL(BAT_free_items)
 		test   %ebx,%ebx
 		je     jump_dd3c0
-		movl   $EXPORT_SYMBOL(BAT_ptr_1e2ca0),0x24(%ebx)
+		movl   $EXPORT_SYMBOL(BAT_free_items),0x24(%ebx)
 	jump_dd3c0:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%ebp
+		mov    EXPORT_SYMBOL(BAT_balls_head),%ebp
 		test   %ebp,%ebp
 		je     jump_dd3e3
 		mov    %ebp,%ebx
 		mov    %ebp,0x20(%eax)
 		lea    0x20(%eax),%ebp
 		mov    %ebp,0x24(%ebx)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		jmp    jump_dd3f2
 	jump_dd3e3:
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		mov    %ebp,0x20(%eax)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
 	jump_dd3f2:
 		mov    %eax,%ebx
 	jump_dd3f4:
@@ -311,7 +311,7 @@ func_dd357:
 /*----------------------------------------------------------------*/
 func_dd401:
 /*----------------------------------------------------------------*/
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%edx
+		mov    EXPORT_SYMBOL(BAT_balls_head),%edx
 		test   %edx,%edx
 		jne    jump_dd445
 		jmp    jump_dd4a2
@@ -334,39 +334,39 @@ func_dd401:
 		test   %edx,%edx
 		je     jump_dd4a2
 	jump_dd445:
-		mov    EXPORT_SYMBOL(BAT_ptr_1e2ca0),%eax
+		mov    EXPORT_SYMBOL(BAT_free_items),%eax
 		test   %eax,%eax
 		jne    jump_dd452
 		xor    %ebx,%ebx
 		jmp    jump_dd49a
 	jump_dd452:
 		mov    0x20(%eax),%ebx
-		mov    %ebx,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
+		mov    %ebx,EXPORT_SYMBOL(BAT_free_items)
 		test   %ebx,%ebx
 		je     jump_dd466
-		movl   $EXPORT_SYMBOL(BAT_ptr_1e2ca0),0x24(%ebx)
+		movl   $EXPORT_SYMBOL(BAT_free_items),0x24(%ebx)
 	jump_dd466:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%ebp
+		mov    EXPORT_SYMBOL(BAT_balls_head),%ebp
 		test   %ebp,%ebp
 		je     jump_dd489
 		mov    %ebp,%ebx
 		mov    %ebp,0x20(%eax)
 		lea    0x20(%eax),%ebp
 		mov    %ebp,0x24(%ebx)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		jmp    jump_dd498
 	jump_dd489:
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		mov    %ebp,0x20(%eax)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
 	jump_dd498:
 		mov    %eax,%ebx
 	jump_dd49a:
 		test   %ebx,%ebx
 		jne    jump_dd410
 	jump_dd4a2:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%edx
+		mov    EXPORT_SYMBOL(BAT_balls_head),%edx
 		test   %edx,%edx
 		jne    jump_dd4ea
 		jmp    jump_dd2dd
@@ -389,32 +389,32 @@ func_dd401:
 		test   %edx,%edx
 		je     jump_dd2dd
 	jump_dd4ea:
-		mov    EXPORT_SYMBOL(BAT_ptr_1e2ca0),%eax
+		mov    EXPORT_SYMBOL(BAT_free_items),%eax
 		test   %eax,%eax
 		jne    jump_dd4f7
 		xor    %ebx,%ebx
 		jmp    jump_dd53f
 	jump_dd4f7:
 		mov    0x20(%eax),%ebx
-		mov    %ebx,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
+		mov    %ebx,EXPORT_SYMBOL(BAT_free_items)
 		test   %ebx,%ebx
 		je     jump_dd50b
-		movl   $EXPORT_SYMBOL(BAT_ptr_1e2ca0),0x24(%ebx)
+		movl   $EXPORT_SYMBOL(BAT_free_items),0x24(%ebx)
 	jump_dd50b:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%ebp
+		mov    EXPORT_SYMBOL(BAT_balls_head),%ebp
 		test   %ebp,%ebp
 		je     jump_dd52e
 		mov    %ebp,%ebx
 		mov    %ebp,0x20(%eax)
 		lea    0x20(%eax),%ebp
 		mov    %ebp,0x24(%ebx)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		jmp    jump_dd53d
 	jump_dd52e:
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		mov    %ebp,0x20(%eax)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
 	jump_dd53d:
 		mov    %eax,%ebx
 	jump_dd53f:
@@ -954,9 +954,9 @@ GLOBAL_FUNC (ASM_BAT_unknsub_20)	/* 0xDDB64 */
 		jmp    jump_ddc35
 	jump_ddc42:
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e27a0),%edx
-		mov    $EXPORT_SYMBOL(BAT_ptr_1e2ca0),%ebx
+		mov    $EXPORT_SYMBOL(BAT_free_items),%ebx
 		xor    %eax,%eax
-		mov    %edx,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
+		mov    %edx,EXPORT_SYMBOL(BAT_free_items)
 		mov    %ebx,data_1e27c4
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e27a0),%ebx
 		xor    %edx,%edx
@@ -976,7 +976,7 @@ GLOBAL_FUNC (ASM_BAT_unknsub_20)	/* 0xDDB64 */
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e2cbc),%ebp
 		xor    %ecx,%ecx
 		xor    %edx,%edx
-		mov    %ecx,EXPORT_SYMBOL(BAT_data_1e2ca4)
+		mov    %ecx,EXPORT_SYMBOL(BAT_balls_head)
 		mov    %ebp,EXPORT_SYMBOL(BAT_ptr_1e2e3c)
 		mov    %ecx,EXPORT_SYMBOL(BAT_dwarr_1e27c0)(%eax)
 		mov    $EXPORT_SYMBOL(BAT_ptr_1e2e3c),%eax
@@ -1139,7 +1139,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_21)	/* 0x0DDCF8 */
 		jge    jump_dde38
 		jmp    jump_dde5c
 	jump_dde68:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%edi
+		mov    EXPORT_SYMBOL(BAT_balls_head),%edi
 		test   %edi,%edi
 		je     jump_ddecf
 	jump_dde72:
@@ -1223,7 +1223,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		push   %edi
 		push   %ebp
 		sub    $0x1c,%esp
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%ebx
+		mov    EXPORT_SYMBOL(BAT_balls_head),%ebx
 		test   %ebx,%ebx
 		jne    jump_ddf5b
 		jmp    jump_de01f
@@ -1309,7 +1309,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		mov    %esi,0x1c(%ebx)
 		jmp    jump_ddf50
 	jump_de01f:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%eax
+		mov    EXPORT_SYMBOL(BAT_balls_head),%eax
 		test   %eax,%eax
 		je     jump_de055
 	jump_de028:
@@ -1331,7 +1331,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		test   %eax,%eax
 		jne    jump_de028
 	jump_de055:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%esi
+		mov    EXPORT_SYMBOL(BAT_balls_head),%esi
 		test   %esi,%esi
 		jne    jump_de06f
 		jmp    jump_de3d0
@@ -1622,7 +1622,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		call   BAT_unknsub_28
 		jmp    jump_de064
 	jump_de3d0:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%ebx
+		mov    EXPORT_SYMBOL(BAT_balls_head),%ebx
 		test   %ebx,%ebx
 		jne    jump_de3e9
 		jmp    jump_de483
@@ -1672,21 +1672,21 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		mov    0x24(%ebx),%edx
 		mov    %edx,0x24(%ecx)
 	jump_de450:
-		mov    EXPORT_SYMBOL(BAT_ptr_1e2ca0),%edx
+		mov    EXPORT_SYMBOL(BAT_free_items),%edx
 		test   %edx,%edx
 		je     jump_de474
 		lea    0x20(%eax),%ebx
 		mov    %edx,0x20(%eax)
 		mov    %ebx,0x24(%edx)
-		mov    %eax,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
-		movl   $EXPORT_SYMBOL(BAT_ptr_1e2ca0),0x24(%eax)
+		mov    %eax,EXPORT_SYMBOL(BAT_free_items)
+		movl   $EXPORT_SYMBOL(BAT_free_items),0x24(%eax)
 		jmp    jump_de3df
 	jump_de474:
-		movl   $EXPORT_SYMBOL(BAT_ptr_1e2ca0),0x24(%eax)
+		movl   $EXPORT_SYMBOL(BAT_free_items),0x24(%eax)
 		mov    %edx,0x20(%eax)
 		jmp    jump_de3df
 	jump_de483:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%esi
+		mov    EXPORT_SYMBOL(BAT_balls_head),%esi
 		test   %esi,%esi
 		jne    jump_de49d
 		jmp    jump_de605
@@ -1828,7 +1828,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		movl   $0x3c00,0x14(%esi)
 		jmp    jump_de492
 	jump_de605:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%eax
+		mov    EXPORT_SYMBOL(BAT_balls_head),%eax
 		test   %eax,%eax
 		je     jump_de620
 	jump_de60e:
@@ -2252,11 +2252,11 @@ breakout_func_de991:
 		cmpl   $0x3c,EXPORT_SYMBOL(BAT_level_intro_timer)
 		jne    jump_ded24
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e27a0),%edx
-		mov    $EXPORT_SYMBOL(BAT_ptr_1e2ca0),%ebx
+		mov    $EXPORT_SYMBOL(BAT_free_items),%ebx
 		mov    EXPORT_SYMBOL(BAT_levelno),%eax
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e27a0),%edi
 		call   ac_breakout_func_ddae0
-		mov    %edx,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
+		mov    %edx,EXPORT_SYMBOL(BAT_free_items)
 		mov    %ebx,data_1e27c4
 		xor    %eax,%eax
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e27a0),%ebx
@@ -2274,8 +2274,8 @@ breakout_func_de991:
 		cmp    $0x1f,%edx
 		jl     jump_dec74
 		xor    %ecx,%ecx
-		mov    EXPORT_SYMBOL(BAT_ptr_1e2ca0),%edi
-		mov    %ecx,EXPORT_SYMBOL(BAT_data_1e2ca4)
+		mov    EXPORT_SYMBOL(BAT_free_items),%edi
+		mov    %ecx,EXPORT_SYMBOL(BAT_balls_head)
 		mov    %ecx,EXPORT_SYMBOL(BAT_dwarr_1e27c0)(%eax)
 		test   %edi,%edi
 		jne    jump_decb1
@@ -2284,24 +2284,24 @@ breakout_func_de991:
 	jump_decb1:
 		mov    0x20(%edi),%edx
 		mov    %edi,%eax
-		mov    %edx,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
+		mov    %edx,EXPORT_SYMBOL(BAT_free_items)
 		test   %edx,%edx
 		je     jump_decc7
-		movl   $EXPORT_SYMBOL(BAT_ptr_1e2ca0),0x24(%edx)
+		movl   $EXPORT_SYMBOL(BAT_free_items),0x24(%edx)
 	jump_decc7:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%edx
+		mov    EXPORT_SYMBOL(BAT_balls_head),%edx
 		test   %edx,%edx
 		je     jump_dece8
 		lea    0x20(%eax),%ebx
 		mov    %edx,0x20(%eax)
 		mov    %ebx,0x24(%edx)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		jmp    jump_decf7
 	jump_dece8:
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		mov    %edx,0x20(%eax)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
 	jump_decf7:
 		mov    %eax,%edx
 	jump_decf9:
@@ -2465,7 +2465,7 @@ func_ded40:
 	jump_deeec:
 		call   ac_BAT_unknsub_21
 		call   ac_breakout_play_sub2
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%ecx
+		mov    EXPORT_SYMBOL(BAT_balls_head),%ecx
 		test   %ecx,%ecx
 		jne    jump_def30
 		mov    $0x3,%esi
@@ -2725,7 +2725,7 @@ func_deffc:
 	jump_df23a:
 		cmpl   $0x28,EXPORT_SYMBOL(BAT_ball_lost_timer)
 		jne    jump_df2c4
-		mov    EXPORT_SYMBOL(BAT_ptr_1e2ca0),%ecx
+		mov    EXPORT_SYMBOL(BAT_free_items),%ecx
 		test   %ecx,%ecx
 		jne    jump_df255
 		xor    %edx,%edx
@@ -2733,24 +2733,24 @@ func_deffc:
 	jump_df255:
 		mov    0x20(%ecx),%edx
 		mov    %ecx,%eax
-		mov    %edx,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
+		mov    %edx,EXPORT_SYMBOL(BAT_free_items)
 		test   %edx,%edx
 		je     jump_df26b
-		movl   $EXPORT_SYMBOL(BAT_ptr_1e2ca0),0x24(%edx)
+		movl   $EXPORT_SYMBOL(BAT_free_items),0x24(%edx)
 	jump_df26b:
-		mov    EXPORT_SYMBOL(BAT_data_1e2ca4),%edi
+		mov    EXPORT_SYMBOL(BAT_balls_head),%edi
 		test   %edi,%edi
 		je     jump_df28c
 		lea    0x20(%eax),%ebx
 		mov    %edi,0x20(%eax)
 		mov    %ebx,0x24(%edi)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		jmp    jump_df29b
 	jump_df28c:
-		movl   $EXPORT_SYMBOL(BAT_data_1e2ca4),0x24(%eax)
+		movl   $EXPORT_SYMBOL(BAT_balls_head),0x24(%eax)
 		mov    %edi,0x20(%eax)
-		mov    %eax,EXPORT_SYMBOL(BAT_data_1e2ca4)
+		mov    %eax,EXPORT_SYMBOL(BAT_balls_head)
 	jump_df29b:
 		mov    %eax,%edx
 	jump_df29d:
@@ -3138,10 +3138,10 @@ func_df554:
 		jmp    jump_df731
 	jump_df73e:
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e27a0),%esi
-		mov    $EXPORT_SYMBOL(BAT_ptr_1e2ca0),%edi
+		mov    $EXPORT_SYMBOL(BAT_free_items),%edi
 		xor    %edx,%edx
 		xor    %eax,%eax
-		mov    %esi,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
+		mov    %esi,EXPORT_SYMBOL(BAT_free_items)
 		lea    0x28(%esi),%ebx
 		mov    %edi,data_1e27c4
 		mov    %esi,%edi
@@ -3160,7 +3160,7 @@ func_df554:
 		mov    $0x2,%edi
 		xor    %ebp,%ebp
 		mov    EXPORT_SYMBOL(ingame)+0x99b,%bh # ingame.UserFlags
-		mov    %ebp,EXPORT_SYMBOL(BAT_data_1e2ca4)
+		mov    %ebp,EXPORT_SYMBOL(BAT_balls_head)
 		or     $0x1,%bh
 		mov    %edx,EXPORT_SYMBOL(BAT_state)
 		mov    %edx,EXPORT_SYMBOL(BAT_levelno)
@@ -3207,9 +3207,9 @@ func_df554:
 		cmp    $0x40,%esi
 		jl     jump_df80d
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e27a0),%ebp
-		mov    $EXPORT_SYMBOL(BAT_ptr_1e2ca0),%eax
+		mov    $EXPORT_SYMBOL(BAT_free_items),%eax
 		xor    %edx,%edx
-		mov    %ebp,EXPORT_SYMBOL(BAT_ptr_1e2ca0)
+		mov    %ebp,EXPORT_SYMBOL(BAT_free_items)
 		mov    %eax,data_1e27c4
 		lea    0x28(%ebp),%ebx
 		xor    %eax,%eax
@@ -3228,7 +3228,7 @@ func_df554:
 		mov    $EXPORT_SYMBOL(BAT_btarr_1e2cbc),%ecx
 		xor    %edx,%edx
 		mov    $EXPORT_SYMBOL(BAT_ptr_1e2e3c),%esi
-		mov    %edx,EXPORT_SYMBOL(BAT_data_1e2ca4)
+		mov    %edx,EXPORT_SYMBOL(BAT_balls_head)
 		mov    %ecx,EXPORT_SYMBOL(BAT_ptr_1e2e3c)
 		mov    %esi,data_1e2cd0
 		mov    %edx,EXPORT_SYMBOL(BAT_dwarr_1e27c0)(%eax)
@@ -3556,9 +3556,9 @@ GLOBAL(BAT_dwarr_1e27c0)	/* 0x1e27c0 */
 		.long	0x0
 data_1e27c4:
 		.fill   0x4dc
-GLOBAL (BAT_ptr_1e2ca0)	/* 0x_1e2ca0 */
+GLOBAL (BAT_free_items)	/* 0x_1e2ca0 */
 		.long	0x0
-GLOBAL (BAT_data_1e2ca4)	/* 0x1e2ca4 */
+GLOBAL (BAT_balls_head)	/* 0x1e2ca4 */
 		.long	0x0
 GLOBAL (BAT_ball_colour)	/* 0x1e2ca8 */
 		.long	0x0
