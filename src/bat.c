@@ -47,9 +47,12 @@
 #define BAT_BRICK_COLUMNS 12
 #define BAT_BRICK_ROWS 10
 
+#define BAT_BALLS_LIMIT 32
+#define BAT_BONUSES_LIMIT 16
+
 struct BreakoutLevel {
     char *lv_name;
-    ubyte field_4[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
+    ubyte bricks[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 };
 
 struct BATBall;
@@ -64,14 +67,15 @@ struct BATBall {
     struct BATBall **ListPvNxPtr;
 };
 
-struct BATUnkn2;
+struct BATBonus;
 
-struct BATUnkn2 {
-    int UnkDw0;
-    int UnkDw1;
-    int UnkDw2[2];
-    struct BATUnkn2 *ListNext;
-    struct BATUnkn2 **ListPvNxPtr;
+struct BATBonus {
+    int X;
+    int Y;
+    int UnkDw2;
+    int UnkDw3;
+    struct BATBonus *ListNext;
+    struct BATBonus **ListPvNxPtr;
 };
 
 enum BATStates {
@@ -94,19 +98,25 @@ extern int BAT_state;
 extern int BAT_levelno;
 extern int BAT_num_lives;
 extern int BAT_score;
-extern int BAT_blocks_remain;
+extern int BAT_bricks_remain;
 extern ubyte *BAT_screen;
-extern ubyte BAT_data_1e271c[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
+extern ubyte BAT_bricks[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 extern int BAT_paddle_x;
 extern int BAT_data_1e2798;
 extern TbPixel BAT_lives_colour;
-extern struct BATBall BAT_balls_store[32];
+
+extern struct BATBall BAT_balls_store[BAT_BALLS_LIMIT];
+/** Linked list of unused balls. */
 extern struct BATBall *BAT_free_balls;
+/** Linked list of existing balls. */
 extern struct BATBall *BAT_balls_head;
 extern TbPixel BAT_ball_colour;
-extern struct BATUnkn2 BAT_bonus_store[16];
-extern struct BATUnkn2 *BAT_free_bonuses;
-extern int BAT_data_1e2e40;
+
+extern struct BATBonus BAT_bonus_store[BAT_BONUSES_LIMIT];
+/** Linked list of unused bonus items. */
+extern struct BATBonus *BAT_free_bonuses;
+/** Linked list of existing bonus items. */
+extern struct BATBonus *BAT_bonuses_head;
 
 extern struct BreakoutLevel BAT_levels[];
 
@@ -240,24 +250,24 @@ static void BAT_input_level(void)
 {
       if (lbKeyOn[KC_N] && lbShift == KMod_SHIFT)
       {
-          BAT_blocks_remain = 0;
+          BAT_bricks_remain = 0;
           BAT_num_lives++;
       }
 }
 
-static void BAT_level_set_rect(int beg_c, int beg_r, int end_c, int end_r, ubyte val)
+static void BAT_bricks_set_rect(int beg_c, int beg_r, int end_c, int end_r, ubyte val)
 {
     int c, r;
     for (r = beg_r; r < end_r; r++)
     {
         for (c = beg_c; c < end_c; c++)
-            BAT_data_1e271c[BAT_BRICK_COLUMNS * r + c] = val;
+            BAT_bricks[BAT_BRICK_COLUMNS * r + c] = val;
     }
 }
 
-static void BAT_level_clear(void)
+static void BAT_bricks_clear(void)
 {
-    BAT_level_set_rect(0, 0, BAT_BRICK_COLUMNS, BAT_BRICK_ROWS, 0x80);
+    BAT_bricks_set_rect(0, 0, BAT_BRICK_COLUMNS, BAT_BRICK_ROWS, 0x80);
 }
 
 void BAT_unknsub_22(void)
@@ -287,13 +297,13 @@ static void BAT_ball_colour_fade(void)
     }
 }
 
-void BAT_reset_free_balls(void)
+static void BAT_reset_free_balls(void)
 {
     int i;
 
     BAT_free_balls = &BAT_balls_store[0];
     BAT_balls_store[0].ListPvNxPtr = &BAT_free_balls;
-    for (i = 0; i < 31; i++)
+    for (i = 0; i < BAT_BALLS_LIMIT - 1; i++)
     {
         BAT_balls_store[i].ListNext = &BAT_balls_store[i + 1];
         BAT_balls_store[i + 1].ListPvNxPtr = &BAT_balls_store[i].ListNext;
@@ -302,22 +312,22 @@ void BAT_reset_free_balls(void)
     BAT_balls_head = NULL;
 }
 
-void BAT_link_unkstr(void)
+static void BAT_reset_free_bonuses(void)
 {
     int i;
 
     BAT_free_bonuses = &BAT_bonus_store[0];
     BAT_bonus_store[0].ListPvNxPtr = &BAT_free_bonuses;
-    for (i = 0; i < 15; i++)
+    for (i = 0; i < BAT_BONUSES_LIMIT - 1; i++)
     {
         BAT_bonus_store[i].ListNext = &BAT_bonus_store[i + 1];
         BAT_bonus_store[i + 1].ListPvNxPtr = &BAT_bonus_store[i].ListNext;
     }
     BAT_bonus_store[i].ListNext = 0;
-    BAT_data_1e2e40 = 0;
+    BAT_bonuses_head = NULL;
 }
 
-void BAT_start_new_game(void)
+static void BAT_start_new_game(void)
 {
     BAT_state = BATSt_LevelIntro;
     BAT_levelno = 1;
@@ -326,7 +336,7 @@ void BAT_start_new_game(void)
     BAT_level_intro_timer = 90;
 }
 
-struct BATBall *new_ball(void)
+static struct BATBall *new_ball(void)
 {
     struct BATBall *curr;
     struct BATBall *next;
@@ -355,7 +365,7 @@ struct BATBall *new_ball(void)
     return curr;
 }
 
-void BAT_create_starting_ball(void)
+static void BAT_create_starting_ball(void)
 {
     struct BATBall *ball;
 
@@ -400,9 +410,9 @@ void breakout_play_sub2(void)
         :  :  : "eax" );
 }
 
-void breakout_func_ddae0(int a1)
+void BAT_bricks_load(int a1)
 {
-    asm volatile ("call ASM_breakout_func_ddae0\n"
+    asm volatile ("call ASM_BAT_bricks_load\n"
         :  :  : "eax" );
 }
 
@@ -418,7 +428,7 @@ void BAT_play(void)
         if (BAT_unknsub_27())
         {
             BAT_start_new_game();
-            BAT_level_clear();
+            BAT_bricks_clear();
         }
         return;
 
@@ -437,7 +447,7 @@ void BAT_play(void)
 
         if (BAT_level_intro_timer == 60)
         {
-            breakout_func_ddae0(BAT_levelno);
+            BAT_bricks_load(BAT_levelno);
             BAT_reset_free_balls();
             BAT_create_starting_ball();
         }
@@ -467,7 +477,7 @@ void BAT_play(void)
             play_sample_using_heap(0, 73, 127, 64, 100, 0, 3u);
         }
         BAT_input_level();
-        if (BAT_blocks_remain == 0)
+        if (BAT_bricks_remain == 0)
         {
             if (BAT_levelno == 10)
             {
@@ -481,7 +491,7 @@ void BAT_play(void)
               BAT_state = BATSt_LevelIntro;
               BAT_level_intro_timer = 90;
             }
-            BAT_level_clear();
+            BAT_bricks_clear();
             BAT_levelno++;
             play_sample_using_heap(0, 70, 127, 64, 100, 0, 3u);
         }
@@ -532,7 +542,7 @@ void BAT_play(void)
 
       if (BAT_game_over_timer == 0)
       {
-          BAT_level_clear();
+          BAT_bricks_clear();
           BAT_start_new_game();
       }
       break;
@@ -546,7 +556,7 @@ void BAT_play(void)
 
       if (BAT_game_won_timer == 0)
       {
-          BAT_level_clear();
+          BAT_bricks_clear();
           BAT_reset_free_balls();
           BAT_start_new_game();
           ingame.UserFlags |= 0x01;
@@ -559,10 +569,10 @@ void BAT_play(void)
     if (!BAT_unknsub_27())
     {
         BAT_state = BATSt_Reset;
-        BAT_level_clear();
+        BAT_bricks_clear();
         BAT_screen_clear();
         BAT_reset_free_balls();
-        BAT_link_unkstr();
+        BAT_reset_free_bonuses();
     }
 #endif
 }
