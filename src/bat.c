@@ -52,16 +52,16 @@ struct BreakoutLevel {
     ubyte field_4[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 };
 
-struct BATItem;
+struct BATBall;
 
-struct BATItem {
-    int UnkDw0;
-    int UnkDw1;
+struct BATBall {
+    int X;
+    int Y;
     int UnkDw2[4];
     int UnkDw6;
     int UnkDw7;
-    struct BATItem *UnkDw8;
-    struct BATItem **UnkDw9;
+    struct BATBall *ListNext;
+    struct BATBall **ListPvNxPtr;
 };
 
 struct BATUnkn2;
@@ -70,33 +70,42 @@ struct BATUnkn2 {
     int UnkDw0;
     int UnkDw1;
     int UnkDw2[2];
-    struct BATUnkn2 *UnkDw4;
-    struct BATUnkn2 **UnkDw5;
+    struct BATUnkn2 *ListNext;
+    struct BATUnkn2 **ListPvNxPtr;
+};
+
+enum BATStates {
+  BATSt_Reset = 0,
+  BATSt_LevelIntro,
+  BATSt_Gameplay,
+  BATSt_BallLost,
+  BATSt_GameOver,
+  BATSt_GameWon,
 };
 
 #pragma pack()
 
 extern int BAT_data_1e26e8;
-extern int BAT_data_1e26ec;
-extern int BAT_data_1e26f0;
-extern int BAT_data_1e26f4;
-extern int BAT_data_1e26f8;
+extern int BAT_game_won_timer;
+extern int BAT_level_intro_timer;
+extern int BAT_ball_lost_timer;
+extern int BAT_game_over_timer;
 extern int BAT_state;
 extern int BAT_levelno;
 extern int BAT_num_lives;
 extern int BAT_score;
-extern int BAT_data_1e270c;
+extern int BAT_blocks_remain;
 extern ubyte *BAT_screen;
 extern ubyte BAT_data_1e271c[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 extern int BAT_paddle_x;
 extern int BAT_data_1e2798;
 extern TbPixel BAT_lives_colour;
-extern struct BATItem BAT_btarr_1e27a0[32];
-extern struct BATItem *BAT_ptr_1e2ca0;
-extern struct BATItem *BAT_data_1e2ca4;
+extern struct BATBall BAT_balls_store[32];
+extern struct BATBall *BAT_free_balls;
+extern struct BATBall *BAT_balls_head;
 extern TbPixel BAT_ball_colour;
-extern struct BATUnkn2 BAT_btarr_1e2cbc[16];
-extern struct BATUnkn2 *BAT_ptr_1e2e3c;
+extern struct BATUnkn2 BAT_bonus_store[16];
+extern struct BATUnkn2 *BAT_free_bonuses;
 extern int BAT_data_1e2e40;
 
 extern struct BreakoutLevel BAT_levels[];
@@ -204,7 +213,7 @@ static void BAT_draw_level_intro_text(void)
 {
     char locstr[64];
 
-    if (BAT_data_1e26f0 < 60)
+    if (BAT_level_intro_timer < 60)
           sprintf(locstr, "%s", BAT_levels[BAT_levelno - 1].lv_name);
     else
           sprintf(locstr, "ENTERING LEVEL : %d", BAT_levelno);
@@ -231,7 +240,7 @@ static void BAT_input_level(void)
 {
       if (lbKeyOn[KC_N] && lbShift == KMod_SHIFT)
       {
-          BAT_data_1e270c = 0;
+          BAT_blocks_remain = 0;
           BAT_num_lives++;
       }
 }
@@ -261,9 +270,9 @@ static void BAT_ball_colour_fade(void)
 {
     int fade_lv;
 
-    if (BAT_data_1e26f0 > 60)
+    if (BAT_level_intro_timer > 60)
     {
-        fade_lv = 32 - 2 * (90 - BAT_data_1e26f0);
+        fade_lv = 32 - 2 * (90 - BAT_level_intro_timer);
         if (fade_lv < 0)
             fade_lv = 0;
         BAT_ball_colour = pixmap.fade_table[256 * fade_lv + colour_lookup[1]];
@@ -278,82 +287,89 @@ static void BAT_ball_colour_fade(void)
     }
 }
 
-void BAT_link_blocks(void)
+void BAT_reset_free_balls(void)
 {
     int i;
 
-    BAT_ptr_1e2ca0 = &BAT_btarr_1e27a0[0];
-    BAT_btarr_1e27a0[0].UnkDw9 = &BAT_ptr_1e2ca0;
+    BAT_free_balls = &BAT_balls_store[0];
+    BAT_balls_store[0].ListPvNxPtr = &BAT_free_balls;
     for (i = 0; i < 31; i++)
     {
-        BAT_btarr_1e27a0[i].UnkDw8 = &BAT_btarr_1e27a0[i + 1];
-        BAT_btarr_1e27a0[i + 1].UnkDw9 = &BAT_btarr_1e27a0[i].UnkDw8;
+        BAT_balls_store[i].ListNext = &BAT_balls_store[i + 1];
+        BAT_balls_store[i + 1].ListPvNxPtr = &BAT_balls_store[i].ListNext;
     }
-    BAT_btarr_1e27a0[i].UnkDw8 = 0;
-    BAT_data_1e2ca4 = 0;
+    BAT_balls_store[i].ListNext = NULL;
+    BAT_balls_head = NULL;
 }
 
 void BAT_link_unkstr(void)
 {
     int i;
 
-    BAT_ptr_1e2e3c = &BAT_btarr_1e2cbc[0];
-    BAT_btarr_1e2cbc[0].UnkDw5 = &BAT_ptr_1e2e3c;
+    BAT_free_bonuses = &BAT_bonus_store[0];
+    BAT_bonus_store[0].ListPvNxPtr = &BAT_free_bonuses;
     for (i = 0; i < 15; i++)
     {
-        BAT_btarr_1e2cbc[i].UnkDw4 = &BAT_btarr_1e2cbc[i + 1];
-        BAT_btarr_1e2cbc[i + 1].UnkDw5 = &BAT_btarr_1e2cbc[i].UnkDw4;
+        BAT_bonus_store[i].ListNext = &BAT_bonus_store[i + 1];
+        BAT_bonus_store[i + 1].ListPvNxPtr = &BAT_bonus_store[i].ListNext;
     }
-    BAT_btarr_1e2cbc[i].UnkDw4 = 0;
+    BAT_bonus_store[i].ListNext = 0;
     BAT_data_1e2e40 = 0;
 }
 
 void BAT_start_new_game(void)
 {
-    BAT_state = 1;
+    BAT_state = BATSt_LevelIntro;
     BAT_levelno = 1;
     BAT_score = 0;
     BAT_num_lives = 2;
-    BAT_data_1e26f0 = 90;
+    BAT_level_intro_timer = 90;
 }
 
-void BAT_unknitm2(void)
+struct BATBall *new_ball(void)
 {
-    struct BATItem *brick_a;
-    struct BATItem *brick_r;
-    struct BATItem *brick_b;
-    ushort rnd;
+    struct BATBall *curr;
+    struct BATBall *next;
 
-    brick_a = BAT_ptr_1e2ca0;
-    if (brick_a != NULL)
-    {
-        brick_b = brick_a->UnkDw8;
-        BAT_ptr_1e2ca0 = brick_b;
-        if (brick_b != NULL)
-          brick_b->UnkDw9 = &BAT_ptr_1e2ca0;
+    curr = BAT_free_balls;
+    if (curr == NULL) {
+        LOGERR("BAT: no more free balls");
+        return NULL;
+    }
 
-        brick_b = BAT_data_1e2ca4;
-        if (brick_b) {
-          brick_a->UnkDw8 = BAT_data_1e2ca4;
-          brick_b->UnkDw9 = &brick_a->UnkDw8;
-        } else {
-          brick_a->UnkDw8 = 0;
-        }
-        brick_a->UnkDw9 = &BAT_data_1e2ca4;
-        BAT_data_1e2ca4 = brick_a;
-        brick_r = brick_a;
+    next = curr->ListNext;
+    BAT_free_balls = next;
+    if (next != NULL)
+        next->ListPvNxPtr = &BAT_free_balls;
+
+    next = BAT_balls_head;
+    if (next != NULL) {
+          curr->ListNext = next;
+          next->ListPvNxPtr = &curr->ListNext;
+    } else {
+          curr->ListNext = NULL;
     }
-    else
+    curr->ListPvNxPtr = &BAT_balls_head;
+    BAT_balls_head = curr;
+
+    return curr;
+}
+
+void BAT_create_starting_ball(void)
+{
+    struct BATBall *ball;
+
+    ball = new_ball();
+
+    if (ball != NULL)
     {
-        brick_r = 0;
-    }
-    if ( brick_r )
-    {
-        brick_r->UnkDw0 = 0x3000;
-        brick_r->UnkDw1 = 0x3100;
+        ushort rnd;
+
+        ball->X = (BAT_SCREEN_WIDTH / 2) << 8;
+        ball->Y = (49) << 8;
         rnd = rand();
-        brick_r->UnkDw7 = 0;
-        brick_r->UnkDw6 = ((rnd & 7) << 8) - 768;
+        ball->UnkDw7 = 0;
+        ball->UnkDw6 = ((rnd & 7) << 8) - 768;
     }
 }
 
@@ -396,79 +412,84 @@ void BAT_play(void)
     asm volatile ("call ASM_BAT_play\n"
         :  :  : "eax" );
 #else
-  switch (BAT_state)
-  {
-    case 0:
-      if (BAT_unknsub_27())
-      {
-        BAT_start_new_game();
-        BAT_level_clear();
-      }
-      return;
-
-    case 1:
-      BAT_screen_clear();
-      BAT_data_1e26f0--;
-      BAT_input_paddle();
-      BAT_ball_colour_fade();
-      breakout_play_sub1();
-      BAT_draw_score_and_level();
-      BAT_draw_remainig_lives(90, 2);
-      BAT_unknsub_21();
-      breakout_play_sub2();
-      BAT_draw_level_intro_text();
-
-      if (BAT_data_1e26f0 == 60)
-      {
-        breakout_func_ddae0(BAT_levelno);
-        BAT_link_blocks();
-        BAT_unknitm2();
-      }
-      if (BAT_data_1e26f0 == 0)
-        BAT_state = 2;
-      goto LABEL_190;
-    case 2:
-      BAT_screen_clear();
-      BAT_input_paddle();
-
-      BAT_unknsub_22();
-      BAT_unknsub_22();
-      BAT_unknsub_22();
-      BAT_unknsub_22();
-      breakout_play_sub1();
-      BAT_draw_score_and_level();
-      BAT_draw_remainig_lives(90, 2);
-      BAT_unknsub_21();
-      breakout_play_sub2();
-      if (!BAT_data_1e2ca4)
-      {
-        BAT_state = 3;
-        BAT_data_1e26f4 = 80;
-        play_sample_using_heap(0, 73, 127, 64, 100, 0, 3u);
-      }
-      BAT_input_level();
-      if (!BAT_data_1e270c)
-      {
-        if (BAT_levelno == 10)
+    switch (BAT_state)
+    {
+    case BATSt_Reset:
+        if (BAT_unknsub_27())
         {
-          BAT_state = 5;
-          BAT_data_1e26ec = 150;
-          rand();
-          BAT_data_1e26e8 = 0;
+            BAT_start_new_game();
+            BAT_level_clear();
         }
-        else
+        return;
+
+    case BATSt_LevelIntro:
+        BAT_screen_clear();
+        BAT_level_intro_timer--;
+        BAT_input_paddle();
+
+        BAT_ball_colour_fade();
+        breakout_play_sub1();
+        BAT_draw_score_and_level();
+        BAT_draw_remainig_lives(90, 2);
+        BAT_unknsub_21();
+        breakout_play_sub2();
+        BAT_draw_level_intro_text();
+
+        if (BAT_level_intro_timer == 60)
         {
-          BAT_state = 1;
-          BAT_data_1e26f0 = 90;
+            breakout_func_ddae0(BAT_levelno);
+            BAT_reset_free_balls();
+            BAT_create_starting_ball();
         }
-        BAT_level_clear();
-        BAT_levelno++;
-        play_sample_using_heap(0, 70, 127, 64, 100, 0, 3u);
-      }
-      goto LABEL_190;
-    case 3:
+        if (BAT_level_intro_timer == 0)
+        {
+            BAT_state = BATSt_Gameplay;
+        }
+        break;
+
+    case BATSt_Gameplay:
+        BAT_screen_clear();
+        BAT_input_paddle();
+
+        BAT_unknsub_22();
+        BAT_unknsub_22();
+        BAT_unknsub_22();
+        BAT_unknsub_22();
+        breakout_play_sub1();
+        BAT_draw_score_and_level();
+        BAT_draw_remainig_lives(90, 2);
+        BAT_unknsub_21();
+        breakout_play_sub2();
+        if (BAT_balls_head == NULL)
+        {
+            BAT_state = BATSt_BallLost;
+            BAT_ball_lost_timer = 80;
+            play_sample_using_heap(0, 73, 127, 64, 100, 0, 3u);
+        }
+        BAT_input_level();
+        if (BAT_blocks_remain == 0)
+        {
+            if (BAT_levelno == 10)
+            {
+              BAT_state = BATSt_GameWon;
+              BAT_game_won_timer = 150;
+              rand();
+              BAT_data_1e26e8 = 0;
+            }
+            else
+            {
+              BAT_state = BATSt_LevelIntro;
+              BAT_level_intro_timer = 90;
+            }
+            BAT_level_clear();
+            BAT_levelno++;
+            play_sample_using_heap(0, 70, 127, 64, 100, 0, 3u);
+        }
+        break;
+
+    case BATSt_BallLost:
       BAT_screen_clear();
-      BAT_data_1e26f4--;
+      BAT_ball_lost_timer--;
       BAT_input_paddle();
 
       breakout_play_sub1();
@@ -478,27 +499,28 @@ void BAT_play(void)
       breakout_play_sub2();
       BAT_draw_lost_life_message();
 
-      if (BAT_data_1e26f4 == 50)
+      if (BAT_ball_lost_timer == 50)
       {
-        if (BAT_num_lives)
-        {
-          --BAT_num_lives;
-        }
-        else
-        {
-          BAT_state = 4;
-          BAT_data_1e26f8 = 100;
-        }
+          if (BAT_num_lives) {
+            BAT_num_lives--;
+          } else {
+            BAT_state = BATSt_GameOver;
+            BAT_game_over_timer = 100;
+          }
       }
-      if (BAT_data_1e26f4 == 40)
+      if (BAT_ball_lost_timer == 40)
       {
-        BAT_unknitm2();
+          BAT_create_starting_ball();
       }
-      if (!BAT_data_1e26f4)
-        BAT_state = 2;
-      goto LABEL_190;
-    case 4:
+      if (BAT_ball_lost_timer == 0)
+      {
+          BAT_state = BATSt_Gameplay;
+      }
+      break;
+
+    case BATSt_GameOver:
       BAT_screen_clear();
+      BAT_game_over_timer--;
       BAT_input_paddle();
 
       breakout_play_sub1();
@@ -508,36 +530,40 @@ void BAT_play(void)
       BAT_unknsub_21();
       BAT_draw_game_over_message();
 
-      if (!BAT_data_1e26f8)
+      if (BAT_game_over_timer == 0)
       {
-        BAT_level_clear();
-        BAT_start_new_game();
+          BAT_level_clear();
+          BAT_start_new_game();
       }
-      goto LABEL_190;
-    case 5:
+      break;
+
+    case BATSt_GameWon:
       BAT_screen_clear();
+      BAT_game_won_timer--;
+
       BAT_draw_win_message();
       player_agents_add_random_epidermises(&players[local_player_no]);
-      if (!BAT_data_1e26ec)
+
+      if (BAT_game_won_timer == 0)
       {
-        BAT_level_clear();
-        BAT_link_blocks();
-        BAT_start_new_game();
-        ingame.UserFlags |= 0x01;
+          BAT_level_clear();
+          BAT_reset_free_balls();
+          BAT_start_new_game();
+          ingame.UserFlags |= 0x01;
       }
-      goto LABEL_190;
+      break;
+
     default:
-LABEL_190:
-      if (!BAT_unknsub_27())
-      {
-        BAT_state = 0;
+      break;
+    }
+    if (!BAT_unknsub_27())
+    {
+        BAT_state = BATSt_Reset;
         BAT_level_clear();
         BAT_screen_clear();
-        BAT_link_blocks();
+        BAT_reset_free_balls();
         BAT_link_unkstr();
-      }
-      return;
-  }
+    }
 #endif
 }
 
