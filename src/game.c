@@ -221,13 +221,6 @@ extern long mech_unkn_tile_y2;
 extern long mech_unkn_tile_x3;
 extern long mech_unkn_tile_y3;
 
-extern long dword_1DC880;
-extern long dword_1DC884;
-extern long dword_1DC888;
-extern long dword_1DC88C;
-extern long dword_1DC890;
-extern long dword_1DC894;
-
 extern short brightness;
 
 //TODO this is not an extern only because I was unable to locate it in asm
@@ -1679,12 +1672,12 @@ void process_engine_unk3(void)
 
     reset_drawlist();
     player_target_clear(local_player_no);
-    dword_1DC880 = mech_unkn_tile_x1;
-    dword_1DC884 = mech_unkn_tile_y1;
-    dword_1DC888 = mech_unkn_tile_x2;
-    dword_1DC88C = mech_unkn_tile_y2;
-    dword_1DC890 = mech_unkn_tile_x3;
-    dword_1DC894 = mech_unkn_tile_y3;
+    mech_unkn_dw_1DC880 = mech_unkn_tile_x1;
+    mech_unkn_dw_1DC884 = mech_unkn_tile_y1;
+    mech_unkn_dw_1DC888 = mech_unkn_tile_x2;
+    mech_unkn_dw_1DC88C = mech_unkn_tile_y2;
+    mech_unkn_dw_1DC890 = mech_unkn_tile_x3;
+    mech_unkn_dw_1DC894 = mech_unkn_tile_y3;
 
     unkstruct03_process();
     func_13A78();
