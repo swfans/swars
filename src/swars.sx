@@ -158372,7 +158372,7 @@ GLOBAL_FUNC(ASM_process_vehicle_weapon)	/* 0x0C620C */
 		je     jump_c63a2
 	jump_c6395:
 		mov    %esi,%eax
-		call   init_v_rocket
+		call   ac_init_v_rocket
 		movw   $0x14,0x58(%esi)
 	jump_c63a2:
 		add    $0x4,%esp
@@ -161036,7 +161036,7 @@ GLOBAL_FUNC(ASM_init_rocket)	/* 0x0C7F10 */
 
 
 /*----------------------------------------------------------------*/
-init_v_rocket:	/* 0x0C8218 */
+GLOBAL_FUNC(ASM_init_v_rocket)	/* 0x0C8218 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
