@@ -137,7 +137,7 @@ GLOBAL_FUNC(ASM_breakout_play_sub1)	/* 0x0DD210 */
 		push   %esi
 		push   %edi
 		push   %ebp
-		mov    EXPORT_SYMBOL(BAT_data_1e2e40),%ecx
+		mov    EXPORT_SYMBOL(BAT_bonuses_head),%ecx
 		test   %ecx,%ecx
 		jne    jump_dd225
 		jmp    jump_dd597
@@ -434,7 +434,7 @@ func_dd54c:
 func_dd557:
 /*----------------------------------------------------------------*/
 		xor    %ebp,%ebp
-		mov    %ebp,EXPORT_SYMBOL(BAT_blocks_remain)
+		mov    %ebp,EXPORT_SYMBOL(BAT_bricks_remain)
 		jmp    jump_dd2dd
 	jump_dd564:
 		mov    (%ecx),%eax
@@ -507,7 +507,7 @@ GLOBAL_FUNC(ASM_breakout_play_sub2)	/* 0x0DD620 */
 		push   %ecx
 		push   %edx
 		push   %esi
-		mov    EXPORT_SYMBOL(BAT_data_1e2e40),%esi
+		mov    EXPORT_SYMBOL(BAT_bonuses_head),%esi
 		test   %esi,%esi
 		jne    jump_dd866
 		pop    %esi
@@ -794,20 +794,20 @@ BAT_unknsub_28:	/* 0x0DD878 */
 		je     jump_dd92a
 		movl   $EXPORT_SYMBOL(BAT_free_bonuses),0x14(%esi)
 	jump_dd92a:
-		mov    EXPORT_SYMBOL(BAT_data_1e2e40),%edi
+		mov    EXPORT_SYMBOL(BAT_bonuses_head),%edi
 		test   %edi,%edi
 		je     jump_dd94e
 		mov    %edi,%esi
 		mov    %edi,0x10(%edx)
 		lea    0x10(%edx),%edi
 		mov    %edi,0x14(%esi)
-		mov    %edx,EXPORT_SYMBOL(BAT_data_1e2e40)
-		movl   $EXPORT_SYMBOL(BAT_data_1e2e40),0x14(%edx)
+		mov    %edx,EXPORT_SYMBOL(BAT_bonuses_head)
+		movl   $EXPORT_SYMBOL(BAT_bonuses_head),0x14(%edx)
 		jmp    jump_dd95e
 	jump_dd94e:
-		movl   $EXPORT_SYMBOL(BAT_data_1e2e40),0x14(%edx)
+		movl   $EXPORT_SYMBOL(BAT_bonuses_head),0x14(%edx)
 		mov    %edi,0x10(%edx)
-		mov    %edx,EXPORT_SYMBOL(BAT_data_1e2e40)
+		mov    %edx,EXPORT_SYMBOL(BAT_bonuses_head)
 	jump_dd95e:
 		test   %edx,%edx
 		je     jump_dd978
@@ -827,7 +827,7 @@ BAT_unknsub_28:	/* 0x0DD878 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_breakout_func_ddae0)	/* 0xddae0 */
+GLOBAL_FUNC(ASM_BAT_bricks_load)	/* 0xddae0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -869,17 +869,17 @@ GLOBAL_FUNC(ASM_breakout_func_ddae0)	/* 0xddae0 */
 		je     jump_ddb11
 	jump_ddb34:
 		mov    breakout_levs0__bricks(%edx),%bl
-		mov    %bl,EXPORT_SYMBOL(BAT_data_1e271c)(%eax)
+		mov    %bl,EXPORT_SYMBOL(BAT_bricks)(%eax)
 		test   $0x80,%bl
 		jne    jump_ddb2e
 		xor    %ebx,%ebx
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%eax),%bl
+		mov    EXPORT_SYMBOL(BAT_bricks)(%eax),%bl
 		cmp    $0x35,%ebx
 		je     jump_ddb2e
 		inc    %ecx
 		jmp    jump_ddb2e
 	jump_ddb55:
-		mov    %ecx,EXPORT_SYMBOL(BAT_blocks_remain)
+		mov    %ecx,EXPORT_SYMBOL(BAT_bricks_remain)
 		add    $0x8,%esp
 		pop    %edi
 		pop    %esi
@@ -997,7 +997,7 @@ GLOBAL_FUNC (ASM_BAT_unknsub_20)	/* 0xDDB64 */
 		jl     jump_ddcb3
 		xor    %edx,%edx
 		mov    %edi,EXPORT_SYMBOL(BAT_screen)
-		mov    %edx,EXPORT_SYMBOL(BAT_data_1e2e40)
+		mov    %edx,EXPORT_SYMBOL(BAT_bonuses_head)
 		mov    %edx,EXPORT_SYMBOL(BAT_state)
 		mov    %edx,EXPORT_SYMBOL(BAT_dwarr_1e2ccc)(%eax)
 		pop    %ebp
@@ -1056,24 +1056,24 @@ GLOBAL_FUNC(ASM_BAT_unknsub_21)	/* 0x0DDCF8 */
 		cmp    %edx,%edi
 		je     jump_ddd1f
 	jump_ddd7a:
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%edi),%ah
+		mov    EXPORT_SYMBOL(BAT_bricks)(%edi),%ah
 		test   $0x80,%ah
 		jne    jump_ddd66
 		mov    %ah,%bl
 		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%edi),%al
+		mov    EXPORT_SYMBOL(BAT_bricks)(%edi),%al
 		sar    $0x4,%eax
 		and    $0xf,%bl
 		and    %ebp,%eax
 		and    $0xff,%ebx
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%edi),%dl
+		mov    EXPORT_SYMBOL(BAT_bricks)(%edi),%dl
 		mov    data_1e2710(%ebx),%bl
 		test   $0x40,%dl
 		je     jump_dddc3
 		mov    %dl,%dh
 		and    $0xbf,%dh
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%bl
-		mov    %dh,EXPORT_SYMBOL(BAT_data_1e271c)(%edi)
+		mov    %dh,EXPORT_SYMBOL(BAT_bricks)(%edi)
 	jump_dddc3:
 		cmp    $0x1,%eax
 		jb     jump_dddd2
@@ -1365,7 +1365,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		jge    jump_de064
 		imul   $0xc,%eax,%edx
 		add    %edi,%edx
-		testb  $0x80,EXPORT_SYMBOL(BAT_data_1e271c)(%edx)
+		testb  $0x80,EXPORT_SYMBOL(BAT_bricks)(%edx)
 		jne    jump_de064
 		mov    %ecx,%eax
 		shl    $0xa,%eax
@@ -1390,12 +1390,12 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		jg     jump_de064
 		addl   $0xa,EXPORT_SYMBOL(BAT_score)
 		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%edx),%al
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%edx),%bl
+		mov    EXPORT_SYMBOL(BAT_bricks)(%edx),%al
+		mov    EXPORT_SYMBOL(BAT_bricks)(%edx),%bl
 		sar    $0x4,%eax
 		or     $0x40,%bl
 		and    $0x3,%eax
-		mov    %bl,EXPORT_SYMBOL(BAT_data_1e271c)(%edx)
+		mov    %bl,EXPORT_SYMBOL(BAT_bricks)(%edx)
 		mov    %eax,0x18(%esp)
 		call   ac_rand
 		and    $0x3,%eax
@@ -1408,7 +1408,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		cmp    0x10(%esp),%eax
 		jg     jump_de27f
 		negl   0x1c(%esi)
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%edx),%al
+		mov    EXPORT_SYMBOL(BAT_bricks)(%edx),%al
 		and    $0x7,%al
 		cmp    $0x5,%al
 		jne    jump_de263
@@ -1558,7 +1558,7 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		add    %edi,%eax
 		test   %ecx,%ecx
 		je     jump_de36f
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%eax),%dl
+		mov    EXPORT_SYMBOL(BAT_bricks)(%eax),%dl
 		and    $0x7,%dl
 		cmp    $0x5,%dl
 		jne    jump_de329
@@ -1580,16 +1580,16 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		dec    %ecx
 		push   $0x0
 		mov    %ecx,0x20(%esp)
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%eax),%cl
+		mov    EXPORT_SYMBOL(BAT_bricks)(%eax),%cl
 		mov    0x20(%esp),%dl
 		and    $0xcf,%cl
 		shl    $0x4,%dl
-		mov    %cl,EXPORT_SYMBOL(BAT_data_1e271c)(%eax)
+		mov    %cl,EXPORT_SYMBOL(BAT_bricks)(%eax)
 		mov    %cl,%ch
 		push   $0x64
 		or     %dl,%ch
 		mov    $0x48,%edx
-		mov    %ch,EXPORT_SYMBOL(BAT_data_1e271c)(%eax)
+		mov    %ch,EXPORT_SYMBOL(BAT_bricks)(%eax)
 		mov    $0x40,%ecx
 		xor    %eax,%eax
 		call   ac_play_sample_using_heap
@@ -1598,17 +1598,17 @@ GLOBAL_FUNC(ASM_BAT_unknsub_22)	/* 0x0DDF38 */
 		push   $0x3
 		mov    $0x4b,%edx
 		mov    EXPORT_SYMBOL(BAT_score),%edi
-		mov    EXPORT_SYMBOL(BAT_data_1e271c)(%eax),%bh
+		mov    EXPORT_SYMBOL(BAT_bricks)(%eax),%bh
 		push   %ecx
 		or     $0x80,%bh
 		add    $0x14,%edi
 		push   $0x64
-		mov    %bh,EXPORT_SYMBOL(BAT_data_1e271c)(%eax)
-		mov    EXPORT_SYMBOL(BAT_blocks_remain),%eax
+		mov    %bh,EXPORT_SYMBOL(BAT_bricks)(%eax)
+		mov    EXPORT_SYMBOL(BAT_bricks_remain),%eax
 		mov    $0x40,%ecx
 		dec    %eax
 		mov    $0x7f,%ebx
-		mov    %eax,EXPORT_SYMBOL(BAT_blocks_remain)
+		mov    %eax,EXPORT_SYMBOL(BAT_bricks_remain)
 		xor    %eax,%eax
 		mov    %edi,EXPORT_SYMBOL(BAT_score)
 		call   ac_play_sample_using_heap
@@ -2255,7 +2255,7 @@ breakout_func_de991:
 		mov    $EXPORT_SYMBOL(BAT_free_balls),%ebx
 		mov    EXPORT_SYMBOL(BAT_levelno),%eax
 		mov    $EXPORT_SYMBOL(BAT_balls_store),%edi
-		call   ac_breakout_func_ddae0
+		call   ac_BAT_bricks_load
 		mov    %edx,EXPORT_SYMBOL(BAT_free_balls)
 		mov    %ebx,data_1e27c4
 		xor    %eax,%eax
@@ -2490,10 +2490,10 @@ func_ded40:
 		mov    EXPORT_SYMBOL(BAT_num_lives),%eax
 		xor    %ebp,%ebp
 		inc    %eax
-		mov    %ebp,EXPORT_SYMBOL(BAT_blocks_remain)
+		mov    %ebp,EXPORT_SYMBOL(BAT_bricks_remain)
 		mov    %eax,EXPORT_SYMBOL(BAT_num_lives)
 	jump_def58:
-		mov    EXPORT_SYMBOL(BAT_blocks_remain),%edx
+		mov    EXPORT_SYMBOL(BAT_bricks_remain),%edx
 		test   %edx,%edx
 		jne    jump_df7c8
 		cmpl   $0xa,EXPORT_SYMBOL(BAT_levelno)
@@ -3247,7 +3247,7 @@ func_df554:
 		cmp    $0xf,%edx
 		jl     jump_df88e
 		xor    %edi,%edi
-		mov    %edi,EXPORT_SYMBOL(BAT_data_1e2e40)
+		mov    %edi,EXPORT_SYMBOL(BAT_bonuses_head)
 		mov    %edi,EXPORT_SYMBOL(BAT_dwarr_1e2ccc)(%eax)
 	jump_df8bd:
 		add    $0xfc,%esp
@@ -3518,7 +3518,7 @@ GLOBAL (BAT_num_lives)	/* 0x1e2704 */
 		.long	0x0
 GLOBAL (BAT_score)	/* 0x1e2708 */
 		.long	0x0
-GLOBAL (BAT_blocks_remain)	/* 0x1e270c */
+GLOBAL (BAT_bricks_remain)	/* 0x1e270c */
 		.ascii  "\x00\x00\x00"
 data_1e270f:
 		.byte	0x0
@@ -3542,7 +3542,7 @@ data_1e2718:
 		.ascii  "\x00\x00\x00"
 BAT_data_1e271b:	/* 0x1e271b */
 		.byte	0x0
-GLOBAL (BAT_data_1e271c)	/* 0x1e271c */
+GLOBAL (BAT_bricks)	/* 0x1e271c */
 		.fill   0x78
 GLOBAL (BAT_paddle_x)	/* 0x1e2794 */
 		.long	0x0
@@ -3576,6 +3576,6 @@ data_1e2cd0:
 		.fill   0x16c
 GLOBAL (BAT_free_bonuses)	/* 0x1e2e3c */
 		.long	0x0
-GLOBAL (BAT_data_1e2e40)	/* 0x1e2e40 */
+GLOBAL (BAT_bonuses_head)	/* 0x1e2e40 */
 		.long	0x0
 
