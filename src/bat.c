@@ -287,7 +287,7 @@ static void BAT_ball_colour_fade(void)
     }
 }
 
-void BAT_link_blocks(void)
+void BAT_reset_free_items(void)
 {
     int i;
 
@@ -298,7 +298,7 @@ void BAT_link_blocks(void)
         BAT_btarr_1e27a0[i].ListNext = &BAT_btarr_1e27a0[i + 1];
         BAT_btarr_1e27a0[i + 1].UnkDw9 = &BAT_btarr_1e27a0[i].ListNext;
     }
-    BAT_btarr_1e27a0[i].ListNext = 0;
+    BAT_btarr_1e27a0[i].ListNext = NULL;
     BAT_balls_head = NULL;
 }
 
@@ -436,7 +436,7 @@ void BAT_play(void)
         if (BAT_level_intro_timer == 60)
         {
             breakout_func_ddae0(BAT_levelno);
-            BAT_link_blocks();
+            BAT_reset_free_items();
             BAT_create_starting_ball();
         }
         if (BAT_level_intro_timer == 0)
@@ -545,7 +545,7 @@ void BAT_play(void)
       if (BAT_game_won_timer == 0)
       {
           BAT_level_clear();
-          BAT_link_blocks();
+          BAT_reset_free_items();
           BAT_start_new_game();
           ingame.UserFlags |= 0x01;
       }
@@ -559,7 +559,7 @@ void BAT_play(void)
         BAT_state = BATSt_Reset;
         BAT_level_clear();
         BAT_screen_clear();
-        BAT_link_blocks();
+        BAT_reset_free_items();
         BAT_link_unkstr();
     }
 #endif
