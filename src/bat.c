@@ -52,16 +52,16 @@ struct BreakoutLevel {
     ubyte field_4[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 };
 
-struct BATItem;
+struct BATBall;
 
-struct BATItem {
+struct BATBall {
     int X;
     int Y;
     int UnkDw2[4];
     int UnkDw6;
     int UnkDw7;
-    struct BATItem *ListNext;
-    struct BATItem **UnkDw9;
+    struct BATBall *ListNext;
+    struct BATBall **ListPvNxPtr;
 };
 
 struct BATUnkn2;
@@ -70,8 +70,8 @@ struct BATUnkn2 {
     int UnkDw0;
     int UnkDw1;
     int UnkDw2[2];
-    struct BATUnkn2 *UnkDw4;
-    struct BATUnkn2 **UnkDw5;
+    struct BATUnkn2 *ListNext;
+    struct BATUnkn2 **ListPvNxPtr;
 };
 
 enum BATStates {
@@ -100,12 +100,12 @@ extern ubyte BAT_data_1e271c[BAT_BRICK_COLUMNS * BAT_BRICK_ROWS];
 extern int BAT_paddle_x;
 extern int BAT_data_1e2798;
 extern TbPixel BAT_lives_colour;
-extern struct BATItem BAT_btarr_1e27a0[32];
-extern struct BATItem *BAT_free_items;
-extern struct BATItem *BAT_balls_head;
+extern struct BATBall BAT_balls_store[32];
+extern struct BATBall *BAT_free_balls;
+extern struct BATBall *BAT_balls_head;
 extern TbPixel BAT_ball_colour;
-extern struct BATUnkn2 BAT_btarr_1e2cbc[16];
-extern struct BATUnkn2 *BAT_ptr_1e2e3c;
+extern struct BATUnkn2 BAT_bonus_store[16];
+extern struct BATUnkn2 *BAT_free_bonuses;
 extern int BAT_data_1e2e40;
 
 extern struct BreakoutLevel BAT_levels[];
@@ -287,18 +287,18 @@ static void BAT_ball_colour_fade(void)
     }
 }
 
-void BAT_reset_free_items(void)
+void BAT_reset_free_balls(void)
 {
     int i;
 
-    BAT_free_items = &BAT_btarr_1e27a0[0];
-    BAT_btarr_1e27a0[0].UnkDw9 = &BAT_free_items;
+    BAT_free_balls = &BAT_balls_store[0];
+    BAT_balls_store[0].ListPvNxPtr = &BAT_free_balls;
     for (i = 0; i < 31; i++)
     {
-        BAT_btarr_1e27a0[i].ListNext = &BAT_btarr_1e27a0[i + 1];
-        BAT_btarr_1e27a0[i + 1].UnkDw9 = &BAT_btarr_1e27a0[i].ListNext;
+        BAT_balls_store[i].ListNext = &BAT_balls_store[i + 1];
+        BAT_balls_store[i + 1].ListPvNxPtr = &BAT_balls_store[i].ListNext;
     }
-    BAT_btarr_1e27a0[i].ListNext = NULL;
+    BAT_balls_store[i].ListNext = NULL;
     BAT_balls_head = NULL;
 }
 
@@ -306,14 +306,14 @@ void BAT_link_unkstr(void)
 {
     int i;
 
-    BAT_ptr_1e2e3c = &BAT_btarr_1e2cbc[0];
-    BAT_btarr_1e2cbc[0].UnkDw5 = &BAT_ptr_1e2e3c;
+    BAT_free_bonuses = &BAT_bonus_store[0];
+    BAT_bonus_store[0].ListPvNxPtr = &BAT_free_bonuses;
     for (i = 0; i < 15; i++)
     {
-        BAT_btarr_1e2cbc[i].UnkDw4 = &BAT_btarr_1e2cbc[i + 1];
-        BAT_btarr_1e2cbc[i + 1].UnkDw5 = &BAT_btarr_1e2cbc[i].UnkDw4;
+        BAT_bonus_store[i].ListNext = &BAT_bonus_store[i + 1];
+        BAT_bonus_store[i + 1].ListPvNxPtr = &BAT_bonus_store[i].ListNext;
     }
-    BAT_btarr_1e2cbc[i].UnkDw4 = 0;
+    BAT_bonus_store[i].ListNext = 0;
     BAT_data_1e2e40 = 0;
 }
 
@@ -326,36 +326,38 @@ void BAT_start_new_game(void)
     BAT_level_intro_timer = 90;
 }
 
-struct BATItem *new_ball(void)
+struct BATBall *new_ball(void)
 {
-    struct BATItem *curr_item;
-    struct BATItem *next_item;
+    struct BATBall *curr;
+    struct BATBall *next;
 
-    curr_item = BAT_free_items;
-    if (curr_item == NULL)
+    curr = BAT_free_balls;
+    if (curr == NULL) {
+        LOGERR("BAT: no more free balls");
         return NULL;
-
-    next_item = curr_item->ListNext;
-    BAT_free_items = next_item;
-    if (next_item != NULL)
-        next_item->UnkDw9 = &BAT_free_items;
-
-    next_item = BAT_balls_head;
-    if (next_item != NULL) {
-          curr_item->ListNext = next_item;
-          next_item->UnkDw9 = &curr_item->ListNext;
-    } else {
-          curr_item->ListNext = NULL;
     }
-    curr_item->UnkDw9 = &BAT_balls_head;
-    BAT_balls_head = curr_item;
 
-    return curr_item;
+    next = curr->ListNext;
+    BAT_free_balls = next;
+    if (next != NULL)
+        next->ListPvNxPtr = &BAT_free_balls;
+
+    next = BAT_balls_head;
+    if (next != NULL) {
+          curr->ListNext = next;
+          next->ListPvNxPtr = &curr->ListNext;
+    } else {
+          curr->ListNext = NULL;
+    }
+    curr->ListPvNxPtr = &BAT_balls_head;
+    BAT_balls_head = curr;
+
+    return curr;
 }
 
 void BAT_create_starting_ball(void)
 {
-    struct BATItem *ball;
+    struct BATBall *ball;
 
     ball = new_ball();
 
@@ -436,7 +438,7 @@ void BAT_play(void)
         if (BAT_level_intro_timer == 60)
         {
             breakout_func_ddae0(BAT_levelno);
-            BAT_reset_free_items();
+            BAT_reset_free_balls();
             BAT_create_starting_ball();
         }
         if (BAT_level_intro_timer == 0)
@@ -545,7 +547,7 @@ void BAT_play(void)
       if (BAT_game_won_timer == 0)
       {
           BAT_level_clear();
-          BAT_reset_free_items();
+          BAT_reset_free_balls();
           BAT_start_new_game();
           ingame.UserFlags |= 0x01;
       }
@@ -559,7 +561,7 @@ void BAT_play(void)
         BAT_state = BATSt_Reset;
         BAT_level_clear();
         BAT_screen_clear();
-        BAT_reset_free_items();
+        BAT_reset_free_balls();
         BAT_link_unkstr();
     }
 #endif
