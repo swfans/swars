@@ -646,13 +646,46 @@ ubyte check_mouse_overlap(ushort sspr)
     return ret;
 }
 
-ubyte check_mouse_overlap_item(ushort sspr)
+void check_mouse_overlap_item(ushort sspr)
 {
-    ubyte ret;
+#if 0
     asm volatile (
       "call ASM_check_mouse_overlap_item\n"
-        : "=r" (ret) : "a" (sspr));
-    return ret;
+        : : "a" (sspr));
+#else
+    struct SortSprite *p_sspr;
+    struct Frame *p_frame;
+    PlayerInfo *p_locplayer;
+    int x, y, w, h;
+
+    p_sspr = &game_sort_sprites[sspr];
+    x = p_sspr->X + ((overall_scale * word_1A5834) >> 8);
+    y = p_sspr->Y + ((overall_scale * word_1A5836) >> 8);
+    p_frame = &frame[p_sspr->Frame];
+    w = (overall_scale * p_frame->SWidth) >> 9;
+    h = (overall_scale * p_frame->SHeight) >> 9;
+
+    p_locplayer = &players[local_player_no];
+    if (p_locplayer->TargetType == TrgTp_DroppedTng)
+    {
+        ushort VX;
+        VX = p_sspr->PThing->VX;
+        if ( VX )
+        {
+            if (VX < 12 || VX > 13)
+                return;
+            x = x - (w >> 1);
+            y = y - (h >> 1);
+            w *= 2;
+            h *= 2;
+        }
+    }
+    if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, x, y, w, h))
+    {
+        p_locplayer->Target = p_sspr->PThing->ThingOffset;
+        p_locplayer->TargetType = TrgTp_DroppedTng;
+    }
+#endif
 }
 
 ubyte check_mouse_overlap_corpse(ushort sspr)
@@ -703,7 +736,7 @@ void draw_sort_sprite1a(ushort sspr)
     draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
     p_thing = game_sort_sprites[sspr].PThing;
 
-    if ((p_locplayer->TargetType <= TrgTp_Unkn5) && (p_thing->Type == SmTT_DROPPED_ITEM)) {
+    if ((p_locplayer->TargetType <= TrgTp_DroppedTng) && (p_thing->Type == SmTT_DROPPED_ITEM)) {
         check_mouse_overlap_item(sspr);
     }
 

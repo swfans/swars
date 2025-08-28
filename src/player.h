@@ -45,7 +45,7 @@ enum PlrTargetType {
     TrgTp_Unkn2,
     TrgTp_Unkn3,
     TrgTp_Unkn4,
-    TrgTp_Unkn5,
+    TrgTp_DroppedTng,
     TrgTp_Unkn6,
     TrgTp_Unkn7,
 };

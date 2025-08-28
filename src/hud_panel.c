@@ -1050,7 +1050,7 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
     ThingIdx thing;
     TbBool drawn;
 
-    if (p_locplayer->TargetType != TrgTp_Unkn5)
+    if (p_locplayer->TargetType != TrgTp_DroppedTng)
         return false;
 
     thing = p_locplayer->field_102;
