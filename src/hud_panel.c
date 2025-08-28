@@ -153,7 +153,7 @@ void update_dropped_item_under_agent_exists(short agent)
     if ((p_agent->Flag & TngF_Unkn08000000) == 0)
         return;
 
-    thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
+    thing = p_agent->U.UPerson.StandOnThing;
     if (thing < 0)
         p_pickup = &sthings[thing];
     else
@@ -771,7 +771,7 @@ TbBool check_scanner_input(void)
                         p_usrinp->Turn = gameturn & 0x7FFF;
                         if (can_control)
                         {
-                            if (p_locplayer->TargetType == 3)
+                            if (p_locplayer->TargetType == TrgTp_Unkn3)
                                 my_build_packet(p_pckt, PAct_PLANT_MINE_AT_FACE_PT, dcthing, map_x, p_locplayer->Target, map_z);
                             else
                                 my_build_packet(p_pckt, PAct_PLANT_MINE_AT_GND_PT, dcthing, map_x, map_y, map_z);
@@ -782,7 +782,7 @@ TbBool check_scanner_input(void)
                         p_usrinp->Turn = 0;
                         if (can_control)
                         {
-                            if (p_locplayer->TargetType == 3)
+                            if (p_locplayer->TargetType == TrgTp_Unkn3)
                                 my_build_packet(p_pckt, PAct_PLANT_MINE_AT_FACE_PT_FF, dcthing, map_x, p_locplayer->Target, map_z);
                             else
                                 my_build_packet(p_pckt, PAct_PLANT_MINE_AT_GND_PT_FF, dcthing, map_x, map_y, map_z);
@@ -796,7 +796,7 @@ TbBool check_scanner_input(void)
                         p_usrinp->Turn = gameturn & 0x7FFF;
                         if (can_control)
                         {
-                            if (p_locplayer->TargetType == 3)
+                            if (p_locplayer->TargetType == TrgTp_Unkn3)
                                 my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT, dcthing, map_x, p_locplayer->Target, map_z);
                             else
                                 my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT, dcthing, map_x, map_y, map_z);
@@ -807,7 +807,7 @@ TbBool check_scanner_input(void)
                         p_usrinp->Turn = 0;
                         if (can_control)
                         {
-                            if (p_locplayer->TargetType == 3)
+                            if (p_locplayer->TargetType == TrgTp_Unkn3)
                                 my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT_FF, dcthing, map_x, p_locplayer->Target, map_z);
                             else
                                 my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT_FF, dcthing, map_x, map_y, map_z);
@@ -818,7 +818,7 @@ TbBool check_scanner_input(void)
                 {
                     if (can_control)
                     {
-                        if (p_locplayer->TargetType == 3)
+                        if (p_locplayer->TargetType == TrgTp_Unkn3)
                             my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT, dcthing, map_x, p_locplayer->Target, map_z);
                         else
                             my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT, dcthing, map_x, map_y, map_z);
@@ -1008,7 +1008,7 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
     if ((p_agent->Flag & TngF_Unkn08000000) == 0)
         return false;
 
-    thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
+    thing = p_agent->U.UPerson.StandOnThing;
     if (thing < 0)
         p_pickup = &sthings[thing];
     else
@@ -1050,7 +1050,7 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
     ThingIdx thing;
     TbBool drawn;
 
-    if (p_locplayer->TargetType != 5)
+    if (p_locplayer->TargetType != TrgTp_Unkn5)
         return false;
 
     thing = p_locplayer->field_102;

@@ -95,8 +95,8 @@ void build_vehicle(struct Thing *p_thing)
 
     p_locplayer = &players[local_player_no];
 
-    if (p_locplayer->TargetType < 4)
-        check_mouse_overvehicle(p_thing, 4);
+    if (p_locplayer->TargetType < TrgTp_Unkn4)
+        check_mouse_overvehicle(p_thing, TrgTp_Unkn4);
     if (p_thing->SubType == SubTT_VEH_MECH)
     {
         if ((p_thing->Flag & TngF_Destroyed) == 0)
@@ -259,8 +259,8 @@ void build_building(struct Thing *p_thing)
         short tng_x, tng_y, tng_z;
 
         p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < 2)
-            check_mouse_overvehicle(p_thing, 2);
+        if (p_locplayer->TargetType < TrgTp_Unkn2)
+            check_mouse_overvehicle(p_thing, TrgTp_Unkn2);
         p_sobj = &game_objects[p_thing->U.UObject.Object];
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
         draw_rot_object2(tng_x - engn_xc, tng_y, tng_z - engn_zc, p_sobj, p_thing);

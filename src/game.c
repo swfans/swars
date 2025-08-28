@@ -1325,12 +1325,12 @@ void draw_hud_target_mouse(short dcthing)
         weprange = current_hand_weapon_range(p_dcthing);
         switch (p_locplayer->TargetType)
         {
-        case 1:
-        case 2:
-        case 6:
-        case 7:
+        case TrgTp_Unkn1:
+        case TrgTp_Unkn2:
+        case TrgTp_Unkn6:
+        case TrgTp_Unkn7:
             p_locplayer->field_102 = p_locplayer->Target;
-            p_locplayer->TargetType = 7;
+            p_locplayer->TargetType = TrgTp_Unkn7;
             p_targtng = &things[p_locplayer->Target];
             range = weprange * weprange;
             if (can_i_see_thing(p_dcthing, p_targtng, range, 3) ) {
@@ -1340,11 +1340,11 @@ void draw_hud_target_mouse(short dcthing)
             }
             do_change_mouse(msspr);
             break;
-        case 3:
+        case TrgTp_Unkn3:
             p_locplayer->field_102 = p_locplayer->Target;
             do_change_mouse(7);
             break;
-        case 4:
+        case TrgTp_Unkn4:
             p_locplayer->field_102 = p_locplayer->Target;
             p_targtng = &things[p_locplayer->field_102];
             p_dcthing = &things[p_locplayer->DirectControl[mouser]];
@@ -1366,7 +1366,7 @@ void draw_hud_target_mouse(short dcthing)
     }
     else if (p_locplayer->Target < 0)
     {
-        if (p_locplayer->TargetType == 3) {
+        if (p_locplayer->TargetType == TrgTp_Unkn3) {
           p_locplayer->field_102 = p_locplayer->Target;
           do_change_mouse(7);
         } else {

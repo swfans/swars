@@ -1954,7 +1954,7 @@ StateChRes person_init_cmd_get_item(struct Thing *p_person, short target)
     p_person->State = PerSt_GET_ITEM;
     p_person->U.UPerson.GotoX = tgtng_x;
     p_person->U.UPerson.GotoZ = tgtng_z;
-    p_person->U.UPerson.Vehicle = 0;
+    p_person->U.UPerson.StandOnThing = 0;
     p_person->U.UPerson.ComTimer = -1;
     p_person->SubState = 0;
     p_person->U.UPerson.ComRange = 0;

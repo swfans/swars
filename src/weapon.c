@@ -2163,7 +2163,7 @@ void process_move_while_firing(struct Thing *p_person)
         p_person->Speed = calc_person_speed(p_person);
     }
     p_vehicle = &things[p_person->U.UPerson.Vehicle];
-    if (((p_person->Flag & TngF_InVehicle) != 0) && (p_vehicle->State == 69))
+    if (((p_person->Flag & TngF_InVehicle) != 0) && (p_vehicle->State == VehSt_UNKN_45))
     {
         p_person->Flag &= ~TngF_Unkn0800;
     }
@@ -2185,8 +2185,8 @@ void process_move_while_firing(struct Thing *p_person)
                 int dt_x, dt_z;
                 ushort i;
 
-                dt_x = (p_target->X - p_person->X) >> 8;
-                dt_z = (p_target->Z - p_person->Z) >> 8;
+                dt_x = PRCCOORD_TO_MAPCOORD(p_target->X - p_person->X);
+                dt_z = PRCCOORD_TO_MAPCOORD(p_target->Z - p_person->Z);
                 i = (arctan(dt_x, -dt_z) + 128) & 0x7FF;
                 change_player_angle(p_person, i >> 8);
             }

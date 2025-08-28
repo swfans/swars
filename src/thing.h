@@ -390,7 +390,10 @@ struct TngUPerson
   ubyte BumpCount;
   /** Index of a thing under this one (item available for pickup or vehicle).
    */
-  short Vehicle;
+  union {
+  ThingIdx Vehicle;
+  ThingIdx StandOnThing;
+  };
   /** Index of a next thing in a linked list of passengers.
    */
   short LinkPassenger;

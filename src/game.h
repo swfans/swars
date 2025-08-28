@@ -59,6 +59,7 @@ enum GameFlags {
 };
 
 enum UserFlags {
+    UsrF_WonBAT       =  0x0001,
     UsrF_Cheats       =  0x0004,
 };
 
