@@ -35,6 +35,10 @@ enum BriefCityMapContentKinds {
 
 #pragma pack()
 /******************************************************************************/
+extern short old_mission_brief;
+extern short open_brief;
+extern short next_brief;
+
 void reveal_netscan_objective(short nsobv);
 void brief_load_mission_info(void);
 void load_netscan_data(ubyte city_id, ubyte level);

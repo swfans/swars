@@ -33,6 +33,7 @@
 #include "drawtext.h"
 #include "enginsngobjs.h"
 #include "engintrns.h"
+#include "febrief.h"
 #include "game.h"
 #include "game_data.h"
 #include "game_speed.h"

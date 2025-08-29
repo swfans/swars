@@ -5878,7 +5878,7 @@ void show_menu_screen_st2(void)
       {
             memcpy(&mission_status[0], &mission_status[open_brief],
               sizeof(struct MissionStatus));
-            delete_mail(open_brief - 1, 1);
+            delete_mail(open_brief - 1, MlTp_Mission);
             open_brief = 0;
             old_mission_brief = 0;
             cities[unkn_city_no].Info = 0;

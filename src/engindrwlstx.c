@@ -2011,7 +2011,7 @@ void draw_object_face4_pole(ushort face4)
 
 void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte bright)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_draw_sorted_sprite1a\n"
         : : "a" (frm), "d" (x), "b" (y), "c" (bright));

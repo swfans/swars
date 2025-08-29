@@ -32,6 +32,7 @@
 #include "app_sprite.h"
 #include "campaign.h"
 #include "display.h"
+#include "febrief.h"
 #include "feequip.h"
 #include "femail.h"
 #include "fecryo.h"

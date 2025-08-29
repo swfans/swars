@@ -20,6 +20,7 @@
 
 #include "bfmemut.h"
 
+#include "febrief.h"
 #include "game.h"
 #include "people.h"
 #include "player.h"
