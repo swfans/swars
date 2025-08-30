@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "bfconfig.h"
 #include "bfdata.h"
 #include "bfendian.h"
 #include "bfsprite.h"
@@ -6343,6 +6344,16 @@ void show_menu_screen(void)
         data_1c4990 = 0;
         lbDisplay.RightButton = 0;
     }
+#if defined(LB_ENABLE_MOUSE_WHEEL)
+    // Clear cummulative inputs if they remained unused after processing all inputs
+    if (lbDisplay.WheelMoveUp) {
+        lbDisplay.WheelMoveUp = 0;
+    }
+    else if (lbDisplay.WheelMoveDown) {
+        lbDisplay.WheelMoveDown = 0;
+    }
+#endif
+
     memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
     draw_purple_screen();
 
