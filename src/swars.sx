@@ -168738,7 +168738,7 @@ GLOBAL_FUNC(ASM_show_alert_box)	/* 0x0D0090 */
 		call   ac_my_set_text_window
 		mov    $0xfffffffb,%edx
 		mov    $EXPORT_SYMBOL(alert_text),%eax
-		mov    %dx,alert_textpos
+		mov    %dx,EXPORT_SYMBOL(alert_textpos)
 		call   ac_my_preprocess_text
 		mov    $EXPORT_SYMBOL(alert_text),%eax
 		call   ac_my_count_lines
@@ -168787,7 +168787,7 @@ GLOBAL_FUNC(ASM_show_alert_box)	/* 0x0D0090 */
 		push   $0x0
 		mov    $0x100,%ebx
 		mov    $0x3,%ecx
-		push   $alert_textpos
+		push   $EXPORT_SYMBOL(alert_textpos)
 		xor    %edx,%edx
 		xor    %eax,%eax
 		push   $0x0
@@ -190101,7 +190101,7 @@ data_1ddbf0:
 GLOBAL (byte_1DDC40)	/* 0x1DDC40 */
 		.byte	0x0
 		.byte	0x0
-alert_textpos:	/* 0x1DDC42 */
+GLOBAL (alert_textpos)	/* 0x1DDC42 */
 		.short  0x0
 GLOBAL (byte_1DDC44)
 		.fill   0x280

@@ -92,6 +92,7 @@ extern ubyte enter_game;
 extern short word_1C6F3E;
 extern short word_1C6F40;
 extern ubyte mo_from_agent;
+extern short alert_textpos;
 
 struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};
 struct ScreenBoxBase global_apps_bar_box = {3, 432, 634, 48};
@@ -246,18 +247,27 @@ void reload_background(void)
 
 ubyte main_do_my_quit(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_main_do_my_quit\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    stop_sample_using_heap(0, 122);
+    exit_game = 1;
+    return 1;
 }
 
 ubyte main_do_map_editor(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_main_do_map_editor\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    map_editor = 1;
+    return 1;
 }
 
 ubyte main_do_login_1(ubyte click)
@@ -340,16 +350,54 @@ void set_flag01_main_screen_boxes(void)
 
 ubyte alert_OK(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_alert_OK\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    screentype = old_screentype;
+    redraw_screen_flag = 1;
+    if (old_screentype == SCRT_SYSMENU)
+        enter_game = 1;
+    return 1;
 }
 
 void show_alert_box(void)
 {
+#if 0
     asm volatile ("call ASM_show_alert_box\n"
         :  :  : "eax" );
+#endif
+    ubyte drawn = 0;
+
+    if ((alert_box.Flags & 0x01) != 0)
+    {
+        short nlines, lnheight;
+
+        lbFontPtr = small_med_font;
+        my_set_text_window(alert_box.X + 4, alert_box.Y + 4, alert_box.Width - 8, alert_box.Height - 8);
+        alert_textpos = -5;
+        my_preprocess_text(alert_text);
+        nlines = my_count_lines(alert_text);
+        lnheight = font_height('A') + 4;
+        alert_box.Y = alert_OK_button.Y - lnheight * nlines - 4;
+        alert_box.Height = alert_OK_button.Height + 8 + lnheight * nlines;
+    }
+    asm volatile ("call *%2\n"
+      : "=r" (drawn) : "a" (&alert_box), "g" (alert_box.DrawFn));
+    //drawn = alert_box.DrawFn(&alert_box);
+    if (drawn == 3)
+    {
+        lbFontPtr = small_med_font;
+        my_set_text_window(alert_box.X + 4, alert_box.Y + 4, alert_box.Width - 8, alert_box.Height - 8);
+        lbDisplay.DrawFlags = 0x0100;
+        flashy_draw_text(0, 0, alert_text, 3, 0, &alert_textpos, 0);
+        lbDisplay.DrawFlags = 0;
+        asm volatile ("call *%2\n"
+          : "=r" (drawn) : "a" (&alert_OK_button), "g" (alert_OK_button.DrawFn));
+        //alert_OK_button.DrawFn(&alert_OK_button);
+    }
 }
 
 void init_alert_screen_boxes(void)
