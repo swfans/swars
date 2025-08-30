@@ -20,8 +20,11 @@
 #include <assert.h>
 #include <SDL.h>
 #include <SDL_syswm.h>
-#include "bfconfig.h"
 #include "bfscreen.h"
+
+#if defined(HAVE_CONFIG_H)
+#  include "bfconfig.h"
+#endif
 
 #include "bfscrsurf.h"
 #include "bfpalette.h"

@@ -21,6 +21,10 @@
 #include <SDL.h>
 #include "bfmouse.h"
 
+#if defined(HAVE_CONFIG_H)
+#  include "bfconfig.h"
+#endif
+
 #include "mshandler.hpp"
 #include "bfscreen.h"
 #include "bfsprite.h"

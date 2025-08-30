@@ -20,6 +20,11 @@
 #include <stdio.h>
 #include <limits.h>
 #include "bftext.h"
+
+#if defined(HAVE_CONFIG_H)
+#  include "bfconfig.h"
+#endif
+
 #include "bfsprite.h"
 #include "bfscreen.h"
 #include "bffont.h"
