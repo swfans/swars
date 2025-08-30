@@ -31,6 +31,9 @@ extern "C" {
 #define SCANNER_GROUP_COUNT 6
 #define SCANNER_ARC_COUNT 4
 
+#define SCANNER_MAPDATA_WIDTH 256
+#define SCANNER_MAPDATA_HEIGHT 256
+
 struct Objective;
 struct NetscanObjective;
 
@@ -80,7 +83,7 @@ struct Scanner // sizeof=0x467 (before resize)
 #pragma pack()
 /******************************************************************************/
 extern long *SCANNER_width;
-extern ubyte SCANNER_data[256][256];
+extern ubyte SCANNER_data[SCANNER_MAPDATA_HEIGHT][SCANNER_MAPDATA_WIDTH];
 extern ushort SCANNER_base_zoom_factor;
 extern ushort SCANNER_user_zoom_factor;
 extern ubyte SCANNER_scale_dots;

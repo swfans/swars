@@ -236,6 +236,17 @@ ubyte flashy_draw_purple_text_box_children(struct ScreenTextBox *p_box)
     return all_drawn;
 }
 
+void purple_text_box_set_scroll_horiz_pos(struct ScreenTextBox *p_box, short scroll_h)
+{
+    if (scroll_h < 0)
+        scroll_h = 0;
+    else if (scroll_h + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
+        scroll_h = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
+
+    p_box->ScrollBarPos = scroll_h;
+    p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+}
+
 ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 {
 #if 0
@@ -524,8 +535,10 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
     if (lbDisplay.MLeftButton && ((p_box->Flags & GBxFlg_IsPushed) != 0))
     {
-        p_box->ScrollBarPos = mouse_move_position_vertical_scrollbar_over_text_box(p_box);
-        p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+        short scroll_h;
+
+        scroll_h = mouse_move_position_vertical_scrollbar_over_text_box(p_box);
+        purple_text_box_set_scroll_horiz_pos(p_box, scroll_h);
     }
 
     if (((p_box->Flags & GBxFlg_RadioBtn) != 0) && (p_box->ScrollBarPos >= 0))
@@ -535,15 +548,10 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         {
             if (lbDisplay.LeftButton)
             {
-                int delta;
+                short scroll_h;
 
-                delta = p_box->ScrollBarPos - (lines_visible - 1) * p_box->ScrollWindowHeight / p_box->Lines;
-                if (delta < 0)
-                    delta = 0;
-                else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
-                    delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
-                p_box->ScrollBarPos = delta;
-                p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+                scroll_h = p_box->ScrollBarPos - (lines_visible - 1) * p_box->ScrollWindowHeight / p_box->Lines;
+                purple_text_box_set_scroll_horiz_pos(p_box, scroll_h);
             }
         }
         // Clicking the scroll bar area below the handle
@@ -551,15 +559,10 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         {
             if (lbDisplay.LeftButton)
             {
-                int delta;
+                short scroll_h;
 
-                delta = p_box->ScrollBarPos + (lines_visible - 1) * p_box->ScrollWindowHeight / p_box->Lines;
-                if (delta < 0)
-                    delta = 0;
-                else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
-                    delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
-                p_box->ScrollBarPos = delta;
-                p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+                scroll_h = p_box->ScrollBarPos + (lines_visible - 1) * p_box->ScrollWindowHeight / p_box->Lines;
+                purple_text_box_set_scroll_horiz_pos(p_box, scroll_h);
             }
         }
 
@@ -582,79 +585,60 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
           && (lbKeyOn[KC_UP] || lbKeyOn[KC_DOWN] || lbKeyOn[KC_PGUP] || lbKeyOn[KC_PGDOWN])
           && ((p_box->Flags & GBxFlg_IsPushed) == 0))
         {
-            int delta;
+            short scroll_h, delta;
+
+            scroll_h = p_box->ScrollBarPos;
 
             delta = 0;
             if (lbKeyOn[KC_DOWN])
                 delta = p_box->ScrollWindowHeight / p_box->Lines;
             else if (lbKeyOn[KC_UP])
                 delta = - p_box->ScrollWindowHeight / p_box->Lines;
-            p_box->ScrollBarPos += delta;
+            scroll_h += delta;
 
             delta = 0;
             if (lbKeyOn[KC_PGDOWN])
                 delta = p_box->ScrollWindowHeight * (lines_visible - 1) / p_box->Lines;
             else if (lbKeyOn[KC_PGUP])
                 delta = - (lines_visible - 1) * p_box->ScrollWindowHeight / p_box->Lines;
-            p_box->ScrollBarPos += delta;
+            scroll_h += delta;
 
-            delta = p_box->ScrollBarPos;
-            if (delta < 0)
-                delta = 0;
-            else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
-                delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
-            p_box->ScrollBarPos = delta;
-
-            p_box->field_38 = p_box->ScrollBarPos * p_box->Lines / p_box->ScrollWindowHeight;
+            purple_text_box_set_scroll_horiz_pos(p_box, scroll_h);
         }
 
         // Input from up arrow in bottom part of the scroll bar
         if (mouse_move_over_box(&scroll_arrow_up_box))
         {
-            int delta;
-
             if (lbDisplay.MLeftButton || joy.Buttons[0])
             {
+                short scroll_h;
+
                 if (lbDisplay.LeftButton)
                     play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
                 lbDisplay.LeftButton = 0;
                 p_box->Flags |= GBxFlg_IsRPushed;
                 scroll_arrow_up_box.Flags |= GBxFlg_IsRPushed;
 
-                p_box->ScrollBarPos -= p_box->ScrollWindowHeight / p_box->Lines;
-                delta = p_box->ScrollBarPos;
-                if (delta < 0)
-                    delta = 0;
-                else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
-                    delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
-                p_box->ScrollBarPos = delta;
-
-                p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+                scroll_h = p_box->ScrollBarPos - p_box->ScrollWindowHeight / p_box->Lines;
+                purple_text_box_set_scroll_horiz_pos(p_box, scroll_h);
             }
         }
 
         // Input from down arrow in bottom part of the scroll bar
         if (mouse_move_over_box(&scroll_arrow_dn_box))
         {
-            int delta;
-
             if (lbDisplay.MLeftButton || joy.Buttons[0])
             {
+                short scroll_h;
+
                 if (lbDisplay.LeftButton)
                     play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
                 lbDisplay.LeftButton = 0;
                 p_box->Flags |= GBxFlg_IsRPushed;
                 scroll_arrow_dn_box.Flags |= GBxFlg_IsRPushed;
 
-                p_box->ScrollBarPos += p_box->ScrollWindowHeight / p_box->Lines;
-                delta = p_box->ScrollBarPos;
-                if (delta < 0)
-                    delta = 0;
-                else if (delta + p_box->ScrollBarSize > p_box->ScrollWindowHeight)
-                    delta = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
-                p_box->ScrollBarPos = delta;
-
-                p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+                scroll_h = p_box->ScrollBarPos + p_box->ScrollWindowHeight / p_box->Lines;
+                purple_text_box_set_scroll_horiz_pos(p_box, scroll_h);
             }
         }
     }
