@@ -54,8 +54,6 @@ extern struct ScreenBox controls_keylist_box;
 
 ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
-ubyte ac_show_audio_tracks_box(struct ScreenBox *box);
-ubyte ac_show_audio_volume_box(struct ScreenBox *box);
 
 void show_audio_volume_box_func_02(short a1, short a2, short a3, short a4, TbPixel colour)
 {
@@ -415,10 +413,10 @@ void init_options_audio_screen_boxes(void)
         options_audio_buttons[i].RadioValue = val++;
         options_audio_buttons[i].Flags |= GBxFlg_RadioBtn;
     }
-    audio_volume_boxes[0].SpecialDrawFn = ac_show_audio_volume_box;
-    audio_volume_boxes[1].SpecialDrawFn = ac_show_audio_volume_box;
-    audio_volume_boxes[2].SpecialDrawFn = ac_show_audio_volume_box;
-    audio_tracks_box.SpecialDrawFn = ac_show_audio_tracks_box;
+    audio_volume_boxes[0].SpecialDrawFn = show_audio_volume_box;
+    audio_volume_boxes[1].SpecialDrawFn = show_audio_volume_box;
+    audio_volume_boxes[2].SpecialDrawFn = show_audio_volume_box;
+    audio_tracks_box.SpecialDrawFn = show_audio_tracks_box;
 
     start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - audio_volume_boxes[0].Width - 7) / 2;
 

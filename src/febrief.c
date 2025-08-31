@@ -69,7 +69,6 @@ extern short word_1C47E8;
 
 ubyte ac_brief_do_netscan_enhance(ubyte click);
 ubyte ac_show_brief_netscan_box(struct ScreenTextBox *box);
-ubyte ac_show_citymap_box(struct ScreenBox *box);
 ubyte ac_accept_mission(ubyte click);
 ubyte ac_do_unkn1_CANCEL(ubyte click);
 void ac_purple_unkn2_data_to_screen(void);
@@ -704,7 +703,7 @@ void init_brief_screen_boxes(void)
     unkn1_CANCEL_button.CallBackFn = ac_do_unkn1_CANCEL;
 
     init_screen_box(&brief_graphical_box, 7, 72, 322, 200, 6);
-    brief_graphical_box.SpecialDrawFn = ac_show_citymap_box;
+    brief_graphical_box.SpecialDrawFn = show_citymap_box;
 
     start_x = (scr_w - brief_graphical_box.Width - brief_mission_text_box.Width - 23) / 2;
     brief_graphical_box.X = start_x + 7;

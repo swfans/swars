@@ -359,10 +359,7 @@ ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
         }
     }
     if (p_box->SpecialDrawFn != NULL) {
-          ubyte drawn;
-          //p_box->SpecialDrawFn(p_box); -- incompatible calling convention
-          asm volatile ("call *%2\n"
-              : "=r" (drawn) : "a" (p_box), "g" (p_box->SpecialDrawFn));
+          p_box->SpecialDrawFn(p_box);
     }
     return 3;
 }

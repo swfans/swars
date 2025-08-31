@@ -44,8 +44,6 @@ extern struct ScreenButton login_abort_button;
 
 ubyte ac_do_abort_2(ubyte click);
 ubyte ac_do_login_2(ubyte click);
-ubyte ac_show_campaigns_list(struct ScreenBox *box);
-ubyte ac_show_login_name(struct ScreenBox *box);
 
 ubyte do_login_2(ubyte click)
 {
@@ -219,8 +217,8 @@ void init_login_screen_boxes(void)
     login_abort_button.AccelKey = 1;
     login_continue_button.CallBackFn = ac_do_login_2;
     login_abort_button.CallBackFn = ac_do_abort_2;
-    login_campaigns_box.SpecialDrawFn = ac_show_campaigns_list;
-    login_name_box.SpecialDrawFn = ac_show_login_name;
+    login_campaigns_box.SpecialDrawFn = show_campaigns_list;
+    login_name_box.SpecialDrawFn = show_login_name;
 }
 
 void reset_login_screen_boxes_flags(void)

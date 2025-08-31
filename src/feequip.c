@@ -89,7 +89,6 @@ short agent_name_shape_points_y[] = {
 ubyte ac_display_weapon_info(struct ScreenTextBox *box);
 ubyte ac_show_weapon_name(struct ScreenTextBox *box);
 ubyte ac_show_weapon_list(struct ScreenTextBox *box);
-ubyte ac_show_weapon_slots(struct ScreenBox *box);
 ubyte ac_do_equip_offer_buy(ubyte click);
 ubyte ac_sell_equipment(ubyte click);
 ubyte ac_select_all_agents(ubyte click);
@@ -1255,7 +1254,7 @@ void init_equip_screen_boxes(void)
       gui_strings[436], 6, med2_font, 1, 0);
     init_screen_info_box(&equip_cost_box, 504u, 404u, 124u,
       gui_strings[442], misc_text[0], 6, med_font, small_med_font, 1);
-    weapon_slots.SpecialDrawFn = ac_show_weapon_slots;
+    weapon_slots.SpecialDrawFn = show_weapon_slots;
     equip_name_box.DrawTextFn = ac_show_weapon_name;
     equip_name_box.Text = unkn41_text;
     equip_name_box.Font = med_font;

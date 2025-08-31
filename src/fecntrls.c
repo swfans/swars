@@ -31,7 +31,6 @@ extern struct ScreenButton controls_defaults_button;
 extern struct ScreenButton controls_save_button;
 extern struct ScreenButton controls_calibrate_button;
 
-ubyte ac_show_controls_joystick_box(struct ScreenBox *box);
 ubyte ac_do_controls_defaults(ubyte click);
 ubyte ac_do_controls_save(ubyte click);
 ubyte ac_do_controls_calibrate(ubyte click);
@@ -83,7 +82,7 @@ void init_controls_screen_boxes(void)
     controls_save_button.CallBackFn = ac_do_controls_save;
 
     init_screen_box(&controls_joystick_box, 7u, 252u, 197u, 174, 6);
-    controls_joystick_box.SpecialDrawFn = ac_show_controls_joystick_box;
+    controls_joystick_box.SpecialDrawFn = show_controls_joystick_box;
     init_screen_button(&controls_calibrate_button, 57u, 405u,
       gui_strings[485], 6, med2_font, 1, 0);
     controls_calibrate_button.CallBackFn = ac_do_controls_calibrate;

@@ -81,7 +81,6 @@ extern struct TbSprite *fe_icons_sprites;
 ubyte ac_do_cryo_offer_cancel(ubyte click);
 ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_cryo_cybmod_list_box(struct ScreenTextBox *box);
-ubyte ac_show_cryo_blokey(struct ScreenBox *box);
 ubyte ac_do_cryo_all_agents_set(ubyte click);
 void ac_weapon_flic_data_to_screen(void);
 ubyte ac_do_equip_offer_buy(ubyte click);
@@ -1662,7 +1661,7 @@ void init_cryo_screen_boxes(void)
     cryo_agent_list_box.ScrollWindowHeight -= 27;
 
     init_screen_box(&cryo_blokey_box, 212u, 122u, 203u, 303, 6);
-    cryo_blokey_box.SpecialDrawFn = ac_show_cryo_blokey;
+    cryo_blokey_box.SpecialDrawFn = show_cryo_blokey;
 
     init_screen_text_box(&cryo_cybmod_list_box, 425u, 153u, 208u, 272,
       6, small_med_font, 1);
