@@ -78,7 +78,7 @@ jobs:
           PKG_CONFIG_PATH: "/usr/lib/i386-linux-gnu/pkgconfig"
         run: |
           mkdir -p release; cd release
-          ../configure --prefix="/"
+          ../configure --prefix="/" --enable-lb-mouse-wheel
 
       - name: Build executable
         run: |
@@ -158,7 +158,7 @@ jobs:
           LDFLAGS: "-m32"
         run: |
           mkdir -p release; cd release
-          ../configure --prefix="/"
+          ../configure --prefix="/" --enable-lb-mouse-wheel
 
       - name: Build executable
         run: |
