@@ -188227,10 +188227,7 @@ GLOBAL (data_1c498d)	/* 0x1c498d */
 		.byte	0x0
 GLOBAL (mouse_sprite_anim_frame)
 		.byte	0x0
-GLOBAL (data_1c498f)	/* 0x1c498f */
-		.byte	0x0
-GLOBAL (data_1c4990)
-		.byte	0x0
+
 GLOBAL (data_1c4991)	/* 0x1c4991 */
 		.byte	0x0
 GLOBAL (replay_intro_timer)	/* 0x1C4992 */

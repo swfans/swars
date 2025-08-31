@@ -137,6 +137,11 @@
  */
 #define EXPECTED_LANG_TXT_SIZE 8000
 
+enum PostRenderAction {
+    PRend_NONE = 0,
+    PRend_SaveScreenshot,
+};
+
 extern char *fadedat_fname;
 char session_name[20] = "SWARA";
 
@@ -189,6 +194,12 @@ extern ushort netgame_agent_pos_z[8][4];
 extern long dword_155010;
 extern long dword_155014;
 extern long dword_155018;
+
+ubyte clear_left_button;
+ubyte clear_right_button;
+ubyte clear_wheel_up;
+ubyte clear_wheel_down;
+ubyte post_render_action;
 
 int mouse_map_x = 0x3200;
 int mouse_map_y = 0;
@@ -6192,6 +6203,41 @@ void menu_screen_redraw(void)
         play_sample_using_heap(0, 113, 127, 64, 100, 0, 3u);
 }
 
+/** Mark beginning of user input processing code.
+ */
+void input_processing_beg(void)
+{
+    clear_left_button = lbDisplay.LeftButton;
+    clear_right_button = lbDisplay.RightButton;
+    clear_wheel_up = lbDisplay.WheelMoveUp;
+    clear_wheel_down = lbDisplay.WheelMoveDown;
+}
+
+/** Mark end of user input processing code.
+ */
+void input_processing_end(void)
+{
+    if (clear_left_button && lbDisplay.LeftButton) {
+        clear_left_button = 0;
+        lbDisplay.LeftButton = 0;
+    }
+    if (clear_right_button && lbDisplay.RightButton) {
+        clear_right_button = 0;
+        lbDisplay.RightButton = 0;
+    }
+#if defined(LB_ENABLE_MOUSE_WHEEL)
+    // Clear cummulative inputs if they remained unused after processing all inputs
+    if (clear_wheel_up && lbDisplay.WheelMoveUp) {
+        clear_wheel_up = 0;
+        lbDisplay.WheelMoveUp = 0;
+    }
+    if (clear_wheel_down && lbDisplay.WheelMoveDown) {
+        clear_wheel_down = 0;
+        lbDisplay.WheelMoveDown = 0;
+    }
+#endif
+}
+
 void show_menu_screen(void)
 {
     switch (data_1c498d)
@@ -6263,8 +6309,8 @@ void show_menu_screen(void)
         lbDisplay.MouseY = i;
     }
 
-    data_1c498f = lbDisplay.LeftButton;
-    data_1c4990 = lbDisplay.RightButton;
+    input_processing_beg();
+
     show_date_time();
 
     if (is_purple_apps_selection_bar_visible())
@@ -6319,6 +6365,13 @@ void show_menu_screen(void)
         break;
     }
 
+    if (lbKeyOn[KC_F12]) {
+        lbKeyOn[KC_F12] = 0;
+        post_render_action = PRend_SaveScreenshot;
+    }
+
+    input_processing_end();
+
     if (login_control__State == 5)
     {
         net_unkn_func_33();
@@ -6334,25 +6387,6 @@ void show_menu_screen(void)
         net_players_copy_equip_and_cryo_now();
         init_net_players();
     }
-    if (data_1c498f && lbDisplay.LeftButton)
-    {
-        data_1c498f = 0;
-        lbDisplay.LeftButton = 0;
-    }
-    if (data_1c4990 && lbDisplay.RightButton)
-    {
-        data_1c4990 = 0;
-        lbDisplay.RightButton = 0;
-    }
-#if defined(LB_ENABLE_MOUSE_WHEEL)
-    // Clear cummulative inputs if they remained unused after processing all inputs
-    if (lbDisplay.WheelMoveUp) {
-        lbDisplay.WheelMoveUp = 0;
-    }
-    else if (lbDisplay.WheelMoveDown) {
-        lbDisplay.WheelMoveDown = 0;
-    }
-#endif
 
     memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
     draw_purple_screen();
@@ -6360,9 +6394,13 @@ void show_menu_screen(void)
     if (is_purple_apps_selection_bar_visible() && !is_purple_alert_on_top())
         get_purple_apps_selection_bar_inputs();
 
-    if (lbKeyOn[KC_F12]) {
-        lbKeyOn[KC_F12] = 0;
+    switch (post_render_action)
+    {
+    case PRend_SaveScreenshot:
         LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
+        break;
+    default:
+        break;
     }
 
     if (change_screen == ChSCRT_SYSMENU)
