@@ -192,16 +192,18 @@ void flashy_draw_projector_reaching_target_coords(short box_x, short box_y, shor
     draw_sprite_purple_list(scr_x2 - 1, scr_y2 - 1, p_spr);
 }
 
-void flashy_draw_projector_vertical_lines(short box_x, short box_y, short box_w, short box_h, short advance, TbPixel colour)
+void flashy_draw_projector_horizontal_lines(short box_x, short box_y, short box_w, short box_h, short advance, TbPixel colour)
 {
     struct TbSprite *p_spr;
     ushort spr;
     short scr_x1, scr_x2;
+    short prog_x;
 
     spr = 11 + (colour != 0xF7);
     vec_colour = colour;
 
-    purple_box_x1 = box_x + advance;
+    prog_x = box_x + advance;
+    purple_box_x1 = prog_x;
     purple_box_y1 = box_y;
     purple_box_x2 = purple_box_x1 - 15;
     scr_x1 = box_x;
@@ -224,11 +226,11 @@ void flashy_draw_projector_vertical_lines(short box_x, short box_y, short box_w,
     draw_line_purple_list(purple_box_x1, purple_box_y1, scr_x2, purple_box_y2, colour);
 
     p_spr = &fe_mouseptr_sprites[spr];
-    draw_sprite_purple_list(purple_box_x1 - 1, box_y - 1, p_spr);
+    draw_sprite_purple_list(prog_x - 1, box_y - 1, p_spr);
     draw_sprite_purple_list(purple_box_x1 - 1, box_y + box_h - 1, p_spr);
 }
 
-void flashy_draw_projector_horizontal_lines(short box_x, short box_y, short box_w, short box_h, short advance, TbPixel colour)
+void flashy_draw_projector_vertical_lines(short box_x, short box_y, short box_w, short box_h, short advance, TbPixel colour)
 {
     struct TbSprite *p_spr;
     ushort spr;
@@ -317,24 +319,24 @@ ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
         return 0;
     }
 
-    // Draw vertical lines
+    // Draw horizontal lines
     if (p_box->Timer <= 48)
     {
         short advance;
 
         advance = ((p_box->Timer - 24) * box_w) / 24;
-        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
         p_box->Timer += p_box->DrawSpeed;
         return 0;
     }
 
-    // Draw horizontal lines
+    // Draw vertical lines
     if (p_box->Timer <= 72)
     {
         short advance;
 
         advance = ((p_box->Timer - 48) * box_h) / 24;
-        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
         p_box->Timer += p_box->DrawSpeed;
         return 2;
     }
@@ -735,24 +737,24 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         return 0;
     }
 
-    // Draw vertical lines
+    // Draw horizontal lines
     if (p_box->Timer <= 48)
     {
         short advance;
 
         advance = ((p_box->Timer - 24) * box_w) / 24;
-        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour1);
+        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour1);
         p_box->Timer += p_box->DrawSpeed;
         return 0;
     }
 
-    // Draw horizontal lines
+    // Draw vertical lines
     if (p_box->Timer <= 72)
     {
         short advance;
 
         advance = ((p_box->Timer - 48) * box_h) / 24;
-        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour1);
+        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour1);
         p_box->Timer += p_box->DrawSpeed;
         return 2;
     }
@@ -905,10 +907,99 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
 ubyte flashy_draw_purple_info_box(struct ScreenInfoBox *p_box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_flashy_draw_purple_info_box\n"
         : "=r" (ret) : "a" (p_box));
     return ret;
+#endif
+    short box_w, box_h;
+
+    box_w = p_box->Width - 1;
+    box_h = p_box->Height - 1;
+
+    if ((p_box->Flags & GBxFlg_Unkn0002) != 0)
+    {
+        p_box->Timer = -1;
+        p_box->Flags &= ~(GBxFlg_Unkn0080|GBxFlg_Unkn0002|GBxFlg_Unkn0001);
+    }
+    if ((p_box->Flags & GBxFlg_Unkn0001) != 0)
+    {
+        p_box->Timer = 0;
+        p_box->Flags &= ~(GBxFlg_Unkn0001|GBxFlg_Unkn0080);
+        p_box->Flags |= GBxFlg_Unkn0080;
+    }
+
+    // Handle sound
+    if (p_box->Timer <= 72)
+    {
+        if (p_box->Timer > 24)
+        {
+            if (!IsSamplePlaying(0, 4, 0))
+                play_sample_using_heap(0, 110, 127, 64, 100, 0, 1u);
+        }
+    }
+
+    // Draw lines from projector origin reaching target rectangle
+    if (p_box->Timer <= 24)
+    {
+        short advance;
+
+        advance = p_box->Timer;
+        flashy_draw_projector_reaching_target_coords(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        p_box->Timer += p_box->DrawSpeed;
+        return 0;
+    }
+
+    // Draw horizontal lines
+    if (p_box->Timer <= 48)
+    {
+        short advance;
+
+        advance = ((p_box->Timer - 24) * box_w) / 24;
+        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        p_box->Timer += p_box->DrawSpeed;
+        return 0;
+    }
+
+    // Draw vertical lines
+    if (p_box->Timer <= 72)
+    {
+        short advance;
+
+        advance = ((p_box->Timer - 48) * box_h) / 24;
+        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        p_box->Timer += p_box->DrawSpeed;
+        return 2;
+    }
+
+    // Now as drawing animation finished, the background became static
+    // Draw and store the static background
+    if ((p_box->Flags & GBxFlg_BkCopied) == 0)
+    {
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        draw_box_purple_list(p_box->X - 1, p_box->Y - 1,
+          p_box->Width + 2, p_box->Height + 2, p_box->BGColour);
+        lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
+        draw_box_purple_list(p_box->X, p_box->Y,
+          p_box->Width, p_box->Height, p_box->Colour);
+        lbDisplay.DrawFlags = 0;
+
+        if ((p_box->Flags & GBxFlg_NoBkCopy) == 0)
+        {
+            copy_box_purple_list(p_box->X - 1, p_box->Y - 1,
+              p_box->Width + 2, p_box->Height + 2);
+            p_box->Flags |= GBxFlg_BkCopied;
+        }
+    }
+    if (p_box->DrawTextFn != NULL) {
+            ubyte drawn;
+            //p_box->DrawTextFn(p_box); -- incompatible calling convention
+            asm volatile ("call *%2\n"
+                : "=r" (drawn) : "a" (p_box), "g" (p_box->DrawTextFn));
+    }
+    return 3;
+
 }
 
 ubyte flashy_draw_purple_button(struct ScreenButton *button)
