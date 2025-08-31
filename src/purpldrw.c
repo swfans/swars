@@ -155,11 +155,11 @@ void draw_hotspot_purple_list(int x, int y)
         : : "a" (x), "d" (y));
 }
 
-ubyte flashy_draw_purple_shape(struct ScreenShape *shape)
+ubyte flashy_draw_purple_shape(struct ScreenShape *p_shape)
 {
     ubyte ret;
     asm volatile ("call ASM_flashy_draw_purple_shape\n"
-        : "=r" (ret) : "a" (shape));
+        : "=r" (ret) : "a" (p_shape));
     return ret;
 }
 
@@ -264,30 +264,30 @@ void purple_text_box_set_scroll_vertical_pos(struct ScreenTextBox *p_box, short 
     p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
 }
 
-void init_scroll_bar_for_text_box(struct ScreenBox *scroll_bar, struct ScreenTextBox *p_box)
+void init_scroll_bar_for_text_box(struct ScreenBox *ar_scroll_bar, struct ScreenTextBox *p_box)
 {
-    init_screen_box(&scroll_bar[ScrlBB_AreaAbv], p_box->X + p_box->Width - 12,
+    init_screen_box(&ar_scroll_bar[ScrlBB_AreaAbv], p_box->X + p_box->Width - 12,
       p_box->Y + p_box->ScrollWindowOffset + 5,
       6, p_box->ScrollBarPos, p_box->DrawSpeed);
 
-    init_screen_box(&scroll_bar[ScrlBB_HndlBox], p_box->X + p_box->Width - 12,
+    init_screen_box(&ar_scroll_bar[ScrlBB_HndlBox], p_box->X + p_box->Width - 12,
       p_box->Y + p_box->ScrollWindowOffset + 5 + p_box->ScrollBarPos,
       6, p_box->ScrollBarSize, p_box->DrawSpeed);
 
-    init_screen_box(&scroll_bar[ScrlBB_AreaBlw], p_box->X + p_box->Width - 12,
+    init_screen_box(&ar_scroll_bar[ScrlBB_AreaBlw], p_box->X + p_box->Width - 12,
       p_box->Y + p_box->ScrollWindowOffset + 5 + p_box->ScrollBarPos + p_box->ScrollBarSize,
       6, p_box->ScrollWindowHeight + 1 - (p_box->ScrollBarPos + p_box->ScrollBarSize), p_box->DrawSpeed);
 
-    init_screen_box(&scroll_bar[ScrlBB_ArrowUp], p_box->X + p_box->Width - 13,
+    init_screen_box(&ar_scroll_bar[ScrlBB_ArrowUp], p_box->X + p_box->Width - 13,
       p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 9,
       8, 9, p_box->DrawSpeed);
 
-    init_screen_box(&scroll_bar[ScrlBB_ArrowDn], p_box->X + p_box->Width - 13,
+    init_screen_box(&ar_scroll_bar[ScrlBB_ArrowDn], p_box->X + p_box->Width - 13,
       p_box->Y + p_box->ScrollWindowHeight + p_box->ScrollWindowOffset + 18,
       8, 9, p_box->DrawSpeed);
 }
 
-void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct ScreenBox *scroll_bar)
+void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct ScreenBox *ar_scroll_bar)
 {
     short lines_visible;
 
@@ -304,7 +304,7 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
     if (((p_box->Flags & GBxFlg_RadioBtn) != 0) && (p_box->ScrollBarPos >= 0))
     {
         // Clicking the scroll bar area above the handle
-        if (mouse_move_over_box(&scroll_bar[ScrlBB_AreaAbv]))
+        if (mouse_move_over_box(&ar_scroll_bar[ScrlBB_AreaAbv]))
         {
             if (lbDisplay.LeftButton)
             {
@@ -315,7 +315,7 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
             }
         }
         // Clicking the scroll bar area below the handle
-        else if (mouse_move_over_box(&scroll_bar[ScrlBB_AreaBlw]))
+        else if (mouse_move_over_box(&ar_scroll_bar[ScrlBB_AreaBlw]))
         {
             if (lbDisplay.LeftButton)
             {
@@ -327,7 +327,7 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
         }
 
         // Input draging the scroll bar handle
-        if (((p_box->Flags & GBxFlg_IsPushed) != 0) || mouse_move_over_box(&scroll_bar[ScrlBB_HndlBox]))
+        if (((p_box->Flags & GBxFlg_IsPushed) != 0) || mouse_move_over_box(&ar_scroll_bar[ScrlBB_HndlBox]))
         {
             if (lbDisplay.LeftButton)
             {
@@ -390,7 +390,7 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
         }
 
         // Input from up arrow in bottom part of the scroll bar
-        if (mouse_move_over_box(&scroll_bar[ScrlBB_ArrowUp]))
+        if (mouse_move_over_box(&ar_scroll_bar[ScrlBB_ArrowUp]))
         {
             if (lbDisplay.MLeftButton || joy.Buttons[0])
             {
@@ -400,7 +400,7 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
                     play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
                 lbDisplay.LeftButton = 0;
                 p_box->Flags |= GBxFlg_IsRPushed;
-                scroll_bar[ScrlBB_ArrowUp].Flags |= GBxFlg_IsRPushed;
+                ar_scroll_bar[ScrlBB_ArrowUp].Flags |= GBxFlg_IsRPushed;
 
                 scroll_pos = p_box->ScrollBarPos - p_box->ScrollWindowHeight / p_box->Lines;
                 purple_text_box_set_scroll_vertical_pos(p_box, scroll_pos);
@@ -408,7 +408,7 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
         }
 
         // Input from down arrow in bottom part of the scroll bar
-        if (mouse_move_over_box(&scroll_bar[ScrlBB_ArrowDn]))
+        if (mouse_move_over_box(&ar_scroll_bar[ScrlBB_ArrowDn]))
         {
             if (lbDisplay.MLeftButton || joy.Buttons[0])
             {
@@ -418,7 +418,7 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
                     play_sample_using_heap(0, 125, 127, 64, 100, 0, 1);
                 lbDisplay.LeftButton = 0;
                 p_box->Flags |= GBxFlg_IsRPushed;
-                scroll_bar[ScrlBB_ArrowDn].Flags |= GBxFlg_IsRPushed;
+                ar_scroll_bar[ScrlBB_ArrowDn].Flags |= GBxFlg_IsRPushed;
 
                 scroll_pos = p_box->ScrollBarPos + p_box->ScrollWindowHeight / p_box->Lines;
                 purple_text_box_set_scroll_vertical_pos(p_box, scroll_pos);
