@@ -195,6 +195,7 @@ extern long dword_155010;
 extern long dword_155014;
 extern long dword_155018;
 
+ubyte simulated_mouse_click;
 ubyte clear_left_button;
 ubyte clear_right_button;
 ubyte clear_wheel_up;
@@ -6207,10 +6208,39 @@ void menu_screen_redraw(void)
  */
 void input_processing_beg(void)
 {
+    if (joy.Buttons[0] && !net_unkn_pos_02)
+    {
+        if (!simulated_mouse_click)
+        {
+            int i;
+
+            simulated_mouse_click = 1;
+
+            // Simulate mouse click at current move position
+            lbDisplay.LeftButton = 1;
+            if (lbDisplay.GraphicsScreenWidth > 320)
+                i = lbDisplay.MMouseX * lbDisplay.GraphicsScreenWidth / 320;
+            else
+                i = lbDisplay.MMouseX;
+            lbDisplay.MouseX = i;
+            if (lbDisplay.GraphicsScreenHeight > 200)
+                i = lbDisplay.MMouseY * lbDisplay.GraphicsScreenHeight / 200;
+            else
+                i = lbDisplay.MMouseY;
+            lbDisplay.MouseY = i;
+        }
+    }
+    else if (simulated_mouse_click)
+    {
+        simulated_mouse_click = 0;
+    }
+
     clear_left_button = lbDisplay.LeftButton;
     clear_right_button = lbDisplay.RightButton;
+#if defined(LB_ENABLE_MOUSE_WHEEL)
     clear_wheel_up = lbDisplay.WheelMoveUp;
     clear_wheel_down = lbDisplay.WheelMoveDown;
+#endif
 }
 
 /** Mark end of user input processing code.
@@ -6286,31 +6316,6 @@ void show_menu_screen(void)
     }
     text_buf_pos = lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight;
 
-    if ( !joy.Buttons[0] || net_unkn_pos_02 )
-    {
-        if ( data_1c4991 )
-            data_1c4991 = 0;
-    }
-    else if ( !data_1c4991 )
-    {
-        int i;
-        data_1c4991 = 1;
-        lbDisplay.LeftButton = 1;
-        // Scale mouse position in high resolutions
-        if (lbDisplay.GraphicsScreenWidth > 320)
-            i = lbDisplay.MMouseX * lbDisplay.GraphicsScreenWidth / 320;
-        else
-            i = lbDisplay.MMouseX;
-        lbDisplay.MouseX = i;
-        if (lbDisplay.GraphicsScreenHeight > 200)
-            i = lbDisplay.MMouseY * lbDisplay.GraphicsScreenHeight / 200;
-        else
-            i = lbDisplay.MMouseY;
-        lbDisplay.MouseY = i;
-    }
-
-    input_processing_beg();
-
     show_date_time();
 
     if (is_purple_apps_selection_bar_visible())
@@ -6325,6 +6330,11 @@ void show_menu_screen(void)
         change_screen = ChSCRT_NONE;
     }
 
+    input_processing_beg();
+
+    input_date_time();
+
+    // TODO separate input functions from draw functions and update functions
     switch (screentype)
     {
     case SCRT_MISSION:
@@ -6365,6 +6375,9 @@ void show_menu_screen(void)
         break;
     }
 
+    if (is_purple_apps_selection_bar_visible() && !is_purple_alert_on_top())
+        input_purple_apps_selection_bar();
+
     if (lbKeyOn[KC_F12]) {
         lbKeyOn[KC_F12] = 0;
         post_render_action = PRend_SaveScreenshot;
@@ -6391,9 +6404,6 @@ void show_menu_screen(void)
     memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
     draw_purple_screen();
 
-    if (is_purple_apps_selection_bar_visible() && !is_purple_alert_on_top())
-        get_purple_apps_selection_bar_inputs();
-
     switch (post_render_action)
     {
     case PRend_SaveScreenshot:
@@ -6402,6 +6412,8 @@ void show_menu_screen(void)
     default:
         break;
     }
+
+    update_date_time();
 
     if (change_screen == ChSCRT_SYSMENU)
     {

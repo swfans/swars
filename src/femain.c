@@ -855,10 +855,17 @@ void show_date_time(void)
     }
 
     global_credits_box_draw();
+}
 
+void update_date_time(void)
+{
     global_date_tick();
-    global_date_inputs();
+}
 
+TbBool input_date_time(void)
+{
+    global_date_inputs();
+    return false;
 }
 
 void reset_system_menu_boxes_flags(void)
@@ -1329,7 +1336,7 @@ void show_purple_apps_selection_bar(void)
     }
 }
 
-TbBool get_purple_apps_selection_bar_inputs(void)
+TbBool input_purple_apps_selection_bar(void)
 {
     short iconid;
     ushort bri;

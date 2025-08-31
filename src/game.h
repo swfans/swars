@@ -402,7 +402,6 @@ extern sbyte unkn_city_no;
 extern ubyte group_types[8];
 extern ubyte byte_1C4AA3;
 extern ubyte net_unkn_pos_02;
-extern ubyte data_1c4991;
 extern ubyte data_1c4aa2;
 extern ubyte start_into_mission;
 extern ubyte edit_flag;
