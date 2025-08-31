@@ -139261,29 +139261,29 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_box)	/* 0x0B3458 */
 		mov    %al,EXPORT_SYMBOL(vec_colour)
 		mov    0x36(%esp),%eax
 		sar    $0x10,%eax
-		mov    %eax,data_1dc584
+		mov    %eax,EXPORT_SYMBOL(purple_box_x1)
 		xor    %eax,%eax
 		mov    0x2(%esi),%ax
 		mov    %dx,0x48(%esp)
-		mov    %eax,data_1dc588
+		mov    %eax,EXPORT_SYMBOL(purple_box_y1)
 		xor    %eax,%eax
-		mov    data_1dc584,%edx
+		mov    EXPORT_SYMBOL(purple_box_x1),%edx
 		mov    0x50(%esp),%al
 		sub    %eax,%edx
 		xor    %eax,%eax
 		mov    (%esi),%ax
-		mov    %edx,data_1dc5ac
+		mov    %edx,EXPORT_SYMBOL(purple_box_x2)
 		cmp    %edx,%eax
 		jle    jump_b3887
-		mov    %eax,data_1dc5ac
+		mov    %eax,EXPORT_SYMBOL(purple_box_x2)
 	jump_b3887:
 		xor    %eax,%eax
-		mov    data_1dc5ac,%ebx
+		mov    EXPORT_SYMBOL(purple_box_x2),%ebx
 		mov    0x2(%esi),%ax
-		mov    data_1dc588,%edx
-		mov    %eax,data_1dc5b0
+		mov    EXPORT_SYMBOL(purple_box_y1),%edx
+		mov    %eax,EXPORT_SYMBOL(purple_box_y2)
 		mov    %eax,%ecx
-		mov    data_1dc584,%eax
+		mov    EXPORT_SYMBOL(purple_box_x1),%eax
 		call   ac_draw_trig_purple_list
 		mov    0x36(%esp),%ebx
 		xor    %eax,%eax
@@ -139299,36 +139299,36 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_box)	/* 0x0B3458 */
 		mov    0x46(%esp),%eax
 		sar    $0x10,%eax
 		mov    0x2a(%esp),%edx
-		mov    %eax,data_1dc584
+		mov    %eax,EXPORT_SYMBOL(purple_box_x1)
 		xor    %eax,%eax
 		sar    $0x10,%edx
 		mov    0x2(%esi),%ax
 		add    %edx,%eax
 		xor    %edx,%edx
-		mov    %eax,data_1dc588
+		mov    %eax,EXPORT_SYMBOL(purple_box_y1)
 		mov    0x50(%esp),%dl
-		mov    data_1dc584,%eax
+		mov    EXPORT_SYMBOL(purple_box_x1),%eax
 		add    %edx,%eax
-		mov    %eax,data_1dc5ac
+		mov    %eax,EXPORT_SYMBOL(purple_box_x2)
 		xor    %eax,%eax
 		movswl %di,%edx
 		mov    (%esi),%ax
-		mov    data_1dc5ac,%ebx
+		mov    EXPORT_SYMBOL(purple_box_x2),%ebx
 		add    %edx,%eax
 		cmp    %ebx,%eax
 		jge    jump_b3914
-		mov    %eax,data_1dc5ac
+		mov    %eax,EXPORT_SYMBOL(purple_box_x2)
 	jump_b3914:
 		mov    0x2a(%esp),%ebp
 		xor    %eax,%eax
 		sar    $0x10,%ebp
 		mov    0x2(%esi),%ax
-		mov    data_1dc5ac,%ebx
+		mov    EXPORT_SYMBOL(purple_box_x2),%ebx
 		add    %ebp,%eax
-		mov    data_1dc588,%edx
-		mov    %eax,data_1dc5b0
+		mov    EXPORT_SYMBOL(purple_box_y1),%edx
+		mov    %eax,EXPORT_SYMBOL(purple_box_y2)
 		mov    %eax,%ecx
-		mov    data_1dc584,%eax
+		mov    EXPORT_SYMBOL(purple_box_x1),%eax
 		call   ac_draw_trig_purple_list
 		xor    %eax,%eax
 		xor    %edx,%edx
@@ -139459,28 +139459,28 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_box)	/* 0x0B3458 */
 		movswl %di,%ecx
 		mov    (%esi),%ax
 		add    %ecx,%eax
-		mov    %eax,data_1dc584
+		mov    %eax,EXPORT_SYMBOL(purple_box_x1)
 		mov    0x3a(%esp),%eax
 		sar    $0x10,%eax
-		mov    %eax,data_1dc588
-		mov    data_1dc584,%eax
+		mov    %eax,EXPORT_SYMBOL(purple_box_y1)
+		mov    EXPORT_SYMBOL(purple_box_x1),%eax
 		mov    %dx,0x34(%esp)
-		mov    %eax,data_1dc5ac
+		mov    %eax,EXPORT_SYMBOL(purple_box_x2)
 		xor    %eax,%eax
-		mov    data_1dc588,%edx
+		mov    EXPORT_SYMBOL(purple_box_y1),%edx
 		mov    0x50(%esp),%al
 		sub    %eax,%edx
 		xor    %eax,%eax
 		mov    0x2(%esi),%ax
-		mov    %edx,data_1dc5b0
+		mov    %edx,EXPORT_SYMBOL(purple_box_y2)
 		cmp    %edx,%eax
 		jle    jump_b3b39
-		mov    %eax,data_1dc5b0
+		mov    %eax,EXPORT_SYMBOL(purple_box_y2)
 	jump_b3b39:
-		mov    data_1dc5b0,%ecx
-		mov    data_1dc5ac,%ebx
-		mov    data_1dc588,%edx
-		mov    data_1dc584,%eax
+		mov    EXPORT_SYMBOL(purple_box_y2),%ecx
+		mov    EXPORT_SYMBOL(purple_box_x2),%ebx
+		mov    EXPORT_SYMBOL(purple_box_y1),%edx
+		mov    EXPORT_SYMBOL(purple_box_x1),%eax
 		call   ac_draw_trig_purple_list
 		mov    0x3a(%esp),%ecx
 		xor    %eax,%eax
@@ -139497,31 +139497,31 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_box)	/* 0x0B3458 */
 		call   ac_draw_line_purple_list
 		xor    %eax,%eax
 		mov    (%esi),%ax
-		mov    %eax,data_1dc584
+		mov    %eax,EXPORT_SYMBOL(purple_box_x1)
 		mov    0x32(%esp),%eax
 		sar    $0x10,%eax
-		mov    %eax,data_1dc588
-		mov    data_1dc584,%eax
-		mov    %eax,data_1dc5ac
+		mov    %eax,EXPORT_SYMBOL(purple_box_y1)
+		mov    EXPORT_SYMBOL(purple_box_x1),%eax
+		mov    %eax,EXPORT_SYMBOL(purple_box_x2)
 		xor    %eax,%eax
-		mov    data_1dc588,%edx
+		mov    EXPORT_SYMBOL(purple_box_y1),%edx
 		mov    0x50(%esp),%al
 		add    %eax,%edx
 		mov    0x2a(%esp),%eax
-		mov    %edx,data_1dc5b0
+		mov    %edx,EXPORT_SYMBOL(purple_box_y2)
 		xor    %edx,%edx
 		sar    $0x10,%eax
 		mov    0x2(%esi),%dx
-		mov    data_1dc5b0,%ebx
+		mov    EXPORT_SYMBOL(purple_box_y2),%ebx
 		add    %edx,%eax
 		cmp    %ebx,%eax
 		jge    jump_b3bcb
-		mov    %eax,data_1dc5b0
+		mov    %eax,EXPORT_SYMBOL(purple_box_y2)
 	jump_b3bcb:
-		mov    data_1dc5b0,%ecx
-		mov    data_1dc5ac,%ebx
-		mov    data_1dc588,%edx
-		mov    data_1dc584,%eax
+		mov    EXPORT_SYMBOL(purple_box_y2),%ecx
+		mov    EXPORT_SYMBOL(purple_box_x2),%ebx
+		mov    EXPORT_SYMBOL(purple_box_y1),%edx
+		mov    EXPORT_SYMBOL(purple_box_x1),%eax
 		call   ac_draw_trig_purple_list
 		xor    %eax,%eax
 		mov    0x16(%esi),%al
@@ -189848,14 +189848,16 @@ data_1dc534:
 		.long	0x0
 data_1dc538:
 		.fill   0x4c
-data_1dc584:
+GLOBAL (purple_box_x1)	/* 0x1DC584 */
 		.long	0x0
-data_1dc588:
-		.fill   0x24
-data_1dc5ac:
+GLOBAL (purple_box_y1)	/* 0x1DC588 */
 		.long	0x0
-data_1dc5b0:
-		.fill   0x4c
+		.fill   0x20
+GLOBAL (purple_box_x2)	/* 0x1DC5AC */
+		.long	0x0
+GLOBAL (purple_box_y2)	/* 0x1DC5B0 */
+		.long	0x0
+		.fill   0x48
 GLOBAL (dword_1DC5FC)	/* 0x1DC5FC */
 		.long	0x0
 GLOBAL (dword_1DC600)	/* 0x1DC600 */
