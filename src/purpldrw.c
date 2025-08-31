@@ -168,6 +168,107 @@ ubyte flashy_draw_purple_shape(struct ScreenShape *p_shape)
     return ret;
 }
 
+void flashy_draw_projector_reaching_target_coords(short box_x, short box_y, short box_w, short box_h, short advance, TbPixel colour)
+{
+    struct TbSprite *p_spr;
+    ushort spr;
+    short scr_x1, scr_y2;
+    short scr_x2, scr_y1;
+
+    spr = 11 + (colour != 0xF7);
+
+    scr_x1 = proj_origin.X + (advance * (box_x - proj_origin.X)) / 24;
+    scr_y1 = proj_origin.Y + (advance * (box_y - proj_origin.Y)) / 24;
+    scr_x2 = proj_origin.X + (advance * (box_x + box_w - proj_origin.X)) / 24;
+    scr_y2 = proj_origin.Y + (advance * (box_y + box_h - proj_origin.Y)) / 24;
+
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+    draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x1, scr_y1, colour);
+    draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x2, scr_y2, colour);
+    lbDisplay.DrawFlags = 0;
+
+    p_spr = &fe_mouseptr_sprites[spr];
+    draw_sprite_purple_list(scr_x1 - 1, scr_y1 - 1, p_spr);
+    draw_sprite_purple_list(scr_x2 - 1, scr_y2 - 1, p_spr);
+}
+
+void flashy_draw_projector_vertical_lines(short box_x, short box_y, short box_w, short box_h, short advance, TbPixel colour)
+{
+    struct TbSprite *p_spr;
+    ushort spr;
+    short scr_x1, scr_x2;
+
+    spr = 11 + (colour != 0xF7);
+    vec_colour = colour;
+
+    purple_box_x1 = box_x + advance;
+    purple_box_y1 = box_y;
+    purple_box_x2 = purple_box_x1 - 15;
+    scr_x1 = box_x;
+    if (purple_box_x2 < scr_x1)
+        purple_box_x2 = scr_x1;
+    purple_box_y2 = box_y;
+
+    draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
+    draw_line_purple_list(scr_x1, purple_box_y2, purple_box_x1, purple_box_y1, colour);
+
+    purple_box_x1 = box_x + box_w - advance;
+    purple_box_y1 = box_y + box_h;
+    purple_box_x2 = purple_box_x1 + 15;
+    scr_x2 = box_x + box_w;
+    if (purple_box_x2 > scr_x2)
+      purple_box_x2 = scr_x2;
+    purple_box_y2 = box_y + box_h;
+
+    draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
+    draw_line_purple_list(purple_box_x1, purple_box_y1, scr_x2, purple_box_y2, colour);
+
+    p_spr = &fe_mouseptr_sprites[spr];
+    draw_sprite_purple_list(purple_box_x1 - 1, box_y - 1, p_spr);
+    draw_sprite_purple_list(purple_box_x1 - 1, box_y + box_h - 1, p_spr);
+}
+
+void flashy_draw_projector_horizontal_lines(short box_x, short box_y, short box_w, short box_h, short advance, TbPixel colour)
+{
+    struct TbSprite *p_spr;
+    ushort spr;
+    short scr_y1, scr_y2;
+    short prog_y;
+
+    spr = 11 + (colour != 0xF7);
+    vec_colour = colour;
+
+    prog_y = box_y + advance;
+    purple_box_x1 = box_x + box_w;
+    purple_box_y1 = prog_y;
+    purple_box_x2 = purple_box_x1;
+    scr_y1 = box_y;
+    purple_box_y2 = prog_y - 15;
+    if (purple_box_y2 < scr_y1)
+      purple_box_y2 = scr_y1;
+
+    draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
+    draw_line_purple_list(purple_box_x2, scr_y1, purple_box_x1, purple_box_y1, colour);
+
+    purple_box_x1 = box_x;
+    purple_box_y1 = box_y + box_h - advance;
+    purple_box_x2 = purple_box_x1;
+    purple_box_y2 = purple_box_y1 + 15;
+    scr_y2 = box_y + box_h;
+    if (purple_box_y2 > scr_y2)
+      purple_box_y2 = scr_y2;
+
+    draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
+    draw_line_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, scr_y2, colour);
+
+    p_spr = &fe_mouseptr_sprites[spr];
+    draw_sprite_purple_list(purple_box_x1 - 1, purple_box_y1 - 1, p_spr);
+    draw_sprite_purple_list(box_x + box_w - 1, prog_y - 1, p_spr);
+
+    draw_line_purple_list(box_x, box_y, box_x + box_w, box_y, colour);
+    draw_line_purple_list(box_x, box_y + box_h, box_x + box_w, box_y + box_h, colour);
+}
+
 ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
 {
 #if 0
@@ -176,13 +277,10 @@ ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
         : "=r" (ret) : "a" (p_box));
     return ret;
 #endif
-    short scr_w, scr_h;
-    ushort spr;
-    ubyte result;
+    short box_w, box_h;
 
-    spr = 11 + (p_box->Colour != 0xF7);
-    scr_w = p_box->Width - 1;
-    scr_h = p_box->Height - 1;
+    box_w = p_box->Width - 1;
+    box_h = p_box->Height - 1;
 
     if ((p_box->Flags & GBxFlg_Unkn0002) != 0)
     {
@@ -208,201 +306,65 @@ ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
         }
     }
 
-    // Draw final form
-    if (p_box->Timer > 72)
+    // Draw lines from projector origin reaching target rectangle
+    if (p_box->Timer <= 24)
     {
-        if ((p_box->Flags & GBxFlg_BkCopied) == 0)
-        {
-          lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-          draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
-            p_box->Width + 6, p_box->Height + 6, p_box->BGColour);
-          lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
-          draw_box_purple_list(p_box->X, p_box->Y,
-            p_box->Width, p_box->Height, p_box->Colour);
-          lbDisplay.DrawFlags = 0;
-          if ((p_box->Flags & GBxFlg_NoBkCopy) == 0)
-          {
-            copy_box_purple_list(p_box->X - 3, p_box->Y - 3,
-              p_box->Width + 6, p_box->Height + 6);
-            p_box->Flags |= GBxFlg_BkCopied;
-          }
-        }
-        if (p_box->SpecialDrawFn != NULL) {
-            ubyte drawn;
-            //p_box->SpecialDrawFn(p_box); -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (drawn) : "a" (p_box), "g" (p_box->SpecialDrawFn));
-        }
-        return 3;
+        short advance;
+
+        advance = p_box->Timer;
+        flashy_draw_projector_reaching_target_coords(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        p_box->Timer += p_box->DrawSpeed;
+        return 0;
+    }
+
+    // Draw vertical lines
+    if (p_box->Timer <= 48)
+    {
+        short advance;
+
+        advance = ((p_box->Timer - 24) * box_w) / 24;
+        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        p_box->Timer += p_box->DrawSpeed;
+        return 0;
     }
 
     // Draw horizontal lines
-    if (p_box->Timer > 48)
+    if (p_box->Timer <= 72)
     {
-        struct TbSprite *p_spr;
-        struct PurpleDrawItem *p_pditem;
-        short progress, prog_y;
-        short scr_y1, scr_y2;
+        short advance;
 
-        progress = ((p_box->Timer - 48) * scr_h) / 24;
-        vec_colour = p_box->Colour;
-
-        prog_y = p_box->Y + progress;
-        purple_box_x1 = p_box->X + scr_w;
-        purple_box_y1 = prog_y;
-        purple_box_x2 = purple_box_x1;
-        scr_y1 = p_box->Y;
-        purple_box_y2 = prog_y - 15;
-        if (purple_box_y2 < scr_y1)
-          purple_box_y2 = scr_y1;
-
-        draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
-        draw_line_purple_list(purple_box_x2, scr_y1, purple_box_x1, purple_box_y1, p_box->Colour);
-
-        purple_box_x1 = p_box->X;
-        purple_box_y1 = scr_h + p_box->Y - progress;
-        purple_box_x2 = purple_box_x1;
-        purple_box_y2 = purple_box_y1 + 15;
-        scr_y2 = p_box->Y + scr_h;
-        if (purple_box_y2 > scr_y2)
-          purple_box_y2 = scr_y2;
-
-        draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
-        draw_line_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, scr_y2, p_box->Colour);
-
-        p_spr = &fe_mouseptr_sprites[spr];
-
-        p_pditem = &purple_draw_list[purple_draw_index];
-        purple_draw_index++;
-
-        p_pditem->Type = PuDT_SPRITE;
-        p_pditem->U.Sprite.X = lbDisplay.GraphicsWindowX + purple_box_x1 - 1;
-        p_pditem->U.Sprite.Y = lbDisplay.GraphicsWindowY + purple_box_y1 - 1;
-        p_pditem->U.Sprite.Sprite = p_spr;
-        p_pditem->U.Sprite.Colour = lbDisplay.DrawColour;
-        p_pditem->Flags = lbDisplay.DrawFlags;
-
-        p_pditem = &purple_draw_list[purple_draw_index];
-        purple_draw_index++;
-
-        p_pditem->Type = PuDT_SPRITE;
-        p_pditem->U.Sprite.X = lbDisplay.GraphicsWindowX + p_box->X + p_box->Width - 2;
-        p_pditem->U.Sprite.Y = lbDisplay.GraphicsWindowY + prog_y - 1;
-        p_pditem->U.Sprite.Sprite = p_spr;
-        p_pditem->U.Sprite.Colour = lbDisplay.DrawColour;
-        p_pditem->Flags = lbDisplay.DrawFlags;
-
-        draw_line_purple_list(p_box->X, p_box->Y, p_box->X + scr_w, p_box->Y, p_box->Colour);
-        draw_line_purple_list(p_box->X, p_box->Y + scr_h, p_box->X + scr_w, p_box->Y + scr_h, p_box->Colour);
-
+        advance = ((p_box->Timer - 48) * box_h) / 24;
+        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
         p_box->Timer += p_box->DrawSpeed;
         return 2;
     }
 
-    // Draw vertical lines
-    if (p_box->Timer > 24)
+    // Now as drawing animation finished, the background became static
+    // Draw and store the static background
+    if ((p_box->Flags & GBxFlg_BkCopied) == 0)
     {
-        struct TbSprite *p_spr;
-        struct PurpleDrawItem *p_pditem;
-        short progress, prog_x;
-        short scr_x1, scr_x2;
-
-        progress = ((p_box->Timer - 24) * scr_w) / 24;
-        vec_colour = p_box->Colour;
-
-        prog_x = p_box->X + scr_w - progress;
-        purple_box_x1 = p_box->X + progress;
-        purple_box_y1 = p_box->Y;
-        purple_box_x2 = purple_box_x1 - 15;
-        scr_x1 = p_box->X;
-        if (purple_box_x2 < scr_x1)
-            purple_box_x2 = scr_x1;
-        purple_box_y2 = p_box->Y;
-
-        draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
-        draw_line_purple_list(scr_x1, purple_box_y2, purple_box_x1, purple_box_y1, p_box->Colour);
-
-        purple_box_x1 = prog_x;
-        purple_box_y1 = p_box->Y + scr_h;
-        purple_box_x2 = purple_box_x1 + 15;
-        scr_x2 = p_box->X + scr_w;
-        if (purple_box_x2 > scr_x2)
-          purple_box_x2 = scr_x2;
-        purple_box_y2 = p_box->Y + scr_h;
-
-        draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
-        draw_line_purple_list(purple_box_x1, purple_box_y1, scr_x2, purple_box_y2, p_box->Colour);
-
-        p_spr = &fe_mouseptr_sprites[spr];
-
-        p_pditem = &purple_draw_list[purple_draw_index];
-        purple_draw_index++;
-
-        p_pditem->Type = PuDT_SPRITE;
-        p_pditem->U.Sprite.X = lbDisplay.GraphicsWindowX + purple_box_x1 - 1;
-        p_pditem->U.Sprite.Y = lbDisplay.GraphicsWindowY + p_box->Y - 1;
-        p_pditem->U.Sprite.Sprite = p_spr;
-        p_pditem->U.Sprite.Colour = lbDisplay.DrawColour;
-        p_pditem->Flags = lbDisplay.DrawFlags;
-
-        p_pditem = &purple_draw_list[purple_draw_index];
-        purple_draw_index++;
-
-        p_pditem->Type = PuDT_SPRITE;
-        p_pditem->U.Sprite.X = lbDisplay.GraphicsWindowX + prog_x - 1;
-        p_pditem->U.Sprite.Y = lbDisplay.GraphicsWindowY + p_box->Y + p_box->Height - 2;
-        p_pditem->U.Sprite.Sprite = p_spr;
-        p_pditem->U.Sprite.Colour = lbDisplay.DrawColour;
-        p_pditem->Flags = lbDisplay.DrawFlags;
-
-        p_box->Timer = p_box->DrawSpeed + p_box->Timer;
-        return 0;
-    }
-
-    // Draw lines from projector origina reaching target rectangle
-    //if (p_box->Timer > 0)
-    {
-        struct TbSprite *p_spr;
-        struct PurpleDrawItem *p_pditem;
-        short scr_x1, scr_y2;
-        short scr_x2, scr_y1;
-
-        scr_x1 = proj_origin.X + (int)(p_box->Timer * (p_box->X - proj_origin.X)) / 24;
-        scr_y1 = proj_origin.Y + (int)(p_box->Timer * (p_box->Y - proj_origin.Y)) / 24;
-        scr_x2 = proj_origin.X + (int)(p_box->Timer * (p_box->X + scr_w - proj_origin.X)) / 24;
-        scr_y2 = proj_origin.Y + (int)(p_box->Timer * (p_box->Y + scr_h - proj_origin.Y)) / 24;
-
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x1, scr_y1, p_box->Colour);
-        draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x2, scr_y2, p_box->Colour);
+        draw_box_purple_list(p_box->X - 3, p_box->Y - 3,
+          p_box->Width + 6, p_box->Height + 6, p_box->BGColour);
+        lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
+        draw_box_purple_list(p_box->X, p_box->Y,
+          p_box->Width, p_box->Height, p_box->Colour);
         lbDisplay.DrawFlags = 0;
 
-        p_spr = &fe_mouseptr_sprites[spr];
-
-        p_pditem = &purple_draw_list[purple_draw_index];
-        purple_draw_index++;
-
-        p_pditem->Type = PuDT_SPRITE;
-        p_pditem->U.Sprite.X = lbDisplay.GraphicsWindowX + scr_x1 - 1;
-        p_pditem->U.Sprite.Y = lbDisplay.GraphicsWindowY + scr_y1 - 1;
-        p_pditem->U.Sprite.Sprite = p_spr;
-        p_pditem->U.Sprite.Colour = lbDisplay.DrawColour;
-        p_pditem->Flags = 0;
-
-        p_pditem = &purple_draw_list[purple_draw_index];
-        purple_draw_index++;
-
-        p_pditem->Type = PuDT_SPRITE;
-        p_pditem->U.Sprite.X = lbDisplay.GraphicsWindowX + scr_x2 - 1;
-        p_pditem->U.Sprite.Y = lbDisplay.GraphicsWindowY + scr_y2 - 1;
-        p_pditem->U.Sprite.Sprite = p_spr;
-        p_pditem->U.Sprite.Colour = lbDisplay.DrawColour;
-        p_pditem->Flags = 0;
-
-        p_box->Timer += p_box->DrawSpeed;
-        return 0;
+        if ((p_box->Flags & GBxFlg_NoBkCopy) == 0)
+        {
+            copy_box_purple_list(p_box->X - 3, p_box->Y - 3,
+              p_box->Width + 6, p_box->Height + 6);
+            p_box->Flags |= GBxFlg_BkCopied;
+        }
     }
-    return result;
+    if (p_box->SpecialDrawFn != NULL) {
+          ubyte drawn;
+          //p_box->SpecialDrawFn(p_box); -- incompatible calling convention
+          asm volatile ("call *%2\n"
+              : "=r" (drawn) : "a" (p_box), "g" (p_box->SpecialDrawFn));
+    }
+    return 3;
 }
 
 short get_text_box_lines_visible(struct ScreenTextBox *p_box)
@@ -673,11 +635,8 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
     return ret;
 #endif
     short box_w, box_h;
-    ushort spr1;
     short lines_visible;
     TbBool text_remains_dynamic; /**< text drawing callback never sets GBxFlg_TextCopied (maybe make this into a box flag?) */
-
-    spr1 = 11 + (p_box->Colour1 != 247);
 
     text_remains_dynamic = (p_box == &world_city_info_box) || (p_box == &equip_display_box) || (p_box == &cryo_cybmod_list_box);
 
@@ -758,114 +717,45 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         }
     }
 
+    // Handle sound
+    if (p_box->Timer <= 72)
+    {
+        if (p_box->Timer > 24)
+        {
+            if (!IsSamplePlaying(0, 4, 0))
+                play_sample_using_heap(0, 110, 127, 64, 100, 0, 1u);
+        }
+    }
+
+    // Draw lines from projector origin reaching target rectangle
     if (p_box->Timer <= 24)
     {
-        struct TbSprite *p_spr;
-        int scr_x1, scr_y1, scr_x2, scr_y2;
-        ushort advance;
+        short advance;
 
         advance = p_box->Timer;
-        scr_x1 = proj_origin.X + (advance * (p_box->X - proj_origin.X)) / 24;
-        scr_y1 = proj_origin.Y + (advance * (p_box->Y - proj_origin.Y)) / 24;
-        scr_x2 = proj_origin.X + (advance * (p_box->X + box_w - proj_origin.X)) / 24;
-        scr_y2 = proj_origin.Y + (advance * (p_box->Y + box_h - proj_origin.Y)) / 24;
-
-        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x1, scr_y1, p_box->Colour1);
-        draw_line_purple_list(proj_origin.X, proj_origin.Y, scr_x2, scr_y2, p_box->Colour1);
-        lbDisplay.DrawFlags = 0;
-
-        p_spr = &fe_mouseptr_sprites[spr1];
-        draw_sprite_purple_list(scr_x1 - 1, scr_y1 - 1, p_spr);
-        draw_sprite_purple_list(scr_x2 - 1, scr_y2 - 1, p_spr);
-
+        flashy_draw_projector_reaching_target_coords(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour1);
         p_box->Timer += p_box->DrawSpeed;
         return 0;
     }
 
-    if (p_box->Timer <= 72)
-    {
-        if (!IsSamplePlaying(0, 4, 0))
-            play_sample_using_heap(0, 110, 127, 64, 100, 0, 1u);
-    }
-
+    // Draw vertical lines
     if (p_box->Timer <= 48)
     {
-        struct TbSprite *p_spr;
-        short scr_x, scr_y;
-        ushort advance;
+        short advance;
 
         advance = ((p_box->Timer - 24) * box_w) / 24;
-        vec_colour = p_box->Colour1;
-        dword_1DC5FC = p_box->X + advance;
-        dword_1DC600 = p_box->Y;
-        dword_1DC624 = dword_1DC5FC - 15;
-        if (dword_1DC624 < p_box->X)
-            dword_1DC624 = p_box->X;
-        dword_1DC628 = p_box->Y;
-        draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
-        draw_line_purple_list(p_box->X, dword_1DC600, dword_1DC5FC, dword_1DC628, p_box->Colour1);
-
-        dword_1DC5FC = p_box->X + box_w - advance;
-        dword_1DC600 = p_box->Y + box_h;
-        dword_1DC624 = dword_1DC5FC + 15;
-        if (dword_1DC624 > p_box->X + box_w)
-            dword_1DC624 = p_box->X + box_w;
-        dword_1DC628 = p_box->Y + box_h;
-        draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
-        draw_line_purple_list(dword_1DC5FC, dword_1DC600, p_box->X + box_w, dword_1DC628, p_box->Colour1);
-
-        p_spr = &fe_mouseptr_sprites[spr1];
-        scr_x = p_box->X + advance - 1;
-        scr_y = p_box->Y - 1;
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-        scr_x = p_box->X + box_w - advance - 1;
-        scr_y = p_box->Y + p_box->Height - 2;
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-
+        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour1);
         p_box->Timer += p_box->DrawSpeed;
         return 0;
     }
 
+    // Draw horizontal lines
     if (p_box->Timer <= 72)
     {
-        struct TbSprite *p_spr;
-        short scr_x, scr_y;
-        ushort advance;
+        short advance;
 
         advance = ((p_box->Timer - 48) * box_h) / 24;
-        vec_colour = p_box->Colour1;
-        dword_1DC5FC = p_box->X + box_w;
-        dword_1DC600 = p_box->Y + advance;
-        dword_1DC624 = p_box->X + box_w;
-        dword_1DC628 = dword_1DC600 - 15;
-        if (dword_1DC628 < p_box->Y)
-            dword_1DC628 = p_box->Y;
-        draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
-        draw_line_purple_list(dword_1DC5FC, p_box->Y, dword_1DC624, dword_1DC600, p_box->Colour1);
-
-        dword_1DC5FC = p_box->X;
-        dword_1DC600 = p_box->Y + box_h - advance;
-        dword_1DC624 = p_box->X;
-        dword_1DC628 = dword_1DC600 + 15;
-        if (dword_1DC628 > p_box->Y + box_h)
-            dword_1DC628 = p_box->Y + box_h;
-        draw_trig_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, dword_1DC628);
-        draw_line_purple_list(dword_1DC5FC, dword_1DC600, dword_1DC624, p_box->Y + box_h, p_box->Colour1);
-
-        p_spr = &fe_mouseptr_sprites[spr1];
-        scr_x = p_box->X - 1;
-        scr_y = p_box->Y + box_h - advance - 1;
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-        scr_x = p_box->X + p_box->Width - 2;
-        scr_y = p_box->Y + advance - 1;
-        draw_sprite_purple_list(scr_x, scr_y, p_spr);
-
-        draw_line_purple_list(p_box->X, p_box->Y,
-            p_box->X + box_w, p_box->Y, p_box->Colour1);
-        draw_line_purple_list(p_box->X, p_box->Y + box_h,
-            p_box->X + box_w, p_box->Y + box_h, p_box->Colour1);
-
+        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour1);
         p_box->Timer += p_box->DrawSpeed;
         return 2;
     }
@@ -927,7 +817,8 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
     input_purple_text_box_wth_scroll(p_box, scroll_bar);
 
-    // Draw the static background
+    // Now as drawing animation finished, the background became static
+    // Draw and store the static background
     if ((p_box->Flags & GBxFlg_BkCopied) == 0)
     {
         short w, h;
