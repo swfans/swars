@@ -249,7 +249,12 @@ const char *miss_end_sta_names[] = {
   "",
 };
 
-const char *misc_text[] = {
+/** Miscellaneous text strings.
+ *
+ * While initialized by constants, it cannot be const array
+ * due to where the items are used.
+ */
+char *misc_text[] = {
   "0",
   "C",
   "/",

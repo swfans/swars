@@ -445,7 +445,7 @@ extern ubyte byte_1C4A6F;
 
 extern char net_unkn2_text[];
 extern char brief_netscan_cost_text[];
-extern const char *misc_text[5];
+extern char *misc_text[5];
 
 extern ubyte game_system_screen;
 extern char alert_text[200];

@@ -470,7 +470,7 @@ ubyte show_citymap_box(struct ScreenBox *p_box)
             p_box->Width - 8, p_box->Height - 8);
         lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
         draw_text_purple_list2(0, 0, gui_strings[483], 0);
-        *brief_NETSCAN_COST_box.Text2 = 0;
+        brief_NETSCAN_COST_box.Text2[0] = '\0';
         brief_NETSCAN_COST_box.Text1 = gui_strings[495];
         mail_num_active_cities = 0;
         selected_city_id = -1;

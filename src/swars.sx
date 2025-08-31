@@ -137902,7 +137902,7 @@ GLOBAL_FUNC(ASM_button_text)	/* 0x0B26CC */
 
 
 /*----------------------------------------------------------------*/
-info_box_text:	/* 0x0B2780 */
+GLOBAL_FUNC(ASM_info_box_text)	/* 0x0B2780 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -138152,8 +138152,8 @@ GLOBAL_FUNC(ASM_init_screen_info_box)	/* 0x0B2A14 */
 		add    $0x6,%eax
 		mov    %ax,0x6(%esi)
 		movw   $0x1,0x24(%esi)
-		movl   $flashy_draw_purple_info_box,0x18(%esi)
-		movl   $info_box_text,0x1c(%esi)
+		movl   $ac_flashy_draw_purple_info_box,0x18(%esi)
+		movl   $ac_info_box_text,0x1c(%esi)
 		movb   $0xf7,0x29(%esi)
 		mov    0x18(%esp),%al
 		movb   $0x38,0x2a(%esi)
@@ -143408,7 +143408,7 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_button)	/* 0x0B59EC */
 
 
 /*----------------------------------------------------------------*/
-flashy_draw_purple_info_box:	/* 0x0B6BEC */
+GLOBAL_FUNC(ASM_flashy_draw_purple_info_box)	/* 0x0B6BEC */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

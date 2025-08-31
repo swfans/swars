@@ -781,6 +781,14 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
     return 3;
 }
 
+ubyte flashy_draw_purple_info_box(struct ScreenInfoBox *p_box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_flashy_draw_purple_info_box\n"
+        : "=r" (ret) : "a" (p_box));
+    return ret;
+}
+
 ubyte flashy_draw_purple_button(struct ScreenButton *button)
 {
     ubyte ret;
@@ -812,6 +820,14 @@ ubyte button_text(struct ScreenButton *p_btn)
     }
     return flashy_draw_text(0, 0, p_btn->Text, p_btn->TextSpeed, p_btn->TextTopLine,
       &p_btn->TextFadePos, 1);
+}
+
+ubyte info_box_text(struct ScreenInfoBox *p_box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_info_box_text\n"
+        : "=r" (ret) : "a" (p_box));
+    return ret;
 }
 
 void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, TbPixel colour)

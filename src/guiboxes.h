@@ -299,7 +299,7 @@ void init_screen_button(struct ScreenButton *p_box, ushort x, ushort y,
   const char *text, int drawspeed,
   struct TbSprite *font, int textspeed, int flags);
 void init_screen_info_box(struct ScreenInfoBox *p_box, ushort x, ushort y,
-  ushort width, const char *text1, const char *text2, int drawspeed,
+  ushort width, char *text1, char *text2, int drawspeed,
   struct TbSprite *p_font1, struct TbSprite *p_font2, int textspeed);
 
 /******************************************************************************/
