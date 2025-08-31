@@ -137902,7 +137902,7 @@ GLOBAL_FUNC(ASM_button_text)	/* 0x0B26CC */
 
 
 /*----------------------------------------------------------------*/
-info_box_text:	/* 0x0B2780 */
+GLOBAL_FUNC(ASM_info_box_text)	/* 0x0B2780 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -138152,8 +138152,8 @@ GLOBAL_FUNC(ASM_init_screen_info_box)	/* 0x0B2A14 */
 		add    $0x6,%eax
 		mov    %ax,0x6(%esi)
 		movw   $0x1,0x24(%esi)
-		movl   $flashy_draw_purple_info_box,0x18(%esi)
-		movl   $info_box_text,0x1c(%esi)
+		movl   $ac_flashy_draw_purple_info_box,0x18(%esi)
+		movl   $ac_info_box_text,0x1c(%esi)
 		movb   $0xf7,0x29(%esi)
 		mov    0x18(%esp),%al
 		movb   $0x38,0x2a(%esi)
@@ -143408,7 +143408,7 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_button)	/* 0x0B59EC */
 
 
 /*----------------------------------------------------------------*/
-flashy_draw_purple_info_box:	/* 0x0B6BEC */
+GLOBAL_FUNC(ASM_flashy_draw_purple_info_box)	/* 0x0B6BEC */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -145404,7 +145404,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_03)	/* 0x0BBDE0 */
 
 
 /*----------------------------------------------------------------*/
-mech_unkn_func_05:	/* 0x0BBE3C */
+GLOBAL_FUNC(ASM_mech_unkn_func_05)	/* 0x0BBE3C */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -146708,22 +146708,22 @@ mech_unkn_func_11:	/* 0x0BCC08 */
 		cmp    $0x5,%eax
 		jne    jump_bcec3
 		mov    0x30(%esp),%eax
-		mov    %eax,EXPORT_SYMBOL(dword_1DC880)
+		mov    %eax,EXPORT_SYMBOL(mech_unkn_dw_1DC880)
 		mov    0x34(%esp),%eax
-		mov    %eax,EXPORT_SYMBOL(dword_1DC884)
+		mov    %eax,EXPORT_SYMBOL(mech_unkn_dw_1DC884)
 		mov    0x38(%esp),%eax
-		mov    %eax,EXPORT_SYMBOL(dword_1DC888)
+		mov    %eax,EXPORT_SYMBOL(mech_unkn_dw_1DC888)
 	jump_bcec3:
 		xor    %eax,%eax
 		mov    0x23(%ebp),%ax
 		cmp    $0x6,%eax
 		jne    jump_bcee9
 		mov    0x30(%esp),%eax
-		mov    %eax,EXPORT_SYMBOL(dword_1DC88C)
+		mov    %eax,EXPORT_SYMBOL(mech_unkn_dw_1DC88C)
 		mov    0x34(%esp),%eax
-		mov    %eax,EXPORT_SYMBOL(dword_1DC890)
+		mov    %eax,EXPORT_SYMBOL(mech_unkn_dw_1DC890)
 		mov    0x38(%esp),%eax
-		mov    %eax,EXPORT_SYMBOL(dword_1DC894)
+		mov    %eax,EXPORT_SYMBOL(mech_unkn_dw_1DC894)
 	jump_bcee9:
 		xor    %eax,%eax
 		mov    0x79(%ebp),%al
@@ -158030,7 +158030,7 @@ GLOBAL_FUNC(ASM_process_persuadertron)	/* 0x0C5CCC */
 
 
 /*----------------------------------------------------------------*/
-init_mech_rocket:	/* 0x0C5FD4 */
+GLOBAL_FUNC(ASM_init_mech_rocket)	/* 0x0C5FD4 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -158372,7 +158372,7 @@ GLOBAL_FUNC(ASM_process_vehicle_weapon)	/* 0x0C620C */
 		je     jump_c63a2
 	jump_c6395:
 		mov    %esi,%eax
-		call   init_v_rocket
+		call   ac_init_v_rocket
 		movw   $0x14,0x58(%esi)
 	jump_c63a2:
 		add    $0x4,%esp
@@ -158523,7 +158523,7 @@ GLOBAL_FUNC(ASM_process_mech_weapon)	/* 0x0C63AC */
 		add    $0x5,%ebx
 	jump_c6533:
 		mov    0x3c(%esi),%ax
-		call   mech_unkn_func_05
+		call   ac_mech_unkn_func_05
 		andb   $0xfb,0x60(%esi)
 	jump_c6540:
 		mov    0x60(%esi),%bl
@@ -158531,28 +158531,28 @@ GLOBAL_FUNC(ASM_process_mech_weapon)	/* 0x0C63AC */
 		je     jump_c656c
 		mov    %bl,%bh
 		and    $0xfe,%bh
-		mov    EXPORT_SYMBOL(dword_1DC884),%ecx
+		mov    EXPORT_SYMBOL(mech_unkn_dw_1DC884),%ecx
 		mov    %bh,0x60(%esi)
-		mov    EXPORT_SYMBOL(dword_1DC888),%ebx
+		mov    EXPORT_SYMBOL(mech_unkn_dw_1DC888),%ebx
 		mov    %esi,%edx
 		push   %ebx
 		mov    %edi,%eax
-		mov    EXPORT_SYMBOL(dword_1DC880),%ebx
-		call   init_mech_rocket
+		mov    EXPORT_SYMBOL(mech_unkn_dw_1DC880),%ebx
+		call   ac_init_mech_rocket
 	jump_c656c:
 		mov    0x60(%esi),%cl
 		test   $0x2,%cl
 		je     jump_c6598
 		mov    %cl,%ch
 		and    $0xfd,%ch
-		mov    EXPORT_SYMBOL(dword_1DC88C),%ebx
+		mov    EXPORT_SYMBOL(mech_unkn_dw_1DC88C),%ebx
 		mov    %ch,0x60(%esi)
-		mov    EXPORT_SYMBOL(dword_1DC894),%ecx
+		mov    EXPORT_SYMBOL(mech_unkn_dw_1DC894),%ecx
 		mov    %esi,%edx
 		push   %ecx
 		mov    %edi,%eax
-		mov    EXPORT_SYMBOL(dword_1DC890),%ecx
-		call   init_mech_rocket
+		mov    EXPORT_SYMBOL(mech_unkn_dw_1DC890),%ecx
+		call   ac_init_mech_rocket
 	jump_c6598:
 		mov    0x60(%esi),%al
 		test   $0x8,%al
@@ -161036,7 +161036,7 @@ GLOBAL_FUNC(ASM_init_rocket)	/* 0x0C7F10 */
 
 
 /*----------------------------------------------------------------*/
-init_v_rocket:	/* 0x0C8218 */
+GLOBAL_FUNC(ASM_init_v_rocket)	/* 0x0C8218 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -168738,7 +168738,7 @@ GLOBAL_FUNC(ASM_show_alert_box)	/* 0x0D0090 */
 		call   ac_my_set_text_window
 		mov    $0xfffffffb,%edx
 		mov    $EXPORT_SYMBOL(alert_text),%eax
-		mov    %dx,alert_textpos
+		mov    %dx,EXPORT_SYMBOL(alert_textpos)
 		call   ac_my_preprocess_text
 		mov    $EXPORT_SYMBOL(alert_text),%eax
 		call   ac_my_count_lines
@@ -168787,7 +168787,7 @@ GLOBAL_FUNC(ASM_show_alert_box)	/* 0x0D0090 */
 		push   $0x0
 		mov    $0x100,%ebx
 		mov    $0x3,%ecx
-		push   $alert_textpos
+		push   $EXPORT_SYMBOL(alert_textpos)
 		xor    %edx,%edx
 		xor    %eax,%eax
 		push   $0x0
@@ -188227,12 +188227,7 @@ GLOBAL (data_1c498d)	/* 0x1c498d */
 		.byte	0x0
 GLOBAL (mouse_sprite_anim_frame)
 		.byte	0x0
-GLOBAL (data_1c498f)	/* 0x1c498f */
-		.byte	0x0
-GLOBAL (data_1c4990)
-		.byte	0x0
-GLOBAL (data_1c4991)	/* 0x1c4991 */
-		.byte	0x0
+
 GLOBAL (replay_intro_timer)	/* 0x1C4992 */
 		.short  0x0
 data_1c4994:
@@ -189972,17 +189967,17 @@ GLOBAL (mech_unkn_tile_x3)	/* 0x1DC878 */
 		.long	0x0
 GLOBAL (mech_unkn_tile_y3)	/* 0x1DC87C */
 		.long	0x0
-GLOBAL (dword_1DC880)	/* 0x1DC880 */
+GLOBAL (mech_unkn_dw_1DC880)	/* 0x1DC880 */
 		.long	0x0
-GLOBAL (dword_1DC884)	/* 0x1DC884 */
+GLOBAL (mech_unkn_dw_1DC884)	/* 0x1DC884 */
 		.long	0x0
-GLOBAL (dword_1DC888)	/* 0x1DC888 */
+GLOBAL (mech_unkn_dw_1DC888)	/* 0x1DC888 */
 		.long	0x0
-GLOBAL (dword_1DC88C)	/* 0x1DC88C */
+GLOBAL (mech_unkn_dw_1DC88C)	/* 0x1DC88C */
 		.long	0x0
-GLOBAL (dword_1DC890)	/* 0x1DC890 */
+GLOBAL (mech_unkn_dw_1DC890)	/* 0x1DC890 */
 		.long	0x0
-GLOBAL (dword_1DC894)	/* 0x1DC894 */
+GLOBAL (mech_unkn_dw_1DC894)	/* 0x1DC894 */
 		.short  0x0
 data_1dc896:
 		.short  0x0
@@ -190101,7 +190096,7 @@ data_1ddbf0:
 GLOBAL (byte_1DDC40)	/* 0x1DDC40 */
 		.byte	0x0
 		.byte	0x0
-alert_textpos:	/* 0x1DDC42 */
+GLOBAL (alert_textpos)	/* 0x1DDC42 */
 		.short  0x0
 GLOBAL (byte_1DDC44)
 		.fill   0x280

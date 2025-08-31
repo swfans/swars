@@ -20,6 +20,11 @@
 #include "bfflic.h"
 
 #include <stdlib.h>
+
+#if defined(HAVE_CONFIG_H)
+#  include "bfconfig.h"
+#endif
+
 #include "bffile.h"
 #include "bfmemut.h"
 #include "privbflog.h"

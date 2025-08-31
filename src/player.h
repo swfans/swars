@@ -39,6 +39,17 @@ extern "C" {
 
 struct Thing;
 
+enum PlrTargetType {
+    TrgTp_NONE = 0,
+    TrgTp_Unkn1,
+    TrgTp_Unkn2,
+    TrgTp_Unkn3,
+    TrgTp_Unkn4,
+    TrgTp_DroppedTng,
+    TrgTp_Unkn6,
+    TrgTp_Unkn7,
+};
+
 //TODO would make more sense to have a struct for each agent, and then a merging struct
 struct AgentInfo {
     ulong Weapons[CRYO_PODS_MAX_COUNT];

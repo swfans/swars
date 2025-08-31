@@ -20,10 +20,13 @@
 #include <assert.h>
 #include "poly.h"
 
+#if defined(HAVE_CONFIG_H)
+#  include "bfconfig.h"
+#endif
+
 #include "poly_gp.h"
 #include "poly_trigp.h"
 #include "poly_trigr.h"
-#include "bfconfig.h"
 #include "bfgentab.h"
 #include "bfmemut.h"
 #include "bfpalette.h"

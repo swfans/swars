@@ -84,12 +84,14 @@ void clear_someflags_system_menu_screen_boxes(void);
 void show_mission_loading_screen(void);
 
 void show_date_time(void);
+void update_date_time(void);
+TbBool input_date_time(void);
 
 void show_sysmenu_screen(void);
 
 TbBool is_purple_apps_selection_bar_visible(void);
 void show_purple_apps_selection_bar(void);
-TbBool get_purple_apps_selection_bar_inputs(void);
+TbBool input_purple_apps_selection_bar(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

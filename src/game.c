@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "bfconfig.h"
 #include "bfdata.h"
 #include "bfendian.h"
 #include "bfsprite.h"
@@ -136,6 +137,11 @@
  */
 #define EXPECTED_LANG_TXT_SIZE 8000
 
+enum PostRenderAction {
+    PRend_NONE = 0,
+    PRend_SaveScreenshot,
+};
+
 extern char *fadedat_fname;
 char session_name[20] = "SWARA";
 
@@ -189,6 +195,13 @@ extern long dword_155010;
 extern long dword_155014;
 extern long dword_155018;
 
+ubyte simulated_mouse_click;
+ubyte clear_left_button;
+ubyte clear_right_button;
+ubyte clear_wheel_up;
+ubyte clear_wheel_down;
+ubyte post_render_action;
+
 int mouse_map_x = 0x3200;
 int mouse_map_y = 0;
 int mouse_map_z = 0x3200;
@@ -221,13 +234,6 @@ extern long mech_unkn_tile_y2;
 extern long mech_unkn_tile_x3;
 extern long mech_unkn_tile_y3;
 
-extern long dword_1DC880;
-extern long dword_1DC884;
-extern long dword_1DC888;
-extern long dword_1DC88C;
-extern long dword_1DC890;
-extern long dword_1DC894;
-
 extern short brightness;
 
 //TODO this is not an extern only because I was unable to locate it in asm
@@ -243,7 +249,12 @@ const char *miss_end_sta_names[] = {
   "",
 };
 
-const char *misc_text[] = {
+/** Miscellaneous text strings.
+ *
+ * While initialized by constants, it cannot be const array
+ * due to where the items are used.
+ */
+char *misc_text[] = {
   "0",
   "C",
   "/",
@@ -1332,12 +1343,12 @@ void draw_hud_target_mouse(short dcthing)
         weprange = current_hand_weapon_range(p_dcthing);
         switch (p_locplayer->TargetType)
         {
-        case 1:
-        case 2:
-        case 6:
-        case 7:
+        case TrgTp_Unkn1:
+        case TrgTp_Unkn2:
+        case TrgTp_Unkn6:
+        case TrgTp_Unkn7:
             p_locplayer->field_102 = p_locplayer->Target;
-            p_locplayer->TargetType = 7;
+            p_locplayer->TargetType = TrgTp_Unkn7;
             p_targtng = &things[p_locplayer->Target];
             range = weprange * weprange;
             if (can_i_see_thing(p_dcthing, p_targtng, range, 3) ) {
@@ -1347,11 +1358,11 @@ void draw_hud_target_mouse(short dcthing)
             }
             do_change_mouse(msspr);
             break;
-        case 3:
+        case TrgTp_Unkn3:
             p_locplayer->field_102 = p_locplayer->Target;
             do_change_mouse(7);
             break;
-        case 4:
+        case TrgTp_Unkn4:
             p_locplayer->field_102 = p_locplayer->Target;
             p_targtng = &things[p_locplayer->field_102];
             p_dcthing = &things[p_locplayer->DirectControl[mouser]];
@@ -1373,7 +1384,7 @@ void draw_hud_target_mouse(short dcthing)
     }
     else if (p_locplayer->Target < 0)
     {
-        if (p_locplayer->TargetType == 3) {
+        if (p_locplayer->TargetType == TrgTp_Unkn3) {
           p_locplayer->field_102 = p_locplayer->Target;
           do_change_mouse(7);
         } else {
@@ -1679,12 +1690,12 @@ void process_engine_unk3(void)
 
     reset_drawlist();
     player_target_clear(local_player_no);
-    dword_1DC880 = mech_unkn_tile_x1;
-    dword_1DC884 = mech_unkn_tile_y1;
-    dword_1DC888 = mech_unkn_tile_x2;
-    dword_1DC88C = mech_unkn_tile_y2;
-    dword_1DC890 = mech_unkn_tile_x3;
-    dword_1DC894 = mech_unkn_tile_y3;
+    mech_unkn_dw_1DC880 = mech_unkn_tile_x1;
+    mech_unkn_dw_1DC884 = mech_unkn_tile_y1;
+    mech_unkn_dw_1DC888 = mech_unkn_tile_x2;
+    mech_unkn_dw_1DC88C = mech_unkn_tile_y2;
+    mech_unkn_dw_1DC890 = mech_unkn_tile_x3;
+    mech_unkn_dw_1DC894 = mech_unkn_tile_y3;
 
     unkstruct03_process();
     func_13A78();
@@ -5885,7 +5896,7 @@ void show_menu_screen_st2(void)
       {
             memcpy(&mission_status[0], &mission_status[open_brief],
               sizeof(struct MissionStatus));
-            delete_mail(open_brief - 1, 1);
+            delete_mail(open_brief - 1, MlTp_Mission);
             open_brief = 0;
             old_mission_brief = 0;
             cities[unkn_city_no].Info = 0;
@@ -6198,6 +6209,70 @@ void menu_screen_redraw(void)
         play_sample_using_heap(0, 113, 127, 64, 100, 0, 3u);
 }
 
+/** Mark beginning of user input processing code.
+ */
+void input_processing_beg(void)
+{
+    if (joy.Buttons[0] && !net_unkn_pos_02)
+    {
+        if (!simulated_mouse_click)
+        {
+            int i;
+
+            simulated_mouse_click = 1;
+
+            // Simulate mouse click at current move position
+            lbDisplay.LeftButton = 1;
+            if (lbDisplay.GraphicsScreenWidth > 320)
+                i = lbDisplay.MMouseX * lbDisplay.GraphicsScreenWidth / 320;
+            else
+                i = lbDisplay.MMouseX;
+            lbDisplay.MouseX = i;
+            if (lbDisplay.GraphicsScreenHeight > 200)
+                i = lbDisplay.MMouseY * lbDisplay.GraphicsScreenHeight / 200;
+            else
+                i = lbDisplay.MMouseY;
+            lbDisplay.MouseY = i;
+        }
+    }
+    else if (simulated_mouse_click)
+    {
+        simulated_mouse_click = 0;
+    }
+
+    clear_left_button = lbDisplay.LeftButton;
+    clear_right_button = lbDisplay.RightButton;
+#if defined(LB_ENABLE_MOUSE_WHEEL)
+    clear_wheel_up = lbDisplay.WheelMoveUp;
+    clear_wheel_down = lbDisplay.WheelMoveDown;
+#endif
+}
+
+/** Mark end of user input processing code.
+ */
+void input_processing_end(void)
+{
+    if (clear_left_button && lbDisplay.LeftButton) {
+        clear_left_button = 0;
+        lbDisplay.LeftButton = 0;
+    }
+    if (clear_right_button && lbDisplay.RightButton) {
+        clear_right_button = 0;
+        lbDisplay.RightButton = 0;
+    }
+#if defined(LB_ENABLE_MOUSE_WHEEL)
+    // Clear cummulative inputs if they remained unused after processing all inputs
+    if (clear_wheel_up && lbDisplay.WheelMoveUp) {
+        clear_wheel_up = 0;
+        lbDisplay.WheelMoveUp = 0;
+    }
+    if (clear_wheel_down && lbDisplay.WheelMoveDown) {
+        clear_wheel_down = 0;
+        lbDisplay.WheelMoveDown = 0;
+    }
+#endif
+}
+
 void show_menu_screen(void)
 {
     switch (data_1c498d)
@@ -6246,31 +6321,6 @@ void show_menu_screen(void)
     }
     text_buf_pos = lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight;
 
-    if ( !joy.Buttons[0] || net_unkn_pos_02 )
-    {
-        if ( data_1c4991 )
-            data_1c4991 = 0;
-    }
-    else if ( !data_1c4991 )
-    {
-        int i;
-        data_1c4991 = 1;
-        lbDisplay.LeftButton = 1;
-        // Scale mouse position in high resolutions
-        if (lbDisplay.GraphicsScreenWidth > 320)
-            i = lbDisplay.MMouseX * lbDisplay.GraphicsScreenWidth / 320;
-        else
-            i = lbDisplay.MMouseX;
-        lbDisplay.MouseX = i;
-        if (lbDisplay.GraphicsScreenHeight > 200)
-            i = lbDisplay.MMouseY * lbDisplay.GraphicsScreenHeight / 200;
-        else
-            i = lbDisplay.MMouseY;
-        lbDisplay.MouseY = i;
-    }
-
-    data_1c498f = lbDisplay.LeftButton;
-    data_1c4990 = lbDisplay.RightButton;
     show_date_time();
 
     if (is_purple_apps_selection_bar_visible())
@@ -6285,6 +6335,11 @@ void show_menu_screen(void)
         change_screen = ChSCRT_NONE;
     }
 
+    input_processing_beg();
+
+    input_date_time();
+
+    // TODO separate input functions from draw functions and update functions
     switch (screentype)
     {
     case SCRT_MISSION:
@@ -6325,6 +6380,16 @@ void show_menu_screen(void)
         break;
     }
 
+    if (is_purple_apps_selection_bar_visible() && !is_purple_alert_on_top())
+        input_purple_apps_selection_bar();
+
+    if (lbKeyOn[KC_F12]) {
+        lbKeyOn[KC_F12] = 0;
+        post_render_action = PRend_SaveScreenshot;
+    }
+
+    input_processing_end();
+
     if (login_control__State == 5)
     {
         net_unkn_func_33();
@@ -6340,26 +6405,20 @@ void show_menu_screen(void)
         net_players_copy_equip_and_cryo_now();
         init_net_players();
     }
-    if (data_1c498f && lbDisplay.LeftButton)
-    {
-        data_1c498f = 0;
-        lbDisplay.LeftButton = 0;
-    }
-    if (data_1c4990 && lbDisplay.RightButton)
-    {
-        data_1c4990 = 0;
-        lbDisplay.RightButton = 0;
-    }
+
     memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
     draw_purple_screen();
 
-    if (is_purple_apps_selection_bar_visible() && !is_purple_alert_on_top())
-        get_purple_apps_selection_bar_inputs();
-
-    if (lbKeyOn[KC_F12]) {
-        lbKeyOn[KC_F12] = 0;
+    switch (post_render_action)
+    {
+    case PRend_SaveScreenshot:
         LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
+        break;
+    default:
+        break;
     }
+
+    update_date_time();
 
     if (change_screen == ChSCRT_SYSMENU)
     {

@@ -129,8 +129,8 @@ struct ScreenBox
     ubyte (*DrawFn)(struct ScreenBox *box);
     ubyte (*SpecialDrawFn)(struct ScreenBox *box);
     ushort Timer2;
-    char field_16;
-    char field_17;
+    ubyte Colour;
+    ubyte BGColour;
 };
 
 struct ScreenInfoBox;
@@ -230,7 +230,7 @@ TbBool boxes_intersect(short box1_x, short box1_y, short box1_w, short box1_h,
 /** Returns if given two boxes have a common part (incl. borders).
  */
 #define screen_boxes_intersect(box1, box2) base_boxes_intersect((struct ScreenBoxBase *)box1, (struct ScreenBoxBase *)box2)
-TbBool base_boxes_intersect(struct ScreenBoxBase *box1, struct ScreenBoxBase *box2);
+TbBool base_boxes_intersect(struct ScreenBoxBase *p_box1, struct ScreenBoxBase *p_box2);
 
 /** Returns if current mouse move position is over given box with coords (incl. borders).
  */
@@ -250,38 +250,38 @@ short mouse_down_position_horizonal_over_bar_coords(short x, short w);
 
 /** Returns if given position is over given box (incl. borders).
  */
-#define is_over_box(x, y, box) is_over_box_base(x, y, (struct ScreenBoxBase *)box)
-TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box);
+#define is_over_box(x, y, p_box) is_over_box_base(x, y, (struct ScreenBoxBase *)p_box)
+TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *p_box);
 
 /** Returns if given position is over given slant (leaning right) box (incl. borders).
  */
-#define is_over_slant_box(x, y, box) is_over_slant_box_base(x, y, (struct ScreenBoxBase *)box)
-TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *box);
+#define is_over_slant_box(x, y, p_box) is_over_slant_box_base(x, y, (struct ScreenBoxBase *)p_box)
+TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *p_box);
 
 /** Returns if current mouse move position is over given box (incl. borders).
  */
-#define mouse_move_over_box(box) mouse_move_over_box_base((struct ScreenBoxBase *)box)
-TbBool mouse_move_over_box_base(struct ScreenBoxBase *box);
+#define mouse_move_over_box(p_box) mouse_move_over_box_base((struct ScreenBoxBase *)p_box)
+TbBool mouse_move_over_box_base(struct ScreenBoxBase *p_box);
 
 /** Returns if mouse position when button was pressed down is over given box (incl. borders).
  */
-#define mouse_down_over_box(box) mouse_down_over_box_base((struct ScreenBoxBase *)box)
-TbBool mouse_down_over_box_base(struct ScreenBoxBase *box);
+#define mouse_down_over_box(p_box) mouse_down_over_box_base((struct ScreenBoxBase *)p_box)
+TbBool mouse_down_over_box_base(struct ScreenBoxBase *p_box);
 
 /** Returns if current mouse move position is over given slant (leaning right) box (incl. borders).
  */
-#define mouse_move_over_slant_box(box) mouse_move_over_slant_box_base((struct ScreenBoxBase *)box)
-TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box);
+#define mouse_move_over_slant_box(p_box) mouse_move_over_slant_box_base((struct ScreenBoxBase *)p_box)
+TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *p_box);
 
 /** Returns X coord of current mouse move position relative to given box.
  */
-#define mouse_move_position_horizonal_over_box(box) mouse_move_position_horizonal_over_box_base((struct ScreenBoxBase *)box)
-short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *box);
+#define mouse_move_position_horizonal_over_box(p_box) mouse_move_position_horizonal_over_box_base((struct ScreenBoxBase *)p_box)
+short mouse_move_position_horizonal_over_box_base(struct ScreenBoxBase *p_box);
 
 /** Returns Y coord of current mouse move position relative to given box.
  */
-#define mouse_move_y_coord_over_box(box) mouse_move_y_coord_over_box_base((struct ScreenBoxBase *)box)
-short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box);
+#define mouse_move_y_coord_over_box(p_box) mouse_move_y_coord_over_box_base((struct ScreenBoxBase *)p_box)
+short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *p_box);
 
 short mouse_move_position_vertical_scrollbar_over_text_box(struct ScreenTextBox *p_box);
 
@@ -290,17 +290,17 @@ short mouse_move_position_vertical_scrollbar_over_text_box(struct ScreenTextBox 
  */
 TbResult ApDrawSlantBox(short x, short y, ushort w, ushort h, TbPixel col);
 
-void init_screen_box(struct ScreenBox *box, ushort x, ushort y,
+void init_screen_box(struct ScreenBox *p_box, ushort x, ushort y,
   ushort width, ushort height, int drawspeed);
 void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
   ushort width, ushort height, int drawspeed,
   struct TbSprite *p_font, ushort textspeed);
-void init_screen_button(struct ScreenButton *box, ushort x, ushort y,
+void init_screen_button(struct ScreenButton *p_box, ushort x, ushort y,
   const char *text, int drawspeed,
   struct TbSprite *font, int textspeed, int flags);
-void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y,
-  ushort width, const char *text1, const char *text2, int drawspeed,
-  struct TbSprite *font1, struct TbSprite *font2, int textspeed);
+void init_screen_info_box(struct ScreenInfoBox *p_box, ushort x, ushort y,
+  ushort width, char *text1, char *text2, int drawspeed,
+  struct TbSprite *p_font1, struct TbSprite *p_font2, int textspeed);
 
 /******************************************************************************/
 #ifdef __cplusplus

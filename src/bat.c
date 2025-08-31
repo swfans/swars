@@ -60,7 +60,10 @@ struct BATBall;
 struct BATBall {
     int X;
     int Y;
-    int UnkDw2[4];
+    int UnkDw2;
+    int UnkDw3;
+    int NextX;
+    int NextY;
     int UnkDw6;
     int UnkDw7;
     struct BATBall *ListNext;

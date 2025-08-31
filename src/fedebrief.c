@@ -24,6 +24,7 @@
 
 #include "campaign.h"
 #include "display.h"
+#include "febrief.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "game_sprts.h"

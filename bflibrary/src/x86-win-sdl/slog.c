@@ -18,8 +18,11 @@
  */
 /******************************************************************************/
 #include <stdarg.h>
-#include "bfconfig.h"
 #include "bflog.h"
+
+#if defined(HAVE_CONFIG_H)
+#  include "bfconfig.h"
+#endif
 
 #include "bfmemut.h"
 #include "bfstrut.h"

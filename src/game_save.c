@@ -27,6 +27,7 @@
 #include "campaign.h"
 #include "display.h"
 #include "engindrwlstm.h"
+#include "febrief.h"
 #include "femail.h"
 #include "femain.h"
 #include "game_data.h"

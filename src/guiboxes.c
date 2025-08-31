@@ -62,11 +62,11 @@ TbBool boxes_intersect(short box1_x, short box1_y, short box1_w, short box1_h,
     return true;
 }
 
-TbBool base_boxes_intersect(struct ScreenBoxBase *box1, struct ScreenBoxBase *box2)
+TbBool base_boxes_intersect(struct ScreenBoxBase *p_box1, struct ScreenBoxBase *p_box2)
 {
-    if ((box1->X + box1->Width < box2->X) || (box1->X > box2->X + box2->Width))
+    if ((p_box1->X + p_box1->Width < p_box2->X) || (p_box1->X > p_box2->X + p_box2->Width))
         return false;
-    if ((box1->Y + box1->Height < box2->Y) || (box1->Y > box2->Y + box2->Height))
+    if ((p_box1->Y + p_box1->Height < p_box2->Y) || (p_box1->Y > p_box2->Y + p_box2->Height))
         return false;
     return true;
 }
@@ -243,13 +243,25 @@ TbResult ApDrawSlantBox(short x, short y, ushort w, ushort h, TbPixel col)
     return Lb_SUCCESS;
 }
 
-void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed)
+void init_screen_box(struct ScreenBox *p_box, ushort x, ushort y, ushort width, ushort height, int drawspeed)
 {
+#if 0
     asm volatile (
       "push %5\n"
       "push %4\n"
       "call ASM_init_screen_box\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed));
+        : : "a" (p_box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed));
+#endif
+    p_box->Flags = GBxFlg_Unkn0001;
+    p_box->DrawFn = ac_flashy_draw_purple_box;
+    p_box->SpecialDrawFn = NULL;
+    p_box->Colour = 0xF7;
+    p_box->BGColour = 0x38;
+    p_box->X = x;
+    p_box->Y = y;
+    p_box->Width = width;
+    p_box->Height = height;
+    p_box->DrawSpeed = drawspeed;
 }
 
 void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
@@ -325,8 +337,9 @@ void init_screen_button(struct ScreenButton *p_box, ushort x, ushort y,
 }
 
 void init_screen_info_box(struct ScreenInfoBox *p_box, ushort x, ushort y, ushort width,
-  const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
+  char *text1, char *text2, int drawspeed, struct TbSprite *p_font1, struct TbSprite *p_font2, int textspeed)
 {
+#if 0
     asm volatile (
       "push %9\n"
       "push %8\n"
@@ -336,6 +349,33 @@ void init_screen_info_box(struct ScreenInfoBox *p_box, ushort x, ushort y, ushor
       "push %4\n"
       "call ASM_init_screen_info_box\n"
         : : "a" (p_box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
+#endif
+    short font1_h, font2_h, font_h;
+
+    lbFontPtr = p_font1;
+    font1_h = font_height('A');
+    lbFontPtr = p_font2;
+    font2_h = font_height('A');
+    if (font1_h <= font2_h)
+        font_h = font2_h;
+    else
+        font_h = font1_h;
+
+    p_box->X = x;
+    p_box->Y = y;
+    p_box->Width = width;
+    p_box->Height = font_h + 6;
+    p_box->Flags = GBxFlg_Unkn0001;
+    p_box->DrawFn = ac_flashy_draw_purple_info_box;
+    p_box->DrawTextFn = ac_info_box_text;
+    p_box->Colour = 0xF7;
+    p_box->BGColour = 0x38;
+    p_box->DrawSpeed = drawspeed;
+    p_box->Font1 = p_font1;
+    p_box->Font2 = p_font2;
+    p_box->Text1 = text1;
+    p_box->Text2 = text2;
+    p_box->TextSpeed = textspeed;
 }
 
 /******************************************************************************/

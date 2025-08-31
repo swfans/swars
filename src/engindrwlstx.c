@@ -51,6 +51,7 @@
 #include "scandraw.h"
 #include "thing.h"
 #include "swlog.h"
+#include "vehicle.h"
 /******************************************************************************/
 #define MAX_LIGHTS_AFFECTING_FACE 100
 
@@ -645,13 +646,46 @@ ubyte check_mouse_overlap(ushort sspr)
     return ret;
 }
 
-ubyte check_mouse_overlap_item(ushort sspr)
+void check_mouse_overlap_item(ushort sspr)
 {
-    ubyte ret;
+#if 0
     asm volatile (
       "call ASM_check_mouse_overlap_item\n"
-        : "=r" (ret) : "a" (sspr));
-    return ret;
+        : : "a" (sspr));
+#else
+    struct SortSprite *p_sspr;
+    struct Frame *p_frame;
+    PlayerInfo *p_locplayer;
+    int x, y, w, h;
+
+    p_sspr = &game_sort_sprites[sspr];
+    x = p_sspr->X + ((overall_scale * word_1A5834) >> 8);
+    y = p_sspr->Y + ((overall_scale * word_1A5836) >> 8);
+    p_frame = &frame[p_sspr->Frame];
+    w = (overall_scale * p_frame->SWidth) >> 9;
+    h = (overall_scale * p_frame->SHeight) >> 9;
+
+    p_locplayer = &players[local_player_no];
+    if (p_locplayer->TargetType == TrgTp_DroppedTng)
+    {
+        ushort VX;
+        VX = p_sspr->PThing->VX;
+        if ( VX )
+        {
+            if (VX < 12 || VX > 13)
+                return;
+            x = x - (w >> 1);
+            y = y - (h >> 1);
+            w *= 2;
+            h *= 2;
+        }
+    }
+    if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, x, y, w, h))
+    {
+        p_locplayer->Target = p_sspr->PThing->ThingOffset;
+        p_locplayer->TargetType = TrgTp_DroppedTng;
+    }
+#endif
 }
 
 ubyte check_mouse_overlap_corpse(ushort sspr)
@@ -702,11 +736,11 @@ void draw_sort_sprite1a(ushort sspr)
     draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
     p_thing = game_sort_sprites[sspr].PThing;
 
-    if ((p_locplayer->TargetType <= 5) && (p_thing->Type == SmTT_DROPPED_ITEM)) {
+    if ((p_locplayer->TargetType <= TrgTp_DroppedTng) && (p_thing->Type == SmTT_DROPPED_ITEM)) {
         check_mouse_overlap_item(sspr);
     }
 
-    if ((p_locplayer->TargetType < 6) && (p_thing->Type == TT_MINE))
+    if ((p_locplayer->TargetType < TrgTp_Unkn6) && (p_thing->Type == TT_MINE))
     {
         if ((p_thing->SubType == 7) || (p_thing->SubType == 3))
             check_mouse_overlap_item(sspr);
@@ -1823,12 +1857,12 @@ void draw_sort_sprite1b(int sspr)
         p_locplayer = &players[local_player_no];
         if ((p_thing->Flag & TngF_Destroyed) != 0)
         {
-            if (p_locplayer->TargetType < 1)
+            if (p_locplayer->TargetType < TrgTp_Unkn1)
                 check_mouse_overlap_corpse(sspr);
         }
         else
         {
-            if (p_locplayer->TargetType < 7)
+            if (p_locplayer->TargetType < TrgTp_Unkn7)
                 check_mouse_overlap(sspr);
         }
     }
@@ -1977,7 +2011,7 @@ void draw_object_face4_pole(ushort face4)
 
 void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte bright)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_draw_sorted_sprite1a\n"
         : : "a" (frm), "d" (x), "b" (y), "c" (bright));
@@ -2217,7 +2251,7 @@ void draw_object_face3_textrd(ushort face)
         PlayerInfo *p_locplayer;
 
         p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < 3) {
+        if (p_locplayer->TargetType < TrgTp_Unkn3) {
             check_mouse_over_face(&point1, &point2, &point3, face, 1);
         }
     }
@@ -2412,7 +2446,7 @@ void draw_object_face4d_textrd(ushort face4)
         PlayerInfo *p_locplayer;
 
         p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < 3) {
+        if (p_locplayer->TargetType < TrgTp_Unkn3) {
             check_mouse_over_face(&point1, &point2, &point3, face4, 2);
         }
     }
@@ -2456,7 +2490,7 @@ void draw_object_face4d_textrd(ushort face4)
         PlayerInfo *p_locplayer;
 
         p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < 3) {
+        if (p_locplayer->TargetType < TrgTp_Unkn3) {
             check_mouse_over_face(&point4, &point3, &point2, face4, 3);
         }
     }
@@ -3111,7 +3145,7 @@ void draw_object_face4_deep_rdr(ushort face4)
         PlayerInfo *p_locplayer;
 
         p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < 3) {
+        if (p_locplayer->TargetType < TrgTp_Unkn3) {
             check_mouse_over_face(&point1, &point2, &point3, face4, 2);
         }
     }
@@ -3124,7 +3158,7 @@ void draw_object_face4_deep_rdr(ushort face4)
         PlayerInfo *p_locplayer;
 
         p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < 3) {
+        if (p_locplayer->TargetType < TrgTp_Unkn3) {
             check_mouse_over_face(&point4, &point3, &point2, face4, 3);
         }
     }
@@ -3187,7 +3221,7 @@ void draw_object_face3_deep_rdr(ushort face)
         PlayerInfo *p_locplayer;
 
         p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < 3) {
+        if (p_locplayer->TargetType < TrgTp_Unkn3) {
             check_mouse_over_face(&point1, &point2, &point3, face, 1);
         }
     }
@@ -3272,7 +3306,7 @@ void number_player(struct Thing *p_person, ubyte n)
     {
         int tng_cor_x, tng_cor_y, tng_cor_z;
 
-        if (((p_person->Flag & TngF_InVehicle) != 0) && things[p_person->U.UPerson.Vehicle].SubType == 29)
+        if (((p_person->Flag & TngF_InVehicle) != 0) && things[p_person->U.UPerson.Vehicle].SubType == SubTT_VEH_TRAIN)
         {
             tng_cor_x = p_person->X;
             tng_cor_y = p_person->Y;

@@ -1185,6 +1185,20 @@ void init_grenade(struct Thing *p_owner, ushort gtype)
         : : "a" (p_owner), "d" (gtype));
 }
 
+void init_v_rocket(struct Thing *p_owner)
+{
+    asm volatile ("call ASM_init_v_rocket\n"
+        : : "a" (p_owner));
+}
+
+void init_mech_rocket(struct Thing *p_owner, struct Thing *p_mech, int x, int y, int z)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_init_mech_rocket\n"
+        : : "a" (p_owner), "d" (p_mech), "b" (x), "c" (y), "g" (z));
+}
+
 void give_take_me_weapon(struct Thing *p_person, int item, int giveortake, short id)
 {
     asm volatile (
@@ -1516,16 +1530,219 @@ ushort player_weapon_time(struct Thing *p_person)
     return ret;
 }
 
+ThingIdx person_is_non_selected_agent(struct Thing *p_person)
+{
+    return ((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag & TngF_Unkn1000) == 0);
+}
+
+ThingIdx person_is_selected_agent(struct Thing *p_person)
+{
+    return ((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag & TngF_Unkn1000) != 0);
+}
+
+ThingIdx get_vehicle_passenger_in_player_control(struct Thing *p_vehicle)
+{
+    ThingIdx passener;
+
+    passener = p_vehicle->U.UVehicle.PassengerHead;
+    while (passener != 0)
+    {
+        struct Thing *p_passenger;
+
+        p_passenger = &things[passener];
+        if (p_passenger->Type == TT_PERSON)
+        {
+            if (person_is_selected_agent(p_passenger))
+                return passener;
+        }
+        passener = p_passenger->U.UPerson.LinkPassenger;
+    }
+    return 0;
+}
+
 void process_vehicle_weapon(struct Thing *p_vehicle, struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_process_vehicle_weapon\n"
         : : "a" (p_vehicle), "d" (p_person));
+#else
+    // If another passenger controls the weapon of this vehicle, no action
+    if (person_is_non_selected_agent(p_person)
+      && (get_vehicle_passenger_in_player_control(p_vehicle) != 0))
+        return;
+
+    if ((p_person->Flag & TngF_Unkn20000000) != 0)
+    {
+        short tdx, tdy, tdz;
+
+        if ((p_person->Flag & TngF_PlayerAgent) != 0)
+        {
+            PlayerInfo *p_player;
+            PlayerIdx plyr;
+            ushort plagent;
+
+            plyr = p_person->U.UPerson.ComCur >> 2;
+            plagent = p_person->U.UPerson.ComCur & 3;
+            p_player = &players[plyr];
+
+            tdx = p_player->UserVX[plagent];
+            tdz = p_player->UserVZ[plagent];
+            if (p_player->UserVY[plagent] != 0)
+            {
+                tdy = p_player->UserVY[plagent];
+                p_player->UserVY[plagent] = 0;
+            }
+            else
+            {
+                tdy = (alt_at_point(tdx, tdz) >> 8) + 20;
+            }
+        }
+        else
+        {
+            tdx = p_vehicle->U.UVehicle.TargetDX;
+            tdy = p_vehicle->U.UVehicle.TargetDY;
+            tdz = p_vehicle->U.UVehicle.TargetDZ;
+        }
+
+        if (p_vehicle->U.UVehicle.TargetDX != tdx || p_vehicle->U.UVehicle.TargetDZ != tdz)
+            p_vehicle->OldTarget = 20000;
+        p_vehicle->PTarget = NULL;
+        p_vehicle->U.UVehicle.TargetDX = tdx;
+        p_vehicle->U.UVehicle.TargetDZ = tdz;
+        p_vehicle->U.UVehicle.TargetDY = tdy;
+        p_vehicle->Flag |= TngF_Unkn20000000;
+    }
+    else if (p_person->PTarget != NULL)
+    {
+        struct Thing *p_target;
+
+        p_vehicle->Flag &= ~TngF_Unkn20000000;
+        p_target = p_person->PTarget;
+        if (p_vehicle->PTarget != p_target)
+        {
+            p_vehicle->OldTarget = 2000;
+            p_vehicle->PTarget = p_target;
+        }
+    }
+
+    if (((p_person->Flag & 0x800) != 0) && (p_person->U.UPerson.WeaponTurn == 0)
+      && (p_vehicle->OldTarget < 24)
+      && ((p_vehicle->PTarget != NULL && p_person->PTarget != NULL)
+      || (p_vehicle->Flag & TngF_Unkn20000000) != 0))
+    {
+        init_v_rocket(p_person);
+        p_person->U.UPerson.WeaponTurn = 20;
+    }
+#endif
+}
+
+void mech_unkn_func_05(int owntng, int a2, int a3)
+{
+    asm volatile ("call ASM_mech_unkn_func_05\n"
+        : : "a" (owntng), "d" (a2), "b" (a3));
 }
 
 void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_process_mech_weapon\n"
         : : "a" (p_vehicle), "d" (p_person));
+#else
+    if ((p_person->Flag & TngF_Unkn20000000) != 0)
+    {
+        short tdx, tdy, tdz;
+
+        p_vehicle->PTarget = NULL;
+        p_vehicle->Flag |= TngF_Unkn20000000;
+        if ((p_person->Flag & TngF_PlayerAgent) != 0)
+        {
+            PlayerInfo *p_player;
+            PlayerIdx plyr;
+            ushort plagent;
+
+            plyr = p_person->U.UPerson.ComCur >> 2;
+            plagent = p_person->U.UPerson.ComCur & 3;
+            p_player = &players[plyr];
+
+            tdx = p_player->UserVX[plagent];
+            tdz = p_player->UserVZ[plagent];
+            if (p_player->UserVY[plagent] != 0)
+            {
+                tdy = p_player->UserVY[plagent];
+                p_player->UserVY[plagent] = 0;
+            }
+            else
+            {
+                tdy = (alt_at_point(tdx, tdz) >> 8) + 20;
+            }
+        }
+        else
+        {
+            tdy = p_person->VY;
+            tdz = p_person->VZ;
+            tdx = p_person->VX;
+        }
+        if ((p_vehicle->U.UVehicle.TargetDX != tdx) || (p_vehicle->U.UVehicle.TargetDZ != tdz))
+        {
+            p_vehicle->OldTarget = 20000;
+            p_vehicle->U.UVehicle.TargetDY = tdy;
+            p_vehicle->U.UVehicle.TargetDZ = tdz;
+            p_vehicle->U.UVehicle.TargetDX = tdx;
+        }
+        p_vehicle->PTarget = NULL;
+    }
+    else if (p_person->PTarget != NULL)
+    {
+        struct Thing *p_target;
+
+        p_vehicle->Flag &= ~TngF_Unkn20000000;
+        p_target = p_person->PTarget;
+        if (p_vehicle->PTarget != p_target)
+        {
+            p_vehicle->OldTarget = 20000;
+            p_vehicle->PTarget = p_target;
+        }
+    }
+
+    if ((p_person->Flag & TngF_PlayerAgent) == 0)
+        p_person->Flag |= TngF_Unkn0800;
+
+    if (((p_person->Flag & 0x0800) != 0) && ((p_vehicle->U.UVehicle.TNode & 0x0004) != 0)
+      && (p_person->U.UPerson.WeaponTurn == 0)
+      && ((p_vehicle->PTarget != NULL && p_person->PTarget != NULL) || (p_vehicle->Flag & 0x20000000) != 0))
+    {
+        p_person->U.UVehicle.WeaponTurn = 10;
+        if (p_vehicle->OldTarget < 24)
+        {
+            int val;
+
+            if ((LbRandomAnyShort() & 0x1F) != 0)
+                val = ((gameturn & 1) != 0) + 5;
+            else
+                val = 7;
+            mech_unkn_func_05(p_vehicle->Owner, 0, val);
+            p_vehicle->U.UVehicle.TNode &= ~0x0004;
+        }
+    }
+    if ((p_vehicle->U.UVehicle.TNode & 0x0001) != 0)
+    {
+        p_vehicle->U.UVehicle.TNode &= ~0x0001;
+        init_mech_rocket(p_person, p_vehicle, mech_unkn_dw_1DC880, mech_unkn_dw_1DC884, mech_unkn_dw_1DC888);
+    }
+    if ((p_vehicle->U.UVehicle.TNode & 0x0002) != 0)
+    {
+        p_vehicle->U.UVehicle.TNode &= ~0x0002;
+        init_mech_rocket(p_person, p_vehicle, mech_unkn_dw_1DC88C, mech_unkn_dw_1DC890, mech_unkn_dw_1DC894);
+    }
+    if ((p_vehicle->U.UVehicle.TNode & 0x0008) != 0)
+    {
+        p_vehicle->U.UVehicle.TNode &= ~0x0008;
+        init_laser_guided(p_person, 32);
+        init_laser_guided(p_person, 32);
+        init_laser_guided(p_person, 32);
+        init_laser_guided(p_person, 32);
+    }
+#endif
 }
 
 ushort persuade_power_required(ThingIdx victim)
@@ -1946,7 +2163,7 @@ void process_move_while_firing(struct Thing *p_person)
         p_person->Speed = calc_person_speed(p_person);
     }
     p_vehicle = &things[p_person->U.UPerson.Vehicle];
-    if (((p_person->Flag & TngF_InVehicle) != 0) && (p_vehicle->State == 69))
+    if (((p_person->Flag & TngF_InVehicle) != 0) && (p_vehicle->State == VehSt_UNKN_45))
     {
         p_person->Flag &= ~TngF_Unkn0800;
     }
@@ -1968,8 +2185,8 @@ void process_move_while_firing(struct Thing *p_person)
                 int dt_x, dt_z;
                 ushort i;
 
-                dt_x = (p_target->X - p_person->X) >> 8;
-                dt_z = (p_target->Z - p_person->Z) >> 8;
+                dt_x = PRCCOORD_TO_MAPCOORD(p_target->X - p_person->X);
+                dt_z = PRCCOORD_TO_MAPCOORD(p_target->Z - p_person->Z);
                 i = (arctan(dt_x, -dt_z) + 128) & 0x7FF;
                 change_player_angle(p_person, i >> 8);
             }

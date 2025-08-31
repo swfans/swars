@@ -144,6 +144,7 @@ static void LbI_ProcessEvent(const SDL_Event *ev)
     case SDL_MOUSEMOTION:
     case SDL_MOUSEBUTTONDOWN:
     case SDL_MOUSEBUTTONUP:
+    case SDL_MOUSEWHEEL:
         MEvent(ev);
         break;
 

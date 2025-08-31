@@ -27,6 +27,11 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum MailType {
+    MlTp_Email = 0,
+    MlTp_Mission,
+};
+
 struct EmailItem { // sizeof=5
 	ubyte RefNum;
 	ubyte RecvDay;

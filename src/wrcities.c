@@ -28,6 +28,7 @@
 #include "bfini.h"
 
 #include "campaign.h"
+#include "febrief.h"
 #include "femail.h"
 #include "game.h"
 #include "game_data.h"

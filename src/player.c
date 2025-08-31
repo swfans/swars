@@ -376,7 +376,7 @@ void player_target_clear(PlayerIdx plyr)
 
     p_player = &players[plyr];
     p_player->Target = 0;
-    p_player->TargetType = 0;
+    p_player->TargetType = TrgTp_NONE;
 }
 
 void kill_my_players(PlayerIdx plyr)

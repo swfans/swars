@@ -279,7 +279,7 @@ void input_user_control_agent(ushort plyr, short dmuser)
         {
             p_player->UserInput[dmuser].Bits &= ~SpUIn_DoTrigger;
             loc_build_packet(p_pckt, PAct_PICKUP, dcthing,
-              p_dcthing->U.UPerson.Vehicle, 0, 0);
+              p_dcthing->U.UPerson.StandOnThing, 0, 0);
             return;
         }
     }
