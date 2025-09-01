@@ -51,6 +51,7 @@ extern struct ScreenTextBox brief_netscan_box;
 extern struct ScreenTextBox world_city_info_box;
 extern struct ScreenTextBox equip_display_box;
 extern struct ScreenTextBox cryo_cybmod_list_box;
+extern struct ScreenButton alert_OK_button;
 
 extern long dword_1DC5FC;
 extern long dword_1DC600;
@@ -192,7 +193,7 @@ void flashy_draw_projector_reaching_target_coords(short box_x, short box_y, shor
     draw_sprite_purple_list(scr_x2 - 1, scr_y2 - 1, p_spr);
 }
 
-void flashy_draw_projector_horizontal_lines(short box_x, short box_y, short box_w, short box_h, short advance, TbPixel colour)
+void flashy_draw_projector_horizontal_lines(short box_x, short box_y, short box_w, short box_h, short advance, short advance_p, short delta_p, TbPixel colour)
 {
     struct TbSprite *p_spr;
     ushort spr;
@@ -202,7 +203,7 @@ void flashy_draw_projector_horizontal_lines(short box_x, short box_y, short box_
     spr = 11 + (colour != 0xF7);
     vec_colour = colour;
 
-    prog_x = box_x + advance;
+    prog_x = box_x + advance_p;
     purple_box_x1 = prog_x;
     purple_box_y1 = box_y;
     purple_box_x2 = purple_box_x1 - 15;
@@ -225,12 +226,13 @@ void flashy_draw_projector_horizontal_lines(short box_x, short box_y, short box_
     draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
     draw_line_purple_list(purple_box_x1, purple_box_y1, scr_x2, purple_box_y2, colour);
 
+    lbDisplay.DrawFlags = 0;
     p_spr = &fe_mouseptr_sprites[spr];
     draw_sprite_purple_list(prog_x - 1, box_y - 1, p_spr);
     draw_sprite_purple_list(purple_box_x1 - 1, box_y + box_h - 1, p_spr);
 }
 
-void flashy_draw_projector_vertical_lines(short box_x, short box_y, short box_w, short box_h, short advance, TbPixel colour)
+void flashy_draw_projector_vertical_lines(short box_x, short box_y, short box_w, short box_h, short advance, short advance_p, short delta_p, TbPixel colour)
 {
     struct TbSprite *p_spr;
     ushort spr;
@@ -240,11 +242,11 @@ void flashy_draw_projector_vertical_lines(short box_x, short box_y, short box_w,
     spr = 11 + (colour != 0xF7);
     vec_colour = colour;
 
-    prog_y = box_y + advance;
+    prog_y = box_y + delta_p + advance_p;
     purple_box_x1 = box_x + box_w;
     purple_box_y1 = prog_y;
     purple_box_x2 = purple_box_x1;
-    scr_y1 = box_y;
+    scr_y1 = box_y + delta_p;
     purple_box_y2 = prog_y - 15;
     if (purple_box_y2 < scr_y1)
       purple_box_y2 = scr_y1;
@@ -263,12 +265,18 @@ void flashy_draw_projector_vertical_lines(short box_x, short box_y, short box_w,
     draw_trig_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, purple_box_y2);
     draw_line_purple_list(purple_box_x1, purple_box_y1, purple_box_x2, scr_y2, colour);
 
+    draw_line_purple_list(box_x, box_y + box_h, box_x + box_w, box_y + box_h, colour);
+    if (delta_p != 0) {
+        draw_line_purple_list(box_x, box_y, box_x + box_w - delta_p, box_y, colour);
+        draw_line_purple_list(box_w + box_x - delta_p, box_y, box_w + box_x, box_y + delta_p, colour);
+    } else {
+        draw_line_purple_list(box_x, box_y, box_x + box_w, box_y, colour);
+    }
+
+    lbDisplay.DrawFlags = 0;
     p_spr = &fe_mouseptr_sprites[spr];
     draw_sprite_purple_list(purple_box_x1 - 1, purple_box_y1 - 1, p_spr);
     draw_sprite_purple_list(box_x + box_w - 1, prog_y - 1, p_spr);
-
-    draw_line_purple_list(box_x, box_y, box_x + box_w, box_y, colour);
-    draw_line_purple_list(box_x, box_y + box_h, box_x + box_w, box_y + box_h, colour);
 }
 
 ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
@@ -325,7 +333,7 @@ ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
         short advance;
 
         advance = ((p_box->Timer - 24) * box_w) / 24;
-        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, advance, 0, p_box->Colour);
         p_box->Timer += p_box->DrawSpeed;
         return 0;
     }
@@ -336,7 +344,7 @@ ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
         short advance;
 
         advance = ((p_box->Timer - 48) * box_h) / 24;
-        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, advance, 0, p_box->Colour);
         p_box->Timer += p_box->DrawSpeed;
         return 2;
     }
@@ -743,7 +751,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         short advance;
 
         advance = ((p_box->Timer - 24) * box_w) / 24;
-        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour1);
+        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, advance, 0, p_box->Colour1);
         p_box->Timer += p_box->DrawSpeed;
         return 0;
     }
@@ -754,7 +762,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         short advance;
 
         advance = ((p_box->Timer - 48) * box_h) / 24;
-        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour1);
+        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, advance, 0, p_box->Colour1);
         p_box->Timer += p_box->DrawSpeed;
         return 2;
     }
@@ -957,7 +965,7 @@ ubyte flashy_draw_purple_info_box(struct ScreenInfoBox *p_box)
         short advance;
 
         advance = ((p_box->Timer - 24) * box_w) / 24;
-        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        flashy_draw_projector_horizontal_lines(p_box->X, p_box->Y, box_w, box_h, advance, advance, 0, p_box->Colour);
         p_box->Timer += p_box->DrawSpeed;
         return 0;
     }
@@ -968,7 +976,7 @@ ubyte flashy_draw_purple_info_box(struct ScreenInfoBox *p_box)
         short advance;
 
         advance = ((p_box->Timer - 48) * box_h) / 24;
-        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, p_box->Colour);
+        flashy_draw_projector_vertical_lines(p_box->X, p_box->Y, box_w, box_h, advance, advance, 0, p_box->Colour);
         p_box->Timer += p_box->DrawSpeed;
         return 2;
     }
@@ -999,14 +1007,326 @@ ubyte flashy_draw_purple_info_box(struct ScreenInfoBox *p_box)
                 : "=r" (drawn) : "a" (p_box), "g" (p_box->DrawTextFn));
     }
     return 3;
-
 }
 
-ubyte flashy_draw_purple_button(struct ScreenButton *button)
+ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_flashy_draw_purple_button\n"
         : "=r" (ret) : "a" (button));
+    return ret;
+#endif
+    short box_w, box_h;
+    short akey;
+    TbBool mouse_over, event_from_key;
+
+    my_set_text_window(p_btn->X + 2, p_btn->Y + 2, p_btn->Width - 18, p_btn->Height - 4);
+    lbFontPtr = p_btn->Font;
+    box_w = p_btn->Width - 1;
+    box_h = p_btn->Height - 1;
+
+    if ((p_btn->Flags & GBxFlg_Unkn0002) != 0)
+    {
+        p_btn->Flags &= ~(GBxFlg_Unkn0080|GBxFlg_Unkn0002|GBxFlg_Unkn0001);
+        p_btn->Timer = -1;
+        if (p_btn->Text != NULL)
+            p_btn->TextFadePos = strlen(p_btn->Text);
+        else
+            p_btn->TextFadePos = -5;
+    }
+    if ((p_btn->Flags & GBxFlg_Unkn0001) != 0)
+    {
+        p_btn->Flags &= ~(GBxFlg_Unkn0080|GBxFlg_Unkn0001);
+        p_btn->Timer = 0;
+        p_btn->Flags |= GBxFlg_Unkn0080;
+    }
+
+    // Handle sound
+    if (p_btn->Timer <= 72)
+    {
+        if (p_btn->Timer > 24)
+        {
+            if (!IsSamplePlaying(0, 4, 0))
+                play_sample_using_heap(0, 110, 127, 64, 100, 0, 1u);
+        }
+    }
+
+    // Draw lines from projector origin reaching target rectangle
+    if (p_btn->Timer <= 24)
+    {
+        short advance;
+
+        advance = p_btn->Timer;
+        flashy_draw_projector_reaching_target_coords(p_btn->X, p_btn->Y, box_w, box_h, advance, p_btn->Colour);
+        p_btn->Timer += p_btn->DrawSpeed;
+        return 0;
+    }
+
+    if (!mouse_move_over_box(p_btn))
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+
+    // Draw horizontal lines
+    if (p_btn->Timer <= 48)
+    {
+        short advance, advance_p, delta_p;
+
+        if ((p_btn->Flags & GBxFlg_Unkn0010) != 0)
+            delta_p = 5;
+        else
+            delta_p = 0;
+        advance = ((p_btn->Timer - 24) * (box_w)) / 24;
+        advance_p = ((p_btn->Timer - 24) * (box_w - delta_p)) / 24;
+        flashy_draw_projector_horizontal_lines(p_btn->X, p_btn->Y, box_w, box_h, advance, advance_p, delta_p, p_btn->Colour);
+        p_btn->Timer += p_btn->DrawSpeed;
+        return 0;
+    }
+
+    // Draw vertical lines
+    if (p_btn->Timer <= 72)
+    {
+        short advance, advance_p, delta_p;
+
+        if ((p_btn->Flags & GBxFlg_Unkn0010) != 0)
+            delta_p = 5;
+        else
+            delta_p = 0;
+        advance = ((p_btn->Timer - 48) * (box_h)) / 24;
+        advance_p = ((p_btn->Timer - 48) * (box_h - delta_p)) / 24;
+        flashy_draw_projector_vertical_lines(p_btn->X, p_btn->Y, box_w, box_h, advance, advance_p, delta_p, p_btn->Colour);
+        p_btn->Timer += p_btn->DrawSpeed;
+        return 2;
+    }
+
+    // Mouse input
+    if (mouse_down_over_box(p_btn))
+    {
+        if (lbDisplay.LeftButton)
+        {
+            lbDisplay.LeftButton = 0;
+            p_btn->Flags |= GBxFlg_IsPushed;
+        }
+        if (lbDisplay.RightButton)
+        {
+            lbDisplay.RightButton = 0;
+            p_btn->Flags |= GBxFlg_IsRPushed;
+        }
+    }
+    event_from_key = false;
+    akey = p_btn->AccelKey  & 0xFF;
+    if (lbKeyOn[akey])
+    {
+        if (akey == KC_RETURN || akey == KC_ESCAPE)
+        {
+            lbKeyOn[akey] = 0;
+            p_btn->Flags |= GBxFlg_IsPushed;
+            event_from_key = true;
+        } else
+        if ((lbShift & 4) != 0)
+        {
+            lbKeyOn[akey] = 0;
+            event_from_key = true;
+            p_btn->Flags |= GBxFlg_IsPushed;
+        } else
+        if ((lbShift & 2) != 0)
+        {
+            lbKeyOn[akey] = 0;
+            p_btn->Flags |= GBxFlg_IsRPushed;
+            event_from_key = true;
+        }
+    }
+
+    mouse_over = mouse_move_over_box(p_btn);
+    if (mouse_over)
+    {
+        if ((p_btn->Flags & GBxFlg_IsMouseOver) == 0)
+        {
+            play_sample_using_heap(0, 123, 127, 64, 100, 0, 1u);
+            p_btn->Flags |= GBxFlg_IsMouseOver;
+        }
+    }
+    else
+    {
+        p_btn->Flags &= ~GBxFlg_IsMouseOver;
+
+    }
+
+    ubyte box_b;
+    ubyte ret;
+
+    ret = 3;
+    box_b = p_btn->Border;
+
+    if (!mouse_over && !event_from_key)
+    {
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        if ((p_btn->Flags & GBxFlg_RadioBtn) != 0 && p_btn->RadioValue == *p_btn->Radio)
+            lbDisplay.DrawFlags = 0;
+        if ((p_btn->Flags & GBxFlg_Unkn0010) != 0)
+        {
+            int v15, v16;
+
+            v15 = box_b;
+            v16 = box_w;
+            draw_box_purple_list(p_btn->X - box_b, p_btn->Y - box_b,
+              box_b + (box_w) - 4, box_b + 5, p_btn->BGColour);
+            lbDisplay.DrawFlags |= 0x8000;
+            draw_box_purple_list(p_btn->X - v15, p_btn->Y + 5,
+              box_w + 1 + 2 * v15, v15 + box_h - 4, p_btn->BGColour);
+            lbDisplay.DrawFlags &= ~0x8000;
+            draw_triangle_purple_list(v16 + p_btn->X - 4, p_btn->Y - v15,
+              v16 + p_btn->X + 1 + v15, p_btn->Y + 5,
+              v16 + p_btn->X - 4, p_btn->Y + 5, p_btn->BGColour);
+            lbDisplay.DrawFlags |= 0x0010;
+            draw_line_purple_list(p_btn->X, p_btn->Y,
+              p_btn->X, p_btn->Y + box_h, p_btn->Colour);
+            draw_line_purple_list(p_btn->X, box_h + p_btn->Y,
+              p_btn->X + box_w, p_btn->Y + box_h, p_btn->Colour);
+            draw_line_purple_list(p_btn->X, p_btn->Y,
+              p_btn->X + box_w - 5, p_btn->Y, p_btn->Colour);
+            draw_line_purple_list(p_btn->X + v16, p_btn->Y + 5,
+              p_btn->X + v16, p_btn->Y + box_h, p_btn->Colour);
+            draw_line_purple_list(p_btn->X + v16 - 5, p_btn->Y,
+              p_btn->X + v16, p_btn->Y + 5, p_btn->Colour);
+        }
+        else
+        {
+            int v17, v18;
+            lbDisplay.DrawFlags |= 0x8000;
+            v17 = box_h + 1;
+            v18 = box_w + 1;
+            draw_box_purple_list(p_btn->X - box_b, p_btn->Y - box_b, v18 + 2 * box_b, 2 * box_b + v17, p_btn->BGColour);
+            lbDisplay.DrawFlags &= ~(0x0010|0x8000);
+            lbDisplay.DrawFlags |= 0x0010;
+            draw_box_purple_list(p_btn->X, p_btn->Y, v18, v17, p_btn->Colour);
+        }
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        if ((p_btn->Flags & (GBxFlg_IsPushed|GBxFlg_IsRPushed)) != 0)
+            p_btn->Flags &= ~(GBxFlg_IsPushed|GBxFlg_IsRPushed);
+        if (((p_btn->Flags & GBxFlg_RadioBtn) != 0) && (p_btn->RadioValue == *p_btn->Radio))
+            lbDisplay.DrawFlags = 0;
+    }
+    else
+    {
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        if ((p_btn->Flags & (GBxFlg_IsPushed|GBxFlg_IsRPushed)) != 0)
+            lbDisplay.DrawFlags = 0;
+        if ((p_btn->Flags & GBxFlg_RadioBtn) != 0 && p_btn->RadioValue == *p_btn->Radio)
+            lbDisplay.DrawFlags = 0;
+        if (lbDisplay.MLeftButton || joy.Buttons[0])
+        {
+            lbDisplay.LeftButton = 0;
+            ret = 4;
+            lbDisplay.DrawFlags = 0;
+            p_btn->Flags |= GBxFlg_IsPushed;
+        }
+        else if ((p_btn->Flags & GBxFlg_IsPushed) != 0)
+        {
+            if (!show_alert || p_btn == &alert_OK_button)
+            {
+                if (p_btn->CallBackFn != NULL)
+                {
+                    ubyte drawn;
+                    //p_btn->CallBackFn(0); -- incompatible calling convention
+                    asm volatile ("call *%2\n"
+                      : "=r" (drawn) : "a" (0), "g" (p_btn->CallBackFn));
+                    if ( drawn )
+                    {
+                      play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
+                    }
+                }
+                else if ((p_btn->Flags & GBxFlg_RadioBtn) != 0)
+                    play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
+                else
+                    play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
+                if ((p_btn->Flags & GBxFlg_RadioBtn) != 0)
+                    *p_btn->Radio = p_btn->RadioValue;
+            }
+            p_btn->Flags &= ~GBxFlg_IsPushed;
+        }
+
+        if (lbDisplay.MRightButton)
+        {
+            lbDisplay.RightButton = 0;
+            ret = 5;
+            lbDisplay.DrawFlags = 0;
+            p_btn->Flags |= GBxFlg_IsRPushed;
+        }
+        else if ((p_btn->Flags & GBxFlg_IsRPushed) != 0)
+        {
+            if (!show_alert || p_btn == &alert_OK_button)
+            {
+                if ( p_btn->CallBackFn && p_btn->CallBackFn(1u) )
+                  play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
+                else
+                  play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
+                if ((p_btn->Flags & GBxFlg_RadioBtn) != 0)
+                  *p_btn->Radio = p_btn->RadioValue;
+            }
+            p_btn->Flags &= ~GBxFlg_IsRPushed;
+        }
+        if ((p_btn->Flags & GBxFlg_Unkn0010) != 0)
+        {
+            int v13, v14;
+
+            if ((p_btn->Flags & GBxFlg_Unkn0020) != 0)
+              lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+            v13 = box_b;
+            draw_box_purple_list(p_btn->X - box_b, p_btn->Y - box_b,
+              box_b + (box_w) - 4, box_b + 5, p_btn->BGColour);
+            lbDisplay.DrawFlags |= 0x8000;
+            draw_box_purple_list(p_btn->X - v13, p_btn->Y + 5,
+              2 * v13 + box_w + 1, box_h - 4 + v13, p_btn->BGColour);
+            lbDisplay.DrawFlags &= ~0x8000;
+            draw_triangle_purple_list(p_btn->X + (box_w) - 4, p_btn->Y - v13,
+              v13 + p_btn->X + (box_w) + 1, p_btn->Y + 5,
+              p_btn->X + (box_w) - 4, p_btn->Y + 5, p_btn->BGColour);
+            lbDisplay.DrawFlags = 0x0010;
+            if ((p_btn->Flags & GBxFlg_Unkn0040) != 0)
+              lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+            v14 = box_w;
+            draw_line_purple_list(p_btn->X, p_btn->Y,
+              p_btn->X, p_btn->Y + box_h, p_btn->Colour);
+            draw_line_purple_list(p_btn->X, box_h + p_btn->Y,
+              p_btn->X + (box_w), box_h + p_btn->Y, p_btn->Colour);
+            draw_line_purple_list(p_btn->X, p_btn->Y,
+              p_btn->X + (box_w) - 5, p_btn->Y, p_btn->Colour);
+            draw_line_purple_list(v14 + p_btn->X, p_btn->Y + 5,
+              v14 + p_btn->X, p_btn->Y + box_h, p_btn->Colour);
+            draw_line_purple_list(v14 + p_btn->X - 5, p_btn->Y,
+              v14 + p_btn->X, p_btn->Y + 5, p_btn->Colour);
+            lbDisplay.DrawFlags = 0;
+        }
+        else
+        {
+            if ((p_btn->Flags & GBxFlg_Unkn0020) != 0)
+                lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+            lbDisplay.DrawFlags |= 0x8000;
+            draw_box_purple_list(p_btn->X - box_b, p_btn->Y - box_b,
+              2 * box_b + (box_w) + 1, box_h + 1 + 2 * box_b, p_btn->BGColour);
+            lbDisplay.DrawFlags = 0x0010;
+            if ((p_btn->Flags & GBxFlg_Unkn0040) != 0)
+              lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+            draw_box_purple_list(p_btn->X, p_btn->Y, box_w + 1, box_h + 1, p_btn->Colour);
+            lbDisplay.DrawFlags = 0;
+        }
+    }
+
+    if ((p_btn->Flags & GBxFlg_TextRight) != 0)
+    {
+          lbDisplay.DrawFlags |= 0x0080;
+    }
+    else if ((p_btn->Flags & GBxFlg_TextCenter) != 0)
+    {
+          lbDisplay.DrawFlags |= 0x0100;
+    }
+    if (p_btn->DrawTextFn != NULL) {
+        ubyte drawn;
+        //p_btn->DrawTextFn(p_btn); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+          : "=r" (drawn) : "a" (p_btn), "g" (p_btn->DrawTextFn));
+    }
+    lbDisplay.DrawFlags = 0;
     return ret;
 }
 
