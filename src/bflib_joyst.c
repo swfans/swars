@@ -745,10 +745,140 @@ int joy_func_066(struct DevInput *dinp)
 
 int joy_func_081(struct UnkVFXStruct1 *p_vfxu1, short a2, short a3)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_joy_func_081\n"
         : "=r" (ret) : "a" (p_vfxu1), "d" (a2), "b" (a3));
     return ret;
+#endif
+#if defined(DOS)||defined(GO32)
+    ubyte bt;
+    char v4;
+    short v5;
+    short v6;
+    ubyte v8;
+    short v9;
+    ubyte v11;
+    short v12;
+    ubyte v14;
+    char v15;
+    short v16;
+    char v17;
+    short v18;
+    ubyte v20;
+    char v22;
+    ubyte v24;
+    ubyte v25, v26, v27;
+    char v28;
+    sbyte v29;
+
+    v29 = -1;
+    v28 = 0;
+    v24 = 15;
+    if ( a2 == 1 )
+    {
+        v27 = 0x30;
+        v26 = 0x10;
+        v25 = 0x20;
+    }
+    else
+    {
+        v27 = 0xC0;
+        v26 = 0x40;
+        v25 = 0x80;
+    }
+
+    cli();
+
+LABEL_5:
+    if (v24 == 1)
+        goto DONE;
+    --v24;
+    bt = inp(0x201u);
+    v4 = v27 & bt;
+    v5 = 4095;
+LABEL_7:
+    if (v5 == 1)
+        goto DONE;
+    v6 = 0;
+    for (v5 = 4095; v5 > 0; v5--)
+    {
+        bt = inp(0x201u);
+        v8 = v4 ^ v27 & bt;
+        if (v8 == 0)
+            continue;
+        v4 ^= v8;
+        if ( (v26 & v8) == 0 )
+            goto LABEL_7;
+        if ( ++v6 >= 6 )
+            break;
+    }
+    if (v5 == 0)
+        goto DONE;
+
+    for (v9 = 4095; v9 > 0; v9--)
+    {
+        bt = inp(0x201u);
+        v11 = v4 ^ v27 & bt;
+        if (v11 == 0)
+            continue;
+        v4 ^= v11;
+        if ((v25 & v11) != 0)
+            break;
+    }
+    if (v9 == 0)
+        goto DONE;
+    for (v12 = 4095; v12 > 0; v12--)
+    {
+        bt = inp(0x201u);
+        v14 = v4 ^ v27 & bt;
+        if (v14 == 0)
+            continue;
+        v15 = v14 ^ v4;
+        if ((v26 & v14) != 0)
+            break;
+        goto LABEL_5;
+    }
+    if (v12 == 0)
+          goto DONE;
+    v29 = 1;
+    v17 = 4;
+    for (v16 = 4095; v16 > 0; v16--)
+    {
+        bt = inp(0x201u);
+        v22 = v15 ^ v27 & bt;
+        if (v22 == 0)
+            continue;
+        v15 ^= v22;
+        __asm { rcl     bx, 1 }
+        if ( --v17 )
+            continue;
+        if (++v28 == 3)
+            break;
+        for (v18 = 4095; v18 > 0; v18--)
+        {
+            bt = inp(0x201u);
+            v20 = v15 ^ v27 & bt;
+            if (v20 != 0)
+                break;
+        }
+        if (v20 == 0)
+            break;
+        v15 ^= v20;
+        if ((v25 & v20) == 0)
+        {
+            v29 = 9;
+            break;
+        }
+        v17 = 5;
+        v16 = 4095;
+    }
+DONE:
+    sti();
+    return v29;
+#else
+    return 0;
+#endif
 }
 
 void devinput_clear(struct DevInput *dinp)
@@ -816,14 +946,14 @@ int joy_func_067_sub1(void)
 
 int joy_func_067_sub2(void)
 {
-    int v5;
+    int cbi;
 
-    v5 = 0x58;
-    v5 = (1 << 8) | (v5 & 0xFF);
+    cbi = 0x58;
+    cbi = (1 << 8) | (cbi & 0xFF);
     byte_1E2F0C = 1;
     if ( joy_grip_initialized )
     {
-        if (cbptr_call(-31583, 0, v5))
+        if (cbptr_call(-31583, 0, cbi))
         {
             byte_1E2F36 = 1;
             dword_1E2F38 = 1;
@@ -851,23 +981,23 @@ int joy_func_049(struct DevInput *dinp, int a2)
 
 int joy_enumerate_devices(struct DevInput *dinp)
 {
-    int v5;
-    int v7;
+    int cbi;
+    int cbr;
     int joyno;
     ubyte v14;
     struct DevInput *dinp_inc;
 
-    v5 = 0x58;
+    cbi = 0x58;
     dinp->NumberOfDevices = 0;
     for (joyno = 0; joyno < 4; joyno++)
     {
-        v5 = ((joyno + 1) << 8) | (v5 & 0xFF);
-        v7 = cbptr_call(-31567, (intptr_t)dinp_inc, v5);
-        if ((v7 & 2) != 0)
+        cbi = ((joyno + 1) << 8) | (cbi & 0xFF);
+        cbr = cbptr_call(-31567, (intptr_t)dinp_inc, cbi);
+        if ((cbr & 2) != 0)
         {
-            v5 = ((joyno + 1) << 8) | (1 & 0xFF);
+            cbi = ((joyno + 1) << 8) | (1 & 0xFF);
             dinp->NumberOfDevices++;
-            v14 = cbptr_call(-31565, (intptr_t)dinp_inc, v5);
+            v14 = cbptr_call(-31565, (intptr_t)dinp_inc, cbi);
             dinp->DeviceType[joyno] = 112;
             dinp->NumberOfButtons[joyno] = v14 + 1;
             dinp->Init[joyno] = 1;
@@ -1016,7 +1146,11 @@ TRY_TYPE_05:
         }
         memset(&vfxunk1, 0, sizeof(vfxunk1));
         i = 0;
+#if defined(DOS)||defined(GO32)
         if (joy_func_081(&vfxunk1, 1, 6) == 1)
+#else
+        if (0)
+#endif
         {
           dinp->DeviceType[0] = 112;
           dinp->NumberOfButtons[0] = 10;
@@ -1027,7 +1161,11 @@ TRY_TYPE_05:
         {
           i = 1;
         }
+#if defined(DOS)||defined(GO32)
         if (joy_func_081(&vfxunk1, 2, 6) == 1)
+#else
+        if (0)
+#endif
         {
           dinp->DeviceType[1] = 112;
           dinp->NumberOfButtons[1] = 10;
