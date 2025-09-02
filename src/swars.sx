@@ -32,9 +32,7 @@
 .text
 
 .global EXPORT_SYMBOL(joy_grip_initialized);
-.global EXPORT_SYMBOL(data_1e2f36);
 .global EXPORT_SYMBOL(joy_spbal_initialized);
-.global EXPORT_SYMBOL(data_1e5ef8);
 
 .global EXPORT_SYMBOL(lbInkeyToAscii);
 .global EXPORT_SYMBOL(lbInkey_prefixed);

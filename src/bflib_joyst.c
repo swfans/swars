@@ -25,6 +25,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "bfmemory.h"
+
+#include "dos.h"
 #include "swlog.h"
 
 #if defined(DOS)||defined(GO32)
@@ -37,11 +39,19 @@ extern struct TbInputHandler *InputHandler;
 extern uint8_t joy_grip_initialized;
 extern uint8_t joy_spbal_initialized;
 
+extern uint8_t byte_1E2F0C;
+extern int32_t dword_1E2F10;
+extern int32_t dword_1E2F14;
+
 extern int32_t dword_1E2F24;
 extern int32_t dword_1E2F28;
 extern int32_t dword_1E2F2C;
 extern int32_t dword_1E2F30;
 extern uint8_t byte_1E2F34;
+extern uint8_t byte_1E2F36;
+extern int32_t dword_1E2F38;
+
+extern ushort (*cbptr_1E5EF8)(short a1, intptr_t a2, int a3);
 
 extern int16_t word_1E6078;
 extern int16_t word_1E607A;
@@ -411,30 +421,85 @@ int joy_func_065_sub7(struct DevInput *dinp, short ipos)
     return 1;
 }
 
-int joy_func_065_sub9(struct DevInput *dinp, short ipos)
-{
 #if defined(DOS)||defined(GO32)
+
+ubyte joy_port_unkn01_s(ubyte oval)
+{
     int i;
     ubyte val;
 
-    val = dinp->ConfigType[ipos] - 1;
-    _disable();
-    __outbyte(0x201, val);
+    cli();
+    outp(0x201, oval);
     for (i = 10000; i > 0; i--)
     {
-        val = __inbyte(0x201);
-        if ((val & 0xB) == 0)
+        val = inp(0x201);
+        if ((val & 0xF) == 0)
           break;
-        if ((val & 1) == 0)
+        if ((val & 0x01) != 0)
           ++dword_1E2F24;
-        if ((val & 2) == 0)
+        if ((val & 0x02) != 0)
           ++dword_1E2F28;
-        if ((val & 8) == 0)
+        if ((val & 0x04) != 0)
+          ++dword_1E2F2C;
+        if ((val & 0x08) != 0)
           ++dword_1E2F30;
     }
-    _enable();
+    sti();
     byte_1E2F34 = val;
-    if (i == 0)
+    return (i > 0);
+}
+
+ubyte joy_port_unkn02_s(ubyte oval)
+{
+    int i;
+    ubyte val;
+
+    cli();
+    outp(0x201, oval);
+    for (i = 10000; i > 0; i--)
+    {
+        val = inp(0x201);
+        if ((val & 0xB) == 0)
+          break;
+        if ((val & 0x01) != 0)
+          ++dword_1E2F24;
+        if ((val & 0x02) != 0)
+          ++dword_1E2F28;
+        if ((val & 0x08) != 0)
+          ++dword_1E2F30;
+    }
+    sti();
+    byte_1E2F34 = val;
+    return (i > 0);
+}
+
+ubyte joy_port_unkn03_s(ubyte oval)
+{
+    int i;
+    ubyte val;
+
+    cli();
+    outp(0x201, oval);
+    for (i = 10000; i > 0; i--)
+    {
+        val = inp(0x201);
+        if ((val & 0x3) == 0)
+          break;
+        if ((val & 0x01) != 0)
+          ++dword_1E2F24;
+        if ((val & 0x02) != 0)
+          ++dword_1E2F28;
+    }
+    sti();
+    byte_1E2F34 = val;
+    return (i > 0);
+}
+#endif
+
+int joy_func_065_sub9(struct DevInput *dinp, short ipos)
+{
+#if defined(DOS)||defined(GO32)
+    if (!joy_port_unkn02_s(dinp->ConfigType[ipos] - 1))
         return 0;
 #endif
     joy_func_065_lab93(dinp, ipos);
@@ -444,29 +509,7 @@ int joy_func_065_sub9(struct DevInput *dinp, short ipos)
 int joy_func_065_sub4(struct DevInput *dinp, short ipos)
 {
 #if defined(DOS)||defined(GO32)
-    int i;
-    ubyte val;
-
-    val = dinp->ConfigType[ipos] - 1;
-    _disable();
-    __outbyte(0x201, val);
-    for (i = 10000; i > 0; i--)
-    {
-        val = __inbyte(0x201);
-        if ((val & 0xF) == 0)
-          break;
-        if (val & 0x01)
-          ++dword_1E2F24;
-        if (val & 0x02)
-          ++dword_1E2F28;
-        if (val & 0x04)
-          ++dword_1E2F2C;
-        if (val & 0x08)
-          ++dword_1E2F30;
-    }
-    _enable();
-    byte_1E2F34 = val;
-    if (i == 0)
+    if (!joy_port_unkn01_s(dinp->ConfigType[ipos] - 1))
         return -1;
 #endif
     dinp->HatMax[ipos] = (dword_1E2F30 + dword_1E2F2C) >> 2;
@@ -477,25 +520,7 @@ int joy_func_065_sub4(struct DevInput *dinp, short ipos)
 int joy_func_065_sub1(struct DevInput *dinp, short ipos)
 {
 #if defined(DOS)||defined(GO32)
-    int i;
-    ubyte val;
-
-    val = dinp->ConfigType[ipos] - 1;
-    _disable();
-    __outbyte(0x201, val);
-    for (i = 10000; i > 0; i--)
-    {
-        val = __inbyte(0x201);
-        if ((val & 3) == 0)
-          break;
-        if (val & 0x01)
-          ++dword_1E2F24;
-        if (val & 0x02)
-          ++dword_1E2F28;
-    }
-    _enable();
-    byte_1E2F34 = val;
-    if (i == 0)
+    if (!joy_port_unkn03_s(dinp->ConfigType[ipos] - 1))
         return -1;
 #endif
     joy_func_065_lab93(dinp, ipos);
@@ -506,26 +531,7 @@ int joy_func_065_sub2(struct DevInput *dinp, short ipos)
 {
     int i;
 #if defined(DOS)||defined(GO32)
-    ubyte val;
-
-    val = dinp->ConfigType[ipos] - 1;
-    _disable();
-    __outbyte(0x201, val);
-    for (i = 10000; i > 0; i--)
-    {
-        val = __inbyte(0x201);
-        if ((val & 0xB) == 0)
-          break;
-        if (val & 0x01)
-          ++dword_1E2F24;
-        if (val & 0x02)
-          ++dword_1E2F28;
-        if (val & 0x08)
-          ++dword_1E2F30;
-    }
-    _enable();
-    byte_1E2F34 = val;
-    if (i == 0)
+    if (!joy_port_unkn02_s(dinp->ConfigType[ipos] - 1))
         return -1;
 #endif
     if (dword_1E2F30 > dinp->HatMax[ipos])
@@ -721,6 +727,14 @@ int joy_func_065(struct DevInput *dinp)
     return 1;
 }
 
+short vfx1_init(void)
+{
+    int ret;
+    asm volatile ("call ASM_vfx1_init\n"
+        : "=r" (ret) :  : "eax");
+    return ret;
+}
+
 int joy_func_066(struct DevInput *dinp)
 {
     int ret;
@@ -729,12 +743,491 @@ int joy_func_066(struct DevInput *dinp)
     return ret;
 }
 
+int joy_func_081(struct UnkVFXStruct1 *p_vfxu1, short a2, short a3)
+{
+    int ret;
+    asm volatile ("call ASM_joy_func_081\n"
+        : "=r" (ret) : "a" (p_vfxu1), "d" (a2), "b" (a3));
+    return ret;
+}
+
+void devinput_clear(struct DevInput *dinp)
+{
+    memset(dinp, 0, sizeof(struct DevInput));
+    dinp->MinXAxis[0] = 0x10000;
+    dinp->MaxXAxis[0] = 0;
+    dinp->MinYAxis[0] = 0x10000;
+    dinp->MaxYAxis[0] = 0;
+    dinp->MinZAxis[0] = 0x10000;
+    dinp->MaxZAxis[0] = 0;
+    dinp->MinRAxis[0] = 0x10000;
+    dinp->MaxRAxis[0] = 0;
+    dinp->MinUAxis[0] = 0x10000;
+    dinp->MaxUAxis[0] = 0;
+    dinp->MinVAxis[0] = 0x10000;
+    dinp->MaxVAxis[0] = 0;
+    dinp->HatMax[0] = 0;
+    dinp->NumberOfDevices = 1;
+}
+
+ushort cbptr_call(short v26, intptr_t a2, int v27)
+{
+    ushort cb_ret;
+#if defined(DOS)||defined(GO32)
+    cb_ret = MK_FP(*((_WORD *)&cbptr_1E5EF8 + 2), cbptr_1E5EF8)(v26, a2, v27);
+#else
+    cb_ret = cbptr_1E5EF8(v26, a2, v27);
+#endif
+    return cb_ret;
+}
+
+int joy_func_067_sub1(void)
+{
+    short v26;
+    int v27;
+    uint v28;
+
+    if (!joy_grip_initialized)
+        return -1;
+
+    if (dword_1E2F14 == 0)
+        dword_1E2F14 = dos_clock();
+
+    v26 = dos_clock();
+    v27 = dword_1E2F14;
+    v28 = v26 - dword_1E2F14;
+    dword_1E2F10 = v26;
+    if (v26 - dword_1E2F14 > 300)
+    {
+        dword_1E2F14 = v26;
+        if (cbptr_call(-31583, v28, v27))
+        {
+            byte_1E2F36 = 1;
+            dword_1E2F38 = 1;
+        }
+        else
+        {
+            byte_1E2F36 = 1;
+            dword_1E2F38 = -1;
+        }
+    }
+    return dword_1E2F38;
+}
+
+int joy_func_049(struct DevInput *dinp, int a2)
+{
+    int ret;
+    asm volatile ("call ASM_joy_func_049\n"
+        : "=r" (ret) : "a" (dinp), "d" (a2));
+    return ret;
+}
+
 int joy_func_067(struct DevInput *dinp, int a2)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_joy_func_067\n"
         : "=r" (ret) : "a" (dinp), "d" (a2));
     return ret;
+#endif
+    int v4;
+    int v5;
+    int v7;
+    int v10;
+    struct DevInput *v11;
+    struct DevInput *v12;
+    short v13;
+    ubyte v14;
+    int result;
+    int v18;
+    int v22;
+    int NumberOfDevices;
+    int v24;
+    int v25;
+    int v31;
+    int v32;
+    int v38;
+    int v39;
+    int v45;
+    int v46;
+    int v51;
+    int v52;
+    int v53;
+    int v58;
+    int v59;
+    int v60;
+    int v64;
+
+    v4 = a2;
+    v5 = 0xA58;
+    devinput_clear(dinp);
+    dword_1E2F2C = 0;
+    dword_1E2F28 = 0;
+    dword_1E2F24 = 0;
+
+    switch (a2)
+    {
+    case 1:
+    case 2:
+    case 20:
+    case 21:
+        v25 = joy_func_067_sub1();
+        if ( v25 != 1 )
+          goto LABEL_57;
+        result = -1;
+        break;
+    case 3:
+    case 4:
+    case 7:
+    case 8:
+        v60 = joy_func_067_sub1();
+        if ( v60 == 1 )
+          return -1;
+#if defined(DOS)||defined(GO32)
+        if (joy_port_unkn02_s(v60))
+#else
+        if (0)
+#endif
+        {
+          dinp->XCentre[0] = dword_1E2F24;
+          dinp->YCentre[0] = dword_1E2F28;
+          dinp->MaxXAxis[0] = dword_1E2F24 + dword_1E2F24 / 2;
+          v64 = dword_1E2F28;
+          dinp->MaxYAxis[0] = dword_1E2F28 + dword_1E2F28 / 2;
+          dinp->MinXAxis[0] = dword_1E2F24 / 6;
+          dinp->DeviceType[0] = 120;
+          dinp->NumberOfButtons[0] = 4;
+          dinp->Init[0] = 1;
+          dinp->ConfigType[0] = v4;
+          dinp->MinYAxis[0] = v64 / 6;
+          result = 1;
+          dinp->Type = v4;
+        }
+        else
+        {
+          v4 = 2;
+LABEL_57:
+#if defined(DOS)||defined(GO32)
+          if (joy_port_unkn03_s(v25))
+#else
+          if (0)
+#endif
+          {
+            dinp->DeviceType[0] = 112;
+            if ( v4 == 20 )
+            {
+              dinp->DeviceType[0] |= 0x88u;
+            }
+            else if ( v4 == 21 )
+            {
+              dinp->DeviceType[0] |= 0x80u;
+            }
+            dinp->XCentre[0] = dword_1E2F24;
+            dinp->YCentre[0] = dword_1E2F28;
+            dinp->MaxXAxis[0] = dword_1E2F24 + dword_1E2F24 / 2;
+            dinp->MaxYAxis[0] = dword_1E2F28 + dword_1E2F28 / 2;
+            dinp->MinXAxis[0] = dword_1E2F24 / 6;
+            v31 = dword_1E2F28 / 6;
+            dinp->NumberOfButtons[0] = 4;
+            dinp->Init[0] = 1;
+            dinp->ConfigType[0] = v4;
+            dinp->MinYAxis[0] = v31;
+            result = 1;
+            dinp->Type = v4;
+          }
+          else
+          {
+            result = -1;
+            dinp->Type = -1;
+          }
+        }
+        break;
+    case 5:
+    case 12:
+    case 13:
+        v32 = joy_func_067_sub1();
+        if ( v32 != 1 )
+          goto LABEL_82;
+        result = -1;
+        break;
+    case 6:
+        v18 = joy_func_067_sub1();
+        if (v18 == 1)
+        {
+          result = -1;
+          break;
+        }
+
+        memset(&vfxunk1, 0, 6u);
+        v22 = 0;
+        if (joy_func_081(&vfxunk1, 1, 6) == 1)
+        {
+          dinp->DeviceType[0] = 112;
+          dinp->NumberOfButtons[0] = 10;
+          dinp->Init[0] = 1;
+          dinp->ConfigType[0] = 6;
+        }
+        else
+        {
+          v22 = 1;
+        }
+        if (joy_func_081(&vfxunk1, 2, 6) == 1)
+        {
+          dinp->DeviceType[1] = 112;
+          dinp->NumberOfButtons[1] = 10;
+          dinp->Init[1] = 1;
+          NumberOfDevices = dinp->NumberOfDevices;
+          dinp->ConfigType[1] = 6;
+          dinp->NumberOfDevices = NumberOfDevices + 1;
+        }
+        else
+        {
+          ++v22;
+        }
+        if ( v22 >= 2 )
+        {
+          v4 = 9;
+          goto LABEL_44;
+        }
+        goto LABEL_192;
+    case 9:
+LABEL_44:
+        v24 = joy_func_067_sub1();
+        if (v24 == 1)
+          return -1;
+#if defined(DOS)||defined(GO32)
+        if (!joy_port_unkn01_s(v24))
+        {
+          v4 = 13;
+          dword_1E2F2C = 0;
+          dword_1E2F28 = 0;
+          dword_1E2F24 = 0;
+          goto LABEL_82;
+        }
+#endif
+        dinp->XCentre[0] = dword_1E2F24;
+        dinp->YCentre[0] = dword_1E2F28;
+        v51 = dword_1E2F24;
+        dinp->MaxXAxis[0] = dword_1E2F24 + dword_1E2F24 / 2;
+        v52 = dword_1E2F28;
+        dinp->MaxYAxis[0] = dword_1E2F28 + dword_1E2F28 / 2;
+        dinp->MinXAxis[0] = v51 / 6;
+        dinp->DeviceType[0] = 112;
+        dinp->Init[0] = 1;
+        dinp->ConfigType[0] = v4;
+        dinp->NumberOfButtons[0] = 6;
+        dinp->MinYAxis[0] = v52 / 6;
+        dinp->Type = v4;
+        result = 1;
+        break;
+    case 11:
+    case 22:
+        if (!vfx1_init())
+          goto LABEL_190;
+        dinp->MinXAxis[0] = -32766;
+        dinp->MaxXAxis[0] = 32767;
+        dinp->MinYAxis[0] = -12743;
+        dinp->MaxYAxis[0] = 12743;
+        dinp->MinZAxis[0] = -12743;
+        dinp->MaxZAxis[0] = 12743;
+        dinp->DeviceType[0] = 2288;
+        dinp->ConfigType[0] = a2;
+        dinp->Init[0] = 1;
+        goto LABEL_192;
+    case 14:
+    case 15:
+        v53 = joy_func_067_sub1();
+        if ( v53 == 1 )
+          return -1;
+#if defined(DOS)||defined(GO32)
+        if (joy_port_unkn02_s(v53))
+#else
+        if (0)
+#endif
+        {
+          dinp->XCentre[0] = dword_1E2F24;
+          dinp->YCentre[0] = dword_1E2F28;
+          v58 = dword_1E2F24;
+          dinp->MaxXAxis[0] = dword_1E2F24 + dword_1E2F24 / 2;
+          v59 = dword_1E2F28;
+          dinp->MaxYAxis[0] = dword_1E2F28 + dword_1E2F28 / 2;
+          dinp->MinXAxis[0] = v58 / 6;
+          dinp->DeviceType[0] = 120;
+          dinp->NumberOfButtons[0] = 4;
+          dinp->Init[0] = 1;
+          dinp->ConfigType[0] = v4;
+          dinp->MinYAxis[0] = v59 / 6;
+          result = 1;
+          dinp->Type = v4;
+        }
+        else
+        {
+          v4 = 13;
+          dword_1E2F2C = 0;
+          dword_1E2F28 = 0;
+          dword_1E2F24 = 0;
+LABEL_82:
+#if defined(DOS)||defined(GO32)
+          if (joy_port_unkn03_s(v32))
+#else
+          if (0)
+#endif
+          {
+            dinp->XCentre[0] = dword_1E2F24;
+            dinp->YCentre[0] = dword_1E2F28;
+            dinp->MaxXAxis[0] = dword_1E2F24 + dword_1E2F24 / 2;
+            dinp->MaxYAxis[0] = dword_1E2F28 + dword_1E2F28 / 2;
+            dinp->MinXAxis[0] = dword_1E2F24 / 6;
+            v38 = dword_1E2F28 / 6;
+            dinp->DeviceType[0] = 112;
+            dinp->NumberOfButtons[0] = 4;
+            dinp->Init[0] = 1;
+            dinp->ConfigType[0] = v4;
+            dinp->MinYAxis[0] = v38;
+            dinp->Type = v4;
+            result = 1;
+          }
+          else
+          {
+            dinp->Type = -1;
+            result = -1;
+          }
+        }
+        break;
+    case 17:
+#if defined(DOS)||defined(GO32)
+        CallJoy(1);
+#endif
+        dinp->NumberOfDevices = 1;
+        dinp->ConfigType[0] = 17;
+        dinp->Init[0] = 1;
+        dinp->Type = a2;
+        result = 1;
+        break;
+    case 18:
+        if (byte_1E2F0C)
+        {
+          v7 = joy_func_067_sub1();
+        }
+        else
+        {
+          v5 = (1 << 8) | (v5 & 0xFF);
+          byte_1E2F0C = 1;
+          if ( joy_grip_initialized )
+          {
+            if (cbptr_call(-31583, 0, v5))
+            {
+              byte_1E2F36 = 1;
+              dword_1E2F38 = 1;
+              v7 = 1;
+            }
+            else
+            {
+              byte_1E2F36 = 1;
+              dword_1E2F38 = -1;
+              v7 = -1;
+            }
+          }
+          else
+          {
+            v5 = -1;
+            dword_1E2F38 = -1;
+            v7 = -1;
+          }
+        }
+        if ( v7 != 1 )
+          goto LABEL_190;
+        v10 = 1;
+        v11 = dinp;
+        v12 = dinp;
+        dinp->NumberOfDevices = 0;
+        do
+        {
+          v5 = (v10 << 8) | (v5 & 0xFF);
+          v7 = cbptr_call(-31567, (intptr_t)v12, v5);
+          if ( (v7 & 2) != 0 )
+          {
+            v13 = dinp->NumberOfDevices + 1;
+            v5 = (v10 << 8) | (1 & 0xFF);
+            dinp->NumberOfDevices = v13;
+            v14 = cbptr_call(-31565, (intptr_t)v12, v5);
+            v12->DeviceType[0] = 112;
+            v7 = v14 + 1;
+            v12->NumberOfButtons[0] = v7;
+            v11->Init[0] = 1;
+            v12->ConfigType[0] = 18;
+          }
+          ++v10;
+          v11 = (struct DevInput *)((char *)v11 + 1);
+          v12 = (struct DevInput *)((char *)v12 + 4);
+        }
+        while ( v10 < 5 );
+        if ( dinp->NumberOfDevices )
+        {
+          result = 1;
+          dinp->Type = v4;
+        }
+        else
+        {
+LABEL_190:
+          result = -1;
+          dinp->Type = -1;
+        }
+        break;
+    case 19:
+        if (joy_func_049(dinp, 0) == 1)
+        {
+          dinp->ConfigType[0] = a2;
+          result = 1;
+          dinp->Type = a2;
+        }
+        else
+        {
+          result = -1;
+          dinp->Type = -1;
+        }
+        break;
+    case 23:
+    case 24:
+        v39 = joy_func_067_sub1();
+        if ( v39 == 1 )
+          return -1;
+#if defined(DOS)||defined(GO32)
+        if (!joy_port_unkn01_s(v39))
+          return -1;
+#endif
+        dinp->XCentre[0] = dword_1E2F24;
+        dinp->YCentre[0] = dword_1E2F28;
+        dinp->MaxXAxis[0] = dword_1E2F24 + dword_1E2F24 / 2;
+        dinp->MaxYAxis[0] = dword_1E2F28 + dword_1E2F28 / 2;
+        dinp->MinXAxis[0] = dword_1E2F24 / 6;
+        v45 = dword_1E2F28 / 6;
+        dinp->DeviceType[0] = 112;
+        dinp->NumberOfButtons[0] = 4;
+        dinp->Init[0] = 1;
+        dinp->ConfigType[0] = v4;
+        dinp->MinYAxis[0] = v45;
+        dinp->XCentre[1] = dword_1E2F2C;
+        dinp->YCentre[1] = dword_1E2F30;
+        v46 = dword_1E2F2C;
+        dinp->MaxXAxis[1] = dword_1E2F2C + dword_1E2F2C / 2;
+        dinp->MaxYAxis[1] = dword_1E2F30 + dword_1E2F30 / 2;
+        dinp->MinXAxis[1] = v46 / 6;
+        dinp->MinYAxis[1] = dword_1E2F30 / 6;
+        dinp->DeviceType[1] = 112;
+        dinp->NumberOfButtons[1] = 4;
+        dinp->Init[1] = 1;
+        dinp->ConfigType[1] = v4;
+        dinp->Type = v4;
+        result = 1;
+        break;
+    default:
+LABEL_192:
+        dinp->Type = v4;
+        result = 1;
+        break;
+    }
+    return result;
 }
 
 /** Gravis Grip joystick driver initialization.

@@ -954,7 +954,7 @@ aSpaceballName:	/* 0x15F54B */
 
 GLOBAL (joy_grip_initialized)	/* 0x1e2f35 */
 		.byte	0x0
-GLOBAL (data_1e2f36)
+GLOBAL (byte_1E2F36)	/* 0x1E2F36 */
 		.byte	0x0
 GLOBAL (joy_spbal_initialized)	/* 0x1E2F37 */
 		.byte	0x0
@@ -965,7 +965,7 @@ data_1e5ef2:
 		.long	0x0
 data_1e5ef6:
 		.short  0x0
-GLOBAL (data_1e5ef8)
+GLOBAL (cbptr_1E5EF8)	/* 0x1E5EF8 */
 		.long	0x0
 data_1e5efc:
 		.long	0x0
