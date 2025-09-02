@@ -3730,8 +3730,7 @@ ubyte load_game_slot(ubyte click)
         return 0;
     }
     if (save_slot == -1) {
-        show_alert = 1;
-        sprintf(alert_text, "%s", gui_strings[564]);
+        alert_box_text_fmt("%s", gui_strings[564]);
         return 1;
     }
     if (save_slot != 0) {
@@ -3744,17 +3743,14 @@ ubyte load_game_slot(ubyte click)
 
     ret = load_game(ldslot, ldname);
     if (ret == 1) {
-        show_alert = 1;
-        sprintf(alert_text, "%s", gui_strings[565]);
+        alert_box_text_fmt("%s", gui_strings[565]);
         return 1;
     } else if (ret == 2) {
-        show_alert = 1;
-        sprintf(alert_text, "%s", gui_strings[567]);
+        alert_box_text_fmt("%s", gui_strings[567]);
         return 1;
     }
 
-    show_alert = 1;
-    sprintf(alert_text, "%s", gui_strings[572]);
+    alert_box_text_fmt("%s", gui_strings[572]);
 
     // Reading the save might have caused campaign switch
     reload_background_flag = 1;
@@ -4562,8 +4558,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
     campaign_new_game_prepare();
 
     if (save_game_write(0, save_active_desc)) {
-        show_alert = 1;
-        sprintf(alert_text, "%s", gui_strings[566]);
+        alert_box_text_fmt("%s", gui_strings[566]);
     }
 
     if (restore_savegame)  {

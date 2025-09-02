@@ -57,6 +57,7 @@ void show_alert_box(void);
 void init_alert_screen_boxes(void);
 void reset_alert_screen_boxes_flags(void);
 void set_flag01_alert_screen_boxes(void);
+void alert_box_text_fmt(const char *fmt, ...);
 
 ubyte ac_show_title_box(struct ScreenTextBox *box);
 

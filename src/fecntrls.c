@@ -18,9 +18,11 @@
 /******************************************************************************/
 #include "fecntrls.h"
 
+#include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
+#include "game_save.h"
 #include "game_sprts.h"
 #include "game.h"
 #include "swlog.h"
@@ -37,26 +39,44 @@ ubyte ac_do_controls_calibrate(ubyte click);
 
 ubyte do_controls_defaults(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_controls_defaults\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    set_default_user_settings();
+    return 1;
 }
 
 ubyte do_controls_save(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_controls_save\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    const char *msg_str;
+    if (save_user_settings())
+        msg_str = gui_strings[578];
+    else
+        msg_str = gui_strings[577];
+    alert_box_text_fmt("%s", msg_str);
+    return 1;
 }
 
 ubyte do_controls_calibrate(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_controls_calibrate\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    net_unkn_pos_02 = 1;
+    alert_box_text_fmt("%s", gui_strings[574]);
+    return 1;
 }
 
 ubyte show_controls_joystick_box(struct ScreenBox *box)

@@ -92,6 +92,7 @@ extern ubyte enter_game;
 extern short word_1C6F3E;
 extern short word_1C6F40;
 extern ubyte mo_from_agent;
+extern char alert_text[200];
 extern short alert_textpos;
 
 struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};
@@ -436,6 +437,20 @@ void reset_alert_screen_boxes_flags(void)
 void set_flag01_alert_screen_boxes(void)
 {
     alert_OK_button.Flags |= GBxFlg_Unkn0001;
+}
+
+void alert_box_text_va(const char *fmt, va_list arg)
+{
+    vsnprintf(alert_text, sizeof(alert_text), fmt, arg);
+    show_alert = 1;
+}
+
+void alert_box_text_fmt(const char *fmt, ...)
+{
+    va_list val;
+    va_start(val, fmt);
+    alert_box_text_va(fmt, val);
+    va_end(val);
 }
 
 ubyte show_title_box(struct ScreenTextBox *box)
