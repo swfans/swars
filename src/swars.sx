@@ -118095,7 +118095,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		cmp    $0x11,%eax
 		jne    jump_9be71
 		mov    %esp,%eax
-		call   ASM_joy_func_063
+		call   ac_joy_func_063
 		cmp    $0xffffffff,%eax
 		je     jump_9beb1
 		mov    back_buffer,%edi
@@ -118235,7 +118235,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		cmpb   $0x0,EXPORT_SYMBOL(byte_1C4A9F)
 		je     jump_9bfaa
 		mov    $joy_Yaw,%eax
-		call   ASM_joy_func_066
+		call   ac_joy_func_066
 	jump_9bfaa:
 		xor    %cl,%cl
 		mov    %cl,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton

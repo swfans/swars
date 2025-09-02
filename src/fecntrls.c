@@ -18,13 +18,20 @@
 /******************************************************************************/
 #include "fecntrls.h"
 
+#include "bftext.h"
+#include "bflib_joyst.h"
+
 #include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
 #include "game_save.h"
+#include "game_speed.h"
 #include "game_sprts.h"
 #include "game.h"
+#include "network.h"
+#include "player.h"
+#include "purpldrw.h"
 #include "swlog.h"
 /******************************************************************************/
 extern struct ScreenBox controls_keylist_box;
@@ -79,12 +86,214 @@ ubyte do_controls_calibrate(ubyte click)
     return 1;
 }
 
-ubyte show_controls_joystick_box(struct ScreenBox *box)
+ubyte show_controls_joystick_box(struct ScreenBox *p_box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_controls_joystick_box\n"
-        : "=r" (ret) : "a" (box));
+        : "=r" (ret) : "a" (p_box));
     return ret;
+#endif
+    char locstr[52];
+    struct ScreenRect active_rect;
+    PlayerInfo *p_locplayer;
+    const char *text;
+    short wpos_x, wpos_y;
+    short ln_height;
+    short tx_width;
+    ubyte dmuser;
+    int i;
+
+    lbFontPtr = small_med_font;
+    my_set_text_window(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
+    ln_height = font_height('A');
+
+    if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0)
+    {
+        lbFontPtr = med_font;
+        lbDisplay.DrawFlags |= Lb_TEXT_HALIGN_CENTER;
+        text = gui_strings[489];
+        draw_text_purple_list2(0, 110, text, 0);
+        lbDisplay.DrawFlags &= ~Lb_TEXT_HALIGN_CENTER;
+
+        lbFontPtr = small_med_font;
+        wpos_x = 6;
+        wpos_y = 10;
+        text = gui_strings[459];
+        draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+        wpos_y += ln_height + 8;
+
+        for (i = 0; i < 4; i++)
+        {
+            sprintf(locstr, "%s %d", gui_strings[460], i + 1);
+            text = loctext_to_gtext(locstr);
+            draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+            wpos_y += ln_height + 4;
+        }
+
+        copy_box_purple_list(p_box->X + 4, p_box->Y + 4,
+          p_box->Width - 8, p_box->Height - 8);
+
+        lbFontPtr = small_med_font;
+        p_box->Flags |= GBxFlg_BkgndDrawn;
+        ln_height = font_height('A');
+    }
+    wpos_y = 126;
+
+    lbDisplay.DrawFlags |= 0x8000;
+    if (byte_1C4A9F == 17)
+    {
+      if (joy_func_063(locstr) != -1)
+      {
+        text = loctext_to_gtext(locstr);
+        tx_width = my_string_width(locstr);
+        wpos_x = (p_box->Width - tx_width) / 2;
+        draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+      }
+    }
+    else
+    {
+        text = gui_strings[539 + byte_1C4A9F];
+        tx_width = my_string_width(text);
+        wpos_x = (p_box->Width - tx_width) / 2;
+        draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+    }
+    lbDisplay.DrawFlags &= ~0x8000;
+
+    active_rect.X = text_window_x1 + wpos_x;
+    active_rect.Width = tx_width;
+    active_rect.Y = text_window_y1 + wpos_y;
+    active_rect.Height = ln_height;
+    if (mouse_down_over_box(&active_rect))
+    {
+        if (lbDisplay.LeftButton)
+        {
+            sbyte v23;
+            ubyte v24;
+
+            if (byte_1C4A9F)
+                joy_func_066(&joy);
+            lbDisplay.LeftButton = 0;
+
+            v23 = -1;
+            v24 = byte_1C4A9F;
+            while (v23 != 1)
+            {
+                if (++byte_1C4A9F > 24)
+                    byte_1C4A9F = 1;
+                if (v24 == byte_1C4A9F)
+                {
+                    v23 = 1;
+                    byte_1C4A9F = 0;
+                }
+                if (unkn01_maskarr[byte_1C4A9F])
+                    v23 = joy_func_067(&joy, byte_1C4A9F);
+                if (!v24)
+                    v24 = 1;
+            }
+        }
+    }
+    p_locplayer = &players[local_player_no];
+
+    wpos_x = 140;
+    wpos_y = 10;
+
+    sprintf(locstr, "%d", p_locplayer->DoubleMode + 1);
+    lbDisplay.DrawFlags |= 0x8000;
+    text = loctext_to_gtext(locstr);
+    draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+    tx_width = LbTextStringWidth(locstr);
+    lbDisplay.DrawFlags &= ~0x8000;
+
+    active_rect.X = text_window_x1 + wpos_x;
+    active_rect.Width = tx_width;
+    active_rect.Y = text_window_y1 + wpos_y;
+    active_rect.Height = ln_height;
+    if (mouse_down_over_box(&active_rect))
+    {
+        if (lbDisplay.LeftButton)
+        {
+            lbDisplay.LeftButton = 0;
+            if (login_control__State != 5 || nsvc.I.Type == 1)
+            {
+                p_locplayer->DoubleMode++;
+                if (p_locplayer->DoubleMode > 3)
+                    p_locplayer->DoubleMode = 0;
+            }
+            else
+            {
+                p_locplayer->DoubleMode = 0;
+            }
+
+            for (dmuser = p_locplayer->DoubleMode + 1; dmuser < 4; dmuser++)
+            {
+                p_locplayer->UserInput[dmuser].ControlMode = 1;
+            }
+        }
+    }
+
+    wpos_x = 100;
+    wpos_y = ln_height + 18;
+    lbDisplay.DrawFlags |= 0x8000;
+
+    active_rect.Y = text_window_y1 + wpos_y;
+    active_rect.Height = ln_height;
+    for (dmuser = 0; dmuser < p_locplayer->DoubleMode + 1; dmuser++)
+    {
+        ushort ctlmode;
+
+        ctlmode = p_locplayer->UserInput[dmuser].ControlMode;
+        if (ctlmode >= 2)
+        {
+            int n_found;
+
+            i = 0;
+            n_found = 0;
+            while (n_found < ctlmode - 1)
+            {
+                if (joy.Init[i])
+                    n_found++;
+                i++;
+            }
+            sprintf(locstr, "%s %d", gui_strings[463], i);
+            text = loctext_to_gtext(locstr);
+            draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+        }
+        else
+        {
+            sprintf(locstr, "%s", gui_strings[461 + ctlmode]);
+            text = loctext_to_gtext(locstr);
+            draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+        }
+        tx_width = LbTextStringWidth(locstr);
+
+        active_rect.X = text_window_x1 + wpos_x;
+        active_rect.Width = tx_width;
+        if (mouse_down_over_box(&active_rect))
+        {
+            if (lbDisplay.LeftButton)
+            {
+                lbDisplay.LeftButton = 0;
+
+                ctlmode = p_locplayer->UserInput[dmuser].ControlMode + 1;
+                p_locplayer->UserInput[dmuser].ControlMode = ctlmode;
+                if (!byte_1C4A9F && ctlmode == 2)
+                    p_locplayer->UserInput[dmuser].ControlMode = 0;
+                if (p_locplayer->UserInput[dmuser].ControlMode > joy.NumberOfDevices + 1)
+                    p_locplayer->UserInput[dmuser].ControlMode = 0;
+            }
+        }
+        wpos_y += ln_height + 4;
+    }
+    lbDisplay.DrawFlags &= ~0x8000;
+
+    //controls_calibrate_button.DrawFn(&controls_calibrate_button); -- incompatible calling convention
+    {
+        ubyte drawn;
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&controls_calibrate_button), "g" (controls_calibrate_button.DrawFn));
+    }
+    return 0;
 }
 
 void init_controls_screen_boxes(void)

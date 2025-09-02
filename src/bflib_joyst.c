@@ -84,6 +84,14 @@ int joy_func_251(int val, int acen, int amin, int amax)
     return ret;
 }
 
+int joy_func_063(char *textbuf)
+{
+    int ret;
+    asm volatile ("call ASM_joy_func_063\n"
+        : "=r" (ret) : "a" (textbuf));
+    return ret;
+}
+
 void joy_func_065_lab93(struct DevInput *dinp, short ipos)
 {
     long val, thresh;
@@ -711,6 +719,14 @@ int joy_func_065(struct DevInput *dinp)
         }
     }
     return 1;
+}
+
+int joy_func_066(struct DevInput *dinp)
+{
+    int ret;
+    asm volatile ("call ASM_joy_func_066\n"
+        : "=r" (ret) : "a" (dinp));
+    return ret;
 }
 
 int joy_func_067(struct DevInput *dinp, int a2)
