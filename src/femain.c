@@ -481,6 +481,7 @@ void show_sysmenu_screen(void)
 #if 0
     asm volatile ("call ASM_show_sysmenu_screen\n"
         :  :  : "eax" );
+    return;
 #endif
     int i;
     ubyte sysscrn_no;
@@ -571,7 +572,7 @@ void show_sysmenu_screen(void)
     if (sysscrn_no)
     {
         game_system_screen = sysscrn_no;
-        mark_system_menu_screen_boxes_redraw();
+        unkn13_SYSTEM_button.Flags &= ~(GBxFlg_TextCopied|GBxFlg_BkCopied);
         reset_sys_scr_shared_boxes_flags();
         update_sys_scr_shared_header(sysscrn_no);
         if (game_projector_speed)
