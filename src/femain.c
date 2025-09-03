@@ -478,8 +478,151 @@ ubyte show_title_box(struct ScreenTextBox *box)
 
 void show_sysmenu_screen(void)
 {
+#if 0
     asm volatile ("call ASM_show_sysmenu_screen\n"
         :  :  : "eax" );
+#endif
+    int i;
+    ubyte sysscrn_no;
+    ubyte drawn;
+    ubyte v2;
+
+    if ((game_projector_speed && is_sys_scr_shared_header_flag01()) || (lbKeyOn[KC_SPACE] && !edit_flag))
+    {
+        lbKeyOn[KC_SPACE] = 0;
+
+        set_flag02_sysmenu_boxes();
+        set_flag02_sys_scr_shared_boxes();
+        switch (game_system_screen)
+        {
+        case 1:
+            set_flag02_net_screen_boxes();
+            break;
+        case 2:
+            set_flag02_storage_screen_boxes();
+            break;
+        case 3:
+            set_flag02_controls_screen_boxes();
+            break;
+        case 4:
+            set_flag02_audio_screen_boxes();
+            break;
+        case 5:
+            set_flag02_gfx_screen_boxes();
+            break;
+        }
+    }
+
+    v2 = 1;
+    sysscrn_no = 0;
+    if (enter_game) {
+        sysscrn_no = game_system_screen;
+        enter_game = 0;
+    }
+
+    //drawn = unkn13_SYSTEM_button.DrawFn(&unkn13_SYSTEM_button); -- incompatible calling convention
+    asm volatile ("call *%2\n"
+        : "=r" (drawn) : "a" (&unkn13_SYSTEM_button), "g" (unkn13_SYSTEM_button.DrawFn));
+    if (drawn)
+    {
+        for (i = 0; i < SYSMNU_BUTTONS_COUNT; i++)
+        {
+            if (((ingame.Flags & 0x0010) != 0) && (i == 1 || i == 2))
+                continue;
+            if (restore_savegame && i < 5)
+                continue;
+            //drawn = sysmnu_buttons[i].DrawFn(&sysmnu_buttons[i]); -- incompatible calling convention
+            asm volatile ("call *%2\n"
+                : "=r" (drawn) : "a" (&sysmnu_buttons[i]), "g" (sysmnu_buttons[i].DrawFn));
+            if (!drawn)
+                v2 = 0;
+            if (enter_game) {
+                sysscrn_no = i + 1;
+                enter_game = 0;
+            }
+        }
+        if (v2 && (game_system_screen != 0) && (game_system_screen < 6))
+        {
+            drawn = show_sys_scr_shared_header();
+            if (drawn && (game_system_screen - 1) <= 4)
+            {
+                switch (game_system_screen)
+                {
+                case 1:
+                    show_netgame_unkn_case1();
+                    break;
+                case 2:
+                    show_storage_screen();
+                    break;
+                case 3:
+                    show_options_controls_screen();
+                    break;
+                case 4:
+                    show_options_audio_screen();
+                    break;
+                case 5:
+                    show_options_visual_screen();
+                    break;
+                }
+            }
+        }
+    }
+
+    if (sysscrn_no)
+    {
+        game_system_screen = sysscrn_no;
+        unkn13_SYSTEM_button.Flags &= ~(GBxFlg_TextCopied|GBxFlg_BkCopied);
+        reset_sys_scr_shared_boxes_flags();
+        update_sys_scr_shared_header(sysscrn_no);
+        if (game_projector_speed)
+        {
+            set_flag02_sys_scr_shared_boxes();
+        }
+        switch (game_system_screen)
+        {
+          case 1:
+            game_projector_speed = 1;
+            reset_net_screen_boxes_flags();
+            set_flag01_net_screen_boxes();
+            break;
+          case 2:
+            save_slot_base = 0;
+            load_save_slot_names();
+            reset_storage_screen_boxes_flags();
+            break;
+          case 3:
+            reset_controls_screen_boxes_flags();
+            if (game_projector_speed)
+                set_flag02_controls_screen_boxes();
+            break;
+          case 4:
+            reset_options_audio_boxes_flags();
+            break;
+          case 5:
+            reset_options_visual_boxes_flags();
+            break;
+          case 6:
+            if (login_control__State == 5)
+            {
+                network_players[LbNetworkPlayerNumber()].Type = 13;
+                byte_15516D = -1;
+                byte_15516C = -1;
+                switch_net_screen_boxes_to_initiate();
+                net_unkn_func_33();
+            }
+            screentype = SCRT_MAINMENU;
+            if (restore_savegame) {
+                restore_savegame = 0;
+                sysmnu_buttons[5].Y += 150;
+            }
+            game_system_screen = 0;
+            if ((ingame.Flags & 0x0010) != 0)
+                save_game_write(0, save_active_desc);
+            break;
+        }
+        edit_flag = 0;
+        reload_background_flag = 1;
+    }
 }
 
 ubyte do_sysmnu_button(ubyte click)
