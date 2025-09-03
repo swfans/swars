@@ -213,12 +213,13 @@ void init_login_screen_boxes(void)
     login_continue_button.X = (scr_w - login_continue_button.Width) / 2 - 1;
     login_abort_button.X = (scr_w - login_abort_button.Width) / 2  - 1;
 
-    login_continue_button.AccelKey = 28;
-    login_abort_button.AccelKey = 1;
     login_continue_button.CallBackFn = ac_do_login_2;
     login_abort_button.CallBackFn = ac_do_abort_2;
     login_campaigns_box.SpecialDrawFn = show_campaigns_list;
     login_name_box.SpecialDrawFn = show_login_name;
+
+    login_continue_button.AccelKey = KC_RETURN;
+    login_abort_button.AccelKey = KC_ESCAPE;
 }
 
 void reset_login_screen_boxes_flags(void)

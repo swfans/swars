@@ -343,8 +343,8 @@ void init_main_screen_boxes(void)
     main_quit_button.CallBackFn = ac_main_do_my_quit;
     main_load_button.CallBackFn = ac_goto_savegame;
 
-    main_login_button.AccelKey = 28;
-    main_quit_button.AccelKey = 1;
+    main_login_button.AccelKey = KC_RETURN;
+    main_quit_button.AccelKey = KC_ESCAPE;
 }
 
 void set_flag01_main_screen_boxes(void)
@@ -432,7 +432,7 @@ void init_alert_screen_boxes(void)
 
     alert_box.X = (scr_w - alert_box.Width) / 2 - 1;
     alert_OK_button.X = (scr_w - alert_OK_button.Width) / 2 - 1;
-    alert_OK_button.AccelKey = 28;
+    alert_OK_button.AccelKey = KC_RETURN;
 }
 
 void reset_alert_screen_boxes_flags(void)
