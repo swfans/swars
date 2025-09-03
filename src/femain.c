@@ -571,7 +571,7 @@ void show_sysmenu_screen(void)
     if (sysscrn_no)
     {
         game_system_screen = sysscrn_no;
-        unkn13_SYSTEM_button.Flags &= ~(GBxFlg_TextCopied|GBxFlg_BkCopied);
+        mark_system_menu_screen_boxes_redraw();
         reset_sys_scr_shared_boxes_flags();
         update_sys_scr_shared_header(sysscrn_no);
         if (game_projector_speed)
@@ -580,28 +580,26 @@ void show_sysmenu_screen(void)
         }
         switch (game_system_screen)
         {
-          case 1:
+        case 1:
             game_projector_speed = 1;
             reset_net_screen_boxes_flags();
             set_flag01_net_screen_boxes();
             break;
-          case 2:
+        case 2:
             save_slot_base = 0;
             load_save_slot_names();
             reset_storage_screen_boxes_flags();
             break;
-          case 3:
+        case 3:
             reset_controls_screen_boxes_flags();
-            if (game_projector_speed)
-                set_flag02_controls_screen_boxes();
             break;
-          case 4:
+        case 4:
             reset_options_audio_boxes_flags();
             break;
-          case 5:
+        case 5:
             reset_options_visual_boxes_flags();
             break;
-          case 6:
+        case 6:
             if (login_control__State == 5)
             {
                 network_players[LbNetworkPlayerNumber()].Type = 13;
@@ -1052,7 +1050,7 @@ void reset_system_menu_boxes_flags(void)
     }
 }
 
-void clear_someflags_system_menu_screen_boxes(void)
+void mark_system_menu_screen_boxes_redraw(void)
 {
     unkn13_SYSTEM_button.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_BkCopied);
 }

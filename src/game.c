@@ -3758,7 +3758,7 @@ ubyte load_game_slot(ubyte click)
     load_objectives_text();
     init_weapon_text();
 
-    clear_someflags_system_menu_screen_boxes();
+    mark_system_menu_screen_boxes_redraw();
     mark_sys_scr_shared_header_box_redraw();
     mark_sys_scr_shared_content_box_redraw();
     mark_storage_screen_boxes_redraw();
