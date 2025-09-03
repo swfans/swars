@@ -1,14 +1,14 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file fecntrls.h
- *     Header file for fecntrls.c.
+/** @file feshared.h
+ *     Header file for feshared.c.
  * @par Purpose:
- *     Front-end desktop and menu system, research screen.
+ *     Front-end desktop and menu system, items shared between screens.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
- * @date     22 Apr 2023 - 22 Oct 2023
+ * @date     22 Apr 2024 - 03 Sep 2025
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef FECNTRLS_H
-#define FECNTRLS_H
+#ifndef FESHARED_H
+#define FESHARED_H
 
 #include "bftypes.h"
 
@@ -27,16 +27,22 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct ScreenBox;
 
 #pragma pack()
 /******************************************************************************/
+extern struct ScreenTextBox system_screen_shared_header_box;
+extern struct ScreenBox system_screen_shared_content_box;
 
-void init_controls_screen_boxes(void);
-void reset_controls_screen_boxes_flags(void);
-ubyte show_options_controls_screen(void);
-void set_flag01_controls_screen_boxes(void);
-void set_flag02_controls_screen_boxes(void);
+TbBool is_sys_scr_shared_header_flag01(void);
+void mark_sys_scr_shared_header_box_redraw(void);
+void update_sys_scr_shared_header(ubyte sysscrn_no);
+ubyte show_sys_scr_shared_header(void);
 
+void mark_sys_scr_shared_content_box_redraw(void);
+
+void reset_sys_scr_shared_boxes_flags(void);
+void set_flag02_sys_scr_shared_boxes(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

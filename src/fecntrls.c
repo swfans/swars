@@ -22,6 +22,7 @@
 #include "bflib_joyst.h"
 
 #include "femain.h"
+#include "feshared.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -34,7 +35,6 @@
 #include "purpldrw.h"
 #include "swlog.h"
 /******************************************************************************/
-extern struct ScreenBox controls_keylist_box;
 extern struct ScreenBox controls_joystick_box;
 extern struct ScreenButton controls_defaults_button;
 extern struct ScreenButton controls_save_button;
@@ -43,6 +43,7 @@ extern struct ScreenButton controls_calibrate_button;
 ubyte ac_do_controls_defaults(ubyte click);
 ubyte ac_do_controls_save(ubyte click);
 ubyte ac_do_controls_calibrate(ubyte click);
+ubyte ac_show_settings_controls_list(struct ScreenBox *box);
 
 ubyte do_controls_defaults(ubyte click)
 {
@@ -296,13 +297,37 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     return 0;
 }
 
+ubyte show_settings_controls_list(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_settings_controls_list\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_options_controls_screen(void)
+{
+    ubyte drawn;
+
+    //drawn = system_screen_shared_content_box.DrawFn(&system_screen_shared_content_box); -- incompatible calling convention
+    asm volatile ("call *%2\n"
+        : "=r" (drawn) : "a" (&system_screen_shared_content_box), "g" (system_screen_shared_content_box.DrawFn));
+    if (drawn == 3) {
+        show_settings_controls_list(&system_screen_shared_content_box);
+        //drawn = controls_joystick_box.DrawFn(&controls_joystick_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&controls_joystick_box), "g" (controls_joystick_box.DrawFn));
+    }
+    return drawn;
+}
+
 void init_controls_screen_boxes(void)
 {
     short scr_w, start_x;
 
     scr_w = lbDisplay.GraphicsWindowWidth;
 
-    init_screen_box(&controls_keylist_box, 213u, 72u, 420u, 354, 6);
+    init_screen_box(&system_screen_shared_content_box, 213u, 72u, 420u, 354, 6);
     init_screen_button(&controls_defaults_button, 219u, 405u,
       gui_strings[484], 6, med2_font, 1, 0);
     controls_defaults_button.CallBackFn = ac_do_controls_defaults;
@@ -316,19 +341,19 @@ void init_controls_screen_boxes(void)
       gui_strings[485], 6, med2_font, 1, 0);
     controls_calibrate_button.CallBackFn = ac_do_controls_calibrate;
 
-    start_x = (scr_w - controls_joystick_box.Width - controls_keylist_box.Width - 23) / 2;
+    start_x = (scr_w - controls_joystick_box.Width - system_screen_shared_content_box.Width - 23) / 2;
 
     controls_joystick_box.X = start_x + 7;
     controls_calibrate_button.X = controls_joystick_box.X + 50;
 
-    controls_keylist_box.X = controls_joystick_box.X + controls_joystick_box.Width + 9;
-    controls_defaults_button.X = controls_keylist_box.X + 6;
-    controls_save_button.X = controls_keylist_box.X + controls_keylist_box.Width - controls_save_button.Width - 6;
+    system_screen_shared_content_box.X = controls_joystick_box.X + controls_joystick_box.Width + 9;
+    controls_defaults_button.X = system_screen_shared_content_box.X + 6;
+    controls_save_button.X = system_screen_shared_content_box.X + system_screen_shared_content_box.Width - controls_save_button.Width - 6;
 }
 
 void reset_controls_screen_boxes_flags(void)
 {
-    controls_keylist_box.Flags = GBxFlg_Unkn0001;
+    system_screen_shared_content_box.Flags = GBxFlg_Unkn0001;
     controls_joystick_box.Flags = GBxFlg_Unkn0001;
 }
 
@@ -339,9 +364,13 @@ void set_flag01_controls_screen_boxes(void)
     controls_calibrate_button.Flags |= GBxFlg_Unkn0001;
 }
 
-void clear_someflags_controls_screen_boxes(void)
+void set_flag02_controls_screen_boxes(void)
 {
-    controls_keylist_box.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_BkCopied);
+    controls_defaults_button.Flags |= GBxFlg_Unkn0002;
+    controls_calibrate_button.Flags |= GBxFlg_Unkn0002;
+    controls_save_button.Flags |= GBxFlg_Unkn0002;
+    controls_joystick_box.Flags |= GBxFlg_Unkn0002;
+    system_screen_shared_content_box.Flags |= GBxFlg_Unkn0002;
 }
 
 /******************************************************************************/

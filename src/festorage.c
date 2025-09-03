@@ -19,6 +19,7 @@
 #include "festorage.h"
 
 #include "femain.h"
+#include "feshared.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -30,7 +31,6 @@ extern struct ScreenButton storage_LOAD_button;
 extern struct ScreenButton storage_SAVE_button;
 extern struct ScreenButton storage_NEW_MORTAL_button;
 extern struct ScreenTextBox storage_slots_box;
-extern struct ScreenTextBox storage_header_box;
 
 ubyte ac_do_storage_NEW_MORTAL(ubyte click);
 ubyte ac_load_game_slot(ubyte click);
@@ -45,14 +45,24 @@ ubyte show_menu_storage_slots_box(struct ScreenTextBox *box)
     return ret;
 }
 
+ubyte show_storage_screen(void)
+{
+    ubyte drawn;
+
+    //drawn = storage_slots_box.DrawFn(&storage_slots_box); -- incompatible calling convention
+    asm volatile ("call *%2\n"
+        : "=r" (drawn) : "a" (&storage_slots_box), "g" (storage_slots_box.DrawFn));
+    return drawn;
+}
+
 void init_storage_screen_boxes(void)
 {
     short scr_w, start_x;
 
     scr_w = lbDisplay.GraphicsWindowWidth;
 
-    init_screen_text_box(&storage_header_box, 213u, 25u, 420u, 38, 6, big_font, 1);
-    storage_header_box.DrawTextFn = ac_show_title_box;
+    init_screen_text_box(&system_screen_shared_header_box, 213u, 25u, 420u, 38, 6, big_font, 1);
+    system_screen_shared_header_box.DrawTextFn = ac_show_title_box;
 
     init_screen_text_box(&storage_slots_box, 213u, 72u, 420u, 354, 6, med2_font, 1);
     storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
@@ -74,7 +84,7 @@ void init_storage_screen_boxes(void)
 
     start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - storage_slots_box.Width - 7) / 2;
 
-    storage_header_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
+    system_screen_shared_header_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
     storage_slots_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
 
     storage_LOAD_button.X = storage_slots_box.X + 6;
@@ -85,8 +95,8 @@ void init_storage_screen_boxes(void)
 
 void reset_storage_screen_boxes_flags(void)
 {
-    storage_header_box.Flags = GBxFlg_Unkn0001;
-    storage_slots_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
+    storage_slots_box.Flags = GBxFlg_Unkn0001;
+    storage_slots_box.Flags |= (GBxFlg_RadioBtn | GBxFlg_IsMouseOver);
 }
 
 void set_flag01_storage_screen_boxes(void)
@@ -96,9 +106,13 @@ void set_flag01_storage_screen_boxes(void)
     storage_NEW_MORTAL_button.Flags |= GBxFlg_Unkn0001;
 }
 
-void clear_someflags_storage_screen_boxes(void)
+void set_flag02_storage_screen_boxes(void)
 {
-    storage_header_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_BkCopied);
+    storage_slots_box.Flags |= 0x0002;
+}
+
+void mark_storage_screen_boxes_redraw(void)
+{
     storage_slots_box.Flags &= ~(GBxFlg_BkgndDrawn | GBxFlg_TextRight | GBxFlg_BkCopied);
 }
 

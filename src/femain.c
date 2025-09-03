@@ -33,13 +33,19 @@
 #include "campaign.h"
 #include "display.h"
 #include "febrief.h"
+#include "fecntrls.h"
+#include "fecryo.h"
 #include "feequip.h"
 #include "femail.h"
-#include "fecryo.h"
+#include "fenet.h"
+#include "feoptions.h"
 #include "feresearch.h"
+#include "feshared.h"
+#include "festorage.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "game_data.h"
+#include "game_save.h"
 #include "game_speed.h"
 #include "game_sprts.h"
 #include "game.h"
@@ -437,6 +443,15 @@ void reset_alert_screen_boxes_flags(void)
 void set_flag01_alert_screen_boxes(void)
 {
     alert_OK_button.Flags |= GBxFlg_Unkn0001;
+}
+
+void set_flag02_sysmenu_boxes(void)
+{
+    int i;
+
+    unkn13_SYSTEM_button.Flags |= GBxFlg_Unkn0002;
+    for (i = 0; i != SYSMNU_BUTTONS_COUNT; i++)
+        sysmnu_buttons[i].Flags |= GBxFlg_Unkn0002;
 }
 
 void alert_box_text_va(const char *fmt, va_list arg)

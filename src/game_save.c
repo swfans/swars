@@ -538,12 +538,15 @@ void load_save_slot_names(void)
     char locstr[DISKPATH_SIZE];
     int i;
 
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < 9; i++)
     {
         TbFileHandle fh;
         int slot;
 
-        slot = save_slot_base + i + 1;
+        if (i == 8)
+            slot = 0;
+        else
+            slot = save_slot_base + i + 1;
         get_saved_game_fname(locstr, slot);
 
         if (!LbFileExists(locstr)) {

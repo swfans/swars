@@ -117832,7 +117832,7 @@ GLOBAL_FUNC(ASM_show_brief_netscan_box)	/* 0x099AC8 */
 
 
 /*----------------------------------------------------------------*/
-show_netgame_unkn_case1:	/* 0x09BA5C */
+GLOBAL_FUNC(ASM_show_netgame_unkn_case1)	/* 0x09BA5C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -120347,7 +120347,7 @@ GLOBAL_FUNC(ASM_show_sysmenu_screen)	/* 0x09D7B8 */
 		mov    %dh,%al
 		cmp    $0x6,%eax
 		jge    jump_9da9b
-		mov    $storage_header_box,%eax
+		mov    $EXPORT_SYMBOL(system_screen_shared_header_box),%eax
 		call   *data_1c703c
 		test   %al,%al
 		jne    jump_9dc4e
@@ -120413,7 +120413,7 @@ GLOBAL_FUNC(ASM_show_sysmenu_screen)	/* 0x09D7B8 */
 /*----------------------------------------------------------------*/
 func_9dbb8:
 /*----------------------------------------------------------------*/
-		call   show_netgame_unkn_case1
+		call   ac_show_netgame_unkn_case1
 		jmp    jump_9da9b
 
 
@@ -120428,12 +120428,12 @@ func_9dbc2:
 /*----------------------------------------------------------------*/
 func_9dbd2:
 /*----------------------------------------------------------------*/
-		mov    $controls_keylist_box,%eax
+		mov    $EXPORT_SYMBOL(system_screen_shared_content_box),%eax
 		call   *data_1c706c
 		and    $0xff,%eax
 		cmp    $0x3,%eax
 		jne    jump_9da9b
-		mov    $controls_keylist_box,%eax
+		mov    $EXPORT_SYMBOL(system_screen_shared_content_box),%eax
 		call   ac_show_settings_controls_list
 		mov    $controls_joystick_box,%eax
 		call   *data_1c726c
@@ -120459,12 +120459,12 @@ func_9dc05:
 /*----------------------------------------------------------------*/
 func_9dc26:
 /*----------------------------------------------------------------*/
-		mov    $controls_keylist_box,%eax
+		mov    $EXPORT_SYMBOL(system_screen_shared_content_box),%eax
 		call   *data_1c706c
 		and    $0xff,%eax
 		cmp    $0x3,%eax
 		jne    jump_9da9b
-		mov    $controls_keylist_box,%eax
+		mov    $EXPORT_SYMBOL(system_screen_shared_content_box),%eax
 		call   ASM_show_netgame_unkn1
 		jmp    jump_9da9b
 	jump_9dc4e:
@@ -188709,7 +188709,7 @@ data_1c6ffc:
 		.fill   0x18
 data_1c7014:
 		.fill   0x8
-GLOBAL (storage_header_box)	/* 0x1C701C */
+GLOBAL (system_screen_shared_header_box)	/* 0x1C701C */
 		.fill   0x18
 data_1c7034:
 		.fill   0x8
@@ -188719,7 +188719,7 @@ data_1c7040:
 		.fill   0x18
 data_1c7058:
 		.fill   0x8
-GLOBAL (controls_keylist_box)	/* 0x1C7060 */
+GLOBAL (system_screen_shared_content_box)	/* 0x1C7060 */
 		.fill   0xa
 data_1c706a:
 		.short  0x0

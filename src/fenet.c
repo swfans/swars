@@ -528,6 +528,13 @@ ubyte do_unkn8_EJECT(ubyte click)
     return ret;
 }
 
+void show_netgame_unkn_case1(void)
+{
+    asm volatile (
+      "call ASM_show_netgame_unkn_case1\n"
+        :  :  : "eax" );
+}
+
 void init_net_screen_boxes(void)
 {
     short scr_w, start_x;
@@ -640,6 +647,25 @@ void set_flag01_net_screen_boxes(void)
     net_unkn40_button.Flags |= GBxFlg_Unkn0001;
     unkn8_EJECT_button.Flags |= GBxFlg_Unkn0001;
     net_groups_LOGON_button.Flags |= GBxFlg_Unkn0001;
+}
+
+void set_flag02_net_screen_boxes(void)
+{
+    net_INITIATE_button.Flags |= GBxFlg_Unkn0002;
+    net_groups_LOGON_button.Flags |= GBxFlg_Unkn0002;
+    net_SET_button.Flags |= GBxFlg_Unkn0002;
+    net_SET2_button.Flags |= GBxFlg_Unkn0002;
+    net_groups_box.Flags |= GBxFlg_Unkn0002;
+    net_users_box.Flags |= GBxFlg_Unkn0002;
+    net_faction_box.Flags |= GBxFlg_Unkn0002;
+    net_team_box.Flags |= GBxFlg_Unkn0002;
+    net_unkn21.Flags |= GBxFlg_Unkn0002;
+    net_benefits_box.Flags |= GBxFlg_Unkn0002;
+    net_protocol_box.Flags |= GBxFlg_Unkn0002;
+    net_protocol_select_button.Flags |= GBxFlg_Unkn0002;
+    net_unkn40_button.Flags |= GBxFlg_Unkn0002;
+    net_protocol_option_button.Flags |= GBxFlg_Unkn0002;
+    net_comms_box.Flags |= GBxFlg_Unkn0002;
 }
 
 void switch_net_screen_boxes_to_initiate(void)
