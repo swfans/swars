@@ -293,6 +293,7 @@ struct TbNetworkSessionList { // sizeof=218
 #pragma pack()
 /******************************************************************************/
 extern ubyte data_1c4a70;
+extern ubyte net_unkn_pos_01a;
 extern ubyte net_unkn_pos_01b;
 extern ubyte net_players_num;
 extern struct TbNetworkService NetworkServicePtr;

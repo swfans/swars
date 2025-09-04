@@ -118918,49 +118918,49 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+208
 		je     jump_9c839
 		mov    %bl,EXPORT_SYMBOL(lbKeyOn)+208
-		incb   net_unkn_pos_01
+		incb   EXPORT_SYMBOL(net_unkn_pos_01a)
 		mov    data_15511d,%eax
 		sar    $0x18,%eax
 		cmp    $0x2e,%eax
 		jle    jump_9c839
-		movb   $0x1,net_unkn_pos_01
+		movb   $0x1,EXPORT_SYMBOL(net_unkn_pos_01a)
 	jump_9c839:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+200
 		je     jump_9c864
 		xor    %dh,%dh
 		mov    %dh,EXPORT_SYMBOL(lbKeyOn)+200
-		decb   net_unkn_pos_01
+		decb   EXPORT_SYMBOL(net_unkn_pos_01a)
 		mov    data_15511d,%eax
 		sar    $0x18,%eax
 		cmp    $0x1,%eax
 		jge    jump_9c864
-		movb   $0x2e,net_unkn_pos_01
+		movb   $0x2e,EXPORT_SYMBOL(net_unkn_pos_01a)
 	jump_9c864:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+205
 		je     jump_9c890
 		xor    %ch,%ch
 		mov    %ch,EXPORT_SYMBOL(lbKeyOn)+205
-		addb   $0x17,net_unkn_pos_01
+		addb   $0x17,EXPORT_SYMBOL(net_unkn_pos_01a)
 		mov    data_15511d,%eax
 		sar    $0x18,%eax
 		cmp    $0x2e,%eax
 		jle    jump_9c890
-		subb   $0x2e,net_unkn_pos_01
+		subb   $0x2e,EXPORT_SYMBOL(net_unkn_pos_01a)
 	jump_9c890:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+203
 		je     jump_9c8c8
 		xor    %dh,%dh
 		mov    %dh,EXPORT_SYMBOL(lbKeyOn)+203
-		mov    net_unkn_pos_01,%bl
+		mov    EXPORT_SYMBOL(net_unkn_pos_01a),%bl
 		sub    $0x17,%bl
-		mov    %bl,net_unkn_pos_01
+		mov    %bl,EXPORT_SYMBOL(net_unkn_pos_01a)
 		mov    data_15511d,%eax
 		sar    $0x18,%eax
 		cmp    $0x1,%eax
 		jge    jump_9c8c8
 		mov    %bl,%bh
 		add    $0x2e,%bh
-		mov    %bh,net_unkn_pos_01
+		mov    %bh,EXPORT_SYMBOL(net_unkn_pos_01a)
 	jump_9c8c8:
 		mov    data_15511d,%eax
 		sar    $0x18,%eax
@@ -118973,7 +118973,7 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+28
 		je     jump_9c8f7
 		inc    %al
-		mov    %al,data_1c4970
+		mov    %al,EXPORT_SYMBOL(byte_1C4970)
 	jump_9c8f7:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+14
 		je     jump_9c977
@@ -118998,12 +118998,12 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 		mov    %cl,EXPORT_SYMBOL(lbInkey_prefixed)
 		mov    EXPORT_SYMBOL(lbInkey_prefixed),%ah
 		mov    %ah,EXPORT_SYMBOL(lbInkey)
-		mov    net_unkn_pos_01,%ah
-		mov    %cl,data_1c4970
+		mov    EXPORT_SYMBOL(net_unkn_pos_01a),%ah
+		mov    %cl,EXPORT_SYMBOL(byte_1C4970)
 		mov    %ah,net_unkn_pos_01b
 		jmp    jump_9c977
 	jump_9c966:
-		mov    data_1c4970,%al
+		mov    EXPORT_SYMBOL(byte_1C4970),%al
 		test   %al,%al
 		jbe    jump_9c8e7
 		cmp    $0x1,%al
@@ -119462,7 +119462,7 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 		xor    %dl,%dl
 		mov    %dl,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
 		mov    0x40(%esp),%al
-		mov    %al,net_unkn_pos_01
+		mov    %al,EXPORT_SYMBOL(net_unkn_pos_01a)
 		mov    %al,net_unkn_pos_01b
 		mov    %dl,EXPORT_SYMBOL(lbInkey_prefixed)
 		mov    EXPORT_SYMBOL(lbInkey_prefixed),%al
@@ -119747,7 +119747,7 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 		mov    %bl,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
 		mov    0x40(%esp),%al
 		add    $0x17,%al
-		mov    %al,net_unkn_pos_01
+		mov    %al,EXPORT_SYMBOL(net_unkn_pos_01a)
 		mov    %al,net_unkn_pos_01b
 		mov    %bl,EXPORT_SYMBOL(lbInkey_prefixed)
 		mov    EXPORT_SYMBOL(lbInkey_prefixed),%al
@@ -185145,7 +185145,7 @@ data_15511d:
 		.byte	0x0
 GLOBAL (word_15511E)	/* 0x15511E */
 		.ascii  "\xff\xff"
-net_unkn_pos_01:	/* 0x155120 */
+GLOBAL (net_unkn_pos_01a)	/* 0x155120 */
 		.ascii  "\x01\x01\x01\x00"
 GLOBAL (byte_155124)	/* 0x155124 */
 		.ascii  "\x01\x11\x21\x27\x3f\x94\x00\x00"
@@ -188186,7 +188186,7 @@ data_1c4948:
 		.fill   0x14
 GLOBAL (byte_1C495C)	/* 0x1C495C */
 		.fill   0x14
-data_1c4970:
+GLOBAL (byte_1C4970)	/* 0x1C4970 */
 		.ascii  "\x00\x00\x00"
 GLOBAL (research_completed)	/* 0x1C4973 */
 		.byte	0x0

@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "fecntrls.h"
 
+#include "bfkeybd.h"
 #include "bftext.h"
 #include "bflib_joyst.h"
 
@@ -26,10 +27,12 @@
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
+#include "game_data.h"
 #include "game_save.h"
 #include "game_speed.h"
 #include "game_sprts.h"
 #include "game.h"
+#include "keyboard.h"
 #include "network.h"
 #include "player.h"
 #include "purpldrw.h"
@@ -39,6 +42,8 @@ extern struct ScreenBox controls_joystick_box;
 extern struct ScreenButton controls_defaults_button;
 extern struct ScreenButton controls_save_button;
 extern struct ScreenButton controls_calibrate_button;
+
+extern ubyte byte_1C4970;
 
 ubyte ac_do_controls_defaults(ubyte click);
 ubyte ac_do_controls_save(ubyte click);
@@ -297,12 +302,425 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     return 0;
 }
 
-ubyte show_settings_controls_list(struct ScreenBox *box)
+ubyte switch_keycode_to_name_code_on_national_keyboard(ubyte keyno)
 {
+    ubyte rkey;
+    rkey = keyno;
+    switch (language_3str[0])
+    {
+    case 'g':
+        // Y and Z keys reversed
+        if (keyno == KC_Y)
+        {
+          rkey = KC_Z;
+        }
+        else if (keyno == KC_Z)
+        {
+          rkey = KC_Y;
+        }
+        break;
+    case 'f':
+        if (keyno == KC_SEMICOLON)
+        {
+          rkey = KC_M;
+        }
+        else if (keyno == KC_Z)
+        {
+          rkey = KC_W;
+        }
+        else if (keyno == KC_M)
+        {
+          rkey = KC_COMMA;
+        }
+        else if (keyno == KC_COMMA)
+        {
+          rkey = KC_SEMICOLON;
+        }
+        else if (keyno == KC_A)
+        {
+          rkey = KC_Q;
+        }
+        else if (keyno == KC_W)
+        {
+          rkey = KC_Z;
+        }
+        else if (keyno == KC_Q)
+        {
+          rkey = KC_A;
+        }
+        break;
+    default:
+        break;
+    }
+    return rkey;
+}
+ubyte show_settings_controls_list(struct ScreenBox *p_box)
+{
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_settings_controls_list\n"
-        : "=r" (ret) : "a" (box));
+        : "=r" (ret) : "a" (p_box));
     return ret;
+#endif
+    char locstr[52];
+    short ln_height;
+    short wpos_x, wpos_y;
+    int i, val;
+    ubyte gkey;
+
+    lbFontPtr = small_med_font;
+    my_set_text_window(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
+    ln_height = font_height('A');
+    if ((p_box->Flags & 0x8000) == 0)
+    {
+        const char *text;
+
+        lbFontPtr = med_font;
+        text = gui_strings[486];
+        draw_text_purple_list2(4, 4, text, 0);
+        text = gui_strings[487];
+        draw_text_purple_list2(200, 4, text, 0);
+        text = gui_strings[488];
+        draw_text_purple_list2(300, 4, text, 0);
+        lbFontPtr = small_med_font;
+        wpos_y = 28;
+        val = -18;
+        for (i = 0; i < 23; i++)
+        {
+            if (i < 19)
+            {
+                text = gui_strings[589 + i];
+            }
+            else
+            {
+                sprintf(locstr, "%s %d", gui_strings[608 + background_type], val);
+                text = loctext_to_gtext(locstr);
+            }
+            draw_text_purple_list2(4, wpos_y, text, 0);
+            ++val;
+            wpos_y += ln_height + 4;
+        }
+        copy_box_purple_list(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
+        p_box->Flags |= 0x8000;
+    }
+
+    if (!net_unkn_pos_01b && !net_unkn_pos_02)
+    {
+        if (lbKeyOn[KC_DOWN])
+        {
+            lbKeyOn[KC_DOWN] = 0;
+            net_unkn_pos_01a++;
+            if (net_unkn_pos_01a > 46)
+                net_unkn_pos_01a = 1;
+        }
+        if (lbKeyOn[KC_UP])
+        {
+            lbKeyOn[KC_UP] = 0;
+            net_unkn_pos_01a--;
+            if (net_unkn_pos_01a < 1)
+                net_unkn_pos_01a = 46;
+        }
+        if (lbKeyOn[KC_RIGHT])
+        {
+            lbKeyOn[KC_RIGHT] = 0;
+            net_unkn_pos_01a += 23;
+            if (net_unkn_pos_01a > 46)
+                net_unkn_pos_01a -= 46;
+        }
+        if (lbKeyOn[KC_LEFT])
+        {
+            lbKeyOn[KC_LEFT] = 0;
+            net_unkn_pos_01a -= 23;
+            if (net_unkn_pos_01a < 1)
+                net_unkn_pos_01a += 46;
+        }
+        if (net_unkn_pos_01a < 31 || net_unkn_pos_01a > 34)
+        {
+            gkey = net_unkn_pos_01a;
+            if (byte_1C4970)
+            {
+                if (byte_1C4970 == 1 && !lbKeyOn[KC_RETURN])
+                {
+                    lbExtendedKeyPress = 0;
+                    lbInkey = 0;
+                    byte_1C4970 = 0;
+                    net_unkn_pos_01b = gkey;
+                }
+            }
+            else
+            {
+                if (lbKeyOn[KC_RETURN])
+                    ++byte_1C4970;
+                if (lbKeyOn[KC_BACK])
+                {
+                    lbKeyOn[KC_BACK] = 0;
+                    if (gkey > 23)
+                      jskeys[gkey - 23] = 0;
+                    else
+                      kbkeys[gkey] = KC_UNASSIGNED;
+                }
+            }
+        }
+    }
+
+    if (net_unkn_pos_01b != 0)
+    {
+        gkey = net_unkn_pos_01b;
+        if (gkey > 23)
+        {
+            if (joy.Buttons[0])
+            {
+                int v12, v13, jbtn;
+
+                jskeys[gkey - 23] = 0;
+                jbtn = 0;
+                if (joy.NumberOfButtons[0] > 0)
+                {
+                  v12 = joy.Buttons[0];
+                  v13 = joy.NumberOfButtons[0];
+                  for (i = 0; i < 4; i++)
+                  {
+                    if ((v12 & (1 << jbtn)) != 0) {
+                        jskeys[gkey - 23] |= 1 << jbtn;
+                    }
+                    jbtn++;
+                    if (jbtn >= v13)
+                        break;
+                  }
+                }
+            }
+            else
+            {
+              gkey = 0;
+            }
+        }
+        else
+        {
+            if (lbInkey != 0)
+            {
+                if (lbExtendedKeyPress)
+                {
+                  kbkeys[gkey] = lbInkey | 0x80;
+                  gkey = 0;
+                  lbExtendedKeyPress = 0;
+                  lbInkey = 0;
+                }
+                else
+                {
+                  if ((lbInkey & 0x7F) != 43)
+                    kbkeys[gkey] = lbInkey & 0x7F;
+                  gkey = 0;
+                  lbInkey = 0;
+                }
+            }
+        }
+    }
+
+    wpos_x = 200;
+    wpos_y = 28;
+    for (i = 1; i < 24; i++)
+    {
+        const char *text;
+        short tx_width;
+        ushort keyno;
+
+        gkey = i;
+        if (net_unkn_pos_01a == gkey)
+        {
+            lbDisplay.DrawFlags = 0x0040;
+            lbDisplay.DrawColour = 0x57;
+        }
+        else
+        {
+            lbDisplay.DrawFlags = 0;
+        }
+        keyno = kbkeys[gkey];
+        if (keyno != 0)
+        {
+            if (lbKeyNames[keyno] == NULL)
+            {
+              sprintf(locstr, "FOO %d", (int)keyno);
+            }
+            else if (gkey == 14)
+            {
+              keyno = switch_keycode_to_name_code_on_national_keyboard(keyno);
+              sprintf(locstr, "ALT+%s", lbKeyNames[keyno]);
+            }
+            else
+            {
+              keyno = switch_keycode_to_name_code_on_national_keyboard(keyno);
+              sprintf(locstr, "%s", lbKeyNames[keyno]);
+            }
+        }
+        else
+        {
+            strcpy(locstr, "...");
+        }
+        text = loctext_to_gtext(locstr);
+        lbDisplay.DrawFlags |= 0x8000;
+        draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+        lbDisplay.DrawFlags &= ~0x8000;
+
+        tx_width = my_string_width(locstr);
+        if (lbDisplay.LeftButton || joy.Buttons[0])
+        {
+            if (mouse_down_over_box_coords(text_window_x1 + wpos_x, text_window_y1 + wpos_y,
+              text_window_x1 + tx_width + wpos_x, text_window_y1 + wpos_y + ln_height))
+            {
+                lbDisplay.LeftButton = 0;
+                net_unkn_pos_01a = gkey;
+                net_unkn_pos_01b = gkey;
+                lbExtendedKeyPress = 0;
+                lbInkey = 0;
+            }
+        }
+
+        wpos_y += ln_height + 4;
+    }
+
+    wpos_x = 300;
+    wpos_y = 28;
+    for (i = 1; i < 24; i++)
+    {
+        const char *text;
+        short tx_width;
+
+        gkey = i + 23;
+        if (net_unkn_pos_01a == gkey)
+        {
+          lbDisplay.DrawFlags = 0x0040;
+          lbDisplay.DrawColour = 87;
+        }
+        else
+        {
+          lbDisplay.DrawFlags = 0;
+        }
+        if ( i >= 8 && i <= 11 )
+        {
+            text = gui_strings[588 + i];
+            draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+        }
+        else
+        {
+            int tx_len;
+            int jbtn, v38;
+
+            tx_len = 0;
+            v38 = 0;
+            for (jbtn = 0; jbtn < joy.NumberOfButtons[0]; jbtn++)
+            {
+              if (v38 >= 4)
+                break;
+              if (((1 << jbtn) & jskeys[i]) != 0)
+              {
+                if (tx_len > 0)
+                  locstr[tx_len++] = '+';
+                if (jbtn >= 9)
+                {
+                    uint n;
+                    n = jbtn + 1;
+                    locstr[tx_len++] = '0' + (n / 10);
+                    locstr[tx_len++] = '0' + (n % 10);
+                }
+                else
+                {
+                    char c;
+                    c = '1' + jbtn;
+                    locstr[tx_len++] = c;
+                }
+                ++v38;
+              }
+            }
+            locstr[tx_len] = '\0';
+            if (tx_len == 0)
+            {
+              strcpy(locstr, "...");
+            }
+            text = loctext_to_gtext(locstr);
+            lbDisplay.DrawFlags |= 0x8000;
+            draw_text_purple_list2(wpos_x, wpos_y, text, 0);
+            lbDisplay.DrawFlags &= ~0x8000;
+        }
+        tx_width = my_string_width(locstr);
+        if ( lbDisplay.LeftButton || joy.Buttons[0] )
+        {
+            if (mouse_down_over_box_coords(text_window_x1 + wpos_x, text_window_y1 + wpos_y,
+              text_window_x1 + wpos_x + tx_width, text_window_y1 + wpos_y + ln_height))
+            {
+                lbDisplay.LeftButton = 0;
+                net_unkn_pos_01a = gkey;
+                net_unkn_pos_01b = gkey;
+                lbExtendedKeyPress = 0;
+                lbInkey = 0;
+            }
+        }
+        wpos_y += ln_height + 4;
+    }
+    lbDisplay.DrawFlags = 0;
+
+    //controls_defaults_button.DrawFn(&controls_defaults_button); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&controls_defaults_button), "g" (controls_defaults_button.DrawFn));
+    //controls_save_button.DrawFn(&controls_save_button); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&controls_save_button), "g" (controls_save_button.DrawFn));
+
+    if (!net_unkn_pos_02 || (net_unkn_pos_02 - 1) > 5)
+        return 0;
+
+    switch (net_unkn_pos_02)
+    {
+    case 1:
+        if (screentype == SCRT_ALERTBOX)
+        {
+            if (!joy.Buttons[0])
+                break;
+            net_unkn_pos_02++;
+            break;
+        }
+        net_unkn_pos_02 = 0;
+        break;
+    case 2:
+        if (joy.Buttons[0])
+            break;
+        alert_box_text_fmt("%s", gui_strings[575]);
+        net_unkn_pos_02++;
+        break;
+    case 3:
+        if (screentype == SCRT_ALERTBOX)
+        {
+            if (!joy.Buttons[0])
+                break;
+            net_unkn_pos_02++;
+            break;
+        }
+        net_unkn_pos_02 = 0;
+        break;
+    case 4:
+        if (joy.Buttons[0])
+            break;
+        alert_box_text_fmt("%s", gui_strings[576]);
+        net_unkn_pos_02++;
+        break;
+    case 5:
+        if (screentype == SCRT_ALERTBOX)
+        {
+            if (!joy.Buttons[0])
+                break;
+            net_unkn_pos_02++;
+            break;
+        }
+        net_unkn_pos_02 = 0;
+        break;
+    case 6:
+        show_alert = 1;
+        if (joy.Buttons[0])
+            break;
+        net_unkn_pos_02 = 0;
+        show_alert = 0;
+        break;
+    }
+    return 0;
 }
 
 ubyte show_options_controls_screen(void)
