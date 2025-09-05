@@ -195,6 +195,11 @@ jobs:
           "${{ runner.workspace }}\dl\MEGAcmdSetup.exe" /S
           echo %LOCALAPPDATA%\MEGAcmd>> %GITHUB_PATH%
 
+      - name: Prepare NSIS - get and install
+        uses: repolevedavaj/install-nsis@v1.0.1
+        with:
+          nsis-version: '3.10'
+
       - name: Download required NSIS plugins - wget
         env:
           DL_WORKSPACE: ${{ runner.workspace }}\dl
