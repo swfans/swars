@@ -263,6 +263,7 @@ void read_user_settings(void)
 {
     char fname[DISKPATH_SIZE];
     TbFileHandle fh;
+    u32 fmtver;
     TbBool read_mortal_salt_backup;
     int i;
 
@@ -291,8 +292,20 @@ void read_user_settings(void)
 
         assert(sizeof(locflags) == sizeof(ingame.UserFlags));
 
-        LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
-        LbFileRead(fh, jskeys, 23 * sizeof(ushort));
+        if (LbFileLengthHandle(fh) > 126)
+            LbFileRead(fh, &fmtver, 4);
+        else
+            fmtver = 0;
+
+        if (fmtver == 0) {
+            // In original game, the last key (agent 4 select) is not saved at all
+            LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
+            LbFileRead(fh, jskeys, 23 * sizeof(ushort));
+        } else {
+            LbFileRead(fh, kbkeys, GKey_KEYS_COUNT * sizeof(ushort));
+            LbFileRead(fh, jskeys, GKey_KEYS_COUNT * sizeof(ushort));
+        }
+
         LbFileRead(fh, &byte_1C4A9F, 1);
         LbFileRead(fh, &players[local_player_no].DoubleMode,
           sizeof(players[local_player_no].DoubleMode));
@@ -344,16 +357,24 @@ TbBool save_user_settings(void)
 {
     char fname[DISKPATH_SIZE];
     TbFileHandle fh;
+    u32 fmtver;
     int i;
 
     get_user_settings_fname(fname, login_name);
+    fmtver = 1;
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
     if (fh == INVALID_FILE)
         return 1;
 
+#ifdef MORE_GAME_KEYS_SUPPORTED //TODO disable until new keys are added and ready
+    LbFileWrite(fh, &fmtver, sizeof(fmtver));
+    LbFileWrite(fh, kbkeys, GKey_KEYS_COUNT * sizeof(ushort));
+    LbFileWrite(fh, jskeys, GKey_KEYS_COUNT * sizeof(ushort));
+#else
     LbFileWrite(fh, kbkeys, 23 * sizeof(ushort));
     LbFileWrite(fh, jskeys, 23 * sizeof(ushort));
+#endif
     LbFileWrite(fh, &byte_1C4A9F, sizeof(byte_1C4A9F));
     LbFileWrite(fh, &players[local_player_no].DoubleMode,
       sizeof(players[local_player_no].DoubleMode));

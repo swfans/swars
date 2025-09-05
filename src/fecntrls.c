@@ -386,7 +386,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
         lbFontPtr = small_med_font;
         wpos_y = 28;
         val = -18;
-        for (i = 0; i < 23; i++)
+        for (i = 0; i < GKey_KEYS_COUNT - 1; i++)
         {
             if (i < 19)
             {
@@ -423,17 +423,19 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
         }
         if (lbKeyOn[KC_RIGHT])
         {
+            // Next column
             lbKeyOn[KC_RIGHT] = 0;
-            net_unkn_pos_01a += 23;
-            if (net_unkn_pos_01a > 46)
-                net_unkn_pos_01a -= 46;
+            net_unkn_pos_01a += (GKey_KEYS_COUNT - 1);
+            if (net_unkn_pos_01a > 2 * (GKey_KEYS_COUNT - 1))
+                net_unkn_pos_01a -= 2 * (GKey_KEYS_COUNT - 1);
         }
         if (lbKeyOn[KC_LEFT])
         {
+            // Prev column
             lbKeyOn[KC_LEFT] = 0;
-            net_unkn_pos_01a -= 23;
+            net_unkn_pos_01a -= (GKey_KEYS_COUNT - 1);
             if (net_unkn_pos_01a < 1)
-                net_unkn_pos_01a += 46;
+                net_unkn_pos_01a += 2 * (GKey_KEYS_COUNT - 1);
         }
         if (net_unkn_pos_01a < 31 || net_unkn_pos_01a > 34)
         {
@@ -451,12 +453,12 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
             else
             {
                 if (lbKeyOn[KC_RETURN])
-                    ++byte_1C4970;
+                    byte_1C4970++;
                 if (lbKeyOn[KC_BACK])
                 {
                     lbKeyOn[KC_BACK] = 0;
-                    if (gkey > 23)
-                      jskeys[gkey - 23] = 0;
+                    if (gkey > (GKey_KEYS_COUNT - 1))
+                      jskeys[gkey - (GKey_KEYS_COUNT - 1)] = 0;
                     else
                       kbkeys[gkey] = KC_UNASSIGNED;
                 }
@@ -467,13 +469,13 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
     if (net_unkn_pos_01b != 0)
     {
         gkey = net_unkn_pos_01b;
-        if (gkey > 23)
+        if (gkey > (GKey_KEYS_COUNT - 1))
         {
             if (joy.Buttons[0])
             {
                 int v12, v13, jbtn;
 
-                jskeys[gkey - 23] = 0;
+                jskeys[gkey - (GKey_KEYS_COUNT - 1)] = 0;
                 jbtn = 0;
                 if (joy.NumberOfButtons[0] > 0)
                 {
@@ -482,7 +484,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
                   for (i = 0; i < 4; i++)
                   {
                     if ((v12 & (1 << jbtn)) != 0) {
-                        jskeys[gkey - 23] |= (1 << jbtn);
+                        jskeys[gkey - (GKey_KEYS_COUNT - 1)] |= (1 << jbtn);
                     }
                     jbtn++;
                     if (jbtn >= v13)
@@ -519,7 +521,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
 
     wpos_x = 200;
     wpos_y = 28;
-    for (i = 1; i < 24; i++)
+    for (i = 1; i < GKey_KEYS_COUNT; i++)
     {
         const char *text;
         short tx_width;
@@ -581,12 +583,12 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
 
     wpos_x = 300;
     wpos_y = 28;
-    for (i = 1; i < 24; i++)
+    for (i = 1; i < GKey_KEYS_COUNT; i++)
     {
         const char *text;
         short tx_width;
 
-        gkey = i + 23;
+        gkey = i + (GKey_KEYS_COUNT - 1);
         if (net_unkn_pos_01a == gkey)
         {
           lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
