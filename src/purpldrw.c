@@ -1177,7 +1177,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
             draw_triangle_purple_list(v16 + p_btn->X - 4, p_btn->Y - v15,
               v16 + p_btn->X + 1 + v15, p_btn->Y + 5,
               v16 + p_btn->X - 4, p_btn->Y + 5, p_btn->BGColour);
-            lbDisplay.DrawFlags |= 0x0010;
+            lbDisplay.DrawFlags |= Lb_SPRITE_OUTLINE;
             draw_line_purple_list(p_btn->X, p_btn->Y,
               p_btn->X, p_btn->Y + box_h, p_btn->Colour);
             draw_line_purple_list(p_btn->X, box_h + p_btn->Y,
@@ -1196,8 +1196,8 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
             v17 = box_h + 1;
             v18 = box_w + 1;
             draw_box_purple_list(p_btn->X - box_b, p_btn->Y - box_b, v18 + 2 * box_b, 2 * box_b + v17, p_btn->BGColour);
-            lbDisplay.DrawFlags &= ~(0x0010|0x8000);
-            lbDisplay.DrawFlags |= 0x0010;
+            lbDisplay.DrawFlags &= ~(Lb_SPRITE_OUTLINE|0x8000);
+            lbDisplay.DrawFlags |= Lb_SPRITE_OUTLINE;
             draw_box_purple_list(p_btn->X, p_btn->Y, v18, v17, p_btn->Colour);
         }
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
@@ -1281,7 +1281,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
             draw_triangle_purple_list(p_btn->X + (box_w) - 4, p_btn->Y - v13,
               v13 + p_btn->X + (box_w) + 1, p_btn->Y + 5,
               p_btn->X + (box_w) - 4, p_btn->Y + 5, p_btn->BGColour);
-            lbDisplay.DrawFlags = 0x0010;
+            lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
             if ((p_btn->Flags & GBxFlg_Unkn0040) != 0)
               lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
             v14 = box_w;
@@ -1304,7 +1304,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
             lbDisplay.DrawFlags |= 0x8000;
             draw_box_purple_list(p_btn->X - box_b, p_btn->Y - box_b,
               2 * box_b + (box_w) + 1, box_h + 1 + 2 * box_b, p_btn->BGColour);
-            lbDisplay.DrawFlags = 0x0010;
+            lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
             if ((p_btn->Flags & GBxFlg_Unkn0040) != 0)
               lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
             draw_box_purple_list(p_btn->X, p_btn->Y, box_w + 1, box_h + 1, p_btn->Colour);
@@ -1314,11 +1314,11 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
 
     if ((p_btn->Flags & GBxFlg_TextRight) != 0)
     {
-          lbDisplay.DrawFlags |= 0x0080;
+          lbDisplay.DrawFlags |= Lb_TEXT_HALIGN_RIGHT;
     }
     else if ((p_btn->Flags & GBxFlg_TextCenter) != 0)
     {
-          lbDisplay.DrawFlags |= 0x0100;
+          lbDisplay.DrawFlags |= Lb_TEXT_HALIGN_CENTER;
     }
     if (p_btn->DrawTextFn != NULL) {
         ubyte drawn;
@@ -1349,7 +1349,7 @@ ubyte button_text(struct ScreenButton *p_btn)
     my_set_text_window(text_x, text_y, lbDisplay.GraphicsScreenWidth, text_y + text_h);
     if (p_btn->Flags & 0x80) {
         p_btn->TextFadePos = -3;
-        p_btn->Flags &= ~0x80;
+        p_btn->Flags &= ~GBxFlg_Unkn0080;
     }
     return flashy_draw_text(0, 0, p_btn->Text, p_btn->TextSpeed, p_btn->TextTopLine,
       &p_btn->TextFadePos, 1);

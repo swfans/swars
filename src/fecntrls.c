@@ -354,6 +354,7 @@ ubyte switch_keycode_to_name_code_on_national_keyboard(ubyte keyno)
     }
     return rkey;
 }
+
 ubyte show_settings_controls_list(struct ScreenBox *p_box)
 {
 #if 0
@@ -371,7 +372,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
     lbFontPtr = small_med_font;
     my_set_text_window(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
     ln_height = font_height('A');
-    if ((p_box->Flags & 0x8000) == 0)
+    if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         const char *text;
 
@@ -401,7 +402,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
             wpos_y += ln_height + 4;
         }
         copy_box_purple_list(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
-        p_box->Flags |= 0x8000;
+        p_box->Flags |= GBxFlg_BkgndDrawn;
     }
 
     if (!net_unkn_pos_01b && !net_unkn_pos_02)
@@ -481,7 +482,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
                   for (i = 0; i < 4; i++)
                   {
                     if ((v12 & (1 << jbtn)) != 0) {
-                        jskeys[gkey - 23] |= 1 << jbtn;
+                        jskeys[gkey - 23] |= (1 << jbtn);
                     }
                     jbtn++;
                     if (jbtn >= v13)
@@ -527,7 +528,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
         gkey = i;
         if (net_unkn_pos_01a == gkey)
         {
-            lbDisplay.DrawFlags = 0x0040;
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
             lbDisplay.DrawColour = 0x57;
         }
         else
@@ -588,7 +589,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
         gkey = i + 23;
         if (net_unkn_pos_01a == gkey)
         {
-          lbDisplay.DrawFlags = 0x0040;
+          lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
           lbDisplay.DrawColour = 87;
         }
         else

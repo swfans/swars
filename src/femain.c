@@ -398,7 +398,7 @@ void show_alert_box(void)
     {
         lbFontPtr = small_med_font;
         my_set_text_window(alert_box.X + 4, alert_box.Y + 4, alert_box.Width - 8, alert_box.Height - 8);
-        lbDisplay.DrawFlags = 0x0100;
+        lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
         flashy_draw_text(0, 0, alert_text, 3, 0, &alert_textpos, 0);
         lbDisplay.DrawFlags = 0;
         asm volatile ("call *%2\n"
@@ -1361,7 +1361,7 @@ void draw_purple_app_email_icon(short cx, short cy, short bri)
     lbFontPtr = small2_font;
     lbDisplay.DrawColour = 87;
     if (mission_remain_until_success(brief_store[bri].Mission))
-        lbDisplay.DrawFlags |= 0x0040;
+        lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
     my_set_text_window(cx, cy, spr->SWidth + 2, spr->SHeight);
     draw_text_purple_list2(8, 3, misc_text[4], 0);
 

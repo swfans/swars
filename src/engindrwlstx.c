@@ -259,8 +259,8 @@ void draw_unkn2_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
                     continue;
 
                 lbDisplay.DrawFlags = p_elem->Flags & 7;
-                if ((lbDisplay.DrawFlags & 0x0004) == 0)
-                    lbDisplay.DrawFlags |= 0x0008;
+                if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) == 0)
+                    lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
 
                 if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
                 {
@@ -1668,13 +1668,13 @@ void draw_sort_line(struct SortLine *p_sline)
         }
 
         if ((p_sline->Flags & 0x02) != 0)
-            lbDisplay.DrawFlags = 0x0004;
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         ftcor = 256 * p_sline->Shade + p_sline->Col;
         LbDrawLine(p_sline->X1, p_sline->Y1,
           p_sline->X2, p_sline->Y2,
           pixmap.fade_table[ftcor]);
 
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         ftcor = 256 * 20 + p_sline->Col;
         LbDrawLine(p_sline->X1 + dtX, p_sline->Y1 + dtY,
           p_sline->X2 + dtX, p_sline->Y2 + dtY,
