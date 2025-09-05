@@ -80,7 +80,7 @@ sys_get_user_path (char *buffer, size_t size)
   if (app_data == NULL)
     return false;
 
-  snprintf (buffer, size, "%s\\Syndicate Wars", app_data);
+  snprintf(buffer, size, "%s\\Syndicate Wars", app_data);
   return true;
 }
 #endif  /* WIN32 */

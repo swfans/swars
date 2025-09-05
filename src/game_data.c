@@ -244,7 +244,7 @@ void SyndFileNameTransform(char *out_fname, const char *inp_fname)
     replace_fs_separator_to_native(fs_fname);
     // Add base path only if the input one is not absolute
     if (fs_fname[0] == FS_SEP || (strlen(fs_fname) >= 2 && fs_fname[1] == ':')) {
-        snprintf (out_fname, FILENAME_MAX-1, "%s", fs_fname);
+        snprintf(out_fname, FILENAME_MAX-1, "%s", fs_fname);
     } else {
         snprintf(out_fname, FILENAME_MAX-1, "%s" FS_SEP_STR "%s", base_dir, fs_fname);
     }
