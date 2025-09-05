@@ -122,8 +122,8 @@ void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usri
         p_usrinp->Bits |= SpUIn_DoDropOrGoOut;
     }
     //TODO why different self destruct?
-    if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == KMod_ALT) {
-        lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
+    if (is_gamekey_pressed(GKey_SELF_DESTRUCT)) {
+        clear_key_pressed(GKey_SELF_DESTRUCT);
         p_usrinp->Bits |= SpUIn_SelfDestruct;
     }
 

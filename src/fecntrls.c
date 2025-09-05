@@ -366,7 +366,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
     char locstr[52];
     short ln_height;
     short wpos_x, wpos_y;
-    int i, val;
+    int i;
     ubyte gkey;
 
     lbFontPtr = small_med_font;
@@ -385,20 +385,19 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
         draw_text_purple_list2(300, 4, text, 0);
         lbFontPtr = small_med_font;
         wpos_y = 28;
-        val = -18;
         for (i = 0; i < GKey_KEYS_COUNT - 1; i++)
         {
-            if (i < 19)
+            if ((i >= 19) && (i <= 22))
             {
-                text = gui_strings[589 + i];
+                //TODO place Agent/Zealot/Outcast text ID in campaign config file
+                sprintf(locstr, "%s %d", gui_strings[608 + background_type], (i - 18));
+                text = loctext_to_gtext(locstr);
             }
             else
             {
-                sprintf(locstr, "%s %d", gui_strings[608 + background_type], val);
-                text = loctext_to_gtext(locstr);
+                text = gui_strings[589 + i];
             }
             draw_text_purple_list2(4, wpos_y, text, 0);
-            ++val;
             wpos_y += ln_height + 4;
         }
         copy_box_purple_list(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
@@ -411,7 +410,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
         {
             lbKeyOn[KC_DOWN] = 0;
             net_unkn_pos_01a++;
-            if (net_unkn_pos_01a > 46)
+            if (net_unkn_pos_01a > 2 * (GKey_KEYS_COUNT - 1))
                 net_unkn_pos_01a = 1;
         }
         if (lbKeyOn[KC_UP])
@@ -419,7 +418,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
             lbKeyOn[KC_UP] = 0;
             net_unkn_pos_01a--;
             if (net_unkn_pos_01a < 1)
-                net_unkn_pos_01a = 46;
+                net_unkn_pos_01a = 2 * (GKey_KEYS_COUNT - 1);
         }
         if (lbKeyOn[KC_RIGHT])
         {

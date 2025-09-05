@@ -299,6 +299,7 @@ void read_user_settings(void)
 
         if (fmtver == 0) {
             // In original game, the last key (agent 4 select) is not saved at all
+            set_default_game_keys();
             LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
             LbFileRead(fh, jskeys, 23 * sizeof(ushort));
         } else {
@@ -378,7 +379,7 @@ TbBool save_user_settings(void)
     LbFileWrite(fh, &byte_1C4A9F, sizeof(byte_1C4A9F));
     LbFileWrite(fh, &players[local_player_no].DoubleMode,
       sizeof(players[local_player_no].DoubleMode));
-    for (i = 0; i != 4; i++)
+    for (i = 0; i < 4; i++)
     {
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];

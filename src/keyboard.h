@@ -77,6 +77,18 @@ ubyte is_key_pressed(TbKeyCode key, TbKeyMods kmodif);
  */
 void clear_key_pressed(TbKeyCode key);
 
+/**
+ * Checks if a mapped game key is pressed.
+ *
+ * @param gkey Game key number, from enumeration.
+ */
+ubyte is_gamekey_pressed(ushort gkey);
+
+/**
+ * Clears the marking that a mapped game key was pressed.
+ */
+void clear_gamekey_pressed(ushort gkey);
+
 void set_default_game_keys(void);
 
 #endif

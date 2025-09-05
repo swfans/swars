@@ -529,6 +529,7 @@ main (int argc, char **argv)
     display_set_full_screen(cmdln_fullscreen);
     display_set_lowres_stretch(cmdln_lores_stretch);
 
+    set_default_user_settings();
     read_strings_file();
     game_setup();
 

@@ -6946,11 +6946,11 @@ game_transform_path_full(const char *file_name, char *buffer, size_t size)
     if (file_name[0] == '\\' || file_name[0] == '/'
         || (strlen (file_name) >= 2 && file_name[1] == ':'))
     {
-        snprintf (buffer, size, "%s", file_name);
+        snprintf(buffer, size, "%s", file_name);
         return;
     }
 
-    snprintf (buffer, size, "%s" FS_SEP_STR "%s", GetDirectoryHdd(), file_name);
+    snprintf(buffer, size, "%s" FS_SEP_STR "%s", GetDirectoryHdd(), file_name);
 }
 
 void game_transform_path(const char *file_name, char *result)
