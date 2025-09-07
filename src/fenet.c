@@ -71,10 +71,6 @@ ubyte ac_show_net_unkn21(struct ScreenBox *box);
 ubyte ac_show_net_comms_box(struct ScreenBox *box);
 ubyte ac_do_net_protocol_select(ubyte click);
 ubyte ac_show_net_protocol_box(struct ScreenBox *box);
-ubyte ac_show_net_faction_box(struct ScreenBox *box);
-ubyte ac_show_net_team_box(struct ScreenBox *box);
-ubyte ac_show_net_groups_box(struct ScreenBox *box);
-ubyte ac_show_net_users_box(struct ScreenBox *box);
 
 ubyte do_net_protocol_option(ubyte click)
 {
@@ -532,6 +528,13 @@ ubyte do_unkn8_EJECT(ubyte click)
     return ret;
 }
 
+void show_netgame_unkn_case1(void)
+{
+    asm volatile (
+      "call ASM_show_netgame_unkn_case1\n"
+        :  :  : "eax" );
+}
+
 void init_net_screen_boxes(void)
 {
     short scr_w, start_x;
@@ -571,23 +574,23 @@ void init_net_screen_boxes(void)
     net_protocol_option_button.Width = net_protocol_select_button.Width;
     net_protocol_option_button.CallBackFn = ac_do_net_protocol_option;
     net_INITIATE_button.CallBackFn = ac_do_net_INITIATE;
-    net_faction_box.SpecialDrawFn = ac_show_net_faction_box;
-    net_team_box.SpecialDrawFn = ac_show_net_team_box;
+    net_faction_box.SpecialDrawFn = show_net_faction_box;
+    net_team_box.SpecialDrawFn = show_net_team_box;
     net_groups_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
 
-    net_groups_box.SpecialDrawFn = ac_show_net_groups_box;
-    net_users_box.SpecialDrawFn = ac_show_net_users_box;
-    net_benefits_box.SpecialDrawFn = ac_show_net_benefits_box;
+    net_groups_box.SpecialDrawFn = show_net_groups_box;
+    net_users_box.SpecialDrawFn = show_net_users_box;
+    net_benefits_box.SpecialDrawFn = show_net_benefits_box;
     net_unkn40_button.CallBackFn = ac_do_net_unkn40;
     net_SET_button.CallBackFn = ac_do_net_SET;
     net_protocol_select_button.CallBackFn = ac_do_net_protocol_select;
     unkn8_EJECT_button.CallBackFn = ac_do_unkn8_EJECT;
-    net_comms_box.SpecialDrawFn = ac_show_net_comms_box;
+    net_comms_box.SpecialDrawFn = show_net_comms_box;
     net_users_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
     net_groups_LOGON_button.CallBackFn = ac_do_net_groups_LOGON;
-    net_unkn21.SpecialDrawFn = ac_show_net_unkn21;
+    net_unkn21.SpecialDrawFn = show_net_unkn21;
     net_SET2_button.CallBackFn = ac_do_net_SET2;
-    net_protocol_box.SpecialDrawFn = ac_show_net_protocol_box;
+    net_protocol_box.SpecialDrawFn = show_net_protocol_box;
 
     start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - net_groups_box.Width - 9 - net_users_box.Width - 7) / 2;
 
@@ -644,6 +647,25 @@ void set_flag01_net_screen_boxes(void)
     net_unkn40_button.Flags |= GBxFlg_Unkn0001;
     unkn8_EJECT_button.Flags |= GBxFlg_Unkn0001;
     net_groups_LOGON_button.Flags |= GBxFlg_Unkn0001;
+}
+
+void set_flag02_net_screen_boxes(void)
+{
+    net_INITIATE_button.Flags |= GBxFlg_Unkn0002;
+    net_groups_LOGON_button.Flags |= GBxFlg_Unkn0002;
+    net_SET_button.Flags |= GBxFlg_Unkn0002;
+    net_SET2_button.Flags |= GBxFlg_Unkn0002;
+    net_groups_box.Flags |= GBxFlg_Unkn0002;
+    net_users_box.Flags |= GBxFlg_Unkn0002;
+    net_faction_box.Flags |= GBxFlg_Unkn0002;
+    net_team_box.Flags |= GBxFlg_Unkn0002;
+    net_unkn21.Flags |= GBxFlg_Unkn0002;
+    net_benefits_box.Flags |= GBxFlg_Unkn0002;
+    net_protocol_box.Flags |= GBxFlg_Unkn0002;
+    net_protocol_select_button.Flags |= GBxFlg_Unkn0002;
+    net_unkn40_button.Flags |= GBxFlg_Unkn0002;
+    net_protocol_option_button.Flags |= GBxFlg_Unkn0002;
+    net_comms_box.Flags |= GBxFlg_Unkn0002;
 }
 
 void switch_net_screen_boxes_to_initiate(void)

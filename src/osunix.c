@@ -24,7 +24,7 @@ sys_get_user_path (char *buffer, size_t size)
   xdg_config_home = getenv ("XDG_CONFIG_HOME");
   if (xdg_config_home != NULL)
     {
-      snprintf (buffer, size,
+      snprintf(buffer, size,
 		"%s" FS_SEP_STR "swars", xdg_config_home);
       return true;
     }
@@ -37,10 +37,10 @@ sys_get_user_path (char *buffer, size_t size)
     }
 
 #ifndef __APPLE__
-  snprintf (buffer, size,
+  snprintf(buffer, size,
             "%s" FS_SEP_STR ".config" FS_SEP_STR "swars", home);
 #else
-  snprintf (buffer, size,
+  snprintf(buffer, size,
             "%s/Library/Preferences/Syndicate Wars", home);
 #endif
 
@@ -50,7 +50,7 @@ sys_get_user_path (char *buffer, size_t size)
 bool
 sys_get_data_path (char *buffer, size_t size)
 {
-  snprintf (buffer, size, GAME_DATA_PATH);
+  snprintf(buffer, size, GAME_DATA_PATH);
   return true;
 }
 

@@ -46,7 +46,6 @@ extern ubyte research_unkn_var_01;
 ubyte ac_do_research_submit(ubyte click);
 ubyte ac_do_research_suspend(ubyte click);
 ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
-ubyte ac_show_research_graph(struct ScreenBox *box);
 ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 
 TbBool research_weapon_daily_progress(void)
@@ -285,7 +284,7 @@ void init_research_screen_boxes(void)
     research_unkn21_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
 
     lbFontPtr = med2_font;
-    research_graph_box.SpecialDrawFn = ac_show_research_graph;
+    research_graph_box.SpecialDrawFn = show_research_graph;
 
     if (my_string_width(gui_strings[418]) <= my_string_width(gui_strings[417]))
         s = gui_strings[417];

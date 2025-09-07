@@ -80,7 +80,7 @@ static inline void LbDrawBufferTrRemap(unsigned char **buf_out, const char *buf_
     }
   } else
   {
-    if ( lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4 )
+    if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) != 0)
     {
         for (i=0; i<buf_len; i++ )
         {

@@ -24,6 +24,7 @@
 
 #include "bfmemut.h"
 #include "bfkeybd.h"
+#include "bflib_joyst.h"
 
 #include "game.h"
 
@@ -33,23 +34,9 @@
 
 #pragma pack(1)
 
-ushort kbkeys[GKey_KEYS_COUNT] = {
-    KC_UNASSIGNED, KC_LCONTROL, KC_LALT, KC_DELETE,
-    KC_PGDOWN, KC_TAB, KC_RCONTROL, KC_OEM_102,
-    KC_UP, KC_DOWN, KC_LEFT, KC_RIGHT,
-    KC_HOME, KC_END, KC_D, KC_Z,
-    KC_INSERT, KC_PGUP, KC_P, KC_K,
-    KC_1, KC_2, KC_3, KC_4,
-};
+ushort kbkeys[GKey_KEYS_COUNT];
 
-ushort jskeys[GKey_KEYS_COUNT] = {
-    0, 1, 2, 0x10,
-    0x20, 4, 8, 0,
-    0, 0, 0, 0,
-    0, 0, 0x0F, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-};
+ushort jskeys[GKey_KEYS_COUNT];
 
 ulong buffered_keys[KEYBOARD_BUFFER_SIZE];
 ulong buffered_keys_read_index;
@@ -74,6 +61,55 @@ void clear_key_pressed(TbKeyCode key)
     lbKeyOn[key] = 0;
     if (key == lbInkey) {
         lbInkey = KC_UNASSIGNED;
+    }
+}
+
+ubyte is_joy_pressed(ushort jkeys)
+{
+    return (jkeys && jkeys == joy.Buttons[0]);
+}
+
+ubyte is_gamekey_pressed(ushort gkey)
+{
+    TbKeyCode kkey;
+    TbKeyMods kmodif;
+    ushort jkeys;
+
+    kkey = kbkeys[gkey];
+
+    switch (gkey)
+    {
+    case GKey_SELF_DESTRUCT:
+        kmodif = KMod_ALT;
+        break;
+    default:
+        kmodif = KMod_DONTCARE;
+        break;
+    }
+
+    jkeys = jskeys[gkey];
+
+    return (is_key_pressed(kkey, kmodif) ||
+        is_joy_pressed(jkeys));
+}
+
+void clear_gamekey_pressed(ushort gkey)
+{
+    TbKeyCode kkey;
+    TbKeyMods kmodif;
+    ushort jkeys;
+
+    kkey = kbkeys[gkey];
+    kmodif = KMod_DONTCARE;
+
+    if (is_key_pressed(kkey, kmodif))
+    {
+        clear_key_pressed(kkey);
+    }
+    else
+    {
+        jkeys = jskeys[gkey];
+        joy.Buttons[0] &= ~jkeys;
     }
 }
 
@@ -175,10 +211,10 @@ void set_default_game_keys(void)
     kbkeys[GKey_DROP_WEAPON] = KC_Z;
     kbkeys[GKey_PAUSE] = KC_P;
     kbkeys[GKey_VIEW_TILT_U] = KC_INSERT;
-    kbkeys[GKey_SEL_AGENT_1] = KC_1;
-    kbkeys[GKey_SEL_AGENT_2] = KC_2;
     kbkeys[GKey_KEY_CONTROL] = KC_K;
     kbkeys[GKey_VIEW_TILT_D] = KC_PGUP;
+    kbkeys[GKey_SEL_AGENT_1] = KC_1;
+    kbkeys[GKey_SEL_AGENT_2] = KC_2;
     kbkeys[GKey_SEL_AGENT_4] = KC_4;
     kbkeys[GKey_SEL_AGENT_3] = KC_3;
 }

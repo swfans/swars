@@ -80,6 +80,7 @@
 #include "fepause.h"
 #include "fepanet.h"
 #include "feresearch.h"
+#include "feshared.h"
 #include "festorage.h"
 #include "feworld.h"
 #include "hud_panecfg.h"
@@ -3730,8 +3731,7 @@ ubyte load_game_slot(ubyte click)
         return 0;
     }
     if (save_slot == -1) {
-        show_alert = 1;
-        sprintf(alert_text, "%s", gui_strings[564]);
+        alert_box_text_fmt("%s", gui_strings[564]);
         return 1;
     }
     if (save_slot != 0) {
@@ -3744,26 +3744,24 @@ ubyte load_game_slot(ubyte click)
 
     ret = load_game(ldslot, ldname);
     if (ret == 1) {
-        show_alert = 1;
-        sprintf(alert_text, "%s", gui_strings[565]);
+        alert_box_text_fmt("%s", gui_strings[565]);
         return 1;
     } else if (ret == 2) {
-        show_alert = 1;
-        sprintf(alert_text, "%s", gui_strings[567]);
+        alert_box_text_fmt("%s", gui_strings[567]);
         return 1;
     }
 
-    show_alert = 1;
-    sprintf(alert_text, "%s", gui_strings[572]);
+    alert_box_text_fmt("%s", gui_strings[572]);
 
     // Reading the save might have caused campaign switch
     reload_background_flag = 1;
     load_objectives_text();
     init_weapon_text();
 
-    clear_someflags_system_menu_screen_boxes();
-    clear_someflags_controls_screen_boxes();
-    clear_someflags_storage_screen_boxes();
+    mark_system_menu_screen_boxes_redraw();
+    mark_sys_scr_shared_header_box_redraw();
+    mark_sys_scr_shared_content_box_redraw();
+    mark_storage_screen_boxes_redraw();
     if (save_slot == 0) {
         ingame.Flags |= GamF_MortalGame;
     }
@@ -4562,8 +4560,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
     campaign_new_game_prepare();
 
     if (save_game_write(0, save_active_desc)) {
-        show_alert = 1;
-        sprintf(alert_text, "%s", gui_strings[566]);
+        alert_box_text_fmt("%s", gui_strings[566]);
     }
 
     if (restore_savegame)  {
@@ -4580,25 +4577,6 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 
     return 1;
 }
-
-ubyte show_netgame_unkn1(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_netgame_unkn1\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_settings_controls_list(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_settings_controls_list\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
-ubyte ac_show_settings_controls_list(struct ScreenBox *box);
 
 void init_screen_boxes(void)
 {
@@ -6179,6 +6157,9 @@ void menu_screen_redraw(void)
         activate_cities(open_brief);
     }
 
+    reset_system_menu_boxes_flags();
+    reset_sys_scr_shared_boxes_flags();
+
     reset_brief_screen_boxes_flags();
     reset_heading_screen_boxes_flags();
     reset_debrief_screen_boxes_flags();
@@ -6190,9 +6171,9 @@ void menu_screen_redraw(void)
     reset_cryo_screen_boxes_flags();
     reset_equip_screen_boxes_flags();
     reset_research_screen_boxes_flags();
-    reset_system_menu_boxes_flags();
 
-    reset_options_screen_boxes_flags();
+    reset_options_audio_boxes_flags();
+    reset_options_visual_boxes_flags();
 
     set_flag01_storage_screen_boxes();
     set_flag01_login_screen_boxes();
@@ -6965,11 +6946,11 @@ game_transform_path_full(const char *file_name, char *buffer, size_t size)
     if (file_name[0] == '\\' || file_name[0] == '/'
         || (strlen (file_name) >= 2 && file_name[1] == ':'))
     {
-        snprintf (buffer, size, "%s", file_name);
+        snprintf(buffer, size, "%s", file_name);
         return;
     }
 
-    snprintf (buffer, size, "%s" FS_SEP_STR "%s", GetDirectoryHdd(), file_name);
+    snprintf(buffer, size, "%s" FS_SEP_STR "%s", GetDirectoryHdd(), file_name);
 }
 
 void game_transform_path(const char *file_name, char *result)

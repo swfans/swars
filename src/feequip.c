@@ -89,7 +89,6 @@ short agent_name_shape_points_y[] = {
 ubyte ac_display_weapon_info(struct ScreenTextBox *box);
 ubyte ac_show_weapon_name(struct ScreenTextBox *box);
 ubyte ac_show_weapon_list(struct ScreenTextBox *box);
-ubyte ac_show_weapon_slots(struct ScreenBox *box);
 ubyte ac_do_equip_offer_buy(ubyte click);
 ubyte ac_sell_equipment(ubyte click);
 ubyte ac_select_all_agents(ubyte click);
@@ -357,7 +356,7 @@ TbBool weapon_available_for_purchase(short weapon)
             || (login_control__State == 5 && login_control__TechLevel >= weapon_tech_level[weapon]);
 }
 
-ubyte flashy_draw_agent_panel_shape(struct ScreenShape *shape, ubyte gbstate)
+ubyte flashy_draw_agent_panel_shape(struct ScreenShape *p_shape, ubyte gbstate)
 {
     ubyte drawn;
 
@@ -366,7 +365,7 @@ ubyte flashy_draw_agent_panel_shape(struct ScreenShape *shape, ubyte gbstate)
     } else {
         lbDisplay.DrawFlags = 0;
     }
-    drawn = flashy_draw_purple_shape(shape);
+    drawn = flashy_draw_purple_shape(p_shape);
     lbDisplay.DrawFlags = 0;
     return drawn;
 }
@@ -505,27 +504,27 @@ ubyte input_equip_all_agents_button(struct ScreenButton *button)
     return gbstate;
 }
 
-ubyte flashy_draw_draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate)
+ubyte flashy_draw_draw_equip_agent_name_shape(struct ScreenShape *p_shape, ubyte gbstate)
 {
-    return flashy_draw_purple_shape(shape);
+    return flashy_draw_purple_shape(p_shape);
 }
 
-void draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate)
+void draw_equip_agent_name_shape(struct ScreenShape *p_shape, ubyte gbstate)
 {
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-    draw_box_purple_list(shape->PtX[0] - 3, shape->PtY[0] - 3,
+    draw_box_purple_list(p_shape->PtX[0] - 3, p_shape->PtY[0] - 3,
       168, 24, 56);
-    draw_triangle_purple_list(shape->PtX[1] + 7, shape->PtY[1] - 3,
-      shape->PtX[2] + 1, shape->PtY[2] + 3,
-      shape->PtX[2] + 1, shape->PtY[1] - 3, 56);
+    draw_triangle_purple_list(p_shape->PtX[1] + 7, p_shape->PtY[1] - 3,
+      p_shape->PtX[2] + 1, p_shape->PtY[2] + 3,
+      p_shape->PtX[2] + 1, p_shape->PtY[1] - 3, 56);
     lbDisplay.DrawFlags = 0;
-    flashy_draw_purple_shape(shape);
+    flashy_draw_purple_shape(p_shape);
     if ((selected_agent >= 0) && (selected_agent < 4))
     {
         const char *name;
         lbFontPtr = med_font;
-        my_set_text_window(shape->PtX[0] + 4, shape->PtY[0] + 4,
-          shape->PtX[2] - shape->PtX[0] - 1, shape->PtY[2] - shape->PtY[0] + 1);
+        my_set_text_window(p_shape->PtX[0] + 4, p_shape->PtY[0] + 4,
+          p_shape->PtX[2] - p_shape->PtX[0] - 1, p_shape->PtY[2] - p_shape->PtY[0] + 1);
         name = get_cryo_agent_name(selected_agent);
         draw_text_purple_list2(0, 0, name, 0);
     }
@@ -650,10 +649,10 @@ ubyte show_equipment_screen(void)
         boxes_drawn = 1;
         for (nagent = 4; nagent >= 0; nagent--)
         {
-            struct ScreenShape *shape;
+            struct ScreenShape *p_shape;
             ubyte gbstate;
 
-            shape = &unk11_menu[nagent];
+            p_shape = &unk11_menu[nagent];
 
             if (nagent == 4) // agent name box
             {
@@ -664,11 +663,11 @@ ubyte show_equipment_screen(void)
 
                 if (byte_1C4976 == 0)
                 {
-                    drawn = flashy_draw_draw_equip_agent_name_shape(shape, gbstate);
+                    drawn = flashy_draw_draw_equip_agent_name_shape(p_shape, gbstate);
                 }
                 else if (byte_1C4976 == 1)
                 {
-                    draw_equip_agent_name_shape(shape, gbstate);
+                    draw_equip_agent_name_shape(p_shape, gbstate);
                     drawn = 3;
                 }
                 byte_1C4976 = (drawn == 3);
@@ -678,16 +677,16 @@ ubyte show_equipment_screen(void)
                 ubyte drawn;
                 ushort spridx;
 
-                gbstate = input_equip_agent_panel_shape(shape, nagent);
+                gbstate = input_equip_agent_panel_shape(p_shape, nagent);
 
                 if (byte_1C4975 == 0)
                 {
-                    drawn = flashy_draw_agent_panel_shape(shape, gbstate);
+                    drawn = flashy_draw_agent_panel_shape(p_shape, gbstate);
                 }
                 else
                 {
                     spridx = 140 + nagent;
-                    draw_agent_panel_shape(shape, spridx, gbstate);
+                    draw_agent_panel_shape(p_shape, spridx, gbstate);
                     drawn = 3;
                 }
                 // Is the flashy draw finished for current button
@@ -1255,7 +1254,7 @@ void init_equip_screen_boxes(void)
       gui_strings[436], 6, med2_font, 1, 0);
     init_screen_info_box(&equip_cost_box, 504u, 404u, 124u,
       gui_strings[442], misc_text[0], 6, med_font, small_med_font, 1);
-    weapon_slots.SpecialDrawFn = ac_show_weapon_slots;
+    weapon_slots.SpecialDrawFn = show_weapon_slots;
     equip_name_box.DrawTextFn = ac_show_weapon_name;
     equip_name_box.Text = unkn41_text;
     equip_name_box.Font = med_font;

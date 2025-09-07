@@ -40,7 +40,9 @@ extern long save_slot_base;
 
 void read_user_settings(void);
 TbBool save_user_settings(void);
+void set_default_user_settings(void);
 
+void load_save_slot_names(void);
 int save_game_write(ubyte slot, char *desc);
 ubyte load_game(int slot, char *desc);
 

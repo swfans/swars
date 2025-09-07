@@ -33,13 +33,19 @@
 #include "campaign.h"
 #include "display.h"
 #include "febrief.h"
+#include "fecntrls.h"
+#include "fecryo.h"
 #include "feequip.h"
 #include "femail.h"
-#include "fecryo.h"
+#include "fenet.h"
+#include "feoptions.h"
 #include "feresearch.h"
+#include "feshared.h"
+#include "festorage.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "game_data.h"
+#include "game_save.h"
 #include "game_speed.h"
 #include "game_sprts.h"
 #include "game.h"
@@ -92,6 +98,7 @@ extern ubyte enter_game;
 extern short word_1C6F3E;
 extern short word_1C6F40;
 extern ubyte mo_from_agent;
+extern char alert_text[200];
 extern short alert_textpos;
 
 struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};
@@ -336,8 +343,8 @@ void init_main_screen_boxes(void)
     main_quit_button.CallBackFn = ac_main_do_my_quit;
     main_load_button.CallBackFn = ac_goto_savegame;
 
-    main_login_button.AccelKey = 28;
-    main_quit_button.AccelKey = 1;
+    main_login_button.AccelKey = KC_RETURN;
+    main_quit_button.AccelKey = KC_ESCAPE;
 }
 
 void set_flag01_main_screen_boxes(void)
@@ -391,7 +398,7 @@ void show_alert_box(void)
     {
         lbFontPtr = small_med_font;
         my_set_text_window(alert_box.X + 4, alert_box.Y + 4, alert_box.Width - 8, alert_box.Height - 8);
-        lbDisplay.DrawFlags = 0x0100;
+        lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
         flashy_draw_text(0, 0, alert_text, 3, 0, &alert_textpos, 0);
         lbDisplay.DrawFlags = 0;
         asm volatile ("call *%2\n"
@@ -425,7 +432,7 @@ void init_alert_screen_boxes(void)
 
     alert_box.X = (scr_w - alert_box.Width) / 2 - 1;
     alert_OK_button.X = (scr_w - alert_OK_button.Width) / 2 - 1;
-    alert_OK_button.AccelKey = 28;
+    alert_OK_button.AccelKey = KC_RETURN;
 }
 
 void reset_alert_screen_boxes_flags(void)
@@ -438,6 +445,29 @@ void set_flag01_alert_screen_boxes(void)
     alert_OK_button.Flags |= GBxFlg_Unkn0001;
 }
 
+void set_flag02_sysmenu_boxes(void)
+{
+    int i;
+
+    unkn13_SYSTEM_button.Flags |= GBxFlg_Unkn0002;
+    for (i = 0; i != SYSMNU_BUTTONS_COUNT; i++)
+        sysmnu_buttons[i].Flags |= GBxFlg_Unkn0002;
+}
+
+void alert_box_text_va(const char *fmt, va_list arg)
+{
+    vsnprintf(alert_text, sizeof(alert_text), fmt, arg);
+    show_alert = 1;
+}
+
+void alert_box_text_fmt(const char *fmt, ...)
+{
+    va_list val;
+    va_start(val, fmt);
+    alert_box_text_va(fmt, val);
+    va_end(val);
+}
+
 ubyte show_title_box(struct ScreenTextBox *box)
 {
     ubyte ret;
@@ -448,8 +478,150 @@ ubyte show_title_box(struct ScreenTextBox *box)
 
 void show_sysmenu_screen(void)
 {
+#if 0
     asm volatile ("call ASM_show_sysmenu_screen\n"
         :  :  : "eax" );
+    return;
+#endif
+    int i;
+    ubyte sysscrn_no;
+    ubyte drawn;
+    ubyte v2;
+
+    if ((game_projector_speed && is_sys_scr_shared_header_flag01()) || (lbKeyOn[KC_SPACE] && !edit_flag))
+    {
+        lbKeyOn[KC_SPACE] = 0;
+
+        set_flag02_sysmenu_boxes();
+        set_flag02_sys_scr_shared_boxes();
+        switch (game_system_screen)
+        {
+        case 1:
+            set_flag02_net_screen_boxes();
+            break;
+        case 2:
+            set_flag02_storage_screen_boxes();
+            break;
+        case 3:
+            set_flag02_controls_screen_boxes();
+            break;
+        case 4:
+            set_flag02_audio_screen_boxes();
+            break;
+        case 5:
+            set_flag02_gfx_screen_boxes();
+            break;
+        }
+    }
+
+    v2 = 1;
+    sysscrn_no = 0;
+    if (enter_game) {
+        sysscrn_no = game_system_screen;
+        enter_game = 0;
+    }
+
+    //drawn = unkn13_SYSTEM_button.DrawFn(&unkn13_SYSTEM_button); -- incompatible calling convention
+    asm volatile ("call *%2\n"
+        : "=r" (drawn) : "a" (&unkn13_SYSTEM_button), "g" (unkn13_SYSTEM_button.DrawFn));
+    if (drawn)
+    {
+        for (i = 0; i < SYSMNU_BUTTONS_COUNT; i++)
+        {
+            if (((ingame.Flags & 0x0010) != 0) && (i == 1 || i == 2))
+                continue;
+            if (restore_savegame && i < 5)
+                continue;
+            //drawn = sysmnu_buttons[i].DrawFn(&sysmnu_buttons[i]); -- incompatible calling convention
+            asm volatile ("call *%2\n"
+                : "=r" (drawn) : "a" (&sysmnu_buttons[i]), "g" (sysmnu_buttons[i].DrawFn));
+            if (!drawn)
+                v2 = 0;
+            if (enter_game) {
+                sysscrn_no = i + 1;
+                enter_game = 0;
+            }
+        }
+        if (v2 && (game_system_screen != 0) && (game_system_screen < 6))
+        {
+            drawn = show_sys_scr_shared_header();
+            if (drawn && (game_system_screen - 1) <= 4)
+            {
+                switch (game_system_screen)
+                {
+                case 1:
+                    show_netgame_unkn_case1();
+                    break;
+                case 2:
+                    show_storage_screen();
+                    break;
+                case 3:
+                    show_options_controls_screen();
+                    break;
+                case 4:
+                    show_options_audio_screen();
+                    break;
+                case 5:
+                    show_options_visual_screen();
+                    break;
+                }
+            }
+        }
+    }
+
+    if (sysscrn_no)
+    {
+        game_system_screen = sysscrn_no;
+        unkn13_SYSTEM_button.Flags &= ~(GBxFlg_TextCopied|GBxFlg_BkCopied);
+        reset_sys_scr_shared_boxes_flags();
+        update_sys_scr_shared_header(sysscrn_no);
+        if (game_projector_speed)
+        {
+            set_flag02_sys_scr_shared_boxes();
+        }
+        switch (game_system_screen)
+        {
+        case 1:
+            game_projector_speed = 1;
+            reset_net_screen_boxes_flags();
+            set_flag01_net_screen_boxes();
+            break;
+        case 2:
+            save_slot_base = 0;
+            load_save_slot_names();
+            reset_storage_screen_boxes_flags();
+            break;
+        case 3:
+            reset_controls_screen_boxes_flags();
+            break;
+        case 4:
+            reset_options_audio_boxes_flags();
+            break;
+        case 5:
+            reset_options_visual_boxes_flags();
+            break;
+        case 6:
+            if (login_control__State == 5)
+            {
+                network_players[LbNetworkPlayerNumber()].Type = 13;
+                byte_15516D = -1;
+                byte_15516C = -1;
+                switch_net_screen_boxes_to_initiate();
+                net_unkn_func_33();
+            }
+            screentype = SCRT_MAINMENU;
+            if (restore_savegame) {
+                restore_savegame = 0;
+                sysmnu_buttons[5].Y += 150;
+            }
+            game_system_screen = 0;
+            if ((ingame.Flags & 0x0010) != 0)
+                save_game_write(0, save_active_desc);
+            break;
+        }
+        edit_flag = 0;
+        reload_background_flag = 1;
+    }
 }
 
 ubyte do_sysmnu_button(ubyte click)
@@ -879,7 +1051,7 @@ void reset_system_menu_boxes_flags(void)
     }
 }
 
-void clear_someflags_system_menu_screen_boxes(void)
+void mark_system_menu_screen_boxes_redraw(void)
 {
     unkn13_SYSTEM_button.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_BkCopied);
 }
@@ -1189,7 +1361,7 @@ void draw_purple_app_email_icon(short cx, short cy, short bri)
     lbFontPtr = small2_font;
     lbDisplay.DrawColour = 87;
     if (mission_remain_until_success(brief_store[bri].Mission))
-        lbDisplay.DrawFlags |= 0x0040;
+        lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
     my_set_text_window(cx, cy, spr->SWidth + 2, spr->SHeight);
     draw_text_purple_list2(8, 3, misc_text[4], 0);
 

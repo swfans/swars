@@ -196,15 +196,20 @@ jobs:
           "${{ runner.workspace }}\dl\MEGAcmdSetup.exe" /S
           echo %LOCALAPPDATA%\MEGAcmd>> %GITHUB_PATH%
 
+      - name: Prepare NSIS - get and install
+        uses: repolevedavaj/install-nsis@v1.0.3
+        with:
+          nsis-version: '3.10'
+
       - name: Download required NSIS plugins - wget
         env:
           DL_WORKSPACE: ${{ runner.workspace }}\dl
         working-directory: ${{ runner.workspace }}
         run: |
           mkdir -p "${DL_WORKSPACE}"
-          wget -O "${DL_WORKSPACE}\\Inetc.zip" --auth-no-challenge --referer="https://nsis.sourceforge.io/Inetc_plug-in" "https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip"
-          wget -O "${DL_WORKSPACE}\\NSISunzU.zip" --auth-no-challenge --referer="https://nsis.sourceforge.io/Nsisunz_plug-in" "https://nsis.sourceforge.io/mediawiki/images/5/5a/NSISunzU.zip"
-          wget -O "${DL_WORKSPACE}\\Md5dll.zip" --auth-no-challenge --referer="https://nsis.sourceforge.io/MD5_plugin" "https://nsis.sourceforge.io/mediawiki/images/d/d7/Md5dll.zip"
+          wget -O "${DL_WORKSPACE}\\Inetc.zip" --retry-connrefused --waitretry=20 --auth-no-challenge --referer="https://nsis.sourceforge.io/Inetc_plug-in" "https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip"
+          wget -O "${DL_WORKSPACE}\\NSISunzU.zip" --retry-connrefused --waitretry=20 --auth-no-challenge --referer="https://nsis.sourceforge.io/Nsisunz_plug-in" "https://nsis.sourceforge.io/mediawiki/images/5/5a/NSISunzU.zip"
+          wget -O "${DL_WORKSPACE}\\Md5dll.zip" --retry-connrefused --waitretry=20 --auth-no-challenge --referer="https://nsis.sourceforge.io/MD5_plugin" "https://nsis.sourceforge.io/mediawiki/images/d/d7/Md5dll.zip"
 
       - name: Download installer utils
         # Instead of the usual actions/download-artifact, we are downloading from Mega
@@ -236,7 +241,7 @@ jobs:
           rm ../util-nsis.zip
 
       - name: Build installer
-        uses: joncloud/makensis-action@v4
+        uses: joncloud/makensis-action@v4.1
         with:
           additional-plugin-paths: "release/nsis-plugins"
           script-file: "release/res/swars-setup.nsi"

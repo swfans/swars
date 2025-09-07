@@ -843,10 +843,10 @@ void draw_screen(void)
     }
 #if 0
     //TODO Setting first palette colour was often used as debug helper; to be removed
-    __outbyte(0x3C8u, 0);
-    __outbyte(0x3C9u, byte_1C83E0);
-    __outbyte(0x3C9u, 0);
-    __outbyte(0x3C9u, 0);
+    outp(0x3C8u, 0);
+    outp(0x3C9u, byte_1C83E0);
+    outp(0x3C9u, 0);
+    outp(0x3C9u, 0);
 #endif
     reset_drawlist();
 }

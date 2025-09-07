@@ -27,6 +27,7 @@
 #include "bflib_joyst.h"
 #include "engindrwlstm.h"
 #include "femain.h"
+#include "feshared.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -49,13 +50,9 @@ extern short textpos[10];
 
 extern struct TbSprite *fe_icons_sprites;
 
-// Shared with other screens
-extern struct ScreenBox controls_keylist_box;
-
 ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
-ubyte ac_show_audio_tracks_box(struct ScreenBox *box);
-ubyte ac_show_audio_volume_box(struct ScreenBox *box);
+ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
 
 void show_audio_volume_box_func_02(short a1, short a2, short a3, short a4, TbPixel colour)
 {
@@ -206,6 +203,14 @@ TbBool input_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
         }
     }
     return target_affected;
+}
+
+ubyte show_netgame_unkn1(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_netgame_unkn1\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
 }
 
 ubyte show_audio_volume_box(struct ScreenBox *box)
@@ -361,6 +366,33 @@ ubyte show_audio_tracks_box(struct ScreenBox *box)
     return drawn1 && drawn2;
 }
 
+ubyte show_options_audio_screen(void)
+{
+    ubyte drawn;
+    int i;
+
+    for (i = 0; i < 4; i++)
+    {
+        //drawn = audio_volume_boxes[i].DrawFn(&audio_volume_boxes[i]); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn) : "a" (&audio_volume_boxes[i]), "g" (audio_volume_boxes[i].DrawFn));
+    }
+    return drawn;
+}
+
+ubyte show_options_visual_screen(void)
+{
+    ubyte drawn;
+
+    //drawn = system_screen_shared_content_box.DrawFn(&system_screen_shared_content_box); -- incompatible calling convention
+    asm volatile ("call *%2\n"
+        : "=r" (drawn) : "a" (&system_screen_shared_content_box), "g" (system_screen_shared_content_box.DrawFn));
+    if (drawn == 3) {
+        show_netgame_unkn1(&system_screen_shared_content_box);
+    }
+    return drawn;
+}
+
 void init_options_audio_screen_boxes(void)
 {
     int i, h;
@@ -415,10 +447,10 @@ void init_options_audio_screen_boxes(void)
         options_audio_buttons[i].RadioValue = val++;
         options_audio_buttons[i].Flags |= GBxFlg_RadioBtn;
     }
-    audio_volume_boxes[0].SpecialDrawFn = ac_show_audio_volume_box;
-    audio_volume_boxes[1].SpecialDrawFn = ac_show_audio_volume_box;
-    audio_volume_boxes[2].SpecialDrawFn = ac_show_audio_volume_box;
-    audio_tracks_box.SpecialDrawFn = ac_show_audio_tracks_box;
+    audio_volume_boxes[0].SpecialDrawFn = show_audio_volume_box;
+    audio_volume_boxes[1].SpecialDrawFn = show_audio_volume_box;
+    audio_volume_boxes[2].SpecialDrawFn = show_audio_volume_box;
+    audio_tracks_box.SpecialDrawFn = show_audio_tracks_box;
 
     start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - audio_volume_boxes[0].Width - 7) / 2;
 
@@ -564,22 +596,22 @@ void init_options_visual_screen_boxes(void)
 
     for (i = 0; i < 14; i+=2)
     {
-        options_gfx_buttons[i+0].X = controls_keylist_box.X +
-          controls_keylist_box.Width - 177;
-        options_gfx_buttons[i+1].X = controls_keylist_box.X +
-          controls_keylist_box.Width - 89;
+        options_gfx_buttons[i+0].X = system_screen_shared_content_box.X +
+          system_screen_shared_content_box.Width - 177;
+        options_gfx_buttons[i+1].X = system_screen_shared_content_box.X +
+          system_screen_shared_content_box.Width - 89;
     }
 
     for (i = 14; i < 16; i++)
     {
-        val = (controls_keylist_box.Width -
+        val = (system_screen_shared_content_box.Width -
           options_gfx_buttons[i].Width) / 2;
-        options_gfx_buttons[i].X = controls_keylist_box.X +
+        options_gfx_buttons[i].X = system_screen_shared_content_box.X +
           val + 9;
     }
 }
 
-void reset_options_screen_boxes_flags(void)
+void reset_options_audio_boxes_flags(void)
 {
     int i;
 
@@ -589,12 +621,36 @@ void reset_options_screen_boxes_flags(void)
     for (i = 0; i < 7; i++) {
         options_audio_buttons[i].Flags = GBxFlg_RadioBtn | GBxFlg_Unkn0001;
     }
+}
+
+void reset_options_visual_boxes_flags(void)
+{
+    int i;
+
     for (i = 0; i < 14; i++) {
       options_gfx_buttons[i].Flags = GBxFlg_RadioBtn | GBxFlg_Unkn0001;
     }
     for (; i < 16; i++) {
       options_gfx_buttons[i].Flags = GBxFlg_Unkn0001;
     }
+}
+
+void set_flag02_audio_screen_boxes(void)
+{
+    int i;
+
+    for (i = 0; i != 4; i++)
+        audio_volume_boxes[i].Flags |= GBxFlg_Unkn0002;
+    for (i = 0; i != 7; i++)
+        options_audio_buttons[i].Flags |= GBxFlg_Unkn0002;
+}
+
+void set_flag02_gfx_screen_boxes(void)
+{
+    int i;
+
+    for (i = 0; i != 16; i++)
+        options_gfx_buttons[i].Flags |= GBxFlg_Unkn0002;
 }
 
 void update_options_screen_state(void)

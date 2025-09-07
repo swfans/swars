@@ -530,7 +530,7 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
     if ((word_1DC7A0 >> 2) > word_1DC7A2 - 4)
         word_1DC7A0 = 0;
     word_1DC7A2 = cmds_count;
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     LbDrawBox(box_x, box_y, box_width, box_height, col3);
     if (lbDisplay.GraphicsScreenHeight < 400) { // TODO get rid of the multiplying, when possible
         box_width *= 2;

@@ -448,7 +448,6 @@ extern char brief_netscan_cost_text[];
 extern char *misc_text[5];
 
 extern ubyte game_system_screen;
-extern char alert_text[200];
 extern ubyte byte_197160;
 
 extern ubyte execute_commands;

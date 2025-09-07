@@ -31,6 +31,7 @@
 .text
 
 .global EXPORT_SYMBOL(data_1e6076)
+.global EXPORT_SYMBOL(cbptr_1E5EF8)
 
 vtable_e11dc:
 		.long   func_e1698
@@ -96,31 +97,31 @@ GLOBAL_FUNC(ASM_joy_func_067)	/* 0x0E123C */
 		jmp    *%cs:vtable_e11dc(,%eax,4)
 /*----------------------------------------------------------------*/
 func_e1308:
-		cmpb   $0x0,data_1e2f0c
+		cmpb   $0x0,EXPORT_SYMBOL(byte_1E2F0C)
 		jne    jump_e1374
 		mov    $0x1,%bh
 		mov    EXPORT_SYMBOL(joy_grip_initialized),%cl
-		mov    %bh,data_1e2f0c
+		mov    %bh,EXPORT_SYMBOL(byte_1E2F0C)
 		test   %cl,%cl
 		jne    jump_e1335
 		mov    $0xffffffff,%ebx
-		mov    %ebx,data_1e2f38
+		mov    %ebx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %ebx,%eax
 		jmp    jump_e13fd
 	jump_e1335:
 		mov    $0x84a1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   %ax,%ax
 		jne    jump_e135c
 		mov    $0xffffffff,%ecx
-		mov    %bh,EXPORT_SYMBOL(data_1e2f36)
-		mov    %ecx,data_1e2f38
+		mov    %bh,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %ecx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %ecx,%eax
 		jmp    jump_e13fd
 	jump_e135c:
 		mov    $0x1,%edi
-		mov    %bh,EXPORT_SYMBOL(data_1e2f36)
-		mov    %edi,data_1e2f38
+		mov    %bh,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %edi,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %edi,%eax
 		jmp    jump_e13fd
 	jump_e1374:
@@ -129,38 +130,38 @@ func_e1308:
 		mov    $0xffffffff,%eax
 		jmp    jump_e13fd
 	jump_e1387:
-		cmpl   $0x0,data_1e2f14
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1E2F14)
 		jne    jump_e139a
 		call   ac_dos_clock
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 	jump_e139a:
 		call   ac_dos_clock
-		mov    data_1e2f14,%ebx
+		mov    EXPORT_SYMBOL(dword_1E2F14),%ebx
 		mov    %eax,%edx
 		sub    %ebx,%edx
-		mov    %eax,data_1e2f10
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F10)
 		cmp    $0x12c,%edx
 		jbe    jump_e13f8
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 		mov    $0x84a1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   %ax,%ax
 		jne    jump_e13e1
 		mov    $0x1,%dl
 		mov    $0xffffffff,%ecx
-		mov    %dl,EXPORT_SYMBOL(data_1e2f36)
-		mov    %ecx,data_1e2f38
+		mov    %dl,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %ecx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %ecx,%eax
 		jmp    jump_e13fd
 	jump_e13e1:
 		mov    $0x1,%dh
 		mov    $0x1,%edi
-		mov    %dh,EXPORT_SYMBOL(data_1e2f36)
-		mov    %edi,data_1e2f38
+		mov    %dh,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %edi,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %edi,%eax
 		jmp    jump_e13fd
 	jump_e13f8:
-		mov    data_1e2f38,%eax
+		mov    EXPORT_SYMBOL(dword_1E2F38),%eax
 	jump_e13fd:
 		cmp    $0x1,%eax
 		jne    jump_e20eb
@@ -178,7 +179,7 @@ func_e1308:
 	jump_e1422:
 		mov    %cl,%bh
 		mov    $0x84b1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   $0x2,%al
 		je     jump_e1418
 		mov    0xa04(%esi),%eax
@@ -187,7 +188,7 @@ func_e1308:
 		mov    %cl,%bh
 		mov    %eax,0xa04(%esi)
 		mov    $0x84b3,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		and    $0xff,%eax
 		movl   $0x70,0xa08(%edx)
 		inc    %eax
@@ -251,27 +252,27 @@ func_e1526:
 		mov    $0xffffffff,%eax
 		jmp    jump_e15c8
 	jump_e1539:
-		cmpl   $0x0,data_1e2f14
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1E2F14)
 		jne    jump_e154c
 		call   ac_dos_clock
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 	jump_e154c:
 		call   ac_dos_clock
-		mov    data_1e2f14,%ebx
+		mov    EXPORT_SYMBOL(dword_1E2F14),%ebx
 		mov    %eax,%edx
 		sub    %ebx,%edx
-		mov    %eax,data_1e2f10
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F10)
 		cmp    $0x12c,%edx
 		jbe    jump_e15c3
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 		mov    $0x84a1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   %ax,%ax
 		jne    jump_e159f
 		mov    $0x1,%al
 		mov    $0xffffffff,%ecx
-		mov    %al,EXPORT_SYMBOL(data_1e2f36)
-		mov    %ecx,data_1e2f38
+		mov    %al,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %ecx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %ecx,%eax
 		cmp    $0x1,%eax
 		jne    jump_e15d7
@@ -280,15 +281,15 @@ func_e1526:
 	jump_e159f:
 		mov    $0x1,%ah
 		mov    $0x1,%edi
-		mov    %ah,EXPORT_SYMBOL(data_1e2f36)
-		mov    %edi,data_1e2f38
+		mov    %ah,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %edi,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %edi,%eax
 		cmp    $0x1,%eax
 		jne    jump_e15d7
 		mov    $0xffffffff,%eax
 		jmp    jump_e2162
 	jump_e15c3:
-		mov    data_1e2f38,%eax
+		mov    EXPORT_SYMBOL(dword_1E2F38),%eax
 	jump_e15c8:
 		cmp    $0x1,%eax
 		jne    jump_e15d7
@@ -302,7 +303,7 @@ func_e1526:
 		mov    $0x1,%edx
 		mov    $EXPORT_SYMBOL(vfxunk1),%eax
 		xor    %ecx,%ecx
-		call   ASM_joy_func_081
+		call   ac_joy_func_081
 		cmp    $0x1,%eax
 		je     jump_e1605
 		mov    $0x1,%ecx
@@ -315,7 +316,7 @@ func_e1526:
 	jump_e162a:
 		mov    $0x2,%edx
 		mov    $EXPORT_SYMBOL(vfxunk1),%eax
-		call   ASM_joy_func_081
+		call   ac_joy_func_081
 		cmp    $0x1,%eax
 		je     jump_e1641
 		inc    %ecx
@@ -345,38 +346,38 @@ func_e1698:
 		mov    $0xffffffff,%eax
 		jmp    jump_e1721
 	jump_e16ab:
-		cmpl   $0x0,data_1e2f14
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1E2F14)
 		jne    jump_e16be
 		call   ac_dos_clock
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 	jump_e16be:
 		call   ac_dos_clock
-		mov    data_1e2f14,%ebx
+		mov    EXPORT_SYMBOL(dword_1E2F14),%ebx
 		mov    %eax,%edx
 		sub    %ebx,%edx
-		mov    %eax,data_1e2f10
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F10)
 		cmp    $0x12c,%edx
 		jbe    jump_e171c
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 		mov    $0x84a1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   %ax,%ax
 		jne    jump_e1705
 		mov    $0x1,%bl
 		mov    $0xffffffff,%ecx
-		mov    %bl,EXPORT_SYMBOL(data_1e2f36)
-		mov    %ecx,data_1e2f38
+		mov    %bl,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %ecx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %ecx,%eax
 		jmp    jump_e1721
 	jump_e1705:
 		mov    $0x1,%bh
 		mov    $0x1,%edi
-		mov    %bh,EXPORT_SYMBOL(data_1e2f36)
-		mov    %edi,data_1e2f38
+		mov    %bh,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %edi,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %edi,%eax
 		jmp    jump_e1721
 	jump_e171c:
-		mov    data_1e2f38,%eax
+		mov    EXPORT_SYMBOL(dword_1E2F38),%eax
 	jump_e1721:
 		cmp    $0x1,%eax
 		jne    jump_e1734
@@ -481,37 +482,37 @@ func_e1842:
 		mov    $0xffffffff,%eax
 		jmp    jump_e18ca
 	jump_e1855:
-		cmpl   $0x0,data_1e2f14
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1E2F14)
 		jne    jump_e1868
 		call   ac_dos_clock
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 	jump_e1868:
 		call   ac_dos_clock
-		mov    data_1e2f14,%ebx
+		mov    EXPORT_SYMBOL(dword_1E2F14),%ebx
 		mov    %eax,%edx
 		sub    %ebx,%edx
-		mov    %eax,data_1e2f10
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F10)
 		cmp    $0x12c,%edx
 		jbe    jump_e18c5
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 		mov    $0x84a1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   %ax,%ax
 		jne    jump_e18ae
-		movb   $0x1,EXPORT_SYMBOL(data_1e2f36)
+		movb   $0x1,EXPORT_SYMBOL(byte_1E2F36)
 		mov    $0xffffffff,%ecx
-		mov    %ecx,data_1e2f38
+		mov    %ecx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %ecx,%eax
 		jmp    jump_e18ca
 	jump_e18ae:
 		mov    $0x1,%ch
 		mov    $0x1,%edi
-		mov    %ch,EXPORT_SYMBOL(data_1e2f36)
-		mov    %edi,data_1e2f38
+		mov    %ch,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %edi,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %edi,%eax
 		jmp    jump_e18ca
 	jump_e18c5:
-		mov    data_1e2f38,%eax
+		mov    EXPORT_SYMBOL(dword_1E2F38),%eax
 	jump_e18ca:
 		cmp    $0x1,%eax
 		jne    jump_e18dd
@@ -607,38 +608,38 @@ func_e19d1:
 		mov    $0xffffffff,%eax
 		jmp    jump_e1a5a
 	jump_e19e4:
-		cmpl   $0x0,data_1e2f14
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1E2F14)
 		jne    jump_e19f7
 		call   ac_dos_clock
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 	jump_e19f7:
 		call   ac_dos_clock
-		mov    data_1e2f14,%ebx
+		mov    EXPORT_SYMBOL(dword_1E2F14),%ebx
 		mov    %eax,%edx
 		sub    %ebx,%edx
-		mov    %eax,data_1e2f10
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F10)
 		cmp    $0x12c,%edx
 		jbe    jump_e1a55
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 		mov    $0x84a1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   %ax,%ax
 		jne    jump_e1a3e
 		mov    $0x1,%dl
 		mov    $0xffffffff,%ecx
-		mov    %dl,EXPORT_SYMBOL(data_1e2f36)
-		mov    %ecx,data_1e2f38
+		mov    %dl,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %ecx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %ecx,%eax
 		jmp    jump_e1a5a
 	jump_e1a3e:
 		mov    $0x1,%dh
 		mov    $0x1,%edi
-		mov    %dh,EXPORT_SYMBOL(data_1e2f36)
-		mov    %edi,data_1e2f38
+		mov    %dh,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %edi,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %edi,%eax
 		jmp    jump_e1a5a
 	jump_e1a55:
-		mov    data_1e2f38,%eax
+		mov    EXPORT_SYMBOL(dword_1E2F38),%eax
 	jump_e1a5a:
 		cmp    $0x1,%eax
 		jne    jump_e1a6d
@@ -769,38 +770,38 @@ func_e19d1:
 		pop    %ebx
 		ret
 	jump_e1bfc:
-		cmpl   $0x0,data_1e2f14
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1E2F14)
 		jne    jump_e1c0f
 		call   ac_dos_clock
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 	jump_e1c0f:
 		call   ac_dos_clock
-		mov    data_1e2f14,%ebx
+		mov    EXPORT_SYMBOL(dword_1E2F14),%ebx
 		mov    %eax,%edx
 		sub    %ebx,%edx
-		mov    %eax,data_1e2f10
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F10)
 		cmp    $0x12c,%edx
 		jbe    jump_e1c6d
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 		mov    $0x84a1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   %ax,%ax
 		jne    jump_e1c56
 		mov    $0x1,%dh
 		mov    $0xffffffff,%ecx
-		mov    %dh,EXPORT_SYMBOL(data_1e2f36)
-		mov    %ecx,data_1e2f38
+		mov    %dh,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %ecx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %ecx,%eax
 		jmp    jump_e1c72
 	jump_e1c56:
 		mov    $0x1,%bl
 		mov    $0x1,%edi
-		mov    %bl,EXPORT_SYMBOL(data_1e2f36)
-		mov    %edi,data_1e2f38
+		mov    %bl,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %edi,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %edi,%eax
 		jmp    jump_e1c72
 	jump_e1c6d:
-		mov    data_1e2f38,%eax
+		mov    EXPORT_SYMBOL(dword_1E2F38),%eax
 	jump_e1c72:
 		cmp    $0x1,%eax
 		jne    jump_e1c85
@@ -900,38 +901,38 @@ func_e1d87:
 		mov    $0xffffffff,%eax
 		jmp    jump_e1e10
 	jump_e1d9a:
-		cmpl   $0x0,data_1e2f14
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1E2F14)
 		jne    jump_e1dad
 		call   ac_dos_clock
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 	jump_e1dad:
 		call   ac_dos_clock
-		mov    data_1e2f14,%ebx
+		mov    EXPORT_SYMBOL(dword_1E2F14),%ebx
 		mov    %eax,%edx
 		sub    %ebx,%edx
-		mov    %eax,data_1e2f10
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F10)
 		cmp    $0x12c,%edx
 		jbe    jump_e1e0b
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 		mov    $0x84a1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   %ax,%ax
 		jne    jump_e1df4
 		mov    $0x1,%bh
 		mov    $0xffffffff,%ecx
-		mov    %bh,EXPORT_SYMBOL(data_1e2f36)
-		mov    %ecx,data_1e2f38
+		mov    %bh,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %ecx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %ecx,%eax
 		jmp    jump_e1e10
 	jump_e1df4:
 		mov    $0x1,%cl
 		mov    $0x1,%edi
-		mov    %cl,EXPORT_SYMBOL(data_1e2f36)
-		mov    %edi,data_1e2f38
+		mov    %cl,EXPORT_SYMBOL(byte_1E2F36)
+		mov    %edi,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %edi,%eax
 		jmp    jump_e1e10
 	jump_e1e0b:
-		mov    data_1e2f38,%eax
+		mov    EXPORT_SYMBOL(dword_1E2F38),%eax
 	jump_e1e10:
 		cmp    $0x1,%eax
 		jne    jump_e1e23
@@ -1027,35 +1028,35 @@ func_e1f1f:
 		mov    $0xffffffff,%eax
 		jmp    jump_e1fa3
 	jump_e1f32:
-		cmpl   $0x0,data_1e2f14
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1E2F14)
 		jne    jump_e1f45
 		call   ac_dos_clock
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 	jump_e1f45:
 		call   ac_dos_clock
-		mov    data_1e2f14,%edi
+		mov    EXPORT_SYMBOL(dword_1E2F14),%edi
 		mov    %eax,%edx
 		sub    %edi,%edx
-		mov    %eax,data_1e2f10
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F10)
 		cmp    $0x12c,%edx
 		jbe    jump_e1f9e
-		mov    %eax,data_1e2f14
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F14)
 		mov    $0x84a1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   %ax,%ax
 		jne    jump_e1f88
-		movb   $0x1,EXPORT_SYMBOL(data_1e2f36)
+		movb   $0x1,EXPORT_SYMBOL(byte_1E2F36)
 		mov    $0xffffffff,%eax
-		mov    %eax,data_1e2f38
+		mov    %eax,EXPORT_SYMBOL(dword_1E2F38)
 		jmp    jump_e1fa3
 	jump_e1f88:
-		movb   $0x1,EXPORT_SYMBOL(data_1e2f36)
+		movb   $0x1,EXPORT_SYMBOL(byte_1E2F36)
 		mov    $0x1,%edx
-		mov    %edx,data_1e2f38
+		mov    %edx,EXPORT_SYMBOL(dword_1E2F38)
 		mov    %edx,%eax
 		jmp    jump_e1fa3
 	jump_e1f9e:
-		mov    data_1e2f38,%eax
+		mov    EXPORT_SYMBOL(dword_1E2F38),%eax
 	jump_e1fa3:
 		cmp    $0x1,%eax
 		jne    jump_e1fb6
@@ -1144,7 +1145,7 @@ func_e1f1f:
 /*----------------------------------------------------------------*/
 func_e20a3:
 		mov    %esi,%eax
-		call   joy_func_049
+		call   ac_joy_func_049
 		cmp    $0x1,%eax
 		je     jump_e20c7
 		mov    $0xffffffff,%eax
@@ -1169,7 +1170,7 @@ func_e20a3:
 		ret
 /*----------------------------------------------------------------*/
 func_e20e1:
-		call   ASM_vfx1_init
+		call   ac_vfx1_init
 		test   %ax,%ax
 		jne    jump_e2103
 	jump_e20eb:
@@ -1545,7 +1546,7 @@ func_e279b:
 		xor    %edx,%edx
 		mov    %ebp,%esi
 		mov    $0x84a0,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		xor    %edi,%edi
 		mov    $0x1,%edx
 		add    $0x4,%ebp
@@ -1587,7 +1588,7 @@ func_e279b:
 		mov    %dl,%bh
 		mov    %edi,0x140(%esp)
 		mov    $0x84b1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		test   $0x2,%al
 		je     jump_e281a
 		mov    $0x2,%ebx
@@ -1595,7 +1596,7 @@ func_e279b:
 		mov    %dl,%bh
 		movb   $0x1,0xa48(%edi,%esi,1)
 		mov    $0x84c0,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		and    $0xffff,%eax
 		lea    0x0(,%edi,4),%ebx
 		dec    %eax
@@ -1606,7 +1607,7 @@ func_e279b:
 		mov    $0x1,%ch
 		mov    %dl,%bh
 		mov    $0x84c0,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		and    $0xffff,%eax
 		dec    %eax
 		mov    0x110(%esp),%ebx
@@ -1617,7 +1618,7 @@ func_e279b:
 		xor    %ch,%ch
 		mov    %dl,%bh
 		mov    $0x84c1,%ax
-		lcall  *EXPORT_SYMBOL(data_1e5ef8)
+		lcall  *EXPORT_SYMBOL(cbptr_1E5EF8)
 		mov    %eax,%ebx
 		mov    %eax,0xec(%esp)
 		sar    $0x2,%eax
@@ -2380,7 +2381,7 @@ func_e32fb:
 		mov    $0x1,%edx
 		mov    $EXPORT_SYMBOL(vfxunk1),%eax
 		xor    %ecx,%ecx
-		call   ASM_joy_func_081
+		call   ac_joy_func_081
 		cmp    $0x1,%eax
 		je     jump_e3329
 		mov    $0x1,%ecx
@@ -2402,7 +2403,7 @@ func_e32fb:
 	jump_e3376:
 		mov    $0x2,%edx
 		mov    $EXPORT_SYMBOL(vfxunk1),%eax
-		call   ASM_joy_func_081
+		call   ac_joy_func_081
 		cmp    $0x1,%eax
 		je     jump_e3396
 		movswl %di,%eax
@@ -2599,7 +2600,7 @@ func_e3605:
 		movswl %di,%ecx
 		mov    %esi,%eax
 		mov    %ecx,%edx
-		call   joy_func_049
+		call   ac_joy_func_049
 		cmp    $0x1,%eax
 		jne    func_e33e2
 		mov    %ebx,0x980(%esi,%ecx,4)
@@ -2723,7 +2724,7 @@ func_e3ec7:
 
 
 /*----------------------------------------------------------------*/
-joy_func_049:	/* 0x0E43C8 */
+GLOBAL_FUNC(ASM_joy_func_049)	/* 0x0E43C8 */
 /*----------------------------------------------------------------*/
 		cmpb   $0x0,EXPORT_SYMBOL(joy_spbal_initialized)
 		je     jump_e44c2
@@ -2857,11 +2858,11 @@ data_1e2efc:
 		.long	0x0
 data_1e2f00:
 		.fill   0xc
-data_1e2f0c:
+GLOBAL (byte_1E2F0C)	/* 0x1E2F0C */
 		.long	0x0
-data_1e2f10:
+GLOBAL (dword_1E2F10)	/* 0x1E2F10 */
 		.long	0x0
-data_1e2f14:
+GLOBAL (dword_1E2F14)	/* 0x1e2f14 */
 		.long	0x0
 GLOBAL (vfxunk1)	/* 0x1E2F18 */
 		.short  0x0
@@ -2878,5 +2879,5 @@ GLOBAL (dword_1E2F30)	/* 0x1E2F30 */
 		.long	0x0
 GLOBAL (byte_1E2F34)	/* 0x1E2F34 */
 		.byte	0x0
-data_1e2f38:
+GLOBAL (dword_1E2F38)	/* 0x1E2F38 */
 		.fill   0x5

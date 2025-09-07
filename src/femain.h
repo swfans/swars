@@ -57,6 +57,7 @@ void show_alert_box(void);
 void init_alert_screen_boxes(void);
 void reset_alert_screen_boxes_flags(void);
 void set_flag01_alert_screen_boxes(void);
+void alert_box_text_fmt(const char *fmt, ...);
 
 ubyte ac_show_title_box(struct ScreenTextBox *box);
 
@@ -79,7 +80,7 @@ TbBool is_heading_flag01(void);
 ubyte draw_heading_box(void);
 void set_flag02_heading_screen_boxes(void);
 void reset_system_menu_boxes_flags(void);
-void clear_someflags_system_menu_screen_boxes(void);
+void mark_system_menu_screen_boxes_redraw(void);
 
 void show_mission_loading_screen(void);
 
