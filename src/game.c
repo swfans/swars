@@ -30,6 +30,7 @@
 #include "bfaudio.h"
 #include "bfmusic.h"
 #include "bfsound.h"
+#include "bfdanger.h"
 #include "bfplanar.h"
 #include "bfscrsurf.h"
 #include "bfscrcopy.h"
@@ -6562,12 +6563,75 @@ void draw_game(void)
     }
 }
 
+/** Draws simple purple rect directly, without drawlists.
+ */
+void draw_purple_rect(int x, int y, int w, int h, ubyte active)
+{
+    TbPixel col1, col2;
+
+    lbDisplay.DrawFlags &= ~0x0010;
+    if (active) {
+        col1 = 0x0E;
+        col2 = 0x0C;
+    } else {
+        col1 = 0x10;
+        col2 = 0x0E;
+    }
+    LbDrawBox(x, y, w, h, col1);
+    LbDrawLine(x, y, x + w - 2, y, col2);
+    LbDrawLine(x, y, x, y + h - 2, col2);
+}
+
 ubyte critical_action_input(void)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_critical_action_input\n"
         : "=r" (ret) : );
     return ret;
+#endif
+    char locstr[52];
+
+    strcpy(locstr, "Confirm Critical Action Y/N?");
+    DangerMusicFadeSwitch(2, 4u);
+    SetMusicTempo(110, 1000);
+    {
+        int x, y, w, h;
+        short tx_height;
+
+        tx_height = font_height('A');
+        w = my_string_width(locstr) + 2 * tx_height;
+        h = 3 * tx_height;
+        x = (lbDisplay.GraphicsWindowWidth - w) / 2;
+        y = (lbDisplay.GraphicsWindowHeight - h) / 2;
+
+        draw_purple_rect(x, y, w, h, 0);
+        draw_text(x + tx_height, y + tx_height, locstr, 0xC);
+    }
+
+    lbKeyOn[KC_Y] = 0;
+    lbKeyOn[KC_N] = 0;
+    swap_wscreen();
+    if ( !lbKeyOn[KC_Y] )
+    {
+      while (!lbKeyOn[KC_N] && !lbKeyOn[KC_Y])
+        game_handle_sdl_events();
+    }
+
+    if (lbKeyOn[KC_Y])
+    {
+        lbKeyOn[KC_Y] = 0;
+        DangerMusicFadeSwitch(1, 1u);
+       SetMusicTempoNormal();
+        return 1;
+    }
+    else
+    {
+        lbKeyOn[KC_N] = 0;
+        DangerMusicFadeSwitch(1, 1u);
+        SetMusicTempoNormal();
+        return 0;
+    }
 }
 
 ubyte process_send_person(ushort player, int i)
