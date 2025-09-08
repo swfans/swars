@@ -2227,97 +2227,97 @@ msgctxt "Outcast names pool"
 msgid "Wright"
 msgstr ""
 
-#. Generic text
+#. Title above system menu.
 #: guitext:366
 msgctxt "Menu screen title"
 msgid "System"
 msgstr ""
 
-#. Generic text
+#. Public Area Network screen title on top.
 #: guitext:367
 msgctxt "Menu screen title"
 msgid "P.A. Network"
 msgstr ""
 
-#. Generic text
+#. Map screen title on top.
 #: guitext:368
 msgctxt "Menu screen title"
 msgid "Utopia"
 msgstr ""
 
-#. Generic text
+#. Cryogenic storage screen title on top.
 #: guitext:369
 msgctxt "Menu screen title"
 msgid "Cryovat"
 msgstr ""
 
-#. Generic text
+#. Cyborg equipment screen title on top.
 #: guitext:370
 msgctxt "Menu screen title"
 msgid "Equipment"
 msgstr ""
 
-#. Generic text
+#. Research screen title on top.
 #: guitext:371
 msgctxt "Menu screen title"
 msgid "Research"
 msgstr ""
 
-#. Generic text
+#. Mission brief title on top.
 #: guitext:372
 msgctxt "Menu screen title"
 msgid "Briefing"
 msgstr ""
 
-#. Generic text
+#. Name for icon at bottom dock bar.
 #: guitext:373
 msgctxt "Dock bar icons"
 msgid "Mail"
 msgstr ""
 
-#. Generic text
+#. Mission debrief title on top.
 #: guitext:374
 msgctxt "Menu screen title"
 msgid "Debriefing"
 msgstr ""
 
-#. Generic text
+#. Name for icon at bottom dock bar.
 #: guitext:375
 msgctxt "Dock bar icons"
 msgid "Brief"
 msgstr ""
 
-#. Generic text
+#. Centered text on loading screen.
 #: guitext:376
 msgctxt "Mission loading"
 msgid "Initiating Drone Connection..."
 msgstr ""
 
-#. Generic text
+#. Text on system menu button.
 #: guitext:377
 msgctxt "System menu"
 msgid "Ops Config"
 msgstr ""
 
-#. Generic text
+#. Text on system menu button.
 #: guitext:378
 msgctxt "System menu"
 msgid "Multinet Access"
 msgstr ""
 
-#. Generic text
+#. Text on system menu button.
 #: guitext:379
 msgctxt "System menu"
 msgid "File Storage"
 msgstr ""
 
-#. Generic text
+#. Text on system menu button.
 #: guitext:380
 msgctxt "System menu"
 msgid "Interface"
 msgstr ""
 
-#. Generic text
+#. Text on system menu button.
 #: guitext:381
 msgctxt "System menu"
 msgid "Audio"
@@ -2325,11 +2325,11 @@ msgstr ""
 
 #. Generic text
 #: guitext:382
-msgctxt "System menu"
+#. Text on system menu button.
 msgid "Visual Depth"
 msgstr ""
 
-#. Generic text
+#. Text on system menu button.
 #: guitext:383
 msgctxt "System menu"
 msgid "Logout"
@@ -2347,7 +2347,7 @@ msgctxt "MP Screen button"
 msgid "Initiate"
 msgstr ""
 
-#. Generic text
+#. Text on button to log into a game in multiplayer screen.
 #: guitext:386
 msgctxt "MP Screen button"
 msgid "Log On"
@@ -2491,13 +2491,13 @@ msgctxt "Research screen area"
 msgid "Research Options"
 msgstr ""
 
-#. Generic text
+#. Text naming a field which shows and allows adjusting funding for research.
 #: guitext:410
 msgctxt "Research screen metric"
 msgid "Funding"
 msgstr ""
 
-#. Generic text
+#. Text naming a field which shows amount of scientists ounder players jurisdiction.
 #: guitext:411
 msgctxt "Research screen metric"
 msgid "Scientists"
@@ -2545,13 +2545,13 @@ msgctxt "Research screen button"
 msgid "Suspend"
 msgstr ""
 
-#. Generic text
+#. Text above volume bar.
 #: guitext:419
 msgctxt "Audio settings area"
 msgid "Sound Volume"
 msgstr ""
 
-#. Generic text
+#. Text above volume bar.
 #: guitext:420
 msgctxt "Audio settings area"
 msgid "Tension Music Volume"
@@ -2569,19 +2569,19 @@ msgctxt "Value bar limit"
 msgid "Max"
 msgstr ""
 
-#. Generic text
+#. Unidentified text
 #: guitext:423
 msgctxt "Menu interface text"
 msgid "Effects"
 msgstr ""
 
-#. Generic text
+#. Unidentified text
 #: guitext:424
 msgctxt "Menu interface text"
 msgid "Music"
 msgstr ""
 
-#. Generic text
+#. Unidentified text
 #: guitext:425
 msgctxt "Menu interface text"
 msgid "Armoury"
@@ -2617,7 +2617,7 @@ msgctxt "Cryo screen area"
 msgid "Cryo"
 msgstr ""
 
-#. Generic text
+#. Text naming the area with list of mods. Deprecated.
 #: guitext:431
 msgctxt "Cryo screen area"
 msgid "Modifications"
@@ -2641,9 +2641,9 @@ msgctxt "Cryo mod properties"
 msgid "Additional"
 msgstr ""
 
-#. Generic text
+#. Title of an area within debrief screen. Deprecated.
 #: guitext:435
-msgctxt "Menu interface text"
+msgctxt "Debrief screen area"
 msgid "Mission Statistics"
 msgstr ""
 
@@ -2767,13 +2767,13 @@ msgctxt "Generic button"
 msgid "Continue"
 msgstr ""
 
-#. Generic text
+#. Unidentified text
 #: guitext:456
 msgctxt "Menu interface text"
 msgid "Fyi"
 msgstr ""
 
-#. Generic text
+#. Unidentified text
 #: guitext:457
 msgctxt "Menu interface text"
 msgid "Billings"
@@ -2821,13 +2821,13 @@ msgctxt "Visual settings option"
 msgid "Projector Speed"
 msgstr ""
 
-#. Generic text
+#. Slow projector speed enables complex animation of redrawing screen.
 #: guitext:465
 msgctxt "Projector Speed value"
 msgid "Slow"
 msgstr ""
 
-#. Generic text
+#. Fast projector means minimal animation of redrawing screen.
 #: guitext:466
 msgctxt "Projector Speed value"
 msgid "Fast"
@@ -2839,61 +2839,61 @@ msgctxt "Generic button"
 msgid "Finish"
 msgstr ""
 
-#. Generic text
+#. Unidentified text
 #: guitext:468
 msgctxt "Menu interface text"
 msgid "Mail Hq"
 msgstr ""
 
-#. Generic text
+#. Name for option which allows switching screen resolution during missions.
 #: guitext:469
 msgctxt "Visual settings option"
 msgid "Resolution"
 msgstr ""
 
-#. Generic text
+#. Name for option which allows switching graphics detail within missison.
 #: guitext:470
 msgctxt "Visual settings option"
 msgid "Detail Level"
 msgstr ""
 
-#. Generic text
+#. Name for option which allows switching mission camera between isometric and perspective view.
 #: guitext:471
 msgctxt "Visual settings option"
 msgid "Perspective"
 msgstr ""
 
-#. Generic text
+#. Name for option which allows changimg max zoom level.
 #: guitext:472
 msgctxt "Visual settings option"
 msgid "Maximum Zoom"
 msgstr ""
 
-#. Generic text
+#. Resolutions depend on config options; these are just initial defaults.
 #: guitext:473
 msgctxt "Resolution value"
 msgid "320x200"
 msgstr ""
 
-#. Generic text
+#. Resolutions depend on config options; these are just initial defaults.
 #: guitext:474
 msgctxt "Resolution value"
 msgid "640x480"
 msgstr ""
 
-#. Generic text
+#. Low detail means smaller resolution of some sprites and fewer debrits on explosions.
 #: guitext:475
 msgctxt "Detail level value"
 msgid "Low"
 msgstr ""
 
-#. Generic text
+#. Medium detail means moderate resolution of sprites and amount of debrits on explosions.
 #: guitext:476
 msgctxt "Detail level value"
 msgid "Medium"
 msgstr ""
 
-#. Generic text
+#. High detail means best matched resolution of sprites and full amount of debrits on explosions.
 #: guitext:477
 msgctxt "Detail level value"
 msgid "High"
@@ -2911,13 +2911,13 @@ msgctxt "Switch option value"
 msgid "On"
 msgstr ""
 
-#. Generic text
+#. Whether movies should be player on billboards during missions.
 #: guitext:480
 msgctxt "Visual settings option"
 msgid "Billboard Movies"
 msgstr ""
 
-#. Generic text
+#. Whether to use more complex and more dynamic lights and effects around lights.
 #: guitext:481
 msgctxt "Visual settings option"
 msgid "Lighting Effects"
@@ -2929,9 +2929,9 @@ msgctxt "Storage screen button"
 msgid "New Mortal Game"
 msgstr ""
 
-#. Generic text
+#. Title of brief screen area with selection of cities. The selection area only exists if more than one mission is bound to one email.
 #: guitext:483
-msgctxt "Menu interface text"
+msgctxt "Brief screen area"
 msgid "Active Cities"
 msgstr ""
 
@@ -2947,25 +2947,25 @@ msgctxt "Joystick area button"
 msgid "Calibrate"
 msgstr ""
 
-#. Generic text
+#. Column title with names of controls functions.
 #: guitext:486
-msgctxt "Menu interface text"
+msgctxt "Controls screen column"
 msgid "Controls"
 msgstr ""
 
-#. Generic text
+#. Column title with keyboard controls assigned.
 #: guitext:487
-msgctxt "Menu interface text"
+msgctxt "Controls screen column"
 msgid "Keys"
 msgstr ""
 
-#. Generic text
+#. Column title with joystick controls assigned.
 #: guitext:488
-msgctxt "Menu interface text"
+msgctxt "Controls screen column"
 msgid "Joystick"
 msgstr ""
 
-#. Generic text
+#. Joystick options in Controls screen.
 #: guitext:489
 msgctxt "Joystick area field"
 msgid "Joystick Type"
@@ -3007,67 +3007,67 @@ msgctxt "Brief screen field"
 msgid "No Further Info"
 msgstr ""
 
-#. Generic text
+#. Button text on the first screen after launching the game.
 #: guitext:496
-msgctxt "Menu interface text"
+msgctxt "First menu"
 msgid "Restore Savegame"
 msgstr ""
 
-#. Generic text
+#. Name of network protocol selection field.
 #: guitext:497
 msgctxt "MP Screen area"
 msgid "Net Protocol"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:498
 msgctxt "MP protocol"
-msgid "Ipx"
+msgid "IPX"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:499
 msgctxt "MP protocol"
-msgid "Serial Com1"
+msgid "Serial COM1"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:500
 msgctxt "MP protocol"
-msgid "Serial Com2"
+msgid "Serial COM2"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:501
 msgctxt "MP protocol"
-msgid "Serial Com3"
+msgid "Serial COM3"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:502
 msgctxt "MP protocol"
-msgid "Serial Com4"
+msgid "Serial COM4"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:503
 msgctxt "MP protocol"
 msgid "Modem"
 msgstr ""
 
-#. Generic text
+#. Transmission baud rate input for multiplayer protocols which require a constant rate.
 #: guitext:504
-msgctxt "Menu interface text"
+msgctxt "MP screen protocol"
 msgid "Baud Rate"
 msgstr ""
 
-#. Generic text
+#. Fix weapons in network game.
 #: guitext:505
 msgctxt "MP screen settings"
 msgid "Fix Weapons"
 msgstr ""
 
-#. Generic text
+#. Agents respawn after death in network game.
 #: guitext:506
 msgctxt "MP screen settings"
 msgid "Reincarnation"
@@ -3079,7 +3079,7 @@ msgctxt "MP screen protocol"
 msgid "Socket No."
 msgstr ""
 
-#. Generic text
+#. Audio output channels setting.
 #: guitext:508
 msgctxt "Menu interface text"
 msgid "Output Mode"
@@ -3115,25 +3115,25 @@ msgctxt "Audio screen option"
 msgid "Midi Stereo"
 msgstr ""
 
-#. Generic text
+#. Make building half-transparent if they are close to the camera and obscuring the view.
 #: guitext:514
 msgctxt "Visual settings option"
 msgid "Deep Radar"
 msgstr ""
 
-#. Generic text
+#. Random weapons apearing on the map within multiplayer missions.
 #: guitext:515
 msgctxt "MP screen settings"
 msgid "Random Weapons"
 msgstr ""
 
-#. Generic text
+#. Text above volume bar.
 #: guitext:516
 msgctxt "Audio settings area"
 msgid "CD Volume"
 msgstr ""
 
-#. Generic text
+#. Unidentified text
 #: guitext:517
 msgctxt "Menu interface text"
 msgid "Withdraw From Mission"
@@ -3163,37 +3163,37 @@ msgctxt "MP modem options"
 msgid "Number"
 msgstr ""
 
-#. Generic text
+#. Selection of colour and shape of HUD panels during missions.
 #: guitext:522
 msgctxt "Visual settings option"
 msgid "Panel Permutation"
 msgstr ""
 
-#. Generic text
+#. Selection of colour for agents trenchcoats.
 #: guitext:523
 msgctxt "Visual settings option"
 msgid "Trenchcoat Preference"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:524
 msgctxt "MP protocol"
 msgid "Modem COM1"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:525
 msgctxt "MP protocol"
 msgid "Modem COM2"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:526
 msgctxt "MP protocol"
 msgid "Modem COM3"
 msgstr ""
 
-#. Generic text
+#. One of network protocols.
 #: guitext:527
 msgctxt "MP protocol"
 msgid "Modem COM4"
@@ -3807,31 +3807,31 @@ msgstr ""
 
 #. Generic text
 #: guitext:629
-msgctxt "Menu interface text"
+msgctxt "Debrief screen metric"
 msgid "Last City Visited"
 msgstr ""
 
 #. Generic text
 #: guitext:630
-msgctxt "Menu interface text"
+msgctxt "Debrief screen metric"
 msgid "Agents Gained"
 msgstr ""
 
 #. Generic text
 #: guitext:631
-msgctxt "Menu interface text"
+msgctxt "Debrief screen metric"
 msgid "Research Completed:"
 msgstr ""
 
 #. Generic text
 #: guitext:632
-msgctxt "Menu interface text"
+msgctxt "Debrief screen metric"
 msgid "Expenditure"
 msgstr ""
 
 #. Generic text
 #: guitext:633
-msgctxt "Menu interface text"
+msgctxt "Debrief screen metric"
 msgid "Income"
 msgstr ""
 
