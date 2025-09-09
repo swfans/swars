@@ -2323,9 +2323,9 @@ msgctxt "System menu"
 msgid "Audio"
 msgstr ""
 
-#. Generic text
-#: guitext:382
 #. Text on system menu button.
+#: guitext:382
+msgctxt "System menu"
 msgid "Visual Depth"
 msgstr ""
 
@@ -2677,7 +2677,7 @@ msgctxt "Generic button"
 msgid "Set"
 msgstr ""
 
-#. Button allowing paying for extra surveillance before mission.
+#. Button allowing paying for extra surveillance before mission, for Eurocorp campaign.
 #: guitext:441
 msgctxt "Brief screen buttons"
 msgid "Netscan"
@@ -3415,367 +3415,367 @@ msgctxt "Joystick type"
 msgid "Digital 2 Joysticks"
 msgstr ""
 
-#. Generic text
+#. Game save or load error message.
 #: guitext:564
 msgctxt "Storage screen message"
 msgid "ERROR\n\nNo game slot selected."
 msgstr ""
 
-#. Generic text
+#. Game load error message.
 #: guitext:565
 msgctxt "Storage screen message"
 msgid "ERROR\n\nCouldn't load game."
 msgstr ""
 
-#. Generic text
+#. Game save error message.
 #: guitext:566
 msgctxt "Storage screen message"
 msgid "ERROR\n\nCouldn't save game."
 msgstr ""
 
-#. Generic text
+#. Game load error message.
 #: guitext:567
 msgctxt "Storage screen message"
 msgid "ERROR\n\nCorrupt save game file."
 msgstr ""
 
-#. Generic text
+#. Network interaction error message.
 #: guitext:568
 msgctxt "MP screen message"
 msgid "ERROR\n\nCouldn't connect to the network."
 msgstr ""
 
-#. Generic text
+#. Inactive city selected in World Map error message.
 #: guitext:569
-msgctxt "World map screen message"
+msgctxt "Game World map screen message"
 msgid "No reported activity.\nCity drop unnecessary."
 msgstr ""
 
-#. Generic text
+#. Too many active missions error message.
 #: guitext:570
 msgctxt "World map screen message"
 msgid "Complete current active mission before undertaking further missions."
 msgstr ""
 
-#. Generic text
+#. Game save success message.
 #: guitext:571
 msgctxt "Storage screen message"
 msgid "Game saved successfully."
 msgstr ""
 
-#. Generic text
+#. Game load success message.
 #: guitext:572
 msgctxt "Storage screen message"
 msgid "Game loaded successfully."
 msgstr ""
 
-#. Generic text
+#. Equip screen limited availability message.
 #: guitext:573
-msgctxt "Menu interface text"
+msgctxt "Equip screen message"
 msgid "Weapons of this type are in limited supply.\nResearch must be completed for availability to improve."
 msgstr ""
 
-#. Generic text
+#. First step of joystick calibration.
 #: guitext:574
 msgctxt "Joystick calibration"
 msgid "Move the joystick to the top left corner and press any button."
 msgstr ""
 
-#. Generic text
+#. Second step of joystick calibration.
 #: guitext:575
 msgctxt "Joystick calibration"
 msgid "Move the joystick to the bottom right corner and press any button."
 msgstr ""
 
-#. Generic text
+#. Third step of joystick calibration.
 #: guitext:576
 msgctxt "Joystick calibration"
 msgid "Leave the joystick in the centre and press any button."
 msgstr ""
 
-#. Generic text
+#. Message after clicking save button in Controls screen.
 #: guitext:577
 msgctxt "Controls screen message"
 msgid "Controls saved successfully."
 msgstr ""
 
-#. Generic text
+#. Message after clicking save button in Controls screen.
 #: guitext:578
 msgctxt "Controls screen message"
 msgid "ERROR\n\nCouldn't save controls."
 msgstr ""
 
-#. Generic text
+#. Message after logging to network session.
 #: guitext:579
 msgctxt "MP screen message"
 msgid "ERROR\n\nCouldn't connect to the session."
 msgstr ""
 
-#. Generic text
+#. Colour and style of HUD panels within mission.
 #: guitext:580
 msgctxt "Panel flavor"
 msgid "Oceanic Translucency"
 msgstr ""
 
-#. Generic text
+#. Colour and style of HUD panels within mission.
 #: guitext:581
 msgctxt "Panel flavor"
 msgid "Metal Lightning"
 msgstr ""
 
-#. Generic text
+#. Colour and style of HUD panels within mission.
 #: guitext:582
 msgctxt "Panel flavor"
 msgid "Veiled Darkness"
 msgstr ""
 
-#. Generic text
+#. Colour of agents trenchcoats within mission.
 #: guitext:583
 msgctxt "Trenchcoat flavor"
 msgid "Standard Issue"
 msgstr ""
 
-#. Generic text
+#. Colour of agents trenchcoats within mission.
 #: guitext:584
 msgctxt "Trenchcoat flavor"
 msgid "Sunburn"
 msgstr ""
 
-#. Generic text
+#. Colour of agents trenchcoats within mission.
 #: guitext:585
 msgctxt "Trenchcoat flavor"
 msgid "Rage"
 msgstr ""
 
-#. Generic text
+#. Colour of agents trenchcoats within mission.
 #: guitext:586
 msgctxt "Trenchcoat flavor"
 msgid "Military Might"
 msgstr ""
 
-#. Generic text
+#. Colour of agents trenchcoats within mission.
 #: guitext:587
 msgctxt "Trenchcoat flavor"
 msgid "Industrial"
 msgstr ""
 
-#. Generic text
+#. Colour of agents trenchcoats within mission.
 #: guitext:588
 msgctxt "Trenchcoat flavor"
 msgid "Gothic"
 msgstr ""
 
-#. Generic text
+#. Weapon fire trigger key.
 #: guitext:589
 msgctxt "Controls"
 msgid "Fire"
 msgstr ""
 
-#. Generic text
+#. Key for changing mood or active weapon.
 #: guitext:590
 msgctxt "Controls"
 msgid "Change Mood/Weapon"
 msgstr ""
 
-#. Generic text
+#. Key for rotating the view left.
 #: guitext:591
 msgctxt "Controls"
 msgid "Spin View Left"
 msgstr ""
 
-#. Generic text
+#. Key for rotating the view right.
 #: guitext:592
 msgctxt "Controls"
 msgid "Spin View Right"
 msgstr ""
 
-#. Generic text
+#. Key for switching cyborgs.
 #: guitext:593
 msgctxt "Controls"
 msgid "Change Agent"
 msgstr ""
 
-#. Generic text
+#. Key for ordering the cyborgs to move.
 #: guitext:594
 msgctxt "Controls"
 msgid "Go To Point"
 msgstr ""
 
-#. Generic text
+#. Key for grouping the cyborgs together.
 #: guitext:595
 msgctxt "Controls"
 msgid "Group Agents"
 msgstr ""
 
-#. Generic text
+#. Key for moving the view or moving the cyborg directly (if in key control mode).
 #: guitext:596
 msgctxt "Controls"
 msgid "Up"
 msgstr ""
 
-#. Generic text
+#. Key for moving the view or moving the cyborg directly (if in key control mode).
 #: guitext:597
 msgctxt "Controls"
 msgid "Down"
 msgstr ""
 
-#. Generic text
+#. Key for moving the view or moving the cyborg directly (if in key control mode).
 #: guitext:598
 msgctxt "Controls"
 msgid "Left"
 msgstr ""
 
-#. Generic text
+#. Key for moving the view or moving the cyborg directly (if in key control mode).
 #: guitext:599
 msgctxt "Controls"
 msgid "Right"
 msgstr ""
 
-#. Generic text
+#. Key for zooming the camera in, magnifying the view.
 #: guitext:600
 msgctxt "Controls"
 msgid "Zoom In"
 msgstr ""
 
-#. Generic text
+#. Key for zooming the camera out, showing wider view.
 #: guitext:601
 msgctxt "Controls"
 msgid "Zoom Out"
 msgstr ""
 
-#. Generic text
+#. Key for self-destructing a cyborg with chest mod.
 #: guitext:602
 msgctxt "Controls"
 msgid "Self-Destruct"
 msgstr ""
 
-#. Generic text
+#. Key for leaving a weapon unarmed on the ground.
 #: guitext:603
 msgctxt "Controls"
 msgid "Drop Weapon"
 msgstr ""
 
-#. Generic text
+#. Key for rotating the camera up (in very limited bounds).
 #: guitext:604
 msgctxt "Controls"
 msgid "Tilt View Up"
 msgstr ""
 
-#. Generic text
+#. Key for rotating the camera down (in very limited bounds).
 #: guitext:605
 msgctxt "Controls"
 msgid "Tilt View Down"
 msgstr ""
 
-#. Generic text
+#. Key for pausing the mission.
 #: guitext:606
 msgctxt "Controls"
 msgid "Pause"
 msgstr ""
 
-#. Generic text
+#. Key for entering cyborgs direct control.
 #: guitext:607
 msgctxt "Controls"
 msgid "Key Control"
 msgstr ""
 
-#. Generic text
+#. How cyborgs from a specific faction are named.
 #: guitext:608
 msgctxt "Noun for cyborgs"
 msgid "Agent"
 msgstr ""
 
-#. Generic text
+#. How cyborgs from a specific faction are named.
 #: guitext:609
 msgctxt "Noun for cyborgs"
 msgid "Zealot"
 msgstr ""
 
-#. Generic text
+#. How cyborgs from a specific faction are named.
 #: guitext:610
 msgctxt "Noun for cyborgs"
 msgid "Outcast"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing mission identifier.
 #: guitext:611
 msgctxt "Debrief screen metric"
 msgid "Mission Reference"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing mission end status.
 #: guitext:612
 msgctxt "Debrief screen metric"
 msgid "Mission Status"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing completed objectives.
 #: guitext:613
 msgctxt "Debrief screen metric"
 msgid "Objectives Completed"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing time spent within the mission (as counted within the game world).
 #: guitext:614
 msgctxt "Debrief screen metric"
 msgid "City Drop Time"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing time elapsed since mission start (as counted within the game world).
 #: guitext:615
 msgctxt "Debrief screen metric"
 msgid "Mission Time Elapsed"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing credits received during the mission and at its completion.
 #: guitext:616
 msgctxt "Debrief screen metric"
 msgid "Net Fiscal Gain"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing computed mission efficiency.
 #: guitext:617
 msgctxt "Debrief screen metric"
 msgid "Efficiency"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing persuaded survivors count.
 #: guitext:618
 msgctxt "Debrief screen metric"
 msgid "Civilians Persuaded"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing persuaded survivors count.
 #: guitext:619
 msgctxt "Debrief screen metric"
 msgid "Militia Persuaded"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing persuaded survivors count.
 #: guitext:620
 msgctxt "Debrief screen metric"
 msgid "Adversaries Persuaded"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing kill count.
 #: guitext:621
 msgctxt "Debrief screen metric"
 msgid "Civilians killed"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing kill count.
 #: guitext:622
 msgctxt "Debrief screen metric"
 msgid "Militia killed"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing kill count.
 #: guitext:623
 msgctxt "Debrief screen metric"
 msgid "Adversaries killed"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing number of owned cyborgs killed.
 #: guitext:624
 msgctxt "Debrief screen metric"
 msgid "Agents lost"
@@ -3805,55 +3805,55 @@ msgctxt "Date formatting"
 msgid "Hours"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing last visited city during a multi-city missison.
 #: guitext:629
 msgctxt "Debrief screen metric"
 msgid "Last City Visited"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing amount of persuaded agents which were stored in Cryovats.
 #: guitext:630
 msgctxt "Debrief screen metric"
 msgid "Agents Gained"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing a comma separated list of items researched during mission time.
 #: guitext:631
 msgctxt "Debrief screen metric"
 msgid "Research Completed:"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing amount of credits spent during mission time.
 #: guitext:632
 msgctxt "Debrief screen metric"
 msgid "Expenditure"
 msgstr ""
 
-#. Generic text
+#. Name of a field storing amount of credits received during the mission and at its completion.
 #: guitext:633
 msgctxt "Debrief screen metric"
 msgid "Income"
 msgstr ""
 
-#. Generic text
+#. Status when the mission was failed before withdrawing, or whwn the withdrawal counts as fail (which are most missions).
 #: guitext:634
 msgctxt "Mission status"
 msgid "Failed"
 msgstr ""
 
-#. Generic text
+#. Status when the mission objectives were met, but visiting another city is now required.
 #: guitext:635
 msgctxt "Mission status"
 msgid "Active"
 msgstr ""
 
-#. Generic text
+#. Status when the mission is completed and removed from pending list, progressing the campaign.
 #: guitext:636
 msgctxt "Mission status"
 msgid "Complete"
 msgstr ""
 
-#. Generic text
+#. Status when the player has exited from mission without failing but also without completing all objectives, allowing to repeat that mission.
 #: guitext:637
 msgctxt "Mission status"
 msgid "Withdrawn"
@@ -3931,9 +3931,9 @@ msgctxt "Epidermis version"
 msgid "Low E-M Profile"
 msgstr ""
 
-#. Generic text
+#. Button allowing paying for extra surveillance before mission, for Church campaign.
 #: guitext:650
-msgctxt "Menu interface text"
+msgctxt "Brief screen buttons"
 msgid "Inquisitor"
 msgstr ""
 
