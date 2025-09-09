@@ -354,7 +354,7 @@ extern long data_197150;
 extern long data_1dd91c;
 extern ubyte unkn_flags_01;
 extern ushort palette_brightness;
-extern long outro_unkn01;
+extern long outro_credits_enabled;
 extern long outro_unkn02;
 extern long outro_unkn03;
 extern long people_groups_count;

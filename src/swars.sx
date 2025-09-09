@@ -190035,7 +190035,7 @@ data_1dd918:
 		.long	0x0
 GLOBAL (data_1dd91c)	/* 0x1dd91c */
 		.long	0x0
-GLOBAL (outro_unkn01)	/* 0x1DD920 */
+GLOBAL (outro_credits_enabled)	/* 0x1DD920 */
 		.long	0x0
 GLOBAL (people_credits_desc)	/* 0x1DD924 */
 		.long	0x0

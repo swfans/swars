@@ -1158,10 +1158,6 @@ void load_outro_sprites(void)
     next_len = load_outro_text(outtxt_ptr);
     next_pos += next_len;
 
-    outro_unkn01 = 1;
-    outro_unkn02 = 0;
-    outro_unkn03 = 0;
-
     peptxt_ptr = &data_buf[next_pos];
     next_len = load_people_text(peptxt_ptr);
     next_pos += next_len;
@@ -1861,8 +1857,6 @@ TbKeyCode screen_wait_seconds_or_until_yesno_key(int sec)
 
 void init_outro(void)
 {
-    int i;
-
     gamep_scene_effect_type = ScEff_NONE;
     gamep_scene_effect_intensity = 1000;
     StopAllSamples();
@@ -1877,6 +1871,11 @@ void init_outro(void)
     //TODO hard-coded map ID
     change_current_map(51);
     load_outro_sprites();
+
+    outro_credits_enabled = 0;
+    outro_unkn02 = 0;
+    outro_unkn03 = 0;
+    gameturn = 0;
 
     screen_animate_draw_outro_text();
     // Sleep for up to 10 seconds
@@ -1897,20 +1896,6 @@ void init_outro(void)
     palette_brightness = 0;
     change_brightness(-64);
 
-    for (i = 0; i < 128; i++)
-    {
-        if (i & 1)
-            change_brightness(1);
-        traffic_unkn_func_01();
-        process_engine_unk1();
-        process_sound_heap();
-        func_2e440();
-
-        swap_wscreen();
-        game_update();
-        LbScreenClear(0);
-    }
-
     while (1)
     {
         if (is_key_pressed(KC_SPACE, KMod_DONTCARE))
@@ -1920,18 +1905,27 @@ void init_outro(void)
         if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
             break;
 
+        if (gameturn < 128)
+        {
+            // 64 steps of brightness increase - fade in
+            if (gameturn & 1)
+                change_brightness(1);
+            if (gameturn == 127)
+                outro_credits_enabled = 1;
+        } else {
+            // Randomly play seagull sample if applause is not currently playing
+            if (((LbRandomAnyShort() & 0xF) == 0) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, NULL)) )
+            {
+                play_sample_using_heap(0, 7 + (LbRandomAnyShort() % 5), 127, 64, 100, 0, 3u);
+            }
+        }
+
         gameturn++;
         traffic_unkn_func_01();
         process_engine_unk1();
-        // Play applause sample
-        if (((LbRandomAnyShort() & 0xF) == 0) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, NULL)) )
-        {
-            //TODO Why we're not storing new value of data_155704 ??
-            play_sample_using_heap(0, 7 + (LbRandomAnyShort() % 5), 127, 64, 100, 0, 3u);
-        }
         process_sound_heap();
         func_2e440();
-        if (outro_unkn01)
+        if (outro_credits_enabled)
         {
             outro_unkn02++;
             func_cc0d4((char **)&people_credits_groups[2 * outro_unkn03]);
