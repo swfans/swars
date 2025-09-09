@@ -753,103 +753,106 @@ int joy_func_081(struct UnkVFXStruct1 *p_vfxu1, short a2, short a3)
 #endif
 #if defined(DOS)||defined(GO32)
     ubyte bt;
-    char v4;
-    short v5;
+    short i;
     short v6;
-    ubyte v8;
-    short v9;
-    ubyte v11;
-    short v12;
-    ubyte v14;
-    char v15;
-    short v16;
+    ubyte o, t, repeat;
     char v17;
     short v18;
     ubyte v20;
     char v22;
-    ubyte v24;
-    ubyte v25, v26, v27;
+    ubyte k;
+    ubyte k3, k2, k1;
     char v28;
     sbyte v29;
 
     v29 = -1;
     v28 = 0;
-    v24 = 15;
-    if ( a2 == 1 )
+    repeat = 0;
+    if (a2 == 1)
     {
-        v27 = 0x30;
-        v26 = 0x10;
-        v25 = 0x20;
+        k1 = 0x30;
+        k2 = 0x10;
+        k3 = 0x20;
     }
     else
     {
-        v27 = 0xC0;
-        v26 = 0x40;
-        v25 = 0x80;
+        k1 = 0xC0;
+        k2 = 0x40;
+        k3 = 0x80;
     }
 
     cli();
 
+    k = 15;
 LABEL_5:
-    if (v24 == 1)
-        goto DONE;
-    --v24;
-    bt = inp(0x201u);
-    v4 = v27 & bt;
-    v5 = 4095;
-LABEL_7:
-    if (v5 == 1)
-        goto DONE;
-    v6 = 0;
-    for (v5 = 4095; v5 > 0; v5--)
     {
+        if (k == 1)
+            goto DONE;
+        --k;
         bt = inp(0x201u);
-        v8 = v4 ^ v27 & bt;
-        if (v8 == 0)
-            continue;
-        v4 ^= v8;
-        if ( (v26 & v8) == 0 )
-            goto LABEL_7;
-        if ( ++v6 >= 6 )
-            break;
-    }
-    if (v5 == 0)
-        goto DONE;
+        o = k1 & bt;
+        v6 = 0;
+        for (i = 4095; i > 0; i--)
+        {
+            bt = inp(0x201u);
+            t = o ^ k1 & bt;
+            if (t != 0)
+            {
+                o ^= t;
+                if ((k2 & t) != 0) {
+                    if (++v6 >= 6)
+                        break;
+                }
+                v6 = 0;
+            }
+        }
+        if (i == 0)
+            goto DONE;
 
-    for (v9 = 4095; v9 > 0; v9--)
-    {
-        bt = inp(0x201u);
-        v11 = v4 ^ v27 & bt;
-        if (v11 == 0)
-            continue;
-        v4 ^= v11;
-        if ((v25 & v11) != 0)
-            break;
+        for (i = 4095; i > 0; i--)
+        {
+            bt = inp(0x201u);
+            t = o ^ k1 & bt;
+            if (t != 0)
+            {
+                o ^= t;
+                if ((k3 & t) != 0) {
+                    break;
+                }
+            }
+        }
+        if (i == 0)
+            goto DONE;
+
+        for (i = 4095; i > 0; i--)
+        {
+            bt = inp(0x201u);
+            t = o ^ k1 & bt;
+            if (t != 0)
+            {
+                o ^= t;
+                if ((k2 & t) != 0) {
+                    break;
+                }
+                repeat = 1;
+                break;
+            }
+        }
+        if (i == 0)
+              goto DONE;
+        if (repeat)
+            goto LABEL_5;
     }
-    if (v9 == 0)
-        goto DONE;
-    for (v12 = 4095; v12 > 0; v12--)
-    {
-        bt = inp(0x201u);
-        v14 = v4 ^ v27 & bt;
-        if (v14 == 0)
-            continue;
-        v15 = v14 ^ v4;
-        if ((v26 & v14) != 0)
-            break;
-        goto LABEL_5;
-    }
-    if (v12 == 0)
-          goto DONE;
+
     v29 = 1;
     v17 = 4;
-    for (v16 = 4095; v16 > 0; v16--)
+    for (i = 4095; i > 0; i--)
     {
         bt = inp(0x201u);
-        v22 = v15 ^ v27 & bt;
+        v22 = o ^ k1 & bt;
         if (v22 == 0)
             continue;
-        v15 ^= v22;
+        o ^= v22;
         __asm { rcl     bx, 1 }
         if ( --v17 )
             continue;
@@ -858,20 +861,20 @@ LABEL_7:
         for (v18 = 4095; v18 > 0; v18--)
         {
             bt = inp(0x201u);
-            v20 = v15 ^ v27 & bt;
+            v20 = o ^ k1 & bt;
             if (v20 != 0)
                 break;
         }
         if (v20 == 0)
             break;
-        v15 ^= v20;
-        if ((v25 & v20) == 0)
+        o ^= v20;
+        if ((k3 & v20) == 0)
         {
             v29 = 9;
             break;
         }
         v17 = 5;
-        v16 = 4095;
+        i = 4095;
     }
 DONE:
     sti();
