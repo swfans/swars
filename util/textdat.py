@@ -101,7 +101,7 @@ def enctable_string_to_bytes(cte, s):
     return b
 
 
-def waditem_string_national_to_upper(stri):
+def datitem_string_national_to_upper(stri):
     stro = ""
     for c in stri:
         if c in "êô":
@@ -114,7 +114,7 @@ def waditem_string_national_to_upper(stri):
 
 
 def datitem_string_to_bytes(po, s):
-    s = waditem_string_national_to_upper(s)
+    s = datitem_string_national_to_upper(s)
     b = enctable_string_to_bytes(po.chartable_d_encode, s)
     return b
 
@@ -122,86 +122,6 @@ def datitem_string_to_bytes(po, s):
 def datitem_bytes_to_string(po, b):
     s = enctable_bytes_to_string(po.chartable_d_decode, b)
     return s
-
-
-def sourceid_encode(mailid, campgn):
-    if campgn == campaign_names[1]:
-        sourceid = mailid + 100
-    elif campgn == campaign_names[2]:
-        sourceid = mailid + 200
-    else:
-        sourceid = mailid
-    return sourceid
-
-
-def sourceid_decode(sourceid):
-    if sourceid < 100:
-        campgn = campaign_names[0]
-        mailid = sourceid
-    elif sourceid < 200:
-        campgn = campaign_names[1]
-        mailid = sourceid - 100
-    else:
-        campgn = campaign_names[2]
-        mailid = sourceid - 200
-    return mailid, campgn
-
-
-def source_linear_number_to_sourceid(sourceno):
-    sourceid = sourceno
-    if sourceno > 34 + 30:
-        mailid_sub = ""
-        mailno = sourceno - 34 - 30;
-        campgn = campaign_names[2]
-    elif sourceno > 34:
-        mailid_sub = ""
-        mailno = sourceno - 34
-        if mailno >= 4:
-            i = mailno - 4
-            if i % 2 == 0:
-                mailid_sub = "a"
-            else:
-                mailid_sub = "b"
-            mailno = (i // 2) + 4
-        campgn = campaign_names[1]
-    else:
-        mailid_sub = ""
-        mailno = sourceno
-        if mailno >= 4:
-            i = mailno - 4
-            if i % 2 == 0:
-                mailid_sub = "a"
-            else:
-                mailid_sub = "b"
-            mailno = (i // 2) + 4
-        campgn = campaign_names[0]
-    sourceid = sourceid_encode(mailno, campgn)
-    return sourceid, mailid_sub
-
-
-def pofile_store_entry(po, pofh, e):
-    pofh.write("\n")
-    if len(e.tcomment) > 0:
-        pofh.write("# " + e.tcomment + "\n")
-    if len(e.comment) > 0:
-        pofh.write("#. " + e.comment + "\n")
-    if len(e.occurrences) > 0:
-        pofh.write("#: " + " ".join(e.occurrences) + "\n")
-    if len(e.flags) > 0:
-        pofh.write("#, " + " ".join(e.flags) + "\n")
-    if len(e.msgctxt) > 0:
-        text = e.msgctxt
-        text = text.replace("\"", "\\\"")
-        pofh.write("msgctxt \"" + text + "\"\n")
-    if True:
-        text = e.msgid
-        text = text.replace("\"", "\\\"")
-        pofh.write("msgid \"" + text + "\"\n")
-    if True:
-        text = e.msgstr
-        text = text.replace("\"", "\\\"")
-        pofh.write("msgstr \"" + text + "\"\n")
-    return
 
 
 def pofile_set_default_metadata(polist, lang):
@@ -222,7 +142,7 @@ def pofile_set_default_metadata(polist, lang):
     else:
         polang = "UNKNOWN"
     polist.metadata = {
-      'Project-Id-Version': 'Menu text for SW Port',
+      'Project-Id-Version': 'GUI text for SW Port',
       'Report-Msgid-Bugs-To': 'https://github.com/swfans/swars/issues',
       'POT-Creation-Date': '2023-08-20 01:12+0200',
       'PO-Revision-Date': '2023-09-02 12:00+0100',
@@ -243,7 +163,7 @@ def pofile_set_default_head_comment(polist, pofname):
       " Syndicate Wars Port, source port of the classic strategy game from Bullfrog.\n" + \
       "*****************************************************************************\n" + \
       "  @file " + pofname + "\n" + \
-      "     Menu text for SW Port translation file\n" + \
+      "     GUI text for SW Port translation file\n" + \
       " @par Purpose:\n" + \
       "     Contains translation of the national text in the game.\n" + \
       " @par Comment:\n" + \
@@ -281,6 +201,16 @@ def textdat_extract_to_po(podict, lines):
     prep_po_entries_per_line(podict, lines, 'guitext', "Menu interface text")
     return
 
+def textdat_part_of_po_entry_upper(k, e):
+    if (k >= 565) and (k <= 580):
+        sublns = e.msgstr.split('\\n')
+        if (len(sublns) > 1) and (' ' not in sublns[0]):
+            sublns[0] = sublns[0].upper()
+        s = '\\n'.join(sublns)
+    else:
+        s = e.msgstr.upper()
+    return s
+
 
 def create_lines_for_per_line(lines, pomdict, refstart):
     if True:
@@ -294,7 +224,7 @@ def create_lines_for_per_line(lines, pomdict, refstart):
                 noexist = ('COMM',refstart,f'{k+1}',) not in pomdict
             if noexist:
                 break
-            lines.append(e.msgstr.upper())
+            lines.append(textdat_part_of_po_entry_upper(k, e))
     lines.append("")
     return
 
