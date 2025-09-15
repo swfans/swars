@@ -112,7 +112,7 @@ msgstr ""
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:13
 msgctxt "Weapon name - Eurocorp"
-msgid ""
+msgid "Napalm Mine"
 msgstr ""
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
@@ -142,7 +142,7 @@ msgstr ""
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:18
 msgctxt "Weapon name - Eurocorp"
-msgid ""
+msgid "Sonic Blast"
 msgstr ""
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
@@ -154,7 +154,7 @@ msgstr ""
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:20
 msgctxt "Weapon name - Eurocorp"
-msgid "Persuadertron Ii"
+msgid "Persuadertron II"
 msgstr ""
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
@@ -166,7 +166,7 @@ msgstr ""
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:22
 msgctxt "Weapon name - Eurocorp"
-msgid ""
+msgid "Energy Shield"
 msgstr ""
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
@@ -184,7 +184,7 @@ msgstr ""
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:25
 msgctxt "Weapon name - Eurocorp"
-msgid "Cerberus Iff"
+msgid "Cerberus IFF"
 msgstr ""
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
@@ -292,7 +292,7 @@ msgstr ""
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:43
 msgctxt "Weapon name - Church of N.E."
-msgid ""
+msgid "Napalm Mine"
 msgstr ""
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
@@ -322,7 +322,7 @@ msgstr ""
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:48
 msgctxt "Weapon name - Church of N.E."
-msgid ""
+msgid "Sonic Blast"
 msgstr ""
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
@@ -346,7 +346,7 @@ msgstr ""
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:52
 msgctxt "Weapon name - Church of N.E."
-msgid ""
+msgid "Energy Shield"
 msgstr ""
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
@@ -3947,10 +3947,4 @@ msgstr ""
 #: guitext:652
 msgctxt "MP game status"
 msgid "Host Has Quit"
-msgstr ""
-
-#. Generic text
-#: guitext:653
-msgctxt "Menu interface text"
-msgid ""
 msgstr ""
