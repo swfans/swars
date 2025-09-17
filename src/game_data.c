@@ -230,16 +230,7 @@ void SyndFileNameTransform(char *out_fname, const char *inp_fname)
         base_dir = GetDirectoryHdd();
     }
 
-    // Special file name switch for using language-specific files from CD
-    if ( (dir_place == DirPlace_Data) && game_dirs[dir_place].use_cd &&
-      (strcasecmp(inp_fname, "data/text.dat") == 0) ) {
-        PathInfo *pinfo;
-        pinfo = &game_dirs[DirPlace_LangData];
-        // we can use '/' as separators here - these are converted later
-        snprintf(fs_fname, DISKPATH_SIZE, "%s/text.dat", pinfo->directory);
-    } else {
-        strncpy(fs_fname, inp_fname, DISKPATH_SIZE);
-    }
+    strncpy(fs_fname, inp_fname, DISKPATH_SIZE);
     // Switch the input folder separators to proper ones for current os
     replace_fs_separator_to_native(fs_fname);
     // Add base path only if the input one is not absolute

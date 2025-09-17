@@ -1929,7 +1929,7 @@ void init_outro(void)
         {
             outro_unkn02++;
             func_cc0d4((char **)&people_credits_groups[2 * outro_unkn03]);
-            if (data_1ddb68 + 50 < outro_unkn02)
+            if (outro_unkn02 > data_1ddb68 + 50)
             {
                 outro_unkn02 = 0;
                 outro_unkn03++;
