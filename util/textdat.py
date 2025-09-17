@@ -39,9 +39,6 @@ from ctypes import c_char, c_int, c_ubyte, c_ushort, c_uint, c_ulonglong, c_floa
 from ctypes import memmove, addressof, sizeof, Array
 
 
-campaign_names = ['SYNDCT', 'CHURCH', 'PUNKS', 'COMM']
-
-
 def find_occurence_in_polist(polist, occur):
     for e in polist:
         if occur in e.occurrences:
@@ -101,20 +98,20 @@ def enctable_string_to_bytes(cte, s):
     return b
 
 
-def datitem_string_national_to_upper(stri):
+def datitem_string_national_adjust(stri):
     stro = ""
     for c in stri:
         if c in "êô":
             stro = stro + unicodedata.normalize('NFKD', c).encode('ascii', 'ignore').decode('ascii', errors='ignore')
-        elif c in "ìäåéöüñáàèíòúù":
-            stro = stro + c.upper()
+        elif c in "ÍÓÚ": # TODO is that really needed? remove, if it will not cause regression in these chars
+            stro = stro + c.lower()
         else:
             stro = stro + c
     return stro
 
 
 def datitem_string_to_bytes(po, s):
-    s = datitem_string_national_to_upper(s)
+    s = datitem_string_national_adjust(s)
     b = enctable_string_to_bytes(po.chartable_d_encode, s)
     return b
 
@@ -187,7 +184,9 @@ def prep_po_entries_per_line(polist, lines, refstart, comment):
             n += 1
             continue
         if True:
-            text = ln[0].upper() + ln[1:].lower()
+            text = '\n'.join(ln.split('\\n'))
+            if (text.isupper()):
+                text = text[0].upper() + text[1:].lower()
             e = polib.POEntry(msgstr=text, msgctxt=comment)
             e.occurrences.append( (f'{refstart}',f'{n+1}',) )
             polist.append(e)
@@ -203,7 +202,7 @@ def textdat_extract_to_po(podict, lines):
 
 def textdat_part_of_po_entry_upper(k, e):
     if (k >= 565) and (k <= 580):
-        sublns = e.msgstr.split('\\n')
+        sublns = e.msgstr.split('\n')
         if (len(sublns) > 1) and (' ' not in sublns[0]):
             sublns[0] = sublns[0].upper()
         s = '\\n'.join(sublns)
