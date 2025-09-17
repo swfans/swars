@@ -24,6 +24,7 @@
 #include "bfmemut.h"
 
 #include "display.h"
+#include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
 char *gui_strings_data;
@@ -64,14 +65,26 @@ const char *loctext_to_gtext(const char *ltext)
  */
 void read_strings_file(void)
 {
-    char *text_fname = "data/text.dat";
+    char datfname[DISKPATH_SIZE];
+    PathInfo *pinfo;
     int text_len;
 
-    text_len = LbFileLength(text_fname);
-    gui_strings_data = (char *)LbMemoryAlloc(text_len);
+    pinfo = &game_dirs[DirPlace_LangData];
+    snprintf(datfname, DISKPATH_SIZE, "%s/guitext.dat", pinfo->directory);
+
+    text_len = LbFileLength(datfname);
+    if (text_len > 0) {
+        gui_strings_data = (char *)LbMemoryAlloc(text_len);
+        gui_strings_data[text_len - 1] = '\0';
+    } else {
+        gui_strings_data = NULL;
+    }
     if (gui_strings_data != NULL) {
         gui_strings_data_end = gui_strings_data + text_len;
-        LbFileLoadAt(text_fname, gui_strings_data);
+        LbFileLoadAt(datfname, gui_strings_data);
+    } else {
+        gui_strings_data_end = gui_strings_data;
+        LOGERR("Failed checking strings file '%s', size=%d", datfname, text_len);
     }
 }
 
