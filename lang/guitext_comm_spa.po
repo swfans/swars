@@ -1,7 +1,7 @@
 # *****************************************************************************
 #  Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 # *****************************************************************************
-#   @file guitext_comm_ita.po
+#   @file guitext_comm_spa.po
 #      GUI text for SW Port translation file
 #  @par Purpose:
 #      Contains translation of the national text in the game.
@@ -21,10 +21,10 @@ msgstr ""
 "Project-Id-Version: GUI text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
 "POT-Creation-Date: 2025-09-01 07:11+0200\n"
-"PO-Revision-Date: 2025-09-17 02:02+0200\n"
+"PO-Revision-Date: 2025-09-17 10:47+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
-"Language: it_IT\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,73 +41,73 @@ msgstr "Uzi"
 #: guitext:2
 msgctxt "Weapon name - Eurocorp"
 msgid "Minigun"
-msgstr "Pistola"
+msgstr "Minigun"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:3
 msgctxt "Weapon name - Eurocorp"
 msgid "Pulse Laser"
-msgstr "Laser a impulsi"
+msgstr "Laser de Pulsos"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:4
 msgctxt "Weapon name - Eurocorp"
 msgid "Electron Mace"
-msgstr "Mazza elettron."
+msgstr "Maza Electrones"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:5
 msgctxt "Weapon name - Eurocorp"
 msgid "Launcher"
-msgstr "Lancia granate"
+msgstr "Lanzador"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:6
 msgctxt "Weapon name - Eurocorp"
 msgid "Nuclear Grenade"
-msgstr "Granata nucleare"
+msgstr "Granada Nuclear"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:7
 msgctxt "Weapon name - Eurocorp"
 msgid "Persuadertron"
-msgstr "Persuadertron"
+msgstr "Persuasor"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:8
 msgctxt "Weapon name - Eurocorp"
 msgid "Flamer"
-msgstr "Lanciafiamme"
+msgstr "Lanzallamas"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:9
 msgctxt "Weapon name - Eurocorp"
 msgid "Disrupter"
-msgstr "Distruttore"
+msgstr "Perturbador"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:10
 msgctxt "Weapon name - Eurocorp"
 msgid "Psycho Gas"
-msgstr "Gas allucinogeno"
+msgstr "Gas Psiquico"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:11
 msgctxt "Weapon name - Eurocorp"
 msgid "Knockout Gas"
-msgstr "Gas nervino"
+msgstr "Gas K.O."
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:12
 msgctxt "Weapon name - Eurocorp"
 msgid "Ion Mine"
-msgstr "Mina a ioni"
+msgstr "Mina Ionica"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:13
 msgctxt "Weapon name - Eurocorp"
 msgid "High Explosive"
-msgstr "Esplos. alto pot."
+msgstr "Gran Explosivo"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:14
@@ -119,25 +119,25 @@ msgstr ""
 #: guitext:15
 msgctxt "Weapon name - Eurocorp"
 msgid "Long Range Rifle"
-msgstr "Fuc. lungo raggio"
+msgstr "Rifle Precision"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:16
 msgctxt "Weapon name - Eurocorp"
 msgid "Satellite Rain"
-msgstr "Pioggia satellite"
+msgstr "Lluvia Satelite"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:17
 msgctxt "Weapon name - Eurocorp"
 msgid "Plasma Lance"
-msgstr "Lancia al plasma"
+msgstr "Lanza de Plasma"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:18
 msgctxt "Weapon name - Eurocorp"
 msgid "Razor Wire"
-msgstr "Filo spinato"
+msgstr "Cable Cortante"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:19
@@ -149,19 +149,19 @@ msgstr ""
 #: guitext:20
 msgctxt "Weapon name - Eurocorp"
 msgid "Graviton Gun"
-msgstr "Pistola gravit."
+msgstr "Cañon Graviton"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:21
 msgctxt "Weapon name - Eurocorp"
 msgid "Persuadertron II"
-msgstr "Persuadertron II"
+msgstr "Persuasor II"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:22
 msgctxt "Weapon name - Eurocorp"
 msgid "Stasis Field"
-msgstr "Campo statico"
+msgstr "Blindaje Stasis"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:23
@@ -173,19 +173,19 @@ msgstr ""
 #: guitext:24
 msgctxt "Weapon name - Eurocorp"
 msgid "Chromotap"
-msgstr "Ricarica energia"
+msgstr "Chromotap"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:25
 msgctxt "Weapon name - Eurocorp"
 msgid "Displacertron"
-msgstr "Dislocatore"
+msgstr "Displacertron"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:26
 msgctxt "Weapon name - Eurocorp"
 msgid "Cerberus IFF"
-msgstr "Guardiano"
+msgstr "Cerberus IFF"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:27
@@ -197,19 +197,19 @@ msgstr "Kit medico"
 #: guitext:28
 msgctxt "Weapon name - Eurocorp"
 msgid "Automedikit"
-msgstr "Kit automedico"
+msgstr "Auto kit medico"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:29
 msgctxt "Weapon name - Eurocorp"
 msgid "Trigger Wire"
-msgstr "Mina esplosiva"
+msgstr "Cable Disparador"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:30
 msgctxt "Weapon name - Eurocorp"
 msgid "Clone Shield"
-msgstr "Schermo clonat."
+msgstr "Blindaje Clon"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:31
@@ -221,73 +221,73 @@ msgstr "Uzi"
 #: guitext:32
 msgctxt "Weapon name - Church of N.E."
 msgid "Minigun"
-msgstr "Pistola"
+msgstr "Minigun"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:33
 msgctxt "Weapon name - Church of N.E."
 msgid "Pulse Laser"
-msgstr "Laser a impulsi"
+msgstr "Laser de Pulsos"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:34
 msgctxt "Weapon name - Church of N.E."
 msgid "Electron Mace"
-msgstr "Mazza elettron."
+msgstr "Maza Electrones"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:35
 msgctxt "Weapon name - Church of N.E."
 msgid "Launcher"
-msgstr "Lancia granate"
+msgstr "Lanzador"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:36
 msgctxt "Weapon name - Church of N.E."
 msgid "Nuclear Grenade"
-msgstr "Granata nucleare"
+msgstr "Granada Nuclear"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:37
 msgctxt "Weapon name - Church of N.E."
 msgid "Indoctrinator"
-msgstr "Indottrinatore"
+msgstr "Indoctrinador"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:38
 msgctxt "Weapon name - Church of N.E."
 msgid "Flamer"
-msgstr "Lanciafiamme"
+msgstr "Lanzallamas"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:39
 msgctxt "Weapon name - Church of N.E."
 msgid "Disrupter"
-msgstr "Distruttore"
+msgstr "Perturbador"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:40
 msgctxt "Weapon name - Church of N.E."
 msgid "Psycho Gas"
-msgstr "Gas allucinogeno"
+msgstr "Gas Psiquico"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:41
 msgctxt "Weapon name - Church of N.E."
 msgid "Knockout Gas"
-msgstr "Gas nervino"
+msgstr "Gas K.O."
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:42
 msgctxt "Weapon name - Church of N.E."
 msgid "Ion Mine"
-msgstr "Mina a ioni"
+msgstr "Mina Ionica"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:43
 msgctxt "Weapon name - Church of N.E."
 msgid "High Explosive"
-msgstr "Esplos. alto pot."
+msgstr "Gran Explosivo"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:44
@@ -299,25 +299,25 @@ msgstr ""
 #: guitext:45
 msgctxt "Weapon name - Church of N.E."
 msgid "Long Range Rifle"
-msgstr "Fuc. lungo raggio"
+msgstr "Rifle Precision"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:46
 msgctxt "Weapon name - Church of N.E."
 msgid "Satellite Rain"
-msgstr "Pioggia satellite"
+msgstr "Lluvia satelite"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:47
 msgctxt "Weapon name - Church of N.E."
 msgid "Plasma Lance"
-msgstr "Lancia al plasma"
+msgstr "Lanza de Plasma"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:48
 msgctxt "Weapon name - Church of N.E."
 msgid "Razor Wire"
-msgstr "Filo spinato"
+msgstr "Cable Cortante"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:49
@@ -329,19 +329,19 @@ msgstr ""
 #: guitext:50
 msgctxt "Weapon name - Church of N.E."
 msgid "Graviton Gun"
-msgstr "Pistola gravit."
+msgstr "Cañon Graviton"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:51
 msgctxt "Weapon name - Church of N.E."
 msgid "Persuadertron II"
-msgstr "Persuadertron II"
+msgstr "Persuasor II"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:52
 msgctxt "Weapon name - Church of N.E."
 msgid "Stasis Field"
-msgstr "Campo statico"
+msgstr "Blindaje Stasis"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:53
@@ -353,19 +353,19 @@ msgstr ""
 #: guitext:54
 msgctxt "Weapon name - Church of N.E."
 msgid "Chromotap"
-msgstr "Ricarica energia"
+msgstr "Chromotap"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:55
 msgctxt "Weapon name - Church of N.E."
 msgid "Displacertron"
-msgstr "Dislocatore"
+msgstr "Displacertron"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:56
 msgctxt "Weapon name - Church of N.E."
 msgid "Cerberus IFF"
-msgstr "Guardiano"
+msgstr "Cerberus IFF"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:57
@@ -377,19 +377,19 @@ msgstr "Kit medico"
 #: guitext:58
 msgctxt "Weapon name - Church of N.E."
 msgid "Automedikit"
-msgstr "Kit automedico"
+msgstr "Auto kit medico"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:59
 msgctxt "Weapon name - Church of N.E."
 msgid "Trigger Wire"
-msgstr "Mina esplosiva"
+msgstr "Cable Disparador"
 
 #. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
 #: guitext:60
 msgctxt "Weapon name - Church of N.E."
 msgid "Clone Shield"
-msgstr "Schermo clonat."
+msgstr "Blindaje clon"
 
 #. Name of category of weapons visible in Equip menu.
 #: guitext:61
@@ -401,19 +401,19 @@ msgstr "Cinetica"
 #: guitext:62
 msgctxt "Weapon category"
 msgid "Chemical"
-msgstr "Chimica"
+msgstr "Quimica"
 
 #. Name of category of weapons visible in Equip menu.
 #: guitext:63
 msgctxt "Weapon category"
 msgid "Nuclear"
-msgstr "Nucleare"
+msgstr "Nuclear"
 
 #. Name of category of weapons visible in Equip menu.
 #: guitext:64
 msgctxt "Weapon category"
 msgid "Conventional"
-msgstr "Convenzionale"
+msgstr "Convencional"
 
 #. Name of category of weapons visible in Equip menu.
 #: guitext:65
@@ -425,73 +425,73 @@ msgstr "Biologica"
 #: guitext:66
 msgctxt "Weapon category"
 msgid "Unknown"
-msgstr "Sconosciuta"
+msgstr "Desconocida"
 
 #. Name of category of weapons visible in Equip menu.
 #: guitext:67
 msgctxt "Weapon category"
 msgid "Electromagnetic"
-msgstr "Elettromagnetica"
+msgstr "Electromagnetica"
 
 #. Name of category of weapons visible in Equip menu.
 #: guitext:68
 msgctxt "Weapon category"
 msgid "Temporal"
-msgstr "Temporale"
+msgstr "Temporal"
 
 #. Name of category of weapons visible in Equip menu.
 #: guitext:69
 msgctxt "Weapon category"
 msgid "Psionic"
-msgstr "Psionica"
+msgstr "Psiquica"
 
 #. Name of category of weapons visible in Equip menu.
 #: guitext:70
 msgctxt "Weapon category"
 msgid "Energy"
-msgstr "A energia"
+msgstr "Energia"
 
 #. Cybernetic modification names in Cryo and Research menus, and Debriefings.
 #: guitext:71
 msgctxt "Cyborg mod part"
 msgid "Brain"
-msgstr "Cervello"
+msgstr "Cerebro"
 
 #. Cybernetic modification names in Cryo and Research menus, and Debriefings.
 #: guitext:72
 msgctxt "Cyborg mod part"
 msgid "Arms"
-msgstr "Braccia"
+msgstr "Brazos"
 
 #. Cybernetic modification names in Cryo and Research menus, and Debriefings.
 #: guitext:73
 msgctxt "Cyborg mod part"
 msgid "Body"
-msgstr "Corpo"
+msgstr "Cuerpo"
 
 #. Cybernetic modification names in Cryo and Research menus, and Debriefings.
 #: guitext:74
 msgctxt "Cyborg mod part"
 msgid "Epidermis"
-msgstr "Epidermide"
+msgstr "Epidermis"
 
 #. Cybernetic modification names in Cryo and Research menus, and Debriefings.
 #: guitext:75
 msgctxt "Cyborg mod part"
 msgid "Legs"
-msgstr "Gambe"
+msgstr "Piernas"
 
 #. Cybernetic modification grade word for mods which differ in effect, used in Cryo and Research menus, and Debriefings.
 #: guitext:76
 msgctxt "Cyborg mod grade"
 msgid "Version"
-msgstr "Vers."
+msgstr "Version"
 
 #. Cybernetic modification grade word for mods which differ just in strength of bonuses, used in Cryo and Research menus, and Debriefings.
 #: guitext:77
 msgctxt "Cyborg mod grade"
 msgid "Level"
-msgstr "Livello"
+msgstr "Nivel"
 
 #. Eurocorp agents are called by their surnames.
 #: guitext:78
@@ -767,7 +767,7 @@ msgstr "Mcloud"
 #: guitext:123
 msgctxt "Agent names pool"
 msgid "De Silva"
-msgstr "De silva"
+msgstr "De Silva"
 
 #. Eurocorp agents are called by their surnames.
 #: guitext:124
@@ -809,7 +809,7 @@ msgstr "Moon"
 #: guitext:130
 msgctxt "Agent names pool"
 msgid "Von Daler"
-msgstr "Von daler"
+msgstr "Von Daler"
 
 #. Eurocorp agents are called by their surnames.
 #: guitext:131
@@ -2159,7 +2159,7 @@ msgstr "Stacey"
 #: guitext:355
 msgctxt "Outcast names pool"
 msgid "Dr Stead"
-msgstr "Dr stead"
+msgstr "Dr Stead"
 
 #. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
 #: guitext:356
@@ -2237,85 +2237,85 @@ msgstr "Sistema"
 #: guitext:368
 msgctxt "Menu screen title"
 msgid "P.A. Network"
-msgstr "Rete annunci"
+msgstr "Red Area Planetaria"
 
 #. Map screen title on top.
 #: guitext:369
 msgctxt "Menu screen title"
 msgid "Utopia"
-msgstr "Utopia"
+msgstr "Utopía"
 
 #. Cryogenic storage screen title on top.
 #: guitext:370
 msgctxt "Menu screen title"
 msgid "Cryovat"
-msgstr "Criovasca"
+msgstr "Cryovat"
 
 #. Cyborg equipment screen title on top.
 #: guitext:371
 msgctxt "Menu screen title"
 msgid "Equipment"
-msgstr "Attrezzatura"
+msgstr "Equipamiento"
 
 #. Research screen title on top.
 #: guitext:372
 msgctxt "Menu screen title"
 msgid "Research"
-msgstr "Ricerca"
+msgstr "Investigación"
 
 #. Mission brief title on top.
 #: guitext:373
 msgctxt "Menu screen title"
 msgid "Briefing"
-msgstr "Istruzioni"
+msgstr "Informe"
 
 #. Name for icon at bottom dock bar.
 #: guitext:374
 msgctxt "Dock bar icons"
 msgid "Mail"
-msgstr "Posta"
+msgstr "Correo"
 
 #. Mission debrief title on top.
 #: guitext:375
 msgctxt "Menu screen title"
 msgid "Debriefing"
-msgstr "Situazione"
+msgstr "Relación"
 
 #. Name for icon at bottom dock bar.
 #: guitext:376
 msgctxt "Dock bar icons"
 msgid "Brief"
-msgstr "Brief"
+msgstr "Resumen"
 
 #. Centered text on loading screen.
 #: guitext:377
 msgctxt "Mission loading"
 msgid "Initiating Drone Connection..."
-msgstr "Avvio connessione..."
+msgstr "Iniciando Conexión..."
 
 #. Text on system menu button.
 #: guitext:378
 msgctxt "System menu"
 msgid "Ops Config"
-msgstr "Config. tasti"
+msgstr "Configurar"
 
 #. Text on system menu button.
 #: guitext:379
 msgctxt "System menu"
 msgid "Multinet Access"
-msgstr "Accesso rete"
+msgstr "Acceso a red"
 
 #. Text on system menu button.
 #: guitext:380
 msgctxt "System menu"
 msgid "File Storage"
-msgstr "Gestione file"
+msgstr "Archivos"
 
 #. Text on system menu button.
 #: guitext:381
 msgctxt "System menu"
 msgid "Interface"
-msgstr "Interfaccia"
+msgstr "Interfaz"
 
 #. Text on system menu button.
 #: guitext:382
@@ -2327,91 +2327,91 @@ msgstr "Audio"
 #: guitext:383
 msgctxt "System menu"
 msgid "Visual Depth"
-msgstr "Profond. visiva"
+msgstr "Detalles"
 
 #. Text on system menu button.
 #: guitext:384
 msgctxt "System menu"
 msgid "Logout"
-msgstr "Disconnessione"
+msgstr "Logout"
 
 #. Text used in various places for some unused slots.
 #: guitext:385
 msgctxt "Unused slot"
 msgid "Unused"
-msgstr "Inutiliz"
+msgstr "Sin uso"
 
 #. Text on button for initiating selected multiplayer protocol, needs to be short.
 #: guitext:386
 msgctxt "MP Screen button"
 msgid "Initiate"
-msgstr "Avvia"
+msgstr "Iniciar"
 
 #. Text on button to log into a game in multiplayer screen.
 #: guitext:387
 msgctxt "MP Screen button"
 msgid "Log On"
-msgstr "Log on"
+msgstr "Log  on"
 
 #. Text on button for starting multiplayer mission, needs to be short.
 #: guitext:388
 msgctxt "MP Screen button"
 msgid "Execute"
-msgstr "Esegui"
+msgstr "Ejecuta"
 
 #. Text on button for aborting multiplayer with previously initiated protocol, needs to be short.
 #: guitext:389
 msgctxt "MP Screen button"
 msgid "Abort"
-msgstr "Interr."
+msgstr "Abortar"
 
 #. Title of an area within multiplayer screeen.
 #: guitext:390
 msgctxt "MP Screen area"
 msgid "Logged Users"
-msgstr "Connessi"
+msgstr "Us. conectados"
 
 #. Title of an area within multiplayer screeen.
 #: guitext:391
 msgctxt "MP Screen area"
 msgid "Uplink Groups"
-msgstr "Gruppi colleg."
+msgstr "Grupos unidos"
 
 #. Title of an area within multiplayer screeen.
 #: guitext:392
 msgctxt "MP Screen area"
 msgid "Team"
-msgstr "Squad"
+msgstr "Equipo"
 
 #. Title of an area within multiplayer screeen.
 #: guitext:393
 msgctxt "MP Screen area"
 msgid "Group"
-msgstr "Grup"
+msgstr "Grupo"
 
 #. Title of an area within multiplayer screeen.
 #: guitext:394
 msgctxt "MP Screen area"
 msgid "Communications"
-msgstr "Comunicazioni"
+msgstr "Comunicaciones"
 
 #. How cyborgs/agents of specific faction are referred to. Used in various places, even in control keys list.
 #: guitext:395
 msgctxt "Noun for cyborgs, short"
 msgid "Agent"
-msgstr "Agente"
+msgstr "Agent"
 
 #. How cyborgs/agents of specific faction are referred to. Used in various places, even in control keys list.
 #: guitext:396
 msgctxt "Noun for cyborgs, short"
 msgid "Zealot"
-msgstr "Fanatico"
+msgstr "Fanat"
 
 #. How cyborgs/agents of specific faction are referred to. Used in various places, even in control keys list.
 #: guitext:397
 msgctxt "Noun for cyborgs, short"
 msgid "Outcast"
-msgstr "Reietto"
+msgstr "Paria"
 
 #. Grouping choices im multiplayer game screen.
 #: guitext:398
@@ -2441,121 +2441,121 @@ msgstr "Xi"
 #: guitext:402
 msgctxt "MP settings"
 msgid "Tech"
-msgstr "Tech"
+msgstr "Tecn"
 
 #. Multiplayer screen setting bar name, needs to be very short.
 #: guitext:403
 msgctxt "MP settings"
 msgid "Funds"
-msgstr "Fondi"
+msgstr "Fondo"
 
 #. Text on button for ejecting unwanted players from a game, needs to be short.
 #: guitext:404
 msgctxt "MP Screen button"
 msgid "Eject"
-msgstr "Espel"
+msgstr "Eyect"
 
 #. City name used for representing a mission; replaced by campaign-specific alltext name when a campaign is loaded.
 #: guitext:405
 msgctxt "Mission location details"
 msgid "Dropsite"
-msgstr "P. lancio"
+msgstr "Inicio"
 
 #. Country in which the city with mission is. Deprecated.
 #: guitext:406
 msgctxt "Mission location details"
 msgid "Country"
-msgstr "Paese"
+msgstr "Pais"
 
 #. City status; was replaced by few specific metrics within a city. Deprecated.
 #: guitext:407
 msgctxt "Mission location details"
 msgid "Status"
-msgstr "Stato"
+msgstr "Estado"
 
 #. Button available when a weapon equipped by an agent is selected.
 #: guitext:408
 msgctxt "Equip screen button"
 msgid "Sell"
-msgstr "Vendi"
+msgstr "Vnde"
 
 #. Text above list of weapons equipped by a cyborg.
 #: guitext:409
 msgctxt "Equip screen area"
 msgid "Available Slots"
-msgstr "Slot disponibili"
+msgstr "Ranuras libres"
 
 #. Research screen area header, not used in final game. Deprecated.
 #: guitext:410
 msgctxt "Research screen area"
 msgid "Research Options"
-msgstr "Opzioni ricerca"
+msgstr "Ops. Investigación"
 
 #. Text naming a field which shows and allows adjusting funding for research.
 #: guitext:411
 msgctxt "Research screen metric"
 msgid "Funding"
-msgstr "Fondi"
+msgstr "Fondos"
 
 #. Text naming a field which shows amount of scientists ounder players jurisdiction.
 #: guitext:412
 msgctxt "Research screen metric"
 msgid "Scientists"
-msgstr "Scienziati"
+msgstr "Científicos"
 
 #. Amount research centre facilities under players control. Deprecated.
 #: guitext:413
 msgctxt "Research screen metric"
 msgid "Research Centres"
-msgstr "Centri ricerca"
+msgstr "Centros I+D"
 
 #. Currently researched weapon or mod.
 #: guitext:414
 msgctxt "Research status text"
 msgid "Current Research"
-msgstr "Ricerca corrente"
+msgstr "Investigación Actual"
 
 #. Time until finalization of current research, at current funding.
 #: guitext:415
 msgctxt "Research screen metric"
 msgid "Hours To Finish"
-msgstr "Ore alla fine"
+msgstr "Horas Terminar"
 
 #. Research screen text on empty slot.
 #: guitext:416
 msgctxt "Research status text"
 msgid "No Weapon Research"
-msgstr "Nessuna ricerca armi"
+msgstr "Ningun Desarrollo Armas"
 
 #. Research screen text on empty slot.
 #: guitext:417
 msgctxt "Research status text"
 msgid "No Mod Research"
-msgstr "Nessuna ricerca mod."
+msgstr "Ningun Desarrollo Módulos"
 
 #. Text on button to start research of selected item.
 #: guitext:418
 msgctxt "Research screen button"
 msgid "Submit"
-msgstr "Mostra"
+msgstr "Present"
 
 #. Text on button to suspend research on currently researched item.
 #: guitext:419
 msgctxt "Research screen button"
 msgid "Suspend"
-msgstr "Sospend"
+msgstr "Suspender"
 
 #. Text above volume bar.
 #: guitext:420
 msgctxt "Audio settings area"
 msgid "Sound Volume"
-msgstr "Volume"
+msgstr "Volumen del sonido"
 
 #. Text above volume bar.
 #: guitext:421
 msgctxt "Audio settings area"
 msgid "Tension Music Volume"
-msgstr "Volume musica atm."
+msgstr "Volumen Música en Tensión"
 
 #. Limit written on a bar for selecting a numeric value, like volume.
 #: guitext:422
@@ -2573,109 +2573,109 @@ msgstr "Max"
 #: guitext:424
 msgctxt "Menu interface text"
 msgid "Effects"
-msgstr "Effetti"
+msgstr "Efectos"
 
 #. Unidentified text
 #: guitext:425
 msgctxt "Menu interface text"
 msgid "Music"
-msgstr "Musica"
+msgstr "Música"
 
 #. Unidentified text
 #: guitext:426
 msgctxt "Menu interface text"
 msgid "Armoury"
-msgstr "Arsenale"
+msgstr "Armeria"
 
 #. Properties shown in Equip screen when specific weapon is selected.
 #: guitext:427
 msgctxt "Weapon properties"
 msgid "Category"
-msgstr "Categoria"
+msgstr "Categoría"
 
 #. Properties shown in Equip screen when specific weapon is selected.
 #: guitext:428
 msgctxt "Weapon properties"
 msgid "Weapon Power"
-msgstr "Potenza arma"
+msgstr "Potencia del Arma"
 
 #. Properties shown in Equip screen when specific weapon is selected.
 #: guitext:429
 msgctxt "Weapon properties"
 msgid "Range"
-msgstr "Gittata"
+msgstr "Alcance"
 
 #. Properties shown in Equip screen when specific weapon is selected.
 #: guitext:430
 msgctxt "Weapon properties"
 msgid "Energy Consumption"
-msgstr "Consumo energetico"
+msgstr "Consumo de Energía"
 
 #. Text naming the area with list of all cyborgs within cryo.
 #: guitext:431
 msgctxt "Cryo screen area"
 msgid "Cryo"
-msgstr "Crio"
+msgstr "Cryo"
 
 #. Text naming the area with list of mods. Deprecated.
 #: guitext:432
 msgctxt "Cryo screen area"
 msgid "Modifications"
-msgstr "Modifiche"
+msgstr "Modificaciones"
 
 #. Properties shown in cryo screen when specific mod is selected.
 #: guitext:433
 msgctxt "Cryo mod properties"
 msgid "Power Output"
-msgstr "Potenza di uscita"
+msgstr "Potencia de Salida"
 
 #. Properties shown in cryo screen when specific mod is selected.
 #: guitext:434
 msgctxt "Cryo mod properties"
 msgid "Resilience"
-msgstr "Resistenza"
+msgstr "Resistencia"
 
 #. Properties shown in cryo screen when specific mod is selected.
 #: guitext:435
 msgctxt "Cryo mod properties"
 msgid "Additional"
-msgstr "Aggiuntivo"
+msgstr "Adicional"
 
 #. Title of an area within debrief screen. Deprecated.
 #: guitext:436
 msgctxt "Debrief screen area"
 msgid "Mission Statistics"
-msgstr "Statistiche missione"
+msgstr "Estadisticas de la Misión"
 
 #. Text used for buttons enabling user acceptance, like a mission or purchease.
 #: guitext:437
 msgctxt "Generic button"
 msgid "Accept"
-msgstr "Accetta"
+msgstr " ok "
 
 #. Text used for buttons enabling user acceptance, like a mission or purchease.
 #: guitext:438
 msgctxt "Generic button"
 msgid "Cancel"
-msgstr "Annulla"
+msgstr "Salir"
 
 #. Button text used where loadinbg from disk is an option, like Storage screen.
 #: guitext:439
 msgctxt "Generic button"
 msgid "Load"
-msgstr "Carica"
+msgstr "Cargar"
 
 #. Button text used where saving to disk is an option, like Storage or Controls screens.
 #: guitext:440
 msgctxt "Generic button"
 msgid "Save"
-msgstr "Salva"
+msgstr "Salvar"
 
 #. Button text used where value chosen needs to be applied deliberately, like some options in MP screen.
 #: guitext:441
 msgctxt "Generic button"
 msgid "Set"
-msgstr "Imp."
+msgstr "Set"
 
 #. Button allowing paying for extra surveillance before mission, for Eurocorp campaign.
 #: guitext:442
@@ -2687,97 +2687,97 @@ msgstr "Info"
 #: guitext:443
 msgctxt "Generic property"
 msgid "Cost:"
-msgstr "Costo"
+msgstr "Coste:"
 
 #. Button text on the first screen after launching the game.
 #: guitext:444
 msgctxt "First menu"
 msgid "Map Editor"
-msgstr "Editor mappa"
+msgstr "Editor de Mapas"
 
 #. Button text on the first screen after launching the game.
 #: guitext:445
 msgctxt "First menu"
 msgid "Login"
-msgstr "Accesso"
+msgstr "Login"
 
 #. Button text on the first screen after launching the game.
 #: guitext:446
 msgctxt "First menu"
 msgid "Quit"
-msgstr "Esci"
+msgstr "Salir"
 
 #. Shows city where mission is selected when MP is initiated.
 #: guitext:447
 msgctxt "Top bar fields"
 msgid "Game"
-msgstr "Gioco"
+msgstr "Partida"
 
 #. Shows chosen tech level when MP is initiated.
 #: guitext:448
 msgctxt "Top bar fields"
 msgid "Tech Level"
-msgstr "Livello tec."
+msgstr "Nivel Técnico"
 
 #. Title of an area with a list of research topics.
 #: guitext:449
 msgctxt "Research screen area"
 msgid "Topic"
-msgstr "Argomento"
+msgstr "Tema"
 
 #. Title of an area with active research progress bar.
 #: guitext:450
 msgctxt "Research screen area"
 msgid "Progress"
-msgstr "Progresso"
+msgstr "Progreso"
 
 #. Switch research options to weapons.
 #: guitext:451
 msgctxt "Research screen button"
 msgid "Weapons"
-msgstr "Armi"
+msgstr "Armas"
 
 #. Switch research options to mods.
 #: guitext:452
 msgctxt "Research screen button"
 msgid "Mods"
-msgstr "Mod."
+msgstr "Módul."
 
 #. Axis on research progress bar.
 #: guitext:453
 msgctxt "Research screen metric"
 msgid "Percentage Complete"
-msgstr "Percentuale completata"
+msgstr "Porcentaje completado"
 
 #. Axis on research progress bar.
 #: guitext:454
 msgctxt "Research screen metric"
 msgid "Time Taken"
-msgstr "Tempo impiegato"
+msgstr "Tiempo usado"
 
 #. Text before login name field.
 #: guitext:455
 msgctxt "Login screen field"
 msgid "Login Id:"
-msgstr "Id di accesso:"
+msgstr "Login id:"
 
 #. Text used for buttons which allow progressing further with a process.
 #: guitext:456
 msgctxt "Generic button"
 msgid "Continue"
-msgstr "Continua"
+msgstr "Continuar"
 
 #. Unidentified text
 #: guitext:457
 msgctxt "Menu interface text"
 msgid "Fyi"
-msgstr "Per tua informazione"
+msgstr "Dti"
 
 #. Unidentified text
 #: guitext:458
 msgctxt "Menu interface text"
 msgid "Billings"
-msgstr "Fatture"
+msgstr "Facturas"
 
 #. Text used for buttons which provide the only way of progressing, like error/info message boxes.
 #: guitext:459
@@ -2789,25 +2789,25 @@ msgstr "Ok"
 #: guitext:460
 msgctxt "Players controls area"
 msgid "Players"
-msgstr "Giocatori"
+msgstr "Jugadores"
 
 #. Line in Controls screen area which shows control method of each local player.
 #: guitext:461
 msgctxt "Players controls area"
 msgid "Player"
-msgstr "Giocatore"
+msgstr "Jugador"
 
 #. Control method of a local player.
 #: guitext:462
 msgctxt "Control method"
 msgid "Keyboard"
-msgstr "Tastiera"
+msgstr "Teclado"
 
 #. Control method of a local player.
 #: guitext:463
 msgctxt "Control method"
 msgid "Mouse"
-msgstr "Mouse"
+msgstr "Raton"
 
 #. Control method of a local player.
 #: guitext:464
@@ -2819,55 +2819,55 @@ msgstr "Joystick"
 #: guitext:465
 msgctxt "Visual settings option"
 msgid "Projector Speed"
-msgstr "Veloc. proiettore"
+msgstr "Velocidad proyector"
 
 #. Slow projector speed enables complex animation of redrawing screen.
 #: guitext:466
 msgctxt "Projector Speed value"
 msgid "Slow"
-msgstr "Lenta"
+msgstr "Lento"
 
 #. Fast projector means minimal animation of redrawing screen.
 #: guitext:467
 msgctxt "Projector Speed value"
 msgid "Fast"
-msgstr "Veloce"
+msgstr "Rápido"
 
 #. Text used for buttons which allow finishing a process.
 #: guitext:468
 msgctxt "Generic button"
 msgid "Finish"
-msgstr "Termina"
+msgstr "Fin"
 
 #. Unidentified text
 #: guitext:469
 msgctxt "Menu interface text"
-msgid "Mail Hq"
-msgstr "Qg posta"
+msgid "Mail HQ"
+msgstr "C.G. Correo"
 
 #. Name for option which allows switching screen resolution during missions.
 #: guitext:470
 msgctxt "Visual settings option"
 msgid "Resolution"
-msgstr "Risoluzione"
+msgstr "Resolución"
 
 #. Name for option which allows switching graphics detail within missison.
 #: guitext:471
 msgctxt "Visual settings option"
 msgid "Detail Level"
-msgstr "Livello dettagli"
+msgstr "Nivel de detalle"
 
 #. Name for option which allows switching mission camera between isometric and perspective view.
 #: guitext:472
 msgctxt "Visual settings option"
 msgid "Perspective"
-msgstr "Prospettiva"
+msgstr "Perspectiva"
 
 #. Name for option which allows changimg max zoom level.
 #: guitext:473
 msgctxt "Visual settings option"
 msgid "Maximum Zoom"
-msgstr "Ingrandimento massimo"
+msgstr "ZOOM MáXIMO"
 
 #. Resolutions depend on config options; these are just initial defaults.
 #: guitext:474
@@ -2885,7 +2885,7 @@ msgstr "640x480"
 #: guitext:476
 msgctxt "Detail level value"
 msgid "Low"
-msgstr "Basso"
+msgstr "Bajo "
 
 #. Medium detail means moderate resolution of sprites and amount of debrits on explosions.
 #: guitext:477
@@ -2897,7 +2897,7 @@ msgstr "Medio"
 #: guitext:478
 msgctxt "Detail level value"
 msgid "High"
-msgstr "Alto"
+msgstr "Alto "
 
 #. Used for all options which can toggle between enabled and disabled.
 #: guitext:479
@@ -2915,49 +2915,49 @@ msgstr "On"
 #: guitext:481
 msgctxt "Visual settings option"
 msgid "Billboard Movies"
-msgstr "Filmati"
+msgstr "Anuncios animados"
 
 #. Whether to use more complex and more dynamic lights and effects around lights.
 #: guitext:482
 msgctxt "Visual settings option"
 msgid "Lighting Effects"
-msgstr "Effetti luce"
+msgstr "Efectos de luz"
 
 #. Text on a button for starting mortal/hardcore game, with no manual saves and permanent death of agents.
 #: guitext:483
 msgctxt "Storage screen button"
 msgid "New Mortal Game"
-msgstr "Nuovo gioco mortale"
+msgstr "Nueva partida mortal"
 
 #. Title of brief screen area with selection of cities. The selection area only exists if more than one mission is bound to one email.
 #: guitext:484
 msgctxt "Brief screen area"
 msgid "Active Cities"
-msgstr "Città attive"
+msgstr "Ciudades activas"
 
 #. Reset controls to defaults.
 #: guitext:485
 msgctxt "Controls screen button"
 msgid "Defaults"
-msgstr "Predefinito"
+msgstr "Predeterminados"
 
 #. Joystick options in Controls.
 #: guitext:486
 msgctxt "Joystick area button"
 msgid "Calibrate"
-msgstr "Calibra"
+msgstr "Calibrar"
 
 #. Column title with names of controls functions.
 #: guitext:487
 msgctxt "Controls screen column"
 msgid "Controls"
-msgstr "Controlli"
+msgstr "Controles"
 
 #. Column title with keyboard controls assigned.
 #: guitext:488
 msgctxt "Controls screen column"
 msgid "Keys"
-msgstr "Tasti"
+msgstr "Teclas"
 
 #. Column title with joystick controls assigned.
 #: guitext:489
@@ -2969,55 +2969,55 @@ msgstr "Joystick"
 #: guitext:490
 msgctxt "Joystick area field"
 msgid "Joystick Type"
-msgstr "Tipo joystick"
+msgstr "Tipo de joystick"
 
 #. City statistic in Map screen.
 #: guitext:491
 msgctxt "City stat"
 msgid "Population"
-msgstr "Popolazione"
+msgstr "POBLACIóN"
 
 #. City statistic in Map screen.
 #: guitext:492
 msgctxt "City stat"
 msgid "Infrastructure"
-msgstr "Infrastruttura"
+msgstr "Infraestructura"
 
 #. City statistic in Map screen.
 #: guitext:493
 msgctxt "City stat"
 msgid "Dialect"
-msgstr "Dialetto"
+msgstr "Dialecto"
 
 #. City statistic in Map screen.
 #: guitext:494
 msgctxt "City stat"
 msgid "Commerce"
-msgstr "Commercio"
+msgstr "Comercio"
 
 #. City statistic in Map screen.
 #: guitext:495
 msgctxt "City stat"
 msgid "Toxicity"
-msgstr "Tossicità"
+msgstr "Polución"
 
 #. Shows up in Brief screen when all Netscan options were depleted.
 #: guitext:496
 msgctxt "Brief screen field"
 msgid "No Further Info"
-msgstr "Nessun'altra info"
+msgstr "No hay info"
 
 #. Button text on the first screen after launching the game.
 #: guitext:497
 msgctxt "First menu"
 msgid "Restore Savegame"
-msgstr "Riprendi partita salvata"
+msgstr "Restaurar partida guardada"
 
 #. Name of network protocol selection field.
 #: guitext:498
 msgctxt "MP Screen area"
 msgid "Net Protocol"
-msgstr "Protocollo di rete"
+msgstr "Protocolo de red"
 
 #. One of network protocols.
 #: guitext:499
@@ -3029,25 +3029,25 @@ msgstr "IPX"
 #: guitext:500
 msgctxt "MP protocol"
 msgid "Serial COM1"
-msgstr "COM1 seriale"
+msgstr "Serie COM1"
 
 #. One of network protocols.
 #: guitext:501
 msgctxt "MP protocol"
 msgid "Serial COM2"
-msgstr "COM2 seriale"
+msgstr "Serie COM2"
 
 #. One of network protocols.
 #: guitext:502
 msgctxt "MP protocol"
 msgid "Serial COM3"
-msgstr "COM3 seriale"
+msgstr "Serie COM3"
 
 #. One of network protocols.
 #: guitext:503
 msgctxt "MP protocol"
 msgid "Serial COM4"
-msgstr "COM4 seriale"
+msgstr "Serie COM4"
 
 #. One of network protocols.
 #: guitext:504
@@ -3059,37 +3059,37 @@ msgstr "Modem"
 #: guitext:505
 msgctxt "MP screen protocol"
 msgid "Baud Rate"
-msgstr "Velocità"
+msgstr "Tasa de baudios"
 
 #. Fix weapons in network game.
 #: guitext:506
 msgctxt "MP screen settings"
 msgid "Fix Weapons"
-msgstr "Armi fisse"
+msgstr "Asegurar armas"
 
 #. Agents respawn after death in network game.
 #: guitext:507
 msgctxt "MP screen settings"
 msgid "Reincarnation"
-msgstr "Reincarnazione"
+msgstr "Reencarnación"
 
 #. Socket number input for multiplayer protocols which require a socket.
 #: guitext:508
 msgctxt "MP screen protocol"
 msgid "Socket No."
-msgstr "N. presa"
+msgstr "Socket no."
 
 #. Audio output channels setting.
 #: guitext:509
 msgctxt "Menu interface text"
 msgid "Output Mode"
-msgstr "Modalità output"
+msgstr "Modo de salida"
 
 #. Audio Channels setting value.
 #: guitext:510
 msgctxt "Channels value"
 msgid "Stereo"
-msgstr "Stereo"
+msgstr "Estereo"
 
 #. Audio Channels setting value.
 #: guitext:511
@@ -3101,7 +3101,7 @@ msgstr "Mono"
 #: guitext:512
 msgctxt "Audio screen option"
 msgid "Music Source"
-msgstr "Fonte musicale"
+msgstr "Fuente musical"
 
 #. Music source setting. Deprecated.
 #: guitext:513
@@ -3113,49 +3113,49 @@ msgstr "CD Mono"
 #: guitext:514
 msgctxt "Audio screen option"
 msgid "MIDI Stereo"
-msgstr "MIDI Stereo"
+msgstr "MIDI estéreo"
 
 #. Make building half-transparent if they are close to the camera and obscuring the view.
 #: guitext:515
 msgctxt "Visual settings option"
 msgid "Deep Radar"
-msgstr "Radar di profondità"
+msgstr "Radar de profundidad"
 
 #. Random weapons apearing on the map within multiplayer missions.
 #: guitext:516
 msgctxt "MP screen settings"
 msgid "Random Weapons"
-msgstr "Armi casuali"
+msgstr "Armas aleatorias"
 
 #. Text above volume bar.
 #: guitext:517
 msgctxt "Audio settings area"
 msgid "CD Volume"
-msgstr "Volume cd"
+msgstr "Volumen del CD"
 
 #. Unidentified text
 #: guitext:518
 msgctxt "Menu interface text"
 msgid "Withdraw From Mission"
-msgstr "Ritirati dalla missione"
+msgstr "Retirarse de la Misión"
 
 #. Text on button for controlling the modem connected to the computer.
 #: guitext:519
 msgctxt "MP modem button"
 msgid "Dial"
-msgstr "Componi"
+msgstr "Marcar"
 
 #. Text on button for controlling the modem connected to the computer.
 #: guitext:520
 msgctxt "MP modem button"
 msgid "Answer"
-msgstr "Rispondi"
+msgstr "Responder"
 
 #. Text on button for controlling the modem connected to the computer.
 #: guitext:521
 msgctxt "MP modem button"
 msgid "Hangup"
-msgstr "Riattacca"
+msgstr "Colgar"
 
 #. Text for option for the modem connected to the computer.
 #: guitext:522
@@ -3167,157 +3167,157 @@ msgstr "Numero"
 #: guitext:523
 msgctxt "Visual settings option"
 msgid "Panel Permutation"
-msgstr "Permutazione pannello"
+msgstr "Permutación de Panel"
 
 #. Selection of colour for agents trenchcoats.
 #: guitext:524
 msgctxt "Visual settings option"
 msgid "Trenchcoat Preference"
-msgstr "Preferenza impermeabile"
+msgstr "Gabardina Preferida"
 
 #. One of network protocols.
 #: guitext:525
 msgctxt "MP protocol"
 msgid "Modem COM1"
-msgstr "Modem su com1"
+msgstr "Modem COM1"
 
 #. One of network protocols.
 #: guitext:526
 msgctxt "MP protocol"
 msgid "Modem COM2"
-msgstr "Modem su com2"
+msgstr "Modem COM2"
 
 #. One of network protocols.
 #: guitext:527
 msgctxt "MP protocol"
 msgid "Modem COM3"
-msgstr "Modem su com3"
+msgstr "Modem COM3"
 
 #. One of network protocols.
 #: guitext:528
 msgctxt "MP protocol"
 msgid "Modem COM4"
-msgstr "Modem su com4"
+msgstr "Modem COM4"
 
 #. Music track to be played during the next mission.
 #: guitext:529
 msgctxt "Audio settings option"
 msgid "CD Music"
-msgstr "Musica CD"
+msgstr "Música CD"
 
 #. Tension music track to be used when chased by enemy during a mission.
 #: guitext:530
 msgctxt "Audio settings option"
 msgid "Tension Music"
-msgstr "Musica di pericolo"
+msgstr "Música de Peligro"
 
 #. Extra audio additions allowed by capabilities of specific sound cards.
 #: guitext:531
 msgctxt "Audio settings option"
 msgid "Sound Extensions"
-msgstr "Estensioni sonore"
+msgstr "Extensiones de sonido"
 
 #. Text on a button for selection of audio track, either CD or tension.
 #: guitext:532
 msgctxt "Audio Track button"
 msgid "Trk 1"
-msgstr " 1 "
+msgstr "Pst 1"
 
 #. Text on a button for selection of audio track, either CD or tension.
 #: guitext:533
 msgctxt "Audio Track button"
 msgid "Trk 2"
-msgstr " 2 "
+msgstr "Pst 2"
 
 #. Text on a button for selection of audio track, either CD or tension.
 #: guitext:534
 msgctxt "Audio Track button"
 msgid "Trk 3"
-msgstr " 3 "
+msgstr "Pst 3"
 
 #. Allows performin Equip/Cryo screen operation (putchease/sell) on all 4 agents.
 #: guitext:535
 msgctxt "Equip/Cryo screens button"
 msgid "All Agents"
-msgstr "Tutti gli agenti"
+msgstr "Todos"
 
 #. Automatic selection of next item to research after previous completes.
 #: guitext:536
 msgctxt "Research screen area"
 msgid "Auto-Research"
-msgstr "Auto-ricerca"
+msgstr "Auto Investigación"
 
 #. Generic text
 #: guitext:537
 msgctxt "Menu interface text"
 msgid "Information Not Available"
-msgstr "Informazione non disponibile"
+msgstr "Información No Disponible"
 
 #. Metric showing amount of scientists who died during the last misison.
 #: guitext:538
 msgctxt "Debrief screen metric"
 msgid "Scientists Dead:"
-msgstr "Scienziati morti:"
+msgstr "Cientificos muertos:"
 
 #. Option in multiplayer screen which allows shuffling starting locations of players.
 #: guitext:539
 msgctxt "MP screen settings"
 msgid "Random Start"
-msgstr "Avvio casuale"
+msgstr "Inicio aleatorio"
 
 #. Joystick type selection in Controls screen.
 #: guitext:540
 msgctxt "Joystick type"
 msgid "None"
-msgstr "Nessuno"
+msgstr "Ninguno"
 
 #. Joystick type selection in Controls screen.
 #: guitext:541
 msgctxt "Joystick type"
 msgid "Analogue 2-Button"
-msgstr "Analogico a 2 pulsanti"
+msgstr "Analógico 2 Botones"
 
 #. Joystick type selection in Controls screen.
 #: guitext:542
 msgctxt "Joystick type"
 msgid "Analogue 4-Button"
-msgstr "Analogico a 4 pulsanti"
+msgstr "Analógico 4 Botones"
 
 #. Joystick type selection in Controls screen.
 #: guitext:543
 msgctxt "Joystick type"
 msgid "Analogue 2-Button + Hat"
-msgstr "Analogico a 2 pulsanti+viste"
+msgstr "Analógico 2 Botones + Seta"
 
 #. Joystick type selection in Controls screen.
 #: guitext:544
 msgctxt "Joystick type"
 msgid "Analogue 4-Button + Hat"
-msgstr "Analogico a 4 pulsanti+viste"
+msgstr "Analógico 4 Botones + Seta"
 
 #. Joystick type selection in Controls screen.
 #: guitext:545
 msgctxt "Joystick type"
 msgid "Gravis Pad"
-msgstr "Gravis pad"
+msgstr "Pad Gravis"
 
 #. Joystick type selection in Controls screen.
 #: guitext:546
 msgctxt "Joystick type"
 msgid "Creative Pad"
-msgstr "Creative pad"
+msgstr "Pad Creative"
 
 #. Joystick type selection in Controls screen.
 #: guitext:547
 msgctxt "Joystick type"
 msgid "Wingman Extreme"
-msgstr "Wingman extreme"
+msgstr "Wingman Extreme"
 
 #. Joystick type selection in Controls screen.
 #: guitext:548
 msgctxt "Joystick type"
 msgid "Wingman New"
-msgstr "Wingman New"
+msgstr "Wingman Nuevo"
 
 #. Joystick type selection in Controls screen.
 #: guitext:549
@@ -3341,43 +3341,43 @@ msgstr "VFX1"
 #: guitext:552
 msgctxt "Joystick type"
 msgid "Digital 2-Button"
-msgstr "Digitale a 2 pulsanti"
+msgstr "Digital 2 Botones"
 
 #. Joystick type selection in Controls screen.
 #: guitext:553
 msgctxt "Joystick type"
 msgid "Digital 4-Button"
-msgstr "Digitale a 4 pulsanti"
+msgstr "Digital 4 Botones"
 
 #. Joystick type selection in Controls screen.
 #: guitext:554
 msgctxt "Joystick type"
 msgid "Digital 2-Button + Hat"
-msgstr "Digitale a 2 pulsanti+viste"
+msgstr "Digital 2 Botones + Seta"
 
 #. Joystick type selection in Controls screen.
 #: guitext:555
 msgctxt "Joystick type"
 msgid "Digital 4-Button + Hat"
-msgstr "Digitale a 4 pulsanti+viste"
+msgstr "Digital 4 Botones + Seta"
 
 #. Generic text
 #: guitext:556
 msgctxt "Menu interface text"
 msgid "Auto Detect"
-msgstr "Rilevamento automatico"
+msgstr "Autodetectar"
 
 #. Generic text
 #: guitext:557
 msgctxt "Menu interface text"
 msgid "External Driver"
-msgstr "Driver esterno"
+msgstr "Controlador externo"
 
 #. Joystick type selection in Controls screen.
 #: guitext:558
 msgctxt "Joystick type"
 msgid "Gravis Grip"
-msgstr "Gravis Grip"
+msgstr "Grip Gravis"
 
 #. Joystick type selection in Controls screen.
 #: guitext:559
@@ -3407,13 +3407,13 @@ msgstr "VFX1 Puck"
 #: guitext:563
 msgctxt "Joystick type"
 msgid "Analogue 2 Joysticks"
-msgstr "2 joystick analogici"
+msgstr "2 Joysticks Analógicos"
 
 #. Joystick type selection in Controls screen.
 #: guitext:564
 msgctxt "Joystick type"
 msgid "Digital 2 Joysticks"
-msgstr "2 joystick digitali"
+msgstr "2 joysticks digitales"
 
 #. Game save or load error message.
 #: guitext:565
@@ -3423,9 +3423,9 @@ msgid ""
 "\n"
 "No game slot selected."
 msgstr ""
-"ERRORE\n"
+"ERROR\n"
 "\n"
-"Nessuna partita selezionata."
+"Ninguna partida seleccionada"
 
 #. Game load error message.
 #: guitext:566
@@ -3435,9 +3435,9 @@ msgid ""
 "\n"
 "Couldn't load game."
 msgstr ""
-"ERRORE\n"
+"ERROR\n"
 "\n"
-"Impossibile caricare la partita."
+"No puedo cargar la partida"
 
 #. Game save error message.
 #: guitext:567
@@ -3447,9 +3447,9 @@ msgid ""
 "\n"
 "Couldn't save game."
 msgstr ""
-"ERRORE\n"
+"ERROR\n"
 "\n"
-"Impossibile salvare la partita."
+"No puedo salvar la partida"
 
 #. Game load error message.
 #: guitext:568
@@ -3459,9 +3459,9 @@ msgid ""
 "\n"
 "Corrupt save game file."
 msgstr ""
-"ERRORE\n"
+"ERROR\n"
 "\n"
-"File partita salvata danneggiato."
+"Archivo de partida corrompido"
 
 #. Network interaction error message.
 #: guitext:569
@@ -3471,9 +3471,9 @@ msgid ""
 "\n"
 "Couldn't connect to the network."
 msgstr ""
-"ERRORE\n"
+"ERROR\n"
 "\n"
-"Impossibile connettersi alla rete."
+"No puedo conectar a la red"
 
 #. Inactive city selected in World Map error message.
 #: guitext:570
@@ -3482,26 +3482,26 @@ msgid ""
 "No reported activity.\n"
 "City drop unnecessary."
 msgstr ""
-"Nessuna notizia di attività.\n"
-"Lancio sulla città non necessario."
+"No se reporta actividad.\n"
+"Caída de la ciudad innecesaria."
 
 #. Too many active missions error message.
 #: guitext:571
 msgctxt "World map screen message"
 msgid "Complete current active mission before undertaking further missions."
-msgstr "Completa la corrente missione attiva prima di iniziare altre missioni."
+msgstr "Completa la misión activa antes de emprender otras misiones."
 
 #. Game save success message.
 #: guitext:572
 msgctxt "Storage screen message"
 msgid "Game saved successfully."
-msgstr "Salvataggio partita completato."
+msgstr "Partida salvada correctamente"
 
 #. Game load success message.
 #: guitext:573
 msgctxt "Storage screen message"
 msgid "Game loaded successfully."
-msgstr "Caricamento partita completato."
+msgstr "Partida cargada correctamente"
 
 #. Equip screen limited availability message.
 #: guitext:574
@@ -3510,32 +3510,32 @@ msgid ""
 "Weapons of this type are in limited supply.\n"
 "Research must be completed for availability to improve."
 msgstr ""
-"Le scorte di questo tipo di armi sono limitate.\n"
-"La ricerca dovrà essere completata per aumentarne la disponibilità."
+"El suministro es limitado para este tipo de armas.\n"
+"Debe completarse la investigación para mejorar la disponibilidad."
 
 #. First step of joystick calibration.
 #: guitext:575
 msgctxt "Joystick calibration"
 msgid "Move the joystick to the top left corner and press any button."
-msgstr "Sposta il joystick nell'angolo superiore sinistro e premi un pulsante."
+msgstr "Mueve el joystick a la esquina superior, izquierda y pulsa un botón."
 
 #. Second step of joystick calibration.
 #: guitext:576
 msgctxt "Joystick calibration"
 msgid "Move the joystick to the bottom right corner and press any button."
-msgstr "Sposta il joystick nell'angolo inferiore destro e premi un pulsante."
+msgstr "Mueve el joystick a la esquina inferior, derecha y pulsa un botón."
 
 #. Third step of joystick calibration.
 #: guitext:577
 msgctxt "Joystick calibration"
 msgid "Leave the joystick in the centre and press any button."
-msgstr "Centra il joystick e premi un pulsante."
+msgstr "Deja centrado el joystick y pulsa un botón."
 
 #. Message after clicking save button in Controls screen.
 #: guitext:578
 msgctxt "Controls screen message"
 msgid "Controls saved successfully."
-msgstr "Salvataggio impostazioni completato."
+msgstr "Controles salvados correctamente"
 
 #. Message after clicking save button in Controls screen.
 #: guitext:579
@@ -3545,9 +3545,9 @@ msgid ""
 "\n"
 "Couldn't save controls."
 msgstr ""
-"ERRORE\n"
+"ERROR\n"
 "\n"
-"Impossibile salvare le impostazioni."
+"No puedo salvar los controles"
 
 #. Message after logging to network session.
 #: guitext:580
@@ -3557,165 +3557,165 @@ msgid ""
 "\n"
 "Couldn't connect to the session."
 msgstr ""
-"ERRORE\n"
+"ERROR\n"
 "\n"
-"Impossibile connettersi alla sessione."
+"No puedo conectar con la sesión"
 
 #. Colour and style of HUD panels within mission.
 #: guitext:581
 msgctxt "Panel flavor"
 msgid "Oceanic Translucency"
-msgstr "Traslucid. oceanica"
+msgstr "Oceánico Translúcido"
 
 #. Colour and style of HUD panels within mission.
 #: guitext:582
 msgctxt "Panel flavor"
 msgid "Metal Lightning"
-msgstr "Illumin. metallica"
+msgstr "Relámpago Metálico"
 
 #. Colour and style of HUD panels within mission.
 #: guitext:583
 msgctxt "Panel flavor"
 msgid "Veiled Darkness"
-msgstr "Oscurità velata"
+msgstr "Oscuridad Velada"
 
 #. Colour of agents trenchcoats within mission.
 #: guitext:584
 msgctxt "Trenchcoat flavor"
 msgid "Standard Issue"
-msgstr "Dotazione standard"
+msgstr "Estándar"
 
 #. Colour of agents trenchcoats within mission.
 #: guitext:585
 msgctxt "Trenchcoat flavor"
 msgid "Sunburn"
-msgstr "Bruciato"
+msgstr "Bronce"
 
 #. Colour of agents trenchcoats within mission.
 #: guitext:586
 msgctxt "Trenchcoat flavor"
 msgid "Rage"
-msgstr "Rabbia"
+msgstr "Ira"
 
 #. Colour of agents trenchcoats within mission.
 #: guitext:587
 msgctxt "Trenchcoat flavor"
 msgid "Military Might"
-msgstr "Potenza militare"
+msgstr "Poder militar"
 
 #. Colour of agents trenchcoats within mission.
 #: guitext:588
 msgctxt "Trenchcoat flavor"
 msgid "Industrial"
-msgstr "Industriale"
+msgstr "Industrial"
 
 #. Colour of agents trenchcoats within mission.
 #: guitext:589
 msgctxt "Trenchcoat flavor"
 msgid "Gothic"
-msgstr "Gotico"
+msgstr "Gótico"
 
 #. Weapon fire trigger key.
 #: guitext:590
 msgctxt "Controls"
 msgid "Fire"
-msgstr "Fuoco"
+msgstr "Fuego"
 
 #. Key for changing mood or active weapon.
 #: guitext:591
 msgctxt "Controls"
 msgid "Change Mood/Weapon"
-msgstr "Modalità modifica/arma"
+msgstr "Cambiar Humor/Arma"
 
 #. Key for rotating the view left.
 #: guitext:592
 msgctxt "Controls"
 msgid "Spin View Left"
-msgstr "Sposta vista a sinistra"
+msgstr "Girar vista a izqda."
 
 #. Key for rotating the view right.
 #: guitext:593
 msgctxt "Controls"
 msgid "Spin View Right"
-msgstr "Sposta vista a destra"
+msgstr "Girar vista a drcha."
 
 #. Key for switching cyborgs.
 #: guitext:594
 msgctxt "Controls"
 msgid "Change Agent"
-msgstr "Cambia agente"
+msgstr "Cambiar agente"
 
 #. Key for ordering the cyborgs to move.
 #: guitext:595
 msgctxt "Controls"
 msgid "Go To Point"
-msgstr "Vai al punto"
+msgstr "Ir al punto"
 
 #. Key for grouping the cyborgs together.
 #: guitext:596
 msgctxt "Controls"
 msgid "Group Agents"
-msgstr "Raggruppa agenti"
+msgstr "Agrupar agentes"
 
 #. Key for moving the view or moving the cyborg directly (if in key control mode).
 #: guitext:597
 msgctxt "Controls"
 msgid "Up"
-msgstr "Su"
+msgstr "Arriba"
 
 #. Key for moving the view or moving the cyborg directly (if in key control mode).
 #: guitext:598
 msgctxt "Controls"
 msgid "Down"
-msgstr "Giù"
+msgstr "Abajo"
 
 #. Key for moving the view or moving the cyborg directly (if in key control mode).
 #: guitext:599
 msgctxt "Controls"
 msgid "Left"
-msgstr "Sinistra"
+msgstr "Izquierda"
 
 #. Key for moving the view or moving the cyborg directly (if in key control mode).
 #: guitext:600
 msgctxt "Controls"
 msgid "Right"
-msgstr "Destra"
+msgstr "Derecha"
 
 #. Key for zooming the camera in, magnifying the view.
 #: guitext:601
 msgctxt "Controls"
 msgid "Zoom In"
-msgstr "Ingrandisci"
+msgstr "Ampliar zoom"
 
 #. Key for zooming the camera out, showing wider view.
 #: guitext:602
 msgctxt "Controls"
 msgid "Zoom Out"
-msgstr "Rimpicciolisci"
+msgstr "Reducir zoom"
 
 #. Key for self-destructing a cyborg with chest mod.
 #: guitext:603
 msgctxt "Controls"
 msgid "Self-Destruct"
-msgstr "Auto distruzione"
+msgstr "Autodestrucción"
 
 #. Key for leaving a weapon unarmed on the ground.
 #: guitext:604
 msgctxt "Controls"
 msgid "Drop Weapon"
-msgstr "Lascia arma"
+msgstr "Tirar Arma"
 
 #. Key for rotating the camera up (in very limited bounds).
 #: guitext:605
 msgctxt "Controls"
 msgid "Tilt View Up"
-msgstr "Sposta vista in alto"
+msgstr "Inclinar Vista Arriba"
 
 #. Key for rotating the camera down (in very limited bounds).
 #: guitext:606
 msgctxt "Controls"
 msgid "Tilt View Down"
-msgstr "Sposta vista in basso"
+msgstr "Inclinar Vista Abajo"
 
 #. Key for pausing the mission.
 #: guitext:607
@@ -3727,7 +3727,7 @@ msgstr "Pausa"
 #: guitext:608
 msgctxt "Controls"
 msgid "Key Control"
-msgstr "Controllo tasto"
+msgstr "Tecla de control"
 
 #. How cyborgs from a specific faction are named.
 #: guitext:609
@@ -3739,262 +3739,262 @@ msgstr "Agente"
 #: guitext:610
 msgctxt "Noun for cyborgs, full"
 msgid "Zealot"
-msgstr "Fanatici"
+msgstr "Fanático"
 
 #. How cyborgs from a specific faction are named.
 #: guitext:611
 msgctxt "Noun for cyborgs, full"
 msgid "Outcast"
-msgstr "Reietto"
+msgstr "Paria"
 
 #. Name of a field storing mission identifier.
 #: guitext:612
 msgctxt "Debrief screen metric"
 msgid "Mission Reference"
-msgstr "Riferimento missione"
+msgstr "Referencia de la Misión"
 
 #. Name of a field storing mission end status.
 #: guitext:613
 msgctxt "Debrief screen metric"
 msgid "Mission Status"
-msgstr "Stato missione"
+msgstr "Estado de la Misión"
 
 #. Name of a field storing completed objectives.
 #: guitext:614
 msgctxt "Debrief screen metric"
 msgid "Objectives Completed"
-msgstr "Obiettivi completati"
+msgstr "Objetivos completados"
 
 #. Name of a field storing time spent within the mission (as counted within the game world).
 #: guitext:615
 msgctxt "Debrief screen metric"
 msgid "City Drop Time"
-msgstr "Ora lancio sulla città"
+msgstr "Tiempo para caida ciudad"
 
 #. Name of a field storing time elapsed since mission start (as counted within the game world).
 #: guitext:616
 msgctxt "Debrief screen metric"
 msgid "Mission Time Elapsed"
-msgstr "Tempo missione trascorso"
+msgstr "Tiempo Empleado en Misión"
 
 #. Name of a field storing credits received during the mission and at its completion.
 #: guitext:617
 msgctxt "Debrief screen metric"
 msgid "Net Fiscal Gain"
-msgstr "Reddito fiscale netto"
+msgstr "Beneficios Netos"
 
 #. Name of a field storing computed mission efficiency.
 #: guitext:618
 msgctxt "Debrief screen metric"
 msgid "Efficiency"
-msgstr "Efficienza"
+msgstr "Eficiencia"
 
 #. Name of a field storing persuaded survivors count.
 #: guitext:619
 msgctxt "Debrief screen metric"
 msgid "Civilians Persuaded"
-msgstr "Civili persuasi"
+msgstr "Civiles Persuadidos"
 
 #. Name of a field storing persuaded survivors count.
 #: guitext:620
 msgctxt "Debrief screen metric"
 msgid "Militia Persuaded"
-msgstr "Miliziani persuasi"
+msgstr "Militares Persuadidos"
 
 #. Name of a field storing persuaded survivors count.
 #: guitext:621
 msgctxt "Debrief screen metric"
 msgid "Adversaries Persuaded"
-msgstr "Avversari persuasi"
+msgstr "Adversarios Persuadidos"
 
 #. Name of a field storing kill count.
 #: guitext:622
 msgctxt "Debrief screen metric"
 msgid "Civilians killed"
-msgstr "Civili uccisi"
+msgstr "Civiles asesinados"
 
 #. Name of a field storing kill count.
 #: guitext:623
 msgctxt "Debrief screen metric"
 msgid "Militia killed"
-msgstr "Miliziani uccisi"
+msgstr "Militares asesinados"
 
 #. Name of a field storing kill count.
 #: guitext:624
 msgctxt "Debrief screen metric"
 msgid "Adversaries killed"
-msgstr "Avversari uccisi"
+msgstr "Enemigos asesinados"
 
 #. Name of a field storing number of owned cyborgs killed.
 #: guitext:625
 msgctxt "Debrief screen metric"
 msgid "Agents lost"
-msgstr "Agenti perduti"
+msgstr "Agentes perdidos"
 
 #. Merging text when formatting dates and time periods.
 #: guitext:626
 msgctxt "Date formatting"
 msgid "Day"
-msgstr "Giorno"
+msgstr "Día"
 
 #. Merging text when formatting dates and time periods.
 #: guitext:627
 msgctxt "Date formatting"
 msgid "Days"
-msgstr "Giorni"
+msgstr "Dias"
 
 #. Merging text when formatting dates and time periods.
 #: guitext:628
 msgctxt "Date formatting"
 msgid "Hour"
-msgstr "Ora"
+msgstr "Hora"
 
 #. Merging text when formatting dates and time periods.
 #: guitext:629
 msgctxt "Date formatting"
 msgid "Hours"
-msgstr "Ore"
+msgstr "Horas"
 
 #. Name of a field storing last visited city during a multi-city missison.
 #: guitext:630
 msgctxt "Debrief screen metric"
 msgid "Last City Visited"
-msgstr "Ultima città visitata"
+msgstr "Última Ciudad Visitada"
 
 #. Name of a field storing amount of persuaded agents which were stored in Cryovats.
 #: guitext:631
 msgctxt "Debrief screen metric"
 msgid "Agents Gained"
-msgstr "Agenti conquistati"
+msgstr "Agentes ganados"
 
 #. Name of a field storing a comma separated list of items researched during mission time.
 #: guitext:632
 msgctxt "Debrief screen metric"
 msgid "Research Completed:"
-msgstr "Ricerca completata:"
+msgstr "Investigación Terminada:"
 
 #. Name of a field storing amount of credits spent during mission time.
 #: guitext:633
 msgctxt "Debrief screen metric"
 msgid "Expenditure"
-msgstr "Spese"
+msgstr "Gastos"
 
 #. Name of a field storing amount of credits received during the mission and at its completion.
 #: guitext:634
 msgctxt "Debrief screen metric"
 msgid "Income"
-msgstr "Introiti"
+msgstr "Ingresos"
 
 #. Status when the mission was failed before withdrawing, or whwn the withdrawal counts as fail (which are most missions).
 #: guitext:635
 msgctxt "Mission status"
 msgid "Failed"
-msgstr "Fallita"
+msgstr "Fallada"
 
 #. Status when the mission objectives were met, but visiting another city is now required.
 #: guitext:636
 msgctxt "Mission status"
 msgid "Active"
-msgstr "Attiva"
+msgstr "Activa"
 
 #. Status when the mission is completed and removed from pending list, progressing the campaign.
 #: guitext:637
 msgctxt "Mission status"
 msgid "Complete"
-msgstr "Completata"
+msgstr "Completada"
 
 #. Status when the player has exited from mission without failing but also without completing all objectives, allowing to repeat that mission.
 #: guitext:638
 msgctxt "Mission status"
 msgid "Withdrawn"
-msgstr "Ritirato"
+msgstr "Retirada"
 
 #. Text before mission status, used as part of a message at mission conclusion.
 #: guitext:639
 msgctxt "In-mission status sentence"
 msgid "Mission"
-msgstr "Missione"
+msgstr "Misión"
 
 #. Text after mission complete, used as part of a message at mission conclusion.
 #: guitext:640
 msgctxt "In-mission status sentence"
 msgid "- press Space or Return"
-msgstr "- premi spazio o invio"
+msgstr "- pulsa Espacio o Retorno"
 
 #. Text denying the start of a mission which needs more cyborgs in players squad.
 #: guitext:641
 msgctxt "Mission deny message"
 msgid "You Have Too Few Agents To Complete The Mission"
-msgstr "Hai troppo pochi agenti per completare la missione"
+msgstr "No tienes suficientes agentes para completar la misión"
 
 #. Text denying the start of a mission which needs more cyborgs in players squad.
 #: guitext:642
 msgctxt "Mission deny message"
 msgid "You Have Too Few Acolytes To Complete The Mission"
-msgstr "Hai troppo pochi accoliti per completare la missione"
+msgstr "No tienes suficientes acolitos para completar la misión"
 
 #. Name of a campaign selectable at start of new game.
 #: guitext:643
 msgctxt "Campaign name"
 msgid "Eurocorp Syndicate"
-msgstr "Sindacato eurocorp"
+msgstr "Sindicato Eurocorp"
 
 #. Name of a campaign selectable at start of new game.
 #: guitext:644
 msgctxt "Campaign name"
 msgid "Church Of The New Epoch"
-msgstr "Chiesa della nuova epoca"
+msgstr "Iglesia de la Nueva Era"
 
 #. Name of a campaign selectable at start of new game.
 #: guitext:645
 msgctxt "Campaign name"
 msgid "The Unguided"
-msgstr "I non guidati"
+msgstr "Los Descontrolados"
 
 #. Generic text
 #: guitext:646
 msgctxt "Menu interface text"
 msgid "None"
-msgstr "Nessuna"
+msgstr "Ninguno"
 
 #. Name of an epidermis mod with specific effect.
 #: guitext:647
 msgctxt "Epidermis version"
 msgid "Toughened"
-msgstr "Rinforzato"
+msgstr "Endurecido"
 
 #. Name of an epidermis mod with specific effect.
 #: guitext:648
 msgctxt "Epidermis version"
 msgid "Flame Resistant"
-msgstr "Ignifugo"
+msgstr "Resistente al Fuego"
 
 #. Name of an epidermis mod with specific effect.
 #: guitext:649
 msgctxt "Epidermis version"
 msgid "E-M Resistant"
-msgstr "Resistente e-m"
+msgstr "E-M Resistencia"
 
 #. Name of an epidermis mod with specific effect.
 #: guitext:650
 msgctxt "Epidermis version"
 msgid "Low E-M Profile"
-msgstr "Prof. e-m basso"
+msgstr "Perfil E-M Bajo"
 
 #. Button allowing paying for extra surveillance before mission, for Church campaign.
 #: guitext:651
 msgctxt "Brief screen buttons"
 msgid "Inquisitor"
-msgstr "Inquisitore"
+msgstr "Administrador"
 
 #. Generic text
 #: guitext:652
 msgctxt "MP game status"
 msgid "Has Left The Game"
-msgstr "Ha abbandonato il gioco"
+msgstr "Ha dejado el juego"
 
 #. Generic text
 #: guitext:653
 msgctxt "MP game status"
 msgid "Host Has Quit"
-msgstr "L'host ha abbandonato"
+msgstr "Administrador ha salido"
