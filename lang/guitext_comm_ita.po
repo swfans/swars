@@ -1,0 +1,4000 @@
+# *****************************************************************************
+#  Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
+# *****************************************************************************
+#   @file text_ita.po
+#      GUI text for SW Port translation file
+#  @par Purpose:
+#      Contains translation of the national text in the game.
+#  @par Comment:
+#      Use this file to improve the translation for specific language.
+#  @author   Syndicate Wars Fans
+#  @date     20 Aug 2023 - 02 Sep 2023
+#  @par  Copying and copyrights:
+#      This program is free software; you can redistribute it and/or modify
+#      it under the terms of the GNU General Public License as published by
+#      the Free Software Foundation; either version 2 of the License, or
+#      (at your option) any later version.
+#
+# *****************************************************************************
+msgid ""
+msgstr ""
+"Project-Id-Version: GUI text for SW Port\n"
+"Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
+"POT-Creation-Date: 2025-09-01 07:11+0200\n"
+"PO-Revision-Date: 2025-09-17 02:02+0200\n"
+"Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
+"Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:1
+msgctxt "Weapon name - Eurocorp"
+msgid "Uzi"
+msgstr "Uzi"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:2
+msgctxt "Weapon name - Eurocorp"
+msgid "Minigun"
+msgstr "Pistola"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:3
+msgctxt "Weapon name - Eurocorp"
+msgid "Pulse Laser"
+msgstr "Laser a impulsi"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:4
+msgctxt "Weapon name - Eurocorp"
+msgid "Electron Mace"
+msgstr "Mazza elettron."
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:5
+msgctxt "Weapon name - Eurocorp"
+msgid "Launcher"
+msgstr "Lancia granate"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:6
+msgctxt "Weapon name - Eurocorp"
+msgid "Nuclear Grenade"
+msgstr "Granata nucleare"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:7
+msgctxt "Weapon name - Eurocorp"
+msgid "Persuadertron"
+msgstr "Persuadertron"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:8
+msgctxt "Weapon name - Eurocorp"
+msgid "Flamer"
+msgstr "Lanciafiamme"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:9
+msgctxt "Weapon name - Eurocorp"
+msgid "Disrupter"
+msgstr "Distruttore"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:10
+msgctxt "Weapon name - Eurocorp"
+msgid "Psycho Gas"
+msgstr "Gas allucinogeno"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:11
+msgctxt "Weapon name - Eurocorp"
+msgid "Knockout Gas"
+msgstr "Gas nervino"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:12
+msgctxt "Weapon name - Eurocorp"
+msgid "Ion Mine"
+msgstr "Mina a ioni"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:13
+msgctxt "Weapon name - Eurocorp"
+msgid "High Explosive"
+msgstr "Esplos. alto pot."
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:14
+msgctxt "Weapon name - Eurocorp"
+msgid "Napalm Mine"
+msgstr ""
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:15
+msgctxt "Weapon name - Eurocorp"
+msgid "Long Range Rifle"
+msgstr "Fuc. lungo raggio"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:16
+msgctxt "Weapon name - Eurocorp"
+msgid "Satellite Rain"
+msgstr "Pioggia satellite"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:17
+msgctxt "Weapon name - Eurocorp"
+msgid "Plasma Lance"
+msgstr "Lancia al plasma"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:18
+msgctxt "Weapon name - Eurocorp"
+msgid "Razor Wire"
+msgstr "Filo spinato"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:19
+msgctxt "Weapon name - Eurocorp"
+msgid "Sonic Blast"
+msgstr ""
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:20
+msgctxt "Weapon name - Eurocorp"
+msgid "Graviton Gun"
+msgstr "Pistola gravit."
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:21
+msgctxt "Weapon name - Eurocorp"
+msgid "Persuadertron II"
+msgstr "Persuadertron II"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:22
+msgctxt "Weapon name - Eurocorp"
+msgid "Stasis Field"
+msgstr "Campo statico"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:23
+msgctxt "Weapon name - Eurocorp"
+msgid "Energy Shield"
+msgstr ""
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:24
+msgctxt "Weapon name - Eurocorp"
+msgid "Chromotap"
+msgstr "Ricarica energia"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:25
+msgctxt "Weapon name - Eurocorp"
+msgid "Displacertron"
+msgstr "Dislocatore"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:26
+msgctxt "Weapon name - Eurocorp"
+msgid "Cerberus IFF"
+msgstr "Guardiano"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:27
+msgctxt "Weapon name - Eurocorp"
+msgid "Medikit"
+msgstr "Kit medico"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:28
+msgctxt "Weapon name - Eurocorp"
+msgid "Automedikit"
+msgstr "Kit automedico"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:29
+msgctxt "Weapon name - Eurocorp"
+msgid "Trigger Wire"
+msgstr "Mina esplosiva"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:30
+msgctxt "Weapon name - Eurocorp"
+msgid "Clone Shield"
+msgstr "Schermo clonat."
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:31
+msgctxt "Weapon name - Church of N.E."
+msgid "Uzi"
+msgstr "Uzi"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:32
+msgctxt "Weapon name - Church of N.E."
+msgid "Minigun"
+msgstr "Pistola"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:33
+msgctxt "Weapon name - Church of N.E."
+msgid "Pulse Laser"
+msgstr "Laser a impulsi"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:34
+msgctxt "Weapon name - Church of N.E."
+msgid "Electron Mace"
+msgstr "Mazza elettron."
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:35
+msgctxt "Weapon name - Church of N.E."
+msgid "Launcher"
+msgstr "Lancia granate"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:36
+msgctxt "Weapon name - Church of N.E."
+msgid "Nuclear Grenade"
+msgstr "Granata nucleare"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:37
+msgctxt "Weapon name - Church of N.E."
+msgid "Indoctrinator"
+msgstr "Indottrinatore"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:38
+msgctxt "Weapon name - Church of N.E."
+msgid "Flamer"
+msgstr "Lanciafiamme"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:39
+msgctxt "Weapon name - Church of N.E."
+msgid "Disrupter"
+msgstr "Distruttore"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:40
+msgctxt "Weapon name - Church of N.E."
+msgid "Psycho Gas"
+msgstr "Gas allucinogeno"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:41
+msgctxt "Weapon name - Church of N.E."
+msgid "Knockout Gas"
+msgstr "Gas nervino"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:42
+msgctxt "Weapon name - Church of N.E."
+msgid "Ion Mine"
+msgstr "Mina a ioni"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:43
+msgctxt "Weapon name - Church of N.E."
+msgid "High Explosive"
+msgstr "Esplos. alto pot."
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:44
+msgctxt "Weapon name - Church of N.E."
+msgid "Napalm Mine"
+msgstr ""
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:45
+msgctxt "Weapon name - Church of N.E."
+msgid "Long Range Rifle"
+msgstr "Fuc. lungo raggio"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:46
+msgctxt "Weapon name - Church of N.E."
+msgid "Satellite Rain"
+msgstr "Pioggia satellite"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:47
+msgctxt "Weapon name - Church of N.E."
+msgid "Plasma Lance"
+msgstr "Lancia al plasma"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:48
+msgctxt "Weapon name - Church of N.E."
+msgid "Razor Wire"
+msgstr "Filo spinato"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:49
+msgctxt "Weapon name - Church of N.E."
+msgid "Sonic Blast"
+msgstr ""
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:50
+msgctxt "Weapon name - Church of N.E."
+msgid "Graviton Gun"
+msgstr "Pistola gravit."
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:51
+msgctxt "Weapon name - Church of N.E."
+msgid "Persuadertron II"
+msgstr "Persuadertron II"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:52
+msgctxt "Weapon name - Church of N.E."
+msgid "Stasis Field"
+msgstr "Campo statico"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:53
+msgctxt "Weapon name - Church of N.E."
+msgid "Energy Shield"
+msgstr ""
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:54
+msgctxt "Weapon name - Church of N.E."
+msgid "Chromotap"
+msgstr "Ricarica energia"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:55
+msgctxt "Weapon name - Church of N.E."
+msgid "Displacertron"
+msgstr "Dislocatore"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:56
+msgctxt "Weapon name - Church of N.E."
+msgid "Cerberus IFF"
+msgstr "Guardiano"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:57
+msgctxt "Weapon name - Church of N.E."
+msgid "Medikit"
+msgstr "Kit medico"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:58
+msgctxt "Weapon name - Church of N.E."
+msgid "Automedikit"
+msgstr "Kit automedico"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:59
+msgctxt "Weapon name - Church of N.E."
+msgid "Trigger Wire"
+msgstr "Mina esplosiva"
+
+#. Weapon name visible in Equip and Research menus, Debriafings, and within Missions.
+#: guitext:60
+msgctxt "Weapon name - Church of N.E."
+msgid "Clone Shield"
+msgstr "Schermo clonat."
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:61
+msgctxt "Weapon category"
+msgid "Kinetic"
+msgstr "Cinetica"
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:62
+msgctxt "Weapon category"
+msgid "Chemical"
+msgstr "Chimica"
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:63
+msgctxt "Weapon category"
+msgid "Nuclear"
+msgstr "Nucleare"
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:64
+msgctxt "Weapon category"
+msgid "Conventional"
+msgstr "Convenzionale"
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:65
+msgctxt "Weapon category"
+msgid "Biological"
+msgstr "Biologica"
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:66
+msgctxt "Weapon category"
+msgid "Unknown"
+msgstr "Sconosciuta"
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:67
+msgctxt "Weapon category"
+msgid "Electromagnetic"
+msgstr "Elettromagnetica"
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:68
+msgctxt "Weapon category"
+msgid "Temporal"
+msgstr "Temporale"
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:69
+msgctxt "Weapon category"
+msgid "Psionic"
+msgstr "Psionica"
+
+#. Name of category of weapons visible in Equip menu.
+#: guitext:70
+msgctxt "Weapon category"
+msgid "Energy"
+msgstr "A energia"
+
+#. Cybernetic modification names in Cryo and Research menus, and Debriefings.
+#: guitext:71
+msgctxt "Cyborg mod part"
+msgid "Brain"
+msgstr "Cervello"
+
+#. Cybernetic modification names in Cryo and Research menus, and Debriefings.
+#: guitext:72
+msgctxt "Cyborg mod part"
+msgid "Arms"
+msgstr "Braccia"
+
+#. Cybernetic modification names in Cryo and Research menus, and Debriefings.
+#: guitext:73
+msgctxt "Cyborg mod part"
+msgid "Body"
+msgstr "Corpo"
+
+#. Cybernetic modification names in Cryo and Research menus, and Debriefings.
+#: guitext:74
+msgctxt "Cyborg mod part"
+msgid "Epidermis"
+msgstr "Epidermide"
+
+#. Cybernetic modification names in Cryo and Research menus, and Debriefings.
+#: guitext:75
+msgctxt "Cyborg mod part"
+msgid "Legs"
+msgstr "Gambe"
+
+#. Cybernetic modification grade word for mods which differ in effect, used in Cryo and Research menus, and Debriefings.
+#: guitext:76
+msgctxt "Cyborg mod grade"
+msgid "Version"
+msgstr "Vers."
+
+#. Cybernetic modification grade word for mods which differ just in strength of bonuses, used in Cryo and Research menus, and Debriefings.
+#: guitext:77
+msgctxt "Cyborg mod grade"
+msgid "Level"
+msgstr "Livello"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:78
+msgctxt "Agent names pool"
+msgid "Holister"
+msgstr "Holister"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:79
+msgctxt "Agent names pool"
+msgid "Burke"
+msgstr "Burke"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:80
+msgctxt "Agent names pool"
+msgid "Goettel"
+msgstr "Goettel"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:81
+msgctxt "Agent names pool"
+msgid "Coppola"
+msgstr "Coppola"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:82
+msgctxt "Agent names pool"
+msgid "Ogilvie"
+msgstr "Ogilvie"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:83
+msgctxt "Agent names pool"
+msgid "Hausman"
+msgstr "Hausman"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:84
+msgctxt "Agent names pool"
+msgid "Kane"
+msgstr "Kane"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:85
+msgctxt "Agent names pool"
+msgid "Jonsson"
+msgstr "Jonsson"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:86
+msgctxt "Agent names pool"
+msgid "Kyrne"
+msgstr "Kyrne"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:87
+msgctxt "Agent names pool"
+msgid "Miller"
+msgstr "Miller"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:88
+msgctxt "Agent names pool"
+msgid "Zaber"
+msgstr "Zaber"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:89
+msgctxt "Agent names pool"
+msgid "Schubermann"
+msgstr "Schubermann"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:90
+msgctxt "Agent names pool"
+msgid "Coburn"
+msgstr "Coburn"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:91
+msgctxt "Agent names pool"
+msgid "Akashi"
+msgstr "Akashi"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:92
+msgctxt "Agent names pool"
+msgid "Schroeder"
+msgstr "Schroeder"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:93
+msgctxt "Agent names pool"
+msgid "Wlodyka"
+msgstr "Wlodyka"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:94
+msgctxt "Agent names pool"
+msgid "Peters"
+msgstr "Peters"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:95
+msgctxt "Agent names pool"
+msgid "Allen"
+msgstr "Allen"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:96
+msgctxt "Agent names pool"
+msgid "Tucker"
+msgstr "Tucker"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:97
+msgctxt "Agent names pool"
+msgid "Watanabe"
+msgstr "Watanabe"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:98
+msgctxt "Agent names pool"
+msgid "Cho"
+msgstr "Cho"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:99
+msgctxt "Agent names pool"
+msgid "Tang"
+msgstr "Tang"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:100
+msgctxt "Agent names pool"
+msgid "Lamar"
+msgstr "Lamar"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:101
+msgctxt "Agent names pool"
+msgid "Lomax"
+msgstr "Lomax"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:102
+msgctxt "Agent names pool"
+msgid "O'Hara"
+msgstr "O'Hara"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:103
+msgctxt "Agent names pool"
+msgid "Niman"
+msgstr "Niman"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:104
+msgctxt "Agent names pool"
+msgid "Philips"
+msgstr "Philips"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:105
+msgctxt "Agent names pool"
+msgid "Yuen"
+msgstr "Yuen"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:106
+msgctxt "Agent names pool"
+msgid "Green"
+msgstr "Green"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:107
+msgctxt "Agent names pool"
+msgid "Furusawa"
+msgstr "Furusawa"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:108
+msgctxt "Agent names pool"
+msgid "Gosz"
+msgstr "Gosz"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:109
+msgctxt "Agent names pool"
+msgid "Devereux"
+msgstr "Devereux"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:110
+msgctxt "Agent names pool"
+msgid "Mahler"
+msgstr "Mahler"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:111
+msgctxt "Agent names pool"
+msgid "Jurgenson"
+msgstr "Jurgenson"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:112
+msgctxt "Agent names pool"
+msgid "Anson"
+msgstr "Anson"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:113
+msgctxt "Agent names pool"
+msgid "Tulley"
+msgstr "Tulley"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:114
+msgctxt "Agent names pool"
+msgid "Mercier"
+msgstr "Mercier"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:115
+msgctxt "Agent names pool"
+msgid "Benoit"
+msgstr "Benoit"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:116
+msgctxt "Agent names pool"
+msgid "Nakashima"
+msgstr "Nakashima"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:117
+msgctxt "Agent names pool"
+msgid "Stradinger"
+msgstr "Stradinger"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:118
+msgctxt "Agent names pool"
+msgid "Fernandez"
+msgstr "Fernandez"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:119
+msgctxt "Agent names pool"
+msgid "Winder"
+msgstr "Winder"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:120
+msgctxt "Agent names pool"
+msgid "Sakura"
+msgstr "Sakura"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:121
+msgctxt "Agent names pool"
+msgid "Fagin"
+msgstr "Fagin"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:122
+msgctxt "Agent names pool"
+msgid "Mcloud"
+msgstr "Mcloud"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:123
+msgctxt "Agent names pool"
+msgid "De Silva"
+msgstr "De silva"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:124
+msgctxt "Agent names pool"
+msgid "Gerretsen"
+msgstr "Gerretsen"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:125
+msgctxt "Agent names pool"
+msgid "Budd"
+msgstr "Budd"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:126
+msgctxt "Agent names pool"
+msgid "Sumner"
+msgstr "Sumner"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:127
+msgctxt "Agent names pool"
+msgid "Noy"
+msgstr "Noy"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:128
+msgctxt "Agent names pool"
+msgid "Wolff"
+msgstr "Wolff"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:129
+msgctxt "Agent names pool"
+msgid "Moon"
+msgstr "Moon"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:130
+msgctxt "Agent names pool"
+msgid "Von Daler"
+msgstr "Von daler"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:131
+msgctxt "Agent names pool"
+msgid "Shokat"
+msgstr "Shokat"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:132
+msgctxt "Agent names pool"
+msgid "Yamagata"
+msgstr "Yamagata"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:133
+msgctxt "Agent names pool"
+msgid "Leeb"
+msgstr "Leeb"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:134
+msgctxt "Agent names pool"
+msgid "Krauze"
+msgstr "Krauze"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:135
+msgctxt "Agent names pool"
+msgid "Hammer"
+msgstr "Hammer"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:136
+msgctxt "Agent names pool"
+msgid "Irioka"
+msgstr "Irioka"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:137
+msgctxt "Agent names pool"
+msgid "Makin"
+msgstr "Makin"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:138
+msgctxt "Agent names pool"
+msgid "Dicks"
+msgstr "Dicks"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:139
+msgctxt "Agent names pool"
+msgid "Kagato"
+msgstr "Kagato"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:140
+msgctxt "Agent names pool"
+msgid "Ferrao"
+msgstr "Ferrao"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:141
+msgctxt "Agent names pool"
+msgid "Giger"
+msgstr "Giger"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:142
+msgctxt "Agent names pool"
+msgid "Yasukawa"
+msgstr "Yasukawa"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:143
+msgctxt "Agent names pool"
+msgid "Bhal"
+msgstr "Bhal"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:144
+msgctxt "Agent names pool"
+msgid "Nivek"
+msgstr "Nivek"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:145
+msgctxt "Agent names pool"
+msgid "Thomas"
+msgstr "Thomas"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:146
+msgctxt "Agent names pool"
+msgid "Stribe"
+msgstr "Stribe"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:147
+msgctxt "Agent names pool"
+msgid "Hill"
+msgstr "Hill"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:148
+msgctxt "Agent names pool"
+msgid "Plank"
+msgstr "Plank"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:149
+msgctxt "Agent names pool"
+msgid "Lucas"
+msgstr "Lucas"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:150
+msgctxt "Agent names pool"
+msgid "Weiss"
+msgstr "Weiss"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:151
+msgctxt "Agent names pool"
+msgid "Clyne"
+msgstr "Clyne"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:152
+msgctxt "Agent names pool"
+msgid "Yeung"
+msgstr "Yeung"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:153
+msgctxt "Agent names pool"
+msgid "Nash"
+msgstr "Nash"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:154
+msgctxt "Agent names pool"
+msgid "Dechini"
+msgstr "Dechini"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:155
+msgctxt "Agent names pool"
+msgid "Lakin"
+msgstr "Lakin"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:156
+msgctxt "Agent names pool"
+msgid "Nelson"
+msgstr "Nelson"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:157
+msgctxt "Agent names pool"
+msgid "Madren"
+msgstr "Madren"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:158
+msgctxt "Agent names pool"
+msgid "Knight"
+msgstr "Knight"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:159
+msgctxt "Agent names pool"
+msgid "Bourne"
+msgstr "Bourne"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:160
+msgctxt "Agent names pool"
+msgid "Hock"
+msgstr "Hock"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:161
+msgctxt "Agent names pool"
+msgid "Bell"
+msgstr "Bell"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:162
+msgctxt "Agent names pool"
+msgid "O'Connell"
+msgstr "O'connell"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:163
+msgctxt "Agent names pool"
+msgid "Wong"
+msgstr "Wong"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:164
+msgctxt "Agent names pool"
+msgid "Rene"
+msgstr "Rene"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:165
+msgctxt "Agent names pool"
+msgid "Ikemoto"
+msgstr "Ikemoto"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:166
+msgctxt "Agent names pool"
+msgid "Sagat"
+msgstr "Sagat"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:167
+msgctxt "Agent names pool"
+msgid "Wlazinski"
+msgstr "Wlazinski"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:168
+msgctxt "Agent names pool"
+msgid "Murayama"
+msgstr "Murayama"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:169
+msgctxt "Agent names pool"
+msgid "Sommer"
+msgstr "Sommer"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:170
+msgctxt "Agent names pool"
+msgid "Bluth"
+msgstr "Bluth"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:171
+msgctxt "Agent names pool"
+msgid "Takagi"
+msgstr "Takagi"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:172
+msgctxt "Agent names pool"
+msgid "Hopper"
+msgstr "Hopper"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:173
+msgctxt "Agent names pool"
+msgid "Zarek"
+msgstr "Zarek"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:174
+msgctxt "Agent names pool"
+msgid "Cleef"
+msgstr "Cleef"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:175
+msgctxt "Agent names pool"
+msgid "Sato"
+msgstr "Sato"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:176
+msgctxt "Agent names pool"
+msgid "Halliwell"
+msgstr "Halliwell"
+
+#. Eurocorp agents are called by their surnames.
+#: guitext:177
+msgctxt "Agent names pool"
+msgid "Srokos"
+msgstr "Srokos"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:178
+msgctxt "Zealot male names pool"
+msgid "Matthew"
+msgstr "Matthew"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:179
+msgctxt "Zealot male names pool"
+msgid "Richard"
+msgstr "Richard"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:180
+msgctxt "Zealot male names pool"
+msgid "Alexander"
+msgstr "Alexander"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:181
+msgctxt "Zealot male names pool"
+msgid "Joseph"
+msgstr "Joseph"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:182
+msgctxt "Zealot male names pool"
+msgid "Christopher"
+msgstr "Christopher"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:183
+msgctxt "Zealot male names pool"
+msgid "Andrew"
+msgstr "Andrew"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:184
+msgctxt "Zealot male names pool"
+msgid "Jason"
+msgstr "Jason"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:185
+msgctxt "Zealot male names pool"
+msgid "Ben"
+msgstr "Ben"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:186
+msgctxt "Zealot male names pool"
+msgid "Paul"
+msgstr "Paul"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:187
+msgctxt "Zealot male names pool"
+msgid "Jonathan"
+msgstr "Jonathan"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:188
+msgctxt "Zealot male names pool"
+msgid "Mark"
+msgstr "Mark"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:189
+msgctxt "Zealot male names pool"
+msgid "Barry"
+msgstr "Barry"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:190
+msgctxt "Zealot male names pool"
+msgid "Leslie"
+msgstr "Leslie"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:191
+msgctxt "Zealot male names pool"
+msgid "Russell"
+msgstr "Russell"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:192
+msgctxt "Zealot male names pool"
+msgid "Tristan"
+msgstr "Tristan"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:193
+msgctxt "Zealot male names pool"
+msgid "Nathan"
+msgstr "Nathan"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:194
+msgctxt "Zealot male names pool"
+msgid "Gary"
+msgstr "Gary"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:195
+msgctxt "Zealot male names pool"
+msgid "Neil"
+msgstr "Neil"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:196
+msgctxt "Zealot male names pool"
+msgid "Alan"
+msgstr "Alan"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:197
+msgctxt "Zealot male names pool"
+msgid "Darran"
+msgstr "Darran"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:198
+msgctxt "Zealot male names pool"
+msgid "Kenneth"
+msgstr "Kenneth"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:199
+msgctxt "Zealot male names pool"
+msgid "Bjarne"
+msgstr "Bjarne"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:200
+msgctxt "Zealot male names pool"
+msgid "Adrian"
+msgstr "Adrian"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:201
+msgctxt "Zealot male names pool"
+msgid "Stephen"
+msgstr "Stephen"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:202
+msgctxt "Zealot male names pool"
+msgid "Guy"
+msgstr "Guy"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:203
+msgctxt "Zealot male names pool"
+msgid "Carsten"
+msgstr "Carsten"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:204
+msgctxt "Zealot male names pool"
+msgid "John"
+msgstr "John"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:205
+msgctxt "Zealot male names pool"
+msgid "William"
+msgstr "William"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:206
+msgctxt "Zealot male names pool"
+msgid "Michael"
+msgstr "Michael"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:207
+msgctxt "Zealot male names pool"
+msgid "Vincent"
+msgstr "Vincent"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:208
+msgctxt "Zealot male names pool"
+msgid "Anthony"
+msgstr "Anthony"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:209
+msgctxt "Zealot male names pool"
+msgid "Iain"
+msgstr "Iain"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:210
+msgctxt "Zealot male names pool"
+msgid "Rajan"
+msgstr "Rajan"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:211
+msgctxt "Zealot male names pool"
+msgid "James"
+msgstr "James"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:212
+msgctxt "Zealot male names pool"
+msgid "Stuart"
+msgstr "Stuart"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:213
+msgctxt "Zealot male names pool"
+msgid "David"
+msgstr "David"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:214
+msgctxt "Zealot male names pool"
+msgid "Findlay"
+msgstr "Finlay"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:215
+msgctxt "Zealot male names pool"
+msgid "Glenn"
+msgstr "Glenn"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:216
+msgctxt "Zealot male names pool"
+msgid "Dene"
+msgstr "Dene"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:217
+msgctxt "Zealot male names pool"
+msgid "Peter"
+msgstr "Peter"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:218
+msgctxt "Zealot male names pool"
+msgid "Martin"
+msgstr "Martin"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:219
+msgctxt "Zealot male names pool"
+msgid "Wayne"
+msgstr "Wayne"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:220
+msgctxt "Zealot male names pool"
+msgid "Ivan"
+msgstr "Ivan"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:221
+msgctxt "Zealot male names pool"
+msgid "Simon"
+msgstr "Simon"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:222
+msgctxt "Zealot male names pool"
+msgid "Daniel"
+msgstr "Daniel"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:223
+msgctxt "Zealot male names pool"
+msgid "Jan"
+msgstr "Jan"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:224
+msgctxt "Zealot male names pool"
+msgid "Steven"
+msgstr "Steven"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:225
+msgctxt "Zealot male names pool"
+msgid "Geoffrey"
+msgstr "Geoffrey"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:226
+msgctxt "Zealot male names pool"
+msgid "Kevin"
+msgstr "Kevin"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:227
+msgctxt "Zealot male names pool"
+msgid "Saurev"
+msgstr "Saurev"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:228
+msgctxt "Zealot female names pool"
+msgid "Mary"
+msgstr "Mary"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:229
+msgctxt "Zealot female names pool"
+msgid "Catherine"
+msgstr "Catherine"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:230
+msgctxt "Zealot female names pool"
+msgid "Emma"
+msgstr "Emma"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:231
+msgctxt "Zealot female names pool"
+msgid "Abigail"
+msgstr "Abigail"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:232
+msgctxt "Zealot female names pool"
+msgid "Ruth"
+msgstr "Ruth"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:233
+msgctxt "Zealot female names pool"
+msgid "Teresa"
+msgstr "Teresa"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:234
+msgctxt "Zealot female names pool"
+msgid "Sian"
+msgstr "Sian"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:235
+msgctxt "Zealot female names pool"
+msgid "Joanne"
+msgstr "Joanne"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:236
+msgctxt "Zealot female names pool"
+msgid "Grace"
+msgstr "Grace"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:237
+msgctxt "Zealot female names pool"
+msgid "Martha"
+msgstr "Martha"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:238
+msgctxt "Zealot female names pool"
+msgid "Natalie"
+msgstr "Natalie"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:239
+msgctxt "Zealot female names pool"
+msgid "Faith"
+msgstr "Faith"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:240
+msgctxt "Zealot female names pool"
+msgid "Lucia"
+msgstr "Lucia"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:241
+msgctxt "Zealot female names pool"
+msgid "Masaya"
+msgstr "Masaya"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:242
+msgctxt "Zealot female names pool"
+msgid "Carla"
+msgstr "Carla"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:243
+msgctxt "Zealot female names pool"
+msgid "Sarah"
+msgstr "Sarah"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:244
+msgctxt "Zealot female names pool"
+msgid "Angela"
+msgstr "Angela"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:245
+msgctxt "Zealot female names pool"
+msgid "Elspeth"
+msgstr "Elspeth"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:246
+msgctxt "Zealot female names pool"
+msgid "Naomi"
+msgstr "Naomi"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:247
+msgctxt "Zealot female names pool"
+msgid "Julia"
+msgstr "Julia"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:248
+msgctxt "Zealot female names pool"
+msgid "Meryl"
+msgstr "Meryl"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:249
+msgctxt "Zealot female names pool"
+msgid "Consuela"
+msgstr "Consuela"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:250
+msgctxt "Zealot female names pool"
+msgid "Caroline"
+msgstr "Caroline"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:251
+msgctxt "Zealot female names pool"
+msgid "Esther"
+msgstr "Esther"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:252
+msgctxt "Zealot female names pool"
+msgid "Julie"
+msgstr "Julie"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:253
+msgctxt "Zealot female names pool"
+msgid "Kirsten"
+msgstr "Kirsten"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:254
+msgctxt "Zealot female names pool"
+msgid "Hope"
+msgstr "Hope"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:255
+msgctxt "Zealot female names pool"
+msgid "Kai"
+msgstr "Kai"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:256
+msgctxt "Zealot female names pool"
+msgid "Cindy"
+msgstr "Cindy"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:257
+msgctxt "Zealot female names pool"
+msgid "Dominique"
+msgstr "Dominique"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:258
+msgctxt "Zealot female names pool"
+msgid "Margaret"
+msgstr "Margaret"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:259
+msgctxt "Zealot female names pool"
+msgid "Lesley"
+msgstr "Lesley"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:260
+msgctxt "Zealot female names pool"
+msgid "Elizabeth"
+msgstr "Elizabeth"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:261
+msgctxt "Zealot female names pool"
+msgid "Christine"
+msgstr "Christine"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:262
+msgctxt "Zealot female names pool"
+msgid "Sophia"
+msgstr "Sophia"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:263
+msgctxt "Zealot female names pool"
+msgid "Katrina"
+msgstr "Katrina"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:264
+msgctxt "Zealot female names pool"
+msgid "Toru"
+msgstr "Toru"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:265
+msgctxt "Zealot female names pool"
+msgid "Louise"
+msgstr "Louise"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:266
+msgctxt "Zealot female names pool"
+msgid "Charity"
+msgstr "Charity"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:267
+msgctxt "Zealot female names pool"
+msgid "Belinda"
+msgstr "Belinda"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:268
+msgctxt "Zealot female names pool"
+msgid "Serena"
+msgstr "Serena"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:269
+msgctxt "Zealot female names pool"
+msgid "Paulette"
+msgstr "Paulette"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:270
+msgctxt "Zealot female names pool"
+msgid "Chihiro"
+msgstr "Chihiro"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:271
+msgctxt "Zealot female names pool"
+msgid "Kyra"
+msgstr "Kyra"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:272
+msgctxt "Zealot female names pool"
+msgid "Joanna"
+msgstr "Joanna"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:273
+msgctxt "Zealot female names pool"
+msgid "Takeshi"
+msgstr "Takeshi"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:274
+msgctxt "Zealot female names pool"
+msgid "Stephanie"
+msgstr "Stephanie"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:275
+msgctxt "Zealot female names pool"
+msgid "Eve"
+msgstr "Eve"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:276
+msgctxt "Zealot female names pool"
+msgid "Nancy"
+msgstr "Nancy"
+
+#. Church of N.E. zealots are called by selected biblical names.
+#: guitext:277
+msgctxt "Zealot female names pool"
+msgid "Katherine"
+msgstr "Katherine"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:278
+msgctxt "Outcast names pool"
+msgid "Adami"
+msgstr "Adami"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:279
+msgctxt "Outcast names pool"
+msgid "Adams"
+msgstr "Adams"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:280
+msgctxt "Outcast names pool"
+msgid "Barnes"
+msgstr "Barnes"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:281
+msgctxt "Outcast names pool"
+msgid "Bass"
+msgstr "Bass"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:282
+msgctxt "Outcast names pool"
+msgid "Beale"
+msgstr "Beale"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:283
+msgctxt "Outcast names pool"
+msgid "Bell"
+msgstr "Bell"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:284
+msgctxt "Outcast names pool"
+msgid "Black"
+msgstr "Black"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:285
+msgctxt "Outcast names pool"
+msgid "Blow"
+msgstr "Blow"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:286
+msgctxt "Outcast names pool"
+msgid "Brown"
+msgstr "Brown"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:287
+msgctxt "Outcast names pool"
+msgid "Brutus"
+msgstr "Brutus"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:288
+msgctxt "Outcast names pool"
+msgid "Burnham"
+msgstr "Burnham"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:289
+msgctxt "Outcast names pool"
+msgid "Byrne"
+msgstr "Byrne"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:290
+msgctxt "Outcast names pool"
+msgid "Cakebread"
+msgstr "Cakebread"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:291
+msgctxt "Outcast names pool"
+msgid "Campos"
+msgstr "Campos"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:292
+msgctxt "Outcast names pool"
+msgid "Carr"
+msgstr "Carr"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:293
+msgctxt "Outcast names pool"
+msgid "Carroll"
+msgstr "Carroll"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:294
+msgctxt "Outcast names pool"
+msgid "Carter"
+msgstr "Carter"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:295
+msgctxt "Outcast names pool"
+msgid "Chilton"
+msgstr "Chilton"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:296
+msgctxt "Outcast names pool"
+msgid "Coglan"
+msgstr "Coglan"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:297
+msgctxt "Outcast names pool"
+msgid "Cook"
+msgstr "Cook"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:298
+msgctxt "Outcast names pool"
+msgid "Corpes"
+msgstr "Corpes"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:299
+msgctxt "Outcast names pool"
+msgid "Cox"
+msgstr "Cox"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:300
+msgctxt "Outcast names pool"
+msgid "Cullum"
+msgstr "Cullum"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:301
+msgctxt "Outcast names pool"
+msgid "Dawson"
+msgstr "Dawson"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:302
+msgctxt "Outcast names pool"
+msgid "Deane"
+msgstr "Deane"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:303
+msgctxt "Outcast names pool"
+msgid "Diskett"
+msgstr "Diskett"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:304
+msgctxt "Outcast names pool"
+msgid "Harrison"
+msgstr "Harrison"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:305
+msgctxt "Outcast names pool"
+msgid "Donkin"
+msgstr "Donkin"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:306
+msgctxt "Outcast names pool"
+msgid "Edgar"
+msgstr "Edgar"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:307
+msgctxt "Outcast names pool"
+msgid "Farmer"
+msgstr "Farmer"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:308
+msgctxt "Outcast names pool"
+msgid "Farquharson"
+msgstr "Farquharson"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:309
+msgctxt "Outcast names pool"
+msgid "Fitton"
+msgstr "Fitton"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:310
+msgctxt "Outcast names pool"
+msgid "Gibbs"
+msgstr "Gibbs"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:311
+msgctxt "Outcast names pool"
+msgid "Godsill"
+msgstr "Godsill"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:312
+msgctxt "Outcast names pool"
+msgid "Goodwin"
+msgstr "Goodwin"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:313
+msgctxt "Outcast names pool"
+msgid "Healey"
+msgstr "Healey"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:314
+msgctxt "Outcast names pool"
+msgid "Heywood"
+msgstr "Heywood"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:315
+msgctxt "Outcast names pool"
+msgid "Hill"
+msgstr "Hill"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:316
+msgctxt "Outcast names pool"
+msgid "Huntley"
+msgstr "Huntley"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:317
+msgctxt "Outcast names pool"
+msgid "Imlach"
+msgstr "Imlach"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:318
+msgctxt "Outcast names pool"
+msgid "Jarrett"
+msgstr "Jarrett"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:319
+msgctxt "Outcast names pool"
+msgid "Jones"
+msgstr "Jones"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:320
+msgctxt "Outcast names pool"
+msgid "Kaminski"
+msgstr "Kaminski"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:321
+msgctxt "Outcast names pool"
+msgid "Kanaoya"
+msgstr "Kanaoya"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:322
+msgctxt "Outcast names pool"
+msgid "Kershaw"
+msgstr "Kershaw"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:323
+msgctxt "Outcast names pool"
+msgid "Lamport"
+msgstr "Lamport"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:324
+msgctxt "Outcast names pool"
+msgid "Lawrie"
+msgstr "Lawrie"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:325
+msgctxt "Outcast names pool"
+msgid "Leach"
+msgstr "Leach"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:326
+msgctxt "Outcast names pool"
+msgid "Lydon"
+msgstr "Lydon"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:327
+msgctxt "Outcast names pool"
+msgid "Malcolm"
+msgstr "Malcolm"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:328
+msgctxt "Outcast names pool"
+msgid "Man"
+msgstr "Man"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:329
+msgctxt "Outcast names pool"
+msgid "Masterson"
+msgstr "Masterson"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:330
+msgctxt "Outcast names pool"
+msgid "Mcentee"
+msgstr "Mcentee"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:331
+msgctxt "Outcast names pool"
+msgid "Mcgechie"
+msgstr "Mcgechie"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:332
+msgctxt "Outcast names pool"
+msgid "Mclaughlin"
+msgstr "Mclaughlin"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:333
+msgctxt "Outcast names pool"
+msgid "Meade"
+msgstr "Meade"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:334
+msgctxt "Outcast names pool"
+msgid "Metcalf"
+msgstr "Metcalf"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:335
+msgctxt "Outcast names pool"
+msgid "Molyneux"
+msgstr "Molyneux"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:336
+msgctxt "Outcast names pool"
+msgid "Moore"
+msgstr "Moore"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:337
+msgctxt "Outcast names pool"
+msgid "Murphy"
+msgstr "Murphy"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:338
+msgctxt "Outcast names pool"
+msgid "Nuttall"
+msgstr "Nuttall"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:339
+msgctxt "Outcast names pool"
+msgid "Paramor"
+msgstr "Paramor"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:340
+msgctxt "Outcast names pool"
+msgid "Parker"
+msgstr "Parker"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:341
+msgctxt "Outcast names pool"
+msgid "Peters"
+msgstr "Peters"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:342
+msgctxt "Outcast names pool"
+msgid "Pitcher"
+msgstr "Pitcher"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:343
+msgctxt "Outcast names pool"
+msgid "Rance"
+msgstr "Rance"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:344
+msgctxt "Outcast names pool"
+msgid "Ratcliffe"
+msgstr "Ratcliffe"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:345
+msgctxt "Outcast names pool"
+msgid "Redshaw"
+msgstr "Redshaw"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:346
+msgctxt "Outcast names pool"
+msgid "Reed"
+msgstr "Reed"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:347
+msgctxt "Outcast names pool"
+msgid "Rene"
+msgstr "Rene"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:348
+msgctxt "Outcast names pool"
+msgid "Rennie"
+msgstr "Rennie"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:349
+msgctxt "Outcast names pool"
+msgid "Rider"
+msgstr "Rider"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:350
+msgctxt "Outcast names pool"
+msgid "Robson"
+msgstr "Robson"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:351
+msgctxt "Outcast names pool"
+msgid "Shaw"
+msgstr "Shaw"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:352
+msgctxt "Outcast names pool"
+msgid "Simmons"
+msgstr "Simmons"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:353
+msgctxt "Outcast names pool"
+msgid "Smethurst"
+msgstr "Smethurst"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:354
+msgctxt "Outcast names pool"
+msgid "Stacey"
+msgstr "Stacey"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:355
+msgctxt "Outcast names pool"
+msgid "Dr Stead"
+msgstr "Dr stead"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:356
+msgctxt "Outcast names pool"
+msgid "Sullivan"
+msgstr "Sullivan"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:357
+msgctxt "Outcast names pool"
+msgid "Svarovsky"
+msgstr "Svarovsky"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:358
+msgctxt "Outcast names pool"
+msgid "Tande"
+msgstr "Tande"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:359
+msgctxt "Outcast names pool"
+msgid "Thomas"
+msgstr "Thomas"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:360
+msgctxt "Outcast names pool"
+msgid "Trowers"
+msgstr "Trowers"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:361
+msgctxt "Outcast names pool"
+msgid "Webley"
+msgstr "Webley"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:362
+msgctxt "Outcast names pool"
+msgid "Wee"
+msgstr "Wee"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:363
+msgctxt "Outcast names pool"
+msgid "White"
+msgstr "White"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:364
+msgctxt "Outcast names pool"
+msgid "Whitton"
+msgstr "Whitton"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:365
+msgctxt "Outcast names pool"
+msgid "Willis"
+msgstr "Willis"
+
+#. Unguided outcasts are called by whatever they chose, names or pseudonyms. Often Bullfrog employees or their friends.
+#: guitext:366
+msgctxt "Outcast names pool"
+msgid "Wright"
+msgstr "Wright"
+
+#. Title above system menu.
+#: guitext:367
+msgctxt "Menu screen title"
+msgid "System"
+msgstr "Sistema"
+
+#. Public Area Network screen title on top.
+#: guitext:368
+msgctxt "Menu screen title"
+msgid "P.A. Network"
+msgstr "Rete annunci"
+
+#. Map screen title on top.
+#: guitext:369
+msgctxt "Menu screen title"
+msgid "Utopia"
+msgstr "Utopia"
+
+#. Cryogenic storage screen title on top.
+#: guitext:370
+msgctxt "Menu screen title"
+msgid "Cryovat"
+msgstr "Criovasca"
+
+#. Cyborg equipment screen title on top.
+#: guitext:371
+msgctxt "Menu screen title"
+msgid "Equipment"
+msgstr "Attrezzatura"
+
+#. Research screen title on top.
+#: guitext:372
+msgctxt "Menu screen title"
+msgid "Research"
+msgstr "Ricerca"
+
+#. Mission brief title on top.
+#: guitext:373
+msgctxt "Menu screen title"
+msgid "Briefing"
+msgstr "Istruzioni"
+
+#. Name for icon at bottom dock bar.
+#: guitext:374
+msgctxt "Dock bar icons"
+msgid "Mail"
+msgstr "Posta"
+
+#. Mission debrief title on top.
+#: guitext:375
+msgctxt "Menu screen title"
+msgid "Debriefing"
+msgstr "Situazione"
+
+#. Name for icon at bottom dock bar.
+#: guitext:376
+msgctxt "Dock bar icons"
+msgid "Brief"
+msgstr "Brief"
+
+#. Centered text on loading screen.
+#: guitext:377
+msgctxt "Mission loading"
+msgid "Initiating Drone Connection..."
+msgstr "Avvio connessione..."
+
+#. Text on system menu button.
+#: guitext:378
+msgctxt "System menu"
+msgid "Ops Config"
+msgstr "Config. tasti"
+
+#. Text on system menu button.
+#: guitext:379
+msgctxt "System menu"
+msgid "Multinet Access"
+msgstr "Accesso rete"
+
+#. Text on system menu button.
+#: guitext:380
+msgctxt "System menu"
+msgid "File Storage"
+msgstr "Gestione file"
+
+#. Text on system menu button.
+#: guitext:381
+msgctxt "System menu"
+msgid "Interface"
+msgstr "Interfaccia"
+
+#. Text on system menu button.
+#: guitext:382
+msgctxt "System menu"
+msgid "Audio"
+msgstr "Audio"
+
+#. Text on system menu button.
+#: guitext:383
+msgctxt "System menu"
+msgid "Visual Depth"
+msgstr "Profond. visiva"
+
+#. Text on system menu button.
+#: guitext:384
+msgctxt "System menu"
+msgid "Logout"
+msgstr "Disconnessione"
+
+#. Text used in various places for some unused slots.
+#: guitext:385
+msgctxt "Unused slot"
+msgid "Unused"
+msgstr "Inutiliz"
+
+#. Text on button for initiating selected multiplayer protocol, needs to be short.
+#: guitext:386
+msgctxt "MP Screen button"
+msgid "Initiate"
+msgstr "Avvia"
+
+#. Text on button to log into a game in multiplayer screen.
+#: guitext:387
+msgctxt "MP Screen button"
+msgid "Log On"
+msgstr "Log on"
+
+#. Text on button for starting multiplayer mission, needs to be short.
+#: guitext:388
+msgctxt "MP Screen button"
+msgid "Execute"
+msgstr "Esegui"
+
+#. Text on button for aborting multiplayer with previously initiated protocol, needs to be short.
+#: guitext:389
+msgctxt "MP Screen button"
+msgid "Abort"
+msgstr "Interr."
+
+#. Title of an area within multiplayer screeen.
+#: guitext:390
+msgctxt "MP Screen area"
+msgid "Logged Users"
+msgstr "Connessi"
+
+#. Title of an area within multiplayer screeen.
+#: guitext:391
+msgctxt "MP Screen area"
+msgid "Uplink Groups"
+msgstr "Gruppi colleg."
+
+#. Title of an area within multiplayer screeen.
+#: guitext:392
+msgctxt "MP Screen area"
+msgid "Team"
+msgstr "Squad"
+
+#. Title of an area within multiplayer screeen.
+#: guitext:393
+msgctxt "MP Screen area"
+msgid "Group"
+msgstr "Grup"
+
+#. Title of an area within multiplayer screeen.
+#: guitext:394
+msgctxt "MP Screen area"
+msgid "Communications"
+msgstr "Comunicazioni"
+
+#. How cyborgs/agents of specific faction are referred to. Used in various places, even in control keys list.
+#: guitext:395
+msgctxt "Noun for cyborgs, short"
+msgid "Agent"
+msgstr "Agente"
+
+#. How cyborgs/agents of specific faction are referred to. Used in various places, even in control keys list.
+#: guitext:396
+msgctxt "Noun for cyborgs, short"
+msgid "Zealot"
+msgstr "Fanatico"
+
+#. How cyborgs/agents of specific faction are referred to. Used in various places, even in control keys list.
+#: guitext:397
+msgctxt "Noun for cyborgs, short"
+msgid "Outcast"
+msgstr "Reietto"
+
+#. Grouping choices im multiplayer game screen.
+#: guitext:398
+msgctxt "MP Group"
+msgid "Omega"
+msgstr "Omega"
+
+#. Grouping choices im multiplayer game screen.
+#: guitext:399
+msgctxt "MP Group"
+msgid "Delta"
+msgstr "Delta"
+
+#. Grouping choices im multiplayer game screen.
+#: guitext:400
+msgctxt "MP Group"
+msgid "Sigma"
+msgstr "Sigma"
+
+#. Grouping choices im multiplayer game screen.
+#: guitext:401
+msgctxt "MP Group"
+msgid "Xi"
+msgstr "Xi"
+
+#. Multiplayer screen setting bar name, needs to be very short.
+#: guitext:402
+msgctxt "MP settings"
+msgid "Tech"
+msgstr "Tech"
+
+#. Multiplayer screen setting bar name, needs to be very short.
+#: guitext:403
+msgctxt "MP settings"
+msgid "Funds"
+msgstr "Fondi"
+
+#. Text on button for ejecting unwanted players from a game, needs to be short.
+#: guitext:404
+msgctxt "MP Screen button"
+msgid "Eject"
+msgstr "Espel"
+
+#. City name used for representing a mission; replaced by campaign-specific alltext name when a campaign is loaded.
+#: guitext:405
+msgctxt "Mission location details"
+msgid "Dropsite"
+msgstr "P. lancio"
+
+#. Country in which the city with mission is. Deprecated.
+#: guitext:406
+msgctxt "Mission location details"
+msgid "Country"
+msgstr "Paese"
+
+#. City status; was replaced by few specific metrics within a city. Deprecated.
+#: guitext:407
+msgctxt "Mission location details"
+msgid "Status"
+msgstr "Stato"
+
+#. Button available when a weapon equipped by an agent is selected.
+#: guitext:408
+msgctxt "Equip screen button"
+msgid "Sell"
+msgstr "Vendi"
+
+#. Text above list of weapons equipped by a cyborg.
+#: guitext:409
+msgctxt "Equip screen area"
+msgid "Available Slots"
+msgstr "Slot disponibili"
+
+#. Research screen area header, not used in final game. Deprecated.
+#: guitext:410
+msgctxt "Research screen area"
+msgid "Research Options"
+msgstr "Opzioni ricerca"
+
+#. Text naming a field which shows and allows adjusting funding for research.
+#: guitext:411
+msgctxt "Research screen metric"
+msgid "Funding"
+msgstr "Fondi"
+
+#. Text naming a field which shows amount of scientists ounder players jurisdiction.
+#: guitext:412
+msgctxt "Research screen metric"
+msgid "Scientists"
+msgstr "Scienziati"
+
+#. Amount research centre facilities under players control. Deprecated.
+#: guitext:413
+msgctxt "Research screen metric"
+msgid "Research Centres"
+msgstr "Centri ricerca"
+
+#. Currently researched weapon or mod.
+#: guitext:414
+msgctxt "Research status text"
+msgid "Current Research"
+msgstr "Ricerca corrente"
+
+#. Time until finalization of current research, at current funding.
+#: guitext:415
+msgctxt "Research screen metric"
+msgid "Hours To Finish"
+msgstr "Ore alla fine"
+
+#. Research screen text on empty slot.
+#: guitext:416
+msgctxt "Research status text"
+msgid "No Weapon Research"
+msgstr "Nessuna ricerca armi"
+
+#. Research screen text on empty slot.
+#: guitext:417
+msgctxt "Research status text"
+msgid "No Mod Research"
+msgstr "Nessuna ricerca mod."
+
+#. Text on button to start research of selected item.
+#: guitext:418
+msgctxt "Research screen button"
+msgid "Submit"
+msgstr "Mostra"
+
+#. Text on button to suspend research on currently researched item.
+#: guitext:419
+msgctxt "Research screen button"
+msgid "Suspend"
+msgstr "Sospend"
+
+#. Text above volume bar.
+#: guitext:420
+msgctxt "Audio settings area"
+msgid "Sound Volume"
+msgstr "Volume"
+
+#. Text above volume bar.
+#: guitext:421
+msgctxt "Audio settings area"
+msgid "Tension Music Volume"
+msgstr "Volume musica atm."
+
+#. Limit written on a bar for selecting a numeric value, like volume.
+#: guitext:422
+msgctxt "Value bar limit"
+msgid "Min"
+msgstr "Min"
+
+#. Limit written on a bar for selecting a numeric value, like volume.
+#: guitext:423
+msgctxt "Value bar limit"
+msgid "Max"
+msgstr "Max"
+
+#. Unidentified text
+#: guitext:424
+msgctxt "Menu interface text"
+msgid "Effects"
+msgstr "Effetti"
+
+#. Unidentified text
+#: guitext:425
+msgctxt "Menu interface text"
+msgid "Music"
+msgstr "Musica"
+
+#. Unidentified text
+#: guitext:426
+msgctxt "Menu interface text"
+msgid "Armoury"
+msgstr "Arsenale"
+
+#. Properties shown in Equip screen when specific weapon is selected.
+#: guitext:427
+msgctxt "Weapon properties"
+msgid "Category"
+msgstr "Categoria"
+
+#. Properties shown in Equip screen when specific weapon is selected.
+#: guitext:428
+msgctxt "Weapon properties"
+msgid "Weapon Power"
+msgstr "Potenza arma"
+
+#. Properties shown in Equip screen when specific weapon is selected.
+#: guitext:429
+msgctxt "Weapon properties"
+msgid "Range"
+msgstr "Gittata"
+
+#. Properties shown in Equip screen when specific weapon is selected.
+#: guitext:430
+msgctxt "Weapon properties"
+msgid "Energy Consumption"
+msgstr "Consumo energetico"
+
+#. Text naming the area with list of all cyborgs within cryo.
+#: guitext:431
+msgctxt "Cryo screen area"
+msgid "Cryo"
+msgstr "Crio"
+
+#. Text naming the area with list of mods. Deprecated.
+#: guitext:432
+msgctxt "Cryo screen area"
+msgid "Modifications"
+msgstr "Modifiche"
+
+#. Properties shown in cryo screen when specific mod is selected.
+#: guitext:433
+msgctxt "Cryo mod properties"
+msgid "Power Output"
+msgstr "Potenza di uscita"
+
+#. Properties shown in cryo screen when specific mod is selected.
+#: guitext:434
+msgctxt "Cryo mod properties"
+msgid "Resilience"
+msgstr "Resistenza"
+
+#. Properties shown in cryo screen when specific mod is selected.
+#: guitext:435
+msgctxt "Cryo mod properties"
+msgid "Additional"
+msgstr "Aggiuntivo"
+
+#. Title of an area within debrief screen. Deprecated.
+#: guitext:436
+msgctxt "Debrief screen area"
+msgid "Mission Statistics"
+msgstr "Statistiche missione"
+
+#. Text used for buttons enabling user acceptance, like a mission or purchease.
+#: guitext:437
+msgctxt "Generic button"
+msgid "Accept"
+msgstr "Accetta"
+
+#. Text used for buttons enabling user acceptance, like a mission or purchease.
+#: guitext:438
+msgctxt "Generic button"
+msgid "Cancel"
+msgstr "Annulla"
+
+#. Button text used where loadinbg from disk is an option, like Storage screen.
+#: guitext:439
+msgctxt "Generic button"
+msgid "Load"
+msgstr "Carica"
+
+#. Button text used where saving to disk is an option, like Storage or Controls screens.
+#: guitext:440
+msgctxt "Generic button"
+msgid "Save"
+msgstr "Salva"
+
+#. Button text used where value chosen needs to be applied deliberately, like some options in MP screen.
+#: guitext:441
+msgctxt "Generic button"
+msgid "Set"
+msgstr "Imp."
+
+#. Button allowing paying for extra surveillance before mission, for Eurocorp campaign.
+#: guitext:442
+msgctxt "Brief screen buttons"
+msgid "Netscan"
+msgstr "Info"
+
+#. Generic text in places where player can pay for something, like Equip/Cryo/Brief screens.
+#: guitext:443
+msgctxt "Generic property"
+msgid "Cost:"
+msgstr "Costo"
+
+#. Button text on the first screen after launching the game.
+#: guitext:444
+msgctxt "First menu"
+msgid "Map Editor"
+msgstr "Editor mappa"
+
+#. Button text on the first screen after launching the game.
+#: guitext:445
+msgctxt "First menu"
+msgid "Login"
+msgstr "Accesso"
+
+#. Button text on the first screen after launching the game.
+#: guitext:446
+msgctxt "First menu"
+msgid "Quit"
+msgstr "Esci"
+
+#. Shows city where mission is selected when MP is initiated.
+#: guitext:447
+msgctxt "Top bar fields"
+msgid "Game"
+msgstr "Gioco"
+
+#. Shows chosen tech level when MP is initiated.
+#: guitext:448
+msgctxt "Top bar fields"
+msgid "Tech Level"
+msgstr "Livello tec."
+
+#. Title of an area with a list of research topics.
+#: guitext:449
+msgctxt "Research screen area"
+msgid "Topic"
+msgstr "Argomento"
+
+#. Title of an area with active research progress bar.
+#: guitext:450
+msgctxt "Research screen area"
+msgid "Progress"
+msgstr "Progresso"
+
+#. Switch research options to weapons.
+#: guitext:451
+msgctxt "Research screen button"
+msgid "Weapons"
+msgstr "Armi"
+
+#. Switch research options to mods.
+#: guitext:452
+msgctxt "Research screen button"
+msgid "Mods"
+msgstr "Mod."
+
+#. Axis on research progress bar.
+#: guitext:453
+msgctxt "Research screen metric"
+msgid "Percentage Complete"
+msgstr "Percentuale completata"
+
+#. Axis on research progress bar.
+#: guitext:454
+msgctxt "Research screen metric"
+msgid "Time Taken"
+msgstr "Tempo impiegato"
+
+#. Text before login name field.
+#: guitext:455
+msgctxt "Login screen field"
+msgid "Login Id:"
+msgstr "Id di accesso:"
+
+#. Text used for buttons which allow progressing further with a process.
+#: guitext:456
+msgctxt "Generic button"
+msgid "Continue"
+msgstr "Continua"
+
+#. Unidentified text
+#: guitext:457
+msgctxt "Menu interface text"
+msgid "Fyi"
+msgstr "Per tua informazione"
+
+#. Unidentified text
+#: guitext:458
+msgctxt "Menu interface text"
+msgid "Billings"
+msgstr "Fatture"
+
+#. Text used for buttons which provide the only way of progressing, like error/info message boxes.
+#: guitext:459
+msgctxt "Generic button"
+msgid "Ok"
+msgstr "Ok"
+
+#. Line in Controls screen area which allows selection of the amount of local players.
+#: guitext:460
+msgctxt "Players controls area"
+msgid "Players"
+msgstr "Giocatori"
+
+#. Line in Controls screen area which shows control method of each local player.
+#: guitext:461
+msgctxt "Players controls area"
+msgid "Player"
+msgstr "Giocatore"
+
+#. Control method of a local player.
+#: guitext:462
+msgctxt "Control method"
+msgid "Keyboard"
+msgstr "Tastiera"
+
+#. Control method of a local player.
+#: guitext:463
+msgctxt "Control method"
+msgid "Mouse"
+msgstr "Mouse"
+
+#. Control method of a local player.
+#: guitext:464
+msgctxt "Control method"
+msgid "Joystick"
+msgstr "Joystick"
+
+#. Text for option which controls how fast interface screens are drawn on refresh.
+#: guitext:465
+msgctxt "Visual settings option"
+msgid "Projector Speed"
+msgstr "Veloc. proiettore"
+
+#. Slow projector speed enables complex animation of redrawing screen.
+#: guitext:466
+msgctxt "Projector Speed value"
+msgid "Slow"
+msgstr "Lenta"
+
+#. Fast projector means minimal animation of redrawing screen.
+#: guitext:467
+msgctxt "Projector Speed value"
+msgid "Fast"
+msgstr "Veloce"
+
+#. Text used for buttons which allow finishing a process.
+#: guitext:468
+msgctxt "Generic button"
+msgid "Finish"
+msgstr "Termina"
+
+#. Unidentified text
+#: guitext:469
+msgctxt "Menu interface text"
+msgid "Mail Hq"
+msgstr "Qg posta"
+
+#. Name for option which allows switching screen resolution during missions.
+#: guitext:470
+msgctxt "Visual settings option"
+msgid "Resolution"
+msgstr "Risoluzione"
+
+#. Name for option which allows switching graphics detail within missison.
+#: guitext:471
+msgctxt "Visual settings option"
+msgid "Detail Level"
+msgstr "Livello dettagli"
+
+#. Name for option which allows switching mission camera between isometric and perspective view.
+#: guitext:472
+msgctxt "Visual settings option"
+msgid "Perspective"
+msgstr "Prospettiva"
+
+#. Name for option which allows changimg max zoom level.
+#: guitext:473
+msgctxt "Visual settings option"
+msgid "Maximum Zoom"
+msgstr "Ingrandimento massimo"
+
+#. Resolutions depend on config options; these are just initial defaults.
+#: guitext:474
+msgctxt "Resolution value"
+msgid "320x200"
+msgstr "320x200"
+
+#. Resolutions depend on config options; these are just initial defaults.
+#: guitext:475
+msgctxt "Resolution value"
+msgid "640x480"
+msgstr "640x480"
+
+#. Low detail means smaller resolution of some sprites and fewer debrits on explosions.
+#: guitext:476
+msgctxt "Detail level value"
+msgid "Low"
+msgstr "Basso"
+
+#. Medium detail means moderate resolution of sprites and amount of debrits on explosions.
+#: guitext:477
+msgctxt "Detail level value"
+msgid "Medium"
+msgstr "Medio"
+
+#. High detail means best matched resolution of sprites and full amount of debrits on explosions.
+#: guitext:478
+msgctxt "Detail level value"
+msgid "High"
+msgstr "Alto"
+
+#. Used for all options which can toggle between enabled and disabled.
+#: guitext:479
+msgctxt "Switch option value"
+msgid "Off"
+msgstr "Off"
+
+#. Used for all options which can toggle between enabled and disabled.
+#: guitext:480
+msgctxt "Switch option value"
+msgid "On"
+msgstr "On"
+
+#. Whether movies should be player on billboards during missions.
+#: guitext:481
+msgctxt "Visual settings option"
+msgid "Billboard Movies"
+msgstr "Filmati"
+
+#. Whether to use more complex and more dynamic lights and effects around lights.
+#: guitext:482
+msgctxt "Visual settings option"
+msgid "Lighting Effects"
+msgstr "Effetti luce"
+
+#. Text on a button for starting mortal/hardcore game, with no manual saves and permanent death of agents.
+#: guitext:483
+msgctxt "Storage screen button"
+msgid "New Mortal Game"
+msgstr "Nuovo gioco mortale"
+
+#. Title of brief screen area with selection of cities. The selection area only exists if more than one mission is bound to one email.
+#: guitext:484
+msgctxt "Brief screen area"
+msgid "Active Cities"
+msgstr "Città attive"
+
+#. Reset controls to defaults.
+#: guitext:485
+msgctxt "Controls screen button"
+msgid "Defaults"
+msgstr "Predefinito"
+
+#. Joystick options in Controls.
+#: guitext:486
+msgctxt "Joystick area button"
+msgid "Calibrate"
+msgstr "Calibra"
+
+#. Column title with names of controls functions.
+#: guitext:487
+msgctxt "Controls screen column"
+msgid "Controls"
+msgstr "Controlli"
+
+#. Column title with keyboard controls assigned.
+#: guitext:488
+msgctxt "Controls screen column"
+msgid "Keys"
+msgstr "Tasti"
+
+#. Column title with joystick controls assigned.
+#: guitext:489
+msgctxt "Controls screen column"
+msgid "Joystick"
+msgstr "Joystick"
+
+#. Joystick options in Controls screen.
+#: guitext:490
+msgctxt "Joystick area field"
+msgid "Joystick Type"
+msgstr "Tipo joystick"
+
+#. City statistic in Map screen.
+#: guitext:491
+msgctxt "City stat"
+msgid "Population"
+msgstr "Popolazione"
+
+#. City statistic in Map screen.
+#: guitext:492
+msgctxt "City stat"
+msgid "Infrastructure"
+msgstr "Infrastruttura"
+
+#. City statistic in Map screen.
+#: guitext:493
+msgctxt "City stat"
+msgid "Dialect"
+msgstr "Dialetto"
+
+#. City statistic in Map screen.
+#: guitext:494
+msgctxt "City stat"
+msgid "Commerce"
+msgstr "Commercio"
+
+#. City statistic in Map screen.
+#: guitext:495
+msgctxt "City stat"
+msgid "Toxicity"
+msgstr "Tossicità"
+
+#. Shows up in Brief screen when all Netscan options were depleted.
+#: guitext:496
+msgctxt "Brief screen field"
+msgid "No Further Info"
+msgstr "Nessun'altra info"
+
+#. Button text on the first screen after launching the game.
+#: guitext:497
+msgctxt "First menu"
+msgid "Restore Savegame"
+msgstr "Riprendi partita salvata"
+
+#. Name of network protocol selection field.
+#: guitext:498
+msgctxt "MP Screen area"
+msgid "Net Protocol"
+msgstr "Protocollo di rete"
+
+#. One of network protocols.
+#: guitext:499
+msgctxt "MP protocol"
+msgid "IPX"
+msgstr "IPX"
+
+#. One of network protocols.
+#: guitext:500
+msgctxt "MP protocol"
+msgid "Serial COM1"
+msgstr "COM1 seriale"
+
+#. One of network protocols.
+#: guitext:501
+msgctxt "MP protocol"
+msgid "Serial COM2"
+msgstr "COM2 seriale"
+
+#. One of network protocols.
+#: guitext:502
+msgctxt "MP protocol"
+msgid "Serial COM3"
+msgstr "COM3 seriale"
+
+#. One of network protocols.
+#: guitext:503
+msgctxt "MP protocol"
+msgid "Serial COM4"
+msgstr "COM4 seriale"
+
+#. One of network protocols.
+#: guitext:504
+msgctxt "MP protocol"
+msgid "Modem"
+msgstr "Modem"
+
+#. Transmission baud rate input for multiplayer protocols which require a constant rate.
+#: guitext:505
+msgctxt "MP screen protocol"
+msgid "Baud Rate"
+msgstr "Velocità"
+
+#. Fix weapons in network game.
+#: guitext:506
+msgctxt "MP screen settings"
+msgid "Fix Weapons"
+msgstr "Armi fisse"
+
+#. Agents respawn after death in network game.
+#: guitext:507
+msgctxt "MP screen settings"
+msgid "Reincarnation"
+msgstr "Reincarnazione"
+
+#. Socket number input for multiplayer protocols which require a socket.
+#: guitext:508
+msgctxt "MP screen protocol"
+msgid "Socket No."
+msgstr "N. presa"
+
+#. Audio output channels setting.
+#: guitext:509
+msgctxt "Menu interface text"
+msgid "Output Mode"
+msgstr "Modalità output"
+
+#. Audio Channels setting value.
+#: guitext:510
+msgctxt "Channels value"
+msgid "Stereo"
+msgstr "Stereo"
+
+#. Audio Channels setting value.
+#: guitext:511
+msgctxt "Channels value"
+msgid "Mono"
+msgstr "Mono"
+
+#. Music source setting. Deprecated.
+#: guitext:512
+msgctxt "Audio screen option"
+msgid "Music Source"
+msgstr "Fonte musicale"
+
+#. Music source setting. Deprecated.
+#: guitext:513
+msgctxt "Audio screen option"
+msgid "CD Mono"
+msgstr "CD Mono"
+
+#. Music source setting. Deprecated.
+#: guitext:514
+msgctxt "Audio screen option"
+msgid "MIDI Stereo"
+msgstr "MIDI Stereo"
+
+#. Make building half-transparent if they are close to the camera and obscuring the view.
+#: guitext:515
+msgctxt "Visual settings option"
+msgid "Deep Radar"
+msgstr "Radar di profondità"
+
+#. Random weapons apearing on the map within multiplayer missions.
+#: guitext:516
+msgctxt "MP screen settings"
+msgid "Random Weapons"
+msgstr "Armi casuali"
+
+#. Text above volume bar.
+#: guitext:517
+msgctxt "Audio settings area"
+msgid "CD Volume"
+msgstr "Volume cd"
+
+#. Unidentified text
+#: guitext:518
+msgctxt "Menu interface text"
+msgid "Withdraw From Mission"
+msgstr "Ritirati dalla missione"
+
+#. Text on button for controlling the modem connected to the computer.
+#: guitext:519
+msgctxt "MP modem button"
+msgid "Dial"
+msgstr "Componi"
+
+#. Text on button for controlling the modem connected to the computer.
+#: guitext:520
+msgctxt "MP modem button"
+msgid "Answer"
+msgstr "Rispondi"
+
+#. Text on button for controlling the modem connected to the computer.
+#: guitext:521
+msgctxt "MP modem button"
+msgid "Hangup"
+msgstr "Riattacca"
+
+#. Text for option for the modem connected to the computer.
+#: guitext:522
+msgctxt "MP modem options"
+msgid "Number"
+msgstr "Numero"
+
+#. Selection of colour and shape of HUD panels during missions.
+#: guitext:523
+msgctxt "Visual settings option"
+msgid "Panel Permutation"
+msgstr "Permutazione pannello"
+
+#. Selection of colour for agents trenchcoats.
+#: guitext:524
+msgctxt "Visual settings option"
+msgid "Trenchcoat Preference"
+msgstr "Preferenza impermeabile"
+
+#. One of network protocols.
+#: guitext:525
+msgctxt "MP protocol"
+msgid "Modem COM1"
+msgstr "Modem su com1"
+
+#. One of network protocols.
+#: guitext:526
+msgctxt "MP protocol"
+msgid "Modem COM2"
+msgstr "Modem su com2"
+
+#. One of network protocols.
+#: guitext:527
+msgctxt "MP protocol"
+msgid "Modem COM3"
+msgstr "Modem su com3"
+
+#. One of network protocols.
+#: guitext:528
+msgctxt "MP protocol"
+msgid "Modem COM4"
+msgstr "Modem su com4"
+
+#. Music track to be played during the next mission.
+#: guitext:529
+msgctxt "Audio settings option"
+msgid "CD Music"
+msgstr "Musica CD"
+
+#. Tension music track to be used when chased by enemy during a mission.
+#: guitext:530
+msgctxt "Audio settings option"
+msgid "Tension Music"
+msgstr "Musica di pericolo"
+
+#. Extra audio additions allowed by capabilities of specific sound cards.
+#: guitext:531
+msgctxt "Audio settings option"
+msgid "Sound Extensions"
+msgstr "Estensioni sonore"
+
+#. Text on a button for selection of audio track, either CD or tension.
+#: guitext:532
+msgctxt "Audio Track button"
+msgid "Trk 1"
+msgstr " 1 "
+
+#. Text on a button for selection of audio track, either CD or tension.
+#: guitext:533
+msgctxt "Audio Track button"
+msgid "Trk 2"
+msgstr " 2 "
+
+#. Text on a button for selection of audio track, either CD or tension.
+#: guitext:534
+msgctxt "Audio Track button"
+msgid "Trk 3"
+msgstr " 3 "
+
+#. Allows performin Equip/Cryo screen operation (putchease/sell) on all 4 agents.
+#: guitext:535
+msgctxt "Equip/Cryo screens button"
+msgid "All Agents"
+msgstr "Tutti gli agenti"
+
+#. Automatic selection of next item to research after previous completes.
+#: guitext:536
+msgctxt "Research screen area"
+msgid "Auto-Research"
+msgstr "Auto-ricerca"
+
+#. Generic text
+#: guitext:537
+msgctxt "Menu interface text"
+msgid "Information Not Available"
+msgstr "Informazione non disponibile"
+
+#. Metric showing amount of scientists who died during the last misison.
+#: guitext:538
+msgctxt "Debrief screen metric"
+msgid "Scientists Dead:"
+msgstr "Scienziati morti:"
+
+#. Option in multiplayer screen which allows shuffling starting locations of players.
+#: guitext:539
+msgctxt "MP screen settings"
+msgid "Random Start"
+msgstr "Avvio casuale"
+
+#. Joystick type selection in Controls screen.
+#: guitext:540
+msgctxt "Joystick type"
+msgid "None"
+msgstr "Nessuno"
+
+#. Joystick type selection in Controls screen.
+#: guitext:541
+msgctxt "Joystick type"
+msgid "Analogue 2-Button"
+msgstr "Analogico a 2 pulsanti"
+
+#. Joystick type selection in Controls screen.
+#: guitext:542
+msgctxt "Joystick type"
+msgid "Analogue 4-Button"
+msgstr "Analogico a 4 pulsanti"
+
+#. Joystick type selection in Controls screen.
+#: guitext:543
+msgctxt "Joystick type"
+msgid "Analogue 2-Button + Hat"
+msgstr "Analogico a 2 pulsanti+viste"
+
+#. Joystick type selection in Controls screen.
+#: guitext:544
+msgctxt "Joystick type"
+msgid "Analogue 4-Button + Hat"
+msgstr "Analogico a 4 pulsanti+viste"
+
+#. Joystick type selection in Controls screen.
+#: guitext:545
+msgctxt "Joystick type"
+msgid "Gravis Pad"
+msgstr "Gravis pad"
+
+#. Joystick type selection in Controls screen.
+#: guitext:546
+msgctxt "Joystick type"
+msgid "Creative Pad"
+msgstr "Creative pad"
+
+#. Joystick type selection in Controls screen.
+#: guitext:547
+msgctxt "Joystick type"
+msgid "Wingman Extreme"
+msgstr "Wingman extreme"
+
+#. Joystick type selection in Controls screen.
+#: guitext:548
+msgctxt "Joystick type"
+msgid "Wingman New"
+msgstr "Wingman New"
+
+#. Joystick type selection in Controls screen.
+#: guitext:549
+msgctxt "Joystick type"
+msgid "Phantom 2i"
+msgstr "Phantom 2i"
+
+#. Joystick type selection in Controls screen.
+#: guitext:550
+msgctxt "Joystick type"
+msgid "Virtual IO"
+msgstr "Virtual IO"
+
+#. Joystick type selection in Controls screen.
+#: guitext:551
+msgctxt "Joystick type"
+msgid "VFX1"
+msgstr "VFX1"
+
+#. Joystick type selection in Controls screen.
+#: guitext:552
+msgctxt "Joystick type"
+msgid "Digital 2-Button"
+msgstr "Digitale a 2 pulsanti"
+
+#. Joystick type selection in Controls screen.
+#: guitext:553
+msgctxt "Joystick type"
+msgid "Digital 4-Button"
+msgstr "Digitale a 4 pulsanti"
+
+#. Joystick type selection in Controls screen.
+#: guitext:554
+msgctxt "Joystick type"
+msgid "Digital 2-Button + Hat"
+msgstr "Digitale a 2 pulsanti+viste"
+
+#. Joystick type selection in Controls screen.
+#: guitext:555
+msgctxt "Joystick type"
+msgid "Digital 4-Button + Hat"
+msgstr "Digitale a 4 pulsanti+viste"
+
+#. Generic text
+#: guitext:556
+msgctxt "Menu interface text"
+msgid "Auto Detect"
+msgstr "Rilevamento automatico"
+
+#. Generic text
+#: guitext:557
+msgctxt "Menu interface text"
+msgid "External Driver"
+msgstr "Driver esterno"
+
+#. Joystick type selection in Controls screen.
+#: guitext:558
+msgctxt "Joystick type"
+msgid "Gravis Grip"
+msgstr "Gravis Grip"
+
+#. Joystick type selection in Controls screen.
+#: guitext:559
+msgctxt "Joystick type"
+msgid "Spaceball Avenger"
+msgstr "Spaceball Avenger"
+
+#. Joystick type selection in Controls screen.
+#: guitext:560
+msgctxt "Joystick type"
+msgid "Gravis Thunderbird"
+msgstr "Gravis Thunderbird"
+
+#. Joystick type selection in Controls screen.
+#: guitext:561
+msgctxt "Joystick type"
+msgid "Microsoft Sidewinder"
+msgstr "Microsoft Sidewinder"
+
+#. Joystick type selection in Controls screen.
+#: guitext:562
+msgctxt "Joystick type"
+msgid "VFX1 Puck"
+msgstr "VFX1 Puck"
+
+#. Joystick type selection in Controls screen.
+#: guitext:563
+msgctxt "Joystick type"
+msgid "Analogue 2 Joysticks"
+msgstr "2 joystick analogici"
+
+#. Joystick type selection in Controls screen.
+#: guitext:564
+msgctxt "Joystick type"
+msgid "Digital 2 Joysticks"
+msgstr "2 joystick digitali"
+
+#. Game save or load error message.
+#: guitext:565
+msgctxt "Storage screen message"
+msgid ""
+"ERROR\n"
+"\n"
+"No game slot selected."
+msgstr ""
+"ERRORE\n"
+"\n"
+"Nessuna partita selezionata."
+
+#. Game load error message.
+#: guitext:566
+msgctxt "Storage screen message"
+msgid ""
+"ERROR\n"
+"\n"
+"Couldn't load game."
+msgstr ""
+"ERRORE\n"
+"\n"
+"Impossibile caricare la partita."
+
+#. Game save error message.
+#: guitext:567
+msgctxt "Storage screen message"
+msgid ""
+"ERROR\n"
+"\n"
+"Couldn't save game."
+msgstr ""
+"ERRORE\n"
+"\n"
+"Impossibile salvare la partita."
+
+#. Game load error message.
+#: guitext:568
+msgctxt "Storage screen message"
+msgid ""
+"ERROR\n"
+"\n"
+"Corrupt save game file."
+msgstr ""
+"ERRORE\n"
+"\n"
+"File partita salvata danneggiato."
+
+#. Network interaction error message.
+#: guitext:569
+msgctxt "MP screen message"
+msgid ""
+"ERROR\n"
+"\n"
+"Couldn't connect to the network."
+msgstr ""
+"ERRORE\n"
+"\n"
+"Impossibile connettersi alla rete."
+
+#. Inactive city selected in World Map error message.
+#: guitext:570
+msgctxt "Game World map screen message"
+msgid ""
+"No reported activity.\n"
+"City drop unnecessary."
+msgstr ""
+"Nessuna notizia di attività.\n"
+"Lancio sulla città non necessario."
+
+#. Too many active missions error message.
+#: guitext:571
+msgctxt "World map screen message"
+msgid "Complete current active mission before undertaking further missions."
+msgstr "Completa la corrente missione attiva prima di iniziare altre missioni."
+
+#. Game save success message.
+#: guitext:572
+msgctxt "Storage screen message"
+msgid "Game saved successfully."
+msgstr "Salvataggio partita completato."
+
+#. Game load success message.
+#: guitext:573
+msgctxt "Storage screen message"
+msgid "Game loaded successfully."
+msgstr "Caricamento partita completato."
+
+#. Equip screen limited availability message.
+#: guitext:574
+msgctxt "Equip screen message"
+msgid ""
+"Weapons of this type are in limited supply.\n"
+"Research must be completed for availability to improve."
+msgstr ""
+"Le scorte di questo tipo di armi sono limitate.\n"
+"La ricerca dovrà essere completata per aumentarne la disponibilità."
+
+#. First step of joystick calibration.
+#: guitext:575
+msgctxt "Joystick calibration"
+msgid "Move the joystick to the top left corner and press any button."
+msgstr "Sposta il joystick nell'angolo superiore sinistro e premi un pulsante."
+
+#. Second step of joystick calibration.
+#: guitext:576
+msgctxt "Joystick calibration"
+msgid "Move the joystick to the bottom right corner and press any button."
+msgstr "Sposta il joystick nell'angolo inferiore destro e premi un pulsante."
+
+#. Third step of joystick calibration.
+#: guitext:577
+msgctxt "Joystick calibration"
+msgid "Leave the joystick in the centre and press any button."
+msgstr "Centra il joystick e premi un pulsante."
+
+#. Message after clicking save button in Controls screen.
+#: guitext:578
+msgctxt "Controls screen message"
+msgid "Controls saved successfully."
+msgstr "Salvataggio impostazioni completato."
+
+#. Message after clicking save button in Controls screen.
+#: guitext:579
+msgctxt "Controls screen message"
+msgid ""
+"ERROR\n"
+"\n"
+"Couldn't save controls."
+msgstr ""
+"ERRORE\n"
+"\n"
+"Impossibile salvare le impostazioni."
+
+#. Message after logging to network session.
+#: guitext:580
+msgctxt "MP screen message"
+msgid ""
+"ERROR\n"
+"\n"
+"Couldn't connect to the session."
+msgstr ""
+"ERRORE\n"
+"\n"
+"Impossibile connettersi alla sessione."
+
+#. Colour and style of HUD panels within mission.
+#: guitext:581
+msgctxt "Panel flavor"
+msgid "Oceanic Translucency"
+msgstr "Traslucid. oceanica"
+
+#. Colour and style of HUD panels within mission.
+#: guitext:582
+msgctxt "Panel flavor"
+msgid "Metal Lightning"
+msgstr "Illumin. metallica"
+
+#. Colour and style of HUD panels within mission.
+#: guitext:583
+msgctxt "Panel flavor"
+msgid "Veiled Darkness"
+msgstr "Oscurità velata"
+
+#. Colour of agents trenchcoats within mission.
+#: guitext:584
+msgctxt "Trenchcoat flavor"
+msgid "Standard Issue"
+msgstr "Dotazione standard"
+
+#. Colour of agents trenchcoats within mission.
+#: guitext:585
+msgctxt "Trenchcoat flavor"
+msgid "Sunburn"
+msgstr "Bruciato"
+
+#. Colour of agents trenchcoats within mission.
+#: guitext:586
+msgctxt "Trenchcoat flavor"
+msgid "Rage"
+msgstr "Rabbia"
+
+#. Colour of agents trenchcoats within mission.
+#: guitext:587
+msgctxt "Trenchcoat flavor"
+msgid "Military Might"
+msgstr "Potenza militare"
+
+#. Colour of agents trenchcoats within mission.
+#: guitext:588
+msgctxt "Trenchcoat flavor"
+msgid "Industrial"
+msgstr "Industriale"
+
+#. Colour of agents trenchcoats within mission.
+#: guitext:589
+msgctxt "Trenchcoat flavor"
+msgid "Gothic"
+msgstr "Gotico"
+
+#. Weapon fire trigger key.
+#: guitext:590
+msgctxt "Controls"
+msgid "Fire"
+msgstr "Fuoco"
+
+#. Key for changing mood or active weapon.
+#: guitext:591
+msgctxt "Controls"
+msgid "Change Mood/Weapon"
+msgstr "Modalità modifica/arma"
+
+#. Key for rotating the view left.
+#: guitext:592
+msgctxt "Controls"
+msgid "Spin View Left"
+msgstr "Sposta vista a sinistra"
+
+#. Key for rotating the view right.
+#: guitext:593
+msgctxt "Controls"
+msgid "Spin View Right"
+msgstr "Sposta vista a destra"
+
+#. Key for switching cyborgs.
+#: guitext:594
+msgctxt "Controls"
+msgid "Change Agent"
+msgstr "Cambia agente"
+
+#. Key for ordering the cyborgs to move.
+#: guitext:595
+msgctxt "Controls"
+msgid "Go To Point"
+msgstr "Vai al punto"
+
+#. Key for grouping the cyborgs together.
+#: guitext:596
+msgctxt "Controls"
+msgid "Group Agents"
+msgstr "Raggruppa agenti"
+
+#. Key for moving the view or moving the cyborg directly (if in key control mode).
+#: guitext:597
+msgctxt "Controls"
+msgid "Up"
+msgstr "Su"
+
+#. Key for moving the view or moving the cyborg directly (if in key control mode).
+#: guitext:598
+msgctxt "Controls"
+msgid "Down"
+msgstr "Giù"
+
+#. Key for moving the view or moving the cyborg directly (if in key control mode).
+#: guitext:599
+msgctxt "Controls"
+msgid "Left"
+msgstr "Sinistra"
+
+#. Key for moving the view or moving the cyborg directly (if in key control mode).
+#: guitext:600
+msgctxt "Controls"
+msgid "Right"
+msgstr "Destra"
+
+#. Key for zooming the camera in, magnifying the view.
+#: guitext:601
+msgctxt "Controls"
+msgid "Zoom In"
+msgstr "Ingrandisci"
+
+#. Key for zooming the camera out, showing wider view.
+#: guitext:602
+msgctxt "Controls"
+msgid "Zoom Out"
+msgstr "Rimpicciolisci"
+
+#. Key for self-destructing a cyborg with chest mod.
+#: guitext:603
+msgctxt "Controls"
+msgid "Self-Destruct"
+msgstr "Auto distruzione"
+
+#. Key for leaving a weapon unarmed on the ground.
+#: guitext:604
+msgctxt "Controls"
+msgid "Drop Weapon"
+msgstr "Lascia arma"
+
+#. Key for rotating the camera up (in very limited bounds).
+#: guitext:605
+msgctxt "Controls"
+msgid "Tilt View Up"
+msgstr "Sposta vista in alto"
+
+#. Key for rotating the camera down (in very limited bounds).
+#: guitext:606
+msgctxt "Controls"
+msgid "Tilt View Down"
+msgstr "Sposta vista in basso"
+
+#. Key for pausing the mission.
+#: guitext:607
+msgctxt "Controls"
+msgid "Pause"
+msgstr "Pausa"
+
+#. Key for entering cyborgs direct control.
+#: guitext:608
+msgctxt "Controls"
+msgid "Key Control"
+msgstr "Controllo tasto"
+
+#. How cyborgs from a specific faction are named.
+#: guitext:609
+msgctxt "Noun for cyborgs, full"
+msgid "Agent"
+msgstr "Agente"
+
+#. How cyborgs from a specific faction are named.
+#: guitext:610
+msgctxt "Noun for cyborgs, full"
+msgid "Zealot"
+msgstr "Fanatici"
+
+#. How cyborgs from a specific faction are named.
+#: guitext:611
+msgctxt "Noun for cyborgs, full"
+msgid "Outcast"
+msgstr "Reietto"
+
+#. Name of a field storing mission identifier.
+#: guitext:612
+msgctxt "Debrief screen metric"
+msgid "Mission Reference"
+msgstr "Riferimento missione"
+
+#. Name of a field storing mission end status.
+#: guitext:613
+msgctxt "Debrief screen metric"
+msgid "Mission Status"
+msgstr "Stato missione"
+
+#. Name of a field storing completed objectives.
+#: guitext:614
+msgctxt "Debrief screen metric"
+msgid "Objectives Completed"
+msgstr "Obiettivi completati"
+
+#. Name of a field storing time spent within the mission (as counted within the game world).
+#: guitext:615
+msgctxt "Debrief screen metric"
+msgid "City Drop Time"
+msgstr "Ora lancio sulla città"
+
+#. Name of a field storing time elapsed since mission start (as counted within the game world).
+#: guitext:616
+msgctxt "Debrief screen metric"
+msgid "Mission Time Elapsed"
+msgstr "Tempo missione trascorso"
+
+#. Name of a field storing credits received during the mission and at its completion.
+#: guitext:617
+msgctxt "Debrief screen metric"
+msgid "Net Fiscal Gain"
+msgstr "Reddito fiscale netto"
+
+#. Name of a field storing computed mission efficiency.
+#: guitext:618
+msgctxt "Debrief screen metric"
+msgid "Efficiency"
+msgstr "Efficienza"
+
+#. Name of a field storing persuaded survivors count.
+#: guitext:619
+msgctxt "Debrief screen metric"
+msgid "Civilians Persuaded"
+msgstr "Civili persuasi"
+
+#. Name of a field storing persuaded survivors count.
+#: guitext:620
+msgctxt "Debrief screen metric"
+msgid "Militia Persuaded"
+msgstr "Miliziani persuasi"
+
+#. Name of a field storing persuaded survivors count.
+#: guitext:621
+msgctxt "Debrief screen metric"
+msgid "Adversaries Persuaded"
+msgstr "Avversari persuasi"
+
+#. Name of a field storing kill count.
+#: guitext:622
+msgctxt "Debrief screen metric"
+msgid "Civilians killed"
+msgstr "Civili uccisi"
+
+#. Name of a field storing kill count.
+#: guitext:623
+msgctxt "Debrief screen metric"
+msgid "Militia killed"
+msgstr "Miliziani uccisi"
+
+#. Name of a field storing kill count.
+#: guitext:624
+msgctxt "Debrief screen metric"
+msgid "Adversaries killed"
+msgstr "Avversari uccisi"
+
+#. Name of a field storing number of owned cyborgs killed.
+#: guitext:625
+msgctxt "Debrief screen metric"
+msgid "Agents lost"
+msgstr "Agenti perduti"
+
+#. Merging text when formatting dates and time periods.
+#: guitext:626
+msgctxt "Date formatting"
+msgid "Day"
+msgstr "Giorno"
+
+#. Merging text when formatting dates and time periods.
+#: guitext:627
+msgctxt "Date formatting"
+msgid "Days"
+msgstr "Giorni"
+
+#. Merging text when formatting dates and time periods.
+#: guitext:628
+msgctxt "Date formatting"
+msgid "Hour"
+msgstr "Ora"
+
+#. Merging text when formatting dates and time periods.
+#: guitext:629
+msgctxt "Date formatting"
+msgid "Hours"
+msgstr "Ore"
+
+#. Name of a field storing last visited city during a multi-city missison.
+#: guitext:630
+msgctxt "Debrief screen metric"
+msgid "Last City Visited"
+msgstr "Ultima città visitata"
+
+#. Name of a field storing amount of persuaded agents which were stored in Cryovats.
+#: guitext:631
+msgctxt "Debrief screen metric"
+msgid "Agents Gained"
+msgstr "Agenti conquistati"
+
+#. Name of a field storing a comma separated list of items researched during mission time.
+#: guitext:632
+msgctxt "Debrief screen metric"
+msgid "Research Completed:"
+msgstr "Ricerca completata:"
+
+#. Name of a field storing amount of credits spent during mission time.
+#: guitext:633
+msgctxt "Debrief screen metric"
+msgid "Expenditure"
+msgstr "Spese"
+
+#. Name of a field storing amount of credits received during the mission and at its completion.
+#: guitext:634
+msgctxt "Debrief screen metric"
+msgid "Income"
+msgstr "Introiti"
+
+#. Status when the mission was failed before withdrawing, or whwn the withdrawal counts as fail (which are most missions).
+#: guitext:635
+msgctxt "Mission status"
+msgid "Failed"
+msgstr "Fallita"
+
+#. Status when the mission objectives were met, but visiting another city is now required.
+#: guitext:636
+msgctxt "Mission status"
+msgid "Active"
+msgstr "Attiva"
+
+#. Status when the mission is completed and removed from pending list, progressing the campaign.
+#: guitext:637
+msgctxt "Mission status"
+msgid "Complete"
+msgstr "Completata"
+
+#. Status when the player has exited from mission without failing but also without completing all objectives, allowing to repeat that mission.
+#: guitext:638
+msgctxt "Mission status"
+msgid "Withdrawn"
+msgstr "Ritirato"
+
+#. Text before mission status, used as part of a message at mission conclusion.
+#: guitext:639
+msgctxt "In-mission status sentence"
+msgid "Mission"
+msgstr "Missione"
+
+#. Text after mission complete, used as part of a message at mission conclusion.
+#: guitext:640
+msgctxt "In-mission status sentence"
+msgid "- press Space or Return"
+msgstr "- premi spazio o invio"
+
+#. Text denying the start of a mission which needs more cyborgs in players squad.
+#: guitext:641
+msgctxt "Mission deny message"
+msgid "You Have Too Few Agents To Complete The Mission"
+msgstr "Hai troppo pochi agenti per completare la missione"
+
+#. Text denying the start of a mission which needs more cyborgs in players squad.
+#: guitext:642
+msgctxt "Mission deny message"
+msgid "You Have Too Few Acolytes To Complete The Mission"
+msgstr "Hai troppo pochi accoliti per completare la missione"
+
+#. Name of a campaign selectable at start of new game.
+#: guitext:643
+msgctxt "Campaign name"
+msgid "Eurocorp Syndicate"
+msgstr "Sindacato eurocorp"
+
+#. Name of a campaign selectable at start of new game.
+#: guitext:644
+msgctxt "Campaign name"
+msgid "Church Of The New Epoch"
+msgstr "Chiesa della nuova epoca"
+
+#. Name of a campaign selectable at start of new game.
+#: guitext:645
+msgctxt "Campaign name"
+msgid "The Unguided"
+msgstr "I non guidati"
+
+#. Generic text
+#: guitext:646
+msgctxt "Menu interface text"
+msgid "None"
+msgstr "Nessuna"
+
+#. Name of an epidermis mod with specific effect.
+#: guitext:647
+msgctxt "Epidermis version"
+msgid "Toughened"
+msgstr "Rinforzato"
+
+#. Name of an epidermis mod with specific effect.
+#: guitext:648
+msgctxt "Epidermis version"
+msgid "Flame Resistant"
+msgstr "Ignifugo"
+
+#. Name of an epidermis mod with specific effect.
+#: guitext:649
+msgctxt "Epidermis version"
+msgid "E-M Resistant"
+msgstr "Resistente e-m"
+
+#. Name of an epidermis mod with specific effect.
+#: guitext:650
+msgctxt "Epidermis version"
+msgid "Low E-M Profile"
+msgstr "Prof. e-m basso"
+
+#. Button allowing paying for extra surveillance before mission, for Church campaign.
+#: guitext:651
+msgctxt "Brief screen buttons"
+msgid "Inquisitor"
+msgstr "Inquisitore"
+
+#. Generic text
+#: guitext:652
+msgctxt "MP game status"
+msgid "Has Left The Game"
+msgstr "Ha abbandonato il gioco"
+
+#. Generic text
+#: guitext:653
+msgctxt "MP game status"
+msgid "Host Has Quit"
+msgstr "L'host ha abbandonato"
