@@ -45,6 +45,14 @@ typedef struct {
     int16_t samples_per_block;
 } WAVE_FMT;
 
+enum WAVE_FORMAT_TAGS {
+    WAVE_FORMAT_PCM = 0x0001,
+    WAVE_FORMAT_IEEE_FLOAT = 0x0003,
+    WAVE_FORMAT_ALAW = 0x0006,
+    WAVE_FORMAT_MULAW = 0x0007,
+    WAVE_FORMAT_EXTENSIBLE = 0xFFFE,
+};
+
 /** .WAV file data chunk */
 typedef struct {
     char DATA_string[4];
@@ -73,7 +81,10 @@ void AIL_process_WAV_image(const uint8_t *image, SNDSAMPLE *s)
         f = (WAVE_FMT*)((int8_t*)f + f->chunk_size + 8 + (f->chunk_size & 1));
     }
 
+    assert(f->format_tag == WAVE_FORMAT_PCM);
+
     // Configure sample type and rate based on FMT chunk
+    // 8-bit PCM is always unsigned, 16-bit is always signed
     if ((f->channels == 1) && (f->bits_per_sample == 8))
     {
         AIL_set_sample_type(s, DIG_F_MONO_8, 0);
