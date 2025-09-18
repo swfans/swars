@@ -3988,13 +3988,269 @@ msgid "Inquisitor"
 msgstr "Inkvisitor"
 
 #. Generic text
-#: guitext:652
+#: guitext:1961
 msgctxt "MP game status"
 msgid "Has Left The Game"
 msgstr ""
 
 #. Generic text
-#: guitext:653
+#: guitext:1962
 msgctxt "MP game status"
 msgid "Host Has Quit"
+msgstr ""
+
+#. Pool of unused entries, for future texts
+#: guitext:652 guitext:653 guitext:654 guitext:655 guitext:656 guitext:657
+#: guitext:658 guitext:659 guitext:660 guitext:661 guitext:662 guitext:663
+#: guitext:664 guitext:665 guitext:666 guitext:667 guitext:668 guitext:669
+#: guitext:670 guitext:671 guitext:672 guitext:673 guitext:674 guitext:675
+#: guitext:676 guitext:677 guitext:678 guitext:679 guitext:680 guitext:681
+#: guitext:682 guitext:683 guitext:684 guitext:685 guitext:686 guitext:687
+#: guitext:688 guitext:689 guitext:690 guitext:691 guitext:692 guitext:693
+#: guitext:694 guitext:695 guitext:696 guitext:697 guitext:698 guitext:699
+#: guitext:700 guitext:701 guitext:702 guitext:703 guitext:704 guitext:705
+#: guitext:706 guitext:707 guitext:708 guitext:709 guitext:710 guitext:711
+#: guitext:712 guitext:713 guitext:714 guitext:715 guitext:716 guitext:717
+#: guitext:718 guitext:719 guitext:720 guitext:721 guitext:722 guitext:723
+#: guitext:724 guitext:725 guitext:726 guitext:727 guitext:728 guitext:729
+#: guitext:730 guitext:731 guitext:732 guitext:733 guitext:734 guitext:735
+#: guitext:736 guitext:737 guitext:738 guitext:739 guitext:740 guitext:741
+#: guitext:742 guitext:743 guitext:744 guitext:745 guitext:746 guitext:747
+#: guitext:748 guitext:749 guitext:750 guitext:751 guitext:752 guitext:753
+#: guitext:754 guitext:755 guitext:756 guitext:757 guitext:758 guitext:759
+#: guitext:760 guitext:761 guitext:762 guitext:763 guitext:764 guitext:765
+#: guitext:766 guitext:767 guitext:768 guitext:769 guitext:770 guitext:771
+#: guitext:772 guitext:773 guitext:774 guitext:775 guitext:776 guitext:777
+#: guitext:778 guitext:779 guitext:780 guitext:781 guitext:782 guitext:783
+#: guitext:784 guitext:785 guitext:786 guitext:787 guitext:788 guitext:789
+#: guitext:790 guitext:791 guitext:792 guitext:793 guitext:794 guitext:795
+#: guitext:796 guitext:797 guitext:798 guitext:799 guitext:800 guitext:801
+#: guitext:802 guitext:803 guitext:804 guitext:805 guitext:806 guitext:807
+#: guitext:808 guitext:809 guitext:810 guitext:811 guitext:812 guitext:813
+#: guitext:814 guitext:815 guitext:816 guitext:817 guitext:818 guitext:819
+#: guitext:820 guitext:821 guitext:822 guitext:823 guitext:824 guitext:825
+#: guitext:826 guitext:827 guitext:828 guitext:829 guitext:830 guitext:831
+#: guitext:832 guitext:833 guitext:834 guitext:835 guitext:836 guitext:837
+#: guitext:838 guitext:839 guitext:840 guitext:841 guitext:842 guitext:843
+#: guitext:844 guitext:845 guitext:846 guitext:847 guitext:848 guitext:849
+#: guitext:850 guitext:851 guitext:852 guitext:853 guitext:854 guitext:855
+#: guitext:856 guitext:857 guitext:858 guitext:859 guitext:860 guitext:861
+#: guitext:862 guitext:863 guitext:864 guitext:865 guitext:866 guitext:867
+#: guitext:868 guitext:869 guitext:870 guitext:871 guitext:872 guitext:873
+#: guitext:874 guitext:875 guitext:876 guitext:877 guitext:878 guitext:879
+#: guitext:880 guitext:881 guitext:882 guitext:883 guitext:884 guitext:885
+#: guitext:886 guitext:887 guitext:888 guitext:889 guitext:890 guitext:891
+#: guitext:892 guitext:893 guitext:894 guitext:895 guitext:896 guitext:897
+#: guitext:898 guitext:899 guitext:900 guitext:901 guitext:902 guitext:903
+#: guitext:904 guitext:905 guitext:906 guitext:907 guitext:908 guitext:909
+#: guitext:910 guitext:911 guitext:912 guitext:913 guitext:914 guitext:915
+#: guitext:916 guitext:917 guitext:918 guitext:919 guitext:920 guitext:921
+#: guitext:922 guitext:923 guitext:924 guitext:925 guitext:926 guitext:927
+#: guitext:928 guitext:929 guitext:930 guitext:931 guitext:932 guitext:933
+#: guitext:934 guitext:935 guitext:936 guitext:937 guitext:938 guitext:939
+#: guitext:940 guitext:941 guitext:942 guitext:943 guitext:944 guitext:945
+#: guitext:946 guitext:947 guitext:948 guitext:949 guitext:950 guitext:951
+#: guitext:952 guitext:953 guitext:954 guitext:955 guitext:956 guitext:957
+#: guitext:958 guitext:959 guitext:960 guitext:961 guitext:962 guitext:963
+#: guitext:964 guitext:965 guitext:966 guitext:967 guitext:968 guitext:969
+#: guitext:970 guitext:971 guitext:972 guitext:973 guitext:974 guitext:975
+#: guitext:976 guitext:977 guitext:978 guitext:979 guitext:980 guitext:981
+#: guitext:982 guitext:983 guitext:984 guitext:985 guitext:986 guitext:987
+#: guitext:988 guitext:989 guitext:990 guitext:991 guitext:992 guitext:993
+#: guitext:994 guitext:995 guitext:996 guitext:997 guitext:998 guitext:999
+#: guitext:1000 guitext:1001 guitext:1002 guitext:1003 guitext:1004
+#: guitext:1005 guitext:1006 guitext:1007 guitext:1008 guitext:1009
+#: guitext:1010 guitext:1011 guitext:1012 guitext:1013 guitext:1014
+#: guitext:1015 guitext:1016 guitext:1017 guitext:1018 guitext:1019
+#: guitext:1020 guitext:1021 guitext:1022 guitext:1023 guitext:1024
+#: guitext:1025 guitext:1026 guitext:1027 guitext:1028 guitext:1029
+#: guitext:1030 guitext:1031 guitext:1032 guitext:1033 guitext:1034
+#: guitext:1035 guitext:1036 guitext:1037 guitext:1038 guitext:1039
+#: guitext:1040 guitext:1041 guitext:1042 guitext:1043 guitext:1044
+#: guitext:1045 guitext:1046 guitext:1047 guitext:1048 guitext:1049
+#: guitext:1050 guitext:1051 guitext:1052 guitext:1053 guitext:1054
+#: guitext:1055 guitext:1056 guitext:1057 guitext:1058 guitext:1059
+#: guitext:1060 guitext:1061 guitext:1062 guitext:1063 guitext:1064
+#: guitext:1065 guitext:1066 guitext:1067 guitext:1068 guitext:1069
+#: guitext:1070 guitext:1071 guitext:1072 guitext:1073 guitext:1074
+#: guitext:1075 guitext:1076 guitext:1077 guitext:1078 guitext:1079
+#: guitext:1080 guitext:1081 guitext:1082 guitext:1083 guitext:1084
+#: guitext:1085 guitext:1086 guitext:1087 guitext:1088 guitext:1089
+#: guitext:1090 guitext:1091 guitext:1092 guitext:1093 guitext:1094
+#: guitext:1095 guitext:1096 guitext:1097 guitext:1098 guitext:1099
+#: guitext:1100 guitext:1101 guitext:1102 guitext:1103 guitext:1104
+#: guitext:1105 guitext:1106 guitext:1107 guitext:1108 guitext:1109
+#: guitext:1110 guitext:1111 guitext:1112 guitext:1113 guitext:1114
+#: guitext:1115 guitext:1116 guitext:1117 guitext:1118 guitext:1119
+#: guitext:1120 guitext:1121 guitext:1122 guitext:1123 guitext:1124
+#: guitext:1125 guitext:1126 guitext:1127 guitext:1128 guitext:1129
+#: guitext:1130 guitext:1131 guitext:1132 guitext:1133 guitext:1134
+#: guitext:1135 guitext:1136 guitext:1137 guitext:1138 guitext:1139
+#: guitext:1140 guitext:1141 guitext:1142 guitext:1143 guitext:1144
+#: guitext:1145 guitext:1146 guitext:1147 guitext:1148 guitext:1149
+#: guitext:1150 guitext:1151 guitext:1152 guitext:1153 guitext:1154
+#: guitext:1155 guitext:1156 guitext:1157 guitext:1158 guitext:1159
+#: guitext:1160 guitext:1161 guitext:1162 guitext:1163 guitext:1164
+#: guitext:1165 guitext:1166 guitext:1167 guitext:1168 guitext:1169
+#: guitext:1170 guitext:1171 guitext:1172 guitext:1173 guitext:1174
+#: guitext:1175 guitext:1176 guitext:1177 guitext:1178 guitext:1179
+#: guitext:1180 guitext:1181 guitext:1182 guitext:1183 guitext:1184
+#: guitext:1185 guitext:1186 guitext:1187 guitext:1188 guitext:1189
+#: guitext:1190 guitext:1191 guitext:1192 guitext:1193 guitext:1194
+#: guitext:1195 guitext:1196 guitext:1197 guitext:1198 guitext:1199
+#: guitext:1200 guitext:1201 guitext:1202 guitext:1203 guitext:1204
+#: guitext:1205 guitext:1206 guitext:1207 guitext:1208 guitext:1209
+#: guitext:1210 guitext:1211 guitext:1212 guitext:1213 guitext:1214
+#: guitext:1215 guitext:1216 guitext:1217 guitext:1218 guitext:1219
+#: guitext:1220 guitext:1221 guitext:1222 guitext:1223 guitext:1224
+#: guitext:1225 guitext:1226 guitext:1227 guitext:1228 guitext:1229
+#: guitext:1230 guitext:1231 guitext:1232 guitext:1233 guitext:1234
+#: guitext:1235 guitext:1236 guitext:1237 guitext:1238 guitext:1239
+#: guitext:1240 guitext:1241 guitext:1242 guitext:1243 guitext:1244
+#: guitext:1245 guitext:1246 guitext:1247 guitext:1248 guitext:1249
+#: guitext:1250 guitext:1251 guitext:1252 guitext:1253 guitext:1254
+#: guitext:1255 guitext:1256 guitext:1257 guitext:1258 guitext:1259
+#: guitext:1260 guitext:1261 guitext:1262 guitext:1263 guitext:1264
+#: guitext:1265 guitext:1266 guitext:1267 guitext:1268 guitext:1269
+#: guitext:1270 guitext:1271 guitext:1272 guitext:1273 guitext:1274
+#: guitext:1275 guitext:1276 guitext:1277 guitext:1278 guitext:1279
+#: guitext:1280 guitext:1281 guitext:1282 guitext:1283 guitext:1284
+#: guitext:1285 guitext:1286 guitext:1287 guitext:1288 guitext:1289
+#: guitext:1290 guitext:1291 guitext:1292 guitext:1293 guitext:1294
+#: guitext:1295 guitext:1296 guitext:1297 guitext:1298 guitext:1299
+#: guitext:1300 guitext:1301 guitext:1302 guitext:1303 guitext:1304
+#: guitext:1305 guitext:1306 guitext:1307 guitext:1308 guitext:1309
+#: guitext:1310 guitext:1311 guitext:1312 guitext:1313 guitext:1314
+#: guitext:1315 guitext:1316 guitext:1317 guitext:1318 guitext:1319
+#: guitext:1320 guitext:1321 guitext:1322 guitext:1323 guitext:1324
+#: guitext:1325 guitext:1326 guitext:1327 guitext:1328 guitext:1329
+#: guitext:1330 guitext:1331 guitext:1332 guitext:1333 guitext:1334
+#: guitext:1335 guitext:1336 guitext:1337 guitext:1338 guitext:1339
+#: guitext:1340 guitext:1341 guitext:1342 guitext:1343 guitext:1344
+#: guitext:1345 guitext:1346 guitext:1347 guitext:1348 guitext:1349
+#: guitext:1350 guitext:1351 guitext:1352 guitext:1353 guitext:1354
+#: guitext:1355 guitext:1356 guitext:1357 guitext:1358 guitext:1359
+#: guitext:1360 guitext:1361 guitext:1362 guitext:1363 guitext:1364
+#: guitext:1365 guitext:1366 guitext:1367 guitext:1368 guitext:1369
+#: guitext:1370 guitext:1371 guitext:1372 guitext:1373 guitext:1374
+#: guitext:1375 guitext:1376 guitext:1377 guitext:1378 guitext:1379
+#: guitext:1380 guitext:1381 guitext:1382 guitext:1383 guitext:1384
+#: guitext:1385 guitext:1386 guitext:1387 guitext:1388 guitext:1389
+#: guitext:1390 guitext:1391 guitext:1392 guitext:1393 guitext:1394
+#: guitext:1395 guitext:1396 guitext:1397 guitext:1398 guitext:1399
+#: guitext:1400 guitext:1401 guitext:1402 guitext:1403 guitext:1404
+#: guitext:1405 guitext:1406 guitext:1407 guitext:1408 guitext:1409
+#: guitext:1410 guitext:1411 guitext:1412 guitext:1413 guitext:1414
+#: guitext:1415 guitext:1416 guitext:1417 guitext:1418 guitext:1419
+#: guitext:1420 guitext:1421 guitext:1422 guitext:1423 guitext:1424
+#: guitext:1425 guitext:1426 guitext:1427 guitext:1428 guitext:1429
+#: guitext:1430 guitext:1431 guitext:1432 guitext:1433 guitext:1434
+#: guitext:1435 guitext:1436 guitext:1437 guitext:1438 guitext:1439
+#: guitext:1440 guitext:1441 guitext:1442 guitext:1443 guitext:1444
+#: guitext:1445 guitext:1446 guitext:1447 guitext:1448 guitext:1449
+#: guitext:1450 guitext:1451 guitext:1452 guitext:1453 guitext:1454
+#: guitext:1455 guitext:1456 guitext:1457 guitext:1458 guitext:1459
+#: guitext:1460 guitext:1461 guitext:1462 guitext:1463 guitext:1464
+#: guitext:1465 guitext:1466 guitext:1467 guitext:1468 guitext:1469
+#: guitext:1470 guitext:1471 guitext:1472 guitext:1473 guitext:1474
+#: guitext:1475 guitext:1476 guitext:1477 guitext:1478 guitext:1479
+#: guitext:1480 guitext:1481 guitext:1482 guitext:1483 guitext:1484
+#: guitext:1485 guitext:1486 guitext:1487 guitext:1488 guitext:1489
+#: guitext:1490 guitext:1491 guitext:1492 guitext:1493 guitext:1494
+#: guitext:1495 guitext:1496 guitext:1497 guitext:1498 guitext:1499
+#: guitext:1500 guitext:1501 guitext:1502 guitext:1503 guitext:1504
+#: guitext:1505 guitext:1506 guitext:1507 guitext:1508 guitext:1509
+#: guitext:1510 guitext:1511 guitext:1512 guitext:1513 guitext:1514
+#: guitext:1515 guitext:1516 guitext:1517 guitext:1518 guitext:1519
+#: guitext:1520 guitext:1521 guitext:1522 guitext:1523 guitext:1524
+#: guitext:1525 guitext:1526 guitext:1527 guitext:1528 guitext:1529
+#: guitext:1530 guitext:1531 guitext:1532 guitext:1533 guitext:1534
+#: guitext:1535 guitext:1536 guitext:1537 guitext:1538 guitext:1539
+#: guitext:1540 guitext:1541 guitext:1542 guitext:1543 guitext:1544
+#: guitext:1545 guitext:1546 guitext:1547 guitext:1548 guitext:1549
+#: guitext:1550 guitext:1551 guitext:1552 guitext:1553 guitext:1554
+#: guitext:1555 guitext:1556 guitext:1557 guitext:1558 guitext:1559
+#: guitext:1560 guitext:1561 guitext:1562 guitext:1563 guitext:1564
+#: guitext:1565 guitext:1566 guitext:1567 guitext:1568 guitext:1569
+#: guitext:1570 guitext:1571 guitext:1572 guitext:1573 guitext:1574
+#: guitext:1575 guitext:1576 guitext:1577 guitext:1578 guitext:1579
+#: guitext:1580 guitext:1581 guitext:1582 guitext:1583 guitext:1584
+#: guitext:1585 guitext:1586 guitext:1587 guitext:1588 guitext:1589
+#: guitext:1590 guitext:1591 guitext:1592 guitext:1593 guitext:1594
+#: guitext:1595 guitext:1596 guitext:1597 guitext:1598 guitext:1599
+#: guitext:1600 guitext:1601 guitext:1602 guitext:1603 guitext:1604
+#: guitext:1605 guitext:1606 guitext:1607 guitext:1608 guitext:1609
+#: guitext:1610 guitext:1611 guitext:1612 guitext:1613 guitext:1614
+#: guitext:1615 guitext:1616 guitext:1617 guitext:1618 guitext:1619
+#: guitext:1620 guitext:1621 guitext:1622 guitext:1623 guitext:1624
+#: guitext:1625 guitext:1626 guitext:1627 guitext:1628 guitext:1629
+#: guitext:1630 guitext:1631 guitext:1632 guitext:1633 guitext:1634
+#: guitext:1635 guitext:1636 guitext:1637 guitext:1638 guitext:1639
+#: guitext:1640 guitext:1641 guitext:1642 guitext:1643 guitext:1644
+#: guitext:1645 guitext:1646 guitext:1647 guitext:1648 guitext:1649
+#: guitext:1650 guitext:1651 guitext:1652 guitext:1653 guitext:1654
+#: guitext:1655 guitext:1656 guitext:1657 guitext:1658 guitext:1659
+#: guitext:1660 guitext:1661 guitext:1662 guitext:1663 guitext:1664
+#: guitext:1665 guitext:1666 guitext:1667 guitext:1668 guitext:1669
+#: guitext:1670 guitext:1671 guitext:1672 guitext:1673 guitext:1674
+#: guitext:1675 guitext:1676 guitext:1677 guitext:1678 guitext:1679
+#: guitext:1680 guitext:1681 guitext:1682 guitext:1683 guitext:1684
+#: guitext:1685 guitext:1686 guitext:1687 guitext:1688 guitext:1689
+#: guitext:1690 guitext:1691 guitext:1692 guitext:1693 guitext:1694
+#: guitext:1695 guitext:1696 guitext:1697 guitext:1698 guitext:1699
+#: guitext:1700 guitext:1701 guitext:1702 guitext:1703 guitext:1704
+#: guitext:1705 guitext:1706 guitext:1707 guitext:1708 guitext:1709
+#: guitext:1710 guitext:1711 guitext:1712 guitext:1713 guitext:1714
+#: guitext:1715 guitext:1716 guitext:1717 guitext:1718 guitext:1719
+#: guitext:1720 guitext:1721 guitext:1722 guitext:1723 guitext:1724
+#: guitext:1725 guitext:1726 guitext:1727 guitext:1728 guitext:1729
+#: guitext:1730 guitext:1731 guitext:1732 guitext:1733 guitext:1734
+#: guitext:1735 guitext:1736 guitext:1737 guitext:1738 guitext:1739
+#: guitext:1740 guitext:1741 guitext:1742 guitext:1743 guitext:1744
+#: guitext:1745 guitext:1746 guitext:1747 guitext:1748 guitext:1749
+#: guitext:1750 guitext:1751 guitext:1752 guitext:1753 guitext:1754
+#: guitext:1755 guitext:1756 guitext:1757 guitext:1758 guitext:1759
+#: guitext:1760 guitext:1761 guitext:1762 guitext:1763 guitext:1764
+#: guitext:1765 guitext:1766 guitext:1767 guitext:1768 guitext:1769
+#: guitext:1770 guitext:1771 guitext:1772 guitext:1773 guitext:1774
+#: guitext:1775 guitext:1776 guitext:1777 guitext:1778 guitext:1779
+#: guitext:1780 guitext:1781 guitext:1782 guitext:1783 guitext:1784
+#: guitext:1785 guitext:1786 guitext:1787 guitext:1788 guitext:1789
+#: guitext:1790 guitext:1791 guitext:1792 guitext:1793 guitext:1794
+#: guitext:1795 guitext:1796 guitext:1797 guitext:1798 guitext:1799
+#: guitext:1800 guitext:1801 guitext:1802 guitext:1803 guitext:1804
+#: guitext:1805 guitext:1806 guitext:1807 guitext:1808 guitext:1809
+#: guitext:1810 guitext:1811 guitext:1812 guitext:1813 guitext:1814
+#: guitext:1815 guitext:1816 guitext:1817 guitext:1818 guitext:1819
+#: guitext:1820 guitext:1821 guitext:1822 guitext:1823 guitext:1824
+#: guitext:1825 guitext:1826 guitext:1827 guitext:1828 guitext:1829
+#: guitext:1830 guitext:1831 guitext:1832 guitext:1833 guitext:1834
+#: guitext:1835 guitext:1836 guitext:1837 guitext:1838 guitext:1839
+#: guitext:1840 guitext:1841 guitext:1842 guitext:1843 guitext:1844
+#: guitext:1845 guitext:1846 guitext:1847 guitext:1848 guitext:1849
+#: guitext:1850 guitext:1851 guitext:1852 guitext:1853 guitext:1854
+#: guitext:1855 guitext:1856 guitext:1857 guitext:1858 guitext:1859
+#: guitext:1860 guitext:1861 guitext:1862 guitext:1863 guitext:1864
+#: guitext:1865 guitext:1866 guitext:1867 guitext:1868 guitext:1869
+#: guitext:1870 guitext:1871 guitext:1872 guitext:1873 guitext:1874
+#: guitext:1875 guitext:1876 guitext:1877 guitext:1878 guitext:1879
+#: guitext:1880 guitext:1881 guitext:1882 guitext:1883 guitext:1884
+#: guitext:1885 guitext:1886 guitext:1887 guitext:1888 guitext:1889
+#: guitext:1890 guitext:1891 guitext:1892 guitext:1893 guitext:1894
+#: guitext:1895 guitext:1896 guitext:1897 guitext:1898 guitext:1899
+#: guitext:1900 guitext:1901 guitext:1902 guitext:1903 guitext:1904
+#: guitext:1905 guitext:1906 guitext:1907 guitext:1908 guitext:1909
+#: guitext:1910 guitext:1911 guitext:1912 guitext:1913 guitext:1914
+#: guitext:1915 guitext:1916 guitext:1917 guitext:1918 guitext:1919
+#: guitext:1920 guitext:1921 guitext:1922 guitext:1923 guitext:1924
+#: guitext:1925 guitext:1926 guitext:1927 guitext:1928 guitext:1929
+#: guitext:1930 guitext:1931 guitext:1932 guitext:1933 guitext:1934
+#: guitext:1935 guitext:1936 guitext:1937 guitext:1938 guitext:1939
+#: guitext:1940 guitext:1941 guitext:1942 guitext:1943 guitext:1944
+#: guitext:1945 guitext:1946 guitext:1947 guitext:1948 guitext:1949
+#: guitext:1950 guitext:1951 guitext:1952 guitext:1953 guitext:1954
+#: guitext:1955 guitext:1956 guitext:1957 guitext:1958 guitext:1959
+#: guitext:1960
+msgctxt "Unused"
+msgid "N"
 msgstr ""
