@@ -18750,7 +18750,7 @@ GLOBAL_FUNC (ASM_process_packets)	/* 0x3E728 */
 		call   ac_LbNetworkHangUp
 		jmp    jump_3fd18
 	jump_3e8f9:
-		mov    EXPORT_SYMBOL(gui_strings)+0x0A2C,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x1EA0,%eax # gui_strings[GSTR_NET_LEFT_GAME]
 		push   %eax
 		xor    %eax,%eax
 		mov    -0xc(%ebp),%ax
@@ -186984,7 +186984,7 @@ GLOBAL (display_palette)	/* 0x1A5878 */
 		.fill   0x8
 
 GLOBAL (gui_strings)	/* 0x1A5888 */
-		.fill   0x0a34
+		.fill   8000
 
 GLOBAL (small2_font_data)	/* 0x1A62C4 */
 		.long	0x0

@@ -25,10 +25,15 @@
 extern "C" {
 #endif
 /******************************************************************************/
-#define STRINGS_MAX 652
+#define STRINGS_MAX 2000
 
 #pragma pack(1)
 
+enum GuiStrings {
+    // Network messages during mission
+    GSTR_NET_LEFT_GAME = 1960,
+    GSTR_NET_HOSQ_QUIT = 1961,
+};
 
 #pragma pack()
 /******************************************************************************/
