@@ -30,6 +30,32 @@ extern "C" {
 #pragma pack(1)
 
 enum GuiStrings {
+    GSTR_MTR_SCIENTISTS_DEAD = 537,
+    // Per-campaign, name for players cyborgs
+    GSTR_CPG_CYBORG_NOUN_FULL = 608,
+    // Mission metrics
+    GSTR_MTR_MISSION_REF = 611,
+    GSTR_MTR_MISSION_STATUS = 612,
+    GSTR_MTR_OBJCTV_N_COMPL = 613,
+    GSTR_MTR_CITY_NAME = 614,
+    GSTR_MTR_MISS_TIME_ELP = 615,
+    GSTR_MTR_CREDS_NET_GAIN = 616,
+    GSTR_MTR_EFFICIENCY = 617,
+    GSTR_MTR_PERSD_CIVIL = 618,
+    GSTR_MTR_PERSD_MILIT = 619,
+    GSTR_MTR_PERSD_ADVERS = 620,
+    GSTR_MTR_KILLD_CIVIL = 621,
+    GSTR_MTR_KILLD_MILIT = 622,
+    GSTR_MTR_KILLD_ADVERS = 623,
+    GSTR_MTR_CYBORGS_LOST = 624,
+    GSTR_MTR_LAST_CITY_NAME = 629,
+    GSTR_MTR_CYBORGS_GAIN = 630,
+    GSTR_MTR_RESEARCH_DONE = 631,
+    GSTR_MTR_CREDS_EXPENDIT = 632,
+    GSTR_MTR_CREDS_INCOME = 633,
+    // Names for mods, per type
+    GSTR_MOD_EPIDERMIS = 645,
+    // Group: Network messages - 1950..1999
     // Network messages during mission
     GSTR_NET_LEFT_GAME = 1960,
     GSTR_NET_HOSQ_QUIT = 1961,
