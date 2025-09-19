@@ -3926,9 +3926,9 @@ msgctxt "Campaign name"
 msgid "The Unguided"
 msgstr ""
 
-#. Generic text
+#. Standard skin, with no artificial epidermis applied.
 #: guitext:646
-msgctxt "Menu interface text"
+msgctxt "Epidermis version"
 msgid "None"
 msgstr ""
 
