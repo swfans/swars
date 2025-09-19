@@ -390,7 +390,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
             if ((i >= 19) && (i <= 22))
             {
                 //TODO place Agent/Zealot/Outcast text ID in campaign config file
-                sprintf(locstr, "%s %d", gui_strings[608 + background_type], (i - 18));
+                sprintf(locstr, "%s %d", gui_strings[GSTR_CPG_CYBORG_NOUN_FULL + background_type], (i - 18));
                 text = loctext_to_gtext(locstr);
             }
             else

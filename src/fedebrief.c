@@ -79,39 +79,39 @@ void draw_mission_stats_names_column(struct ScreenBox *box,
     y = sepheight;
 
     // Reference no
-    draw_text_purple_list2(x, y, gui_strings[611], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_MISSION_REF], 0);
     y += lnheight;
 
     // Status
-    draw_text_purple_list2(x, y, gui_strings[612], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_MISSION_STATUS], 0);
     y += lnheight;
 
     // City time
-    draw_text_purple_list2(x, y, gui_strings[614], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_CITY_NAME], 0);
     y += lnheight;
 
     // Mission time
-    draw_text_purple_list2(x, y, gui_strings[615], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_MISS_TIME_ELP], 0);
     y += lnheight;
     y += sepheight;
 
     // Income
-    draw_text_purple_list2(x, y, gui_strings[633], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_CREDS_INCOME], 0);
     y += lnheight;
 
     // Expenditure
-    draw_text_purple_list2(x, y, gui_strings[632], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_CREDS_EXPENDIT], 0);
     y += lnheight;
 
     if (research_ln > 0)
     {
-        draw_text_purple_list2(x, y, gui_strings[631], 0);
+        draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_RESEARCH_DONE], 0);
         y += lnheight * research_ln;
     }
     if (scilost_ln > 0)
     {
         // Scientists lost
-        draw_text_purple_list2(x, y, gui_strings[537], 0);
+        draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_SCIENTISTS_DEAD], 0);
         y += lnheight * scilost_ln;
     }
 }

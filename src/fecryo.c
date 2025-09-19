@@ -1355,7 +1355,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 
         draw_discrete_rects_bar_lv(&power_box, mdef->PowerOutput, 8, byte_155175);
         draw_discrete_rects_bar_lv(&resil_box, mdef->Resilience, 8, byte_155181);
-        draw_text_property_lv(&addit_box, gui_strings[645 + mdef->AdditProp]);
+        draw_text_property_lv(&addit_box, gui_strings[GSTR_MOD_EPIDERMIS + mdef->AdditProp]);
         lbDisplay.DrawFlags = 0;
 
         // Add control hotspot for the view / description switch

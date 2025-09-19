@@ -117282,7 +117282,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		and    $0xff,%eax
 		mov    $0xd0,%edx
 		xor    %ecx,%ecx
-		mov    EXPORT_SYMBOL(gui_strings)+0x0A14(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x0A14(,%eax,4),%ebx # gui_strings[GSTR_MOD_EPIDERMIS+mdef->AdditProp]
 		xor    %eax,%eax
 		call   ac_draw_text_purple_list2
 		mov    -0xc(%ebp),%eax
@@ -118843,7 +118843,7 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 		mov    0x48(%esp),%edx
 		mov    background_type,%al
 		push   %edx
-		mov    EXPORT_SYMBOL(gui_strings)+0x980(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x980(,%eax,4),%ebx # gui_strings[GSTR_CPG_CYBORG_NOUN_FULL + background_type]
 		push   %ebx
 		push   $ascSD_9
 		lea    0xc(%esp),%eax
