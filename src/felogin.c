@@ -119,7 +119,7 @@ ubyte show_campaigns_list(struct ScreenBox *box)
             lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
         hbeg = cy - (4 * nlines - 4 + nlines * line_height) / 2;
         lbDisplay.DrawFlags |= 0x8000;
-        text = gui_strings[642 + campgn];
+        text = gui_strings[GSTR_CPG_CAMPAIGN_NAME + 100 * campgn];
         draw_text_purple_list2(0, hbeg, text, 0);
         lbDisplay.DrawFlags &= ~0x8000;
         cy += campgn_height;

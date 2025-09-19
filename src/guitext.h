@@ -55,10 +55,12 @@ enum GuiStrings {
     GSTR_MTR_CREDS_INCOME = 633,
     // Names for mods, per type
     GSTR_MOD_EPIDERMIS = 645,
-    // Group: Network messages - 1950..1999
+    // Group: Network messages - 950..999
     // Network messages during mission
-    GSTR_NET_LEFT_GAME = 1960,
-    GSTR_NET_HOSQ_QUIT = 1961,
+    GSTR_NET_LEFT_GAME = 960,
+    GSTR_NET_HOST_QUIT = 961,
+    // Campaign name
+    GSTR_CPG_CAMPAIGN_NAME = 999,
 };
 
 #pragma pack()
