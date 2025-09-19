@@ -16198,9 +16198,9 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    EXPORT_SYMBOL(scroll_text),%ebp
 		sar    $0x10,%eax
 		push   %ebp
-		mov    data_1a6274(,%eax,4),%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx
 		push   %edx
-		mov    data_1a6280,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx
 		push   %ebx
 		push   $ascSSS
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16249,14 +16249,14 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3bff1:
 		push   %ebx
 		push   %edx
-		mov    data_1a6284,%ebp
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ebp
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
 		sar    $0x10,%eax
 		push   %ebp
-		mov    data_1a6274(,%eax,4),%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx
 		push   %edx
-		mov    data_1a6280,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx
 		push   %ebx
 		push   $aSSSTime02d02d0
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16270,14 +16270,14 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3c03a:
 		push   %ebx
 		push   %edx
-		mov    data_1a6284,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ecx
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
 		sar    $0x10,%eax
 		push   %ecx
-		mov    data_1a6274(,%eax,4),%esi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%esi
 		push   %esi
-		mov    data_1a6280,%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%edi
 		push   %edi
 		push   $aSSSTempo02d02d
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16287,14 +16287,14 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3c06f:
 		push   %ebx
 		push   %edx
-		mov    data_1a6284,%ebp
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ebp
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
 		sar    $0x10,%eax
 		push   %ebp
-		mov    data_1a6274(,%eax,4),%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx
 		push   %edx
-		mov    data_1a6280,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx
 		push   %ebx
 		push   $aSSSZeit02d02d0
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16307,13 +16307,13 @@ GLOBAL_FUNC (ASM_load_packet)
 		push   %ebx
 		push   %eax
 		push   %esi
-		mov    data_1a6284,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%eax
 		push   %eax
 		mov    ingame__fld_unkC4F,%eax
 		sar    $0x10,%eax
-		mov    data_1a6274(,%eax,4),%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx
 		push   %edx
-		mov    data_1a6280,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx
 		push   %ebx
 		push   $aSSSTiempo02d02
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16325,12 +16325,12 @@ GLOBAL_FUNC (ASM_load_packet)
 		push   %eax
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
-		mov    data_1a6284,%esi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%esi
 		sar    $0x10,%eax
 		push   %esi
-		mov    data_1a6274(,%eax,4),%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edi
 		push   %edi
-		mov    data_1a6280,%ebp
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebp
 		push   %ebp
 		push   $aSSSTid02d02d02
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16373,14 +16373,14 @@ GLOBAL_FUNC (ASM_load_packet)
 		jbe    jump_3bff1
 		push   %ebx
 		push   %edx
-		mov    data_1a6284,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ecx
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
 		sar    $0x10,%eax
 		push   %ecx
-		mov    data_1a6274(,%eax,4),%esi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%esi
 		push   %esi
-		mov    data_1a6280,%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%edi
 		push   %edi
 		push   $aSSSHeure02d02d
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -18750,7 +18750,7 @@ GLOBAL_FUNC (ASM_process_packets)	/* 0x3E728 */
 		call   ac_LbNetworkHangUp
 		jmp    jump_3fd18
 	jump_3e8f9:
-		mov    data_1a62b4,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x1EA0,%eax # gui_strings[GSTR_NET_LEFT_GAME]
 		push   %eax
 		xor    %eax,%eax
 		mov    -0xc(%ebp),%ax
@@ -109536,14 +109536,14 @@ GLOBAL_FUNC(ASM_show_login_name)	/* 0x08D300 */
 		add    $0x4,%eax
 		and    $0xffff,%eax
 		call   ac_my_set_text_window
-		mov    data_1a5fa0,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x718,%eax
 		call   ac_my_string_width
 		lea    0x2(%eax),%edi
 		testb  $0x80,0xb(%esi)
 		jne    jump_8d3fa
 		mov    $0x2,%edx
 		mov    med_font,%eax
-		mov    data_1a5fa0,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x718,%ebx
 		xor    %ecx,%ecx
 		mov    %eax,EXPORT_SYMBOL(lbFontPtr)
 		xor    %eax,%eax
@@ -110058,7 +110058,7 @@ GLOBAL_FUNC(ASM_show_net_comms_box)	/* 0x08E7EC */
 		jne    jump_8e94d
 		mov    $0x100,%edx
 		mov    med2_font,%eax
-		mov    data_1a5eac,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x624,%ebx
 		xor    %ecx,%ecx
 		mov    %eax,EXPORT_SYMBOL(lbFontPtr)
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
@@ -110397,7 +110397,7 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		jmp    jump_8ec11
 	jump_8ecb7:
 		mov    $0x1108,%ebx
-		mov    data_1a6050,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x7C8,%eax
 		xor    %edx,%edx
 		mov    %eax,data_1c8010
 		mov    $unkstruct04_arr,%eax
@@ -110432,14 +110432,14 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		pop    %ebx
 		ret
 	jump_8ed2b:
-		mov    data_1a6168,%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x8E0,%edi
 		push   %edi
 		mov    $0x1,%cl
 		push   $EXPORT_SYMBOL(alert_text)
 		mov    $0x2,%edx
 		mov    $asc19200,%ebp
 		call   ac_sprintf
-		mov    data_1a6054,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		add    $0x8,%esp
 		mov    %cl,show_alert
 		mov    %dx,EXPORT_SYMBOL(word_1811AE)
@@ -110462,7 +110462,7 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		and    $0xffff,%eax
 		mov    $ASM_do_serial_speed_switch,%esi
 		mov    %ecx,data_1c7704
-		mov    data_1a60b0(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x828(,%eax,4),%eax
 		mov    %esi,data_1c7714
 		jmp    jump_8edca
 	jump_8eda8:
@@ -110470,7 +110470,7 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		and    $0xffff,%eax
 		mov    $ASM_do_serial_speed_switch,%ebx
 		mov    %edx,data_1c7704
-		mov    data_1a604c(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x7C4(,%eax,4),%eax
 		mov    %ebx,data_1c7714
 	jump_8edca:
 		mov    %eax,data_1c8010
@@ -110709,14 +110709,14 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		movb   $0x1,EXPORT_SYMBOL(byte_1C4A7C)
 		jmp    jump_8f502
 	jump_8f0f6:
-		mov    data_1a6168,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x8E0,%ecx
 		push   %ecx
 		mov    $0x1,%bl
 		push   $EXPORT_SYMBOL(alert_text)
 		mov    $asc19200,%esi
 		mov    $ASM_do_serial_speed_switch,%edi
 		call   ac_sprintf
-		mov    data_1a6054,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		add    $0x8,%esp
 		mov    %bl,show_alert
 		mov    %esi,data_1c7704
@@ -111024,25 +111024,25 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		mov    $0x2,%edx
 		mov    $0x4,%eax
 		mov    0x14(%esp),%esi
-		mov    data_1a6070,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x7E8,%ebx
 		xor    %ecx,%ecx
 		mov    0x14(%esp),%edi
 		call   ac_draw_text_purple_list2
 		mov    $0x4,%eax
-		mov    data_1a606c,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x7E4,%ebx
 		add    $0x6,%esi
 		xor    %ecx,%ecx
 		mov    %esi,%edx
 		add    $0x4,%edi
 		call   ac_draw_text_purple_list2
 		mov    $0x4,%eax
-		mov    data_1a6094,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x80C,%ebx
 		add    %edi,%esi
 		xor    %ecx,%ecx
 		mov    %esi,%edx
 		call   ac_draw_text_purple_list2
 		mov    $0x4,%eax
-		mov    data_1a60f0,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x868,%ebx
 		lea    (%esi,%edi,1),%edx
 		xor    %ecx,%ecx
 		mov    $0x2,%esi
@@ -111051,24 +111051,24 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		orw    $0x8040,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		testb  $0x4,unkn_flags_08
 		je     jump_8f5bc
-		mov    data_1a6004,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x77C,%eax
 		call   ac_my_string_width
 		mov    %edi,%edx
 		mov    %eax,%ebp
 		sar    %eax
 		xor    %ecx,%ecx
 		sub    %eax,%edx
-		mov    data_1a6004,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x77C,%ebx
 		jmp    jump_8f5d6
 	jump_8f5bc:
-		mov    data_1a6000,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x778,%eax
 		call   ac_my_string_width
 		mov    %edi,%edx
 		mov    %eax,%ebp
 		sar    %eax
 		xor    %ecx,%ecx
 		sub    %eax,%edx
-		mov    data_1a6000,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x778,%ebx
 	jump_8f5d6:
 		mov    %edx,%eax
 		mov    %esi,%edx
@@ -111177,24 +111177,24 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		mov    %cx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		testb  $0x8,unkn_flags_08
 		je     jump_8f74e
-		mov    data_1a6004,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x77C,%eax
 		call   ac_my_string_width
 		mov    %edi,%edx
 		mov    %eax,%ebp
 		sar    %eax
 		xor    %ecx,%ecx
 		sub    %eax,%edx
-		mov    data_1a6004,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x77C,%ebx
 		jmp    jump_8f768
 	jump_8f74e:
-		mov    data_1a6000,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x778,%eax
 		call   ac_my_string_width
 		mov    %edi,%edx
 		mov    %eax,%ebp
 		sar    %eax
 		xor    %ecx,%ecx
 		sub    %eax,%edx
-		mov    data_1a6000,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x778,%ebx
 	jump_8f768:
 		mov    %edx,%eax
 		mov    %esi,%edx
@@ -111303,24 +111303,24 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		testb  $0x10,unkn_flags_08
 		je     jump_8f8dc
-		mov    data_1a6004,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x77C,%eax
 		call   ac_my_string_width
 		mov    %edi,%edx
 		mov    %eax,%ebp
 		sar    %eax
 		xor    %ecx,%ecx
 		sub    %eax,%edx
-		mov    data_1a6004,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x77C,%ebx
 		jmp    jump_8f8f6
 	jump_8f8dc:
-		mov    data_1a6000,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x778,%eax
 		call   ac_my_string_width
 		mov    %edi,%edx
 		mov    %eax,%ebp
 		sar    %eax
 		xor    %ecx,%ecx
 		sub    %eax,%edx
-		mov    data_1a6000,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x778,%ebx
 	jump_8f8f6:
 		mov    %edx,%eax
 		mov    %esi,%edx
@@ -111429,24 +111429,24 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		mov    %cx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		testb  $0x20,unkn_flags_08
 		je     jump_8fa6c
-		mov    data_1a6004,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x77C,%eax
 		call   ac_my_string_width
 		mov    %edi,%edx
 		mov    %eax,%ebp
 		sar    %eax
 		xor    %ecx,%ecx
 		sub    %eax,%edx
-		mov    data_1a6004,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x77C,%ebx
 		jmp    jump_8fa86
 	jump_8fa6c:
-		mov    data_1a6000,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x778,%eax
 		call   ac_my_string_width
 		mov    %edi,%edx
 		mov    %eax,%ebp
 		sar    %eax
 		xor    %ecx,%ecx
 		sub    %eax,%edx
-		mov    data_1a6000,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x778,%ebx
 	jump_8fa86:
 		mov    %edx,%eax
 		mov    %esi,%edx
@@ -111597,7 +111597,7 @@ GLOBAL_FUNC(ASM_show_net_faction_box)	/* 0x08FBD8 */
 		call   ac_font_height
 		mov    %al,0x4(%esp)
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		mov    data_1a5ea8,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x620,%ebx
 		xor    %ecx,%ecx
 		xor    %edx,%edx
 		xor    %eax,%eax
@@ -111698,7 +111698,7 @@ GLOBAL_FUNC(ASM_show_net_faction_box)	/* 0x08FBD8 */
 		mov    EXPORT_SYMBOL(lbDisplay)+96,%bx # lbDisplay__DrawFlags
 		or     $0x80,%bh
 		mov    %bx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		mov    data_1a5eb0(%edi),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x628(%edi),%ebx
 		xor    %edx,%edx
 		xor    %ecx,%ecx
 		mov    %si,%dx
@@ -111835,7 +111835,7 @@ GLOBAL_FUNC(ASM_show_net_team_box)	/* 0x08FED4 */
 		call   ac_font_height
 		mov    %al,0x8(%esp)
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		mov    data_1a5ea4,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x61C,%ebx
 		xor    %ecx,%ecx
 		xor    %edx,%edx
 		xor    %eax,%eax
@@ -111940,7 +111940,7 @@ GLOBAL_FUNC(ASM_show_net_team_box)	/* 0x08FED4 */
 		mov    EXPORT_SYMBOL(lbDisplay)+96,%bx # lbDisplay__DrawFlags
 		or     $0x80,%bh
 		mov    %bx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		mov    data_1a5ebc(%edi),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x634(%edi),%ebx
 		xor    %edx,%edx
 		xor    %ecx,%ecx
 		mov    %si,%dx
@@ -112077,7 +112077,7 @@ GLOBAL_FUNC(ASM_show_net_groups_box)	/* 0x0901E0 */
 		mov    %al,0x44(%esp)
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		mov    $0x1,%edx
-		mov    data_1a5ea0,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x618,%ebx
 		xor    %ecx,%ecx
 		xor    %eax,%eax
 		call   ac_draw_text_purple_list2
@@ -112179,7 +112179,7 @@ GLOBAL_FUNC(ASM_show_net_groups_box)	/* 0x0901E0 */
 		test   %bh,%bh
 		jne    jump_903a4
 	jump_903b6:
-		mov    data_1a5f80,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x6F8,%edx
 		push   %edx
 		lea    0x4(%esp),%eax
 		push   %eax
@@ -112302,7 +112302,7 @@ GLOBAL_FUNC(ASM_show_net_groups_box)	/* 0x0901E0 */
 		test   %al,%al
 		jne    jump_90508
 	jump_9051a:
-		mov    data_1a5f80,%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x6F8,%edi
 		push   %edi
 		lea    0x4(%esp),%eax
 		push   %eax
@@ -112485,7 +112485,7 @@ GLOBAL_FUNC(ASM_show_net_users_box)	/* 0x0906E4 */
 		mov    %al,0x34(%esp)
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		mov    $0x1,%edx
-		mov    data_1a5e9c,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x614,%ebx
 		xor    %ecx,%ecx
 		xor    %eax,%eax
 		call   ac_draw_text_purple_list2
@@ -112678,7 +112678,7 @@ GLOBAL_FUNC(ASM_show_net_users_box)	/* 0x0906E4 */
 		mov    0x24(%esp),%di
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(group_types)(%edi),%al
-		mov    data_1a5eb0(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x628(,%eax,4),%eax
 		mov    $0x40,%edx
 		call   ac_my_string_width
 		sub    %eax,%edx
@@ -112688,7 +112688,7 @@ GLOBAL_FUNC(ASM_show_net_users_box)	/* 0x0906E4 */
 		mov    %eax,%edx
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(group_types)(%edi),%al
-		mov    data_1a5eb0(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x628(,%eax,4),%ebx
 		xor    %eax,%eax
 		xor    %ecx,%ecx
 		mov    %dx,%ax
@@ -113087,11 +113087,11 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		xor    %edx,%edx
 		xor    %ecx,%ecx
 		mov    0x4(%eax),%dx
-		mov    data_1a5f88,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x700,%eax
 		sub    $0x8,%edx
 		call   ac_my_string_width
 		sub    %eax,%edx
-		mov    data_1a5f88,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x700,%ebx
 		mov    %edx,%eax
 		mov    $0x2,%edx
 		shr    %eax
@@ -113100,11 +113100,11 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		xor    %edx,%edx
 		xor    %ecx,%ecx
 		mov    0x4(%eax),%dx
-		mov    data_1a5ef0,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x668,%eax
 		sub    $0x8,%edx
 		call   ac_my_string_width
 		sub    %eax,%edx
-		mov    data_1a5ef0,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x668,%ebx
 		mov    %edx,%eax
 		mov    $0xf7,%edx
 		shr    %eax
@@ -113113,11 +113113,11 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		xor    %edx,%edx
 		xor    %ecx,%ecx
 		mov    0x4(%eax),%dx
-		mov    data_1a5ef4,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x66C,%eax
 		sub    $0x8,%edx
 		call   ac_my_string_width
 		sub    %eax,%edx
-		mov    data_1a5ef4,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x66C,%ebx
 		mov    %edx,%eax
 		mov    $0x119,%edx
 		shr    %eax
@@ -113285,11 +113285,11 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		cmp    %esi,%eax
 		je     jump_9354f
 		movl   $ASM_do_research_submit,data_1c7dd8
-		mov    data_1a5f0c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
 		jmp    jump_9355f
 	jump_9354f:
 		mov    $ASM_do_research_suspend,%edi
-		mov    data_1a5f10,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
 		mov    %edi,data_1c7dd8
 	jump_9355f:
 		mov    %eax,data_1c7dc8
@@ -113326,7 +113326,7 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		mov    $0x3,%eax
 		mov    %ebp,%edx
 		xor    %ecx,%ecx
-		mov    data_1a5900(%ebx),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x078(%ebx),%ebx
 	jump_935dc:
 		call   ac_draw_text_purple_list2
 		xor    %esi,%esi
@@ -113410,12 +113410,12 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		cmp    %edx,%eax
 		je     jump_936f7
 		mov    $ASM_do_research_submit,%ecx
-		mov    data_1a5f0c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
 		mov    %ecx,data_1c7dd8
 		jmp    jump_93707
 	jump_936f7:
 		mov    $ASM_do_research_suspend,%ebx
-		mov    data_1a5f10,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
 		mov    %ebx,data_1c7dd8
 	jump_93707:
 		mov    %eax,data_1c7dc8
@@ -113451,7 +113451,7 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		mov    0x20(%esp,%eax,1),%bl
 		lea    0x1(%ebp),%edx
 		mov    $0x3,%eax
-		mov    data_1a59a0(,%ebx,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x118(,%ebx,4),%ebx
 		call   ac_draw_text_purple_list2
 		orw    $0x80,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		mov    0x44(%esp),%cl
@@ -113463,7 +113463,7 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		jg     jump_937ae
 		mov    0x28(%esp),%edx
 		push   %edx
-		mov    data_1a59b4,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x12C,%ebx
 		push   %ebx
 		push   $ascSD_1
 		jmp    jump_937cb
@@ -113475,7 +113475,7 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		idiv   %ebx
 		inc    %edx
 		push   %edx
-		mov    data_1a59b8,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x130,%eax
 		push   %eax
 		push   $ascSD_2
 	jump_937cb:
@@ -113584,7 +113584,7 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		jmp    jump_93a59
 	jump_93922:
 		mov    $0x19,%edx
-		mov    data_1a5900(%eax),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x078(%eax),%ebx
 		xor    %ecx,%ecx
 		mov    $0x4,%eax
 		call   ac_draw_text_purple_list2
@@ -113619,10 +113619,10 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		sar    $0x18,%eax
 		sub    $0xb,%eax
 		push   %eax
-		mov    data_1a59b4,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x12C,%ebx
 		mov    0x48(%esp),%eax
 		push   %ebx
-		mov    data_1a59a0(,%eax,4),%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x118(,%eax,4),%ecx
 		push   %ecx
 		push   $ascSSD
 		jmp    jump_939e8
@@ -113635,10 +113635,10 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		idiv   %ebx
 		inc    %edx
 		push   %edx
-		mov    data_1a59b8,%ebp
+		mov    EXPORT_SYMBOL(gui_strings)+0x130,%ebp
 		mov    0x48(%esp),%eax
 		push   %ebp
-		mov    data_1a59a0(,%eax,4),%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x118(,%eax,4),%edx
 		push   %edx
 		push   $ascSSD_0
 	jump_939e8:
@@ -114034,14 +114034,14 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		inc    %ecx
 		mov    0x4(%eax),%dx
 		add    %ecx,%ebx
-		mov    data_1a60e4,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x85C,%eax
 		mov    %ebx,text_buf_pos
 		sub    $0x8,%edx
 		call   ac_my_string_width
 		sub    %eax,%edx
 		xor    %ecx,%ecx
 		mov    %edx,%eax
-		mov    data_1a60e4,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x85C,%ebx
 		shr    %eax
 		mov    $0x13b,%edx
 		call   ac_draw_text_purple_list2
@@ -114103,7 +114103,7 @@ GLOBAL_FUNC(ASM_show_audio_tracks_box)	/* 0x094844 */
 		xor    %ebx,%ebx
 		jmp    jump_948a0
 	jump_94886:
-		mov    data_1a60c8(,%edx,4),%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x840(,%edx,4),%edi
 		sub    %ecx,%ecx
 		dec    %ecx
 		xor    %eax,%eax
@@ -114144,13 +114144,13 @@ GLOBAL_FUNC(ASM_show_audio_tracks_box)	/* 0x094844 */
 		mov    $0x4,%edx
 		push   $0x0
 		mov    $0x14,%eax
-		mov    data_1a60c8,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x840,%ebx
 		call   ac_flashy_draw_text
 		push   $0x0
 		mov    $0x1,%ecx
 		push   $data_1c486e
 		mov    $0x16,%edx
-		mov    data_1a60cc,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x844,%ebx
 		push   $0x0
 		movzbw %al,%si
 		mov    $0x14,%eax
@@ -114219,43 +114219,43 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		mov    $0x41,%eax
 		xor    %ecx,%ecx
 		call   ac_font_height
-		mov    data_1a5fc8,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x740,%ebx
 		movzbl %al,%ebp
 		mov    %edx,%eax
 		call   ac_draw_text_purple_list2
 		lea    0x1c(%ebp),%esi
 		mov    $0x14,%eax
-		mov    data_1a5fdc,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x754,%ebx
 		mov    %esi,%edx
 		xor    %ecx,%ecx
 		call   ac_draw_text_purple_list2
 		lea    0x8(%ebp),%edi
 		mov    $0x14,%eax
-		mov    data_1a5fe0,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x758,%ebx
 		add    %edi,%esi
 		xor    %ecx,%ecx
 		mov    %esi,%edx
 		call   ac_draw_text_purple_list2
 		mov    $0x14,%eax
-		mov    data_1a5fe4,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x75C,%ebx
 		add    %edi,%esi
 		xor    %ecx,%ecx
 		mov    %esi,%edx
 		call   ac_draw_text_purple_list2
 		mov    $0x14,%eax
-		mov    data_1a600c,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x784,%ebx
 		add    %edi,%esi
 		xor    %ecx,%ecx
 		mov    %esi,%edx
 		call   ac_draw_text_purple_list2
 		add    %edi,%esi
 		mov    $0x14,%eax
-		mov    data_1a6008,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x780,%ebx
 		mov    %esi,%edx
 		xor    %ecx,%ecx
 		call   ac_draw_text_purple_list2
 		mov    $0x14,%eax
-		mov    data_1a6090,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x808,%ebx
 		add    %edi,%esi
 		xor    %ecx,%ecx
 		mov    %esi,%edx
@@ -114268,13 +114268,13 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		or     $0x1,%dh
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		mov    $0x14,%eax
-		mov    data_1a60b0,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x828,%ebx
 		mov    %esi,%edx
 		xor    %ecx,%ecx
 		call   ac_draw_text_purple_list2
 		add    %ebp,%ebp
 		mov    $0x14,%eax
-		mov    data_1a60b4,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x82C,%ebx
 		add    $0x10,%ebp
 		xor    %ecx,%ecx
 		lea    (%esi,%ebp,1),%edx
@@ -114357,7 +114357,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 	jump_94bd0:
 		mov    ingame__fld_unkCA0,%eax
 		sar    $0x18,%eax
-		mov    data_1a6198(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
 		mov    %eax,data_1c7424(%esi)
 		jmp    jump_94c63
 	jump_94bea:
@@ -114373,7 +114373,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		cltd
 		xor    %edx,%eax
 		sub    %edx,%eax
-		mov    data_1a6194(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x90C(,%eax,4),%eax
 		mov    %eax,data_1c7424(%esi)
 		jmp    jump_94c63
 	jump_94c1f:
@@ -114386,7 +114386,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 	jump_94c39:
 		xor    %eax,%eax
 		mov    ingame__TrenchcoatPreference,%al
-		mov    data_1a61a4(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x91C(,%eax,4),%eax
 		mov    %eax,data_1c7424(%esi)
 		jmp    jump_94c63
 	jump_94c4f:
@@ -114489,7 +114489,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 	jump_94d96:
 		mov    ingame__fld_unkCA0,%eax
 		sar    $0x18,%eax
-		mov    data_1a6198(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
 		mov    %eax,data_1c7424(%esi)
 		jmp    jump_94e29
 	jump_94db0:
@@ -114505,7 +114505,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		cltd
 		xor    %edx,%eax
 		sub    %edx,%eax
-		mov    data_1a6194(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x90C(,%eax,4),%eax
 		mov    %eax,data_1c7424(%esi)
 		jmp    jump_94e29
 	jump_94de6:
@@ -114518,7 +114518,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 	jump_94dfe:
 		xor    %eax,%eax
 		mov    ingame__TrenchcoatPreference,%al
-		mov    data_1a61a4(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x91C(,%eax,4),%eax
 		mov    %eax,data_1c7424(%esi)
 		jmp    jump_94e29
 	jump_94e14:
@@ -114744,14 +114744,14 @@ GLOBAL_FUNC(ASM_show_menu_storage_slots_box)	/* 0x094F08 */
 		mov    0x8(%esp),%eax
 		xor    %edx,%edx
 		mov    0x4(%eax),%dx
-		mov    data_1a5ee8,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x660,%eax
 		call   ac_my_string_width
 		sub    %eax,%edx
 		shr    %edx
 		sub    $0x3,%edx
 		xor    %ecx,%ecx
 		mov    %dx,0x18(%esp)
-		mov    data_1a5ee8,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x660,%ebx
 		mov    0x16(%esp),%eax
 		mov    $0x2,%edx
 		sar    $0x10,%eax
@@ -115837,13 +115837,13 @@ GLOBAL_FUNC(ASM_show_weapon_slots)	/* 0x097D5C */
 	jump_980da:
 		mov    0x2(%esp),%eax
 		sar    $0x10,%eax
-		mov    data_1a5900(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x078(,%eax,4),%eax
 		jmp    jump_980ef
 	jump_980ea:
-		mov    data_1a598c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x104,%eax
 	jump_980ef:
 		mov    %eax,data_1c7b20
-		mov    data_1a5ee4,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x65C,%eax
 		mov    %eax,data_1c7bf4
 		mov    data_155161,%eax
 		sar    $0x18,%eax
@@ -115890,7 +115890,7 @@ GLOBAL_FUNC(ASM_show_weapon_slots)	/* 0x097D5C */
 		mov    %edx,data_1c7bc0
 		jmp    jump_981bb
 	jump_981b1:
-		mov    data_1a60e8,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x860,%eax
 		mov    %eax,data_1c7bc0
 	jump_981bb:
 		movw   $0xfffb,data_1c7be2
@@ -116005,13 +116005,13 @@ GLOBAL_FUNC(ASM_show_cryo_agent_list)	/* 0x098278 */
 		mov    0x8(%esp),%eax
 		xor    %edx,%edx
 		mov    0x4(%eax),%dx
-		mov    data_1a5f40,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x6B8,%eax
 		call   ac_my_string_width
 		sub    %eax,%edx
 		shr    %edx
 		xor    %ecx,%ecx
 		sub    $0x3,%edx
-		mov    data_1a5f40,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x6B8,%ebx
 		movswl %dx,%eax
 		mov    $0x2,%edx
 		mov    0x8(%esp),%esi
@@ -116551,7 +116551,7 @@ GLOBAL_FUNC(ASM_show_cryo_agent_list)	/* 0x098278 */
 		mov    data_1c4c64(%ebp),%al
 		mov    %esi,%edx
 		xor    %ecx,%ecx
-		mov    data_1a5c14(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x38C(,%eax,4),%ebx
 		mov    $0x1e,%eax
 		call   ac_draw_text_purple_list2
 		jmp    jump_98aeb
@@ -116560,7 +116560,7 @@ GLOBAL_FUNC(ASM_show_cryo_agent_list)	/* 0x098278 */
 		mov    data_1c4c64(%ebp),%al
 		mov    %esi,%edx
 		xor    %ecx,%ecx
-		mov    data_1a5b4c(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x2C4(,%eax,4),%ebx
 		mov    $0x1e,%eax
 		call   ac_draw_text_purple_list2
 		jmp    jump_98aeb
@@ -116569,7 +116569,7 @@ GLOBAL_FUNC(ASM_show_cryo_agent_list)	/* 0x098278 */
 		mov    data_1c4c64(%ebp),%al
 		mov    %esi,%edx
 		xor    %ecx,%ecx
-		mov    data_1a59bc(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x134(,%eax,4),%ebx
 		mov    $0x1e,%eax
 		call   ac_draw_text_purple_list2
 	jump_98aeb:
@@ -116704,18 +116704,18 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		movw   $0x100,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		mov    $0x94,%edx
 		mov    small_med_font,%eax
-		mov    data_1a5f48,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x6C0,%ebx
 		xor    %ecx,%ecx
 		mov    %eax,EXPORT_SYMBOL(lbFontPtr)
 		xor    %eax,%eax
 		call   ac_draw_text_purple_list2
 		mov    $0xad,%edx
-		mov    data_1a5f4c,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x6C4,%ebx
 		xor    %ecx,%ecx
 		xor    %eax,%eax
 		call   ac_draw_text_purple_list2
 		mov    $0xc4,%edx
-		mov    data_1a5f50,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x6C8,%ebx
 		xor    %ecx,%ecx
 		xor    %eax,%eax
 		call   ac_draw_text_purple_list2
@@ -117012,7 +117012,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		jg     jump_99442
 		mov    -0x14(%ebp),%eax
 		push   %eax
-		mov    data_1a59b4,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x12C,%edx
 		mov    -0x4(%ebp),%ebx
 		push   %edx
 		cmp    $0xf,%ebx
@@ -117028,7 +117028,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 	jump_9942a:
 		mov    -0x24(%eax,%ebp,1),%al
 		and    $0xff,%eax
-		mov    data_1a59a0(,%eax,4),%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x118(,%eax,4),%ecx
 		push   %ecx
 		push   $ascSSD_1
 		jmp    jump_99488
@@ -117040,7 +117040,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		idiv   %ebx
 		inc    %edx
 		push   %edx
-		mov    data_1a59b8,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x130,%ecx
 		mov    -0x4(%ebp),%esi
 		push   %ecx
 		cmp    $0xf,%esi
@@ -117055,7 +117055,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 	jump_99472:
 		mov    -0x24(%eax,%ebp,1),%al
 		and    $0xff,%eax
-		mov    data_1a59a0(,%eax,4),%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x118(,%eax,4),%edi
 		push   %edi
 		push   $ascSSD_2
 	jump_99488:
@@ -117071,7 +117071,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		push   $equip_cost_text
 		mov    $ac_do_equip_offer_buy,%esi
 		call   ac_sprintf
-		mov    data_1a5f58,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x6D0,%eax
 		add    $0xc,%esp
 		mov    %eax,data_1c7bf4
 		mov    EXPORT_SYMBOL(display_box_content),%al
@@ -117147,7 +117147,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		mov    -0x24(%eax,%ebp,1),%bl
 		inc    %edx
 		mov    $0x3,%eax
-		mov    data_1a59a0(,%ebx,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x118(,%ebx,4),%ebx
 		call   ac_draw_text_purple_list2
 		andw   $0x7f7f,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		mov    EXPORT_SYMBOL(lbDisplay)+96,%cx # lbDisplay__DrawFlags
@@ -117162,7 +117162,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		jg     jump_9961e
 		mov    -0x14(%ebp),%ebx
 		push   %ebx
-		mov    data_1a59b4,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x12C,%ecx
 		push   %ecx
 		push   $ascSD_5
 		jmp    jump_9963b
@@ -117174,7 +117174,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		idiv   %ebx
 		inc    %edx
 		push   %edx
-		mov    data_1a59b8,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x130,%edx
 		push   %edx
 		push   $ascSD_6
 	jump_9963b:
@@ -117282,7 +117282,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		and    $0xff,%eax
 		mov    $0xd0,%edx
 		xor    %ecx,%ecx
-		mov    data_1a629c(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x0A14(,%eax,4),%ebx
 		xor    %eax,%eax
 		call   ac_draw_text_purple_list2
 		mov    -0xc(%ebp),%eax
@@ -117887,7 +117887,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn_case1)	/* 0x09BA5C */
 	jump_9bb04:
 		cmpb   $0x0,EXPORT_SYMBOL(byte_1C4A7C)
 		jne    jump_9bb61
-		mov    data_1a6168,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x8E0,%edx
 		push   %edx
 		mov    $0x2,%esi
 		push   $EXPORT_SYMBOL(alert_text)
@@ -117898,7 +117898,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn_case1)	/* 0x09BA5C */
 		add    $0x8,%esp
 		mov    %si,EXPORT_SYMBOL(word_1811AE)
 		mov    %al,show_alert
-		mov    data_1a6054,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		mov    %ebx,data_1c7704
 		mov    %eax,data_1c8010
 		mov    $0x1,%ah
@@ -117988,7 +117988,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		or     $0x1,%dh
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		mov    $0x6e,%edx
-		mov    data_1a602c,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x7A4,%ebx
 		xor    %ecx,%ecx
 		xor    %eax,%eax
 		call   ac_draw_text_purple_list2
@@ -117998,7 +117998,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		mov    $0x6,%edx
 		movzbl 0x50(%esp),%ebp
 		mov    small_med_font,%eax
-		mov    data_1a5fb4,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x72C,%ebx
 		xor    %ecx,%ecx
 		mov    %eax,EXPORT_SYMBOL(lbFontPtr)
 		mov    %edx,0x48(%esp)
@@ -118010,7 +118010,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 	jump_9bcd7:
 		inc    %eax
 		push   %eax
-		mov    data_1a5fb8,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x730,%ecx
 		push   %ecx
 		push   $ascSD_7
 		mov    %eax,0x44(%esp)
@@ -118143,7 +118143,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		mov    %esi,text_buf_pos
 		jmp    jump_9beb1
 	jump_9be71:
-		mov    data_1a60f4(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x86C(,%eax,4),%eax
 		mov    0x4c(%esp),%ebx
 		call   ac_my_string_width
 		xor    %edx,%edx
@@ -118156,7 +118156,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		mov    EXPORT_SYMBOL(byte_1C4A9F),%al
 		mov    %edx,0x48(%esp)
 		mov    $0x7e,%edx
-		mov    data_1a60f4(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x86C(,%eax,4),%ebx
 		mov    0x48(%esp),%eax
 		call   ac_draw_text_purple_list2
 	jump_9beb1:
@@ -118509,7 +118509,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		jmp    jump_9c2c8
 	jump_9c2f6:
 		push   %eax
-		mov    data_1a5fc4,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x73C,%eax
 		push   %eax
 		push   $ascSD_8
 		lea    0xc(%esp),%eax
@@ -118679,7 +118679,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		and    $0xffff,%eax
 		cmp    $0x2,%eax
 		jge    jump_9c2c2
-		mov    data_1a5fbc(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x734(,%eax,4),%ebx
 		push   %ebx
 		lea    0x4(%esp),%eax
 		push   %eax
@@ -118788,19 +118788,19 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 		jne    jump_9c7e1
 		mov    $0x4,%edx
 		mov    med_font,%eax
-		mov    data_1a6020,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x798,%ebx
 		xor    %ecx,%ecx
 		mov    %eax,EXPORT_SYMBOL(lbFontPtr)
 		mov    %edx,%eax
 		call   ac_draw_text_purple_list2
 		mov    $0x4,%edx
 		mov    $0xc8,%eax
-		mov    data_1a6024,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x79C,%ebx
 		xor    %ecx,%ecx
 		call   ac_draw_text_purple_list2
 		mov    $0x4,%edx
 		mov    $0x12c,%eax
-		mov    data_1a6028,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x7A0,%ebx
 		xor    %ecx,%ecx
 		xor    %ebp,%ebp
 		call   ac_draw_text_purple_list2
@@ -118816,7 +118816,7 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 	jump_9c6c6:
 		mov    0x52(%esp),%edx
 		mov    $0x4,%eax
-		mov    data_1a61bc(%ebp),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x934(%ebp),%ebx
 		xor    %ecx,%ecx
 		sar    $0x10,%edx
 		call   ac_draw_text_purple_list2
@@ -118843,7 +118843,7 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 		mov    0x48(%esp),%edx
 		mov    background_type,%al
 		push   %edx
-		mov    data_1a6208(,%eax,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x980(,%eax,4),%ebx
 		push   %ebx
 		push   $ascSD_9
 		lea    0xc(%esp),%eax
@@ -119664,7 +119664,7 @@ GLOBAL_FUNC (ASM_show_settings_controls_list)	/* 0x09C5D8 */
 		mov    $0x12c,%eax
 		xor    %ecx,%ecx
 		sar    $0x10,%edx
-		mov    data_1a61b8(%ebx),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x930(%ebx),%ebx
 		call   ac_draw_text_purple_list2
 	jump_9d11d:
 		mov    %esp,%eax
@@ -119842,7 +119842,7 @@ func_9d310:
 		movb   $0x1,show_alert
 		cmpl   $0x0,joy_Buttons
 		jne    jump_9d2c7
-		mov    data_1a6184,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x8FC,%ecx
 		push   %ecx
 		push   $EXPORT_SYMBOL(alert_text)
 		call   ac_sprintf
@@ -119903,7 +119903,7 @@ func_9d38f:
 		mov    %ah,show_alert
 		test   %edi,%edi
 		jne    jump_9d2c7
-		mov    data_1a6188,%ebp
+		mov    EXPORT_SYMBOL(gui_strings)+0x900,%ebp
 		push   %ebp
 		push   $EXPORT_SYMBOL(alert_text)
 		call   ac_sprintf
@@ -120366,7 +120366,7 @@ GLOBAL_FUNC(ASM_show_sysmenu_screen)	/* 0x09D7B8 */
 		and    $0xeffb,%esi
 		mov    game_projector_speed,%bl
 		mov    %si,data_1c7014
-		mov    data_1a5e6c(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x5E4(,%eax,4),%eax
 		mov    %di,data_1c70b4
 		mov    %eax,data_1c7034
 		test   %bl,%bl
@@ -120578,10 +120578,10 @@ func_9dc26:
 		mov    $0xd,%bh
 		mov    $0xff,%cl
 		mov    %bh,network_players(,%eax,2)
-		mov    data_1a5e8c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x604,%eax
 		mov    %cl,EXPORT_SYMBOL(byte_15516D)
 		mov    %eax,data_1c7f80
-		mov    data_1a5e90,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x608,%eax
 		mov    %cl,EXPORT_SYMBOL(byte_15516C)
 		mov    %eax,data_1c7fb0
 		call   ac_net_unkn_func_33
@@ -121435,7 +121435,7 @@ func_a0291:
 		mov    next_brief,%ax
 		mov    %ax,open_brief
 		movb   $0x7,change_screen
-		mov    data_1a5e58,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x5D0,%eax
 		jmp    jump_a075d
 	jump_a0716:
 		mov    EXPORT_SYMBOL(next_email),%ax
@@ -121454,7 +121454,7 @@ func_a0291:
 		mov    $0x7,%al
 		neg    %esi
 		mov    %al,change_screen
-		mov    data_1a5e5c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x5D4,%eax
 		mov    %si,open_brief
 	jump_a075d:
 		mov    %eax,data_1c6f68
@@ -121785,7 +121785,7 @@ func_a0b0c:
 		mov    $0x40,%ecx
 		mov    $0x7f,%ebx
 		mov    %al,change_screen
-		mov    data_1a5e58,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x5D0,%eax
 		push   $0x0
 		mov    %eax,data_1c6f68
 		mov    0x3c(%esp),%eax
@@ -122014,7 +122014,7 @@ func_a0b0c:
 		mov    $0x4,%eax
 		mov    text_buf_pos,%esi
 		inc    %ecx
-		mov    data_1a5e64,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x5DC,%ebx
 		add    %ecx,%esi
 		xor    %ecx,%ecx
 		mov    %esi,text_buf_pos
@@ -167262,7 +167262,7 @@ net_unkn_func_31:	/* 0x0CD2EC */
 		call   ac_LbNetworkServiceStart
 		cmp    $0x1,%eax
 		je     jump_cd34d
-		mov    data_1a6168,%esi
+		mov    EXPORT_SYMBOL(gui_strings)+0x8E0,%esi
 		push   %esi
 		jmp    jump_cd4a6
 	jump_cd34d:
@@ -167295,7 +167295,7 @@ net_unkn_func_31:	/* 0x0CD2EC */
 	jump_cd3a4:
 		call   ac_LbNetworkHangUp
 	jump_cd3a9:
-		mov    data_1a6194,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x90C,%ebx
 		push   %ebx
 		jmp    jump_cd4a6
 	jump_cd3b5:
@@ -167318,7 +167318,7 @@ net_unkn_func_31:	/* 0x0CD2EC */
 		je     jump_cd3a4
 		jmp    jump_cd3ec
 	jump_cd3e0:
-		mov    data_1a6194,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x90C,%edx
 		push   %edx
 		jmp    jump_cd4a6
 	jump_cd3ec:
@@ -167380,7 +167380,7 @@ net_unkn_func_31:	/* 0x0CD2EC */
 		pop    %ebx
 		ret
 	jump_cd49f:
-		mov    data_1a6194,%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x90C,%edi
 		push   %edi
 	jump_cd4a6:
 		push   $EXPORT_SYMBOL(alert_text)
@@ -167406,7 +167406,7 @@ net_unkn_func_31:	/* 0x0CD2EC */
 		jne    jump_cd515
 		mov    $0x2,%edx
 		mov    $asc19200,%ebp
-		mov    data_1a6054,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		mov    %dx,EXPORT_SYMBOL(word_1811AE)
 		mov    %eax,data_1c8010
 		mov    $ASM_do_serial_speed_switch,%eax
@@ -167460,7 +167460,7 @@ net_unkn_func_32:	/* 0x0CD528 */
 		call   ac_LbNetworkServiceStart
 		cmp    $0x1,%eax
 		je     jump_cd59a
-		mov    data_1a6168,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x8E0,%ecx
 		push   %ecx
 		jmp    jump_cd715
 	jump_cd59a:
@@ -167493,7 +167493,7 @@ net_unkn_func_32:	/* 0x0CD528 */
 	jump_cd5f2:
 		call   ac_LbNetworkHangUp
 	jump_cd5f7:
-		mov    data_1a6194,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x90C,%ebx
 		push   %ebx
 		jmp    jump_cd715
 	jump_cd603:
@@ -167517,7 +167517,7 @@ net_unkn_func_32:	/* 0x0CD528 */
 		je     jump_cd5f2
 		jmp    jump_cd63f
 	jump_cd633:
-		mov    data_1a6194,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x90C,%edx
 		push   %edx
 		jmp    jump_cd715
 	jump_cd63f:
@@ -167586,7 +167586,7 @@ net_unkn_func_32:	/* 0x0CD528 */
 		pop    %ebx
 		ret
 	jump_cd70e:
-		mov    data_1a6194,%esi
+		mov    EXPORT_SYMBOL(gui_strings)+0x90C,%esi
 		push   %esi
 	jump_cd715:
 		push   $EXPORT_SYMBOL(alert_text)
@@ -167613,7 +167613,7 @@ net_unkn_func_32:	/* 0x0CD528 */
 		mov    $0x2,%ebx
 		mov    $asc19200,%edi
 		mov    $ASM_do_serial_speed_switch,%ebp
-		mov    data_1a6054,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		mov    %bx,EXPORT_SYMBOL(word_1811AE)
 		mov    %eax,data_1c8010
 		mov    %edi,data_1c7704
@@ -167787,7 +167787,7 @@ GLOBAL_FUNC(ASM_check_buy_sell_button)	/* 0x0CE5A8 */
 		mov    (%esp),%al
 		cmp    $0x2,%eax
 		jne    jump_ce7a2
-		mov    data_1a5f58,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x6D0,%eax
 		mov    $ac_do_equip_offer_buy,%ebp
 		mov    %eax,data_1c7bf4
 		mov    %ebp,data_1c7c04
@@ -167795,7 +167795,7 @@ GLOBAL_FUNC(ASM_check_buy_sell_button)	/* 0x0CE5A8 */
 	jump_ce7a2:
 		cmp    $0x1,%eax
 		jne    jump_ce7bc
-		mov    data_1a5ee4,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x65C,%eax
 		mov    $ac_sell_equipment,%edi
 		mov    %eax,data_1c7bf4
 		mov    %edi,data_1c7c04
@@ -169709,10 +169709,10 @@ GLOBAL_FUNC(ASM_init_variables)	/* 0x0D0B9C */
 		mov    %bx,EXPORT_SYMBOL(word_1C6E08)
 		mov    %ah,EXPORT_SYMBOL(research_on_weapons)
 		mov    %edx,data_1c7dd8
-		mov    data_1a5f0c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
 		mov    %cl,%dl
 		mov    %eax,data_1c7dc8
-		mov    data_1a5f94,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x70C,%eax
 		mov    %dl,EXPORT_SYMBOL(selected_netscan_objective)
 		mov    %eax,data_1c7df8
 		xor    %eax,%eax
@@ -170274,9 +170274,9 @@ GLOBAL_FUNC(ASM_show_world_city_info_box)	/* 0x0D2A84 */
 		xor    %ecx,%ecx
 		xor    %eax,%eax
 		mov    %si,%dx
-		mov    data_1a602c(,%ebp,4),%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x7A4(,%ebp,4),%ebx
 		call   ac_draw_text_purple_list2
-		mov    data_1a602c(,%ebp,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x7A4(,%ebp,4),%eax
 		mov    0x4(%esp),%edx
 		call   ac_my_count_lines
 		imul   %edx,%eax
@@ -170338,13 +170338,13 @@ GLOBAL_FUNC(ASM_show_world_city_info_box)	/* 0x0D2A84 */
 	jump_d2cb4:
 		test   %di,%di
 		jne    jump_d2be3
-		mov    data_1a5ed8,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x650,%ebx
 		xor    %edx,%edx
 		xor    %ecx,%ecx
 		xor    %eax,%eax
 		mov    %si,%dx
 		call   ac_draw_text_purple_list2
-		mov    data_1a5ed8,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x650,%eax
 		mov    0x4(%esp),%ecx
 		call   ac_my_count_lines
 		imul   %ecx,%eax
@@ -170456,7 +170456,7 @@ GLOBAL_FUNC(ASM_do_net_protocol_option)	/* 0x0D2D3C */
 		movb   $0x1,EXPORT_SYMBOL(byte_1C4A7C)
 		jmp    jump_d2e86
 	jump_d2e3f:
-		mov    data_1a6168,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x8E0,%edx
 		push   %edx
 		mov    $0x2,%edi
 		push   $EXPORT_SYMBOL(alert_text)
@@ -170468,7 +170468,7 @@ GLOBAL_FUNC(ASM_do_net_protocol_option)	/* 0x0D2D3C */
 		mov    %di,EXPORT_SYMBOL(word_1811AE)
 		mov    %ebx,data_1c7704
 		mov    %al,show_alert
-		mov    data_1a6054,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		mov    %ecx,data_1c7714
 		mov    %eax,data_1c8010
 	jump_d2e86:
@@ -170565,7 +170565,7 @@ GLOBAL_FUNC(ASM_change_panel_permutation)	/* 0x0D2F18 */
 	jump_d2f4e:
 		mov    ingame__fld_unkCA0,%eax
 		sar    $0x18,%eax
-		mov    data_1a6198(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
 		jmp    jump_d2fdb
 	jump_d2f62:
 		mov    %ah,ingame__PanelPermutation
@@ -170588,7 +170588,7 @@ GLOBAL_FUNC(ASM_change_panel_permutation)	/* 0x0D2F18 */
 	jump_d2f9b:
 		mov    ingame__fld_unkCA0,%eax
 		sar    $0x18,%eax
-		mov    data_1a6198(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
 		mov    %eax,data_1c76a8
 		mov    $0x1,%al
 		pop    %edx
@@ -170605,7 +170605,7 @@ GLOBAL_FUNC(ASM_change_panel_permutation)	/* 0x0D2F18 */
 		cltd
 		xor    %edx,%eax
 		sub    %edx,%eax
-		mov    data_1a6194(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x90C(,%eax,4),%eax
 	jump_d2fdb:
 		mov    %eax,data_1c76a8
 		mov    $0x1,%al
@@ -170637,7 +170637,7 @@ GLOBAL_FUNC(ASM_change_trenchcoat_preference)	/* 0x0D2FE4 */
 	jump_d301f:
 		xor    %eax,%eax
 		mov    ingame__TrenchcoatPreference,%al
-		mov    data_1a61a4(,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x91C(,%eax,4),%eax
 		mov    %eax,data_1c76d6
 		mov    $0x1,%al
 		pop    %edx
@@ -170660,11 +170660,11 @@ GLOBAL_FUNC(ASM_do_controls_save)	/* 0x0D3040 */
 		call   ac_save_user_settings
 		test   %al,%al
 		je     jump_d3054
-		mov    data_1a6190,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x908,%ebx
 		push   %ebx
 		jmp    jump_d305b
 	jump_d3054:
-		mov    data_1a618c,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x904,%edx
 		push   %edx
 	jump_d305b:
 		push   $EXPORT_SYMBOL(alert_text)
@@ -170682,7 +170682,7 @@ GLOBAL_FUNC(ASM_do_controls_save)	/* 0x0D3040 */
 GLOBAL_FUNC(ASM_do_controls_calibrate)	/* 0x0D3078 */
 /*----------------------------------------------------------------*/
 		push   %edx
-		mov    data_1a6180,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x8F8,%edx
 		push   %edx
 		mov    $0x1,%ah
 		push   $EXPORT_SYMBOL(alert_text)
@@ -170817,15 +170817,15 @@ GLOBAL_FUNC(ASM_do_net_INITIATE)	/* 0x0D3184 */
 		call   net_unkn_func_32
 		test   %al,%al
 		je     jump_d326e
-		mov    data_1a5e94,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x60C,%eax
 		mov    EXPORT_SYMBOL(byte_1C4A6F),%bh
 		mov    %eax,data_1c7f80
 		test   %bh,%bh
 		je     jump_d31d7
-		mov    data_1a60a8,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x820,%eax
 		jmp    jump_d31dc
 	jump_d31d7:
-		mov    data_1a5e98,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x610,%eax
 	jump_d31dc:
 		mov    %eax,data_1c7fb0
 		call   ac_init_variables
@@ -170837,7 +170837,7 @@ GLOBAL_FUNC(ASM_do_net_INITIATE)	/* 0x0D3184 */
 		mov    $0xf,%ch
 	jump_d31fc:
 		add    $0x1aa,%eax
-		mov    %ch,data_1a61f1(%eax)
+		mov    %ch,EXPORT_SYMBOL(players)-0x0EF(%eax)
 		cmp    $0xd50,%eax
 		je     jump_d326e
 		jmp    jump_d31fc
@@ -170923,15 +170923,15 @@ GLOBAL_FUNC(ASM_do_net_groups_LOGON)	/* 0x0D3274 */
 		call   net_unkn_func_31
 		test   %al,%al
 		je     jump_d3381
-		mov    data_1a5e94,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x60C,%eax
 		mov    EXPORT_SYMBOL(byte_1C4A6F),%bh
 		mov    %eax,data_1c7f80
 		test   %bh,%bh
 		je     jump_d32fc
-		mov    data_1a60a8,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x820,%eax
 		jmp    jump_d3301
 	jump_d32fc:
-		mov    data_1a5e98,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x610,%eax
 	jump_d3301:
 		mov    %eax,data_1c7fb0
 		call   ac_init_variables
@@ -170943,7 +170943,7 @@ GLOBAL_FUNC(ASM_do_net_groups_LOGON)	/* 0x0D3274 */
 		mov    $0xf,%ch
 	jump_d3321:
 		add    $0x1aa,%eax
-		mov    %ch,data_1a61f1(%eax)
+		mov    %ch,EXPORT_SYMBOL(players)-0x0EF(%eax)
 		cmp    $0xd50,%eax
 		je     jump_d3381
 		jmp    jump_d3321
@@ -170960,10 +170960,10 @@ GLOBAL_FUNC(ASM_do_net_groups_LOGON)	/* 0x0D3274 */
 		add    %edx,%eax
 		movb   $0xd,network_players(,%eax,2)
 		mov    $0xff,%dh
-		mov    data_1a5e8c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x604,%eax
 		mov    %dh,EXPORT_SYMBOL(byte_15516D)
 		mov    %eax,data_1c7f80
-		mov    data_1a5e90,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x608,%eax
 		mov    %dh,EXPORT_SYMBOL(byte_15516C)
 		mov    %eax,data_1c7fb0
 		call   ac_net_unkn_func_33
@@ -171047,7 +171047,7 @@ GLOBAL_FUNC(ASM_do_unkn2_ACCEPT)	/* 0x0D3400 */
 		testb  $0x11,data_1c52c2(,%eax,8)
 		jne    jump_d3442
 		movb   $0x1,show_alert
-		mov    data_1a616c,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x8E4,%edx
 		push   %edx
 		push   $ascS
 		push   $EXPORT_SYMBOL(alert_text)
@@ -171132,7 +171132,7 @@ GLOBAL_FUNC(ASM_save_game_slot)	/* 0x0D38B0 */
 		call   ac_save_game_write
 		test   %al,%al
 		je     jump_d3927
-		mov    data_1a6160,%esi
+		mov    EXPORT_SYMBOL(gui_strings)+0x8D8,%esi
 		push   %esi
 		push   $ascS_5
 		mov    $0x1,%dh
@@ -171140,7 +171140,7 @@ GLOBAL_FUNC(ASM_save_game_slot)	/* 0x0D38B0 */
 		mov    %dh,show_alert
 		jmp    jump_d395b
 	jump_d3927:
-		mov    data_1a6174,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x8EC,%ecx
 		push   %ecx
 		push   $ascS_6
 		mov    $0x1,%dl
@@ -171148,7 +171148,7 @@ GLOBAL_FUNC(ASM_save_game_slot)	/* 0x0D38B0 */
 		mov    %dl,show_alert
 		jmp    jump_d395b
 	jump_d3942:
-		mov    data_1a6158,%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x8D0,%edx
 		push   %edx
 		push   $ascS_7
 		mov    $0x1,%ah
@@ -172775,7 +172775,7 @@ func_d5090:
 		push   $ascD_16
 		push   $equip_cost_text
 		call   ac_sprintf
-		mov    data_1a5f58,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x6D0,%eax
 		mov    %eax,data_1c7bf4
 		mov    $ac_do_equip_offer_buy,%eax
 		add    $0xc,%esp
@@ -173157,7 +173157,7 @@ GLOBAL_FUNC (ASM_do_research_submit)	/* 0x0D56D0 */
 		movsl  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
 		mov    $ASM_do_research_suspend,%ebx
-		mov    data_1a5f10,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
 		mov    %ebx,data_1c7dd8
 		mov    %eax,data_1c7dc8
 		mov    $0x1,%al
@@ -173181,7 +173181,7 @@ GLOBAL_FUNC (ASM_do_research_submit)	/* 0x0D56D0 */
 		movsl  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
 		mov    $ASM_do_research_suspend,%edx
-		mov    data_1a5f10,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
 		mov    %edx,data_1c7dd8
 		mov    %eax,data_1c7dc8
 		mov    $0x1,%al
@@ -173212,7 +173212,7 @@ GLOBAL_FUNC (ASM_do_research_suspend)	/* 0x0D5784 */
 		movb   $0xff,data_1c5287
 	jump_d579e:
 		mov    $ASM_do_research_submit,%edx
-		mov    data_1a5f0c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
 		mov    %edx,data_1c7dd8
 		mov    %eax,data_1c7dc8
 		xor    %al,%al
@@ -173233,35 +173233,35 @@ GLOBAL_FUNC(ASM_do_unkn12_WEAPONS_MODS)	/* 0x0D57B8 */
 		mov    %al,EXPORT_SYMBOL(research_on_weapons)
 		test   %al,%al
 		je     jump_d580b
-		mov    data_1a5f94,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x70C,%eax
 		mov    %eax,data_1c7df8
 		mov    data_1c5283,%eax
 		sar    $0x18,%eax
 		cmp    $0xffffffff,%eax
 		je     jump_d57f9
 		mov    $ASM_do_research_suspend,%esi
-		mov    data_1a5f10,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
 		mov    %esi,data_1c7dd8
 		jmp    jump_d5844
 	jump_d57f9:
 		mov    $ASM_do_research_submit,%ecx
-		mov    data_1a5f0c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
 		mov    %ecx,data_1c7dd8
 		jmp    jump_d5844
 	jump_d580b:
-		mov    data_1a5f90,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x708,%eax
 		mov    %eax,data_1c7df8
 		mov    data_1c5284,%eax
 		sar    $0x18,%eax
 		cmp    $0xffffffff,%eax
 		je     jump_d5834
 		mov    $ASM_do_research_suspend,%ebx
-		mov    data_1a5f10,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
 		mov    %ebx,data_1c7dd8
 		jmp    jump_d5844
 	jump_d5834:
 		mov    $ASM_do_research_submit,%edx
-		mov    data_1a5f0c,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
 		mov    %edx,data_1c7dd8
 	jump_d5844:
 		mov    %eax,data_1c7dc8
@@ -186984,357 +186984,7 @@ GLOBAL (display_palette)	/* 0x1A5878 */
 		.fill   0x8
 
 GLOBAL (gui_strings)	/* 0x1A5888 */
-		.fill   0x78
-data_1a5900:
-		.fill   0x74
-data_1a5974:
-		.fill   0x18
-data_1a598c:
-		.fill   0x14
-data_1a59a0:
-		.fill   0x14
-data_1a59b4:
-		.long	0x0
-data_1a59b8:
-		.long	0x0
-data_1a59bc:
-		.fill   0x190
-data_1a5b4c:
-		.fill   0xc8
-data_1a5c14:
-		.fill   0x22c
-data_1a5e40:
-		.long	0x0
-data_1a5e44:
-		.long	0x0
-data_1a5e48:
-		.long	0x0
-data_1a5e4c:
-		.long	0x0
-data_1a5e50:
-		.long	0x0
-data_1a5e54:
-		.long	0x0
-data_1a5e58:
-		.long	0x0
-data_1a5e5c:
-		.long	0x0
-data_1a5e60:
-		.long	0x0
-data_1a5e64:
-		.long	0x0
-data_1a5e68:
-		.long	0x0
-data_1a5e6c:
-		.long	0x0
-data_1a5e70:
-		.fill   0x1c
-data_1a5e8c:
-		.long	0x0
-data_1a5e90:
-		.long	0x0
-data_1a5e94:
-		.long	0x0
-data_1a5e98:
-		.long	0x0
-data_1a5e9c:
-		.long	0x0
-data_1a5ea0:
-		.long	0x0
-data_1a5ea4:
-		.long	0x0
-data_1a5ea8:
-		.long	0x0
-data_1a5eac:
-		.long	0x0
-data_1a5eb0:
-		.fill   0xc
-data_1a5ebc:
-		.fill   0x10
-data_1a5ecc:
-		.long	0x0
-data_1a5ed0:
-		.long	0x0
-data_1a5ed4:
-		.long	0x0
-data_1a5ed8:
-		.fill   0xc
-data_1a5ee4:
-		.long	0x0
-data_1a5ee8:
-		.fill   0x8
-data_1a5ef0:
-		.long	0x0
-data_1a5ef4:
-		.fill   0x18
-data_1a5f0c:
-		.long	0x0
-data_1a5f10:
-		.long	0x0
-data_1a5f14:
-		.long	0x0
-data_1a5f18:
-		.long	0x0
-data_1a5f1c:
-		.long	0x0
-data_1a5f20:
-		.fill   0xc
-data_1a5f2c:
-		.long	0x0
-data_1a5f30:
-		.long	0x0
-data_1a5f34:
-		.long	0x0
-data_1a5f38:
-		.long	0x0
-data_1a5f3c:
-		.long	0x0
-data_1a5f40:
-		.fill   0x8
-data_1a5f48:
-		.long	0x0
-data_1a5f4c:
-		.long	0x0
-data_1a5f50:
-		.fill   0x8
-data_1a5f58:
-		.long	0x0
-data_1a5f5c:
-		.long	0x0
-data_1a5f60:
-		.long	0x0
-data_1a5f64:
-		.long	0x0
-data_1a5f68:
-		.long	0x0
-data_1a5f6c:
-		.long	0x0
-data_1a5f70:
-		.long	0x0
-data_1a5f74:
-		.long	0x0
-data_1a5f78:
-		.long	0x0
-data_1a5f7c:
-		.long	0x0
-data_1a5f80:
-		.long	0x0
-data_1a5f84:
-		.long	0x0
-data_1a5f88:
-		.long	0x0
-data_1a5f8c:
-		.long	0x0
-data_1a5f90:
-		.long	0x0
-data_1a5f94:
-		.long	0x0
-data_1a5f98:
-		.long	0x0
-data_1a5f9c:
-		.long	0x0
-data_1a5fa0:
-		.long	0x0
-data_1a5fa4:
-		.fill   0xc
-data_1a5fb0:
-		.long	0x0
-data_1a5fb4:
-		.long	0x0
-data_1a5fb8:
-		.long	0x0
-data_1a5fbc:
-		.fill   0x8
-data_1a5fc4:
-		.long	0x0
-data_1a5fc8:
-		.long	0x0
-data_1a5fcc:
-		.long	0x0
-data_1a5fd0:
-		.fill   0xc
-data_1a5fdc:
-		.long	0x0
-data_1a5fe0:
-		.long	0x0
-data_1a5fe4:
-		.fill   0x8
-data_1a5fec:
-		.long	0x0
-data_1a5ff0:
-		.long	0x0
-data_1a5ff4:
-		.fill   0x8
-data_1a5ffc:
-		.long	0x0
-data_1a6000:
-		.long	0x0
-data_1a6004:
-		.long	0x0
-data_1a6008:
-		.long	0x0
-data_1a600c:
-		.long	0x0
-data_1a6010:
-		.long	0x0
-data_1a6014:
-		.long	0x0
-data_1a6018:
-		.long	0x0
-data_1a601c:
-		.long	0x0
-data_1a6020:
-		.long	0x0
-data_1a6024:
-		.long	0x0
-data_1a6028:
-		.long	0x0
-data_1a602c:
-		.fill   0x18
-data_1a6044:
-		.long	0x0
-data_1a6048:
-		.long	0x0
-data_1a604c:
-		.long	0x0
-data_1a6050:
-		.long	0x0
-data_1a6054:
-		.fill   0x18
-data_1a606c:
-		.long	0x0
-data_1a6070:
-		.fill   0x20
-data_1a6090:
-		.long	0x0
-data_1a6094:
-		.long	0x0
-data_1a6098:
-		.fill   0x10
-data_1a60a8:
-		.fill   0x8
-data_1a60b0:
-		.long	0x0
-data_1a60b4:
-		.fill   0x14
-data_1a60c8:
-		.long	0x0
-data_1a60cc:
-		.fill   0x8
-data_1a60d4:
-		.long	0x0
-data_1a60d8:
-		.long	0x0
-data_1a60dc:
-		.long	0x0
-data_1a60e0:
-		.long	0x0
-data_1a60e4:
-		.long	0x0
-data_1a60e8:
-		.long	0x0
-data_1a60ec:
-		.long	0x0
-data_1a60f0:
-		.long	0x0
-data_1a60f4:
-		.fill   0x60
-data_1a6154:
-		.long	0x0
-data_1a6158:
-		.long	0x0
-data_1a615c:
-		.long	0x0
-data_1a6160:
-		.long	0x0
-data_1a6164:
-		.long	0x0
-data_1a6168:
-		.long	0x0
-data_1a616c:
-		.fill   0x8
-data_1a6174:
-		.long	0x0
-data_1a6178:
-		.fill   0x8
-data_1a6180:
-		.long	0x0
-data_1a6184:
-		.long	0x0
-data_1a6188:
-		.long	0x0
-data_1a618c:
-		.long	0x0
-data_1a6190:
-		.long	0x0
-data_1a6194:
-		.long	0x0
-data_1a6198:
-		.fill   0xc
-data_1a61a4:
-		.fill   0x14
-data_1a61b8:
-		.long	0x0
-data_1a61bc:
-		.fill   0x35
-data_1a61f1:
-		.fill   0xf
-data_1a6200:
-		.fill   0x8
-data_1a6208:
-		.fill   0xc
-data_1a6214:
-		.long	0x0
-data_1a6218:
-		.fill   0x8
-data_1a6220:
-		.long	0x0
-data_1a6224:
-		.fill   0xc
-data_1a6230:
-		.long	0x0
-data_1a6234:
-		.long	0x0
-data_1a6238:
-		.long	0x0
-data_1a623c:
-		.long	0x0
-data_1a6240:
-		.long	0x0
-data_1a6244:
-		.long	0x0
-data_1a6248:
-		.long	0x0
-data_1a624c:
-		.long	0x0
-data_1a6250:
-		.long	0x0
-data_1a6254:
-		.long	0x0
-data_1a6258:
-		.fill   0x8
-data_1a6260:
-		.long	0x0
-data_1a6264:
-		.long	0x0
-data_1a6268:
-		.long	0x0
-data_1a626c:
-		.fill   0x8
-data_1a6274:
-		.fill   0xc
-data_1a6280:
-		.long	0x0
-data_1a6284:
-		.fill   0xc
-data_1a6290:
-		.fill   0xc
-data_1a629c:
-		.fill   0x14
-data_1a62b0:
-		.long	0x0
-data_1a62b4:
-		.fill   0x8
+		.fill   8000
 
 GLOBAL (small2_font_data)	/* 0x1A62C4 */
 		.long	0x0
@@ -187349,9 +186999,7 @@ GLOBAL (big_font_data)	/* 0x1A62D4 */
 GLOBAL (turns_delta)	/* 0x1A62D8 */
 		.long	0x0
 GLOBAL (gameturn)	/* 0x1A62DC */
-		.byte	0x0
-		.byte	0x0
-		.short  0x0
+		.long	0x0
 /* PlayerInfo players[8];
  */
 GLOBAL (players)	/* 0x1a62e0 players+0x000  */
@@ -190035,7 +189683,7 @@ data_1dd918:
 		.long	0x0
 GLOBAL (data_1dd91c)	/* 0x1dd91c */
 		.long	0x0
-GLOBAL (outro_unkn01)	/* 0x1DD920 */
+GLOBAL (outro_credits_enabled)	/* 0x1DD920 */
 		.long	0x0
 GLOBAL (people_credits_desc)	/* 0x1DD924 */
 		.long	0x0

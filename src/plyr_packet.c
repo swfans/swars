@@ -52,7 +52,7 @@ void net_player_leave(PlayerIdx plyr)
     else
     {
         net_players_num--;
-        sprintf(player_unknCC9[plyr], "%s %s", unkn2_names[plyr], gui_strings[651]);
+        sprintf(player_unknCC9[plyr], "%s %s", unkn2_names[plyr], gui_strings[GSTR_NET_LEFT_GAME]);
         player_unkn0C9[plyr] = -106;
         LbNetworkSessionStop();
         ingame.InNetGame_UNSURE &= ~(1 << plyr);

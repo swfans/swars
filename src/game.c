@@ -30,6 +30,7 @@
 #include "bfaudio.h"
 #include "bfmusic.h"
 #include "bfsound.h"
+#include "bfdanger.h"
 #include "bfplanar.h"
 #include "bfscrsurf.h"
 #include "bfscrcopy.h"
@@ -1157,10 +1158,6 @@ void load_outro_sprites(void)
     next_len = load_outro_text(outtxt_ptr);
     next_pos += next_len;
 
-    outro_unkn01 = 1;
-    outro_unkn02 = 0;
-    outro_unkn03 = 0;
-
     peptxt_ptr = &data_buf[next_pos];
     next_len = load_people_text(peptxt_ptr);
     next_pos += next_len;
@@ -1797,31 +1794,69 @@ void screen_animate_draw_outro_text(void)
     func_cc638(text1, text2);
 }
 
-void screen_wait_seconds_or_until_continue_key(int sec)
+TbKeyCode screen_wait_seconds_or_until_continue_key(int sec)
 {
     int i;
+    TbKeyCode key;
 
+    clear_key_pressed(KC_SPACE);
+    clear_key_pressed(KC_ESCAPE);
+    clear_key_pressed(KC_RETURN);
+
+    key = KC_UNASSIGNED;
     for (i = sec*game_num_fps; i != 0; i--)
     {
-        if (is_key_pressed(KC_SPACE, KMod_DONTCARE))
+        if (is_key_pressed(KC_SPACE, KMod_DONTCARE)) {
+            key = KC_SPACE;
             break;
-        if (is_key_pressed(KC_ESCAPE, KMod_DONTCARE))
+        }
+        if (is_key_pressed(KC_ESCAPE, KMod_DONTCARE)) {
+            key = KC_ESCAPE;
             break;
-        if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
+        }
+        if (is_key_pressed(KC_RETURN, KMod_DONTCARE)) {
+            key = KC_RETURN;
             break;
+        }
 
         swap_wscreen();
         game_update();
     }
-    clear_key_pressed(KC_SPACE);
-    clear_key_pressed(KC_ESCAPE);
-    clear_key_pressed(KC_RETURN);
+    clear_key_pressed(key);
+
+    return key;
+}
+
+TbKeyCode screen_wait_seconds_or_until_yesno_key(int sec)
+{
+    int i;
+    TbKeyCode key;
+
+    clear_key_pressed(KC_Y);
+    clear_key_pressed(KC_N);
+
+    key = KC_UNASSIGNED;
+    for (i = sec*game_num_fps; i != 0; i--)
+    {
+        if (is_key_pressed(KC_Y, KMod_DONTCARE)) {
+            key = KC_Y;
+            break;
+        }
+        if (is_key_pressed(KC_N, KMod_DONTCARE)) {
+            key = KC_N;
+            break;
+        }
+
+        swap_wscreen();
+        game_update();
+    }
+    clear_key_pressed(key);
+
+    return key;
 }
 
 void init_outro(void)
 {
-    int i;
-
     gamep_scene_effect_type = ScEff_NONE;
     gamep_scene_effect_intensity = 1000;
     StopAllSamples();
@@ -1836,6 +1871,11 @@ void init_outro(void)
     //TODO hard-coded map ID
     change_current_map(51);
     load_outro_sprites();
+
+    outro_credits_enabled = 0;
+    outro_unkn02 = 0;
+    outro_unkn03 = 0;
+    gameturn = 0;
 
     screen_animate_draw_outro_text();
     // Sleep for up to 10 seconds
@@ -1856,20 +1896,6 @@ void init_outro(void)
     palette_brightness = 0;
     change_brightness(-64);
 
-    for (i = 0; i < 128; i++)
-    {
-        if (i & 1)
-            change_brightness(1);
-        traffic_unkn_func_01();
-        process_engine_unk1();
-        process_sound_heap();
-        func_2e440();
-
-        swap_wscreen();
-        game_update();
-        LbScreenClear(0);
-    }
-
     while (1)
     {
         if (is_key_pressed(KC_SPACE, KMod_DONTCARE))
@@ -1879,22 +1905,31 @@ void init_outro(void)
         if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
             break;
 
+        if (gameturn < 128)
+        {
+            // 64 steps of brightness increase - fade in
+            if (gameturn & 1)
+                change_brightness(1);
+            if (gameturn == 127)
+                outro_credits_enabled = 1;
+        } else {
+            // Randomly play seagull sample if applause is not currently playing
+            if (((LbRandomAnyShort() & 0xF) == 0) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, NULL)) )
+            {
+                play_sample_using_heap(0, 7 + (LbRandomAnyShort() % 5), 127, 64, 100, 0, 3u);
+            }
+        }
+
         gameturn++;
         traffic_unkn_func_01();
         process_engine_unk1();
-        // Play applause sample
-        if (((LbRandomAnyShort() & 0xF) == 0) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, NULL)) )
-        {
-            //TODO Why we're not storing new value of data_155704 ??
-            play_sample_using_heap(0, 7 + (LbRandomAnyShort() % 5), 127, 64, 100, 0, 3u);
-        }
         process_sound_heap();
         func_2e440();
-        if (outro_unkn01)
+        if (outro_credits_enabled)
         {
             outro_unkn02++;
             func_cc0d4((char **)&people_credits_groups[2 * outro_unkn03]);
-            if (data_1ddb68 + 50 < outro_unkn02)
+            if (outro_unkn02 > data_1ddb68 + 50)
             {
                 outro_unkn02 = 0;
                 outro_unkn03++;
@@ -6562,12 +6597,59 @@ void draw_game(void)
     }
 }
 
+/** Draws simple purple rect directly, without drawlists.
+ */
+void draw_purple_rect(int x, int y, int w, int h, ubyte active)
+{
+    TbPixel col1, col2;
+
+    lbDisplay.DrawFlags &= ~0x0010;
+    if (active) {
+        col1 = 0x0E;
+        col2 = 0x0C;
+    } else {
+        col1 = 0x10;
+        col2 = 0x0E;
+    }
+    LbDrawBox(x, y, w, h, col1);
+    LbDrawLine(x, y, x + w - 2, y, col2);
+    LbDrawLine(x, y, x, y + h - 2, col2);
+}
+
 ubyte critical_action_input(void)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_critical_action_input\n"
         : "=r" (ret) : );
     return ret;
+#endif
+    char locstr[52];
+    TbKeyCode key;
+
+    strcpy(locstr, "Confirm Critical Action Y/N?");
+    DangerMusicFadeSwitch(2, 4u);
+    SetMusicTempo(110, 1000);
+    {
+        int x, y, w, h;
+        short tx_height;
+
+        tx_height = font_height('A');
+        w = my_string_width(locstr) + 2 * tx_height;
+        h = 3 * tx_height;
+        x = (lbDisplay.GraphicsWindowWidth - w) / 2;
+        y = (lbDisplay.GraphicsWindowHeight - h) / 2;
+
+        draw_purple_rect(x, y, w, h, 0);
+        draw_text(x + tx_height, y + tx_height, locstr, 0xC);
+    }
+
+    key = screen_wait_seconds_or_until_yesno_key(20);
+
+    DangerMusicFadeSwitch(1, 1);
+    SetMusicTempoNormal();
+
+    return (key == KC_Y);
 }
 
 ubyte process_send_person(ushort player, int i)

@@ -23,6 +23,7 @@
 #include "bfpalette.h"
 
 #include "bfscreen.h"
+#include "bftime.h"
 #include "bfwindows.h"
 #include "bfbox.h"
 #include "bftext.h"
@@ -44,6 +45,8 @@ TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps)
 
     if (fade_steps == 1)
     {
+        TbClockMSec sleep_end = LbTimerClock();
+
         LbPaletteGet(fade_from_pal);
         if (ptr == NULL)
         {
@@ -61,8 +64,14 @@ TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps)
             }
             LbScreenWaitVbi();
             LbPaletteSet(palette);
+            // On original VESA cards, switcheng the palette had imediate effects
+            // But since on new cards the 8-bit mode is simulated, we need to swap
+            LbScreenSwap();
             if (fade_count < fade_to)
-                LbDoMultitasking();
+            {
+                sleep_end += 5;
+                LbSleepUntil(sleep_end);
+            }
         }
         fade_started = false;
     }

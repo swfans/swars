@@ -343,12 +343,18 @@ get_pcm_format(SNDSAMPLE *s)
     switch (s->format)
     {
     case DIG_F_MONO_8:
+        // OpenAL expects 8-bit formats to be unsigned
+        assert((s->flags & DIG_PCM_SIGN) == 0);
         return AL_FORMAT_MONO8;
     case DIG_F_MONO_16:
+        // OpenAL expects 16-bit formats to be signed
+        assert((s->flags & DIG_PCM_SIGN) != 0);
         return AL_FORMAT_MONO16;
     case DIG_F_STEREO_8:
+        assert((s->flags & DIG_PCM_SIGN) == 0);
         return AL_FORMAT_STEREO8;
     case DIG_F_STEREO_16:
+        assert((s->flags & DIG_PCM_SIGN) != 0);
         return AL_FORMAT_STEREO16;
     case DIG_F_MULTICHANNEL_8:
     case DIG_F_MULTICHANNEL_16:
@@ -403,9 +409,7 @@ queue_dig_sample_buffers(DIG_DRIVER *digdrv, SNDSAMPLE *s)
         if (len > SOUND_MAX_BUFSIZE)
             len = SOUND_MAX_BUFSIZE;
 
-        assert ((s->flags & DIG_PCM_SIGN) != 0);
-
-        buf = pop_free_buffer ();
+        buf = pop_free_buffer();
         alBufferData(buf, get_pcm_format(s), data, len, s->playback_rate);
         if (!check_al("alBufferData"))
             goto err;
