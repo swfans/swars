@@ -31,8 +31,6 @@ extern "C" {
 
 enum GuiStrings {
     GSTR_MTR_SCIENTISTS_DEAD = 537,
-    // Per-campaign, name for players cyborgs
-    GSTR_CPG_CYBORG_NOUN_FULL = 608,
     // Mission metrics
     GSTR_MTR_MISSION_REF = 611,
     GSTR_MTR_MISSION_STATUS = 612,
@@ -59,8 +57,11 @@ enum GuiStrings {
     // Network messages during mission
     GSTR_NET_LEFT_GAME = 960,
     GSTR_NET_HOST_QUIT = 961,
+    // Group: Per-campaign names - 1000..1099
     // Campaign name
     GSTR_CPG_CAMPAIGN_NAME = 999,
+    // Name for players cyborgs
+    GSTR_CPG_CYBORG_NOUN_FULL = 1000,
 };
 
 #pragma pack()
