@@ -39,6 +39,8 @@ enum GuiStrings {
     GSTR_CHK_MISSION_STA_SUF_KEYS = 639,
     // Names for mods, per type
     GSTR_MOD_EPIDERMIS = 645,
+    // Group: Names of control actions assignable to keys - 800..849
+    GSTR_SYS_GAME_KEYS = 799,
     // Group: Mission metrics - 900..949
     // Metrics on mission debrief screen
     GSTR_MTR_MISSION_REF = 901,

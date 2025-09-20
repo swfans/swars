@@ -357,12 +357,6 @@ ubyte switch_keycode_to_name_code_on_national_keyboard(ubyte keyno)
 
 ubyte show_settings_controls_list(struct ScreenBox *p_box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_settings_controls_list\n"
-        : "=r" (ret) : "a" (p_box));
-    return ret;
-#endif
     char locstr[52];
     short ln_height;
     short wpos_x, wpos_y;
@@ -395,7 +389,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
             }
             else
             {
-                text = gui_strings[589 + i];
+                text = gui_strings[GSTR_SYS_GAME_KEYS + i];
             }
             draw_text_purple_list2(4, wpos_y, text, 0);
             wpos_y += ln_height + 4;
@@ -599,7 +593,7 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
         }
         if ( i >= 8 && i <= 11 )
         {
-            text = gui_strings[588 + i];
+            text = gui_strings[GSTR_SYS_GAME_KEYS + 7 + (i - 8)];
             draw_text_purple_list2(wpos_x, wpos_y, text, 0);
         }
         else
