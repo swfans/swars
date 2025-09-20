@@ -5170,16 +5170,19 @@ ubyte do_user_interface(void)
     }
 
     // Control map area to draw
-    if (lbKeyOn[KC_E])
+    if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
-        lbKeyOn[KC_E] = 0;
+        if (lbKeyOn[KC_E])
+        {
+            lbKeyOn[KC_E] = 0;
 
-        if (lbShift & KMod_SHIFT)
-            n = -2;
-        else
-            n = 2;
-        render_area_a = bound_render_area(render_area_a + n);
-        render_area_b = bound_render_area(render_area_b + n);
+            if (lbShift & KMod_SHIFT)
+                n = -2;
+            else
+                n = 2;
+            render_area_a = bound_render_area(render_area_a + n);
+            render_area_b = bound_render_area(render_area_b + n);
+        }
     }
 
     // Entering pause screen
