@@ -3736,24 +3736,6 @@ msgctxt "Controls"
 msgid "Key Control"
 msgstr "Tastatursteuerung"
 
-#. How cyborgs from a specific faction are named.
-#: guitext:609
-msgctxt "Noun for cyborgs, full"
-msgid "Agent"
-msgstr "Agent"
-
-#. How cyborgs from a specific faction are named.
-#: guitext:610
-msgctxt "Noun for cyborgs, full"
-msgid "Zealot"
-msgstr "Kultist"
-
-#. How cyborgs from a specific faction are named.
-#: guitext:611
-msgctxt "Noun for cyborgs, full"
-msgid "Outcast"
-msgstr "Ungeleiteter"
-
 #. Name of a field storing mission identifier.
 #: guitext:612
 msgctxt "Debrief screen metric"
@@ -3992,21 +3974,40 @@ msgstr "Der leiter hat die runde beendet"
 #: guitext:1000
 msgctxt "Campaign name"
 msgid "Eurocorp Syndicate"
-msgstr "1. eurocorp-syndikat"
+msgstr "1. Eurocorp-Syndikat"
+
+#. How cyborgs from a specific faction are named.
+#: guitext:1001
+msgctxt "Noun for cyborgs, full"
+msgid "Agent"
+msgstr "Agent"
 
 #. Name of a campaign selectable at start of new game.
 #: guitext:1100
 msgctxt "Campaign name"
 msgid "Church Of The New Epoch"
-msgstr "2. kirche der neuen epoche"
+msgstr "2. Kirche der Neuen Epoche"
+
+#. How cyborgs from a specific faction are named.
+#: guitext:1101
+msgctxt "Noun for cyborgs, full"
+msgid "Zealot"
+msgstr "Kultist"
 
 #. Name of a campaign selectable at start of new game.
 #: guitext:1200
 msgctxt "Campaign name"
 msgid "The Unguided"
-msgstr "3. die ungeleiteten"
+msgstr "3. Die Ungeleiteten"
+
+#. How cyborgs from a specific faction are named.
+#: guitext:1201
+msgctxt "Noun for cyborgs, full"
+msgid "Outcast"
+msgstr "Ungeleiteter"
 
 #. Pool of unused entries, for future texts
+#: guitext:609 guitext:610 guitext:611
 #: guitext:643 guitext:644 guitext:645
 #: guitext:652 guitext:653 guitext:654 guitext:655 guitext:656 guitext:657
 #: guitext:658 guitext:659 guitext:660 guitext:661 guitext:662 guitext:663
@@ -4066,7 +4067,7 @@ msgstr "3. die ungeleiteten"
 #: guitext:982 guitext:983 guitext:984 guitext:985 guitext:986 guitext:987
 #: guitext:988 guitext:989 guitext:990 guitext:991 guitext:992 guitext:993
 #: guitext:994 guitext:995 guitext:996 guitext:997 guitext:998 guitext:999
-#: guitext:1001 guitext:1002 guitext:1003 guitext:1004
+#: guitext:1002 guitext:1003 guitext:1004
 #: guitext:1005 guitext:1006 guitext:1007 guitext:1008 guitext:1009
 #: guitext:1010 guitext:1011 guitext:1012 guitext:1013 guitext:1014
 #: guitext:1015 guitext:1016 guitext:1017 guitext:1018 guitext:1019
@@ -4086,7 +4087,7 @@ msgstr "3. die ungeleiteten"
 #: guitext:1085 guitext:1086 guitext:1087 guitext:1088 guitext:1089
 #: guitext:1090 guitext:1091 guitext:1092 guitext:1093 guitext:1094
 #: guitext:1095 guitext:1096 guitext:1097 guitext:1098 guitext:1099
-#: guitext:1101 guitext:1102 guitext:1103 guitext:1104
+#: guitext:1102 guitext:1103 guitext:1104
 #: guitext:1105 guitext:1106 guitext:1107 guitext:1108 guitext:1109
 #: guitext:1110 guitext:1111 guitext:1112 guitext:1113 guitext:1114
 #: guitext:1115 guitext:1116 guitext:1117 guitext:1118 guitext:1119
@@ -4106,7 +4107,7 @@ msgstr "3. die ungeleiteten"
 #: guitext:1185 guitext:1186 guitext:1187 guitext:1188 guitext:1189
 #: guitext:1190 guitext:1191 guitext:1192 guitext:1193 guitext:1194
 #: guitext:1195 guitext:1196 guitext:1197 guitext:1198 guitext:1199
-#: guitext:1201 guitext:1202 guitext:1203 guitext:1204
+#: guitext:1202 guitext:1203 guitext:1204
 #: guitext:1205 guitext:1206 guitext:1207 guitext:1208 guitext:1209
 #: guitext:1210 guitext:1211 guitext:1212 guitext:1213 guitext:1214
 #: guitext:1215 guitext:1216 guitext:1217 guitext:1218 guitext:1219
