@@ -478,11 +478,6 @@ ubyte show_title_box(struct ScreenTextBox *box)
 
 void show_sysmenu_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_show_sysmenu_screen\n"
-        :  :  : "eax" );
-    return;
-#endif
     int i;
     ubyte sysscrn_no;
     ubyte drawn;

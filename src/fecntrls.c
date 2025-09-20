@@ -48,7 +48,7 @@ extern ubyte byte_1C4970;
 ubyte ac_do_controls_defaults(ubyte click);
 ubyte ac_do_controls_save(ubyte click);
 ubyte ac_do_controls_calibrate(ubyte click);
-ubyte ac_show_settings_controls_list(struct ScreenBox *box);
+ubyte ac_show_menu_controls_list_box(struct ScreenBox *box);
 
 ubyte do_controls_defaults(ubyte click)
 {
@@ -355,7 +355,7 @@ ubyte switch_keycode_to_name_code_on_national_keyboard(ubyte keyno)
     return rkey;
 }
 
-ubyte show_settings_controls_list(struct ScreenBox *p_box)
+ubyte show_menu_controls_list_box(struct ScreenBox *p_box)
 {
     char locstr[52];
     short ln_height;
@@ -661,6 +661,11 @@ ubyte show_settings_controls_list(struct ScreenBox *p_box)
     asm volatile ("call *%1\n"
         : : "a" (&controls_save_button), "g" (controls_save_button.DrawFn));
 
+    return 0;
+}
+
+ubyte update_settings_controls_alert(struct ScreenBox *p_box)
+{
     if (!net_unkn_pos_02 || (net_unkn_pos_02 - 1) > 5)
         return 0;
 
@@ -727,7 +732,8 @@ ubyte show_options_controls_screen(void)
     asm volatile ("call *%2\n"
         : "=r" (drawn) : "a" (&system_screen_shared_content_box), "g" (system_screen_shared_content_box.DrawFn));
     if (drawn == 3) {
-        show_settings_controls_list(&system_screen_shared_content_box);
+        show_menu_controls_list_box(&system_screen_shared_content_box);
+        update_settings_controls_alert(&system_screen_shared_content_box);
         //drawn = controls_joystick_box.DrawFn(&controls_joystick_box); -- incompatible calling convention
         asm volatile ("call *%2\n"
             : "=r" (drawn) : "a" (&controls_joystick_box), "g" (controls_joystick_box.DrawFn));
