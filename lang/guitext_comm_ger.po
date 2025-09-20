@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GUI text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
-"POT-Creation-Date: 2025-09-20 15:02+0200\n"
-"PO-Revision-Date: 2025-09-20 15:09+0200\n"
+"POT-Creation-Date: 2025-09-20 22:19+0200\n"
+"PO-Revision-Date: 2025-09-20 22:27+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: de_DE\n"
@@ -2860,8 +2860,8 @@ msgstr "Detailstufe"
 #. Name for option which allows switching mission camera between isometric and perspective view.
 #: guitext:472
 msgctxt "Visual settings option"
-msgid "Perspective"
-msgstr "Perspektive"
+msgid "Camera Perspective"
+msgstr "Kameraperspektive"
 
 #. Name for option which allows changimg max zoom level.
 #: guitext:473
@@ -3850,12 +3850,41 @@ msgctxt "Controls"
 msgid "Cyborg N"
 msgstr ""
 
+#. Key for switching mode of camera lens.
+#: guitext:823
+msgctxt "Controls"
+msgid "Camera Perspective"
+msgstr "Kameraperspektive"
+
+#. Key for disabling or enabling scanner pulses.
+#: guitext:824
+msgctxt "Controls"
+msgid "Scanner Pulse toggle"
+msgstr ""
+
+#. Key for changing colour of half-transparent buildings under deep radar.
+#: guitext:825
+msgctxt "Controls"
+msgid "Deep Radar sur. colour"
+msgstr "Tiefenradar-Oberfläche"
+
+#. Key for changing colour of half-transparent buildings under deep radar.
+#: guitext:826
+msgctxt "Controls"
+msgid "Deep Radar line colour"
+msgstr "Tiefenradar-Linie"
+
+#. Key for making all buildings either transparent or completely invisible.
+#: guitext:827
+msgctxt "Controls"
+msgid "Deep Radar expand"
+msgstr "Tiefenradar erweitern"
+
 #. Key for future use; does nothing currently.
-#: guitext:823 guitext:824 guitext:825 guitext:826 guitext:827 guitext:828
-#: guitext:829 guitext:830 guitext:831 guitext:832 guitext:833 guitext:834
-#: guitext:835 guitext:836 guitext:837 guitext:838 guitext:839 guitext:840
-#: guitext:841 guitext:842 guitext:843 guitext:844 guitext:845 guitext:846
-#: guitext:847 guitext:848 guitext:849
+#: guitext:828 guitext:829 guitext:830 guitext:831 guitext:832 guitext:833
+#: guitext:834 guitext:835 guitext:836 guitext:837 guitext:838 guitext:839
+#: guitext:840 guitext:841 guitext:842 guitext:843 guitext:844 guitext:845
+#: guitext:846 guitext:847 guitext:848 guitext:849
 msgctxt "Controls"
 msgid "Future key"
 msgstr ""
