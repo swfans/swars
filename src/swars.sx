@@ -16198,9 +16198,9 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    EXPORT_SYMBOL(scroll_text),%ebp
 		sar    $0x10,%eax
 		push   %ebp
-		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx # gui_strings[GSTR_ENM_MISSION_STATUS + 1]
 		push   %edx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx # gui_strings[GSTR_CHK_MISSION_STA_PRE]
 		push   %ebx
 		push   $ascSSS
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16249,14 +16249,14 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3bff1:
 		push   %ebx
 		push   %edx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ebp
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ebp # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
 		sar    $0x10,%eax
 		push   %ebp
-		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx # gui_strings[GSTR_ENM_MISSION_STATUS + 1 + x]
 		push   %edx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx # gui_strings[GSTR_CHK_MISSION_STA_PRE]
 		push   %ebx
 		push   $aSSSTime02d02d0
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16270,14 +16270,14 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3c03a:
 		push   %ebx
 		push   %edx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ecx # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
 		sar    $0x10,%eax
 		push   %ecx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%esi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%esi # gui_strings[GSTR_ENM_MISSION_STATUS + 1 + x]
 		push   %esi
-		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%edi # gui_strings[GSTR_CHK_MISSION_STA_PRE]
 		push   %edi
 		push   $aSSSTempo02d02d
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16287,14 +16287,14 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3c06f:
 		push   %ebx
 		push   %edx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ebp
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ebp # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
 		sar    $0x10,%eax
 		push   %ebp
-		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx # gui_strings[GSTR_ENM_MISSION_STATUS + 1 + x]
 		push   %edx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx # gui_strings[GSTR_CHK_MISSION_STA_PRE]
 		push   %ebx
 		push   $aSSSZeit02d02d0
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16307,13 +16307,13 @@ GLOBAL_FUNC (ASM_load_packet)
 		push   %ebx
 		push   %eax
 		push   %esi
-		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%eax
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%eax # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
 		push   %eax
 		mov    ingame__fld_unkC4F,%eax
 		sar    $0x10,%eax
-		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx # gui_strings[GSTR_ENM_MISSION_STATUS + 1 + x]
 		push   %edx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebx # gui_strings[GSTR_CHK_MISSION_STA_PRE]
 		push   %ebx
 		push   $aSSSTiempo02d02
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16325,12 +16325,12 @@ GLOBAL_FUNC (ASM_load_packet)
 		push   %eax
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
-		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%esi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%esi # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
 		sar    $0x10,%eax
 		push   %esi
-		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edi # gui_strings[GSTR_ENM_MISSION_STATUS + 1 + x]
 		push   %edi
-		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebp
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%ebp # gui_strings[GSTR_CHK_MISSION_STA_PRE]
 		push   %ebp
 		push   $aSSSTid02d02d02
 		push   $EXPORT_SYMBOL(unknmsg_str)
@@ -16373,14 +16373,14 @@ GLOBAL_FUNC (ASM_load_packet)
 		jbe    jump_3bff1
 		push   %ebx
 		push   %edx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ecx
+		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ecx # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
 		mov    ingame__fld_unkC4F,%eax
 		push   %esi
 		sar    $0x10,%eax
 		push   %ecx
-		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%esi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%esi # gui_strings[GSTR_ENM_MISSION_STATUS + 1 + x]
 		push   %esi
-		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%edi
+		mov    EXPORT_SYMBOL(gui_strings)+0x9F8,%edi # gui_strings[GSTR_CHK_MISSION_STA_PRE]
 		push   %edi
 		push   $aSSSHeure02d02d
 		push   $EXPORT_SYMBOL(unknmsg_str)

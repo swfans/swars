@@ -6736,7 +6736,8 @@ void draw_mission_concluded(void)
     tm = (dos_clock() - ingame.fld_unkC91) / 100;
     if (ingame.fld_unkCB5)
     {
-        sprintf(unknmsg_str, "%s %s: %s ", gui_strings[638], gui_strings[635 + ingame.MissionStatus], scroll_text);
+        sprintf(unknmsg_str, "%s %s: %s ", gui_strings[GSTR_CHK_MISSION_STA_PRE],
+          gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus], scroll_text);
         data_15319c = unknmsg_str;
     }
     else
@@ -6748,34 +6749,34 @@ void draw_mission_concluded(void)
         {
         case 'e':
         default:
-            sprintf(unknmsg_str, "%s %s %s Time %02d:%02d:%02d", gui_strings[638],
-              gui_strings[635 + ingame.MissionStatus], gui_strings[639],
-              tm_h, tm_m % 60, tm_s);
+            sprintf(unknmsg_str, "%s %s %s Time %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
+              gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
+              gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
             break;
         case 'f':
-            sprintf(unknmsg_str, "%s %s %s Heure %02d:%02d:%02d", gui_strings[638],
-              gui_strings[635 + ingame.MissionStatus], gui_strings[639],
-              tm_h, tm_m % 60, tm_s);
+            sprintf(unknmsg_str, "%s %s %s Heure %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
+              gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
+              gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
             break;
         case 'g':
-            sprintf(unknmsg_str, "%s %s %s Zeit %02d:%02d:%02d", gui_strings[638],
-              gui_strings[635 + ingame.MissionStatus], gui_strings[639],
-              tm_h, tm_m % 60, tm_s);
+            sprintf(unknmsg_str, "%s %s %s Zeit %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
+              gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
+              gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
             break;
         case 'i':
-            sprintf(unknmsg_str, "%s %s %s Tempo %02d:%02d:%02d", gui_strings[638],
-              gui_strings[635 + ingame.MissionStatus], gui_strings[639],
-              tm_h, tm_m % 60, tm_s);
+            sprintf(unknmsg_str, "%s %s %s Tempo %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
+              gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
+              gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
             break;
         case 's':
             if (language_3str[1] == 'p')
-              sprintf(unknmsg_str, "%s %s %s Tiempo %02d:%02d:%02d", gui_strings[638],
-                gui_strings[635 + ingame.MissionStatus], gui_strings[639],
-                tm_h, tm_m % 60, tm_s);
+              sprintf(unknmsg_str, "%s %s %s Tiempo %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
+                gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
+                gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
             else
-              sprintf(unknmsg_str, "%s %s %s Tid %02d:%02d:%02d",  gui_strings[638],
-                gui_strings[635 + ingame.MissionStatus], gui_strings[639],
-                tm_h, tm_m % 60, tm_s);
+              sprintf(unknmsg_str, "%s %s %s Tid %02d:%02d:%02d",  gui_strings[GSTR_CHK_MISSION_STA_PRE],
+                gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
+                gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
             break;
         }
         data_15319c = unknmsg_str;

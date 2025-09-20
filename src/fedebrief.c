@@ -145,7 +145,7 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
     draw_text_purple_list2(x, y, text, 0);
     y += lnheight;
 
-    snprintf(locstr, sizeof(locstr), "%s", gui_strings[635 + p_rep->Status]);
+    snprintf(locstr, sizeof(locstr), "%s", gui_strings[GSTR_ENM_MISSION_STATUS + 1 + p_rep->Status]);
     text = loctext_to_gtext(locstr);
     draw_text_purple_list2(x, y, text, 0);
     y += lnheight;
@@ -413,30 +413,30 @@ void draw_mission_people_stats_names_column(struct ScreenBox *box,
     x = 20;
     y = lnheight;
 
-    draw_text_purple_list2(x, y, gui_strings[618], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_PERSD_CIVIL], 0);
     y += lnheight;
 
-    draw_text_purple_list2(x, y, gui_strings[619], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_PERSD_MILIT], 0);
     y += lnheight;
 
-    draw_text_purple_list2(x, y, gui_strings[620], 0);
-    y += lnheight;
-    y += lnheight;
-
-    draw_text_purple_list2(x, y, gui_strings[621], 0);
-    y += lnheight;
-
-    draw_text_purple_list2(x, y, gui_strings[622], 0);
-    y += lnheight;
-
-    draw_text_purple_list2(x, y, gui_strings[623], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_PERSD_ADVERS], 0);
     y += lnheight;
     y += lnheight;
 
-    draw_text_purple_list2(x, y, gui_strings[624], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_KILLD_CIVIL], 0);
     y += lnheight;
 
-    draw_text_purple_list2(x, y, gui_strings[630], 0);
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_KILLD_MILIT], 0);
+    y += lnheight;
+
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_KILLD_ADVERS], 0);
+    y += lnheight;
+    y += lnheight;
+
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_CYBORGS_LOST], 0);
+    y += lnheight;
+
+    draw_text_purple_list2(x, y, gui_strings[GSTR_MTR_CYBORGS_GAIN], 0);
     y += lnheight;
 }
 
