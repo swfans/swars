@@ -51,6 +51,7 @@ extern struct ScreenTextBox brief_netscan_box;
 extern struct ScreenTextBox world_city_info_box;
 extern struct ScreenTextBox equip_display_box;
 extern struct ScreenTextBox cryo_cybmod_list_box;
+extern struct ScreenTextBox controls_list_box;
 extern struct ScreenButton alert_OK_button;
 
 extern long dword_1DC5FC;
@@ -538,8 +539,11 @@ void init_scroll_bar_for_text_box(struct ScreenBox *ar_scroll_bar, struct Screen
 void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct ScreenBox *ar_scroll_bar)
 {
     short lines_visible;
+    TbBool no_keyboard_inputs;
 
     lines_visible = get_text_box_window_lines_visible(p_box);
+    //TODO make this into a flag within the box
+    no_keyboard_inputs = (p_box == &controls_list_box);
 
     if (lbDisplay.MLeftButton && ((p_box->Flags & GBxFlg_IsPushed) != 0))
     {
@@ -591,7 +595,11 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
         if (mouse_move_over_box(p_box) && ((p_box->Flags & GBxFlg_IsPushed) == 0))
         {
             // Using keyboard to scroll
-            if (lbKeyOn[KC_UP] || lbKeyOn[KC_DOWN] || lbKeyOn[KC_PGUP] || lbKeyOn[KC_PGDOWN])
+            if (no_keyboard_inputs)
+            {
+                // User requested disable - the same keys are probably used for something else
+            }
+            else if (lbKeyOn[KC_UP] || lbKeyOn[KC_DOWN] || lbKeyOn[KC_PGUP] || lbKeyOn[KC_PGDOWN])
             {
                 short scroll_pos, delta;
 
