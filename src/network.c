@@ -23,11 +23,12 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "bfkeybd.h"
 #include "bfdos.h"
 #include "bfmemory.h"
 #include "bftime.h"
+
 #include "display.h"
+#include "keyboard.h"
 #include "swlog.h"
 /******************************************************************************/
 #pragma pack(1)
@@ -2164,7 +2165,7 @@ TbResult LbModemReadConfig(const char *fname)
 int my_net_session_callback()
 {
     swap_wscreen();
-    if (lbKeyOn[KC_ESCAPE])
+    if (is_key_pressed(KC_ESCAPE, KMod_DONTCARE))
         return -7;
     return 0;
 }

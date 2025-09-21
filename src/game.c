@@ -1230,7 +1230,7 @@ void load_level_wrap(short level, short missi, ubyte reload)
     load_level_pc(level, missi, reload);
 
     // No idea what exactly pressing F during level load does
-    if (lbKeyOn[KC_F])
+    if (is_key_pressed(KC_F, KMod_DONTCARE))
         unkn_f_pressed_func();
 }
 
@@ -2215,7 +2215,7 @@ void game_graphics_inputs(void)
 
     if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
-        if (lbKeyOn[KC_T] && (lbShift == KMod_ALT))
+        if (is_key_pressed(KC_T, KMod_ALT))
         {
             lbKeyOn[KC_T] = 0;
             teleport_current_agent(p_locplayer);
@@ -2224,13 +2224,13 @@ void game_graphics_inputs(void)
 
     if ((ingame.UserFlags & UsrF_Cheats) && !in_network_game)
     {
-        if (lbKeyOn[KC_Q] && (lbShift == KMod_NONE))
+        if (is_key_pressed(KC_Q, KMod_NONE))
         {
             lbKeyOn[KC_Q] = 0;
             give_best_mods_to_all_agents(p_locplayer);
             set_max_stats_to_all_agents(p_locplayer);
         }
-        if (lbKeyOn[KC_Q] && (lbShift == KMod_SHIFT))
+        if (is_key_pressed(KC_Q, KMod_SHIFT))
         {
             lbKeyOn[KC_Q] = 0;
             resurrect_any_dead_agents(p_locplayer);
@@ -2238,7 +2238,7 @@ void game_graphics_inputs(void)
         }
     }
 
-    if (lbKeyOn[KC_F8])
+    if (is_key_pressed(KC_F8, KMod_DONTCARE))
     {
         lbKeyOn[KC_F8] = 0;
         screen_mode_switch_to_next();
@@ -3627,7 +3627,7 @@ void gproc3_unknsub2(void)
     long bkp_engn_xc, bkp_engn_yc, bkp_engn_zc;
 
     ingame.Flags &= ~GamF_BillboardMovies;
-    if (lbKeyOn[KC_Q])
+    if (is_key_pressed(KC_Q, KMod_DONTCARE))
     {
         dword_155010 = 0x4000;
         dword_155014 = 0x4000;
@@ -4870,7 +4870,7 @@ ubyte weapon_select_input(void)
     for (n = 0; n < (int)(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0])); n++)
     {
         ushort kkey = sel_weapon_keys[n];
-        if (lbKeyOn[kkey] && (lbShift == KMod_NONE))
+        if (is_key_pressed(kkey, KMod_NONE))
         {
             lbKeyOn[kkey] = 0;
             weptype = find_nth_weapon_held(dcthing, n+1);
@@ -4921,7 +4921,7 @@ TbResult read_palette_file(void)
 void do_music_user_input(void)
 {
     // MIDI Music (tension) volume control
-    if (lbKeyOn[KC_NUMPAD8])
+    if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
     {
         if (lbShift & KMod_SHIFT)
             startscr_midivol += 1;
@@ -4929,7 +4929,7 @@ void do_music_user_input(void)
             startscr_midivol += 10;
         sfx_apply_midivol();
     }
-    if (lbKeyOn[KC_NUMPAD2])
+    if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
     {
         if (lbShift & KMod_SHIFT)
             startscr_midivol -= 1;
@@ -4939,7 +4939,7 @@ void do_music_user_input(void)
     }
 
     // Sample volume control
-    if (lbKeyOn[KC_NUMPAD7])
+    if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
     {
         if (lbShift & KMod_SHIFT)
             startscr_samplevol += 1;
@@ -4947,7 +4947,7 @@ void do_music_user_input(void)
             startscr_samplevol += 10;
         sfx_apply_samplevol();
     }
-    if (lbKeyOn[KC_NUMPAD1])
+    if (is_key_pressed(KC_NUMPAD1, KMod_DONTCARE))
     {
         if (lbShift & KMod_SHIFT)
             startscr_samplevol -= 1;
@@ -4957,7 +4957,7 @@ void do_music_user_input(void)
     }
 
     // CD Music volume control
-    if (lbKeyOn[KC_NUMPAD9])
+    if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
     {
         if (lbShift & KMod_SHIFT)
             startscr_cdvolume += 1;
@@ -4965,7 +4965,7 @@ void do_music_user_input(void)
             startscr_cdvolume += 10;
         sfx_apply_cdvolume();
     }
-    if (lbKeyOn[KC_NUMPAD3])
+    if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
     {
         if (lbShift & KMod_SHIFT)
             startscr_cdvolume -= 1;
@@ -4975,13 +4975,13 @@ void do_music_user_input(void)
     }
 
     // Music track control
-    if (lbKeyOn[KC_NUMPAD5])
+    if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
     {
         lbKeyOn[KC_NUMPAD5] = 0;
         if (++ingame.CDTrack > 4)
             ingame.CDTrack = 2;
     }
-    if (lbKeyOn[KC_NUMPAD0])
+    if (is_key_pressed(KC_NUMPAD0, KMod_DONTCARE))
     {
         lbKeyOn[KC_NUMPAD0] = 0;
         ingame.DangerTrack = 2 - ingame.DangerTrack + 1;
@@ -5000,7 +5000,7 @@ ubyte do_user_interface(void)
     do_rotate_map();
     if (in_network_game)
     {
-        if (lbKeyOn[KC_RETURN])
+        if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
         {
             lbKeyOn[KC_RETURN] = 0;
             if ((p_locplayer->PanelState[mouser] != 17) && (player_unkn0C9[local_player_no] <= 140))
@@ -5018,7 +5018,7 @@ ubyte do_user_interface(void)
         return process_mouse_imputs() != 0;
 
     // screenshot
-    if (lbKeyOn[KC_M])
+    if (is_key_pressed(KC_M, KMod_DONTCARE))
         LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
 
 #if 0
@@ -5026,26 +5026,23 @@ ubyte do_user_interface(void)
     // clearly unfinished; remove pending
     for (n = 0; n < 5; n++)
     {
-        if (lbKeyOn[KC_F1+n])
+        if (is_key_pressed(KC_F1+n, KMod_ALT))
         {
-            if (lbShift & KMod_ALT)
-            {
-                lbKeyOn[KC_F1+n] = 0;
-                my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_ADD, n, 0, 0, 0);
-                return 1;
-            }
-            if (lbShift & KMod_SHIFT)
-            {
-                lbKeyOn[KC_F1+n] = 0;
-                my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_PROT, n, 0, 0, 0);
-                return 1;
-            }
+            lbKeyOn[KC_F1+n] = 0;
+            my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_ADD, n, 0, 0, 0);
+            return 1;
+        }
+        if (is_key_pressed(KC_F1+n, KMod_SHIFT))
+        {
+            lbKeyOn[KC_F1+n] = 0;
+            my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_PROT, n, 0, 0, 0);
+            return 1;
         }
     }
 #endif
 
     // change panel style
-    if (lbKeyOn[KC_F9] && (lbShift == KMod_NONE))
+    if (is_key_pressed(KC_F9, KMod_NONE))
     {
         sbyte panperm;
 
@@ -5078,7 +5075,7 @@ ubyte do_user_interface(void)
     }
 
     // change agents colours
-    if (lbKeyOn[KC_F10] && (lbShift == KMod_NONE))
+    if (is_key_pressed(KC_F10, KMod_NONE))
     {
         lbKeyOn[KC_F10] = 0;
         StopCD();
@@ -5088,27 +5085,24 @@ ubyte do_user_interface(void)
     }
 
     // adjust palette brightness
-    if (lbKeyOn[KC_F11])
+    if (is_key_pressed(KC_F11, KMod_CONTROL))
     {
         lbKeyOn[KC_F11] = 0;
-        if (lbShift & KMod_CONTROL)
-        {
-            read_palette_file();
-        }
-        else if (lbShift & KMod_SHIFT)
-        {
-            change_brightness(-1);
-            brightness--;
-        }
-        else if (lbShift == KMod_NONE)
-        {
-            change_brightness(1);
-            brightness++;
-        }
+        read_palette_file();
+    }
+    if (is_key_pressed(KC_F11, KMod_SHIFT))
+    {
+        lbKeyOn[KC_F11] = 0;
+        change_brightness(-1);
+        brightness--;
+    }
+    if (is_key_pressed(KC_F11, KMod_NONE))
+    {
+        change_brightness(1);
+        brightness++;
     }
 
-    // TODO No idea what these are doing
-    if (lbKeyOn[KC_F1] && (lbShift & KMod_CONTROL))
+    if (is_key_pressed(KC_F1, KMod_CONTROL))
     {
         lbKeyOn[KC_F1] = 0;
         if ((ingame.Flags & GamF_BillboardMovies) != 0)
@@ -5116,7 +5110,7 @@ ubyte do_user_interface(void)
         else
             ingame.Flags |= GamF_BillboardMovies;
     }
-    if (lbKeyOn[KC_F2] && (lbShift & KMod_CONTROL))
+    if (is_key_pressed(KC_F2, KMod_CONTROL))
     {
         lbKeyOn[KC_F2] = 0;
         if (ingame.Flags & GamF_RenderScene)
@@ -5124,7 +5118,7 @@ ubyte do_user_interface(void)
         else
             ingame.Flags |= GamF_RenderScene;
     }
-    if (lbKeyOn[KC_F3] && (lbShift & KMod_CONTROL))
+    if (is_key_pressed(KC_F3, KMod_CONTROL))
     {
         lbKeyOn[KC_F3] = 0;
         if (ingame.Flags & GamF_StopThings)
@@ -5132,7 +5126,7 @@ ubyte do_user_interface(void)
         else
             ingame.Flags |= GamF_StopThings;
     }
-    if (lbKeyOn[KC_F4] && (lbShift & KMod_CONTROL))
+    if (is_key_pressed(KC_F4, KMod_CONTROL))
     {
         lbKeyOn[KC_F4] = 0;
         if ((ingame.Flags & GamF_AdvLights) != 0)
@@ -5140,7 +5134,7 @@ ubyte do_user_interface(void)
         else
             ingame.Flags |= GamF_AdvLights;
     }
-    if (lbKeyOn[KC_F6] && (lbShift & KMod_CONTROL))
+    if (is_key_pressed(KC_F6, KMod_CONTROL))
     {
         lbKeyOn[KC_F6] = 0;
         if ((ingame.Flags & GamF_DeepRadar) != 0)
@@ -5148,7 +5142,7 @@ ubyte do_user_interface(void)
         else
             ingame.Flags |= GamF_DeepRadar;
     }
-    if ( lbKeyOn[KC_F10] && (lbShift & KMod_CONTROL))
+    if (is_key_pressed(KC_F10, KMod_CONTROL))
     {
         lbKeyOn[KC_F10] = 0;
         if (ingame.Flags & GamF_HUDPanel)
@@ -5175,10 +5169,8 @@ ubyte do_user_interface(void)
     // Control map area to draw
     if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
-        if (lbKeyOn[KC_E])
+        if (is_key_pressed(KC_E, KMod_DONTCARE))
         {
-            lbKeyOn[KC_E] = 0;
-
             if (lbShift & KMod_SHIFT)
                 n = -2;
             else
@@ -5200,9 +5192,9 @@ ubyte do_user_interface(void)
     }
 
     // Scanner appearence control
-    if (lbKeyOn[KC_NUMPAD6])
+    if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
         ingame.Scanner.Brightness += 4;
-    if (lbKeyOn[KC_NUMPAD4])
+    if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
         ingame.Scanner.Brightness -= 4;
     if (ingame.Scanner.Brightness < 0)
         ingame.Scanner.Brightness = 0;
@@ -5213,7 +5205,7 @@ ubyte do_user_interface(void)
     // Restart level
     if (!in_network_game && (ingame.Flags & GamF_MortalGame) == 0)
     {
-        if (lbKeyOn[KC_R])
+        if (is_key_pressed(KC_R, KMod_DONTCARE))
         {
             lbKeyOn[KC_R] = 0;
             StopCD();
@@ -5232,15 +5224,15 @@ ubyte do_user_interface(void)
         return 1;
     }
 
-    static ushort sel_agent_gkeys[] = {
+    static GameKey sel_agent_gkeys[] = {
         GKey_SEL_AGENT_1, GKey_SEL_AGENT_2, GKey_SEL_AGENT_3, GKey_SEL_AGENT_4
     };
     static GameTurn last_sel_agent_turn[AGENTS_SQUAD_MAX_COUNT] = {0};
     assert(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0]) <= AGENTS_SQUAD_MAX_COUNT);
     for (n = 0; n < (int)(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0])); n++)
     {
-        ulong gkey = sel_agent_gkeys[n];
-        if (lbKeyOn[kbkeys[gkey]] && (lbShift == KMod_NONE))
+        GameKey gkey = sel_agent_gkeys[n];
+        if (is_gamekey_pressed(gkey))
         {
             struct Thing *p_agent;
 
@@ -5249,7 +5241,7 @@ ubyte do_user_interface(void)
 
             if (person_can_accept_control(p_agent->ThingOffset) && ((p_agent->Flag2 & TgF2_KnockedOut) == 0))
             {
-                lbKeyOn[kbkeys[gkey]] = 0;
+                clear_key_pressed(gkey);
                 if (p_locplayer->DoubleMode)
                 {
                     byte_153198 = n+1;
@@ -5295,13 +5287,13 @@ ubyte do_user_interface(void)
     // Resurrection and best equipment cheat; why is it in two places?
     if (p_locplayer->DoubleMode && (ingame.UserFlags & UsrF_Cheats) && !in_network_game)
     {
-        if (lbKeyOn[KC_Q] && (lbShift == KMod_NONE))
+        if (is_key_pressed(KC_Q, KMod_NONE))
         {
             lbKeyOn[KC_Q] = 0;
             give_best_mods_to_all_agents(p_locplayer);
             set_max_stats_to_all_agents(p_locplayer);
         }
-        if (lbKeyOn[KC_Q] && (lbShift == KMod_SHIFT))
+        if (is_key_pressed(KC_Q, KMod_SHIFT))
         {
             lbKeyOn[KC_Q] = 0;
             resurrect_any_dead_agents(p_locplayer);
@@ -5359,9 +5351,9 @@ ubyte do_user_interface(void)
 
         p_usrinp = &p_locplayer->UserInput[0];
         ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
-        if ((ctlmode == UInpCtr_Mouse) && lbKeyOn[kbkeys[GKey_KEY_CONTROL]])
+        if ((ctlmode == UInpCtr_Mouse) && is_gamekey_pressed(GKey_KEY_CONTROL))
         {
-            lbKeyOn[kbkeys[GKey_KEY_CONTROL]] = 0;
+            clear_key_pressed(GKey_KEY_CONTROL);
             p_usrinp->ControlMode &= UInpCtr_AllFlagsMask;
             p_usrinp->ControlMode |= UInpCtr_Keyboard;
             do_change_mouse(8);
@@ -6405,7 +6397,7 @@ void show_menu_screen(void)
     if (is_purple_apps_selection_bar_visible() && !is_purple_alert_on_top())
         input_purple_apps_selection_bar();
 
-    if (lbKeyOn[KC_F12]) {
+    if (is_key_pressed(KC_F12, KMod_DONTCARE)) {
         lbKeyOn[KC_F12] = 0;
         post_render_action = PRend_SaveScreenshot;
     }
@@ -6675,7 +6667,7 @@ void input_packet_playback(void)
     p_locplayer = &players[local_player_no];
     p_pckt = &packets[local_player_no];
 
-    if (lbKeyOn[KC_ESCAPE] && (lbShift == KMod_SHIFT))
+    if (is_key_pressed(KC_ESCAPE, KMod_SHIFT))
     {
         lbKeyOn[KC_ESCAPE] = 0;
         if (critical_action_input())
@@ -6686,7 +6678,7 @@ void input_packet_playback(void)
     }
     do_scroll_map();
     do_rotate_map();
-    if (lbKeyOn[KC_1])
+    if (is_key_pressed(KC_1, KMod_DONTCARE))
     {
         p_agent = p_locplayer->MyAgent[0];
         ingame.TrackX = p_agent->X >> 8;
@@ -6694,7 +6686,7 @@ void input_packet_playback(void)
         engn_xc = ingame.TrackX;
         engn_zc = ingame.TrackZ;
     }
-    if (lbKeyOn[KC_2])
+    if (is_key_pressed(KC_2, KMod_DONTCARE))
     {
         p_agent = p_locplayer->MyAgent[1];
         ingame.TrackX = p_agent->X >> 8;
@@ -6702,7 +6694,7 @@ void input_packet_playback(void)
         engn_xc = ingame.TrackX;
         engn_zc = ingame.TrackZ;
     }
-    if (lbKeyOn[KC_3])
+    if (is_key_pressed(KC_3, KMod_DONTCARE))
     {
         p_agent = p_locplayer->MyAgent[2];
         ingame.TrackX = p_agent->X >> 8;
@@ -6710,7 +6702,7 @@ void input_packet_playback(void)
         engn_xc = ingame.TrackX;
         engn_zc = ingame.TrackZ;
     }
-    if (lbKeyOn[KC_4])
+    if (is_key_pressed(KC_4, KMod_DONTCARE))
     {
         p_agent = p_locplayer->MyAgent[3];
         ingame.TrackX = p_agent->X >> 8;
@@ -6722,12 +6714,12 @@ void input_packet_playback(void)
 
 void input_mission_cheats(void)
 {
-    if ((ingame.UserFlags & UsrF_Cheats) != 0 && lbKeyOn[KC_C] && lbShift == KMod_ALT)
+    if ((ingame.UserFlags & UsrF_Cheats) != 0 && is_key_pressed(KC_C, KMod_ALT))
     {
         lbKeyOn[KC_C] = 0;
         mission_result = 1;
     }
-    if ((ingame.UserFlags & UsrF_Cheats) != 0 && lbKeyOn[KC_F] && lbShift == KMod_ALT)
+    if ((ingame.UserFlags & UsrF_Cheats) != 0 && is_key_pressed(KC_F, KMod_ALT))
     {
         lbKeyOn[KC_F] = 0;
         mission_result = -1;
@@ -6909,14 +6901,14 @@ void load_packet(void)
 
     if (p_locplayer->PanelState[mouser] != 17)
     {
-        if (lbKeyOn[KC_ESCAPE] && (in_network_game || (ingame.UserFlags & UsrF_Cheats) != 0))
+        if (in_network_game || (ingame.UserFlags & UsrF_Cheats) != 0)
         {
-            if ((lbShift & KMod_CONTROL) != 0 && !in_network_game)
+            if (!in_network_game && is_key_pressed(KC_ESCAPE, KMod_CONTROL))
             {
                 lbKeyOn[KC_ESCAPE] = 0;
                 exit_game = 1;
             }
-            else if ((lbShift & KMod_SHIFT) != 0)
+            else if (is_key_pressed(KC_ESCAPE, KMod_SHIFT))
             {
                 lbKeyOn[KC_ESCAPE] = 0;
                 if (in_network_game || critical_action_input()) {

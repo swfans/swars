@@ -365,7 +365,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
 
     if (!net_unkn_pos_01b && !net_unkn_pos_02)
     {
-        if (lbKeyOn[KC_DOWN])
+        if (is_key_pressed(KC_DOWN, KMod_DONTCARE))
         {
             lbKeyOn[KC_DOWN] = 0;
             controls_hlight_gkey++;
@@ -373,7 +373,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
                 controls_hlight_gkey = 1;
             ret = 1;
         }
-        if (lbKeyOn[KC_UP])
+        if (is_key_pressed(KC_UP, KMod_DONTCARE))
         {
             lbKeyOn[KC_UP] = 0;
             controls_hlight_gkey--;
@@ -381,7 +381,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
                 controls_hlight_gkey = 2 * (GKey_KEYS_COUNT - 1);
             ret = 1;
         }
-        if (lbKeyOn[KC_RIGHT])
+        if (is_key_pressed(KC_RIGHT, KMod_DONTCARE))
         {
             // Next column
             lbKeyOn[KC_RIGHT] = 0;
@@ -390,7 +390,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
                 controls_hlight_gkey -= 2 * (GKey_KEYS_COUNT - 1);
             ret = 1;
         }
-        if (lbKeyOn[KC_LEFT])
+        if (is_key_pressed(KC_LEFT, KMod_DONTCARE))
         {
             // Prev column
             lbKeyOn[KC_LEFT] = 0;
@@ -404,7 +404,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
         {
             if (byte_1C4970)
             {
-                if (byte_1C4970 == 1 && !lbKeyOn[KC_RETURN])
+                if (byte_1C4970 == 1 && !is_key_pressed(KC_RETURN, KMod_DONTCARE))
                 {
                     lbExtendedKeyPress = 0;
                     lbInkey = 0;
@@ -415,12 +415,12 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
             }
             else
             {
-                if (lbKeyOn[KC_RETURN])
+                if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
                 {
                     byte_1C4970++;
                     ret = 2;
                 }
-                if (lbKeyOn[KC_BACK])
+                if (is_key_pressed(KC_BACK, KMod_DONTCARE))
                 {
                     lbKeyOn[KC_BACK] = 0;
                     unset_controls_key(controls_hlight_gkey);

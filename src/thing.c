@@ -747,7 +747,7 @@ void process_things(void)
         }
     }
 #if 0
-    if ( lbKeyOn[KC_N] )
+    if (is_key_pressed(KC_N, KMod_DONTCARE))
       lbKeyOn[KC_N] = 0;
 #endif
 

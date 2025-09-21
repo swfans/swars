@@ -246,10 +246,6 @@ void apply_user_settings(void)
 
 void set_default_user_settings(void)
 {
-#if 0
-    asm volatile ("call ASM_set_default_user_settings\n"
-        :  :  : "eax" );
-#endif
     set_default_game_keys();
     set_default_player_control();
     set_default_sfx_settings();

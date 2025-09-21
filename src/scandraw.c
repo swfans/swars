@@ -21,7 +21,6 @@
 #include "bfanywnd.h"
 #include "bfendian.h"
 #include "bfgentab.h"
-#include "bfkeybd.h"
 #include "bfline.h"
 #include "bfmath.h"
 #include "bfpixel.h"
@@ -33,6 +32,7 @@
 #include "thing.h"
 #include "game_speed.h"
 #include "game.h"
+#include "keyboard.h"
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -417,7 +417,7 @@ void SCANNER_process_special_input(void)
     ushort sckey, nxkey;
 
     sckey = scanner_keys[scanner_next_key_no];
-    if (lbKeyOn[sckey])
+    if (is_key_pressed(sckey, KMod_DONTCARE))
     {
         lbKeyOn[sckey] = 0;
         nxkey = scanner_keys[++scanner_next_key_no];

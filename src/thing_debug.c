@@ -19,7 +19,6 @@
 #include "thing.h"
 
 #include <string.h>
-#include "bfkeybd.h"
 #include "bfbox.h"
 #include "bfline.h"
 #include "bfmath.h"
@@ -32,6 +31,7 @@
 #include "engintrns.h"
 #include "game.h"
 #include "game_sprts.h"
+#include "keyboard.h"
 #include "pathtrig.h"
 #include "scandraw.h"
 #include "thing_search.h"
@@ -621,12 +621,15 @@ void things_debug_hud(void)
     map_coords_limit(&map_x, &map_y, &map_z, mouse_map_x, 0, mouse_map_z);
     thing = select_thing_for_debug(map_x, map_y, map_z, -1);
     // Lock on current thing
-    if (lbKeyOn[KC_W])
+    if (is_key_pressed(KC_W, KMod_SHIFT))
     {
         lbKeyOn[KC_W] = 0;
-        if (lbShift & KMod_SHIFT) {
-            dword_1DC7A4 = 0;
-        } else if (thing > 0) {
+        dword_1DC7A4 = 0;
+    }
+    if (is_key_pressed(KC_W, KMod_NONE))
+    {
+        lbKeyOn[KC_W] = 0;
+        if (thing > 0) {
             dword_1DC7A4 = thing;
         }
     }

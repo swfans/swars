@@ -48,6 +48,8 @@ ulong buffered_keys_write_index;
 
 ubyte is_key_pressed(TbKeyCode key, TbKeyMods kmodif)
 {
+    if ((kmodif == KMod_NONE) && (lbShift != KMod_NONE))
+        return 0;
     if ((kmodif == KMod_DONTCARE) || (kmodif & lbShift) == kmodif)
         return lbKeyOn[key];
     return 0;
@@ -381,7 +383,7 @@ void set_default_game_keys(void)
     jskeys[GKey_CHANGE_MD_WP] = 0x02;
     jskeys[GKey_CHANGE_AGENT] = 0x04;
     jskeys[GKey_SELF_DESTRUCT] = 0x0F;
-    jskeys[GKey_GROUP] = 32;
+    jskeys[GKey_GROUP] = 0x20;
     jskeys[GKey_GOTO_POINT] = 0x08;
     jskeys[GKey_DROP_WEAPON] = 0x10;
     ctl_joystick_type = JTyp_GRAVIS_GRIP;

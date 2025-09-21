@@ -979,7 +979,7 @@ void draw_blokey_body_mods(void)
         cryo_cyborg_part_buf_blokey_static_load_all(old_flic_mods);
 
     current_drawing_mod = new_current_drawing_mod;
-    if ((lbKeyOn[KC_SPACE] || game_projector_speed) && (cryo_blokey_box.Flags & GBxFlg_RadioBtn) == 0)
+    if ((is_key_pressed(KC_SPACE, KMod_DONTCARE) || game_projector_speed) && (cryo_blokey_box.Flags & GBxFlg_RadioBtn) == 0)
     {
         lbKeyOn[KC_SPACE] = 0;
         cryo_cyborg_part_buf_blokey_static_reload();
@@ -1414,7 +1414,7 @@ ubyte input_cryo_agent_panel_shape(struct ScreenShape *shape, sbyte nagent)
 {
     ubyte gbstate;
 
-    if (lbKeyOn[KC_1 + nagent])
+    if (is_key_pressed(KC_1 + nagent, KMod_DONTCARE))
     {
         lbKeyOn[KC_1 + nagent] = 0;
         if (nagent < cryo_agents.NumAgents)
@@ -1493,7 +1493,7 @@ ubyte input_cryo_all_agents_button(struct ScreenButton *button)
     sbyte nagent = 4;
 
     gbstate = GBxSta_NORMAL;
-    if (lbKeyOn[KC_1 + nagent])
+    if (is_key_pressed(KC_1 + nagent, KMod_DONTCARE))
     {
         lbKeyOn[KC_1 + nagent] = 0;
         selected_agent = nagent;
@@ -1527,7 +1527,7 @@ ubyte show_cryo_chamber_screen(void)
     }
     if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
-        if (lbKeyOn[KC_0])
+        if (is_key_pressed(KC_0, KMod_DONTCARE))
         {
             lbKeyOn[KC_0] = 0;
             refresh_equip_list = 1;

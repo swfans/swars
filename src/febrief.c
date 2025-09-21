@@ -344,7 +344,7 @@ ubyte input_citymap_scanner(struct ScreenBox *p_box)
         word_1C47E8 = ms_y;
         ret = 1;
     }
-    if (lbKeyOn[KC_PGDOWN])
+    if (is_key_pressed(KC_PGDOWN, KMod_DONTCARE))
     {
         if (dword_1C47E0 > 0)
             dword_1C47E0 = -dword_1C47E0;
@@ -354,7 +354,7 @@ ubyte input_citymap_scanner(struct ScreenBox *p_box)
             dword_1C47E0 = -256;
         ret = 1;
     }
-    else if (lbKeyOn[KC_DELETE])
+    else if (is_key_pressed(KC_DELETE, KMod_DONTCARE))
     {
         if (dword_1C47E0 < 0)
             dword_1C47E0 = -dword_1C47E0;
@@ -375,19 +375,19 @@ ubyte input_citymap_scanner(struct ScreenBox *p_box)
     dx = 0;
     dy = 0;
     ingame.Scanner.Angle = ((dword_1C47E0 >> 2) + ingame.Scanner.Angle) & 0x7FF;
-    if (lbKeyOn[KC_RIGHT]) {
+    if (is_key_pressed(KC_RIGHT, KMod_DONTCARE)) {
         dx++;
         ret = 1;
     }
-    if (lbKeyOn[KC_LEFT]) {
+    if (is_key_pressed(KC_LEFT, KMod_DONTCARE)) {
         dx--;
         ret = 1;
     }
-    if (lbKeyOn[KC_UP]) {
+    if (is_key_pressed(KC_UP, KMod_DONTCARE)) {
         dy--;
         ret = 1;
     }
-    if (lbKeyOn[KC_DOWN]) {
+    if (is_key_pressed(KC_DOWN, KMod_DONTCARE)) {
         dy++;
         ret = 1;
     }
@@ -415,7 +415,7 @@ ubyte input_brief_mission_text_box(struct ScreenTextBox *p_box)
         return 0;
 
     ret = 0;
-    if (lbKeyOn[KC_F])
+    if (is_key_pressed(KC_F, KMod_DONTCARE))
     {
         lbKeyOn[KC_F] = 0;
         if ((p_box->Flags & GBxFlg_TextCopied) == 0)

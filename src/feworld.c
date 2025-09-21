@@ -475,7 +475,7 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
         box->Flags &= ~GBxFlg_Unkn0080;
     }
 
-    if (lbKeyOn[KC_C])
+    if (is_key_pressed(KC_C, KMod_DONTCARE))
     {
         lbKeyOn[KC_C] = 0;
         if (unkn_city_no == -1)

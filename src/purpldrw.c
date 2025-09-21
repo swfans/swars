@@ -19,7 +19,6 @@
 #include "purpldrw.h"
 
 #include "bfconfig.h"
-#include "bfkeybd.h"
 #include "bfutility.h"
 #include "bfscreen.h"
 #include "bfsprite.h"
@@ -33,6 +32,7 @@
 #include "game_sprts.h"
 #include "guiboxes.h"
 #include "guitext.h"
+#include "keyboard.h"
 #include "purpldrwlst.h"
 #include "sound.h"
 #include "swlog.h"
@@ -599,23 +599,24 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
             {
                 // User requested disable - the same keys are probably used for something else
             }
-            else if (lbKeyOn[KC_UP] || lbKeyOn[KC_DOWN] || lbKeyOn[KC_PGUP] || lbKeyOn[KC_PGDOWN])
+            else if (is_key_pressed(KC_UP, KMod_DONTCARE) || is_key_pressed(KC_DOWN, KMod_DONTCARE) ||
+              is_key_pressed(KC_PGUP, KMod_DONTCARE) || is_key_pressed(KC_PGDOWN, KMod_DONTCARE))
             {
                 short scroll_pos, delta;
 
                 scroll_pos = p_box->ScrollBarPos;
 
                 delta = 0;
-                if (lbKeyOn[KC_DOWN])
+                if (is_key_pressed(KC_DOWN, KMod_DONTCARE))
                     delta = p_box->ScrollWindowHeight / p_box->Lines;
-                else if (lbKeyOn[KC_UP])
+                else if (is_key_pressed(KC_UP, KMod_DONTCARE))
                     delta = - p_box->ScrollWindowHeight / p_box->Lines;
                 scroll_pos += delta;
 
                 delta = 0;
-                if (lbKeyOn[KC_PGDOWN])
+                if (is_key_pressed(KC_PGDOWN, KMod_DONTCARE))
                     delta = p_box->ScrollWindowHeight * (lines_visible - 1) / p_box->Lines;
-                else if (lbKeyOn[KC_PGUP])
+                else if (is_key_pressed(KC_PGUP, KMod_DONTCARE))
                     delta = - (lines_visible - 1) * p_box->ScrollWindowHeight / p_box->Lines;
                 scroll_pos += delta;
 
@@ -1153,7 +1154,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
     }
     event_from_key = false;
     akey = p_btn->AccelKey  & 0xFF;
-    if (lbKeyOn[akey])
+    if (is_key_pressed(akey, KMod_DONTCARE))
     {
         if (akey == KC_RETURN || akey == KC_ESCAPE)
         {

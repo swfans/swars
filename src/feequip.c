@@ -409,7 +409,7 @@ ubyte input_equip_agent_panel_shape(struct ScreenShape *shape, sbyte nagent)
 {
     ubyte gbstate;
 
-    if (lbKeyOn[KC_1 + nagent])
+    if (is_key_pressed(KC_1 + nagent, KMod_DONTCARE))
     {
         lbKeyOn[KC_1 + nagent] = 0;
         if (nagent < cryo_agents.NumAgents)
@@ -494,7 +494,7 @@ ubyte input_equip_all_agents_button(struct ScreenButton *button)
     sbyte nagent = 4;
 
     gbstate = GBxSta_NORMAL;
-    if (lbKeyOn[KC_1 + nagent])
+    if (is_key_pressed(KC_1 + nagent, KMod_DONTCARE))
     {
         lbKeyOn[KC_1 + nagent] = 0;
         selected_agent = nagent;
@@ -613,7 +613,7 @@ ubyte show_equipment_screen(void)
     }
     if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
-        if ( lbKeyOn[KC_0] )
+        if (is_key_pressed(KC_0, KMod_DONTCARE))
         {
             lbKeyOn[KC_0] = 0;
             if (cheat_research_weapon < WEP_TYPES_COUNT) {

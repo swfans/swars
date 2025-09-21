@@ -483,7 +483,7 @@ void show_sysmenu_screen(void)
     ubyte drawn;
     ubyte v2;
 
-    if ((game_projector_speed && is_sys_scr_shared_header_flag01()) || (lbKeyOn[KC_SPACE] && !edit_flag))
+    if ((game_projector_speed && is_sys_scr_shared_header_flag01()) || (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
         lbKeyOn[KC_SPACE] = 0;
 
@@ -814,7 +814,7 @@ void global_date_inputs(void)
 {
     if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
-        if (lbKeyOn[KC_PERIOD]) {
+        if (is_key_pressed(KC_PERIOD, KMod_DONTCARE)) {
             lbKeyOn[KC_PERIOD] = 0;
             ingame.Credits += 10000;
         }
@@ -1217,12 +1217,12 @@ void draw_purple_app_unread_email_icon(short cx, short cy)
     struct TbSprite *spr;
 
     spr = &fe_icons_sprites[79];
-    if ((lbKeyOn[KC_RETURN]
+    if ((is_key_pressed(KC_RETURN, KMod_DONTCARE)
         && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
             || screentype != SCRT_SYSMENU) && !edit_flag)
         || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
     {
-        if (!byte_1C4980 && !lbKeyOn[KC_RETURN])
+        if (!byte_1C4980 && !is_key_pressed(KC_RETURN, KMod_DONTCARE))
         {
             byte_1C4980 = 1;
             play_sample_using_heap(0, 123, 127, 64, 100, 0, 1);
@@ -1260,7 +1260,7 @@ TbBool get_purple_app_unread_email_icon_inputs(short cx, short cy)
     const char *subtext;
 
     spr = &fe_icons_sprites[79];
-    if ((lbKeyOn[KC_RETURN]
+    if ((is_key_pressed(KC_RETURN, KMod_DONTCARE)
         && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
             || screentype != SCRT_SYSMENU) && !edit_flag)
         || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
@@ -1272,7 +1272,7 @@ TbBool get_purple_app_unread_email_icon_inputs(short cx, short cy)
         }
         else
         {
-            if (word_1C498A == 50 || lbKeyOn[KC_RETURN])
+            if (word_1C498A == 50 || is_key_pressed(KC_RETURN, KMod_DONTCARE))
             {
                 word_1C498A = 0;
                 lbKeyOn[KC_RETURN] = 0;
@@ -1558,33 +1558,33 @@ TbBool input_purple_apps_selection_bar(void)
 
     if (!net_unkn_pos_01b)
     {
-        if (lbKeyOn[KC_F1])
+        if (is_key_pressed(KC_F1, KMod_DONTCARE))
         {
             lbKeyOn[KC_F1] = 0;
             change_screen = ChSCRT_SYSMENU;
         }
-        if (lbKeyOn[KC_F2])
+        if (is_key_pressed(KC_F2, KMod_DONTCARE))
         {
             lbKeyOn[KC_F2] = 0;
             change_screen = ChSCRT_WORLDMAP;
         }
-        if (lbKeyOn[KC_F3])
+        if (is_key_pressed(KC_F3, KMod_DONTCARE))
         {
             lbKeyOn[KC_F3] = 0;
             change_screen = ChSCRT_CRYO;
         }
-        if (lbKeyOn[KC_F4])
+        if (is_key_pressed(KC_F4, KMod_DONTCARE))
         {
             lbKeyOn[KC_F4] = 0;
             change_screen = ChSCRT_EQUIP;
         }
-        if (lbKeyOn[KC_F5])
+        if (is_key_pressed(KC_F5, KMod_DONTCARE))
         {
             lbKeyOn[KC_F5] = 0;
             if (research.NumBases > 0)
                 change_screen = ChSCRT_RESEARCH;
         }
-        if (lbKeyOn[KC_F6])
+        if (is_key_pressed(KC_F6, KMod_DONTCARE))
         {
             lbKeyOn[KC_F6] = 0;
             if (open_brief != 0)

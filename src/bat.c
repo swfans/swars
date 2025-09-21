@@ -26,6 +26,7 @@
 
 #include "display.h"
 #include "game.h"
+#include "keyboard.h"
 #include "player.h"
 #include "sound.h"
 #include "swlog.h"
@@ -251,7 +252,7 @@ static void BAT_input_paddle(void)
  */
 static void BAT_input_level(void)
 {
-      if (lbKeyOn[KC_N] && lbShift == KMod_SHIFT)
+      if (is_key_pressed(KC_N, KMod_SHIFT))
       {
           BAT_bricks_remain = 0;
           BAT_num_lives++;
