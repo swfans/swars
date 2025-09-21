@@ -27,6 +27,8 @@
 #include "bflib_joyst.h"
 
 #include "game.h"
+#include "game_data.h"
+#include "guitext.h"
 
 /******************************************************************************/
 
@@ -169,6 +171,122 @@ void set_gamekey_kbd(GameKey gkey, TbKeyCode key)
 void set_gamekey_joy(GameKey gkey, ushort jkey)
 {
     jskeys[gkey] = jkey;
+}
+
+ubyte switch_keycode_to_name_code_on_national_keyboard(ubyte keyno)
+{
+    ubyte rkey;
+    rkey = keyno;
+    switch (language_3str[0])
+    {
+    case 'g':
+        // Y and Z keys reversed
+        if (keyno == KC_Y)
+        {
+          rkey = KC_Z;
+        }
+        else if (keyno == KC_Z)
+        {
+          rkey = KC_Y;
+        }
+        break;
+    case 'f':
+        if (keyno == KC_SEMICOLON)
+        {
+          rkey = KC_M;
+        }
+        else if (keyno == KC_Z)
+        {
+          rkey = KC_W;
+        }
+        else if (keyno == KC_M)
+        {
+          rkey = KC_COMMA;
+        }
+        else if (keyno == KC_COMMA)
+        {
+          rkey = KC_SEMICOLON;
+        }
+        else if (keyno == KC_A)
+        {
+          rkey = KC_Q;
+        }
+        else if (keyno == KC_W)
+        {
+          rkey = KC_Z;
+        }
+        else if (keyno == KC_Q)
+        {
+          rkey = KC_A;
+        }
+        break;
+    default:
+        break;
+    }
+    return rkey;
+}
+
+void sprint_gamekey_combination_kbd(char *ostr, GameKey gkey)
+{
+    ushort keyno;
+    TbKeyMods kmodif;
+
+    switch (gkey)
+    {
+    case GKey_SELF_DESTRUCT:
+        kmodif = KMod_ALT;
+        break;
+    case GKey_TRANS_OBJ_SURF_COL:
+    case GKey_TRANS_OBJ_LINE_COL:
+        kmodif = KMod_CONTROL;
+        break;
+    case GKey_CAMERA_PERSPECTV:
+        kmodif = KMod_NONE;
+        break;
+    default:
+        kmodif = KMod_DONTCARE;
+        break;
+    }
+
+    keyno = kbkeys[gkey];
+    if (keyno == KC_UNASSIGNED)
+    {
+        ostr[0] = '\0';
+        return;
+    }
+
+    if (lbKeyNames[keyno] == NULL)
+    {
+        sprintf(ostr, "FOO %d", (int)keyno);
+        return;
+    }
+
+    keyno = switch_keycode_to_name_code_on_national_keyboard(keyno);
+
+    switch (kmodif)
+    {
+    case KMod_ALT:
+        sprintf(ostr, "ALT+%s", lbKeyNames[keyno]);
+        break;
+    case KMod_CONTROL:
+        sprintf(ostr, "CTRL+%s", lbKeyNames[keyno]);
+        break;
+    default:
+        sprintf(ostr, "%s", lbKeyNames[keyno]);
+        break;
+    }
+}
+
+void sprint_gamekey_combination_joy(char *ostr, GameKey gkey)
+{
+    if ((gkey >= GKey_UP) && (gkey <= GKey_RIGHT))
+    {
+        strncpy(ostr, gui_strings[GSTR_SYS_GAME_KEYS + 7 + (gkey - GKey_UP)], 50);
+    }
+    else
+    {
+        sprint_joy_key(ostr, joy.NumberOfButtons[0], jskeys[gkey]);
+    }
 }
 
 static void add_key_to_buffer(ubyte key)

@@ -305,59 +305,6 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     return 0;
 }
 
-ubyte switch_keycode_to_name_code_on_national_keyboard(ubyte keyno)
-{
-    ubyte rkey;
-    rkey = keyno;
-    switch (language_3str[0])
-    {
-    case 'g':
-        // Y and Z keys reversed
-        if (keyno == KC_Y)
-        {
-          rkey = KC_Z;
-        }
-        else if (keyno == KC_Z)
-        {
-          rkey = KC_Y;
-        }
-        break;
-    case 'f':
-        if (keyno == KC_SEMICOLON)
-        {
-          rkey = KC_M;
-        }
-        else if (keyno == KC_Z)
-        {
-          rkey = KC_W;
-        }
-        else if (keyno == KC_M)
-        {
-          rkey = KC_COMMA;
-        }
-        else if (keyno == KC_COMMA)
-        {
-          rkey = KC_SEMICOLON;
-        }
-        else if (keyno == KC_A)
-        {
-          rkey = KC_Q;
-        }
-        else if (keyno == KC_W)
-        {
-          rkey = KC_Z;
-        }
-        else if (keyno == KC_Q)
-        {
-          rkey = KC_A;
-        }
-        break;
-    default:
-        break;
-    }
-    return rkey;
-}
-
 void set_controls_key(ushort hlight_gkey, ushort key)
 {
     GameKey gkey;
@@ -560,34 +507,10 @@ const char *gamekey_text_kbkey_name_for_draw(GameKey gkey)
 {
     char locstr[52];
     const char *text;
-    ushort keyno;
 
-    keyno = kbkeys[gkey];
-    if (keyno != 0)
-    {
-        if (lbKeyNames[keyno] == NULL)
-        {
-          sprintf(locstr, "FOO %d", (int)keyno);
-        }
-        else if (gkey == GKey_SELF_DESTRUCT)
-        {
-          keyno = switch_keycode_to_name_code_on_national_keyboard(keyno);
-          sprintf(locstr, "ALT+%s", lbKeyNames[keyno]);
-        }
-        else if (gkey == GKey_TRANS_OBJ_SURF_COL || gkey == GKey_TRANS_OBJ_LINE_COL)
-        {
-          keyno = switch_keycode_to_name_code_on_national_keyboard(keyno);
-          sprintf(locstr, "CTRL+%s", lbKeyNames[keyno]);
-        }
-        else
-        {
-          keyno = switch_keycode_to_name_code_on_national_keyboard(keyno);
-          sprintf(locstr, "%s", lbKeyNames[keyno]);
-        }
-    }
-    else
-    {
-        strcpy(locstr, "...");
+    sprint_gamekey_combination_kbd(locstr, gkey);
+    if (strlen(locstr) == 0) {
+      strcpy(locstr, "...");
     }
     text = loctext_to_gtext(locstr);
 
@@ -599,19 +522,11 @@ const char *gamekey_text_jskey_name_for_draw(GameKey gkey)
     char locstr[52];
     const char *text;
 
-    if ((gkey >= GKey_UP) && (gkey <= GKey_RIGHT))
-    {
-        text = gui_strings[GSTR_SYS_GAME_KEYS + 7 + (gkey - GKey_UP)];
+    sprint_gamekey_combination_joy(locstr, gkey);
+    if (strlen(locstr) == 0) {
+      strcpy(locstr, "...");
     }
-    else
-    {
-        sprint_joy_key(locstr, joy.NumberOfButtons[0], jskeys[gkey]);
-        if (strlen(locstr) == 0)
-        {
-          strcpy(locstr, "...");
-        }
-        text = loctext_to_gtext(locstr);
-    }
+    text = loctext_to_gtext(locstr);
 
     return text;
 }

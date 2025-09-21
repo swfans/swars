@@ -130,6 +130,9 @@ void set_gamekey_kbd(GameKey gkey, TbKeyCode key);
  */
 void set_gamekey_joy(GameKey gkey, ushort jkey);
 
+void sprint_gamekey_combination_joy(char *ostr, GameKey gkey);
+void sprint_gamekey_combination_kbd(char *ostr, GameKey gkey);
+
 void set_default_game_keys(void);
 
 #endif
