@@ -384,7 +384,7 @@ void set_default_game_keys(void)
     jskeys[GKey_GROUP] = 32;
     jskeys[GKey_GOTO_POINT] = 8;
     jskeys[GKey_DROP_WEAPON] = 16;
-    byte_1C4A9F = 18;
+    ctl_joystick_type = 18;
 
     LbMemorySet(kbkeys, 0, sizeof(kbkeys));
     kbkeys[GKey_NONE] = KC_UNASSIGNED;

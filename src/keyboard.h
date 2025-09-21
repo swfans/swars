@@ -65,6 +65,9 @@ extern ushort kbkeys[GKey_KEYS_COUNT];
 /** Array of joystick button bindings; uses GKey_* enum members as index.
  */
 extern ushort jskeys[GKey_KEYS_COUNT];
+/** Type of joystick selected with controls.
+ */
+extern ubyte ctl_joystick_type;
 
 void init_buffered_keys(void);
 void reset_buffered_keys(void);

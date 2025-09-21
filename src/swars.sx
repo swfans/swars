@@ -20723,7 +20723,7 @@ GLOBAL_FUNC (ASM_set_default_user_settings)	/* 0x40a64 */
 		xor    %edx,%edx
 		mov    $0x12,%ah
 		mov    %cl,%dl
-		mov    %ah,EXPORT_SYMBOL(byte_1C4A9F)
+		mov    %ah,EXPORT_SYMBOL(ctl_joystick_type)
 		lea    0x0(,%edx,8),%eax
 		mov    %di,EXPORT_SYMBOL(kbkeys)+38
 		add    %edx,%eax
@@ -118089,7 +118089,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		or     $0x80,%ch
 		mov    %cx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(byte_1C4A9F),%al
+		mov    EXPORT_SYMBOL(ctl_joystick_type),%al
 		cmp    $0x11,%eax
 		jne    jump_9be71
 		mov    %esp,%eax
@@ -118153,7 +118153,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		sub    %eax,%edx
 		xor    %eax,%eax
 		sar    %edx
-		mov    EXPORT_SYMBOL(byte_1C4A9F),%al
+		mov    EXPORT_SYMBOL(ctl_joystick_type),%al
 		mov    %edx,0x48(%esp)
 		mov    $0x7e,%edx
 		mov    EXPORT_SYMBOL(gui_strings)+0x86C(,%eax,4),%ebx
@@ -118230,7 +118230,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		jge    jump_9c01d
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
 		je     jump_9c01d
-		cmpb   $0x0,EXPORT_SYMBOL(byte_1C4A9F)
+		cmpb   $0x0,EXPORT_SYMBOL(ctl_joystick_type)
 		je     jump_9bfaa
 		mov    $joy_Yaw,%eax
 		call   ac_joy_func_066
@@ -118239,26 +118239,26 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		mov    %cl,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
 		mov    $0xff,%al
 		mov    $joy_Yaw,%esi
-		mov    EXPORT_SYMBOL(byte_1C4A9F),%cl
+		mov    EXPORT_SYMBOL(ctl_joystick_type),%cl
 		mov    $0x1,%ebx
 	jump_9bfc4:
-		mov    EXPORT_SYMBOL(byte_1C4A9F),%ch
+		mov    EXPORT_SYMBOL(ctl_joystick_type),%ch
 		xor    %edx,%edx
 		inc    %ch
 		mov    %ch,%dl
-		mov    %ch,EXPORT_SYMBOL(byte_1C4A9F)
+		mov    %ch,EXPORT_SYMBOL(ctl_joystick_type)
 		cmp    $0x18,%edx
 		jle    jump_9bfe1
-		mov    %bl,EXPORT_SYMBOL(byte_1C4A9F)
+		mov    %bl,EXPORT_SYMBOL(ctl_joystick_type)
 	jump_9bfe1:
-		cmp    EXPORT_SYMBOL(byte_1C4A9F),%cl
+		cmp    EXPORT_SYMBOL(ctl_joystick_type),%cl
 		jne    jump_9bff3
 		xor    %dl,%dl
 		mov    %bl,%al
-		mov    %dl,EXPORT_SYMBOL(byte_1C4A9F)
+		mov    %dl,EXPORT_SYMBOL(ctl_joystick_type)
 	jump_9bff3:
 		xor    %edx,%edx
-		mov    EXPORT_SYMBOL(byte_1C4A9F),%dl
+		mov    EXPORT_SYMBOL(ctl_joystick_type),%dl
 		cmpb   $0x0,unkn01_maskarr(%edx)
 		je     jump_9c00b
 		mov    %esi,%eax
@@ -118629,7 +118629,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		add    0x3c(%esp),%eax
 		mov    EXPORT_SYMBOL(players)+0x01e(%eax),%di # players[0].UserInput[0].ControlMode
 		inc    %edi
-		mov    EXPORT_SYMBOL(byte_1C4A9F),%dl
+		mov    EXPORT_SYMBOL(ctl_joystick_type),%dl
 		mov    %di,EXPORT_SYMBOL(players)+0x01e(%eax) # players[0].UserInput[0].ControlMode
 		test   %dl,%dl
 		jne    jump_9c48f
@@ -186434,7 +186434,7 @@ GLOBAL (current_drawing_mod)	/* 0x1C4A9D */
 		.byte	0x0
 GLOBAL (mo_from_agent)	/* 0x1C4A9E */
 		.byte	0x0
-GLOBAL (byte_1C4A9F)	/* 0x1C4A9F */
+GLOBAL (ctl_joystick_type)	/* 0x1C4A9F */
 		.byte	0x0
 GLOBAL (display_box_content)	/* 0x1C4AA0 */
 		.byte	0x0

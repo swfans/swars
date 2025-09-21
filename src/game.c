@@ -1454,8 +1454,8 @@ void draw_hud(int dcthing)
             if ((p_agent->Flag & TngF_Unkn1000) != 0)
             {
                 short ctlmode;
-                ctlmode = p_locplayer->UserInput[plagent].ControlMode & 0x1FFF;
-                if (ctlmode != 1)
+                ctlmode = p_locplayer->UserInput[plagent].ControlMode & ~UInpCtr_AllFlagsMask;
+                if (ctlmode != UInpCtr_Mouse)
                 {
                     if (p_agent->PTarget != NULL)
                         draw_target_person(p_agent->PTarget, 2);
@@ -4641,7 +4641,7 @@ void players_init_control_mode(void)
 {
     PlayerIdx plyr;
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {
-      players[plyr].UserInput[0].ControlMode = 1;
+      players[plyr].UserInput[0].ControlMode = UInpCtr_Mouse;
     }
 }
 
@@ -4680,7 +4680,7 @@ void do_scroll_map(void)
 {
     PlayerInfo *p_locplayer;
     long engn_xc_orig, engn_zc_orig;
-    ushort md;
+    ushort ctlmode;
     long abase, angle;
     int dx, dy, dz;
     int dampr;
@@ -4714,8 +4714,8 @@ void do_scroll_map(void)
         }
         if (dcthing)
         {
-            md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
-            if (md == 1 || pktrec_mode == PktR_PLAYBACK)
+            ctlmode = p_locplayer->UserInput[0].ControlMode & ~UInpCtr_AllFlagsMask;
+            if (ctlmode == UInpCtr_Mouse || pktrec_mode == PktR_PLAYBACK)
                 move_camera(ingame.TrackX, engn_yc, ingame.TrackZ);
             else
                 track_player(dcthing);
@@ -4723,10 +4723,10 @@ void do_scroll_map(void)
     }
     dy = 0;
     dx = 0;
-    md = p_locplayer->UserInput[byte_153198-1].ControlMode & 0x1FFF;
+    ctlmode = p_locplayer->UserInput[byte_153198-1].ControlMode & ~UInpCtr_AllFlagsMask;
     engn_xc_orig = engn_xc;
     engn_zc_orig = engn_zc;
-    if (md == 1 || pktrec_mode == PktR_PLAYBACK)
+    if (ctlmode == UInpCtr_Mouse || pktrec_mode == PktR_PLAYBACK)
     {
         if (!p_locplayer->PanelState[mouser])
         {
@@ -4741,8 +4741,8 @@ void do_scroll_map(void)
 
             if (!p_locplayer->DoubleMode)
             {
-                dx = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
-                dy = (lbKeyOn[kbkeys[GKey_DOWN]] & 1) - (lbKeyOn[kbkeys[GKey_UP]] & 1);
+                dx = (is_gamekey_kbd_pressed(GKey_RIGHT) & 1) - (is_gamekey_kbd_pressed(GKey_LEFT) & 1);
+                dy = (is_gamekey_kbd_pressed(GKey_DOWN) & 1) - (is_gamekey_kbd_pressed(GKey_UP) & 1);
             }
 
             if (dx == 0)
@@ -5259,7 +5259,7 @@ ubyte do_user_interface(void)
                     short dcthing;
                     dcthing = p_locplayer->DirectControl[n];
                     my_build_packet(&packets[local_player_no], PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
-                    p_locplayer->UserInput[0].ControlMode |= 0x8000;
+                    p_locplayer->UserInput[0].ControlMode |= UInpCtrF_Unkn8000;
                     // Double tapping - center view on the agent
                     if (gameturn - last_sel_agent_turn[n] < 7)
                     {
@@ -5320,8 +5320,8 @@ ubyte do_user_interface(void)
 
             p_usrinp = &p_locplayer->UserInput[n];
             p_usrinp->Bits &= 0x8000FFFF;
-            ctlmode = p_usrinp->ControlMode & 0x1FFF;
-            if (ctlmode == 1)
+            ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+            if (ctlmode == UInpCtr_Mouse)
             {
                 p_usrinp->Bits &= 0x0000FFFF;
                 process_mouse_imputs();
@@ -5346,8 +5346,8 @@ ubyte do_user_interface(void)
                 do_user_input_bits_direction_from_joy(p_usrinp, ctlmode - 2);
                 do_user_input_bits_actions_from_joy(p_usrinp, ctlmode - 2);
             }
-            ctlmode = p_usrinp->ControlMode & 0x1FFF;
-            if (ctlmode != 1)
+            ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+            if (ctlmode != UInpCtr_Mouse)
             {
                 update_agent_move_direction_deltas(p_usrinp);
             }
@@ -5358,11 +5358,12 @@ ubyte do_user_interface(void)
         short dcthing;
 
         p_usrinp = &p_locplayer->UserInput[0];
-        ctlmode = p_usrinp->ControlMode & 0x1FFF;
-        if ((ctlmode == 1) && lbKeyOn[kbkeys[GKey_KEY_CONTROL]])
+        ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+        if ((ctlmode == UInpCtr_Mouse) && lbKeyOn[kbkeys[GKey_KEY_CONTROL]])
         {
             lbKeyOn[kbkeys[GKey_KEY_CONTROL]] = 0;
-            p_usrinp->ControlMode &= 0xE000;
+            p_usrinp->ControlMode &= UInpCtr_AllFlagsMask;
+            p_usrinp->ControlMode |= UInpCtr_Keyboard;
             do_change_mouse(8);
             p_locplayer->State[0] = 0;
         }
@@ -5379,8 +5380,8 @@ ubyte do_user_interface(void)
         {
             do_user_input_bits_actions_from_joy_and_kbd(p_usrinp);
 
-            ctlmode = p_usrinp->ControlMode & 0x1FFF;
-            if (ctlmode != 1)
+            ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+            if (ctlmode != UInpCtr_Mouse)
             {
                 do_user_input_bits_direction_clear(p_usrinp);
                 do_user_input_bits_direction_from_kbd(p_usrinp);
@@ -6894,9 +6895,9 @@ void load_packet(void)
         for (dmuser = 0; dmuser < p_locplayer->DoubleMode + 1; dmuser++)
         {
             if (p_locplayer->DoubleMode != 0) {
-                ulong md;
-                md = p_locplayer->UserInput[dmuser].ControlMode & 0x1FFF;
-                if (md == 1)
+                ulong ctlmode;
+                ctlmode = p_locplayer->UserInput[dmuser].ControlMode & ~UInpCtr_AllFlagsMask;
+                if (ctlmode == UInpCtr_Mouse)
                     continue;
             }
             if (ingame.TrackThing != 0)

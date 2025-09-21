@@ -150,7 +150,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     wpos_y = 126;
 
     lbDisplay.DrawFlags |= 0x8000;
-    if (byte_1C4A9F == 17)
+    if (ctl_joystick_type == 17)
     {
       if (joy_func_063(locstr) != -1)
       {
@@ -162,7 +162,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     }
     else
     {
-        text = gui_strings[539 + byte_1C4A9F];
+        text = gui_strings[539 + ctl_joystick_type];
         tx_width = my_string_width(text);
         wpos_x = (p_box->Width - tx_width) / 2;
         draw_text_purple_list2(wpos_x, wpos_y, text, 0);
@@ -180,23 +180,23 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
             sbyte v23;
             ubyte v24;
 
-            if (byte_1C4A9F)
+            if (ctl_joystick_type)
                 joy_func_066(&joy);
             lbDisplay.LeftButton = 0;
 
             v23 = -1;
-            v24 = byte_1C4A9F;
+            v24 = ctl_joystick_type;
             while (v23 != 1)
             {
-                if (++byte_1C4A9F > 24)
-                    byte_1C4A9F = 1;
-                if (v24 == byte_1C4A9F)
+                if (++ctl_joystick_type > 24)
+                    ctl_joystick_type = 1;
+                if (v24 == ctl_joystick_type)
                 {
                     v23 = 1;
-                    byte_1C4A9F = 0;
+                    ctl_joystick_type = 0;
                 }
-                if (unkn01_maskarr[byte_1C4A9F])
-                    v23 = joy_func_067(&joy, byte_1C4A9F);
+                if (unkn01_maskarr[ctl_joystick_type])
+                    v23 = joy_func_067(&joy, ctl_joystick_type);
                 if (!v24)
                     v24 = 1;
             }
@@ -236,7 +236,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
 
             for (dmuser = p_locplayer->DoubleMode + 1; dmuser < 4; dmuser++)
             {
-                p_locplayer->UserInput[dmuser].ControlMode = 1;
+                p_locplayer->UserInput[dmuser].ControlMode = UInpCtr_Mouse;
             }
         }
     }
@@ -252,7 +252,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
         ushort ctlmode;
 
         ctlmode = p_locplayer->UserInput[dmuser].ControlMode;
-        if (ctlmode >= 2)
+        if (ctlmode >= UInpCtr_Joystick0)
         {
             int n_found;
 
@@ -285,11 +285,11 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
                 lbDisplay.LeftButton = 0;
 
                 ctlmode = p_locplayer->UserInput[dmuser].ControlMode + 1;
+                if (ctl_joystick_type == 0 && ctlmode == UInpCtr_Joystick0)
+                    ctlmode = UInpCtr_Keyboard;
+                if (ctlmode >= UInpCtr_Joystick0 + joy.NumberOfDevices)
+                    ctlmode = UInpCtr_Keyboard;
                 p_locplayer->UserInput[dmuser].ControlMode = ctlmode;
-                if (!byte_1C4A9F && ctlmode == 2)
-                    p_locplayer->UserInput[dmuser].ControlMode = 0;
-                if (p_locplayer->UserInput[dmuser].ControlMode > joy.NumberOfDevices + 1)
-                    p_locplayer->UserInput[dmuser].ControlMode = 0;
             }
         }
         wpos_y += ln_height + 4;

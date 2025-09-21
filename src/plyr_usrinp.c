@@ -45,9 +45,9 @@ void do_user_input_bits_direction_from_kbd(struct SpecialUserInput *p_usrinp)
 {
     sbyte k;
 
-    k = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
+    k = (is_gamekey_kbd_pressed(GKey_RIGHT) & 1) - (is_gamekey_kbd_pressed(GKey_LEFT) & 1);
     p_usrinp->Bits |= ((ubyte)k & 0xFF) << 0;
-    k = (lbKeyOn[kbkeys[GKey_UP]] & 1) - (lbKeyOn[kbkeys[GKey_DOWN]] & 1);
+    k = (is_gamekey_kbd_pressed(GKey_UP) & 1) - (is_gamekey_kbd_pressed(GKey_DOWN) & 1);
     p_usrinp->Bits |= ((ubyte)k & 0xFF) << 8;
 }
 

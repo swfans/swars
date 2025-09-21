@@ -83,6 +83,7 @@ typedef struct {
     ubyte SubState[4]; /* offs=0xC2 */
     ubyte PrevState[4];
     ubyte SubStateTimer[4];
+    /** Double mode is multiple players using the same computer (controlling individual agents). */
     ubyte DoubleMode;
     ubyte PlayerNo;
     ulong Weapons[AGENTS_SQUAD_MAX_COUNT];

@@ -322,7 +322,6 @@ extern long target_old_frameno;
 extern ushort word_176E38;
 
 extern ubyte byte_1C4A7C;
-extern ubyte byte_1C4A9F;
 extern ubyte linear_vec_pal[256];
 extern ulong nsta_size;
 

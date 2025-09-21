@@ -718,8 +718,8 @@ TbBool check_scanner_input(void)
             p_pckt = &packets[local_player_no];
 
             lbDisplay.LeftButton = 0;
-            p_usrinp->ControlMode |= 0x8000;
-            if ((p_locplayer->DoubleMode) || ((p_usrinp->ControlMode & 0x1FFF) == 1))
+            p_usrinp->ControlMode |= UInpCtrF_Unkn8000;
+            if ((p_locplayer->DoubleMode) || ((p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask) == UInpCtr_Mouse))
             {
                 map_y = (alt_at_point(map_x, map_z) >> 8) + 20;
                 if ((gameturn & 0x7FFF) - p_usrinp->Turn >= 7)
@@ -738,7 +738,7 @@ TbBool check_scanner_input(void)
             else
             {
                 do_change_mouse(8);
-                build_packet(p_pckt, PAct_CONTROL_MODE, 1, 0, 0, 0);
+                build_packet(p_pckt, PAct_CONTROL_MODE, UInpCtr_Mouse, 0, 0, 0);
             }
             return true;
         }
@@ -756,7 +756,7 @@ TbBool check_scanner_input(void)
             p_usrinp = &p_locplayer->UserInput[mouser];
 
             lbDisplay.RightButton = 0;
-            p_usrinp->ControlMode |= 0x4000;
+            p_usrinp->ControlMode |= UInpCtrF_Unkn4000;
             if (!p_locplayer->DoubleMode)
             {
                 map_y = (alt_at_point(map_x, map_z) >> 8) + 20;
@@ -2542,9 +2542,11 @@ void draw_new_panel(void)
     if (!func_1caf8(panel_wep))
     {
         if (ingame.Flags & GamF_Unkn0200) {
-            ulong md, y;
-            md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
-            if (md == 1 && pktrec_mode != PktR_PLAYBACK) {
+            uint y;
+            ushort ctlmode;
+
+            ctlmode = p_locplayer->UserInput[0].ControlMode & ~UInpCtr_AllFlagsMask;
+            if (ctlmode == UInpCtr_Mouse && pktrec_mode != PktR_PLAYBACK) {
                 y = alt_at_point(mouse_map_x, mouse_map_z);
                 func_702c0(mouse_map_x, PRCCOORD_TO_YCOORD(y), mouse_map_z, 64, 64, colour_lookup[ColLU_RED]);
             }
@@ -2579,7 +2581,7 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
 
         if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
         {
-            p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
+            p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn4000;
             my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, pnitm, 0, 0);
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             return true;
@@ -2597,7 +2599,7 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
             lbDisplay.RightButton = 0;
             if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
             {
-                p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
+                p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn4000;
                 my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, pnitm, 0, 0);
                 p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
                 return true;
@@ -2612,7 +2614,7 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
                 p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
                 lbDisplay.RightButton = 0;
                 lbDisplay.LeftButton = 0;
-                p_locplayer->UserInput[mouser].ControlMode &= ~(0x4000|0x8000);
+                p_locplayer->UserInput[mouser].ControlMode &= ~(UInpCtrF_Unkn4000|UInpCtrF_Unkn8000);
                 return true;
             }
         }
@@ -2640,7 +2642,7 @@ TbBool process_panel_state_grp_agents_weapon(ushort agent)
         p_agent = p_locplayer->MyAgent[agent];
         if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
         {
-            p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+            p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn8000;
             my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, pnitm, 0, 0);
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             return true;
@@ -2658,7 +2660,7 @@ TbBool process_panel_state_grp_agents_weapon(ushort agent)
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             lbDisplay.RightButton = 0;
             lbDisplay.LeftButton = 0;
-            p_locplayer->UserInput[mouser].ControlMode &= ~(0x4000|0x8000);
+            p_locplayer->UserInput[mouser].ControlMode &= ~(UInpCtrF_Unkn4000|UInpCtrF_Unkn8000);
             return true;
         }
         p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
@@ -2726,7 +2728,7 @@ TbBool process_panel_state_grp_agents_mood(ushort main_panel, ushort agent)
             build_packet(p_pckt, PAct_GROUP_SET_MOOD, p_agent->ThingOffset, mood, 0, 0);
         return true;
     }
-    p_locplayer->UserInput[mouser].ControlMode &= ~0xC000;
+    p_locplayer->UserInput[mouser].ControlMode &= ~(UInpCtrF_Unkn4000|UInpCtrF_Unkn8000);
     p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
 
     return false;
@@ -2820,7 +2822,7 @@ TbBool check_panel_input(short panel)
             } else {
                 dcthing = p_locplayer->DirectControl[0];
                 build_packet(p_pckt, PAct_SELECT_AGENT, dcthing, p_agent->ThingOffset, 0, 0);
-                p_locplayer->UserInput[0].ControlMode |= 0x8000;
+                p_locplayer->UserInput[0].ControlMode |= UInpCtrF_Unkn8000;
             }
             return 1;
         case PanT_AgentMood:
@@ -2828,7 +2830,7 @@ TbBool check_panel_input(short panel)
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
             {
-                p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+                p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn8000;
                 i = panel_mouse_move_mood_value(panel);
                 if (panel_active_based_on_target(panel))
                     my_build_packet(p_pckt, PAct_AGENT_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
@@ -2844,7 +2846,7 @@ TbBool check_panel_input(short panel)
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && person_can_accept_control(p_agent->ThingOffset))
             {
-                p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+                p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn8000;
                 p_locplayer->PanelState[mouser] = PANEL_STATE_WEP_SEL_ONE + p_panel->ID;
                 return 1;
             }
@@ -2871,7 +2873,7 @@ TbBool check_panel_input(short panel)
             if (p_agent->Type != TT_PERSON)
                 break;
             build_packet(p_pckt, PAct_SHIELD_TOGGLE, dcthing, p_agent->ThingOffset, 0, 0);
-            p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+            p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn8000;
             return 1;
         case PanT_Grouping:
             if (mouse_over_infrared_slant_box(panel))
@@ -2897,7 +2899,7 @@ TbBool check_panel_input(short panel)
             {
                 // Increase agent grouping
                 dcthing = p_locplayer->DirectControl[mouser];
-                p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+                p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn8000;
                 if (panel_active_based_on_target(panel))
                     my_build_packet(p_pckt, PAct_PROTECT_INC, dcthing, 0, 0, 0);
             }
@@ -2924,7 +2926,7 @@ TbBool check_panel_input(short panel)
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && (p_agent->State != PerSt_DEAD))
             {
-                p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
+                p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn4000;
                 i = panel_mouse_move_mood_value(panel);
                 if (panel_active_based_on_target(panel))
                     my_build_packet(p_pckt, PAct_GROUP_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
@@ -2940,14 +2942,14 @@ TbBool check_panel_input(short panel)
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if ((p_agent->Type == TT_PERSON) && person_can_accept_control(p_agent->ThingOffset))
             {
-                p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
+                p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn4000;
                 p_locplayer->PanelState[mouser] = PANEL_STATE_WEP_SEL_GRP + p_panel->ID;
                 return 1;
             }
             break;
         case PanT_Grouping:
             // Switch grouping fully on or fully off
-            p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
+            p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn4000;
             if (panel_active_based_on_target(panel))
             {
                 short dcthing;

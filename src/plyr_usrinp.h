@@ -55,6 +55,20 @@ enum SpecialUserInputBits {
     SpUIn_DoActionFast     = 0x80000000,
 };
 
+enum SpecialUserInputControlModes {
+    UInpCtr_Keyboard = 0,
+    UInpCtr_Mouse,
+    UInpCtr_Joystick0,
+    UInpCtr_Joystick1,
+    UInpCtr_Joystick2,
+    UInpCtr_Joystick3,
+    UInpCtrF_Unkn2000 = 0x2000,
+    UInpCtrF_Unkn4000 = 0x4000,
+    UInpCtrF_Unkn8000 = 0x8000,
+};
+
+#define UInpCtr_AllFlagsMask (UInpCtrF_Unkn2000|UInpCtrF_Unkn4000|UInpCtrF_Unkn8000)
+
 /** Per-local-player input mapping struct.
  *
  * The game allows multiple people to play locally, using different input

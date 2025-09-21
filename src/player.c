@@ -367,7 +367,7 @@ void set_default_player_control(void)
     p_locplayer = &players[local_player_no];
     p_locplayer->DoubleMode = 0;
     for (i = 0; i < 4; i++)
-        p_locplayer->UserInput[i].ControlMode = 1;
+        p_locplayer->UserInput[i].ControlMode = UInpCtr_Mouse;
 }
 
 void player_target_clear(PlayerIdx plyr)
