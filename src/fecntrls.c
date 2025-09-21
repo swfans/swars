@@ -519,10 +519,15 @@ const char *gamekey_text_kbkey_name_for_draw(GameKey gkey)
         {
           sprintf(locstr, "FOO %d", (int)keyno);
         }
-        else if (gkey == 14)
+        else if (gkey == GKey_SELF_DESTRUCT)
         {
           keyno = switch_keycode_to_name_code_on_national_keyboard(keyno);
           sprintf(locstr, "ALT+%s", lbKeyNames[keyno]);
+        }
+        else if (gkey == GKey_TRANS_OBJ_SURF_COL || gkey == GKey_TRANS_OBJ_LINE_COL)
+        {
+          keyno = switch_keycode_to_name_code_on_national_keyboard(keyno);
+          sprintf(locstr, "CTRL+%s", lbKeyNames[keyno]);
         }
         else
         {
