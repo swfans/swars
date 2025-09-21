@@ -112,11 +112,10 @@ void sprint_joy_key(char *ostr, int buttons_num, ushort jkeys)
     ostr[tx_len] = '\0';
 }
 
-ubyte is_gamekey_pressed(GameKey gkey)
+ubyte is_gamekey_kbd_pressed(GameKey gkey)
 {
     TbKeyCode kkey;
     TbKeyMods kmodif;
-    ushort jkeys;
 
     kkey = kbkeys[gkey];
 
@@ -137,29 +136,48 @@ ubyte is_gamekey_pressed(GameKey gkey)
         break;
     }
 
+    return is_key_pressed(kkey, kmodif);
+}
+
+ubyte is_gamekey_joy_pressed(GameKey gkey, ubyte channel)
+{
+    ushort jkeys;
+
     jkeys = jskeys[gkey];
 
-    return (is_key_pressed(kkey, kmodif) ||
-        is_joy_pressed(jkeys, 0));
+    return is_joy_pressed(jkeys, channel);
+}
+
+ubyte is_gamekey_pressed(GameKey gkey)
+{
+    return is_gamekey_kbd_pressed(gkey) || is_gamekey_joy_pressed(gkey, 0);
+}
+
+void clear_gamekey_kbd_pressed(GameKey gkey)
+{
+    TbKeyCode kkey;
+
+    kkey = kbkeys[gkey];
+    clear_key_pressed(kkey);
+}
+
+void clear_gamekey_joy_pressed(GameKey gkey, ubyte channel)
+{
+    ushort jkeys;
+
+    jkeys = jskeys[gkey];
+    clear_joy_pressed(jkeys, channel);
 }
 
 void clear_gamekey_pressed(GameKey gkey)
 {
-    TbKeyCode kkey;
-    TbKeyMods kmodif;
-    ushort jkeys;
-
-    kkey = kbkeys[gkey];
-    kmodif = KMod_DONTCARE;
-
-    if (is_key_pressed(kkey, kmodif))
+    if (is_gamekey_kbd_pressed(gkey))
     {
-        clear_key_pressed(kkey);
+        clear_gamekey_kbd_pressed(gkey);
     }
     else
     {
-        jkeys = jskeys[gkey];
-        clear_joy_pressed(jkeys, 0);
+        clear_gamekey_joy_pressed(gkey, 0);
     }
 }
 

@@ -402,7 +402,7 @@ void wait_for_keypress_end(ushort game_key, TbBool impatient)
     TbBool ended;
 
     if (impatient) {
-        lbKeyOn[kbkeys[game_key]] = 0;
+        clear_gamekey_pressed(game_key);
     }
 
     ended = false;
@@ -410,8 +410,7 @@ void wait_for_keypress_end(ushort game_key, TbBool impatient)
     {
         joy_func_065(&joy);
 
-        if (!lbKeyOn[kbkeys[game_key]]
-          && !is_joy_pressed(jskeys[game_key], 0))
+        if (!is_gamekey_pressed(game_key))
             ended = true;
 
         PlayCDTrack(ingame.CDTrack);
@@ -669,8 +668,7 @@ TbBool pause_screen_handle(void)
             return 1;
         }
 
-        if (lbKeyOn[kbkeys[GKey_PAUSE]]
-          || is_joy_pressed(jskeys[GKey_PAUSE], 0))
+        if (is_gamekey_pressed(GKey_PAUSE))
             resume_game = true;
 
         lbDisplay.DrawFlags = 0;

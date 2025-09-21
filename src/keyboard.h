@@ -115,10 +115,16 @@ void clear_joy_pressed(ushort jkeys, ubyte channel);
  */
 ubyte is_gamekey_pressed(GameKey gkey);
 
+ubyte is_gamekey_kbd_pressed(GameKey gkey);
+ubyte is_gamekey_joy_pressed(GameKey gkey, ubyte channel);
+
 /**
  * Clears the marking that a mapped game key was pressed.
  */
 void clear_gamekey_pressed(GameKey gkey);
+
+void clear_gamekey_kbd_pressed(GameKey gkey);
+void clear_gamekey_joy_pressed(GameKey gkey, ubyte channel);
 
 /**
  * Set new keyboard key assigned to the game key.

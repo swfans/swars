@@ -5191,8 +5191,7 @@ ubyte do_user_interface(void)
     // Entering pause screen
     if (!in_network_game)
     {
-        if (lbKeyOn[kbkeys[GKey_PAUSE]] ||
-            is_joy_pressed(jskeys[GKey_PAUSE], 0))
+        if (is_gamekey_pressed(GKey_PAUSE))
         {
             if (pause_screen_handle()) {
                 return -1;
