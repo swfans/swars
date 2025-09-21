@@ -4619,6 +4619,7 @@ void init_screen_boxes(void)
     init_alert_screen_boxes();
     init_main_screen_boxes();
     init_system_menu_boxes();
+    init_sys_scr_shared_content_box();
     init_brief_screen_boxes();
     init_world_screen_boxes();
     init_debrief_screen_boxes();

@@ -18,6 +18,9 @@
 /******************************************************************************/
 #include "feshared.h"
 
+#include "bfscreen.h"
+
+#include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "purpldrw.h"
@@ -48,6 +51,13 @@ ubyte show_sys_scr_shared_header(void)
     asm volatile ("call *%2\n"
         : "=r" (drawn) : "a" (&system_screen_shared_header_box), "g" (system_screen_shared_header_box.DrawFn));
     return drawn;
+}
+
+void init_sys_scr_shared_content_box(void)
+{
+    init_screen_box(&system_screen_shared_content_box, 213u, 72u, 420u, 354, 6);
+
+    system_screen_shared_content_box.X = unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width + 9;
 }
 
 void mark_sys_scr_shared_content_box_redraw(void)
