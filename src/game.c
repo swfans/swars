@@ -1657,25 +1657,27 @@ void engine_draw_things(int pos_beg_x, int pos_beg_z, int rend_beg_x, int rend_b
 
 TbBool get_engine_inputs(void)
 {
-    if ((lbKeyOn[KC_J]) && (lbShift & KMod_CONTROL))
+    if (is_gamekey_pressed(GKey_TRANS_OBJ_SURF_COL))
     {
         short i;
+
         if (lbShift & KMod_SHIFT)
             i = 1;
         else
             i = -1;
+        clear_gamekey_pressed(GKey_TRANS_OBJ_SURF_COL);
         deep_radar_surface_col += i;
-        lbKeyOn[KC_J] = 0;
     }
-    if ((lbKeyOn[KC_H]) && (lbShift & KMod_CONTROL))
+    if (is_gamekey_pressed(GKey_TRANS_OBJ_LINE_COL))
     {
         short i;
+
         if (lbShift & KMod_SHIFT)
             i = 1;
         else
             i = -1;
+        clear_gamekey_pressed(GKey_TRANS_OBJ_LINE_COL);
         deep_radar_line_col += i;
-        lbKeyOn[KC_H] = 0;
     }
     return false;
 }
@@ -2202,9 +2204,9 @@ void game_graphics_inputs(void)
     if (in_network_game && p_locplayer->PanelState[mouser] != 17)
         return;
 
-    if (lbKeyOn[KC_F] && (lbShift == KMod_NONE))
+    if (is_gamekey_pressed(GKey_CAMERA_PERSPECTV))
     {
-        lbKeyOn[KC_F] = 0;
+        clear_gamekey_pressed(GKey_CAMERA_PERSPECTV);
         if (game_perspective == 5)
             game_perspective = 0;
         else
@@ -5162,7 +5164,7 @@ ubyte do_user_interface(void)
     }
 
     // Toggle Scanner beep
-    if (lbKeyOn[KC_S])
+    if (is_gamekey_pressed(GKey_SCANNER_PULSE))
     {
         if (ingame.Flags & GamF_NoScannerBeep)
             ingame.Flags &= ~GamF_NoScannerBeep;

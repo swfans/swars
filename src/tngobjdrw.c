@@ -34,6 +34,7 @@
 #include "game.h"
 #include "game_speed.h"
 #include "game_sprani.h"
+#include "keyboard.h"
 #include "matrix.h"
 #include "player.h"
 #include "thing.h"
@@ -234,8 +235,12 @@ void build_building(struct Thing *p_thing)
 {
     struct SingleObject *p_sobj;
 
-    if ((ingame.DisplayMode == DpM_ENGINEPLY) && (lbKeyOn[KC_B]))
-        return;
+    if (ingame.DisplayMode == DpM_ENGINEPLY)
+    {
+        if (is_gamekey_pressed(GKey_TRANS_OBJECTS))
+            return;
+    }
+
     if (gameturn == p_thing->U.UObject.DrawTurn)
         return;
     p_thing->U.UObject.DrawTurn = gameturn;

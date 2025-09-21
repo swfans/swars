@@ -368,14 +368,9 @@ TbBool save_user_settings(void)
     if (fh == INVALID_FILE)
         return 1;
 
-#ifdef MORE_GAME_KEYS_SUPPORTED //TODO disable until new keys are added and ready
     LbFileWrite(fh, &fmtver, sizeof(fmtver));
     LbFileWrite(fh, kbkeys, GKey_KEYS_COUNT * sizeof(ushort));
     LbFileWrite(fh, jskeys, GKey_KEYS_COUNT * sizeof(ushort));
-#else
-    LbFileWrite(fh, kbkeys, 23 * sizeof(ushort));
-    LbFileWrite(fh, jskeys, 23 * sizeof(ushort));
-#endif
     LbFileWrite(fh, &byte_1C4A9F, sizeof(byte_1C4A9F));
     LbFileWrite(fh, &players[local_player_no].DoubleMode,
       sizeof(players[local_player_no].DoubleMode));

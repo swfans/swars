@@ -82,6 +82,13 @@ ubyte is_gamekey_pressed(ushort gkey)
     case GKey_SELF_DESTRUCT:
         kmodif = KMod_ALT;
         break;
+    case GKey_TRANS_OBJ_SURF_COL:
+    case GKey_TRANS_OBJ_LINE_COL:
+        kmodif = KMod_CONTROL;
+        break;
+    case GKey_CAMERA_PERSPECTV:
+        kmodif = KMod_NONE;
+        break;
     default:
         kmodif = KMod_DONTCARE;
         break;
@@ -217,6 +224,11 @@ void set_default_game_keys(void)
     kbkeys[GKey_SEL_AGENT_2] = KC_2;
     kbkeys[GKey_SEL_AGENT_4] = KC_4;
     kbkeys[GKey_SEL_AGENT_3] = KC_3;
+    kbkeys[GKey_TRANS_OBJECTS] = KC_B;
+    kbkeys[GKey_SCANNER_PULSE] = KC_S;
+    kbkeys[GKey_CAMERA_PERSPECTV] = KC_F;
+    kbkeys[GKey_TRANS_OBJ_SURF_COL] = KC_J;
+    kbkeys[GKey_TRANS_OBJ_LINE_COL] = KC_H;
 }
 
 /******************************************************************************/
