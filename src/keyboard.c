@@ -46,7 +46,7 @@ ulong buffered_keys_write_index;
 
 ubyte is_key_pressed(TbKeyCode key, TbKeyMods kmodif)
 {
-    if ((kmodif == KMod_DONTCARE) || (kmodif == lbShift))
+    if ((kmodif == KMod_DONTCARE) || (kmodif & lbShift) == kmodif)
         return lbKeyOn[key];
     return 0;
 }
@@ -64,12 +64,53 @@ void clear_key_pressed(TbKeyCode key)
     }
 }
 
-ubyte is_joy_pressed(ushort jkeys)
+ubyte is_joy_pressed(ushort jkeys, ubyte channel)
 {
-    return (jkeys && jkeys == joy.Buttons[0]);
+    return (jkeys && jkeys == joy.Buttons[channel]);
 }
 
-ubyte is_gamekey_pressed(ushort gkey)
+void clear_joy_pressed(ushort jkeys, ubyte channel)
+{
+    if (channel >= sizeof(joy.Buttons[0])/sizeof(joy.Buttons[0]))
+        return;
+    joy.Buttons[channel] &= ~jkeys;
+}
+
+void sprint_joy_key(char *ostr, int buttons_num, ushort jkeys)
+{
+    int tx_len;
+    int jbtn, pressed_count;
+
+    tx_len = 0;
+    pressed_count = 0;
+    for (jbtn = 0; jbtn < buttons_num; jbtn++)
+    {
+        if (pressed_count >= 4)
+            break;
+        if (((1 << jbtn) & jkeys) != 0)
+        {
+            if (tx_len > 0)
+                ostr[tx_len++] = '+';
+            if (jbtn >= 9)
+            {
+                uint n;
+                n = jbtn + 1;
+                ostr[tx_len++] = '0' + (n / 10);
+                ostr[tx_len++] = '0' + (n % 10);
+            }
+            else
+            {
+                char c;
+                c = '1' + jbtn;
+                ostr[tx_len++] = c;
+            }
+            ++pressed_count;
+        }
+    }
+    ostr[tx_len] = '\0';
+}
+
+ubyte is_gamekey_pressed(GameKey gkey)
 {
     TbKeyCode kkey;
     TbKeyMods kmodif;
@@ -97,10 +138,10 @@ ubyte is_gamekey_pressed(ushort gkey)
     jkeys = jskeys[gkey];
 
     return (is_key_pressed(kkey, kmodif) ||
-        is_joy_pressed(jkeys));
+        is_joy_pressed(jkeys, 0));
 }
 
-void clear_gamekey_pressed(ushort gkey)
+void clear_gamekey_pressed(GameKey gkey)
 {
     TbKeyCode kkey;
     TbKeyMods kmodif;
@@ -116,8 +157,18 @@ void clear_gamekey_pressed(ushort gkey)
     else
     {
         jkeys = jskeys[gkey];
-        joy.Buttons[0] &= ~jkeys;
+        clear_joy_pressed(jkeys, 0);
     }
+}
+
+void set_gamekey_kbd(GameKey gkey, TbKeyCode key)
+{
+    kbkeys[gkey] = key;
+}
+
+void set_gamekey_joy(GameKey gkey, ushort jkey)
+{
+    jskeys[gkey] = jkey;
 }
 
 static void add_key_to_buffer(ubyte key)

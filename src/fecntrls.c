@@ -358,13 +358,59 @@ ubyte switch_keycode_to_name_code_on_national_keyboard(ubyte keyno)
     return rkey;
 }
 
+void set_controls_key(ushort hlight_gkey, ushort key)
+{
+    GameKey gkey;
+    TbBool is_joystick;
+
+    if (hlight_gkey > (GKey_KEYS_COUNT - 1)) {
+        gkey = hlight_gkey - (GKey_KEYS_COUNT - 1);
+        is_joystick = true;
+    } else {
+        gkey = hlight_gkey;
+        is_joystick = false;
+    }
+
+    if (is_joystick)
+        set_gamekey_joy(gkey, key);
+    else
+        set_gamekey_kbd(gkey, key);
+}
+
+void unset_controls_key(ushort hlight_gkey)
+{
+    GameKey gkey;
+    TbBool is_joystick;
+
+    if (hlight_gkey > (GKey_KEYS_COUNT - 1)) {
+        gkey = hlight_gkey - (GKey_KEYS_COUNT - 1);
+        is_joystick = true;
+    } else {
+        gkey = hlight_gkey;
+        is_joystick = false;
+    }
+
+    if (is_joystick)
+        set_gamekey_joy(gkey, 0);
+    else
+        set_gamekey_kbd(gkey, KC_UNASSIGNED);
+}
+
+TbBool is_hardcoded_hlight_gkey(ushort hlight_gkey)
+{
+    if (hlight_gkey >= (GKey_KEYS_COUNT - 1) + GKey_UP &&
+      hlight_gkey <= (GKey_KEYS_COUNT - 1) + GKey_RIGHT)
+        return true;
+
+    return false;
+}
+
 /** Check inputs for controls box in system menu screen.
  *
  * @return Gives 0 on no action, 1 on non-control-changing action, 2 on control key update/
  */
 ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
 {
-    GameKey gkey;
     ubyte ret;
     int i;
 
@@ -406,9 +452,9 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
                 controls_hlight_gkey += 2 * (GKey_KEYS_COUNT - 1);
             ret = 1;
         }
-        if (controls_hlight_gkey < 31 || controls_hlight_gkey > 34)
+
+        if (is_hardcoded_hlight_gkey(controls_hlight_gkey))
         {
-            gkey = controls_hlight_gkey;
             if (byte_1C4970)
             {
                 if (byte_1C4970 == 1 && !lbKeyOn[KC_RETURN])
@@ -416,52 +462,55 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
                     lbExtendedKeyPress = 0;
                     lbInkey = 0;
                     byte_1C4970 = 0;
-                    net_unkn_pos_01b = gkey;
+                    net_unkn_pos_01b = controls_hlight_gkey;
+                    ret = 2;
                 }
-                ret = 2;
             }
             else
             {
                 if (lbKeyOn[KC_RETURN])
+                {
                     byte_1C4970++;
+                    ret = 2;
+                }
                 if (lbKeyOn[KC_BACK])
                 {
                     lbKeyOn[KC_BACK] = 0;
-                    if (gkey > (GKey_KEYS_COUNT - 1))
-                      jskeys[gkey - (GKey_KEYS_COUNT - 1)] = 0;
-                    else
-                      kbkeys[gkey] = KC_UNASSIGNED;
+                    unset_controls_key(controls_hlight_gkey);
+                    ret = 2;
                 }
-                ret = 2;
             }
         }
     }
 
     if (net_unkn_pos_01b != 0)
     {
-        gkey = net_unkn_pos_01b;
-        if (gkey > (GKey_KEYS_COUNT - 1))
+        GameKey hlight_gkey;
+
+        hlight_gkey = net_unkn_pos_01b;
+        if (hlight_gkey > (GKey_KEYS_COUNT - 1))
         {
             if (joy.Buttons[0])
             {
-                int v12, v13, jbtn;
+                uint jbtn_pressed, jbtn_max, jbtn, jskey_flags;
 
-                jskeys[gkey - (GKey_KEYS_COUNT - 1)] = 0;
+                jskey_flags = 0;
                 jbtn = 0;
-                if (joy.NumberOfButtons[0] > 0)
+                jbtn_max = joy.NumberOfButtons[0];
+                if (jbtn_max > 0)
                 {
-                  v12 = joy.Buttons[0];
-                  v13 = joy.NumberOfButtons[0];
+                  jbtn_pressed = joy.Buttons[0];
                   for (i = 0; i < 4; i++)
                   {
-                    if ((v12 & (1 << jbtn)) != 0) {
-                        jskeys[gkey - (GKey_KEYS_COUNT - 1)] |= (1 << jbtn);
+                    if ((jbtn_pressed & (1 << jbtn)) != 0) {
+                        jskey_flags |= (1 << jbtn);
                     }
                     jbtn++;
-                    if (jbtn >= v13)
+                    if (jbtn >= jbtn_max)
                         break;
                   }
                 }
+                set_controls_key(hlight_gkey, jskey_flags);
                 ret = 2;
             }
         }
@@ -471,14 +520,14 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
             {
                 if (lbExtendedKeyPress)
                 {
-                  kbkeys[gkey] = lbInkey | 0x80;
+                  set_controls_key(hlight_gkey, lbInkey | 0x80);
                   lbExtendedKeyPress = 0;
                   lbInkey = 0;
                 }
                 else
                 {
-                  if ((lbInkey & 0x7F) != 43)
-                    kbkeys[gkey] = lbInkey & 0x7F;
+                  if ((lbInkey & 0x7F) != KC_BACKSLASH)
+                      set_controls_key(hlight_gkey, lbInkey & 0x7F);
                   lbInkey = 0;
                 }
                 ret = 2;
@@ -556,37 +605,8 @@ const char *gamekey_text_jskey_name_for_draw(GameKey gkey)
     }
     else
     {
-        int tx_len;
-        int jbtn, v38;
-
-        tx_len = 0;
-        v38 = 0;
-        for (jbtn = 0; jbtn < joy.NumberOfButtons[0]; jbtn++)
-        {
-          if (v38 >= 4)
-            break;
-          if (((1 << jbtn) & jskeys[gkey]) != 0)
-          {
-            if (tx_len > 0)
-              locstr[tx_len++] = '+';
-            if (jbtn >= 9)
-            {
-                uint n;
-                n = jbtn + 1;
-                locstr[tx_len++] = '0' + (n / 10);
-                locstr[tx_len++] = '0' + (n % 10);
-            }
-            else
-            {
-                char c;
-                c = '1' + jbtn;
-                locstr[tx_len++] = c;
-            }
-            ++v38;
-          }
-        }
-        locstr[tx_len] = '\0';
-        if (tx_len == 0)
+        sprint_joy_key(locstr, joy.NumberOfButtons[0], jskeys[gkey]);
+        if (strlen(locstr) == 0)
         {
           strcpy(locstr, "...");
         }

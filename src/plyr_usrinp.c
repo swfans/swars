@@ -79,17 +79,13 @@ void do_user_input_bits_actions_from_kbd(struct SpecialUserInput *p_usrinp)
 
 void do_user_input_bits_actions_from_joy(struct SpecialUserInput *p_usrinp, ubyte channel)
 {
-    if (jskeys[GKey_FIRE]
-      && (jskeys[GKey_FIRE] & joy.Buttons[channel]) == jskeys[GKey_FIRE])
+    if (is_joy_pressed(jskeys[GKey_FIRE], channel))
         p_usrinp->Bits |= SpUIn_DoTrigger;
-    if (jskeys[GKey_CHANGE_MD_WP]
-      && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[channel]) == jskeys[GKey_CHANGE_MD_WP])
+    if (is_joy_pressed(jskeys[GKey_CHANGE_MD_WP], channel))
         p_usrinp->Bits |= SpUIn_ChangeMoodOrWep;
-    if (jskeys[GKey_DROP_WEAPON]
-      && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[channel]) == jskeys[GKey_DROP_WEAPON])
+    if (is_joy_pressed(jskeys[GKey_DROP_WEAPON], channel))
         p_usrinp->Bits |= SpUIn_DoDropOrGoOut;
-    if (jskeys[GKey_SELF_DESTRUCT]
-      && (jskeys[GKey_SELF_DESTRUCT] & joy.Buttons[channel]) == jskeys[GKey_SELF_DESTRUCT])
+    if (is_joy_pressed(jskeys[GKey_SELF_DESTRUCT], channel))
         p_usrinp->Bits |= SpUIn_SelfDestruct;
 }
 
@@ -127,26 +123,19 @@ void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usri
         p_usrinp->Bits |= SpUIn_SelfDestruct;
     }
 
-    if (jskeys[GKey_FIRE]
-      && (jskeys[GKey_FIRE] & joy.Buttons[0]) == jskeys[GKey_FIRE])
+    if (is_joy_pressed(jskeys[GKey_FIRE], 0))
         p_usrinp->Bits |= SpUIn_DoTrigger;
-    if (jskeys[GKey_CHANGE_MD_WP]
-      && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[0]) == jskeys[GKey_CHANGE_MD_WP])
+    if (is_joy_pressed(jskeys[GKey_CHANGE_MD_WP], 0))
         p_usrinp->Bits |= SpUIn_ChangeMoodOrWep;
-    if (jskeys[GKey_CHANGE_AGENT]
-      && (jskeys[GKey_CHANGE_AGENT] & joy.Buttons[0]) == jskeys[GKey_CHANGE_AGENT])
+    if (is_joy_pressed(jskeys[GKey_CHANGE_AGENT], 0))
         p_usrinp->Bits |= SpUIn_ChangeAgent;
-    if (jskeys[GKey_GOTO_POINT]
-      && (jskeys[GKey_GOTO_POINT] & joy.Buttons[0]) == jskeys[GKey_GOTO_POINT])
+    if (is_joy_pressed(jskeys[GKey_GOTO_POINT], 0))
         p_usrinp->Bits |= SpUIn_GotoPoint;
-    if (jskeys[GKey_GROUP]
-      && (jskeys[GKey_GROUP] & joy.Buttons[0]) == jskeys[GKey_GROUP])
+    if (is_joy_pressed(jskeys[GKey_GROUP], 0))
         p_usrinp->Bits |= SpUIn_GroupingInc;
-    if (jskeys[GKey_DROP_WEAPON]
-      && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[0]) == jskeys[GKey_DROP_WEAPON])
+    if (is_joy_pressed(jskeys[GKey_DROP_WEAPON], 0))
         p_usrinp->Bits |= SpUIn_DoDropOrGoOut;
-    if (jskeys[GKey_SELF_DESTRUCT]
-      && (jskeys[GKey_SELF_DESTRUCT] & joy.Buttons[0]) == jskeys[GKey_SELF_DESTRUCT])
+    if (is_joy_pressed(jskeys[GKey_SELF_DESTRUCT], 0))
         p_usrinp->Bits |= SpUIn_SelfDestruct;
 }
 

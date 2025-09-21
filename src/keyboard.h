@@ -79,9 +79,34 @@ ulong next_buffered_key(void);
 ubyte is_key_pressed(TbKeyCode key, TbKeyMods kmodif);
 
 /**
+ * Checks if a specific joystick key is pressed.
+ *
+ * @param jkeys Flags marking the buttons to check.
+ * @param channel Joystick channel selection, for multiple joysticks connected.
+ */
+ubyte is_joy_pressed(ushort jkeys, ubyte channel);
+
+/**
+ * Print joystick buttons combination as text.
+ *
+ * @param ostr Output string buffer.
+ * @param buttons_num Amount of buttons supported by the device.
+ * @param jkeys Flags marking the buttons to print.
+ */
+void sprint_joy_key(char *ostr, int buttons_num, ushort jkeys);
+
+/**
  * Clears the marking that a specific key was pressed.
  */
 void clear_key_pressed(TbKeyCode key);
+
+/**
+ * Clears the marking that specific joystick buttons were pressed.
+ *
+ * @param jkeys Flags marking the buttons to clear.
+ * @param channel Joystick channel selection, for multiple joysticks connected.
+ */
+void clear_joy_pressed(ushort jkeys, ubyte channel);
 
 /**
  * Checks if a mapped game key is pressed.
@@ -94,6 +119,16 @@ ubyte is_gamekey_pressed(GameKey gkey);
  * Clears the marking that a mapped game key was pressed.
  */
 void clear_gamekey_pressed(GameKey gkey);
+
+/**
+ * Set new keyboard key assigned to the game key.
+ */
+void set_gamekey_kbd(GameKey gkey, TbKeyCode key);
+
+/**
+ * Set new joystick key assigned to the game key.
+ */
+void set_gamekey_joy(GameKey gkey, ushort jkey);
 
 void set_default_game_keys(void);
 

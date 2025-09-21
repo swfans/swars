@@ -5192,7 +5192,7 @@ ubyte do_user_interface(void)
     if (!in_network_game)
     {
         if (lbKeyOn[kbkeys[GKey_PAUSE]] ||
-            (jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0]))
+            is_joy_pressed(jskeys[GKey_PAUSE], 0))
         {
             if (pause_screen_handle()) {
                 return -1;
