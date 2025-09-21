@@ -1133,7 +1133,7 @@ short test_objective(ushort objectv, ushort show_obj)
         if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
           (p_objectv->Status != ObvStatu_FAILED) && is_key_pressed(KC_SLASH, KMod_ALT))
         {
-            lbKeyOn[KC_SLASH] = 0;
+            clear_key_pressed(KC_SLASH);
             p_objectv->Status = ObvStatu_FAILED;
         }
         if (p_objectv->Status == ObvStatu_FAILED)
@@ -1147,7 +1147,7 @@ short test_objective(ushort objectv, ushort show_obj)
         if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
           (p_objectv->Status != ObvStatu_FAILED) && is_key_pressed(KC_SLASH, KMod_ALT))
         {
-            lbKeyOn[KC_SLASH] = 0;
+            clear_key_pressed(KC_SLASH);
             p_objectv->Status = ObvStatu_FAILED;
         }
         if (p_objectv->Status == ObvStatu_FAILED)

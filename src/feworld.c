@@ -477,7 +477,7 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
 
     if (is_key_pressed(KC_C, KMod_DONTCARE))
     {
-        lbKeyOn[KC_C] = 0;
+        clear_key_pressed(KC_C);
         if (unkn_city_no == -1)
         {
             for (i = 0; i < num_cities; i++)

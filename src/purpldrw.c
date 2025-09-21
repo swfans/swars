@@ -1154,26 +1154,23 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
     }
     event_from_key = false;
     akey = p_btn->AccelKey  & 0xFF;
-    if (is_key_pressed(akey, KMod_DONTCARE))
+    if ((akey == KC_RETURN || akey == KC_ESCAPE) && is_key_pressed(akey, KMod_DONTCARE))
     {
-        if (akey == KC_RETURN || akey == KC_ESCAPE)
-        {
-            lbKeyOn[akey] = 0;
-            p_btn->Flags |= GBxFlg_IsPushed;
-            event_from_key = true;
-        } else
-        if ((lbShift & 4) != 0)
-        {
-            lbKeyOn[akey] = 0;
-            event_from_key = true;
-            p_btn->Flags |= GBxFlg_IsPushed;
-        } else
-        if ((lbShift & 2) != 0)
-        {
-            lbKeyOn[akey] = 0;
-            p_btn->Flags |= GBxFlg_IsRPushed;
-            event_from_key = true;
-        }
+        clear_key_pressed(akey);
+        p_btn->Flags |= GBxFlg_IsPushed;
+        event_from_key = true;
+    } else
+    if (is_key_pressed(akey, KMod_ALT))
+    {
+        clear_key_pressed(akey);
+        event_from_key = true;
+        p_btn->Flags |= GBxFlg_IsPushed;
+    } else
+    if (is_key_pressed(akey, KMod_CONTROL))
+    {
+        clear_key_pressed(akey);
+        p_btn->Flags |= GBxFlg_IsRPushed;
+        event_from_key = true;
     }
 
     mouse_over = mouse_move_over_box(p_btn);

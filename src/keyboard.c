@@ -68,6 +68,14 @@ void clear_key_pressed(TbKeyCode key)
     }
 }
 
+void simulate_key_press(TbKeyCode key)
+{
+    lbKeyOn[key] = 1;
+    if (lbInkey == KC_UNASSIGNED) {
+        lbInkey = key;
+    }
+}
+
 ubyte is_joy_pressed(ushort jkeys, ubyte channel)
 {
     return (jkeys && jkeys == joy.Buttons[channel]);
@@ -372,6 +380,26 @@ TbResult KEventBufferedKeysUpdate(TbKeyAction action, TbKeyCode code)
 void init_buffered_keys(void)
 {
     LbKeyboardCustomHandler(KEventBufferedKeysUpdate);
+}
+
+void input(void)
+{
+    uint16_t n;
+
+    n = lbShift;
+    if (lbKeyOn[KC_LSHIFT] || lbKeyOn[KC_RSHIFT])
+        n |= KMod_SHIFT;
+    else
+        n &= ~KMod_SHIFT;
+    if (lbKeyOn[KC_LCONTROL] || lbKeyOn[KC_RCONTROL])
+        n |= KMod_CONTROL;
+    else
+        n &= ~KMod_CONTROL;
+    if (lbKeyOn[KC_RALT] || lbKeyOn[KC_LALT])
+        n |= KMod_ALT;
+    else
+        n &= ~KMod_ALT;
+    lbShift = n;
 }
 
 void set_default_game_keys(void)

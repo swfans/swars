@@ -623,12 +623,12 @@ void things_debug_hud(void)
     // Lock on current thing
     if (is_key_pressed(KC_W, KMod_SHIFT))
     {
-        lbKeyOn[KC_W] = 0;
+        clear_key_pressed(KC_W);
         dword_1DC7A4 = 0;
     }
     if (is_key_pressed(KC_W, KMod_NONE))
     {
-        lbKeyOn[KC_W] = 0;
+        clear_key_pressed(KC_W);
         if (thing > 0) {
             dword_1DC7A4 = thing;
         }

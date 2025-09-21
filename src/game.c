@@ -931,7 +931,7 @@ void play_intro(void)
 
     LOGSYNC("Starting");
     lbDisplay.LeftButton = 0;
-    lbKeyOn[KC_ESCAPE] = 0;
+    clear_key_pressed(KC_ESCAPE);
     if ( (cmdln_param_bcg || is_single_game) &&
       ((ingame.Flags & GamF_SkipIntro) == 0))
     {
@@ -2217,7 +2217,7 @@ void game_graphics_inputs(void)
     {
         if (is_key_pressed(KC_T, KMod_ALT))
         {
-            lbKeyOn[KC_T] = 0;
+            clear_key_pressed(KC_T);
             teleport_current_agent(p_locplayer);
         }
     }
@@ -2226,13 +2226,13 @@ void game_graphics_inputs(void)
     {
         if (is_key_pressed(KC_Q, KMod_NONE))
         {
-            lbKeyOn[KC_Q] = 0;
+            clear_key_pressed(KC_Q);
             give_best_mods_to_all_agents(p_locplayer);
             set_max_stats_to_all_agents(p_locplayer);
         }
         if (is_key_pressed(KC_Q, KMod_SHIFT))
         {
-            lbKeyOn[KC_Q] = 0;
+            clear_key_pressed(KC_Q);
             resurrect_any_dead_agents(p_locplayer);
             give_all_weapons_to_all_agents(p_locplayer);
         }
@@ -2240,7 +2240,7 @@ void game_graphics_inputs(void)
 
     if (is_key_pressed(KC_F8, KMod_DONTCARE))
     {
-        lbKeyOn[KC_F8] = 0;
+        clear_key_pressed(KC_F8);
         screen_mode_switch_to_next();
     }
 }
@@ -3552,25 +3552,6 @@ void mapwho_unkn01(int a1, int a2)
         : : "a" (a1), "d" (a2));
 }
 
-void input(void)
-{
-    uint16_t n;
-    n = lbShift;
-    if ( lbKeyOn[KC_LSHIFT] || lbKeyOn[KC_RSHIFT] )
-        n |= KMod_SHIFT;
-    else
-        n &= ~KMod_SHIFT;
-    if ( lbKeyOn[KC_LCONTROL] || lbKeyOn[KC_RCONTROL] )
-        n |= KMod_CONTROL;
-    else
-        n &= ~KMod_CONTROL;
-    if ( lbKeyOn[KC_RALT] || lbKeyOn[KC_LALT] )
-        n |= KMod_ALT;
-    else
-        n &= ~KMod_ALT;
-    lbShift = n;
-}
-
 void show_unkn3A_screen(int a1)
 {
     // Empty
@@ -4872,7 +4853,7 @@ ubyte weapon_select_input(void)
         ushort kkey = sel_weapon_keys[n];
         if (is_key_pressed(kkey, KMod_NONE))
         {
-            lbKeyOn[kkey] = 0;
+            clear_key_pressed(kkey);
             weptype = find_nth_weapon_held(dcthing, n+1);
             if (weptype != WEP_NULL)
                 break;
@@ -4977,13 +4958,13 @@ void do_music_user_input(void)
     // Music track control
     if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
     {
-        lbKeyOn[KC_NUMPAD5] = 0;
+        clear_key_pressed(KC_NUMPAD5);
         if (++ingame.CDTrack > 4)
             ingame.CDTrack = 2;
     }
     if (is_key_pressed(KC_NUMPAD0, KMod_DONTCARE))
     {
-        lbKeyOn[KC_NUMPAD0] = 0;
+        clear_key_pressed(KC_NUMPAD0);
         ingame.DangerTrack = 2 - ingame.DangerTrack + 1;
     }
 
@@ -5002,7 +4983,7 @@ ubyte do_user_interface(void)
     {
         if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
         {
-            lbKeyOn[KC_RETURN] = 0;
+            clear_key_pressed(KC_RETURN);
             if ((p_locplayer->PanelState[mouser] != 17) && (player_unkn0C9[local_player_no] <= 140))
             {
                 p_locplayer->PanelState[mouser] = 17;
@@ -5028,13 +5009,13 @@ ubyte do_user_interface(void)
     {
         if (is_key_pressed(KC_F1+n, KMod_ALT))
         {
-            lbKeyOn[KC_F1+n] = 0;
+            clear_key_pressed(KC_F1+n);
             my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_ADD, n, 0, 0, 0);
             return 1;
         }
         if (is_key_pressed(KC_F1+n, KMod_SHIFT))
         {
-            lbKeyOn[KC_F1+n] = 0;
+            clear_key_pressed(KC_F1+n);
             my_build_packet(&packets[local_player_no], PAct_AGENT_UNKGROUP_PROT, n, 0, 0, 0);
             return 1;
         }
@@ -5046,7 +5027,7 @@ ubyte do_user_interface(void)
     {
         sbyte panperm;
 
-        lbKeyOn[KC_F9] = 0;
+        clear_key_pressed(KC_F9);
         StopCD();
         if (ingame.PanelPermutation >= 0)
         {
@@ -5077,7 +5058,7 @@ ubyte do_user_interface(void)
     // change agents colours
     if (is_key_pressed(KC_F10, KMod_NONE))
     {
-        lbKeyOn[KC_F10] = 0;
+        clear_key_pressed(KC_F10);
         StopCD();
         if (++ingame.TrenchcoatPreference > 5)
             ingame.TrenchcoatPreference = 0;
@@ -5087,12 +5068,12 @@ ubyte do_user_interface(void)
     // adjust palette brightness
     if (is_key_pressed(KC_F11, KMod_CONTROL))
     {
-        lbKeyOn[KC_F11] = 0;
+        clear_key_pressed(KC_F11);
         read_palette_file();
     }
     if (is_key_pressed(KC_F11, KMod_SHIFT))
     {
-        lbKeyOn[KC_F11] = 0;
+        clear_key_pressed(KC_F11);
         change_brightness(-1);
         brightness--;
     }
@@ -5104,7 +5085,7 @@ ubyte do_user_interface(void)
 
     if (is_key_pressed(KC_F1, KMod_CONTROL))
     {
-        lbKeyOn[KC_F1] = 0;
+        clear_key_pressed(KC_F1);
         if ((ingame.Flags & GamF_BillboardMovies) != 0)
             ingame.Flags &= ~GamF_BillboardMovies;
         else
@@ -5112,7 +5093,7 @@ ubyte do_user_interface(void)
     }
     if (is_key_pressed(KC_F2, KMod_CONTROL))
     {
-        lbKeyOn[KC_F2] = 0;
+        clear_key_pressed(KC_F2);
         if (ingame.Flags & GamF_RenderScene)
             ingame.Flags &= ~GamF_RenderScene;
         else
@@ -5120,7 +5101,7 @@ ubyte do_user_interface(void)
     }
     if (is_key_pressed(KC_F3, KMod_CONTROL))
     {
-        lbKeyOn[KC_F3] = 0;
+        clear_key_pressed(KC_F3);
         if (ingame.Flags & GamF_StopThings)
             ingame.Flags &= ~GamF_StopThings;
         else
@@ -5128,7 +5109,7 @@ ubyte do_user_interface(void)
     }
     if (is_key_pressed(KC_F4, KMod_CONTROL))
     {
-        lbKeyOn[KC_F4] = 0;
+        clear_key_pressed(KC_F4);
         if ((ingame.Flags & GamF_AdvLights) != 0)
             ingame.Flags &= ~GamF_AdvLights;
         else
@@ -5136,7 +5117,7 @@ ubyte do_user_interface(void)
     }
     if (is_key_pressed(KC_F6, KMod_CONTROL))
     {
-        lbKeyOn[KC_F6] = 0;
+        clear_key_pressed(KC_F6);
         if ((ingame.Flags & GamF_DeepRadar) != 0)
             ingame.Flags &= ~GamF_DeepRadar;
         else
@@ -5144,7 +5125,7 @@ ubyte do_user_interface(void)
     }
     if (is_key_pressed(KC_F10, KMod_CONTROL))
     {
-        lbKeyOn[KC_F10] = 0;
+        clear_key_pressed(KC_F10);
         if (ingame.Flags & GamF_HUDPanel)
             ingame.Flags &= ~GamF_HUDPanel;
         else
@@ -5207,7 +5188,7 @@ ubyte do_user_interface(void)
     {
         if (is_key_pressed(KC_R, KMod_DONTCARE))
         {
-            lbKeyOn[KC_R] = 0;
+            clear_key_pressed(KC_R);
             StopCD();
             test_missions(1);
             init_level_3d(1);
@@ -5289,13 +5270,13 @@ ubyte do_user_interface(void)
     {
         if (is_key_pressed(KC_Q, KMod_NONE))
         {
-            lbKeyOn[KC_Q] = 0;
+            clear_key_pressed(KC_Q);
             give_best_mods_to_all_agents(p_locplayer);
             set_max_stats_to_all_agents(p_locplayer);
         }
         if (is_key_pressed(KC_Q, KMod_SHIFT))
         {
-            lbKeyOn[KC_Q] = 0;
+            clear_key_pressed(KC_Q);
             resurrect_any_dead_agents(p_locplayer);
             give_all_weapons_to_all_agents(p_locplayer);
         }
@@ -6398,7 +6379,7 @@ void show_menu_screen(void)
         input_purple_apps_selection_bar();
 
     if (is_key_pressed(KC_F12, KMod_DONTCARE)) {
-        lbKeyOn[KC_F12] = 0;
+        clear_key_pressed(KC_F12);
         post_render_action = PRend_SaveScreenshot;
     }
 
@@ -6669,7 +6650,7 @@ void input_packet_playback(void)
 
     if (is_key_pressed(KC_ESCAPE, KMod_SHIFT))
     {
-        lbKeyOn[KC_ESCAPE] = 0;
+        clear_key_pressed(KC_ESCAPE);
         if (critical_action_input())
         {
             exit_game = 1;
@@ -6716,12 +6697,12 @@ void input_mission_cheats(void)
 {
     if ((ingame.UserFlags & UsrF_Cheats) != 0 && is_key_pressed(KC_C, KMod_ALT))
     {
-        lbKeyOn[KC_C] = 0;
+        clear_key_pressed(KC_C);
         mission_result = 1;
     }
     if ((ingame.UserFlags & UsrF_Cheats) != 0 && is_key_pressed(KC_F, KMod_ALT))
     {
-        lbKeyOn[KC_F] = 0;
+        clear_key_pressed(KC_F);
         mission_result = -1;
     }
 }
@@ -6794,20 +6775,22 @@ void draw_mission_concluded(void)
 
 void input_mission_concluded(void)
 {
-    if ( lbKeyOn[KC_RETURN] || lbKeyOn[KC_SPACE] || (lbKeyOn[KC_ESCAPE] && (lbShift & KMod_SHIFT) == 0))
+    if (is_key_pressed(KC_RETURN, KMod_DONTCARE) ||
+      is_key_pressed(KC_SPACE, KMod_DONTCARE) ||
+      is_key_pressed(KC_ESCAPE, KMod_NONE))
     {
-        if ( ingame.MissionStatus != -1 || lbKeyOn[KC_ESCAPE] )
+        if (ingame.MissionStatus != -1 || is_key_pressed(KC_ESCAPE, KMod_NONE))
         {
-          lbKeyOn[KC_ESCAPE] = 0;
-          lbKeyOn[KC_SPACE] = 0;
-          lbKeyOn[KC_RETURN] = 0;
+          clear_key_pressed(KC_ESCAPE);
+          clear_key_pressed(KC_SPACE);
+          clear_key_pressed(KC_RETURN);
           ingame.fld_unkC4F = 1;
         }
         else
         {
-          lbKeyOn[KC_R] = 1;
-          lbKeyOn[KC_SPACE] = 0;
-          lbKeyOn[KC_RETURN] = 0;
+          simulate_key_press(KC_R);
+          clear_key_pressed(KC_SPACE);
+          clear_key_pressed(KC_RETURN);
         }
     }
 }
@@ -6905,12 +6888,12 @@ void load_packet(void)
         {
             if (!in_network_game && is_key_pressed(KC_ESCAPE, KMod_CONTROL))
             {
-                lbKeyOn[KC_ESCAPE] = 0;
+                clear_key_pressed(KC_ESCAPE);
                 exit_game = 1;
             }
             else if (is_key_pressed(KC_ESCAPE, KMod_SHIFT))
             {
-                lbKeyOn[KC_ESCAPE] = 0;
+                clear_key_pressed(KC_ESCAPE);
                 if (in_network_game || critical_action_input()) {
                     change_brightness(-32);
                     p_pckt->Action = 2;

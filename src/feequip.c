@@ -411,7 +411,7 @@ ubyte input_equip_agent_panel_shape(struct ScreenShape *shape, sbyte nagent)
 
     if (is_key_pressed(KC_1 + nagent, KMod_DONTCARE))
     {
-        lbKeyOn[KC_1 + nagent] = 0;
+        clear_key_pressed(KC_1 + nagent);
         if (nagent < cryo_agents.NumAgents)
         {
             selected_agent = nagent;
@@ -496,7 +496,7 @@ ubyte input_equip_all_agents_button(struct ScreenButton *button)
     gbstate = GBxSta_NORMAL;
     if (is_key_pressed(KC_1 + nagent, KMod_DONTCARE))
     {
-        lbKeyOn[KC_1 + nagent] = 0;
+        clear_key_pressed(KC_1 + nagent);
         selected_agent = nagent;
         check_buy_sell_button();
         gbstate = GBxSta_HLIGHT2;
@@ -615,7 +615,7 @@ ubyte show_equipment_screen(void)
     {
         if (is_key_pressed(KC_0, KMod_DONTCARE))
         {
-            lbKeyOn[KC_0] = 0;
+            clear_key_pressed(KC_0);
             if (cheat_research_weapon < WEP_TYPES_COUNT) {
                 refresh_equip_list = 1;
                 research_weapon_complete(cheat_research_weapon + 1);

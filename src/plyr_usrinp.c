@@ -121,7 +121,7 @@ void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usri
     }
     // TODO remove hard-coded BACKSLASH and make sure GKey_GROUP works for all keyboard layouts
     if (is_key_pressed(KC_BACKSLASH, KMod_DONTCARE)) {
-        lbKeyOn[KC_BACKSLASH] = 0;
+        clear_key_pressed(KC_BACKSLASH);
         p_usrinp->Bits |= SpUIn_GroupingInc;
     }
     if (is_gamekey_pressed(GKey_GROUP)) {

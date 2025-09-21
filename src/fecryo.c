@@ -981,7 +981,7 @@ void draw_blokey_body_mods(void)
     current_drawing_mod = new_current_drawing_mod;
     if ((is_key_pressed(KC_SPACE, KMod_DONTCARE) || game_projector_speed) && (cryo_blokey_box.Flags & GBxFlg_RadioBtn) == 0)
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
         cryo_cyborg_part_buf_blokey_static_reload();
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
@@ -1416,7 +1416,7 @@ ubyte input_cryo_agent_panel_shape(struct ScreenShape *shape, sbyte nagent)
 
     if (is_key_pressed(KC_1 + nagent, KMod_DONTCARE))
     {
-        lbKeyOn[KC_1 + nagent] = 0;
+        clear_key_pressed(KC_1 + nagent);
         if (nagent < cryo_agents.NumAgents)
         {
             selected_agent = nagent;
@@ -1495,7 +1495,7 @@ ubyte input_cryo_all_agents_button(struct ScreenButton *button)
     gbstate = GBxSta_NORMAL;
     if (is_key_pressed(KC_1 + nagent, KMod_DONTCARE))
     {
-        lbKeyOn[KC_1 + nagent] = 0;
+        clear_key_pressed(KC_1 + nagent);
         selected_agent = nagent;
         check_buy_sell_button();
         update_flic_mods(flic_mods);
@@ -1529,7 +1529,7 @@ ubyte show_cryo_chamber_screen(void)
     {
         if (is_key_pressed(KC_0, KMod_DONTCARE))
         {
-            lbKeyOn[KC_0] = 0;
+            clear_key_pressed(KC_0);
             refresh_equip_list = 1;
             research_cymod_complete(cheat_research_cybmods + 1);
             cheat_research_cybmods++;

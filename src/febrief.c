@@ -417,7 +417,7 @@ ubyte input_brief_mission_text_box(struct ScreenTextBox *p_box)
     ret = 0;
     if (is_key_pressed(KC_F, KMod_DONTCARE))
     {
-        lbKeyOn[KC_F] = 0;
+        clear_key_pressed(KC_F);
         if ((p_box->Flags & GBxFlg_TextCopied) == 0)
         {
             if (p_box->Font == small_font)

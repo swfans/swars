@@ -748,7 +748,7 @@ void process_things(void)
     }
 #if 0
     if (is_key_pressed(KC_N, KMod_DONTCARE))
-      lbKeyOn[KC_N] = 0;
+      clear_key_pressed(KC_N);
 #endif
 
     if (in_network_game)

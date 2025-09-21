@@ -103,6 +103,8 @@ void init_buffered_keys(void);
 void reset_buffered_keys(void);
 ulong next_buffered_key(void);
 
+void input(void);
+
 /**
  * Checks if a specific key is pressed.
  *
@@ -132,6 +134,7 @@ void sprint_joy_key(char *ostr, int buttons_num, ushort jkeys);
  * Clears the marking that a specific key was pressed.
  */
 void clear_key_pressed(TbKeyCode key);
+void simulate_key_press(TbKeyCode key);
 
 /**
  * Clears the marking that specific joystick buttons were pressed.

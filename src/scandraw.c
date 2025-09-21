@@ -419,7 +419,7 @@ void SCANNER_process_special_input(void)
     sckey = scanner_keys[scanner_next_key_no];
     if (is_key_pressed(sckey, KMod_DONTCARE))
     {
-        lbKeyOn[sckey] = 0;
+        clear_key_pressed(sckey);
         nxkey = scanner_keys[++scanner_next_key_no];
         if (nxkey == 9999)
         {

@@ -485,7 +485,7 @@ void show_sysmenu_screen(void)
 
     if ((game_projector_speed && is_sys_scr_shared_header_flag01()) || (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
-        lbKeyOn[KC_SPACE] = 0;
+        clear_key_pressed(KC_SPACE);
 
         set_flag02_sysmenu_boxes();
         set_flag02_sys_scr_shared_boxes();
@@ -815,7 +815,7 @@ void global_date_inputs(void)
     if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
         if (is_key_pressed(KC_PERIOD, KMod_DONTCARE)) {
-            lbKeyOn[KC_PERIOD] = 0;
+            clear_key_pressed(KC_PERIOD);
             ingame.Credits += 10000;
         }
     }
@@ -1275,7 +1275,7 @@ TbBool get_purple_app_unread_email_icon_inputs(short cx, short cy)
             if (word_1C498A == 50 || is_key_pressed(KC_RETURN, KMod_DONTCARE))
             {
                 word_1C498A = 0;
-                lbKeyOn[KC_RETURN] = 0;
+                clear_key_pressed(KC_RETURN);
                 if (!is_purple_alert_on_top())
                 {
                     if (activate_queued_mail() == 1)
@@ -1560,33 +1560,33 @@ TbBool input_purple_apps_selection_bar(void)
     {
         if (is_key_pressed(KC_F1, KMod_DONTCARE))
         {
-            lbKeyOn[KC_F1] = 0;
+            clear_key_pressed(KC_F1);
             change_screen = ChSCRT_SYSMENU;
         }
         if (is_key_pressed(KC_F2, KMod_DONTCARE))
         {
-            lbKeyOn[KC_F2] = 0;
+            clear_key_pressed(KC_F2);
             change_screen = ChSCRT_WORLDMAP;
         }
         if (is_key_pressed(KC_F3, KMod_DONTCARE))
         {
-            lbKeyOn[KC_F3] = 0;
+            clear_key_pressed(KC_F3);
             change_screen = ChSCRT_CRYO;
         }
         if (is_key_pressed(KC_F4, KMod_DONTCARE))
         {
-            lbKeyOn[KC_F4] = 0;
+            clear_key_pressed(KC_F4);
             change_screen = ChSCRT_EQUIP;
         }
         if (is_key_pressed(KC_F5, KMod_DONTCARE))
         {
-            lbKeyOn[KC_F5] = 0;
+            clear_key_pressed(KC_F5);
             if (research.NumBases > 0)
                 change_screen = ChSCRT_RESEARCH;
         }
         if (is_key_pressed(KC_F6, KMod_DONTCARE))
         {
-            lbKeyOn[KC_F6] = 0;
+            clear_key_pressed(KC_F6);
             if (open_brief != 0)
                 change_screen = ChSCRT_MISSION;
         }

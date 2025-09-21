@@ -367,7 +367,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
     {
         if (is_key_pressed(KC_DOWN, KMod_DONTCARE))
         {
-            lbKeyOn[KC_DOWN] = 0;
+            clear_key_pressed(KC_DOWN);
             controls_hlight_gkey++;
             if (controls_hlight_gkey > 2 * (GKey_KEYS_COUNT - 1))
                 controls_hlight_gkey = 1;
@@ -375,7 +375,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
         }
         if (is_key_pressed(KC_UP, KMod_DONTCARE))
         {
-            lbKeyOn[KC_UP] = 0;
+            clear_key_pressed(KC_UP);
             controls_hlight_gkey--;
             if (controls_hlight_gkey < 1)
                 controls_hlight_gkey = 2 * (GKey_KEYS_COUNT - 1);
@@ -384,7 +384,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
         if (is_key_pressed(KC_RIGHT, KMod_DONTCARE))
         {
             // Next column
-            lbKeyOn[KC_RIGHT] = 0;
+            clear_key_pressed(KC_RIGHT);
             controls_hlight_gkey += (GKey_KEYS_COUNT - 1);
             if (controls_hlight_gkey > 2 * (GKey_KEYS_COUNT - 1))
                 controls_hlight_gkey -= 2 * (GKey_KEYS_COUNT - 1);
@@ -393,7 +393,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
         if (is_key_pressed(KC_LEFT, KMod_DONTCARE))
         {
             // Prev column
-            lbKeyOn[KC_LEFT] = 0;
+            clear_key_pressed(KC_LEFT);
             controls_hlight_gkey -= (GKey_KEYS_COUNT - 1);
             if (controls_hlight_gkey < 1)
                 controls_hlight_gkey += 2 * (GKey_KEYS_COUNT - 1);
@@ -422,7 +422,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
                 }
                 if (is_key_pressed(KC_BACK, KMod_DONTCARE))
                 {
-                    lbKeyOn[KC_BACK] = 0;
+                    clear_key_pressed(KC_BACK);
                     unset_controls_key(controls_hlight_gkey);
                     ret = 2;
                 }
