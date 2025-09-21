@@ -620,7 +620,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
         lbDisplay.DrawFlags = 0;
     }
 
-    lbFontPtr = small_med_font;
+    lbFontPtr = p_box->Font;
     ln_height = font_height('A');
 
     // Names column
@@ -699,7 +699,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
         GameKey gkey;
 
         gkey = i + 1;
-        if (net_unkn_pos_01a == gkey)
+        if (net_unkn_pos_01a == gkey + (GKey_KEYS_COUNT - 1))
         {
           lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
           lbDisplay.DrawColour = 87;
