@@ -22,6 +22,7 @@
 
 #include "bftypes.h"
 #include "bfkeybd.h"
+#include "game_bstype.h"
 
 enum GameKeys
 {
@@ -82,12 +83,12 @@ void clear_key_pressed(TbKeyCode key);
  *
  * @param gkey Game key number, from enumeration.
  */
-ubyte is_gamekey_pressed(ushort gkey);
+ubyte is_gamekey_pressed(GameKey gkey);
 
 /**
  * Clears the marking that a mapped game key was pressed.
  */
-void clear_gamekey_pressed(ushort gkey);
+void clear_gamekey_pressed(GameKey gkey);
 
 void set_default_game_keys(void);
 

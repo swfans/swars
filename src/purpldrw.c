@@ -374,11 +374,44 @@ ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
     return 3;
 }
 
+void my_set_text_window_for_text_box(struct ScreenTextBox *p_box)
+{
+    short scr_scroll_w, scr_scroll_h;
+
+    if ((p_box->Flags & GBxFlg_RadioBtn) != 0)
+        scr_scroll_w = 12;
+    else
+        scr_scroll_w = 0;
+
+    if ((p_box->Buttons[0] != NULL) || (p_box->Infos[0] != NULL) || (p_box == &brief_netscan_box))
+        scr_scroll_h = p_box->ScrollWindowHeight + 2;
+    else
+        scr_scroll_h = p_box->ScrollWindowHeight + 23;
+
+    my_set_text_window(p_box->X + 4, p_box->ScrollWindowOffset + p_box->Y + 4, p_box->Width - 8 - scr_scroll_w, scr_scroll_h);
+}
+
+/** Get amount of lines within currently set text window.
+ */
+short get_text_box_window_lines_visible(struct ScreenTextBox *p_box)
+{
+    short text_window_h;
+    text_window_h = text_window_y2 - text_window_y1 - 1;
+    return (text_window_h + 2) / p_box->LineHeight;
+}
+
+/** Get amount of lines within given text box.
+ * This function alters my_text_window and the current font.
+ */
 short get_text_box_lines_visible(struct ScreenTextBox *p_box)
 {
-    short text_window_w;
-    text_window_w = text_window_y2 - text_window_y1 - 1;
-    return (text_window_w + 2) / p_box->LineHeight;
+    my_set_text_window_for_text_box(p_box);
+
+    lbFontPtr = p_box->Font;
+    if (p_box->LineHeight == 0)
+        p_box->LineHeight = p_box->LineSpacing + font_height('A');
+
+    return get_text_box_window_lines_visible(p_box);
 }
 
 ubyte flashy_draw_purple_text_box_text(struct ScreenTextBox *p_box)
@@ -494,7 +527,7 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
 {
     short lines_visible;
 
-    lines_visible = get_text_box_lines_visible(p_box);
+    lines_visible = get_text_box_window_lines_visible(p_box);
 
     if (lbDisplay.MLeftButton && ((p_box->Flags & GBxFlg_IsPushed) != 0))
     {
@@ -646,28 +679,14 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
     TbBool text_remains_dynamic; /**< text drawing callback never sets GBxFlg_TextCopied (maybe make this into a box flag?) */
 
     text_remains_dynamic = (p_box == &world_city_info_box) || (p_box == &equip_display_box) || (p_box == &cryo_cybmod_list_box);
+    my_set_text_window_for_text_box(p_box);
 
-    {
-        short scr_scroll_w, scr_scroll_h;
-
-        if ((p_box->Flags & GBxFlg_RadioBtn) != 0)
-            scr_scroll_w = 12;
-        else
-            scr_scroll_w = 0;
-
-        if ((p_box->Buttons[0] != NULL) || (p_box->Infos[0] != NULL) || (p_box == &brief_netscan_box))
-            scr_scroll_h = p_box->ScrollWindowHeight + 2;
-        else
-            scr_scroll_h = p_box->ScrollWindowHeight + 23;
-
-        my_set_text_window(p_box->X + 4, p_box->ScrollWindowOffset + p_box->Y + 4, p_box->Width - 8 - scr_scroll_w, scr_scroll_h);
-    }
     lbFontPtr = p_box->Font;
     byte_197160 = p_box->LineSpacing;
     if (p_box->LineHeight == 0)
         p_box->LineHeight = byte_197160 + font_height('A');
 
-    lines_visible = get_text_box_lines_visible(p_box);
+    lines_visible = get_text_box_window_lines_visible(p_box);
 
     box_w = p_box->Width - 1;
     box_h = p_box->Height - 1;

@@ -52,6 +52,10 @@ typedef ubyte PlayerIdx;
  */
 typedef short ScrCoord;
 
+/** Type which stores index of a Game Key binding.
+ */
+typedef ushort GameKey;
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

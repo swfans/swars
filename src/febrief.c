@@ -715,7 +715,8 @@ void init_brief_screen_boxes(void)
 
     brief_mission_text_box.X = brief_graphical_box.X + brief_graphical_box.Width + 9;
     unkn1_ACCEPT_button.X = brief_mission_text_box.X + 5;
-    unkn1_CANCEL_button.X = brief_mission_text_box.X + brief_mission_text_box.Width - unkn1_CANCEL_button.Width - 17;
+    // Additional 12 px left to fit scroll bar buttons
+    unkn1_CANCEL_button.X = brief_mission_text_box.X + brief_mission_text_box.Width - unkn1_CANCEL_button.Width - 5 - 12;
 }
 
 void update_brief_screen_netscan_button(ushort text_id)

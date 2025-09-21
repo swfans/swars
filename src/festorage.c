@@ -68,7 +68,7 @@ void init_storage_screen_boxes(void)
     storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
     storage_slots_box.ScrollWindowHeight = 208;
     storage_slots_box.Lines = 99;
-    storage_slots_box.Flags |= GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
+    storage_slots_box.Flags |= (GBxFlg_RadioBtn | GBxFlg_IsMouseOver);
     storage_slots_box.LineHeight = 26;
     storage_slots_box.ScrollWindowOffset += 27;
 
