@@ -307,7 +307,7 @@ void read_user_settings(void)
             LbFileRead(fh, jskeys, GKey_KEYS_COUNT * sizeof(ushort));
         }
 
-        LbFileRead(fh, &ctl_joystick_type, 1);
+        LbFileRead(fh, &ctl_joystick_type, sizeof(ctl_joystick_type));
         LbFileRead(fh, &players[local_player_no].DoubleMode,
           sizeof(players[local_player_no].DoubleMode));
         for (i = 0; i != 4; i++)
@@ -351,7 +351,7 @@ void read_user_settings(void)
     if (ctl_joystick_type)
         i = joy_func_067(&joy, ctl_joystick_type);
     if (i != 1)
-        ctl_joystick_type = 0;
+        ctl_joystick_type = JTyp_NONE;
 }
 
 TbBool save_user_settings(void)

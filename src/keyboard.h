@@ -58,6 +58,36 @@ enum GameKeys
   GKey_KEYS_COUNT,
 };
 
+enum JoystickType
+{
+  JTyp_NONE = 0,
+  JTyp_ANALG_2BTN,
+  JTyp_ANALG_4BTN,
+  JTyp_ANALG_2BTN_HT,
+  JTyp_ANALG_4BTN_HT,
+  JTyp_GRAVIS_PAD,
+  JTyp_CREATV_PAD,
+  JTyp_WINGMAN_EXTRM,
+  JTyp_WINGMAN_NEW,
+  JTyp_PHANTOM_2I,
+  JTyp_VIRTUAL_IO,
+  JTyp_VFX1,
+  JTyp_DIGTL_2BTN,
+  JTyp_DIGTL_4BTN,
+  JTyp_DIGTL_2BTN_HT,
+  JTyp_DIGTL_4BTN_HT,
+  JTyp_AUTO_DETECT,
+  JTyp_EXT_DRIVER,
+  JTyp_GRAVIS_GRIP,
+  JTyp_SPACEBALL_AVN,
+  JTyp_GRAVIS_THNBRD,
+  JTyp_MS_SIDEWINDER,
+  JTyp_VFX1_PUCK,
+  JTyp_ANALG_2JSTCKS,
+  JTyp_DIGTL_2JSTCKS,
+  JTyp_TYPES_COUNT,
+};
+
 /******************************************************************************/
 /** Array of keyboard keys bindings; uses GKey_* enum members as index.
  */

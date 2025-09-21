@@ -375,16 +375,16 @@ void init_buffered_keys(void)
 void set_default_game_keys(void)
 {
     LbMemorySet(jskeys, 0, sizeof(jskeys));
-    jskeys[GKey_VIEW_SPIN_L] = 64;
-    jskeys[GKey_VIEW_SPIN_R] = 128;
-    jskeys[GKey_FIRE] = 1;
-    jskeys[GKey_CHANGE_MD_WP] = 2;
-    jskeys[GKey_CHANGE_AGENT] = 4;
-    jskeys[GKey_SELF_DESTRUCT] = 15;
+    jskeys[GKey_VIEW_SPIN_L] = 0x40;
+    jskeys[GKey_VIEW_SPIN_R] = 0x80;
+    jskeys[GKey_FIRE] = 0x01;
+    jskeys[GKey_CHANGE_MD_WP] = 0x02;
+    jskeys[GKey_CHANGE_AGENT] = 0x04;
+    jskeys[GKey_SELF_DESTRUCT] = 0x0F;
     jskeys[GKey_GROUP] = 32;
-    jskeys[GKey_GOTO_POINT] = 8;
-    jskeys[GKey_DROP_WEAPON] = 16;
-    ctl_joystick_type = 18;
+    jskeys[GKey_GOTO_POINT] = 0x08;
+    jskeys[GKey_DROP_WEAPON] = 0x10;
+    ctl_joystick_type = JTyp_GRAVIS_GRIP;
 
     LbMemorySet(kbkeys, 0, sizeof(kbkeys));
     kbkeys[GKey_NONE] = KC_UNASSIGNED;

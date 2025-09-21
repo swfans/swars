@@ -150,7 +150,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     wpos_y = 126;
 
     lbDisplay.DrawFlags |= 0x8000;
-    if (ctl_joystick_type == 17)
+    if (ctl_joystick_type == JTyp_EXT_DRIVER)
     {
       if (joy_func_063(locstr) != -1)
       {
@@ -180,7 +180,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
             sbyte v23;
             ubyte v24;
 
-            if (ctl_joystick_type)
+            if (ctl_joystick_type != JTyp_NONE)
                 joy_func_066(&joy);
             lbDisplay.LeftButton = 0;
 
@@ -188,12 +188,12 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
             v24 = ctl_joystick_type;
             while (v23 != 1)
             {
-                if (++ctl_joystick_type > 24)
-                    ctl_joystick_type = 1;
+                if (++ctl_joystick_type >= JTyp_TYPES_COUNT)
+                    ctl_joystick_type = JTyp_ANALG_2BTN; // first one
                 if (v24 == ctl_joystick_type)
                 {
                     v23 = 1;
-                    ctl_joystick_type = 0;
+                    ctl_joystick_type = JTyp_NONE;
                 }
                 if (unkn01_maskarr[ctl_joystick_type])
                     v23 = joy_func_067(&joy, ctl_joystick_type);
@@ -285,7 +285,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
                 lbDisplay.LeftButton = 0;
 
                 ctlmode = p_locplayer->UserInput[dmuser].ControlMode + 1;
-                if (ctl_joystick_type == 0 && ctlmode == UInpCtr_Joystick0)
+                if (ctl_joystick_type == JTyp_NONE && ctlmode == UInpCtr_Joystick0)
                     ctlmode = UInpCtr_Keyboard;
                 if (ctlmode >= UInpCtr_Joystick0 + joy.NumberOfDevices)
                     ctlmode = UInpCtr_Keyboard;
