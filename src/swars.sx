@@ -183628,7 +183628,7 @@ data_15511d:
 		.byte	0x0
 GLOBAL (word_15511E)	/* 0x15511E */
 		.ascii  "\xff\xff"
-GLOBAL (net_unkn_pos_01a)	/* 0x155120 */
+GLOBAL (controls_hlight_gkey)	/* 0x155120 */
 		.ascii  "\x01\x01\x01\x00"
 GLOBAL (byte_155124)	/* 0x155124 */
 		.ascii  "\x01\x11\x21\x27\x3f\x94\x00\x00"

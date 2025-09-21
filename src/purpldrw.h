@@ -48,6 +48,8 @@ void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, T
 void draw_hotspot_purple_list(int x, int y);
 ubyte flashy_draw_purple_shape(struct ScreenShape *shape);
 ubyte flashy_draw_purple_box(struct ScreenBox *p_box);
+TbBool flashy_draw_text(int x, int y, const char *text, ubyte speed,
+  int top_line, short *textpos, int cyan_flag);
 ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box);
 void draw_flic_purple_list(void (*fn)());
 void draw_noise_box_purple_list(int x, int y, ulong width, ulong height);

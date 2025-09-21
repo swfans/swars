@@ -121,17 +121,4 @@ TbBool create_strings_list(char **strings, char *strings_data, char *strings_dat
   LOGSYNC("Listed text strings (%d entries)", STRINGS_MAX - text_idx);
   return true;
 }
-
-TbBool flashy_draw_text(int x, int y, const char *text, ubyte speed, int top_line, short *textpos, int cyan_flag)
-{
-    TbBool ret;
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "call ASM_flashy_draw_text\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (text), "c" (speed), "g" (top_line), "g" (textpos), "g" (cyan_flag));
-    return ret;
-}
-
 /******************************************************************************/

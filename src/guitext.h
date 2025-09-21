@@ -92,9 +92,6 @@ const char *loctext_to_gtext(const char *ltext);
 void read_strings_file(void);
 TbBool create_strings_list(char **strings, char *strings_data, char *strings_data_end);
 
-TbBool flashy_draw_text(int x, int y, const char *text, ubyte speed,
-  int top_line, short *textpos, int cyan_flag);
-
 /******************************************************************************/
 #ifdef __cplusplus
 }
