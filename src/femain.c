@@ -491,26 +491,26 @@ void show_sysmenu_screen(void)
         set_flag02_sys_scr_shared_boxes();
         switch (game_system_screen)
         {
-        case 1:
+        case SySc_NETGAME:
             set_flag02_net_screen_boxes();
             break;
-        case 2:
+        case SySc_STORAGE:
             set_flag02_storage_screen_boxes();
             break;
-        case 3:
+        case SySc_CONTROLS:
             set_flag02_controls_screen_boxes();
             break;
-        case 4:
+        case SySc_AUDIO_OPTS:
             set_flag02_audio_screen_boxes();
             break;
-        case 5:
+        case SySc_GFX_OPTS:
             set_flag02_gfx_screen_boxes();
             break;
         }
     }
 
     v2 = 1;
-    sysscrn_no = 0;
+    sysscrn_no = SySc_NONE;
     if (enter_game) {
         sysscrn_no = game_system_screen;
         enter_game = 0;
@@ -523,7 +523,7 @@ void show_sysmenu_screen(void)
     {
         for (i = 0; i < SYSMNU_BUTTONS_COUNT; i++)
         {
-            if (((ingame.Flags & 0x0010) != 0) && (i == 1 || i == 2))
+            if (((ingame.Flags & GamF_MortalGame) != 0) && (i == 1 || i == 2))
                 continue;
             if (restore_savegame && i < 5)
                 continue;
@@ -537,26 +537,26 @@ void show_sysmenu_screen(void)
                 enter_game = 0;
             }
         }
-        if (v2 && (game_system_screen != 0) && (game_system_screen < 6))
+        if (v2 && (game_system_screen != SySc_NONE) && (game_system_screen < SySc_TYPES_COUNT))
         {
             drawn = show_sys_scr_shared_header();
-            if (drawn && (game_system_screen - 1) <= 4)
+            if (drawn)
             {
                 switch (game_system_screen)
                 {
-                case 1:
+                case SySc_NETGAME:
                     show_netgame_unkn_case1();
                     break;
-                case 2:
+                case SySc_STORAGE:
                     show_storage_screen();
                     break;
-                case 3:
+                case SySc_CONTROLS:
                     show_options_controls_screen();
                     break;
-                case 4:
+                case SySc_AUDIO_OPTS:
                     show_options_audio_screen();
                     break;
-                case 5:
+                case SySc_GFX_OPTS:
                     show_options_visual_screen();
                     break;
                 }
@@ -564,7 +564,7 @@ void show_sysmenu_screen(void)
         }
     }
 
-    if (sysscrn_no)
+    if (sysscrn_no != SySc_NONE)
     {
         game_system_screen = sysscrn_no;
         unkn13_SYSTEM_button.Flags &= ~(GBxFlg_TextCopied|GBxFlg_BkCopied);
@@ -576,26 +576,26 @@ void show_sysmenu_screen(void)
         }
         switch (game_system_screen)
         {
-        case 1:
+        case SySc_NETGAME:
             game_projector_speed = 1;
             reset_net_screen_boxes_flags();
             set_flag01_net_screen_boxes();
             break;
-        case 2:
+        case SySc_STORAGE:
             save_slot_base = 0;
             load_save_slot_names();
             reset_storage_screen_boxes_flags();
             break;
-        case 3:
+        case SySc_CONTROLS:
             reset_controls_screen_boxes_flags();
             break;
-        case 4:
+        case SySc_AUDIO_OPTS:
             reset_options_audio_boxes_flags();
             break;
-        case 5:
+        case SySc_GFX_OPTS:
             reset_options_visual_boxes_flags();
             break;
-        case 6:
+        case SySc_LOGOUT:
             if (login_control__State == 5)
             {
                 network_players[LbNetworkPlayerNumber()].Type = 13;
@@ -609,8 +609,8 @@ void show_sysmenu_screen(void)
                 restore_savegame = 0;
                 sysmnu_buttons[5].Y += 150;
             }
-            game_system_screen = 0;
-            if ((ingame.Flags & 0x0010) != 0)
+            game_system_screen = SySc_NONE;
+            if ((ingame.Flags & GamF_MortalGame) != 0)
                 save_game_write(0, save_active_desc);
             break;
         }
@@ -1218,7 +1218,7 @@ void draw_purple_app_unread_email_icon(short cx, short cy)
 
     spr = &fe_icons_sprites[79];
     if ((is_key_pressed(KC_RETURN, KMod_DONTCARE)
-        && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
+        && ((game_system_screen != SySc_CONTROLS && game_system_screen != SySc_NETGAME)
             || screentype != SCRT_SYSMENU) && !edit_flag)
         || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
     {
@@ -1261,7 +1261,7 @@ TbBool get_purple_app_unread_email_icon_inputs(short cx, short cy)
 
     spr = &fe_icons_sprites[79];
     if ((is_key_pressed(KC_RETURN, KMod_DONTCARE)
-        && ((game_system_screen != SCRT_WORLDMAP && game_system_screen != SCRT_MISSION)
+        && ((game_system_screen != SySc_CONTROLS && game_system_screen != SySc_NETGAME)
             || screentype != SCRT_SYSMENU) && !edit_flag)
         || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
     {
@@ -1476,7 +1476,7 @@ void show_purple_apps_selection_bar(void)
 
     // Show unread mail notification icon
     if (new_mail
-        && (game_system_screen != SCRT_MISSION || screentype != SCRT_SYSMENU))
+        && (game_system_screen != SySc_NETGAME || screentype != SCRT_SYSMENU))
     {
         draw_purple_app_unread_email_icon(cx, cy);
     }
@@ -1530,7 +1530,7 @@ TbBool input_purple_apps_selection_bar(void)
 
     // Get inputs from unread mail notification icon
     if (new_mail
-        && (game_system_screen != SCRT_MISSION || screentype != SCRT_SYSMENU))
+        && (game_system_screen != SySc_NETGAME || screentype != SCRT_SYSMENU))
     {
         get_purple_app_unread_email_icon_inputs(cx, cy);
     }

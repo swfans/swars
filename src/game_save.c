@@ -499,7 +499,7 @@ int save_game_write(ubyte slot, char *desc)
     save_game_buffer[gblen] = ingame.AutoResearch;
     gblen += 1;
 
-    if (((ingame.Flags & 0x10) != 0) || (desc[0] == '\0'))
+    if (((ingame.Flags & GamF_MortalGame) != 0) || (desc[0] == '\0'))
     {
         struct Campaign *p_campgn;
         p_campgn = &campaigns[background_type];
@@ -514,16 +514,16 @@ int save_game_write(ubyte slot, char *desc)
         gblen += 1;
     }
 
-    if ((ingame.Flags & 0x10) != 0)
+    if ((ingame.Flags & GamF_MortalGame) != 0)
     {
         save_mortal_salt = time(0);
         resave_salt_to_keys();
     }
 
-    simple_salt = ((ingame.Flags & 0x10) == 0);
+    simple_salt = ((ingame.Flags & GamF_MortalGame) == 0);
     decrypt_verify = save_game_encrypt(fmtver, simple_salt, save_game_buffer, gblen);
 
-    if ((ingame.Flags & 0x10) != 0)
+    if ((ingame.Flags & GamF_MortalGame) != 0)
         sprintf(locstr, "qdata/savegame/synwarsm.sav");
     else if (slot >= 9)
         sprintf(locstr, "qdata/savegame/swars%03d.sav", slot - 1);

@@ -3788,7 +3788,7 @@ ubyte load_game_slot(ubyte click)
     word_1C6E0A = 0;
     word_1C6E08 = 0;
     screentype = SCRT_99;
-    game_system_screen = 0;
+    game_system_screen = SySc_NONE;
     if (restore_savegame) {
         restore_savegame = 0;
         sysmnu_button_enable(0, 5);
@@ -4539,7 +4539,7 @@ void campaign_new_game_prepare(void)
     p_campgn = &campaigns[background_type];
 
     screentype = SCRT_99;
-    game_system_screen = 0;
+    game_system_screen = SySc_NONE;
     {
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];
@@ -4836,7 +4836,7 @@ ubyte weapon_select_input(void)
     ushort weptype;
     int n;
 
-    static ushort sel_weapon_keys[] = {
+    static TbKeyCode sel_weapon_keys[] = {
         KC_5, KC_6, KC_7, KC_8, KC_9, KC_0,
     };
     static GameTurn last_sel_weapon_turn[WEAPONS_CARRIED_MAX_COUNT] = {0};

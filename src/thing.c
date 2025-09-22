@@ -746,10 +746,6 @@ void process_things(void)
             p_dcthing->Flag |= TngF_Unkn1000;
         }
     }
-#if 0
-    if (is_key_pressed(KC_N, KMod_DONTCARE))
-      clear_key_pressed(KC_N);
-#endif
 
     if (in_network_game)
     {

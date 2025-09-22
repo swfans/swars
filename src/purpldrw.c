@@ -1058,7 +1058,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
     return ret;
 #endif
     short box_w, box_h;
-    short akey;
+    TbKeyCode akey;
     TbBool mouse_over, event_from_key;
 
     my_set_text_window(p_btn->X + 2, p_btn->Y + 2, p_btn->Width - 18, p_btn->Height - 4);

@@ -57,8 +57,9 @@ ubyte do_login_2(ubyte click)
 
     if (in_network_game)
     {
-        screentype = 7;
-        game_system_screen = 3;
+        screentype = SCRT_SYSMENU;
+        //TODO why go to controls screen in net game? is it a mistake?
+        game_system_screen = SySc_CONTROLS;
         reload_background_flag = 1;
         edit_flag = 0;
         return 1;

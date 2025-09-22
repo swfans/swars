@@ -27,6 +27,21 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum SysScreenType {
+  SySc_NONE = 0x0,
+  SySc_NETGAME,
+  SySc_STORAGE,
+  SySc_CONTROLS,
+  SySc_AUDIO_OPTS,
+  SySc_GFX_OPTS,
+  SySc_TYPES_COUNT,
+};
+
+/** Special value whch does not have system screen,
+ * but commands to logout to main menu.
+ */
+#define SySc_LOGOUT SySc_TYPES_COUNT
+
 struct SynTime {
     ubyte Minute;
     ubyte Hour;
