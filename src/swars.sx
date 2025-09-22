@@ -186618,7 +186618,7 @@ data_1c6f48:
 		.short  0x0
 GLOBAL (edit_flag)	/* 0x1C6F4A */
 		.byte	0x0
-GLOBAL (net_unkn_pos_01b)	/* 0x1C6F4B */
+GLOBAL (controls_edited_gkey)	/* 0x1C6F4B */
 		.byte	0x0
 GLOBAL (save_game_buffer)	/* 0x1C6F4C */
 		.long	0x0

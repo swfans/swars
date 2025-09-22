@@ -33,6 +33,7 @@
 /******************************************************************************/
 
 #define KEYBOARD_BUFFER_SIZE 16
+#define GAMEKEY_JOY_BUTTONS_MAX 4
 
 #pragma pack(1)
 
@@ -89,6 +90,33 @@ ubyte is_joy_pressed(ushort jkeys, ubyte channel)
     return (jkeys && jkeys == joy.Buttons[channel]);
 }
 
+ubyte is_joy_pressed_any(ubyte channel)
+{
+    return (joy.Buttons[channel] != 0);
+}
+
+ushort get_joy_pressed_key(ubyte channel)
+{
+    uint jbtn_pressed;
+    ushort jbtn, buttons_num, pressed_count;
+    ushort jskey_flags;
+
+    jskey_flags = 0;
+    buttons_num = joy.NumberOfButtons[channel];
+    jbtn_pressed = joy.Buttons[channel];
+    pressed_count = 0;
+    for (jbtn = 0; jbtn < buttons_num; jbtn++)
+    {
+          if (pressed_count >= GAMEKEY_JOY_BUTTONS_MAX)
+              break;
+          if ((jbtn_pressed & (1 << jbtn)) != 0) {
+              jskey_flags |= (1 << jbtn);
+              pressed_count++;
+          }
+    }
+    return jskey_flags;
+}
+
 void clear_joy_pressed(ushort jkeys, ubyte channel)
 {
     if (channel >= sizeof(joy.Buttons[0])/sizeof(joy.Buttons[0]))
@@ -99,13 +127,13 @@ void clear_joy_pressed(ushort jkeys, ubyte channel)
 void sprint_joy_key(char *ostr, int buttons_num, ushort jkeys)
 {
     int tx_len;
-    int jbtn, pressed_count;
+    ushort jbtn, pressed_count;
 
     tx_len = 0;
     pressed_count = 0;
     for (jbtn = 0; jbtn < buttons_num; jbtn++)
     {
-        if (pressed_count >= 4)
+        if (pressed_count >= GAMEKEY_JOY_BUTTONS_MAX)
             break;
         if (((1 << jbtn) & jkeys) != 0)
         {

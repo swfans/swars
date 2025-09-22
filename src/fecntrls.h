@@ -29,7 +29,11 @@ extern "C" {
 
 #pragma pack()
 /******************************************************************************/
-extern ubyte net_unkn_pos_01b;
+/** Game key currently being edited in the controls screen.
+ * Max value is 2x max GameKey index - because it also stored distinction
+ * between entering keyboard key and joystick key.
+ */
+extern ubyte controls_edited_gkey;
 
 void init_controls_screen_boxes(void);
 void reset_controls_screen_boxes_flags(void);

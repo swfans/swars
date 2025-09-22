@@ -359,11 +359,10 @@ TbBool is_hardcoded_hlight_gkey(ushort hlight_gkey)
 ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
 {
     ubyte ret;
-    int i;
 
     ret = 0;
 
-    if (!net_unkn_pos_01b && !net_unkn_pos_02)
+    if (controls_edited_gkey == 0 && !net_unkn_pos_02)
     {
         if (is_key_pressed(KC_DOWN, KMod_DONTCARE))
         {
@@ -400,7 +399,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
             ret = 1;
         }
 
-        if (is_hardcoded_hlight_gkey(controls_hlight_gkey))
+        if (!is_hardcoded_hlight_gkey(controls_hlight_gkey))
         {
             if (byte_1C4970)
             {
@@ -408,7 +407,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
                 {
                     clear_key_pressed(lbInkey);
                     byte_1C4970 = 0;
-                    net_unkn_pos_01b = controls_hlight_gkey;
+                    controls_edited_gkey = controls_hlight_gkey;
                     ret = 2;
                 }
             }
@@ -429,34 +428,24 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
         }
     }
 
-    if (net_unkn_pos_01b != 0)
+    if (controls_edited_gkey != 0)
     {
-        GameKey hlight_gkey;
+        GameKey edited_gkey;
 
-        hlight_gkey = net_unkn_pos_01b;
-        if (hlight_gkey > (GKey_KEYS_COUNT - 1))
+        edited_gkey = controls_edited_gkey;
+        if (is_key_pressed(KC_ESCAPE, KMod_DONTCARE))
         {
-            if (joy.Buttons[0])
+            clear_key_pressed(KC_ESCAPE);
+            controls_edited_gkey = 0;
+        }
+        else if (edited_gkey > (GKey_KEYS_COUNT - 1))
+        {
+            if (is_joy_pressed_any(0))
             {
-                uint jbtn_pressed, jbtn_max, jbtn, jskey_flags;
+                ushort jskey;
 
-                jskey_flags = 0;
-                jbtn = 0;
-                jbtn_max = joy.NumberOfButtons[0];
-                if (jbtn_max > 0)
-                {
-                  jbtn_pressed = joy.Buttons[0];
-                  for (i = 0; i < 4; i++)
-                  {
-                    if ((jbtn_pressed & (1 << jbtn)) != 0) {
-                        jskey_flags |= (1 << jbtn);
-                    }
-                    jbtn++;
-                    if (jbtn >= jbtn_max)
-                        break;
-                  }
-                }
-                set_controls_key(hlight_gkey, jskey_flags);
+                jskey = get_joy_pressed_key(0);
+                set_controls_key(edited_gkey, jskey);
                 ret = 2;
             }
         }
@@ -467,15 +456,15 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
 #if defined(DOS)||defined(GO32)
                 if (lbExtendedKeyPress)
                 {
-                  set_controls_key(hlight_gkey, lbInkey | 0x80);
+                  set_controls_key(edited_gkey, lbInkey | 0x80);
                 }
                 else
                 {
                   if ((lbInkey & 0x7F) != KC_BACKSLASH)
-                      set_controls_key(hlight_gkey, lbInkey & 0x7F);
+                      set_controls_key(edited_gkey, lbInkey & 0x7F);
                 }
 #else
-                set_controls_key(hlight_gkey, lbInkey);
+                set_controls_key(edited_gkey, lbInkey);
 #endif
                 clear_key_pressed(lbInkey);
                 ret = 2;
@@ -654,7 +643,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
             {
                 lbDisplay.LeftButton = 0;
                 controls_hlight_gkey = gkey;
-                net_unkn_pos_01b = gkey;
+                controls_edited_gkey = gkey;
                 clear_key_pressed(lbInkey);
             }
         }
@@ -678,7 +667,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
             {
                 lbDisplay.LeftButton = 0;
                 controls_hlight_gkey = gkey + (GKey_KEYS_COUNT - 1);
-                net_unkn_pos_01b = gkey + (GKey_KEYS_COUNT - 1);
+                controls_edited_gkey = gkey + (GKey_KEYS_COUNT - 1);
                 clear_key_pressed(lbInkey);
             }
         }

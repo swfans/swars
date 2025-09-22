@@ -122,6 +122,20 @@ ubyte is_key_pressed(TbKeyCode key, TbKeyMods kmodif);
 ubyte is_joy_pressed(ushort jkeys, ubyte channel);
 
 /**
+ * Checks if any joystick key is pressed.
+ *
+ * @param channel Joystick channel selection, for multiple joysticks connected.
+ */
+ubyte is_joy_pressed_any(ubyte channel);
+
+/**
+ * Get flags marking currently pressed joystick button combination.
+ *
+ * @param channel Joystick channel selection, for multiple joysticks connected.
+ */
+ushort get_joy_pressed_key(ubyte channel);
+
+/**
  * Print joystick buttons combination as text.
  *
  * @param ostr Output string buffer.

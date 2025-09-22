@@ -1556,7 +1556,7 @@ TbBool input_purple_apps_selection_bar(void)
         }
     }
 
-    if (!net_unkn_pos_01b)
+    if (controls_edited_gkey == 0)
     {
         if (is_key_pressed(KC_F1, KMod_DONTCARE))
         {
