@@ -745,13 +745,6 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
 
     }
 
-    //controls_defaults_button.DrawFn(&controls_defaults_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&controls_defaults_button), "g" (controls_defaults_button.DrawFn));
-    //controls_save_button.DrawFn(&controls_save_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&controls_save_button), "g" (controls_save_button.DrawFn));
-
     return 0;
 }
 
