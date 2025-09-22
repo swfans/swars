@@ -372,17 +372,17 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box, short *p_tx_kbd_width, s
     lbFontPtr = p_box->Font;
     ln_height = font_height('A');
 
-    wpos_x = 200;
-    wpos_y = 28;
-    for (i = p_box->field_38; i < i_limit; i++)
+    if (lbDisplay.LeftButton || joy.Buttons[0])
     {
-        short col_width;
-        GameKey gkey;
-
-        gkey = i + 1;
-        col_width = max(p_tx_kbd_width[gkey], GAMEKEY_ACTIVE_WIDTH_MIN);
-        if (lbDisplay.LeftButton || joy.Buttons[0])
+        wpos_x = 200;
+        wpos_y = 28;
+        for (i = p_box->field_38; i < i_limit; i++)
         {
+            short col_width;
+            GameKey gkey;
+
+            gkey = i + 1;
+            col_width = max(p_tx_kbd_width[gkey], GAMEKEY_ACTIVE_WIDTH_MIN);
             if (mouse_down_over_box_coords(text_window_x1 + wpos_x, text_window_y1 + wpos_y,
               text_window_x1 + col_width + wpos_x, text_window_y1 + wpos_y + ln_height))
             {
@@ -394,23 +394,23 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box, short *p_tx_kbd_width, s
                     controls_edited_gkey = controls_hlight_gkey;
                 }
                 clear_key_pressed(lbInkey);
+                break;
             }
+            wpos_y += p_box->LineHeight;
         }
-
-        wpos_y += p_box->LineHeight;
     }
 
-    wpos_x = 300;
-    wpos_y = 28;
-    for (i = p_box->field_38; i < i_limit; i++)
+    if (lbDisplay.LeftButton || joy.Buttons[0])
     {
-        short col_width;
-        GameKey gkey;
-
-        gkey = i + 1;
-        col_width = max(p_tx_joy_width[gkey], GAMEKEY_ACTIVE_WIDTH_MIN);
-        if (lbDisplay.LeftButton || joy.Buttons[0])
+        wpos_x = 300;
+        wpos_y = 28;
+        for (i = p_box->field_38; i < i_limit; i++)
         {
+            short col_width;
+            GameKey gkey;
+
+            gkey = i + 1;
+            col_width = max(p_tx_joy_width[gkey], GAMEKEY_ACTIVE_WIDTH_MIN);
             if (mouse_down_over_box_coords(text_window_x1 + wpos_x, text_window_y1 + wpos_y,
               text_window_x1 + wpos_x + col_width, text_window_y1 + wpos_y + ln_height))
             {
@@ -422,9 +422,17 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box, short *p_tx_kbd_width, s
                     controls_edited_gkey = controls_hlight_gkey;
                 }
                 clear_key_pressed(lbInkey);
+                break;
             }
+            wpos_y += p_box->LineHeight;
         }
-        wpos_y += p_box->LineHeight;
+    }
+
+    if (lbDisplay.LeftButton || joy.Buttons[0])
+    {
+        lbDisplay.LeftButton = 0;
+        // Clicked outside of the keys area - exit editing a binding
+        controls_edited_gkey = 0;
     }
 
     if (controls_edited_gkey == 0 && !net_unkn_pos_02)
