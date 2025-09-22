@@ -1083,7 +1083,7 @@ GLOBAL_FUNC(ASM_draw_sorted_sprite1a)	/* 0x0122FC */
 		jle    jump_1232c
 		movb   $0x30,0x8(%esp)
 	jump_1232c:
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		sar    $0x10,%edx
 		cmp    $0x100,%edx
 		je     jump_12376
@@ -1318,7 +1318,7 @@ GLOBAL_FUNC(ASM_func_13A78)	/* 0x13a78 */
 		add    %ebx,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		sar    $0x10,%esi
 		sar    $0x10,%edx
 		imul   %edx,%esi
@@ -1898,7 +1898,7 @@ GLOBAL_FUNC(ASM_number_player)	/* 0x01C2CC */
 		add    %ecx,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		mov    0x28(%esp),%ecx
 		sar    $0x10,%edx
 		imul   %edx,%ecx
@@ -2062,7 +2062,7 @@ GLOBAL_FUNC(ASM_number_player)	/* 0x01C2CC */
 		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
 		cmp    $0x1,%eax
 		mov    0x2(%ecx),%edx
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		sar    $0x10,%edx
 		sar    $0x10,%eax
 		imul   %eax,%edx
@@ -2287,7 +2287,7 @@ GLOBAL_FUNC(ASM_draw_target_vehicle)	/* 0x0202C0 */
 		add    %ebp,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		sar    $0x10,%edi
 		sar    $0x10,%edx
 		imul   %edx,%edi
@@ -2557,7 +2557,7 @@ GLOBAL_FUNC(ASM_draw_target_person)	/* 0x020648 */
 		add    %ebx,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		sar    $0x10,%esi
 		sar    $0x10,%edx
 		imul   %edx,%esi
@@ -5600,7 +5600,7 @@ GLOBAL_FUNC(ASM_check_mouse_overvehicle)	/* 0x024758 */
 		add    %esi,%edx
 		sar    $0x10,%edx
 		mov    %edx,0x1c(%esp)
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		sar    $0x10,%ebp
 		sar    $0x10,%edx
 		imul   %edx,%ebp
@@ -5751,7 +5751,7 @@ GLOBAL_FUNC(ASM_check_mouse_overvehicle)	/* 0x024758 */
 		xor    %eax,%eax
 		mov    0x14(%ebx),%ax
 		mov    %eax,%esi
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		sar    $0x3,%esi
 		sar    $0x10,%eax
 		imul   %esi,%eax
@@ -6331,7 +6331,7 @@ GLOBAL_FUNC(ASM_check_mouse_overlap)	/* 0x250A0 */
 		cwtl
 		mov    EXPORT_SYMBOL(game_sort_sprites),%esi
 		shl    $0x4,%eax
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		add    %eax,%esi
 		mov    EXPORT_SYMBOL(word_1A5834)-2,%eax
 		sar    $0x10,%edx
@@ -6514,7 +6514,7 @@ GLOBAL_FUNC(ASM_check_mouse_over_unkn2)
 		shl    $0x4,%eax
 		mov    EXPORT_SYMBOL(word_1A5834)-2,%edi
 		add    %edx,%eax
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		sar    $0x10,%edi
 		sar    $0x10,%edx
 		imul   %edx,%edi
@@ -6669,7 +6669,7 @@ GLOBAL_FUNC(ASM_check_mouse_overlap_corpse)	/* 0x25428 */
 		movswl %ax,%esi
 		mov    EXPORT_SYMBOL(game_sort_sprites),%eax
 		shl    $0x4,%esi
-		mov    EXPORT_SYMBOL(render_area_b),%ebx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%ebx
 		add    %eax,%esi
 		mov    EXPORT_SYMBOL(word_1A5834)-2,%eax
 		sar    $0x10,%ebx
@@ -6853,7 +6853,7 @@ GLOBAL_FUNC(ASM_check_mouse_overlap_item)	/* 0x25624 */
 		movswl %ax,%esi
 		mov    EXPORT_SYMBOL(game_sort_sprites),%eax
 		shl    $0x4,%esi
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		add    %eax,%esi
 		mov    EXPORT_SYMBOL(word_1A5834)-2,%eax
 		sar    $0x10,%edx
@@ -7297,7 +7297,7 @@ GLOBAL_FUNC(ASM_draw_person_shadow)	/* 0x026CD0 */
 		mov    0xa0(%esp),%cl
 		mov    %cl,EXPORT_SYMBOL(vec_colour)
 		sar    $0x6,%eax
-		mov    EXPORT_SYMBOL(render_area_b),%ecx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%ecx
 		cwtl
 		sar    $0x10,%ecx
 		imul   %ecx,%eax
@@ -9313,7 +9313,7 @@ GLOBAL_FUNC(ASM_draw_object_face4_pole)	/* 0x028800 */
 		shl    $0x10,%eax
 		mov    %eax,0x5c(%esp)
 	jump_288d5:
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		movzwl 0x4(%edx),%ebp
 		sar    $0x10,%eax
 		imul   %eax,%ebp
@@ -11745,7 +11745,7 @@ GLOBAL_FUNC(ASM_draw_sort_sprite_veh_health_bar)	/* 0x02ABE0 */
 		mov    EXPORT_SYMBOL(game_sort_sprites),%edx
 		shl    $0x4,%eax
 		mov    0x8(%edx,%eax,1),%eax
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		mov    0x86(%eax),%bx
 		sar    $0x10,%edx
 		mov    0x3a(%eax),%cx
@@ -11874,7 +11874,7 @@ GLOBAL_FUNC(ASM_transform_point)	/* 0x02B3C0 */
 		add    %ecx,%ebx
 		sar    $0x10,%ebx
 		mov    %ebx,0x1c(%eax)
-		mov    EXPORT_SYMBOL(render_area_b),%ebx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%ebx
 		sar    $0x10,%edi
 		sar    $0x10,%ebx
 		imul   %ebx,%edi
@@ -70866,7 +70866,7 @@ GLOBAL_FUNC(ASM_build_polygon_circle_2d)	/* 0x067BF0 */
 		mov    EXPORT_SYMBOL(next_screen_point),%si
 		mov    %eax,0x14(%esp)
 		mov    %edx,0x10(%esp)
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		sar    $0x10,%eax
 		imul   %eax,%ebx
 		mov    0x14(%esp),%eax
@@ -71383,7 +71383,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		and    $0x7,%al
 		mov    %eax,%ecx
 		and    $0xffff,%ecx
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		shl    $0x7,%ecx
 		sar    $0x10,%eax
 		sub    $0x200,%ecx
@@ -71408,7 +71408,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		and    $0x7,%al
 		mov    %eax,%edx
 		and    $0xffff,%edx
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		shl    $0x7,%edx
 		sar    $0x10,%eax
 		sub    $0x200,%edx
@@ -71419,7 +71419,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		xor    %ah,%ah
 		and    $0x7,%al
 		and    $0xffff,%eax
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		shl    $0x7,%eax
 		sar    $0x10,%edx
 		sub    $0x200,%eax
@@ -71438,7 +71438,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		and    $0x7,%al
 		mov    %eax,%ebx
 		and    $0xffff,%ebx
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		shl    $0x7,%ebx
 		sar    $0x10,%eax
 		sub    $0x200,%ebx
@@ -71463,7 +71463,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		mov    %edx,%eax
 		sar    $0x1f,%edx
 		idiv   %ebx
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		shl    $0x7,%edx
 		sar    $0x10,%eax
 		sub    $0x400,%edx
@@ -71477,7 +71477,7 @@ GLOBAL_FUNC(ASM_build_wobble_line)	/* 0x0687AC */
 		mov    %edx,%eax
 		sar    $0x1f,%edx
 		idiv   %ecx
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		shl    $0x7,%edx
 		sar    $0x10,%eax
 		sub    $0x400,%edx
@@ -71721,7 +71721,7 @@ GLOBAL_FUNC(ASM_build_electricity)	/* 0x068D1C */
 		mov    0x26(%edi),%dx
 		add    %eax,%edx
 		mov    data_19ab13(,%edx,2),%esi
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		sar    $0x18,%esi
 		sar    $0x10,%eax
 		imul   %eax,%esi
@@ -72268,7 +72268,7 @@ GLOBAL_FUNC(ASM_build_laser_beam)	/* 0x069A34 */
 		add    %edx,%eax
 		lea    0x0(,%eax,2),%edx
 		mov    data_19ab13(%edx),%ebx
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		sar    $0x18,%ebx
 		sar    $0x10,%eax
 		imul   %eax,%ebx
@@ -72916,7 +72916,7 @@ GLOBAL_FUNC(ASM_build_laser_beam_q)	/* 0x06A2E0 */
 		mov    0x26(%ebx),%dx
 		add    %edx,%eax
 		mov    data_19ab13(,%eax,2),%ebx
-		mov    EXPORT_SYMBOL(render_area_b),%edx
+		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		sar    $0x18,%ebx
 		sar    $0x10,%edx
 		imul   %edx,%ebx
@@ -73851,7 +73851,7 @@ GLOBAL_FUNC(ASM_build_glare)	/* 0x06B634 */
 		jl     jump_6b6c6
 		movl   $0x270f,0x28(%esp)
 	jump_6b6c6:
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		movswl %cx,%ebx
 		sar    $0x10,%eax
 		imul   %ebx,%eax
@@ -78578,7 +78578,7 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(render_area_b),%ax
 		mov    %eax,0x8(%esp)
-		mov    EXPORT_SYMBOL(render_area_b),%eax
+		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		sar    $0x10,%eax
 		mov    %eax,0x10(%esp)
 		mov    engn_xc,%eax
@@ -123564,7 +123564,7 @@ GLOBAL_FUNC(ASM_group_not_seen)	/* 0x0A6BD0 */
 		push   %edi
 		mov    %eax,%ecx
 		mov    $0x90000,%eax
-		mov    EXPORT_SYMBOL(render_area_b),%esi
+		mov    EXPORT_SYMBOL(overall_scale)-2,%esi
 		mov    %eax,%edx
 		sar    $0x10,%esi
 		sar    $0x1f,%edx
