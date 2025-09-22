@@ -59,17 +59,25 @@ void clear_key_pressed(TbKeyCode key)
 {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wtype-limits"
-    if (key >= sizeof(lbKeyOn))
+    if (key >= sizeof(lbKeyOn)/sizeof(lbKeyOn[0]))
         return;
 #pragma GCC diagnostic pop
     lbKeyOn[key] = 0;
     if (key == lbInkey) {
         lbInkey = KC_UNASSIGNED;
+        lbExtendedKeyPress = 0;
     }
 }
 
 void simulate_key_press(TbKeyCode key)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtype-limits"
+    if (key >= sizeof(lbKeyOn)/sizeof(lbKeyOn[0]))
+        return;
+#pragma GCC diagnostic pop
+    if (key == KC_UNASSIGNED)
+        return;
     lbKeyOn[key] = 1;
     if (lbInkey == KC_UNASSIGNED) {
         lbInkey = key;

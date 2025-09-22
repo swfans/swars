@@ -5141,6 +5141,7 @@ ubyte do_user_interface(void)
     // Toggle Scanner beep
     if (is_gamekey_pressed(GKey_SCANNER_PULSE))
     {
+        clear_gamekey_pressed(GKey_SCANNER_PULSE);
         if (ingame.Flags & GamF_NoScannerBeep)
             ingame.Flags &= ~GamF_NoScannerBeep;
         else

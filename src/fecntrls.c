@@ -406,8 +406,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
             {
                 if (byte_1C4970 == 1 && !is_key_pressed(KC_RETURN, KMod_DONTCARE))
                 {
-                    lbExtendedKeyPress = 0;
-                    lbInkey = 0;
+                    clear_key_pressed(lbInkey);
                     byte_1C4970 = 0;
                     net_unkn_pos_01b = controls_hlight_gkey;
                     ret = 2;
@@ -463,20 +462,22 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
         }
         else
         {
-            if (lbInkey != 0)
+            if (lbInkey != KC_UNASSIGNED)
             {
+#if defined(DOS)||defined(GO32)
                 if (lbExtendedKeyPress)
                 {
                   set_controls_key(hlight_gkey, lbInkey | 0x80);
-                  lbExtendedKeyPress = 0;
-                  lbInkey = 0;
                 }
                 else
                 {
                   if ((lbInkey & 0x7F) != KC_BACKSLASH)
                       set_controls_key(hlight_gkey, lbInkey & 0x7F);
-                  lbInkey = 0;
                 }
+#else
+                set_controls_key(hlight_gkey, lbInkey);
+#endif
+                clear_key_pressed(lbInkey);
                 ret = 2;
             }
         }
@@ -654,8 +655,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
                 lbDisplay.LeftButton = 0;
                 controls_hlight_gkey = gkey;
                 net_unkn_pos_01b = gkey;
-                lbExtendedKeyPress = 0;
-                lbInkey = 0;
+                clear_key_pressed(lbInkey);
             }
         }
 
@@ -679,8 +679,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
                 lbDisplay.LeftButton = 0;
                 controls_hlight_gkey = gkey + (GKey_KEYS_COUNT - 1);
                 net_unkn_pos_01b = gkey + (GKey_KEYS_COUNT - 1);
-                lbExtendedKeyPress = 0;
-                lbInkey = 0;
+                clear_key_pressed(lbInkey);
             }
         }
         wpos_y += p_box->LineHeight;
