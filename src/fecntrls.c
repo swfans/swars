@@ -579,14 +579,25 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
         GameKey gkey;
 
         gkey = i + 1;
-        if (controls_hlight_gkey == gkey)
+        if (controls_edited_gkey == gkey)
         {
             lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
-            lbDisplay.DrawColour = 0x57;
+            lbDisplay.DrawColour = 0x32; // white
+        }
+        else if (controls_hlight_gkey == gkey)
+        {
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
+            lbDisplay.DrawColour = 0x57; // med purple
+        }
+        else if (is_hardcoded_hlight_gkey(gkey))
+        {
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
+            lbDisplay.DrawColour = 0x69; // darker purple
         }
         else
         {
             lbDisplay.DrawFlags = 0;
+            // Original colour - blue
         }
         text = gamekey_text_kbkey_name_for_draw(gkey);
         tx_kb_width[gkey] = my_string_width(text);
@@ -607,14 +618,25 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
         GameKey gkey;
 
         gkey = i + 1;
-        if (controls_hlight_gkey == gkey + (GKey_KEYS_COUNT - 1))
+        if (controls_edited_gkey == gkey + (GKey_KEYS_COUNT - 1))
         {
-          lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
-          lbDisplay.DrawColour = 87;
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
+            lbDisplay.DrawColour = 0xF8; // light purple
+        }
+        else if (controls_hlight_gkey == gkey + (GKey_KEYS_COUNT - 1))
+        {
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
+            lbDisplay.DrawColour = 0x57; // med purple
+        }
+        else if (is_hardcoded_hlight_gkey(gkey + (GKey_KEYS_COUNT - 1)))
+        {
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
+            lbDisplay.DrawColour = 0x69; // darker purple
         }
         else
         {
-          lbDisplay.DrawFlags = 0;
+            lbDisplay.DrawFlags = 0;
+            // Original colour - blue
         }
         text = gamekey_text_jskey_name_for_draw(gkey);
         tx_js_width[gkey] = my_string_width(text);
