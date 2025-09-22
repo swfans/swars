@@ -353,17 +353,79 @@ TbBool is_hardcoded_hlight_gkey(ushort hlight_gkey)
     return false;
 }
 
+#define GAMEKEY_ACTIVE_WIDTH_MIN 50
 #define SHEET_COLUMNS 2
 
 /** Check inputs for controls box in system menu screen.
  *
  * @return Gives 0 on no action, 1 on non-control-changing action, 2 on control key update/
  */
-ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
+ubyte menu_controls_inputs(struct ScreenTextBox *p_box, short *p_tx_kbd_width, short *p_tx_joy_width, int i_limit)
 {
+    short ln_height;
+    short wpos_x, wpos_y;
+    int i;
     ubyte ret;
 
     ret = 0;
+
+    lbFontPtr = p_box->Font;
+    ln_height = font_height('A');
+
+    wpos_x = 200;
+    wpos_y = 28;
+    for (i = p_box->field_38; i < i_limit; i++)
+    {
+        short col_width;
+        GameKey gkey;
+
+        gkey = i + 1;
+        col_width = max(p_tx_kbd_width[gkey], GAMEKEY_ACTIVE_WIDTH_MIN);
+        if (lbDisplay.LeftButton || joy.Buttons[0])
+        {
+            if (mouse_down_over_box_coords(text_window_x1 + wpos_x, text_window_y1 + wpos_y,
+              text_window_x1 + col_width + wpos_x, text_window_y1 + wpos_y + ln_height))
+            {
+                lbDisplay.LeftButton = 0;
+                controls_hlight_gkey = gkey;
+                if (is_hardcoded_hlight_gkey(controls_hlight_gkey)) {
+                    controls_edited_gkey = 0;
+                } else {
+                    controls_edited_gkey = controls_hlight_gkey;
+                }
+                clear_key_pressed(lbInkey);
+            }
+        }
+
+        wpos_y += p_box->LineHeight;
+    }
+
+    wpos_x = 300;
+    wpos_y = 28;
+    for (i = p_box->field_38; i < i_limit; i++)
+    {
+        short col_width;
+        GameKey gkey;
+
+        gkey = i + 1;
+        col_width = max(p_tx_joy_width[gkey], GAMEKEY_ACTIVE_WIDTH_MIN);
+        if (lbDisplay.LeftButton || joy.Buttons[0])
+        {
+            if (mouse_down_over_box_coords(text_window_x1 + wpos_x, text_window_y1 + wpos_y,
+              text_window_x1 + wpos_x + col_width, text_window_y1 + wpos_y + ln_height))
+            {
+                lbDisplay.LeftButton = 0;
+                controls_hlight_gkey = gkey + (GKey_KEYS_COUNT - 1);
+                if (is_hardcoded_hlight_gkey(controls_hlight_gkey)) {
+                    controls_edited_gkey = 0;
+                } else {
+                    controls_edited_gkey = controls_hlight_gkey;
+                }
+                clear_key_pressed(lbInkey);
+            }
+        }
+        wpos_y += p_box->LineHeight;
+    }
 
     if (controls_edited_gkey == 0 && !net_unkn_pos_02)
     {
@@ -533,14 +595,11 @@ const char *gamekey_text_jskey_name_for_draw(GameKey gkey)
     return text;
 }
 
-#define GAMEKEY_ACTIVE_WIDTH_MIN 50
-
 ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
 {
-    short ln_height;
     short wpos_x, wpos_y;
-    short tx_kb_width[GKey_KEYS_COUNT];
-    short tx_js_width[GKey_KEYS_COUNT];
+    short tx_kbd_width[GKey_KEYS_COUNT];
+    short tx_joy_width[GKey_KEYS_COUNT];
     int i, i_limit;
     ubyte kchange;
 
@@ -566,7 +625,6 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
     }
 
     lbFontPtr = p_box->Font;
-    ln_height = font_height('A');
 
     // Names column
     wpos_x = 4;
@@ -612,7 +670,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
             // Original colour - blue
         }
         text = gamekey_text_kbkey_name_for_draw(gkey);
-        tx_kb_width[gkey] = my_string_width(text);
+        tx_kbd_width[gkey] = my_string_width(text);
 
         lbDisplay.DrawFlags |= 0x8000;
         draw_text_purple_list2(wpos_x, wpos_y, text, 0);
@@ -651,7 +709,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
             // Original colour - blue
         }
         text = gamekey_text_jskey_name_for_draw(gkey);
-        tx_js_width[gkey] = my_string_width(text);
+        tx_joy_width[gkey] = my_string_width(text);
 
         lbDisplay.DrawFlags |= 0x8000;
         draw_text_purple_list2(wpos_x, wpos_y, text, 0);
@@ -661,54 +719,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
     }
     lbDisplay.DrawFlags = 0;
 
-    wpos_x = 200;
-    wpos_y = 28;
-    for (i = p_box->field_38; i < i_limit; i++)
-    {
-        short col_width;
-        GameKey gkey;
-
-        gkey = i + 1;
-        col_width = max(tx_kb_width[gkey], GAMEKEY_ACTIVE_WIDTH_MIN);
-        if (lbDisplay.LeftButton || joy.Buttons[0])
-        {
-            if (mouse_down_over_box_coords(text_window_x1 + wpos_x, text_window_y1 + wpos_y,
-              text_window_x1 + col_width + wpos_x, text_window_y1 + wpos_y + ln_height))
-            {
-                lbDisplay.LeftButton = 0;
-                controls_hlight_gkey = gkey;
-                controls_edited_gkey = gkey;
-                clear_key_pressed(lbInkey);
-            }
-        }
-
-        wpos_y += p_box->LineHeight;
-    }
-
-    wpos_x = 300;
-    wpos_y = 28;
-    for (i = p_box->field_38; i < i_limit; i++)
-    {
-        short col_width;
-        GameKey gkey;
-
-        gkey = i + 1;
-        col_width = max(tx_js_width[gkey], GAMEKEY_ACTIVE_WIDTH_MIN);
-        if ( lbDisplay.LeftButton || joy.Buttons[0] )
-        {
-            if (mouse_down_over_box_coords(text_window_x1 + wpos_x, text_window_y1 + wpos_y,
-              text_window_x1 + wpos_x + col_width, text_window_y1 + wpos_y + ln_height))
-            {
-                lbDisplay.LeftButton = 0;
-                controls_hlight_gkey = gkey + (GKey_KEYS_COUNT - 1);
-                controls_edited_gkey = gkey + (GKey_KEYS_COUNT - 1);
-                clear_key_pressed(lbInkey);
-            }
-        }
-        wpos_y += p_box->LineHeight;
-    }
-
-    kchange = menu_controls_inputs(p_box);
+    kchange = menu_controls_inputs(p_box, tx_kbd_width, tx_joy_width, i_limit);
 
     // If moved key, make sure the new highlight is visible
     if ((kchange != 0) && (controls_hlight_gkey != 0))
