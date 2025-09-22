@@ -37,6 +37,7 @@
 #include "network.h"
 #include "player.h"
 #include "purpldrw.h"
+#include "sound.h"
 #include "swlog.h"
 /******************************************************************************/
 extern struct ScreenBox controls_joystick_box;
@@ -352,6 +353,8 @@ TbBool is_hardcoded_hlight_gkey(ushort hlight_gkey)
     return false;
 }
 
+#define SHEET_COLUMNS 2
+
 /** Check inputs for controls box in system menu screen.
  *
  * @return Gives 0 on no action, 1 on non-control-changing action, 2 on control key update/
@@ -368,16 +371,17 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
         {
             clear_key_pressed(KC_DOWN);
             controls_hlight_gkey++;
-            if (controls_hlight_gkey > 2 * (GKey_KEYS_COUNT - 1))
+            if (controls_hlight_gkey > SHEET_COLUMNS * (GKey_KEYS_COUNT - 1))
                 controls_hlight_gkey = 1;
             ret = 1;
         }
         if (is_key_pressed(KC_UP, KMod_DONTCARE))
         {
             clear_key_pressed(KC_UP);
-            controls_hlight_gkey--;
-            if (controls_hlight_gkey < 1)
-                controls_hlight_gkey = 2 * (GKey_KEYS_COUNT - 1);
+            if (controls_hlight_gkey < 1 + 1)
+                controls_hlight_gkey = SHEET_COLUMNS * (GKey_KEYS_COUNT - 1);
+            else
+                controls_hlight_gkey--;
             ret = 1;
         }
         if (is_key_pressed(KC_RIGHT, KMod_DONTCARE))
@@ -385,41 +389,49 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box)
             // Next column
             clear_key_pressed(KC_RIGHT);
             controls_hlight_gkey += (GKey_KEYS_COUNT - 1);
-            if (controls_hlight_gkey > 2 * (GKey_KEYS_COUNT - 1))
-                controls_hlight_gkey -= 2 * (GKey_KEYS_COUNT - 1);
+            if (controls_hlight_gkey > SHEET_COLUMNS * (GKey_KEYS_COUNT - 1))
+                controls_hlight_gkey -= SHEET_COLUMNS * (GKey_KEYS_COUNT - 1);
             ret = 1;
         }
         if (is_key_pressed(KC_LEFT, KMod_DONTCARE))
         {
             // Prev column
             clear_key_pressed(KC_LEFT);
-            controls_hlight_gkey -= (GKey_KEYS_COUNT - 1);
-            if (controls_hlight_gkey < 1)
-                controls_hlight_gkey += 2 * (GKey_KEYS_COUNT - 1);
+            if (controls_hlight_gkey < (GKey_KEYS_COUNT - 1) + 1)
+                controls_hlight_gkey += (SHEET_COLUMNS - 1) * (GKey_KEYS_COUNT - 1);
+            else
+                controls_hlight_gkey -= (GKey_KEYS_COUNT - 1);
             ret = 1;
         }
 
-        if (!is_hardcoded_hlight_gkey(controls_hlight_gkey))
+        if (byte_1C4970)
         {
-            if (byte_1C4970)
+            if (byte_1C4970 == 1 && !is_key_pressed(KC_RETURN, KMod_DONTCARE))
             {
-                if (byte_1C4970 == 1 && !is_key_pressed(KC_RETURN, KMod_DONTCARE))
-                {
+                if (!is_hardcoded_hlight_gkey(controls_hlight_gkey)) {
                     clear_key_pressed(lbInkey);
                     byte_1C4970 = 0;
                     controls_edited_gkey = controls_hlight_gkey;
                     ret = 2;
                 }
             }
-            else
+        }
+        else
+        {
+            if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
             {
-                if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
-                {
+                if (is_hardcoded_hlight_gkey(controls_hlight_gkey)) {
+                    play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
+                } else {
                     byte_1C4970++;
                     ret = 2;
                 }
-                if (is_key_pressed(KC_BACK, KMod_DONTCARE))
-                {
+            }
+            if (is_key_pressed(KC_BACK, KMod_DONTCARE))
+            {
+                if (is_hardcoded_hlight_gkey(controls_hlight_gkey)) {
+                    play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
+                } else {
                     clear_key_pressed(KC_BACK);
                     unset_controls_key(controls_hlight_gkey);
                     ret = 2;
