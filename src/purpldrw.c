@@ -983,6 +983,7 @@ ubyte flashy_draw_purple_info_box(struct ScreenInfoBox *p_box)
     {
         if (p_box->Timer > 24)
         {
+            // Projector drawing sound
             if (!IsSamplePlaying(0, 4, 0))
                 play_sample_using_heap(0, 110, 127, 64, 100, 0, 1u);
         }
@@ -1054,9 +1055,9 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
 #if 0
     ubyte ret;
     asm volatile ("call ASM_flashy_draw_purple_button\n"
-        : "=r" (ret) : "a" (button));
+        : "=r" (ret) : "a" (p_btn));
     return ret;
-#endif
+#else
     short box_w, box_h;
     TbKeyCode akey;
     TbBool mouse_over, event_from_key;
@@ -1087,6 +1088,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
     {
         if (p_btn->Timer > 24)
         {
+            // Projector drawing sound
             if (!IsSamplePlaying(0, 4, 0))
                 play_sample_using_heap(0, 110, 127, 64, 100, 0, 1u);
         }
@@ -1178,6 +1180,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
     {
         if ((p_btn->Flags & GBxFlg_IsMouseOver) == 0)
         {
+            // Mouse over sound
             play_sample_using_heap(0, 123, 127, 64, 100, 0, 1u);
             p_btn->Flags |= GBxFlg_IsMouseOver;
         }
@@ -1261,21 +1264,30 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
         {
             if (!show_alert || p_btn == &alert_OK_button)
             {
+                ushort smpl_id;
+
                 if (p_btn->CallBackFn != NULL)
                 {
-                    ubyte drawn;
+                    ubyte clicked;
                     //p_btn->CallBackFn(0); -- incompatible calling convention
                     asm volatile ("call *%2\n"
-                      : "=r" (drawn) : "a" (0), "g" (p_btn->CallBackFn));
-                    if ( drawn )
-                    {
-                      play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
-                    }
+                      : "=r" (clicked) : "a" (0), "g" (p_btn->CallBackFn));
+                    if (clicked)
+                        smpl_id = 111;
+                    else
+                        smpl_id = 129;
                 }
-                else if ((p_btn->Flags & GBxFlg_RadioBtn) != 0)
-                    play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
                 else
-                    play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
+                {
+                    if ((p_btn->Flags & GBxFlg_RadioBtn) != 0)
+                        // Click sound for do action button
+                        smpl_id = 111;
+                    else
+                        // Click sound for cancel / abort button
+                        smpl_id = 129;
+                }
+                play_sample_using_heap(0, smpl_id, 127, 64, 100, 0, 2u);
+
                 if ((p_btn->Flags & GBxFlg_RadioBtn) != 0)
                     *p_btn->Radio = p_btn->RadioValue;
             }
@@ -1293,10 +1305,26 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
         {
             if (!show_alert || p_btn == &alert_OK_button)
             {
-                if ( p_btn->CallBackFn && p_btn->CallBackFn(1u) )
-                  play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
+                ushort smpl_id;
+
+                if (p_btn->CallBackFn != NULL)
+                {
+                    ubyte clicked;
+                    //clicked = p_btn->CallBackFn(1); -- incompatible calling convention
+                    asm volatile ("call *%2\n"
+                      : "=r" (clicked) : "a" (1), "g" (p_btn->CallBackFn));
+                    if (clicked)
+                        smpl_id = 111;
+                    else
+                        smpl_id = 129;
+                }
                 else
-                  play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
+                {
+                    // Click sound for cancel / abort button
+                    smpl_id = 129;
+                }
+                play_sample_using_heap(0, smpl_id, 127, 64, 100, 0, 2u);
+
                 if ((p_btn->Flags & GBxFlg_RadioBtn) != 0)
                   *p_btn->Radio = p_btn->RadioValue;
             }
@@ -1365,6 +1393,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
     }
     lbDisplay.DrawFlags = 0;
     return ret;
+#endif
 }
 
 ubyte button_text(struct ScreenButton *p_btn)

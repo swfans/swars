@@ -323,7 +323,7 @@ void init_screen_button(struct ScreenButton *p_box, ushort x, ushort y,
     p_box->X = x;
     p_box->DrawFn = ac_flashy_draw_purple_button;
     p_box->DrawTextFn = ac_button_text;
-    p_box->CallBackFn = 0;
+    p_box->CallBackFn = NULL;
     p_box->Border = 1;
     p_box->Colour = 0xAE;
     p_box->BGColour = 0xF3;
