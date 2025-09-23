@@ -63,7 +63,6 @@
 
 #define PURPLE_APPS_EMAIL_ICONS_LIMIT 10
 
-extern struct ScreenTextBox heading_box;
 extern struct ScreenButton sysmnu_buttons[SYSMNU_BUTTONS_COUNT];
 extern char options_title_text[];
 
@@ -1010,7 +1009,7 @@ static void global_techlevel_box_draw(void)
     draw_text_purple_list2(3, 3, text, 0);
 }
 
-void show_date_time(void)
+void show_purple_status_top_bar(void)
 {
     global_date_box_draw();
     global_time_box_draw();

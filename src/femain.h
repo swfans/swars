@@ -56,6 +56,10 @@ struct ScreenTextBox;
 /******************************************************************************/
 extern struct ScreenTextBox unkn13_SYSTEM_button;
 
+extern struct ScreenBoxBase global_top_bar_box;
+extern struct ScreenBoxBase global_apps_bar_box;
+extern struct ScreenTextBox heading_box;
+
 extern struct SynTime global_date;
 extern struct SynTime research_curr_wep_date;
 extern struct SynTime research_curr_mod_date;
@@ -99,7 +103,7 @@ void mark_system_menu_screen_boxes_redraw(void);
 
 void show_mission_loading_screen(void);
 
-void show_date_time(void);
+void show_purple_status_top_bar(void);
 void update_date_time(void);
 TbBool input_date_time(void);
 

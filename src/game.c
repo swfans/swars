@@ -6317,7 +6317,7 @@ void show_menu_screen(void)
     }
     text_buf_pos = lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight;
 
-    show_date_time();
+    show_purple_status_top_bar();
 
     if (is_purple_apps_selection_bar_visible())
           show_purple_apps_selection_bar();

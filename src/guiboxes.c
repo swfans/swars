@@ -28,32 +28,32 @@
 #include "swlog.h"
 /******************************************************************************/
 
-TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box_h)
+TbBool in_box(ScrCoord x, ScrCoord y, ScrCoord box_x, ScrCoord box_y, short box_w, short box_h)
 {
     return x > box_x && x < box_x + box_w
         && y > box_y && y < box_y + box_h;
 }
 
-TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2)
+TbBool in_box_coords(ScrCoord x, ScrCoord y, ScrCoord box_x1, ScrCoord box_y1, ScrCoord box_x2, ScrCoord box_y2)
 {
     return x > box_x1 && x < box_x2
         && y > box_y1 && y < box_y2;
 }
 
-TbBool over_box(short x, short y, short box_x, short box_y, short box_w, short box_h)
+TbBool over_box(ScrCoord x, ScrCoord y, ScrCoord box_x, ScrCoord box_y, short box_w, short box_h)
 {
     return x >= box_x && x <= box_x + box_w
         && y >= box_y && y <= box_y + box_h;
 }
 
-TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2)
+TbBool over_box_coords(ScrCoord x, ScrCoord y, ScrCoord box_x1, ScrCoord box_y1, ScrCoord box_x2, ScrCoord box_y2)
 {
     return x >= box_x1 && x <= box_x2
         && y >= box_y1 && y <= box_y2;
 }
 
-TbBool boxes_intersect(short box1_x, short box1_y, short box1_w, short box1_h,
-  short box2_x, short box2_y, short box2_w, short box2_h)
+TbBool boxes_intersect(ScrCoord box1_x, ScrCoord box1_y, short box1_w, short box1_h,
+  ScrCoord box2_x, ScrCoord box2_y, short box2_w, short box2_h)
 {
     if ((box1_x + box1_w < box2_x) || (box1_x > box2_x + box2_w))
         return false;
@@ -71,18 +71,18 @@ TbBool base_boxes_intersect(struct ScreenBoxBase *p_box1, struct ScreenBoxBase *
     return true;
 }
 
-TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2)
+TbBool mouse_move_over_box_coords(ScrCoord box_x1, ScrCoord box_y1, ScrCoord box_x2, ScrCoord box_y2)
 {
-    short ms_x, ms_y;
+    ScrCoord ms_x, ms_y;
 
     ms_x = lbDisplay.MMouseX;
     ms_y = lbDisplay.MMouseY;
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
-TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2)
+TbBool mouse_down_over_box_coords(ScrCoord box_x1, ScrCoord box_y1, ScrCoord box_x2, ScrCoord box_y2)
 {
-    short ms_x, ms_y;
+    ScrCoord ms_x, ms_y;
 
     ms_x = lbDisplay.MouseX;
     ms_y = lbDisplay.MouseY;
@@ -90,18 +90,18 @@ TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, shor
 }
 
 // TODO switch order of arguments and to above function, remove when this is no longer used
-TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2)
+TbBool mouse_move_over_rect(ScrCoord box_x1, ScrCoord box_x2, ScrCoord box_y1, ScrCoord box_y2)
 {
-    short ms_x, ms_y;
+    ScrCoord ms_x, ms_y;
 
     ms_x = lbDisplay.MMouseX;
     ms_y = lbDisplay.MMouseY;
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
-TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, TbBool a5)
+TbBool mouse_move_over_rect_adv(ScrCoord x1, ScrCoord y1, short width, short height, TbBool a5)
 {
-    short ms_x, ms_y;
+    ScrCoord ms_x, ms_y;
     short dx, dy;
 
     ms_x = lbDisplay.MMouseX;
@@ -130,37 +130,37 @@ TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, T
     return 0;
 }
 
-short mouse_move_position_horizonal_over_bar_coords(short x, short w)
+short mouse_move_position_horizonal_over_bar_coords(ScrCoord x, short w)
 {
-    short ms_x;
+    ScrCoord ms_x;
 
     ms_x = lbDisplay.MMouseX;
     return (ms_x - x);
 }
 
-short mouse_move_position_vertical_over_bar_coords(short y, short h)
+short mouse_move_position_vertical_over_bar_coords(ScrCoord y, short h)
 {
-    short ms_y;
+    ScrCoord ms_y;
 
     ms_y = lbDisplay.MMouseY;
     return (ms_y - y);
 }
 
-short mouse_down_position_horizonal_over_bar_coords(short x, short w)
+short mouse_down_position_horizonal_over_bar_coords(ScrCoord x, short w)
 {
-    short ms_x;
+    ScrCoord ms_x;
 
     ms_x = lbDisplay.MouseX;
     return (ms_x - x);
 }
 
-TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *p_box)
+TbBool is_over_box_base(ScrCoord x, ScrCoord y, struct ScreenBoxBase *p_box)
 {
     return (x >= p_box->X) && (x <= p_box->X + p_box->Width)
         && (y >= p_box->Y) && (y <= p_box->Y + p_box->Height);
 }
 
-TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *p_box)
+TbBool is_over_slant_box_base(ScrCoord x, ScrCoord y, struct ScreenBoxBase *p_box)
 {
     if ((x >= p_box->X) && (x <= p_box->X + p_box->Width + p_box->Height)
         && (y >= p_box->Y) && (y <= p_box->Y + p_box->Height))
@@ -177,7 +177,7 @@ TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *p_box)
 
 TbBool mouse_move_over_box_base(struct ScreenBoxBase *p_box)
 {
-    short ms_x, ms_y;
+    ScrCoord ms_x, ms_y;
 
     ms_x = lbDisplay.MMouseX;
     ms_y = lbDisplay.MMouseY;
@@ -186,7 +186,7 @@ TbBool mouse_move_over_box_base(struct ScreenBoxBase *p_box)
 
 TbBool mouse_down_over_box_base(struct ScreenBoxBase *p_box)
 {
-    short ms_x, ms_y;
+    ScrCoord ms_x, ms_y;
 
     ms_x = lbDisplay.MouseX;
     ms_y = lbDisplay.MouseY;
@@ -195,7 +195,7 @@ TbBool mouse_down_over_box_base(struct ScreenBoxBase *p_box)
 
 TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *p_box)
 {
-    short ms_x, ms_y;
+    ScrCoord ms_x, ms_y;
 
     ms_x = lbDisplay.MMouseX;
     ms_y = lbDisplay.MMouseY;
@@ -221,13 +221,13 @@ short mouse_move_position_vertical_scrollbar_over_text_box(struct ScreenTextBox 
 
 short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
 {
-    short ms_y;
+    ScrCoord ms_y;
 
     ms_y = lbDisplay.MMouseY;
     return ms_y - box->Y;
 }
 
-TbResult ApDrawSlantBox(short x, short y, ushort w, ushort h, TbPixel col)
+TbResult ApDrawSlantBox(ScrCoord x, ScrCoord y, ushort w, ushort h, TbPixel col)
 {
     short cx, cy;
     short ch;
@@ -243,7 +243,7 @@ TbResult ApDrawSlantBox(short x, short y, ushort w, ushort h, TbPixel col)
     return Lb_SUCCESS;
 }
 
-void init_screen_box(struct ScreenBox *p_box, ushort x, ushort y, ushort width, ushort height, int drawspeed)
+void init_screen_box(struct ScreenBox *p_box, ScrCoord x, ScrCoord y, ushort width, ushort height, int drawspeed)
 {
 #if 0
     asm volatile (
@@ -264,7 +264,7 @@ void init_screen_box(struct ScreenBox *p_box, ushort x, ushort y, ushort width, 
     p_box->DrawSpeed = drawspeed;
 }
 
-void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
+void init_screen_text_box(struct ScreenTextBox *p_box, ScrCoord x, ScrCoord y,
   ushort width, ushort height, int drawspeed, struct TbSprite *p_font, ushort textspeed)
 {
 #if 0
@@ -299,7 +299,7 @@ void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
     p_box->ScrollWindowHeight = p_box->Height - 31;
 }
 
-void init_screen_button(struct ScreenButton *p_box, ushort x, ushort y,
+void init_screen_button(struct ScreenButton *p_box, ScrCoord x, ScrCoord y,
   const char *text, int drawspeed, struct TbSprite *p_font, int textspeed, int flags)
 {
 #if 0
@@ -336,7 +336,7 @@ void init_screen_button(struct ScreenButton *p_box, ushort x, ushort y,
     p_box->RadioValue = 0;
 }
 
-void init_screen_info_box(struct ScreenInfoBox *p_box, ushort x, ushort y, ushort width,
+void init_screen_info_box(struct ScreenInfoBox *p_box, ScrCoord x, ScrCoord y, ushort width,
   char *text1, char *text2, int drawspeed, struct TbSprite *p_font1, struct TbSprite *p_font2, int textspeed)
 {
 #if 0

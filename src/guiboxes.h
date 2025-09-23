@@ -21,6 +21,8 @@
 
 #include "bftypes.h"
 
+#include "game_bstype.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -209,25 +211,25 @@ struct ScreenShape { // sizeof=42
 
 /** Returns if given position is inside given box with size (excl. borders).
  */
-TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box_h);
+TbBool in_box(ScrCoord x, ScrCoord y, ScrCoord box_x, ScrCoord box_y, short box_w, short box_h);
 
 /** Returns if given position is inside given box with coords (excl. borders).
  */
-TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
+TbBool in_box_coords(ScrCoord x, ScrCoord y, ScrCoord box_x1, ScrCoord box_y1, ScrCoord box_x2, ScrCoord box_y2);
 
 
 /** Returns if given position is over given box with size (incl. borders).
  */
-TbBool over_box(short x, short y, short box_x, short box_y, short box_w, short box_h);
+TbBool over_box(ScrCoord x, ScrCoord y, ScrCoord box_x, ScrCoord box_y, short box_w, short box_h);
 
 /** Returns if given position is over given box with coords (incl. borders).
  */
-TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
+TbBool over_box_coords(ScrCoord x, ScrCoord y, ScrCoord box_x1, ScrCoord box_y1, ScrCoord box_x2, ScrCoord box_y2);
 
 /** Returns if given two boxes have a common part (incl. borders).
  */
-TbBool boxes_intersect(short box1_x, short box1_y, short box1_w, short box1_h,
-  short box2_x, short box2_y, short box2_w, short box2_h);
+TbBool boxes_intersect(ScrCoord box1_x, ScrCoord box1_y, short box1_w, short box1_h,
+  ScrCoord box2_x, ScrCoord box2_y, short box2_w, short box2_h);
 
 /** Returns if given two boxes have a common part (incl. borders).
  */
@@ -236,29 +238,29 @@ TbBool base_boxes_intersect(struct ScreenBoxBase *p_box1, struct ScreenBoxBase *
 
 /** Returns if current mouse move position is over given box with coords (incl. borders).
  */
-TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);
+TbBool mouse_move_over_box_coords(ScrCoord box_x1, ScrCoord box_y1, ScrCoord box_x2, ScrCoord box_y2);
 
 /** Returns if mouse position when button was pressed down is over given box with coords (incl. borders).
  */
-TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);
+TbBool mouse_down_over_box_coords(ScrCoord box_x1, ScrCoord box_y1, ScrCoord box_x2, ScrCoord box_y2);
 
 // TODO switch order of arguments and to above function, remove when this is no longer used
-TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2);
+TbBool mouse_move_over_rect(ScrCoord box_x1, ScrCoord box_x2, ScrCoord box_y1, ScrCoord box_y2);
 
-TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, TbBool a5);
+TbBool mouse_move_over_rect_adv(ScrCoord x1, ScrCoord y1, short width, short height, TbBool a5);
 
-short mouse_move_position_horizonal_over_bar_coords(short x, short w);
-short mouse_down_position_horizonal_over_bar_coords(short x, short w);
+short mouse_move_position_horizonal_over_bar_coords(ScrCoord x, short w);
+short mouse_down_position_horizonal_over_bar_coords(ScrCoord x, short w);
 
 /** Returns if given position is over given box (incl. borders).
  */
 #define is_over_box(x, y, p_box) is_over_box_base(x, y, (struct ScreenBoxBase *)p_box)
-TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *p_box);
+TbBool is_over_box_base(ScrCoord x, ScrCoord y, struct ScreenBoxBase *p_box);
 
 /** Returns if given position is over given slant (leaning right) box (incl. borders).
  */
 #define is_over_slant_box(x, y, p_box) is_over_slant_box_base(x, y, (struct ScreenBoxBase *)p_box)
-TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *p_box);
+TbBool is_over_slant_box_base(ScrCoord x, ScrCoord y, struct ScreenBoxBase *p_box);
 
 /** Returns if current mouse move position is over given box (incl. borders).
  */
@@ -290,17 +292,17 @@ short mouse_move_position_vertical_scrollbar_over_text_box(struct ScreenTextBox 
 /** Draws slant box / kicked box / parallellogram skewed 45 deg.
  * This function is like a extension to bflibrary API, but it's defined on application side.
  */
-TbResult ApDrawSlantBox(short x, short y, ushort w, ushort h, TbPixel col);
+TbResult ApDrawSlantBox(ScrCoord x, ScrCoord y, ushort w, ushort h, TbPixel col);
 
-void init_screen_box(struct ScreenBox *p_box, ushort x, ushort y,
+void init_screen_box(struct ScreenBox *p_box, ScrCoord x, ScrCoord y,
   ushort width, ushort height, int drawspeed);
-void init_screen_text_box(struct ScreenTextBox *p_box, ushort x, ushort y,
+void init_screen_text_box(struct ScreenTextBox *p_box, ScrCoord x, ScrCoord y,
   ushort width, ushort height, int drawspeed,
   struct TbSprite *p_font, ushort textspeed);
-void init_screen_button(struct ScreenButton *p_box, ushort x, ushort y,
+void init_screen_button(struct ScreenButton *p_box, ScrCoord x, ScrCoord y,
   const char *text, int drawspeed,
   struct TbSprite *font, int textspeed, int flags);
-void init_screen_info_box(struct ScreenInfoBox *p_box, ushort x, ushort y,
+void init_screen_info_box(struct ScreenInfoBox *p_box, ScrCoord x, ScrCoord y,
   ushort width, char *text1, char *text2, int drawspeed,
   struct TbSprite *p_font1, struct TbSprite *p_font2, int textspeed);
 

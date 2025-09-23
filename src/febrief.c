@@ -673,11 +673,18 @@ void init_brief_screen_scanner(void)
     SCANNER_init();
 }
 
+#define SCROLL_BAR_WIDTH 12
+
 void init_brief_screen_boxes(void)
 {
-    short scr_w, start_x;
+    ScrCoord scr_w, scr_h, start_x, start_y;
 
     scr_w = lbDisplay.GraphicsWindowWidth;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
 
     init_screen_text_box(&brief_netscan_box, 7, 281, 322, 145,
       6, small_med_font, 3);
@@ -692,7 +699,7 @@ void init_brief_screen_boxes(void)
 
     init_screen_text_box(&brief_mission_text_box, 338u, 72u, 295u, 354, 6, small_font, 3);
     init_screen_button(&unkn1_ACCEPT_button, 343u, 405u,
-      gui_strings[436], 6, med2_font, 1, 0);
+      gui_strings[436], 6, med2_font, 1, 0x00);
     init_screen_button(&unkn1_CANCEL_button, 616u, 405u,
       gui_strings[437], 6, med2_font, 1, 0x80);
     brief_mission_text_box.Buttons[0] = &unkn1_ACCEPT_button;
@@ -706,17 +713,24 @@ void init_brief_screen_boxes(void)
     brief_graphical_box.SpecialDrawFn = show_citymap_box;
 
     start_x = (scr_w - brief_graphical_box.Width - brief_mission_text_box.Width - 23) / 2;
+    start_y = (scr_h - heading_box.Y - heading_box.Height - brief_graphical_box.Height - 24) / 2;
     brief_graphical_box.X = start_x + 7;
+    brief_graphical_box.Y = start_y;
+
+    brief_mission_text_box.X = brief_graphical_box.X + brief_graphical_box.Width + 9;
+    brief_mission_text_box.Y = brief_graphical_box.Y;
 
     brief_netscan_box.X = start_x + 7;
+    brief_netscan_box.Y = brief_mission_text_box.Y + brief_mission_text_box.Height - brief_netscan_box.Height;
     brief_NETSCAN_COST_box.X = brief_netscan_box.X + 5;
+    brief_NETSCAN_COST_box.Y = brief_netscan_box.Y + brief_netscan_box.Height - brief_NETSCAN_COST_box.Height - 5;
     //no need to update brief_NETSCAN_button.X - it will happen on the update below
     update_brief_screen_netscan_button(441);
 
-    brief_mission_text_box.X = brief_graphical_box.X + brief_graphical_box.Width + 9;
     unkn1_ACCEPT_button.X = brief_mission_text_box.X + 5;
-    // Additional 12 px left to fit scroll bar buttons
-    unkn1_CANCEL_button.X = brief_mission_text_box.X + brief_mission_text_box.Width - unkn1_CANCEL_button.Width - 5 - 12;
+    unkn1_ACCEPT_button.Y = brief_mission_text_box.Y + brief_mission_text_box.Height - unkn1_ACCEPT_button.Height - 5;
+    unkn1_CANCEL_button.X = brief_mission_text_box.X + brief_mission_text_box.Width - unkn1_CANCEL_button.Width - 5 - SCROLL_BAR_WIDTH;
+    unkn1_CANCEL_button.Y = brief_mission_text_box.Y + brief_mission_text_box.Height - unkn1_CANCEL_button.Height - 5;
 }
 
 void update_brief_screen_netscan_button(ushort text_id)
@@ -724,7 +738,8 @@ void update_brief_screen_netscan_button(ushort text_id)
     const char *text;
 
     text = gui_strings[text_id];
-    init_screen_button(&brief_NETSCAN_button, brief_netscan_box.X + brief_netscan_box.Width - 17, 405,
+    init_screen_button(&brief_NETSCAN_button,
+      brief_netscan_box.X + brief_netscan_box.Width - 17, brief_NETSCAN_COST_box.Y,
       text, 6, med2_font, 1, 0x80);
     brief_NETSCAN_COST_box.Width = brief_netscan_box.Width - 10 - brief_NETSCAN_button.Width - 17;
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
