@@ -592,7 +592,7 @@ void show_sysmenu_screen(void)
             reset_options_audio_boxes_flags();
             break;
         case SySc_GFX_OPTS:
-            reset_options_visual_boxes_flags();
+            reset_options_gfx_settings_boxes_flags();
             break;
         case SySc_LOGOUT:
             if (login_control__State == 5)

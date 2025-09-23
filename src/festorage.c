@@ -61,9 +61,6 @@ void init_storage_screen_boxes(void)
 
     scr_w = lbDisplay.GraphicsWindowWidth;
 
-    init_screen_text_box(&system_screen_shared_header_box, 213u, 25u, 420u, 38, 6, big_font, 1);
-    system_screen_shared_header_box.DrawTextFn = ac_show_title_box;
-
     init_screen_text_box(&storage_slots_box, 213u, 72u, 420u, 354, 6, med2_font, 1);
     storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
     storage_slots_box.ScrollWindowHeight = 208;
@@ -84,7 +81,6 @@ void init_storage_screen_boxes(void)
 
     start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - storage_slots_box.Width - 7) / 2;
 
-    system_screen_shared_header_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
     storage_slots_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
 
     storage_LOAD_button.X = storage_slots_box.X + 6;

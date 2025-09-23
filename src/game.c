@@ -3778,7 +3778,6 @@ ubyte load_game_slot(ubyte click)
 
     mark_system_menu_screen_boxes_redraw();
     mark_sys_scr_shared_header_box_redraw();
-    mark_sys_scr_shared_content_box_redraw();
     mark_storage_screen_boxes_redraw();
     if (save_slot == 0) {
         ingame.Flags |= GamF_MortalGame;
@@ -4602,7 +4601,7 @@ void init_screen_boxes(void)
     init_alert_screen_boxes();
     init_main_screen_boxes();
     init_system_menu_boxes();
-    init_sys_scr_shared_content_box();
+    init_sys_scr_shared_boxes();
     init_brief_screen_boxes();
     init_world_screen_boxes();
     init_debrief_screen_boxes();
@@ -6188,7 +6187,7 @@ void menu_screen_redraw(void)
     reset_research_screen_boxes_flags();
 
     reset_options_audio_boxes_flags();
-    reset_options_visual_boxes_flags();
+    reset_options_gfx_settings_boxes_flags();
 
     set_flag01_storage_screen_boxes();
     set_flag01_login_screen_boxes();

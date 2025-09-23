@@ -833,9 +833,15 @@ ubyte show_options_controls_screen(void)
 
 void init_controls_screen_boxes(void)
 {
-    short scr_w, start_x, part_w;
+    ScrCoord scr_w, scr_h, start_x, start_y;
+    short part_w;
 
     scr_w = lbDisplay.GraphicsWindowWidth;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
 
     init_screen_text_box(&controls_list_box, 213u, 72u, 420u, 354, 6, small_med_font, 1);
     controls_list_box.DrawTextFn = ac_show_menu_controls_list_box;
@@ -861,17 +867,24 @@ void init_controls_screen_boxes(void)
     controls_calibrate_button.CallBackFn = ac_do_controls_calibrate;
 
     start_x = (scr_w - controls_joystick_box.Width - controls_list_box.Width - 23) / 2;
+    start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height + 2 +
+      (scr_h - system_screen_shared_header_box.Y - system_screen_shared_header_box.Height - controls_list_box.Height) / 2;
 
     controls_joystick_box.X = start_x + 7;
     controls_calibrate_button.X = controls_joystick_box.X + 50;
 
     controls_list_box.X = controls_joystick_box.X + controls_joystick_box.Width + 9;
+    controls_list_box.Y = start_y;
     part_w = controls_list_box.Width - 6 - SCROLL_BAR_WIDTH;
     sheet_columns_x[0] = 3 + 1;
     sheet_columns_x[1] = 3 + part_w - 2 * (part_w / 4);
     sheet_columns_x[2] = 3 + part_w - (part_w / 4);
     controls_defaults_button.X = controls_list_box.X + 6;
+    controls_defaults_button.Y = controls_list_box.Y + controls_list_box.Height - controls_defaults_button.Height - 5;
     controls_save_button.X = controls_list_box.X + controls_list_box.Width - controls_save_button.Width - 6 - SCROLL_BAR_WIDTH;
+    controls_save_button.Y = controls_list_box.Y + controls_list_box.Height - controls_save_button.Height - 5;
+
+    controls_joystick_box.Y = controls_list_box.Y + controls_list_box.Height - controls_joystick_box.Height;
 }
 
 void reset_controls_screen_boxes_flags(void)

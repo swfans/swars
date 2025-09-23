@@ -21,11 +21,27 @@
 #include "bfscreen.h"
 
 #include "femain.h"
+#include "game_sprts.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "purpldrw.h"
 #include "swlog.h"
 /******************************************************************************/
+
+void init_sys_scr_shared_header_box(void)
+{
+    short scr_w, start_x, content_box_width;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
+
+    init_screen_text_box(&system_screen_shared_header_box, 213u, 25u, 420u, 38, 6, big_font, 1);
+    system_screen_shared_header_box.DrawTextFn = ac_show_title_box;
+
+    content_box_width = 420;
+    start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - content_box_width - 7) / 2;
+
+    system_screen_shared_header_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
+}
 
 TbBool is_sys_scr_shared_header_flag01(void)
 {
@@ -53,28 +69,20 @@ ubyte show_sys_scr_shared_header(void)
     return drawn;
 }
 
-void init_sys_scr_shared_content_box(void)
-{
-    init_screen_box(&system_screen_shared_content_box, 213u, 72u, 420u, 354, 6);
-
-    system_screen_shared_content_box.X = unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width + 9;
-}
-
-void mark_sys_scr_shared_content_box_redraw(void)
-{
-    system_screen_shared_content_box.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_BkCopied);
-}
-
 void reset_sys_scr_shared_boxes_flags(void)
 {
     system_screen_shared_header_box.Flags = GBxFlg_Unkn0001;
-    system_screen_shared_content_box.Flags = GBxFlg_Unkn0001;
 }
 
 void set_flag02_sys_scr_shared_boxes(void)
 {
     system_screen_shared_header_box.Flags |= GBxFlg_Unkn0002;
-    system_screen_shared_content_box.Flags |= GBxFlg_Unkn0002;
 }
+
+void init_sys_scr_shared_boxes(void)
+{
+    init_sys_scr_shared_header_box();
+}
+
 
 /******************************************************************************/

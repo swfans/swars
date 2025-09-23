@@ -42,6 +42,7 @@ extern struct ScreenBox audio_tracks_box;
 extern struct ScreenBox audio_volume_boxes[3];
 extern struct ScreenButton options_audio_buttons[7];
 
+extern struct ScreenBox options_gfx_settings_box;
 extern struct ScreenButton options_gfx_buttons[16];
 
 extern short word_1C4866[3];
@@ -384,11 +385,11 @@ ubyte show_options_visual_screen(void)
 {
     ubyte drawn;
 
-    //drawn = system_screen_shared_content_box.DrawFn(&system_screen_shared_content_box); -- incompatible calling convention
+    //drawn = options_gfx_settings_box.DrawFn(&options_gfx_settings_box); -- incompatible calling convention
     asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&system_screen_shared_content_box), "g" (system_screen_shared_content_box.DrawFn));
+        : "=r" (drawn) : "a" (&options_gfx_settings_box), "g" (options_gfx_settings_box.DrawFn));
     if (drawn == 3) {
-        show_netgame_unkn1(&system_screen_shared_content_box);
+        show_netgame_unkn1(&options_gfx_settings_box);
     }
     return drawn;
 }
@@ -483,6 +484,8 @@ void init_options_visual_screen_boxes(void)
 {
     int i;
     int val;
+
+    init_screen_box(&options_gfx_settings_box, 213u, 72u, 420u, 354, 6);
 
     init_screen_button(&options_gfx_buttons[0], 456u, 94u,
       gui_strings[465], 6, med2_font, 1, 0);
@@ -594,19 +597,21 @@ void init_options_visual_screen_boxes(void)
 
     // Reposition the components to current resolution
 
+    options_gfx_settings_box.X = unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width + 9;
+
     for (i = 0; i < 14; i+=2)
     {
-        options_gfx_buttons[i+0].X = system_screen_shared_content_box.X +
-          system_screen_shared_content_box.Width - 177;
-        options_gfx_buttons[i+1].X = system_screen_shared_content_box.X +
-          system_screen_shared_content_box.Width - 89;
+        options_gfx_buttons[i+0].X = options_gfx_settings_box.X +
+          options_gfx_settings_box.Width - 177;
+        options_gfx_buttons[i+1].X = options_gfx_settings_box.X +
+          options_gfx_settings_box.Width - 89;
     }
 
     for (i = 14; i < 16; i++)
     {
-        val = (system_screen_shared_content_box.Width -
+        val = (options_gfx_settings_box.Width -
           options_gfx_buttons[i].Width) / 2;
-        options_gfx_buttons[i].X = system_screen_shared_content_box.X +
+        options_gfx_buttons[i].X = options_gfx_settings_box.X +
           val + 9;
     }
 }
@@ -623,9 +628,11 @@ void reset_options_audio_boxes_flags(void)
     }
 }
 
-void reset_options_visual_boxes_flags(void)
+void reset_options_gfx_settings_boxes_flags(void)
 {
     int i;
+
+    options_gfx_settings_box.Flags = GBxFlg_Unkn0001;
 
     for (i = 0; i < 14; i++) {
       options_gfx_buttons[i].Flags = GBxFlg_RadioBtn | GBxFlg_Unkn0001;
@@ -649,11 +656,18 @@ void set_flag02_gfx_screen_boxes(void)
 {
     int i;
 
+    options_gfx_settings_box.Flags |= GBxFlg_Unkn0002;
+
     for (i = 0; i != 16; i++)
         options_gfx_buttons[i].Flags |= GBxFlg_Unkn0002;
 }
 
-void update_options_screen_state(void)
+void mark_gfx_screen_boxes_redraw(void)
+{
+    options_gfx_settings_box.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_BkCopied);
+}
+
+void update_options_gfx_settings_state(void)
 {
     const char *text;
     int i;
@@ -667,6 +681,12 @@ void update_options_screen_state(void)
 
     i = ingame.TrenchcoatPreference;
     options_gfx_buttons[15].Text = gui_strings[583 + i];
+}
+
+void update_options_screen_state(void)
+{
+    update_options_gfx_settings_state();
+    mark_gfx_screen_boxes_redraw();
 }
 
 /******************************************************************************/

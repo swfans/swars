@@ -186583,7 +186583,7 @@ data_1c7040:
 		.fill   0x18
 data_1c7058:
 		.fill   0x8
-GLOBAL (system_screen_shared_content_box)	/* 0x1C7060 */
+GLOBAL (options_gfx_settings_box)	/* 0x1C7060 */
 		.fill   0xa
 data_1c706a:
 		.short  0x0
