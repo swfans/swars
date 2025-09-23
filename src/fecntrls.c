@@ -430,9 +430,12 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box, short *p_tx_kbd_width, s
 
     if (lbDisplay.LeftButton || joy.Buttons[0])
     {
-        lbDisplay.LeftButton = 0;
-        // Clicked outside of the keys area - exit editing a binding
-        controls_edited_gkey = 0;
+        if (mouse_down_over_box(p_box))
+        {
+            // Clicked outside of the keys area - exit editing a binding
+            // Do not clear the click
+            controls_edited_gkey = 0;
+        }
     }
 
     if (controls_edited_gkey == 0 && !net_unkn_pos_02)

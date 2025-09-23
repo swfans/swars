@@ -6598,12 +6598,6 @@ void draw_purple_rect(int x, int y, int w, int h, ubyte active)
 
 ubyte critical_action_input(void)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_critical_action_input\n"
-        : "=r" (ret) : );
-    return ret;
-#endif
     char locstr[52];
     TbKeyCode key;
 
