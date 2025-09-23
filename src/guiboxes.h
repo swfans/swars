@@ -169,7 +169,9 @@ struct ScreenTextBox {
   ubyte LineSpacing;
   short ScrollBarPos;
   ushort ScrollBarSize;
+  /** Height of the scroll window within the box. */
   short ScrollWindowHeight;
+  /** Top margin of the scroll window within the box. */
   short ScrollWindowOffset;
   short GrabPos;
   ushort Lines;
