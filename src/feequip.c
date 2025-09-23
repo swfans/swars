@@ -890,7 +890,7 @@ void draw_display_box_content_wep(struct ScreenTextBox *p_box)
         lbFontPtr = p_box->Font;
         my_set_text_window(p_box->X + 4, p_box->ScrollWindowOffset + p_box->Y + 4,
           p_box->Width - 20, p_box->ScrollWindowHeight + 23);
-        flashy_draw_text(0, 0, p_box->Text, p_box->TextSpeed, p_box->field_38,
+        flashy_draw_text(0, 0, p_box->Text, p_box->TextSpeed, p_box->TextTopLine,
           &p_box->TextFadePos, 0);
         break;
     case DiBoxCt_ANIM:
@@ -992,7 +992,7 @@ ubyte show_weapon_name(struct ScreenTextBox *box)
     scr_y = box->Y + ((box->Height - text_h) >> 1);
     my_set_text_window(scr_x, scr_y, 640u, scr_y + text_h);
     flashy_draw_text(0, 0, box->Text, box->TextSpeed,
-      box->field_38, &box->TextFadePos, 0);
+      box->TextTopLine, &box->TextFadePos, 0);
 
     return 0;
 }
@@ -1031,7 +1031,7 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
     spr = &fepanel_sprites[15 + 0];
     sheight = spr->SHeight;
 
-    for (weapon = box->field_38; (weapon < WEP_TYPES_COUNT) && (h0 + sheight < box->ScrollWindowHeight + 23); weapon++)
+    for (weapon = box->TextTopLine; (weapon < WEP_TYPES_COUNT) && (h0 + sheight < box->ScrollWindowHeight + 23); weapon++)
     {
         short msy, msx;
         short y1, y2;

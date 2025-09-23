@@ -170,7 +170,7 @@ void cryo_display_box_redraw(struct ScreenTextBox *p_box)
         // Re-add scroll bars
         p_box->Flags |= GBxFlg_RadioBtn;
 
-        p_box->field_38 = 0;
+        p_box->TextTopLine = 0;
         p_box->Lines = 0;
         p_box->Text = &weapon_text[cybmod_text_index[selected_mod]];
         lbFontPtr = small_font;
@@ -1224,7 +1224,7 @@ void draw_display_box_content_mod(struct ScreenTextBox *p_box)
         lbFontPtr = small_font;
         my_set_text_window(p_box->X + 4, p_box->ScrollWindowOffset + p_box->Y + 4,
           p_box->Width - 20, p_box->ScrollWindowHeight + 23);
-        flashy_draw_text(0, 0, p_box->Text, p_box->TextSpeed, p_box->field_38,
+        flashy_draw_text(0, 0, p_box->Text, p_box->TextSpeed, p_box->TextTopLine,
           &p_box->TextFadePos, 0);
         break;
     case DiBoxCt_ANIM:
@@ -1309,7 +1309,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 
         cy = 3;
         text_h = font_height('A');
-        for (mtype = box->field_38+1; mtype < MOD_TYPES_COUNT; mtype++)
+        for (mtype = box->TextTopLine + 1; mtype < MOD_TYPES_COUNT; mtype++)
         {
             if (text_h + cy >= box->ScrollWindowHeight + 23)
                 return 0;

@@ -172,7 +172,7 @@ ubyte show_brief_netscan_box(struct ScreenTextBox *p_box)
     tx_height = font_height('A');
     ln_height = tx_height + margin;
     nlines = 0;
-    start_shift = border - ln_height * p_box->field_38;
+    start_shift = border - ln_height * p_box->TextTopLine;
     lbDisplay.DrawColour = 87;
     lbDisplay.DrawFlags = 0;
     if (selected_city_id != -1)
@@ -182,7 +182,7 @@ ubyte show_brief_netscan_box(struct ScreenTextBox *p_box)
             struct NetscanObjective *p_nsobv;
 
             p_nsobv = &netscan_objectives[nsobv];
-            if (nlines + p_nsobv->TextLines >= p_box->field_38)
+            if (nlines + p_nsobv->TextLines >= p_box->TextTopLine)
             {
                 if (lbDisplay.LeftButton)
                 {

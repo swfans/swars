@@ -378,7 +378,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box, short *p_tx_kbd_width, s
     {
         wpos_x = sheet_columns_x[1];
         wpos_y = p_box->ScrollWindowOffset + 1;
-        for (i = p_box->field_38; i < i_limit; i++)
+        for (i = p_box->TextTopLine; i < i_limit; i++)
         {
             short col_width;
             GameKey gkey;
@@ -406,7 +406,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box, short *p_tx_kbd_width, s
     {
         wpos_x = sheet_columns_x[2];
         wpos_y = p_box->ScrollWindowOffset + 1;
-        for (i = p_box->field_38; i < i_limit; i++)
+        for (i = p_box->TextTopLine; i < i_limit; i++)
         {
             short col_width;
             GameKey gkey;
@@ -617,7 +617,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
     ubyte kchange;
 
     // This needs to be done before setting my_text_window
-    i_limit = p_box->field_38 + get_text_box_lines_visible(p_box);
+    i_limit = p_box->TextTopLine + get_text_box_lines_visible(p_box);
     if (i_limit > GKey_KEYS_COUNT - 1)
         i_limit = GKey_KEYS_COUNT - 1;
 
@@ -642,7 +642,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
     // Names column
     wpos_x = sheet_columns_x[0];
     wpos_y = p_box->ScrollWindowOffset + 1;
-    for (i = p_box->field_38; i < i_limit; i++)
+    for (i = p_box->TextTopLine; i < i_limit; i++)
     {
         const char *text;
         GameKey gkey;
@@ -656,7 +656,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
     // Keyboard keys column
     wpos_x = sheet_columns_x[1];
     wpos_y = p_box->ScrollWindowOffset + 1;
-    for (i = p_box->field_38; i < i_limit; i++)
+    for (i = p_box->TextTopLine; i < i_limit; i++)
     {
         const char *text;
         GameKey gkey;
@@ -695,7 +695,7 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
     // Joystick keys column
     wpos_x = sheet_columns_x[2];
     wpos_y = p_box->ScrollWindowOffset + 1;
-    for (i = p_box->field_38; i < i_limit; i++)
+    for (i = p_box->TextTopLine; i < i_limit; i++)
     {
         const char *text;
         GameKey gkey;
@@ -743,10 +743,10 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
             i = controls_hlight_gkey - 1;
         else
             i = controls_hlight_gkey - 1 - (GKey_KEYS_COUNT - 1);
-        if (p_box->field_38 > i)
-            p_box->field_38 = i;
-        else if (p_box->field_38 + i_limit < i + 1)
-            p_box->field_38 = i + 1 - i_limit;
+        if (p_box->TextTopLine > i)
+            p_box->TextTopLine = i;
+        else if (p_box->TextTopLine + i_limit < i + 1)
+            p_box->TextTopLine = i + 1 - i_limit;
 
     }
 

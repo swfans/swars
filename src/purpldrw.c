@@ -457,7 +457,7 @@ ubyte flashy_draw_purple_text_box_text(struct ScreenTextBox *p_box)
     else if (p_box->Text != NULL)
     {
         ubyte drawn;
-        drawn = flashy_draw_text(0,  0, p_box->Text, p_box->TextSpeed, p_box->field_38,
+        drawn = flashy_draw_text(0,  0, p_box->Text, p_box->TextSpeed, p_box->TextTopLine,
               &p_box->TextFadePos, p_box->DrawTextFn != NULL);
         text_drawn = text_drawn && drawn;
     }
@@ -510,7 +510,7 @@ void purple_text_box_set_scroll_vertical_pos(struct ScreenTextBox *p_box, short 
         scroll_pos = p_box->ScrollWindowHeight - p_box->ScrollBarSize;
 
     p_box->ScrollBarPos = scroll_pos;
-    p_box->field_38 = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
+    p_box->TextTopLine = p_box->Lines * p_box->ScrollBarPos / p_box->ScrollWindowHeight;
 }
 
 void init_scroll_bar_for_text_box(struct ScreenBox *ar_scroll_bar, struct ScreenTextBox *p_box)
@@ -831,7 +831,7 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
         {
             p_box->Flags &= ~GBxFlg_RadioBtn;
         }
-        p_box->field_38 = 0;
+        p_box->TextTopLine = 0;
         p_box->Flags &= ~(GBxFlg_IsPushed|GBxFlg_Unkn0080);
         if (p_box->Timer != 255) {
             p_box->TextFadePos = -5;
