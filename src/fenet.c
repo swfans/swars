@@ -21,10 +21,12 @@
 #include "bfscrcopy.h"
 #include "bfsprite.h"
 #include "bftext.h"
+
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
 #include "femain.h"
+#include "feshared.h"
 #include "game_sprts.h"
 #include "game.h"
 #include "purpldrw.h"
@@ -45,7 +47,7 @@ extern struct ScreenBox net_faction_box;
 extern struct ScreenBox net_team_box;
 extern struct ScreenBox net_benefits_box;
 extern struct ScreenBox net_comms_box;
-extern struct ScreenBox net_unkn21;
+extern struct ScreenBox net_grpaint;
 extern struct ScreenBox net_protocol_box;
 extern struct ScreenButton net_protocol_option_button;
 
@@ -67,7 +69,7 @@ ubyte ac_do_net_INITIATE(ubyte click);
 ubyte ac_do_net_groups_LOGON(ubyte click);
 ubyte ac_do_unkn8_EJECT(ubyte click);
 ubyte ac_show_net_benefits_box(struct ScreenBox *box);
-ubyte ac_show_net_unkn21(struct ScreenBox *box);
+ubyte ac_show_net_grpaint(struct ScreenBox *box);
 ubyte ac_show_net_comms_box(struct ScreenBox *box);
 ubyte ac_do_net_protocol_select(ubyte click);
 ubyte ac_show_net_protocol_box(struct ScreenBox *box);
@@ -440,7 +442,7 @@ ubyte show_net_benefits_box(struct ScreenBox *box)
 
 void purple_unkn3_data_to_screen(void)
 {
-    LbScreenSetGraphicsWindow(net_unkn21.X + 4, net_unkn21.Y + 4,
+    LbScreenSetGraphicsWindow(net_grpaint.X + 4, net_grpaint.Y + 4,
       255, 96);
     LbScreenCopy(dword_1C6DE8, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
@@ -449,17 +451,17 @@ void purple_unkn3_data_to_screen(void)
 
 void purple_unkn4_data_to_screen(void)
 {
-    LbScreenSetGraphicsWindow(net_unkn21.X + 4, net_unkn21.Y + 4,
+    LbScreenSetGraphicsWindow(net_grpaint.X + 4, net_grpaint.Y + 4,
       255, 96);
     LbScreenCopy(dword_1C6DE4, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
 }
 
-ubyte show_net_unkn21(struct ScreenBox *box)
+ubyte show_net_grpaint(struct ScreenBox *box)
 {
     ubyte ret;
-    asm volatile ("call ASM_show_net_unkn21\n"
+    asm volatile ("call ASM_show_net_grpaint\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
@@ -537,18 +539,26 @@ void show_netgame_unkn_case1(void)
 
 void init_net_screen_boxes(void)
 {
-    short scr_w, start_x;
+    ScrCoord scr_w, scr_h, start_x, start_y;
+    short content_boxes_height;
 
     scr_w = lbDisplay.GraphicsWindowWidth;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
 
     init_screen_box(&net_groups_box, 213u, 72u, 171u, 155, 6);
     init_screen_box(&net_users_box, 393u, 72u, 240u, 155, 6);
+
     init_screen_box(&net_faction_box, 213u, 236u, 73u, 67, 6);
     init_screen_box(&net_team_box, 295u, 236u, 72u, 67, 6);
     init_screen_box(&net_benefits_box, 376u, 236u, 257u, 67, 6);
-    init_screen_box(&net_comms_box, 295u, 312u, 336u, 104, 6);
-    init_screen_box(&net_unkn21, 7u, 312u, 279u, 104, 6);
     init_screen_box(&net_protocol_box, 7u, 252u, 197u, 51, 6);
+
+    init_screen_box(&net_grpaint, 7u, 312u, 279u, 104, 6);
+    init_screen_box(&net_comms_box, 295u, 312u, 336u, 104, 6);
 
     init_screen_button(&net_INITIATE_button, 218u, 185u, gui_strings[385], 6,
         med2_font, 1, 0);
@@ -556,10 +566,12 @@ void init_net_screen_boxes(void)
         6, med2_font, 1, 0);
     init_screen_button(&unkn8_EJECT_button, 308u, 206u, gui_strings[403], 6,
         med2_font, 1, 0);
+
     init_screen_button(&net_SET2_button, 562u, 251u, gui_strings[440], 6,
         med2_font, 1, 0);
     init_screen_button(&net_SET_button, 562u, 284u, gui_strings[440], 6,
         med2_font, 1, 0);
+
     init_screen_button(&net_protocol_select_button, 37u, 256u, gui_strings[498],
         6, med2_font, 1, 0);
     init_screen_button(&net_unkn40_button, 37u, 256u, net_unkn40_text, 6,
@@ -588,36 +600,58 @@ void init_net_screen_boxes(void)
     net_comms_box.SpecialDrawFn = show_net_comms_box;
     net_users_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
     net_groups_LOGON_button.CallBackFn = ac_do_net_groups_LOGON;
-    net_unkn21.SpecialDrawFn = show_net_unkn21;
+    net_grpaint.SpecialDrawFn = show_net_grpaint;
     net_SET2_button.CallBackFn = ac_do_net_SET2;
     net_protocol_box.SpecialDrawFn = show_net_protocol_box;
 
+    // The last 10 pixels are unused
+    content_boxes_height = net_groups_box.Height + 9 + net_faction_box.Height + 9 + net_grpaint.Height + 10;
     start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - net_groups_box.Width - 9 - net_users_box.Width - 7) / 2;
+    start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height + 2 +
+      (scr_h - system_screen_shared_header_box.Y - system_screen_shared_header_box.Height - content_boxes_height) / 2;
 
     net_groups_box.X = start_x + unkn13_SYSTEM_button.Width + 16;
+    net_groups_box.Y = start_y;
     net_users_box.X = net_groups_box.X + net_groups_box.Width + 9;
+    net_users_box.Y = start_y;
+
     net_faction_box.X = start_x + unkn13_SYSTEM_button.Width + 16;;
+    net_faction_box.Y = net_groups_box.Y + net_groups_box.Height + 9;
     net_team_box.X = net_faction_box.X + net_faction_box.Width + 9;
+    net_team_box.Y = net_groups_box.Y + net_groups_box.Height + 9;
     net_benefits_box.X = net_team_box.X + net_team_box.Width + 9;
+    net_benefits_box.Y = net_groups_box.Y + net_groups_box.Height + 9;
     net_protocol_box.X = start_x + 7;
-    net_unkn21.X = start_x + 7;
-    net_comms_box.X = net_unkn21.X + net_unkn21.Width + 9;
+    net_protocol_box.Y = net_faction_box.Y + net_faction_box.Height - net_protocol_box.Height;
+
+    net_grpaint.X = start_x + 7;
+    net_grpaint.Y = net_benefits_box.Y + net_benefits_box.Height + 9;
+    net_comms_box.X = net_grpaint.X + net_grpaint.Width + 9;
+    net_comms_box.Y = net_benefits_box.Y + net_benefits_box.Height + 9;
 
     // Two buttons on top of each other
     net_protocol_select_button.X = net_protocol_box.X +
       (net_protocol_box.Width - net_protocol_select_button.Width) / 2;
+    net_protocol_select_button.Y = net_protocol_box.Y + net_protocol_box.Height - 43;
     net_unkn40_button.X = net_protocol_box.X +
       (net_protocol_box.Width - net_unkn40_button.Width) / 2;
+    net_unkn40_button.Y = net_protocol_box.Y + net_protocol_box.Height - 43;
 
     net_protocol_option_button.X = net_protocol_box.X +
       (net_protocol_box.Width - net_protocol_option_button.Width) / 2;
+    net_protocol_option_button.Y = net_protocol_box.Y + net_protocol_box.Height - 24;
 
     net_INITIATE_button.X = net_groups_box.X + 5;
+    net_INITIATE_button.Y = net_groups_box.Y + net_groups_box.Height - 42;
     net_groups_LOGON_button.X = net_groups_box.X + 5;
+    net_groups_LOGON_button.Y = net_groups_box.Y + net_groups_box.Height - 21;
 
     unkn8_EJECT_button.X = net_groups_box.X + net_groups_box.Width - 76;
+    unkn8_EJECT_button.Y = net_groups_box.Y + net_groups_box.Height - 21;
     net_SET2_button.X = net_benefits_box.X + net_benefits_box.Width - 71;
+    net_SET2_button.Y = net_benefits_box.Y + net_benefits_box.Height - 52;
     net_SET_button.X = net_benefits_box.X + net_benefits_box.Width - 71;
+    net_SET_button.Y = net_benefits_box.Y + net_benefits_box.Height - 19;
 }
 
 void reset_net_screen_boxes_flags(void)
@@ -628,7 +662,7 @@ void reset_net_screen_boxes_flags(void)
     net_team_box.Flags = GBxFlg_Unkn0001;
     net_faction_box.Flags = GBxFlg_Unkn0001;
     net_comms_box.Flags = GBxFlg_Unkn0001;
-    net_unkn21.Flags = GBxFlg_Unkn0001;
+    net_grpaint.Flags = GBxFlg_Unkn0001;
     net_protocol_box.Flags = GBxFlg_Unkn0001;
 }
 
@@ -659,7 +693,7 @@ void set_flag02_net_screen_boxes(void)
     net_users_box.Flags |= GBxFlg_Unkn0002;
     net_faction_box.Flags |= GBxFlg_Unkn0002;
     net_team_box.Flags |= GBxFlg_Unkn0002;
-    net_unkn21.Flags |= GBxFlg_Unkn0002;
+    net_grpaint.Flags |= GBxFlg_Unkn0002;
     net_benefits_box.Flags |= GBxFlg_Unkn0002;
     net_protocol_box.Flags |= GBxFlg_Unkn0002;
     net_protocol_select_button.Flags |= GBxFlg_Unkn0002;

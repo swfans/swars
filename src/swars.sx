@@ -109401,7 +109401,7 @@ GLOBAL_FUNC(ASM_purple_unkn1_data_to_screen)	/* 0x08E398 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_show_net_unkn21)	/* 0x08E3C0 */
+GLOBAL_FUNC(ASM_show_net_grpaint)	/* 0x08E3C0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -117655,7 +117655,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn_case1)	/* 0x09BA5C */
 		call   *data_1c8134
 		mov    $net_comms_box,%eax
 		call   *data_1c814c
-		mov    $net_unkn21,%eax
+		mov    $net_grpaint,%eax
 		call   *data_1c8164
 		xor    %eax,%eax
 		mov    login_control__State,%al
@@ -187443,7 +187443,7 @@ data_1c814c:
 		.long	0x0
 data_1c8150:
 		.fill   0x8
-GLOBAL (net_unkn21)	/* 0x1C8158 */
+GLOBAL (net_grpaint)	/* 0x1C8158 */
 		.short  0x0
 data_1c815a:
 		.fill   0x8
