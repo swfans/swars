@@ -194,9 +194,18 @@ ubyte show_login_screen(void)
 
 void init_login_screen_boxes(void)
 {
-    short scr_w;
+    ScrCoord scr_w, scr_h;
+    short border, ln_height, ncampgns;
 
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
     scr_w = lbDisplay.GraphicsWindowWidth;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = lbDisplay.GraphicsWindowHeight;
+#else
+    scr_h = 480;
+#endif
 
     init_screen_box(&login_campaigns_box, 219u, 159u, 200u, 100, 6);
     init_screen_box(&login_name_box, 150u, 128u, 337u, 22, 6);
@@ -204,15 +213,6 @@ void init_login_screen_boxes(void)
       gui_strings[455], 6, med2_font, 1, 0);
     init_screen_button(&login_abort_button, 260u, 329u,
       gui_strings[388], 6, med2_font, 1, 0);
-    login_abort_button.Border = 3;
-    login_continue_button.Border = 3;
-
-    lbFontPtr = med2_font;
-    login_name_box.Width = my_string_width(gui_strings[454]) + 254;
-    login_campaigns_box.X = (scr_w - login_campaigns_box.Width) / 2 - 1;
-    login_name_box.X = (scr_w - login_name_box.Width) / 2 - 1;
-    login_continue_button.X = (scr_w - login_continue_button.Width) / 2 - 1;
-    login_abort_button.X = (scr_w - login_abort_button.Width) / 2  - 1;
 
     login_continue_button.CallBackFn = ac_do_login_2;
     login_abort_button.CallBackFn = ac_do_abort_2;
@@ -221,6 +221,29 @@ void init_login_screen_boxes(void)
 
     login_continue_button.AccelKey = KC_RETURN;
     login_abort_button.AccelKey = KC_ESCAPE;
+
+    // Reposition the components to current resolution
+
+    login_abort_button.Border = border;
+    login_continue_button.Border = border;
+
+    lbFontPtr = med2_font;
+    login_name_box.Width = my_string_width(gui_strings[454]) + 254;
+    login_campaigns_box.X = (scr_w - login_campaigns_box.Width) / 2 - 1;
+    login_name_box.X = (scr_w - login_name_box.Width) / 2 - 1;
+    login_continue_button.X = (scr_w - login_continue_button.Width) / 2 - 1;
+    login_abort_button.X = (scr_w - login_abort_button.Width) / 2  - 1;
+
+    lbFontPtr = small_med_font;
+    ln_height = font_height('A') * 5 / 4;
+    ncampgns = selectable_campaigns_count();
+
+    login_campaigns_box.Height = 2 * border + 2 * ln_height + 3 * ln_height * (ncampgns + 1);
+
+    login_name_box.Y = scr_h * 4 / 16;
+    login_campaigns_box.Y = login_name_box.Y + scr_h / 16;
+    login_continue_button.Y = login_campaigns_box.Y + login_campaigns_box.Height + scr_h / 16;
+    login_abort_button.Y = login_continue_button.Y + scr_h / 16;
 }
 
 void reset_login_screen_boxes_flags(void)

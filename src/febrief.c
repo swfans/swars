@@ -739,15 +739,19 @@ void init_brief_screen_boxes(void)
     brief_graphical_box.Y = brief_mission_text_box.Y;
     brief_netscan_box.Y = brief_mission_text_box.Y + brief_mission_text_box.Height - brief_netscan_box.Height;
 
-    brief_NETSCAN_COST_box.X = brief_netscan_box.X + 5;
-    brief_NETSCAN_COST_box.Y = brief_netscan_box.Y + brief_netscan_box.Height - brief_NETSCAN_COST_box.Height - 5;
-    //no need to update brief_NETSCAN_button.X - it will happen on the update below
+    // Boxes defining areas done; now reposition components inside
+
+    space_w = 5;
+    space_h = 5;
+    brief_NETSCAN_COST_box.X = brief_netscan_box.X + space_w;
+    brief_NETSCAN_COST_box.Y = brief_netscan_box.Y + brief_netscan_box.Height - brief_NETSCAN_COST_box.Height - space_h;
+    // no need to update brief_NETSCAN_button.X - it will happen on the update below
     update_brief_screen_netscan_button(441);
 
-    unkn1_ACCEPT_button.X = brief_mission_text_box.X + 5;
-    unkn1_ACCEPT_button.Y = brief_mission_text_box.Y + brief_mission_text_box.Height - unkn1_ACCEPT_button.Height - 5;
-    unkn1_CANCEL_button.X = brief_mission_text_box.X + brief_mission_text_box.Width - unkn1_CANCEL_button.Width - 5 - SCROLL_BAR_WIDTH;
-    unkn1_CANCEL_button.Y = brief_mission_text_box.Y + brief_mission_text_box.Height - unkn1_CANCEL_button.Height - 5;
+    unkn1_ACCEPT_button.X = brief_mission_text_box.X + space_w;
+    unkn1_ACCEPT_button.Y = brief_mission_text_box.Y + brief_mission_text_box.Height - unkn1_ACCEPT_button.Height - space_h;
+    unkn1_CANCEL_button.X = brief_mission_text_box.X + brief_mission_text_box.Width - unkn1_CANCEL_button.Width - space_w - SCROLL_BAR_WIDTH;
+    unkn1_CANCEL_button.Y = brief_mission_text_box.Y + brief_mission_text_box.Height - unkn1_CANCEL_button.Height - space_h;
 }
 
 void update_brief_screen_netscan_button(ushort text_id)

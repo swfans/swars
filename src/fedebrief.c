@@ -25,6 +25,7 @@
 #include "campaign.h"
 #include "display.h"
 #include "febrief.h"
+#include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "game_sprts.h"
@@ -681,9 +682,17 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
 
 void init_debrief_screen_boxes(void)
 {
-    short scr_w, start_x;
+    ScrCoord scr_h, start_x, start_y;
+    short space_w, space_h, border;
 
-    scr_w = lbDisplay.GraphicsWindowWidth;
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
 
     init_screen_box(&debrief_mission_box, 7u, 72u, 518u, 172, 6);
     debrief_mission_box.SpecialDrawFn = show_mission_stats;
@@ -691,10 +700,27 @@ void init_debrief_screen_boxes(void)
     init_screen_box(&debrief_people_box, 7u, 253u, 518u, 173, 6);
     debrief_people_box.SpecialDrawFn = show_mission_people_stats;
 
-    start_x = (scr_w - debrief_mission_box.Width - world_city_info_box.Width - 23) / 2;
+    // Reposition the components to current resolution
 
-    debrief_mission_box.X = start_x + 7;
-    debrief_people_box.X = start_x + 7;
+    start_x = heading_box.X;
+    // On the X axis, we're going for aligning below heading box, to both left and right
+    space_w = heading_box.Width - debrief_mission_box.Width - world_city_info_box.Width;
+
+    start_y = heading_box.Y + heading_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    space_h = scr_h - start_y - world_city_info_box.Height + border;
+
+    world_city_info_box.Y = start_y + space_h / 2;
+
+    debrief_mission_box.X = start_x;
+    debrief_mission_box.Y = world_city_info_box.Y;
+
+    world_city_info_box.X = debrief_mission_box.X + debrief_mission_box.Width + space_w;
+
+    debrief_people_box.X = start_x;
+    debrief_people_box.Y = world_city_info_box.Y + world_city_info_box.Height - debrief_people_box.Height;
 }
 
 void reset_debrief_screen_boxes_flags(void)
