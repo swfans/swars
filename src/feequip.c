@@ -1236,10 +1236,18 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
 
 void init_equip_screen_boxes(void)
 {
-    const char *s;
-    short scr_w, start_x;
+    const char *text;
+    ScrCoord scr_h, start_x, start_y;
+    short space_w, space_h, border;
 
-    scr_w = lbDisplay.GraphicsWindowWidth;
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
 
     init_screen_text_box(&equip_list_head_box, 7u, 122u, 191u, 22,
       6, small_med_font, 1);
@@ -1276,10 +1284,10 @@ void init_equip_screen_boxes(void)
 
     lbFontPtr = med2_font;
     if (my_string_width(gui_strings[436]) <= my_string_width(gui_strings[407]))
-        s = gui_strings[407];
+        text = gui_strings[407];
     else
-        s = gui_strings[436];
-    equip_offer_buy_button.Width = my_string_width(s) + 4;
+        text = gui_strings[436];
+    equip_offer_buy_button.Width = my_string_width(text) + 4;
     equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
 
     init_screen_button(&equip_all_agents_button, 7u, 96u,
@@ -1289,17 +1297,52 @@ void init_equip_screen_boxes(void)
     equip_all_agents_button.Flags |= GBxFlg_RadioBtn;
     equip_all_agents_button.Radio = (ubyte *)&selected_agent;
 
-    start_x = (scr_w - weapon_slots.Width - equip_list_box.Width - equip_name_box.Width - 32) / 2;
+    // Reposition the components to current resolution
 
-    equip_all_agents_button.X = start_x + 7;
-    equip_list_head_box.X = start_x + 7;
-    weapon_slots.X = start_x + 7;
-    equip_list_box.X = weapon_slots.X + weapon_slots.Width + 9;
-    equip_name_box.X = equip_list_box.X + equip_list_box.Width + 9;
+    start_x = heading_box.X;
+    // On the X axis, we're going for aligning below heading box, to both left and right
+    space_w = heading_box.Width - weapon_slots.Width - equip_list_box.Width - equip_name_box.Width;
+
+    start_y = heading_box.Y + heading_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    // One re-used box - cyborg name - does not exist as global instance, so count all agents button twice.
+    space_h = scr_h - start_y - 2 * equip_all_agents_button.Height - equip_list_box.Height + border;
+
+    // On the X axis, aligning to heading box left
+    equip_all_agents_button.X = start_x;
+    // Agent name field has no global box - assume it has the same height as equip_all_agents_button,
+    // so add that height to Y-position of equip_all_agents_button. Aleso move the box a tiny bit up from
+    // the normal position grid.
+    equip_all_agents_button.Y = start_y + equip_all_agents_button.Height + 2 * space_h / 4 - space_h / 24;
+
+    equip_list_head_box.X = start_x;
+    equip_list_head_box.Y = start_y + 2 * equip_all_agents_button.Height + 3 * space_h / 4;
+
+    weapon_slots.X = start_x;
+
+    equip_list_box.X = weapon_slots.X + weapon_slots.Width + space_w / 2;
+    equip_list_box.Y = equip_list_head_box.Y;
+
+    weapon_slots.Y = equip_list_box.Y + equip_list_box.Height - weapon_slots.Height;
+
+    equip_name_box.X = equip_list_box.X + equip_list_box.Width + space_w - space_w / 2;
+    equip_name_box.Y = equip_list_box.Y;
+
     equip_display_box.X = equip_name_box.X;
-    equip_offer_buy_button.X = equip_display_box.X + 5;
-    equip_cost_box.X = equip_offer_buy_button.X + equip_offer_buy_button.Width + 4;
-    equip_cost_box.Width = equip_list_box.Width - 2 - equip_offer_buy_button.Width - 14;
+    equip_display_box.Y = equip_list_box.Y + equip_list_box.Height - equip_display_box.Height;
+
+    // Boxes defining areas done; now reposition components inside
+
+    space_w = 5;
+    space_h = 5;
+    equip_offer_buy_button.X = equip_display_box.X + space_w;
+    equip_offer_buy_button.Y = equip_display_box.Y + equip_display_box.Height - space_h - equip_offer_buy_button.Height;
+
+    equip_cost_box.Width = equip_list_box.Width - equip_offer_buy_button.Width - 3 * space_w - 1;
+    equip_cost_box.X = equip_offer_buy_button.X + equip_offer_buy_button.Width - (space_w - 1) - equip_cost_box.Width;
+    equip_cost_box.Y = equip_display_box.Y + equip_display_box.Height - space_h - equip_cost_box.Height;
 }
 
 void init_equip_screen_shapes(void)

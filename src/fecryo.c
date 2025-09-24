@@ -1707,8 +1707,12 @@ void init_cryo_screen_boxes(void)
     cryo_agent_list_box.Y = cryo_blokey_box.Y;
     cryo_cybmod_list_box.Y = cryo_blokey_box.Y + cryo_blokey_box.Height - cryo_cybmod_list_box.Height;
 
-    cryo_offer_cancel_button.X = cryo_cybmod_list_box.X + cryo_cybmod_list_box.Width - cryo_offer_cancel_button.Width - 5;
-    cryo_offer_cancel_button.Y = cryo_cybmod_list_box.Y + cryo_cybmod_list_box.Height - cryo_offer_cancel_button.Height - 5;
+    // Boxes defining areas done; now reposition components inside
+
+    space_w = 5;
+    space_h = 5;
+    cryo_offer_cancel_button.X = cryo_cybmod_list_box.X + cryo_cybmod_list_box.Width - cryo_offer_cancel_button.Width - space_w;
+    cryo_offer_cancel_button.Y = cryo_cybmod_list_box.Y + cryo_cybmod_list_box.Height - cryo_offer_cancel_button.Height - space_h;
 }
 
 void switch_shared_equip_screen_buttons_to_cybmod(void)
