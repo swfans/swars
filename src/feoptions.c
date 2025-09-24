@@ -339,10 +339,13 @@ ubyte show_audio_tracks_box(struct ScreenBox *box)
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
 
     if (drawn1)
-        drawn1 = flashy_draw_text(20,  4, gui_strings[528], 1, 0, &textpos[0], 0);
+        drawn1 = flashy_draw_text(20, 4 + 0 * 18, gui_strings[528], 1, 0, &textpos[0], 0);
     if (drawn2)
-        drawn2 = flashy_draw_text(20, 22, gui_strings[529], 1, 0, &textpos[1], 0);
-
+        drawn2 = flashy_draw_text(20, 4 + 1 * 18, gui_strings[529], 1, 0, &textpos[1], 0);
+#ifdef HAS_MULTIMEDIA_EXTENSIONS
+    if (drawn2)
+        drawn2 = flashy_draw_text(20, 4 + 2 * 18, gui_strings[530], 1, 0, &textpos[2], 0);
+#endif
     if (drawn1)
     {
         //drawn1 = options_audio_buttons[0].DrawFn(&options_audio_buttons[0]); -- incompatible calling convention
@@ -363,6 +366,14 @@ ubyte show_audio_tracks_box(struct ScreenBox *box)
         //drawn2 = options_audio_buttons[4].DrawFn(&options_audio_buttons[4]); -- incompatible calling convention
         asm volatile ("call *%2\n"
             : "=r" (drawn2) : "a" (&options_audio_buttons[4]), "g" (options_audio_buttons[4].DrawFn));
+#ifdef HAS_MULTIMEDIA_EXTENSIONS
+        //drawn2 = options_audio_buttons[5].DrawFn(&options_audio_buttons[5]); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn2) : "a" (&options_audio_buttons[5]), "g" (options_audio_buttons[5].DrawFn));
+        //drawn2 = options_audio_buttons[6].DrawFn(&options_audio_buttons[6]); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (drawn2) : "a" (&options_audio_buttons[6]), "g" (options_audio_buttons[6].DrawFn));
+#endif
     }
     return drawn1 && drawn2;
 }
@@ -398,9 +409,18 @@ void init_options_audio_screen_boxes(void)
 {
     int i, h;
     int val;
-    short scr_w, start_x;
+    ScrCoord scr_w, scr_h, start_x, start_y;
+    short space_w, space_h, border;
 
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
     scr_w = lbDisplay.GraphicsWindowWidth;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
 
     h = 72;
     for (i = 0; i < 3; i++)
@@ -428,55 +448,86 @@ void init_options_audio_screen_boxes(void)
     val = 2;
     for (i = 0; i < 3; i++)
     {
-        options_audio_buttons[i].Radio = &ingame.CDTrack;
-        options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= GBxFlg_RadioBtn;
+        options_audio_buttons[0+i].Radio = &ingame.CDTrack;
+        options_audio_buttons[0+i].RadioValue = val++;
+        options_audio_buttons[0+i].Flags |= GBxFlg_RadioBtn;
     }
 
     val = 1;
-    for (i = 3; i < 5; i++)
+    for (i = 0; i < 2; i++)
     {
-        options_audio_buttons[i].Radio = &ingame.DangerTrack;
-        options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= GBxFlg_RadioBtn;
+        options_audio_buttons[3+i].Radio = &ingame.DangerTrack;
+        options_audio_buttons[3+i].RadioValue = val++;
+        options_audio_buttons[3+i].Flags |= GBxFlg_RadioBtn;
     }
 
     val = 0;
-    for (i = 5; i < 7; i++)
+    for (i = 0; i < 2; i++)
     {
-        options_audio_buttons[i].Radio = &ingame.UseMultiMedia;
-        options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= GBxFlg_RadioBtn;
+        options_audio_buttons[5+i].Radio = &ingame.UseMultiMedia;
+        options_audio_buttons[5+i].RadioValue = val++;
+        options_audio_buttons[5+i].Flags |= GBxFlg_RadioBtn;
     }
+
     audio_volume_boxes[0].SpecialDrawFn = show_audio_volume_box;
     audio_volume_boxes[1].SpecialDrawFn = show_audio_volume_box;
     audio_volume_boxes[2].SpecialDrawFn = show_audio_volume_box;
     audio_tracks_box.SpecialDrawFn = show_audio_tracks_box;
 
-    start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - audio_volume_boxes[0].Width - 7) / 2;
+    // Reposition the components to current resolution
 
+    start_x = unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width;
+    // On the X axis, we're going for centering on the screen. So subtract the previous
+    // button position two times - once for the left, and once to make the same space on
+    // the right.
+    space_w = scr_w - start_x - unkn13_SYSTEM_button.X - audio_volume_boxes[0].Width;
+
+    start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    space_h = scr_h - start_y + border;
     for (i = 0; i < 3; i++)
     {
-        audio_volume_boxes[i].X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
+        space_h -= audio_volume_boxes[i].Height;
     }
-    audio_tracks_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
+    space_h -= audio_tracks_box.Height;
+    // Some unused space below
+    space_h -= audio_tracks_box.Height * 5 / 4;
+
+    h = space_h / 5;
+    for (i = 0; i < 3; i++)
+    {
+        // There is one box only to position, and no space is needed after it - the whole
+        // available empty space goes into one place.
+        audio_volume_boxes[i].X = start_x + space_w;
+        // There is one box only to position, so space goes into two parts - before and after.
+        audio_volume_boxes[i].Y = start_y + h;
+
+        h += audio_volume_boxes[i].Height + space_h / 5;
+    }
+    audio_tracks_box.X = start_x + space_w;
+    audio_tracks_box.Y = start_y + h;
 
     for (i = 0; i < 3; i++)
     {
         options_audio_buttons[0+i].X = audio_tracks_box.X +
           audio_tracks_box.Width - 45 - 65 * (3-i);
+        options_audio_buttons[0+i].Y = audio_tracks_box.Y + 4;
     }
 
     for (i = 0; i < 2; i++)
     {
         options_audio_buttons[3+i].X = audio_tracks_box.X +
           audio_tracks_box.Width - 45 - 65 * (2-i);
+        options_audio_buttons[3+i].Y = audio_tracks_box.Y + 4 + 1 * 18;
     }
 
     for (i = 0; i < 2; i++)
     {
         options_audio_buttons[5+i].X = audio_tracks_box.X +
           audio_tracks_box.Width - 45 - 65 * (2-i);
+        options_audio_buttons[5+i].Y = audio_tracks_box.Y + 4 + 2 * 18;
     }
 }
 

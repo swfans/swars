@@ -57,9 +57,18 @@ ubyte show_storage_screen(void)
 
 void init_storage_screen_boxes(void)
 {
-    short scr_w, start_x;
+    ScrCoord scr_w, scr_h, start_x, start_y;
+    short space_w, space_h, border;
 
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
     scr_w = lbDisplay.GraphicsWindowWidth;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
 
     init_screen_text_box(&storage_slots_box, 213u, 72u, 420u, 354, 6, med2_font, 1);
     storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
@@ -79,9 +88,25 @@ void init_storage_screen_boxes(void)
     storage_SAVE_button.CallBackFn = ac_save_game_slot;
     storage_NEW_MORTAL_button.CallBackFn = ac_do_storage_NEW_MORTAL;
 
-    start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - storage_slots_box.Width - 7) / 2;
+    // Reposition the components to current resolution
 
-    storage_slots_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
+    start_x = unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width;
+    // On the X axis, we're going for centering on the screen. So subtract the previous
+    // button position two times - once for the left, and once to make the same space on
+    // the right.
+    space_w = scr_w - start_x - unkn13_SYSTEM_button.X - storage_slots_box.Width;
+
+    start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    space_h = scr_h - start_y - storage_slots_box.Height + border;
+
+    // There is one box only to position, and no space is needed after it - the whole
+    // available empty space goes into one place.
+    storage_slots_box.X = start_x + space_w;
+    // There is one box only to position, so space goes into two parts - before and after.
+    storage_slots_box.Y = start_y + space_h / 2;
 
     storage_LOAD_button.X = storage_slots_box.X + 6;
     storage_SAVE_button.X = storage_LOAD_button.X + storage_LOAD_button.Width + 4;

@@ -834,8 +834,12 @@ ubyte show_options_controls_screen(void)
 void init_controls_screen_boxes(void)
 {
     ScrCoord scr_w, scr_h, start_x, start_y;
+    short space_w, space_h, border;
     short part_w;
 
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
     scr_w = lbDisplay.GraphicsWindowWidth;
 #ifdef EXPERIMENTAL_MENU_CENTER_H
     scr_h = global_apps_bar_box.Y;
@@ -868,15 +872,29 @@ void init_controls_screen_boxes(void)
 
     // Reposition the components to current resolution
 
-    start_x = (scr_w - controls_joystick_box.Width - controls_list_box.Width - 23) / 2;
-    start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height + 2 +
-      (scr_h - system_screen_shared_header_box.Y - system_screen_shared_header_box.Height - controls_list_box.Height) / 2;
+    start_x = unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width;
+    // On the X axis, we're going for centering on the screen. So subtract the previous
+    // button position two times - once for the left, and once to make the same space on
+    // the right.
+    space_w = scr_w - start_x - unkn13_SYSTEM_button.X - controls_list_box.Width;
 
-    controls_joystick_box.X = start_x + 7;
+    start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    space_h = scr_h - start_y - controls_list_box.Height + border;
+
+    // There is one box only to position, and no space is needed after it - the whole
+    // available empty space goes into one place.
+    controls_list_box.X = start_x + space_w;
+    // There is one box only to position, so space goes into two parts - before and after.
+    controls_list_box.Y = start_y + space_h / 2;
+
+    start_x = unkn13_SYSTEM_button.X;
+
+    controls_joystick_box.X = start_x;
     controls_calibrate_button.X = controls_joystick_box.X + 50;
 
-    controls_list_box.X = controls_joystick_box.X + controls_joystick_box.Width + 9;
-    controls_list_box.Y = start_y;
     part_w = controls_list_box.Width - 6 - SCROLL_BAR_WIDTH;
     sheet_columns_x[0] = 3 + 1;
     sheet_columns_x[1] = 3 + part_w - 2 * (part_w / 4);
@@ -887,6 +905,7 @@ void init_controls_screen_boxes(void)
     controls_save_button.Y = controls_list_box.Y + controls_list_box.Height - controls_save_button.Height - 5;
 
     controls_joystick_box.Y = controls_list_box.Y + controls_list_box.Height - controls_joystick_box.Height;
+    controls_calibrate_button.Y = controls_joystick_box.Y + controls_joystick_box.Height - 21;
 }
 
 void reset_controls_screen_boxes_flags(void)
