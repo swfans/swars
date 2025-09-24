@@ -677,9 +677,12 @@ void init_brief_screen_scanner(void)
 
 void init_brief_screen_boxes(void)
 {
-    ScrCoord scr_w, scr_h, start_x, start_y;
+    ScrCoord scr_h, start_x, start_y;
+    short space_w, space_h, border;
 
-    scr_w = lbDisplay.GraphicsWindowWidth;
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
 #ifdef EXPERIMENTAL_MENU_CENTER_H
     scr_h = global_apps_bar_box.Y;
 #else
@@ -712,16 +715,30 @@ void init_brief_screen_boxes(void)
     init_screen_box(&brief_graphical_box, 7, 72, 322, 200, 6);
     brief_graphical_box.SpecialDrawFn = show_citymap_box;
 
-    start_x = (scr_w - brief_graphical_box.Width - brief_mission_text_box.Width - 23) / 2;
-    start_y = (scr_h - heading_box.Y - heading_box.Height - brief_graphical_box.Height - 24) / 2;
-    brief_graphical_box.X = start_x + 7;
-    brief_graphical_box.Y = start_y;
+    // Reposition the components to current resolution
 
-    brief_mission_text_box.X = brief_graphical_box.X + brief_graphical_box.Width + 9;
-    brief_mission_text_box.Y = brief_graphical_box.Y;
+    start_x = heading_box.X;
+    // On the X axis, we're going for aligning below heading box, to both left and right
+    space_w = heading_box.Width - brief_graphical_box.Width - brief_mission_text_box.Width;
 
-    brief_netscan_box.X = start_x + 7;
+    start_y = heading_box.Y + heading_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    space_h = scr_h - start_y - brief_mission_text_box.Height + border;
+
+    // On the X axis, aligning to heading box left
+    brief_graphical_box.X = start_x;
+    brief_netscan_box.X = start_x;
+    // Ot to heading box right
+    brief_mission_text_box.X = brief_graphical_box.X + brief_graphical_box.Width + space_w;
+
+    // There is one box only to Y-position in 2nd column, so space goes into two parts - before and after
+    brief_mission_text_box.Y = start_y + space_h / 2;
+    // The remaining boxes should be Y-aligned to the one box in 2nd column
+    brief_graphical_box.Y = brief_mission_text_box.Y;
     brief_netscan_box.Y = brief_mission_text_box.Y + brief_mission_text_box.Height - brief_netscan_box.Height;
+
     brief_NETSCAN_COST_box.X = brief_netscan_box.X + 5;
     brief_NETSCAN_COST_box.Y = brief_netscan_box.Y + brief_netscan_box.Height - brief_NETSCAN_COST_box.Height - 5;
     //no need to update brief_NETSCAN_button.X - it will happen on the update below
