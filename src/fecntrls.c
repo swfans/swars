@@ -866,6 +866,8 @@ void init_controls_screen_boxes(void)
       gui_strings[485], 6, med2_font, 1, 0);
     controls_calibrate_button.CallBackFn = ac_do_controls_calibrate;
 
+    // Reposition the components to current resolution
+
     start_x = (scr_w - controls_joystick_box.Width - controls_list_box.Width - 23) / 2;
     start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height + 2 +
       (scr_h - system_screen_shared_header_box.Y - system_screen_shared_header_box.Height - controls_list_box.Height) / 2;

@@ -604,6 +604,8 @@ void init_net_screen_boxes(void)
     net_SET2_button.CallBackFn = ac_do_net_SET2;
     net_protocol_box.SpecialDrawFn = show_net_protocol_box;
 
+    // Reposition the components to current resolution
+
     // The last 10 pixels are unused
     content_boxes_height = net_groups_box.Height + 9 + net_faction_box.Height + 9 + net_grpaint.Height + 10;
     start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - net_groups_box.Width - 9 - net_users_box.Width - 7) / 2;

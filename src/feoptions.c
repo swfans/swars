@@ -42,7 +42,7 @@ extern struct ScreenBox audio_tracks_box;
 extern struct ScreenBox audio_volume_boxes[3];
 extern struct ScreenButton options_audio_buttons[7];
 
-extern struct ScreenBox options_gfx_settings_box;
+extern struct ScreenBox options_gfx_box;
 extern struct ScreenButton options_gfx_buttons[16];
 
 extern short word_1C4866[3];
@@ -385,11 +385,11 @@ ubyte show_options_visual_screen(void)
 {
     ubyte drawn;
 
-    //drawn = options_gfx_settings_box.DrawFn(&options_gfx_settings_box); -- incompatible calling convention
+    //drawn = options_gfx_box.DrawFn(&options_gfx_box); -- incompatible calling convention
     asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&options_gfx_settings_box), "g" (options_gfx_settings_box.DrawFn));
+        : "=r" (drawn) : "a" (&options_gfx_box), "g" (options_gfx_box.DrawFn));
     if (drawn == 3) {
-        show_netgame_unkn1(&options_gfx_settings_box);
+        show_netgame_unkn1(&options_gfx_box);
     }
     return drawn;
 }
@@ -480,12 +480,24 @@ void init_options_audio_screen_boxes(void)
     }
 }
 
-void init_options_visual_screen_boxes(void)
+void init_options_gfx_screen_boxes(void)
 {
     int i;
     int val;
+    ScrCoord scr_w, scr_h, start_x, start_y;
+    short space_w, space_h, border;
 
-    init_screen_box(&options_gfx_settings_box, 213u, 72u, 420u, 354, 6);
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
+    scr_w = lbDisplay.GraphicsWindowWidth;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
+
+    init_screen_box(&options_gfx_box, 213u, 72u, 420u, 354, 6);
 
     init_screen_button(&options_gfx_buttons[0], 456u, 94u,
       gui_strings[465], 6, med2_font, 1, 0);
@@ -597,21 +609,39 @@ void init_options_visual_screen_boxes(void)
 
     // Reposition the components to current resolution
 
-    options_gfx_settings_box.X = unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width + 9;
+    start_x = unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width;
+    // On the X axis, we're going for centering on the screen. So subtract the previous
+    // button position two times - once for the left, and once to make the same space on
+    // the right.
+    space_w = scr_w - start_x - unkn13_SYSTEM_button.X - options_gfx_box.Width;
+
+    start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    space_h = scr_h - start_y - options_gfx_box.Height + border;
+
+    // There is one box only to position, and no space is needed after it - the whole
+    // available empty space goes into one place.
+    options_gfx_box.X = start_x + space_w;
+    // There is one box only to position, so space goes into two parts - before and after.
+    options_gfx_box.Y = start_y + space_h / 2;
 
     for (i = 0; i < 14; i+=2)
     {
-        options_gfx_buttons[i+0].X = options_gfx_settings_box.X +
-          options_gfx_settings_box.Width - 177;
-        options_gfx_buttons[i+1].X = options_gfx_settings_box.X +
-          options_gfx_settings_box.Width - 89;
+        options_gfx_buttons[i+0].X = options_gfx_box.X +
+          options_gfx_box.Width - 89 - 88;
+        options_gfx_buttons[i+0].Y = options_gfx_box.Y + 22 + (i/2) * 18;
+        options_gfx_buttons[i+1].X = options_gfx_box.X +
+          options_gfx_box.Width - 89;
+        options_gfx_buttons[i+1].Y = options_gfx_buttons[i+0].Y;
     }
 
     for (i = 14; i < 16; i++)
     {
-        val = (options_gfx_settings_box.Width -
+        val = (options_gfx_box.Width -
           options_gfx_buttons[i].Width) / 2;
-        options_gfx_buttons[i].X = options_gfx_settings_box.X +
+        options_gfx_buttons[i].X = options_gfx_box.X +
           val + 9;
     }
 }
@@ -628,11 +658,11 @@ void reset_options_audio_boxes_flags(void)
     }
 }
 
-void reset_options_gfx_settings_boxes_flags(void)
+void reset_options_gfx_boxes_flags(void)
 {
     int i;
 
-    options_gfx_settings_box.Flags = GBxFlg_Unkn0001;
+    options_gfx_box.Flags = GBxFlg_Unkn0001;
 
     for (i = 0; i < 14; i++) {
       options_gfx_buttons[i].Flags = GBxFlg_RadioBtn | GBxFlg_Unkn0001;
@@ -656,7 +686,7 @@ void set_flag02_gfx_screen_boxes(void)
 {
     int i;
 
-    options_gfx_settings_box.Flags |= GBxFlg_Unkn0002;
+    options_gfx_box.Flags |= GBxFlg_Unkn0002;
 
     for (i = 0; i != 16; i++)
         options_gfx_buttons[i].Flags |= GBxFlg_Unkn0002;
@@ -664,10 +694,10 @@ void set_flag02_gfx_screen_boxes(void)
 
 void mark_gfx_screen_boxes_redraw(void)
 {
-    options_gfx_settings_box.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_BkCopied);
+    options_gfx_box.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_BkCopied);
 }
 
-void update_options_gfx_settings_state(void)
+void update_options_gfx_state(void)
 {
     const char *text;
     int i;
@@ -685,7 +715,7 @@ void update_options_gfx_settings_state(void)
 
 void update_options_screen_state(void)
 {
-    update_options_gfx_settings_state();
+    update_options_gfx_state();
     mark_gfx_screen_boxes_redraw();
 }
 

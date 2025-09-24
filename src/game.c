@@ -4601,16 +4601,19 @@ void init_screen_boxes(void)
     init_alert_screen_boxes();
     init_main_screen_boxes();
     init_system_menu_boxes();
+
     init_sys_scr_shared_boxes();
+    init_controls_screen_boxes();
+    init_options_audio_screen_boxes();
+    init_options_gfx_screen_boxes();
+    init_net_screen_boxes();
+    init_storage_screen_boxes();
+
+    init_login_screen_boxes();
+
     init_brief_screen_boxes();
     init_world_screen_boxes();
     init_debrief_screen_boxes();
-    init_controls_screen_boxes();
-    init_options_audio_screen_boxes();
-    init_options_visual_screen_boxes();
-    init_storage_screen_boxes();
-    init_net_screen_boxes();
-    init_login_screen_boxes();
     init_equip_screen_boxes();
     init_cryo_screen_boxes();
     init_research_screen_boxes();
@@ -6187,7 +6190,7 @@ void menu_screen_redraw(void)
     reset_research_screen_boxes_flags();
 
     reset_options_audio_boxes_flags();
-    reset_options_gfx_settings_boxes_flags();
+    reset_options_gfx_boxes_flags();
 
     set_flag01_storage_screen_boxes();
     set_flag01_login_screen_boxes();

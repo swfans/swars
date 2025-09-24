@@ -33,10 +33,10 @@ extern "C" {
 extern char options_title_text[];
 
 void init_options_audio_screen_boxes(void);
-void init_options_visual_screen_boxes(void);
+void init_options_gfx_screen_boxes(void);
 void update_options_screen_state(void);
 void reset_options_audio_boxes_flags(void);
-void reset_options_gfx_settings_boxes_flags(void);
+void reset_options_gfx_boxes_flags(void);
 void set_flag02_audio_screen_boxes(void);
 void set_flag02_gfx_screen_boxes(void);
 
