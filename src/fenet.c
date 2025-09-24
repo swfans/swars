@@ -540,8 +540,12 @@ void show_netgame_unkn_case1(void)
 void init_net_screen_boxes(void)
 {
     ScrCoord scr_w, scr_h, start_x, start_y;
+    short space_w, space_h, border;
     short content_boxes_height;
 
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
     scr_w = lbDisplay.GraphicsWindowWidth;
 #ifdef EXPERIMENTAL_MENU_CENTER_H
     scr_h = global_apps_bar_box.Y;
@@ -606,30 +610,49 @@ void init_net_screen_boxes(void)
 
     // Reposition the components to current resolution
 
-    // The last 10 pixels are unused
-    content_boxes_height = net_groups_box.Height + 9 + net_faction_box.Height + 9 + net_grpaint.Height + 10;
-    start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - net_groups_box.Width - 9 - net_users_box.Width - 7) / 2;
-    start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height + 2 +
-      (scr_h - system_screen_shared_header_box.Y - system_screen_shared_header_box.Height - content_boxes_height) / 2;
+    start_x = unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width;
+    // On the X axis, we're going for centering on the screen. So subtract the previous
+    // button position two times - once for the left, and once to make the same space on
+    // the right.
+    space_w = scr_w - start_x - unkn13_SYSTEM_button.X - net_groups_box.Width - net_users_box.Width;
 
-    net_groups_box.X = start_x + unkn13_SYSTEM_button.Width + 16;
-    net_groups_box.Y = start_y;
-    net_users_box.X = net_groups_box.X + net_groups_box.Width + 9;
-    net_users_box.Y = start_y;
+    start_y = system_screen_shared_header_box.Y + system_screen_shared_header_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    space_h = scr_h - start_y - net_users_box.Height - net_benefits_box.Height - net_comms_box.Height + border;
 
-    net_faction_box.X = start_x + unkn13_SYSTEM_button.Width + 16;;
-    net_faction_box.Y = net_groups_box.Y + net_groups_box.Height + 9;
-    net_team_box.X = net_faction_box.X + net_faction_box.Width + 9;
-    net_team_box.Y = net_groups_box.Y + net_groups_box.Height + 9;
-    net_benefits_box.X = net_team_box.X + net_team_box.Width + 9;
-    net_benefits_box.Y = net_groups_box.Y + net_groups_box.Height + 9;
-    net_protocol_box.X = start_x + 7;
+    // There are 2 boxes to position in X axis, and no space is needed after - the
+    // available empty space is divided into 2.
+    net_groups_box.X = start_x + space_w / 2;
+    // There are 3 boxes to position in Y axis, so space goes into 4 parts - before, between and after.
+    net_groups_box.Y = start_y + space_h / 4;
+    net_users_box.X = net_groups_box.X + net_groups_box.Width + space_w - space_w / 2;
+    net_users_box.Y = net_groups_box.Y;
+
+    // Next row - re-compute space in one dimension
+    space_w = scr_w - start_x - unkn13_SYSTEM_button.X - net_faction_box.Width - net_team_box.Width - net_benefits_box.Width;
+
+    net_faction_box.X = start_x + space_w / 3;
+    net_faction_box.Y = net_groups_box.Y + net_groups_box.Height + space_h / 4;
+    net_team_box.X = net_faction_box.X + net_faction_box.Width  + space_w / 3;
+    net_team_box.Y = net_faction_box.Y;
+    net_benefits_box.X = net_team_box.X + net_team_box.Width + space_w - 2 * (space_w / 3);
+    net_benefits_box.Y = net_faction_box.Y;
+
+    // The remaining components are positioned below the system menu
+    start_x = unkn13_SYSTEM_button.X;
+
+    net_protocol_box.X = start_x;
     net_protocol_box.Y = net_faction_box.Y + net_faction_box.Height - net_protocol_box.Height;
 
-    net_grpaint.X = start_x + 7;
-    net_grpaint.Y = net_benefits_box.Y + net_benefits_box.Height + 9;
-    net_comms_box.X = net_grpaint.X + net_grpaint.Width + 9;
-    net_comms_box.Y = net_benefits_box.Y + net_benefits_box.Height + 9;
+    // Next row - re-compute space in one dimension
+    space_w = scr_w - start_x - unkn13_SYSTEM_button.X - net_grpaint.Width - net_comms_box.Width;
+
+    net_grpaint.X = start_x;
+    net_grpaint.Y = net_benefits_box.Y + net_benefits_box.Height + space_h / 4;
+    net_comms_box.X = net_grpaint.X + net_grpaint.Width + space_w;
+    net_comms_box.Y = net_grpaint.Y;
 
     // Two buttons on top of each other
     net_protocol_select_button.X = net_protocol_box.X +
