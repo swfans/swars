@@ -694,6 +694,7 @@ void init_options_gfx_screen_boxes(void)
           options_gfx_buttons[i].Width) / 2;
         options_gfx_buttons[i].X = options_gfx_box.X +
           val + 9;
+        options_gfx_buttons[i].Y = options_gfx_buttons[12].Y + (i - 12) * 36;
     }
 }
 

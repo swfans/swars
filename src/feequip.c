@@ -812,19 +812,6 @@ TbBool input_display_box_content_wep(struct ScreenTextBox *p_box)
     return false;
 }
 
-void switch_shared_equip_screen_buttons_to_equip(void)
-{
-    set_heading_box_text(gui_strings[370]);
-    refresh_equip_list = 1;
-    equip_cost_box.X = equip_offer_buy_button.X + equip_offer_buy_button.Width + 4;
-    equip_cost_box.Width = equip_list_box.Width - 2 - equip_offer_buy_button.Width - 14;
-    equip_cost_box.Y = 404;
-    equip_all_agents_button.CallBackFn = ac_do_equip_all_agents_set;
-
-    equip_display_box_redraw(&equip_display_box);
-    equip_name_box_redraw(&equip_name_box);
-}
-
 /** Determines if buy or sell should be available in the equip weapon offer.
  *
  * @return Gives 0 if button unavailable, 1 for buy, 2 for sell.
@@ -1339,10 +1326,26 @@ void init_equip_screen_boxes(void)
     space_h = 5;
     equip_offer_buy_button.X = equip_display_box.X + space_w;
     equip_offer_buy_button.Y = equip_display_box.Y + equip_display_box.Height - space_h - equip_offer_buy_button.Height;
+    // No need to update equip_cost_box - that is done in switch_shared_equip_screen_buttons_to_equip()
+}
 
-    equip_cost_box.Width = equip_list_box.Width - equip_offer_buy_button.Width - 3 * space_w - 1;
-    equip_cost_box.X = equip_offer_buy_button.X + equip_offer_buy_button.Width - (space_w - 1) - equip_cost_box.Width;
+void switch_shared_equip_screen_buttons_to_equip(void)
+{
+    short space_w, space_h;
+
+    space_w = 5;
+    space_h = 5;
+    set_heading_box_text(gui_strings[370]);
+    refresh_equip_list = 1;
+
+    equip_cost_box.Width = equip_display_box.Width - equip_offer_buy_button.Width - 3 * space_w - 1;
+    equip_cost_box.X = equip_display_box.X + equip_display_box.Width - (space_w - 1) - equip_cost_box.Width;
     equip_cost_box.Y = equip_display_box.Y + equip_display_box.Height - space_h - equip_cost_box.Height;
+
+    equip_all_agents_button.CallBackFn = ac_do_equip_all_agents_set;
+
+    equip_display_box_redraw(&equip_display_box);
+    equip_name_box_redraw(&equip_name_box);
 }
 
 void init_equip_screen_shapes(void)

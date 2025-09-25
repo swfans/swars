@@ -541,7 +541,6 @@ void init_net_screen_boxes(void)
 {
     ScrCoord scr_w, scr_h, start_x, start_y;
     short space_w, space_h, border;
-    short content_boxes_height;
 
     // Border value represents how much the box background goes
     // out of the box area.

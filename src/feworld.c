@@ -695,10 +695,15 @@ void init_world_screen_boxes(void)
     world_landmap_box.Y = world_city_info_box.Y;
     world_city_info_box.X = world_landmap_box.X + world_landmap_box.Width + space_w;
 
-    world_info_ACCEPT_button.X = world_city_info_box.X
-        + ((world_city_info_box.Width - world_info_ACCEPT_button.Width) >> 1);
+    space_h = 5;
     world_info_CANCEL_button.X = world_city_info_box.X
-        + ((world_city_info_box.Width - world_info_CANCEL_button.Width) >> 1);
+      + ((world_city_info_box.Width - world_info_CANCEL_button.Width) >> 1);
+    world_info_CANCEL_button.Y = world_city_info_box.Y + world_city_info_box.Height
+      - space_h - world_info_CANCEL_button.Height;
+    world_info_ACCEPT_button.X = world_city_info_box.X
+      + ((world_city_info_box.Width - world_info_ACCEPT_button.Width) >> 1);
+    world_info_ACCEPT_button.Y = world_info_CANCEL_button.Y
+      - space_h - world_info_ACCEPT_button.Height;
 }
 
 void reset_world_screen_boxes_flags(void)

@@ -1713,14 +1713,21 @@ void init_cryo_screen_boxes(void)
     space_h = 5;
     cryo_offer_cancel_button.X = cryo_cybmod_list_box.X + cryo_cybmod_list_box.Width - cryo_offer_cancel_button.Width - space_w;
     cryo_offer_cancel_button.Y = cryo_cybmod_list_box.Y + cryo_cybmod_list_box.Height - cryo_offer_cancel_button.Height - space_h;
+    // No need to update equip_cost_box - that is done in switch_shared_equip_screen_buttons_to_cybmod()
 }
 
 void switch_shared_equip_screen_buttons_to_cybmod(void)
 {
+    short space_w, space_h;
+
+    space_w = 5;
+    space_h = 5;
     set_heading_box_text(gui_strings[369]);
-    equip_cost_box.X = cryo_cybmod_list_box.X + 5;
-    equip_cost_box.Width = cryo_cybmod_list_box.Width - 10;
-    equip_cost_box.Y = 383;
+
+    equip_cost_box.X = cryo_cybmod_list_box.X + space_w;
+    equip_cost_box.Width = cryo_cybmod_list_box.Width - 2 * space_h;
+    equip_cost_box.Y = cryo_offer_cancel_button.Y - space_h - equip_cost_box.Height;
+
     equip_name_box.Text = cybmod_name_text;
     equip_all_agents_button.CallBackFn = ac_do_cryo_all_agents_set;
 

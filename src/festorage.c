@@ -108,10 +108,15 @@ void init_storage_screen_boxes(void)
     // There is one box only to position, so space goes into two parts - before and after.
     storage_slots_box.Y = start_y + space_h / 2;
 
-    storage_LOAD_button.X = storage_slots_box.X + 6;
-    storage_SAVE_button.X = storage_LOAD_button.X + storage_LOAD_button.Width + 4;
+    space_w = 5;
+    space_h = 5;
+    storage_LOAD_button.X = storage_slots_box.X + (space_w + 1);
+    storage_LOAD_button.Y = storage_slots_box.Y + storage_slots_box.Height - space_w - storage_LOAD_button.Height;
+    storage_SAVE_button.X = storage_LOAD_button.X + storage_LOAD_button.Width + (space_w - 1);
+    storage_SAVE_button.Y = storage_LOAD_button.Y;
     storage_NEW_MORTAL_button.X = storage_slots_box.X + storage_slots_box.Width -
-      storage_NEW_MORTAL_button.Width - 6;
+      storage_NEW_MORTAL_button.Width - (space_w + 1);
+    storage_NEW_MORTAL_button.Y = storage_LOAD_button.Y;
 }
 
 void reset_storage_screen_boxes_flags(void)

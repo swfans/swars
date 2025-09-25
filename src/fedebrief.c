@@ -682,17 +682,7 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
 
 void init_debrief_screen_boxes(void)
 {
-    ScrCoord scr_h, start_x, start_y;
-    short space_w, space_h, border;
-
-    // Border value represents how much the box background goes
-    // out of the box area.
-    border = 3;
-#ifdef EXPERIMENTAL_MENU_CENTER_H
-    scr_h = global_apps_bar_box.Y;
-#else
-    scr_h = 432;
-#endif
+    ScrCoord start_x, start_y;
 
     init_screen_box(&debrief_mission_box, 7u, 72u, 518u, 172, 6);
     debrief_mission_box.SpecialDrawFn = show_mission_stats;
@@ -702,22 +692,17 @@ void init_debrief_screen_boxes(void)
 
     // Reposition the components to current resolution
 
+    // For this screen, we will just align to other pre-positioned boxes;
+    // No need to compute positions from scratch
     start_x = heading_box.X;
-    // On the X axis, we're going for aligning below heading box, to both left and right
-    space_w = heading_box.Width - debrief_mission_box.Width - world_city_info_box.Width;
-
-    start_y = heading_box.Y + heading_box.Height;
-    // On the top, we're aligning to spilled border of previous box; same goes inside.
-    // But on the bottom, we're aligning to hard border, without spilling. To compensate
-    // for that, add pixels for such border to the space.
-    space_h = scr_h - start_y - world_city_info_box.Height + border;
+    start_y = world_city_info_box.Y;
 
     // Expect world_city_info_box to be already set
     debrief_mission_box.X = start_x;
-    debrief_mission_box.Y = world_city_info_box.Y;
+    debrief_mission_box.Y = start_y;
 
     debrief_people_box.X = start_x;
-    debrief_people_box.Y = world_city_info_box.Y + world_city_info_box.Height - debrief_people_box.Height;
+    debrief_people_box.Y = start_y + world_city_info_box.Height - debrief_people_box.Height;
 }
 
 void reset_debrief_screen_boxes_flags(void)
