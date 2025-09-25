@@ -83,6 +83,8 @@ ubyte net_players_num = 1;
 extern struct ComHandlerInfo com_dev[4];
 extern struct IPXDatagramBackup datagram_backup[8];
 
+struct TbNetworkService NetworkServicePtr;
+
 extern struct TbSerialDev *data_1e85e3;
 
 const struct ModemResponse modem_response[] = {

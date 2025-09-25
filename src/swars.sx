@@ -31,21 +31,13 @@
 
 .text
 
-.global EXPORT_SYMBOL(joy_grip_initialized);
-.global EXPORT_SYMBOL(joy_spbal_initialized);
-
 .global EXPORT_SYMBOL(lbInkeyToAscii);
 .global EXPORT_SYMBOL(lbInkey_prefixed);
 .global EXPORT_SYMBOL(lbInkey);
 .global EXPORT_SYMBOL(lbShift);
 .global EXPORT_SYMBOL(lbKeyOn);
-.global EXPORT_SYMBOL(lbKeyNames);
 
-.global EXPORT_SYMBOL(lbSpacesPerTab);
-.global EXPORT_SYMBOL(lbTextJustifyWindow);
 .global EXPORT_SYMBOL(lbFontPtr);
-.global EXPORT_SYMBOL(tabwidth);
-.global EXPORT_SYMBOL(font);
 
 .global EXPORT_SYMBOL(deep_radar_surface_col);	/* 0x152E5C */
 .global EXPORT_SYMBOL(deep_radar_line_col);	/* 0x152E5D */
@@ -56,15 +48,9 @@
 .global EXPORT_SYMBOL(lbMouseInstalled);	/* 0x1E3088 */
 .global EXPORT_SYMBOL(lbSinTable);
 
-.global EXPORT_SYMBOL(poly_screen);	/* 0x150100 */
-.global EXPORT_SYMBOL(vec_screen);
 .global EXPORT_SYMBOL(vec_map);
-.global EXPORT_SYMBOL(vec_pal);
-.global EXPORT_SYMBOL(vec_screen_width);
 .global EXPORT_SYMBOL(vec_window_width);	/* 0x150114 */
 .global EXPORT_SYMBOL(vec_window_height);	/* 0x150118 */
-.global EXPORT_SYMBOL(dither_map);
-.global EXPORT_SYMBOL(dither_end);
 .global EXPORT_SYMBOL(vec_colour);
 .global EXPORT_SYMBOL(vec_mode);
 
@@ -72,7 +58,6 @@
 .global EXPORT_SYMBOL(mod_defs);	/* 0x15441C */
 .global EXPORT_SYMBOL(static_radii);	/* 0x154216 */
 .global EXPORT_SYMBOL(peep_type_stats);	/* 0x154890 */
-.global EXPORT_SYMBOL(conf_file_cmnds);	/* 0x15315C */
 .global EXPORT_SYMBOL(mem_game);	/* 0x1539c4 */
 .global EXPORT_SYMBOL(people_frames);	/* 0x153D5C */
 .global EXPORT_SYMBOL(follow_dist);	/* 0x153398 */
@@ -80,6 +65,8 @@
 .global EXPORT_SYMBOL(pop1_sprites);	/* 0x19CBDC */
 .global EXPORT_SYMBOL(pointer_sprites);	/* 0x1A5840 */
 .global EXPORT_SYMBOL(small_font);	/* 0x1A5848 */
+
+.global EXPORT_SYMBOL(NetworkServicePtr);     /* 0x1E2F40 */
 
 /* C function pointers used in ASM; these are in C calling convention,
  * use ac_* variants if you need to call them with Watcom convention. */
@@ -183239,9 +183226,6 @@ data_15488b:
 GLOBAL (ASM_byte_154BB4)	/* 0x154BB4 */
 		.ascii  "\xdc\xe0\xe0\xde\xdc\xdc\x00\x00"
 
-aConfirmCritica:	/* 0x154F0C */
-		.string "Confirm Critical Action Y/N?"
-		.ascii  "\x00\x00\x00"
 GLOBAL (byte_154F2C)	/* 0x154F2C */
 		.byte	0x0
 		.ascii  "\x00\x00\x01\x02\x02\x03\x04\x09"
@@ -183759,42 +183743,11 @@ aStillSimpleOnM:	/* 0x15D402 */
 aD_2:	/* 0x15D424 */
 		.ascii  "\x25\x64\x00\x00"
 
-aFliColour256:	/* 0x15D428 */
-		.string "COLOUR256 "
-aFliSs2:	/* 0x15D433 */
-		.string "SS2 "
-aFliColour:	/* 0x15D438 */
-		.string "COLOUR "
-aFliLc:	/* 0x15D440 */
-		.ascii  "\x4c\x43\x20\x00"
-aFliBlack:	/* 0x15D444 */
-		.string "BLACK "
-aFliBrun:	/* 0x15D44B */
-		.string "BRUN "
-aFliCopy:	/* 0x15D451 */
-		.string "COPY "
-aFliPstamp:	/* 0x15D457 */
-		.string "PSTAMP "
-
-aQdataDemo1D_fl:	/* 0x15D51F */
-		.string "qdata/demo-1%d.fli"
-aNSyn2SwarsData:	/* 0x15D532 */
-		.string "n:/syn2/swars/data/intro.fli"
-aDataMcomp_fli:	/* 0x15D54F */
-		.string "data/mcomp.fli"
-aDataMcomp_fl_0:	/* 0x15D55E */
-		.string "data/mcomp.fli"
-aDataMcomp_fl_1:	/* 0x15D56D */
-		.string "data/mcomp.fli"
-		.align	4
-
 ascD_54:	/* 0x15D63E */
 		.ascii  "\x25\x64\x00"
 ascD_55:	/* 0x15D641 */
 		.ascii  "\x25\x64\x00"
-aGlobal3dStored:	/* 0x15D644 */
-		.string " GLOBAL 3d STORED ->INUSE"
-		.short  0x0
+
 aShaggedTrainSt:	/* 0x15D660 */
 		.string "Shagged train state %d"
 aTellMdFailedEx:	/* 0x15D677 */
@@ -188000,10 +187953,6 @@ GLOBAL (samples_in_bank)	/* 0x1E2E48 */
 		.long	0x0
 GLOBAL (sample_table)	/* 0x1E2E4C */
 		.long	0x0
-
-
-GLOBAL (NetworkServicePtr)	/* 0x1E2F40 */
-		.fill	0x30
 
 
 run_exchange_func__start_time:	/* 0x1E8128 */
