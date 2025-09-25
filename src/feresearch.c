@@ -237,24 +237,35 @@ ubyte show_research_graph(struct ScreenBox *box)
     return 0;
 }
 
+#define SCROLL_BAR_WIDTH 12
+
 void init_research_screen_boxes(void)
 {
     int i, val;
-    const char *s;
-    short scr_w, start_x;
+    const char *text;
+    ScrCoord scr_h, start_x, start_y;
+    short space_w, space_h, border;
 
-    scr_w = lbDisplay.GraphicsWindowWidth;
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
 
     init_screen_box(&research_graph_box, 7u, 103u, 409u, 322, 6);
     init_screen_text_box(&research_progress_button, 7u, 72u, 409u, 23,
       6, med_font, 1);
     init_screen_text_box(&research_unkn21_box, 425u, 72u, 208u, 353,
       6, small_med_font, 3);
+
     init_screen_button(&research_submit_button, 430u, 302u,
       gui_strings[418], 6, med2_font, 1, 0);
-
     init_screen_button(&unkn12_WEAPONS_MODS_button, 616u, 302u,
         gui_strings[450], 6, med2_font, 1, 0x80);
+
     init_screen_button(&research_list_buttons[0], 425u, 404u,
      gui_strings[478], 6, med2_font, 1, 0);
     init_screen_button(&research_list_buttons[1], 425u, 404u,
@@ -273,46 +284,71 @@ void init_research_screen_boxes(void)
     unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
 
     research_unkn21_box.DrawTextFn = ac_show_unkn21_box;
-    research_unkn21_box.ScrollWindowHeight = 180;
     research_unkn21_box.Buttons[0] = &research_submit_button;
     research_unkn21_box.Buttons[1] = &unkn12_WEAPONS_MODS_button;
-    research_unkn21_box.ScrollWindowOffset += 41;
+    research_unkn21_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
+    research_submit_button.Text = gui_strings[417];
     research_submit_button.CallBackFn = ac_do_research_submit;
     research_progress_button.DrawTextFn = ac_show_title_box;
-    research_submit_button.Text = gui_strings[417];
     research_progress_button.Text = gui_strings[449];
-    research_unkn21_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
 
-    lbFontPtr = med2_font;
     research_graph_box.SpecialDrawFn = show_research_graph;
 
+    research_unkn21_box.ScrollWindowHeight = 180;
+    research_unkn21_box.ScrollWindowOffset += 41;
+
+    lbFontPtr = med2_font;
+
     if (my_string_width(gui_strings[418]) <= my_string_width(gui_strings[417]))
-        s = gui_strings[417];
+        text = gui_strings[417];
     else
-        s = gui_strings[418];
-    research_submit_button.Width = my_string_width(s) + 4;
+        text = gui_strings[418];
+    research_submit_button.Width = my_string_width(text) + 4;
 
     if (my_string_width(gui_strings[451]) <= my_string_width(gui_strings[450]))
-        s = gui_strings[450];
+        text = gui_strings[450];
     else
-        s = gui_strings[451];
-    unkn12_WEAPONS_MODS_button.Width = my_string_width(s) + 4;
+        text = gui_strings[451];
+    unkn12_WEAPONS_MODS_button.Width = my_string_width(text) + 4;
 
-    start_x = (scr_w - research_graph_box.Width - research_unkn21_box.Width - 23) / 2;
+    // Reposition the components to current resolution
 
-    research_graph_box.X = start_x + 7;
-    research_progress_button.X = start_x + 7;
-    research_unkn21_box.X = research_graph_box.X + research_graph_box.Width + 9;
-    research_submit_button.X = research_unkn21_box.X + 5;
+    start_x = heading_box.X;
+    // On the X axis, we're going for aligning below heading box, to both left and right
+    space_w = heading_box.Width - research_graph_box.Width - research_unkn21_box.Width;
+
+    start_y = heading_box.Y + heading_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    // One re-used box - cyborg name - does not exist as global instance, so count all agents button twice.
+    space_h = scr_h - start_y - research_unkn21_box.Height + border;
+
+    research_graph_box.X = start_x;
+    research_progress_button.X = start_x;
+    research_progress_button.Y = start_y + space_h / 2;
+    research_unkn21_box.X = research_graph_box.X + research_graph_box.Width + space_w;
+    research_unkn21_box.Y = research_progress_button.Y;
+    research_graph_box.Y = research_unkn21_box.Y + research_unkn21_box.Height - research_graph_box.Height;
+
+    space_w = 5;
+    space_h = 5;
+    research_submit_button.X = research_unkn21_box.X + space_w;
+    research_submit_button.Y = research_unkn21_box.Y +
+      research_unkn21_box.ScrollWindowOffset + research_unkn21_box.ScrollWindowHeight + 9;
     unkn12_WEAPONS_MODS_button.X = research_unkn21_box.X + research_unkn21_box.Width -
-      17 - unkn12_WEAPONS_MODS_button.Width;
+      SCROLL_BAR_WIDTH - space_w - unkn12_WEAPONS_MODS_button.Width;
+    unkn12_WEAPONS_MODS_button.Y = research_submit_button.Y;
 
     // Middle of first half od the panel
     research_list_buttons[0].X = research_unkn21_box.X +
       (research_unkn21_box.Width / 2 - research_list_buttons[0].Width) / 2;
+    research_list_buttons[0].Y = research_unkn21_box.Y + research_unkn21_box.Height -
+      research_list_buttons[0].Height - space_h;
     // Middle of 2nd half od the panel
     research_list_buttons[1].X = research_unkn21_box.X + research_unkn21_box.Width -
       research_unkn21_box.Width / 2 + (research_unkn21_box.Width / 2 - research_list_buttons[1].Width) / 2;
+    research_list_buttons[1].Y = research_list_buttons[0].Y;
 }
 
 void reset_research_screen_boxes_flags(void)
