@@ -194,11 +194,13 @@ struct ScreenTextBox {
   ubyte field_43;
 };
 
+#define SCREENSHAPE_POINTS_NUM 9
+
 struct ScreenShape { // sizeof=42
     /** Positions of points making the shape, X coord. */
-    ushort PtX[9];
+    ushort PtX[SCREENSHAPE_POINTS_NUM];
     /** Positions of points making the shape, Y coord. */
-    ushort PtY[9];
+    ushort PtY[SCREENSHAPE_POINTS_NUM];
     ubyte field_24;
     ubyte field_25;
     ushort Flags;
@@ -305,6 +307,9 @@ void init_screen_button(struct ScreenButton *p_box, ScrCoord x, ScrCoord y,
 void init_screen_info_box(struct ScreenInfoBox *p_box, ScrCoord x, ScrCoord y,
   ushort width, char *text1, char *text2, int drawspeed,
   struct TbSprite *p_font1, struct TbSprite *p_font2, int textspeed);
+void init_screen_shape(struct ScreenShape *p_shp, ScrCoord x, ScrCoord y,
+  short *pts_w, short *pts_h, ushort pts_len, short scale_w, short scale_h,
+  TbPixel col, TbPixel bgcol);
 
 /******************************************************************************/
 #ifdef __cplusplus

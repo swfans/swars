@@ -73,15 +73,23 @@ extern ubyte weapon_nrg[31];
 extern ubyte weapon_range[31];
 extern ubyte weapon_damage[31];
 
+/* Points for shape of the agent selection buttons, X coords.
+ */
 short agent_panel_shape_points_x[] = {
       0,  23, 120, 103,  35,  22,   7,   0,   0,
 };
+/* Points for shape of the agent selection buttons, Y coords.
+ */
 short agent_panel_shape_points_y[] = {
      23,   0,   0,  17,  17,  30,  30,  23,  23,
 };
+/* Points for skewed rectangle with agent name, X coords.
+ */
 short agent_name_shape_points_x[] = {
       0, 181, 164,   0,   0,
 };
+/* Points for skewed rectangle with agent name, Y coords.
+ */
 short agent_name_shape_points_y[] = {
       0,   0,  17,  17,   0,
 };
@@ -1350,7 +1358,7 @@ void switch_shared_equip_screen_buttons_to_equip(void)
 
 void init_equip_screen_shapes(void)
 {
-    ushort i, k;
+    ushort i;
     short x, y;
     short scr_w, start_x;
 
@@ -1362,50 +1370,20 @@ void init_equip_screen_shapes(void)
     y = 72;
     for (i = 0; i < 4; i++)
     {
-        LbMemoryCopy(unk11_menu[i].PtX, agent_panel_shape_points_x, sizeof(agent_panel_shape_points_x));
-        LbMemoryCopy(unk11_menu[i].PtY, agent_panel_shape_points_y, sizeof(agent_panel_shape_points_y));
-        for (k = 0; k < 9; k++)
-        {
-            if (k < sizeof(agent_panel_shape_points_x)/sizeof(agent_panel_shape_points_x[0]))
-            {
-                unk11_menu[i].PtX[k] = agent_panel_shape_points_x[k] + x;
-                unk11_menu[i].PtY[k] = agent_panel_shape_points_y[k] + y;
-            }
-            else
-            {
-                unk11_menu[i].PtX[k] = 0;
-                unk11_menu[i].PtY[k] = 0;
-            }
-        }
-        unk11_menu[i].field_24 = 6;
-        unk11_menu[i].field_25 = 0;
-        unk11_menu[i].Flags = GBxFlg_Unkn0001;
-        unk11_menu[i].Colour = 174;
-        unk11_menu[i].BGColour = 8;
+        init_screen_shape(&unk11_menu[i], x, y,
+          agent_panel_shape_points_x, agent_panel_shape_points_y,
+          sizeof(agent_panel_shape_points_x)/sizeof(agent_panel_shape_points_x[0]),
+          0x0100, 0x0100, 0x0AE, 0x08);
         x += 110;
     }
     x = 7 + start_x;
     y = 72;
     i = 4;
     {
-        for (k = 0; k < 9; k++)
-        {
-            if (k < sizeof(agent_name_shape_points_x)/sizeof(agent_name_shape_points_x[0]))
-            {
-                unk11_menu[i].PtX[k] = agent_name_shape_points_x[k] + x;
-                unk11_menu[i].PtY[k] = agent_name_shape_points_y[k] + y;
-            }
-            else
-            {
-                unk11_menu[i].PtX[k] = 0;
-                unk11_menu[i].PtY[k] = 0;
-            }
-        }
-        unk11_menu[i].field_24 = 6;
-        unk11_menu[i].field_25 = 0;
-        unk11_menu[i].Flags = GBxFlg_Unkn0001;
-        unk11_menu[i].Colour = 247;
-        unk11_menu[i].BGColour = 4;
+        init_screen_shape(&unk11_menu[i], x, y,
+          agent_name_shape_points_x, agent_name_shape_points_y,
+          sizeof(agent_name_shape_points_x)/sizeof(agent_name_shape_points_x[0]),
+          0x0100, 0x0100, 0x0F7, 0x04);
     }
 }
 

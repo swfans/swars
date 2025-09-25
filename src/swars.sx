@@ -114695,7 +114695,7 @@ GLOBAL_FUNC(ASM_show_menu_storage_slots_box)	/* 0x094F08 */
 		mov    %dh,data_1c4880(%eax)
 	jump_95401:
 		mov    0x12(%esp),%eax
-		mov    data_1551d6,%edx
+		mov    EXPORT_SYMBOL(save_slot)-2,%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
 		inc    %eax
@@ -114764,7 +114764,7 @@ GLOBAL_FUNC(ASM_show_menu_storage_slots_box)	/* 0x094F08 */
 		mov    $0x4,%edx
 		mov    %eax,text_buf_pos
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		mov    data_1551d6,%eax
+		mov    EXPORT_SYMBOL(save_slot)-2,%eax
 		sar    $0x10,%eax
 		cmp    %eax,%ebp
 		jne    jump_95522
@@ -114804,7 +114804,7 @@ GLOBAL_FUNC(ASM_show_menu_storage_slots_box)	/* 0x094F08 */
 		cmpb   $0x0,edit_flag
 		je     jump_955be
 		mov    0x12(%esp),%eax
-		mov    data_1551d6,%edx
+		mov    EXPORT_SYMBOL(save_slot)-2,%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
 		inc    %eax
@@ -115017,7 +115017,7 @@ GLOBAL_FUNC(ASM_show_menu_storage_slots_box)	/* 0x094F08 */
 		jle    jump_9581b
 	jump_95806:
 		mov    0x12(%esp),%eax
-		mov    data_1551d6,%edx
+		mov    EXPORT_SYMBOL(save_slot)-2,%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
 		inc    %eax
@@ -115052,7 +115052,7 @@ GLOBAL_FUNC(ASM_show_menu_storage_slots_box)	/* 0x094F08 */
 		add    %esi,%eax
 		call   ac_draw_sprite_purple_list
 		movw   $0x4,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		mov    data_1551d6,%eax
+		mov    EXPORT_SYMBOL(save_slot)-2,%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
 		jne    jump_9589c
@@ -169315,11 +169315,11 @@ GLOBAL_FUNC(ASM_save_game_slot)	/* 0x0D38B0 */
 		pop    %ebx
 		ret
 	jump_d38c7:
-		mov    data_1551d6,%eax
+		mov    EXPORT_SYMBOL(save_slot)-2,%eax
 		sar    $0x10,%eax
 		cmp    $0xffffffff,%eax
 		je     jump_d3942
-		mov    data_1551d6,%eax
+		mov    EXPORT_SYMBOL(save_slot)-2,%eax
 		mov    EXPORT_SYMBOL(save_slot_base),%ebx
 		sar    $0x10,%eax
 		sub    %ebx,%eax
@@ -183413,22 +183413,6 @@ GLOBAL (byte_155189)
 		.byte	0xf7
 data_15518a:
 		.ascii  "\xff\xff"
-
-agent_panel_shape_points_x:	/* 0x1551A0 */
-		.ascii  "\xb2\x00\xc9\x00\x2a\x01\x19\x01"
-		.ascii  "\xd5\x00\xc8\x00\xb9\x00\xb2\x00"
-		.ascii  "\xb2\x00"
-agent_panel_shape_points_y:
-		.ascii  "\x5f\x00\x48\x00\x48\x00\x59\x00"
-		.ascii  "\x59\x00\x66\x00\x66\x00\x5f\x00"
-		.ascii  "\x5f\x00"
-agent_name_shape_points_x:
-		.ascii  "\x07\x00\xbc\x00\xab\x00\x07\x00"
-		.ascii  "\x07\x00"
-agent_name_shape_points_y:
-		.ascii  "\x48\x00\x48\x00\x59\x00\x59\x00"
-data_1551d6:
-		.ascii  "\x48\x00"
 
 GLOBAL (save_slot)	/* 0x1551D8 */
 		.ascii  "\xff\xff"
