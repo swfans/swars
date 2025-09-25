@@ -653,9 +653,17 @@ ubyte show_worldmap_screen(void)
 
 void init_world_screen_boxes(void)
 {
-    short scr_w, start_x;
+    ScrCoord scr_h, start_x, start_y;
+    short space_w, space_h, border;
 
-    scr_w = lbDisplay.GraphicsWindowWidth;
+    // Border value represents how much the box background goes
+    // out of the box area.
+    border = 3;
+#ifdef EXPERIMENTAL_MENU_CENTER_H
+    scr_h = global_apps_bar_box.Y;
+#else
+    scr_h = 432;
+#endif
 
     init_screen_box(&world_landmap_box, 7u, 72u, 518u, 354, 6);
     init_screen_text_box(&world_city_info_box, 534u, 72u, 99u, 354, 6, small_med_font, 3);
@@ -670,10 +678,22 @@ void init_world_screen_boxes(void)
     world_info_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;
     world_landmap_box.SpecialDrawFn = show_world_landmap_box;
 
-    start_x = (scr_w - world_landmap_box.Width - world_city_info_box.Width - 23) / 2;
+    // Reposition the components to current resolution
 
-    world_landmap_box.X = start_x + 7;
-    world_city_info_box.X = world_landmap_box.X + world_landmap_box.Width + 9;
+    start_x = heading_box.X;
+    // On the X axis, we're going for aligning below heading box, to both left and right
+    space_w = heading_box.Width - world_landmap_box.Width - world_city_info_box.Width;
+
+    start_y = heading_box.Y + heading_box.Height;
+    // On the top, we're aligning to spilled border of previous box; same goes inside.
+    // But on the bottom, we're aligning to hard border, without spilling. To compensate
+    // for that, add pixels for such border to the space.
+    space_h = scr_h - start_y - world_city_info_box.Height + border;
+
+    world_city_info_box.Y = start_y + space_h / 2;
+    world_landmap_box.X = start_x;
+    world_landmap_box.Y = world_city_info_box.Y;
+    world_city_info_box.X = world_landmap_box.X + world_landmap_box.Width + space_w;
 
     world_info_ACCEPT_button.X = world_city_info_box.X
         + ((world_city_info_box.Width - world_info_ACCEPT_button.Width) >> 1);

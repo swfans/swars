@@ -712,12 +712,9 @@ void init_debrief_screen_boxes(void)
     // for that, add pixels for such border to the space.
     space_h = scr_h - start_y - world_city_info_box.Height + border;
 
-    world_city_info_box.Y = start_y + space_h / 2;
-
+    // Expect world_city_info_box to be already set
     debrief_mission_box.X = start_x;
     debrief_mission_box.Y = world_city_info_box.Y;
-
-    world_city_info_box.X = debrief_mission_box.X + debrief_mission_box.Width + space_w;
 
     debrief_people_box.X = start_x;
     debrief_people_box.Y = world_city_info_box.Y + world_city_info_box.Height - debrief_people_box.Height;
