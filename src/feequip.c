@@ -76,12 +76,12 @@ extern ubyte weapon_damage[31];
 /* Points for shape of the agent selection buttons, X coords.
  */
 short agent_panel_shape_points_x[] = {
-      0,  23, 120, 103,  35,  22,   7,   0,   0,
+      0,  23, 120, 103,  35,  22,   7,   0,
 };
 /* Points for shape of the agent selection buttons, Y coords.
  */
 short agent_panel_shape_points_y[] = {
-     23,   0,   0,  17,  17,  30,  30,  23,  23,
+     23,   0,   0,  17,  17,  30,  30,  23,
 };
 /* Points for skewed rectangle with agent name, X coords.
  */
@@ -1376,9 +1376,8 @@ void init_equip_screen_shapes(void)
         init_screen_shape(p_shp, x, y,
           agent_panel_shape_points_x, agent_panel_shape_points_y,
           sizeof(agent_panel_shape_points_x)/sizeof(agent_panel_shape_points_x[0]),
-          0x0100, 0x0100);
+          0x0100, 0x0100, 6);
         p_shp->Colour = 0xAE;
-        p_shp->BGColour = 0x08;
         x += 110;
     }
     x = 7 + start_x;
@@ -1391,9 +1390,8 @@ void init_equip_screen_shapes(void)
         init_screen_shape(p_shp, x, y,
           agent_name_shape_points_x, agent_name_shape_points_y,
           sizeof(agent_name_shape_points_x)/sizeof(agent_name_shape_points_x[0]),
-          0x0100, 0x0100);
+          0x0100, 0x0100, 6);
         p_shp->Colour = 0x0F7;
-        p_shp->BGColour = 0x04;
     }
 }
 
