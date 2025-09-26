@@ -35,6 +35,8 @@ struct SampleTable {
   struct HeapMgrHandle *hmhandle;
 };
 
+#define STARTSCR_VOLUME_MAX 322
+
 #pragma pack()
 
 extern short startscr_samplevol;

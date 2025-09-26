@@ -141,8 +141,8 @@ TbBool input_slant_right_arrow(struct ScreenBox *box, short *target)
         {
             lbDisplay.LeftButton = 0;
             (*target)++;
-            if ((*target) > 322)
-                (*target) = 322;
+            if ((*target) > STARTSCR_VOLUME_MAX)
+                (*target) = STARTSCR_VOLUME_MAX;
             return true;
         }
     }
@@ -167,7 +167,7 @@ TbBool input_slant_box(struct ScreenBox *box, short *target)
             dy = ms_y - box->Y - border;
             if (dx + dy >= 0 && dx + dy <= box->Width - 2 * border - border)
             {
-                (*target) = 322 * (dx + dy) / (box->Width - 2 * border - border);
+                (*target) = STARTSCR_VOLUME_MAX * (dx + dy) / (box->Width - 2 * border - border);
                 return true;
             }
         }
@@ -528,7 +528,7 @@ void draw_pause_volume_bar(struct ScreenBox *p_box1, struct ScreenBox *p_box2, s
         stp = pop1_sprites_scale+1;
         box4.X = p_box1->X + 1 * stp;
         box4.Y = p_box1->Y + 1 * stp;
-        box4.Width = (p_box1->Width - 3 * stp) * (*p_target) / 322;
+        box4.Width = (p_box1->Width - 3 * stp) * (*p_target) / STARTSCR_VOLUME_MAX;
         box4.Height = p_box1->Height - 2 * stp;
         draw_slant_box(&box4, colour_lookup[ColLU_WHITE]);
     }
@@ -637,17 +637,17 @@ TbBool pause_screen_handle(void)
 
         if (affected == &startscr_samplevol)
         {
-            SetSoundMasterVolume(127 * startscr_samplevol / 322);
+            SetSoundMasterVolume(127 * startscr_samplevol / STARTSCR_VOLUME_MAX);
             if (!IsSamplePlaying(0, 80, 0))
                 play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
         }
         else if (affected == &startscr_midivol)
         {
-            SetMusicMasterVolume(127 * startscr_midivol / 322);
+            SetMusicMasterVolume(127 * startscr_midivol / STARTSCR_VOLUME_MAX);
         }
         else if (affected == &startscr_cdvolume)
         {
-            SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+            SetCDVolume(70 * (127 * startscr_cdvolume / STARTSCR_VOLUME_MAX) / 100);
         }
         else if (affected == &ingame.DetailLevel)
         {

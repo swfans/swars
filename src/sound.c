@@ -40,36 +40,36 @@ extern struct SampleTable *sample_table;
 
 void set_default_sfx_settings(void)
 {
-    startscr_samplevol = 322;
-    startscr_midivol = 322;
-    startscr_cdvolume = 228;
+    startscr_samplevol = STARTSCR_VOLUME_MAX;
+    startscr_midivol = STARTSCR_VOLUME_MAX;
+    startscr_cdvolume = STARTSCR_VOLUME_MAX * 71 / 100;
 }
 
 void sfx_apply_samplevol(void)
 {
     if (startscr_samplevol < 0)
         startscr_samplevol = 0;
-    if (startscr_samplevol > 322)
-        startscr_samplevol = 322;
-    SetSoundMasterVolume(127 * startscr_samplevol / 322);
+    if (startscr_samplevol > STARTSCR_VOLUME_MAX)
+        startscr_samplevol = STARTSCR_VOLUME_MAX;
+    SetSoundMasterVolume(127 * startscr_samplevol / STARTSCR_VOLUME_MAX);
 }
 
 void sfx_apply_midivol(void)
 {
     if (startscr_midivol < 0)
         startscr_midivol = 0;
-    if (startscr_midivol > 322)
-        startscr_midivol = 322;
-    SetMusicMasterVolume(127 * startscr_midivol / 322);
+    if (startscr_midivol > STARTSCR_VOLUME_MAX)
+        startscr_midivol = STARTSCR_VOLUME_MAX;
+    SetMusicMasterVolume(127 * startscr_midivol / STARTSCR_VOLUME_MAX);
 }
 
 void sfx_apply_cdvolume(void)
 {
     if (startscr_cdvolume < 0)
         startscr_cdvolume = 0;
-    if (startscr_cdvolume > 322)
-        startscr_cdvolume = 322;
-    SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+    if (startscr_cdvolume > STARTSCR_VOLUME_MAX)
+        startscr_cdvolume = STARTSCR_VOLUME_MAX;
+    SetCDVolume(70 * (127 * startscr_cdvolume / STARTSCR_VOLUME_MAX) / 100);
 }
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)

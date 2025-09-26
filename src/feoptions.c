@@ -51,6 +51,12 @@ extern short textpos[10];
 
 extern struct TbSprite *fe_icons_sprites;
 
+struct ScreenShape audio_volume_sliders[9];
+
+/** How many pixels the slider is spill outside of its active rect area.
+ */
+#define HORIZ_PROSLIDER_MAIN_SPILL_W 6
+
 ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
@@ -63,57 +69,81 @@ void show_audio_volume_box_func_02(short scr_x, short scr_y, short a3, short a4,
         : : "a" (scr_x), "d" (scr_y), "b" (a3), "c" (a4), "g" (colour));
 }
 
-void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
+void draw_horiz_proslider_main_body(struct ScreenShape *p_shp, short *p_value)
 {
-    short x1b, x2c;
-    short wtext1, wtext2;
+    short box_x, box_y, thick_width, thin_height, x2c;
+    short wtext1, wtext2, box_width, box_height, spill_w;
+    short val;
+
+    // Size and coords of a box around the shape
+    spill_w = HORIZ_PROSLIDER_MAIN_SPILL_W;
+    box_width = p_shp->PtX[4] - p_shp->PtX[0] - 2 * spill_w;
+    box_height = p_shp->PtY[0] - p_shp->PtY[3];
+    box_x = p_shp->PtX[0] + spill_w;
+    box_y = p_shp->PtY[3];
+    // text in cut-ins at start and at end of slider
+    wtext1 = p_shp->PtX[2] - p_shp->PtX[1];
+    wtext2 = p_shp->PtX[5] - p_shp->PtX[6];
+    // Compute the scaled slider value; subtract half a height to have a proper input value range
+    val = *p_value * (box_width - (box_height+1)/2) / STARTSCR_VOLUME_MAX;
 
     lbDisplay.DrawFlags = 0;
-    // text in cut-ins at start and at end of slider
-    // TODO cut-in sizes should be stored somewhere, so that text drawing func has access to it
-    wtext2 = my_string_width(gui_strings[422]) + 2;
-    wtext1 = my_string_width(gui_strings[421]) + 2;
-    x1b = box->Width - wtext1 - wtext2 - 14;
-    if (*target_ptr < wtext1)
+    thick_width = p_shp->PtX[7] - p_shp->PtX[3] + box_height + 2;
+    thin_height = p_shp->PtY[0] - p_shp->PtY[1];
+    if (val < wtext1)
     {
-        x2c = *target_ptr;
-        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, x2c, 17, 0x0AE);
+        x2c = val;
+        show_audio_volume_box_func_02(box_x + 9, box_y + 11, x2c, thin_height+1, 0x0AE);
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        show_audio_volume_box_func_02(box->X + 9 + x2c, box->Y + 11, wtext1 - x2c, 17, 0x0AE);
-        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 0x0AE);
-        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 0x0AE);
+        show_audio_volume_box_func_02(box_x + 9 + x2c, box_y + 11, wtext1 - x2c, thin_height+1, 0x0AE);
+        show_audio_volume_box_func_02(box_x + 20 + wtext1, box_y, thick_width, box_height+1, 0x0AE);
+        show_audio_volume_box_func_02(box_x + box_width + spill_w + 1 - wtext2, box_y, wtext2, thin_height+1, 0x0AE);
     }
-    else if (*target_ptr >= 322 - wtext2)
+    else if (val >= box_width - (box_height+1)/2 - wtext2)
     {
-        x2c = (*target_ptr) - (322 - wtext2);
-        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 0x0AE);
-        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 0x0AE);
-        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, x2c, 17, 0x0AE);
+        x2c = val - (box_width - (box_height+1)/2 - wtext2);
+        show_audio_volume_box_func_02(box_x + 9, box_y + 11, wtext1, thin_height+1, 0x0AE);
+        show_audio_volume_box_func_02(box_x + 20 + wtext1, box_y, thick_width, box_height+1, 0x0AE);
+        show_audio_volume_box_func_02(box_x + box_width + spill_w + 1 - wtext2, box_y, x2c, thin_height+1, 0x0AE);
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        show_audio_volume_box_func_02(box->X + box->Width + 6 + x2c - wtext2, box->Y, wtext2 - x2c, 17, 0x0AE);
+        show_audio_volume_box_func_02(box_x + box_width + spill_w + 1 + x2c - wtext2, box_y, wtext2 - x2c, thin_height+1, 0x0AE);
     }
     else
     {
-        x2c = (*target_ptr) - wtext1;
-        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 0x0AE);
-        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x2c, 28, 0x0AE);
+        x2c = val - wtext1;
+        show_audio_volume_box_func_02(box_x + 9, box_y + 11, wtext1, thin_height+1, 0x0AE);
+        show_audio_volume_box_func_02(box_x + 20 + wtext1, box_y, x2c, box_height+1, 0x0AE);
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        show_audio_volume_box_func_02(box->X + 20 + x2c + wtext1, box->Y, x1b - x2c, 28, 0x0AE);
-        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 0x0AE);
+        show_audio_volume_box_func_02(box_x + 20 + x2c + wtext1, box_y, thick_width - x2c, box_height+1, 0x0AE);
+        show_audio_volume_box_func_02(box_x + box_width + spill_w + 1 - wtext2, box_y, wtext2, thin_height+1, 0x0AE);
     }
 }
 
-void draw_vert_slider_main_body_text(struct ScreenBox *box, struct ScreenBox *tbox, short *target_ptr)
+void draw_horiz_proslider_main_body_text(struct ScreenShape *p_shp, struct ScreenBox *p_tbox, short *p_value)
 {
-    short wtext2;
+    const char *text;
+    short box_x, box_y, shift_y;
+    short wtext2, box_width, box_height, spill_w;
+
+    // Size and coords of a box around the shape
+    spill_w = HORIZ_PROSLIDER_MAIN_SPILL_W;
+    box_width = p_shp->PtX[4] - p_shp->PtX[0] - 2 * spill_w;
+    box_height = p_shp->PtY[0] - p_shp->PtY[3];
+    // Text drawing area is bound to a text box, so make the coords relative to text box position
+    box_x = p_shp->PtX[0] - p_tbox->X + spill_w;
+    box_y = p_shp->PtY[3] - p_tbox->Y;
+    // text in cut-ins at start and at end of slider
+    wtext2 = p_shp->PtX[5] - p_shp->PtX[6];
 
     lbDisplay.DrawFlags = 0;
-    wtext2 = my_string_width(gui_strings[422]) + 2; // TODO reuse from main body rather than re-compute
-    draw_text_purple_list2(box->X + 9 - tbox->X, 24, gui_strings[421], 0);
-    draw_text_purple_list2(box->X + box->Width - 13 - wtext2 - tbox->X, 41, gui_strings[422], 0);
+    text = gui_strings[421];
+    draw_text_purple_list2(box_x + 9, box_y - 2, text, 0);
+    text = gui_strings[422];
+    shift_y = box_height - font_height('A');
+    draw_text_purple_list2(box_x + box_width - 13 - wtext2, box_y + shift_y - 4, text, 0);
 }
 
-TbBool input_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
+TbBool input_horiz_proslider_main_body(struct ScreenBox *box, short *p_value)
 {
     TbBool target_affected;
 
@@ -127,18 +157,18 @@ TbBool input_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
             lbDisplay.LeftButton = 0;
             delta_y = mouse_move_y_coord_over_box(box) - 14;
             delta_x = mouse_move_position_horizonal_over_box(box) - 9;
-            (*target_ptr) = delta_y + delta_x;
-            if ((*target_ptr) < 0)
-                *target_ptr = 0;
-            else if ((*target_ptr) > 322)
-                (*target_ptr) = 322;
+            (*p_value) = delta_y + delta_x;
+            if ((*p_value) < 0)
+                *p_value = 0;
+            else if ((*p_value) > STARTSCR_VOLUME_MAX)
+                (*p_value) = STARTSCR_VOLUME_MAX;
             target_affected = 1;
         }
     }
     return target_affected;
 }
 
-void draw_vert_slider_left_arrow(struct ScreenBox *box)
+void draw_horiz_proslider_left_arrow(struct ScreenBox *box)
 {
     lbDisplay.DrawFlags |= 0x8000;
     lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
@@ -149,7 +179,7 @@ void draw_vert_slider_left_arrow(struct ScreenBox *box)
     draw_sprite_purple_list(box->X, box->Y, &fe_icons_sprites[108]);
 }
 
-TbBool input_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
+TbBool input_horiz_proslider_left_arrow(struct ScreenBox *box, short *p_value)
 {
     TbBool target_affected;
 
@@ -161,18 +191,18 @@ TbBool input_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
             lbDisplay.LeftButton = 0;
             box->Flags |= GBxFlg_IsRPushed;
             if ((lbShift & KMod_SHIFT) != 0)
-                (*target_ptr)--;
+                (*p_value)--;
             else
-                (*target_ptr) -= 10;
-            if ((*target_ptr) < 0)
-                (*target_ptr) = 0;
+                (*p_value) -= 10;
+            if ((*p_value) < 0)
+                (*p_value) = 0;
             target_affected = 1;
         }
     }
     return target_affected;
 }
 
-void draw_vert_slider_right_arrow(struct ScreenBox *box)
+void draw_horiz_proslider_right_arrow(struct ScreenBox *box)
 {
     lbDisplay.DrawFlags |= 0x8000;
     lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
@@ -183,7 +213,7 @@ void draw_vert_slider_right_arrow(struct ScreenBox *box)
     draw_sprite_purple_list(box->X - 7, box->Y, &fe_icons_sprites[109]);
 }
 
-TbBool input_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
+TbBool input_horiz_proslider_right_arrow(struct ScreenBox *box, short *p_value)
 {
     TbBool target_affected;
 
@@ -195,11 +225,11 @@ TbBool input_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
             lbDisplay.LeftButton = 0;
             box->Flags |= GBxFlg_IsRPushed;
             if ((lbShift & KMod_SHIFT) != 0)
-                (*target_ptr)++;
+                (*p_value)++;
             else
-                (*target_ptr) += 10;
-            if ((*target_ptr) > 322)
-                (*target_ptr) = 322;
+                (*p_value) += 10;
+            if ((*p_value) > STARTSCR_VOLUME_MAX)
+                (*p_value) = STARTSCR_VOLUME_MAX;
             target_affected = 1;
         }
     }
@@ -261,6 +291,8 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
     w = (box->Width - my_string_width(s)) >> 1;
     if (flashy_draw_text(1 + w, 1, s, 1, 0, &word_1C4866[target_var], 0))
     {
+        struct ScreenShape *p_shp;
+
         lbFontPtr = small_med_font;
 
         struct ScreenBox box1; // Left triangle
@@ -283,16 +315,17 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
         box0.X = box->X + 33 + 9 + 2;
         box2.X = box->X + 33 + 9 + 2 + 336 + 1;
 
-        draw_vert_slider_main_body(&box0, target_ptr);
-        change |= input_vert_slider_main_body(&box0, target_ptr);
+        p_shp = &audio_volume_sliders[3 * target_var + 1];
+        draw_horiz_proslider_main_body(p_shp, target_ptr);
+        change |= input_horiz_proslider_main_body(&box0, target_ptr);
 
-        draw_vert_slider_left_arrow(&box1);
-        change |= input_vert_slider_left_arrow(&box1, target_ptr);
+        draw_horiz_proslider_left_arrow(&box1);
+        change |= input_horiz_proslider_left_arrow(&box1, target_ptr);
 
-        draw_vert_slider_right_arrow(&box2);
-        change |= input_vert_slider_right_arrow(&box2, target_ptr);
+        draw_horiz_proslider_right_arrow(&box2);
+        change |= input_horiz_proslider_right_arrow(&box2, target_ptr);
 
-        draw_vert_slider_main_body_text(&box0, box, target_ptr);
+        draw_horiz_proslider_main_body_text(p_shp, box, target_ptr);
 
     }
     lbDisplay.DrawFlags = 0;
@@ -300,11 +333,11 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
         return 0;
 
     if (target_var == 0)
-        SetSoundMasterVolume(127 * (*target_ptr) / 322);
+        sfx_apply_samplevol();
     else if (target_var == 1)
-        SetMusicMasterVolume(127 * (*target_ptr) / 322);
+        sfx_apply_midivol();
     else if (target_var == 2)
-      SetCDVolume((70 * (127 * (*target_ptr) / 322) / 100));
+        sfx_apply_cdvolume();
 
     return 0;
 }
@@ -405,6 +438,58 @@ ubyte show_options_visual_screen(void)
     return drawn;
 }
 
+short horiz_proslider_prepare_main_body_pts(short *pts_x, short *pts_y, short width, short height)
+{
+    short wtext1, wtext2, htext;
+
+    lbFontPtr = small_med_font;
+    // cut-ins for text at start and at end of slider
+    wtext2 = my_string_width(gui_strings[422]) + 2;
+    wtext1 = my_string_width(gui_strings[421]) + 2;
+    htext = font_height('A') + 4;
+
+    pts_x[0] = 0;
+    pts_y[0] = height;
+
+    pts_x[1] = pts_x[0] + (height - htext);
+    pts_y[1] = htext;
+
+    pts_x[2] = pts_x[1] + wtext1;
+    pts_y[2] = htext;
+
+    pts_x[3] = pts_x[2] + htext;
+    pts_y[3] = 0;
+
+    pts_x[4] = width + 2 * 6;
+    pts_y[4] = 0;
+
+    pts_x[5] = pts_x[4] - (height - htext);
+    pts_y[5] = height - htext;
+
+    pts_x[6] = pts_x[5] - wtext2;
+    pts_y[6] = height - htext;
+
+    pts_x[7] = pts_x[6] - htext;
+    pts_y[7] = height;
+
+    pts_x[8] = pts_x[0];
+    pts_y[8] = pts_y[0];
+
+    return 9;
+}
+
+short horiz_proslider_prepare_left_arrow_pts(short *pts_x, short *pts_y, short width, short height)
+{
+    // TODO
+    return 0;
+}
+
+short horiz_proslider_prepare_right_arrow_pts(short *pts_x, short *pts_y, short width, short height)
+{
+    // TODO
+    return 0;
+}
+
 void init_options_audio_screen_boxes(void)
 {
     int i, h;
@@ -499,6 +584,10 @@ void init_options_audio_screen_boxes(void)
     for (i = 0; i < 3; i++)
     {
         struct ScreenBox *p_box;
+        struct ScreenShape *p_shp;
+        short shape_pts_x[9];
+        short shape_pts_y[9];
+        short pts_len;
 
         p_box = &audio_volume_boxes[i];
         // There is one box only to position, and no space is needed after it - the whole
@@ -507,8 +596,29 @@ void init_options_audio_screen_boxes(void)
         // There is one box only to position, so space goes into two parts - before and after.
         p_box->Y = start_y + h;
 
+        // Each volume bar consists of 3 shapes: main body and two arrows
+
+        p_shp = &audio_volume_sliders[3*i+1];
+        pts_len = horiz_proslider_prepare_main_body_pts(shape_pts_x, shape_pts_y, 336, 27);
+        init_screen_shape(p_shp, p_box->X + 33 + 4, p_box->Y + 26,
+          shape_pts_x, shape_pts_y, pts_len, 0x0100, 0x0100, 6);
+        p_shp->Colour = 0x0AE;
+
+        p_shp = &audio_volume_sliders[3*i+0];
+        pts_len = horiz_proslider_prepare_left_arrow_pts(shape_pts_x, shape_pts_y, 9, 14);
+        init_screen_shape(p_shp, p_box->X + 33, p_box->Y + 26 + 12,
+          shape_pts_x, shape_pts_y, pts_len, 0x0100, 0x0100, 6);
+        p_shp->Colour = 0x0AE;
+
+        p_shp = &audio_volume_sliders[3*i+2];
+        pts_len = horiz_proslider_prepare_right_arrow_pts(shape_pts_x, shape_pts_y, 9, 14);
+        init_screen_shape(p_shp, p_box->X + 33 + 9 + 2 + 336 + 1, p_box->Y + 26 + 1,
+          shape_pts_x, shape_pts_y, pts_len, 0x0100, 0x0100, 6);
+        p_shp->Colour = 0x0AE;
+
         h += p_box->Height + space_h / 5;
     }
+
     audio_tracks_box.X = start_x + space_w;
     audio_tracks_box.Y = start_y + h;
 
