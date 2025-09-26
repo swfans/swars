@@ -379,8 +379,7 @@ void init_screen_info_box(struct ScreenInfoBox *p_box, ScrCoord x, ScrCoord y, u
 }
 
 void init_screen_shape(struct ScreenShape *p_shp, ScrCoord x, ScrCoord y,
-  short *pts_w, short *pts_h, ushort pts_len, short scale_w, short scale_h,
-  TbPixel col, TbPixel bgcol)
+  short *pts_w, short *pts_h, ushort pts_len, short scale_w, short scale_h)
 {
     ushort k;
 
@@ -400,8 +399,8 @@ void init_screen_shape(struct ScreenShape *p_shp, ScrCoord x, ScrCoord y,
     p_shp->field_24 = 6;
     p_shp->field_25 = 0;
     p_shp->Flags = GBxFlg_Unkn0001;
-    p_shp->Colour = col;
-    p_shp->BGColour = bgcol;
+    p_shp->Colour = 0xF7;
+    p_shp->BGColour = 0x38;
 }
 
 /******************************************************************************/

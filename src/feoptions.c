@@ -55,12 +55,12 @@ ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
 
-void show_audio_volume_box_func_02(short a1, short a2, short a3, short a4, TbPixel colour)
+void show_audio_volume_box_func_02(short scr_x, short scr_y, short a3, short a4, TbPixel colour)
 {
     asm volatile (
       "push %4\n"
       "call ASM_show_audio_volume_box_func_02\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (colour));
+        : : "a" (scr_x), "d" (scr_y), "b" (a3), "c" (a4), "g" (colour));
 }
 
 void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
@@ -77,29 +77,29 @@ void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
     if (*target_ptr < wtext1)
     {
         x2c = *target_ptr;
-        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, x2c, 17, 174);
+        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, x2c, 17, 0x0AE);
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        show_audio_volume_box_func_02(box->X + 9 + x2c, box->Y + 11, wtext1 - x2c, 17, 174);
-        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 174);
-        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 174);
+        show_audio_volume_box_func_02(box->X + 9 + x2c, box->Y + 11, wtext1 - x2c, 17, 0x0AE);
+        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 0x0AE);
+        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 0x0AE);
     }
     else if (*target_ptr >= 322 - wtext2)
     {
         x2c = (*target_ptr) - (322 - wtext2);
-        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 174);
-        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 174);
-        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, x2c, 17, 174);
+        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 0x0AE);
+        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 0x0AE);
+        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, x2c, 17, 0x0AE);
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        show_audio_volume_box_func_02(box->X + box->Width + 6 + x2c - wtext2, box->Y, wtext2 - x2c, 17, 174);
+        show_audio_volume_box_func_02(box->X + box->Width + 6 + x2c - wtext2, box->Y, wtext2 - x2c, 17, 0x0AE);
     }
     else
     {
         x2c = (*target_ptr) - wtext1;
-        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 174);
-        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x2c, 28, 174);
+        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 0x0AE);
+        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x2c, 28, 0x0AE);
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        show_audio_volume_box_func_02(box->X + 20 + x2c + wtext1, box->Y, x1b - x2c, 28, 174);
-        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 174);
+        show_audio_volume_box_func_02(box->X + 20 + x2c + wtext1, box->Y, x1b - x2c, 28, 0x0AE);
+        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 0x0AE);
     }
 }
 
@@ -498,13 +498,16 @@ void init_options_audio_screen_boxes(void)
     h = space_h / 5;
     for (i = 0; i < 3; i++)
     {
+        struct ScreenBox *p_box;
+
+        p_box = &audio_volume_boxes[i];
         // There is one box only to position, and no space is needed after it - the whole
         // available empty space goes into one place.
-        audio_volume_boxes[i].X = start_x + space_w;
+        p_box->X = start_x + space_w;
         // There is one box only to position, so space goes into two parts - before and after.
-        audio_volume_boxes[i].Y = start_y + h;
+        p_box->Y = start_y + h;
 
-        h += audio_volume_boxes[i].Height + space_h / 5;
+        h += p_box->Height + space_h / 5;
     }
     audio_tracks_box.X = start_x + space_w;
     audio_tracks_box.Y = start_y + h;

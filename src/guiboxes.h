@@ -308,8 +308,7 @@ void init_screen_info_box(struct ScreenInfoBox *p_box, ScrCoord x, ScrCoord y,
   ushort width, char *text1, char *text2, int drawspeed,
   struct TbSprite *p_font1, struct TbSprite *p_font2, int textspeed);
 void init_screen_shape(struct ScreenShape *p_shp, ScrCoord x, ScrCoord y,
-  short *pts_w, short *pts_h, ushort pts_len, short scale_w, short scale_h,
-  TbPixel col, TbPixel bgcol);
+  short *pts_w, short *pts_h, ushort pts_len, short scale_w, short scale_h);
 
 /******************************************************************************/
 #ifdef __cplusplus

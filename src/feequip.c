@@ -1370,20 +1370,30 @@ void init_equip_screen_shapes(void)
     y = 72;
     for (i = 0; i < 4; i++)
     {
-        init_screen_shape(&unk11_menu[i], x, y,
+        struct ScreenShape *p_shp;
+
+        p_shp = &unk11_menu[i];
+        init_screen_shape(p_shp, x, y,
           agent_panel_shape_points_x, agent_panel_shape_points_y,
           sizeof(agent_panel_shape_points_x)/sizeof(agent_panel_shape_points_x[0]),
-          0x0100, 0x0100, 0x0AE, 0x08);
+          0x0100, 0x0100);
+        p_shp->Colour = 0xAE;
+        p_shp->BGColour = 0x08;
         x += 110;
     }
     x = 7 + start_x;
     y = 72;
     i = 4;
     {
-        init_screen_shape(&unk11_menu[i], x, y,
+        struct ScreenShape *p_shp;
+
+        p_shp = &unk11_menu[i];
+        init_screen_shape(p_shp, x, y,
           agent_name_shape_points_x, agent_name_shape_points_y,
           sizeof(agent_name_shape_points_x)/sizeof(agent_name_shape_points_x[0]),
-          0x0100, 0x0100, 0x0F7, 0x04);
+          0x0100, 0x0100);
+        p_shp->Colour = 0x0F7;
+        p_shp->BGColour = 0x04;
     }
 }
 
