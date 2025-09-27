@@ -74,7 +74,7 @@ extern struct ScreenTextBox equip_list_box;
 extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenButton equip_offer_buy_button;
 extern struct ScreenButton equip_all_agents_button;
-extern struct ScreenShape unk11_menu[5];
+extern struct ScreenShape equip_agent_select_shapes[5];
 
 extern struct TbSprite *fe_icons_sprites;
 
@@ -1396,7 +1396,7 @@ void set_flag02_cryo_screen_boxes(void)
     cryo_offer_cancel_button.Flags |= GBxFlg_Unkn0002;
     equip_all_agents_button.Flags |= GBxFlg_Unkn0002;
     for (i = 0; i < 5; i++) {
-        unk11_menu[i].Flags = GBxFlg_Unkn0002;
+        equip_agent_select_shapes[i].Flags = GBxFlg_Unkn0002;
     }
 }
 
@@ -1509,7 +1509,7 @@ ubyte show_cryo_chamber_screen(void)
 {
     ubyte drawn = true;
 
-    if ((unk11_menu[0].Flags & GBxFlg_Unkn0001) != 0)
+    if ((equip_agent_select_shapes[0].Flags & GBxFlg_Unkn0001) != 0)
     {
         byte_1C4978 = 0;
         byte_1C4979 = 0;
@@ -1567,7 +1567,7 @@ ubyte show_cryo_chamber_screen(void)
             struct ScreenShape *shape;
             ubyte gbstate;
 
-            shape = &unk11_menu[nagent];
+            shape = &equip_agent_select_shapes[nagent];
 
             if (nagent == 4) // agent name box
             {

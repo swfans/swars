@@ -110033,7 +110033,7 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		mov    %dh,EXPORT_SYMBOL(byte_1C4A7C)
 	jump_8eb6e:
 		mov    net_protocol_select_button,%ax
-		mov    data_1c800c,%bx
+		mov    EXPORT_SYMBOL(net_protocol_select_button)+0x04,%bx
 		sub    $0xc,%eax
 		add    %eax,%ebx
 		add    $0x4,%ebx
@@ -110119,7 +110119,7 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		mov    $0x1108,%ebx
 		mov    EXPORT_SYMBOL(gui_strings)+0x7C8,%eax
 		xor    %edx,%edx
-		mov    %eax,data_1c8010
+		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
 		mov    $unkstruct04_arr,%eax
 		call   ac_memset
 		xor    %bl,%bl
@@ -110141,8 +110141,8 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		mov    $ASM_do_net_protocol_option,%ebx
 		mov    %ch,EXPORT_SYMBOL(byte_1C4A7C)
 		mov    %al,EXPORT_SYMBOL(byte_15516C)
-		mov    %edx,data_1c7704
-		mov    %ebx,data_1c7714
+		mov    %edx,EXPORT_SYMBOL(net_protocol_option_button)+0x8
+		mov    %ebx,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 		mov    $0x1,%al
 		pop    %ebp
 		pop    %edi
@@ -110163,10 +110163,10 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		add    $0x8,%esp
 		mov    %cl,show_alert
 		mov    %dx,EXPORT_SYMBOL(word_1811AE)
-		mov    %eax,data_1c8010
+		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
 		mov    $ASM_do_serial_speed_switch,%eax
-		mov    %ebp,data_1c7704
-		mov    %eax,data_1c7714
+		mov    %ebp,EXPORT_SYMBOL(net_protocol_option_button)+0x8
+		mov    %eax,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 		mov    $0x1,%al
 		pop    %ebp
 		pop    %edi
@@ -110181,19 +110181,19 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		mov    $asc19200,%ecx
 		and    $0xffff,%eax
 		mov    $ASM_do_serial_speed_switch,%esi
-		mov    %ecx,data_1c7704
+		mov    %ecx,EXPORT_SYMBOL(net_protocol_option_button)+0x8
 		mov    EXPORT_SYMBOL(gui_strings)+0x828(,%eax,4),%eax
-		mov    %esi,data_1c7714
+		mov    %esi,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 		jmp    jump_8edca
 	jump_8eda8:
 		mov    $asc19200,%edx
 		and    $0xffff,%eax
 		mov    $ASM_do_serial_speed_switch,%ebx
-		mov    %edx,data_1c7704
+		mov    %edx,EXPORT_SYMBOL(net_protocol_option_button)+0x8
 		mov    EXPORT_SYMBOL(gui_strings)+0x7C4(,%eax,4),%eax
-		mov    %ebx,data_1c7714
+		mov    %ebx,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 	jump_8edca:
-		mov    %eax,data_1c8010
+		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
 		xor    %dh,%dh
 		mov    %dh,EXPORT_SYMBOL(byte_15516C)
 		mov    $0x1,%al
@@ -110439,13 +110439,13 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		add    $0x8,%esp
 		mov    %bl,show_alert
-		mov    %esi,data_1c7704
-		mov    %edi,data_1c7714
+		mov    %esi,EXPORT_SYMBOL(net_protocol_option_button)+0x8
+		mov    %edi,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 		mov    $0x2,%ebx
-		mov    %eax,data_1c8010
+		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
 		mov    %bx,EXPORT_SYMBOL(word_1811AE)
 		mov    $net_protocol_select_button,%eax
-		call   *data_1c8018
+		call   *EXPORT_SYMBOL(net_protocol_select_button)+0x10
 		xor    %al,%al
 		add    $0x18,%esp
 		pop    %ebp
@@ -110459,7 +110459,7 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		cmpb   $0x0,EXPORT_SYMBOL(byte_1C4A6F)
 		je     jump_8f4f7
 		mov    $net_unkn40_button,%eax
-		call   *data_1c8048
+		call   *EXPORT_SYMBOL(net_unkn40_button)+0x10
 		and    $0xff,%eax
 		cmp    $0x3,%eax
 		jne    jump_8f27b
@@ -110467,7 +110467,7 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		xor    %eax,%eax
 		xor    %esi,%esi
 		mov    net_unkn40_button,%ax
-		mov    data_1c803a,%si
+		mov    EXPORT_SYMBOL(net_unkn40_button)+0x02,%si
 		lea    0x3(%eax),%edx
 		add    $0x3,%esi
 		mov    %edx,0x10(%esp)
@@ -110708,7 +110708,7 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		xor    %dl,%dl
 		mov    %dl,data_1c4806
 		mov    $net_protocol_select_button,%eax
-		call   *data_1c8018
+		call   *EXPORT_SYMBOL(net_protocol_select_button)+0x10
 		xor    %al,%al
 		add    $0x18,%esp
 		pop    %ebp
@@ -110726,10 +110726,10 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 	jump_8f4f7:
 		mov    $net_protocol_option_button,%eax
 	jump_8f4fc:
-		call   *data_1c770c
+		call   *EXPORT_SYMBOL(net_protocol_option_button)+0x10
 	jump_8f502:
 		mov    $net_protocol_select_button,%eax
-		call   *data_1c8018
+		call   *EXPORT_SYMBOL(net_protocol_select_button)+0x10
 		xor    %al,%al
 		add    $0x18,%esp
 		pop    %ebp
@@ -111950,13 +111950,13 @@ GLOBAL_FUNC(ASM_show_net_groups_box)	/* 0x0901E0 */
 		test   %al,%al
 		je     jump_90467
 		mov    $net_INITIATE_button,%eax
-		call   *data_1c7f88
+		call   *EXPORT_SYMBOL(net_INITIATE_button)+0x10
 		mov    EXPORT_SYMBOL(selected_city_id),%eax
 		sar    $0x18,%eax
 		cmp    $0xffffffff,%eax
 		je     jump_90467
 		mov    $unkn8_EJECT_button,%eax
-		call   *data_1c7fe8
+		call   *EXPORT_SYMBOL(unkn8_EJECT_button)+0x10
 	jump_90467:
 		mov    unkn_city_no,%eax
 		sar    $0x18,%eax
@@ -111968,7 +111968,7 @@ GLOBAL_FUNC(ASM_show_net_groups_box)	/* 0x0901E0 */
 		jne    jump_9048b
 	jump_90480:
 		mov    $net_groups_LOGON_button,%eax
-		call   *data_1c7fb8
+		call   *EXPORT_SYMBOL(net_groups_LOGON_button)+0x10
 	jump_9048b:
 		xor    %al,%al
 		add    $0x48,%esp
@@ -113004,15 +113004,15 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		sar    $0x18,%eax
 		cmp    %esi,%eax
 		je     jump_9354f
-		movl   $ASM_do_research_submit,data_1c7dd8
+		movl   $ASM_do_research_submit,EXPORT_SYMBOL(research_submit_button)+0x18
 		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
 		jmp    jump_9355f
 	jump_9354f:
 		mov    $ASM_do_research_suspend,%edi
 		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
-		mov    %edi,data_1c7dd8
+		mov    %edi,EXPORT_SYMBOL(research_submit_button)+0x18
 	jump_9355f:
-		mov    %eax,data_1c7dc8
+		mov    %eax,EXPORT_SYMBOL(research_submit_button)+0x08
 	jump_93564:
 		mov    data_155163,%eax
 		mov    0x44(%esp),%edx
@@ -113131,14 +113131,14 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		je     jump_936f7
 		mov    $ASM_do_research_submit,%ecx
 		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
-		mov    %ecx,data_1c7dd8
+		mov    %ecx,EXPORT_SYMBOL(research_submit_button)+0x18
 		jmp    jump_93707
 	jump_936f7:
 		mov    $ASM_do_research_suspend,%ebx
 		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
-		mov    %ebx,data_1c7dd8
+		mov    %ebx,EXPORT_SYMBOL(research_submit_button)+0x18
 	jump_93707:
-		mov    %eax,data_1c7dc8
+		mov    %eax,EXPORT_SYMBOL(research_submit_button)+0x08
 	jump_9370c:
 		mov    selected_weapon,%eax
 		mov    0x44(%esp),%esi
@@ -113774,7 +113774,7 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		mov    %edx,%eax
 		add    $0x2e,%edx
 		lea    0x1(%ecx),%esi
-		call   *data_1c7e8c(%ebx)
+		call   *EXPORT_SYMBOL(research_list_buttons)+0x10(%ebx)
 		mov    %esi,0x44(%esp)
 		cmp    $0x2,%esi
 		jl     jump_93f03
@@ -113880,18 +113880,18 @@ GLOBAL_FUNC(ASM_show_audio_tracks_box)	/* 0x094844 */
 		test   %si,%si
 		je     jump_9496a
 		mov    $options_audio_buttons,%eax
-		call   *data_1c72e8
-		mov    $data_1c7306,%eax
-		call   *data_1c7316
-		mov    $data_1c7334,%eax
-		call   *data_1c7344
+		call   *EXPORT_SYMBOL(options_audio_buttons)+0x10
+		mov    $EXPORT_SYMBOL(options_audio_buttons)+0x2E,%eax
+		call   *EXPORT_SYMBOL(options_audio_buttons)+0x3E
+		mov    $EXPORT_SYMBOL(options_audio_buttons)+0x5C,%eax
+		call   *EXPORT_SYMBOL(options_audio_buttons)+0x6C
 	jump_9496a:
 		test   %dx,%dx
 		je     jump_94985
-		mov    $options_audio_buttons_itm3,%eax
-		call   *data_1c7372
-		mov    $data_1c7390,%eax
-		call   *data_1c73a0
+		mov    $EXPORT_SYMBOL(options_audio_buttons)+0x8A,%eax
+		call   *EXPORT_SYMBOL(options_audio_buttons)+0x9A
+		mov    $EXPORT_SYMBOL(options_audio_buttons)+0x0B8,%eax
+		call   *EXPORT_SYMBOL(options_audio_buttons)+0x0C8
 	jump_94985:
 		xor    %al,%al
 		pop    %edi
@@ -114009,7 +114009,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		mov    %ebx,%eax
 		add    $0x2e,%ebx
 		inc    %ecx
-		call   *data_1c742c(%esi)
+		call   *EXPORT_SYMBOL(options_gfx_buttons)+0x10(%esi)
 		cmp    $0x10,%ecx
 		jb     jump_94af0
 		mov    $0x284,%esi
@@ -114078,7 +114078,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		mov    ingame__fld_unkCA0,%eax
 		sar    $0x18,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
-		mov    %eax,data_1c7424(%esi)
+		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94c63
 	jump_94bea:
 		incb   ingame__PanelPermutation
@@ -114094,7 +114094,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		xor    %edx,%eax
 		sub    %edx,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x90C(,%eax,4),%eax
-		mov    %eax,data_1c7424(%esi)
+		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94c63
 	jump_94c1f:
 		mov    ingame__TrenchcoatPreference,%ah
@@ -114107,7 +114107,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		xor    %eax,%eax
 		mov    ingame__TrenchcoatPreference,%al
 		mov    EXPORT_SYMBOL(gui_strings)+0x91C(,%eax,4),%eax
-		mov    %eax,data_1c7424(%esi)
+		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94c63
 	jump_94c4f:
 		xor    %al,%al
@@ -114136,7 +114136,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 	jump_94ca9:
 		xor    %eax,%eax
 		xor    %ebx,%ebx
-		mov    data_1c7420(%esi),%ax
+		mov    EXPORT_SYMBOL(options_gfx_buttons)+0x04(%esi),%ax
 		mov    options_gfx_buttons(%esi),%bx
 		add    %eax,%ebx
 		add    $0xa,%ebx
@@ -114210,7 +114210,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		mov    ingame__fld_unkCA0,%eax
 		sar    $0x18,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
-		mov    %eax,data_1c7424(%esi)
+		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94e29
 	jump_94db0:
 		decb   ingame__PanelPermutation
@@ -114226,7 +114226,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		xor    %edx,%eax
 		sub    %edx,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x90C(,%eax,4),%eax
-		mov    %eax,data_1c7424(%esi)
+		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94e29
 	jump_94de6:
 		incb   ingame__TrenchcoatPreference
@@ -114239,7 +114239,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		xor    %eax,%eax
 		mov    ingame__TrenchcoatPreference,%al
 		mov    EXPORT_SYMBOL(gui_strings)+0x91C(,%eax,4),%eax
-		mov    %eax,data_1c7424(%esi)
+		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94e29
 	jump_94e14:
 		xor    %dh,%dh
@@ -114265,7 +114265,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		mov    $0x8004,%eax
 		xor    %ecx,%ecx
 		movzwl options_gfx_buttons(%esi),%ebp
-		mov    data_1c741e(%esi),%cx
+		mov    EXPORT_SYMBOL(options_gfx_buttons)+0x02(%esi),%cx
 		sub    $0x13,%ebp
 		inc    %ecx
 		mov    %ax,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
@@ -114346,15 +114346,15 @@ GLOBAL_FUNC(ASM_show_menu_storage_slots_box)	/* 0x094F08 */
 		mov    %dl,%dh
 		and    $0x7f,%dh
 		mov    %dh,0x3c(%eax)
-		mov    data_1c71f4,%bl
+		mov    EXPORT_SYMBOL(storage_LOAD_button)+0x24,%bl
 		or     $0x1,%bl
-		mov    data_1c7254,%cl
-		mov    %bl,data_1c71f4
-		mov    data_1c7224,%bh
+		mov    EXPORT_SYMBOL(storage_NEW_MORTAL_button)+0x24,%cl
+		mov    %bl,EXPORT_SYMBOL(storage_LOAD_button)+0x24
+		mov    EXPORT_SYMBOL(storage_SAVE_button)+0x24,%bh
 		or     $0x1,%cl
 		or     $0x1,%bh
-		mov    %cl,data_1c7254
-		mov    %bh,data_1c7224
+		mov    %cl,EXPORT_SYMBOL(storage_NEW_MORTAL_button)+0x24
+		mov    %bh,EXPORT_SYMBOL(storage_SAVE_button)+0x24
 	jump_94f72:
 		mov    0x8(%esp),%edx
 		xor    %eax,%eax
@@ -114362,15 +114362,15 @@ GLOBAL_FUNC(ASM_show_menu_storage_slots_box)	/* 0x094F08 */
 		cmp    $0xff,%eax
 		jne    jump_94fb2
 		movw   $0xf,0x3a(%edx)
-		mov    data_1c7224,%al
+		mov    EXPORT_SYMBOL(storage_SAVE_button)+0x24,%al
 		or     $0x2,%al
-		mov    data_1c71f4,%ch
-		mov    %al,data_1c7224
-		mov    data_1c7254,%ah
+		mov    EXPORT_SYMBOL(storage_LOAD_button)+0x24,%ch
+		mov    %al,EXPORT_SYMBOL(storage_SAVE_button)+0x24
+		mov    EXPORT_SYMBOL(storage_NEW_MORTAL_button)+0x24,%ah
 		or     $0x2,%ch
 		or     $0x2,%ah
-		mov    %ch,data_1c71f4
-		mov    %ah,data_1c7254
+		mov    %ch,EXPORT_SYMBOL(storage_LOAD_button)+0x24
+		mov    %ah,EXPORT_SYMBOL(storage_NEW_MORTAL_button)+0x24
 	jump_94fb2:
 		mov    $0x3,%edx
 		mov    $0x16,%ecx
@@ -115072,14 +115072,14 @@ GLOBAL_FUNC(ASM_show_menu_storage_slots_box)	/* 0x094F08 */
 		xor    %ebx,%ebx
 		mov    %bx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		mov    $storage_LOAD_button,%eax
-		call   *data_1c71e0
+		call   *EXPORT_SYMBOL(storage_LOAD_button)+0x10
 		cmpb   $0x0,restore_savegame
 		jne    jump_958e4
 		mov    $storage_SAVE_button,%eax
-		call   *data_1c7210
+		call   *EXPORT_SYMBOL(storage_SAVE_button)+0x10
 	jump_958e4:
 		mov    $storage_NEW_MORTAL_button,%eax
-		call   *data_1c7240
+		call   *EXPORT_SYMBOL(storage_NEW_MORTAL_button)+0x10
 		xor    %al,%al
 		add    $0x20,%esp
 		pop    %ebp
@@ -115562,17 +115562,17 @@ GLOBAL_FUNC(ASM_show_weapon_slots)	/* 0x097D5C */
 	jump_980ea:
 		mov    EXPORT_SYMBOL(gui_strings)+0x104,%eax
 	jump_980ef:
-		mov    %eax,data_1c7b20
+		mov    %eax,EXPORT_SYMBOL(equip_name_box)+0x18
 		mov    EXPORT_SYMBOL(gui_strings)+0x65C,%eax
-		mov    %eax,data_1c7bf4
+		mov    %eax,EXPORT_SYMBOL(equip_offer_buy_button)+0x08
 		mov    data_155161,%eax
 		sar    $0x18,%eax
 		inc    %eax
 		imul   $0x19,%eax,%eax # sizeof(struct WeaponDef)
 		mov    $0xfffffffb,%ebx
 		mov    $ac_sell_equipment,%esi
-		mov    %bx,data_1c7b42
-		mov    %esi,data_1c7c04
+		mov    %bx,EXPORT_SYMBOL(equip_name_box)+0x3A
+		mov    %esi,EXPORT_SYMBOL(equip_offer_buy_button)+0x18
 		mov    EXPORT_SYMBOL(weapon_defs)+20(%eax),%ax
 		and    $0xffff,%eax
 		imul   $0x64,%eax,%eax
@@ -115586,14 +115586,14 @@ GLOBAL_FUNC(ASM_show_weapon_slots)	/* 0x097D5C */
 		mov    selected_weapon,%al
 		xor    %ecx,%ecx
 		call   ac_init_weapon_anim
-		mov    %cx,data_1c7bbe
-		orb    $0x80,data_1c7be4
+		mov    %cx,EXPORT_SYMBOL(equip_display_box)+0x16
+		orb    $0x80,EXPORT_SYMBOL(equip_display_box)+0x3C
 		mov    0x2(%esp),%ecx
 		mov    $0x1,%eax
 		sar    $0x10,%ecx
 		mov    data_1c5290,%ebp
 		shl    %cl,%eax
-		mov    %bx,data_1c7be2
+		mov    %bx,EXPORT_SYMBOL(equip_display_box)+0x3A
 		test   %ebp,%eax
 		jne    jump_9818c
 		xor    %eax,%eax
@@ -115607,13 +115607,13 @@ GLOBAL_FUNC(ASM_show_weapon_slots)	/* 0x097D5C */
 		mov    weapon_text,%edx
 		and    $0xffff,%eax
 		add    %eax,%edx
-		mov    %edx,data_1c7bc0
+		mov    %edx,EXPORT_SYMBOL(equip_display_box)+0x18
 		jmp    jump_981bb
 	jump_981b1:
 		mov    EXPORT_SYMBOL(gui_strings)+0x860,%eax
-		mov    %eax,data_1c7bc0
+		mov    %eax,EXPORT_SYMBOL(equip_display_box)+0x18
 	jump_981bb:
-		movw   $0xfffb,data_1c7be2
+		movw   $0xfffb,EXPORT_SYMBOL(equip_display_box)+0x3A
 	jump_981c4:
 		mov    0x2(%esp),%edx
 		mov    data_155151,%eax
@@ -116725,7 +116725,7 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		mov    $0x1,%eax
 		mov    $0xfffffffb,%esi
 		shl    %cl,%eax
-		mov    %si,data_1c7b42
+		mov    %si,EXPORT_SYMBOL(equip_name_box)+0x3A
 		cmp    $0x1000,%eax
 		jl     jump_99442
 		cmp    $0x8000,%eax
@@ -116793,9 +116793,9 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		call   ac_sprintf
 		mov    EXPORT_SYMBOL(gui_strings)+0x6D0,%eax
 		add    $0xc,%esp
-		mov    %eax,data_1c7bf4
+		mov    %eax,EXPORT_SYMBOL(equip_offer_buy_button)+0x08
 		mov    EXPORT_SYMBOL(display_box_content),%al
-		mov    %esi,data_1c7c04
+		mov    %esi,EXPORT_SYMBOL(equip_offer_buy_button)+0x18
 		test   %al,%al
 		jne    jump_994ff
 		mov    data_155162,%ecx
@@ -117227,23 +117227,23 @@ GLOBAL_FUNC(ASM_show_cryo_cybmod_list_box)	/* 0x098F1C */
 		mov    %eax,EXPORT_SYMBOL(lbFontPtr)
 	jump_99a62:
 		mov    $equip_offer_buy_button,%eax
-		call   *data_1c7bfc
+		call   *EXPORT_SYMBOL(equip_offer_buy_button)+0x10
 		mov    $cryo_offer_cancel_button,%eax
-		call   *data_1c7c2c
+		call   *EXPORT_SYMBOL(cryo_offer_cancel_button)+0x10
 		mov    $equip_cost_box,%eax
-		call   *data_1c7c64
+		call   *EXPORT_SYMBOL(equip_cost_box)+0x18
 		mov    data_155162,%eax
 		sar    $0x18,%eax
 		cmp    $0xffffffff,%eax
 		jne    jump_99aba
 		mov    $0x9,%edi
-		mov    data_1c7c10,%dh
-		mov    data_1c7c40,%bl
-		mov    %di,data_1c7c70
+		mov    EXPORT_SYMBOL(equip_offer_buy_button)+0x24,%dh
+		mov    EXPORT_SYMBOL(cryo_offer_cancel_button)+0x24,%bl
+		mov    %di,EXPORT_SYMBOL(equip_cost_box)+0x24
 		or     $0x1,%dh
 		or     $0x1,%bl
-		mov    %dh,data_1c7c10
-		mov    %bl,data_1c7c40
+		mov    %dh,EXPORT_SYMBOL(equip_offer_buy_button)+0x24
+		mov    %bl,EXPORT_SYMBOL(cryo_offer_cancel_button)+0x24
 	jump_99aba:
 		xor    %al,%al
 		mov    %ebp,%esp
@@ -117535,10 +117535,10 @@ GLOBAL_FUNC(ASM_show_brief_netscan_box)	/* 0x099AC8 */
 		cmp    %eax,%edx
 		jge    jump_99e78
 		mov    $brief_NETSCAN_button,%eax
-		call   *data_1c783c
+		call   *EXPORT_SYMBOL(brief_NETSCAN_button)+0x10
 	jump_99e78:
 		mov    $brief_NETSCAN_COST_box,%eax
-		call   *data_1c7874
+		call   *EXPORT_SYMBOL(brief_NETSCAN_COST_box)+0x18
 	jump_99e83:
 		xor    %al,%al
 		add    $0x10,%esp
@@ -117619,31 +117619,31 @@ GLOBAL_FUNC(ASM_show_netgame_unkn_case1)	/* 0x09BA5C */
 		mov    %si,EXPORT_SYMBOL(word_1811AE)
 		mov    %al,show_alert
 		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
-		mov    %ebx,data_1c7704
-		mov    %eax,data_1c8010
+		mov    %ebx,EXPORT_SYMBOL(net_protocol_option_button)+0x8
+		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
 		mov    $0x1,%ah
-		mov    %ecx,data_1c7714
+		mov    %ecx,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 		mov    %ah,data_1c4995
 		jmp    jump_9bbde
 	jump_9bb61:
 		movb   $0x1,data_1c4995
 	jump_9bb68:
 		mov    $net_protocol_box,%eax
-		call   *data_1c817c
+		call   *EXPORT_SYMBOL(net_protocol_box)+0x0C
 		mov    $net_groups_box,%eax
-		call   *data_1c80d4
+		call   *EXPORT_SYMBOL(net_groups_box)+0x0C
 		mov    $net_users_box,%eax
-		call   *data_1c80ec
+		call   *EXPORT_SYMBOL(net_users_box)+0x0C
 		mov    $net_faction_box,%eax
-		call   *data_1c8104
+		call   *EXPORT_SYMBOL(net_faction_box)+0x0C
 		mov    $net_team_box,%eax
-		call   *data_1c811c
+		call   *EXPORT_SYMBOL(net_team_box)+0x0C
 		mov    $net_benefits_box,%eax
-		call   *data_1c8134
+		call   *EXPORT_SYMBOL(net_benefits_box)+0x0C
 		mov    $net_comms_box,%eax
-		call   *data_1c814c
+		call   *EXPORT_SYMBOL(net_comms_box)+0x0C
 		mov    $net_grpaint,%eax
-		call   *data_1c8164
+		call   *EXPORT_SYMBOL(net_grpaint)+0x0C
 		xor    %eax,%eax
 		mov    login_control__State,%al
 		cmp    $0x6,%eax
@@ -118447,7 +118447,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		and    $0x7f,%ch
 		mov    %cx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		mov    $controls_calibrate_button,%eax
-		call   *data_1c81f8
+		call   *EXPORT_SYMBOL(controls_calibrate_button)+0x10
 		xor    %al,%al
 		add    $0x58,%esp
 		pop    %ebp
@@ -118671,7 +118671,7 @@ GLOBAL_FUNC(ASM_show_debrief_screen)	/* 0x09D584 */
 		push   %ecx
 		cmpb   $0x0,game_projector_speed
 		je     jump_9d598
-		testb  $0x1,data_1c6f8c
+		testb  $0x1,EXPORT_SYMBOL(heading_box)+0x3C
 		jne    jump_9d5aa
 	jump_9d598:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+57
@@ -118681,33 +118681,33 @@ GLOBAL_FUNC(ASM_show_debrief_screen)	/* 0x09D584 */
 	jump_9d5aa:
 		xor    %bh,%bh
 		mov    %bh,EXPORT_SYMBOL(lbKeyOn)+57
-		mov    data_1c6f8c,%cl
-		mov    data_1c78aa,%al
+		mov    EXPORT_SYMBOL(heading_box)+0x3C,%cl
+		mov    EXPORT_SYMBOL(debrief_people_box)+0x0A,%al
 		or     $0x2,%cl
 		or     $0x2,%al
-		mov    %cl,data_1c6f8c
-		mov    %al,data_1c78aa
-		mov    data_1c7892,%ch
-		mov    data_1c790c,%ah
+		mov    %cl,EXPORT_SYMBOL(heading_box)+0x3C
+		mov    %al,EXPORT_SYMBOL(debrief_people_box)+0x0A
+		mov    EXPORT_SYMBOL(debrief_mission_box)+0x0A,%ch
+		mov    EXPORT_SYMBOL(world_city_info_box)+0x3C,%ah
 		or     $0x2,%ch
 		or     $0x2,%ah
-		mov    %ch,data_1c7892
-		mov    %ah,data_1c790c
+		mov    %ch,EXPORT_SYMBOL(debrief_mission_box)+0x0A
+		mov    %ah,EXPORT_SYMBOL(world_city_info_box)+0x3C
 	jump_9d5eb:
 		mov    $heading_box,%eax
-		call   *data_1c6f70
+		call   *EXPORT_SYMBOL(heading_box)+0x20
 		test   %al,%al
 		je     jump_9d623
 		mov    $debrief_mission_box,%eax
-		call   *data_1c7894
+		call   *EXPORT_SYMBOL(debrief_mission_box)+0x0C
 		test   %al,%al
 		je     jump_9d623
 		mov    $debrief_people_box,%eax
-		call   *data_1c78ac
+		call   *EXPORT_SYMBOL(debrief_people_box)+0x0C
 		test   %al,%al
 		je     jump_9d623
 		mov    $world_city_info_box,%eax
-		call   *data_1c78f0
+		call   *EXPORT_SYMBOL(world_city_info_box)+0x20
 	jump_9d623:
 		pop    %ecx
 		pop    %ebx
@@ -118724,7 +118724,7 @@ GLOBAL_FUNC(ASM_show_mission_screen)	/* 0x09D628 */
 		push   %edi
 		cmpb   $0x0,game_projector_speed
 		je     jump_9d63f
-		testb  $0x1,data_1c6f8c
+		testb  $0x1,EXPORT_SYMBOL(heading_box)+0x3C
 		jne    jump_9d651
 	jump_9d63f:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+57
@@ -118734,44 +118734,44 @@ GLOBAL_FUNC(ASM_show_mission_screen)	/* 0x09D628 */
 	jump_9d651:
 		xor    %bh,%bh
 		mov    %bh,EXPORT_SYMBOL(lbKeyOn)+57
-		mov    data_1c6f8c,%cl
-		mov    data_1c7736,%al
-		mov    data_1c7850,%dl
+		mov    EXPORT_SYMBOL(heading_box)+0x3C,%cl
+		mov    EXPORT_SYMBOL(brief_graphical_box)+0x0A,%al
+		mov    EXPORT_SYMBOL(brief_NETSCAN_button)+0x24,%dl
 		or     $0x2,%cl
 		or     $0x2,%al
 		or     $0x2,%dl
-		mov    %cl,data_1c6f8c
-		mov    %al,data_1c7736
-		mov    %dl,data_1c7850
-		mov    data_1c77c4,%ch
-		mov    data_1c7780,%ah
-		mov    data_1c7880,%dh
+		mov    %cl,EXPORT_SYMBOL(heading_box)+0x3C
+		mov    %al,EXPORT_SYMBOL(brief_graphical_box)+0x0A
+		mov    %dl,EXPORT_SYMBOL(brief_NETSCAN_button)+0x24
+		mov    EXPORT_SYMBOL(brief_mission_text_box)+0x3C,%ch
+		mov    EXPORT_SYMBOL(brief_netscan_box)+0x3C,%ah
+		mov    EXPORT_SYMBOL(brief_NETSCAN_COST_box)+0x24,%dh
 		or     $0x2,%ch
 		or     $0x2,%ah
 		or     $0x2,%dh
-		mov    %ch,data_1c77c4
-		mov    %ah,data_1c7780
-		mov    %dh,data_1c7880
+		mov    %ch,EXPORT_SYMBOL(brief_mission_text_box)+0x3C
+		mov    %ah,EXPORT_SYMBOL(brief_netscan_box)+0x3C
+		mov    %dh,EXPORT_SYMBOL(brief_NETSCAN_COST_box)+0x24
 	jump_9d6b0:
 		mov    $heading_box,%eax
-		call   *data_1c6f70
+		call   *EXPORT_SYMBOL(heading_box)+0x20
 		test   %al,%al
 		je     jump_9d79e
 		mov    $brief_mission_text_box,%eax
-		call   *data_1c77a8
+		call   *EXPORT_SYMBOL(brief_mission_text_box)+0x20
 		test   %al,%al
 		je     jump_9d79e
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+33
 		je     jump_9d784
-		mov    data_1c778a,%ax
-		add    data_1c778e,%ax
-		mov    data_1c778c,%si
+		mov    EXPORT_SYMBOL(brief_mission_text_box)+2,%ax
+		add    EXPORT_SYMBOL(brief_mission_text_box)+6,%ax
+		mov    EXPORT_SYMBOL(brief_mission_text_box)+4,%si
 		movswl %ax,%ecx
 		mov    brief_mission_text_box,%ax
 		add    %esi,%eax
 		mov    brief_mission_text_box,%ebx
 		movswl %ax,%edx
-		mov    data_1c7786,%eax
+		mov    EXPORT_SYMBOL(brief_netscan_box)+0x42,%eax
 		sar    $0x10,%ebx
 		sar    $0x10,%eax
 		call   ac_mouse_move_over_rect
@@ -118779,38 +118779,38 @@ GLOBAL_FUNC(ASM_show_mission_screen)	/* 0x09D628 */
 		je     jump_9d784
 		xor    %bh,%bh
 		mov    %bh,EXPORT_SYMBOL(lbKeyOn)+33
-		testb  $0x10,data_1c77c5
+		testb  $0x10,EXPORT_SYMBOL(brief_mission_text_box)+0x3D
 		jne    jump_9d784
-		mov    data_1c77a4,%eax
+		mov    EXPORT_SYMBOL(brief_mission_text_box)+0x1C,%eax
 		mov    EXPORT_SYMBOL(small_font),%edx
 		cmp    %edx,%eax
 		jne    jump_9d74b
 		mov    small_med_font,%eax
-		mov    %eax,data_1c77a4
+		mov    %eax,EXPORT_SYMBOL(brief_mission_text_box)+0x1C
 		jmp    jump_9d765
 	jump_9d74b:
 		cmp    small_med_font,%eax
 		jne    jump_9d75f
 		mov    med_font,%eax
-		mov    %eax,data_1c77a4
+		mov    %eax,EXPORT_SYMBOL(brief_mission_text_box)+0x1C
 		jmp    jump_9d765
 	jump_9d75f:
-		mov    %edx,data_1c77a4
+		mov    %edx,EXPORT_SYMBOL(brief_mission_text_box)+0x1C
 	jump_9d765:
-		mov    data_1c77c4,%ch
+		mov    EXPORT_SYMBOL(brief_mission_text_box)+0x3C,%ch
 		xor    %edi,%edi
 		xor    %al,%al
 		or     $0x80,%ch
-		mov    %di,data_1c779e
-		mov    %al,data_1c77c8
-		mov    %ch,data_1c77c4
+		mov    %di,EXPORT_SYMBOL(brief_mission_text_box)+0x16
+		mov    %al,EXPORT_SYMBOL(brief_mission_text_box)+0x40
+		mov    %ch,EXPORT_SYMBOL(brief_mission_text_box)+0x3C
 	jump_9d784:
 		mov    $brief_graphical_box,%eax
-		call   *data_1c7738
+		call   *EXPORT_SYMBOL(brief_graphical_box)+0x0C
 		test   %al,%al
 		je     jump_9d79e
 		mov    $brief_netscan_box,%eax
-		call   *data_1c7764
+		call   *EXPORT_SYMBOL(brief_netscan_box)+0x20
 	jump_9d79e:
 		pop    %edi
 		pop    %esi
@@ -118830,7 +118830,7 @@ GLOBAL_FUNC(ASM_show_research_screen)	/* 0x09DEB8 */
 		push   %edi
 		cmpb   $0x0,game_projector_speed
 		je     jump_9decf
-		testb  $0x1,data_1c6f8c
+		testb  $0x1,EXPORT_SYMBOL(heading_box)+0x3C
 		jne    jump_9dee1
 	jump_9decf:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+57
@@ -118840,29 +118840,29 @@ GLOBAL_FUNC(ASM_show_research_screen)	/* 0x09DEB8 */
 	jump_9dee1:
 		xor    %bh,%bh
 		mov    %bh,EXPORT_SYMBOL(lbKeyOn)+57
-		mov    data_1c6f8c,%cl
-		mov    data_1c7e5c,%al
-		mov    data_1c7de4,%dl
-		mov    data_1c7ece,%bl
+		mov    EXPORT_SYMBOL(heading_box)+0x3C,%cl
+		mov    EXPORT_SYMBOL(research_progress_button)+0x3C,%al
+		mov    EXPORT_SYMBOL(research_submit_button)+0x24,%dl
+		mov    EXPORT_SYMBOL(research_list_buttons)+0x52,%bl
 		or     $0x2,%cl
 		or     $0x2,%al
 		or     $0x2,%dl
 		or     $0x2,%bl
-		mov    %cl,data_1c6f8c
-		mov    %al,data_1c7e5c
-		mov    %dl,data_1c7de4
-		mov    %bl,data_1c7ece
-		mov    data_1c7db8,%ch
-		mov    data_1c7e6e,%ah
-		mov    data_1c7ea0,%dh
+		mov    %cl,EXPORT_SYMBOL(heading_box)+0x3C
+		mov    %al,EXPORT_SYMBOL(research_progress_button)+0x3C
+		mov    %dl,EXPORT_SYMBOL(research_submit_button)+0x24
+		mov    %bl,EXPORT_SYMBOL(research_list_buttons)+0x52
+		mov    EXPORT_SYMBOL(research_unkn21_box)+0x3C,%ch
+		mov    EXPORT_SYMBOL(research_graph_box)+0x0A,%ah
+		mov    EXPORT_SYMBOL(research_list_buttons)+0x24,%dh
 		or     $0x2,%ch
 		or     $0x2,%ah
 		or     $0x2,%dh
-		mov    %ch,data_1c7db8
-		mov    %ah,data_1c7e6e
-		mov    %dh,data_1c7ea0
+		mov    %ch,EXPORT_SYMBOL(research_unkn21_box)+0x3C
+		mov    %ah,EXPORT_SYMBOL(research_graph_box)+0x0A
+		mov    %dh,EXPORT_SYMBOL(research_list_buttons)+0x24
 	jump_9df4f:
-		cmpw   $0x0,data_1c7d92
+		cmpw   $0x0,EXPORT_SYMBOL(research_unkn21_box)+0x16
 		jne    jump_9dfb3
 		cmpb   $0x0,EXPORT_SYMBOL(research_on_weapons)
 		je     jump_9df86
@@ -118878,7 +118878,7 @@ GLOBAL_FUNC(ASM_show_research_screen)	/* 0x09DEB8 */
 		shl    %cl,%edx
 		test   %edx,data_1c5288
 		je     jump_9df66
-		incw   data_1c7d92
+		incw   EXPORT_SYMBOL(research_unkn21_box)+0x16
 		jmp    jump_9df66
 	jump_9df86:
 		xor    %eax,%eax
@@ -118894,25 +118894,25 @@ GLOBAL_FUNC(ASM_show_research_screen)	/* 0x09DEB8 */
 		shl    %cl,%edx
 		test   %ebx,%edx
 		je     jump_9df8a
-		incw   data_1c7d92
+		incw   EXPORT_SYMBOL(research_unkn21_box)+0x16
 		jmp    jump_9df8a
 	jump_9dfac:
-		orb    $0x80,data_1c7db8
+		orb    $0x80,EXPORT_SYMBOL(research_unkn21_box)+0x3C
 	jump_9dfb3:
 		mov    $heading_box,%eax
-		call   *data_1c6f70
+		call   *EXPORT_SYMBOL(heading_box)+0x20
 		test   %al,%al
 		je     jump_9dfeb
 		mov    $research_progress_button,%eax
-		call   *data_1c7e40
+		call   *EXPORT_SYMBOL(research_progress_button)+0x20
 		test   %al,%al
 		je     jump_9dfeb
 		mov    $research_graph_box,%eax
-		call   *data_1c7e70
+		call   *EXPORT_SYMBOL(research_graph_box)+0x0C
 		test   %al,%al
 		je     jump_9dfeb
 		mov    $research_unkn21_box,%eax
-		call   *data_1c7d9c
+		call   *EXPORT_SYMBOL(research_unkn21_box)+0x20
 	jump_9dfeb:
 		testb  $0x4,EXPORT_SYMBOL(ingame)+0x99b # ingame.UserFlags
 		je     jump_9e016
@@ -119660,7 +119660,7 @@ func_a0291:
 		mov    EXPORT_SYMBOL(gui_strings)+0x5D4,%eax
 		mov    %si,open_brief
 	jump_a075d:
-		mov    %eax,data_1c6f68
+		mov    %eax,EXPORT_SYMBOL(heading_box)+0x18
 		push   $0x2
 		push   $0x0
 		mov    $0x40,%ecx
@@ -119990,7 +119990,7 @@ func_a0b0c:
 		mov    %al,change_screen
 		mov    EXPORT_SYMBOL(gui_strings)+0x5D0,%eax
 		push   $0x0
-		mov    %eax,data_1c6f68
+		mov    %eax,EXPORT_SYMBOL(heading_box)+0x18
 		mov    0x3c(%esp),%eax
 		mov    $0x6f,%edx
 		inc    %eax
@@ -165611,10 +165611,10 @@ net_unkn_func_31:	/* 0x0CD2EC */
 		mov    $asc19200,%ebp
 		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		mov    %dx,EXPORT_SYMBOL(word_1811AE)
-		mov    %eax,data_1c8010
+		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
 		mov    $ASM_do_serial_speed_switch,%eax
-		mov    %ebp,data_1c7704
-		mov    %eax,data_1c7714
+		mov    %ebp,EXPORT_SYMBOL(net_protocol_option_button)+0x8
+		mov    %eax,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 	jump_cd515:
 		mov    $0x1,%ch
 		xor    %al,%al
@@ -165818,9 +165818,9 @@ net_unkn_func_32:	/* 0x0CD528 */
 		mov    $ASM_do_serial_speed_switch,%ebp
 		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		mov    %bx,EXPORT_SYMBOL(word_1811AE)
-		mov    %eax,data_1c8010
-		mov    %edi,data_1c7704
-		mov    %ebp,data_1c7714
+		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
+		mov    %edi,EXPORT_SYMBOL(net_protocol_option_button)+0x8
+		mov    %ebp,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 	jump_cd787:
 		mov    $0x1,%dl
 		xor    %al,%al
@@ -165992,16 +165992,16 @@ GLOBAL_FUNC(ASM_check_buy_sell_button)	/* 0x0CE5A8 */
 		jne    jump_ce7a2
 		mov    EXPORT_SYMBOL(gui_strings)+0x6D0,%eax
 		mov    $ac_do_equip_offer_buy,%ebp
-		mov    %eax,data_1c7bf4
-		mov    %ebp,data_1c7c04
+		mov    %eax,EXPORT_SYMBOL(equip_offer_buy_button)+0x08
+		mov    %ebp,EXPORT_SYMBOL(equip_offer_buy_button)+0x18
 		jmp    jump_ce7bc
 	jump_ce7a2:
 		cmp    $0x1,%eax
 		jne    jump_ce7bc
 		mov    EXPORT_SYMBOL(gui_strings)+0x65C,%eax
 		mov    $ac_sell_equipment,%edi
-		mov    %eax,data_1c7bf4
-		mov    %edi,data_1c7c04
+		mov    %eax,EXPORT_SYMBOL(equip_offer_buy_button)+0x08
+		mov    %edi,EXPORT_SYMBOL(equip_offer_buy_button)+0x18
 	jump_ce7bc:
 		add    $0x4,%esp
 		pop    %ebp
@@ -166343,7 +166343,7 @@ GLOBAL_FUNC(ASM_init_agents)	/* 0x0CF8A0 */
 		xor    %eax,%eax
 		xor    %edx,%edx
 		mov    background_type,%al
-		mov    %dx,data_1c7eee
+		mov    %dx,EXPORT_SYMBOL(cryo_agent_list_box)+0x16
 		cmp    $0x1,%eax
 		jne    jump_cf8d5
 		xor    %edx,%edx
@@ -166579,7 +166579,7 @@ GLOBAL_FUNC(ASM_remove_agent)	/* 0x0CFA64 */
 		xor    %esi,%esi
 		mov    data_1c4d24,%al
 		mov    %esi,(%esp)
-		mov    %ax,data_1c7eee
+		mov    %ax,EXPORT_SYMBOL(cryo_agent_list_box)+0x16
 		jmp    jump_cfb9d
 	jump_cfb91:
 		mov    (%esp),%edi
@@ -166742,7 +166742,7 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		inc    %ch
 		mov    %ch,%al
 		mov    %ch,data_1c4d24
-		mov    %ax,data_1c7eee
+		mov    %ax,EXPORT_SYMBOL(cryo_agent_list_box)+0x16
 	jump_cfd80:
 		pop    %ebp
 		pop    %edi
@@ -167911,13 +167911,13 @@ GLOBAL_FUNC(ASM_init_variables)	/* 0x0D0B9C */
 		mov    %bl,refresh_equip_list
 		mov    %bx,EXPORT_SYMBOL(word_1C6E08)
 		mov    %ah,EXPORT_SYMBOL(research_on_weapons)
-		mov    %edx,data_1c7dd8
+		mov    %edx,EXPORT_SYMBOL(research_submit_button)+0x18
 		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
 		mov    %cl,%dl
-		mov    %eax,data_1c7dc8
+		mov    %eax,EXPORT_SYMBOL(research_submit_button)+0x08
 		mov    EXPORT_SYMBOL(gui_strings)+0x70C,%eax
 		mov    %dl,EXPORT_SYMBOL(selected_netscan_objective)
-		mov    %eax,data_1c7df8
+		mov    %eax,EXPORT_SYMBOL(unkn12_WEAPONS_MODS_button)+0x08
 		xor    %eax,%eax
 	jump_d0c1a:
 		add    $0xc,%eax
@@ -168393,12 +168393,12 @@ GLOBAL_FUNC(ASM_show_world_city_info_box)	/* 0x0D2A84 */
 		jl     jump_d2aba
 		mov    (%esp),%eax
 		andb   $0x7f,0x3c(%eax)
-		mov    data_1c7938,%bh
-		mov    data_1c7968,%cl
+		mov    EXPORT_SYMBOL(world_info_ACCEPT_button)+0x24,%bh
+		mov    EXPORT_SYMBOL(world_info_CANCEL_button)+0x24,%cl
 		or     $0x1,%bh
 		or     $0x1,%cl
-		mov    %bh,data_1c7938
-		mov    %cl,data_1c7968
+		mov    %bh,EXPORT_SYMBOL(world_info_ACCEPT_button)+0x24
+		mov    %cl,EXPORT_SYMBOL(world_info_CANCEL_button)+0x24
 	jump_d2af2:
 		mov    (%esp),%edx
 		xor    %eax,%eax
@@ -168429,13 +168429,13 @@ GLOBAL_FUNC(ASM_show_world_city_info_box)	/* 0x0D2A84 */
 		mov    %si,%ax
 		cmp    $0x6,%eax
 		jl     jump_d2b05
-		mov    data_1c7968,%al
-		mov    data_1c7938,%ch
+		mov    EXPORT_SYMBOL(world_info_CANCEL_button)+0x24,%al
+		mov    EXPORT_SYMBOL(world_info_ACCEPT_button)+0x24,%ch
 		or     $0x2,%al
 		or     $0x2,%ch
-		mov    %al,data_1c7968
+		mov    %al,EXPORT_SYMBOL(world_info_CANCEL_button)+0x24
 		mov    (%esp),%eax
-		mov    %ch,data_1c7938
+		mov    %ch,EXPORT_SYMBOL(world_info_ACCEPT_button)+0x24
 		movb   $0xfe,0x9(%eax)
 	jump_d2b68:
 		orb    $0x1,EXPORT_SYMBOL(lbDisplay)+97 # lbDisplay.DrawFlags >> 8
@@ -168564,9 +168564,9 @@ GLOBAL_FUNC(ASM_show_world_city_info_box)	/* 0x0D2A84 */
 		cmp    $0x3,%eax
 		jne    jump_d2d1e
 		mov    $world_info_ACCEPT_button,%eax
-		call   *data_1c7924
+		call   *EXPORT_SYMBOL(world_info_ACCEPT_button)+0x10
 		mov    $world_info_CANCEL_button,%eax
-		call   *data_1c7954
+		call   *EXPORT_SYMBOL(world_info_CANCEL_button)+0x10
 	jump_d2d1e:
 		xor    %al,%al
 		add    $0xc,%esp
@@ -168669,11 +168669,11 @@ GLOBAL_FUNC(ASM_do_net_protocol_option)	/* 0x0D2D3C */
 		mov    $0x1,%al
 		add    $0x8,%esp
 		mov    %di,EXPORT_SYMBOL(word_1811AE)
-		mov    %ebx,data_1c7704
+		mov    %ebx,EXPORT_SYMBOL(net_protocol_option_button)+0x8
 		mov    %al,show_alert
 		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
-		mov    %ecx,data_1c7714
-		mov    %eax,data_1c8010
+		mov    %ecx,EXPORT_SYMBOL(net_protocol_option_button)+0x18
+		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
 	jump_d2e86:
 		mov    $0x1,%al
 		pop    %edi
@@ -168792,7 +168792,7 @@ GLOBAL_FUNC(ASM_change_panel_permutation)	/* 0x0D2F18 */
 		mov    ingame__fld_unkCA0,%eax
 		sar    $0x18,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
-		mov    %eax,data_1c76a8
+		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x28C
 		mov    $0x1,%al
 		pop    %edx
 		ret
@@ -168810,7 +168810,7 @@ GLOBAL_FUNC(ASM_change_panel_permutation)	/* 0x0D2F18 */
 		sub    %edx,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x90C(,%eax,4),%eax
 	jump_d2fdb:
-		mov    %eax,data_1c76a8
+		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x28C
 		mov    $0x1,%al
 		pop    %edx
 		ret
@@ -168841,7 +168841,7 @@ GLOBAL_FUNC(ASM_change_trenchcoat_preference)	/* 0x0D2FE4 */
 		xor    %eax,%eax
 		mov    ingame__TrenchcoatPreference,%al
 		mov    EXPORT_SYMBOL(gui_strings)+0x91C(,%eax,4),%eax
-		mov    %eax,data_1c76d6
+		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x2BA
 		mov    $0x1,%al
 		pop    %edx
 		ret
@@ -169022,7 +169022,7 @@ GLOBAL_FUNC(ASM_do_net_INITIATE)	/* 0x0D3184 */
 		je     jump_d326e
 		mov    EXPORT_SYMBOL(gui_strings)+0x60C,%eax
 		mov    EXPORT_SYMBOL(byte_1C4A6F),%bh
-		mov    %eax,data_1c7f80
+		mov    %eax,EXPORT_SYMBOL(net_INITIATE_button)+0x08
 		test   %bh,%bh
 		je     jump_d31d7
 		mov    EXPORT_SYMBOL(gui_strings)+0x820,%eax
@@ -169030,7 +169030,7 @@ GLOBAL_FUNC(ASM_do_net_INITIATE)	/* 0x0D3184 */
 	jump_d31d7:
 		mov    EXPORT_SYMBOL(gui_strings)+0x610,%eax
 	jump_d31dc:
-		mov    %eax,data_1c7fb0
+		mov    %eax,EXPORT_SYMBOL(net_groups_LOGON_button)+0x08
 		call   ac_init_variables
 		call   ac_init_agents
 		call   ac_srm_reset_research
@@ -169128,7 +169128,7 @@ GLOBAL_FUNC(ASM_do_net_groups_LOGON)	/* 0x0D3274 */
 		je     jump_d3381
 		mov    EXPORT_SYMBOL(gui_strings)+0x60C,%eax
 		mov    EXPORT_SYMBOL(byte_1C4A6F),%bh
-		mov    %eax,data_1c7f80
+		mov    %eax,EXPORT_SYMBOL(net_INITIATE_button)+0x08
 		test   %bh,%bh
 		je     jump_d32fc
 		mov    EXPORT_SYMBOL(gui_strings)+0x820,%eax
@@ -169136,7 +169136,7 @@ GLOBAL_FUNC(ASM_do_net_groups_LOGON)	/* 0x0D3274 */
 	jump_d32fc:
 		mov    EXPORT_SYMBOL(gui_strings)+0x610,%eax
 	jump_d3301:
-		mov    %eax,data_1c7fb0
+		mov    %eax,EXPORT_SYMBOL(net_groups_LOGON_button)+0x08
 		call   ac_init_variables
 		call   ac_init_agents
 		call   ac_srm_reset_research
@@ -169165,10 +169165,10 @@ GLOBAL_FUNC(ASM_do_net_groups_LOGON)	/* 0x0D3274 */
 		mov    $0xff,%dh
 		mov    EXPORT_SYMBOL(gui_strings)+0x604,%eax
 		mov    %dh,EXPORT_SYMBOL(byte_15516D)
-		mov    %eax,data_1c7f80
+		mov    %eax,EXPORT_SYMBOL(net_INITIATE_button)+0x08
 		mov    EXPORT_SYMBOL(gui_strings)+0x608,%eax
 		mov    %dh,EXPORT_SYMBOL(byte_15516C)
-		mov    %eax,data_1c7fb0
+		mov    %eax,EXPORT_SYMBOL(net_groups_LOGON_button)+0x08
 		call   ac_net_unkn_func_33
 	jump_d3381:
 		mov    $0x1,%al
@@ -169412,10 +169412,10 @@ GLOBAL_FUNC(ASM_goto_savegame)	/* 0x0D39A4 */
 		je     jump_d39e7
 		mov    $0x5c,%ecx
 	jump_d39c4:
-		mov    data_1c70be(%ecx),%dx
+		mov    EXPORT_SYMBOL(sysmnu_buttons)+0x2(%ecx),%dx
 		add    $0x2e,%ecx
 		add    $0x3c,%edx
-		mov    %dx,data_1c7090(%ecx)
+		mov    %dx,EXPORT_SYMBOL(storage_slots_box)+0x18(%ecx)
 		cmp    $0x114,%ecx
 		jne    jump_d39c4
 		andb   $0xef,EXPORT_SYMBOL(ingame)+0x92F # ingame.Flags+0
@@ -169437,12 +169437,12 @@ GLOBAL_FUNC(ASM_goto_savegame)	/* 0x0D39A4 */
 		mov    %bh,screentype
 		mov    %eax,%edx
 		shl    $0x2,%eax
-		mov    data_1c71a4,%bx
+		mov    EXPORT_SYMBOL(sysmnu_buttons)+0x0E8,%bx
 		sub    %edx,%eax
 		sub    $0x96,%ebx
 		mov    $0x2,%edx
 		mov    %ch,data_1a639b(%eax)
-		mov    %bx,data_1c71a4
+		mov    %bx,EXPORT_SYMBOL(sysmnu_buttons)+0x0E8
 		mov    $0x0,%eax
 		call   ac_load_city_data
 		call   ac_init_weapon_text
@@ -169544,11 +169544,11 @@ GLOBAL_FUNC(ASM_do_cryo_offer_cancel)	/* 0x0D3FF8 */
 		xor    %dl,%dl
 		mov    %ah,selected_mod
 		mov    %dl,EXPORT_SYMBOL(cybmod_name_text)
-		mov    data_1c7f70,%dh
+		mov    EXPORT_SYMBOL(cryo_cybmod_list_box)+0x3C,%dh
 		mov    %bl,refresh_equip_list
 		or     $0x80,%dh
 		xor    %al,%al
-		mov    %dh,data_1c7f70
+		mov    %dh,EXPORT_SYMBOL(cryo_cybmod_list_box)+0x3C
 		pop    %edx
 		pop    %ebx
 		ret
@@ -170294,12 +170294,12 @@ func_d4799:
 		movb   $0xe,network_players(,%eax,2)
 	jump_d48c9:
 		mov    $0xff,%cl
-		mov    data_1c7f70,%al
+		mov    EXPORT_SYMBOL(cryo_cybmod_list_box)+0x3C,%al
 		xor    %ebx,%ebx
 		mov    %cl,selected_mod
 		or     $0x80,%al
-		mov    %ebx,data_1c7f4c
-		mov    %al,data_1c7f70
+		mov    %ebx,EXPORT_SYMBOL(cryo_cybmod_list_box)+0x18
+		mov    %al,EXPORT_SYMBOL(cryo_cybmod_list_box)+0x3C
 		xor    %ch,%ch
 		mov    $0x1,%ah
 		mov    %ch,EXPORT_SYMBOL(cybmod_name_text)
@@ -170979,10 +170979,10 @@ func_d5090:
 		push   $equip_cost_text
 		call   ac_sprintf
 		mov    EXPORT_SYMBOL(gui_strings)+0x6D0,%eax
-		mov    %eax,data_1c7bf4
+		mov    %eax,EXPORT_SYMBOL(equip_offer_buy_button)+0x08
 		mov    $ac_do_equip_offer_buy,%eax
 		add    $0xc,%esp
-		mov    %eax,data_1c7c04
+		mov    %eax,EXPORT_SYMBOL(equip_offer_buy_button)+0x18
 	jump_d51d2:
 		mov    $0x1,%al
 	jump_d51d4:
@@ -171361,8 +171361,8 @@ GLOBAL_FUNC (ASM_do_research_submit)	/* 0x0D56D0 */
 		movsb  %ds:(%esi),%es:(%edi)
 		mov    $ASM_do_research_suspend,%ebx
 		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
-		mov    %ebx,data_1c7dd8
-		mov    %eax,data_1c7dc8
+		mov    %ebx,EXPORT_SYMBOL(research_submit_button)+0x18
+		mov    %eax,EXPORT_SYMBOL(research_submit_button)+0x08
 		mov    $0x1,%al
 		sub    %al,EXPORT_SYMBOL(research_curr_wep_date)
 		pop    %edi
@@ -171385,8 +171385,8 @@ GLOBAL_FUNC (ASM_do_research_submit)	/* 0x0D56D0 */
 		movsb  %ds:(%esi),%es:(%edi)
 		mov    $ASM_do_research_suspend,%edx
 		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
-		mov    %edx,data_1c7dd8
-		mov    %eax,data_1c7dc8
+		mov    %edx,EXPORT_SYMBOL(research_submit_button)+0x18
+		mov    %eax,EXPORT_SYMBOL(research_submit_button)+0x08
 		mov    $0x1,%al
 		sub    %al,EXPORT_SYMBOL(research_curr_mod_date)
 		pop    %edi
@@ -171416,8 +171416,8 @@ GLOBAL_FUNC (ASM_do_research_suspend)	/* 0x0D5784 */
 	jump_d579e:
 		mov    $ASM_do_research_submit,%edx
 		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
-		mov    %edx,data_1c7dd8
-		mov    %eax,data_1c7dc8
+		mov    %edx,EXPORT_SYMBOL(research_submit_button)+0x18
+		mov    %eax,EXPORT_SYMBOL(research_submit_button)+0x08
 		xor    %al,%al
 		pop    %edx
 		ret
@@ -171437,43 +171437,43 @@ GLOBAL_FUNC(ASM_do_unkn12_WEAPONS_MODS)	/* 0x0D57B8 */
 		test   %al,%al
 		je     jump_d580b
 		mov    EXPORT_SYMBOL(gui_strings)+0x70C,%eax
-		mov    %eax,data_1c7df8
+		mov    %eax,EXPORT_SYMBOL(unkn12_WEAPONS_MODS_button)+0x08
 		mov    data_1c5283,%eax
 		sar    $0x18,%eax
 		cmp    $0xffffffff,%eax
 		je     jump_d57f9
 		mov    $ASM_do_research_suspend,%esi
 		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
-		mov    %esi,data_1c7dd8
+		mov    %esi,EXPORT_SYMBOL(research_submit_button)+0x18
 		jmp    jump_d5844
 	jump_d57f9:
 		mov    $ASM_do_research_submit,%ecx
 		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
-		mov    %ecx,data_1c7dd8
+		mov    %ecx,EXPORT_SYMBOL(research_submit_button)+0x18
 		jmp    jump_d5844
 	jump_d580b:
 		mov    EXPORT_SYMBOL(gui_strings)+0x708,%eax
-		mov    %eax,data_1c7df8
+		mov    %eax,EXPORT_SYMBOL(unkn12_WEAPONS_MODS_button)+0x08
 		mov    data_1c5284,%eax
 		sar    $0x18,%eax
 		cmp    $0xffffffff,%eax
 		je     jump_d5834
 		mov    $ASM_do_research_suspend,%ebx
 		mov    EXPORT_SYMBOL(gui_strings)+0x688,%eax
-		mov    %ebx,data_1c7dd8
+		mov    %ebx,EXPORT_SYMBOL(research_submit_button)+0x18
 		jmp    jump_d5844
 	jump_d5834:
 		mov    $ASM_do_research_submit,%edx
 		mov    EXPORT_SYMBOL(gui_strings)+0x684,%eax
-		mov    %edx,data_1c7dd8
+		mov    %edx,EXPORT_SYMBOL(research_submit_button)+0x18
 	jump_d5844:
-		mov    %eax,data_1c7dc8
+		mov    %eax,EXPORT_SYMBOL(research_submit_button)+0x08
 		mov    $0xff,%dl
 		mov    %dl,research_selected_mod
 		mov    %dl,research_selected_wep
 		xor    %edx,%edx
 		mov    $0x1,%al
-		mov    %dx,data_1c7d92
+		mov    %dx,EXPORT_SYMBOL(research_unkn21_box)+0x16
 		pop    %esi
 		pop    %edx
 		pop    %ecx
@@ -186297,15 +186297,12 @@ word_1C52BA:	/* 0x1C52BA */
 		.short  0x0
 GLOBAL (cities)	/* 0x1C52BC */
 		.short  0x0
-data_1c52be:
 		.short  0x0
 data_1c52c0:
 		.byte	0x0
-data_1c52c1:
 		.byte	0x0
 data_1c52c2:
 		.byte	0x0
-data_1c52c3:
 		.byte	0x0
 data_1c52c4:
 		.fill   0x47e
@@ -186477,953 +186474,153 @@ GLOBAL (controls_edited_gkey)	/* 0x1C6F4B */
 GLOBAL (save_game_buffer)	/* 0x1C6F4C */
 		.long	0x0
 GLOBAL (heading_box)	/* 0x1C6F50 */
-		.fill   0x18
-data_1c6f68:
-		.fill   0x8
-data_1c6f70:
-		.long	0x0
-data_1c6f74:
-		.fill   0x18
-data_1c6f8c:
-		.fill   0x8
+		.fill   0x44
 GLOBAL (loading_INITIATING_box)	/* 0x1C6F94 */
-		.short  0x0
-data_1c6f96:
-		.short  0x0
-data_1c6f98:
-		.short  0x0
-data_1c6f9a:
-		.fill   0x12
-data_1c6fac:
-		.fill   0x8
-data_1c6fb4:
-		.fill   0x1c
-data_1c6fd0:
-		.fill   0x8
+		.fill   0x44
 GLOBAL (unkn13_SYSTEM_button)	/* 0x1C6FD8 */
-		.fill   0x18
-data_1c6ff0:
-		.fill   0x8
-data_1c6ff8:
-		.long	0x0
-data_1c6ffc:
-		.fill   0x18
-data_1c7014:
-		.fill   0x8
+		.fill   0x44
 GLOBAL (system_screen_shared_header_box)	/* 0x1C701C */
-		.fill   0x18
-data_1c7034:
-		.fill   0x8
-data_1c703c:
-		.long	0x0
-data_1c7040:
-		.fill   0x18
-data_1c7058:
-		.fill   0x8
+		.fill   0x44
 GLOBAL (options_gfx_box)	/* 0x1C7060 */
-		.fill   0xa
-data_1c706a:
-		.short  0x0
-data_1c706c:
-		.fill   0xc
+		.fill   0x18
 GLOBAL (storage_slots_box)	/* 0x1C7078 */
-		.fill   0x10
-data_1c7088:
-		.short  0x0
-data_1c708a:
-		.long	0x0
-data_1c708e:
-		.short  0x0
-data_1c7090:
-		.fill   0x8
-data_1c7098:
-		.long	0x0
-data_1c709c:
-		.fill   0x16
-data_1c70b2:
-		.short  0x0
-data_1c70b4:
-		.byte	0x0
-data_1c70b5:
-		.ascii  "\x00\x00\x00"
-data_1c70b8:
-		.long	0x0
+		.fill   0x44
 GLOBAL (sysmnu_buttons)	/* 0x1C70BC */
-		.short  0x0
-data_1c70be:
-		.short  0x0
-data_1c70c0:
-		.short  0x0
-data_1c70c2:
-		.fill   0xa
-data_1c70cc:
-		.fill   0x8
-data_1c70d4:
-		.fill   0xc
-data_1c70e0:
-		.fill   0x5
-data_1c70e5:
-		.fill   0xbf
-data_1c71a4:
-		.fill   0x2c
+		.fill   0x114
 GLOBAL (storage_LOAD_button)	/* 0x1C71D0 */
-		.long	0x0
-data_1c71d4:
-		.fill   0xc
-data_1c71e0:
-		.fill   0x8
-data_1c71e8:
-		.fill   0xc
-data_1c71f4:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (storage_SAVE_button)	/* 0x1C7200 */
-		.fill   0x10
-data_1c7210:
-		.fill   0x8
-data_1c7218:
-		.fill   0xc
-data_1c7224:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (storage_NEW_MORTAL_button)	/* 0x1C7230 */
-		.fill   0x10
-data_1c7240:
-		.fill   0x8
-data_1c7248:
-		.fill   0xc
-data_1c7254:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (controls_joystick_box)	/* 0x1C7260 */
-		.fill   0xa
-data_1c726a:
-		.short  0x0
-data_1c726c:
-		.long	0x0
-data_1c7270:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (audio_volume_boxes)	/* 0x1C7278 */
-		.fill   0xa
-data_1c7282:
-		.short  0x0
-data_1c7284:
-		.long	0x0
-data_1c7288:
-		.fill   0x8
-data_1c7290:
-		.fill   0x10
-data_1c72a0:
-		.fill   0x18
-data_1c72b8:
-		.fill   0x8
+		.fill   0x48
 GLOBAL (audio_tracks_box)	/* 0x1C72C0 */
-		.fill   0x6
-data_1c72c6:
-		.fill   0x8
-data_1c72ce:
-		.byte	0x0
-data_1c72cf:
-		.byte	0x0
-data_1c72d0:
-		.fill   0x7
-data_1c72d7:
-		.byte	0x0
+		.fill   0x18
 GLOBAL (options_audio_buttons)	/* 0x1C72D8, audio -> music track */
-		.fill   0x10
-data_1c72e8:
-		.fill   0x14
-data_1c72fc:
-		.byte	0x0
-data_1c72fd:
-		.fill   0x8
-data_1c7305:
-		.byte	0x0
-data_1c7306:
-		.fill   0x10
-data_1c7316:
-		.fill   0x1e
-data_1c7334:
-		.fill   0x10
-data_1c7344:
-		.fill   0x1e
-GLOBAL (options_audio_buttons_itm3)	/* 0x1C7362, audio -> tension track */
-		.fill   0x10
-data_1c7372:
-		.fill   0x1e
-data_1c7390:
-		.fill   0x10
-data_1c73a0:
-		.fill   0x1e
-GLOBAL (options_audio_buttons_itm5)	/* 0x1C73BE, audio -> mmedia */
-		.fill   0x2e
-data_1c73ec:
-		.fill   0x1e
-data_1c740a:
-		.fill   0x8
-data_1c7412:
-		.byte	0x0
-data_1c7413:
-		.fill   0x8
-data_1c741b:
-		.byte	0x0
+		.fill   0x144
 GLOBAL (options_gfx_buttons)	/* 0x1C741C */
-		.short  0x0
-data_1c741e:
-		.short  0x0
-data_1c7420:
-		.long	0x0
-data_1c7424:
-		.fill   0x8
-data_1c742c:
-		.fill   0x14
-data_1c7440:
-		.byte	0x0
-data_1c7441:
-		.fill   0x8
-data_1c7449:
-		.byte	0x0
-data_1c744a:
-		.fill   0x2e
-data_1c7478:
-		.fill   0x2e
-data_1c74a6:
-		.fill   0x2e
-data_1c74d4:
-		.fill   0x2e
-data_1c7502:
-		.fill   0x2e
-data_1c7530:
-		.fill   0x2e
-data_1c755e:
-		.fill   0x2e
-data_1c758c:
-		.fill   0x2e
-data_1c75ba:
-		.fill   0x2e
-data_1c75e8:
-		.fill   0x2e
-data_1c7616:
-		.fill   0x2e
-data_1c7644:
-		.fill   0x2e
-data_1c7672:
-		.fill   0x2e
-data_1c76a0:
-		.long	0x0
-data_1c76a4:
-		.long	0x0
-data_1c76a8:
-		.fill   0x10
-data_1c76b8:
-		.fill   0x16
-data_1c76ce:
-		.long	0x0
-data_1c76d2:
-		.long	0x0
-data_1c76d6:
-		.fill   0x10
-data_1c76e6:
-		.fill   0x16
+		.fill   0x2E0
 GLOBAL (net_protocol_option_button)	/* 0x1C76FC */
-		.long	0x0
-data_1c7700:
-		.long	0x0
-data_1c7704:
-		.fill   0x8
-data_1c770c:
-		.fill   0x8
-data_1c7714:
-		.fill   0xc
-data_1c7720:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (brief_graphical_box)	/* 0x1C772C */
-		.fill   0xa
-data_1c7736:
-		.short  0x0
-data_1c7738:
-		.long	0x0
-data_1c773c:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (brief_netscan_box)	/* 0x1C7744 */
-		.short  0x0
-data_1c7746:
-		.short  0x0
-data_1c7748:
-		.fill   0xc
-data_1c7754:
-		.short  0x0
-data_1c7756:
-		.long	0x0
-data_1c775a:
-		.fill   0xa
-data_1c7764:
-		.long	0x0
-data_1c7768:
-		.fill   0x18
-data_1c7780:
-		.byte	0x0
-data_1c7781:
-		.fill   0x5
-data_1c7786:
-		.short  0x0
+		.fill   0x44
 GLOBAL (brief_mission_text_box)	/* 0x1C7788 */
-		.short  0x0
-data_1c778a:
-		.short  0x0
-data_1c778c:
-		.short  0x0
-data_1c778e:
-		.fill   0x10
-data_1c779e:
-		.short  0x0
-data_1c77a0:
-		.long	0x0
-data_1c77a4:
-		.long	0x0
-data_1c77a8:
-		.fill   0x8
-data_1c77b0:
-		.long	0x0
-data_1c77b4:
-		.fill   0x10
-data_1c77c4:
-		.byte	0x0
-data_1c77c5:
-		.ascii  "\x00\x00\x00"
-data_1c77c8:
-		.long	0x0
+		.fill   0x44
 GLOBAL (unkn1_ACCEPT_button)	/* 0x1C77CC */
-		.fill   0x18
-data_1c77e4:
-		.fill   0x18
+		.fill   0x30
 GLOBAL (unkn1_CANCEL_button)	/* 0x1C77FC */
-		.fill   0x18
-data_1c7814:
-		.fill   0x18
+		.fill   0x30
 GLOBAL (brief_NETSCAN_button)	/* 0x1C782C */
-		.long	0x0
-data_1c7830:
-		.fill   0xc
-data_1c783c:
-		.fill   0x8
-data_1c7844:
-		.fill   0xc
-data_1c7850:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (brief_NETSCAN_COST_box)	/* 0x1C785C */
-		.long	0x0
-data_1c7860:
-		.long	0x0
-data_1c7864:
-		.long	0x0
-data_1c7868:
-		.fill   0xc
-data_1c7874:
-		.fill   0xc
-data_1c7880:
-		.fill   0x8
+		.fill   0x2C
 GLOBAL (debrief_mission_box)	/* 0x1C7888 */
-		.fill   0xa
-data_1c7892:
-		.short  0x0
-data_1c7894:
-		.long	0x0
-data_1c7898:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (debrief_people_box)	/* 0x1C78A0 */
-		.fill   0xa
-data_1c78aa:
-		.short  0x0
-data_1c78ac:
-		.long	0x0
-data_1c78b0:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (world_landmap_box)	/* 0x1C78B8 */
-		.fill   0xa
-data_1c78c2:
-		.short  0x0
-data_1c78c4:
-		.long	0x0
-data_1c78c8:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (world_city_info_box)	/* 0x1C78D0 */
-		.long	0x0
-data_1c78d4:
-		.fill   0x1c
-data_1c78f0:
-		.long	0x0
-data_1c78f4:
-		.fill   0x18
-data_1c790c:
-		.byte	0x0
-data_1c790d:
-		.fill   0x7
+		.fill   0x44
 GLOBAL (world_info_ACCEPT_button)	/* 0x1C7914 */
-		.long	0x0
-data_1c7918:
-		.fill   0xc
-data_1c7924:
-		.fill   0x8
-data_1c792c:
-		.fill   0xc
-data_1c7938:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (world_info_CANCEL_button)	/* 0x1C7944 */
-		.long	0x0
-data_1c7948:
-		.fill   0xc
-data_1c7954:
-		.fill   0x8
-data_1c795c:
-		.fill   0xc
-data_1c7968:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (main_quit_button)	/* 0x1C7974 */
-		.long	0x0
-data_1c7978:
-		.fill   0xc
-data_1c7984:
-		.fill   0x8
-data_1c798c:
-		.fill   0xc
-data_1c7998:
-		.fill   0x5
-data_1c799d:
-		.ascii  "\x00\x00\x00"
-data_1c79a0:
-		.long	0x0
+		.fill   0x30
 GLOBAL (main_login_button)	/* 0x1C79A4 */
-		.long	0x0
-data_1c79a8:
-		.fill   0xc
-data_1c79b4:
-		.fill   0x8
-data_1c79bc:
-		.fill   0xc
-data_1c79c8:
-		.fill   0x5
-data_1c79cd:
-		.ascii  "\x00\x00\x00"
-data_1c79d0:
-		.long	0x0
+		.fill   0x30
 GLOBAL (login_continue_button)	/* 0x1C79D4 */
-		.long	0x0
-data_1c79d8:
-		.fill   0xc
-data_1c79e4:
-		.fill   0x8
-data_1c79ec:
-		.fill   0xc
-data_1c79f8:
-		.fill   0x5
-data_1c79fd:
-		.ascii  "\x00\x00\x00"
-data_1c7a00:
-		.long	0x0
+		.fill   0x30
 GLOBAL (login_abort_button)	/* 0x1C7A04 */
-		.long	0x0
-data_1c7a08:
-		.fill   0xc
-data_1c7a14:
-		.fill   0x8
-data_1c7a1c:
-		.fill   0xc
-data_1c7a28:
-		.fill   0x5
-data_1c7a2d:
-		.ascii  "\x00\x00\x00"
-data_1c7a30:
-		.long	0x0
+		.fill   0x30
 GLOBAL (main_map_editor_button)	/* 0x1C7A34 */
-		.long	0x0
-data_1c7a38:
-		.fill   0x14
-data_1c7a4c:
-		.fill   0xc
-data_1c7a58:
-		.fill   0x5
-data_1c7a5d:
-		.fill   0x7
+		.fill   0x30
 GLOBAL (main_load_button)	/* 0x1C7A64 */
-		.long	0x0
-data_1c7a68:
-		.fill   0xc
-data_1c7a74:
-		.fill   0x8
-data_1c7a7c:
-		.fill   0xc
-data_1c7a88:
-		.fill   0x5
-data_1c7a8d:
-		.fill   0x7
+		.fill   0x30
 GLOBAL (login_campaigns_box)	/* 0x1C7A94 */
-		.fill   0xa
-data_1c7a9e:
-		.short  0x0
-data_1c7aa0:
-		.long	0x0
-data_1c7aa4:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (login_name_box)	/* 0x1C7AAC */
-		.long	0x0
-data_1c7ab0:
-		.fill   0x6
-data_1c7ab6:
-		.short  0x0
-data_1c7ab8:
-		.long	0x0
-data_1c7abc:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (equip_list_head_box)	/* 0x1C7AC4 */
-		.fill   0x18
-data_1c7adc:
-		.long	0x0
-data_1c7ae0:
-		.long	0x0
-data_1c7ae4:
-		.long	0x0
-data_1c7ae8:
-		.fill   0x18
-data_1c7b00:
-		.fill   0x8
+		.fill   0x44
 GLOBAL (equip_name_box)	/* 0x1C7B08 */
-		.fill   0x18
-data_1c7b20:
-		.long	0x0
-data_1c7b24:
-		.long	0x0
-data_1c7b28:
-		.long	0x0
-data_1c7b2c:
-		.fill   0x16
-data_1c7b42:
-		.short  0x0
-data_1c7b44:
-		.fill   0x8
+		.fill   0x44
 GLOBAL (weapon_slots)	/* 0x1C7B4C */
-		.fill   0xa
-data_1c7b56:
-		.short  0x0
-data_1c7b58:
-		.long	0x0
-data_1c7b5c:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (equip_list_box)	/* 0x1C7B64 */
-		.fill   0x10
-data_1c7b74:
-		.short  0x0
-data_1c7b76:
-		.long	0x0
-data_1c7b7a:
-		.fill   0xa
-data_1c7b84:
-		.long	0x0
-data_1c7b88:
-		.fill   0x18
-data_1c7ba0:
-		.byte	0x0
-data_1c7ba1:
-		.ascii  "\x00\x00\x00"
-data_1c7ba4:
-		.long	0x0
+		.fill   0x44
 GLOBAL (equip_display_box)	/* 0x1C7BA8 */
-		.fill   0x10
-data_1c7bb8:
-		.fill   0x6
-data_1c7bbe:
-		.short  0x0
-data_1c7bc0:
-		.fill   0x8
-data_1c7bc8:
-		.long	0x0
-data_1c7bcc:
-		.fill   0x16
-data_1c7be2:
-		.short  0x0
-data_1c7be4:
-		.byte	0x0
-data_1c7be5:
-		.fill   0x7
+		.fill   0x44
 GLOBAL (equip_offer_buy_button)	/* 0x1C7BEC */
-		.long	0x0
-data_1c7bf0:
-		.long	0x0
-data_1c7bf4:
-		.fill   0x8
-data_1c7bfc:
-		.fill   0x8
-data_1c7c04:
-		.fill   0xc
-data_1c7c10:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (cryo_offer_cancel_button)	/* 0x1C7C1C */
-		.fill   0x10
-data_1c7c2c:
-		.fill   0x8
-data_1c7c34:
-		.fill   0xc
-data_1c7c40:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (equip_cost_box)	/* 0x1C7C4C */
-		.short  0x0
-data_1c7c4e:
-		.short  0x0
-data_1c7c50:
-		.fill   0x8
-data_1c7c58:
-		.fill   0xc
-data_1c7c64:
-		.fill   0xc
-data_1c7c70:
-		.short  0x0
-data_1c7c72:
-		.byte	0x0
-data_1c7c73:
-		.byte	0x0
-data_1c7c74:
-		.short  0x0
-data_1c7c76:
-		.byte	0x0
-GLOBAL (unk11_menu_m1)	/* 0x1C7C77 */
-		.byte	0x0
-GLOBAL (unk11_menu)	/* 0x1C7C78 */
-		.short  0x0
-		.short  0x0
-		.fill   0xe
-data_1c7c8a:
-		.short  0x0
-data_1c7c8c:
-		.short  0x0
-data_1c7c8e:
-		.fill   0x10
-data_1c7c9e:
-		.byte	0x0
-data_1c7c9f:
-		.fill   0x81
-data_1c7d20:
-		.fill   0x12
-data_1c7d32:
-		.fill   0x12
-data_1c7d44:
-		.byte	0x0
-data_1c7d45:
-		.byte	0x0
-data_1c7d46:
-		.short  0x0
-data_1c7d48:
-		.byte	0x0
-data_1c7d49:
-		.ascii  "\x00\x00\x00"
+		.fill   0x2C
+GLOBAL (equip_agent_select_shapes)	/* 0x1C7C78 */
+		.fill   0x0D4
 GLOBAL (equip_all_agents_button)	/* 0x1C7D4C */
-		.long	0x0
-data_1c7d50:
-		.fill   0xc
-data_1c7d5c:
-		.fill   0xc
-data_1c7d68:
-		.fill   0x8
-data_1c7d70:
-		.byte	0x0
-data_1c7d71:
-		.fill   0x8
-data_1c7d79:
-		.ascii  "\x00\x00\x00"
+		.fill   0x30
 GLOBAL (research_unkn21_box)	/* 0x1C7D7C */
-		.fill   0x10
-data_1c7d8c:
-		.short  0x0
-data_1c7d8e:
-		.long	0x0
-data_1c7d92:
-		.fill   0xa
-data_1c7d9c:
-		.long	0x0
-data_1c7da0:
-		.long	0x0
-data_1c7da4:
-		.long	0x0
-data_1c7da8:
-		.fill   0x10
-data_1c7db8:
-		.byte	0x0
-data_1c7db9:
-		.fill   0x7
+		.fill   0x44
 GLOBAL (research_submit_button)	/* 0x1C7DC0 */
-		.long	0x0
-data_1c7dc4:
-		.long	0x0
-data_1c7dc8:
-		.fill   0x10
-data_1c7dd8:
-		.fill   0xc
-data_1c7de4:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (unkn12_WEAPONS_MODS_button)	/* 0x1C7DF0 */
-		.long	0x0
-data_1c7df4:
-		.long	0x0
-data_1c7df8:
-		.fill   0x10
-data_1c7e08:
-		.fill   0xc
-data_1c7e14:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (research_progress_button)	/* 0x1C7E20 */
-		.fill   0x18
-data_1c7e38:
-		.fill   0x8
-data_1c7e40:
-		.long	0x0
-data_1c7e44:
-		.fill   0x18
-data_1c7e5c:
-		.fill   0x8
+		.fill   0x44
 GLOBAL (research_graph_box)	/* 0x1C7E64 */
-		.fill   0x6
-data_1c7e6a:
-		.long	0x0
-data_1c7e6e:
-		.short  0x0
-data_1c7e70:
-		.ascii  "\x00\x00\x00"
-data_1c7e73:
-		.byte	0x0
-data_1c7e74:
-		.fill   0x7
-data_1c7e7b:
-		.byte	0x0
+		.fill   0x18
 GLOBAL (research_list_buttons)	/* 0x1C7E7C */
-		.long	0x0
-data_1c7e80:
-		.fill   0xc
-data_1c7e8c:
-		.fill   0x14
-data_1c7ea0:
-		.fill   0xa
-data_1c7eaa:
-		.long	0x0
-data_1c7eae:
-		.fill   0x20
-data_1c7ece:
-		.fill   0xa
+		.fill   0x5C
 GLOBAL (cryo_agent_list_box)	/* 0x1C7ED8 */
-		.fill   0x10
-data_1c7ee8:
-		.short  0x0
-data_1c7eea:
-		.long	0x0
-data_1c7eee:
-		.fill   0xa
-data_1c7ef8:
-		.long	0x0
-data_1c7efc:
-		.fill   0x18
-data_1c7f14:
-		.byte	0x0
-data_1c7f15:
-		.ascii  "\x00\x00\x00"
-data_1c7f18:
-		.long	0x0
+		.fill   0x44
 GLOBAL (cryo_blokey_box)	/* 0x1C7F1C */
-		.short  0x0
-data_1c7f1e:
-		.short  0x0
-data_1c7f20:
-		.short  0x0
-data_1c7f22:
-		.long	0x0
-data_1c7f26:
-		.byte	0x0
-data_1c7f27:
-		.byte	0x0
-data_1c7f28:
-		.long	0x0
-data_1c7f2c:
-		.fill   0x8
-GLOBAL (cryo_cybmod_list_box)	/* 0x1C7F34 */
-		.fill   0x10
-data_1c7f44:
-		.fill   0x6
-data_1c7f4a:
-		.short  0x0
-data_1c7f4c:
-		.fill   0x8
-data_1c7f54:
-		.long	0x0
-data_1c7f58:
 		.fill   0x18
-data_1c7f70:
-		.byte	0x0
-data_1c7f71:
-		.ascii  "\x00\x00\x00"
-data_1c7f74:
-		.long	0x0
+GLOBAL (cryo_cybmod_list_box)	/* 0x1C7F34 */
+		.fill   0x44
 GLOBAL (net_INITIATE_button)	/* 0x1C7F78 */
-		.long	0x0
-data_1c7f7c:
-		.long	0x0
-data_1c7f80:
-		.fill   0x8
-data_1c7f88:
-		.fill   0x8
-data_1c7f90:
-		.fill   0xc
-data_1c7f9c:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (net_groups_LOGON_button)	/* 0x1C7FA8 */
-		.long	0x0
-data_1c7fac:
-		.long	0x0
-data_1c7fb0:
-		.fill   0x8
-data_1c7fb8:
-		.fill   0x8
-data_1c7fc0:
-		.fill   0xc
-data_1c7fcc:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (unkn8_EJECT_button)	/* 0x1C7FD8 */
-		.fill   0x10
-data_1c7fe8:
-		.fill   0x8
-data_1c7ff0:
-		.fill   0xc
-data_1c7ffc:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (net_protocol_select_button)	/* 0x1C8008 */
-		.long	0x0
-data_1c800c:
-		.long	0x0
-data_1c8010:
-		.fill   0x8
-data_1c8018:
-		.fill   0x8
-data_1c8020:
-		.fill   0xc
-data_1c802c:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (net_unkn40_button)	/* 0x1C8038 */
-		.short  0x0
-data_1c803a:
-		.short  0x0
-data_1c803c:
-		.fill   0xc
-data_1c8048:
-		.fill   0x8
-data_1c8050:
-		.fill   0xc
-data_1c805c:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (net_SET2_button)	/* 0x1C8068 */
-		.fill   0x10
-data_1c8078:
-		.fill   0x8
-data_1c8080:
-		.fill   0xc
-data_1c808c:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (net_SET_button)	/* 0x1C8098 */
-		.fill   0x10
-data_1c80a8:
-		.fill   0x8
-data_1c80b0:
-		.fill   0xc
-data_1c80bc:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (net_groups_box)	/* 0x1C80C8 */
-		.fill   0xa
-data_1c80d2:
-		.byte	0x0
-data_1c80d3:
-		.byte	0x0
-data_1c80d4:
-		.long	0x0
-data_1c80d8:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (net_users_box)	/* 0x1C80E0 */
-		.fill   0xa
-data_1c80ea:
-		.byte	0x0
-data_1c80eb:
-		.byte	0x0
-data_1c80ec:
-		.long	0x0
-data_1c80f0:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (net_faction_box)	/* 0x1C80F8 */
-		.fill   0xa
-data_1c8102:
-		.short  0x0
-data_1c8104:
-		.long	0x0
-data_1c8108:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (net_team_box)	/* 0x1C8110 */
-		.fill   0xa
-data_1c811a:
-		.short  0x0
-data_1c811c:
-		.long	0x0
-data_1c8120:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (net_benefits_box)	/* 0x1C8128 */
-		.fill   0xa
-data_1c8132:
-		.short  0x0
-data_1c8134:
-		.long	0x0
-data_1c8138:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (net_comms_box)	/* 0x1C8140 */
-		.fill   0xa
-data_1c814a:
-		.short  0x0
-data_1c814c:
-		.long	0x0
-data_1c8150:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (net_grpaint)	/* 0x1C8158 */
-		.short  0x0
-data_1c815a:
-		.fill   0x8
-data_1c8162:
-		.short  0x0
-data_1c8164:
-		.long	0x0
-data_1c8168:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (net_protocol_box)	/* 0x1C8170 */
-		.long	0x0
-data_1c8174:
-		.fill   0x6
-data_1c817a:
-		.short  0x0
-data_1c817c:
-		.long	0x0
-data_1c8180:
-		.fill   0x8
+		.fill   0x18
 GLOBAL (controls_defaults_button)	/* 0x1C8188 */
-		.fill   0x10
-data_1c8198:
-		.fill   0x8
-data_1c81a0:
-		.fill   0xc
-data_1c81ac:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (controls_save_button)	/* 0x1C81B8 */
-		.fill   0x10
-data_1c81c8:
-		.fill   0x8
-data_1c81d0:
-		.fill   0xc
-data_1c81dc:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (controls_calibrate_button)	/* 0x1C81E8 */
-		.fill   0x10
-data_1c81f8:
-		.fill   0x8
-data_1c8200:
-		.fill   0xc
-data_1c820c:
-		.fill   0xc
+		.fill   0x30
 GLOBAL (save_slot_names)	/* 0x1C8218 */
 		.fill   0xc8
 GLOBAL (save_active_desc)
@@ -187437,7 +186634,8 @@ GLOBAL (text_buf_pos)	/* 0x1C83C8 */
 GLOBAL (cmdln_param_n)	/* 0x1C83D0 */
 		.byte	0x0
 GLOBAL (byte_1C83D1)	/* 0x1C83D1 */
-		.ascii  "\x00\x00\x00"
+		.byte	0x0
+		.align	4
 GLOBAL (bezier_pts)	/* 0x1C83D4 */
 		.fill   0x6
 GLOBAL (mission_strings_len)	/* 0x1C83DA */

@@ -54,7 +54,7 @@ extern struct ScreenTextBox equip_display_box;
 extern struct ScreenButton equip_offer_buy_button;
 extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenButton equip_all_agents_button;
-extern struct ScreenShape unk11_menu[5];
+extern struct ScreenShape equip_agent_select_shapes[5];
 
 extern ubyte byte_155174; // = 166;
 extern ubyte byte_155175[];
@@ -347,7 +347,7 @@ void set_flag02_equipment_screen_boxes(void)
     equip_cost_box.Flags |= GBxFlg_Unkn0002;
     equip_all_agents_button.Flags |= GBxFlg_Unkn0002;
     for (i = 0; i < 5; i++) {
-        unk11_menu[i].Flags = GBxFlg_Unkn0002;
+        equip_agent_select_shapes[i].Flags = GBxFlg_Unkn0002;
     }
 }
 
@@ -605,7 +605,7 @@ ubyte show_equipment_screen(void)
 {
     ubyte drawn = true;
 
-    if ((unk11_menu[0].Flags & GBxFlg_Unkn0001) != 0)
+    if ((equip_agent_select_shapes[0].Flags & GBxFlg_Unkn0001) != 0)
     {
         byte_1C4975 = 0;
         byte_1C4976 = 0;
@@ -660,7 +660,7 @@ ubyte show_equipment_screen(void)
             struct ScreenShape *p_shape;
             ubyte gbstate;
 
-            p_shape = &unk11_menu[nagent];
+            p_shape = &equip_agent_select_shapes[nagent];
 
             if (nagent == 4) // agent name box
             {
@@ -1372,7 +1372,7 @@ void init_equip_screen_shapes(void)
     {
         struct ScreenShape *p_shp;
 
-        p_shp = &unk11_menu[i];
+        p_shp = &equip_agent_select_shapes[i];
         init_screen_shape(p_shp, x, y,
           agent_panel_shape_points_x, agent_panel_shape_points_y,
           sizeof(agent_panel_shape_points_x)/sizeof(agent_panel_shape_points_x[0]),
@@ -1386,7 +1386,7 @@ void init_equip_screen_shapes(void)
     {
         struct ScreenShape *p_shp;
 
-        p_shp = &unk11_menu[i];
+        p_shp = &equip_agent_select_shapes[i];
         init_screen_shape(p_shp, x, y,
           agent_name_shape_points_x, agent_name_shape_points_y,
           sizeof(agent_name_shape_points_x)/sizeof(agent_name_shape_points_x[0]),
@@ -1406,7 +1406,7 @@ void reset_equip_screen_boxes_flags(void)
     equip_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
     equip_display_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
     for (i = 0; i < 5; i++) {
-        unk11_menu[i].Flags = GBxFlg_Unkn0001;
+        equip_agent_select_shapes[i].Flags = GBxFlg_Unkn0001;
     }
 }
 
