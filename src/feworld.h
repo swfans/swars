@@ -34,7 +34,7 @@ ubyte show_worldmap_screen(void);
 void init_world_screen_boxes(void);
 void reset_world_screen_boxes_flags(void);
 void set_flag01_world_screen_boxes(void);
-void set_flag02_world_screen_boxes(void);
+void skip_flashy_draw_world_screen_boxes(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

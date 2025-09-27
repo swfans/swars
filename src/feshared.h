@@ -39,7 +39,7 @@ void update_sys_scr_shared_header(ubyte sysscrn_no);
 ubyte show_sys_scr_shared_header(void);
 
 void reset_sys_scr_shared_boxes_flags(void);
-void set_flag02_sys_scr_shared_boxes(void);
+void skip_flashy_draw_sys_scr_shared_boxes(void);
 
 void init_sys_scr_shared_boxes(void);
 /******************************************************************************/

@@ -164,6 +164,14 @@ ubyte show_login_name(struct ScreenBox *box)
     return ret;
 }
 
+void skip_flashy_draw_login_screen_boxes(void)
+{
+    login_campaigns_box.Flags |= GBxFlg_Unkn0002;
+    login_name_box.Flags |= GBxFlg_Unkn0002;
+    login_abort_button.Flags |= GBxFlg_Unkn0002;
+    login_continue_button.Flags |= GBxFlg_Unkn0002;
+}
+
 ubyte show_login_screen(void)
 {
     ubyte drawn = true;
@@ -172,10 +180,7 @@ ubyte show_login_screen(void)
       (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
         clear_key_pressed(KC_SPACE);
-        login_campaigns_box.Flags |= GBxFlg_Unkn0002;
-        login_name_box.Flags |= GBxFlg_Unkn0002;
-        login_abort_button.Flags |= GBxFlg_Unkn0002;
-        login_continue_button.Flags |= GBxFlg_Unkn0002;
+        skip_flashy_draw_login_screen_boxes();
     }
     //drawn = login_name_box.DrawFn(&login_name_box); -- incompatible calling convention
     asm volatile ("call *%2\n"

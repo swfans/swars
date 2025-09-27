@@ -34,7 +34,7 @@ extern "C" {
 void init_storage_screen_boxes(void);
 void reset_storage_screen_boxes_flags(void);
 void set_flag01_storage_screen_boxes(void);
-void set_flag02_storage_screen_boxes(void);
+void skip_flashy_draw_storage_screen_boxes(void);
 void mark_storage_screen_boxes_redraw(void);
 ubyte show_storage_screen(void);
 

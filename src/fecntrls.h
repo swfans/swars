@@ -39,7 +39,7 @@ void init_controls_screen_boxes(void);
 void reset_controls_screen_boxes_flags(void);
 ubyte show_options_controls_screen(void);
 void set_flag01_controls_screen_boxes(void);
-void set_flag02_controls_screen_boxes(void);
+void skip_flashy_draw_controls_screen_boxes(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

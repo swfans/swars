@@ -290,16 +290,21 @@ ubyte main_do_login_1(ubyte click)
     return 1;
 }
 
+void skip_flashy_draw_main_screen_boxes(void)
+{
+    main_quit_button.Flags |= GBxFlg_Unkn0002;
+    main_load_button.Flags |= GBxFlg_Unkn0002;
+    main_login_button.Flags |= GBxFlg_Unkn0002;
+    main_map_editor_button.Flags |= GBxFlg_Unkn0002;
+}
+
 void show_main_screen(void)
 {
     if ((game_projector_speed && (main_quit_button.Flags & GBxFlg_Unkn0001)) ||
       (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
         clear_key_pressed(KC_SPACE);
-        main_quit_button.Flags |= GBxFlg_Unkn0002;
-        main_load_button.Flags |= GBxFlg_Unkn0002;
-        main_login_button.Flags |= GBxFlg_Unkn0002;
-        main_map_editor_button.Flags |= GBxFlg_Unkn0002;
+        skip_flashy_draw_main_screen_boxes();
     }
     //main_quit_button.DrawFn(&main_quit_button); -- incompatible calling convention
     asm volatile ("call *%1\n"
@@ -444,7 +449,7 @@ void set_flag01_alert_screen_boxes(void)
     alert_OK_button.Flags |= GBxFlg_Unkn0001;
 }
 
-void set_flag02_sysmenu_boxes(void)
+void skip_flashy_draw_sysmenu_boxes(void)
 {
     int i;
 
@@ -482,28 +487,29 @@ void show_sysmenu_screen(void)
     ubyte drawn;
     ubyte v2;
 
-    if ((game_projector_speed && is_sys_scr_shared_header_flag01()) || (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
+    if ((game_projector_speed && is_sys_scr_shared_header_flag01()) ||
+      (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
         clear_key_pressed(KC_SPACE);
 
-        set_flag02_sysmenu_boxes();
-        set_flag02_sys_scr_shared_boxes();
+        skip_flashy_draw_sysmenu_boxes();
+        skip_flashy_draw_sys_scr_shared_boxes();
         switch (game_system_screen)
         {
         case SySc_NETGAME:
-            set_flag02_net_screen_boxes();
+            skip_flashy_draw_net_screen_boxes();
             break;
         case SySc_STORAGE:
-            set_flag02_storage_screen_boxes();
+            skip_flashy_draw_storage_screen_boxes();
             break;
         case SySc_CONTROLS:
-            set_flag02_controls_screen_boxes();
+            skip_flashy_draw_controls_screen_boxes();
             break;
         case SySc_AUDIO_OPTS:
-            set_flag02_audio_screen_boxes();
+            skip_flashy_draw_audio_screen_boxes();
             break;
         case SySc_GFX_OPTS:
-            set_flag02_gfx_screen_boxes();
+            skip_flashy_draw_gfx_screen_boxes();
             break;
         }
     }
@@ -571,7 +577,7 @@ void show_sysmenu_screen(void)
         update_sys_scr_shared_header(sysscrn_no);
         if (game_projector_speed)
         {
-            set_flag02_sys_scr_shared_boxes();
+            skip_flashy_draw_sys_scr_shared_boxes();
         }
         switch (game_system_screen)
         {
@@ -712,7 +718,7 @@ TbBool is_heading_flag01(void)
     return (heading_box.Flags & GBxFlg_Unkn0001) != 0;
 }
 
-void set_flag02_heading_screen_boxes(void)
+void skip_flashy_draw_heading_screen_boxes(void)
 {
     heading_box.Flags |= GBxFlg_Unkn0002;
 }
@@ -1607,6 +1613,11 @@ void init_global_boxes(void)
     global_apps_bar_box.Y = lbDisplay.GraphicsWindowHeight - global_apps_bar_box.Height;
 }
 
+void skip_flashy_draw_loading_screen_boxes(void)
+{
+    loading_INITIATING_box.Flags |= GBxFlg_Unkn0002;
+}
+
 void show_mission_loading_screen(void)
 {
     LbMouseChangeSprite(0);
@@ -1621,7 +1632,7 @@ void show_mission_loading_screen(void)
         if ((0 != game_projector_speed && (loading_INITIATING_box.Flags & GBxFlg_Unkn0001))
           || (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag)) {
             clear_key_pressed(KC_SPACE);
-            loading_INITIATING_box.Flags |= GBxFlg_Unkn0002;
+            skip_flashy_draw_loading_screen_boxes();
         }
         //loading_INITIATING_box.DrawFn(&loading_INITIATING_box); -- incompatible calling convention
         asm volatile ("call *%1\n"
@@ -1789,4 +1800,5 @@ void init_menu_screen_colors_and_sprites(void)
     show_black_screen();
     reload_background();
 }
+
 /******************************************************************************/

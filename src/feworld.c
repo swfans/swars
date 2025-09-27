@@ -621,6 +621,13 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
     return 4;
 }
 
+void skip_flashy_draw_world_screen_boxes(void)
+{
+    skip_flashy_draw_heading_screen_boxes();
+    world_landmap_box.Flags |= GBxFlg_Unkn0002;
+    world_city_info_box.Flags |= GBxFlg_Unkn0002;
+}
+
 ubyte show_worldmap_screen(void)
 {
     ubyte drawn = true;
@@ -629,7 +636,7 @@ ubyte show_worldmap_screen(void)
       (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
         clear_key_pressed(KC_SPACE);
-        set_flag02_world_screen_boxes();
+        skip_flashy_draw_world_screen_boxes();
     }
 
     // Draw sequentially
@@ -718,10 +725,4 @@ void set_flag01_world_screen_boxes(void)
     world_info_CANCEL_button.Flags |= GBxFlg_Unkn0001;
 }
 
-void set_flag02_world_screen_boxes(void)
-{
-    set_flag02_heading_screen_boxes();
-    world_landmap_box.Flags |= GBxFlg_Unkn0002;
-    world_city_info_box.Flags |= GBxFlg_Unkn0002;
-}
 /******************************************************************************/

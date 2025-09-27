@@ -36,7 +36,7 @@ void show_netgame_unkn_case1(void);
 void reset_net_screen_boxes_flags(void);
 void reset_net_screen_EJECT_flags(void);
 void set_flag01_net_screen_boxes(void);
-void set_flag02_net_screen_boxes(void);
+void skip_flashy_draw_net_screen_boxes(void);
 void switch_net_screen_boxes_to_initiate(void);
 void switch_net_screen_boxes_to_execute(void);
 

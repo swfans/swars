@@ -52,6 +52,7 @@ extern short textpos[10];
 extern struct TbSprite *fe_icons_sprites;
 
 struct ScreenShape audio_volume_sliders[9];
+ubyte audio_volume_sliders_draw_state[3] = {0};
 
 /** How many pixels the slider is spill outside of its active rect area.
  */
@@ -356,13 +357,21 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
         target_var = 2;
     }
 
+    if ((audio_volume_sliders[3 * target_var + 1].Flags & GBxFlg_Unkn0001) != 0)
+    {
+        audio_volume_sliders_draw_state[target_var] = 0;
+    }
+
     lbFontPtr = med_font;
     w = (box->Width - my_string_width(s)) >> 1;
     text_drawn = flashy_draw_text(1 + w, 1, s, 1, 0, &word_1C4866[target_var], 0);
 
-    shapes_drawn = 3;
-
-    if ((text_drawn > 0) && (shapes_drawn > 0))
+    if (audio_volume_sliders_draw_state[target_var] == 0)
+    {
+        audio_volume_sliders[3 * target_var + 1].Flags &= ~GBxFlg_Unkn0001;
+        shapes_drawn = (text_drawn ? 3 : 0);
+    }
+    else if (audio_volume_sliders_draw_state[target_var] == 1)
     {
         struct ScreenShape *p_shp;
 
@@ -383,7 +392,10 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
         p_shp = &audio_volume_sliders[3 * target_var + 1]; // Main bar
         draw_horiz_proslider_main_body_text(p_shp, box, target_ptr);
 
+        shapes_drawn = 3;
     }
+    audio_volume_sliders_draw_state[target_var] = (shapes_drawn == 3);
+
     lbDisplay.DrawFlags = 0;
     if (!change)
         return 0;
@@ -908,6 +920,9 @@ void reset_options_audio_boxes_flags(void)
     for (i = 0; i < 7; i++) {
         options_audio_buttons[i].Flags = GBxFlg_RadioBtn | GBxFlg_Unkn0001;
     }
+    for (i = 0; i < 3; i++) {
+        audio_volume_sliders_draw_state[i] = 0;
+    }
 }
 
 void reset_options_gfx_boxes_flags(void)
@@ -924,7 +939,7 @@ void reset_options_gfx_boxes_flags(void)
     }
 }
 
-void set_flag02_audio_screen_boxes(void)
+void skip_flashy_draw_audio_screen_boxes(void)
 {
     int i;
 
@@ -934,9 +949,11 @@ void set_flag02_audio_screen_boxes(void)
         audio_volume_sliders[i].Flags |= GBxFlg_Unkn0002;
     for (i = 0; i < 7; i++)
         options_audio_buttons[i].Flags |= GBxFlg_Unkn0002;
+    for (i = 0; i < 3; i++)
+        audio_volume_sliders_draw_state[i] = 1;
 }
 
-void set_flag02_gfx_screen_boxes(void)
+void skip_flashy_draw_gfx_screen_boxes(void)
 {
     int i;
 

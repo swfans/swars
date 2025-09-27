@@ -185993,9 +185993,9 @@ GLOBAL (research_completed)	/* 0x1C4973 */
 		.byte	0x0
 GLOBAL (cheat_research_weapon)	/* 0x1C4974 */
 		.byte	0x0
-GLOBAL (byte_1C4975)	/* 0x1C4975 */
+GLOBAL (equip_agents_panel_draw_state)	/* 0x1C4975 */
 		.byte	0x0
-GLOBAL (byte_1C4976)	/* 0x1C4976 */
+GLOBAL (equip_agent_name_draw_state)	/* 0x1C4976 */
 		.byte	0x0
 GLOBAL (cheat_research_cybmods)	/* 0x1C4977 */
 		.byte	0x0

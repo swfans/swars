@@ -707,7 +707,7 @@ void set_flag01_net_screen_boxes(void)
     net_groups_LOGON_button.Flags |= GBxFlg_Unkn0001;
 }
 
-void set_flag02_net_screen_boxes(void)
+void skip_flashy_draw_net_screen_boxes(void)
 {
     net_INITIATE_button.Flags |= GBxFlg_Unkn0002;
     net_groups_LOGON_button.Flags |= GBxFlg_Unkn0002;

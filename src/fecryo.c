@@ -1383,9 +1383,11 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
     return 0;
 }
 
-void set_flag02_cryo_screen_boxes(void)
+void skip_flashy_draw_cryo_chamber_screen_boxes(void)
 {
     short i;
+
+    skip_flashy_draw_heading_screen_boxes();
 
     cryo_agent_list_box.Flags |= GBxFlg_Unkn0002;
     cryo_blokey_box.Flags |= GBxFlg_Unkn0002;
@@ -1398,6 +1400,9 @@ void set_flag02_cryo_screen_boxes(void)
     for (i = 0; i < 5; i++) {
         equip_agent_select_shapes[i].Flags = GBxFlg_Unkn0002;
     }
+
+    byte_1C4978 = 1;
+    byte_1C4979 = 1;
 }
 
 ubyte do_cryo_all_agents_set(ubyte click)
@@ -1520,10 +1525,7 @@ ubyte show_cryo_chamber_screen(void)
       (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
         clear_key_pressed(KC_SPACE);
-        set_flag02_heading_screen_boxes();
-        set_flag02_cryo_screen_boxes();
-        byte_1C4978 = 1;
-        byte_1C4979 = 1;
+        skip_flashy_draw_cryo_chamber_screen_boxes();
     }
     if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {

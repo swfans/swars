@@ -611,6 +611,16 @@ void load_netscan_data(ubyte city_id, ubyte level)
     update_netscan_cost_button(city_id);
 }
 
+void skip_flashy_draw_mission_screen_boxes(void)
+{
+    skip_flashy_draw_heading_screen_boxes();
+    brief_graphical_box.Flags |= GBxFlg_Unkn0002;
+    brief_NETSCAN_button.Flags |= GBxFlg_Unkn0002;
+    brief_mission_text_box.Flags |= GBxFlg_Unkn0002;
+    brief_netscan_box.Flags |= GBxFlg_Unkn0002;
+    brief_NETSCAN_COST_box.Flags |= GBxFlg_Unkn0002;
+}
+
 ubyte show_mission_screen(void)
 {
 #if 0
@@ -623,12 +633,7 @@ ubyte show_mission_screen(void)
       (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
         clear_key_pressed(KC_SPACE);
-        set_flag02_heading_screen_boxes();
-        brief_graphical_box.Flags |= GBxFlg_Unkn0002;
-        brief_NETSCAN_button.Flags |= GBxFlg_Unkn0002;
-        brief_mission_text_box.Flags |= GBxFlg_Unkn0002;
-        brief_netscan_box.Flags |= GBxFlg_Unkn0002;
-        brief_NETSCAN_COST_box.Flags |= GBxFlg_Unkn0002;
+        skip_flashy_draw_mission_screen_boxes();
     }
     // Draw sequentially
     if (drawn)

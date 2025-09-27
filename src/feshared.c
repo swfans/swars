@@ -74,7 +74,7 @@ void reset_sys_scr_shared_boxes_flags(void)
     system_screen_shared_header_box.Flags = GBxFlg_Unkn0001;
 }
 
-void set_flag02_sys_scr_shared_boxes(void)
+void skip_flashy_draw_sys_scr_shared_boxes(void)
 {
     system_screen_shared_header_box.Flags |= GBxFlg_Unkn0002;
 }

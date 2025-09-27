@@ -923,7 +923,7 @@ void set_flag01_controls_screen_boxes(void)
     controls_calibrate_button.Flags |= GBxFlg_Unkn0001;
 }
 
-void set_flag02_controls_screen_boxes(void)
+void skip_flashy_draw_controls_screen_boxes(void)
 {
     controls_defaults_button.Flags |= GBxFlg_Unkn0002;
     controls_calibrate_button.Flags |= GBxFlg_Unkn0002;

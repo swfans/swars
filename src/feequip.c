@@ -61,8 +61,8 @@ extern ubyte byte_155175[];
 extern ubyte byte_155180; // = 109;
 extern ubyte byte_155181[];
 extern ubyte cheat_research_weapon;
-extern ubyte byte_1C4975;
-extern ubyte byte_1C4976;
+extern ubyte equip_agents_panel_draw_state;
+extern ubyte equip_agent_name_draw_state;
 
 extern ubyte mo_from_agent;
 extern struct TbSprite *fe_icons_sprites;
@@ -334,9 +334,11 @@ void switch_equip_offer_to_sell(void)
     equip_offer_buy_button.CallBackFn = ac_sell_equipment;
 }
 
-void set_flag02_equipment_screen_boxes(void)
+void skip_flashy_draw_equipment_screen_boxes(void)
 {
     short i;
+
+    skip_flashy_draw_heading_screen_boxes();
 
     equip_list_head_box.Flags |= GBxFlg_Unkn0002;
     weapon_slots.Flags |= GBxFlg_Unkn0002;
@@ -349,6 +351,9 @@ void set_flag02_equipment_screen_boxes(void)
     for (i = 0; i < 5; i++) {
         equip_agent_select_shapes[i].Flags = GBxFlg_Unkn0002;
     }
+
+    equip_agents_panel_draw_state = 1;
+    equip_agent_name_draw_state = 1;
 }
 
 TbBool weapon_available_for_purchase(short weapon)
@@ -607,17 +612,14 @@ ubyte show_equipment_screen(void)
 
     if ((equip_agent_select_shapes[0].Flags & GBxFlg_Unkn0001) != 0)
     {
-        byte_1C4975 = 0;
-        byte_1C4976 = 0;
+        equip_agents_panel_draw_state = 0;
+        equip_agent_name_draw_state = 0;
     }
     if (((game_projector_speed != 0) && is_heading_flag01()) ||
       (is_key_pressed(KC_SPACE, KMod_DONTCARE) && !edit_flag))
     {
         clear_key_pressed(KC_SPACE);
-        set_flag02_heading_screen_boxes();
-        set_flag02_equipment_screen_boxes();
-        byte_1C4975 = 1;
-        byte_1C4976 = 1;
+        skip_flashy_draw_equipment_screen_boxes();
     }
     if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
@@ -669,16 +671,16 @@ ubyte show_equipment_screen(void)
                 // Agents grouping has little to do with name box, but it's convienient to put here
                 gbstate = input_equip_all_agents_button(&equip_all_agents_button);
 
-                if (byte_1C4976 == 0)
+                if (equip_agent_name_draw_state == 0)
                 {
                     drawn = flashy_draw_draw_equip_agent_name_shape(p_shape, gbstate);
                 }
-                else if (byte_1C4976 == 1)
+                else if (equip_agent_name_draw_state == 1)
                 {
                     draw_equip_agent_name_shape(p_shape, gbstate);
                     drawn = 3;
                 }
-                byte_1C4976 = (drawn == 3);
+                equip_agent_name_draw_state = (drawn == 3);
             }
             else
             {
@@ -687,7 +689,7 @@ ubyte show_equipment_screen(void)
 
                 gbstate = input_equip_agent_panel_shape(p_shape, nagent);
 
-                if (byte_1C4975 == 0)
+                if (equip_agents_panel_draw_state == 0)
                 {
                     drawn = flashy_draw_agent_panel_shape(p_shape, gbstate);
                 }
@@ -704,8 +706,8 @@ ubyte show_equipment_screen(void)
             }
         }
 
-        if (byte_1C4975 == 0) {
-            byte_1C4975 = agnt[0] && agnt[1] && agnt[2] && agnt[3];
+        if (equip_agents_panel_draw_state == 0) {
+            equip_agents_panel_draw_state = agnt[0] && agnt[1] && agnt[2] && agnt[3];
         }
         drawn = boxes_drawn;
     }
@@ -1417,4 +1419,5 @@ void set_flag01_equip_screen_boxes(void)
     if (screentype == SCRT_CRYO)
         equip_cost_box.Flags |= GBxFlg_NoBkCopy;
 }
+
 /******************************************************************************/

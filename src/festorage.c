@@ -132,7 +132,7 @@ void set_flag01_storage_screen_boxes(void)
     storage_NEW_MORTAL_button.Flags |= GBxFlg_Unkn0001;
 }
 
-void set_flag02_storage_screen_boxes(void)
+void skip_flashy_draw_storage_screen_boxes(void)
 {
     storage_slots_box.Flags |= 0x0002;
 }
