@@ -3068,6 +3068,14 @@ int place_default_player(ushort player_id, TbBool replace)
     return ret;
 }
 
+void reset_mission_agents(void)
+{
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    p_locplayer->MissionAgents = 0x0F;
+}
+
 void place_single_player(void)
 {
     PlayerInfo *p_locplayer;
@@ -3417,11 +3425,7 @@ void game_setup(void)
     setup_sprites_small_font();
     load_peep_type_stats();
     load_campaigns();
-    {
-        PlayerInfo *p_locplayer;
-        p_locplayer = &players[local_player_no];
-        p_locplayer->MissionAgents = 0x0F;
-    }
+    reset_mission_agents();
     debug_trace_setup(-1);
     if ( is_single_game || cmdln_param_bcg )
     {
@@ -3806,18 +3810,16 @@ ubyte save_game_slot(ubyte click)
     return ret;
 }
 
-ubyte goto_savegame(ubyte click)
+void init_variables(void)
 {
-    ubyte ret;
-    asm volatile ("call ASM_goto_savegame\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
+    asm volatile ("call ASM_init_variables\n"
+        :  :  : "eax" );
 }
 
-void my_preprocess_text(char *text)
+void init_agents(void)
 {
-    asm volatile ("call ASM_my_preprocess_text\n"
-        :  : "a" (text));
+    asm volatile ("call ASM_init_agents\n"
+        :  :  : "eax" );
 }
 
 /** Initializes the research data for a new game.
@@ -3844,6 +3846,44 @@ void srm_reset_research(void)
     research.CurrentMod = -1;
     research.Scientists = 0;
     research.NumBases = 0;
+}
+
+ubyte goto_savegame(ubyte click)
+{
+#if 0
+    ubyte ret;
+    asm volatile ("call ASM_goto_savegame\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+#endif
+    restore_savegame = 1;
+    game_system_screen = SySc_STORAGE;
+    screentype = SCRT_SYSMENU;
+    sysmnu_button_disable(0, 5);
+    update_sys_scr_shared_header(game_system_screen);
+    ingame.Flags &= ~GamF_MortalGame;
+
+    reset_mission_agents();
+    load_city_data(0);
+    init_weapon_text();
+    load_city_txt();
+    init_variables();
+    srm_reset_research();
+    init_agents();
+
+    edit_flag = 0;
+    save_slot_base = 0;
+    redraw_screen_flag = 1;
+
+    load_save_slot_names();
+
+    return 1;
+}
+
+void my_preprocess_text(char *text)
+{
+    asm volatile ("call ASM_my_preprocess_text\n"
+        :  : "a" (text));
 }
 
 void research_unkn_func_006(ushort missi)
@@ -4042,12 +4082,6 @@ void update_player_cash(void)
 
     credits = mission_over_calculate_player_cash_gain_from_items();
     ingame.Credits += credits;
-}
-
-void init_agents(void)
-{
-    asm volatile ("call ASM_init_agents\n"
-        :  :  : "eax" );
 }
 
 void do_start_triggers(short missi)
@@ -4525,12 +4559,6 @@ TbBool player_try_spend_money(long cost)
     return true;
 }
 
-void init_variables(void)
-{
-    asm volatile ("call ASM_init_variables\n"
-        :  :  : "eax" );
-}
-
 void campaign_new_game_prepare(void)
 {
     struct Campaign *p_campgn;
@@ -4539,20 +4567,18 @@ void campaign_new_game_prepare(void)
 
     screentype = SCRT_99;
     game_system_screen = SySc_NONE;
-    {
-        PlayerInfo *p_locplayer;
-        p_locplayer = &players[local_player_no];
-        p_locplayer->MissionAgents = 0x0F;
-    }
-    init_weapon_text();
+
+    reset_mission_agents();
     load_city_data(0);
+    init_weapon_text();
     load_city_txt();
     init_variables();
+    srm_reset_research();
     init_agents();
+
     load_missions(background_type);
     clear_mission_state_slots();
     load_objectives_text();
-    srm_reset_research();
 
     {
         open_new_mission(p_campgn->FirstTrigger);
@@ -5407,12 +5433,7 @@ void show_menu_screen_st0(void)
     global_date.Year = 74;
     global_date.Month = 6;
 
-    {
-        PlayerInfo *p_locplayer;
-        p_locplayer = &players[local_player_no];
-        p_locplayer->MissionAgents = 0x0f;
-    }
-
+    reset_mission_agents();
     debug_trace_place(17);
     init_menu_screen_colors_and_sprites();
 
@@ -5422,7 +5443,7 @@ void show_menu_screen_st0(void)
     load_city_txt();
 
     debug_trace_place(19);
-    if ( in_network_game )
+    if (in_network_game)
         screentype = SCRT_LOGIN;
     else
         screentype = SCRT_MAINMENU;
