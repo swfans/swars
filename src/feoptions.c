@@ -368,8 +368,17 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
 
     if (audio_volume_sliders_draw_state[target_var] == 0)
     {
-        audio_volume_sliders[3 * target_var + 1].Flags &= ~GBxFlg_Unkn0001;
-        shapes_drawn = (text_drawn ? 3 : 0);
+        int i;
+
+        for (i = 0; i < 3; i++) {
+            struct ScreenShape *p_shp;
+            ubyte drawn;
+
+            p_shp = &audio_volume_sliders[3 * target_var + i];
+            drawn = flashy_draw_purple_shape(p_shp);
+            if (shapes_drawn > drawn)
+                shapes_drawn = drawn;
+        }
     }
     else if (audio_volume_sliders_draw_state[target_var] == 1)
     {
@@ -697,19 +706,19 @@ void init_options_audio_screen_boxes(void)
         p_shp = &audio_volume_sliders[3*i+1];
         pts_len = horiz_proslider_prepare_main_body_pts(shape_pts_x, shape_pts_y, 336, 28);
         init_screen_shape(p_shp, p_box->X + 33 + 4, p_box->Y + 26,
-          shape_pts_x, shape_pts_y, pts_len, 0x0100, 0x0100, 6);
+          shape_pts_x, shape_pts_y, pts_len, 0x0100, 0x0100, 4);
         p_shp->Colour = 0x0AE;
 
         p_shp = &audio_volume_sliders[3*i+0];
         pts_len = horiz_proslider_prepare_left_arrow_pts(shape_pts_x, shape_pts_y, 16, 15);
         init_screen_shape(p_shp, p_box->X + 33, p_box->Y + 26 + 12,
-          shape_pts_x, shape_pts_y, pts_len, 0x0100, 0x0100, 6);
+          shape_pts_x, shape_pts_y, pts_len, 0x0100, 0x0100, 4);
         p_shp->Colour = 0x0AE;
 
         p_shp = &audio_volume_sliders[3*i+2];
         pts_len = horiz_proslider_prepare_right_arrow_pts(shape_pts_x, shape_pts_y, 16, 15);
         init_screen_shape(p_shp, p_box->X + 33 + 1 + 3 + 336 + 1, p_box->Y + 26 + 1,
-          shape_pts_x, shape_pts_y, pts_len, 0x0100, 0x0100, 6);
+          shape_pts_x, shape_pts_y, pts_len, 0x0100, 0x0100, 4);
         p_shp->Colour = 0x0AE;
 
         h += p_box->Height + space_h / 5;
