@@ -20,6 +20,7 @@
 #include "bfflic.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #if defined(HAVE_CONFIG_H)
 #  include "bfconfig.h"
