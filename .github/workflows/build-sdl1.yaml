@@ -111,7 +111,7 @@ jobs:
         if: ${{ steps.unittests.conclusion != 'skipped' }}
         run: |
           cd release
-          tail -n +1 ./bflibrary/test-suite.log ./bflibrary/tst_*.log
+          tail -n +1 ./bflibrary/test-suite.log $(find ./bflibrary/ -name 'tst_*.log')
 
       - name: Upload unit tests debug files
         if: ${{ failure() && steps.unittests.conclusion == 'failure' }}
@@ -214,7 +214,7 @@ jobs:
         if: ${{ steps.unittests.conclusion != 'skipped' }}
         run: |
           cd release
-          tail -n +1 ./bflibrary/test-suite.log ./bflibrary/tst_*.log
+          tail -n +1 ./bflibrary/test-suite.log $(find ./bflibrary/ -name 'tst_*.log')
 
       - name: Upload unit tests debug files
         if: ${{ failure() && steps.unittests.conclusion == 'failure' }}
