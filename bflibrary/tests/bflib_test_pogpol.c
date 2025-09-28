@@ -195,8 +195,7 @@ TbBool test_gpoly(void)
     // The draw function can access textures out of the normal mapping area - allocate with redundance
     texmap_buf = LbMemoryAlloc(256*256*1 * 3);
     memset(texmap_buf,0x3c, 256*256*1 * 3);
-    //texmap = texmap_buf + 256*256*1; -- workaround - texmap needs to be aligned to 64k
-    texmap = (ubyte *)((uintptr_t)(texmap_buf + 256*256*1) & ~0xFFFF);
+    texmap = texmap_buf + 256*256*1;
     generate_example_texture_map_xor_based(pal, texmap);
 
     setup_vecs(lbDisplay.WScreen, texmap, lbDisplay.PhysicalScreenWidth,
