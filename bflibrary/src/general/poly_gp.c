@@ -439,15 +439,14 @@ static TbPixel gpoly_pixel_noshade(int *a2d, int *a3b, int *a4c, struct gpoly_st
 
 static void gpoly_stb_drw_incr1a(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
-    int a3b_bias;
     int loc_4c, loc_2d, loc_3bh;
     ubyte a3b_h, a3b_l;
     ubyte loc_carry;
 
-    a3b_bias = *a3b;
+    a3b_h = *a3b >> 8;
 
-    loc_carry = __CFADDB__(a3b_bias, st->inc_S);
-    a3b_l = a3b_bias + st->inc_S;
+    loc_carry = __CFADDB__(*a3b, st->inc_S);
+    a3b_l = *a3b + st->inc_S;
     loc_4c = *a4c + loc_carry;
 
     loc_carry = __CFADDL__(loc_4c, st->var_0CC);
@@ -456,24 +455,21 @@ static void gpoly_stb_drw_incr1a(int *a2d, int *a3b, int *a4c, struct gpoly_stat
 
     loc_carry = __CFADDL__(loc_2d, st->var_0C4);
     *a2d = loc_2d + st->var_0C4;
-    loc_3bh = ((uint)a3b_bias >> 8) + loc_carry;
+    loc_3bh = a3b_h + loc_carry;
 
     a3b_h = loc_3bh + st->var_0C8;
-    a3b_bias = (a3b_h << 8) | a3b_l;
 
-    *a3b = a3b_bias;
+    *a3b = (a3b_h << 8) | a3b_l;
 }
 
 static void gpoly_stb_drw_incr1b(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
-    int a3b_bias;
     int loc_2d, loc_3bh;
     ubyte a3b_h, a3b_l;
     ubyte loc_carry;
 
-    a3b_bias = *a3b;
-
-    a3b_l = a3b_bias;
+    a3b_h = *a3b >> 8;
+    a3b_l = *a3b;
 
     loc_carry = __CFADDL__(*a4c, st->var_0CC);
     *a4c = *a4c + st->var_0CC;
@@ -481,7 +477,7 @@ static void gpoly_stb_drw_incr1b(int *a2d, int *a3b, int *a4c, struct gpoly_stat
 
     loc_carry = __CFADDL__(loc_2d, st->var_0C4);
     *a2d = loc_2d + st->var_0C4;
-    loc_3bh = ((uint)a3b_bias >> 8) + loc_carry;
+    loc_3bh = a3b_h + loc_carry;
 
     a3b_h = loc_3bh + st->var_0C8;
 
@@ -490,15 +486,14 @@ static void gpoly_stb_drw_incr1b(int *a2d, int *a3b, int *a4c, struct gpoly_stat
 
 static void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
-    int a3b_bias;
     int loc_4c, loc_2d, loc_3bh;
     ubyte a3b_h, a3b_l;
     ubyte loc_carry;
 
-    a3b_bias = *a3b;
+    a3b_h = *a3b >> 8;
 
-    loc_carry = __CFADDB__(a3b_bias, st->var_0A8);
-    a3b_l = a3b_bias + st->var_0A8;
+    loc_carry = __CFADDB__(*a3b, st->var_0A8);
+    a3b_l = *a3b + st->var_0A8;
     loc_4c = *a4c + loc_carry;
 
     loc_carry = __CFADDL__(loc_4c, st->var_0BC);
@@ -507,7 +502,7 @@ static void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state
 
     loc_carry = __CFADDL__(loc_2d, st->var_0B8);
     *a2d = loc_2d + st->var_0B8;
-    loc_3bh = ((uint)a3b_bias >> 8) + loc_carry;
+    loc_3bh = a3b_h + loc_carry;
 
     a3b_h = loc_3bh + st->var_0B4;
 
@@ -516,15 +511,14 @@ static void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state
 
 static void gpoly_stb_drw_incr3(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
-    int a3b_bias;
     int loc_4c, loc_2d, loc_3bh;
     ubyte a3b_h, a3b_l;
     ubyte loc_carry;
 
-    a3b_bias = *a3b;
+    a3b_h = *a3b >> 8;
 
-    loc_carry = __CFSUBB__(a3b_bias, st->var_0A8);
-    a3b_l = a3b_bias - st->var_0A8;
+    loc_carry = __CFSUBB__(*a3b, st->var_0A8);
+    a3b_l = *a3b - st->var_0A8;
     loc_4c = *a4c - loc_carry;
 
     loc_carry = __CFSUBL__(loc_4c, st->var_0BC);
@@ -533,7 +527,7 @@ static void gpoly_stb_drw_incr3(int *a2d, int *a3b, int *a4c, struct gpoly_state
 
     loc_carry = __CFSUBL__(loc_2d, st->var_0B8);
     *a2d = loc_2d - st->var_0B8;
-    loc_3bh = ((uint)a3b_bias >> 8) - loc_carry;
+    loc_3bh = a3b_h - loc_carry;
 
     a3b_h = loc_3bh - st->var_0B4;
 
@@ -542,14 +536,12 @@ static void gpoly_stb_drw_incr3(int *a2d, int *a3b, int *a4c, struct gpoly_state
 
 static void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
-    int a3b_bias;
     int loc_2d, loc_3bh;
     ubyte a3b_h, a3b_l;
     ubyte loc_carry;
 
-    a3b_bias = *a3b;
-
-    a3b_l = a3b_bias;
+    a3b_h = *a3b >> 8;
+    a3b_l = *a3b;
 
     loc_carry = __CFADDL__(*a4c, st->var_0BC);
     *a4c = *a4c + st->var_0BC;
@@ -557,7 +549,7 @@ static void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_state
 
     loc_carry = __CFADDL__(loc_2d, st->var_0B8);
     *a2d = loc_2d + st->var_0B8;
-    loc_3bh = ((uint)a3b_bias >> 8) + loc_carry;
+    loc_3bh = a3b_h + loc_carry;
 
     a3b_h = loc_3bh + st->var_0B4;
 
@@ -566,14 +558,12 @@ static void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_state
 
 static void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
-    int a3b_bias;
     int loc_2d, loc_3bh;
     ubyte a3b_h, a3b_l;
     ubyte loc_carry;
 
-    a3b_bias = *a3b;
-
-    a3b_l = a3b_bias;
+    a3b_h = *a3b >> 8;
+    a3b_l = *a3b;
 
     loc_carry = __CFSUBL__(*a4c, st->var_0BC);
     *a4c = *a4c - st->var_0BC;
@@ -581,7 +571,7 @@ static void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, struct gpoly_state
 
     loc_carry = __CFSUBL__(loc_2d, st->var_0B8);
     *a2d = loc_2d - st->var_0B8;
-    loc_3bh = ((uint)a3b_bias >> 8) - loc_carry;
+    loc_3bh = a3b_h - loc_carry;
 
     a3b_h = loc_3bh - st->var_0B4;
 
