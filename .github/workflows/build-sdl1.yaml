@@ -99,6 +99,12 @@ jobs:
           name: ${{ env.PKG_NAME }}
           path: release/pkg/**
 
+      - name: Execute unit tests
+        run: |
+          cd release
+          make V=1 clean
+          make V=1 check
+
   windows-msys2:
     name: "Windows MSYS2 SDL1"
     runs-on: windows-latest
@@ -179,6 +185,12 @@ jobs:
         with:
           name: ${{ env.PKG_NAME }}
           path: release/pkg/**
+
+      - name: Execute unit tests
+        run: |
+          cd release
+          make V=1 clean
+          make V=1 check
 
       - name: Prepare for downloading from MEGA - wget
         env:
