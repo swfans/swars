@@ -45,7 +45,8 @@ TbResult LbPngLoad(const char *fname, TbPixel *out_buffer,
  * @param width Input buffer width and interline.
  * @param height Input buffer height.
  * @param pal Image colour palette data pointer.
- * @param force_fname
+ * @param force_fname Treat provided `fname` as full file name,
+ *     do not alter it ie appendind index or extension.
  * @return
  */
 TbResult LbPngSave(const char *fname, const TbPixel *inp_buffer,
@@ -56,7 +57,8 @@ TbResult LbPngSave(const char *fname, const TbPixel *inp_buffer,
  * @param fname File name or main component of file name.
  * @param inp_buffer Input buffer pointer.
  * @param pal Image colour palette data pointer.
- * @param force_fname
+ * @param force_fname Treat provided `fname` as full file name,
+ *     do not alter it ie appendind index or extension.
  * @return
  */
 TbResult LbPngSaveScreen(const char *fname, const TbPixel *inp_buffer,

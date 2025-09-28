@@ -150,7 +150,7 @@ TbBool test_polyline(void)
 
     mdinfo = LbScreenGetModeInfo(mode);
 
-    // Prepare a palette, and colour tables for it
+    // Prepare a palette, and colour tables for altering colours from that palette
     make_general_palette(pal);
     LbFileSaveAt("tst_gp.pal", &pal, sizeof(pal));
     LbColourTablesGenerate(pal, unaffected_colours, "tst_gptbl.dat");

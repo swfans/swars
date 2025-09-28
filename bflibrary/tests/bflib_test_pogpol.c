@@ -145,6 +145,14 @@ void test_gpoly_draw_random_gpolys(const ubyte *pal)
             draw_gpoly(&point_a, &point_b, &point_c);
         else
             draw_gpoly(&point_a, &point_c, &point_b);
+
+        if (0) { // Debug code
+            char loc_fname[64];
+            static int cntr = 0;
+            if (i == 0) cntr++;
+            sprintf(loc_fname, "tst_gpoly%d_tri%d.png", cntr, i);
+            LbPngSaveScreen(loc_fname, lbDisplay.WScreen, lbDisplay.Palette, true);
+        }
     }
 }
 
@@ -172,7 +180,7 @@ TbBool test_gpoly(void)
     }
     LbMemorySetup();
 
-    // Prepare a palette, and colour tables for it
+    // Prepare a palette, and colour tables for altering colours from that palette
     make_general_palette(pal);
     LbFileSaveAt("tst_gp.pal", &pal, sizeof(pal));
     LbColourTablesGenerate(pal, unaffected_colours, "tst_gptbl.dat");
