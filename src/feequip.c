@@ -1397,6 +1397,13 @@ void init_equip_screen_shapes(void)
     }
 }
 
+void reset_equip_screen_player_state(void)
+{
+    selected_weapon = -1;
+    selected_agent = 0;
+    refresh_equip_list = 0;
+}
+
 void reset_equip_screen_boxes_flags(void)
 {
     short i;

@@ -42,6 +42,8 @@ extern struct ScreenButton research_list_buttons[2];
 
 extern ubyte research_on_weapons;// = true;
 extern ubyte research_unkn_var_01;
+extern ubyte research_selected_wep; // = -1;
+extern ubyte research_selected_mod; // = -1;
 
 ubyte ac_do_research_submit(ubyte click);
 ubyte ac_do_research_suspend(ubyte click);
@@ -349,6 +351,16 @@ void init_research_screen_boxes(void)
     research_list_buttons[1].X = research_unkn21_box.X + research_unkn21_box.Width -
       research_unkn21_box.Width / 2 + (research_unkn21_box.Width / 2 - research_list_buttons[1].Width) / 2;
     research_list_buttons[1].Y = research_list_buttons[0].Y;
+}
+
+void reset_research_screen_player_state(void)
+{
+    research_selected_wep = -1;
+    research_selected_mod = -1;
+    research_on_weapons = 1;
+    research_submit_button.CallBackFn = do_research_submit;
+    research_submit_button.Text = gui_strings[417];
+    unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
 }
 
 void reset_research_screen_boxes_flags(void)

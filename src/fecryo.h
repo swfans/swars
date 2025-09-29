@@ -63,6 +63,14 @@ void update_flic_mods(ubyte *mods);
 void cryo_update_for_selected_cybmod(void);
 
 void init_cryo_screen_boxes(void);
+
+/** Reset players part of cryo screen state.
+ *
+ * Resets all parts of cryo screen which are set by the player
+ * or related to players game progress.
+ */
+void reset_cryo_screen_player_state(void);
+
 void reset_cryo_screen_boxes_flags(void);
 void set_flag01_cryo_screen_boxes(void);
 

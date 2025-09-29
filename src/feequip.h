@@ -73,6 +73,14 @@ void init_weapon_anim(ubyte weapon);
 void display_box_content_state_switch(void);
 
 void init_equip_screen_boxes(void);
+
+/** Reset players part of equip screen state.
+ *
+ * Resets all parts of equip screen which are set by the player
+ * or related to players game progress.
+ */
+void reset_equip_screen_player_state(void);
+
 void reset_equip_screen_boxes_flags(void);
 void set_flag01_equip_screen_boxes(void);
 

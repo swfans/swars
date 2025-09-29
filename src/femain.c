@@ -1782,6 +1782,17 @@ TbResult init_read_all_sprite_files(void)
     return tret;
 }
 
+void reset_app_bar_player_state(void)
+{
+    new_mail = 0;
+    next_brief = 0;
+    word_1C6F3E = 0;
+    word_1C6F40 = 0;
+    next_email = 0;
+    next_ref = 0;
+    open_brief = 0;
+}
+
 void init_menu_screen_colors_and_sprites(void)
 {
     init_read_all_sprite_files();

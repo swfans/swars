@@ -771,6 +771,12 @@ void update_brief_screen_netscan_button(ushort text_id)
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
 }
 
+void reset_brief_screen_player_state(void)
+{
+    selected_netscan_objective = -1;
+    old_mission_brief = 0;
+}
+
 void reset_brief_screen_boxes_flags(void)
 {
     brief_NETSCAN_COST_box.Flags = GBxFlg_Unkn0001;

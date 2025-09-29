@@ -713,6 +713,13 @@ void init_world_screen_boxes(void)
       - space_h - world_info_ACCEPT_button.Height;
 }
 
+void reset_world_screen_player_state(void)
+{
+    unkn_city_no = -1;
+    word_1C6E0A = 0;
+    word_1C6E08 = 0;
+}
+
 void reset_world_screen_boxes_flags(void)
 {
     world_landmap_box.Flags = GBxFlg_Unkn0001;

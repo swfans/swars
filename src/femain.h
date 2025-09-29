@@ -113,6 +113,13 @@ TbBool is_purple_apps_selection_bar_visible(void);
 void show_purple_apps_selection_bar(void);
 TbBool input_purple_apps_selection_bar(void);
 
+/** Reset players part of app bar state.
+ *
+ * Resets all parts of app bar at bottom which are set by the player
+ * or related to players game progress.
+ */
+void reset_app_bar_player_state(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

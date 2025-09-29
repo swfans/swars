@@ -209,7 +209,7 @@ void show_net_benefits_sub2(short x0, short y0, TbPixel *colours)
             if (lbDisplay.LeftButton)
             {
                 lbDisplay.LeftButton = 0;
-                if (is_unkn_current_player() && ((unkn_flags_08 & 2) == 0)
+                if (is_unkn_current_player() && ((unkn_flags_08 & 0x02) == 0)
                   && (login_control__State == 5))
                     login_control__TechLevel = i + 1;
             }
@@ -244,7 +244,7 @@ void show_net_benefits_sub3(struct ScreenBox *box)
             if (mouse_down_over_box(&box1))
             {
                 lbDisplay.LeftButton = 0;
-                if (is_unkn_current_player() && ((unkn_flags_08 & 2) == 0)
+                if (is_unkn_current_player() && ((unkn_flags_08 & 0x02) == 0)
                     && (login_control__State == 5))
                 {
                     login_control__TechLevel--;
@@ -270,7 +270,7 @@ void show_net_benefits_sub4(struct ScreenBox *box)
             if (mouse_down_over_box(&box2))
             {
                 lbDisplay.LeftButton = 0;
-                if (is_unkn_current_player() && ((unkn_flags_08 & 2) == 0)
+                if (is_unkn_current_player() && ((unkn_flags_08 & 0x02) == 0)
                     && (login_control__State == 5))
                 {
                     login_control__TechLevel++;
@@ -319,7 +319,7 @@ void show_net_benefits_sub5(short x0, short y0, TbPixel *colours)
             if (lbDisplay.LeftButton)
             {
                 lbDisplay.LeftButton = 0;
-                if (is_unkn_current_player() && ((unkn_flags_08 & 1) == 0)
+                if (is_unkn_current_player() && ((unkn_flags_08 & 0x01) == 0)
                   && (login_control__State == 5))
                 {
                     login_control__Money = dword_155750[i];
@@ -357,7 +357,7 @@ void show_net_benefits_sub6(struct ScreenBox *box)
             if (mouse_down_over_box(&box1))
             {
                 lbDisplay.LeftButton = 0;
-                if (is_unkn_current_player() && ((unkn_flags_08 & 1) == 0)
+                if (is_unkn_current_player() && ((unkn_flags_08 & 0x01) == 0)
                     && (login_control__State == 5))
                 {
                     sub_CCE8C(-1);
@@ -383,7 +383,7 @@ void show_net_benefits_sub7(struct ScreenBox *box)
             if (mouse_down_over_box(&box2))
             {
                 lbDisplay.LeftButton = 0;
-                if (is_unkn_current_player() && ((unkn_flags_08 & 1) == 0)
+                if (is_unkn_current_player() && ((unkn_flags_08 & 0x01) == 0)
                     && (login_control__State == 5))
                 {
                     sub_CCE8C(1);

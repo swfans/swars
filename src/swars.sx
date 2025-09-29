@@ -29394,7 +29394,7 @@ GLOBAL_FUNC(ASM_set_person_dead)	/* 0x0480DC */
 		jne    jump_4831d
 		cmpb   $0x0,in_network_game
 		jne    jump_48360
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -30505,7 +30505,7 @@ func_48fec:
 /*----------------------------------------------------------------*/
 func_4904e:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -30516,7 +30516,7 @@ func_4904e:
 /*----------------------------------------------------------------*/
 func_4906d:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -30527,7 +30527,7 @@ func_4906d:
 /*----------------------------------------------------------------*/
 func_4908c:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -31150,7 +31150,7 @@ GLOBAL_FUNC(ASM_person_hit_razor_wire)	/* 0x049294 */
 /*----------------------------------------------------------------*/
 func_4974d:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -31168,7 +31168,7 @@ func_4974d:
 /*----------------------------------------------------------------*/
 func_49775:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -31186,7 +31186,7 @@ func_49775:
 /*----------------------------------------------------------------*/
 func_4979d:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -54956,7 +54956,7 @@ GLOBAL_FUNC(ASM_person_hit_by_car)	/* 0x05AA3C */
 		je     jump_5ad4e
 		cmpb   $0x0,in_network_game
 		jne    jump_5abd1
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -54989,7 +54989,7 @@ GLOBAL_FUNC(ASM_person_hit_by_car)	/* 0x05AA3C */
 /*----------------------------------------------------------------*/
 func_5ac26:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -55005,7 +55005,7 @@ func_5ac26:
 /*----------------------------------------------------------------*/
 func_5ac57:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -55016,7 +55016,7 @@ func_5ac57:
 /*----------------------------------------------------------------*/
 func_5ac76:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -64859,7 +64859,7 @@ do_shockwave_person:	/* 0x062F0C */
 /*----------------------------------------------------------------*/
 func_62ff6:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -64870,7 +64870,7 @@ func_62ff6:
 /*----------------------------------------------------------------*/
 func_63015:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -64881,7 +64881,7 @@ func_63015:
 /*----------------------------------------------------------------*/
 func_63034:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -76432,7 +76432,7 @@ stop_being_persuaded:	/* 0x06D3D8 */
 /*----------------------------------------------------------------*/
 func_6d505:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -76442,7 +76442,7 @@ func_6d505:
 /*----------------------------------------------------------------*/
 func_6d51e:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -76458,7 +76458,7 @@ func_6d51e:
 /*----------------------------------------------------------------*/
 func_6d53e:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -76474,7 +76474,7 @@ func_6d53e:
 /*----------------------------------------------------------------*/
 func_6d55e:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -79365,7 +79365,7 @@ clear_mission_status:	/* 0x074C4C */
 	jump_74c7b:
 		test   %edx,%edx
 		jne    jump_74cd6
-		mov    old_mission_brief,%eax
+		mov    EXPORT_SYMBOL(open_brief)-2,%eax
 		sar    $0x10,%eax
 		lea    0x0(,%eax,4),%edx
 		add    %eax,%edx
@@ -112998,7 +112998,7 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		xor    %bl,%bl
 		mov    %bl,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
 		mov    0x44(%esp),%al
-		mov    %al,research_selected_wep
+		mov    %al,EXPORT_SYMBOL(research_selected_wep)
 		mov    data_1c5283,%eax
 		mov    0x44(%esp),%esi
 		sar    $0x18,%eax
@@ -113123,7 +113123,7 @@ GLOBAL_FUNC(ASM_show_unkn21_box)	/* 0x0930DC */
 		xor    %ah,%ah
 		mov    %ah,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
 		mov    0x44(%esp),%al
-		mov    %al,research_selected_mod
+		mov    %al,EXPORT_SYMBOL(research_selected_mod)
 		mov    data_1c5284,%eax
 		mov    0x44(%esp),%edx
 		sar    $0x18,%eax
@@ -117267,7 +117267,7 @@ GLOBAL_FUNC(ASM_show_brief_netscan_box)	/* 0x099AC8 */
 		push   %ebp
 		sub    $0x10,%esp
 		mov    %eax,(%esp)
-		mov    old_mission_brief,%eax
+		mov    EXPORT_SYMBOL(open_brief)-2,%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
 		jge    jump_99b2d
@@ -117331,7 +117331,7 @@ GLOBAL_FUNC(ASM_show_brief_netscan_box)	/* 0x099AC8 */
 		movb   $0x57,EXPORT_SYMBOL(lbDisplay)+113 # lbDisplay.DrawColour
 		xor    %edx,%edx
 		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		mov    research_selected_mod,%edx
+		mov    EXPORT_SYMBOL(selected_city_id)-3,%edx
 		sar    $0x18,%edx
 		cmp    $0xffffffff,%edx
 		je     jump_99e78
@@ -117349,7 +117349,7 @@ GLOBAL_FUNC(ASM_show_brief_netscan_box)	/* 0x099AC8 */
 		add    %eax,%edi
 	jump_99bec:
 		mov    %bx,0x4(%esp)
-		mov    research_selected_mod,%eax
+		mov    EXPORT_SYMBOL(selected_city_id)-3,%eax
 		sar    $0x18,%eax
 		imul   $0x28,%eax,%eax
 		mov    data_1c52c0(%eax),%edx
@@ -117485,7 +117485,7 @@ GLOBAL_FUNC(ASM_show_brief_netscan_box)	/* 0x099AC8 */
 		mov    %ebx,ingame__Scanner__BigBlip_0__Z-0x0c(%eax)
 		jmp    jump_99d36
 	jump_99dbc:
-		mov    EXPORT_SYMBOL(research_on_weapons),%edx
+		mov    EXPORT_SYMBOL(selected_netscan_objective)-3,%edx
 		mov    0x2(%esp),%eax
 		sar    $0x18,%edx
 		sar    $0x10,%eax
@@ -117524,7 +117524,7 @@ GLOBAL_FUNC(ASM_show_brief_netscan_box)	/* 0x099AC8 */
 		cmp    %edx,%ebx
 		jl     jump_99bd0
 	jump_99e46:
-		mov    research_selected_mod,%edx
+		mov    EXPORT_SYMBOL(selected_city_id)-3,%edx
 		sar    $0x18,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -158109,7 +158109,7 @@ process_drift_smoke:	/* 0x0C71CC */
 /*----------------------------------------------------------------*/
 func_c753e:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -158125,7 +158125,7 @@ func_c753e:
 /*----------------------------------------------------------------*/
 func_c7560:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -158141,7 +158141,7 @@ func_c7560:
 /*----------------------------------------------------------------*/
 func_c7582:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -158446,7 +158446,7 @@ process_napalm_flame:	/* 0x0C7678 */
 /*----------------------------------------------------------------*/
 func_c790c:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -158457,7 +158457,7 @@ func_c790c:
 /*----------------------------------------------------------------*/
 func_c792b:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -158468,7 +158468,7 @@ func_c792b:
 /*----------------------------------------------------------------*/
 func_c794a:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -158713,7 +158713,7 @@ process_flame1:	/* 0x0C7A80 */
 /*----------------------------------------------------------------*/
 func_c7c18:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -158724,7 +158724,7 @@ func_c7c18:
 /*----------------------------------------------------------------*/
 func_c7c37:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -158735,7 +158735,7 @@ func_c7c37:
 /*----------------------------------------------------------------*/
 func_c7c56:
 /*----------------------------------------------------------------*/
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -166777,7 +166777,7 @@ GLOBAL_FUNC(ASM_update_mission_time)	/* 0x0CFD88 */
 		sar    $0x1f,%edx
 		idiv   %ebx
 		mov    %edx,%ecx
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%ebx
 		add    %edx,%ebx
@@ -166803,7 +166803,7 @@ GLOBAL_FUNC(ASM_update_mission_time)	/* 0x0CFD88 */
 		inc    %edx
 		mov    mission_status(%ebx),%ecx
 		add    %edx,%ecx
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		mov    %ecx,mission_status(%ebx)
 		lea    0x0(,%edx,4),%ebx
@@ -166818,7 +166818,7 @@ GLOBAL_FUNC(ASM_update_mission_time)	/* 0x0CFD88 */
 		shl    $0x3,%ebx
 		mov    data_19982c(%ebx),%esi
 		add    %edx,%esi
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -166833,7 +166833,7 @@ GLOBAL_FUNC(ASM_update_mission_time)	/* 0x0CFD88 */
 		mov    %ebp,mission_status(%eax)
 		mov    %edx,data_19982c(%eax)
 	jump_cfe9d:
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -166855,7 +166855,7 @@ GLOBAL_FUNC(ASM_update_mission_time)	/* 0x0CFD88 */
 		mov    %edi,data_199830(%eax)
 		mov    %ebp,data_199834(%eax)
 	jump_cfefb:
-		mov    old_mission_brief,%edx
+		mov    EXPORT_SYMBOL(open_brief)-2,%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -167901,8 +167901,8 @@ GLOBAL_FUNC(ASM_init_variables)	/* 0x0D0B9C */
 		mov    %ah,selected_mod
 		mov    %bl,selected_agent
 		mov    %ah,%cl
-		mov    %ah,research_selected_wep
-		mov    %ah,research_selected_mod
+		mov    %ah,EXPORT_SYMBOL(research_selected_wep)
+		mov    %ah,EXPORT_SYMBOL(research_selected_mod)
 		mov    %ah,unkn_city_no
 		mov    %dx,EXPORT_SYMBOL(word_1C6E0A)
 		mov    $0x1,%ah
@@ -167936,15 +167936,15 @@ GLOBAL_FUNC(ASM_init_variables)	/* 0x0D0B9C */
 		mov    %si,next_brief
 		mov    %di,EXPORT_SYMBOL(word_1C6F3E)
 		mov    %ax,EXPORT_SYMBOL(word_1C6F40)
-		mov    %si,data_1c6f48
+		mov    %si,EXPORT_SYMBOL(word_1C6F48)
 		xor    %dl,%dl
 		mov    $0x6,%bh
 		mov    $0xffffffff,%edi
 		mov    $0x1,%eax
-		mov    %dx,old_mission_brief
+		mov    %dx,EXPORT_SYMBOL(old_mission_brief)
 		xor    %ch,%ch
 		mov    %bh,data_1c6df3
-		mov    %di,data_15518a
+		mov    %di,EXPORT_SYMBOL(word_15518A)
 		mov    %ax,ingame__MissionStatus
 		xor    %cl,%cl
 		mov    starting_cash_amounts,%eax
@@ -168369,7 +168369,7 @@ GLOBAL_FUNC(ASM_show_world_city_info_box)	/* 0x0D2A84 */
 		push   %ebp
 		sub    $0xc,%esp
 		mov    %eax,(%esp)
-		mov    research_selected_wep,%eax
+		mov    EXPORT_SYMBOL(unkn_city_no)-3,%eax
 		sar    $0x18,%eax
 		cmp    $0xffffffff,%eax
 		je     jump_d2d1e
@@ -168408,7 +168408,7 @@ GLOBAL_FUNC(ASM_show_world_city_info_box)	/* 0x0D2A84 */
 		xor    %esi,%esi
 		jmp    jump_d2b3c
 	jump_d2b05:
-		mov    research_selected_wep,%edx
+		mov    EXPORT_SYMBOL(unkn_city_no)-3,%edx
 		sar    $0x18,%edx
 		imul   $0x28,%edx,%ebx
 		lea    0x0(,%eax,2),%edx
@@ -168494,7 +168494,7 @@ GLOBAL_FUNC(ASM_show_world_city_info_box)	/* 0x0D2A84 */
 		mov    0x8(%esp),%eax
 		xor    %ecx,%ecx
 		mov    0xa(%eax),%cl
-		mov    research_selected_wep,%eax
+		mov    EXPORT_SYMBOL(unkn_city_no)-3,%eax
 		sar    $0x18,%eax
 		imul   $0x28,%eax,%eax
 		xor    %edx,%edx
@@ -168506,7 +168506,7 @@ GLOBAL_FUNC(ASM_show_world_city_info_box)	/* 0x0D2A84 */
 		add    %eax,%ebx
 		xor    %eax,%eax
 		call   ac_flashy_draw_text
-		mov    research_selected_wep,%eax
+		mov    EXPORT_SYMBOL(unkn_city_no)-3,%eax
 		sar    $0x18,%eax
 		imul   $0x28,%eax,%eax
 		mov    data_1c52c4(%eax,%ebp,1),%ax
@@ -169206,7 +169206,7 @@ GLOBAL_FUNC(ASM_do_unkn8_EJECT)	/* 0x0D3388 */
 GLOBAL_FUNC(ASM_accept_mission)	/* 0x0D33B8 */
 /*----------------------------------------------------------------*/
 		push   %edx
-		mov    old_mission_brief,%eax
+		mov    EXPORT_SYMBOL(open_brief)-2,%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
 		jle    jump_d33e1
@@ -169215,7 +169215,7 @@ GLOBAL_FUNC(ASM_accept_mission)	/* 0x0D33B8 */
 		mov    %ah,change_screen
 		mov    open_brief,%ax
 		mov    %dl,map_from_mission
-		mov    %ax,old_mission_brief
+		mov    %ax,EXPORT_SYMBOL(old_mission_brief)
 	jump_d33e1:
 		mov    $0x1,%al
 		pop    %edx
@@ -169240,7 +169240,7 @@ GLOBAL_FUNC(ASM_do_unkn2_ACCEPT)	/* 0x0D3400 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
-		mov    research_selected_wep,%eax
+		mov    EXPORT_SYMBOL(unkn_city_no)-3,%eax
 		sar    $0x18,%eax
 		cmp    $0xffffffff,%eax
 		je     jump_d3456
@@ -171352,11 +171352,11 @@ GLOBAL_FUNC (ASM_do_research_submit)	/* 0x0D56D0 */
 		cmp    $0xffffffff,%eax
 		je     jump_d577b
 		mov    $0xff,%bl
-		mov    research_selected_wep,%al
+		mov    EXPORT_SYMBOL(research_selected_wep),%al
 		mov    $EXPORT_SYMBOL(research_curr_wep_date),%edi
 		mov    $global_date,%esi
 		mov    %al,data_1c5286
-		mov    %bl,research_selected_wep
+		mov    %bl,EXPORT_SYMBOL(research_selected_wep)
 		movsl  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
 		mov    $ASM_do_research_suspend,%ebx
@@ -171376,11 +171376,11 @@ GLOBAL_FUNC (ASM_do_research_submit)	/* 0x0D56D0 */
 		cmp    $0xffffffff,%eax
 		je     jump_d577b
 		mov    $0xff,%dl
-		mov    research_selected_mod,%al
+		mov    EXPORT_SYMBOL(research_selected_mod),%al
 		mov    $EXPORT_SYMBOL(research_curr_mod_date),%edi
 		mov    $global_date,%esi
 		mov    %al,data_1c5287
-		mov    %dl,research_selected_mod
+		mov    %dl,EXPORT_SYMBOL(research_selected_mod)
 		movsl  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
 		mov    $ASM_do_research_suspend,%edx
@@ -171469,8 +171469,8 @@ GLOBAL_FUNC(ASM_do_unkn12_WEAPONS_MODS)	/* 0x0D57B8 */
 	jump_d5844:
 		mov    %eax,EXPORT_SYMBOL(research_submit_button)+0x08
 		mov    $0xff,%dl
-		mov    %dl,research_selected_mod
-		mov    %dl,research_selected_wep
+		mov    %dl,EXPORT_SYMBOL(research_selected_mod)
+		mov    %dl,EXPORT_SYMBOL(research_selected_wep)
 		xor    %edx,%edx
 		mov    $0x1,%al
 		mov    %dx,EXPORT_SYMBOL(research_unkn21_box)+0x16
@@ -183411,7 +183411,7 @@ GLOBAL (byte_155181)	/* 0x155181 */
 		.ascii  "\x6f\x41\x69\xa2\xec\xfd\xfe\x57"
 GLOBAL (byte_155189)
 		.byte	0xf7
-data_15518a:
+GLOBAL (word_15518A)	/* 0x15518A */
 		.ascii  "\xff\xff"
 
 GLOBAL (save_slot)	/* 0x1551D8 */
@@ -186465,7 +186465,7 @@ GLOBAL (open_brief)	/* 0x1C6F44 */
 		.short  0x0
 GLOBAL (next_ref)	/* 0x1C6F46 */
 		.short  0x0
-data_1c6f48:
+GLOBAL (word_1C6F48)	/* 0x1C6F48 */
 		.short  0x0
 GLOBAL (edit_flag)	/* 0x1C6F4A */
 		.byte	0x0

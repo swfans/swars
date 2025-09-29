@@ -1718,6 +1718,12 @@ void init_cryo_screen_boxes(void)
     // No need to update equip_cost_box - that is done in switch_shared_equip_screen_buttons_to_cybmod()
 }
 
+void reset_cryo_screen_player_state(void)
+{
+    selected_mod = -1;
+    selected_agent = 0;
+}
+
 void switch_shared_equip_screen_buttons_to_cybmod(void)
 {
     short space_w, space_h;
