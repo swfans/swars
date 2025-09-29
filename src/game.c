@@ -3863,10 +3863,10 @@ ubyte goto_savegame(ubyte click)
     update_sys_scr_shared_header(game_system_screen);
     ingame.Flags &= ~GamF_MortalGame;
 
-    reset_mission_agents();
     load_city_data(0);
     init_weapon_text();
     load_city_txt();
+    reset_mission_agents();
     init_variables();
     srm_reset_research();
     init_agents();
@@ -4568,17 +4568,17 @@ void campaign_new_game_prepare(void)
     screentype = SCRT_99;
     game_system_screen = SySc_NONE;
 
-    reset_mission_agents();
-    load_city_data(0);
-    init_weapon_text();
-    load_city_txt();
-    init_variables();
-    srm_reset_research();
-    init_agents();
-
     load_missions(background_type);
     clear_mission_state_slots();
     load_objectives_text();
+
+    load_city_data(0);
+    init_weapon_text();
+    load_city_txt();
+    reset_mission_agents();
+    init_variables();
+    srm_reset_research();
+    init_agents();
 
     {
         open_new_mission(p_campgn->FirstTrigger);
@@ -5433,14 +5433,15 @@ void show_menu_screen_st0(void)
     global_date.Year = 74;
     global_date.Month = 6;
 
-    reset_mission_agents();
     debug_trace_place(17);
     init_menu_screen_colors_and_sprites();
 
     debug_trace_place(18);
     init_screen_boxes();
+
     load_city_data(0);
     load_city_txt();
+    reset_mission_agents();
 
     debug_trace_place(19);
     if (in_network_game)
