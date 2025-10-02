@@ -14365,14 +14365,14 @@ GLOBAL_FUNC (ASM_do_rotate_map)	/* 0x036480 */
 		test   %edx,%edx
 		jne    jump_365ff
 		mov    EXPORT_SYMBOL(jskeys)+6,%dx
-		mov    joy_Buttons,%esi
+		mov    EXPORT_SYMBOL(joy)+0x900,%esi # joy.Buttons
 		and    %edx,%esi
 		cmp    %edx,%esi
 		jne    jump_365e9
 		inc    %eax
 	jump_365e9:
 		xor    %edx,%edx
-		mov    joy_Buttons,%esi
+		mov    EXPORT_SYMBOL(joy)+0x900,%esi # joy.Buttons
 		mov    EXPORT_SYMBOL(jskeys)+8,%dx
 		and    %edx,%esi
 		cmp    %edx,%esi
@@ -18293,7 +18293,7 @@ GLOBAL_FUNC (ASM_joy_input)	/* 0x3DC68 */
 		push   %esi
 		push   %edi
 		push   %ebp
-		mov    $joy_Yaw,%eax
+		mov    $EXPORT_SYMBOL(joy)+0,%eax # joy.Yaw
 		xor    %edx,%edx
 		call   ac_joy_func_065
 		mov    EXPORT_SYMBOL(local_player_no),%dl
@@ -18312,29 +18312,29 @@ GLOBAL_FUNC (ASM_joy_input)	/* 0x3DC68 */
 		cmp    $0x37,%eax
 		jne    jump_3dd15
 	jump_3dcad:
-		mov    joy_NumberOfDevices,%ecx
+		mov    EXPORT_SYMBOL(joy)+0x0a04,%ecx # joy.NumberOfDevices
 		xor    %edx,%edx
 		xor    %ebx,%ebx
 		test   %ecx,%ecx
 		jle    jump_3dd6c
 		xor    %eax,%eax
 	jump_3dcc1:
-		cmpb   $0x0,joy_Init(%edx)
+		cmpb   $0x0,EXPORT_SYMBOL(joy)+0x0a48(%edx) # joy.Init
 		je     jump_3dd05
-		mov    joy_Buttons,%esi
-		mov    joy_Buttons(%eax),%ecx
+		mov    EXPORT_SYMBOL(joy)+0x900,%esi # joy.Buttons
+		mov    EXPORT_SYMBOL(joy)+0x900(%eax),%ecx # joy.Buttons
 		or     %ecx,%esi
-		mov    %esi,joy_Buttons
-		mov    joy_DigitalX,%edi
-		mov    joy_DigitalX(%eax),%ecx
+		mov    %esi,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
+		mov    EXPORT_SYMBOL(joy)+0x240,%edi # joy.DigitalX[edi]
+		mov    EXPORT_SYMBOL(joy)+0x240(%eax),%ecx # joy.DigitalX[eax]
 		or     %ecx,%edi
-		mov    %edi,joy_DigitalX
-		mov    joy_DigitalY,%ebp
-		or     joy_DigitalY(%eax),%ebp
+		mov    %edi,EXPORT_SYMBOL(joy)+0x240 # joy.DigitalX
+		mov    EXPORT_SYMBOL(joy)+0x280,%ebp # joy.DigitalY
+		or     EXPORT_SYMBOL(joy)+0x280(%eax),%ebp # joy.DigitalY
 		inc    %ebx
-		mov    %ebp,joy_DigitalY
+		mov    %ebp,EXPORT_SYMBOL(joy)+0x280 # joy.DigitalY
 	jump_3dd05:
-		mov    joy_NumberOfDevices,%ecx
+		mov    EXPORT_SYMBOL(joy)+0x0a04,%ecx # joy.NumberOfDevices
 		add    $0x4,%eax
 		inc    %edx
 		cmp    %ecx,%ebx
@@ -18343,28 +18343,28 @@ GLOBAL_FUNC (ASM_joy_input)	/* 0x3DC68 */
 	jump_3dd15:
 		cmp    $0x32,%eax
 		jne    jump_3dd6c
-		mov    joy_NumberOfDevices,%ebx
+		mov    EXPORT_SYMBOL(joy)+0x0a04,%ebx # joy.NumberOfDevices
 		xor    %edx,%edx
 		xor    %eax,%eax
 		test   %ebx,%ebx
 		jle    jump_3dd6c
 		xor    %ebx,%ebx
 	jump_3dd2a:
-		cmpb   $0x0,joy_Init(%edx)
+		cmpb   $0x0,EXPORT_SYMBOL(joy)+0x0a48(%edx) # joy.Init
 		je     jump_3dd5e
 		xor    %esi,%esi
 		xor    %ecx,%ecx
 		mov    EXPORT_SYMBOL(jskeys)+6,%si
 		mov    EXPORT_SYMBOL(jskeys)+8,%cx
-		mov    joy_Buttons(%ebx),%edi
+		mov    EXPORT_SYMBOL(joy)+0x900(%ebx),%edi # joy.Buttons
 		or     %esi,%ecx
-		mov    joy_Buttons,%ebp
+		mov    EXPORT_SYMBOL(joy)+0x900,%ebp # joy.Buttons
 		and    %edi,%ecx
 		or     %ecx,%ebp
 		inc    %eax
-		mov    %ebp,joy_Buttons
+		mov    %ebp,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 	jump_3dd5e:
-		mov    joy_NumberOfDevices,%esi
+		mov    EXPORT_SYMBOL(joy)+0x0a04,%esi # joy.NumberOfDevices
 		add    $0x4,%ebx
 		inc    %edx
 		cmp    %esi,%eax
@@ -114060,7 +114060,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		jg     jump_94c94
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		jne    jump_94c4f
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		jne    jump_94c4f
 		jmp    jump_94c63
 	jump_94bab:
@@ -114192,7 +114192,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		jg     jump_94e32
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		jne    jump_94e14
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		jne    jump_94e14
 		jmp    jump_94e29
 	jump_94d71:
@@ -117952,13 +117952,13 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		je     jump_9c01d
 		cmpb   $0x0,EXPORT_SYMBOL(ctl_joystick_type)
 		je     jump_9bfaa
-		mov    $joy_Yaw,%eax
+		mov    $EXPORT_SYMBOL(joy)+0,%eax # joy.Yaw
 		call   ac_joy_func_066
 	jump_9bfaa:
 		xor    %cl,%cl
 		mov    %cl,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
 		mov    $0xff,%al
-		mov    $joy_Yaw,%esi
+		mov    $EXPORT_SYMBOL(joy)+0,%esi # joy.Yaw
 		mov    EXPORT_SYMBOL(ctl_joystick_type),%cl
 		mov    $0x1,%ebx
 	jump_9bfc4:
@@ -118221,7 +118221,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		dec    %edx
 		cmp    %edx,%ecx
 		jge    jump_9c2f6
-		cmpb   $0x0,joy_Init(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(joy)+0x0a48(%eax) # joy.Init
 		je     jump_9c2f3
 		inc    %ecx
 	jump_9c2f3:
@@ -118365,7 +118365,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		imul   $0x1aa,%eax,%eax
 		add    0x3c(%esp),%eax
 		xor    %ebx,%ebx
-		mov    joy_NumberOfDevices,%edx
+		mov    EXPORT_SYMBOL(joy)+0x0a04,%edx # joy.NumberOfDevices
 		mov    EXPORT_SYMBOL(players)+0x01e(%eax),%bx # players[0].UserInput[0].ControlMode
 		inc    %edx
 		cmp    %edx,%ebx
@@ -118487,7 +118487,7 @@ func_9d2d3:
 		pop    %ebx
 		ret
 	jump_9d2f4:
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_9d2c7
 		inc    %al
 		mov    %al,net_unkn_pos_02
@@ -118506,7 +118506,7 @@ func_9d2d3:
 func_9d310:
 /*----------------------------------------------------------------*/
 		movb   $0x1,show_alert
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		jne    jump_9d2c7
 		mov    EXPORT_SYMBOL(gui_strings)+0x8FC,%ecx
 		push   %ecx
@@ -118546,7 +118546,7 @@ func_9d34e:
 		pop    %ebx
 		ret
 	jump_9d36f:
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_9d2c7
 		inc    %al
 		mov    %al,net_unkn_pos_02
@@ -118565,7 +118565,7 @@ func_9d34e:
 func_9d38f:
 /*----------------------------------------------------------------*/
 		mov    $0x1,%ah
-		mov    joy_Buttons,%edi
+		mov    EXPORT_SYMBOL(joy)+0x900,%edi # joy.Buttons
 		mov    %ah,show_alert
 		test   %edi,%edi
 		jne    jump_9d2c7
@@ -118607,7 +118607,7 @@ func_9d3d3:
 		pop    %ebx
 		ret
 	jump_9d3f3:
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_9d2c7
 		inc    %al
 		mov    %al,net_unkn_pos_02
@@ -118626,7 +118626,7 @@ func_9d3d3:
 func_9d413:
 /*----------------------------------------------------------------*/
 		mov    $0x1,%bh
-		mov    joy_Buttons,%ecx
+		mov    EXPORT_SYMBOL(joy)+0x900,%ecx # joy.Buttons
 		mov    %bh,show_alert
 		test   %ecx,%ecx
 		jne    jump_9d2c7
@@ -119093,7 +119093,7 @@ GLOBAL_FUNC(ASM_show_purple_apps_selection_bar)	/* 0x9FE28 */
 		movw   $0x4,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		jne    jump_9ff5b
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_9ff7e
 		cmpb   $0x0,net_unkn_pos_02
 		jne    jump_9ff7e
@@ -119141,7 +119141,7 @@ GLOBAL_FUNC(ASM_show_purple_apps_selection_bar)	/* 0x9FE28 */
 	jump_9ffec:
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+107 # lbDisplay.MRightButton
 		jne    jump_a000f
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_a0305
 		cmpb   $0x0,net_unkn_pos_02
 		jne    jump_a0305
@@ -119594,7 +119594,7 @@ func_a0291:
 		movw   $0x4,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		jne    jump_a0670
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_a068e
 		cmpb   $0x0,net_unkn_pos_02
 		jne    jump_a068e
@@ -119890,7 +119890,7 @@ func_a0908:
 	jump_a0a40:
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		jne    jump_a0a63
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_a0b70
 		cmpb   $0x0,net_unkn_pos_02
 		jne    jump_a0b70
@@ -138866,7 +138866,7 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_text_box)	/* 0x0B3DA4 */
 		jge    jump_b4b6d
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		jne    jump_b493c
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_b49ed
 	jump_b493c:
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
@@ -139164,7 +139164,7 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_text_box)	/* 0x0B3DA4 */
 		jge    jump_b4f56
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		jne    jump_b4d30
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_b4de1
 	jump_b4d30:
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
@@ -139381,7 +139381,7 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_text_box)	/* 0x0B3DA4 */
 	jump_b501e:
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		jne    jump_b50e4
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		jne    jump_b50e4
 		andb   $0xf3,0x3d(%esi)
 		jmp    jump_b50e4
@@ -140380,7 +140380,7 @@ GLOBAL_FUNC(ASM_flashy_draw_purple_button)	/* 0x0B59EC */
 	jump_b5caf:
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		jne    jump_b5cc1
-		cmpl   $0x0,joy_Buttons
+		cmpl   $0x0,EXPORT_SYMBOL(joy)+0x900 # joy.Buttons
 		je     jump_b5cdf
 	jump_b5cc1:
 		xor    %bh,%bh
@@ -184339,70 +184339,7 @@ GLOBAL (word_17FA58)	/* 0x17FA58 */
 		.fill   0x320
 /* struct DevInput joy; */
 GLOBAL (joy)	/* 0x17FD78 */
-joy_Yaw:
-		.fill   0x40
-joy_Roll:
-		.fill   0x40
-joy_Pitch:
-		.fill   0x40
-joy_AnalogueX:
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-joy_DigitalX:
-		.fill   0x40
-joy_DigitalY:
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-joy_MinXAxis:
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-joy_MaxXAxis:
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-joy_XCentre:
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-		.fill   0x40
-joy_HatX:
-		.fill   0x40
-joy_HatY:
-		.fill   0x40
-joy_HatMax:
-		.fill   0x40
-joy_Buttons:
-		.fill   0x40
-joy_NumberOfButtons:
-		.fill   0x40
-joy_ConfigType:
-		.fill   0x40
-joy_MenuButtons:
-		.fill   0x40
-joy_Type:
-		.fill   0x4
-joy_NumberOfDevices:
-		.fill   0x4
-joy_DeviceType:
-		.fill   0x40
-joy_Init:
-		.fill   0x14
+		.fill   0x0a5C
 
 
 GLOBAL (ingame)	/* 0x1807D4 */
