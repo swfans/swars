@@ -18720,7 +18720,7 @@ GLOBAL_FUNC (ASM_process_packets)	/* 0x3E728 */
 	jump_3e8a3:
 		mov    $0x37,%esi
 		xor    %edx,%edx
-		mov    %si,ingame__DisplayMode
+		mov    %si,EXPORT_SYMBOL(ingame)+0x002 # ingame.DisplayMode
 		call   ac_StopCD
 		call   ac_StopAllSamples
 		mov    $0x64,%eax
@@ -20457,7 +20457,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    %edi,%eax
 		mov    $0x37,%ebx
 		call   show_message
-		mov    %bx,ingame__DisplayMode
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x002 # ingame.DisplayMode
 		call   ac_StopCD
 		call   ac_StopAllSamples
 	jump_401b9:
@@ -20470,7 +20470,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		xor    %dl,%dl
 		call   show_message
 		mov    %dl,ingame__InNetGame_UNSURE
-		movw   $0x37,ingame__DisplayMode
+		movw   $0x37,EXPORT_SYMBOL(ingame)+0x002 # ingame.DisplayMode
 		call   ac_StopCD
 		call   ac_StopAllSamples
 	jump_401ee:
@@ -78801,9 +78801,9 @@ GLOBAL_FUNC (ASM_init_scanner)	/* 0x0740FC */
 		mov    %esi,ingame__Scanner__Contrast
 		mov    %eax,SCANNER_width
 		xor    %eax,%eax
-		mov    %edi,ingame__Scanner__Zoom
+		mov    %edi,EXPORT_SYMBOL(ingame)+0x024 # ingame.Scanner.Zoom
 		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
-		mov    %edx,ingame__Scanner__Angle
+		mov    %edx,EXPORT_SYMBOL(ingame)+0x028 # ingame.Scanner.Angle
 		cmp    $0x1,%eax
 		je     jump_741e3
 		mov    $0x1,%edi
@@ -78812,17 +78812,17 @@ GLOBAL_FUNC (ASM_init_scanner)	/* 0x0740FC */
 		mov    $0x1cc,%edx
 		mov    $0x81,%ecx
 		xor    %ebx,%ebx
-		mov    %edi,ingame__Scanner__X1 # ingame.Scanner.X1
-		mov    %ebp,ingame__Scanner__Y1
-		mov    %eax,ingame__Scanner__X2
-		mov    %edx,ingame__Scanner__Y2
+		mov    %edi,EXPORT_SYMBOL(ingame)+0x00C # ingame.Scanner.X1
+		mov    %ebp,EXPORT_SYMBOL(ingame)+0x010 # ingame.Scanner.Y1
+		mov    %eax,EXPORT_SYMBOL(ingame)+0x014 # ingame.Scanner.X2
+		mov    %edx,EXPORT_SYMBOL(ingame)+0x018 # ingame.Scanner.Y2
 		jmp    jump_741ab
 	jump_741aa:
 		inc    %ebx
 	jump_741ab:
-		mov    ingame__Scanner__Y1,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x010,%eax # ingame.Scanner.Y1
 		movswl %bx,%edx
-		mov    ingame__Scanner__Y2,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ebp # ingame.Scanner.Y2
 		add    %edx,%eax
 		cmp    %ebp,%eax
 		jg     jump_74245
@@ -78838,18 +78838,18 @@ GLOBAL_FUNC (ASM_init_scanner)	/* 0x0740FC */
 		mov    $0x41,%ecx
 		mov    $0xbd,%esi
 		mov    $0x40,%edi
-		mov    %eax,ingame__Scanner__X1 # ingame.Scanner.X1
-		mov    %ebx,ingame__Scanner__Y1
-		mov    %ecx,ingame__Scanner__X2
-		mov    %esi,ingame__Scanner__Y2
+		mov    %eax,EXPORT_SYMBOL(ingame)+0x00C # ingame.Scanner.X1
+		mov    %ebx,EXPORT_SYMBOL(ingame)+0x010 # ingame.Scanner.Y1
+		mov    %ecx,EXPORT_SYMBOL(ingame)+0x014 # ingame.Scanner.X2
+		mov    %esi,EXPORT_SYMBOL(ingame)+0x018 # ingame.Scanner.Y2
 		xor    %ebx,%ebx
 		jmp    jump_74213
 	jump_74212:
 		inc    %ebx
 	jump_74213:
-		mov    ingame__Scanner__Y1,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
 		movswl %bx,%eax
-		mov    ingame__Scanner__Y2,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ecx # ingame.Scanner.Y2
 		add    %eax,%edx
 		cmp    %ecx,%edx
 		jg     jump_74245
@@ -79983,11 +79983,11 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		mov    %ax,EXPORT_SYMBOL(last_map_for_lights_func_11)
 		call   ac_find_the_tall_buildings
 		xor    %eax,%eax
-		mov    ingame__CDTrack,%al
+		mov    EXPORT_SYMBOL(ingame)+0x007,%al # ingame.CDTrack
 		xor    %edx,%edx
 		call   ac_PlayCDTrack
 		xor    %eax,%eax
-		mov    ingame__DangerTrack,%al
+		mov    EXPORT_SYMBOL(ingame)+0x008,%al # ingame.DangerTrack
 		call   ac_StartMusic
 		pop    %edi
 		pop    %esi
@@ -129482,7 +129482,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		call   ac_LbDrawPixel
 		jmp    jump_acc27
 	jump_acac5:
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		inc    %eax
 		cmp    %eax,%ecx
 		jle    jump_acaf5
@@ -129500,7 +129500,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		mov    %edi,%eax
 		call   ac_LbDrawPixel
 	jump_acaf5:
-		mov    ingame__Scanner__Y2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x018,%eax # ingame.Scanner.Y2
 		sub    $0x2,%eax
 		cmp    %eax,%esi
 		jge    jump_acb2c
@@ -129519,15 +129519,15 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		mov    %edi,%edx
 		call   ac_LbDrawPixel
 	jump_acb2c:
-		mov    ingame__Scanner__Y1,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
 		mov    %esi,%edx
 		sub    %ebx,%edx
 		shl    $0x2,%edx
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		add    ingame__Scanner__Width(%edx),%eax
 		cmp    %eax,%ecx
 		jge    jump_acb87
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		add    ingame__Scanner__Brightness(%edx),%eax
 		cmp    %eax,%ecx
 		jge    jump_acb68
@@ -129548,14 +129548,14 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		mov    %edi,%eax
 		call   ac_LbDrawPixel
 	jump_acb87:
-		mov    ingame__Scanner__Y1,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x010,%eax # ingame.Scanner.Y1
 		inc    %eax
 		cmp    %eax,%esi
 		jle    jump_acc27
-		mov    ingame__Scanner__Y1,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x010,%eax # ingame.Scanner.Y1
 		mov    %esi,%edx
 		sub    %eax,%edx
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		add    ingame__Scanner__Contrast(,%edx,4),%eax
 		add    $0x2,%eax
 		cmp    %eax,%ecx
@@ -129566,10 +129566,10 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		mov    0x4(%esp),%bl
 		call   ac_LbDrawPixel
 	jump_acbc2:
-		mov    ingame__Scanner__Y1,%edi
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edi # ingame.Scanner.Y1
 		mov    %esi,%edx
 		sub    %edi,%edx
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		add    ingame__Scanner__Contrast(,%edx,4),%eax
 		inc    %eax
 		cmp    %eax,%ecx
@@ -129580,10 +129580,10 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		mov    0x4(%esp),%bl
 		call   ac_LbDrawPixel
 	jump_acbed:
-		mov    ingame__Scanner__Y1,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x010,%eax # ingame.Scanner.Y1
 		mov    %esi,%edx
 		sub    %eax,%edx
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		add    ingame__Scanner__Contrast(,%edx,4),%eax
 		cmp    %eax,%ecx
 		jge    jump_acc27
@@ -129621,11 +129621,11 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    %eax,%esi
 		mov    %edx,%ecx
 		mov    %bl,(%esp)
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		add    $0x2,%eax
 		cmp    %eax,%esi
 		jle    jump_acc88
-		cmp    ingame__Scanner__Y1,%ecx
+		cmp    EXPORT_SYMBOL(ingame)+0x010,%ecx # ingame.Scanner.Y1
 		jle    jump_acc62
 		lea    -0x2(%ecx),%edx
 		xor    %ebx,%ebx
@@ -129639,18 +129639,18 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    %ebp,%ebx
 		mov    %edi,%eax
 		call   ac_LbDrawPixel
-		cmp    ingame__Scanner__Y2,%ecx
+		cmp    EXPORT_SYMBOL(ingame)+0x018,%ecx # ingame.Scanner.Y2
 		jge    jump_acc88
 		lea    0x2(%ecx),%edx
 		mov    %ebp,%ebx
 		mov    %edi,%eax
 		call   ac_LbDrawPixel
 	jump_acc88:
-		mov    ingame__Scanner__Y2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x018,%eax # ingame.Scanner.Y2
 		sub    $0x2,%eax
 		cmp    %eax,%ecx
 		jge    jump_accea
-		cmp    ingame__Scanner__X1,%esi # ingame.Scanner.X1
+		cmp    EXPORT_SYMBOL(ingame)+0x00C,%esi # ingame.Scanner.X1
 		jle    jump_accac
 		lea    0x3(%ecx),%edx
 		xor    %ebx,%ebx
@@ -129664,11 +129664,11 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    %ebp,%ebx
 		mov    %edi,%edx
 		call   ac_LbDrawPixel
-		mov    ingame__Scanner__Y1,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
 		mov    %ecx,%eax
 		sub    %edx,%eax
 		lea    0x0(,%eax,4),%edx
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		add    ingame__Scanner__Width+0x0C(%edx),%eax
 		cmp    %eax,%esi
 		jge    jump_accea
@@ -129677,20 +129677,20 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    %edi,%edx
 		call   ac_LbDrawPixel
 	jump_accea:
-		mov    ingame__Scanner__Y1,%edi
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edi # ingame.Scanner.Y1
 		mov    %ecx,%eax
 		sub    %edi,%eax
 		shl    $0x2,%eax
-		mov    ingame__Scanner__X1,%edi # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
 		add    ingame__Scanner__Width(%eax),%edi
 		dec    %edi
 		cmp    %edi,%esi
 		jge    jump_acd61
-		mov    ingame__Scanner__Y1,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
 		inc    %edx
 		cmp    %edx,%ecx
 		jle    jump_acd36
-		mov    ingame__Scanner__X1,%edi # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
 		add    ingame__Scanner__Contrast(%eax),%edi
 		lea    -0x2(%edi),%eax
 		cmp    %eax,%esi
@@ -129701,10 +129701,10 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    (%esp),%bl
 		call   ac_LbDrawPixel
 	jump_acd36:
-		mov    ingame__Scanner__Y1,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
 		mov    %ecx,%eax
 		sub    %ebx,%eax
-		mov    ingame__Scanner__X1,%edi # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
 		add    ingame__Scanner__Width(,%eax,4),%edi
 		dec    %edi
 		cmp    %edi,%esi
@@ -129715,12 +129715,12 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    (%esp),%bl
 		call   ac_LbDrawPixel
 	jump_acd61:
-		cmp    ingame__Scanner__Y2,%ecx
+		cmp    EXPORT_SYMBOL(ingame)+0x018,%ecx # ingame.Scanner.Y2
 		jge    jump_acd95
-		mov    ingame__Scanner__Y1,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
 		mov    %ecx,%eax
 		sub    %edx,%eax
-		mov    ingame__Scanner__X1,%edi # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
 		add    ingame__Scanner__Width+0x08(,%eax,4),%edi
 		dec    %edi
 		cmp    %edi,%esi
@@ -129731,11 +129731,11 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    (%esp),%bl
 		call   ac_LbDrawPixel
 	jump_acd95:
-		mov    ingame__Scanner__Y1,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x010,%eax # ingame.Scanner.Y1
 		add    $0x2,%eax
 		cmp    %eax,%ecx
 		jle    jump_ace0e
-		cmp    ingame__Scanner__X1,%esi # ingame.Scanner.X1
+		cmp    EXPORT_SYMBOL(ingame)+0x00C,%esi # ingame.Scanner.X1
 		jle    jump_acdb9
 		lea    -0x3(%ecx),%edx
 		xor    %ebx,%ebx
@@ -129743,11 +129743,11 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    (%esp),%bl
 		call   ac_LbDrawPixel
 	jump_acdb9:
-		mov    ingame__Scanner__Y1,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebp # ingame.Scanner.Y1
 		mov    %ecx,%eax
 		sub    %ebp,%eax
-		mov    ingame__Scanner__X1,%edi # ingame.Scanner.X1
-		add    ingame__Scanner__Angle(,%eax,4),%edi
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
+		add    EXPORT_SYMBOL(ingame)+0x028(,%eax,4),%edi # ingame.Scanner.Angle
 		cmp    %edi,%esi
 		jg     jump_acde3
 		lea    -0x3(%ecx),%edx
@@ -129756,11 +129756,11 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    (%esp),%bl
 		call   ac_LbDrawPixel
 	jump_acde3:
-		mov    ingame__Scanner__Y1,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
 		mov    %ecx,%eax
 		sub    %ebx,%eax
-		mov    ingame__Scanner__X1,%edi # ingame.Scanner.X1
-		add    ingame__Scanner__Angle(,%eax,4),%edi
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
+		add    EXPORT_SYMBOL(ingame)+0x028(,%eax,4),%edi # ingame.Scanner.Angle
 		cmp    %edi,%esi
 		jge    jump_ace0e
 		lea    -0x3(%ecx),%edx
@@ -129894,21 +129894,21 @@ GLOBAL_FUNC(ASM_SCANNER_find_position)	/* 0x0AD188 */
 		sub    $0x34,%esp
 		mov    %eax,%esi
 		mov    %edx,%edi
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		mov    %eax,0x10(%esp)
-		mov    ingame__Scanner__Y1,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x010,%eax # ingame.Scanner.Y1
 		mov    %eax,0x14(%esp)
-		mov    ingame__Scanner__X2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x014,%eax # ingame.Scanner.X2
 		mov    %eax,0x18(%esp)
-		mov    ingame__Scanner__Y2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x018,%eax # ingame.Scanner.Y2
 		mov    %eax,0x1c(%esp)
-		mov    ingame__Scanner__MZ,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x020,%eax # ingame.Scanner.MZ
 		mov    %eax,0x20(%esp)
-		mov    ingame__Scanner__MX,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x01C,%eax # ingame.Scanner.MX
 		mov    %eax,0x24(%esp)
-		mov    ingame__Scanner__Zoom,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x024,%eax # ingame.Scanner.Zoom
 		mov    %eax,0x28(%esp)
-		mov    ingame__Scanner__Angle,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x028,%edx # ingame.Scanner.Angle
 		mov    0x28(%esp),%ebp
 		mov    EXPORT_SYMBOL(lbSinTable)(,%edx,4),%eax
 		imul   %ebp,%eax
@@ -130010,12 +130010,12 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_196)	/* 0xAD2F4 */
 		push   %ebp
 		sub    $0x74,%esp
 		call   ac_SCANNER_process_bbpoints
-		mov    ingame__Scanner__Angle,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x028,%eax # ingame.Scanner.Angle
 		mov    EXPORT_SYMBOL(lbSinTable)(,%eax,4),%eax
 		mov    %eax,0x68(%esp)
-		mov    ingame__Scanner__Angle,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x028,%eax # ingame.Scanner.Angle
 		mov    EXPORT_SYMBOL(lbSinTable)+2048(,%eax,4),%eax
-		mov    ingame__Scanner__Zoom,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x024,%edx # ingame.Scanner.Zoom
 		mov    %eax,0x6c(%esp)
 		mov    0x68(%esp),%eax
 		imul   %edx,%eax
@@ -130023,9 +130023,9 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_196)	/* 0xAD2F4 */
 		mov    0x6c(%esp),%eax
 		imul   %edx,%eax
 		mov    0x68(%esp),%ecx
-		mov    ingame__Scanner__X1,%edi # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
 		sar    $0x8,%ecx
-		mov    ingame__Scanner__X2,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x014,%edx # ingame.Scanner.X2
 		mov    %ecx,0x68(%esp)
 		sub    %edi,%edx
 		mov    0x68(%esp),%ebx
@@ -130037,9 +130037,9 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_196)	/* 0xAD2F4 */
 		mov    %esi,0x6c(%esp)
 		mov    0x6c(%esp),%edi
 		imul   %edx,%edi
-		mov    ingame__Scanner__Y1,%ebp
-		mov    ingame__Scanner__Y2,%eax
-		mov    ingame__Scanner__MX,%esi
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebp # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x018,%eax # ingame.Scanner.Y2
+		mov    EXPORT_SYMBOL(ingame)+0x01C,%esi # ingame.Scanner.MX
 		sub    %ebp,%eax
 		shl    $0x10,%esi
 		mov    0x6c(%esp),%ebp
@@ -130050,7 +130050,7 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_196)	/* 0xAD2F4 */
 		mov    %edx,0x14(%esp)
 		mov    (%esp),%edx
 		imul   %ebp,%edx
-		mov    ingame__Scanner__MZ,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x020,%ecx # ingame.Scanner.MZ
 		shl    $0x10,%ecx
 		mov    %ecx,%eax
 		sub    %ebx,%eax
@@ -130082,8 +130082,8 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_196)	/* 0xAD2F4 */
 		sar    $0x10,%eax
 		add    %ebx,%edx
 		mov    %al,EXPORT_SYMBOL(SCANNER_bt085)
-		mov    ingame__Scanner__Y1,%eax
-		mov    ingame__Scanner__X1,%ebx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x010,%eax # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%ebx # ingame.Scanner.X1
 		mov    %eax,0x40(%esp)
 		mov    EXPORT_SYMBOL(lbDisplay)+4,%eax # lbDisplay.WScreen
 		mov    EXPORT_SYMBOL(lbDisplay)+24,%ecx # lbDisplay.PhysicalScreenWidth
@@ -130097,7 +130097,7 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_196)	/* 0xAD2F4 */
 		mov    %edx,0x48(%esp)
 		mov    %eax,0x2c(%esp)
 		mov    SCANNER_width,%eax
-		mov    ingame__Scanner__Y2,%esi
+		mov    EXPORT_SYMBOL(ingame)+0x018,%esi # ingame.Scanner.Y2
 		mov    %eax,0x28(%esp)
 		mov    0x40(%esp),%eax
 		mov    %ebx,0x3c(%esp)
@@ -130514,7 +130514,7 @@ func_ad914:
 		add    %edi,%ebp
 		mov    0x6c(%esp),%eax
 		mov    %edx,0x3c(%esp)
-		mov    ingame__Scanner__Y2,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x018,%edx # ingame.Scanner.Y2
 		sub    %eax,%ebx
 		mov    0x68(%esp),%eax
 		mov    %ebx,0x34(%esp)
@@ -130636,7 +130636,7 @@ func_ad914:
 		mov    $0x80,%esi
 		mov    %eax,0x24(%esp)
 		mov    EXPORT_SYMBOL(lbDisplay)+44,%eax # lbDisplay.GraphicsWindowY
-		mov    ingame__Scanner__X1,%ebx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%ebx # ingame.Scanner.X1
 		mov    %eax,0x1c(%esp)
 		mov    EXPORT_SYMBOL(lbDisplay)+48,%eax # lbDisplay.GraphicsWindowWidth
 		xor    %edi,%edi
@@ -130644,7 +130644,7 @@ func_ad914:
 		mov    EXPORT_SYMBOL(lbDisplay)+52,%eax # lbDisplay.GraphicsWindowHeight
 		mov    %esi,0x38(%esp)
 		mov    %eax,0x20(%esp)
-		mov    ingame__Scanner__X2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x014,%eax # ingame.Scanner.X2
 		mov    %edi,0x30(%esp)
 		sub    %ebx,%eax
 		mov    %edi,0x44(%esp)
@@ -130747,8 +130747,8 @@ func_ad914:
 		sar    $0x10,%ebx
 		cmp    $0x1,%eax
 		jl     jump_adc87
-		mov    ingame__Scanner__Y1,%edx
-		mov    ingame__Scanner__Y2,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ecx # ingame.Scanner.Y2
 		add    %eax,%edx
 		cmp    %ecx,%edx
 		jg     jump_adc87
@@ -130758,17 +130758,17 @@ func_ad914:
 		mov    SCANNER_width,%eax
 		cmp    (%ecx,%eax,1),%ebx
 		jg     jump_adc87
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		add    %ebx,%eax
 		mov    $0x57,%ebx
 		call   ac_SCANNER_draw_mark_point5_blink4
 	jump_adc87:
-		mov    ingame__Scanner__Y2,%eax
-		mov    ingame__Scanner__Y1,%edi
+		mov    EXPORT_SYMBOL(ingame)+0x018,%eax # ingame.Scanner.Y2
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edi # ingame.Scanner.Y1
 		sub    %edi,%eax
 		lea    0x1(%eax),%ecx
-		mov    ingame__Scanner__X1,%ebp # ingame.Scanner.X1
-		mov    ingame__Scanner__X2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%ebp # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x014,%eax # ingame.Scanner.X2
 		sub    %ebp,%eax
 		lea    0x1(%eax),%ebx
 		mov    %edi,%edx
@@ -131477,23 +131477,23 @@ GLOBAL_FUNC(ASM_SCANNER_draw_new_transparent_map)	/* 0x0ADF44 */
 		mov    %bl,EXPORT_SYMBOL(scanner_blink)
 	jump_adfa9:
 		call   ac_SCANNER_process_bbpoints
-		mov    ingame__Scanner__Angle,%edi
-		mov    ingame__Scanner__Zoom,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x028,%edi # ingame.Scanner.Angle
+		mov    EXPORT_SYMBOL(ingame)+0x024,%ebp # ingame.Scanner.Zoom
 		mov    EXPORT_SYMBOL(lbSinTable)(,%edi,4),%edi
 		imul   %ebp,%edi
-		mov    ingame__Scanner__Angle,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x028,%eax # ingame.Scanner.Angle
 		mov    EXPORT_SYMBOL(lbSinTable)+2048(,%eax,4),%esi
 		imul   %ebp,%esi
-		mov    ingame__Scanner__X1,%edx # ingame.Scanner.X1
-		mov    ingame__Scanner__X2,%eax
-		mov    ingame__Scanner__Y1,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x014,%eax # ingame.Scanner.X2
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
 		sub    %edx,%eax
-		mov    ingame__Scanner__Y2,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x018,%edx # ingame.Scanner.Y2
 		sub    %ebx,%edx
 		sar    %edx
 		sar    %eax
 		mov    %edx,0x18(%esp)
-		mov    ingame__Scanner__X1,%edx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edx # ingame.Scanner.X1
 		add    %eax,%edx
 		sar    $0x8,%edi
 		mov    %edx,0x68(%esp)
@@ -131513,12 +131513,12 @@ GLOBAL_FUNC(ASM_SCANNER_draw_new_transparent_map)	/* 0x0ADF44 */
 		mov    %edx,0x70(%esp)
 		imul   %edx,%edx
 		mov    %edx,0x74(%esp)
-		mov    ingame__Scanner__MX,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x01C,%edx # ingame.Scanner.MX
 		shl    $0x10,%edx
 		mov    %edx,0xb4(%esp)
 		mov    %eax,%edx
 		imul   %edi,%edx
-		mov    ingame__Scanner__MZ,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x020,%ebx # ingame.Scanner.MZ
 		shl    $0x10,%ebx
 		mov    %ebx,%ecx
 		sub    %edx,%ecx
@@ -131554,7 +131554,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_new_transparent_map)	/* 0x0ADF44 */
 		sub    0x9c(%esp),%ebp
 		sub    %ecx,%edx
 		mov    %esi,%ebx
-		mov    ingame__Scanner__X1,%ecx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%ecx # ingame.Scanner.X1
 		sar    $0x10,%ebx
 		mov    %ebp,0x8(%esp)
 		mov    %bl,EXPORT_SYMBOL(SCANNER_bt085)
@@ -131564,7 +131564,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_new_transparent_map)	/* 0x0ADF44 */
 		mov    ingame__Scanner__Contrast,%bl
 		add    %ebp,%ebp
 		mov    %bl,EXPORT_SYMBOL(SCANNER_cont)
-		mov    ingame__Scanner__Y1,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
 		mov    %ebp,0x18(%esp)
 		mov    %ebx,0xc(%esp)
 		mov    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
@@ -131578,7 +131578,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_new_transparent_map)	/* 0x0ADF44 */
 		mov    %esi,EXPORT_SYMBOL(SCANNER_dw068)
 		mov    %eax,0x3c(%esp)
 		mov    %edx,0x30(%esp)
-		mov    ingame__Scanner__Y2,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x018,%edx # ingame.Scanner.Y2
 		add    %ebx,%ecx
 		mov    0x4(%esp),%ebx
 		mov    0xc(%esp),%eax
@@ -131760,7 +131760,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_new_transparent_map)	/* 0x0ADF44 */
 		mov    0x2c(%esp),%ebx
 		mov    0x30(%esp),%ecx
 		sub    %esi,%eax
-		mov    ingame__Scanner__Y2,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ebp # ingame.Scanner.Y2
 		mov    %eax,0x24(%esp)
 		sub    %esi,%ebx
 		add    %edi,%ecx
@@ -131864,23 +131864,23 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		mov    $0x7fffffff,%edx
 		mov    %edx,0x5c(%esp)
 
-		mov    ingame__Scanner__Angle,%edi
-		mov    ingame__Scanner__Zoom,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x028,%edi # ingame.Scanner.Angle
+		mov    EXPORT_SYMBOL(ingame)+0x024,%ebp # ingame.Scanner.Zoom
 		mov    EXPORT_SYMBOL(lbSinTable)(,%edi,4),%edi
 		imul   %ebp,%edi
-		mov    ingame__Scanner__Angle,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x028,%eax # ingame.Scanner.Angle
 		mov    EXPORT_SYMBOL(lbSinTable)+2048(,%eax,4),%esi
 		imul   %ebp,%esi
-		mov    ingame__Scanner__X1,%edx # ingame.Scanner.X1
-		mov    ingame__Scanner__X2,%eax
-		mov    ingame__Scanner__Y1,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x014,%eax # ingame.Scanner.X2
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
 		sub    %edx,%eax
-		mov    ingame__Scanner__Y2,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x018,%edx # ingame.Scanner.Y2
 		sub    %ebx,%edx
 		sar    %edx
 		sar    %eax
 		mov    %edx,0x18(%esp)
-		mov    ingame__Scanner__X1,%edx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edx # ingame.Scanner.X1
 		add    %eax,%edx
 		sar    $0x8,%edi
 		mov    %edx,0x68(%esp)
@@ -131900,12 +131900,12 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		mov    %edx,0x70(%esp)
 		imul   %edx,%edx
 		mov    %edx,0x74(%esp)
-		mov    ingame__Scanner__MX,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x01C,%edx # ingame.Scanner.MX
 		shl    $0x10,%edx
 		mov    %edx,0xb4(%esp)
 		mov    %eax,%edx
 		imul   %edi,%edx
-		mov    ingame__Scanner__MZ,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x020,%ebx # ingame.Scanner.MZ
 		shl    $0x10,%ebx
 		mov    %ebx,%ecx
 		sub    %edx,%ecx
@@ -131936,22 +131936,22 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		mov    EXPORT_SYMBOL(lbDisplay)+48,%eax # lbDisplay.GraphicsWindowWidth
 		mov    %eax,0x50(%esp)
 		mov    EXPORT_SYMBOL(lbDisplay)+52,%eax # lbDisplay.GraphicsWindowHeight
-		mov    ingame__Scanner__Y1,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
 		mov    %eax,0x54(%esp)
-		mov    ingame__Scanner__Y2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x018,%eax # ingame.Scanner.Y2
 		sub    %edx,%eax
 		lea    0x1(%eax),%ecx
-		mov    ingame__Scanner__X1,%ebx # ingame.Scanner.X1
-		mov    ingame__Scanner__X2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%ebx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x014,%eax # ingame.Scanner.X2
 		sub    %ebx,%eax
 		xor    %ebp,%ebp
 		lea    0x1(%eax),%ebx
 		mov    %ebp,0x14(%esp)
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		mov    %ebp,0xcc(%esp)
 		call   ac_LbScreenSetGraphicsWindow
-		mov    ingame__Scanner__X2,%eax
-		mov    ingame__Scanner__X1,%ecx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x014,%eax # ingame.Scanner.X2
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%ecx # ingame.Scanner.X1
 		mov    %ebp,0xd0(%esp)
 		sub    %ecx,%eax
 		mov    %ebp,0xd4(%esp)
@@ -132054,8 +132054,8 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		add    %ebp,%eax
 		test   %edx,%edx
 		jl     jump_aebfe
-		mov    ingame__Scanner__Y1,%ebx
-		mov    ingame__Scanner__Y2,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ebp # ingame.Scanner.Y2
 		add    %edx,%ebx
 		cmp    %ebp,%ebx
 		jg     jump_aebfe
@@ -132086,8 +132086,8 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		add    %ebx,%eax
 		test   %edx,%edx
 		jl     jump_aec7d
-		mov    ingame__Scanner__Y1,%ebx
-		mov    ingame__Scanner__Y2,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ebp # ingame.Scanner.Y2
 		add    %edx,%ebx
 		cmp    %ebp,%ebx
 		jg     jump_aec7d
@@ -132118,8 +132118,8 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		add    %ebx,%eax
 		test   %edx,%edx
 		jl     jump_aece8
-		mov    ingame__Scanner__Y1,%ebx
-		mov    ingame__Scanner__Y2,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ecx # ingame.Scanner.Y2
 		add    %edx,%ebx
 		cmp    %ecx,%ebx
 		jg     jump_aece8
@@ -132850,8 +132850,8 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		test   %al,%al
 		je     jump_af71d
 		mov    0xe8(%esp),%eax
-		mov    ingame__Scanner__X1,%edx # ingame.Scanner.X1
-		mov    ingame__Scanner__Y1,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
 		add    %edx,%eax
 		mov    0xec(%esp),%edx
 		add    %ebx,%edx
@@ -132877,8 +132877,8 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		mov    0xec(%esp),%ebp
 		test   %ebp,%ebp
 		jl     jump_af960
-		mov    ingame__Scanner__Y1,%edx
-		mov    ingame__Scanner__Y2,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ebx # ingame.Scanner.Y2
 		lea    (%edx,%ebp,1),%eax
 		cmp    %ebx,%eax
 		jg     jump_af960
@@ -132942,8 +132942,8 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		cmp    $0x1e,%edx
 		je     jump_af84b
 		mov    0xe8(%esp),%ebp
-		mov    ingame__Scanner__X1,%edx # ingame.Scanner.X1
-		mov    ingame__Scanner__Y1,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%edx # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
 		add    %edx,%ebp
 		mov    0xec(%esp),%edx
 		add    %ebx,%edx
@@ -132966,8 +132966,8 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		jmp    jump_af8ee
 	jump_af84b:
 		mov    0xec(%esp),%edx
-		add    ingame__Scanner__Y1,%edx
-		mov    ingame__Scanner__X1,%ebx # ingame.Scanner.X1
+		add    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%ebx # ingame.Scanner.X1
 		mov    %edx,0xac(%esp)
 		mov    0xe8(%esp),%edx
 		add    %ebx,%edx
@@ -133029,11 +133029,11 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		je     jump_af960
 		mov    0xec(%esp),%edx
 		xor    %ebx,%ebx
-		mov    ingame__Scanner__Y1,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ebp # ingame.Scanner.Y1
 		mov    %al,%bl
 		add    %ebp,%edx
 		mov    0xe8(%esp),%eax
-		add    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		add    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		call   ac_SCANNER_draw_mark_point7
 	jump_af960:
 		mov    0x4(%ecx),%edx
@@ -133144,8 +133144,8 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 	jump_afaa4:
 		test   %ebx,%ebx
 		jl     jump_afadf
-		mov    ingame__Scanner__Y1,%ecx
-		mov    ingame__Scanner__Y2,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ecx # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ebp # ingame.Scanner.Y2
 		add    %ebx,%ecx
 		cmp    %ebp,%ecx
 		jg     jump_afadf
@@ -133158,7 +133158,7 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		jg     jump_afadf
 		xor    %ebx,%ebx
 		mov    %al,%bl
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		add    %edx,%eax
 		mov    %ecx,%edx
 		call   ac_LbDrawPixel
@@ -133182,7 +133182,7 @@ SCANNER_draw_new_transparent_sub9:	/* 0xAFAF3 */
 		 */
 		cmpl   $0x0,EXPORT_SYMBOL(scanner_blink)
 		je     jump_afb56
-		mov    ingame__Scanner__Angle,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x028,%eax # ingame.Scanner.Angle
 		mov    0x70(%esp),%edi
 		mov    EXPORT_SYMBOL(lbSinTable)(,%eax,4),%edx
 		imul   %edi,%edx
@@ -133272,55 +133272,55 @@ SCANNER_draw_new_transparent_sub9:	/* 0xAFAF3 */
 		call   ac_LbDrawLine
 	jump_afc1c:
 		xor    %eax,%eax
-		mov    ingame__Scanner__Y2,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ecx # ingame.Scanner.Y2
 		mov    EXPORT_SYMBOL(SCANNER_colour)+4,%al
-		mov    ingame__Scanner__Y1,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
 		push   %eax
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		inc    %ecx
 		dec    %eax
 		dec    %edx
 		mov    %eax,%ebx
 		call   ac_LbDrawLine
-		mov    ingame__Scanner__Y1,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
 		xor    %eax,%eax
-		mov    ingame__Scanner__X2,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x014,%ebx # ingame.Scanner.X2
 		mov    EXPORT_SYMBOL(SCANNER_colour)+4,%al
 		dec    %edx
 		sub    $0x18,%ebx
 		push   %eax
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		mov    %edx,%ecx
 		dec    %eax
 		call   ac_LbDrawLine
-		mov    ingame__Scanner__Y2,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x018,%edx # ingame.Scanner.Y2
 		xor    %eax,%eax
-		mov    ingame__Scanner__X2,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x014,%ebx # ingame.Scanner.X2
 		mov    EXPORT_SYMBOL(SCANNER_colour)+4,%al
 		inc    %edx
 		push   %eax
-		mov    ingame__Scanner__X1,%eax # ingame.Scanner.X1
+		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
 		mov    %edx,%ecx
 		dec    %eax
 		call   ac_LbDrawLine
-		mov    ingame__Scanner__Y1,%ecx
-		mov    ingame__Scanner__X2,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%ecx # ingame.Scanner.Y1
+		mov    EXPORT_SYMBOL(ingame)+0x014,%ebx # ingame.Scanner.X2
 		xor    %eax,%eax
-		mov    ingame__Scanner__Y1,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
 		mov    EXPORT_SYMBOL(SCANNER_colour)+4,%al
 		add    $0x18,%ecx
 		inc    %ebx
 		push   %eax
-		mov    ingame__Scanner__X2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x014,%eax # ingame.Scanner.X2
 		dec    %edx
 		sub    $0x18,%eax
 		call   ac_LbDrawLine
 		xor    %eax,%eax
-		mov    ingame__Scanner__Y2,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x018,%ecx # ingame.Scanner.Y2
 		mov    EXPORT_SYMBOL(SCANNER_colour)+4,%al
-		mov    ingame__Scanner__Y1,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x010,%edx # ingame.Scanner.Y1
 		push   %eax
-		mov    ingame__Scanner__X2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x014,%eax # ingame.Scanner.X2
 		inc    %ecx
 		inc    %eax
 		add    $0x18,%edx
@@ -184343,48 +184343,7 @@ GLOBAL (joy)	/* 0x17FD78 */
 
 
 GLOBAL (ingame)	/* 0x1807D4 */
-ingame__GameMode:	/* 0x1807D4 ingame+0x000 */
-		.short  0x0
-/*
- * This variable decides what mode the game is in.  0x37 means menu, 0x32
- * means mission (though there are other possible values)
- */
-/* uint16_t */
-ingame__DisplayMode:	/* 0x1807D6 ingame+0x002 */
-		.long	0x0
-ingame__fld_unk7DA:	/* 0x1807DA ingame+0x006 */
-		.byte	0x0
-/*
- * 2 - track 1
- * 3 - track 2
- * 4 - track 3
- */
-ingame__CDTrack:	/* 0x1807db ingame+0x007 */
-		.byte	0x0
-ingame__DangerTrack:	/* 0x1807dc ingame+0x008 */
-		.byte	0x0
-ingame__UseMultiMedia:	/* 0x1807DD ingame+0x009 */
-		.byte	0x0
-ingame__AutoResearch:	/* 0x1807DE ingame+0x00A */
-		.byte	0x0
-ingame__GameOver:	/* 0x1807DF ingame+0x00B */
-		.byte	0x0
-ingame__Scanner__X1:	/* 0x1807E0 ingame+0x00C */
-		.long	0x0
-ingame__Scanner__Y1:	/* 0x1807E4 ingame+0x010 */
-		.long	0x0
-ingame__Scanner__X2:	/* 0x1807E8 ingame+0x014 */
-		.long	0x0
-ingame__Scanner__Y2:	/* 0x1807EC ingame+0x018 */
-		.long	0x0
-ingame__Scanner__MX:	/* 0x1807F0 ingame+0x01C */
-		.long	0x0
-ingame__Scanner__MZ:	/* 0x1807F4 ingame+0x020 */
-		.long	0x0
-ingame__Scanner__Zoom:	/* 0x1807F8 ingame+0x024 */
-		.long	0x0
-ingame__Scanner__Angle:	/* 0x1807FC ingame+0x028 */
-		.long	0x0
+		.fill   0x02C
 ingame__Scanner__Contrast:	/* 0x180800 ingame+0x02C */
 		.long	0x0
 ingame__Scanner__Brightness:	/* 0x180804 ingame+0x030 */
