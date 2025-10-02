@@ -78796,9 +78796,9 @@ GLOBAL_FUNC (ASM_init_scanner)	/* 0x0740FC */
 		mov    %edx,EXPORT_SYMBOL(dword_1AA5C4)
 		mov    %edx,EXPORT_SYMBOL(dword_1AA5C8)
 		call   ac_SCANNER_fill_in
-		mov    $ingame__Scanner__Width,%eax
-		mov    %ecx,ingame__Scanner__Brightness
-		mov    %esi,ingame__Scanner__Contrast
+		mov    $EXPORT_SYMBOL(ingame)+0x034,%eax # ingame.Scanner.Width
+		mov    %ecx,EXPORT_SYMBOL(ingame)+0x030 # ingame.Scanner.Brightness
+		mov    %esi,EXPORT_SYMBOL(ingame)+0x02C # ingame.Scanner.Contrast
 		mov    %eax,SCANNER_width
 		xor    %eax,%eax
 		mov    %edi,EXPORT_SYMBOL(ingame)+0x024 # ingame.Scanner.Zoom
@@ -78828,10 +78828,10 @@ GLOBAL_FUNC (ASM_init_scanner)	/* 0x0740FC */
 		jg     jump_74245
 		lea    0x0(,%edx,4),%eax
 		add    $0x69,%edx
-		mov    %edx,ingame__Scanner__Width(%eax)
+		mov    %edx,EXPORT_SYMBOL(ingame)+0x034(%eax) # ingame.Scanner.Width
 		cmp    $0x81,%edx
 		jle    jump_741aa
-		mov    %ecx,ingame__Scanner__Width(%eax)
+		mov    %ecx,EXPORT_SYMBOL(ingame)+0x034(%eax) # ingame.Scanner.Width
 		jmp    jump_741aa
 	jump_741e3:
 		mov    $0x7f,%ebx
@@ -78855,10 +78855,10 @@ GLOBAL_FUNC (ASM_init_scanner)	/* 0x0740FC */
 		jg     jump_74245
 		lea    0x0(,%eax,4),%edx
 		add    $0x28,%eax
-		mov    %eax,ingame__Scanner__Width(%edx)
+		mov    %eax,EXPORT_SYMBOL(ingame)+0x034(%edx) # ingame.Scanner.Width
 		cmp    $0x40,%eax
 		jle    jump_74212
-		mov    %edi,ingame__Scanner__Width(%edx)
+		mov    %edi,EXPORT_SYMBOL(ingame)+0x034(%edx) # ingame.Scanner.Width
 		jmp    jump_74212
 	jump_74245:
 		call   ac_SCANNER_init
@@ -117443,7 +117443,7 @@ GLOBAL_FUNC(ASM_show_brief_netscan_box)	/* 0x099AC8 */
 	jump_99d1e:
 		add    $0xc,%eax
 		xor    %bl,%bl
-		mov    %bl,ingame__Scanner__BigBlip_0__Period-0x0c(%eax)
+		mov    %bl,EXPORT_SYMBOL(ingame)+0x80D-0x0c(%eax) # &ingame.Scanner.BigBlip[0].Period-0x0c
 		cmp    $0xc0,%eax
 		jne    jump_99d1e
 		xor    %edx,%edx
@@ -117467,22 +117467,22 @@ GLOBAL_FUNC(ASM_show_brief_netscan_box)	/* 0x099AC8 */
 		je     jump_99d36
 	jump_99d66:
 		mov    $0x20,%bh
-		mov    %bh,ingame__Scanner__BigBlip_0__Period(%eax)
-		mov    %bh,ingame__Scanner__BigBlip_0__Counter(%eax)
-		movb   $0x57,ingame__Scanner__BigBlip_0__Colour(%eax)
+		mov    %bh,EXPORT_SYMBOL(ingame)+0x80D(%eax) # ingame.Scanner.BigBlip[0].Period
+		mov    %bh,EXPORT_SYMBOL(ingame)+0x80F(%eax) # ingame.Scanner.BigBlip[0].Counter
+		movb   $0x57,EXPORT_SYMBOL(ingame)+0x80C(%eax) # ingame.Scanner.BigBlip[0].Colour
 		mov    0x2(%esp),%ebx
 		sar    $0x10,%ebx
 		imul   $0x14,%ebx,%ebx
-		movb   $0x4,ingame__Scanner__BigBlip_0__Speed(%eax)
+		movb   $0x4,EXPORT_SYMBOL(ingame)+0x80E(%eax) # ingame.Scanner.BigBlip[0].Speed
 		xor    %ecx,%ecx
 		mov    data_1c5a94(%edx,%ebx,1),%cl
 		shl    $0xf,%ecx
 		mov    data_1c5a99(%edx,%ebx,1),%bl
-		mov    %ecx,ingame__Scanner__BigBlip_0__X(%eax)
+		mov    %ecx,EXPORT_SYMBOL(ingame)+0x804(%eax) # ingame.Scanner.BigBlip[0].X
 		and    $0xff,%ebx
 		add    $0xc,%eax
 		shl    $0xf,%ebx
-		mov    %ebx,ingame__Scanner__BigBlip_0__Z-0x0c(%eax)
+		mov    %ebx,EXPORT_SYMBOL(ingame)+0x808-0x0c(%eax) # &ingame.Scanner.BigBlip[0].Z-0x0c
 		jmp    jump_99d36
 	jump_99dbc:
 		mov    EXPORT_SYMBOL(selected_netscan_objective)-3,%edx
@@ -124216,16 +124216,16 @@ GLOBAL_FUNC(ASM_post_process_blips)	/* 0x0A7CAC */
 		cmp    $0xb4,%ebx
 		je     jump_a7d4a
 	jump_a7d17:
-		cmpb   $0x0,ingame__Scanner__BigBlip_0__Period(%ebx)
+		cmpb   $0x0,EXPORT_SYMBOL(ingame)+0x80D(%ebx) # ingame.Scanner.BigBlip[0].Period
 		je     jump_a7d0c
-		mov    ingame__Scanner__BigBlip_0__X(%ebx),%eax
+		mov    EXPORT_SYMBOL(ingame)+0x804(%ebx),%eax # ingame.Scanner.BigBlip[0].X
 		sar    $0x8,%eax
 		sub    %edi,%eax
 		cltd
 		xor    %edx,%eax
 		sub    %edx,%eax
 		mov    %eax,%ecx
-		mov    ingame__Scanner__BigBlip_0__Z(%ebx),%eax
+		mov    EXPORT_SYMBOL(ingame)+0x808(%ebx),%eax # ingame.Scanner.BigBlip[0].Z
 		sar    $0x8,%eax
 		sub    %ebp,%eax
 		cltd
@@ -127832,7 +127832,7 @@ GLOBAL_FUNC(ASM_SCANNER_process_arcpoints)	/* 0x0AB5A0 */
 		mov    %al,ingame__Scanner__Arc_0__Period(%edx)
 		mov    %al,ingame__Scanner__Arc_0__Counter(%edx)
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%al
-		mov    %al,ingame__Scanner__Arc_0__Colour(%edx)
+		mov    %al,EXPORT_SYMBOL(ingame)+0x8D4(%edx) # ingame.Scanner.Arc[0].Colour
 	jump_ab68d:
 		mov    0x10(%esp),%edi
 		mov    0x18(%esp),%ebp
@@ -127876,11 +127876,11 @@ GLOBAL_FUNC(ASM_SCANNER_process_arcpoints)	/* 0x0AB5A0 */
 		jne    jump_ab68d
 		mov    ingame__Scanner__Arc_0__Period(%edx),%al
 		mov    %al,ingame__Scanner__Arc_0__Counter(%edx)
-		mov    ingame__Scanner__Arc_0__Z1,%edi
-		mov    ingame__Scanner__Arc_0__Z2,%ebp
-		mov    ingame__Scanner__Arc_0__X1,%esi
+		mov    EXPORT_SYMBOL(ingame)+0x8C8,%edi # ingame.Scanner.Arc[0].Z1
+		mov    EXPORT_SYMBOL(ingame)+0x8D0,%ebp # ingame.Scanner.Arc[0].Z2
+		mov    EXPORT_SYMBOL(ingame)+0x8C4,%esi # ingame.Scanner.Arc[0].X1
 		sub    %edi,%ebp
-		mov    ingame__Scanner__Arc_0__X2,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x8CC,%ecx # ingame.Scanner.Arc[0].X2
 		mov    %ebp,%eax
 		sub    %esi,%ecx
 		cltd
@@ -128047,18 +128047,18 @@ GLOBAL_FUNC(ASM_SCANNER_init_arcpoint)	/* 0x0AB7AC */
 		lea    0x0(,%esi,4),%eax
 		add    %esi,%eax
 		mov    0x4(%esp),%edx
-		mov    %edi,ingame__Scanner__Arc_0__X1(,%eax,4)
-		mov    %edx,ingame__Scanner__Arc_0__X2(,%eax,4)
+		mov    %edi,EXPORT_SYMBOL(ingame)+0x8C4(,%eax,4) # ingame.Scanner.Arc[0].X1
+		mov    %edx,EXPORT_SYMBOL(ingame)+0x8CC(,%eax,4) # ingame.Scanner.Arc[0].X2
 		mov    0x10(%esp),%edx
-		mov    %edx,ingame__Scanner__Arc_0__Z2(,%eax,4)
+		mov    %edx,EXPORT_SYMBOL(ingame)+0x8D0(,%eax,4) # ingame.Scanner.Arc[0].Z2
 		mov    0x18(%esp),%edx
-		mov    %ebp,ingame__Scanner__Arc_0__Z1(,%eax,4)
+		mov    %ebp,EXPORT_SYMBOL(ingame)+0x8C8(,%eax,4) # ingame.Scanner.Arc[0].Z1
 		sar    $0x10,%edx
 		mov    %dl,ingame__Scanner__Arc_0__Period(,%eax,4)
 		mov    0x30(%esp),%dl
 		mov    %dl,ingame__Scanner__Arc_0__Counter(,%eax,4)
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%dl
-		mov    %dl,ingame__Scanner__Arc_0__Colour(,%eax,4)
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x8D4(,%eax,4) # ingame.Scanner.Arc[0].Colour
 		mov    %esi,%eax
 		add    $0x20,%esp
 		pop    %ebp
@@ -129524,11 +129524,11 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		sub    %ebx,%edx
 		shl    $0x2,%edx
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
-		add    ingame__Scanner__Width(%edx),%eax
+		add    EXPORT_SYMBOL(ingame)+0x034(%edx),%eax # ingame.Scanner.Width
 		cmp    %eax,%ecx
 		jge    jump_acb87
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
-		add    ingame__Scanner__Brightness(%edx),%eax
+		add    EXPORT_SYMBOL(ingame)+0x030(%edx),%eax # ingame.Scanner.Brightness
 		cmp    %eax,%ecx
 		jge    jump_acb68
 		lea    -0x1(%esi),%edx
@@ -129556,7 +129556,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		mov    %esi,%edx
 		sub    %eax,%edx
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
-		add    ingame__Scanner__Contrast(,%edx,4),%eax
+		add    EXPORT_SYMBOL(ingame)+0x02C(,%edx,4),%eax # ingame.Scanner.Contrast
 		add    $0x2,%eax
 		cmp    %eax,%ecx
 		jge    jump_acbc2
@@ -129570,7 +129570,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		mov    %esi,%edx
 		sub    %edi,%edx
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
-		add    ingame__Scanner__Contrast(,%edx,4),%eax
+		add    EXPORT_SYMBOL(ingame)+0x02C(,%edx,4),%eax # ingame.Scanner.Contrast
 		inc    %eax
 		cmp    %eax,%ecx
 		jge    jump_acbed
@@ -129584,7 +129584,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point5_blink4)	/* 0x0ACA48 */
 		mov    %esi,%edx
 		sub    %eax,%edx
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
-		add    ingame__Scanner__Contrast(,%edx,4),%eax
+		add    EXPORT_SYMBOL(ingame)+0x02C(,%edx,4),%eax # ingame.Scanner.Contrast
 		cmp    %eax,%ecx
 		jge    jump_acc27
 		lea    -0x2(%esi),%edx
@@ -129669,7 +129669,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		sub    %edx,%eax
 		lea    0x0(,%eax,4),%edx
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%eax # ingame.Scanner.X1
-		add    ingame__Scanner__Width+0x0C(%edx),%eax
+		add    EXPORT_SYMBOL(ingame)+0x034+0x0C(%edx),%eax # ingame.Scanner.Width
 		cmp    %eax,%esi
 		jge    jump_accea
 		lea    0x2(%esi),%eax
@@ -129682,7 +129682,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		sub    %edi,%eax
 		shl    $0x2,%eax
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
-		add    ingame__Scanner__Width(%eax),%edi
+		add    EXPORT_SYMBOL(ingame)+0x034(%eax),%edi # ingame.Scanner.Width
 		dec    %edi
 		cmp    %edi,%esi
 		jge    jump_acd61
@@ -129691,7 +129691,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		cmp    %edx,%ecx
 		jle    jump_acd36
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
-		add    ingame__Scanner__Contrast(%eax),%edi
+		add    EXPORT_SYMBOL(ingame)+0x02C(%eax),%edi # ingame.Scanner.Contrast
 		lea    -0x2(%edi),%eax
 		cmp    %eax,%esi
 		jge    jump_acd36
@@ -129705,7 +129705,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    %ecx,%eax
 		sub    %ebx,%eax
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
-		add    ingame__Scanner__Width(,%eax,4),%edi
+		add    EXPORT_SYMBOL(ingame)+0x034(,%eax,4),%edi # ingame.Scanner.Width
 		dec    %edi
 		cmp    %edi,%esi
 		jge    jump_acd61
@@ -129721,7 +129721,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_mark_point7)	/* 0x0ACC30 */
 		mov    %ecx,%eax
 		sub    %edx,%eax
 		mov    EXPORT_SYMBOL(ingame)+0x00C,%edi # ingame.Scanner.X1
-		add    ingame__Scanner__Width+0x08(,%eax,4),%edi
+		add    EXPORT_SYMBOL(ingame)+0x034+0x08(,%eax,4),%edi # ingame.Scanner.Width
 		dec    %edi
 		cmp    %edi,%esi
 		jge    jump_acd95
@@ -129800,21 +129800,21 @@ GLOBAL_FUNC(ASM_SCANNER_process_bbpoints)	/* 0x0ACE64 */
 		cmp    $0x10,%edi
 		jge    jump_acf81
 	jump_ace8f:
-		cmpb   $0x0,ingame__Scanner__BigBlip_0__Period(%esi)
+		cmpb   $0x0,EXPORT_SYMBOL(ingame)+0x80D(%esi) # ingame.Scanner.BigBlip[0].Period
 		je     jump_ace76
-		mov    ingame__Scanner__BigBlip_0__Counter(%esi),%dl
+		mov    EXPORT_SYMBOL(ingame)+0x80F(%esi),%dl # ingame.Scanner.BigBlip[0].Counter
 		inc    %dl
 		mov    %edi,%ebx
-		mov    %dl,ingame__Scanner__BigBlip_0__Counter(%esi)
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x80F(%esi) # ingame.Scanner.BigBlip[0].Counter
 		shl    $0x7,%ebx
-		mov    ingame__Scanner__BigBlip_0__Period(%esi),%dh
+		mov    EXPORT_SYMBOL(ingame)+0x80D(%esi),%dh # ingame.Scanner.BigBlip[0].Period
 		lea    0x80(%ebx),%ecx
 		cmp    %dh,%dl
 		jne    jump_acef5
 		cmp    $0xf,%edi
 		jne    jump_aceca
 		xor    %dh,%dl
-		mov    %dl,ingame__Scanner__BigBlip_0__Period(%esi)
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x80D(%esi) # ingame.Scanner.BigBlip[0].Period
 		jmp    jump_acf2c
 	jump_aceca:
 		mov    %esi,%ebp
@@ -129822,8 +129822,8 @@ GLOBAL_FUNC(ASM_SCANNER_process_bbpoints)	/* 0x0ACE64 */
 		mov    %ecx,%edx
 		cmp    %ecx,%ebx
 		je     jump_acf20
-		mov    ingame__Scanner__BigBlip_0__Z(%esi),%ecx
-		mov    ingame__Scanner__BigBlip_0__X(%esi),%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x808(%esi),%ecx # ingame.Scanner.BigBlip[0].Z
+		mov    EXPORT_SYMBOL(ingame)+0x804(%esi),%ebx # ingame.Scanner.BigBlip[0].X
 	jump_acee0:
 		add    $0x8,%eax
 		mov    %ecx,EXPORT_SYMBOL(SCANNER_bbpoint)-8(%eax)
@@ -129838,8 +129838,8 @@ GLOBAL_FUNC(ASM_SCANNER_process_bbpoints)	/* 0x0ACE64 */
 		mov    %ecx,%edx
 		cmp    %ecx,%ebx
 		je     jump_acf20
-		mov    ingame__Scanner__BigBlip_0__Z(%esi),%ebx
-		mov    ingame__Scanner__BigBlip_0__X(%esi),%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x808(%esi),%ebx # ingame.Scanner.BigBlip[0].Z
+		mov    EXPORT_SYMBOL(ingame)+0x804(%esi),%ecx # ingame.Scanner.BigBlip[0].X
 	jump_acf0d:
 		add    $0x8,%eax
 		mov    %ebx,EXPORT_SYMBOL(SCANNER_bbpoint)-8(%eax)
@@ -129847,13 +129847,13 @@ GLOBAL_FUNC(ASM_SCANNER_process_bbpoints)	/* 0x0ACE64 */
 		cmp    %edx,%eax
 		jne    jump_acf0d
 	jump_acf20:
-		mov    ingame__Scanner__BigBlip_0__Period(%ebp),%al
-		sub    %al,ingame__Scanner__BigBlip_0__Counter(%ebp)
+		mov    EXPORT_SYMBOL(ingame)+0x80D(%ebp),%al # ingame.Scanner.BigBlip[0].Period
+		sub    %al,EXPORT_SYMBOL(ingame)+0x80F(%ebp) # ingame.Scanner.BigBlip[0].Counter
 	jump_acf2c:
 		mov    (%esp),%eax
 		xor    %ebx,%ebx
 		xor    %edx,%edx
-		mov    ingame__Scanner__BigBlip_0__Speed(%esi),%bl
+		mov    EXPORT_SYMBOL(ingame)+0x80E(%esi),%bl # ingame.Scanner.BigBlip[0].Speed
 	jump_acf39:
 		mov    %bl,%cl
 		mov    data_1dbaec(%edx),%ebp
@@ -130673,7 +130673,7 @@ func_ad914:
 		je     jump_adef7
 	jump_adb73:
 		mov    0x4(%esp),%eax
-		cmpb   $0x0,ingame__Scanner__BigBlip_0__Period(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(ingame)+0x80D(%eax) # ingame.Scanner.BigBlip[0].Period
 		je     jump_adb35
 		mov    0x20(%esp),%ecx
 		mov    0x18(%esp),%ebx
@@ -130684,10 +130684,10 @@ func_ad914:
 		mov    0x4(%esp),%ecx
 		mov    0xc(%esp),%eax
 		mov    0x50(%esp),%edx
-		mov    ingame__Scanner__BigBlip_0__Z(%ecx),%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x808(%ecx),%ecx # ingame.Scanner.BigBlip[0].Z
 		mov    0x6c(%esp),%ebx
 		add    %ecx,%ecx
-		mov    ingame__Scanner__BigBlip_0__X(%esi),%esi
+		mov    EXPORT_SYMBOL(ingame)+0x804(%esi),%esi # ingame.Scanner.BigBlip[0].X
 		sub    %eax,%ecx
 		add    %esi,%esi
 		mov    %ecx,%eax
@@ -130942,14 +130942,14 @@ func_ad914:
 	jump_ade7e:
 		mov    0x64(%esp),%edx
 		xor    %eax,%eax
-		mov    ingame__Scanner__BigBlip_0__Counter(%edx),%al
+		mov    EXPORT_SYMBOL(ingame)+0x80F(%edx),%al # ingame.Scanner.BigBlip[0].Counter
 		mov    $0x1f,%edx
 		sub    %eax,%edx
 		mov    0x64(%esp),%ebx
 		mov    %edx,%eax
 		xor    %edx,%edx
 		shl    $0x9,%eax
-		mov    ingame__Scanner__BigBlip_0__Colour(%ebx),%dl
+		mov    EXPORT_SYMBOL(ingame)+0x80C(%ebx),%dl # ingame.Scanner.BigBlip[0].Colour
 		add    %edx,%eax
 		mov    EXPORT_SYMBOL(pixmap)(%eax),%al # pixmap.fade_table[?]
 		and    $0xff,%eax
@@ -131558,10 +131558,10 @@ GLOBAL_FUNC(ASM_SCANNER_draw_new_transparent_map)	/* 0x0ADF44 */
 		sar    $0x10,%ebx
 		mov    %ebp,0x8(%esp)
 		mov    %bl,EXPORT_SYMBOL(SCANNER_bt085)
-		mov    ingame__Scanner__Brightness,%bl
+		mov    EXPORT_SYMBOL(ingame)+0x030,%bl # ingame.Scanner.Brightness
 		mov    0x18(%esp),%ebp
 		mov    %bl,EXPORT_SYMBOL(SCANNER_brig)
-		mov    ingame__Scanner__Contrast,%bl
+		mov    EXPORT_SYMBOL(ingame)+0x02C,%bl # ingame.Scanner.Contrast
 		add    %ebp,%ebp
 		mov    %bl,EXPORT_SYMBOL(SCANNER_cont)
 		mov    EXPORT_SYMBOL(ingame)+0x010,%ebx # ingame.Scanner.Y1
@@ -131980,11 +131980,11 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		je     SCANNER_draw_signals_end
 	jump_aeab0:
 		mov    0xd4(%esp),%eax
-		cmpb   $0x0,ingame__Scanner__BigBlip_0__Period(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(ingame)+0x80D(%eax) # ingame.Scanner.BigBlip[0].Period
 		je     jump_aea5b
 		mov    0x8(%esp),%edx
-		mov    ingame__Scanner__BigBlip_0__Z(%eax),%ecx
-		mov    ingame__Scanner__BigBlip_0__X(%eax),%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x808(%eax),%ecx # ingame.Scanner.BigBlip[0].Z
+		mov    EXPORT_SYMBOL(ingame)+0x804(%eax),%ebp # ingame.Scanner.BigBlip[0].X
 		mov    0x4(%esp),%eax
 		add    %ecx,%ecx
 		mov    %esi,%ebx
@@ -132067,7 +132067,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		cmp    (%ebx),%eax
 		jg     jump_aebfe
 		mov    0xd4(%esp),%ebx
-		mov    ingame__Scanner__BigBlip_0__Colour(%ebx),%bl
+		mov    EXPORT_SYMBOL(ingame)+0x80C(%ebx),%bl # ingame.Scanner.BigBlip[0].Colour
 		and    $0xff,%ebx
 		mov    %ebx,0x9c(%esp)
 		mov    0x9c(%esp),%ebp
@@ -132099,7 +132099,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		cmp    (%ebx),%eax
 		jg     jump_aec7d
 		mov    0xd4(%esp),%ebx
-		mov    ingame__Scanner__BigBlip_0__Colour(%ebx),%bl
+		mov    EXPORT_SYMBOL(ingame)+0x80C(%ebx),%bl # ingame.Scanner.BigBlip[0].Colour
 		and    $0xff,%ebx
 		mov    %ebx,0x9c(%esp)
 		mov    0x9c(%esp),%ebp
@@ -132130,7 +132130,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 		jg     jump_aece8
 		mov    0xd4(%esp),%ecx
 		xor    %ebx,%ebx
-		mov    ingame__Scanner__BigBlip_0__Colour(%ecx),%bl
+		mov    EXPORT_SYMBOL(ingame)+0x80C(%ecx),%bl # ingame.Scanner.BigBlip[0].Colour
 		mov    EXPORT_SYMBOL(pixmap)+0x1000(%ebx),%bl # pixmap.fade_table[0x1000+?]
 		and    $0xff,%ebx
 		call   ac_LbDrawPixel
@@ -132317,13 +132317,13 @@ GLOBAL_FUNC(ASM_SCANNER_draw_signals)	/* 0xAE9C0 */
 	jump_aef69:
 		mov    0x84(%esp),%edx
 		xor    %eax,%eax
-		mov    ingame__Scanner__BigBlip_0__Counter(%edx),%al
+		mov    EXPORT_SYMBOL(ingame)+0x80F(%edx),%al # ingame.Scanner.BigBlip[0].Counter
 		mov    $0x1f,%edx
 		mov    0x84(%esp),%ebx
 		sub    %eax,%edx
 		xor    %eax,%eax
 		shl    $0x9,%edx
-		mov    ingame__Scanner__BigBlip_0__Colour(%ebx),%al
+		mov    EXPORT_SYMBOL(ingame)+0x80C(%ebx),%al # ingame.Scanner.BigBlip[0].Colour
 		mov    EXPORT_SYMBOL(pixmap)(%edx,%eax,1),%al # pixmap.fade_table[?]
 		and    $0xff,%eax
 		mov    0x20(%esp),%ebx
@@ -132513,7 +132513,7 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 	jump_af231:
 		mov    0xa0(%esp),%edx
 		xor    %eax,%eax
-		mov    ingame__Scanner__Arc_0__Colour(%edx),%al
+		mov    EXPORT_SYMBOL(ingame)+0x8D4(%edx),%al # ingame.Scanner.Arc[0].Colour
 		mov    0x100(%esp),%ebx
 		push   %eax
 		mov    0xfc(%esp),%edx
@@ -133455,8 +133455,8 @@ GLOBAL_FUNC(ASM_SCANNER_draw_objective_info)	/* 0x0B0204 */
 		mov    %eax,0xd0(%esp)
 		jmp    jump_b0258
 	jump_b022e:
-		mov    ingame__Scanner__Contrast,%ebx
-		mov    ingame__Scanner__Brightness,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x02C,%ebx # ingame.Scanner.Contrast
+		mov    EXPORT_SYMBOL(ingame)+0x030,%ecx # ingame.Scanner.Brightness
 		push   %ebx
 		mov    %esi,%edx
 		xor    %eax,%eax
@@ -167922,7 +167922,7 @@ GLOBAL_FUNC(ASM_init_variables)	/* 0x0D0B9C */
 	jump_d0c1a:
 		add    $0xc,%eax
 		xor    %dh,%dh
-		mov    %dh,ingame__Scanner__BigBlip_0__Period-0x0c(%eax)
+		mov    %dh,EXPORT_SYMBOL(ingame)+0x80D-0x0c(%eax) # &ingame.Scanner.BigBlip[0].Period-0xc
 		cmp    $0xc0,%eax
 		jne    jump_d0c1a
 		mov    $0x2,%bl
@@ -184343,47 +184343,14 @@ GLOBAL (joy)	/* 0x17FD78 */
 
 
 GLOBAL (ingame)	/* 0x1807D4 */
-		.fill   0x02C
-ingame__Scanner__Contrast:	/* 0x180800 ingame+0x02C */
-		.long	0x0
-ingame__Scanner__Brightness:	/* 0x180804 ingame+0x030 */
-		.long	0x0
-ingame__Scanner__Width:	/* 0x180808 ingame+0x034 (Scanner+0x028) */
-		.fill   0x190
-		.fill   0x190
-		.fill   0x190
-		.fill   0x190
-		.fill   0x190
-ingame__Scanner__BigBlip_0__X:	/* 0x180B28 ingame+0x354 (Scanner+0x348) */
-		.long	0x0
-ingame__Scanner__BigBlip_0__Z:	/* 0x180B2C ingame+0x358 (Scanner+0x34C) */
-		.long	0x0
-ingame__Scanner__BigBlip_0__Colour:	/* 0x180B30 */
-		.byte	0x0
-ingame__Scanner__BigBlip_0__Period:	/* 0x180B31 */
-		.byte	0x0
-ingame__Scanner__BigBlip_0__Speed:	/* 0x180B32 */
-		.byte	0x0
-ingame__Scanner__BigBlip_0__Counter:	/* 0x180B33 */
-		.byte	0x0
-		.fill   0xb4
-ingame__Scanner__Arc_0__X1:	/* 0x180BE8 */
-		.long	0x0
-ingame__Scanner__Arc_0__Z1:	/* 0x180BEC */
-		.long	0x0
-ingame__Scanner__Arc_0__X2:	/* 0x180BF0 */
-		.long	0x0
-ingame__Scanner__Arc_0__Z2:	/* 0x180BF4 */
-		.long	0x0
-ingame__Scanner__Arc_0__Colour:	/* 0x180BF8 */
-		.byte	0x0
-ingame__Scanner__Arc_0__Period:	/* 0x180BF9 */
+		.fill   0x8D5
+ingame__Scanner__Arc_0__Period:	/* 0x180BF9 + 0x04B0 */
 		.byte	0x0
 		.byte	0x0
-ingame__Scanner__Arc_0__Counter:	/* 0x180BFB */
+ingame__Scanner__Arc_0__Counter:	/* 0x180BFB (resize + 0x04B0) */
 		.byte	0x0
 		.fill   0x3c
-ingame__Scanner__Group:	/* 0x180C38 */
+ingame__Scanner__Group:	/* 0x180C38 (resize + 0x04B0) */
 		.fill   0x6
 ingame__Scanner__GroupCol:	/* 0x180C3E */
 		.fill   0x6
@@ -184402,7 +184369,7 @@ ingame__fld_unkC4F:	/* 0x180C4F */
 ingame__MissionStatus:	/* 0x180C51 */
 		.short  0x0
 /* Some kind of flags */
-ingame__Flags:	/* 0x180C53 ingame+0x47F */
+ingame__Flags:	/* 0x180C53 ingame+0x47F (resize + 0x04B0) */
 		.byte	0x0
 ingame__Flags_p1:	/* 0x180C54 ingame+0x480 */
 		.byte	0x0
@@ -184459,7 +184426,7 @@ ingame__fld_unkCA8:	/* 0x180CA8 */
 		.byte   0x0
 ingame__PalType:	/* 0x180CAB */
 		.byte	0x0
-ingame__FlameCount:	/* 0x180CAC */
+ingame__FlameCount:	/* 0x180CAC (resize + 0x04B0) */
 		.byte	0x0
 data_180cad:
 		.byte	0x0
@@ -184479,12 +184446,12 @@ ingame__fld_unkCB7:	/* 0x180CB7 */
 		.short  0x0
 ingame__InNetGame_UNSURE:	/* 0x180CB9 */
 		.fill   0x6
-ingame__UserFlags:	/* 0x180CBF ingame+0x4eb */
+ingame__UserFlags:	/* 0x180CBF ingame+0x4eb (resize + 0x04B0) */
 		.byte	0x0
 		.byte	0x0
-ingame__CashAtStart:	/* 0x180CC1 ingame+0x4ed */
+ingame__CashAtStart:	/* 0x180CC1 ingame+0x4ed (resize + 0x04B0) */
 		.long	0x0
-ingame__Expenditure:	/* 0x180CC5 */
+ingame__Expenditure:	/* 0x180CC5 (resize + 0x04B0) */
 		.long	0x0
 
 
