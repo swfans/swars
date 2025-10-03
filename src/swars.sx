@@ -127829,8 +127829,8 @@ GLOBAL_FUNC(ASM_SCANNER_process_arcpoints)	/* 0x0AB5A0 */
 		mov    0xc(%esp),%eax
 		mov    0x18(%esp),%edx
 		sar    $0x10,%eax
-		mov    %al,ingame__Scanner__Arc_0__Period(%edx)
-		mov    %al,ingame__Scanner__Arc_0__Counter(%edx)
+		mov    %al,EXPORT_SYMBOL(ingame)+0x8D5(%edx) # ingame.Scanner.Arc[0].Period
+		mov    %al,EXPORT_SYMBOL(ingame)+0x8D7(%edx) # ingame.Scanner.Arc[0].Counter
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%al
 		mov    %al,EXPORT_SYMBOL(ingame)+0x8D4(%edx) # ingame.Scanner.Arc[0].Colour
 	jump_ab68d:
@@ -127847,7 +127847,7 @@ GLOBAL_FUNC(ASM_SCANNER_process_arcpoints)	/* 0x0AB5A0 */
 		jge    jump_ab7a2
 	jump_ab6b5:
 		mov    0x18(%esp),%eax
-		cmpb   $0x0,ingame__Scanner__Arc_0__Counter(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(ingame)+0x8D7(%eax) # ingame.Scanner.Arc[0].Counter
 		je     jump_ab68d
 		mov    EXPORT_SYMBOL(dword_1DB1A0),%ebx
 		inc    %ebx
@@ -127868,14 +127868,14 @@ GLOBAL_FUNC(ASM_SCANNER_process_arcpoints)	/* 0x0AB5A0 */
 		cmp    %ebx,%eax
 		jne    jump_ab6da
 		mov    0x18(%esp),%eax
-		decb   ingame__Scanner__Arc_0__Counter(%eax)
+		decb   EXPORT_SYMBOL(ingame)+0x8D7(%eax) # ingame.Scanner.Arc[0].Counter
 		mov    0x18(%esp),%edx
 		xor    %eax,%eax
-		mov    ingame__Scanner__Arc_0__Counter(%edx),%al
+		mov    EXPORT_SYMBOL(ingame)+0x8D7(%edx),%al # ingame.Scanner.Arc[0].Counter
 		test   %eax,%eax
 		jne    jump_ab68d
-		mov    ingame__Scanner__Arc_0__Period(%edx),%al
-		mov    %al,ingame__Scanner__Arc_0__Counter(%edx)
+		mov    EXPORT_SYMBOL(ingame)+0x8D5(%edx),%al # ingame.Scanner.Arc[0].Period
+		mov    %al,EXPORT_SYMBOL(ingame)+0x8D7(%edx) # ingame.Scanner.Arc[0].Counter
 		mov    EXPORT_SYMBOL(ingame)+0x8C8,%edi # ingame.Scanner.Arc[0].Z1
 		mov    EXPORT_SYMBOL(ingame)+0x8D0,%ebp # ingame.Scanner.Arc[0].Z2
 		mov    EXPORT_SYMBOL(ingame)+0x8C4,%esi # ingame.Scanner.Arc[0].X1
@@ -127940,10 +127940,10 @@ GLOBAL_FUNC(ASM_SCANNER_init_arcpoint)	/* 0x0AB7AC */
 		xor    %eax,%eax
 	jump_ab7c2:
 		xor    %edx,%edx
-		mov    ingame__Scanner__Arc_0__Period(%eax),%dl
+		mov    EXPORT_SYMBOL(ingame)+0x8D5(%eax),%dl # ingame.Scanner.Arc[0].Period
 		test   %edx,%edx
 		jne    jump_ab836
-		mov    ingame__Scanner__Arc_0__Counter(%eax),%dl
+		mov    EXPORT_SYMBOL(ingame)+0x8D7(%eax),%dl # ingame.Scanner.Arc[0].Counter
 		test   %edx,%edx
 		jne    jump_ab836
 		mov    0x4(%esp),%eax
@@ -128054,9 +128054,9 @@ GLOBAL_FUNC(ASM_SCANNER_init_arcpoint)	/* 0x0AB7AC */
 		mov    0x18(%esp),%edx
 		mov    %ebp,EXPORT_SYMBOL(ingame)+0x8C8(,%eax,4) # ingame.Scanner.Arc[0].Z1
 		sar    $0x10,%edx
-		mov    %dl,ingame__Scanner__Arc_0__Period(,%eax,4)
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x8D5(,%eax,4) # ingame.Scanner.Arc[0].Period
 		mov    0x30(%esp),%dl
-		mov    %dl,ingame__Scanner__Arc_0__Counter(,%eax,4)
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x8D7(,%eax,4) # ingame.Scanner.Arc[0].Counter
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%dl
 		mov    %dl,EXPORT_SYMBOL(ingame)+0x8D4(,%eax,4) # ingame.Scanner.Arc[0].Colour
 		mov    %esi,%eax
@@ -132363,8 +132363,8 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		xor    %dl,%dl
 	jump_af00a:
 		add    $0x14,%eax
-		mov    %dl,ingame__Scanner__Arc_0__Period-0x14(%eax)
-		mov    %dl,ingame__Scanner__Arc_0__Counter-0x14(%eax)
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x8D5-0x14(%eax) # ingame.Scanner.Arc[0].Period
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x8D7-0x14(%eax) # ingame.Scanner.Arc[0].Counter-0x14
 		cmp    $0x50,%eax
 		jne    jump_af00a
 	jump_af01e:
@@ -132394,9 +132394,9 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		jge    jump_af46d
 	jump_af086:
 		mov    0xe0(%esp),%eax
-		cmpb   $0x0,ingame__Scanner__Arc_0__Period(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(ingame)+0x8D5(%eax) # ingame.Scanner.Arc[0].Period
 		jne    jump_af09f
-		cmpb   $0x0,ingame__Scanner__Arc_0__Counter(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(ingame)+0x8D7(%eax) # ingame.Scanner.Arc[0].Counter
 		je     jump_af054
 	jump_af09f:
 		imul   $0x50,0x88(%esp),%eax
@@ -132833,16 +132833,16 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		inc    %eax
 	jump_af693:
 		xor    %edx,%edx
-		mov    ingame__Scanner__GroupCount,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x920,%dl # ingame.Scanner.GroupCount
 		cmp    %edx,%eax
 		jge    jump_af6bd
 		xor    %edx,%edx
 		xor    %ebx,%ebx
 		mov    0x10c(%esp),%dx
-		mov    ingame__Scanner__Group(%eax),%bl
+		mov    EXPORT_SYMBOL(ingame)+0x914(%eax),%bl # ingame.Scanner.Group
 		cmp    %edx,%ebx
 		jne    jump_af692
-		mov    ingame__Scanner__GroupCol(%eax),%al
+		mov    EXPORT_SYMBOL(ingame)+0x91A(%eax),%al # ingame.Scanner.GroupCol
 		jmp    jump_af6bf
 	jump_af6bd:
 		xor    %al,%al
@@ -133011,16 +133011,16 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		inc    %eax
 	jump_af908:
 		xor    %edx,%edx
-		mov    ingame__Scanner__GroupCount,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x920,%dl # ingame.Scanner.GroupCount
 		cmp    %edx,%eax
 		jge    jump_af932
 		xor    %edx,%edx
 		xor    %ebx,%ebx
 		mov    0x110(%esp),%dx
-		mov    ingame__Scanner__Group(%eax),%bl
+		mov    EXPORT_SYMBOL(ingame)+0x914(%eax),%bl # ingame.Scanner.Group
 		cmp    %edx,%ebx
 		jne    jump_af907
-		mov    ingame__Scanner__GroupCol(%eax),%al
+		mov    EXPORT_SYMBOL(ingame)+0x91A(%eax),%al # ingame.Scanner.GroupCol
 		jmp    jump_af934
 	jump_af932:
 		xor    %al,%al
@@ -165134,7 +165134,7 @@ GLOBAL_FUNC(ASM_sub_CCE8C)	/* 0xCCE8C */
 		mov    EXPORT_SYMBOL(dword_155750)(,%edx,4),%eax
 		xor    %edi,%edi
 		mov    %eax,login_control__Money
-		mov    %eax,ingame__Credits
+		mov    %eax,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    %eax,ingame__CashAtStart
 		mov    %edi,ingame__Expenditure
 		pop    %edi
@@ -167958,12 +167958,12 @@ GLOBAL_FUNC(ASM_init_variables)	/* 0x0D0B9C */
 		cmp    $0x6,%eax
 		jne    jump_d0ccf
 		mov    $0xc350,%ebx
-		mov    %ebx,ingame__Credits
+		mov    %ebx,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    %ebx,ingame__CashAtStart
 		jmp    jump_d0cde
 	jump_d0ccf:
 		mov    login_control__Money,%eax
-		mov    %eax,ingame__Credits
+		mov    %eax,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    %eax,ingame__CashAtStart
 	jump_d0cde:
 		mov    $0x13,%al
@@ -169645,7 +169645,7 @@ GLOBAL_FUNC (ASM_do_equip_offer_buy)	/* 0x0D4090 */
 		sub    %edx,%eax
 		shl    $0x3,%eax
 		add    %edx,%eax
-		mov    ingame__Credits,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x923,%edx # ingame.Credits
 		shl    $0x2,%eax
 		sub    %eax,%edx
 		test   %edx,%edx
@@ -169740,12 +169740,12 @@ func_d417d:
 		sub    %edx,%eax
 		shl    $0x3,%eax
 		add    %edx,%eax
-		mov    ingame__Credits,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x923,%ebx # ingame.Credits
 		shl    $0x2,%eax
 		mov    ingame__Expenditure,%ecx
 		sub    %eax,%ebx
 		add    %eax,%ecx
-		mov    %ebx,ingame__Credits
+		mov    %ebx,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    $0x1,%bl
 		mov    %ecx,ingame__Expenditure
 		mov    %bl,0x4(%esp)
@@ -169981,7 +169981,7 @@ func_d4452:
 		mov    EXPORT_SYMBOL(weapon_defs)+20(%eax),%ax
 		and    $0xffff,%eax
 		imul   $0x64,%eax,%eax
-		mov    ingame__Credits,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x923,%edx # ingame.Credits
 		sub    %eax,%edx
 		test   %edx,%edx
 		jl     jump_d48f5
@@ -170026,12 +170026,12 @@ func_d4515:
 		and    $0xffff,%eax
 		imul   $0x64,%eax,%eax
 		mov    ingame__Expenditure,%ecx
-		mov    ingame__Credits,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x923,%edx # ingame.Credits
 		add    %eax,%ecx
 		sub    %eax,%edx
 		mov    %ecx,ingame__Expenditure
 		mov    $0x1,%cl
-		mov    %edx,ingame__Credits
+		mov    %edx,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    %cl,0x4(%esp)
 	jump_d45a9:
 		mov    (%esp),%edi
@@ -170185,7 +170185,7 @@ func_d46ab:
 		mov    EXPORT_SYMBOL(mod_defs)+20(,%eax,8),%dx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    ingame__Credits,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x923,%edx # ingame.Credits
 		add    %eax,%eax
 		sub    %eax,%edx
 		test   %edx,%edx
@@ -170271,12 +170271,12 @@ func_d4799:
 		add    %edx,%eax
 		mov    ingame__Expenditure,%ecx
 		add    %eax,%eax
-		mov    ingame__Credits,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x923,%ebx # ingame.Credits
 		add    %eax,%ecx
 		sub    %eax,%ebx
 		mov    %ecx,ingame__Expenditure
 		mov    $0x1,%ch
-		mov    %ebx,ingame__Credits
+		mov    %ebx,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    %ch,0x4(%esp)
 	jump_d4896:
 		xor    %eax,%eax
@@ -170560,7 +170560,7 @@ func_d4b34:
 		mov    EXPORT_SYMBOL(mod_defs)+20(%eax),%ax
 		and    $0xffff,%eax
 		imul   $0xa,%eax,%eax
-		mov    ingame__Credits,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x923,%edx # ingame.Credits
 		sub    %eax,%edx
 		test   %edx,%edx
 		jge    jump_d4f86
@@ -170629,12 +170629,12 @@ func_d4c03:
 		and    $0xffff,%eax
 		imul   $0xa,%eax,%eax
 		mov    $0x1,%dh
-		mov    ingame__Credits,%esi
+		mov    EXPORT_SYMBOL(ingame)+0x923,%esi # ingame.Credits
 		mov    ingame__Expenditure,%edi
 		mov    %dh,0x4(%esp)
 		sub    %eax,%esi
 		add    %eax,%edi
-		mov    %esi,ingame__Credits
+		mov    %esi,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    %edi,ingame__Expenditure
 	jump_d4cf6:
 		mov    (%esp),%eax
@@ -170888,13 +170888,13 @@ GLOBAL_FUNC(ASM_sell_equipment)	/* 0x0D4FDC */
 		mov    EXPORT_SYMBOL(weapon_defs)+20(%ecx),%cx
 		and    $0xffff,%ecx
 		imul   $0x64,%ecx,%ecx
-		mov    ingame__Credits,%ebp
+		mov    EXPORT_SYMBOL(ingame)+0x923,%ebp # ingame.Credits
 		sar    %ecx
 		add    %ecx,%ebp
 		mov    selected_weapon,%cl
 		mov    %cl,%ch
 		sub    $0x5,%ch
-		mov    %ebp,ingame__Credits
+		mov    %ebp,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		cmp    $0x7,%ch
 		ja     func_d5688
 		movzbl %ch,%edi
@@ -171180,10 +171180,10 @@ func_d53fc:
 		shl    $0x3,%eax
 		add    %edx,%eax
 		shl    $0x2,%eax
-		mov    ingame__Credits,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x923,%edx # ingame.Credits
 		sar    %eax
 		add    %eax,%edx
-		mov    %edx,ingame__Credits
+		mov    %edx,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    selected_weapon,%dl
 		mov    %dl,%al
 		sub    $0x5,%al
@@ -184343,24 +184343,7 @@ GLOBAL (joy)	/* 0x17FD78 */
 
 
 GLOBAL (ingame)	/* 0x1807D4 */
-		.fill   0x8D5
-ingame__Scanner__Arc_0__Period:	/* 0x180BF9 + 0x04B0 */
-		.byte	0x0
-		.byte	0x0
-ingame__Scanner__Arc_0__Counter:	/* 0x180BFB (resize + 0x04B0) */
-		.byte	0x0
-		.fill   0x3c
-ingame__Scanner__Group:	/* 0x180C38 (resize + 0x04B0) */
-		.fill   0x6
-ingame__Scanner__GroupCol:	/* 0x180C3E */
-		.fill   0x6
-ingame__Scanner__GroupCount:	/* 0x180C44 */
-		.byte	0x0
-ingame__Scanner__NearThing1:	/* 0x180C45 */
-		.short  0x0
-ingame__Credits:	/* 0x180C47 */
-		.short  0x0
-		.short  0x0
+		.fill   0x927
 ingame__fld_unkC4B:	/* 0x180C4B */
 		.short  0x0
 		.short  0x0
