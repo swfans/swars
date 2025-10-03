@@ -275,8 +275,8 @@ GLOBAL_FUNC(ASM_place_default_player)	/* 0x0101F0 */
 		mov    0x20(%eax),%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		mov    %dx,ingame__TrackX
-		mov    %ax,ingame__TrackZ
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 		jmp    jump_10482
 	jump_1044c:
 		cmpb   $0x0,in_network_game
@@ -572,7 +572,7 @@ GLOBAL_FUNC(ASM_unkn_truce_groups)	/* 0x010CA0 */
 		jge    jump_10d9d
 		mov    $0x1,%eax
 		mov    %edx,%ecx
-		movzbl ingame__InNetGame_UNSURE,%esi
+		movzbl EXPORT_SYMBOL(ingame)+0x995,%esi # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%esi
 		je     jump_10d52
@@ -674,7 +674,7 @@ GLOBAL_FUNC(ASM_unkn_truce_groups)	/* 0x010CA0 */
 	jump_10ebd:
 		mov    $0x1,%edi
 		mov    %al,%cl
-		movzbl ingame__InNetGame_UNSURE,%esi
+		movzbl EXPORT_SYMBOL(ingame)+0x995,%esi # ingame.InNetGame_UNSURE
 		shl    %cl,%edi
 		test   %edi,%esi
 		je     jump_10eb7
@@ -794,7 +794,7 @@ GLOBAL_FUNC(ASM_unkn1_handle_agent_groups)	/* 0x010F94 */
 		mov    (%esp),%cl
 		xor    %edx,%edx
 		mov    $0x1,%eax
-		mov    ingame__InNetGame_UNSURE,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%dl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%edx
 		je     jump_10fcc
@@ -826,7 +826,7 @@ GLOBAL_FUNC(ASM_unkn1_handle_agent_groups)	/* 0x010F94 */
 		mov    (%esp),%cl
 		xor    %eax,%eax
 		mov    $0x1,%edx
-		mov    ingame__InNetGame_UNSURE,%al
+		mov    EXPORT_SYMBOL(ingame)+0x995,%al # ingame.InNetGame_UNSURE
 		shl    %cl,%edx
 		test   %edx,%eax
 		jne    jump_1102a
@@ -1197,10 +1197,10 @@ GLOBAL_FUNC (ASM_init_engine)	/* 0x1260C */
 		mov    %ebx,engn_zc
 		mov    engn_xc,%ax
 		mov    %ecx,engn_yc
-		mov    %ax,ingame__TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    engn_zc,%ax
 		mov    engn_xc,%dx
-		mov    %ax,ingame__TrackZ
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 		mov    EXPORT_SYMBOL(render_area_a),%ax
 		xor    %dl,%dl
 		shl    $0x7,%eax
@@ -2991,10 +2991,10 @@ GLOBAL_FUNC(ASM_draw_hud)	/* 0x020C80 */
 		push   %ebp
 		sub    $0x8,%esp
 		mov    %eax,%ebx
-		cmpw   $0x0,ingame__TrackThing
+		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		je     jump_20cbd
 		xor    %edx,%edx
-		mov    ingame__TrackThing,%dx
+		mov    EXPORT_SYMBOL(ingame)+0x975,%dx # ingame.TrackThing
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		shl    $0x2,%eax
@@ -7142,7 +7142,7 @@ GLOBAL_FUNC(ASM_draw_person_shadow)	/* 0x026CD0 */
 		mov    0x8(%edx,%eax,1),%edx
 		movb   $0xa,EXPORT_SYMBOL(vec_mode)
 		xor    %eax,%eax
-		mov    ingame__LastTmap,%al
+		mov    EXPORT_SYMBOL(ingame)+0x98A,%al # ingame.LastTmap
 		mov    EXPORT_SYMBOL(vec_tmap)(,%eax,4),%eax
 		mov    %eax,EXPORT_SYMBOL(vec_map)
 		xor    %eax,%eax
@@ -11754,7 +11754,7 @@ GLOBAL_FUNC(ASM_draw_sort_sprite_veh_health_bar)	/* 0x02ABE0 */
 		sar    $0x1f,%edx
 		idiv   %ebx
 		mov    %ax,0x4(%esp)
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		cmp    $0xfffffffd,%eax
 		jne    jump_2ac55
@@ -11782,7 +11782,7 @@ GLOBAL_FUNC(ASM_draw_sort_sprite_veh_health_bar)	/* 0x02ABE0 */
 		mov    %ecx,%eax
 		mov    $0x6,%ecx
 		call   ac_LbDrawBox
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		cmp    $0xfffffffd,%eax
 		jne    jump_2acaa
@@ -14314,26 +14314,26 @@ GLOBAL_FUNC (ASM_do_rotate_map)	/* 0x036480 */
 		sub    %dx,%di
 		mov    %edi,%edx
 		je     jump_36577
-		mov    ingame__UserZoom,%si
+		mov    EXPORT_SYMBOL(ingame)+0x961,%si # ingame.UserZoom
 		shl    $0x3,%edx
 		add    %edx,%esi
 		xor    %edx,%edx
 		mov    %si,%dx
-		mov    %si,ingame__UserZoom
+		mov    %si,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		cmp    $0x78,%edx
 		jge    jump_3655d
 		xor    %edx,%edx
 		mov    pktrec_mode,%dl
 		cmp    $0x2,%edx
 		je     jump_3655d
-		movw   $0x78,ingame__UserZoom
+		movw   $0x78,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		jmp    jump_36577
 	jump_3655d:
 		xor    %edx,%edx
-		mov    ingame__UserZoom,%dx
+		mov    EXPORT_SYMBOL(ingame)+0x961,%dx # ingame.UserZoom
 		cmp    $0x100,%edx
 		jl     jump_36577
-		movw   $0x100,ingame__UserZoom
+		movw   $0x100,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 	jump_36577:
 		xor    %esi,%esi
 		mov    EXPORT_SYMBOL(kbkeys)+32,%si
@@ -16040,9 +16040,9 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    %edx,engn_xc
 		mov    %eax,engn_zc
 		mov    engn_xc,%ax
-		mov    %ax,ingame__TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    engn_zc,%ax
-		mov    %ax,ingame__TrackZ
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 	jump_3bd1a:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+3
 		je     jump_3bd77
@@ -16064,9 +16064,9 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    %edx,engn_xc
 		mov    %eax,engn_zc
 		mov    engn_xc,%ax
-		mov    %ax,ingame__TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    engn_zc,%ax
-		mov    %ax,ingame__TrackZ
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 	jump_3bd77:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+4
 		je     jump_3bdd4
@@ -16088,9 +16088,9 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    %edx,engn_xc
 		mov    %eax,engn_zc
 		mov    engn_xc,%ax
-		mov    %ax,ingame__TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    engn_zc,%ax
-		mov    %ax,ingame__TrackZ
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 	jump_3bdd4:
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+5
 		je     jump_3be31
@@ -16112,9 +16112,9 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    %edx,engn_xc
 		mov    %eax,engn_zc
 		mov    engn_xc,%ax
-		mov    %ax,ingame__TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    engn_zc,%ax
-		mov    %ax,ingame__TrackZ
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 	jump_3be31:
 		xor    %eax,%eax
 		call   ac_test_missions
@@ -16172,13 +16172,13 @@ GLOBAL_FUNC (ASM_load_packet)
 		jne    jump_3c465
 		call   ac_dos_clock
 		mov    $0x64,%ebx
-		mov    ingame__fld_unkC91,%edi
+		mov    EXPORT_SYMBOL(ingame)+0x96D,%edi # ingame.fld_unkC91
 		xor    %edx,%edx
 		sub    %edi,%eax
 		div    %ebx
 		mov    %eax,%ebx
 		xor    %eax,%eax
-		mov    ingame__fld_unkCB5,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x991,%ax # ingame.fld_unkCB5
 		test   %eax,%eax
 		je     jump_3c11c
 		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
@@ -16654,7 +16654,7 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3c557:
 		movl   $ac_build_packet4,0x10(%esp)
 	jump_3c55f:
-		cmpw   $0x0,ingame__TrackThing
+		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		jne    jump_3cbcf
 		xor    %ebx,%ebx
 		mov    EXPORT_SYMBOL(local_player_no),%bl
@@ -17266,7 +17266,7 @@ GLOBAL_FUNC (ASM_build_packet)	/* 0x03CD0C */
 		mov    %bx,0x2(%eax)
 		mov    (%esp),%edx
 		mov    %cx,0x4(%eax)
-		mov    %si,ingame__UserZoom
+		mov    %si,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    %dx,(%eax)
 		add    $0x4,%esp
 		pop    %edi
@@ -17292,7 +17292,7 @@ GLOBAL_FUNC (ASM_build_packet)	/* 0x03CD0C */
 		mov    %bx,0x2(%eax)
 		mov    $0x78,%edx
 		mov    %cx,0x4(%eax)
-		mov    %dx,ingame__UserZoom
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    (%esp),%edx
 		mov    %dx,(%eax)
 		add    $0x4,%esp
@@ -17366,7 +17366,7 @@ GLOBAL_FUNC (ASM_build_packet)	/* 0x03CD0C */
 		mov    %bx,0x2(%eax)
 		mov    (%esp),%edx
 		mov    %cx,0x4(%eax)
-		mov    %di,ingame__UserZoom
+		mov    %di,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    %dx,(%eax)
 		add    $0x4,%esp
 		pop    %edi
@@ -17450,7 +17450,7 @@ GLOBAL_FUNC (ASM_build_packet2)	/* 0x03CF38 */
 		mov    %bx,0xc(%eax)
 		mov    $0x78,%edx
 		mov    %cx,0xe(%eax)
-		mov    %dx,ingame__UserZoom
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    (%esp),%edx
 		mov    %dx,0xa(%eax)
 		add    $0x4,%esp
@@ -17462,7 +17462,7 @@ GLOBAL_FUNC (ASM_build_packet2)	/* 0x03CF38 */
 		mov    %bx,0xc(%eax)
 		mov    (%esp),%edx
 		mov    %cx,0xe(%eax)
-		mov    %si,ingame__UserZoom
+		mov    %si,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    %dx,0xa(%eax)
 		add    $0x4,%esp
 		pop    %edi
@@ -17547,7 +17547,7 @@ GLOBAL_FUNC (ASM_build_packet2)	/* 0x03CF38 */
 		mov    %bx,0xc(%eax)
 		mov    (%esp),%edx
 		mov    %cx,0xe(%eax)
-		mov    %di,ingame__UserZoom
+		mov    %di,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    %dx,0xa(%eax)
 		add    $0x4,%esp
 		pop    %edi
@@ -17631,7 +17631,7 @@ GLOBAL_FUNC (ASM_build_packet3)	/* 0x03D174 */
 		mov    %bx,0x16(%eax)
 		mov    $0x78,%edx
 		mov    %cx,0x18(%eax)
-		mov    %dx,ingame__UserZoom
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    (%esp),%edx
 		mov    %dx,0x14(%eax)
 		add    $0x4,%esp
@@ -17643,7 +17643,7 @@ GLOBAL_FUNC (ASM_build_packet3)	/* 0x03D174 */
 		mov    %bx,0x16(%eax)
 		mov    (%esp),%edx
 		mov    %cx,0x18(%eax)
-		mov    %si,ingame__UserZoom
+		mov    %si,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    %dx,0x14(%eax)
 		add    $0x4,%esp
 		pop    %edi
@@ -17728,7 +17728,7 @@ GLOBAL_FUNC (ASM_build_packet3)	/* 0x03D174 */
 		mov    %bx,0x16(%eax)
 		mov    (%esp),%edx
 		mov    %cx,0x18(%eax)
-		mov    %di,ingame__UserZoom
+		mov    %di,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    %dx,0x14(%eax)
 		add    $0x4,%esp
 		pop    %edi
@@ -17812,7 +17812,7 @@ GLOBAL_FUNC (ASM_build_packet4)	/* 0x03D3B0 */
 		mov    %bx,0x20(%eax)
 		mov    $0x78,%edx
 		mov    %cx,0x22(%eax)
-		mov    %dx,ingame__UserZoom
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    (%esp),%edx
 		mov    %dx,0x1e(%eax)
 		add    $0x4,%esp
@@ -17824,7 +17824,7 @@ GLOBAL_FUNC (ASM_build_packet4)	/* 0x03D3B0 */
 		mov    %bx,0x20(%eax)
 		mov    (%esp),%edx
 		mov    %cx,0x22(%eax)
-		mov    %si,ingame__UserZoom
+		mov    %si,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    %dx,0x1e(%eax)
 		add    $0x4,%esp
 		pop    %edi
@@ -17909,7 +17909,7 @@ GLOBAL_FUNC (ASM_build_packet4)	/* 0x03D3B0 */
 		mov    %bx,0x20(%eax)
 		mov    (%esp),%edx
 		mov    %cx,0x22(%eax)
-		mov    %di,ingame__UserZoom
+		mov    %di,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    %dx,0x1e(%eax)
 		add    $0x4,%esp
 		pop    %edi
@@ -17939,7 +17939,7 @@ GLOBAL_FUNC (ASM_change_brightness)	/* 0x03D5F0 */
 		mov    display_palette,%esi
 		mov    %eax,%ebx
 		xor    %eax,%eax
-		mov    ingame__PalType,%al
+		mov    EXPORT_SYMBOL(ingame)+0x987,%al # ingame.PalType
 		push   %eax
 		mov    palette_fname_fmt,%edx
 		push   %edx
@@ -18589,7 +18589,7 @@ GLOBAL_FUNC (ASM_player_chat_message_add_key)	/* 0x3E580 */
 		shl    $0x7,%eax
 		mov    %dl,player_unknCC9(%ecx,%eax,1)
 		xor    %dl,%dl
-		mov    %dl,data_180cca(%ecx,%eax,1)
+		mov    %dl,EXPORT_SYMBOL(player_unknCC9)+1(%ecx,%eax,1)
 	jump_3e71e:
 		add    $0x4,%esp
 		pop    %edi
@@ -18648,7 +18648,7 @@ GLOBAL_FUNC (ASM_process_packets)	/* 0x3E728 */
 		mov    %eax,%ecx
 		xor    %edx,%edx
 		mov    $0x1,%eax
-		mov    ingame__InNetGame_UNSURE,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%dl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%edx
 		je     jump_3e77b
@@ -18766,7 +18766,7 @@ GLOBAL_FUNC (ASM_process_packets)	/* 0x3E728 */
 		call   ac_LbNetworkSessionStop
 		mov    -0x4(%ebp),%al
 		not    %al
-		and    %al,ingame__InNetGame_UNSURE
+		and    %al,EXPORT_SYMBOL(ingame)+0x995 # ingame.InNetGame_UNSURE
 		jmp    jump_3fd18
 	jump_3e965:
 		movb   $0x1,exit_game
@@ -20237,7 +20237,7 @@ GLOBAL_FUNC (ASM_process_packets)	/* 0x3E728 */
 		mov    -0xc(%ebp),%ecx
 		xor    %edx,%edx
 		mov    $0x1,%eax
-		mov    ingame__InNetGame_UNSURE,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%dl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%edx
 		jne    jump_3fd53
@@ -20316,7 +20316,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    $0x1,%esi
 		xor    %eax,%eax
 		mov    %edx,%ecx
-		mov    ingame__InNetGame_UNSURE,%al
+		mov    EXPORT_SYMBOL(ingame)+0x995,%al # ingame.InNetGame_UNSURE
 		shl    %cl,%esi
 		test   %esi,%eax
 		je     jump_3ff3c
@@ -20425,7 +20425,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		jge    jump_401ee
 		mov    $0x1,%eax
 		mov    %edx,%ecx
-		movzbl ingame__InNetGame_UNSURE,%esi
+		movzbl EXPORT_SYMBOL(ingame)+0x995,%esi # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%esi
 		je     jump_40124
@@ -20446,12 +20446,12 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		call   show_message
 		mov    $0x1,%al
 		shl    %cl,%al
-		mov    ingame__InNetGame_UNSURE,%ch
+		mov    EXPORT_SYMBOL(ingame)+0x995,%ch # ingame.InNetGame_UNSURE
 		not    %al
 		and    %al,%ch
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(local_player_no),%al
-		mov    %ch,ingame__InNetGame_UNSURE
+		mov    %ch,EXPORT_SYMBOL(ingame)+0x995 # ingame.InNetGame_UNSURE
 		cmp    %eax,%ebx
 		jne    jump_401b9
 		mov    %edi,%eax
@@ -20469,7 +20469,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    $aHostConnection,%eax
 		xor    %dl,%dl
 		call   show_message
-		mov    %dl,ingame__InNetGame_UNSURE
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x995 # ingame.InNetGame_UNSURE
 		movw   $0x37,EXPORT_SYMBOL(ingame)+0x002 # ingame.DisplayMode
 		call   ac_StopCD
 		call   ac_StopAllSamples
@@ -20500,7 +20500,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    $0x1,%eax
 		xor    %edx,%edx
 		mov    %esi,%ecx
-		mov    ingame__InNetGame_UNSURE,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%dl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%edx
 		je     jump_40224
@@ -20516,7 +20516,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    $0x1,%ebp
 		xor    %ebx,%ebx
 		mov    %eax,%ecx
-		mov    ingame__InNetGame_UNSURE,%bl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%bl # ingame.InNetGame_UNSURE
 		shl    %cl,%ebp
 		test   %ebp,%ebx
 		je     jump_40248
@@ -20543,7 +20543,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    %edx,%ecx
 		xor    %eax,%eax
 		mov    %esi,%ebp
-		mov    ingame__InNetGame_UNSURE,%al
+		mov    EXPORT_SYMBOL(ingame)+0x995,%al # ingame.InNetGame_UNSURE
 		shl    %cl,%ebp
 		test   %ebp,%eax
 		je     jump_40293
@@ -20999,7 +20999,7 @@ GLOBAL_FUNC (ASM_load_texturemaps)
 		jb     jump_419dd
 	jump_41a0d:
 		dec    %bl
-		mov    %bl,ingame__LastTmap
+		mov    %bl,EXPORT_SYMBOL(ingame)+0x98A # ingame.LastTmap
 		jmp    jump_41a64
 	jump_41a17:
 		movb   $0x1,exit_game
@@ -22596,7 +22596,7 @@ GLOBAL_FUNC (ASM_generate_shadows_for_multicolor_sprites)	/* 0x042E70 */
 		jmp    jump_42f87
 	jump_4314b:
 		xor    %eax,%eax
-		mov    ingame__LastTmap,%al
+		mov    EXPORT_SYMBOL(ingame)+0x98A,%al # ingame.LastTmap
 		mov    $0xffffff80,%esi
 		mov    $0x7f,%ebp
 		mov    EXPORT_SYMBOL(vec_tmap)(,%eax,4),%eax
@@ -31221,7 +31221,7 @@ func_4979d:
 		mov    $0x1,%ebp
 		xor    %ebx,%ebx
 		mov    %al,%cl
-		mov    ingame__InNetGame_UNSURE,%bl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%bl # ingame.InNetGame_UNSURE
 		shl    %cl,%ebp
 		test   %ebp,%ebx
 		je     jump_497ef
@@ -32740,7 +32740,7 @@ GLOBAL_FUNC(ASM_process_random_speech)	/* 0x04AB2C */
 		push   %esi
 		mov    %eax,%esi
 		call   ac_LbRandomAnyShort
-		cmpw   $0x0,ingame__TrackThing
+		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		jne    jump_4ab60
 		testb  $0x1,0x47(%esi)
 		jne    jump_4ab60
@@ -35431,7 +35431,7 @@ func_4c9ca:
 		testb  $0x8,0x18(%esi)
 		je     jump_4c9e2
 		xor    %edx,%edx
-		mov    %dx,ingame__fld_unkCA6
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x982 # ingame.fld_unkCA6
 		add    $0x8,%esp
 		pop    %ebp
 		pop    %edi
@@ -35441,9 +35441,9 @@ func_4c9ca:
 		ret
 	jump_4c9e2:
 		mov    0x2(%esi),%ax
-		mov    %ax,ingame__fld_unkCA6
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x982 # ingame.fld_unkCA6
 		mov    0xe(%esi),%ax
-		mov    %ax,ingame__fld_unkCA8
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x984 # ingame.fld_unkCA8
 		add    $0x8,%esp
 		pop    %ebp
 		pop    %edi
@@ -35477,17 +35477,17 @@ func_4c9ff:
 		shl    $0x3,%eax
 		xor    %ebx,%ebx
 		add    %edx,%eax
-		mov    %bx,ingame__TrackThing
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		mov    0x18(%eax),%edx
 		mov    0x20(%eax),%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		mov    %dx,ingame__TrackX
-		mov    %ax,ingame__TrackZ
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 		jmp    jump_4ca71
 	jump_4ca67:
 		mov    0x2(%esi),%ax
-		mov    %ax,ingame__TrackThing
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 	jump_4ca71:
 		movw   $0x0,0xa(%ebp)
 		add    $0x8,%esp
@@ -38443,7 +38443,7 @@ GLOBAL_FUNC(ASM_person_dead)	/* 0x04EA2C */
 		mov    $0x1,%edx
 		xor    %eax,%eax
 		mov    %esi,%ecx
-		mov    ingame__InNetGame_UNSURE,%al
+		mov    EXPORT_SYMBOL(ingame)+0x995,%al # ingame.InNetGame_UNSURE
 		shl    %cl,%edx
 		test   %edx,%eax
 		je     jump_4eab6
@@ -38541,7 +38541,7 @@ GLOBAL_FUNC(ASM_person_pickup)	/* 0x04EB0C */
 		mov    0x14(%edi),%eax
 		sar    $0x10,%eax
 		call   ac_remove_sthing
-		decw   ingame__fld_unkCB7
+		decw   EXPORT_SYMBOL(ingame)+0x993 # ingame.fld_unkCB7
 	jump_4ec08:
 		movw   $0x0,0x5e(%esi)
 	jump_4ec0e:
@@ -41861,7 +41861,7 @@ GLOBAL_FUNC(ASM_person_kill_target2)	/* 0x050E78 */
 	jump_510df:
 		testb  $0x20,0xd(%edi)
 		je     jump_510f4
-		movw   $0x1,ingame__fld_unkC8B
+		movw   $0x1,EXPORT_SYMBOL(ingame)+0x967 # ingame.fld_unkC8B
 		jmp    jump_510f4
 	jump_510f0:
 		andb   $0xfb,0xc(%esi)
@@ -47772,7 +47772,7 @@ find_nearest_player:	/* 0x0558B8 */
 		mov    $0x1,%esi
 		xor    %ebx,%ebx
 		mov    %eax,%ecx
-		mov    ingame__InNetGame_UNSURE,%bl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%bl # ingame.InNetGame_UNSURE
 		shl    %cl,%esi
 		test   %esi,%ebx
 		je     jump_558e9
@@ -48410,8 +48410,8 @@ GLOBAL_FUNC(ASM_set_peep_comcur)	/* 0x055EC8 */
 		mov    0x20(%ecx),%edx
 		sar    $0x8,%ebx
 		sar    $0x8,%edx
-		mov    %bx,ingame__TrackX
-		mov    %dx,ingame__TrackZ
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 	jump_55f59:
 		pop    %esi
 		pop    %edx
@@ -50005,7 +50005,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		mov    $0x1,%eax
 		xor    %edx,%edx
 		mov    %bl,%cl
-		mov    ingame__InNetGame_UNSURE,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%dl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%edx
 		je     jump_57332
@@ -50025,7 +50025,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		cmpb   $0x0,in_network_game
 		je     jump_57412
 		xor    %eax,%eax
-		mov    ingame__fld_unkCB7,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x993,%ax # ingame.fld_unkCB7
 		cmp    $0x96,%eax
 		jle    jump_573ac
 		call   ac_rand
@@ -50038,7 +50038,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		testb  $0xf,gameturn
 		jne    jump_573e2
 		xor    %eax,%eax
-		mov    ingame__fld_unkCB7,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x993,%ax # ingame.fld_unkCB7
 		cmp    $0x64,%eax
 		jle    jump_573d4
 		xor    %eax,%eax
@@ -50125,7 +50125,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		test   %eax,%eax
 		jg     jump_5751a
 		xor    %eax,%eax
-		mov    ingame__PalType,%al
+		mov    EXPORT_SYMBOL(ingame)+0x987,%al # ingame.PalType
 		push   %eax
 		mov    palette_fname_fmt,%esi
 		push   %esi
@@ -50477,7 +50477,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		cmp    $0x2,%eax
 		jne    jump_57d27
 		xor    %ecx,%ecx
-		mov    %cx,ingame__SoundThing
+		mov    %cx,EXPORT_SYMBOL(ingame)+0x98B # ingame.SoundThing
 		mov    0x64(%esp),%edi
 		jmp    jump_57846
 	jump_57979:
@@ -62262,7 +62262,7 @@ GLOBAL_FUNC(ASM_sub_6031C)	/* 0x6031C */
 		mov    %bx,EXPORT_SYMBOL(next_object_point)
 		call   point_unkn_func_03
 		xor    %eax,%eax
-		mov    ingame__LowerMemoryUse,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x965,%ax # ingame.LowerMemoryUse
 		cmp    $0x3,%eax
 		jne    jump_6048f
 		mov    %edx,%eax
@@ -62318,7 +62318,7 @@ GLOBAL_FUNC(ASM_sub_6031C)	/* 0x6031C */
 		mov    EXPORT_SYMBOL(next_object),%bx
 		xor    %eax,%eax
 		inc    %ebx
-		mov    ingame__LowerMemoryUse,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x965,%ax # ingame.LowerMemoryUse
 		mov    %bx,EXPORT_SYMBOL(next_object)
 		cmp    $0x3,%eax
 		jne    jump_605c6
@@ -62326,7 +62326,7 @@ GLOBAL_FUNC(ASM_sub_6031C)	/* 0x6031C */
 		call   ASM_merged_noop_unkn1
 	jump_605c6:
 		xor    %eax,%eax
-		mov    ingame__LowerMemoryUse,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x965,%ax # ingame.LowerMemoryUse
 		cmp    $0x3,%eax
 		jne    jump_605dd
 		mov    $0xffffd8f0,%eax
@@ -62377,7 +62377,7 @@ GLOBAL_FUNC(ASM_sub_6031C)	/* 0x6031C */
 		jae    jump_60501
 	jump_6066d:
 		xor    %eax,%eax
-		mov    ingame__LowerMemoryUse,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x965,%ax # ingame.LowerMemoryUse
 		cmp    $0x3,%eax
 		jne    jump_60684
 		xor    %eax,%eax
@@ -62448,7 +62448,7 @@ GLOBAL_FUNC(ASM_sub_6031C)	/* 0x6031C */
 		mov    %ax,EXPORT_SYMBOL(next_face_texture)
 	jump_60754:
 		xor    %eax,%eax
-		mov    ingame__LowerMemoryUse,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x965,%ax # ingame.LowerMemoryUse
 		cmp    $0x3,%eax
 		jne    jump_605e4
 		xor    %eax,%eax
@@ -62527,7 +62527,7 @@ GLOBAL_FUNC(ASM_sub_6031C)	/* 0x6031C */
 		mov    %ax,EXPORT_SYMBOL(next_floor_texture)
 	jump_60869:
 		xor    %eax,%eax
-		mov    ingame__LowerMemoryUse,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x965,%ax # ingame.LowerMemoryUse
 		cmp    $0x3,%eax
 		jne    jump_60883
 		xor    %eax,%eax
@@ -62572,7 +62572,7 @@ GLOBAL_FUNC(ASM_sub_6031C)	/* 0x6031C */
 		mov    %ax,0x20(%edx)
 		xor    %eax,%eax
 		movw   $0x0,0x1c(%edx)
-		mov    ingame__LowerMemoryUse,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x965,%ax # ingame.LowerMemoryUse
 		movw   $0x0,0x1e(%edx)
 		cmp    $0x3,%eax
 		jne    jump_6092b
@@ -62739,10 +62739,10 @@ GLOBAL_FUNC(ASM_move_camera)	/* 0x060AC4 */
 		push   %edi
 		push   %ebp
 		mov    %edx,%esi
-		cmpw   $0x0,ingame__TrackThing
+		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		je     jump_60b08
 		xor    %edx,%edx
-		mov    ingame__TrackThing,%dx
+		mov    EXPORT_SYMBOL(ingame)+0x975,%dx # ingame.TrackThing
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		shl    $0x2,%eax
@@ -62838,11 +62838,11 @@ GLOBAL_FUNC(ASM_track_player)	/* 0x060BC4 */
 		cmp    $0x2,%edx
 		jne    jump_60bf9
 		mov    engn_xc,%dx
-		mov    %dx,ingame__TrackX
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    engn_zc,%dx
-		mov    %dx,ingame__TrackZ
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 		xor    %edx,%edx
-		mov    %dx,ingame__TrackThing
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 	jump_60bf9:
 		xor    %edx,%edx
 		mov    %ax,%dx
@@ -62866,16 +62866,16 @@ GLOBAL_FUNC(ASM_track_player)	/* 0x060BC4 */
 		mov    0x18(%ebx),%eax
 		sar    $0x8,%eax
 		xor    %edx,%edx
-		mov    %ax,ingame__TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    0x20(%ebx),%eax
 		mov    0x1c(%ebx),%ecx
 		sar    $0x8,%eax
 		sar    $0xb,%ecx
-		mov    %ax,ingame__TrackZ
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 		mov    %ax,%dx
 		xor    %eax,%eax
 		mov    %edx,%ebx
-		mov    ingame__TrackX,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x971,%ax # ingame.TrackX
 		mov    %ecx,%edx
 		jmp    jump_60cf2
 	jump_60c6a:
@@ -62891,16 +62891,16 @@ GLOBAL_FUNC(ASM_track_player)	/* 0x060BC4 */
 		add    %eax,%ebx
 		mov    0x18(%ebx),%eax
 		sar    $0x8,%eax
-		mov    %ax,ingame__TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    0x20(%ebx),%eax
 		xor    %ecx,%ecx
 		sar    $0x8,%eax
 		mov    0x1c(%ebx),%edx
-		mov    %ax,ingame__TrackZ
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 		xor    %eax,%eax
 		sar    $0xb,%edx
-		mov    ingame__TrackZ,%ax
-		mov    ingame__TrackX,%cx
+		mov    EXPORT_SYMBOL(ingame)+0x973,%ax # ingame.TrackZ
+		mov    EXPORT_SYMBOL(ingame)+0x971,%cx # ingame.TrackX
 		mov    %eax,%ebx
 		mov    %ecx,%eax
 		call   ac_move_camera
@@ -62911,16 +62911,16 @@ GLOBAL_FUNC(ASM_track_player)	/* 0x060BC4 */
 	jump_60cc5:
 		mov    0x18(%eax),%edx
 		sar    $0x8,%edx
-		mov    %dx,ingame__TrackX
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    0x20(%eax),%edx
 		sar    $0x8,%edx
 		xor    %ebx,%ebx
-		mov    %dx,ingame__TrackZ
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 		mov    %dx,%bx
 		mov    0x1c(%eax),%edx
 		xor    %eax,%eax
 		sar    $0x8,%edx
-		mov    ingame__TrackX,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x971,%ax # ingame.TrackX
 	jump_60cf2:
 		call   ac_move_camera
 		pop    %edx
@@ -62952,7 +62952,7 @@ GLOBAL_FUNC(ASM_track_angle)	/* 0x060D18 */
 		push   %edx
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(engn_anglexz),%ebx
-		mov    ingame__fld_unkCA6,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x982,%ax # ingame.fld_unkCA6
 		sar    $0x5,%ebx
 		sub    %ebx,%eax
 		mov    %eax,%ebx
@@ -62965,7 +62965,7 @@ GLOBAL_FUNC(ASM_track_angle)	/* 0x060D18 */
 		cmp    $0x400,%eax
 		jg     jump_60d89
 		xor    %eax,%eax
-		mov    ingame__fld_unkCA8,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x984,%ax # ingame.fld_unkCA8
 		cltd
 		xor    %edx,%eax
 		sub    %edx,%eax
@@ -62978,7 +62978,7 @@ GLOBAL_FUNC(ASM_track_angle)	/* 0x060D18 */
 		cmp    %ecx,%eax
 		jge    jump_60d7c
 		xor    %eax,%eax
-		mov    ingame__fld_unkCA6,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x982,%ax # ingame.fld_unkCA6
 		shl    $0x5,%eax
 		mov    %eax,EXPORT_SYMBOL(engn_anglexz)
 		pop    %edx
@@ -62996,7 +62996,7 @@ GLOBAL_FUNC(ASM_track_angle)	/* 0x060D18 */
 		mov    $0xffffffff,%ebx
 	jump_60d8e:
 		xor    %eax,%eax
-		mov    ingame__fld_unkCA8,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x984,%ax # ingame.fld_unkCA8
 		imul   %eax,%ebx
 		mov    EXPORT_SYMBOL(engn_anglexz),%edx
 		add    %ebx,%edx
@@ -67245,9 +67245,9 @@ GLOBAL_FUNC(ASM_collapse_building)	/* 0x064CC8 */
 		mov    %edx,0x18(%esp)
 		mov    %ebx,0xc(%esp)
 		mov    %ecx,0x8(%esp)
-		cmpw   $0x0,ingame__SoundThing
+		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x98B # ingame.SoundThing
 		je     jump_64d1d
-		mov    data_180cad,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x989,%edx # ingame.data_180cad
 		sar    $0x10,%edx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -67289,7 +67289,7 @@ GLOBAL_FUNC(ASM_collapse_building)	/* 0x064CC8 */
 		je     jump_64d7b
 		movw   $0x1,0xa(%eax)
 		mov    0x16(%eax),%ax
-		mov    %ax,ingame__SoundThing
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x98B # ingame.SoundThing
 	jump_64d7b:
 		mov    0x8(%esp),%eax
 		mov    0x16(%eax),%ax
@@ -74086,7 +74086,7 @@ search_for_danger:	/* 0x06B9E8 */
 		mov    $0x1,%eax
 		xor    %ebx,%ebx
 		sar    $0x10,%ecx
-		mov    ingame__InNetGame_UNSURE,%bl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%bl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%ebx
 		je     jump_6ba48
@@ -75808,7 +75808,7 @@ find_target_from_players:	/* 0x06CCB0 */
 		call   set_interrupt_target
 		mov    $0x1,%edx
 		mov    $0x1,%al
-		mov    %dx,ingame__fld_unkC8B
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x967 # ingame.fld_unkC8B
 	jump_6cdfc:
 		add    $0x20,%esp
 		pop    %ebp
@@ -76524,7 +76524,7 @@ GLOBAL_FUNC(ASM_people_intel)	/* 0x06D9F8 */
 		mov    $0x1,%edx
 		xor    %eax,%eax
 		mov    %edi,%ecx
-		mov    ingame__InNetGame_UNSURE,%al
+		mov    EXPORT_SYMBOL(ingame)+0x995,%al # ingame.InNetGame_UNSURE
 		shl    %cl,%edx
 		test   %edx,%eax
 		je     jump_6da29
@@ -76594,7 +76594,7 @@ GLOBAL_FUNC(ASM_people_intel)	/* 0x06D9F8 */
 		mov    0x4(%esp),%ecx
 		xor    %eax,%eax
 		mov    $0x1,%edx
-		mov    ingame__InNetGame_UNSURE,%al
+		mov    EXPORT_SYMBOL(ingame)+0x995,%al # ingame.InNetGame_UNSURE
 		shl    %cl,%edx
 		test   %edx,%eax
 		je     jump_6dad8
@@ -78776,7 +78776,7 @@ GLOBAL_FUNC (ASM_init_scanner)	/* 0x0740FC */
 		push   %esi
 		push   %edi
 		push   %ebp
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		cmp    $0x2,%eax
 		je     jump_74114
@@ -79402,7 +79402,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		je     jump_74d1c
 		mov    $0x1,%dl
 		xor    %eax,%eax
-		mov    %dl,ingame__DetailLevel
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x960 # ingame.DetailLevel
 		xor    %edx,%edx
 		xor    %bl,%bl
 	jump_74d02:
@@ -79462,7 +79462,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		mov    %dh,EXPORT_SYMBOL(ingame)+0x930 # ingame.Flags+1
 		test   %bl,%bl
 		jne    jump_74dce
-		movb   $0x1,ingame__InNetGame_UNSURE
+		movb   $0x1,EXPORT_SYMBOL(ingame)+0x995 # ingame.InNetGame_UNSURE
 	jump_74dce:
 		mov    nstart_ani,%eax
 		mov    0x7b0(%eax),%ax
@@ -79492,24 +79492,24 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		mov    0x6(%eax,%edx,8),%ax
 		xor    %ecx,%ecx
 		mov    %ax,EXPORT_SYMBOL(shield_frm)+6
-		mov    %bx,ingame__fld_unkCB7
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x993 # ingame.fld_unkCB7
 		mov    %bx,EXPORT_SYMBOL(ingame)+0x935 # ingame.data_180c59
-		mov    %bx,ingame__FlameCount
-		mov    %bx,ingame__SoundThing
-		mov    %bx,ingame__fld_unkCB5
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x988 # ingame.FlameCount
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x98B # ingame.SoundThing
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x991 # ingame.fld_unkCB5
 		call   clear_mission_status
 		call   ac_init_free_explode_faces
 		call   ac_StopAllSamples
-		mov    %bx,ingame__TrackThing
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		call   ac_func_74934
 		mov    engn_xc,%ax
 		mov    $0x78,%ebx
-		mov    %ax,ingame__TrackX
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x971 # ingame.TrackX
 		mov    engn_zc,%ax
-		mov    %cx,ingame__fld_unkCA6
-		mov    %ax,ingame__TrackZ
+		mov    %cx,EXPORT_SYMBOL(ingame)+0x982 # ingame.fld_unkCA6
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x973 # ingame.TrackZ
 		mov    EXPORT_SYMBOL(next_floor_texture),%ax
-		mov    %bx,ingame__UserZoom
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
 		mov    %ax,EXPORT_SYMBOL(word_1AABD0)
 		call   ac_init_crater_textures
 		call   ASM_bang_init
@@ -79596,7 +79596,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		cmp    $0x258,%eax
 		jl     jump_74fa1
 		call   ac_dos_clock
-		mov    %eax,ingame__fld_unkC91
+		mov    %eax,EXPORT_SYMBOL(ingame)+0x96D # ingame.fld_unkC91
 		xor    %eax,%eax
 		mov    current_map,%ax
 		cmp    $0xb,%eax
@@ -79665,8 +79665,8 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		mov    %edx,gamep_unknval_16
 		mov    $0x1,%dh
 		xor    %eax,%eax
-		mov    %dh,ingame__byte_180CB1
-		mov    %dh,ingame__byte_180CB2
+		mov    %dh,EXPORT_SYMBOL(ingame)+0x98D # ingame.byte_180CB1
+		mov    %dh,EXPORT_SYMBOL(ingame)+0x98E # ingame.byte_180CB2
 		jmp    jump_750e5
 	jump_750da:
 		xor    %ebx,%ebx
@@ -80274,11 +80274,11 @@ func_75879:
 		movw   $0x422,0x26(%edx)
 		mov    %ax,0x24(%edx)
 	jump_7588a:
-		mov    ingame__fld_unkCB7,%cx
+		mov    EXPORT_SYMBOL(ingame)+0x993,%cx # ingame.fld_unkCB7
 		mov    0x2(%esp),%eax
 		inc    %ecx
 		sar    $0x10,%eax
-		mov    %cx,ingame__fld_unkCB7
+		mov    %cx,EXPORT_SYMBOL(ingame)+0x993 # ingame.fld_unkCB7
 		call   ac_add_node_sthing
 		movl   $0x4,0xc(%edx)
 		mov    %bl,0x8(%edx)
@@ -81073,7 +81073,7 @@ swoosh_veh:	/* 0x076270 */
 		cmp    $0x96,%eax
 		jb     jump_7634c
 	jump_76298:
-		mov    ingame__TrackThing,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x975,%ax # ingame.TrackThing
 		cmp    0x16(%esi),%ax
 		jne    jump_76333
 		pop    %esi
@@ -112311,7 +112311,7 @@ GLOBAL_FUNC(ASM_show_net_users_box)	/* 0x0906E4 */
 		jne    jump_90c1c
 		mov    $0xff,%dh
 		xor    %edi,%edi
-		mov    %dh,ingame__InNetGame_UNSURE
+		mov    %dh,EXPORT_SYMBOL(ingame)+0x995 # ingame.InNetGame_UNSURE
 		mov    %di,0x24(%esp)
 		jmp    jump_90bb9
 	jump_908e3:
@@ -112534,18 +112534,18 @@ GLOBAL_FUNC(ASM_show_net_users_box)	/* 0x0906E4 */
 	jump_90b7e:
 		mov    %dl,%al
 		not    %al
-		mov    ingame__InNetGame_UNSURE,%ah
+		mov    EXPORT_SYMBOL(ingame)+0x995,%ah # ingame.InNetGame_UNSURE
 		xor    %dl,%dl
 		and    %al,%ah
 		mov    %dl,unkn2_names(%ebx)
-		mov    %ah,ingame__InNetGame_UNSURE
+		mov    %ah,EXPORT_SYMBOL(ingame)+0x995 # ingame.InNetGame_UNSURE
 		jmp    jump_90bb4
 	jump_90b9a:
 		mov    %dl,%al
-		mov    ingame__InNetGame_UNSURE,%cl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%cl # ingame.InNetGame_UNSURE
 		not    %al
 		and    %al,%cl
-		mov    %cl,ingame__InNetGame_UNSURE
+		mov    %cl,EXPORT_SYMBOL(ingame)+0x995 # ingame.InNetGame_UNSURE
 		xor    %ch,%ch
 		mov    %ch,unkn2_names(%ebx)
 	jump_90bb4:
@@ -114064,31 +114064,31 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		jne    jump_94c4f
 		jmp    jump_94c63
 	jump_94bab:
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		test   %eax,%eax
 		jl     jump_94bea
-		decb   ingame__PanelPermutation
-		mov    ingame__fld_unkCA0,%eax
+		decb   EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		test   %eax,%eax
 		jge    jump_94bd0
-		movb   $0x2,ingame__PanelPermutation
+		movb   $0x2,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 	jump_94bd0:
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
 		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94c63
 	jump_94bea:
-		incb   ingame__PanelPermutation
-		mov    ingame__fld_unkCA0,%eax
+		incb   EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		test   %eax,%eax
 		jne    jump_94c03
-		movb   $0xfd,ingame__PanelPermutation
+		movb   $0xfd,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 	jump_94c03:
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		cltd
 		xor    %edx,%eax
@@ -114097,15 +114097,15 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94c63
 	jump_94c1f:
-		mov    ingame__TrenchcoatPreference,%ah
+		mov    EXPORT_SYMBOL(ingame)+0x980,%ah # ingame.TrenchcoatPreference
 		dec    %ah
-		mov    %ah,ingame__TrenchcoatPreference
+		mov    %ah,EXPORT_SYMBOL(ingame)+0x980 # ingame.TrenchcoatPreference
 		test   $0x80,%ah
 		je     jump_94c39
-		movb   $0x5,ingame__TrenchcoatPreference
+		movb   $0x5,EXPORT_SYMBOL(ingame)+0x980 # ingame.TrenchcoatPreference
 	jump_94c39:
 		xor    %eax,%eax
-		mov    ingame__TrenchcoatPreference,%al
+		mov    EXPORT_SYMBOL(ingame)+0x980,%al # ingame.TrenchcoatPreference
 		mov    EXPORT_SYMBOL(gui_strings)+0x91C(,%eax,4),%eax
 		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94c63
@@ -114196,31 +114196,31 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		jne    jump_94e14
 		jmp    jump_94e29
 	jump_94d71:
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		test   %eax,%eax
 		jl     jump_94db0
-		incb   ingame__PanelPermutation
-		mov    ingame__fld_unkCA0,%eax
+		incb   EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		cmp    $0x2,%eax
 		jle    jump_94d96
-		mov    %dh,ingame__PanelPermutation
+		mov    %dh,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 	jump_94d96:
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
 		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94e29
 	jump_94db0:
-		decb   ingame__PanelPermutation
-		mov    ingame__fld_unkCA0,%eax
+		decb   EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		cmp    $0xfffffffd,%eax
 		jge    jump_94dca
-		movb   $0xff,ingame__PanelPermutation
+		movb   $0xff,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 	jump_94dca:
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		cltd
 		xor    %edx,%eax
@@ -114229,15 +114229,15 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94e29
 	jump_94de6:
-		incb   ingame__TrenchcoatPreference
+		incb   EXPORT_SYMBOL(ingame)+0x980 # ingame.TrenchcoatPreference
 		xor    %eax,%eax
-		mov    ingame__TrenchcoatPreference,%al
+		mov    EXPORT_SYMBOL(ingame)+0x980,%al # ingame.TrenchcoatPreference
 		cmp    $0x5,%eax
 		jle    jump_94dfe
-		mov    %dh,ingame__TrenchcoatPreference
+		mov    %dh,EXPORT_SYMBOL(ingame)+0x980 # ingame.TrenchcoatPreference
 	jump_94dfe:
 		xor    %eax,%eax
-		mov    ingame__TrenchcoatPreference,%al
+		mov    EXPORT_SYMBOL(ingame)+0x980,%al # ingame.TrenchcoatPreference
 		mov    EXPORT_SYMBOL(gui_strings)+0x91C(,%eax,4),%eax
 		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x08(%esi)
 		jmp    jump_94e29
@@ -114301,7 +114301,7 @@ GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
 		andb   $0xfb,EXPORT_SYMBOL(ingame)+0x930 # ingame.Flags+1
 	jump_94ee3:
 		xor    %eax,%eax
-		mov    ingame__DetailLevel,%al
+		mov    EXPORT_SYMBOL(ingame)+0x960,%al # ingame.DetailLevel
 		test   %eax,%eax
 		jne    jump_94ef5
 		mov    $0x1,%eax
@@ -123043,7 +123043,7 @@ GLOBAL_FUNC(ASM_mem_group_arrived_square2)	/* 0x0A6708 */
 		mov    (%esp),%cl
 		xor    %ebx,%ebx
 		mov    $0x1,%eax
-		mov    ingame__InNetGame_UNSURE,%bl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%bl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%ebx
 		je     jump_a673b
@@ -123184,7 +123184,7 @@ GLOBAL_FUNC(ASM_mem_group_arrived)	/* 0x0A6898 */
 		mov    (%esp),%cl
 		xor    %edx,%edx
 		mov    $0x1,%eax
-		mov    ingame__InNetGame_UNSURE,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%dl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%edx
 		je     jump_a69c6
@@ -124242,7 +124242,7 @@ GLOBAL_FUNC(ASM_post_process_blips)	/* 0x0A7CAC */
 		add    $0x2,%ebx
 		test   $0x20,%ah
 		jne    jump_a7da7
-		cmpw   $0x0,ingame__TrackThing
+		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		jne    jump_a7da7
 		mov    data_1c8468,%ax
 		xor    %ecx,%ecx
@@ -124470,7 +124470,7 @@ GLOBAL_FUNC(ASM_test_single_mission)	/* 0x0A8C48 */
 		je     jump_a8e82
 		xor    %ah,%ah
 		mov    %bl,%al
-		mov    %ax,ingame__fld_unkCB5
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x991 # ingame.fld_unkCB5
 	jump_a8e82:
 		incl   0x8(%esp)
 		jmp    jump_a8ea3
@@ -124629,7 +124629,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		mov    $0x1,%ebx
 		test   %eax,%eax
 		jne    jump_a901a
-		cmpw   $0x0,ingame__TrackThing
+		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		jne    jump_a921a
 	jump_a901a:
 		mov    mission_open,%eax
@@ -124707,10 +124707,10 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		sar    $0x10,%eax
 		cmp    $0xffffffff,%eax
 		jne    jump_a912a
-		cmpw   $0x0,ingame__fld_unkCB5
+		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x991 # ingame.fld_unkCB5
 		je     jump_a911f
 		xor    %eax,%eax
-		mov    ingame__fld_unkCB5,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x991,%ax # ingame.fld_unkCB5
 		mov    EXPORT_SYMBOL(objective_text)(,%eax,4),%eax
 		mov    %eax,EXPORT_SYMBOL(scroll_text)
 	jump_a911f:
@@ -124783,7 +124783,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		ret
 	jump_a91dc:
 		jge    jump_a9215
-		mov    ingame__fld_unkCB5,%dx
+		mov    EXPORT_SYMBOL(ingame)+0x991,%dx # ingame.fld_unkCB5
 		test   %dx,%dx
 		je     jump_a91fb
 		xor    %eax,%eax
@@ -134029,7 +134029,7 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
 		mov    0x50(%esp),%cl
 		xor    %edx,%edx
 		mov    $0x1,%eax
-		mov    ingame__InNetGame_UNSURE,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%dl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%edx
 		je     jump_b0a13
@@ -134122,7 +134122,7 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
 		mov    0x54(%esp),%cl
 		xor    %ebx,%ebx
 		mov    $0x1,%eax
-		mov    ingame__InNetGame_UNSURE,%bl
+		mov    EXPORT_SYMBOL(ingame)+0x995,%bl # ingame.InNetGame_UNSURE
 		shl    %cl,%eax
 		test   %eax,%ebx
 		je     jump_b0b0d
@@ -152410,7 +152410,7 @@ GLOBAL_FUNC(ASM_init_flamer)	/* 0x0C303C */
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_c31da
-		incw   ingame__FlameCount
+		incw   EXPORT_SYMBOL(ingame)+0x988 # ingame.FlameCount
 		call   ac_LbRandomAnyShort
 		movb   $0x2e,0x8(%edx)
 		mov    0x28(%edx),%cx
@@ -158333,7 +158333,7 @@ process_napalm_flame:	/* 0x0C7678 */
 		call   ac_remove_sthing
 		mov    %esi,%eax
 		call   ac_delete_snode
-		decw   ingame__FlameCount
+		decw   EXPORT_SYMBOL(ingame)+0x988 # ingame.FlameCount
 		jmp    jump_c7a40
 	jump_c77b4:
 		push   $0x0
@@ -158525,7 +158525,7 @@ func_c794a:
 		xor    %ah,%ah
 		xor    %edx,%edx
 		and    $0x1f,%al
-		mov    ingame__FlameCount,%dx
+		mov    EXPORT_SYMBOL(ingame)+0x988,%dx # ingame.FlameCount
 		add    $0x50,%eax
 		cmp    $0x14,%edx
 		jge    jump_c7a1c
@@ -161484,10 +161484,10 @@ GLOBAL_FUNC(ASM_process_mine)	/* 0x0C9ADC */
 		mov    0x14(%esi),%eax
 		sar    $0x10,%eax
 		call   ac_remove_sthing
-		mov    ingame__fld_unkCB7,%dx
+		mov    EXPORT_SYMBOL(ingame)+0x993,%dx # ingame.fld_unkCB7
 		dec    %edx
 		mov    %esi,%eax
-		mov    %dx,ingame__fld_unkCB7
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x993 # ingame.fld_unkCB7
 		call   ac_delete_snode
 		pop    %edi
 		pop    %esi
@@ -161600,10 +161600,10 @@ GLOBAL_FUNC(ASM_process_mine)	/* 0x0C9ADC */
 		mov    0x14(%esi),%eax
 		sar    $0x10,%eax
 		call   ac_remove_sthing
-		mov    ingame__fld_unkCB7,%bx
+		mov    EXPORT_SYMBOL(ingame)+0x993,%bx # ingame.fld_unkCB7
 		dec    %ebx
 		mov    %esi,%eax
-		mov    %bx,ingame__fld_unkCB7
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x993 # ingame.fld_unkCB7
 		call   ac_delete_snode
 		pop    %edi
 		pop    %esi
@@ -165135,8 +165135,8 @@ GLOBAL_FUNC(ASM_sub_CCE8C)	/* 0xCCE8C */
 		xor    %edi,%edi
 		mov    %eax,login_control__Money
 		mov    %eax,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
-		mov    %eax,ingame__CashAtStart
-		mov    %edi,ingame__Expenditure
+		mov    %eax,EXPORT_SYMBOL(ingame)+0x99D # ingame.CashAtStart
+		mov    %edi,EXPORT_SYMBOL(ingame)+0x9A1 # ingame.Expenditure
 		pop    %edi
 		pop    %edx
 		pop    %ecx
@@ -167959,18 +167959,18 @@ GLOBAL_FUNC(ASM_init_variables)	/* 0x0D0B9C */
 		jne    jump_d0ccf
 		mov    $0xc350,%ebx
 		mov    %ebx,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
-		mov    %ebx,ingame__CashAtStart
+		mov    %ebx,EXPORT_SYMBOL(ingame)+0x99D # ingame.CashAtStart
 		jmp    jump_d0cde
 	jump_d0ccf:
 		mov    login_control__Money,%eax
 		mov    %eax,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
-		mov    %eax,ingame__CashAtStart
+		mov    %eax,EXPORT_SYMBOL(ingame)+0x99D # ingame.CashAtStart
 	jump_d0cde:
 		mov    $0x13,%al
 		mov    $0x6,%dl
 		xor    %esi,%esi
 		xor    %bl,%bl
-		mov    %esi,ingame__Expenditure
+		mov    %esi,EXPORT_SYMBOL(ingame)+0x9A1 # ingame.Expenditure
 		mov    %al,login_control__City
 		mov    %dl,login_control__State
 		mov    %bl,EXPORT_SYMBOL(byte_181189)
@@ -168750,46 +168750,46 @@ GLOBAL_FUNC(ASM_change_panel_permutation)	/* 0x0D2F18 */
 /*----------------------------------------------------------------*/
 		push   %edx
 		mov    %al,%dl
-		mov    ingame__PanelPermutation,%ah
+		mov    EXPORT_SYMBOL(ingame)+0x97F,%ah # ingame.PanelPermutation
 		inc    %ah
-		mov    ingame__PanelPermutation,%al
+		mov    EXPORT_SYMBOL(ingame)+0x97F,%al # ingame.PanelPermutation
 		dec    %al
 		test   %dl,%dl
 		je     jump_d2f78
-		mov    ingame__fld_unkCA0,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%edx # ingame.fld_unkCA0
 		sar    $0x18,%edx
 		test   %edx,%edx
 		jl     jump_d2f62
-		mov    %al,ingame__PanelPermutation
+		mov    %al,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 		movsbl %al,%eax
 		test   %eax,%eax
 		jge    jump_d2f4e
-		movb   $0x2,ingame__PanelPermutation
+		movb   $0x2,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 	jump_d2f4e:
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
 		jmp    jump_d2fdb
 	jump_d2f62:
-		mov    %ah,ingame__PanelPermutation
+		mov    %ah,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 		movsbl %ah,%eax
 		test   %eax,%eax
 		jne    jump_d2fc7
-		movb   $0xfd,ingame__PanelPermutation
+		movb   $0xfd,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 		jmp    jump_d2fc7
 	jump_d2f78:
-		mov    ingame__fld_unkCA0,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%edx # ingame.fld_unkCA0
 		sar    $0x18,%edx
 		test   %edx,%edx
 		jl     jump_d2fb3
-		mov    %ah,ingame__PanelPermutation
+		mov    %ah,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 		movsbl %ah,%eax
 		cmp    $0x2,%eax
 		jle    jump_d2f9b
 		xor    %dl,%dl
-		mov    %dl,ingame__PanelPermutation
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 	jump_d2f9b:
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x910(,%eax,4),%eax
 		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x28C
@@ -168797,13 +168797,13 @@ GLOBAL_FUNC(ASM_change_panel_permutation)	/* 0x0D2F18 */
 		pop    %edx
 		ret
 	jump_d2fb3:
-		mov    %al,ingame__PanelPermutation
+		mov    %al,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 		movsbl %al,%eax
 		cmp    $0xfffffffd,%eax
 		jge    jump_d2fc7
-		movb   $0xff,ingame__PanelPermutation
+		movb   $0xff,EXPORT_SYMBOL(ingame)+0x97F # ingame.PanelPermutation
 	jump_d2fc7:
-		mov    ingame__fld_unkCA0,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x97C,%eax # ingame.fld_unkCA0
 		sar    $0x18,%eax
 		cltd
 		xor    %edx,%eax
@@ -168822,24 +168822,24 @@ GLOBAL_FUNC(ASM_change_trenchcoat_preference)	/* 0x0D2FE4 */
 		push   %edx
 		test   %al,%al
 		je     jump_d3005
-		mov    ingame__TrenchcoatPreference,%dh
+		mov    EXPORT_SYMBOL(ingame)+0x980,%dh # ingame.TrenchcoatPreference
 		dec    %dh
-		mov    %dh,ingame__TrenchcoatPreference
+		mov    %dh,EXPORT_SYMBOL(ingame)+0x980 # ingame.TrenchcoatPreference
 		test   $0x80,%dh
 		je     jump_d301f
-		movb   $0x5,ingame__TrenchcoatPreference
+		movb   $0x5,EXPORT_SYMBOL(ingame)+0x980 # ingame.TrenchcoatPreference
 		jmp    jump_d301f
 	jump_d3005:
-		incb   ingame__TrenchcoatPreference
+		incb   EXPORT_SYMBOL(ingame)+0x980 # ingame.TrenchcoatPreference
 		xor    %eax,%eax
-		mov    ingame__TrenchcoatPreference,%al
+		mov    EXPORT_SYMBOL(ingame)+0x980,%al # ingame.TrenchcoatPreference
 		cmp    $0x5,%eax
 		jle    jump_d301f
 		xor    %dl,%dl
-		mov    %dl,ingame__TrenchcoatPreference
+		mov    %dl,EXPORT_SYMBOL(ingame)+0x980 # ingame.TrenchcoatPreference
 	jump_d301f:
 		xor    %eax,%eax
-		mov    ingame__TrenchcoatPreference,%al
+		mov    EXPORT_SYMBOL(ingame)+0x980,%al # ingame.TrenchcoatPreference
 		mov    EXPORT_SYMBOL(gui_strings)+0x91C(,%eax,4),%eax
 		mov    %eax,EXPORT_SYMBOL(options_gfx_buttons)+0x2BA
 		mov    $0x1,%al
@@ -169742,12 +169742,12 @@ func_d417d:
 		add    %edx,%eax
 		mov    EXPORT_SYMBOL(ingame)+0x923,%ebx # ingame.Credits
 		shl    $0x2,%eax
-		mov    ingame__Expenditure,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x9A1,%ecx # ingame.Expenditure
 		sub    %eax,%ebx
 		add    %eax,%ecx
 		mov    %ebx,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    $0x1,%bl
-		mov    %ecx,ingame__Expenditure
+		mov    %ecx,EXPORT_SYMBOL(ingame)+0x9A1 # ingame.Expenditure
 		mov    %bl,0x4(%esp)
 	jump_d4270:
 		xor    %eax,%eax
@@ -170025,11 +170025,11 @@ func_d4515:
 		mov    EXPORT_SYMBOL(weapon_defs)+20(%eax),%ax
 		and    $0xffff,%eax
 		imul   $0x64,%eax,%eax
-		mov    ingame__Expenditure,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x9A1,%ecx # ingame.Expenditure
 		mov    EXPORT_SYMBOL(ingame)+0x923,%edx # ingame.Credits
 		add    %eax,%ecx
 		sub    %eax,%edx
-		mov    %ecx,ingame__Expenditure
+		mov    %ecx,EXPORT_SYMBOL(ingame)+0x9A1 # ingame.Expenditure
 		mov    $0x1,%cl
 		mov    %edx,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    %cl,0x4(%esp)
@@ -170269,12 +170269,12 @@ func_d4799:
 		mov    EXPORT_SYMBOL(mod_defs)+20(,%eax,8),%dx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    ingame__Expenditure,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x9A1,%ecx # ingame.Expenditure
 		add    %eax,%eax
 		mov    EXPORT_SYMBOL(ingame)+0x923,%ebx # ingame.Credits
 		add    %eax,%ecx
 		sub    %eax,%ebx
-		mov    %ecx,ingame__Expenditure
+		mov    %ecx,EXPORT_SYMBOL(ingame)+0x9A1 # ingame.Expenditure
 		mov    $0x1,%ch
 		mov    %ebx,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
 		mov    %ch,0x4(%esp)
@@ -170630,12 +170630,12 @@ func_d4c03:
 		imul   $0xa,%eax,%eax
 		mov    $0x1,%dh
 		mov    EXPORT_SYMBOL(ingame)+0x923,%esi # ingame.Credits
-		mov    ingame__Expenditure,%edi
+		mov    EXPORT_SYMBOL(ingame)+0x9A1,%edi # ingame.Expenditure
 		mov    %dh,0x4(%esp)
 		sub    %eax,%esi
 		add    %eax,%edi
 		mov    %esi,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
-		mov    %edi,ingame__Expenditure
+		mov    %edi,EXPORT_SYMBOL(ingame)+0x9A1 # ingame.Expenditure
 	jump_d4cf6:
 		mov    (%esp),%eax
 		inc    %eax
@@ -180010,7 +180010,7 @@ GLOBAL_FUNC(ASM_process_things_mines_explode)	/* 0x0E0B9C */
 		mov    %eax,%edi
 		xor    %eax,%eax
 		mov    $0x258,%edx
-		mov    ingame__fld_unkCB7,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x993,%ax # ingame.fld_unkCB7
 		sub    %eax,%edx
 		mov    %edx,(%esp)
 		cmp    $0x1e,%edx
@@ -180057,10 +180057,10 @@ GLOBAL_FUNC(ASM_process_things_mines_explode)	/* 0x0E0B9C */
 		mov    0x14(%esi),%eax
 		sar    $0x10,%eax
 		call   ac_remove_sthing
-		mov    ingame__fld_unkCB7,%dx
+		mov    EXPORT_SYMBOL(ingame)+0x993,%dx # ingame.fld_unkCB7
 		dec    %edx
 		dec    %edi
-		mov    %dx,ingame__fld_unkCB7
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x993 # ingame.fld_unkCB7
 		test   %edi,%edi
 		jg     jump_e0c6a
 		mov    $0x1,%eax
@@ -184343,75 +184343,11 @@ GLOBAL (joy)	/* 0x17FD78 */
 
 
 GLOBAL (ingame)	/* 0x1807D4 */
-		.fill   0x95F
-		.align  4
-ingame__DetailLevel:	/* 0x180c84 */
-		.byte	0x0
-ingame__UserZoom:	/* 0x180C85 */
-		.short  0x0
-		.short  0x0
-ingame__LowerMemoryUse:
-		.short  0x0
-ingame__fld_unkC8B:	/* 0x180C8B */
-		.short  0x0
-		.fill   0x4
-ingame__fld_unkC91:	/* 0x180C91 */
-		.long	0x0
-ingame__TrackX:	/* 0x180C95 */
-		.short  0x0
-ingame__TrackZ:	/* 0x180C97 */
-		.short  0x0
-ingame__TrackThing:	/* 0x180C99 */
-		.fill   0x7
-ingame__fld_unkCA0:	/* 0x180CA0 */
-		.short  0x0
-		.byte	0x0
-ingame__PanelPermutation:	/* 0x180CA3 */
-		.byte	0x0
-ingame__TrenchcoatPreference:	/* 0x180CA4 */
-		.byte	0x0
-ingame__MissionNo:	/* 0x180CA5 */
-		.byte	0x0
-ingame__fld_unkCA6:	/* 0x180CA6 */
-		.short  0x0
-ingame__fld_unkCA8:	/* 0x180CA8 */
-		.short  0x0
-		.byte   0x0
-ingame__PalType:	/* 0x180CAB */
-		.byte	0x0
-ingame__FlameCount:	/* 0x180CAC (resize + 0x04B0) */
-		.byte	0x0
-data_180cad:
-		.byte	0x0
-ingame__LastTmap:	/* 0x180CAE */
-		.byte	0x0
-ingame__SoundThing:	/* 0x180CAF */
-		.short  0x0
-ingame__byte_180CB1:	/* 0x180CB1 */
-		.byte	0x0
-ingame__byte_180CB2:	/* 0x180CB2 */
-		.byte	0x0
-ingame__VisibleBillboardThing:	/* 0x180CB3 */
-		.short  0x0
-ingame__fld_unkCB5:	/* 0x180CB5 */
-		.short  0x0
-ingame__fld_unkCB7:	/* 0x180CB7 */
-		.short  0x0
-ingame__InNetGame_UNSURE:	/* 0x180CB9 */
-		.fill   0x6
-ingame__UserFlags:	/* 0x180CBF ingame+0x4eb (resize + 0x04B0) */
-		.byte	0x0
-		.byte	0x0
-ingame__CashAtStart:	/* 0x180CC1 ingame+0x4ed (resize + 0x04B0) */
-		.long	0x0
-ingame__Expenditure:	/* 0x180CC5 (resize + 0x04B0) */
-		.long	0x0
+		.fill   0x9A5
 
 
 GLOBAL (player_unknCC9)	/* 0x180CC9 */
-		.byte	0x0
-data_180cca:
-		.fill   0x7f
+		.fill   0x80
 		.fill   0x80
 		.fill   0x80
 		.fill   0x80
