@@ -183638,15 +183638,6 @@ ascB:	/* 0x15BF1F */
 aSMap03d_bB:	/* 0x15BF24 */
 		.string "%s/map%03d.b&b"
 
-qdata_keys_dat_2:
-		.string "qdata/keys.dat"
-
-aSyndicate02d02:	/* 0x15C035 */
-		.string "SYNDICATE %02d:%02d:%02d NC"
-aChurch02d02d02:	/* 0x15C051 */
-		.string "CHURCH %02d:%02d:%02d NC"
-aUnguided02d02d:	/* 0x15C06A */
-		.string "UNGUIDED %02d:%02d:%02d NC"
 aS_idx:	/* 0x15C085 */
 		.string "%s.idx"
 aS_wad:	/* 0x15C08C */
