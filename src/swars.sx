@@ -120033,7 +120033,7 @@ func_a0b0c:
 		mov    %eax,EXPORT_SYMBOL(lbFontPtr)
 		mov    %dl,EXPORT_SYMBOL(lbDisplay)+113 # lbDisplay.DrawColour
 		xor    %eax,%eax
-		mov    data_1c6e74(%ebp),%al
+		mov    EXPORT_SYMBOL(brief_store)+4(%ebp),%al # brief_store[].Mission
 		call   is_a_scientist_mission
 		test   %al,%al
 		je     jump_a0c70
@@ -120059,7 +120059,7 @@ func_a0b0c:
 		mov    med2_font,%eax
 		mov    %eax,EXPORT_SYMBOL(lbFontPtr)
 		xor    %eax,%eax
-		mov    brief_store(%ebp),%al
+		mov    EXPORT_SYMBOL(brief_store)+0(%ebp),%al # brief_store[].RefNum
 		push   %eax
 		push   $ascD_50
 		lea    0x8(%esp),%eax
@@ -120107,10 +120107,10 @@ func_a0b0c:
 		mov    small2_font,%eax
 		mov    %eax,EXPORT_SYMBOL(lbFontPtr)
 		xor    %eax,%eax
-		mov    data_1c6e72(%ebp),%al
+		mov    EXPORT_SYMBOL(brief_store)+2(%ebp),%al # brief_store[].RecvMonth
 		push   %eax
 		xor    %eax,%eax
-		mov    data_1c6e71(%ebp),%al
+		mov    EXPORT_SYMBOL(brief_store)+1(%ebp),%al # brief_store[].RecvDay
 		push   %eax
 		mov    text_buf_pos,%esi
 		inc    %ecx
@@ -120162,7 +120162,7 @@ func_a0b0c:
 		not    %ecx
 		dec    %ecx
 		xor    %eax,%eax
-		mov    data_1c6e73(%ebp),%al
+		mov    EXPORT_SYMBOL(brief_store)+3(%ebp),%al # brief_store[].RecvYear
 		push   %eax
 		mov    text_buf_pos,%esi
 		inc    %ecx
@@ -168055,25 +168055,25 @@ GLOBAL_FUNC(ASM_activate_queued_mail)	/* 0x0D23B4 */
 		push   %edi
 		sub    $0x4,%esp
 		mov    new_mail,%cl
-		testb  $0x1,data_1c6ea8
+		testb  $0x1,EXPORT_SYMBOL(newmail_store)+4 # newmail_store[].Flag
 		je     jump_d2490
 		xor    %ebx,%ebx
 		mov    next_brief,%bx
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
 		mov    data_1c6df2,%bl
-		mov    %bl,data_1c6e71(%eax)
+		mov    %bl,EXPORT_SYMBOL(brief_store)+1(%eax) # brief_store[].RecvDay
 		mov    data_1c6df3,%bl
 		mov    next_ref,%dx
-		mov    %bl,data_1c6e72(%eax)
+		mov    %bl,EXPORT_SYMBOL(brief_store)+2(%eax) # brief_store[].RecvMonth
 		mov    data_1c6df4,%bl
 		mov    next_brief,%di
-		mov    %bl,data_1c6e73(%eax)
-		mov    data_1c6ea7,%bl
+		mov    %bl,EXPORT_SYMBOL(brief_store)+3(%eax) # brief_store[].RecvYear
+		mov    EXPORT_SYMBOL(newmail_store)+3,%bl # newmail_store[].Mission
 		inc    %edi
-		mov    %bl,data_1c6e74(%eax)
+		mov    %bl,EXPORT_SYMBOL(brief_store)+4(%eax) # brief_store[].Mission
 		xor    %ebx,%ebx
-		mov    %dl,brief_store(%eax)
+		mov    %dl,EXPORT_SYMBOL(brief_store)+0(%eax) # brief_store[].RefNum
 		mov    %di,%bx
 		inc    %edx
 		lea    0x0(,%ebx,4),%eax
@@ -168102,19 +168102,19 @@ GLOBAL_FUNC(ASM_activate_queued_mail)	/* 0x0D23B4 */
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
 		mov    next_ref,%dx
-		mov    EXPORT_SYMBOL(newmail_store),%bl
-		mov    %dl,email_store(%eax)
+		mov    EXPORT_SYMBOL(newmail_store)+0,%bl # newmail_store[].RecvDay
+		mov    %dl,EXPORT_SYMBOL(email_store)+0(%eax) # email_store[].RefNum
 		mov    EXPORT_SYMBOL(next_email),%si
-		mov    %bl,data_1c6e0d(%eax)
-		mov    data_1c6ea5,%bl
+		mov    %bl,EXPORT_SYMBOL(email_store)+1(%eax) # email_store[].RecvDay
+		mov    EXPORT_SYMBOL(newmail_store)+1,%bl # newmail_store[].RecvMonth
 		inc    %esi
-		mov    %bl,data_1c6e0e(%eax)
-		mov    data_1c6ea6,%bl
+		mov    %bl,EXPORT_SYMBOL(email_store)+2(%eax) # email_store[].RecvMonth
+		mov    EXPORT_SYMBOL(newmail_store)+2,%bl # newmail_store[].RecvYear
 		mov    %si,EXPORT_SYMBOL(next_email)
-		mov    %bl,data_1c6e0f(%eax)
-		mov    data_1c6ea7,%bl
+		mov    %bl,EXPORT_SYMBOL(email_store)+3(%eax) # email_store[].RecvYear
+		mov    EXPORT_SYMBOL(newmail_store)+3,%bl # newmail_store[].Mission
 		inc    %edx
-		mov    %bl,data_1c6e10(%eax)
+		mov    %bl,EXPORT_SYMBOL(email_store)+4(%eax) # email_store[].Mission
 		xor    %ebx,%ebx
 		mov    %dx,next_ref
 		mov    %ebx,(%esp)
@@ -168125,8 +168125,8 @@ GLOBAL_FUNC(ASM_activate_queued_mail)	/* 0x0D23B4 */
 		lea    (%eax,%eax,4),%ebx
 		dec    %eax
 		lea    (%eax,%eax,4),%esi
-		lea    EXPORT_SYMBOL(newmail_store)(%esi),%edi
-		lea    EXPORT_SYMBOL(newmail_store)(%ebx),%esi
+		lea    EXPORT_SYMBOL(newmail_store)(%esi),%edi # newmail_store[].RecvDay
+		lea    EXPORT_SYMBOL(newmail_store)(%ebx),%esi # newmail_store[].RecvDay
 		inc    %edx
 		movsl  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -168204,8 +168204,8 @@ GLOBAL_FUNC(ASM_delete_mail)	/* 0x0D2540 */
 		lea    (%edx,%edx,4),%esi
 		dec    %edx
 		lea    (%edx,%edx,4),%edx
-		lea    email_store(%esi),%esi
-		lea    email_store(%edx),%edi
+		lea    EXPORT_SYMBOL(email_store)(%esi),%esi
+		lea    EXPORT_SYMBOL(email_store)(%edx),%edi
 		movsl  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
 		inc    %eax
@@ -186172,35 +186172,11 @@ GLOBAL (word_1C6E08)	/* 0x1C6E08 */
 GLOBAL (word_1C6E0A)	/* 0x1C6E0A */
 		.short  0x0
 GLOBAL (email_store)	/* 0x1C6E0C */
-		.byte	0x0
-data_1c6e0d:
-		.byte	0x0
-data_1c6e0e:
-		.byte	0x0
-data_1c6e0f:
-		.byte	0x0
-data_1c6e10:
-		.fill   0x60
+		.fill   0x64
 GLOBAL (brief_store)	/* 0x1C6E70 */
-		.byte	0x0
-data_1c6e71:
-		.byte	0x0
-data_1c6e72:
-		.byte	0x0
-data_1c6e73:
-		.byte	0x0
-data_1c6e74:
-		.fill   0x30
+		.fill   0x34
 GLOBAL (newmail_store)	/* 0x1C6EA4 */
-		.byte	0x0
-data_1c6ea5:
-		.byte	0x0
-data_1c6ea6:
-		.byte	0x0
-data_1c6ea7:
-		.byte	0x0
-data_1c6ea8:
-		.fill   0x90
+		.fill   0x94
 GLOBAL (new_mail)	/* 0x1C6F38 */
 		.short  0x0
 GLOBAL (next_email)	/* 0x1C6F3A */
