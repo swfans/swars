@@ -1217,7 +1217,7 @@ GLOBAL_FUNC (ASM_init_engine)	/* 0x1260C */
 		mov    %dx,EXPORT_SYMBOL(word_19CC66)
 		xor    %edx,%edx
 		mov    EXPORT_SYMBOL(lbDisplay)+4,%eax # lbDisplay.WScreen
-		mov    %dx,ingame__NextRocket
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x957 # ingame.NextRocket
 		mov    EXPORT_SYMBOL(vec_tmap),%edx
 		call   ac_setup_vecs
 		orw    $0x20c0,EXPORT_SYMBOL(ingame)+0x92F # ingame.Flags+0
@@ -7552,7 +7552,7 @@ GLOBAL_FUNC(ASM_draw_sort_sprite1b)	/* 0x027070 */
 		mov    %ebp,%edx
 		call   ac_draw_sorted_sprite1b
 	jump_27252:
-		mov    ingame__TrainMode,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x959,%eax # ingame.TrainMode
 		xor    %edx,%edx
 		sar    $0x10,%eax
 		mov    0x51(%esi),%dl
@@ -9548,12 +9548,12 @@ GLOBAL_FUNC(ASM_draw_object_face4g_textrd)	/* 0x028AA4 */
 		mov    EXPORT_SYMBOL(dword_176D04),%ebx
 		sar    $0x10,%eax
 		add    %eax,%ebx
-		mov    data_180c59,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x935,%eax # ingame.data_180c59
 		sar    $0x10,%eax
 		mov    %ebx,0x7c(%esp)
 		test   %eax,%eax
 		jne    jump_28c2d
-		mov    %dx,ingame__draw_unknprop_01
+		mov    %dx,EXPORT_SYMBOL(ingame)+0x937 # ingame.draw_unknprop_01
 	jump_28c2d:
 		xor    %eax,%eax
 		mov    0x10(%ecx),%ax
@@ -16118,7 +16118,7 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3be31:
 		xor    %eax,%eax
 		call   ac_test_missions
-		mov    %ax,ingame__MissionStatus
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x92D # ingame.MissionStatus
 		add    $0x40,%esp
 		pop    %ebp
 		pop    %edi
@@ -16164,7 +16164,7 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3bec6:
 		xor    %eax,%eax
 		call   ac_test_missions
-		mov    %ax,ingame__MissionStatus
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x92D # ingame.MissionStatus
 		cwtl
 		test   %eax,%eax
 		je     jump_3c465
@@ -16181,7 +16181,7 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    ingame__fld_unkCB5,%ax
 		test   %eax,%eax
 		je     jump_3c11c
-		mov    ingame__fld_unkC4F,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
 		mov    EXPORT_SYMBOL(scroll_text),%ebp
 		sar    $0x10,%eax
 		push   %ebp
@@ -16221,7 +16221,7 @@ GLOBAL_FUNC (ASM_load_packet)
 		testb  $0x1,EXPORT_SYMBOL(lbShift)
 		jne    jump_3c42c
 	jump_3bfb6:
-		mov    ingame__fld_unkC4F,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
 		sar    $0x10,%eax
 		cmp    $0xffffffff,%eax
 		jne    jump_3c407
@@ -16237,7 +16237,7 @@ GLOBAL_FUNC (ASM_load_packet)
 		push   %ebx
 		push   %edx
 		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ebp # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
-		mov    ingame__fld_unkC4F,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
 		push   %esi
 		sar    $0x10,%eax
 		push   %ebp
@@ -16258,7 +16258,7 @@ GLOBAL_FUNC (ASM_load_packet)
 		push   %ebx
 		push   %edx
 		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ecx # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
-		mov    ingame__fld_unkC4F,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
 		push   %esi
 		sar    $0x10,%eax
 		push   %ecx
@@ -16275,7 +16275,7 @@ GLOBAL_FUNC (ASM_load_packet)
 		push   %ebx
 		push   %edx
 		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ebp # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
-		mov    ingame__fld_unkC4F,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
 		push   %esi
 		sar    $0x10,%eax
 		push   %ebp
@@ -16296,7 +16296,7 @@ GLOBAL_FUNC (ASM_load_packet)
 		push   %esi
 		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%eax # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
 		push   %eax
-		mov    ingame__fld_unkC4F,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
 		sar    $0x10,%eax
 		mov    EXPORT_SYMBOL(gui_strings)+0x9EC(,%eax,4),%edx # gui_strings[GSTR_ENM_MISSION_STATUS + 1 + x]
 		push   %edx
@@ -16310,7 +16310,7 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3c0e4:
 		push   %ebx
 		push   %eax
-		mov    ingame__fld_unkC4F,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
 		push   %esi
 		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%esi # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
 		sar    $0x10,%eax
@@ -16361,7 +16361,7 @@ GLOBAL_FUNC (ASM_load_packet)
 		push   %ebx
 		push   %edx
 		mov    EXPORT_SYMBOL(gui_strings)+0x9FC,%ecx # gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS]
-		mov    ingame__fld_unkC4F,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
 		push   %esi
 		sar    $0x10,%eax
 		push   %ecx
@@ -16565,13 +16565,13 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    %al,EXPORT_SYMBOL(lbKeyOn)+57
 		mov    EXPORT_SYMBOL(lbKeyOn)+57,%al
 		mov    %al,EXPORT_SYMBOL(lbKeyOn)+28
-		movw   $0x1,ingame__fld_unkC4F
+		movw   $0x1,EXPORT_SYMBOL(ingame)+0x92B # ingame.fld_unkC4F
 	jump_3c42c:
-		mov    ingame__fld_unkC4F-2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B-2,%eax # ingame.fld_unkC4F-2
 		sar    $0x10,%eax
 		test   %eax,%eax
 		jne    jump_3c465
-		mov    ingame__MyGroup,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x95B,%edx # ingame.MyGroup
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -16581,19 +16581,19 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    data_1974cc(%eax),%bx
 		test   %bx,%bx
 		je     jump_3c465
-		mov    %bx,ingame__fld_unkC4F
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x92B # ingame.fld_unkC4F
 	jump_3c465:
-		cmpw   $0x0,ingame__fld_unkC4F
+		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x92B # ingame.fld_unkC4F
 		je     jump_3c4b8
-		mov    ingame__fld_unkC4F-2,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B-2,%eax # ingame.fld_unkC4F-2
 		sar    $0x10,%eax
 		cmp    $0x1e,%eax
 		jge    jump_3c486
 		mov    $0xfffffffe,%eax
 		call   ac_change_brightness
 	jump_3c486:
-		decw   ingame__fld_unkC4F
-		mov    ingame__fld_unkC4F-2,%eax
+		decw   EXPORT_SYMBOL(ingame)+0x92B # ingame.fld_unkC4F
+		mov    EXPORT_SYMBOL(ingame)+0x92B-2,%eax # ingame.fld_unkC4F-2
 		sar    $0x10,%eax
 		test   %eax,%eax
 		jne    jump_3c4b8
@@ -16614,11 +16614,11 @@ GLOBAL_FUNC (ASM_load_packet)
 	jump_3c4d4:
 		mov    $0x1,%eax
 		call   ac_init_level_3d
-		mov    ingame__fld_unkC4F,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x92B,%eax # ingame.fld_unkC4F
 		sar    $0x10,%eax
 		cmp    $0x1,%eax
 		je     jump_3c4f4
-		movw   $0xffff,ingame__MissionStatus
+		movw   $0xffff,EXPORT_SYMBOL(ingame)+0x92D # ingame.MissionStatus
 	jump_3c4f4:
 		call   ac_mission_over
 	jump_3c4f9:
@@ -20348,7 +20348,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    data_1a7038(%edx),%dx
 		mov    %bx,data_1aa21a(%eax)
 		mov    %dx,data_1aa21c(%eax)
-		mov    ingame__fld_unkC4B,%dl
+		mov    EXPORT_SYMBOL(ingame)+0x927,%dl # ingame.fld_unkC4B
 		mov    %dl,data_1aa21e(%eax)
 		mov    $0xb,%edx
 		mov    $data_1aa214,%eax
@@ -20395,7 +20395,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		shl    $0x4,%eax
 		mov    EXPORT_SYMBOL(lbSeed),%edx
 		mov    %edx,data_1a7058(%eax)
-		mov    ingame__fld_unkC4B,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x927,%edx # ingame.fld_unkC4B
 		mov    %edx,data_1a705c(%eax)
 		lea    0xc8(%esp),%eax
 		mov    $0x30,%edx
@@ -20478,11 +20478,11 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    EXPORT_SYMBOL(word_1811AE),%ax
 		cmp    $0x1,%eax
 		je     jump_40209
-		mov    ingame__fld_unkC4B,%edi
+		mov    EXPORT_SYMBOL(ingame)+0x927,%edi # ingame.fld_unkC4B
 		and    $0xff,%edi
 		jmp    jump_4020f
 	jump_40209:
-		mov    ingame__fld_unkC4B,%edi
+		mov    EXPORT_SYMBOL(ingame)+0x927,%edi # ingame.fld_unkC4B
 	jump_4020f:
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(word_1811AE),%ax
@@ -30493,7 +30493,7 @@ func_48fec:
 		je     jump_49171
 		cmpb   $0x0,in_network_game
 		jne    jump_490c5
-		mov    ingame__TrainMode,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x959,%eax # ingame.TrainMode
 		xor    %edx,%edx
 		sar    $0x10,%eax
 		mov    0x51(%ebp),%dl
@@ -31131,7 +31131,7 @@ GLOBAL_FUNC(ASM_person_hit_razor_wire)	/* 0x049294 */
 		call   ac_set_person_dead
 		cmpb   $0x0,in_network_game
 		jne    jump_497df
-		mov    ingame__TrainMode,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x959,%eax # ingame.TrainMode
 		xor    %edx,%edx
 		sar    $0x10,%eax
 		mov    0x50(%esi),%dl
@@ -50144,7 +50144,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		call   ASM_merged_noop_unkn1
 		xor    %edi,%edi
 		call   ac_build_same_type_headers
-		mov    %edi,ingame__fld_unkC4B
+		mov    %edi,EXPORT_SYMBOL(ingame)+0x927 # ingame.fld_unkC4B
 		call   ac_animate_textures
 		call   ac_unkn_update_lights
 		xor    %eax,%eax
@@ -50200,10 +50200,10 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		dec    %edx
 		cmp    $0xffffffff,%edx
 		je     jump_57828
-		mov    ingame__fld_unkC4B,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x927,%eax # ingame.fld_unkC4B
 		add    %edi,%eax
 		imul   $0xa8,%edi,%esi
-		mov    %eax,ingame__fld_unkC4B
+		mov    %eax,EXPORT_SYMBOL(ingame)+0x927 # ingame.fld_unkC4B
 		mov    things,%eax
 		add    %eax,%esi
 		xor    %ebx,%ebx
@@ -50213,7 +50213,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		add    %ebx,%eax
 		add    0x18(%esi),%eax
 		add    0x1c(%esi),%eax
-		add    %eax,ingame__fld_unkC4B
+		add    %eax,EXPORT_SYMBOL(ingame)+0x927 # ingame.fld_unkC4B
 		mov    0x4(%esi),%ebx
 		mov    0x47(%esi),%al
 		sar    $0x10,%ebx
@@ -50682,12 +50682,12 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		add    %edx,%eax
 		mov    0x1c(%esi),%ecx
 		add    %ebx,%eax
-		mov    ingame__fld_unkC4B,%ebx
+		mov    EXPORT_SYMBOL(ingame)+0x927,%ebx # ingame.fld_unkC4B
 		add    %ecx,%eax
 		add    %eax,%ebx
 		mov    0x9(%esi),%al
 		mov    %al,%ah
-		mov    %ebx,ingame__fld_unkC4B
+		mov    %ebx,EXPORT_SYMBOL(ingame)+0x927 # ingame.fld_unkC4B
 		cmp    $0x1a,%al
 		jb     jump_57cbe
 		jbe    jump_57ae8
@@ -54979,7 +54979,7 @@ GLOBAL_FUNC(ASM_person_hit_by_car)	/* 0x05AA3C */
 		mov    things,%eax
 		xor    %edx,%edx
 		mov    0x51(%eax,%edi,8),%dl
-		mov    ingame__TrainMode,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x959,%eax # ingame.TrainMode
 		sar    $0x10,%eax
 		cmp    %eax,%edx
 		je     jump_5ac95
@@ -63279,7 +63279,7 @@ func_617f0:
 		sar    $0x10,%ecx
 		test   %ecx,%ecx
 		je     jump_6187c
-		mov    ingame__dword_180C57,%ecx
+		mov    EXPORT_SYMBOL(ingame)+0x933,%ecx # ingame.dword_180C57
 		inc    %ebx
 		xor    %esi,%esi
 		sar    $0x10,%ecx
@@ -64847,7 +64847,7 @@ do_shockwave_person:	/* 0x062F0C */
 		je     jump_630ec
 		cmpb   $0x0,in_network_game
 		jne    jump_6306d
-		mov    ingame__TrainMode,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x959,%eax # ingame.TrainMode
 		xor    %edx,%edx
 		sar    $0x10,%eax
 		mov    0x51(%ebp),%dl
@@ -76417,7 +76417,7 @@ stop_being_persuaded:	/* 0x06D3D8 */
 		add    %edx,%eax
 		xor    %edx,%edx
 		mov    0x51(%ebx,%eax,8),%dl
-		mov    ingame__TrainMode,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x959,%eax # ingame.TrainMode
 		sar    $0x10,%eax
 		cmp    %eax,%edx
 		je     jump_6d57e
@@ -78954,7 +78954,7 @@ GLOBAL_FUNC (ASM_init_level_3d)	/* 0x07445C */
 		mov    EXPORT_SYMBOL(next_object),%ax
 		dec    %eax
 		inc    %esi
-		mov    %ax,ingame__Rocket1(,%edi,2)
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x939(,%edi,2) # ingame.Rocket1
 	jump_74586:
 		xor    %edi,%edi
 		mov    %si,%di
@@ -79246,7 +79246,7 @@ GLOBAL_FUNC(ASM_func_74934)	/* 0x74934 */
 		call   train_related_func_01
 		and    $0xffff,%eax
 		je     jump_749e5
-		orb    $0x2,ingame__TrainMode
+		orb    $0x2,EXPORT_SYMBOL(ingame)+0x959 # ingame.TrainMode
 	jump_749e5:
 		movswl %dx,%eax
 		imul   $0xa8,%eax,%eax
@@ -79319,10 +79319,10 @@ GLOBAL_FUNC(ASM_func_749fc)	/* 0x749fc */
 		mov    %dx,0x6a(%ebx,%eax,1)
 		movswl %dx,%ebx
 		imul   $0xa8,%ebx,%ebx
-		mov    data_180c59,%cx
+		mov    EXPORT_SYMBOL(ingame)+0x935,%cx # ingame.data_180c59
 		inc    %ecx
 		movw   $0x0,0x6a(%ebx,%eax,1)
-		mov    %cx,data_180c59
+		mov    %cx,EXPORT_SYMBOL(ingame)+0x935 # ingame.data_180c59
 		mov    %si,0x3c(%ebx,%eax,1)
 		jmp    jump_74a10
 	jump_74aee:
@@ -79493,7 +79493,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		xor    %ecx,%ecx
 		mov    %ax,EXPORT_SYMBOL(shield_frm)+6
 		mov    %bx,ingame__fld_unkCB7
-		mov    %bx,data_180c59
+		mov    %bx,EXPORT_SYMBOL(ingame)+0x935 # ingame.data_180c59
 		mov    %bx,ingame__FlameCount
 		mov    %bx,ingame__SoundThing
 		mov    %bx,ingame__fld_unkCB5
@@ -124531,7 +124531,7 @@ GLOBAL_FUNC (ASM_init_mission_states)	/* 0x0A8EE8 */
 		push   %edi
 		mov    game_used_objectives,%esi
 		mov    $0x1,%eax
-		mov    ingame__CurrentMission,%di
+		mov    EXPORT_SYMBOL(ingame)+0x95D,%di # ingame.CurrentMission
 		xor    %ebx,%ebx
 	jump_a8f01:
 		xor    %edx,%edx
@@ -124636,7 +124636,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		sar    $0x10,%eax
 		test   %eax,%eax
 		jne    jump_a9032
-		mov    ingame__CurrentMission,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x95D,%ax # ingame.CurrentMission
 		mov    %ax,data_19f432
 	jump_a9032:
 		xor    %eax,%eax
@@ -124649,7 +124649,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		xor    %eax,%eax
 		call   ac_add_signal_to_scanner
 	jump_a9050:
-		mov    ingame__CurrentMission,%si
+		mov    EXPORT_SYMBOL(ingame)+0x95D,%si # ingame.CurrentMission
 	jump_a9057:
 		xor    %edx,%edx
 		mov    %bx,%dx
@@ -124671,7 +124671,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 	jump_a9088:
 		cmpb   $0x0,in_network_game
 		je     jump_a90a4
-		mov    ingame__CurrentMission,%ax
+		mov    EXPORT_SYMBOL(ingame)+0x95D,%ax # ingame.CurrentMission
 		mov    $0x1,%ebx
 		mov    %ax,data_19f432
 		jmp    jump_a90c6
@@ -124727,7 +124727,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		sar    $0x10,%eax
 		mov    %cx,mission_state(%edx)
 		call   ac_test_single_mission
-		mov    ingame__CurrentMission,%di
+		mov    EXPORT_SYMBOL(ingame)+0x95D,%di # ingame.CurrentMission
 		mov    %eax,%esi
 		cmp    mission_open(%edx),%di
 		jne    jump_a9175
@@ -158093,7 +158093,7 @@ process_drift_smoke:	/* 0x0C71CC */
 		test   %cl,%cl
 		jne    jump_c75be
 		mov    0x51(%eax),%al
-		mov    ingame__TrainMode,%edx
+		mov    EXPORT_SYMBOL(ingame)+0x959,%edx # ingame.TrainMode
 		and    $0xff,%eax
 		sar    $0x10,%edx
 		cmp    %edx,%eax
@@ -158436,7 +158436,7 @@ process_napalm_flame:	/* 0x0C7678 */
 		jne    jump_c7983
 		xor    %edx,%edx
 		mov    0x51(%eax),%dl
-		mov    ingame__TrainMode,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x959,%eax # ingame.TrainMode
 		sar    $0x10,%eax
 		cmp    %eax,%edx
 		je     jump_c7969
@@ -158703,7 +158703,7 @@ process_flame1:	/* 0x0C7A80 */
 		jne    jump_c7c8f
 		xor    %edx,%edx
 		mov    0x51(%eax),%dl
-		mov    ingame__TrainMode,%eax
+		mov    EXPORT_SYMBOL(ingame)+0x959,%eax # ingame.TrainMode
 		sar    $0x10,%eax
 		cmp    %eax,%edx
 		je     jump_c7c75
@@ -167945,7 +167945,7 @@ GLOBAL_FUNC(ASM_init_variables)	/* 0x0D0B9C */
 		xor    %ch,%ch
 		mov    %bh,data_1c6df3
 		mov    %di,EXPORT_SYMBOL(word_15518A)
-		mov    %ax,ingame__MissionStatus
+		mov    %ax,EXPORT_SYMBOL(ingame)+0x92D # ingame.MissionStatus
 		xor    %cl,%cl
 		mov    starting_cash_amounts,%eax
 		mov    %cx,EXPORT_SYMBOL(next_email)
@@ -184343,37 +184343,7 @@ GLOBAL (joy)	/* 0x17FD78 */
 
 
 GLOBAL (ingame)	/* 0x1807D4 */
-		.fill   0x927
-ingame__fld_unkC4B:	/* 0x180C4B */
-		.short  0x0
-		.short  0x0
-ingame__fld_unkC4F:	/* 0x180C4F */
-		.short  0x0
-ingame__MissionStatus:	/* 0x180C51 */
-		.short  0x0
-/* Some kind of flags */
-ingame__Flags:	/* 0x180C53 ingame+0x47F (resize + 0x04B0) */
-		.byte	0x0
-ingame__Flags_p1:	/* 0x180C54 ingame+0x480 */
-		.byte	0x0
-ingame__Flags_p2:	/* 0x180C55 ingame+0x481 */
-		.short  0x0
-ingame__dword_180C57:	/* 0x180C57 */
-		.short  0x0
-data_180c59:
-		.short  0x0
-ingame__draw_unknprop_01:	/* 0x180C5B */
-		.short  0x0
-ingame__Rocket1:	/* 0x180C5D */
-		.fill   0x1e
-ingame__NextRocket:	/* 0x180C7B */
-		.short  0x0
-ingame__TrainMode:	/* 0x180C7D */
-		.short  0x0
-ingame__MyGroup:	/* 0x180C7F */
-		.short  0x0
-ingame__CurrentMission:	/* 0x180C81 */
-		.short  0x0
+		.fill   0x95F
 		.align  4
 ingame__DetailLevel:	/* 0x180c84 */
 		.byte	0x0
