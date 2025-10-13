@@ -6813,10 +6813,17 @@ void draw_mission_concluded(void)
     }
     {
         int scr_x, scr_y;
+        int tx_height;
+
         // TODO the text position should be computed based on position of panels loaded from file
         scr_x = 11 * pop1_sprites_scale;
         scr_y = 26 * pop1_sprites_scale;
-        if (lbDisplay.GraphicsScreenHeight < 400)
+        lbFontPtr = small_font;
+        tx_height = font_height('A');
+        // For window width=320, expect text height=6; if width rises more
+        // than half from that without font size compensating, use doubling
+        // TODO prepare a function to scale this font to any size, rather than only 1x or 2x selection
+        if (lbDisplay.GraphicsWindowWidth < tx_height * (320 * 3 / 2) / 6)
             draw_text_linewrap2b(scr_x, &scr_y, data_15319c);
         else
             draw_text_linewrap1b(scr_x, &scr_y, data_15319c);
