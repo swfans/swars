@@ -31,6 +31,7 @@
 #include "ssampply.h"
 
 #include "app_sprite.h"
+#include "app_text.h"
 #include "bflib_render_drspr.h"
 #include "bigmap.h"
 #include "display.h"
@@ -163,113 +164,6 @@ void update_dropped_item_under_agent_exists(short agent)
     }
 }
 
-/* draws a sprite scaled to double size; remove pending */
-void SCANNER_unkn_func_200(struct TbSprite *p_spr, int x, int y, ubyte col)
-{
-    int xwind_beg;
-    int xwind_end;
-    int xwind_start;
-    sbyte *inp;
-    ubyte *oline;
-    int opitch;
-    int h;
-    TbBool needs_window_bounding;
-
-    xwind_beg = lbDisplay.GraphicsWindowX;
-    xwind_end = lbDisplay.GraphicsWindowX + lbDisplay.GraphicsWindowWidth;
-    xwind_start = lbDisplay.GraphicsWindowX + x;
-    inp = (sbyte *)p_spr->Data;
-    opitch = lbDisplay.GraphicsScreenWidth;
-    oline = &lbDisplay.WScreen[opitch * (lbDisplay.GraphicsWindowY + y) + lbDisplay.GraphicsWindowX + x];
-    if (xwind_start < lbDisplay.GraphicsWindowX) {
-        if (xwind_start + 2 * p_spr->SWidth <= lbDisplay.GraphicsWindowX)
-            return;
-        needs_window_bounding = true;
-    } else {
-        if (xwind_start >= xwind_end)
-            return;
-        needs_window_bounding = (xwind_start + 2 * p_spr->SWidth > xwind_end);
-    }
-
-    if (!needs_window_bounding)
-    {
-        // Simplified and faster drawing when we do not have to check bounds
-        for (h = 0; h < p_spr->SHeight; h++)
-        {
-            ubyte *o;
-
-            o = oline;
-            while (*inp)
-            {
-                int ival;
-                int i;
-
-                ival = *inp;
-                if (ival < 0)
-                {
-                    inp++;
-                    o -= 2 * ival;
-                    continue;
-                }
-                inp += ival + 1;
-                for (i = 0; i < ival; i++)
-                {
-                    o[0] = col;
-                    o[opitch + 0] = col;
-                    o[1] = col;
-                    o[opitch + 1] = col;
-                    o += 2;
-                }
-            }
-            inp++;
-            oline += 2 * opitch;
-        }
-    }
-    else
-    {
-        for (h = 0; h < p_spr->SHeight; h++)
-        {
-            ubyte *o;
-            int xwind_curr;
-
-            o = oline;
-            xwind_curr = xwind_start;
-            while (*inp)
-            {
-                int ival;
-                int i;
-
-                ival = *inp;
-                if (ival < 0)
-                {
-                    inp++;
-                    o -= 2 * ival;
-                    xwind_curr -= 2 * ival;
-                    continue;
-                }
-                inp += ival + 1;
-                for (i = 0; i < ival; i++)
-                {
-                    if (xwind_curr >= xwind_beg && xwind_curr < xwind_end) {
-                        o[0] = col;
-                        o[opitch] = col;
-                    }
-                    xwind_curr++;
-                    o++;
-                    if (xwind_curr >= xwind_beg && xwind_curr < xwind_end) {
-                        o[0] = col;
-                        o[opitch] = col;
-                    }
-                    xwind_curr++;
-                    o++;
-                }
-            }
-            inp++;
-            oline += 2 * opitch;
-        }
-    }
-}
-
 void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int a7)
 {
     asm volatile (
@@ -382,228 +276,25 @@ void SCANNER_move_objective_info(int width, int height, int end_pos)
     }
 }
 
-void draw_text_linewrap1b(int base_x, int *p_pos_y, const char *text)
-{
-    const char *str;
-    int pos_x, pos_y;
-    int base_shift;
-    TbPixel col2;
-
-    col2 = SCANNER_colour[0];
-    str = text;
-    pos_x = base_x;
-    base_shift = 0;
-    pos_y = *p_pos_y;
-    while (*str != '\0')
-    {
-        if (*str == 32)
-        {
-            const char *sstr;
-            int w;
-
-            w = 0;
-            sstr = str + 1;
-            while (*sstr != '\0')
-            {
-                struct TbSprite *p_spr;
-
-                if (*sstr == 32)
-                    break;
-                p_spr = &small_font[my_char_to_upper(*sstr) - 31];
-                w += p_spr->SWidth;
-                sstr++;
-            }
-            if (pos_x + 2 * w < lbDisplay.PhysicalScreenWidth - 16) {
-                pos_x += 8;
-            } else {
-                pos_x = base_x;
-                pos_y += 12;
-            }
-        }
-        else
-        {
-            struct TbSprite *p_spr;
-            ushort fade_lv;
-
-            fade_lv = 40 - (lbSinTable[128 * ((gameturn + base_shift) & 0xF)] >> 13);
-            p_spr = &small_font[my_char_to_upper(*str) - 31];
-            SCANNER_unkn_func_200(p_spr, pos_x + 1, pos_y + 1, colour_lookup[0]);
-            SCANNER_unkn_func_200(p_spr, pos_x, pos_y, pixmap.fade_table[256 * fade_lv + col2]);
-            pos_x += p_spr->SWidth + p_spr->SWidth;
-        }
-        base_shift++;
-        str++;
-    }
-    pos_y += 12;
-    *p_pos_y = pos_y;
-}
-
-void draw_text_linewrap2b(int base_x, int *p_pos_y, const char *text)
-{
-    const char *str;
-    int pos_x, pos_y;
-    int base_shift;
-    TbPixel col2;
-
-    col2 = SCANNER_colour[0];
-    pos_x = base_x;
-    str = text;
-    pos_y = *p_pos_y;
-    base_shift = 0;
-    while (*str != '\0')
-    {
-        if (*str == 32)
-        {
-            const char *sstr;
-            int w;
-
-            w = 0;
-            sstr = str + 1;
-            while (*sstr != '\0')
-            {
-                struct TbSprite *p_spr;
-
-                if (*sstr == 32)
-                  break;
-                p_spr = &small_font[my_char_to_upper(*sstr) - 31];
-                w += p_spr->SWidth;
-                sstr++;
-            }
-            if (pos_x + w < lbDisplay.PhysicalScreenWidth - 8) {
-                pos_x += 4;
-            } else {
-                pos_x = base_x;
-                pos_y += 6;
-            }
-        }
-        else
-        {
-            struct TbSprite *p_spr;
-            ushort fade_lv;
-
-            fade_lv = 40 - (lbSinTable[128 * ((gameturn + base_shift) & 0xF)] >> 13);
-            p_spr = &small_font[my_char_to_upper(*str) - 31];
-            LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, p_spr, colour_lookup[0]);
-            LbSpriteDrawOneColour(pos_x, pos_y,  p_spr, pixmap.fade_table[256 * fade_lv + col2]);
-            pos_x += p_spr->SWidth;
-        }
-        str++;
-        base_shift++;
-    }
-    pos_y += 6;
-    *p_pos_y = pos_y;
-}
-
-void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
-{
-    const char *str;
-    int pos_x, pos_y;
-    int base_shift;
-    TbPixel col2;
-
-    str = text;
-    pos_x = base_x;
-    pos_y = *p_pos_y;
-    col2 = byte_1C5C30[plyr];
-    base_shift = -180;
-    while (*str != '\0')
-    {
-        if (*str == 32)
-        {
-            if (pos_x + 2 * font_word_length(str + 1) < lbDisplay.PhysicalScreenWidth - 16) {
-                pos_x += 8;
-            } else {
-                pos_x = base_x;
-                pos_y += 12;
-            }
-        }
-        else
-        {
-            struct TbSprite *p_spr;
-            int fd;
-            ubyte ch;
-            TbPixel col1;
-
-            ch = my_char_to_upper(*str);
-            p_spr = &small_font[ch - 31];
-            fd = base_shift + 4 * player_unkn0C9[plyr];
-            if (fd > 63)
-                fd = 63 - (fd - 63);
-            if (fd > 63)
-                fd = 63;
-            if (fd < 0)
-                fd = 0;
-            col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
-            SCANNER_unkn_func_200(p_spr, pos_x + 1, pos_y + 1, col1);
-            SCANNER_unkn_func_200(p_spr, pos_x, pos_y, col2);
-            pos_x += 2 * p_spr->SWidth;
-        }
-        str++;
-        base_shift++;
-    }
-    pos_y += 12;
-    *p_pos_y = pos_y;
-}
-
-void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
-{
-    const char *str;
-    int pos_x, pos_y;
-    int base_shift;
-    TbPixel col2;
-
-    str = text;
-    pos_x = base_x;
-    pos_y = *p_pos_y;
-    col2 = byte_1C5C30[plyr];
-    base_shift = -180;
-    while (*str != '\0')
-    {
-        if (*str == 32)
-        {
-            if (pos_x + font_word_length(str + 1) < lbDisplay.PhysicalScreenWidth - 8) {
-                pos_x += 4;
-            } else {
-                pos_x = base_x;
-                pos_y += 6;
-            }
-        }
-        else
-        {
-            struct TbSprite *p_spr;
-            int fd;
-            ubyte ch;
-            TbPixel col1;
-
-            ch = my_char_to_upper(*str);
-            p_spr = &small_font[ch - 31];
-            fd = base_shift + 4 * (ubyte)player_unkn0C9[plyr];
-            if (fd > 63)
-                fd = 63 - (fd - 63);
-            if (fd > 63)
-                fd = 63;
-            if (fd < 0)
-                fd = 0;
-            col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
-            LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, p_spr, col1);
-            LbSpriteDrawOneColour(pos_x, pos_y, p_spr, col2);
-            pos_x += p_spr->SWidth;
-        }
-        str++;
-        base_shift++;
-    }
-    pos_y += 6;
-    *p_pos_y = pos_y;
-}
-
 void draw_players_chat_talk(int x, int y)
 {
     char locstr[164];
     int plyr;
     int base_x, pos_y;
+    int units_per_px;
 
     base_x = x;
     pos_y = y;
+
+    {
+        int tx_height;
+
+        lbFontPtr = small_font;
+        tx_height = font_height('A');
+        // For window width=320, expect text height=6; so that should
+        // produce unscaled sprite, which is 16 units per px.
+        units_per_px = (lbDisplay.GraphicsWindowWidth * 6 / tx_height)  / (320 / 16);
+    }
 
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {
@@ -625,14 +316,7 @@ void draw_players_chat_talk(int x, int y)
             sprintf(locstr, "%s said nothing.", plname);
         }
 
-        if (lbDisplay.GraphicsScreenHeight >= 400)
-        {
-            draw_text_linewrap1(base_x, &pos_y, plyr, locstr);
-        }
-        else
-        {
-            draw_text_linewrap2(base_x, &pos_y, plyr, locstr);
-        }
+        AppTextDrawColourBorderResized(base_x, &pos_y, units_per_px, plyr, locstr);
 
         if ( !--player_unkn0C9[plyr] ) {
             player_unknCC9[plyr][0] = '\0';

@@ -47,6 +47,7 @@
 #include "bflib_joyst.h"
 #include "ssampply.h"
 #include "matrix.h"
+#include "app_text.h"
 #include "dos.h"
 #include "drawtext.h"
 #include "enginbckt.h"
@@ -6760,7 +6761,6 @@ void input_mission_cheats(void)
 void draw_mission_concluded(void)
 {
     uint tm;
-    uint tm_h, tm_m, tm_s;
 
     tm = (dos_clock() - ingame.fld_unkC91) / 100;
     if (ingame.fld_unkCB5)
@@ -6771,6 +6771,9 @@ void draw_mission_concluded(void)
     }
     else
     {
+        const char *text_time;
+        uint tm_h, tm_m, tm_s;
+
         tm_h = tm / 3600;
         tm_m = tm / 60;
         tm_s = tm % 60;
@@ -6778,55 +6781,44 @@ void draw_mission_concluded(void)
         {
         case 'e':
         default:
-            sprintf(unknmsg_str, "%s %s %s Time %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
-              gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
-              gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
+            text_time = "Time";
             break;
         case 'f':
-            sprintf(unknmsg_str, "%s %s %s Heure %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
-              gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
-              gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
+            text_time = "Heure";
             break;
         case 'g':
-            sprintf(unknmsg_str, "%s %s %s Zeit %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
-              gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
-              gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
+            text_time = "Zeit";
             break;
         case 'i':
-            sprintf(unknmsg_str, "%s %s %s Tempo %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
-              gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
-              gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
+            text_time = "Tempo";
             break;
         case 's':
             if (language_3str[1] == 'p')
-              sprintf(unknmsg_str, "%s %s %s Tiempo %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
-                gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
-                gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
+                text_time = "Tiempo";
             else
-              sprintf(unknmsg_str, "%s %s %s Tid %02d:%02d:%02d",  gui_strings[GSTR_CHK_MISSION_STA_PRE],
-                gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
-                gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], tm_h, tm_m % 60, tm_s);
+                text_time = "Tid";
             break;
         }
+        sprintf(unknmsg_str, "%s %s %s %s %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
+          gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
+          gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], text_time, tm_h, tm_m % 60, tm_s);
         data_15319c = unknmsg_str;
         scroll_text = unknmsg_str;
     }
     {
         int scr_x, scr_y;
         int tx_height;
+        int units_per_px;
 
         // TODO the text position should be computed based on position of panels loaded from file
         scr_x = 11 * pop1_sprites_scale;
         scr_y = 26 * pop1_sprites_scale;
         lbFontPtr = small_font;
         tx_height = font_height('A');
-        // For window width=320, expect text height=6; if width rises more
-        // than half from that without font size compensating, use doubling
-        // TODO prepare a function to scale this font to any size, rather than only 1x or 2x selection
-        if (lbDisplay.GraphicsWindowWidth < tx_height * (320 * 3 / 2) / 6)
-            draw_text_linewrap2b(scr_x, &scr_y, data_15319c);
-        else
-            draw_text_linewrap1b(scr_x, &scr_y, data_15319c);
+        // For window width=320, expect text height=6; so that should
+        // produce unscaled sprite, which is 16 units per px.
+        units_per_px = (lbDisplay.GraphicsWindowWidth * 6 / tx_height)  / (320 / 16);
+        AppTextDrawColourWaveResized(scr_x, scr_y, units_per_px, data_15319c);
     }
 }
 
