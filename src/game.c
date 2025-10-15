@@ -6815,6 +6815,7 @@ void draw_mission_concluded(void)
         scr_x = 11 * pop1_sprites_scale;
         scr_y = 26 * pop1_sprites_scale;
 
+        lbDisplay.DrawColour = SCANNER_colour[0];
         AppTextDrawMissionStatus(scr_x, scr_y, data_15319c);
     }
 }

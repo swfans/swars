@@ -69,11 +69,12 @@ void put_down_colwavetext_sprites(const char *sbuf, const char *ebuf,
   for (c=sbuf; c < ebuf; c++)
   {
     ushort fade_lv;
-    TbPixel colour;
+    TbPixel colour, shadcol;
 
     fade_lv = cw_base + cw_vari/2 - (cw_vari/2 * lbSinTable[LbFPMath_PI/8 * (cw_shift & 0xF)] >> 16);
     colour = lbDisplay.DrawColour;
     colour = pixmap.fade_table[fade_lv * PALETTE_8b_COLORS + colour];
+    shadcol = SHADOW_COLOUR;
     chr = (ubyte)(*c);
     if (chr > 32)
     {
@@ -81,7 +82,7 @@ void put_down_colwavetext_sprites(const char *sbuf, const char *ebuf,
       if (spr != NULL)
       {
         // Draw shadow
-        LbSpriteDrawOneColour(x + 1, y + 1, spr, SHADOW_COLOUR);
+        LbSpriteDrawOneColour(x + 1, y + 1, spr, shadcol);
         if ((lbDisplay.DrawFlags & Lb_TEXT_ONE_COLOR) != 0)
           LbSpriteDrawOneColour(x, y, spr, colour);
         else
@@ -90,7 +91,7 @@ void put_down_colwavetext_sprites(const char *sbuf, const char *ebuf,
         if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
         {
             h = LbTextLineHeight();
-            LbDrawCharUnderline(x, y, w, h, colour, SHADOW_COLOUR);
+            LbDrawCharUnderline(x, y, w, h, colour, shadcol);
         }
         x += w;
         cw_shift += 1;
@@ -102,7 +103,7 @@ void put_down_colwavetext_sprites(const char *sbuf, const char *ebuf,
         if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
         {
             h = LbTextLineHeight();
-            LbDrawCharUnderline(x, y, w, h, colour, SHADOW_COLOUR);
+            LbDrawCharUnderline(x, y, w, h, colour, shadcol);
         }
         x += w;
         cw_shift += 1;
@@ -113,7 +114,7 @@ void put_down_colwavetext_sprites(const char *sbuf, const char *ebuf,
         if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
         {
             h = LbTextLineHeight();
-            LbDrawCharUnderline(x, y, w, h, colour, SHADOW_COLOUR);
+            LbDrawCharUnderline(x, y, w, h, colour, shadcol);
         }
         x += w;
         cw_shift += lbSpacesPerTab;
@@ -144,11 +145,12 @@ void put_down_colwavetext_sprites_resized(const char *sbuf, const char *ebuf,
   for (c=sbuf; c < ebuf; c++)
   {
     ushort fade_lv;
-    TbPixel colour;
+    TbPixel colour, shadcol;
 
     fade_lv = cw_base + cw_vari/2 - (cw_vari/2 * lbSinTable[LbFPMath_PI/8 * (cw_shift & 0xF)] >> 16);
     colour = lbDisplay.DrawColour;
     colour = pixmap.fade_table[fade_lv * PALETTE_8b_COLORS + colour];
+    shadcol = SHADOW_COLOUR;
     chr = (ubyte)(*c);
     if (chr > 32)
     {
@@ -156,7 +158,7 @@ void put_down_colwavetext_sprites_resized(const char *sbuf, const char *ebuf,
       if (spr != NULL)
       {
         // Draw shadow
-        LbSpriteDrawResizedOneColour(x + units_per_px/12, y + units_per_px/12, units_per_px, spr, SHADOW_COLOUR);
+        LbSpriteDrawResizedOneColour(x + units_per_px/12, y + units_per_px/12, units_per_px, spr, shadcol);
         if ((lbDisplay.DrawFlags & Lb_TEXT_ONE_COLOR) != 0) {
             LbSpriteDrawResizedOneColour(x, y, units_per_px, spr, colour);
         } else {
@@ -166,7 +168,7 @@ void put_down_colwavetext_sprites_resized(const char *sbuf, const char *ebuf,
         if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
         {
             h = LbTextLineHeight() * units_per_px / 16;
-            LbDrawCharUnderline(x, y, w, h, colour, SHADOW_COLOUR);
+            LbDrawCharUnderline(x, y, w, h, colour, shadcol);
         }
         x += w;
         cw_shift += 1;
@@ -178,7 +180,7 @@ void put_down_colwavetext_sprites_resized(const char *sbuf, const char *ebuf,
         if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
         {
             h = LbTextLineHeight() * units_per_px / 16;
-            LbDrawCharUnderline(x, y, w, h, colour, SHADOW_COLOUR);
+            LbDrawCharUnderline(x, y, w, h, colour, shadcol);
         }
         x += w;
         cw_shift += 1;
@@ -189,7 +191,7 @@ void put_down_colwavetext_sprites_resized(const char *sbuf, const char *ebuf,
         if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
         {
             h = LbTextLineHeight() * units_per_px / 16;
-            LbDrawCharUnderline(x, y, w, h, colour, SHADOW_COLOUR);
+            LbDrawCharUnderline(x, y, w, h, colour, shadcol);
         }
         x += w;
         cw_shift += lbSpacesPerTab;
@@ -329,7 +331,7 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
     str = text;
     pos_x = base_x;
     pos_y = *p_pos_y;
-    col2 = net_player_colours[plyr];
+    col2 = lbDisplay.DrawColour;
     base_shift = -180;
     while (*str != '\0')
     {
@@ -380,7 +382,7 @@ void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
     str = text;
     pos_x = base_x;
     pos_y = *p_pos_y;
-    col2 = net_player_colours[plyr];
+    col2 = lbDisplay.DrawColour;
     base_shift = -180;
     while (*str != '\0')
     {
@@ -428,7 +430,7 @@ void draw_text_linewrap1b(int base_x, int *p_pos_y, const char *text)
     int base_shift;
     TbPixel col2;
 
-    col2 = SCANNER_colour[0];
+    col2 = lbDisplay.DrawColour;
     str = text;
     pos_x = base_x;
     base_shift = 0;
@@ -717,16 +719,9 @@ TbBool AppTextDrawColourWave(int posx, int posy, const char *text)
     return AppTextDrawColourWaveResized(posx, posy, 16, text);
 }
 
-TbBool AppTextDrawColourBorderResized(int posx, int *posy, int units_per_px, int plyr, const char *text)
+TbBool AppTextDrawShadClFlashResized(int posx, int *posy, int units_per_px, const char *text)
 {
-#if 1
     // TODO prepare the function to scale this font to any size, rather than only 1x or 2x selection
-    if (units_per_px < 24)
-        draw_text_linewrap2(posx, posy, plyr, text);
-    else
-        draw_text_linewrap1(posx, posy, plyr, text);
-    return true;
-#endif
 }
 
 /** Altered version of LbFontCharSprite() which returns non-const reference.
@@ -782,13 +777,11 @@ TbBool AppTextDrawMissionStatus(int posx, int posy, const char *text)
     units_per_px = (units_per_px + 4) & ~0x07;
 
     lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR | Lb_TEXT_HALIGN_LEFT;
-    lbDisplay.DrawColour = SCANNER_colour[0];
 #if defined(LB_ENABLE_SHADOW_COLOUR)
     lbDisplay.ShadowColour = colour_lookup[ColLU_BLACK];
 #endif
 #if 0 // old way of drawing mission status - remove pending
     if (gameturn & 0x40) {
-    // TODO prepare the function to scale this font to any size, rather than only 1x or 2x selection
     if (units_per_px < 24)
         draw_text_linewrap2b(posx, &posy, text);
     else
@@ -799,6 +792,36 @@ TbBool AppTextDrawMissionStatus(int posx, int posy, const char *text)
     space_bkp = FontSpacingAlter(small_font, 12);
     ret = AppTextDrawColourWaveResized(posx, posy, units_per_px, text);
     FontSpacingRestore(small_font, space_bkp);
+    return ret;
+}
+
+TbBool AppTextDrawMissionChatMessage(int posx, int *posy, const char *text)
+{
+    ushort space_bkp;
+    int tx_height;
+    int units_per_px;
+    TbBool ret;
+
+    lbFontPtr = small_font;
+    tx_height = font_height('A');
+    // For window width=320, expect text height=5; so that should
+    // produce unscaled sprite, which is 16 units per px.
+    units_per_px = (lbDisplay.GraphicsWindowWidth * 5 / tx_height)  / (320 / 16);
+    // Do not allow any scale, only n * 50%
+    units_per_px = (units_per_px + 4) & ~0x07;
+
+    lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR | Lb_TEXT_HALIGN_LEFT;
+#if defined(LB_ENABLE_SHADOW_COLOUR)
+    lbDisplay.ShadowColour = colour_lookup[ColLU_GREYLT];
+#endif
+#if 1
+    if (units_per_px < 24)
+        draw_text_linewrap2(posx, posy, 0, text);
+    else
+        draw_text_linewrap1(posx, posy, 0, text);
+    return true;
+#endif
+    ret = AppTextDrawShadClFlashResized(posx, posy, units_per_px, text);
     return ret;
 }
 

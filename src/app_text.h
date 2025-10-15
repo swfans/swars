@@ -48,9 +48,11 @@ TbBool AppTextDrawColourWave(int posx, int posy, const char *text);
  */
 TbBool AppTextDrawColourWaveResized(int posx, int posy, int units_per_px, const char *text);
 
-TbBool AppTextDrawColourBorderResized(int posx, int *posy, int units_per_px, int plyr, const char *text);
+TbBool AppTextDrawColourBorderResized(int posx, int *posy, int units_per_px, const char *text);
 
 TbBool AppTextDrawMissionStatus(int posx, int posy, const char *text);
+
+TbBool AppTextDrawMissionChatMessage(int posx, int *posy, const char *text);
 
 #ifdef __cplusplus
 };
