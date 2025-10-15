@@ -44,6 +44,7 @@ struct SoundBankSizes {
 };
 
 #pragma pack()
+/******************************************************************************/
 
 TbBool SixteenBit = true;
 ulong SampleRate = 0;

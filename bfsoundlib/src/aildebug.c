@@ -32,8 +32,8 @@
 #include "miscutil.h"
 #include "ailss.h"
 #include "mssdig.h"
-#include "mssxmidi.h"
 #include "mssxdig.h"
+#include "mssxmidi.h"
 /******************************************************************************/
 static long long tmcount_start = 0;
 

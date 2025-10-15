@@ -40,6 +40,8 @@ enum SampleFileTypes {
     SMP_FTYP_ASI = 2,
 };
 
+/******************************************************************************/
+
 static int32_t SS_use_locked;
 
 static const uint8_t volume_pan_table[128] = {

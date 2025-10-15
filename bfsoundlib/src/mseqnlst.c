@@ -40,6 +40,7 @@ struct MusicBankHead {
 };
 
 #pragma pack()
+/******************************************************************************/
 
 extern TbBool MusicInstalled;
 extern TbBool MusicAble;

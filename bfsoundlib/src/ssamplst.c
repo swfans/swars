@@ -108,7 +108,7 @@ void PlaySampleList(int sfx1, int sfx2, int sfx3, int sfx4, int sfx5, int sfx6, 
         sample_queue_handle = AIL_allocate_sample_handle(SoundDriver);
         sample_queue_handle_initiated = 1;
     }
-    sample_queue_handle_stopped = 1;
+    sample_queue_handle_stopped = true;
     AIL_end_sample(sample_queue_handle);
     AIL_set_sample_user_data(sample_queue_handle, 0, sfx1);
     AIL_set_sample_user_data(sample_queue_handle, 1, sfx2);
@@ -119,7 +119,7 @@ void PlaySampleList(int sfx1, int sfx2, int sfx3, int sfx4, int sfx5, int sfx6, 
     AIL_set_sample_user_data(sample_queue_handle, 6, sfx7);
     AIL_set_sample_user_data(sample_queue_handle, 7, sfx8);
     current_sample_queue_count = 0;
-    sample_queue_handle_stopped = 0;
+    sample_queue_handle_stopped = false;
     cb_sample_queue_callback(sample_queue_handle);
 }
 
