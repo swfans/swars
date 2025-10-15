@@ -291,9 +291,9 @@ void draw_players_chat_talk(int x, int y)
 
         lbFontPtr = small_font;
         tx_height = font_height('A');
-        // For window width=320, expect text height=6; so that should
+        // For window width=320, expect text height=5; so that should
         // produce unscaled sprite, which is 16 units per px.
-        units_per_px = (lbDisplay.GraphicsWindowWidth * 6 / tx_height)  / (320 / 16);
+        units_per_px = (lbDisplay.GraphicsWindowWidth * 5 / tx_height)  / (320 / 16);
     }
 
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
@@ -316,6 +316,11 @@ void draw_players_chat_talk(int x, int y)
             sprintf(locstr, "%s said nothing.", plname);
         }
 
+        lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
+        lbDisplay.DrawColour = SCANNER_colour[0];
+#if defined(LB_ENABLE_SHADOW_COLOUR)
+        lbDisplay.ShadowColour = colour_lookup[ColLU_BLACK];
+#endif
         AppTextDrawColourBorderResized(base_x, &pos_y, units_per_px, plyr, locstr);
 
         if ( !--player_unkn0C9[plyr] ) {

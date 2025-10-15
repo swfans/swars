@@ -34,6 +34,7 @@
 #include "bfplanar.h"
 #include "bfscrsurf.h"
 #include "bfscrcopy.h"
+#include "bfstrut.h"
 #include "bfsmack.h"
 #include "bftringl.h"
 #include "bfscd.h"
@@ -120,6 +121,7 @@
 #include "plyr_packet.h"
 #include "research.h"
 #include "rules.h"
+#include "scandraw.h"
 #include "thing.h"
 #include "tngcolisn.h"
 #include "tngobjdrw.h"
@@ -6804,21 +6806,16 @@ void draw_mission_concluded(void)
           gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], text_time, tm_h, tm_m % 60, tm_s);
         data_15319c = unknmsg_str;
         scroll_text = unknmsg_str;
+        LbStringToUpper(unknmsg_str);
     }
     {
         int scr_x, scr_y;
-        int tx_height;
-        int units_per_px;
 
         // TODO the text position should be computed based on position of panels loaded from file
         scr_x = 11 * pop1_sprites_scale;
         scr_y = 26 * pop1_sprites_scale;
-        lbFontPtr = small_font;
-        tx_height = font_height('A');
-        // For window width=320, expect text height=6; so that should
-        // produce unscaled sprite, which is 16 units per px.
-        units_per_px = (lbDisplay.GraphicsWindowWidth * 6 / tx_height)  / (320 / 16);
-        AppTextDrawColourWaveResized(scr_x, scr_y, units_per_px, data_15319c);
+
+        AppTextDrawMissionStatus(scr_x, scr_y, data_15319c);
     }
 }
 

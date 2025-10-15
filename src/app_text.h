@@ -50,6 +50,8 @@ TbBool AppTextDrawColourWaveResized(int posx, int posy, int units_per_px, const 
 
 TbBool AppTextDrawColourBorderResized(int posx, int *posy, int units_per_px, int plyr, const char *text);
 
+TbBool AppTextDrawMissionStatus(int posx, int posy, const char *text);
+
 #ifdef __cplusplus
 };
 #endif
