@@ -10,8 +10,10 @@ swars_SOURCES = \
 	ap_gspr_map.c \
 	ap_spr_smap.c \
 	app_sprite.h \
-	app_text.c \
-	app_text.h \
+	app_text_cw.c \
+	app_text_cw.h \
+	app_text_sf.c \
+	app_text_sf.h \
 	bflib_joyst.c \
 	bflib_joyst.h \
 	bflib_joyst_s.sx \

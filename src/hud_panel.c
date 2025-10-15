@@ -32,7 +32,7 @@
 #include "ssampply.h"
 
 #include "app_sprite.h"
-#include "app_text.h"
+#include "app_text_sf.h"
 #include "bflib_render_drspr.h"
 #include "bigmap.h"
 #include "display.h"

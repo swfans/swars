@@ -2,8 +2,8 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file app_text.h
- *     Header file for app_text.c.
+/** @file app_text_cw.h
+ *     Header file for app_text_cw.c.
  * @par Purpose:
  *     Allows drawing text coloured in a wave-like transsition.
  * @par Comment:
@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef APP_TEXT_H_
-#define APP_TEXT_H_
+#ifndef APP_TEXT_CW_H_
+#define APP_TEXT_CW_H_
 
 #include <stdarg.h>
 #include "bftypes.h"
@@ -48,15 +48,11 @@ TbBool AppTextDrawColourWave(int posx, int posy, const char *text);
  */
 TbBool AppTextDrawColourWaveResized(int posx, int posy, int units_per_px, const char *text);
 
-TbBool AppTextDrawColourBorderResized(int posx, int *posy, int units_per_px, const char *text);
-
 TbBool AppTextDrawMissionStatus(int posx, int posy, const char *text);
-
-TbBool AppTextDrawMissionChatMessage(int posx, int *posy, const char *text);
 
 #ifdef __cplusplus
 };
 #endif
 
-#endif // APP_TEXT_H_
+#endif // APP_TEXT_CW_H_
 /******************************************************************************/

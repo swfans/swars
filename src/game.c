@@ -48,7 +48,7 @@
 #include "bflib_joyst.h"
 #include "ssampply.h"
 #include "matrix.h"
-#include "app_text.h"
+#include "app_text_cw.h"
 #include "dos.h"
 #include "drawtext.h"
 #include "enginbckt.h"
