@@ -45,7 +45,7 @@ TbResult LbSpriteDrawUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
 
 void LbCursorSpriteSetScalingWidthClipped(long x, long swidth, long dwidth, long gwidth)
 {
-    LOGDBG("starting %ld -> %ld at %ld", swidth, dwidth, x);
+    LOGNO("starting %ld -> %ld at %ld", swidth, dwidth, x);
     if (swidth > CURSOR_SCALING_XSTEPS)
         swidth = CURSOR_SCALING_XSTEPS;
     LbSpriteSetScalingWidthClippedArray(cursor_xsteps_array, x, swidth, dwidth, gwidth);
@@ -53,7 +53,7 @@ void LbCursorSpriteSetScalingWidthClipped(long x, long swidth, long dwidth, long
 
 void LbCursorSpriteSetScalingWidthSimple(long x, long swidth, long dwidth)
 {
-    LOGDBG("starting %ld -> %ld at %ld", swidth, dwidth, x);
+    LOGNO("starting %ld -> %ld at %ld", swidth, dwidth, x);
     if (swidth > CURSOR_SCALING_XSTEPS)
         swidth = CURSOR_SCALING_XSTEPS;
     LbSpriteSetScalingWidthSimpleArray(cursor_xsteps_array, x, swidth, dwidth);
@@ -61,7 +61,7 @@ void LbCursorSpriteSetScalingWidthSimple(long x, long swidth, long dwidth)
 
 void LbCursorSpriteSetScalingHeightClipped(long y, long sheight, long dheight, long gheight)
 {
-    LOGDBG("starting %ld -> %ld at %ld", sheight, dheight, y);
+    LOGNO("starting %ld -> %ld at %ld", sheight, dheight, y);
     if (sheight > CURSOR_SCALING_YSTEPS)
         sheight = CURSOR_SCALING_YSTEPS;
     LbSpriteSetScalingHeightClippedArray(cursor_ysteps_array, y, sheight, dheight, gheight);
@@ -69,7 +69,7 @@ void LbCursorSpriteSetScalingHeightClipped(long y, long sheight, long dheight, l
 
 void LbCursorSpriteSetScalingHeightSimple(long y, long sheight, long dheight)
 {
-    LOGDBG("starting %ld -> %ld at %ld", sheight, dheight, y);
+    LOGNO("starting %ld -> %ld at %ld", sheight, dheight, y);
     if (sheight > CURSOR_SCALING_YSTEPS)
         sheight = CURSOR_SCALING_YSTEPS;
     LbSpriteSetScalingHeightSimpleArray(cursor_ysteps_array, y, sheight, dheight);

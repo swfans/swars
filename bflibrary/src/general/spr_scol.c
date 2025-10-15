@@ -47,7 +47,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1RL(uchar *outbuf, int scan
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -155,7 +155,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1LR(uchar *outbuf, int scan
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -263,7 +263,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2RL(uchar *outbuf, int scan
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -371,7 +371,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2LR(uchar *outbuf, int scan
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -477,7 +477,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidRL(uchar *outbuf, int scanl
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -600,7 +600,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidLR(uchar *outbuf, int scanl
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -723,7 +723,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1RL(uchar *outbuf, int sc
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -816,7 +816,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1LR(uchar *outbuf, int sc
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -909,7 +909,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2RL(uchar *outbuf, int sc
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1002,7 +1002,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2LR(uchar *outbuf, int sc
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1093,7 +1093,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidRL(uchar *outbuf, int sca
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1183,7 +1183,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidLR(uchar *outbuf, int sca
     unsigned char *sprdata;
     long *ycurstep;
 
-    LOGDBG("drawing");
+    LOGNO("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1271,7 +1271,7 @@ TbResult LbSpriteDrawOneColourUsingScalingData(long posx, long posy, const TbSpr
     long *ystep;
     int scanline;
 
-    LOGDBG("at (%ld,%ld): drawing", posx, posy);
+    LOGNO("at (%ld,%ld): drawing", posx, posy);
     {
         long sposx, sposy;
         sposx = posx;

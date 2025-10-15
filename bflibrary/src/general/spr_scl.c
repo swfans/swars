@@ -95,7 +95,7 @@ void LbSpriteSetScalingWidthClippedArray(long * xsteps_arr, long x, long swidth,
 
 void LbSpriteSetScalingWidthClipped(long x, long swidth, long dwidth, long gwidth)
 {
-    LOGDBG("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
+    LOGNO("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
     if (swidth > SPRITE_SCALING_XSTEPS)
         swidth = SPRITE_SCALING_XSTEPS;
     LbSpriteSetScalingWidthClippedArray(xsteps_array, x, swidth, dwidth, gwidth);
@@ -103,7 +103,7 @@ void LbSpriteSetScalingWidthClipped(long x, long swidth, long dwidth, long gwidt
 
 void LbSpriteSetAlphaScalingWidthClipped(long x, long swidth, long dwidth, long gwidth)
 {
-    LOGDBG("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
+    LOGNO("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
     if (swidth > SPRITE_SCALING_XSTEPS)
         swidth = SPRITE_SCALING_XSTEPS;
     LbSpriteSetScalingWidthClippedArray(alpha_xsteps_array, x, swidth, dwidth, gwidth);
@@ -147,7 +147,7 @@ void LbSpriteSetScalingWidthSimpleArray(long * xsteps_arr, long x, long swidth, 
 
 void LbSpriteSetScalingWidthSimple(long x, long swidth, long dwidth)
 {
-    LOGDBG("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
+    LOGNO("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
     if (swidth > SPRITE_SCALING_XSTEPS)
         swidth = SPRITE_SCALING_XSTEPS;
     LbSpriteSetScalingWidthSimpleArray(xsteps_array, x, swidth, dwidth);
@@ -155,7 +155,7 @@ void LbSpriteSetScalingWidthSimple(long x, long swidth, long dwidth)
 
 void LbSpriteSetAlphaScalingWidthSimple(long x, long swidth, long dwidth)
 {
-    LOGDBG("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
+    LOGNO("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
     if (swidth > SPRITE_SCALING_XSTEPS)
         swidth = SPRITE_SCALING_XSTEPS;
     LbSpriteSetScalingWidthSimpleArray(alpha_xsteps_array, x, swidth, dwidth);
@@ -239,7 +239,7 @@ void LbSpriteSetScalingHeightClippedArray(long * ysteps_arr, long y, long sheigh
 
 void LbSpriteSetScalingHeightClipped(long y, long sheight, long dheight, long gheight)
 {
-    LOGSYNC("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
+    LOGNO("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
     if (sheight > SPRITE_SCALING_YSTEPS)
         sheight = SPRITE_SCALING_YSTEPS;
     LbSpriteSetScalingHeightClippedArray(ysteps_array, y, sheight, dheight, gheight);
@@ -247,7 +247,7 @@ void LbSpriteSetScalingHeightClipped(long y, long sheight, long dheight, long gh
 
 void LbSpriteSetAlphaScalingHeightClipped(long y, long sheight, long dheight, long gheight)
 {
-    LOGDBG("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
+    LOGNO("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
     if (sheight > SPRITE_SCALING_YSTEPS)
         sheight = SPRITE_SCALING_YSTEPS;
     LbSpriteSetScalingHeightClippedArray(alpha_ysteps_array, y, sheight, dheight, gheight);
@@ -291,7 +291,7 @@ void LbSpriteSetScalingHeightSimpleArray(long * ysteps_arr, long y, long sheight
 
 void LbSpriteSetScalingHeightSimple(long y, long sheight, long dheight)
 {
-    LOGDBG("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
+    LOGNO("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
     if (sheight > SPRITE_SCALING_YSTEPS)
         sheight = SPRITE_SCALING_YSTEPS;
     LbSpriteSetScalingHeightSimpleArray(ysteps_array, y, sheight, dheight);
@@ -299,7 +299,7 @@ void LbSpriteSetScalingHeightSimple(long y, long sheight, long dheight)
 
 void LbSpriteSetAlphaScalingHeightSimple(long y, long sheight, long dheight)
 {
-    LOGDBG("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
+    LOGNO("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
     if (sheight > SPRITE_SCALING_YSTEPS)
         sheight = SPRITE_SCALING_YSTEPS;
     LbSpriteSetScalingHeightSimpleArray(alpha_ysteps_array, y, sheight, dheight);
