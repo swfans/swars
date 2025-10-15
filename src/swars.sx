@@ -658,7 +658,7 @@ GLOBAL_FUNC(ASM_unkn_truce_groups)	/* 0x010CA0 */
 	jump_10e88:
 		mov    0xa0(%esp,%ebx,1),%dl
 		mov    %dl,%bl
-		mov    %dl,EXPORT_SYMBOL(byte_1C5C30)(%eax)
+		mov    %dl,EXPORT_SYMBOL(net_player_colours)(%eax)
 		and    $0xff,%ebx
 		mov    %ebx,0x8c(%esp,%ecx,1)
 		mov    %esi,%ebx
@@ -666,7 +666,7 @@ GLOBAL_FUNC(ASM_unkn_truce_groups)	/* 0x010CA0 */
 	jump_10ea8:
 		mov    0xa0(%esp,%ebx,1),%dl
 		mov    %esi,%ebx
-		mov    %dl,EXPORT_SYMBOL(byte_1C5C30)(%eax)
+		mov    %dl,EXPORT_SYMBOL(net_player_colours)(%eax)
 	jump_10eb7:
 		inc    %eax
 		cmp    $0x8,%eax
@@ -688,7 +688,7 @@ GLOBAL_FUNC(ASM_unkn_truce_groups)	/* 0x010CA0 */
 		cmpl   $0xffffffff,0x8c(%esp,%ecx,1)
 		je     jump_10e88
 		mov    0x8c(%esp,%ecx,1),%dl
-		mov    %dl,EXPORT_SYMBOL(byte_1C5C30)(%eax)
+		mov    %dl,EXPORT_SYMBOL(net_player_colours)(%eax)
 		jmp    jump_10eb7
 	jump_10f02:
 		add    $0xb8,%esp
@@ -2912,7 +2912,7 @@ GLOBAL_FUNC(ASM_draw_engine_net_text)	/* 0x020B50 */
 		and    $0xffff,%eax
 		sar    $0x2,%eax
 		mov    %esp,%edx
-		mov    EXPORT_SYMBOL(byte_1C5C30)(%eax),%al
+		mov    EXPORT_SYMBOL(net_player_colours)(%eax),%al
 		mov    (%esp),%bh
 		mov    %al,0x24(%esp)
 		mov    data_176cd0,%eax
@@ -16529,7 +16529,7 @@ GLOBAL_FUNC (ASM_load_packet)
 		lea    -0xba(%eax),%ebp
 		lea    0x1(%esi),%edx
 		mov    %ebp,%eax
-		call   ac_SCANNER_unkn_func_200
+		call   ac_AppSpriteDrawDoubleOneColour
 		mov    0x24(%esp),%eax
 		add    gameturn,%eax
 		and    $0xf,%eax
@@ -16546,7 +16546,7 @@ GLOBAL_FUNC (ASM_load_packet)
 		mov    EXPORT_SYMBOL(pixmap)(%edx,%eax,1),%cl # pixmap.fade_table[?]
 		mov    %esi,%edx
 		mov    %ebp,%eax
-		call   ac_SCANNER_unkn_func_200
+		call   ac_AppSpriteDrawDoubleOneColour
 		xor    %eax,%eax
 		mov    0x4(%ebp),%al
 		add    %eax,%esi
@@ -18493,8 +18493,8 @@ GLOBAL_FUNC (ASM_player_chat_message_add_key)	/* 0x3E580 */
 		je     jump_3e61c
 		xor    %ecx,%eax
 		mov    EXPORT_SYMBOL(local_player_no),%al
-		mov    EXPORT_SYMBOL(byte_1C5C30)(%esi),%cl
-		cmp    EXPORT_SYMBOL(byte_1C5C30)(%eax),%cl
+		mov    EXPORT_SYMBOL(net_player_colours)(%esi),%cl
+		cmp    EXPORT_SYMBOL(net_player_colours)(%eax),%cl
 		jne    jump_3e623
 	jump_3e61c:
 		movb   $0x96,player_unkn0C9(%esi)
@@ -132952,7 +132952,7 @@ SCANNER_draw_new_transparent_sub3:	/* 0xAEFFD */
 		xor    %eax,%eax
 		mov    0x54(%ecx),%ax
 		sar    $0x2,%eax
-		mov    EXPORT_SYMBOL(byte_1C5C30)(%eax),%al
+		mov    EXPORT_SYMBOL(net_player_colours)(%eax),%al
 		and    $0xff,%eax
 		mov    %eax,%ebx
 		mov    %ebp,%eax
@@ -133571,7 +133571,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_objective_info)	/* 0x0B0204 */
 		lea    -0xba(%eax),%ebp
 		mov    %esi,%edx
 		mov    %ebp,%eax
-		call   ac_SCANNER_unkn_func_200
+		call   ac_AppSpriteDrawDoubleOneColour
 		xor    %eax,%eax
 		mov    0x4(%ebp),%al
 		add    %eax,%esi
@@ -133859,13 +133859,13 @@ GLOBAL_FUNC(ASM_SCANNER_draw_objective_info)	/* 0x0B0204 */
 		mov    EXPORT_SYMBOL(pixmap)(%edx,%eax,1),%cl # pixmap.fade_table[?]
 		mov    0xe8(%esp),%eax
 		lea    0x1(%edi),%edx
-		call   ac_SCANNER_unkn_func_200
+		call   ac_AppSpriteDrawDoubleOneColour
 		mov    0xe8(%esp),%eax
 		mov    %ebp,%ebx
 		xor    %ecx,%ecx
 		mov    %edi,%edx
 		mov    0xf0(%esp),%cl
-		call   ac_SCANNER_unkn_func_200
+		call   ac_AppSpriteDrawDoubleOneColour
 		mov    0xe8(%esp),%edx
 		xor    %eax,%eax
 		mov    0x4(%edx),%al
@@ -133908,7 +133908,7 @@ GLOBAL_FUNC(ASM_SCANNER_draw_objective_info)	/* 0x0B0204 */
 		mov    0xac(%esp),%eax
 		cmpb   $0x0,player_unkn0C9(%eax)
 		je     jump_b0838
-		mov    EXPORT_SYMBOL(byte_1C5C30)(%eax),%al
+		mov    EXPORT_SYMBOL(net_player_colours)(%eax),%al
 		mov    %al,0xf0(%esp)
 		mov    0xb0(%esp),%eax
 		cmpb   $0x0,player_unknCC9(%eax)
@@ -133964,7 +133964,7 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
 		mov    %eax,%edx
 		shl    $0x7,%edx
 		add    $player_unknCC9,%edx
-		mov    EXPORT_SYMBOL(byte_1C5C30)(%eax),%al
+		mov    EXPORT_SYMBOL(net_player_colours)(%eax),%al
 		push   %edx
 		and    $0xff,%eax
 		push   %eax
@@ -134002,8 +134002,8 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
 		jae    jump_b09f0
 	jump_b09d5:
 		mov    0x50(%esp),%ecx
-		mov    EXPORT_SYMBOL(byte_1C5C30)(%ecx),%cl
-		cmp    EXPORT_SYMBOL(byte_1C5C30)(%edx),%cl
+		mov    EXPORT_SYMBOL(net_player_colours)(%ecx),%cl
+		cmp    EXPORT_SYMBOL(net_player_colours)(%edx),%cl
 		jne    jump_b09c5
 		movswl (%ebx),%ecx
 		sub    %ecx,0x20(%esp,%eax,1)
@@ -134128,7 +134128,7 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
 		je     jump_b0b0d
 		mov    0x54(%esp),%eax
 		movb   $0x1,(%edx)
-		mov    EXPORT_SYMBOL(byte_1C5C30)(%eax),%al
+		mov    EXPORT_SYMBOL(net_player_colours)(%eax),%al
 		mov    %al,0x1(%edx)
 		mov    $unkn2_names,%eax
 		add    %edi,%eax
@@ -186105,7 +186105,7 @@ data_1c5b6d:
 		.fill   0xbb
 GLOBAL (byte_1C5C28)
 		.fill   0x8
-GLOBAL (byte_1C5C30)
+GLOBAL (net_player_colours)
 		.fill   0x8
 GLOBAL (group_types)	/* 0x1C5C38 */
 		.fill   0x8

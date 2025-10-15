@@ -1627,7 +1627,7 @@ void SCANNER_draw_thing(struct Thing *p_thing, struct NearestPos *p_nearest, int
         else
         {
             if (in_network_game)
-                SCANNER_draw_mark_point5_blink4(x, y, byte_1C5C30[p_thing->U.UPerson.ComCur >> 2]);
+                SCANNER_draw_mark_point5_blink4(x, y, net_player_colours[p_thing->U.UPerson.ComCur >> 2]);
             else
                 SCANNER_draw_mark_point5_blink4(x, y, col);
         }

@@ -213,7 +213,7 @@ void put_down_cw_sprites(const char *sbuf, const char *ebuf,
 }
 
 /* draws a sprite scaled to double size; remove pending */
-void SCANNER_unkn_func_200(struct TbSprite *p_spr, int x, int y, ubyte col)
+void AppSpriteDrawDoubleOneColour(struct TbSprite *p_spr, int x, int y, ubyte col)
 {
     int xwind_beg;
     int xwind_end;
@@ -329,7 +329,7 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
     str = text;
     pos_x = base_x;
     pos_y = *p_pos_y;
-    col2 = byte_1C5C30[plyr];
+    col2 = net_player_colours[plyr];
     base_shift = -180;
     while (*str != '\0')
     {
@@ -359,8 +359,8 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
             if (fd < 0)
                 fd = 0;
             col1 = pixmap.fade_table[256 * fd + colour_lookup[8]];
-            SCANNER_unkn_func_200(p_spr, pos_x + 1, pos_y + 1, col1);
-            SCANNER_unkn_func_200(p_spr, pos_x, pos_y, col2);
+            AppSpriteDrawDoubleOneColour(p_spr, pos_x + 1, pos_y + 1, col1);
+            AppSpriteDrawDoubleOneColour(p_spr, pos_x, pos_y, col2);
             pos_x += 2 * p_spr->SWidth;
         }
         str++;
@@ -380,7 +380,7 @@ void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
     str = text;
     pos_x = base_x;
     pos_y = *p_pos_y;
-    col2 = byte_1C5C30[plyr];
+    col2 = net_player_colours[plyr];
     base_shift = -180;
     while (*str != '\0')
     {
@@ -466,8 +466,8 @@ void draw_text_linewrap1b(int base_x, int *p_pos_y, const char *text)
 
             fade_lv = 40 - (lbSinTable[128 * ((gameturn + base_shift) & 0xF)] >> 13);
             p_spr = &lbFontPtr[my_char_to_upper(*str) - 31];
-            SCANNER_unkn_func_200(p_spr, pos_x + 1, pos_y + 1, colour_lookup[0]);
-            SCANNER_unkn_func_200(p_spr, pos_x, pos_y, pixmap.fade_table[256 * fade_lv + col2]);
+            AppSpriteDrawDoubleOneColour(p_spr, pos_x + 1, pos_y + 1, colour_lookup[0]);
+            AppSpriteDrawDoubleOneColour(p_spr, pos_x, pos_y, pixmap.fade_table[256 * fade_lv + col2]);
             pos_x += p_spr->SWidth + p_spr->SWidth;
         }
         base_shift++;
