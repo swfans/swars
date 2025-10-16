@@ -64,11 +64,6 @@ struct NetworkServiceFunction { // sizeof=36
     NSVC_SESSIONCB netsvcfunc_unkn20; // offset=32
 };
 
-struct TbNetworkService { // sizeof=10
-    struct NetworkServiceInfo I; // offset=0
-    struct NetworkServiceFunction F; // offset=12
-};
-
 struct TbNetworkSession { // sizeof=40
     NSESS_HANDLE Id; // offset=0
     ulong GameId; // offset=2
@@ -77,6 +72,14 @@ struct TbNetworkSession { // sizeof=40
     short MaxPlayers; // offset=16
     short Flags; // offset=18
     ubyte Reserved[20]; // offset=20
+};
+
+struct TbNetworkService { // sizeof=10
+    struct NetworkServiceInfo I; // offset=0
+    union {
+    struct NetworkServiceFunction F; // offset=12
+    struct TbNetworkSession S;
+    };
 };
 
 struct NetworkPlayerUFourPacks {
@@ -306,6 +309,11 @@ extern struct TbNetworkService nsvc;
 extern struct WeaponsFourPack net_agents__FourPacks[8][4]; // maybe a part of larger struct, maybe not
 
 TbResult LbNetworkReadConfig(const char *fname);
+TbResult LbNetworkSetBaud(int rate);
+TbResult LbNetworkSessionCreate(struct TbNetworkSession *session, char *a2);
+TbResult LbNetworkSessionJoin(struct TbNetworkSession *session, char *a2);
+TbResult LbNetworkSetTimeoutSec(ulong tmsec);
+
 TbResult LbNetworkSetSessionCreateFunction(void *func);
 TbResult LbNetworkSetSessionJoinFunction(void *func);
 TbResult LbNetworkSetSessionExchangeFunction(void *func);
@@ -314,8 +322,8 @@ TbResult LbNetworkSetSessionInitFunction(void *func);
 TbResult LbNetworkSetSessionDialFunction(void *func);
 TbResult LbNetworkSetSessionAnswerFunction(void *func);
 TbResult LbNetworkSetSessionHangUpFunction(void *func);
-TbResult LbNetworkSetTimeoutSec(ulong tmsec);
 
+TbResult LbNetworkInit(void);
 TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc);
 
 int LbNetworkSessionNumberPlayers(void);
@@ -325,6 +333,8 @@ TbResult LbNetworkSetupIPXAddress(ulong addr);
 TbResult LbNetworkPlayerNumber(void);
 TbResult LbNetworkExchange(void *a1, int a2);
 TbResult LbNetworkReset(void);
+TbResult LbNetworkDial(const char *distr);
+TbResult LbNetworkAnswer(void);
 TbResult LbNetworkHangUp(void);
 TbResult LbNetworkSessionStop(void);
 TbResult LbNetworkShutDownListeners(void);

@@ -129,6 +129,7 @@ const char *get_cryo_agent_name(ushort cryo_no);
 void remove_agent(ubyte cryo_no);
 void add_agent(ulong weapons, ushort mods);
 
+void player_mission_agents_reset(PlayerIdx plyr);
 void player_agents_init_prev_weapon(PlayerIdx plyr);
 void player_agents_add_random_epidermises(PlayerInfo *p_player);
 void player_agent_update_prev_weapon(struct Thing *p_agent);

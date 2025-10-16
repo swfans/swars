@@ -30,6 +30,14 @@
 #include "swlog.h"
 /******************************************************************************/
 
+void player_mission_agents_reset(PlayerIdx plyr)
+{
+    PlayerInfo *p_plyr;
+
+    p_plyr = &players[plyr];
+    p_plyr->MissionAgents = 0x0F;
+}
+
 void player_update_from_cryo_agent(ushort cryo_no, PlayerInfo *p_player, ushort plagent)
 {
     ushort wepfp;

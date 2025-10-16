@@ -165469,7 +165469,7 @@ GLOBAL_FUNC(ASM_net_unkn_func_31)	/* 0x0CD2EC */
 		push   %esi
 		jmp    jump_cd4a6
 	jump_cd34d:
-		mov    rate,%eax
+		mov    EXPORT_SYMBOL(unkn_rate),%eax
 		xor    %edx,%edx
 		call   ac_LbNetworkSetBaud
 		mov    EXPORT_SYMBOL(local_player_no),%dl
@@ -165667,7 +165667,7 @@ GLOBAL_FUNC(ASM_net_unkn_func_32)	/* 0x0CD528 */
 		push   %ecx
 		jmp    jump_cd715
 	jump_cd59a:
-		mov    rate,%eax
+		mov    EXPORT_SYMBOL(unkn_rate),%eax
 		xor    %edx,%edx
 		call   ac_LbNetworkSetBaud
 		mov    EXPORT_SYMBOL(local_player_no),%dl
@@ -168702,7 +168702,7 @@ GLOBAL_FUNC(ASM_do_serial_speed_switch)	/* 0x0D2EA4 */
 		push   %edx
 		push   %esi
 		sub    $0x4,%esp
-		mov    rate,%esi
+		mov    EXPORT_SYMBOL(unkn_rate),%esi
 		mov    %al,(%esp)
 		xor    %edx,%edx
 		xor    %eax,%eax
@@ -168732,10 +168732,10 @@ GLOBAL_FUNC(ASM_do_serial_speed_switch)	/* 0x0D2EA4 */
 		push   %esi
 		push   $ascD_14
 		push   $EXPORT_SYMBOL(net_baudrate_text)
-		mov    %esi,rate
+		mov    %esi,EXPORT_SYMBOL(unkn_rate)
 		call   ac_sprintf
 		mov    $0x1,%al
-		mov    rate,%esi
+		mov    EXPORT_SYMBOL(unkn_rate),%esi
 		add    $0xc,%esp
 		add    $0x4,%esp
 		pop    %esi
@@ -183363,7 +183363,7 @@ GLOBAL (net_proto_param_text)	/* 0x155140 */
 		.ascii  "\x00\x00\x00"
 		.string "100%"
 		.ascii  "\x00\x00\x00"
-rate:	/* 0x155150 */
+GLOBAL (unkn_rate)	/* 0x155150 */
 		.byte	0x0
 data_155151:
 		.ascii  "\x4b\x00\x00"

@@ -3071,14 +3071,6 @@ int place_default_player(ushort player_id, TbBool replace)
     return ret;
 }
 
-void reset_mission_agents(void)
-{
-    PlayerInfo *p_locplayer;
-
-    p_locplayer = &players[local_player_no];
-    p_locplayer->MissionAgents = 0x0F;
-}
-
 void place_single_player(void)
 {
     PlayerInfo *p_locplayer;
@@ -3428,7 +3420,7 @@ void game_setup(void)
     setup_sprites_small_font();
     load_peep_type_stats();
     load_campaigns();
-    reset_mission_agents();
+    player_mission_agents_reset(local_player_no);
     debug_trace_setup(-1);
     if ( is_single_game || cmdln_param_bcg )
     {
@@ -3900,7 +3892,7 @@ ubyte goto_savegame(ubyte click)
     load_city_data(0);
     init_weapon_text();
     load_city_txt();
-    reset_mission_agents();
+    player_mission_agents_reset(local_player_no);
     init_variables();
     srm_reset_research();
     init_agents();
@@ -4609,7 +4601,7 @@ void campaign_new_game_prepare(void)
     load_city_data(0);
     init_weapon_text();
     load_city_txt();
-    reset_mission_agents();
+    player_mission_agents_reset(local_player_no);
     init_variables();
     srm_reset_research();
     init_agents();
@@ -5475,7 +5467,7 @@ void show_menu_screen_st0(void)
 
     load_city_data(0);
     load_city_txt();
-    reset_mission_agents();
+    player_mission_agents_reset(local_player_no);
 
     debug_trace_place(19);
     if (in_network_game)
