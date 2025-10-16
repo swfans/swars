@@ -114,12 +114,12 @@ void LbDrawCharUnderline(long pos_x, long pos_y, long width, long height,
 
 long LbTextLineHeight(void)
 {
-    return LbSprFontCharHeight(lbFontPtr, ' ');
+    return LbSprFontCharHeight(lbFontPtr, 'W');
 }
 
 long LbTextHeight(const char *text)
 {
-    return LbSprFontCharHeight(lbFontPtr, ' ');
+    return LbSprFontCharHeight(lbFontPtr, 'W');
 }
 
 long LbTextCharWidth(const ulong chr)
