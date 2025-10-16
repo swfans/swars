@@ -151,16 +151,15 @@ ubyte do_net_protocol_option(ubyte click)
 
     memset(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
     byte_1C6D48 = 0;
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < 8; i++) {
         unkn2_names[i][0] = '\0';
+    }
 
     if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
     {
+        LOGERR("Failed on LbNetworkServiceStart");
         nsvc.I.Type = NetSvc_COM1;
-        net_protocol_option_button.Text = net_baudrate_text;
-        net_protocol_option_button.CallBackFn = ac_do_serial_speed_switch;
-        net_protocol_select_button.Text = gui_strings[497 + nsvc.I.Type];
-
+        net_service_gui_switch();
         alert_box_text_fmt("%s", gui_strings[568]);
         return 1;
     }
@@ -417,6 +416,27 @@ out_fail:
 #endif
 }
 
+void netgame_state_enter_5(void)
+{
+    const char *text;
+    PlayerIdx plyr;
+
+    net_INITIATE_button.Text = gui_strings[387];
+    if (byte_1C4A6F)
+        text = gui_strings[520];
+    else
+        text = gui_strings[388];
+    net_groups_LOGON_button.Text = text;
+    init_variables();
+    init_agents();
+    srm_reset_research();
+    login_control__State = 5;
+    for (plyr = 0; plyr < 8; plyr++) {
+        player_mission_agents_reset(plyr);
+    }
+}
+
+
 ubyte do_net_INITIATE(ubyte click)
 {
 #if 0
@@ -425,9 +445,6 @@ ubyte do_net_INITIATE(ubyte click)
         : "=r" (ret) : "a" (click));
     return ret;
 #endif
-    const char *text;
-    int plyr;
-
     if (nsvc.I.Type == NetSvc_IPX && !byte_1C4A7C) {
         LOGWARN("Cannot init protocol %d - not ready", (int)nsvc.I.Type);
         return 0;
@@ -436,23 +453,12 @@ ubyte do_net_INITIATE(ubyte click)
     {
         if (net_unkn_func_32())
         {
-          net_INITIATE_button.Text = gui_strings[387];
-          if (byte_1C4A6F)
-            text = gui_strings[520];
-          else
-            text = gui_strings[388];
-          net_groups_LOGON_button.Text = text;
-          init_variables();
-          init_agents();
-          srm_reset_research();
-          login_control__State = 5;
-          for (plyr = 0; plyr < 8; plyr++) {
-              players[plyr].MissionAgents = 15;
-          }
+          netgame_state_enter_5();
       }
     }
     else if (login_control__State == 5)
     {
+        int plyr;
         plyr = LbNetworkPlayerNumber();
         if (plyr == net_host_player_no)
         {
@@ -476,7 +482,6 @@ ubyte do_net_groups_LOGON(ubyte click)
         : "=r" (ret) : "a" (click));
     return ret;
 #endif
-    const char *text;
     int plyr;
 
     if (nsvc.I.Type == NetSvc_IPX && !byte_1C4A7C) {
@@ -499,19 +504,7 @@ ubyte do_net_groups_LOGON(ubyte click)
         {
             if (net_unkn_func_31(&unkstruct04_arr[byte_15516C].Session))
             {
-                net_INITIATE_button.Text = gui_strings[387];
-                if (byte_1C4A6F)
-                    text = gui_strings[520];
-                else
-                    text = gui_strings[388];
-                net_groups_LOGON_button.Text = text;
-                init_variables();
-                init_agents();
-                srm_reset_research();
-                login_control__State = 5;
-                for (plyr = 0; plyr < 8; plyr++) {
-                    players[plyr].MissionAgents = 15;
-                }
+                netgame_state_enter_5();
             }
         }
     }
@@ -870,7 +863,6 @@ ubyte do_net_protocol_select(ubyte click)
         : "=r" (ret) : "a" (click));
     return ret;
 #endif
-    const char *text;
     int i;
     short proto;
     short pos_x;
@@ -943,15 +935,15 @@ ubyte do_net_protocol_select(ubyte click)
 
         memset(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
         byte_1C6D48 = 0;
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < 8; i++) {
             unkn2_names[i][0] = '\0';
+        }
+
         if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
         {
+            LOGERR("Failed on LbNetworkServiceStart");
             nsvc.I.Type = NetSvc_COM1;
-            net_protocol_select_button.Text = gui_strings[497 + nsvc.I.Type];
-            net_protocol_option_button.Text = net_baudrate_text;
-            net_protocol_option_button.CallBackFn = ac_do_serial_speed_switch;
-
+            net_service_gui_switch();
             alert_box_text_fmt("%s", gui_strings[568]);
             break;
         }
@@ -964,13 +956,7 @@ ubyte do_net_protocol_select(ubyte click)
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        net_protocol_option_button.Text = net_baudrate_text;
-        if (byte_1C4A6F)
-            text = gui_strings[522 + nsvc.I.Type];
-        else
-            text = gui_strings[497 + nsvc.I.Type];
-        net_protocol_option_button.CallBackFn = ac_do_serial_speed_switch;
-        net_protocol_select_button.Text = text;
+        net_service_gui_switch();
         byte_15516C = 0;
         break;
     }
