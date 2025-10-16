@@ -308,7 +308,7 @@ void draw_players_chat_talk(int x, int y)
         LbStringToUpper(locstr);
 
         lbDisplay.DrawColour = net_player_colours[plyr];
-        AppTextDrawMissionChatMessage(base_x, &pos_y, locstr);
+        AppTextDrawMissionChatMessage(base_x, &pos_y, plyr, locstr);
 
         if ( !--player_unkn0C9[plyr] ) {
             player_unknCC9[plyr][0] = '\0';

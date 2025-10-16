@@ -68,10 +68,14 @@ void put_down_colwavetext_sprites(const char *sbuf, const char *ebuf,
   long w,h;
   for (c=sbuf; c < ebuf; c++)
   {
-    ushort fade_lv;
+    short fade_lv;
     TbPixel colour, shadcol;
 
     fade_lv = cw_base + cw_vari/2 - (cw_vari/2 * lbSinTable[LbFPMath_PI/8 * (cw_shift & 0xF)] >> 16);
+    if (fade_lv > PALETTE_FADE_LEVELS-1)
+        fade_lv = PALETTE_FADE_LEVELS-1;
+    if (fade_lv < 0)
+        fade_lv = 0;
     colour = lbDisplay.DrawColour;
     colour = pixmap.fade_table[fade_lv * PALETTE_8b_COLORS + colour];
     shadcol = SHADOW_COLOUR;
@@ -144,10 +148,14 @@ void put_down_colwavetext_sprites_resized(const char *sbuf, const char *ebuf,
   long w,h;
   for (c=sbuf; c < ebuf; c++)
   {
-    ushort fade_lv;
+    short fade_lv;
     TbPixel colour, shadcol;
 
     fade_lv = cw_base + cw_vari/2 - (cw_vari/2 * lbSinTable[LbFPMath_PI/8 * (cw_shift & 0xF)] >> 16);
+    if (fade_lv > PALETTE_FADE_LEVELS-1)
+        fade_lv = PALETTE_FADE_LEVELS-1;
+    if (fade_lv < 0)
+        fade_lv = 0;
     colour = lbDisplay.DrawColour;
     colour = pixmap.fade_table[fade_lv * PALETTE_8b_COLORS + colour];
     shadcol = SHADOW_COLOUR;
