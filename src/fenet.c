@@ -85,6 +85,17 @@ ubyte ac_do_net_protocol_select(ubyte click);
 ubyte ac_show_net_protocol_box(struct ScreenBox *box);
 
 
+void net_service_unkstruct04_clear(void)
+{
+    int i;
+
+    LbMemorySet(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
+    byte_1C6D48 = 0;
+    for (i = 0; i < 8; i++) {
+        unkn2_names[i][0] = '\0';
+    }
+}
+
 void net_service_gui_switch(void)
 {
     const char *text;
@@ -92,7 +103,11 @@ void net_service_gui_switch(void)
     switch (nsvc.I.Type)
     {
     case NetSvc_IPX:
-        //TODO
+        net_protocol_option_button.Text = net_proto_param_text;
+        net_protocol_option_button.CallBackFn = ac_do_net_protocol_option;
+        text = gui_strings[497 + nsvc.I.Type];
+        net_protocol_select_button.Text = text;
+        net_service_unkstruct04_clear();
         break;
     case NetSvc_COM1:
     case NetSvc_COM2:
@@ -118,7 +133,6 @@ ubyte do_net_protocol_option(ubyte click)
     return ret;
 #endif
     short param, dt;
-    int i;
 
     if (byte_1C4A7C)
     {
@@ -149,11 +163,7 @@ ubyte do_net_protocol_option(ubyte click)
     sprintf(net_proto_param_text, "%04x", (int)nsvc.I.Param);
     LbStringToUpper(net_proto_param_text);
 
-    memset(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
-    byte_1C6D48 = 0;
-    for (i = 0; i < 8; i++) {
-        unkn2_names[i][0] = '\0';
-    }
+    net_service_unkstruct04_clear();
 
     if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
     {
@@ -218,11 +228,7 @@ ubyte net_unkn_func_32(void)
     if (nsvc.I.Type == NetSvc_IPX)
         goto skip_modem_init;
 
-    LbMemorySet(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
-    byte_1C6D48 = 0;
-    for (i = 0; i < 8; i++) {
-        unkn2_names[i][0] = '\0';
-    }
+    net_service_unkstruct04_clear();
 
     if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
     {
@@ -325,11 +331,7 @@ ubyte net_unkn_func_31(struct TbNetworkSession *p_nsession)
     if (nsvc.I.Type == NetSvc_IPX)
       goto skip_modem_init;
 
-    memset(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
-    byte_1C6D48 = 0;
-    for (i = 0; i < 8; i++) {
-        unkn2_names[i][0] = '\0';
-    }
+    net_service_unkstruct04_clear();
 
     if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
     {
@@ -626,7 +628,7 @@ void show_net_benefits_sub3(struct ScreenBox *box)
             {
                 lbDisplay.LeftButton = 0;
                 if (is_unkn_current_player() && ((unkn_flags_08 & 0x02) == 0)
-                    && (login_control__State == 5))
+                  && (login_control__State == 5))
                 {
                     login_control__TechLevel--;
                     if (login_control__TechLevel < 1)
@@ -863,7 +865,6 @@ ubyte do_net_protocol_select(ubyte click)
         : "=r" (ret) : "a" (click));
     return ret;
 #endif
-    int i;
     short proto;
     short pos_x;
 
@@ -931,13 +932,7 @@ ubyte do_net_protocol_select(ubyte click)
     default:
         break;
     case NetSvc_IPX:
-        net_protocol_select_button.Text = gui_strings[497 + NetSvc_IPX];
-
-        memset(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
-        byte_1C6D48 = 0;
-        for (i = 0; i < 8; i++) {
-            unkn2_names[i][0] = '\0';
-        }
+        net_service_gui_switch();
 
         if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
         {
@@ -949,8 +944,6 @@ ubyte do_net_protocol_select(ubyte click)
         }
         byte_1C4A7C = 1;
         byte_15516C = -1;
-        net_protocol_option_button.Text = net_proto_param_text;
-        net_protocol_option_button.CallBackFn = ac_do_net_protocol_option;
         break;
     case NetSvc_COM1:
     case NetSvc_COM2:
