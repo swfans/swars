@@ -165629,7 +165629,7 @@ net_unkn_func_31:	/* 0x0CD2EC */
 
 
 /*----------------------------------------------------------------*/
-net_unkn_func_32:	/* 0x0CD528 */
+GLOBAL_FUNC(ASM_net_unkn_func_32)	/* 0x0CD528 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -169017,7 +169017,7 @@ GLOBAL_FUNC(ASM_do_net_INITIATE)	/* 0x0D3184 */
 		mov    login_control__State,%al
 		cmp    $0x6,%eax
 		jne    jump_d3210
-		call   net_unkn_func_32
+		call   ac_net_unkn_func_32
 		test   %al,%al
 		je     jump_d326e
 		mov    EXPORT_SYMBOL(gui_strings)+0x60C,%eax

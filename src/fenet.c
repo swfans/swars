@@ -34,6 +34,7 @@
 #include "network.h"
 #include "purpldrw.h"
 #include "purpldrwlst.h"
+#include "player.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -128,7 +129,7 @@ ubyte do_net_protocol_option(ubyte click)
         nsvc.I.Type = NetSvc_COM1;
         net_protocol_option_button.Text = net_baudrate_text;
         net_protocol_option_button.CallBackFn = ac_do_serial_speed_switch;
-        net_protocol_select_button.Text = gui_strings[499];
+        net_protocol_select_button.Text = gui_strings[497 + nsvc.I.Type];
 
         alert_box_text_fmt("%s", gui_strings[568]);
         return 1;
@@ -170,12 +171,63 @@ ubyte do_net_SET(ubyte click)
     return ret;
 }
 
+ubyte net_unkn_func_32(void)
+{
+    ubyte ret;
+    asm volatile ("call ASM_net_unkn_func_32\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
 ubyte do_net_INITIATE(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_net_INITIATE\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    const char *text;
+    int plyr;
+
+    if (nsvc.I.Type == NetSvc_IPX && !byte_1C4A7C) {
+        LOGWARN("Cannot init protocol %d - not ready", (int)nsvc.I.Type);
+        return 0;
+    }
+    if (login_control__State == 6)
+    {
+        if (net_unkn_func_32())
+        {
+          net_INITIATE_button.Text = gui_strings[387];
+          if (byte_1C4A6F)
+            text = gui_strings[520];
+          else
+            text = gui_strings[388];
+          net_groups_LOGON_button.Text = text;
+          init_variables();
+          init_agents();
+          srm_reset_research();
+          login_control__State = 5;
+          for (plyr = 0; plyr < 8; plyr++) {
+              players[plyr].MissionAgents = 15;
+          }
+      }
+    }
+    else if (login_control__State == 5)
+    {
+        plyr = LbNetworkPlayerNumber();
+        if (plyr == net_host_player_no)
+        {
+            if (login_control__City == -1) {
+                LOGWARN("Cannot init protocol %d player %d - city not selected", (int)nsvc.I.Type, plyr);
+                return 0;
+            }
+            byte_15516D = -1;
+            byte_15516C = -1;
+            network_players[plyr].Type = 2;
+        }
+    }
+    return 1;
 }
 
 ubyte do_net_groups_LOGON(ubyte click)
@@ -616,7 +668,7 @@ ubyte do_net_protocol_select(ubyte click)
         if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
         {
             nsvc.I.Type = NetSvc_COM1;
-            net_protocol_select_button.Text = gui_strings[499];
+            net_protocol_select_button.Text = gui_strings[497 + nsvc.I.Type];
             net_protocol_option_button.Text = net_baudrate_text;
             net_protocol_option_button.CallBackFn = ac_do_serial_speed_switch;
 
@@ -687,10 +739,19 @@ ubyte show_net_users_box(struct ScreenBox *box)
 
 ubyte do_unkn8_EJECT(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_unkn8_EJECT\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    int plyr;
+
+    plyr = LbNetworkPlayerNumber();
+    if (byte_15516D == plyr)
+        return 0;
+    network_players[plyr].Type = 12;
+    return 1;
 }
 
 void show_netgame_unkn_case1(void)
