@@ -18,8 +18,10 @@
 /******************************************************************************/
 #include "fenet.h"
 
+#include "bfkeybd.h"
 #include "bfscrcopy.h"
 #include "bfsprite.h"
+#include "bfstrut.h"
 #include "bftext.h"
 
 #include "guiboxes.h"
@@ -29,6 +31,7 @@
 #include "feshared.h"
 #include "game_sprts.h"
 #include "game.h"
+#include "network.h"
 #include "purpldrw.h"
 #include "purpldrwlst.h"
 #include "swlog.h"
@@ -52,7 +55,8 @@ extern struct ScreenBox net_protocol_box;
 extern struct ScreenButton net_protocol_option_button;
 
 extern char net_unkn40_text[];
-extern char unkn_opt_number_text[];
+extern char net_baudrate_text[8];
+extern char net_proto_param_text[8];
 extern ulong dword_155750[];
 extern ubyte byte_155174; // = 166;
 extern ubyte byte_155175[];
@@ -76,10 +80,62 @@ ubyte ac_show_net_protocol_box(struct ScreenBox *box);
 
 ubyte do_net_protocol_option(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_net_protocol_option\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    short param, dt;
+    int i;
+
+    if (byte_1C4A7C)
+    {
+        LbNetworkReset();
+        byte_1C4A7C = 0;
+    }
+    dt = 0x01;
+    if ((lbShift & KMod_SHIFT) != 0)
+        dt = 0x10;
+    if ((lbShift & KMod_CONTROL) != 0)
+        dt = 0x100;
+
+    param = nsvc.I.Param;
+    if (click)
+    {
+        param -= dt;
+        if (param < 0)
+            param = 2746;
+    }
+    else
+    {
+        param += dt;
+        if (param > 2746)
+            param = 0;
+    }
+    nsvc.I.Param = param;
+
+    sprintf(net_proto_param_text, "%04x", (int)nsvc.I.Param);
+    LbStringToUpper(net_proto_param_text);
+
+    memset(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
+    byte_1C6D48 = 0;
+    for (i = 0; i < 8; i++)
+        unkn2_names[i][0] = '\0';
+
+    if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
+    {
+        nsvc.I.Type = NetSvc_COM1;
+        net_protocol_option_button.Text = net_baudrate_text;
+        net_protocol_option_button.CallBackFn = ac_do_serial_speed_switch;
+        net_protocol_select_button.Text = gui_strings[499];
+
+        alert_box_text_fmt("%s", gui_strings[568]);
+        return 1;
+    }
+
+    byte_1C4A7C = 1;
+    return 1;
 }
 
 ubyte do_net_unkn40(ubyte click)
@@ -580,7 +636,7 @@ void init_net_screen_boxes(void)
     init_screen_button(&net_unkn40_button, 37u, 256u, net_unkn40_text, 6,
         med2_font, 1, 0);
     init_screen_button(&net_protocol_option_button, 7u, 275u,
-        unkn_opt_number_text, 6, med2_font, 1, 0);
+        net_proto_param_text, 6, med2_font, 1, 0);
 
     net_groups_LOGON_button.Width = 85;
     net_INITIATE_button.Width = 85;

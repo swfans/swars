@@ -106,13 +106,13 @@ struct ModemCommand modem_cmds[] = {
 };
 
 struct NetworkServiceInfo Network_Service_List[] = {
-    {0, 0, NetSvc_IPX, 0x02},
-    {0, 0, NetSvc_COM1, 0x01},
-    {0, 0, NetSvc_COM2, 0x01},
-    {0, 0, NetSvc_COM3, 0x01},
-    {0, 0, NetSvc_COM4, 0x01},
-    {0, 0, NetSvc_RADICA, 0x02},
-    {0, 0, 0, 0},
+    {0, 0, NetSvc_IPX, 0x02, 0},
+    {0, 0, NetSvc_COM1, 0x01, 0},
+    {0, 0, NetSvc_COM2, 0x01, 0},
+    {0, 0, NetSvc_COM3, 0x01, 0},
+    {0, 0, NetSvc_COM4, 0x01, 0},
+    {0, 0, NetSvc_RADICA, 0x02, 0},
+    {0, 0, 0, 0, 0},
 };
 
 TbResult LbNetworkSetSessionCreateFunction(void *func)

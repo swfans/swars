@@ -110137,7 +110137,7 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		jne    jump_8ed2b
 		mov    $0x1,%ch
 		mov    $0xff,%al
-		mov    $unkn_opt_number_text,%edx
+		mov    $EXPORT_SYMBOL(net_proto_param_text),%edx
 		mov    $ASM_do_net_protocol_option,%ebx
 		mov    %ch,EXPORT_SYMBOL(byte_1C4A7C)
 		mov    %al,EXPORT_SYMBOL(byte_15516C)
@@ -110157,14 +110157,14 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 		mov    $0x1,%cl
 		push   $EXPORT_SYMBOL(alert_text)
 		mov    $0x2,%edx
-		mov    $asc19200,%ebp
+		mov    $EXPORT_SYMBOL(net_baudrate_text),%ebp
 		call   ac_sprintf
 		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		add    $0x8,%esp
 		mov    %cl,show_alert
 		mov    %dx,EXPORT_SYMBOL(word_1811AE)
 		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
-		mov    $ASM_do_serial_speed_switch,%eax
+		mov    $ac_do_serial_speed_switch,%eax
 		mov    %ebp,EXPORT_SYMBOL(net_protocol_option_button)+0x8
 		mov    %eax,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 		mov    $0x1,%al
@@ -110178,17 +110178,17 @@ GLOBAL_FUNC(ASM_do_net_protocol_select)	/* 0x08EB50 */
 	jump_8ed7b:
 		cmpb   $0x0,EXPORT_SYMBOL(byte_1C4A6F)
 		je     jump_8eda8
-		mov    $asc19200,%ecx
+		mov    $EXPORT_SYMBOL(net_baudrate_text),%ecx
 		and    $0xffff,%eax
-		mov    $ASM_do_serial_speed_switch,%esi
+		mov    $ac_do_serial_speed_switch,%esi
 		mov    %ecx,EXPORT_SYMBOL(net_protocol_option_button)+0x8
 		mov    EXPORT_SYMBOL(gui_strings)+0x828(,%eax,4),%eax
 		mov    %esi,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 		jmp    jump_8edca
 	jump_8eda8:
-		mov    $asc19200,%edx
+		mov    $EXPORT_SYMBOL(net_baudrate_text),%edx
 		and    $0xffff,%eax
-		mov    $ASM_do_serial_speed_switch,%ebx
+		mov    $ac_do_serial_speed_switch,%ebx
 		mov    %edx,EXPORT_SYMBOL(net_protocol_option_button)+0x8
 		mov    EXPORT_SYMBOL(gui_strings)+0x7C4(,%eax,4),%eax
 		mov    %ebx,EXPORT_SYMBOL(net_protocol_option_button)+0x18
@@ -110292,7 +110292,7 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		or     $0x80,%ah
 		mov    %ax,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		mov    $unkn_opt_number_text,%ebx
+		mov    $EXPORT_SYMBOL(net_proto_param_text),%ebx
 		mov    %edi,%edx
 		mov    %esi,%eax
 		xor    %ecx,%ecx
@@ -110329,7 +110329,7 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 	jump_8ef8c:
 		xor    %ebx,%ebx
 		mov    EXPORT_SYMBOL(text_window_x1),%bx
-		mov    $unkn_opt_number_text,%eax
+		mov    $EXPORT_SYMBOL(net_proto_param_text),%eax
 		add    %esi,%ebx
 		call   ac_LbTextStringWidth
 		add    %ebx,%eax
@@ -110390,7 +110390,7 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		add    $0x54,%ebx
 		add    %edi,%edx
 		add    %eax,%esi
-		mov    $unkn_opt_number_text,%eax
+		mov    $EXPORT_SYMBOL(net_proto_param_text),%eax
 		add    $0x3,%edx
 		call   ac_LbTextStringWidth
 		add    %esi,%eax
@@ -110398,14 +110398,14 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 	jump_8f073:
 		mov    $0x3,%ebx
 		mov    $0x4,%edx
-		mov    $unkn_opt_number_text,%eax
+		mov    $EXPORT_SYMBOL(net_proto_param_text),%eax
 		call   user_read_value
 		test   %al,%al
 		je     jump_8f502
 		push   $data_1811b2
 		push   $asc04x
 		xor    %ah,%ah
-		push   $unkn_opt_number_text
+		push   $EXPORT_SYMBOL(net_proto_param_text)
 		mov    $0x1108,%ebx
 		mov    %ah,data_1c4806
 		call   ac_sscanf
@@ -110433,8 +110433,8 @@ GLOBAL_FUNC(ASM_show_net_protocol_box)	/* 0x08EDE0 */
 		push   %ecx
 		mov    $0x1,%bl
 		push   $EXPORT_SYMBOL(alert_text)
-		mov    $asc19200,%esi
-		mov    $ASM_do_serial_speed_switch,%edi
+		mov    $EXPORT_SYMBOL(net_baudrate_text),%esi
+		mov    $ac_do_serial_speed_switch,%edi
 		call   ac_sprintf
 		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		add    $0x8,%esp
@@ -117611,8 +117611,8 @@ GLOBAL_FUNC(ASM_show_netgame_unkn_case1)	/* 0x09BA5C */
 		push   %edx
 		mov    $0x2,%esi
 		push   $EXPORT_SYMBOL(alert_text)
-		mov    $asc19200,%ebx
-		mov    $ASM_do_serial_speed_switch,%ecx
+		mov    $EXPORT_SYMBOL(net_baudrate_text),%ebx
+		mov    $ac_do_serial_speed_switch,%ecx
 		call   ac_sprintf
 		mov    $0x1,%al
 		add    $0x8,%esp
@@ -165608,11 +165608,11 @@ net_unkn_func_31:	/* 0x0CD2EC */
 		cmpb   $0x0,EXPORT_SYMBOL(byte_1C4A7C)
 		jne    jump_cd515
 		mov    $0x2,%edx
-		mov    $asc19200,%ebp
+		mov    $EXPORT_SYMBOL(net_baudrate_text),%ebp
 		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		mov    %dx,EXPORT_SYMBOL(word_1811AE)
 		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
-		mov    $ASM_do_serial_speed_switch,%eax
+		mov    $ac_do_serial_speed_switch,%eax
 		mov    %ebp,EXPORT_SYMBOL(net_protocol_option_button)+0x8
 		mov    %eax,EXPORT_SYMBOL(net_protocol_option_button)+0x18
 	jump_cd515:
@@ -165814,8 +165814,8 @@ net_unkn_func_32:	/* 0x0CD528 */
 		cmpb   $0x0,EXPORT_SYMBOL(byte_1C4A7C)
 		jne    jump_cd787
 		mov    $0x2,%ebx
-		mov    $asc19200,%edi
-		mov    $ASM_do_serial_speed_switch,%ebp
+		mov    $EXPORT_SYMBOL(net_baudrate_text),%edi
+		mov    $ac_do_serial_speed_switch,%ebp
 		mov    EXPORT_SYMBOL(gui_strings)+0x7CC,%eax
 		mov    %bx,EXPORT_SYMBOL(word_1811AE)
 		mov    %eax,EXPORT_SYMBOL(net_protocol_select_button)+0x08
@@ -168627,7 +168627,7 @@ GLOBAL_FUNC(ASM_do_net_protocol_option)	/* 0x0D2D3C */
 		mov    data_1811b2,%ax
 		push   %eax
 		push   $asc04x_0
-		push   $unkn_opt_number_text
+		push   $EXPORT_SYMBOL(net_proto_param_text)
 		xor    %edx,%edx
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -168663,8 +168663,8 @@ GLOBAL_FUNC(ASM_do_net_protocol_option)	/* 0x0D2D3C */
 		push   %edx
 		mov    $0x2,%edi
 		push   $EXPORT_SYMBOL(alert_text)
-		mov    $asc19200,%ebx
-		mov    $ASM_do_serial_speed_switch,%ecx
+		mov    $EXPORT_SYMBOL(net_baudrate_text),%ebx
+		mov    $ac_do_serial_speed_switch,%ecx
 		call   ac_sprintf
 		mov    $0x1,%al
 		add    $0x8,%esp
@@ -168731,7 +168731,7 @@ GLOBAL_FUNC(ASM_do_serial_speed_switch)	/* 0x0D2EA4 */
 		mov    data_155770(,%edx,4),%esi
 		push   %esi
 		push   $ascD_14
-		push   $asc19200
+		push   $EXPORT_SYMBOL(net_baudrate_text)
 		mov    %esi,rate
 		call   ac_sprintf
 		mov    $0x1,%al
@@ -183352,13 +183352,13 @@ GLOBAL (byte_155124)	/* 0x155124 */
 GLOBAL (byte_15512C)	/* 0x15512C */
 		.ascii  "\x08\x08\x03\x0c\x08\x04\x00\x00"
 		.ascii  "\xff\x79\x03\x00"
-asc19200:	/* 0x155138 */
+GLOBAL (net_baudrate_text)	/* 0x155138 */
 		.ascii  "19200"
 data_15513d:
 		.short  0x0
 data_15513f:
 		.byte	0x0
-GLOBAL (unkn_opt_number_text)	/* 0x155140 */
+GLOBAL (net_proto_param_text)	/* 0x155140 */
 		.string "0000"
 		.ascii  "\x00\x00\x00"
 		.string "100%"

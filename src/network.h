@@ -48,7 +48,8 @@ struct NetworkServiceInfo { // sizeof=12
     NSERV_HANDLE Id; // offset=0
     ushort GameId; // offset=4
     ushort Type; // offset=6
-    ulong Flags; // offset=8
+    ushort Flags; // offset=8
+    short Param; // offset=10
 };
 
 struct NetworkServiceFunction { // sizeof=36
@@ -314,6 +315,8 @@ TbResult LbNetworkSetSessionDialFunction(void *func);
 TbResult LbNetworkSetSessionAnswerFunction(void *func);
 TbResult LbNetworkSetSessionHangUpFunction(void *func);
 TbResult LbNetworkSetTimeoutSec(ulong tmsec);
+
+TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc);
 
 int LbNetworkSessionNumberPlayers(void);
 TbBool LbNetworkSessionActive(void);
