@@ -19,16 +19,20 @@
 #include "fenet.h"
 
 #include "bfkeybd.h"
+#include "bfmemut.h"
 #include "bfscrcopy.h"
 #include "bfsprite.h"
 #include "bfstrut.h"
 #include "bftext.h"
+#include "bfutility.h"
 
+#include "campaign.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
 #include "femain.h"
 #include "feshared.h"
+#include "game_save.h"
 #include "game_sprts.h"
 #include "game.h"
 #include "network.h"
@@ -64,6 +68,7 @@ extern ubyte byte_155175[];
 extern ubyte byte_155180; // = 109;
 extern ubyte byte_155181[];
 extern struct TbSprite *fe_icons_sprites;
+extern int unkn_rate; // = 19200;
 
 ubyte ac_do_net_protocol_option(ubyte click);
 ubyte ac_do_net_unkn40(ubyte click);
@@ -78,6 +83,31 @@ ubyte ac_show_net_grpaint(struct ScreenBox *box);
 ubyte ac_show_net_comms_box(struct ScreenBox *box);
 ubyte ac_do_net_protocol_select(ubyte click);
 ubyte ac_show_net_protocol_box(struct ScreenBox *box);
+
+
+void net_service_gui_switch(void)
+{
+    const char *text;
+
+    switch (nsvc.I.Type)
+    {
+    case NetSvc_IPX:
+        //TODO
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        net_protocol_option_button.Text = net_baudrate_text;
+        net_protocol_option_button.CallBackFn = ac_do_serial_speed_switch;
+        if (byte_1C4A6F)
+            text = gui_strings[522 + nsvc.I.Type];
+        else
+            text = gui_strings[497 + nsvc.I.Type];
+        net_protocol_select_button.Text = text;
+        break;
+    }
+}
 
 ubyte do_net_protocol_option(ubyte click)
 {
@@ -173,18 +203,218 @@ ubyte do_net_SET(ubyte click)
 
 ubyte net_unkn_func_32(void)
 {
+#if 1
     ubyte ret;
     asm volatile ("call ASM_net_unkn_func_32\n"
         : "=r" (ret) : );
     return ret;
+#else
+    int i, ret;
+    TbBool modem_on_line;
+
+    modem_on_line = 0;
+    if (LbNetworkSessionActive())
+        return 0;
+
+    if (nsvc.I.Type == NetSvc_IPX)
+        goto skip_modem_init;
+
+    LbMemorySet(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
+    byte_1C6D48 = 0;
+    for (i = 0; i < 8; i++) {
+        unkn2_names[i][0] = '\0';
+    }
+
+    if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
+    {
+        LOGERR("Failed on LbNetworkServiceStart");
+        alert_box_text_fmt("%s", gui_strings[568]);
+        goto out_fail;
+    }
+
+    LbNetworkSetBaud(unkn_rate);
+    players[local_player_no].DoubleMode = 0;
+    byte_1C4A7C = 1;
+    if (!byte_1C4A6F)
+        goto skip_modem_init;
+
+    if (LbNetworkInit() != Lb_SUCCESS) {
+        LOGERR("Failed on LbNetworkInit");
+        alert_box_text_fmt("%s", gui_strings[579]);
+        goto out_fail;
+    }
+
+    ret = LbNetworkDial(net_unkn2_text);
+    if (ret == -7 || ret == -1) {
+        LOGERR("Failed on LbNetworkAnswer, ret=%d", ret);
+        alert_box_text_fmt("%s", gui_strings[579]);
+        modem_on_line = true;
+        goto out_fail;
+    }
+    if (ret == 7) {
+        LOGERR("Failed on LbNetworkAnswer, ret=%d", ret);
+        alert_box_text_fmt("%s", gui_strings[579]);
+        goto out_fail;
+    }
+    if (ret == 4 || ret == 5 || ret == 6) {
+        LOGERR("Failed on LbNetworkAnswer, ret=%d", ret);
+        alert_box_text_fmt("%s", gui_strings[579]);
+        modem_on_line = true;
+        goto out_fail;
+    }
+    if (ret == 1) {
+        modem_on_line = true;
+    }
+
+skip_modem_init:
+    LbMemoryCopy(nsvc.S.Name, login_name, min(sizeof(nsvc.S.Name),sizeof(login_name)));
+    nsvc.S.MaxPlayers = 8;
+    nsvc.S.HostPlayerNumber = 0;
+    if (LbNetworkSessionCreate(&nsvc.S, nsvc.S.Name) != Lb_SUCCESS)
+    {
+        LOGERR("Failed on LbNetworkSessionCreate");
+        alert_box_text_fmt("%s", gui_strings[579]);
+        goto out_fail;
+    }
+
+    login_control__State = 5;
+    net_host_player_no = LbNetworkHostPlayerNumber();
+    net_players_num = LbNetworkSessionNumberPlayers();
+    byte_15516C = -1;
+    byte_15516D = -1;
+    if (nsvc.I.Type != NetSvc_IPX)
+        players[local_player_no].DoubleMode = 0;
+    load_missions(1);
+    for (i = 0; i < 8; i++) {
+        network_players[i].Type = 17;
+    }
+    return 1;
+
+out_fail:
+    if (modem_on_line)
+        LbNetworkHangUp();
+    if (nsvc.I.Type == NetSvc_IPX)
+    {
+        if (!byte_1C4A7C) {
+            nsvc.I.Type = NetSvc_COM1;
+            net_service_gui_switch();
+        }
+    }
+    else
+    {
+        if (byte_1C4A7C) {
+            LbNetworkReset();
+        }
+        byte_1C4A7C = 0;
+    }
+    return 0;
+#endif
 }
 
 ubyte net_unkn_func_31(struct TbNetworkSession *p_nsession)
 {
+#if 1
     ubyte ret;
     asm volatile ("call ASM_net_unkn_func_31\n"
         : "=r" (ret) : "a" (p_nsession));
     return ret;
+#else
+    TbBool modem_on_line;
+    int i, ret;
+
+    modem_on_line = false;
+    if (nsvc.I.Type == NetSvc_IPX)
+      goto skip_modem_init;
+
+    memset(unkstruct04_arr, 0, sizeof(unkstruct04_arr));
+    byte_1C6D48 = 0;
+    for (i = 0; i < 8; i++) {
+        unkn2_names[i][0] = '\0';
+    }
+
+    if (LbNetworkServiceStart(&nsvc.I) != Lb_SUCCESS)
+    {
+        LOGERR("Failed on LbNetworkServiceStart");
+        alert_box_text_fmt("%s", gui_strings[568]);
+        goto out_fail;
+    }
+
+    LbNetworkSetBaud(unkn_rate);
+    byte_1C4A7C = 1;
+    players[local_player_no].DoubleMode = 0;
+    if (!byte_1C4A6F)
+        goto skip_modem_init;
+
+    if (LbNetworkInit() != Lb_SUCCESS) {
+        LOGERR("Failed on LbNetworkInit");
+        alert_box_text_fmt("%s", gui_strings[579]);
+        goto out_fail;
+    }
+
+    ret = LbNetworkAnswer();
+    if (ret == -7 || ret == -1) {
+        LOGERR("Failed on LbNetworkAnswer, ret=%d", ret);
+        alert_box_text_fmt("%s", gui_strings[579]);
+        modem_on_line = true;
+        goto out_fail;
+    }
+    if (ret == 7) {
+        LOGERR("Failed on LbNetworkAnswer, ret=%d", ret);
+        alert_box_text_fmt("%s", gui_strings[579]);
+        goto out_fail;
+    }
+    if (ret == 4 || ret == 5 || ret == 6) {
+        LOGERR("Failed on LbNetworkAnswer, ret=%d", ret);
+        alert_box_text_fmt("%s", gui_strings[579]);
+        modem_on_line = true;
+        goto out_fail;
+    }
+    if (ret == 1) {
+      modem_on_line = true;
+    }
+
+skip_modem_init:
+    p_nsession->MaxPlayers = 8;
+    if (LbNetworkSessionJoin(p_nsession, login_name) != Lb_SUCCESS)
+    {
+        LOGERR("Failed on LbNetworkSessionJoin");
+        alert_box_text_fmt("%s", gui_strings[579]);
+        goto out_fail;
+    }
+    login_control__State = 5;
+    net_host_player_no = LbNetworkHostPlayerNumber();
+    net_players_num = LbNetworkSessionNumberPlayers();
+    byte_1C6D4A = 1;
+    LbMemoryCopy(&nsvc.F, p_nsession, 0x28u);
+    if (nsvc.I.Type != NetSvc_IPX) {
+        players[local_player_no].DoubleMode = 0;
+    }
+    load_missions(1);
+
+    for (i = 0; i < 8; i++) {
+        network_players[i].Type = 17;
+    }
+
+    return 1;
+
+out_fail:
+    if (modem_on_line)
+        LbNetworkHangUp();
+    if (nsvc.I.Type == NetSvc_IPX)
+    {
+        if (!byte_1C4A7C) {
+            nsvc.I.Type = NetSvc_COM1;
+            net_service_gui_switch();
+        }
+    }
+    else
+    {
+        if (byte_1C4A7C)
+            LbNetworkReset();
+        byte_1C4A7C = 0;
+    }
+    return 0;
+#endif
 }
 
 ubyte do_net_INITIATE(ubyte click)
