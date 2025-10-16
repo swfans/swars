@@ -165435,7 +165435,7 @@ net_unkn_func_30:	/* 0x0CD0AC */
 
 
 /*----------------------------------------------------------------*/
-net_unkn_func_31:	/* 0x0CD2EC */
+GLOBAL_FUNC(ASM_net_unkn_func_31)	/* 0x0CD2EC */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -169123,7 +169123,7 @@ GLOBAL_FUNC(ASM_do_net_groups_LOGON)	/* 0x0D3274 */
 		sar    $0x18,%eax
 		imul   $0xda,%eax,%eax
 		add    $unkstruct04_arr,%eax
-		call   net_unkn_func_31
+		call   ac_net_unkn_func_31
 		test   %al,%al
 		je     jump_d3381
 		mov    EXPORT_SYMBOL(gui_strings)+0x60C,%eax

@@ -179,6 +179,14 @@ ubyte net_unkn_func_32(void)
     return ret;
 }
 
+ubyte net_unkn_func_31(struct TbNetworkSession *p_nsession)
+{
+    ubyte ret;
+    asm volatile ("call ASM_net_unkn_func_31\n"
+        : "=r" (ret) : "a" (p_nsession));
+    return ret;
+}
+
 ubyte do_net_INITIATE(ubyte click)
 {
 #if 0
@@ -232,10 +240,52 @@ ubyte do_net_INITIATE(ubyte click)
 
 ubyte do_net_groups_LOGON(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_net_groups_LOGON\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    const char *text;
+    int plyr;
+
+    if (nsvc.I.Type == NetSvc_IPX && !byte_1C4A7C) {
+        LOGWARN("Cannot abort protocol %d - not ready", (int)nsvc.I.Type);
+        return 0;
+    }
+      if (login_control__State == 5)
+      {
+        plyr = LbNetworkPlayerNumber();
+        network_players[plyr].Type = 13;
+        byte_15516D = -1;
+        net_INITIATE_button.Text = gui_strings[385];
+        byte_15516C = -1;
+        net_groups_LOGON_button.Text = gui_strings[386];
+        net_unkn_func_33();
+      }
+    else if (login_control__State == 6)
+    {
+        if (byte_15516C != -1 || nsvc.I.Type != NetSvc_IPX)
+        {
+            if (net_unkn_func_31(&unkstruct04_arr[byte_15516C].Session))
+            {
+                net_INITIATE_button.Text = gui_strings[387];
+                if (byte_1C4A6F)
+                    text = gui_strings[520];
+                else
+                    text = gui_strings[388];
+                net_groups_LOGON_button.Text = text;
+                init_variables();
+                init_agents();
+                srm_reset_research();
+                login_control__State = 5;
+                for (plyr = 0; plyr < 8; plyr++) {
+                    players[plyr].MissionAgents = 15;
+                }
+            }
+        }
+    }
+    return 1;
 }
 
 TbBool mouse_down_over_unkn1(short x, short y, short width, short height)
