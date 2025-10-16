@@ -1341,13 +1341,13 @@ TbResult LbModemRingType(ushort dev_id, ubyte rtyp)
     return Lb_SUCCESS;
 }
 
-TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
+TbResult LbNetworkServiceStart(struct NetworkServiceInfo *p_nsvc)
 {
     TbResult ret;
     ulong k;
 
     ret = Lb_FAIL;
-    memcpy(&NetworkServicePtr.I, nsvc, sizeof(struct NetworkServiceInfo));
+    memcpy(&NetworkServicePtr.I, p_nsvc, sizeof(struct NetworkServiceInfo));
     switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
@@ -1361,8 +1361,8 @@ TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
         }
         memset(&IPXPlayer.Header, 0, sizeof(struct TbIPXPlayerHeader));
         memset(&IPXPlayer.Data, 0, sizeof(struct TbIPXPlayerData));
-        IPXPlayer.Header.field_2 = nsvc->GameId;
-        k = (nsvc->Flags >> 16) + 0x4545;
+        IPXPlayer.Header.field_2 = p_nsvc->GameId;
+        k = p_nsvc->Param + 0x4545;
         NetworkServicePtr.I.Id = &IPXPlayer.Header;
         if (k > 0x4FFF)
             k = 0x4FFF;
@@ -1382,7 +1382,7 @@ TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
         ret = Lb_SUCCESS;
         break;
     case NetSvc_RADICA:
-        ret = radica_service_init(nsvc);
+        ret = radica_service_init(p_nsvc);
         if (ret != Lb_SUCCESS) {
             LOGERR("RADICA service init failed");
             ret = Lb_FAIL;
