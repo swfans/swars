@@ -212,7 +212,7 @@ ubyte do_net_SET(ubyte click)
 
 ubyte net_unkn_func_32(void)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile ("call ASM_net_unkn_func_32\n"
         : "=r" (ret) : );
@@ -281,7 +281,6 @@ skip_modem_init:
         alert_box_text_fmt("%s", gui_strings[579]);
         goto out_fail;
     }
-
     login_control__State = 5;
     net_host_player_no = LbNetworkHostPlayerNumber();
     net_players_num = LbNetworkSessionNumberPlayers();
@@ -289,7 +288,7 @@ skip_modem_init:
     byte_15516D = -1;
     if (nsvc.I.Type != NetSvc_IPX)
         players[local_player_no].DoubleMode = 0;
-    load_missions(1);
+    load_missions(99);
     for (i = 0; i < 8; i++) {
         network_players[i].Type = 17;
     }
@@ -318,7 +317,7 @@ out_fail:
 
 ubyte net_unkn_func_31(struct TbNetworkSession *p_nsession)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile ("call ASM_net_unkn_func_31\n"
         : "=r" (ret) : "a" (p_nsession));
@@ -390,7 +389,7 @@ skip_modem_init:
     if (nsvc.I.Type != NetSvc_IPX) {
         players[local_player_no].DoubleMode = 0;
     }
-    load_missions(1);
+    load_missions(99);
 
     for (i = 0; i < 8; i++) {
         network_players[i].Type = 17;
