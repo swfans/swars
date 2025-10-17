@@ -2204,7 +2204,8 @@ void game_graphics_inputs(void)
     if ((ingame.DisplayMode != DpM_ENGINEPLY) &&
         (ingame.DisplayMode != DpM_UNKN_3B))
         return;
-    if (in_network_game && p_locplayer->PanelState[mouser] != 17)
+    if (in_network_game && p_locplayer->PanelState[mouser]
+      == PANEL_STATE_SEND_MESSAGE)
         return;
 
     if (is_gamekey_pressed(GKey_CAMERA_PERSPECTV))
@@ -2726,7 +2727,7 @@ void init_level(void)
             p_player->UserVZ[mouser] = 0;
             p_player->SpecialItems[mouser] = 0;
             p_player->PanelItem[mouser] = 0;
-            p_player->PanelState[mouser] = 0;
+            p_player->PanelState[mouser] = PANEL_STATE_NORMAL;
         }
         p_player->GotoFace = 0;
         p_player->field_102 = 0;
@@ -4763,7 +4764,7 @@ void do_scroll_map(void)
     engn_zc_orig = engn_zc;
     if (ctlmode == UInpCtr_Mouse || pktrec_mode == PktR_PLAYBACK)
     {
-        if (!p_locplayer->PanelState[mouser])
+        if (p_locplayer->PanelState[mouser] == PANEL_STATE_NORMAL)
         {
             long cumm_alt;
             int mv_border;
@@ -5038,9 +5039,10 @@ ubyte do_user_interface(void)
         if (is_key_pressed(KC_RETURN, KMod_DONTCARE))
         {
             clear_key_pressed(KC_RETURN);
-            if ((p_locplayer->PanelState[mouser] != 17) && (player_unkn0C9[local_player_no] <= 140))
+            if ((p_locplayer->PanelState[mouser] != PANEL_STATE_SEND_MESSAGE)
+              && (player_unkn0C9[local_player_no] <= 140))
             {
-                p_locplayer->PanelState[mouser] = 17;
+                p_locplayer->PanelState[mouser] = PANEL_STATE_SEND_MESSAGE;
                 reset_buffered_keys();
                 player_unknCC9[local_player_no][0] = '\0';
                 player_unkn0C9[local_player_no] = 0;
@@ -5049,7 +5051,7 @@ ubyte do_user_interface(void)
             }
         }
     }
-    if (p_locplayer->PanelState[mouser] == 17)
+    if (p_locplayer->PanelState[mouser] == PANEL_STATE_SEND_MESSAGE)
         return process_mouse_imputs() != 0;
 
     // screenshot
@@ -6921,7 +6923,7 @@ void load_packet(void)
         }
     }
 
-    if (p_locplayer->PanelState[mouser] != 17)
+    if (p_locplayer->PanelState[mouser] != PANEL_STATE_SEND_MESSAGE)
     {
         if (in_network_game || (ingame.UserFlags & UsrF_Cheats) != 0)
         {
