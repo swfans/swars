@@ -173,7 +173,7 @@ extern unsigned short unkn2_pos_x;
 extern unsigned short unkn2_pos_y;
 extern unsigned short unkn2_pos_z;
 extern int data_1c8428;
-extern const char *primvehobj_fname;
+const char *primvehobj_fname = "qdata/primveh.obj";
 extern unsigned char textwalk_data[640];
 
 extern short word_1C6E08;
@@ -2289,14 +2289,6 @@ void setup_debug_obj_trace(void)
     // Code for setting memory ranges was here
     // Removed, as we no longer have such tracking/profiling mechanism
     debug_trace_place(0);
-}
-
-void BAT_unknsub_20(int a1, int a2, int a3, int a4, ubyte *a5)
-{
-    asm volatile (
-      "push %4\n"
-      "call ASM_BAT_unknsub_20\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
 }
 
 TbResult prep_multicolor_sprites(void)
@@ -6838,10 +6830,6 @@ void input_mission_concluded(void)
 
 void load_packet(void)
 {
-#if 0
-    asm volatile ("call ASM_load_packet\n"
-        :  :  : "eax" );
-#else
     PlayerInfo *p_locplayer;
     struct Packet *p_pckt;
     int did_actn;
@@ -6947,7 +6935,6 @@ void load_packet(void)
             PacketRecord_Write(p_pckt);
         }
     }
-#endif
 }
 
 void joy_input(void)

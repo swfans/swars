@@ -24,6 +24,7 @@
 #include "bfmath.h"
 #include "bfmemut.h"
 
+#include "bat.h"
 #include "triangls.h"
 #include "trpoints.h"
 #include "trstate.h"
@@ -54,6 +55,17 @@
 #include "vehtraffic.h"
 #include "weapon.h"
 #include "swlog.h"
+/******************************************************************************/
+#pragma pack(1)
+
+struct BillboardNBreakout {
+  ubyte field_0;
+  ubyte field_1;
+  ubyte field_2;
+  ubyte field_3;
+};
+
+#pragma pack()
 /******************************************************************************/
 
 TbBool level_deep_fix = false;
@@ -93,6 +105,9 @@ struct QuickLoad quick_load_pc[] = {
 };
 
 ushort next_used_lvl_objective = 1;
+
+extern uint dword_177790;
+extern struct BillboardNBreakout map_bnb;
 
 void debug_level(const char *text, int player)
 {
@@ -1401,8 +1416,45 @@ TbResult load_map_mad(ushort mapno)
 
 void load_map_bnb(int a1)
 {
+#if 0
     asm volatile ("call ASM_load_map_bnb\n"
         : : "a" (a1));
+#endif
+    char locstr[52];
+    TbFileHandle fh;
+    ubyte Amin, Amax;
+    ubyte Bmin, Bmax;
+
+    sprintf(locstr, "%s/map%03d.b&b", "maps", a1);
+    fh = LbFileOpen(locstr, 2u);
+    if (fh == INVALID_FILE)
+    {
+        map_bnb.field_0 = 0;
+        map_bnb.field_1 = 0;
+        map_bnb.field_2 = 0;
+        map_bnb.field_3 = 0;
+        dword_177790 = 0;
+    }
+    else
+    {
+        LbFileRead(fh, &map_bnb, 4);
+        LbFileClose(fh);
+        dword_177790 = 2;
+    }
+    Amin = map_bnb.field_0;
+    if (map_bnb.field_0 >= map_bnb.field_2)
+        Amin = map_bnb.field_2;
+    Bmin = map_bnb.field_1;
+    if (map_bnb.field_1 >= map_bnb.field_3)
+        Bmin = map_bnb.field_3;
+    Amax = map_bnb.field_0;
+    if (map_bnb.field_0 <= map_bnb.field_2)
+        Amax = map_bnb.field_2;
+    Bmax = map_bnb.field_1;
+    if (map_bnb.field_1 <= map_bnb.field_3)
+        Bmax = map_bnb.field_3;
+
+    BAT_unknsub_20(Amin, Bmin, Amax, Bmax, vec_tmap[4] + 0xA040);
 }
 
 TbResult load_mad_pc(ushort mapno)
