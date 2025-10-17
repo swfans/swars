@@ -1420,13 +1420,15 @@ void load_map_bnb(int a1)
     asm volatile ("call ASM_load_map_bnb\n"
         : : "a" (a1));
 #endif
-    char locstr[52];
+    char locstr[DISKPATH_SIZE];
+    PathInfo *pinfo;
     TbFileHandle fh;
     ubyte Amin, Amax;
     ubyte Bmin, Bmax;
 
-    sprintf(locstr, "%s/map%03d.b&b", "maps", a1);
-    fh = LbFileOpen(locstr, 2u);
+    pinfo = &game_dirs[DirPlace_Maps];
+    snprintf(locstr, DISKPATH_SIZE-1, "%s/map%03d.b&b", pinfo->directory, a1);
+    fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
     {
         map_bnb.field_0 = 0;

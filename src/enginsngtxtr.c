@@ -30,6 +30,29 @@ ushort next_floor_texture = 1;
 
 ushort next_local_mat = 1;
 
+/******************************************************************************/
+
+/** Convert given texture index into page+U+V coordinates in texture atlas.
+ */
+void texture_index_to_page_u_v(ubyte *p_page, ubyte *p_tmap_u, ubyte *p_tmap_v, int index)
+{
+    *p_page = index / (8 * 8);
+    *p_tmap_u = (index % 8) * 32;
+    *p_tmap_v = ((index / 8) % 8) * 32;
+}
+
+/** Convert page+U+V coordinates from texture atlas into single texture index.
+ */
+int texture_page_u_v_to_index(ubyte page, ubyte tmap_u, ubyte tmap_v)
+{
+    int index;
+
+    index = page * (8 * 8);
+    index += (tmap_v / 32) * 8;
+    index += (tmap_u / 32);
+    return index;
+}
+
 /** Checks whether texture with specified index is the only in use within given SingleFloorTexture.
  */
 TbBool floor_texture_is_only_using_index(struct SingleFloorTexture *p_fltextr, int index)
