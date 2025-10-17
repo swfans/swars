@@ -62,7 +62,6 @@ extern struct ScreenButton net_protocol_option_button;
 extern char net_unkn40_text[];
 extern char net_baudrate_text[8];
 extern char net_proto_param_text[8];
-extern ulong dword_155750[];
 extern ubyte byte_155174; // = 166;
 extern ubyte byte_155175[];
 extern ubyte byte_155180; // = 109;
@@ -666,12 +665,45 @@ void show_net_benefits_sub4(struct ScreenBox *box)
     draw_sprite_purple_list(box2.X - 7, box2.Y, &fe_icons_sprites[109]);
 }
 
-ulong sub_CCE8C(sbyte change)
+ubyte get_current_starting_cash_level(void)
 {
+    int i, lv_curr;
+
+    lv_curr = 0;
+    for (i = 0; i < 8; i++)
+    {
+      if (login_control__Money == starting_cash_amounts[i])
+          break;
+      lv_curr++;
+    }
+    return lv_curr;
+}
+
+uint reinit_starting_credits(sbyte change)
+{
+#if 0
     ulong ret;
-    asm volatile ("call ASM_sub_CCE8C\n"
+    asm volatile ("call ASM_reinit_starting_credits\n"
         : "=r" (ret) : "a" (change));
     return ret;
+#endif
+  int lv, lv_curr;
+  uint creds;
+
+    lv_curr = get_current_starting_cash_level();
+    lv = lv_curr + change;
+    if (lv < 0)
+        lv = 0;
+    if (lv > 7)
+        lv = 7;
+
+    creds = starting_cash_amounts[lv];
+    login_control__Money = creds;
+    ingame.Credits = creds;
+    ingame.CashAtStart = creds;
+    ingame.Expenditure = 0;
+
+    return creds;
 }
 
 void show_net_benefits_sub5(short x0, short y0, TbPixel *colours)
@@ -689,7 +721,7 @@ void show_net_benefits_sub5(short x0, short y0, TbPixel *colours)
         short delta;
 
         p_sprite = &fe_icons_sprites[spridx];
-        if (login_control__Money >= dword_155750[i])
+        if (login_control__Money >= starting_cash_amounts[i])
         {
             lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
             lbDisplay.DrawColour = colours[i];
@@ -704,7 +736,7 @@ void show_net_benefits_sub5(short x0, short y0, TbPixel *colours)
                 if (is_unkn_current_player() && ((unkn_flags_08 & 0x01) == 0)
                   && (login_control__State == 5))
                 {
-                    login_control__Money = dword_155750[i];
+                    login_control__Money = starting_cash_amounts[i];
                     ingame.Credits = login_control__Money;
                 }
             }
@@ -742,7 +774,7 @@ void show_net_benefits_sub6(struct ScreenBox *box)
                 if (is_unkn_current_player() && ((unkn_flags_08 & 0x01) == 0)
                     && (login_control__State == 5))
                 {
-                    sub_CCE8C(-1);
+                    reinit_starting_credits(-1);
                 }
             }
         }
@@ -768,7 +800,7 @@ void show_net_benefits_sub7(struct ScreenBox *box)
                 if (is_unkn_current_player() && ((unkn_flags_08 & 0x01) == 0)
                     && (login_control__State == 5))
                 {
-                    sub_CCE8C(1);
+                    reinit_starting_credits(1);
                 }
             }
         }

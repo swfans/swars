@@ -3824,7 +3824,7 @@ void init_variables(void)
     global_date.Year = 74;
     //word_15518A = -1; -- set but never used - remove pending
     ingame.MissionStatus = ObvStatu_COMPLETED;
-    login_control__Money = starting_cash_amounts[0];
+    login_control__Money = starting_cash_amounts[4];
     if (login_control__State == 6)
     {
         ingame.Credits = 50000;
@@ -5525,7 +5525,7 @@ void net_new_game_prepare(void)
     login_control__City = -1;
     ingame.Expenditure = 0;
     unkn_flags_08 = 0x3C;
-    login_control__Money = starting_cash_amounts[0];
+    login_control__Money = starting_cash_amounts[4];
     init_agents();
     load_missions(background_type);
     load_objectives_text();

@@ -165107,7 +165107,7 @@ GLOBAL_FUNC(ASM_is_mission_active_in_city)	/* 0x0CCD10 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_sub_CCE8C)	/* 0xCCE8C */
+GLOBAL_FUNC(ASM_reinit_starting_credits)	/* 0xCCE8C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -165118,7 +165118,7 @@ GLOBAL_FUNC(ASM_sub_CCE8C)	/* 0xCCE8C */
 		xor    %edx,%edx
 		xor    %eax,%eax
 	jump_cce9c:
-		cmp    EXPORT_SYMBOL(dword_155750)(%eax),%ebx
+		cmp    EXPORT_SYMBOL(starting_cash_amounts)(%eax),%ebx
 		jne    jump_ccedc
 	jump_ccea4:
 		movsbl %cl,%eax
@@ -165131,7 +165131,7 @@ GLOBAL_FUNC(ASM_sub_CCE8C)	/* 0xCCE8C */
 		jle    jump_cceb9
 		mov    $0x7,%edx
 	jump_cceb9:
-		mov    EXPORT_SYMBOL(dword_155750)(,%edx,4),%eax
+		mov    EXPORT_SYMBOL(starting_cash_amounts)(,%edx,4),%eax
 		xor    %edi,%edi
 		mov    %eax,login_control__Money
 		mov    %eax,EXPORT_SYMBOL(ingame)+0x923 # ingame.Credits
@@ -167947,7 +167947,7 @@ GLOBAL_FUNC(ASM_init_variables)	/* 0x0D0B9C */
 		mov    %di,EXPORT_SYMBOL(word_15518A)
 		mov    %ax,EXPORT_SYMBOL(ingame)+0x92D # ingame.MissionStatus
 		xor    %cl,%cl
-		mov    starting_cash_amounts,%eax
+		mov    EXPORT_SYMBOL(starting_cash_amounts)+0x10,%eax
 		mov    %cx,EXPORT_SYMBOL(next_email)
 		mov    %cx,next_ref
 		mov    %eax,login_control__Money
@@ -168707,7 +168707,7 @@ GLOBAL_FUNC(ASM_do_serial_speed_switch)	/* 0x0D2EA4 */
 		xor    %edx,%edx
 		xor    %eax,%eax
 	jump_d2eb8:
-		mov    data_155770(%eax),%ecx
+		mov    EXPORT_SYMBOL(serial_speeds)(%eax),%ecx
 		lea    0x1(%edx),%ebx
 		cmp    %esi,%ecx
 		je     jump_d2ecc
@@ -168728,7 +168728,7 @@ GLOBAL_FUNC(ASM_do_serial_speed_switch)	/* 0x0D2EA4 */
 		jle    jump_d2ee7
 		xor    %ebx,%edx
 	jump_d2ee7:
-		mov    data_155770(,%edx,4),%esi
+		mov    EXPORT_SYMBOL(serial_speeds)(,%edx,4),%esi
 		push   %esi
 		push   $ascD_14
 		push   $EXPORT_SYMBOL(net_baudrate_text)
@@ -183572,13 +183572,12 @@ data_155744:
 		.ascii  "\xfb\xff"
 		.ascii  "\xfb\xff"
 		.ascii  "\xfb\xff"
-GLOBAL (dword_155750)	/* 0x155750 */
+GLOBAL (starting_cash_amounts)	/* 0x155750 */
 		.ascii  "\x20\x4e\x00\x00\x50\xc3\x00\x00"
 		.ascii  "\x40\x0d\x03\x00\x20\xa1\x07\x00"
-GLOBAL (starting_cash_amounts)	/* 0x155760 */
 		.ascii  "\x80\x84\x1e\x00\x40\x4b\x4c\x00"
 		.ascii  "\x00\x2d\x31\x01\x00\xe1\xf5\x05"
-data_155770:
+GLOBAL (serial_speeds)	/* 0x155770 */
 		.ascii  "\x80\x25\x00\x00\x40\x38\x00\x00"
 		.ascii  "\x00\x4b\x00\x00\x80\x70\x00\x00"
 		.ascii  "\x00\x96\x00\x00\x00\xe1\x00\x00"
