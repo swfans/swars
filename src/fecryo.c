@@ -1200,12 +1200,193 @@ ubyte show_cryo_blokey(struct ScreenBox *p_box)
     return 0;
 }
 
+void switch_local_player_agents(ushort plagent1, ushort plagent2)
+{
+    PlayerInfo *p_locplayer;
+    uint tmp;
+    ushort wepfp;
+    TbBool plagent1_female, plagent2_female;
+
+    p_locplayer = &players[local_player_no];
+
+    tmp = cryo_agents.RandomName[plagent2];
+    cryo_agents.RandomName[plagent2] = cryo_agents.RandomName[plagent1];
+    cryo_agents.RandomName[plagent1] = tmp;
+
+    tmp = cryo_agents.Weapons[plagent2];
+    cryo_agents.Weapons[plagent2] = cryo_agents.Weapons[plagent1];
+    cryo_agents.Weapons[plagent1] = tmp;
+
+    tmp = cryo_agents.Mods[plagent2].Mods;
+    cryo_agents.Mods[plagent2].Mods = cryo_agents.Mods[plagent1].Mods;
+    cryo_agents.Mods[plagent1].Mods = tmp;
+
+    for (wepfp = 0; wepfp < 5; wepfp++)
+    {
+        tmp = cryo_agents.FourPacks[plagent2].Amount[wepfp];
+        cryo_agents.FourPacks[plagent2].Amount[wepfp] = cryo_agents.FourPacks[plagent1].Amount[wepfp];
+        cryo_agents.FourPacks[plagent1].Amount[wepfp] = tmp;
+
+        p_locplayer->FourPacks[wepfp][plagent2] = cryo_agents.FourPacks[plagent2].Amount[wepfp];
+        if (plagent1 < 4) {
+            p_locplayer->FourPacks[wepfp][plagent1] = cryo_agents.FourPacks[plagent1].Amount[wepfp];
+        }
+    }
+
+    plagent2_female = cryo_agents.Sex & (1 << plagent2);
+    plagent1_female = cryo_agents.Sex & (1 << plagent1);
+    if ((plagent2_female && !plagent1_female) || (!plagent2_female && plagent1_female))
+    {
+        if (plagent2_female)
+            cryo_agents.Sex |= (1 << plagent1);
+        else
+            cryo_agents.Sex &= ~(1 << plagent1);
+        if (plagent1_female)
+            cryo_agents.Sex |= (1 << plagent2);
+        else
+            cryo_agents.Sex &= ~(1 << plagent2);
+    }
+
+    {
+        p_locplayer->Weapons[plagent2] = cryo_agents.Weapons[plagent2];
+        p_locplayer->Mods[plagent2] = cryo_agents.Mods[plagent2];
+        if (plagent1 < 4) {
+            p_locplayer->Weapons[plagent1] = cryo_agents.Weapons[plagent1];
+            p_locplayer->Mods[plagent1] = cryo_agents.Mods[plagent1];
+        }
+    }
+}
+
 ubyte show_cryo_agent_list(struct ScreenTextBox *p_box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_cryo_agent_list\n"
         : "=r" (ret) : "a" (p_box));
     return ret;
+#endif
+    int tx_width, ln_height;
+    int lines_y1, lines_y2, shift_x;
+    ushort plagent1;
+    short i;
+    short pos_y;
+
+    if ((p_box->Flags & 0x8000) == 0)
+    {
+        lbDisplay.DrawFlags = 0x0004;
+        draw_box_purple_list(text_window_x1, text_window_y1,
+        text_window_x2 - text_window_x1 + 1, text_window_y2 - text_window_y1 + 1, 56);
+        lbDisplay.DrawFlags = 0;
+        my_set_text_window(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
+        lbFontPtr = med_font;
+        tx_width = my_string_width(gui_strings[430]);
+        draw_text_purple_list2(((p_box->Width - tx_width) >> 1) - 3, 2, gui_strings[430], 0);
+        p_box->Flags |= 0x8000;
+        copy_box_purple_list(p_box->X + 4, p_box->Y - 3, p_box->Width - 20, p_box->Height + 6);
+    }
+    my_set_text_window(p_box->X + 4, p_box->ScrollWindowOffset + p_box->Y + 4,
+      p_box->Width - 20, p_box->ScrollWindowHeight + 23);
+
+    pos_y = 3;
+    lbFontPtr = med_font;
+    lbDisplay.DrawColour = 87;
+    ln_height = 25;
+
+    plagent1 = p_box->TextTopLine;
+    while (plagent1 < p_box->Lines && pos_y + 22 < p_box->ScrollWindowHeight + 23)
+    {
+      // Check for enabling/disabling a team member
+      lines_y1 = p_box->Y + pos_y + 31;
+      lines_y2 = p_box->Y + pos_y + 53;
+      if (plagent1 < 4 && mouse_down_over_box_coords(p_box->X + 7, lines_y1, p_box->X + 31, lines_y2))
+      {
+          if (lbDisplay.LeftButton)
+          {
+              lbDisplay.LeftButton = 0;
+
+              if (login_control__State != 5) {
+                  PlayerInfo *p_locplayer;
+
+                  play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
+
+                  p_locplayer = &players[local_player_no];
+                  if ((p_locplayer->MissionAgents & (1 << plagent1)) == 0) {
+                      for (i = 0; i <= plagent1; i++)
+                          p_locplayer->MissionAgents |= (1 << i);
+                  } else {
+                      for (i = plagent1; i < 4; i++)
+                          p_locplayer->MissionAgents &= ~(1 << i);
+                      if (p_locplayer->MissionAgents == 0)
+                          p_locplayer->MissionAgents |= (1 << plagent1);
+                  }
+              } else {
+                  play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
+              }
+          }
+      }
+
+      // Check for replacing a team member with unused agent in cryo, or reordering team members
+      lines_y1 = text_window_y1 + pos_y - 1;
+      lines_y2 = text_window_y1 + pos_y + 23;
+      if (mouse_down_over_box_coords(text_window_x1, lines_y1, text_window_x2, lines_y2))
+      {
+          if (lbDisplay.LeftButton)
+          {
+              lbDisplay.LeftButton = 0;
+
+              if (login_control__State != 5 && selected_agent != -1) {
+                  play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
+
+                  switch_local_player_agents(plagent1, selected_agent);
+                  update_flic_mods(flic_mods);
+                  for (i = 0; i < 4; i++)
+                  {
+                     if (old_flic_mods[i] != flic_mods[i])
+                          mod_draw_states[i] |= 0x08;
+                  }
+              } else {
+                  play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
+              }
+          }
+      }
+
+      lbDisplay.DrawFlags = 0x0004;
+      draw_box_purple_list(p_box->X + 7, pos_y + p_box->Y + 31, 0x18u, 0x16u, 56);
+
+      lbDisplay.DrawFlags = 0;
+      if (((1 << plagent1) & players[local_player_no].MissionAgents) != 0)
+          lbDisplay.DrawFlags |= 0x0040;
+      if (plagent1 < 4)
+          lbDisplay.DrawFlags |= 0x8000;
+
+      {
+          char locstr[16];
+          const char *text;
+
+          sprintf(locstr, "%d", plagent1 + 1);
+          tx_width = LbTextStringWidth(locstr);
+          shift_x = (24 - tx_width) >> 1;
+          text = loctext_to_gtext(locstr);
+          draw_text_purple_list2(4 + shift_x, pos_y + 6, text, 0);
+      }
+
+      lbDisplay.DrawFlags |= 0x8000;
+      if (background_type == 1)
+      {
+          if ((cryo_agents.Sex & (1 << plagent1)) != 0)
+              draw_text_purple_list2(30, pos_y + 6, gui_strings[227 + cryo_agents.RandomName[plagent1]], 0);
+          else
+              draw_text_purple_list2(30, pos_y + 6, gui_strings[177 + cryo_agents.RandomName[plagent1]], 0);
+      }
+      else
+      {
+          draw_text_purple_list2(30, pos_y + 6, gui_strings[77 + cryo_agents.RandomName[plagent1]], 0);
+      }
+      lbDisplay.DrawFlags = 0;
+      pos_y += ln_height;
+      plagent1++;
+    }
+    return 0;
 }
 
 TbBool cybmod_available_for_purchase(short mtype)
