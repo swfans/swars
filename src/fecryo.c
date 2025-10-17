@@ -953,8 +953,44 @@ ubyte cryo_blokey_mod_level(ubyte ordpart)
 
 void update_flic_mods(ubyte *mods)
 {
+#if 0
     asm volatile ("call ASM_update_flic_mods\n"
         : : "a" (mods));
+#endif
+    short plagent, i;
+    ubyte lv;
+
+    plagent = selected_agent;
+    if (plagent < 4)
+    {
+        mods[0] = cybmod_chest_level(&cryo_agents.Mods[plagent]);
+        mods[1] = cybmod_brain_level(&cryo_agents.Mods[plagent]);
+        mods[2] = cybmod_arms_level(&cryo_agents.Mods[plagent]);
+        mods[3] = cybmod_legs_level(&cryo_agents.Mods[plagent]);
+        return;
+    }
+
+    for (i = 0; i < 4; i++)
+        mods[i] = 3;
+
+    for (plagent = 0; plagent < 4; plagent++)
+    {
+        lv = cybmod_chest_level(&cryo_agents.Mods[plagent]);
+        if (lv < mods[0])
+            mods[0] = lv;
+
+        lv = cybmod_brain_level(&cryo_agents.Mods[plagent]);
+        if (lv < mods[1])
+            mods[1] = lv;
+
+        lv = cybmod_arms_level(&cryo_agents.Mods[plagent]);
+        if (lv < mods[2])
+            mods[2] = lv;
+
+        lv = cybmod_legs_level(&cryo_agents.Mods[plagent]);
+        if (lv < mods[3])
+            mods[3] = lv;
+    }
 }
 
 /** Draws body mods, either images or anims, on pre-drawn background.

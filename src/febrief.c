@@ -244,10 +244,12 @@ void purple_unkn2_data_to_screen(void)
 
 void load_netscan_map(ushort mapno)
 {
+    char locstr[DISKPATH_SIZE];
+    PathInfo *pinfo;
     TbFileHandle fh;
-    char locstr[52];
 
-    sprintf(locstr, "maps/map%03d.scn", mapno);
+    pinfo = &game_dirs[DirPlace_Maps];
+    snprintf(locstr, DISKPATH_SIZE-1, "%s/map%03d.scn", pinfo->directory, mapno);
     fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (fh != INVALID_FILE) {
         LbFileRead(fh, SCANNER_data, SCANNER_MAPDATA_WIDTH * SCANNER_MAPDATA_HEIGHT);

@@ -1395,12 +1395,14 @@ void prepare_map_dat_to_play(void)
 
 TbResult load_map_mad(ushort mapno)
 {
-    char mad_fname[52];
+    char mad_fname[DISKPATH_SIZE];
+    PathInfo *pinfo;
     long fsize;
 
     next_local_mat = 1;
 
-    sprintf(mad_fname, "%s/map%03d.mad", "maps", mapno);
+    pinfo = &game_dirs[DirPlace_Maps];
+    snprintf(mad_fname, DISKPATH_SIZE-1, "%s/map%03d.mad", pinfo->directory, mapno);
     fsize = LbFileLoadAt(mad_fname, scratch_malloc_mem);
     if (fsize == Lb_FAIL)
         return Lb_FAIL;
@@ -1414,11 +1416,11 @@ TbResult load_map_mad(ushort mapno)
     return Lb_SUCCESS;
 }
 
-void load_map_bnb(int a1)
+void load_map_bnb(ushort mapno)
 {
 #if 0
     asm volatile ("call ASM_load_map_bnb\n"
-        : : "a" (a1));
+        : : "a" (mapno));
 #endif
     char locstr[DISKPATH_SIZE];
     PathInfo *pinfo;
@@ -1427,7 +1429,7 @@ void load_map_bnb(int a1)
     ubyte Bmin, Bmax;
 
     pinfo = &game_dirs[DirPlace_Maps];
-    snprintf(locstr, DISKPATH_SIZE-1, "%s/map%03d.b&b", pinfo->directory, a1);
+    snprintf(locstr, DISKPATH_SIZE-1, "%s/map%03d.b&b", pinfo->directory, mapno);
     fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
     {
