@@ -393,8 +393,10 @@ void init_screen_shape(struct ScreenShape *p_shp, ScrCoord x, ScrCoord y,
         }
         else
         {
-            p_shp->PtX[k] = 0;
-            p_shp->PtY[k] = 0;
+            // Fill remaining points by repeating the previous ones;
+            // the drawing function may use first of these points
+            p_shp->PtX[k] = p_shp->PtX[k - pts_len];
+            p_shp->PtY[k] = p_shp->PtY[k - pts_len];
         }
     }
     p_shp->DrawSpeed = drawspeed;
