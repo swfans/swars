@@ -222,6 +222,15 @@ ubyte do_cryo_offer_cancel(ubyte click)
     return 0;
 }
 
+void clear_mod_draw_states(void)
+{
+    ubyte part;
+    for (part = 0; part < 4; part++)
+    {
+        mod_draw_states[part] = 0;
+    }
+}
+
 void reset_mod_draw_states_flag08(void)
 {
     ubyte part;
@@ -1006,7 +1015,7 @@ void draw_blokey_body_mods(void)
     if ((current_drawing_mod == ModDPt_BKGND) &&
       (new_current_drawing_mod != ModDPt_BKGND))
         // If previously we were in background drawing, all part buffers
-        // need to be clered (background occupied the same buffer)
+        // need to be cleared (background occupied the same buffer)
         cryo_cyborg_part_buf_blokey_static_clear_all();
     else if ((current_drawing_mod == ModDPt_BREATH) &&
       (new_current_drawing_mod != ModDPt_BREATH))
@@ -1022,8 +1031,7 @@ void draw_blokey_body_mods(void)
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
 
-        for (part = 0; part < 4; part++)
-            mod_draw_states[part] = 0;
+        clear_mod_draw_states();
         new_current_drawing_mod = ModDPt_CHEST;
         current_drawing_mod = ModDPt_CHEST;
         current_frame = 0;
@@ -1051,7 +1059,7 @@ void draw_blokey_body_mods(void)
             done = xdo_next_frame(AniSl_CYBORG_INOUT);
             cryo_cyborg_part_buf_blokey_fli_frame_copy(part, AniSl_CYBORG_INOUT);
             still_playing = 1;
-            if (done != 0)
+            if (done)
             {
                 mod_draw_states[part] &= ~(ModDSt_ModAnimIn | ModDSt_Unkn04);
                 mod_draw_states[part] |= ModDSt_Unkn04;
@@ -1338,12 +1346,10 @@ ubyte show_cryo_agent_list(struct ScreenTextBox *p_box)
                   play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
 
                   switch_local_player_agents(plagent1, selected_agent);
+                  word_15511E = plagent1;
+                  check_buy_sell_button();
                   update_flic_mods(flic_mods);
-                  for (i = 0; i < 4; i++)
-                  {
-                     if (old_flic_mods[i] != flic_mods[i])
-                          mod_draw_states[i] |= 0x08;
-                  }
+                  set_mod_draw_states_flag08();
               } else {
                   play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
               }
