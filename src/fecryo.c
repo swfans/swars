@@ -1281,7 +1281,7 @@ ubyte show_cryo_agent_list(struct ScreenTextBox *p_box)
 
     if ((p_box->Flags & 0x8000) == 0)
     {
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_box_purple_list(text_window_x1, text_window_y1,
         text_window_x2 - text_window_x1 + 1, text_window_y2 - text_window_y1 + 1, 56);
         lbDisplay.DrawFlags = 0;
@@ -1356,12 +1356,12 @@ ubyte show_cryo_agent_list(struct ScreenTextBox *p_box)
           }
       }
 
-      lbDisplay.DrawFlags = 0x0004;
+      lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
       draw_box_purple_list(p_box->X + 7, pos_y + p_box->Y + 31, 0x18u, 0x16u, 56);
 
       lbDisplay.DrawFlags = 0;
       if (((1 << plagent1) & players[local_player_no].MissionAgents) != 0)
-          lbDisplay.DrawFlags |= 0x0040;
+          lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
       if (plagent1 < 4)
           lbDisplay.DrawFlags |= 0x8000;
 
@@ -1377,16 +1377,21 @@ ubyte show_cryo_agent_list(struct ScreenTextBox *p_box)
       }
 
       lbDisplay.DrawFlags |= 0x8000;
-      if (background_type == 1)
       {
-          if ((cryo_agents.Sex & (1 << plagent1)) != 0)
-              draw_text_purple_list2(30, pos_y + 6, gui_strings[227 + cryo_agents.RandomName[plagent1]], 0);
+          const char *text;
+
+          if (background_type == 1)
+          {
+              if ((cryo_agents.Sex & (1 << plagent1)) != 0)
+                  text = gui_strings[227 + cryo_agents.RandomName[plagent1]];
+              else
+                  text = gui_strings[177 + cryo_agents.RandomName[plagent1]];
+          }
           else
-              draw_text_purple_list2(30, pos_y + 6, gui_strings[177 + cryo_agents.RandomName[plagent1]], 0);
-      }
-      else
-      {
-          draw_text_purple_list2(30, pos_y + 6, gui_strings[77 + cryo_agents.RandomName[plagent1]], 0);
+          {
+              text = gui_strings[77 + cryo_agents.RandomName[plagent1]];
+          }
+          draw_text_purple_list2(30, pos_y + 6, text, 0);
       }
       lbDisplay.DrawFlags = 0;
       pos_y += ln_height;
