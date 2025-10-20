@@ -264,9 +264,13 @@ void read_user_settings(void)
     int i;
 
     read_mortal_salt_backup = false;
+    fh = INVALID_FILE;
     get_user_settings_fname(fname, login_name);
+    if (login_name[0] == '\0')
+        read_mortal_salt_backup = true;
 
-    fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    if (LbFileExists(fname))
+        fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
 
     // Try default settings file instead
     if ((fh == INVALID_FILE) && (strlen(login_name) > 0))

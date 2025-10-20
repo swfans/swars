@@ -277,7 +277,7 @@ void get_user_settings_fname(char *fname, const char *name)
     PathInfo *pinfo;
 
     pinfo = &game_dirs[DirPlace_Savegame];
-    if (strlen(name) == 0)
+    if (name[0] == '\0')
         name = "default";
     sprintf(fname, "%s/%.8s.ini", pinfo->directory, name);
     LbStringToLower(fname+strlen(pinfo->directory));

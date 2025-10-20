@@ -1428,11 +1428,15 @@ void load_map_bnb(ushort mapno)
     ubyte Amin, Amax;
     ubyte Bmin, Bmax;
 
+    fh = INVALID_FILE;
     pinfo = &game_dirs[DirPlace_Maps];
     snprintf(locstr, DISKPATH_SIZE-1, "%s/map%03d.b&b", pinfo->directory, mapno);
-    fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
+    if (LbFileExists(locstr))
+        fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
+
     if (fh == INVALID_FILE)
     {
+        LOGSYNC("Using defaults in place of '%s' file", locstr);
         map_bnb.field_0 = 0;
         map_bnb.field_1 = 0;
         map_bnb.field_2 = 0;
