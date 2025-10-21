@@ -67,14 +67,28 @@ and then add the neccessary data files. The steps are:
    [levels](https://github.com/swfans/swars-levels/releases).
 4. Now we finally get to this code repository. Download and unpack the source
    tarball or clone git repo. You can also try downloading the prebuilt *patch*
-   release, in which case you should skip the next step; but that will only
-   work if your Linux environment happens to be compatible to the one where
-   the release patch package was built.
-5. Follow [building instructions](#general-building-instructions) below to get
-   a compiled executable.
-6. After the build succeeded, do `make DESTDIR=<TARGET> install` in the
-   directory where build commands were executed, to copy built files into the
-   *\<TARGET\>* installation folder you've chosen.
+   release; but that will only  work if your Linux environment happens to be
+   compatible to the one where the release patch package was built.
+   Depending on what you've chosen, follow further steps:
+
+Route "a" - compiling the game by yourself.
+
+7.a. Follow [building instructions](#general-building-instructions) below to get
+     a compiled executable and configuration files.
+8.a. After the build succeeded, do `make prefix=<TARGET> install` in the
+     directory where build commands were executed, to copy built files into the
+     *\<TARGET\>/swars* installation folder you've chosen. If you've built the
+     binary yourself, you already have all the tools neccessary for that install
+     command to work. After installation, verify the folder to make sure you
+     didn't installed these files to `swars/swars/` directory; you can just
+     move them one dir higher if that's the case.
+
+Route "b" - using the prebuilt *patch* release.
+
+7.b. Extract the downloaded patch file.
+8.b. Move all extracted files and folders to the selected installation folder.
+     Place them all in one folder, so that sub-olders `conf`, `data`, `levels`
+     and the executable file `swars` are all next to each other.
 
 If all went well, you can now [start the game](#starting-the-game).
 
@@ -140,17 +154,27 @@ If you've decided on the hand-compilation option, proceed with the following ste
 5. *[optional]* Create a `music` directory inside your chosen installation
    folder, and place the previously encoded `.ogg` files there.
 6. Now we finally get to this code repository. Download and unpack the source
-   tarball or clone git repo. You can also download the prebuilt *patch*
-   release, in which case you should skip the next step.
-7. Follow [building instructions](#building-on-windows) below to get
-   a compiled executable and configuration files.
-8. After the build succeeded, do `make prefix=<TARGET> install` in the
-   directory where build commands were executed, to copy built files into the
-   *\<TARGET\>/swars* installation folder you've chosen. If you've built the
-   binary yourself, you already have all the tools neccessary for that install
-   command to work. After installation, verify the folder to make sure you
-   didn't installed these files to `swars/swars/` directory; you can just
-   move them one dir higher if that's the case.
+   tarball or clone git repo. Or you can instead download the prebuilt *patch*
+   release. Depending on what you've chosen, follow further steps:
+
+Route "a" - compiling the game by yourself.
+
+7.a. Follow [building instructions](#building-on-windows) below to get
+     a compiled executable and configuration files.
+8.a. After the build succeeded, do `make prefix=<TARGET> install` in the
+     directory where build commands were executed, to copy built files into the
+     *\<TARGET\>/swars* installation folder you've chosen. If you've built the
+     binary yourself, you already have all the tools neccessary for that install
+     command to work. After installation, verify the folder to make sure you
+     didn't installed these files to `swars/swars/` directory; you can just
+     move them one dir higher if that's the case.
+
+Route "b" - using the prebuilt *patch* release.
+
+7.b. Extract the downloaded patch file.
+8.b. Move all extracted files and folders to the selected installation folder.
+     Place them all in one folder, so that sub-olders `conf`, `data`, `levels`
+     and the executable file `swars.exe` are all next to each other.
 
 You can now [start the game](#starting-the-game).
 
