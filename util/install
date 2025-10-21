@@ -15,7 +15,7 @@ Available options:
 
   -h       print usage information
 
-Available languages: eng fre ger ita spa swe
+Available languages: ${LANGS}
 EOF
 }
 
@@ -29,6 +29,7 @@ OWN_TARGET="no"
 DEVICE=""
 SOURCE=""
 TARGET=""
+LANGS="eng fre ger ita spa swe"
 LANG="eng"
 
 LEVELS_VERSION="1.0.1.31"
@@ -333,6 +334,11 @@ copy_data()
 
   install_dir "intro" || return 1
 
+  install_dir "language" || return 1
+  for dirn in $(echo ${LANGS}); do
+    install_dir "language/${dirn}" || return 1
+  done
+
   # Copy files which on the CD are in per-language dir
   install_file_to "language/$LANG/text.dat" "data" || return 1
   install_file_to "language/$LANG/syn_ele.smk" "data" || return 1
@@ -365,10 +371,20 @@ extract_packages()
     | while read file; do
     mv -vn "$file" -t "${TARGET}/data/equip" || return 1
       done
+  find "$TARGET/swars/qdata" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
+    | while read file; do
+    mv -vn "$file" -t "${TARGET}/qdata" || return 1
+      done
   find "$TARGET/swars/qdata/equip" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
     | while read file; do
     mv -vn "$file" -t "${TARGET}/qdata/equip" || return 1
       done
+  for dirn in $(echo ${LANGS}); do
+    find "$TARGET/swars/language/${dirn}" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
+      | while read file; do
+      mv -vn "$file" -t "${TARGET}/language/${dirn}" || return 1
+        done
+  done
   rm -rf "${TARGET}/swars" || return 1
 
   unzip -o "${SFX_PACKAGE}.zip" -d "${TARGET}" || return 1
