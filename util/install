@@ -350,38 +350,41 @@ copy_data()
 
 extract_packages()
 {
+  # for levels package, we cannot be sure about character case in file names
   unzip -o "${LEVELS_PACKAGE}.zip" -d "${TARGET}" || return 1
   find "$TARGET/swars/LEVELS" -mindepth 1 -maxdepth 1 -type f -iname 'c*.*' \
     | while read file; do
-    mv -vn "$file" -t "${TARGET}/levels" || return 1
+        dest_fname=$(basename "$file" | tr '[:upper:]' '[:lower:]')
+        mv -vn "$file" -T "${TARGET}/levels/${dest_fname}" || return 1
       done
   find "$TARGET/swars/MAPS" -mindepth 1 -maxdepth 1 -type f -iname 'map*.*' \
     | while read file; do
-    mv -vn "$file" -t "${TARGET}/maps" || return 1
+        dest_fname=$(basename "$file" | tr '[:upper:]' '[:lower:]')
+        mv -vn "$file" -T "${TARGET}/maps/${dest_fname}" || return 1
       done
   rm -rf "${TARGET}/swars" || return 1
 
   unzip -o "${GFX_PACKAGE}.zip" -d "${TARGET}" || return 1
   find "$TARGET/swars/data" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
     | while read file; do
-    mv -vn "$file" -t "${TARGET}/data" || return 1
+        mv -vn "$file" -t "${TARGET}/data" || return 1
       done
   find "$TARGET/swars/data/equip" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
     | while read file; do
-    mv -vn "$file" -t "${TARGET}/data/equip" || return 1
+        mv -vn "$file" -t "${TARGET}/data/equip" || return 1
       done
   find "$TARGET/swars/qdata" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
     | while read file; do
-    mv -vn "$file" -t "${TARGET}/qdata" || return 1
+        mv -vn "$file" -t "${TARGET}/qdata" || return 1
       done
   find "$TARGET/swars/qdata/equip" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
     | while read file; do
-    mv -vn "$file" -t "${TARGET}/qdata/equip" || return 1
+        mv -vn "$file" -t "${TARGET}/qdata/equip" || return 1
       done
   for dirn in $(echo ${LANGS}); do
     find "$TARGET/swars/language/${dirn}" -mindepth 1 -maxdepth 1 -type f -iname '*.*' \
       | while read file; do
-      mv -vn "$file" -t "${TARGET}/language/${dirn}" || return 1
+          mv -vn "$file" -t "${TARGET}/language/${dirn}" || return 1
         done
   done
   rm -rf "${TARGET}/swars" || return 1
@@ -389,7 +392,7 @@ extract_packages()
   unzip -o "${SFX_PACKAGE}.zip" -d "${TARGET}" || return 1
   find "$TARGET/swars/sound" -mindepth 1 -maxdepth 1 -type f -iname '*.dat' \
     | while read file; do
-    mv -vn "$file" -t "${TARGET}/sound" || return 1
+        mv -vn "$file" -t "${TARGET}/sound" || return 1
       done
   rm -rf "${TARGET}/swars" || return 1
 
