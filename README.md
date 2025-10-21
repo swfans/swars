@@ -25,9 +25,9 @@ port. This means that some of game data are not included. To install the
 ## Community
 
 If you wish to discuss the **Syndicate Wars Port** or if you have any problems,
-you may post to either [doscussion page of the project repo](https://github.com/swfans/swars/discussions)
-or to the Google group [syndicate-wars-port](http://groups.google.com/group/syndicate-wars-port)
- (you don't need to be a member to post).
+you may post to [discussion page of the project repo](https://github.com/swfans/swars/discussions)
+or join [Syndicate discord channel](https://discord.gg/cnHmWqe49t).
+There is also a Google group [syndicate-wars-port](http://groups.google.com/group/syndicate-wars-port).
 
 ## Installation
 
