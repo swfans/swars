@@ -340,7 +340,6 @@ copy_data()
   done
 
   # Copy files which on the CD are in per-language dir
-  install_file_to "language/$LANG/text.dat" "data" || return 1
   install_file_to "language/$LANG/syn_ele.smk" "data" || return 1
   install_file_to "language/$LANG/chu_ele.smk" "data" || return 1
 
