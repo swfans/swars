@@ -66,7 +66,10 @@ and then add the neccessary data files. The steps are:
    [sfx](https://github.com/swfans/swars-sfx/releases) and
    [levels](https://github.com/swfans/swars-levels/releases).
 4. Now we finally get to this code repository. Download and unpack the source
-   tarball or clone git repo.
+   tarball or clone git repo. You can also try downloading the prebuilt *patch*
+   release, in which case you should skip the next step; but that will only
+   work if your Linux environment happens to be compatible to the one where
+   the release patch package was built.
 5. Follow [building instructions](#general-building-instructions) below to get
    a compiled executable.
 6. After the build succeeded, do `make DESTDIR=<TARGET> install` in the
@@ -122,7 +125,8 @@ If you've decided on the hand-compilation option, proceed with the following ste
 
 1. Insert the *Syndicate Wars CD* and make sure it is mounted, or mount a
    *SW CD image* (so that you get drive letter or path, ie. `e:`).
-2. Choose an installation folder, like `c:\Program Files\swars`.
+2. Choose an installation folder which ends with project name, like
+   `c:\Program Files\swars`.
 3. Use `util/install` script to both copy required files from CD and download
    additional data, and place them all into your chosen installation folder.
    If you have UNIX or GNU support on your Windows (ie. Linux Windows Subsystem,
@@ -136,14 +140,17 @@ If you've decided on the hand-compilation option, proceed with the following ste
 5. *[optional]* Create a `music` directory inside your chosen installation
    folder, and place the previously encoded `.ogg` files there.
 6. Now we finally get to this code repository. Download and unpack the source
-   tarball or clone git repo.
-5. Follow [building instructions](#building-on-windows) below to get
+   tarball or clone git repo. You can also download the prebuilt *patch*
+   release, in which case you should skip the next step.
+7. Follow [building instructions](#building-on-windows) below to get
    a compiled executable and configuration files.
-6. After the build succeeded, do `make DESTDIR=<TARGET> install` in the
+8. After the build succeeded, do `make prefix=<TARGET> install` in the
    directory where build commands were executed, to copy built files into the
-   *\<TARGET\>* installation folder you've chosen. If you've built the binary
-   yourself, you already have all the tools neccessary for that install command
-   to work.
+   *\<TARGET\>/swars* installation folder you've chosen. If you've built the
+   binary yourself, you already have all the tools neccessary for that install
+   command to work. After installation, verify the folder to make sure you
+   didn't installed these files to `swars/swars/` directory; you can just
+   move them one dir higher if that's the case.
 
 You can now [start the game](#starting-the-game).
 
