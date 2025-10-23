@@ -283,11 +283,15 @@ enum PersonCommandFlags
   PCmdF_Unkn0001 = 0x0001,
    /** The command is executed only while condition is met in "UNTIL" command which comes next.
     * Note that the command is not repeated - if it returns it's finished, the until block ends.
+    * If the command is "UNTIL" command, but the next one is another UNTIL, then failing any one
+    * of the conditions will break the loop.
     */
   PCmdF_RunUntil = 0x0002,
    /** The command is kind of a "UNTIL" command which allows to terminate previous command.
     * The previous command is executed until the additional condition is met. When the condition
     * resolves to false, previous command stops being executed even if it did not finished.
+    * If a command is followed by multiple "UNTIL" conditions, only the last one should have
+    * this flag set.
     */
   PCmdF_IsUntil = 0x0004,
   /** The command has its function reverted.

@@ -1578,19 +1578,30 @@ ushort person_command_until_check_condition(struct Thing *p_person, ushort cond_
 {
     struct Command *p_cmd;
     ushort cmd;
-    TbBool until_met;
+    TbBool until_met, has_more_conditions;
 
     p_cmd = &game_commands[cond_cmd];
     cmd = p_cmd->Next;
     until_met = false;
+    has_more_conditions = ((p_cmd->Flags & PCmdF_RunUntil) != 0);
 
     while (1)
     {
         if (cmd == 0)
             break;
         p_cmd = &game_commands[cmd];
-        if ((p_cmd->Flags & PCmdF_IsUntil) == 0)
-            break;
+        if ((p_cmd->Flags & PCmdF_RunUntil) == 0)
+            has_more_conditions = false;
+        if (!has_more_conditions) {
+            if ((p_cmd->Flags & PCmdF_IsUntil) == 0)
+                break;
+            // After RunUntil commands and then IsUntil command, this loop should be broken
+            // If it is not, then something is wrong with flags of the commands.
+            if ((p_cmd->Flags & PCmdF_RunUntil) != 0) {
+                LOGWARN("Person %s %d command %d has broken chain of UNTIL commands at %d",
+                  person_type_name(p_person->SubType), (int)p_person->ThingOffset, cond_cmd, cmd);
+            }
+        }
         if (conditional_command_state_true(cmd, p_person, 3)) {
             if (gameturn <= 1) {
                 LOGWARN("Person %s %d command %d end condition %d met just at start of the game",
@@ -1616,25 +1627,36 @@ ushort person_command_until_check_condition(struct Thing *p_person, ushort cond_
     return cmd;
 }
 
-/** Gives the next command beyond conditions.
+/** For given command, return the next command beyond any "until" conditions.
  *
- * @return Gives index of next command beyond "until" consitions, regardless
+ * @return Gives index of next command beyond "until" conditions, regardless
  *   whether any of the conditions is met or not.
  */
 ushort person_command_until_skip_condition(struct Thing *p_person, ushort cond_cmd)
 {
     struct Command *p_cmd;
     ushort cmd;
+    TbBool has_more_conditions;
 
-    cmd = cond_cmd;
+    p_cmd = &game_commands[cond_cmd];
+    cmd = p_cmd->Next;
+    has_more_conditions = ((p_cmd->Flags & PCmdF_RunUntil) != 0);
 
     while (1)
     {
         if (cmd == 0)
             break;
         p_cmd = &game_commands[cmd];
-        if ((p_cmd->Flags & PCmdF_IsUntil) == 0)
-            break;
+        if ((p_cmd->Flags & PCmdF_RunUntil) == 0)
+            has_more_conditions = false;
+        if (!has_more_conditions) {
+            if ((p_cmd->Flags & PCmdF_IsUntil) == 0)
+                break;
+            if ((p_cmd->Flags & PCmdF_RunUntil) != 0) {
+                LOGWARN("Person %s %d command %d has broken chain of UNTIL commands at %d",
+                  person_type_name(p_person->SubType), (int)p_person->ThingOffset, cond_cmd, cmd);
+            }
+        }
         cmd = p_cmd->Next;
     }
 
@@ -1645,15 +1667,13 @@ ushort person_command_until_skip_condition(struct Thing *p_person, ushort cond_c
  */
 void person_command_select_next(struct Thing *p_person)
 {
-    struct Command *p_cmd;
     ushort cmd;
 
     cmd = p_person->U.UPerson.ComCur;
     if (cmd == 0)
         return;
 
-    p_cmd = &game_commands[cmd];
-    p_person->U.UPerson.ComCur = person_command_until_skip_condition(p_person, p_cmd->Next);
+    p_person->U.UPerson.ComCur = person_command_until_skip_condition(p_person, cmd);
 }
 
 /** Discards a command at top of the person stack.
@@ -1661,15 +1681,13 @@ void person_command_select_next(struct Thing *p_person)
  */
 void person_command_skip_at_start(struct Thing *p_person)
 {
-    struct Command *p_cmd;
     ushort cmd;
 
     cmd = p_person->U.UPerson.ComHead;
     if (cmd == 0)
         return;
 
-    p_cmd = &game_commands[cmd];
-    p_person->U.UPerson.ComHead = person_command_until_skip_condition(p_person, p_cmd->Next);
+    p_person->U.UPerson.ComHead = person_command_until_skip_condition(p_person, cmd);
 }
 
 /** Jump to specific command on a person.
@@ -2765,17 +2783,6 @@ void person_init_command(struct Thing *p_person, ushort from)
             p_person->State = PerSt_DEAD;
             break;
         }
-
-        // Skip any detached "until" conditions for which we do not have a command
-        nxcmd = person_command_until_skip_condition(p_person, cmd);
-        if (nxcmd != cmd) {
-            // Currently this log would be too verbose - we switch states
-            // without skipping the follwing `until` in some places.
-            LOGNO("Person %s %d state %d.%d command %d is detached 'until'",
-              person_type_name(p_person->SubType), (int)p_person->ThingOffset,
-              p_person->State, p_person->SubState, cmd);
-        }
-        cmd = nxcmd;
 
         if (cmd == 0)
         {
