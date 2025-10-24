@@ -5271,7 +5271,7 @@ ubyte do_user_interface(void)
 
             if (person_can_accept_control(p_agent->ThingOffset) && ((p_agent->Flag2 & TgF2_KnockedOut) == 0))
             {
-                clear_key_pressed(gkey);
+                clear_gamekey_pressed(gkey);
                 if (p_locplayer->DoubleMode)
                 {
                     byte_153198 = n+1;
@@ -5383,7 +5383,7 @@ ubyte do_user_interface(void)
         ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
         if ((ctlmode == UInpCtr_Mouse) && is_gamekey_pressed(GKey_KEY_CONTROL))
         {
-            clear_key_pressed(GKey_KEY_CONTROL);
+            clear_gamekey_pressed(GKey_KEY_CONTROL);
             p_usrinp->ControlMode &= UInpCtr_AllFlagsMask;
             p_usrinp->ControlMode |= UInpCtr_Keyboard;
             do_change_mouse(8);
