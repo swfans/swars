@@ -482,6 +482,14 @@ void set_default_game_keys(void)
     kbkeys[GKey_CAMERA_PERSPECTV] = KC_F;
     kbkeys[GKey_TRANS_OBJ_SURF_COL] = KC_J;
     kbkeys[GKey_TRANS_OBJ_LINE_COL] = KC_H;
+#ifdef MORE_GAME_KEYS
+    kbkeys[GKey_SEL_WEP_1] = KC_5;
+    kbkeys[GKey_SEL_WEP_2] = KC_6;
+    kbkeys[GKey_SEL_WEP_3] = KC_7;
+    kbkeys[GKey_SEL_WEP_4] = KC_8;
+    kbkeys[GKey_SEL_WEP_5] = KC_9;
+    kbkeys[GKey_SEL_WEP_6] = KC_0;
+#endif
 }
 
 /******************************************************************************/

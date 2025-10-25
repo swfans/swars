@@ -55,6 +55,14 @@ enum GameKeys
   GKey_TRANS_OBJ_SURF_COL = 26,
   GKey_TRANS_OBJ_LINE_COL = 27,
   GKey_TRANS_OBJECTS = 28,
+#ifdef MORE_GAME_KEYS
+  GKey_SEL_WEP_1 = 29,
+  GKey_SEL_WEP_2 = 30,
+  GKey_SEL_WEP_3 = 31,
+  GKey_SEL_WEP_4 = 32,
+  GKey_SEL_WEP_5 = 33,
+  GKey_SEL_WEP_6 = 34,
+#endif
   GKey_KEYS_COUNT,
 };
 

@@ -675,7 +675,7 @@ void process_packets(void)
             p_thing = get_thing_safe(packet->Data, TT_PERSON);
 
             if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
-                packet->Action = 0;
+                packet->Action = PAct_NONE;
 
             if (p_thing != INVALID_THING)
             {
@@ -687,7 +687,7 @@ void process_packets(void)
 
             process_packet(plyr, packet, i);
 
-            packet->Action = 0;
+            packet->Action = PAct_NONE;
             packet = (struct Packet *)((char *)packet + 10);
         }
     }
