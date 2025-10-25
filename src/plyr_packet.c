@@ -300,345 +300,575 @@ void plgroup_set_mood(PlayerIdx plyr, struct Thing *p_member, short mood)
     }
 }
 
+void player_agent_init_goto_gnd_point_abs(PlayerIdx plyr, struct Thing *p_person,
+  MapCoord cor_x, MapCoord cor_y, MapCoord cor_z)
+{
+    if (plyr == local_player_no)
+        show_goto_point(1);
+    p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
+    thing_goto_point(p_person, cor_x, cor_y, cor_z);
+}
+
+void player_agent_select_specific_weapon(PlayerIdx plyr, struct Thing *p_person, ushort wtype)
+{
+    thing_select_specific_weapon(p_person, wtype, 0);
+    peep_change_weapon(p_person);
+    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
+    reset_person_frame(p_person);
+    p_person->Speed = calc_person_speed(p_person);
+    p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
+    if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
+    {
+        ushort smp;
+        if (background_type == 1)
+            smp = weapon_sound_z[p_person->U.UPerson.CurrentWeapon];
+        else
+            smp = weapon_sound[p_person->U.UPerson.CurrentWeapon];
+        play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
+    }
+}
+
+void player_set_control_mode(PlayerIdx plyr, ushort ctrmode)
+{
+    players[plyr].UserInput[0].ControlMode = ctrmode;
+}
+
 void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
 {
     struct Thing *p_thing;
     struct Thing *p_sectng;
     int n;
+    short result;
 
+    result = PARes_EBADRQC;
     switch (packet->Action & 0x7FFF)
     {
     case PAct_MISSN_ABORT:
         if (in_network_game) {
             net_player_leave(plyr);
+            result = PARes_DONE;
             break;
         }
         exit_game = 1;
+        result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_GND_PT_ABS:
-        if (plyr == local_player_no)
-            show_goto_point(1);
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
-        thing_goto_point(p_thing, packet->X, packet->Y, packet->Z);
+        }
+        player_agent_init_goto_gnd_point_abs(plyr, p_thing, packet->X, packet->Y, packet->Z);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_GND_PT_REL:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         thing_goto_point_rel(p_thing, packet->X, packet->Y, packet->Z);
+        result = PARes_DONE;
         break;
     case PAct_SELECT_NEXT_WEAPON:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+        }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_TNGBADST;
             break;
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
+            break;
+        }
         player_agent_weapon_switch(plyr, packet->Data, 1);
+        result = PARes_DONE;
         break;
     case PAct_DROP_SELC_WEAPON_SECR:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+        }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_EALREADY;
             break;
-        if (p_thing->U.UPerson.CurrentWeapon == 0)
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
             break;
+        }
+        if (p_thing->U.UPerson.CurrentWeapon == 0) {
+            result = PARes_TNGBADST;
+            break;
+        }
         player_agent_init_drop_item(plyr, p_thing, 0);
+        result = PARes_DONE;
         break;
     case PAct_PICKUP:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         person_init_pickup(p_thing, packet->X);
+        result = PARes_DONE;
         break;
     case PAct_ENTER_VEHICLE:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
-        if (p_sectng == INVALID_THING)
+        if (p_sectng == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+        }
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
+            result = PARes_TNGBADST;
             break;
+        }
         person_enter_vehicle(p_thing, p_sectng);
+        result = PARes_DONE;
         break;
     case PAct_LEAVE_VEHICLE:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+        }
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
+            result = PARes_TNGBADST;
             break;
+        }
         person_attempt_to_leave_vehicle(p_thing);
+        result = PARes_DONE;
         break;
     case PAct_SELECT_AGENT:
+        p_sectng = get_thing_safe(packet->X, TT_PERSON);
+        if (p_sectng == INVALID_THING) {
+            result = PARes_EINVAL;
+            break;
+        }
         player_agent_select(plyr, packet->X);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_GND_PT_REL_FF:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         thing_goto_point_rel_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
+        result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_GND_POINT:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 0);
+        result = PARes_DONE;
         break;
     case PAct_SELECT_PREV_WEAPON:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+        }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_TNGBADST;
             break;
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
+            break;
+        }
         player_agent_weapon_switch(plyr, packet->Data, -1);
+        result = PARes_DONE;
         break;
     case PAct_PROTECT_INC:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         call_protect(p_thing, plyr);
         n = count_protect(p_thing, plyr);
         if (plyr == local_player_no && n)
             play_sample_using_heap(0, 61, 127, 64, 5 * n + 90, 0, 3);
+        result = PARes_DONE;
         break;
     case PAct_PROTECT_TOGGLE:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         call_unprotect(p_thing, plyr, 0);
         n = count_protect(p_thing, plyr);
         if (plyr == local_player_no && n)
             play_sample_using_heap(0, 61, 127, 64, 5 * n + 90, 0, 3);
+        result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_THING:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         thing_shoot_at_thing(p_thing, packet->X);
+        result = PARes_DONE;
         break;
     case PAct_GET_ITEM:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         person_init_get_item(p_thing, packet->X, plyr);
+        result = PARes_DONE;
         break;
     case PAct_PLANT_MINE_AT_GND_PT:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+        }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_EALREADY;
             break;
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
+            break;
+        }
         person_init_plant_mine(p_thing, packet->X, packet->Y, packet->Z, 0);
+        result = PARes_DONE;
         break;
     case PAct_SELECT_SPECIFIC_WEAPON:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
-            break;
-        thing_select_specific_weapon(p_thing, packet->X, 0);
-        peep_change_weapon(p_thing);
-        p_thing->U.UPerson.AnimMode = gun_out_anim(p_thing, 0);
-        reset_person_frame(p_thing);
-        p_thing->Speed = calc_person_speed(p_thing);
-        p_thing->U.UPerson.TempWeapon = p_thing->U.UPerson.CurrentWeapon;
-        if ((plyr == local_player_no) && (p_thing->U.UPerson.CurrentWeapon != 0))
-        {
-            ushort smp;
-            if (background_type == 1)
-                smp = weapon_sound_z[p_thing->U.UPerson.CurrentWeapon];
-            else
-                smp = weapon_sound[p_thing->U.UPerson.CurrentWeapon];
-            play_disk_sample(local_player_no, smp, 127, 64, 100, 0, 3);
         }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_TNGBADST;
+            break;
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
+            break;
+        }
+        player_agent_select_specific_weapon(plyr, p_thing, packet->X);
+        result = PARes_DONE;
         break;
     case PAct_DROP_HELD_WEAPON_SECR:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+        }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_EALREADY;
             break;
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
+            break;
+        }
         player_agent_init_drop_item(plyr, p_thing, packet->X);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_SET_MOOD:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         p_thing->U.UPerson.Mood = limit_mood(p_thing, packet->X);
         p_thing->Speed = calc_person_speed(p_thing);
+        result = PARes_DONE;
         break;
     case PAct_GO_ENTER_VEHICLE:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
-        if (p_sectng == INVALID_THING)
+        if (p_sectng == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         person_go_enter_vehicle(p_thing, p_sectng);
+        result = PARes_DONE;
         break;
     case PAct_FOLLOW_PERSON:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         p_sectng = get_thing_safe(packet->X, TT_PERSON);
-        if (p_sectng == INVALID_THING)
+        if (p_sectng == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+        }
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
+            result = PARes_TNGBADST;
             break;
+        }
         person_init_follow_person(p_thing, p_sectng);
+        result = PARes_DONE;
         break;
     case PAct_CONTROL_MODE:
-        players[plyr].UserInput[0].ControlMode = packet->Data;
+        if ((packet->Data & ~UInpCtr_AllFlagsMask) >= UInpCtr_MODES_COUNT) {
+            result = PARes_EINVAL;
+            break;
+        }
+        player_set_control_mode(plyr, packet->Data);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_FACE_PT_ABS:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
+            break;
+        }
         if (plyr == local_player_no)
             show_goto_point(1);
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
-            break;
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point_on_face(p_thing, packet->X, packet->Z, packet->Y);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_GND_PT_ABS_FF:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
+            break;
+        }
         if (plyr == local_player_no)
             show_goto_point(1);
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
-            break;
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_FACE_PT_ABS_FF:
+        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
+            break;
+        }
         if (plyr == local_player_no)
             show_goto_point(1);
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
-            break;
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
         thing_goto_point_on_face_fast(p_thing, packet->X, packet->Z, packet->Y, plyr);
+        result = PARes_DONE;
         break;
     case PAct_GO_ENTER_VEHICLE_FF:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
-        if (p_sectng == INVALID_THING)
+        if (p_sectng == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         person_go_enter_vehicle_fast(p_thing, p_sectng, plyr);
+        result = PARes_DONE;
         break;
     case PAct_GET_ITEM_FAST:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         person_init_get_item_fast(p_thing, packet->X, plyr);
+        result = PARes_DONE;
         break;
     case PAct_SHIELD_TOGGLE:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+        }
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
+            result = PARes_TNGBADST;
             break;
+        }
         person_shield_toggle(p_thing, plyr);
+        result = PARes_DONE;
         break;
     case PAct_PLANT_MINE_AT_GND_PT_FF:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if (p_thing->State == PerSt_DROP_ITEM)
+        }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_EALREADY;
             break;
-        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0)
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
             break;
+        }
         person_init_plant_mine_fast(p_thing, packet->X, packet->Y, packet->Z, 0);
+        result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_GND_POINT_FF:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 1);
+        result = PARes_DONE;
         break;
     case PAct_PEEPS_SCATTER:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+        }
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
+            result = PARes_TNGBADST;
             break;
+        }
         make_peeps_scatter(p_thing, packet->X, packet->Z);
+        result = PARes_DONE;
         break;
     case PAct_SELECT_GRP_SPEC_WEAPON:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if (p_thing->State == PerSt_DROP_ITEM)
+        }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_TNGBADST;
             break;
-        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0)
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
             break;
+        }
         person_grp_switch_to_specific_weapon(p_thing, plyr, packet->X);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_USE_MEDIKIT:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         if (!person_carries_any_medikit(p_thing)) {
-            LOGERR("Cheater? Player %d requested medikit use when none available.", (int)plyr);
+            result = PARes_TNGBADST;
             break;
         }
         person_use_medikit(p_thing, plyr);
+        result = PARes_DONE;
         break;
     case PAct_GROUP_SET_MOOD:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         plgroup_set_mood(plyr, p_thing, packet->X);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_UNKGROUP_PROT: // Unfinished mess; remove pending
         unkn_player_group_prot(packet->Data, plyr);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_UNKGROUP_ADD: // Unfinished mess; remove pending
         unkn_player_group_add(packet->Data, plyr);
+        result = PARes_DONE;
         break;
     case PAct_CHAT_MESSAGE_KEY:
         player_chat_message_add_key(plyr, packet->Data);
+        result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_FACE_POINT:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 2);
+        result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_FACE_POINT_FF:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
+        }
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 3);
+        result = PARes_DONE;
         break;
     case PAct_PLANT_MINE_AT_FACE_PT:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+        }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_EALREADY;
             break;
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
+            break;
+        }
         person_init_plant_mine(p_thing, packet->X, 0, packet->Z, packet->Y);
+        result = PARes_DONE;
         break;
     case PAct_PLANT_MINE_AT_FACE_PT_FF:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->State == PerSt_DROP_ITEM) || ((p_thing->Flag2 & TgF2_KnockedOut) != 0))
+        }
+        if (p_thing->State == PerSt_DROP_ITEM) {
+            result = PARes_EALREADY;
             break;
+        }
+        if ((p_thing->Flag2 & TgF2_KnockedOut) != 0) {
+            result = PARes_TNGBADST;
+            break;
+        }
         person_init_plant_mine_fast(p_thing, packet->X, 0, packet->Z, packet->Y);
+        result = PARes_DONE;
         break;
     case PAct_AGENT_SELF_DESTRUCT:
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
-        if (p_thing == INVALID_THING)
+        if (p_thing == INVALID_THING) {
+            result = PARes_EINVAL;
             break;
-        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0)
+        }
+        if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
+            result = PARes_TNGBADST;
             break;
+        }
         person_self_destruct(p_thing);
+        result = PARes_DONE;
         break;
+    case PAct_NONE:
+        result = PARes_DONE;
+        break;
+    }
+    if (result > PARes_SUCCESS) {
+        LOGWARN("Player %d action %d: result %d", (int)plyr, (int)(packet->Action & 0x7FFF),
+          (int)result);
     }
 }
 

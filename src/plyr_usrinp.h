@@ -62,6 +62,7 @@ enum SpecialUserInputControlModes {
     UInpCtr_Joystick1,
     UInpCtr_Joystick2,
     UInpCtr_Joystick3,
+    UInpCtr_MODES_COUNT,
     UInpCtrF_Unkn2000 = 0x2000,
     UInpCtrF_Unkn4000 = 0x4000,
     UInpCtrF_Unkn8000 = 0x8000,

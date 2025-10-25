@@ -56,6 +56,13 @@ typedef short ScrCoord;
  */
 typedef ushort GameKey;
 
+/** Type which stores coordinate on the ingame map.
+ *
+ * Can be separated into a tile and position within.
+ * Position within a tile is scaled 0..255.
+ */
+typedef short MapCoord;
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

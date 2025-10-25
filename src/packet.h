@@ -103,6 +103,17 @@ enum PacketActions
     PAct_AGENT_SELF_DESTRUCT = 0xFF,
 };
 
+enum PacketActionResults
+{
+    PARes_DONE = 0,	/**< Action was performed, with success or not. */
+    PARes_SUCCESS,	/**< Action was performed, success confirmed. */
+    PARes_EBADRQC,	/**< Action skipped, unsupported action code. */
+    PARes_EINVAL,	/**< Action skipped, invalid argument (ie. number out of range, thing of wrong type). */
+    PARes_EBADSLT,	/**< Action skipped, invalid agent slot (player action but thing is not players agent). */
+    PARes_EALREADY,	/**< Action skipped, already in requested state or already performing the command. */
+    PARes_TNGBADST,	/**< Action skipped, thing in bad state (ie. agent is performing contradictory command). */
+};
+
 struct Packet
 {
     ushort Action;
