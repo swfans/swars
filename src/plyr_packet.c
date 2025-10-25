@@ -191,7 +191,7 @@ void player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ushort 
 }
 
 void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr,
-  ushort weapon, ubyte first_flag)
+  ushort weptype, ubyte first_flag)
 {
     struct Thing *p_owntng;
     ushort plagent;
@@ -201,12 +201,9 @@ void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr
     if (p_person->State == PerSt_PROTECT_PERSON)
         p_owntng = &things[p_person->Owner];
 
-    flag = thing_select_specific_weapon(p_person, weapon, first_flag);
+    flag = thing_select_specific_weapon(p_person, weptype, first_flag);
 
     peep_change_weapon(p_person);
-    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-    reset_person_frame(p_person);
-    p_person->Speed = calc_person_speed(p_person);
     p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
 
     if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
@@ -224,15 +221,15 @@ void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr
         if (p_agent == p_person)
             continue;
 
-        if (((p_agent->U.UPerson.WeaponsCarried & (1 << (weapon - 1))) == 0) || (flag == 1))
+        if (!person_carries_weapon(p_agent, weptype) || (flag == WepSel_HIDE))
         {
             stop_looped_weapon_sample(p_agent, p_agent->U.UPerson.CurrentWeapon);
-            if (flag == 1)
+            if (flag == WepSel_HIDE)
             {
                 player_agent_update_prev_weapon(p_agent);
-                p_agent->U.UPerson.CurrentWeapon = 0;
+                p_agent->U.UPerson.CurrentWeapon = WEP_NULL;
             }
-            else if (p_agent->U.UPerson.TempWeapon != 0)
+            else if (p_agent->U.UPerson.TempWeapon != WEP_NULL)
             {
                 thing_select_specific_weapon(p_agent, p_agent->U.UPerson.TempWeapon, flag);
             }
@@ -244,7 +241,7 @@ void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr
         else
         {
             peep_change_weapon(p_agent);
-            thing_select_specific_weapon(p_agent, weapon, flag);
+            thing_select_specific_weapon(p_agent, weptype, flag);
         }
         p_agent->U.UPerson.AnimMode = gun_out_anim(p_agent, 0);
         reset_person_frame(p_agent);
@@ -876,7 +873,7 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
             result = PARes_EINVAL;
             break;
         }
-        if (p_pckt->Y > WepSel_HIDE) {
+        if (p_pckt->Y > WepSel_SKIP) {
             result = PARes_EINVAL;
             break;
         }

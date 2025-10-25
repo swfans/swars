@@ -4927,16 +4927,10 @@ ubyte weapon_select_input(void)
     // Double tapping - select for all agents
     if (gameturn - last_sel_weapon_turn[n] < 7)
     {
-        //TODO This doesn't work properly because the flag is not stored in packet
-        // building a packet needs rewriting; for now 0 is written there, which translates to "TOGGLE".
-#if 0
         ubyte flag;
 
         flag = (person_get_selected_weapon(dcthing) == weptype) ? WepSel_SELECT : WepSel_HIDE;
         my_build_packet(&packets[local_player_no], PAct_SELECT_GRP_SPEC_WEAPON, dcthing, weptype, flag, 0);
-#else
-        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, WepSel_TOGGLE, 0);
-#endif
         last_sel_weapon_turn[n] -= 7;
     }
     else

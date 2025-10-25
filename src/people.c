@@ -3743,24 +3743,19 @@ ubyte thing_select_specific_weapon(struct Thing *p_person, ushort weptype, ubyte
 
     if (((p_person->U.UPerson.CurrentWeapon == weptype) || (flag == WepSel_HIDE)) && (flag != WepSel_SELECT))
     {
-        if ((p_person->Flag & TngF_PlayerAgent) != 0 && (p_person->Flag2 & TgF2_Unkn0800) == 0) {
-            PlayerInfo *p_player;
-            PlayerIdx plyr;
-            ushort plagent;
-
-            plagent = p_person->U.UPerson.ComCur & 3;
-            plyr = p_person->U.UPerson.ComCur >> 2;
-            p_player = &players[plyr];
-
-            p_player->PrevWeapon[plagent] = p_person->U.UPerson.CurrentWeapon;
+        if ((p_person->Flag & TngF_PlayerAgent) != 0 &&
+          (p_person->Flag2 & TgF2_Unkn0800) == 0 &&
+          p_person->U.UPerson.CurrentWeapon != WEP_NULL) {
+            player_agent_update_prev_weapon(p_person);
         }
         p_person->U.UPerson.CurrentWeapon = WEP_NULL;
-        switch_person_anim_mode(p_person, 0);
     }
     else
     {
-        ubyte animode;
         p_person->U.UPerson.CurrentWeapon = weptype;
+    }
+    {
+        ubyte animode;
         animode = gun_out_anim(p_person, 0);
         switch_person_anim_mode(p_person, animode);
     }
