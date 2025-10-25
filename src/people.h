@@ -217,6 +217,10 @@ TbBool person_carries_any_medikit(struct Thing *p_person);
 
 TbBool person_can_accept_control(ThingIdx person);
 
+/** Returns slot at which given person is in given players agents, or -1.
+ */
+short person_slot_as_player_agent(struct Thing *p_person, ushort plyr);
+
 void set_person_stats_type(struct Thing *p_person, ushort type);
 void set_person_health_shield_type(struct Thing *p_person, ushort stype);
 void set_person_energy_stamina_type(struct Thing *p_person, ushort stype);

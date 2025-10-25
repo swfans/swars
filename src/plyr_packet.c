@@ -358,6 +358,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         player_agent_init_goto_gnd_point_abs(plyr, p_thing, packet->X, packet->Y, packet->Z);
         result = PARes_DONE;
         break;
@@ -367,6 +371,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         thing_goto_point_rel(p_thing, packet->X, packet->Y, packet->Z);
         result = PARes_DONE;
         break;
@@ -374,6 +382,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if (p_thing->State == PerSt_DROP_ITEM) {
@@ -391,6 +403,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if (p_thing->State == PerSt_DROP_ITEM) {
@@ -414,6 +430,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         person_init_pickup(p_thing, packet->X);
         result = PARes_DONE;
         break;
@@ -426,6 +446,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
         if (p_sectng == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
@@ -441,6 +465,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
             result = PARes_TNGBADST;
             break;
@@ -454,6 +482,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         player_agent_select(plyr, packet->X);
         result = PARes_DONE;
         break;
@@ -461,6 +493,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         thing_goto_point_rel_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
@@ -472,6 +508,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 0);
         result = PARes_DONE;
         break;
@@ -479,6 +519,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if (p_thing->State == PerSt_DROP_ITEM) {
@@ -498,6 +542,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         call_protect(p_thing, plyr);
         n = count_protect(p_thing, plyr);
         if (plyr == local_player_no && n)
@@ -508,6 +556,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         call_unprotect(p_thing, plyr, 0);
@@ -522,6 +574,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         thing_shoot_at_thing(p_thing, packet->X);
         result = PARes_DONE;
         break;
@@ -531,6 +587,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         person_init_get_item(p_thing, packet->X, plyr);
         result = PARes_DONE;
         break;
@@ -538,6 +598,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if (p_thing->State == PerSt_DROP_ITEM) {
@@ -557,6 +621,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         if (p_thing->State == PerSt_DROP_ITEM) {
             result = PARes_TNGBADST;
             break;
@@ -572,6 +640,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if (p_thing->State == PerSt_DROP_ITEM) {
@@ -591,6 +663,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         p_thing->U.UPerson.Mood = limit_mood(p_thing, packet->X);
         p_thing->Speed = calc_person_speed(p_thing);
         result = PARes_DONE;
@@ -599,6 +675,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
@@ -618,6 +698,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_sectng = get_thing_safe(packet->X, TT_PERSON);
         if (p_sectng == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
@@ -641,6 +725,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
@@ -653,6 +741,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
@@ -663,6 +755,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if (plyr == local_player_no)
@@ -682,6 +778,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         person_go_enter_vehicle_fast(p_thing, p_sectng, plyr);
         result = PARes_DONE;
         break;
@@ -691,6 +791,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         person_init_get_item_fast(p_thing, packet->X, plyr);
         result = PARes_DONE;
         break;
@@ -698,6 +802,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
@@ -711,6 +819,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if (p_thing->State == PerSt_DROP_ITEM) {
@@ -730,6 +842,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 1);
         result = PARes_DONE;
         break;
@@ -737,6 +853,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
@@ -750,6 +870,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if (p_thing->State == PerSt_DROP_ITEM) {
@@ -769,6 +893,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         if (!person_carries_any_medikit(p_thing)) {
             result = PARes_TNGBADST;
             break;
@@ -780,6 +908,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         plgroup_set_mood(plyr, p_thing, packet->X);
@@ -803,6 +935,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 2);
         result = PARes_DONE;
         break;
@@ -812,6 +948,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 3);
         result = PARes_DONE;
         break;
@@ -819,6 +959,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if (p_thing->State == PerSt_DROP_ITEM) {
@@ -838,6 +982,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
+            break;
+        }
         if (p_thing->State == PerSt_DROP_ITEM) {
             result = PARes_EALREADY;
             break;
@@ -853,6 +1001,10 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         p_thing = get_thing_safe(packet->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
+            break;
+        }
+        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+            result = PARes_EBADSLT;
             break;
         }
         if ((p_thing->Flag2 & TgF2_Unkn0800) != 0) {
