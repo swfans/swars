@@ -333,7 +333,7 @@ void player_set_control_mode(PlayerIdx plyr, ushort ctrmode)
     players[plyr].UserInput[0].ControlMode = ctrmode;
 }
 
-void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
+void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
 {
     struct Thing *p_thing;
     struct Thing *p_sectng;
@@ -341,7 +341,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
     short result;
 
     result = PARes_EBADRQC;
-    switch (packet->Action & 0x7FFF)
+    switch (p_pckt->Action & 0x7FFF)
     {
     case PAct_MISSN_ABORT:
         if (in_network_game) {
@@ -353,7 +353,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_GND_PT_ABS:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -362,11 +362,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        player_agent_init_goto_gnd_point_abs(plyr, p_thing, packet->X, packet->Y, packet->Z);
+        player_agent_init_goto_gnd_point_abs(plyr, p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z);
         result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_GND_PT_REL:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -375,11 +375,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        thing_goto_point_rel(p_thing, packet->X, packet->Y, packet->Z);
+        thing_goto_point_rel(p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z);
         result = PARes_DONE;
         break;
     case PAct_SELECT_NEXT_WEAPON:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -396,11 +396,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        player_agent_weapon_switch(plyr, packet->Data, 1);
+        player_agent_weapon_switch(plyr, p_pckt->Data, 1);
         result = PARes_DONE;
         break;
     case PAct_DROP_SELC_WEAPON_SECR:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -425,7 +425,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_PICKUP:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -434,16 +434,16 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        person_init_pickup(p_thing, packet->X);
+        person_init_pickup(p_thing, p_pckt->X);
         result = PARes_DONE;
         break;
     case PAct_ENTER_VEHICLE:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
         }
-        p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
+        p_sectng = get_thing_safe(p_pckt->X, TT_VEHICLE);
         if (p_sectng == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -460,7 +460,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_LEAVE_VEHICLE:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -477,20 +477,20 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_SELECT_AGENT:
-        p_sectng = get_thing_safe(packet->X, TT_PERSON);
+        p_sectng = get_thing_safe(p_pckt->X, TT_PERSON);
         if (p_sectng == INVALID_THING) {
             result = PARes_EINVAL;
             break;
         }
-        if (person_slot_as_player_agent(p_thing, plyr) < 0) {
+        if (person_slot_as_player_agent(p_sectng, plyr) < 0) {
             result = PARes_EBADSLT;
             break;
         }
-        player_agent_select(plyr, packet->X);
+        player_agent_select(plyr, p_pckt->X);
         result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_GND_PT_REL_FF:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -499,11 +499,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        thing_goto_point_rel_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
+        thing_goto_point_rel_fast(p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z, plyr);
         result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_GND_POINT:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -512,11 +512,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 0);
+        thing_shoot_at_point(p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z, 0);
         result = PARes_DONE;
         break;
     case PAct_SELECT_PREV_WEAPON:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -533,11 +533,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        player_agent_weapon_switch(plyr, packet->Data, -1);
+        player_agent_weapon_switch(plyr, p_pckt->Data, -1);
         result = PARes_DONE;
         break;
     case PAct_PROTECT_INC:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -553,7 +553,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_PROTECT_TOGGLE:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -569,7 +569,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_THING:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -578,11 +578,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        thing_shoot_at_thing(p_thing, packet->X);
+        thing_shoot_at_thing(p_thing, p_pckt->X);
         result = PARes_DONE;
         break;
     case PAct_GET_ITEM:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -591,11 +591,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        person_init_get_item(p_thing, packet->X, plyr);
+        person_init_get_item(p_thing, p_pckt->X, plyr);
         result = PARes_DONE;
         break;
     case PAct_PLANT_MINE_AT_GND_PT:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -612,11 +612,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        person_init_plant_mine(p_thing, packet->X, packet->Y, packet->Z, 0);
+        person_init_plant_mine(p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z, 0);
         result = PARes_DONE;
         break;
     case PAct_SELECT_SPECIFIC_WEAPON:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -633,11 +633,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        player_agent_select_specific_weapon(plyr, p_thing, packet->X);
+        player_agent_select_specific_weapon(plyr, p_thing, p_pckt->X);
         result = PARes_DONE;
         break;
     case PAct_DROP_HELD_WEAPON_SECR:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -654,11 +654,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        player_agent_init_drop_item(plyr, p_thing, packet->X);
+        player_agent_init_drop_item(plyr, p_thing, p_pckt->X);
         result = PARes_DONE;
         break;
     case PAct_AGENT_SET_MOOD:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -667,12 +667,12 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        p_thing->U.UPerson.Mood = limit_mood(p_thing, packet->X);
+        p_thing->U.UPerson.Mood = limit_mood(p_thing, p_pckt->X);
         p_thing->Speed = calc_person_speed(p_thing);
         result = PARes_DONE;
         break;
     case PAct_GO_ENTER_VEHICLE:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -681,7 +681,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
+        p_sectng = get_thing_safe(p_pckt->X, TT_VEHICLE);
         if (p_sectng == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -690,12 +690,12 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_FOLLOW_PERSON:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
         }
-        p_sectng = get_thing_safe(packet->X, TT_PERSON);
+        p_sectng = get_thing_safe(p_pckt->X, TT_PERSON);
         if (p_sectng == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -712,15 +712,15 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_CONTROL_MODE:
-        if ((packet->Data & ~UInpCtr_AllFlagsMask) >= UInpCtr_MODES_COUNT) {
+        if ((p_pckt->Data & ~UInpCtr_AllFlagsMask) >= UInpCtr_MODES_COUNT) {
             result = PARes_EINVAL;
             break;
         }
-        player_set_control_mode(plyr, packet->Data);
+        player_set_control_mode(plyr, p_pckt->Data);
         result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_FACE_PT_ABS:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -732,11 +732,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
-        thing_goto_point_on_face(p_thing, packet->X, packet->Z, packet->Y);
+        thing_goto_point_on_face(p_thing, p_pckt->X, p_pckt->Z, p_pckt->Y);
         result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_GND_PT_ABS_FF:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -748,11 +748,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
-        thing_goto_point_fast(p_thing, packet->X, packet->Y, packet->Z, plyr);
+        thing_goto_point_fast(p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z, plyr);
         result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_FACE_PT_ABS_FF:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -764,16 +764,16 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         if (plyr == local_player_no)
             show_goto_point(1);
         p_thing->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
-        thing_goto_point_on_face_fast(p_thing, packet->X, packet->Z, packet->Y, plyr);
+        thing_goto_point_on_face_fast(p_thing, p_pckt->X, p_pckt->Z, p_pckt->Y, plyr);
         result = PARes_DONE;
         break;
     case PAct_GO_ENTER_VEHICLE_FF:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
         }
-        p_sectng = get_thing_safe(packet->X, TT_VEHICLE);
+        p_sectng = get_thing_safe(p_pckt->X, TT_VEHICLE);
         if (p_sectng == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -786,7 +786,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_GET_ITEM_FAST:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -795,11 +795,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        person_init_get_item_fast(p_thing, packet->X, plyr);
+        person_init_get_item_fast(p_thing, p_pckt->X, plyr);
         result = PARes_DONE;
         break;
     case PAct_SHIELD_TOGGLE:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -816,7 +816,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_PLANT_MINE_AT_GND_PT_FF:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -833,11 +833,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        person_init_plant_mine_fast(p_thing, packet->X, packet->Y, packet->Z, 0);
+        person_init_plant_mine_fast(p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z, 0);
         result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_GND_POINT_FF:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -846,11 +846,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 1);
+        thing_shoot_at_point(p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z, 1);
         result = PARes_DONE;
         break;
     case PAct_PEEPS_SCATTER:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -863,11 +863,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        make_peeps_scatter(p_thing, packet->X, packet->Z);
+        make_peeps_scatter(p_thing, p_pckt->X, p_pckt->Z);
         result = PARes_DONE;
         break;
     case PAct_SELECT_GRP_SPEC_WEAPON:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -884,11 +884,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        person_grp_switch_to_specific_weapon(p_thing, plyr, packet->X);
+        person_grp_switch_to_specific_weapon(p_thing, plyr, p_pckt->X);
         result = PARes_DONE;
         break;
     case PAct_AGENT_USE_MEDIKIT:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -905,7 +905,7 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         result = PARes_DONE;
         break;
     case PAct_GROUP_SET_MOOD:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -914,23 +914,23 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        plgroup_set_mood(plyr, p_thing, packet->X);
+        plgroup_set_mood(plyr, p_thing, p_pckt->X);
         result = PARes_DONE;
         break;
     case PAct_AGENT_UNKGROUP_PROT: // Unfinished mess; remove pending
-        unkn_player_group_prot(packet->Data, plyr);
+        unkn_player_group_prot(p_pckt->Data, plyr);
         result = PARes_DONE;
         break;
     case PAct_AGENT_UNKGROUP_ADD: // Unfinished mess; remove pending
-        unkn_player_group_add(packet->Data, plyr);
+        unkn_player_group_add(p_pckt->Data, plyr);
         result = PARes_DONE;
         break;
     case PAct_CHAT_MESSAGE_KEY:
-        player_chat_message_add_key(plyr, packet->Data);
+        player_chat_message_add_key(plyr, p_pckt->Data);
         result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_FACE_POINT:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -939,11 +939,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 2);
+        thing_shoot_at_point(p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z, 2);
         result = PARes_DONE;
         break;
     case PAct_SHOOT_AT_FACE_POINT_FF:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -952,11 +952,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        thing_shoot_at_point(p_thing, packet->X, packet->Y, packet->Z, 3);
+        thing_shoot_at_point(p_thing, p_pckt->X, p_pckt->Y, p_pckt->Z, 3);
         result = PARes_DONE;
         break;
     case PAct_PLANT_MINE_AT_FACE_PT:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -973,11 +973,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        person_init_plant_mine(p_thing, packet->X, 0, packet->Z, packet->Y);
+        person_init_plant_mine(p_thing, p_pckt->X, 0, p_pckt->Z, p_pckt->Y);
         result = PARes_DONE;
         break;
     case PAct_PLANT_MINE_AT_FACE_PT_FF:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -994,11 +994,11 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        person_init_plant_mine_fast(p_thing, packet->X, 0, packet->Z, packet->Y);
+        person_init_plant_mine_fast(p_thing, p_pckt->X, 0, p_pckt->Z, p_pckt->Y);
         result = PARes_DONE;
         break;
     case PAct_AGENT_SELF_DESTRUCT:
-        p_thing = get_thing_safe(packet->Data, TT_PERSON);
+        p_thing = get_thing_safe(p_pckt->Data, TT_PERSON);
         if (p_thing == INVALID_THING) {
             result = PARes_EINVAL;
             break;
@@ -1019,7 +1019,8 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         break;
     }
     if (result > PARes_SUCCESS) {
-        LOGWARN("Player %d action %d: %s", (int)plyr, (int)(packet->Action & 0x7FFF),
+        LOGWARN("Player %d action %s: %s", (int)plyr,
+          get_packet_action_name(p_pckt->Action & 0x7FFF),
           get_packet_action_result_text(result));
     }
 }

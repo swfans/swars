@@ -47,6 +47,75 @@ const char *packet_action_result_text[] = {
     "thing in bad state",
 };
 
+const char *packet_action_name[] = {
+    "NONE",
+    "UNKNACTN_01",
+    "MISSN_ABORT",
+    "UNKNACTN_03",
+    "UNKNACTN_04",
+    "UNKNACTN_05",
+    "UNKNACTN_06",
+    "UNKNACTN_07",
+    "UNKNACTN_08",
+    "UNKNACTN_09",
+    "UNKNACTN_0A",
+    "AGENT_GOTO_GND_PT_ABS",
+    "AGENT_GOTO_GND_PT_REL",
+    "SELECT_NEXT_WEAPON",
+    "DROP_SELC_WEAPON_SECR",
+    "UNKNACTN_0F",
+    "PICKUP",
+    "UNKNACTN_11",
+    "UNKNACTN_12",
+    "UNKNACTN_13",
+    "ENTER_VEHICLE",
+    "LEAVE_VEHICLE",
+    "UNKNACTN_16",
+    "SELECT_AGENT",
+    "UNKNACTN_18",
+    "AGENT_GOTO_GND_PT_REL_FF",
+    "SHOOT_AT_GND_POINT",
+    "SELECT_PREV_WEAPON",
+    "PROTECT_INC",
+    "PROTECT_TOGGLE",
+    "SHOOT_AT_THING",
+    "GET_ITEM",
+    "PLANT_MINE_AT_GND_PT",
+    "SELECT_SPECIFIC_WEAPON",
+    "DROP_HELD_WEAPON_SECR",
+    "AGENT_SET_MOOD",
+    "GO_ENTER_VEHICLE",
+    "FOLLOW_PERSON",
+    "CONTROL_MODE",
+    "AGENT_GOTO_FACE_PT_ABS",
+    "AGENT_GOTO_GND_PT_ABS_FF",
+    "UNKNACTN_29",
+    "AGENT_GOTO_FACE_PT_ABS_FF",
+    "GO_ENTER_VEHICLE_FF",
+    "GET_ITEM_FAST",
+    "SHIELD_TOGGLE",
+    "PLANT_MINE_AT_GND_PT_FF",
+    "SHOOT_AT_GND_POINT_FF",
+    "PEEPS_SCATTER",
+    "SELECT_GRP_SPEC_WEAPON",
+    "AGENT_USE_MEDIKIT",
+    "UNKNACTN_33",
+    "GROUP_SET_MOOD",
+    "AGENT_UNKGROUP_PROT",
+    "AGENT_UNKGROUP_ADD",
+    "CHAT_MESSAGE_KEY",
+    "SHOOT_AT_FACE_POINT",
+    "SHOOT_AT_FACE_POINT_FF",
+    "PLANT_MINE_AT_FACE_PT",
+    "PLANT_MINE_AT_FACE_PT_FF",
+    "UNKNACTN_3C",
+    "UNKNACTN_3D",
+    "UNKNACTN_3E",
+    "UNKNACTN_3F",
+    "UNKNACTN_40",
+    "AGENT_SELF_DESTRUCT",
+};
+
 void (*my_build_packet)(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 
 /******************************************************************************/
@@ -54,9 +123,16 @@ void (*my_build_packet)(struct Packet *packet, ushort type, ulong param1, long x
 extern TbFileHandle packet_rec_fh;
 ushort packet_rec_no = 0;
 
+const char * get_packet_action_name(ushort atype)
+{
+    if (atype > sizeof(packet_action_name)/sizeof(packet_action_name[0]))
+        return "outranged";
+    return packet_action_name[atype];
+}
+
 const char * get_packet_action_result_text(short result)
 {
-    if ((result < 0) || (result > sizeof(packet_action_result_text)/sizeof(packet_action_result_text[0])))
+    if ((result < 0) || (result > (int)(sizeof(packet_action_result_text)/sizeof(packet_action_result_text[0]))))
         return "outranged";
     return packet_action_result_text[result];
 }
