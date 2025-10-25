@@ -668,6 +668,17 @@ TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr)
     return (p_person->U.UPerson.Group == plygroup);
 }
 
+ubyte person_get_selected_weapon(ThingIdx thing)
+{
+    struct Thing *p_thing;
+
+    if (thing <= 0)
+        return WEP_NULL;
+
+    p_thing = &things[thing];
+    return p_thing->U.UPerson.CurrentWeapon;
+}
+
 short calc_person_speed(struct Thing *p_person)
 {
     struct PeepStat *pstat;
@@ -3689,31 +3700,33 @@ void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, i
         : : "a" (p_person), "d" (x), "b" (y), "c" (z), "g" (face));
 }
 
-int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, ubyte flag)
+ubyte thing_select_specific_weapon(struct Thing *p_person, ushort weptype, ubyte flag)
 {
 #if 0
     int ret;
     asm volatile ("call ASM_thing_select_specific_weapon\n"
-        : "=r" (ret) : "a" (p_person), "d" (weapon), "b" (flag));
+        : "=r" (ret) : "a" (p_person), "d" (weptype), "b" (flag));
     return ret;
 #endif
     if ((p_person->Flag & TngF_Destroyed) != 0)
-        return false;
-    if (weapon == WEP_AIRSTRIKE && current_map == 65) // map065 The Moon
+        return WepSel_SKIP;
+    if (weptype == WEP_AIRSTRIKE && current_map == 65) // map065 The Moon
     {
         play_dist_sample(p_person, 0x81u, 0x7Fu, 0x40u, 100, 0, 3);
         p_person->U.UPerson.CurrentWeapon = WEP_NULL;
-        return false;
+        return WepSel_SKIP;
     }
 
     if ((p_person->Flag2 & TgF2_Unkn0001) != 0)
         finalise_razor_wire(p_person);
     stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);
 
-    if (!person_carries_weapon(p_person, weapon))
-        return false;
+    if (flag == WepSel_SKIP)
+        return WepSel_SKIP;
+    if (!person_carries_weapon(p_person, weptype))
+        return WepSel_SKIP;
 
-    if (weapon == WEP_MEDI1) // TODO why selecting medkit just uses it? Make it active innstead, and use on LMB? Why make MEDI2 different?
+    if (weptype == WEP_MEDI1) // TODO why selecting medkit just uses it? Make it active innstead, and use on LMB? Why make MEDI2 different?
     {
         if ((p_person->Flag & TngF_PlayerAgent) != 0) {
             PlayerIdx plyr;
@@ -3724,11 +3737,11 @@ int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, ubyte fl
         }
 
         p_person->Health = p_person->U.UPerson.MaxHealth;
-        person_weapons_remove_one(p_person, weapon);
-        return false;
+        person_weapons_remove_one(p_person, weptype);
+        return WepSel_HIDE;
     }
 
-    if (((p_person->U.UPerson.CurrentWeapon == weapon) || (flag == WepSel_SELECT)) && (flag != WepSel_HIDE))
+    if (((p_person->U.UPerson.CurrentWeapon == weptype) || (flag == WepSel_HIDE)) && (flag != WepSel_SELECT))
     {
         if ((p_person->Flag & TngF_PlayerAgent) != 0 && (p_person->Flag2 & TgF2_Unkn0800) == 0) {
             PlayerInfo *p_player;
@@ -3747,13 +3760,13 @@ int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, ubyte fl
     else
     {
         ubyte animode;
-        p_person->U.UPerson.CurrentWeapon = weapon;
+        p_person->U.UPerson.CurrentWeapon = weptype;
         animode = gun_out_anim(p_person, 0);
         switch_person_anim_mode(p_person, animode);
     }
     p_person->Speed = calc_person_speed(p_person);
 
-    return (p_person->U.UPerson.CurrentWeapon == WEP_NULL);
+    return (p_person->U.UPerson.CurrentWeapon != WEP_NULL) ? WepSel_SELECT : WepSel_HIDE;
 }
 
 void person_go_enter_vehicle_fast(struct Thing *p_person, struct Thing *p_vehicle, ushort plyr)

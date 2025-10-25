@@ -138,8 +138,9 @@ enum PersonFlags3 {
 
 enum ThingWeaponSelectFlags {
     WepSel_TOGGLE = 0,
-    WepSel_SELECT,
     WepSel_HIDE,
+    WepSel_SELECT,
+    WepSel_SKIP,
 };
 
 struct Thing;
@@ -217,6 +218,7 @@ void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing);
 
 TbBool person_is_dead(ThingIdx thing);
 TbBool person_is_dead_or_dying(ThingIdx thing);
+ubyte person_get_selected_weapon(ThingIdx thing);
 
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 TbBool person_carries_any_medikit(struct Thing *p_person);
@@ -319,9 +321,9 @@ void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, i
  * @param p_person The thing which will have current weapon switched.
  * @param weapon The weapon type to be used.
  * @param flag Value from ThingWeaponSelectFlags enum, telling whether to select or hide weapon.
- * @return Gives true if the weapon was made the currently wielded weapon, false otherwise.
+ * @return Gives Value from ThingWeaponSelectFlags enum based on results of the action.
  */
-int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, ubyte flag);
+ubyte thing_select_specific_weapon(struct Thing *p_person, ushort weapon, ubyte flag);
 
 void person_go_enter_vehicle_fast(struct Thing *p_person, struct Thing *p_vehicle, ushort plyr);
 void person_go_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle);

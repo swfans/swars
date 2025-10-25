@@ -195,15 +195,13 @@ void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr
 {
     struct Thing *p_owntng;
     ushort plagent;
-    TbBool is_selected;
     ubyte flag;
 
     p_owntng = p_person;
     if (p_person->State == PerSt_PROTECT_PERSON)
         p_owntng = &things[p_person->Owner];
 
-    is_selected = thing_select_specific_weapon(p_person, weapon, first_flag);
-    flag = is_selected ? WepSel_SELECT : WepSel_HIDE;
+    flag = thing_select_specific_weapon(p_person, weapon, first_flag);
 
     peep_change_weapon(p_person);
     p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
@@ -311,9 +309,9 @@ void player_agent_init_goto_gnd_point_abs(PlayerIdx plyr, struct Thing *p_person
 }
 
 void player_agent_select_specific_weapon(PlayerIdx plyr, struct Thing *p_person,
-  ushort wtype, ubyte first_flag)
+  ushort wtype, ubyte flag)
 {
-    thing_select_specific_weapon(p_person, wtype, first_flag);
+    thing_select_specific_weapon(p_person, wtype, flag);
     peep_change_weapon(p_person);
     p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
     reset_person_frame(p_person);
