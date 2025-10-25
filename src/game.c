@@ -2095,7 +2095,7 @@ void teleport_current_agent(PlayerInfo *p_locplayer)
 
 void person_give_all_weapons(struct Thing *p_person)
 {
-    ushort wtype;
+    WeaponType wtype;
 
     for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
     {
@@ -2115,7 +2115,7 @@ void person_give_all_weapons(struct Thing *p_person)
 
 void mark_all_weapons_researched(void)
 {
-    ushort wtype;
+    WeaponType wtype;
 
     for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
     {
@@ -4880,7 +4880,7 @@ ubyte weapon_select_input(void)
 #endif
     PlayerInfo *p_locplayer;
     ThingIdx dcthing;
-    ushort weptype;
+    WeaponType wtype;
     int n;
 
 #ifdef MORE_GAME_KEYS
@@ -4897,7 +4897,7 @@ ubyte weapon_select_input(void)
 
     p_locplayer = &players[local_player_no];
     dcthing = p_locplayer->DirectControl[0];
-    weptype = WEP_NULL;
+    wtype = WEP_NULL;
 
 
     assert(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
@@ -4915,13 +4915,13 @@ ubyte weapon_select_input(void)
         {
             clear_key_pressed(kkey);
 #endif
-            weptype = find_nth_weapon_held(dcthing, n+1);
-            if (weptype != WEP_NULL)
+            wtype = find_nth_weapon_held(dcthing, n+1);
+            if (wtype != WEP_NULL)
                 break;
         }
     }
 
-    if (weptype == WEP_NULL)
+    if (wtype == WEP_NULL)
         return 0;
 
     // Double tapping - select for all agents
@@ -4929,13 +4929,13 @@ ubyte weapon_select_input(void)
     {
         ubyte flag;
 
-        flag = (person_get_selected_weapon(dcthing) == weptype) ? WepSel_SELECT : WepSel_HIDE;
-        my_build_packet(&packets[local_player_no], PAct_SELECT_GRP_SPEC_WEAPON, dcthing, weptype, flag, 0);
+        flag = (person_get_selected_weapon(dcthing) == wtype) ? WepSel_SELECT : WepSel_HIDE;
+        my_build_packet(&packets[local_player_no], PAct_SELECT_GRP_SPEC_WEAPON, dcthing, wtype, flag, 0);
         last_sel_weapon_turn[n] -= 7;
     }
     else
     {
-        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, WepSel_TOGGLE, 0);
+        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, wtype, WepSel_TOGGLE, 0);
         last_sel_weapon_turn[n] = gameturn;
     }
 

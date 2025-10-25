@@ -122,7 +122,7 @@ ushort get_unscaled_zoom(ushort szoom)
         return  240 * szoom / h;
 }
 
-int get_weapon_zoom_min(ushort wtype)
+int get_weapon_zoom_min(WeaponType wtype)
 {
     struct WeaponDef *wdef;
     int zoom;

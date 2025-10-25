@@ -220,7 +220,7 @@ TbBool person_is_dead(ThingIdx thing);
 TbBool person_is_dead_or_dying(ThingIdx thing);
 ubyte person_get_selected_weapon(ThingIdx thing);
 
-TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
+TbBool person_carries_weapon(struct Thing *p_person, WeaponType wtype);
 TbBool person_carries_any_medikit(struct Thing *p_person);
 
 TbBool person_can_accept_control(ThingIdx person);
@@ -319,11 +319,11 @@ void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, i
 /** Selects a wielded weapon for the thing, or hides the weapon currently in hands.
  *
  * @param p_person The thing which will have current weapon switched.
- * @param weapon The weapon type to be used.
+ * @param wtype The weapon type to be used.
  * @param flag Value from ThingWeaponSelectFlags enum, telling whether to select or hide weapon.
  * @return Gives Value from ThingWeaponSelectFlags enum based on results of the action.
  */
-ubyte thing_select_specific_weapon(struct Thing *p_person, ushort weapon, ubyte flag);
+ubyte thing_select_specific_weapon(struct Thing *p_person, WeaponType wtype, ubyte flag);
 
 void person_go_enter_vehicle_fast(struct Thing *p_person, struct Thing *p_vehicle, ushort plyr);
 void person_go_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle);

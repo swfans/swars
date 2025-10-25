@@ -142,14 +142,14 @@ void player_agents_init_prev_weapon(PlayerIdx plyr)
     for (plagent = 0; plagent < playable_agents; plagent++)
     {
         struct Thing *p_agent;
-        ushort weptype;
+        WeaponType wtype;
 
         p_agent = p_locplayer->MyAgent[plagent];
         if (p_agent->Type == TT_PERSON)
-            weptype = find_nth_weapon_held(p_agent->ThingOffset, 1);
+            wtype = find_nth_weapon_held(p_agent->ThingOffset, 1);
         else
-            weptype = WEP_NULL;
-        p_locplayer->PrevWeapon[plagent] = weptype;
+            wtype = WEP_NULL;
+        p_locplayer->PrevWeapon[plagent] = wtype;
     }
     for (; plagent < AGENTS_SQUAD_MAX_COUNT; plagent++)
     {

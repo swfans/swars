@@ -1131,16 +1131,16 @@ void draw_fourpack_slots(short x, short y, ubyte fp)
     draw_box_purple_list(x + 150, y + 30, 4u, 4u, 174);
 }
 
-void show_weapon_slot(short scr_x, short scr_y, short weptype)
+void show_weapon_slot(short scr_x, short scr_y, WeaponType wtype)
 {
     ushort fp;
 
     lbDisplay.DrawColour = 174;
     lbDisplay.DrawFlags = 0x8000 | Lb_TEXT_ONE_COLOR;
-    draw_sprite_purple_list(scr_x, scr_y, &unk1_sprites[weptype - 1 + 1]);
+    draw_sprite_purple_list(scr_x, scr_y, &unk1_sprites[wtype - 1 + 1]);
     lbDisplay.DrawFlags &= ~0x8000;
 
-    fp = weapon_fourpack_index(weptype);
+    fp = weapon_fourpack_index(wtype);
     if (fp < WFRPK_COUNT) {
         draw_fourpack_slots(scr_x, scr_y, fp);
     }
@@ -1151,7 +1151,7 @@ void show_weapon_slot(short scr_x, short scr_y, short weptype)
         if (mouse_down_over_box_coords(scr_x, scr_y, scr_x + 181, scr_y + 42))
         {
             lbDisplay.LeftButton = 0;
-            mo_weapon = weptype - 1;
+            mo_weapon = (int)wtype - 1;
             mo_from_agent = selected_agent;
         }
     }
@@ -1160,11 +1160,11 @@ void show_weapon_slot(short scr_x, short scr_y, short weptype)
     {
         if (mouse_move_over_box_coords(scr_x, scr_y, scr_x + 181, scr_y + 42))
         {
-            selected_weapon = weptype - 1;
+            selected_weapon = (int)wtype - 1;
             switch_equip_offer_to_sell();
             equip_update_for_selected_weapon();
         }
-        if (weptype - 1 >= mo_weapon) {
+        if ((int)wtype - 1 >= mo_weapon) {
             mo_weapon = -1;
         }
     }
@@ -1180,7 +1180,7 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
 #endif
     short scr_x, scr_y;
     short slot;
-    short weptype;
+    WeaponType wtype;
 
     scr_x = p_box->X + 5;
     if ((p_box->Flags & GBxFlg_TextCopied) == 0)
@@ -1202,7 +1202,7 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
 
     scr_y = p_box->Y + 5;
     slot = 0;
-    for (weptype = 1; weptype < WEP_TYPES_COUNT; weptype++)
+    for (wtype = WEP_NULL + 1; wtype < WEP_TYPES_COUNT; wtype++)
     {
         TbBool has_weapon;
 
@@ -1211,19 +1211,19 @@ ubyte show_weapon_slots(struct ScreenBox *p_box)
 
         if (selected_agent == 4)
         {
-          has_weapon = player_agent_has_weapon(local_player_no, 0, weptype)
-            && player_agent_has_weapon(local_player_no, 1, weptype)
-            && player_agent_has_weapon(local_player_no, 2, weptype)
-            && player_agent_has_weapon(local_player_no, 3, weptype);
+          has_weapon = player_agent_has_weapon(local_player_no, 0, wtype)
+            && player_agent_has_weapon(local_player_no, 1, wtype)
+            && player_agent_has_weapon(local_player_no, 2, wtype)
+            && player_agent_has_weapon(local_player_no, 3, wtype);
         }
         else
         {
-          has_weapon = player_agent_has_weapon(local_player_no, selected_agent, weptype);
+          has_weapon = player_agent_has_weapon(local_player_no, selected_agent, wtype);
         }
 
         if (has_weapon)
         {
-            show_weapon_slot(scr_x, scr_y, weptype);
+            show_weapon_slot(scr_x, scr_y, wtype);
             slot++;
             scr_y += 44;
         }

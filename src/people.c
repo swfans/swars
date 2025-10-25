@@ -3700,17 +3700,17 @@ void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, i
         : : "a" (p_person), "d" (x), "b" (y), "c" (z), "g" (face));
 }
 
-ubyte thing_select_specific_weapon(struct Thing *p_person, ushort weptype, ubyte flag)
+ubyte thing_select_specific_weapon(struct Thing *p_person, WeaponType wtype, ubyte flag)
 {
 #if 0
     int ret;
     asm volatile ("call ASM_thing_select_specific_weapon\n"
-        : "=r" (ret) : "a" (p_person), "d" (weptype), "b" (flag));
+        : "=r" (ret) : "a" (p_person), "d" (wtype), "b" (flag));
     return ret;
 #endif
     if ((p_person->Flag & TngF_Destroyed) != 0)
         return WepSel_SKIP;
-    if (weptype == WEP_AIRSTRIKE && current_map == 65) // map065 The Moon
+    if (wtype == WEP_AIRSTRIKE && current_map == 65) // map065 The Moon
     {
         play_dist_sample(p_person, 0x81u, 0x7Fu, 0x40u, 100, 0, 3);
         p_person->U.UPerson.CurrentWeapon = WEP_NULL;
@@ -3723,10 +3723,10 @@ ubyte thing_select_specific_weapon(struct Thing *p_person, ushort weptype, ubyte
 
     if (flag == WepSel_SKIP)
         return WepSel_SKIP;
-    if (!person_carries_weapon(p_person, weptype))
+    if (!person_carries_weapon(p_person, wtype))
         return WepSel_SKIP;
 
-    if (weptype == WEP_MEDI1) // TODO why selecting medkit just uses it? Make it active innstead, and use on LMB? Why make MEDI2 different?
+    if (wtype == WEP_MEDI1) // TODO why selecting medkit just uses it? Make it active innstead, and use on LMB? Why make MEDI2 different?
     {
         if ((p_person->Flag & TngF_PlayerAgent) != 0) {
             PlayerIdx plyr;
@@ -3737,11 +3737,11 @@ ubyte thing_select_specific_weapon(struct Thing *p_person, ushort weptype, ubyte
         }
 
         p_person->Health = p_person->U.UPerson.MaxHealth;
-        person_weapons_remove_one(p_person, weptype);
+        person_weapons_remove_one(p_person, wtype);
         return WepSel_HIDE;
     }
 
-    if (((p_person->U.UPerson.CurrentWeapon == weptype) || (flag == WepSel_HIDE)) && (flag != WepSel_SELECT))
+    if (((p_person->U.UPerson.CurrentWeapon == wtype) || (flag == WepSel_HIDE)) && (flag != WepSel_SELECT))
     {
         if ((p_person->Flag & TngF_PlayerAgent) != 0 &&
           (p_person->Flag2 & TgF2_Unkn0800) == 0 &&
@@ -3752,7 +3752,7 @@ ubyte thing_select_specific_weapon(struct Thing *p_person, ushort weptype, ubyte
     }
     else
     {
-        p_person->U.UPerson.CurrentWeapon = weptype;
+        p_person->U.UPerson.CurrentWeapon = wtype;
     }
     {
         ubyte animode;

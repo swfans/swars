@@ -22,6 +22,8 @@
 #include "bftypes.h"
 #include "poly.h"
 
+#include "game_bstype.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -58,7 +60,7 @@ void zoom_update(short zoom_min, short zoom_max);
 
 ushort get_scaled_zoom(ushort zoom);
 ushort get_unscaled_zoom(ushort szoom);
-int get_weapon_zoom_min(ushort wtype);
+int get_weapon_zoom_min(WeaponType wtype);
 
 short get_overall_scale_min(void);
 short get_overall_scale_max(void);

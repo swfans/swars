@@ -96,21 +96,21 @@ int research_wep_get_progress(short cwep)
     return research.WeaponProgress[cwep][cday];
 }
 
-TbBool is_research_weapon_completed(ushort wtype)
+TbBool is_research_weapon_completed(WeaponType wtype)
 {
     ulong wflag;
     wflag = 1 << (wtype - 1);
     return (research.WeaponsCompleted & wflag) != 0;
 }
 
-TbBool is_research_weapon_allowed(ushort wtype)
+TbBool is_research_weapon_allowed(WeaponType wtype)
 {
     ulong wflag;
     wflag = 1 << (wtype - 1);
     return (research.WeaponsAllowed & wflag) != 0;
 }
 
-void research_weapon_allow(ushort wtype)
+void research_weapon_allow(WeaponType wtype)
 {
     ulong wflag;
     wflag = 1 << (wtype - 1);
@@ -120,9 +120,9 @@ void research_weapon_allow(ushort wtype)
 void research_weapon_flags_allow(ulong wpflags)
 {
     ulong oneflag;
-    ushort wtype;
+    WeaponType wtype;
 
-    for (wtype = 1; wtype < WEP_TYPES_COUNT; wtype++)
+    for (wtype = WEP_NULL + 1; wtype < WEP_TYPES_COUNT; wtype++)
     {
         oneflag = 1 << (wtype - 1);
         if ((wpflags & oneflag) == 0)
@@ -133,7 +133,7 @@ void research_weapon_flags_allow(ulong wpflags)
     }
 }
 
-void research_weapon_complete(ushort wtype)
+void research_weapon_complete(WeaponType wtype)
 {
     ulong wflag;
     wflag = 1 << (wtype - 1);
@@ -158,19 +158,19 @@ void research_current_weapon_complete(void)
 
 int research_wep_next_type(void)
 {
-    int wptype;
+    WeaponType wtype;
 
-    wptype = 0;
-    while ((research.WeaponsAllowed & (1 << wptype)) == 0)
+    wtype = WEP_NULL + 1;
+    while ((research.WeaponsAllowed & (1 << (wtype-1))) == 0)
     {
-        wptype++;
-        if (wptype >= WEP_TYPES_COUNT)
+        wtype++;
+        if (wtype >= WEP_TYPES_COUNT)
             return -1;
     }
     if ((research.CurrentWeapon == -1) ||
-      (weapon_tech_level[wptype + 1] > weapon_tech_level[research.CurrentWeapon + 1])) {
-        research.CurrentWeapon = wptype;
-        return wptype;
+      (weapon_tech_level[wtype + 1] > weapon_tech_level[research.CurrentWeapon + 1])) {
+        research.CurrentWeapon = wtype - 1;
+        return wtype;
     }
     return -1;
 }
@@ -250,13 +250,16 @@ void research_unkn_func_003(void)
     return;
 #endif
     struct WeaponDef *wdef;
-    short weapon;
+    WeaponType wtype;
 
-    weapon = research.CurrentWeapon + 1;
-    if (weapon < 0 || weapon >= WEP_TYPES_COUNT)
+    wtype = research.CurrentWeapon + 1;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtype-limits"
+    if (wtype < 0 || wtype >= WEP_TYPES_COUNT)
         return;
+#pragma GCC diagnostic pop
 
-    wdef = &weapon_defs[weapon];
+    wdef = &weapon_defs[wtype];
     //TODO this modifies configuration which is not saved.
     // instead we should count the dropped weapons in
     // a separate variable within structs which are saved/loaded

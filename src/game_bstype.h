@@ -44,6 +44,10 @@ typedef short ThingIdx;
  */
 typedef ubyte PlayerIdx;
 
+/** Type which stores type of a weapon.
+ */
+typedef ubyte WeaponType;
+
 /** Coordinate on the screen surface.
  * The type shall allow safety store values beyond (below/above) real screen
  * coordinates, up to another screen size. This means it needs to allow to

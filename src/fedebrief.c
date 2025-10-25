@@ -179,7 +179,7 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
 
 void snprint_concat_comma_separated_weapons_list(char *out, ushort outlen, ulong weapons)
 {
-    ushort wtype;
+    WeaponType wtype;
     ushort strid;
     ushort pos;
 
@@ -189,7 +189,7 @@ void snprint_concat_comma_separated_weapons_list(char *out, ushort outlen, ulong
         struct Campaign *p_campgn;
 
         wtype = weapons_prev_weapon(weapons, wtype);
-        if (wtype == 0)
+        if (wtype == WEP_NULL)
             break;
 
         if (strlen(out) > outlen - 4u)

@@ -191,7 +191,7 @@ void player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ushort 
 }
 
 void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr,
-  ushort weptype, ubyte first_flag)
+  WeaponType wtype, ubyte first_flag)
 {
     struct Thing *p_owntng;
     ushort plagent;
@@ -201,9 +201,8 @@ void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr
     if (p_person->State == PerSt_PROTECT_PERSON)
         p_owntng = &things[p_person->Owner];
 
-    flag = thing_select_specific_weapon(p_person, weptype, first_flag);
-
     peep_change_weapon(p_person);
+    flag = thing_select_specific_weapon(p_person, wtype, first_flag);
     p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
 
     if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))
@@ -221,7 +220,7 @@ void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr
         if (p_agent == p_person)
             continue;
 
-        if (!person_carries_weapon(p_agent, weptype) || (flag == WepSel_HIDE))
+        if (!person_carries_weapon(p_agent, wtype) || (flag == WepSel_HIDE))
         {
             stop_looped_weapon_sample(p_agent, p_agent->U.UPerson.CurrentWeapon);
             if (flag == WepSel_HIDE)
@@ -236,16 +235,16 @@ void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr
             else
             {
                 choose_best_weapon_for_range(p_agent, 1280);
+                p_agent->U.UPerson.AnimMode = gun_out_anim(p_agent, 0);
+                reset_person_frame(p_agent);
+                p_agent->Speed = calc_person_speed(p_agent);
             }
         }
         else
         {
             peep_change_weapon(p_agent);
-            thing_select_specific_weapon(p_agent, weptype, flag);
+            thing_select_specific_weapon(p_agent, wtype, flag);
         }
-        p_agent->U.UPerson.AnimMode = gun_out_anim(p_agent, 0);
-        reset_person_frame(p_agent);
-        p_agent->Speed = calc_person_speed(p_agent);
         p_agent->U.UPerson.TempWeapon = p_agent->U.UPerson.CurrentWeapon;
     }
 }
@@ -306,7 +305,7 @@ void player_agent_init_goto_gnd_point_abs(PlayerIdx plyr, struct Thing *p_person
 }
 
 void player_agent_select_specific_weapon(PlayerIdx plyr, struct Thing *p_person,
-  ushort wtype, ubyte flag)
+  WeaponType wtype, ubyte flag)
 {
     thing_select_specific_weapon(p_person, wtype, flag);
     peep_change_weapon(p_person);

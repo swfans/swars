@@ -662,10 +662,10 @@ TbBool thing_arrived_at_objectv(ThingIdx thing, struct Objective *p_objectv)
 /** Returns whether given item (which may be weapon) has arrived at given objective position.
  *
  * @param thing Thing index for the item to check.
- * @param weapon Weapon type, in case it was picked up and therfore is no longer at expected Thing index.
+ * @param wtype Weapon type, in case it was picked up and therfore is no longer at expected Thing index.
  * @param p_objectv Pointer to the objective which XYZ coords and radius will be checked.
  */
-TbBool item_arrived_at_objectv(ThingIdx thing, ushort weapon, struct Objective *p_objectv)
+TbBool item_arrived_at_objectv(ThingIdx thing, WeaponType wtype, struct Objective *p_objectv)
 {
     struct SimpleThing *p_sthing;
 
@@ -677,7 +677,7 @@ TbBool item_arrived_at_objectv(ThingIdx thing, ushort weapon, struct Objective *
     if ((p_sthing->Type == SmTT_DROPPED_ITEM) || (p_sthing->Type == SmTT_CARRIED_ITEM))
     {
         // Make sure the dropped thing exists, and was not reused for a different dropped item
-        if (!thing_is_destroyed(thing) && (p_sthing->U.UWeapon.WeaponType == weapon))
+        if (!thing_is_destroyed(thing) && (p_sthing->U.UWeapon.WeaponType == wtype))
             // Note that having two identical items in game (ie. two same weapons) could lead to
             // the 2nd one accidentally dropping into thing slot from the first, and locking out
             // this objective; make sure there is only one such item on a level to avoid that
@@ -685,10 +685,10 @@ TbBool item_arrived_at_objectv(ThingIdx thing, ushort weapon, struct Objective *
     }
     // If the target is no longer a correct thing, then it is now either carried weapon or
     // a different dropped weapon (dropping it created another thing)
-    thing = find_dropped_weapon_within_circle(p_objectv->X, p_objectv->Z, p_objectv->Radius << 6, weapon);
+    thing = find_dropped_weapon_within_circle(p_objectv->X, p_objectv->Z, p_objectv->Radius << 6, wtype);
     if (thing != 0)
         return true;
-    thing = find_person_carrying_weapon_within_circle(p_objectv->X, p_objectv->Z, p_objectv->Radius << 6, weapon);
+    thing = find_person_carrying_weapon_within_circle(p_objectv->X, p_objectv->Z, p_objectv->Radius << 6, wtype);
     return (thing != 0);
 }
 
@@ -702,7 +702,7 @@ TbBool item_arrived_at_objectv(ThingIdx thing, ushort weapon, struct Objective *
  * exact same weapon instance, but that should not matter in most practical
  * uses of the objective.
  */
-TbBool item_is_carried_by_player(ThingIdx thing, ushort weapon, ushort plyr)
+TbBool item_is_carried_by_player(ThingIdx thing, WeaponType wtype, ushort plyr)
 {
     struct SimpleThing *p_sthing;
     short plyagent, plygroup;
@@ -717,7 +717,7 @@ TbBool item_is_carried_by_player(ThingIdx thing, ushort weapon, ushort plyr)
     p_player = &players[plyr];
 
     if ((p_sthing->Type == SmTT_DROPPED_ITEM) &&
-      (p_sthing->U.UWeapon.WeaponType == weapon))
+      (p_sthing->U.UWeapon.WeaponType == wtype))
         return false;
 
     plyagent = p_player->DirectControl[0];
@@ -735,7 +735,7 @@ TbBool item_is_carried_by_player(ThingIdx thing, ushort weapon, ushort plyr)
 
         p_agent = p_player->MyAgent[i];
         if (p_agent->Type != TT_PERSON) continue;
-        if (person_carries_weapon(p_agent, weapon))
+        if (person_carries_weapon(p_agent, wtype))
             return true;
     }
     return false;
