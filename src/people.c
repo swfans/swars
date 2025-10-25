@@ -3689,7 +3689,7 @@ void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, i
         : : "a" (p_person), "d" (x), "b" (y), "c" (z), "g" (face));
 }
 
-int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, uint flag)
+int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, ubyte flag)
 {
 #if 0
     int ret;
@@ -3698,7 +3698,7 @@ int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, uint fla
     return ret;
 #endif
     if ((p_person->Flag & TngF_Destroyed) != 0)
-        return 0;
+        return false;
     if (weapon == WEP_AIRSTRIKE && current_map == 65) // map065 The Moon
     {
         play_dist_sample(p_person, 0x81u, 0x7Fu, 0x40u, 100, 0, 3);
@@ -3728,7 +3728,7 @@ int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, uint fla
         return false;
     }
 
-    if (((p_person->U.UPerson.CurrentWeapon == weapon) || (flag == 1)) && (flag != 2))
+    if (((p_person->U.UPerson.CurrentWeapon == weapon) || (flag == WepSel_SELECT)) && (flag != WepSel_HIDE))
     {
         if ((p_person->Flag & TngF_PlayerAgent) != 0 && (p_person->Flag2 & TgF2_Unkn0800) == 0) {
             PlayerInfo *p_player;

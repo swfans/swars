@@ -2286,7 +2286,7 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
         {
             if ((p_agent != NULL) && (pnitm != 0))
             {
-                my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, p_agent->ThingOffset, pnitm, 0, 0);
+                my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, p_agent->ThingOffset, pnitm, WepSel_TOGGLE, 0);
                 p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
                 lbDisplay.RightButton = 0;
                 lbDisplay.LeftButton = 0;
@@ -2332,7 +2332,7 @@ TbBool process_panel_state_grp_agents_weapon(ushort agent)
         // release button while in weapon selection mode
         if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
         {
-            my_build_packet(p_pckt, PAct_SELECT_GRP_SPEC_WEAPON, p_agent->ThingOffset, pnitm, 0, 0);
+            my_build_packet(p_pckt, PAct_SELECT_GRP_SPEC_WEAPON, p_agent->ThingOffset, pnitm, WepSel_TOGGLE, 0);
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             lbDisplay.RightButton = 0;
             lbDisplay.LeftButton = 0;

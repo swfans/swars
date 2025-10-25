@@ -190,19 +190,20 @@ void player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ushort 
     p_person->Speed = calc_person_speed(p_person);
 }
 
-void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr, ushort weapon)
+void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr,
+  ushort weapon, ubyte first_flag)
 {
     struct Thing *p_owntng;
     ushort plagent;
+    TbBool is_selected;
     ubyte flag;
 
     p_owntng = p_person;
     if (p_person->State == PerSt_PROTECT_PERSON)
         p_owntng = &things[p_person->Owner];
 
-    flag = thing_select_specific_weapon(p_person, weapon, 0);
-    if (flag != 1)
-        flag = 2;
+    is_selected = thing_select_specific_weapon(p_person, weapon, first_flag);
+    flag = is_selected ? WepSel_SELECT : WepSel_HIDE;
 
     peep_change_weapon(p_person);
     p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
@@ -309,9 +310,10 @@ void player_agent_init_goto_gnd_point_abs(PlayerIdx plyr, struct Thing *p_person
     thing_goto_point(p_person, cor_x, cor_y, cor_z);
 }
 
-void player_agent_select_specific_weapon(PlayerIdx plyr, struct Thing *p_person, ushort wtype)
+void player_agent_select_specific_weapon(PlayerIdx plyr, struct Thing *p_person,
+  ushort wtype, ubyte first_flag)
 {
-    thing_select_specific_weapon(p_person, wtype, 0);
+    thing_select_specific_weapon(p_person, wtype, first_flag);
     peep_change_weapon(p_person);
     p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
     reset_person_frame(p_person);
@@ -621,6 +623,10 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (p_pckt->Y > WepSel_HIDE) {
+            result = PARes_EINVAL;
+            break;
+        }
         if (person_slot_as_player_agent(p_thing, plyr) < 0) {
             result = PARes_EBADSLT;
             break;
@@ -633,7 +639,7 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        player_agent_select_specific_weapon(plyr, p_thing, p_pckt->X);
+        player_agent_select_specific_weapon(plyr, p_thing, p_pckt->X, p_pckt->Y);
         result = PARes_DONE;
         break;
     case PAct_DROP_HELD_WEAPON_SECR:
@@ -872,6 +878,10 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
             result = PARes_EINVAL;
             break;
         }
+        if (p_pckt->Y > WepSel_HIDE) {
+            result = PARes_EINVAL;
+            break;
+        }
         if (person_slot_as_player_agent(p_thing, plyr) < 0) {
             result = PARes_EBADSLT;
             break;
@@ -884,7 +894,7 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
             result = PARes_TNGBADST;
             break;
         }
-        person_grp_switch_to_specific_weapon(p_thing, plyr, p_pckt->X);
+        person_grp_switch_to_specific_weapon(p_thing, plyr, p_pckt->X, p_pckt->Y);
         result = PARes_DONE;
         break;
     case PAct_AGENT_USE_MEDIKIT:

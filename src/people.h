@@ -136,6 +136,12 @@ enum PersonFlags3 {
 
 #define PERSON_MAX_SPEED 2048
 
+enum ThingWeaponSelectFlags {
+    WepSel_TOGGLE = 0,
+    WepSel_SELECT,
+    WepSel_HIDE,
+};
+
 struct Thing;
 
 struct PeepStat
@@ -307,7 +313,16 @@ void person_init_get_item(struct Thing *p_person, short item, ushort plyr);
 void person_init_get_item_fast(struct Thing *p_person, short item, ushort plyr);
 void person_init_plant_mine_fast(struct Thing *p_thing, short x, short y, short z, int face);
 void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, int face);
-int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, uint flag);
+
+/** Selects a wielded weapon for the thing, or hides the weapon currently in hands.
+ *
+ * @param p_person The thing which will have current weapon switched.
+ * @param weapon The weapon type to be used.
+ * @param flag Value from ThingWeaponSelectFlags enum, telling whether to select or hide weapon.
+ * @return Gives true if the weapon was made the currently wielded weapon, false otherwise.
+ */
+int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, ubyte flag);
+
 void person_go_enter_vehicle_fast(struct Thing *p_person, struct Thing *p_vehicle, ushort plyr);
 void person_go_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle);
 void person_init_follow_person(struct Thing *p_person, struct Thing *p_other);

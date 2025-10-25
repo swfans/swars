@@ -4931,15 +4931,15 @@ ubyte weapon_select_input(void)
         // selecting and deselecting weapon; process_packets() would have to be updated for
         // that to work, ie. to use one of zeroed packet parameters as select/deselect flag
 #if 0
-        my_build_packet(&packets[local_player_no], PAct_SELECT_GRP_SPEC_WEAPON, dcthing, weptype, 0, 0);
+        my_build_packet(&packets[local_player_no], PAct_SELECT_GRP_SPEC_WEAPON, dcthing, weptype, WepSel_TOGGLE, 0);
 #else
-        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, 0, 0);
+        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, WepSel_TOGGLE, 0);
 #endif
         last_sel_weapon_turn[n] -= 7;
     }
     else
     {
-        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, 0, 0);
+        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, weptype, WepSel_TOGGLE, 0);
         last_sel_weapon_turn[n] = gameturn;
     }
 
