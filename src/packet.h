@@ -146,6 +146,8 @@ struct Packet
 extern struct Packet packets[8];
 extern void (*my_build_packet)(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 
+const char * get_packet_action_result_text(short result);
+
 void build_packet(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 void build_packet2(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 void build_packet3(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);

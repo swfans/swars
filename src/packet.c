@@ -37,12 +37,29 @@ struct PacketFileHead {
 
 #pragma pack()
 
+const char *packet_action_result_text[] = {
+    "action done",
+    "action succeeded",
+    "unsupported action code",
+    "invalid argument",
+    "invalid agent slot",
+    "already done/in progress",
+    "thing in bad state",
+};
+
 void (*my_build_packet)(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 
 /******************************************************************************/
 
 extern TbFileHandle packet_rec_fh;
 ushort packet_rec_no = 0;
+
+const char * get_packet_action_result_text(short result)
+{
+    if ((result < 0) || (result > sizeof(packet_action_result_text)/sizeof(packet_action_result_text[0])))
+        return "outranged";
+    return packet_action_result_text[result];
+}
 
 void build_packet(struct Packet *packet, ushort type, ulong param1, long x, long y, long z)
 {

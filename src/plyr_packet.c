@@ -867,8 +867,8 @@ void process_packet(PlayerIdx plyr, struct Packet *packet, ushort i)
         break;
     }
     if (result > PARes_SUCCESS) {
-        LOGWARN("Player %d action %d: result %d", (int)plyr, (int)(packet->Action & 0x7FFF),
-          (int)result);
+        LOGWARN("Player %d action %d: %s", (int)plyr, (int)(packet->Action & 0x7FFF),
+          get_packet_action_result_text(result));
     }
 }
 
