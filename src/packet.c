@@ -117,7 +117,7 @@ const char *packet_action_name[] = {
     "AGENT_SELF_DESTRUCT",
 };
 
-void (*my_build_packet)(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
+void (*my_build_packet)(struct Packet *packet, ushort action, ulong param1, long x, long y, long z);
 
 /******************************************************************************/
 
@@ -265,7 +265,6 @@ void build_packet(struct Packet *packet, ushort action, ulong param1, long x, lo
         packet->Action = action;
         break;
     case 3:
-        ingame.UserZoom = 120;
         packet->Data = param1;
         packet->X = x;
         packet->Y = y;
@@ -283,31 +282,133 @@ void build_packet(struct Packet *packet, ushort action, ulong param1, long x, lo
     }
 }
 
-void build_packet2(struct Packet *packet, ushort type, ulong param1, long x, long y, long z)
+void build_packet2(struct Packet *packet, ushort action, ulong param1, long x, long y, long z)
 {
+#if 0
     asm volatile (
       "push %5\n"
       "push %4\n"
       "call ASM_build_packet2\n"
         : : "a" (packet), "d" (type), "b" (param1), "c" (x), "g" (y), "g" (z));
+#endif
+    ubyte num_params;
+
+    num_params = packet_action_params_count(action);
+    packet_action_immediate_local_change(1, action);
+
+    switch (num_params)
+    {
+    case 1:
+        packet->Data2 = param1;
+        packet->Action2 = action;
+        break;
+    case 2:
+        packet->Data2 = param1;
+        packet->X2 = x;
+        packet->Action2 = action;
+        break;
+    case 3:
+        packet->Data2 = param1;
+        packet->X2 = x;
+        packet->Y2 = y;
+        packet->Action2 = action;
+        break;
+    case 4:
+        packet->Data2 = param1;
+        packet->X2 = x;
+        packet->Y2 = y;
+        packet->Z2 = z;
+        packet->Action2 = action;
+        break;
+    default:
+        break;
+    }
 }
 
-void build_packet3(struct Packet *packet, ushort type, ulong param1, long x, long y, long z)
+void build_packet3(struct Packet *packet, ushort action, ulong param1, long x, long y, long z)
 {
+#if 0
     asm volatile (
       "push %5\n"
       "push %4\n"
       "call ASM_build_packet3\n"
         : : "a" (packet), "d" (type), "b" (param1), "c" (x), "g" (y), "g" (z));
+#endif
+    ubyte num_params;
+
+    num_params = packet_action_params_count(action);
+    packet_action_immediate_local_change(2, action);
+
+    switch (num_params)
+    {
+    case 1:
+        packet->Data3 = param1;
+        packet->Action3 = action;
+        break;
+    case 2:
+        packet->Data3 = param1;
+        packet->X3 = x;
+        packet->Action3 = action;
+        break;
+    case 3:
+        packet->Data3 = param1;
+        packet->X3 = x;
+        packet->Y3 = y;
+        packet->Action3 = action;
+        break;
+    case 4:
+        packet->Data3 = param1;
+        packet->X3 = x;
+        packet->Y3 = y;
+        packet->Z3 = z;
+        packet->Action3 = action;
+        break;
+    default:
+        break;
+    }
 }
 
-void build_packet4(struct Packet *packet, ushort type, ulong param1, long x, long y, long z)
+void build_packet4(struct Packet *packet, ushort action, ulong param1, long x, long y, long z)
 {
+#if 0
     asm volatile (
       "push %5\n"
       "push %4\n"
       "call ASM_build_packet4\n"
         : : "a" (packet), "d" (type), "b" (param1), "c" (x), "g" (y), "g" (z));
+#endif
+    ubyte num_params;
+
+    num_params = packet_action_params_count(action);
+    packet_action_immediate_local_change(3, action);
+
+    switch (num_params)
+    {
+    case 1:
+        packet->Data4 = param1;
+        packet->Action4 = action;
+        break;
+    case 2:
+        packet->Data4 = param1;
+        packet->X4 = x;
+        packet->Action4 = action;
+        break;
+    case 3:
+        packet->Data4 = param1;
+        packet->X4 = x;
+        packet->Y4 = y;
+        packet->Action4 = action;
+        break;
+    case 4:
+        packet->Data4 = param1;
+        packet->X4 = x;
+        packet->Y4 = y;
+        packet->Z4 = z;
+        packet->Action4 = action;
+        break;
+    default:
+        break;
+    }
 }
 
 void PacketRecord_Close(void)
