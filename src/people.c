@@ -3691,10 +3691,69 @@ void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, i
 
 int thing_select_specific_weapon(struct Thing *p_person, ushort weapon, uint flag)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_thing_select_specific_weapon\n"
         : "=r" (ret) : "a" (p_person), "d" (weapon), "b" (flag));
     return ret;
+#endif
+    if ((p_person->Flag & TngF_Destroyed) != 0)
+        return 0;
+    if (weapon == WEP_AIRSTRIKE && current_map == 65) // map065 The Moon
+    {
+        play_dist_sample(p_person, 0x81u, 0x7Fu, 0x40u, 100, 0, 3);
+        p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+        return false;
+    }
+
+    if ((p_person->Flag2 & TgF2_Unkn0001) != 0)
+        finalise_razor_wire(p_person);
+    stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);
+
+    if (!person_carries_weapon(p_person, weapon))
+        return false;
+
+    if (weapon == WEP_MEDI1) // TODO why selecting medkit just uses it? Make it active innstead, and use on LMB? Why make MEDI2 different?
+    {
+        if ((p_person->Flag & TngF_PlayerAgent) != 0) {
+            PlayerIdx plyr;
+
+            plyr = p_person->U.UPerson.ComCur >> 2;
+            if (plyr == local_player_no)
+                play_sample_using_heap(0, 2, 127, 64, 100, 0, 3u);
+        }
+
+        p_person->Health = p_person->U.UPerson.MaxHealth;
+        person_weapons_remove_one(p_person, weapon);
+        return false;
+    }
+
+    if (((p_person->U.UPerson.CurrentWeapon == weapon) || (flag == 1)) && (flag != 2))
+    {
+        if ((p_person->Flag & TngF_PlayerAgent) != 0 && (p_person->Flag2 & TgF2_Unkn0800) == 0) {
+            PlayerInfo *p_player;
+            PlayerIdx plyr;
+            ushort plagent;
+
+            plagent = p_person->U.UPerson.ComCur & 3;
+            plyr = p_person->U.UPerson.ComCur >> 2;
+            p_player = &players[plyr];
+
+            p_player->PrevWeapon[plagent] = p_person->U.UPerson.CurrentWeapon;
+        }
+        p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+        switch_person_anim_mode(p_person, 0);
+    }
+    else
+    {
+        ubyte animode;
+        p_person->U.UPerson.CurrentWeapon = weapon;
+        animode = gun_out_anim(p_person, 0);
+        switch_person_anim_mode(p_person, animode);
+    }
+    p_person->Speed = calc_person_speed(p_person);
+
+    return (p_person->U.UPerson.CurrentWeapon == WEP_NULL);
 }
 
 void person_go_enter_vehicle_fast(struct Thing *p_person, struct Thing *p_vehicle, ushort plyr)
