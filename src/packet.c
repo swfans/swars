@@ -23,6 +23,7 @@
 #include "campaign.h"
 #include "game_data.h"
 #include "game.h"
+#include "player.h"
 #include "swlog.h"
 /******************************************************************************/
 #pragma pack(1)
@@ -137,13 +138,149 @@ const char * get_packet_action_result_text(short result)
     return packet_action_result_text[result];
 }
 
-void build_packet(struct Packet *packet, ushort type, ulong param1, long x, long y, long z)
+void packet_action_immediate_local_change(ubyte cmouser, ushort action)
 {
+    players[local_player_no].PrevState[cmouser] = action;
+
+    switch (action & 0x7FFF)
+    {
+    case PAct_SELECT_PREV_WEAPON:
+    case PAct_SELECT_SPECIFIC_WEAPON:
+    case PAct_SELECT_NEXT_WEAPON:
+    case PAct_SELECT_GRP_SPEC_WEAPON:
+    case PAct_33:
+        ingame.UserZoom = 120;
+        break;
+    default:
+        break;
+    }
+}
+
+ubyte packet_action_params_count(ushort action)
+{
+    switch (action & 0x7FFF)
+    {
+    case PAct_NONE:
+    case PAct_AGENT_UNKGROUP_PROT:
+    case PAct_AGENT_UNKGROUP_ADD:
+    case PAct_CHAT_MESSAGE_KEY:
+    case PAct_AGENT_USE_MEDIKIT:
+    case PAct_LEAVE_VEHICLE:
+    case PAct_AGENT_SELF_DESTRUCT:
+    case PAct_PROTECT_INC:
+    case PAct_PROTECT_TOGGLE:
+    case PAct_DROP_SELC_WEAPON_SECR:
+    case PAct_SHIELD_TOGGLE:
+    case PAct_CONTROL_MODE:
+        return 1;
+
+    case PAct_GET_ITEM:
+    case PAct_DROP_HELD_WEAPON_SECR:
+    case PAct_AGENT_SET_MOOD:
+    case PAct_F:
+    case PAct_PICKUP:
+    case PAct_ENTER_VEHICLE:
+    case PAct_GO_ENTER_VEHICLE:
+    case PAct_GROUP_SET_MOOD:
+    case PAct_GO_ENTER_VEHICLE_FF:
+    case PAct_GET_ITEM_FAST:
+    case PAct_FOLLOW_PERSON:
+    case PAct_SELECT_AGENT:
+    case PAct_SHOOT_AT_THING:
+        return 2;
+
+    case PAct_SELECT_PREV_WEAPON:
+    case PAct_SELECT_SPECIFIC_WEAPON:
+    case PAct_SELECT_NEXT_WEAPON:
+    case PAct_SELECT_GRP_SPEC_WEAPON:
+    case PAct_33:
+        return 3;
+
+    case PAct_18:
+    case PAct_AGENT_GOTO_GND_PT_REL_FF:
+    case PAct_SHOOT_AT_GND_POINT:
+    case PAct_PLANT_MINE_AT_GND_PT:
+    case PAct_AGENT_GOTO_GND_PT_ABS:
+    case PAct_AGENT_GOTO_GND_PT_REL:
+    case PAct_AGENT_GOTO_FACE_PT_ABS:
+    case PAct_AGENT_GOTO_GND_PT_ABS_FF:
+    case PAct_SHOOT_AT_GND_POINT_FF:
+    case PAct_PEEPS_SCATTER:
+    case PAct_SHOOT_AT_FACE_POINT:
+    case PAct_SHOOT_AT_FACE_POINT_FF:
+    case PAct_PLANT_MINE_AT_FACE_PT:
+    case PAct_PLANT_MINE_AT_FACE_PT_FF:
+    case PAct_AGENT_GOTO_FACE_PT_ABS_FF:
+    case PAct_PLANT_MINE_AT_GND_PT_FF:
+    case PAct_29:
+        return 4;
+
+    case PAct_1:
+    case PAct_MISSN_ABORT:
+    case PAct_3:
+    case PAct_4:
+    case PAct_5:
+    case PAct_6:
+    case PAct_7:
+    case PAct_8:
+    case PAct_9:
+    case PAct_A:
+    case PAct_11:
+    case PAct_12:
+    case PAct_13:
+    case PAct_16:
+    case PAct_3C:
+    case PAct_3D:
+    case PAct_3E:
+    case PAct_3F:
+    case PAct_40:
+    default:
+        return 0;
+    }
+}
+
+void build_packet(struct Packet *packet, ushort action, ulong param1, long x, long y, long z)
+{
+#if 0
     asm volatile (
       "push %5\n"
       "push %4\n"
       "call ASM_build_packet\n"
-        : : "a" (packet), "d" (type), "b" (param1), "c" (x), "g" (y), "g" (z));
+        : : "a" (packet), "d" (action), "b" (param1), "c" (x), "g" (y), "g" (z));
+#endif
+    ubyte num_params;
+
+    num_params = packet_action_params_count(action);
+    packet_action_immediate_local_change(0, action);
+
+    switch (num_params)
+    {
+    case 1:
+        packet->Data = param1;
+        packet->Action = action;
+        break;
+    case 2:
+        packet->Data = param1;
+        packet->X = x;
+        packet->Action = action;
+        break;
+    case 3:
+        ingame.UserZoom = 120;
+        packet->Data = param1;
+        packet->X = x;
+        packet->Y = y;
+        packet->Action = action;
+        break;
+    case 4:
+        packet->Data = param1;
+        packet->X = x;
+        packet->Y = y;
+        packet->Z = z;
+        packet->Action = action;
+        break;
+    default:
+        break;
+    }
 }
 
 void build_packet2(struct Packet *packet, ushort type, ulong param1, long x, long y, long z)

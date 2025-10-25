@@ -2709,17 +2709,17 @@ void init_level(void)
     for (plyr_no = 0; plyr_no < PLAYERS_LIMIT; plyr_no++)
     {
         PlayerInfo *p_player;
-        short mouser;
+        short cmouser;
 
         p_player = &players[plyr_no];
-        for (mouser = 0; mouser < 4; mouser++)
+        for (cmouser = 0; cmouser < 4; cmouser++)
         {
-            p_player->UserVX[mouser] = 0;
-            p_player->UserVY[mouser] = 0;
-            p_player->UserVZ[mouser] = 0;
-            p_player->SpecialItems[mouser] = 0;
-            p_player->PanelItem[mouser] = 0;
-            p_player->PanelState[mouser] = PANEL_STATE_NORMAL;
+            p_player->UserVX[cmouser] = 0;
+            p_player->UserVY[cmouser] = 0;
+            p_player->UserVZ[cmouser] = 0;
+            p_player->SpecialItems[cmouser] = 0;
+            p_player->PanelItem[cmouser] = 0;
+            p_player->PanelState[cmouser] = PANEL_STATE_NORMAL;
         }
         p_player->GotoFace = 0;
         p_player->field_102 = 0;
