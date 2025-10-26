@@ -1758,7 +1758,7 @@ void update_game_panel(void)
         case PanT_AgentMedi:
             // If an agent has a medkit, use the sprite with lighted cross
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            panel_sprites_switch(panel, (p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent));
+            panel_sprites_switch(panel, (p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent->ThingOffset));
             break;
         case PanT_WeaponEnergy:
             // If supershield is enabled for the current agent, draw energy bar in red
@@ -2241,11 +2241,11 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
 {
     PlayerInfo *p_locplayer;
     struct Packet *p_pckt;
-    short pnitm;
+    WeaponType wtype;
 
     p_locplayer = &players[local_player_no];
     p_pckt = &packets[local_player_no];
-    pnitm = p_locplayer->PanelItem[mouser];
+    wtype = p_locplayer->PanelItem[mouser];
 
     if (lbDisplay.RightButton)
     {
@@ -2255,10 +2255,10 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
         lbDisplay.RightButton = 0;
         p_agent = p_locplayer->MyAgent[agent];
 
-        if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
+        if ((p_agent->Type == TT_PERSON) && (wtype != 0))
         {
             p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn4000;
-            my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, pnitm, 0, 0);
+            my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, wtype, 0, 0);
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             return true;
         }
@@ -2273,10 +2273,10 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
         {
             // Hold left, hold right, release left weapon drop
             lbDisplay.RightButton = 0;
-            if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
+            if ((p_agent->Type == TT_PERSON) && (wtype != 0))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn4000;
-                my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, pnitm, 0, 0);
+                my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, wtype, 0, 0);
                 p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
                 return true;
             }
@@ -2284,9 +2284,9 @@ TbBool process_panel_state_one_agent_weapon(ushort agent)
 
         // release button while in weapon selection mode
         {
-            if ((p_agent != NULL) && (pnitm != 0))
+            if ((p_agent != NULL) && (wtype != 0))
             {
-                my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, p_agent->ThingOffset, pnitm, WepSel_TOGGLE, 0);
+                my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, p_agent->ThingOffset, wtype, WepSel_TOGGLE, 0);
                 p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
                 lbDisplay.RightButton = 0;
                 lbDisplay.LeftButton = 0;
@@ -2303,11 +2303,11 @@ TbBool process_panel_state_grp_agents_weapon(ushort agent)
 {
     PlayerInfo *p_locplayer;
     struct Packet *p_pckt;
-    short pnitm;
+    WeaponType wtype;
 
     p_locplayer = &players[local_player_no];
     p_pckt = &packets[local_player_no];
-    pnitm = p_locplayer->PanelItem[mouser];
+    wtype = p_locplayer->PanelItem[mouser];
 
     if (lbDisplay.LeftButton)
     {
@@ -2316,10 +2316,10 @@ TbBool process_panel_state_grp_agents_weapon(ushort agent)
 
         lbDisplay.LeftButton = 0;
         p_agent = p_locplayer->MyAgent[agent];
-        if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
+        if ((p_agent->Type == TT_PERSON) && (wtype != 0))
         {
             p_locplayer->UserInput[mouser].ControlMode |= UInpCtrF_Unkn8000;
-            my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, pnitm, 0, 0);
+            my_build_packet(p_pckt, PAct_DROP_HELD_WEAPON_SECR, p_agent->ThingOffset, wtype, 0, 0);
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             return true;
         }
@@ -2330,9 +2330,9 @@ TbBool process_panel_state_grp_agents_weapon(ushort agent)
 
         p_agent = p_locplayer->MyAgent[agent];
         // release button while in weapon selection mode
-        if ((p_agent->Type == TT_PERSON) && (pnitm != 0))
+        if ((p_agent->Type == TT_PERSON) && (wtype != 0))
         {
-            my_build_packet(p_pckt, PAct_SELECT_GRP_SPEC_WEAPON, p_agent->ThingOffset, pnitm, WepSel_TOGGLE, 0);
+            my_build_packet(p_pckt, PAct_SELECT_GRP_SPEC_WEAPON, p_agent->ThingOffset, wtype, WepSel_TOGGLE, 0);
             p_locplayer->PanelState[mouser] = PANEL_STATE_NORMAL;
             lbDisplay.RightButton = 0;
             lbDisplay.LeftButton = 0;
@@ -2530,7 +2530,7 @@ TbBool check_panel_input(short panel)
         case PanT_AgentMedi:
             // Use medikit
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent))
+            if ((p_agent->Type == TT_PERSON) && person_carries_any_medikit(p_agent->ThingOffset))
             {
                 my_build_packet(p_pckt, PAct_AGENT_USE_MEDIKIT, p_agent->ThingOffset, 0, 0, 0);
                 return 1;

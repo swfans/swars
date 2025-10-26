@@ -221,7 +221,10 @@ TbBool person_is_dead_or_dying(ThingIdx thing);
 ubyte person_get_selected_weapon(ThingIdx thing);
 
 TbBool person_carries_weapon(struct Thing *p_person, WeaponType wtype);
-TbBool person_carries_any_medikit(struct Thing *p_person);
+
+/** Returns if a person carries medikit of any kind.
+ */
+TbBool person_carries_any_medikit(ThingIdx person);
 
 TbBool person_can_accept_control(ThingIdx person);
 

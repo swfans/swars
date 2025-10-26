@@ -575,8 +575,14 @@ TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon)
     return weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, weapon);
 }
 
-TbBool person_carries_any_medikit(struct Thing *p_person)
+TbBool person_carries_any_medikit(ThingIdx person)
 {
+    struct Thing *p_person;
+
+    if (person <= 0)
+        return false;
+
+    p_person = &things[person];
     return person_carries_weapon(p_person, WEP_MEDI2) || person_carries_weapon(p_person, WEP_MEDI1);
 }
 

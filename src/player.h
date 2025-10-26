@@ -35,7 +35,7 @@ extern "C" {
 
 #define CRYO_PODS_MAX_COUNT 32
 #define AGENTS_SQUAD_MAX_COUNT 4
-#define MOUSER_USERS_MAX_COUNT 4
+#define LOCAL_USERS_MAX_COUNT 4
 
 struct Thing;
 
@@ -61,9 +61,9 @@ struct AgentInfo {
 };
 
 typedef struct {
-    /** Per-mouser agent input control parameters */
-    struct SpecialUserInput UserInput[MOUSER_USERS_MAX_COUNT];
-    u32 DirectControl[MOUSER_USERS_MAX_COUNT]; /* offs=0x88 */
+    /** Per-user agent input control parameters */
+    struct SpecialUserInput UserInput[LOCAL_USERS_MAX_COUNT];
+    u32 DirectControl[LOCAL_USERS_MAX_COUNT]; /* offs=0x88 */
     u32 ControlPad;
     /* Pointers to agents in the squad of this player.
      * These are guaranteed treference a valid thing (non-NULL),
@@ -72,9 +72,11 @@ typedef struct {
      * during the tactical mission, not in-menu.
      */
     struct Thing *MyAgent[AGENTS_SQUAD_MAX_COUNT];
+    /** Previously active weapon in players panel, used when switching weapons with ability to revert. */
     ubyte PrevWeapon[AGENTS_SQUAD_MAX_COUNT];  /* offs=0xAC */
-    ubyte PanelState[MOUSER_USERS_MAX_COUNT];
-    ubyte PanelItem[MOUSER_USERS_MAX_COUNT];
+    ubyte PanelState[LOCAL_USERS_MAX_COUNT];
+    /** Weapon type which is selected/highlighted on per-agent players panel. */
+    ubyte PanelItem[LOCAL_USERS_MAX_COUNT];
     ushort Dummy98; /* offs=0xB8 */
     ubyte Dummy97;
     ubyte MissionAgents;
@@ -88,9 +90,9 @@ typedef struct {
     ubyte PlayerNo;
     ulong Weapons[AGENTS_SQUAD_MAX_COUNT];
     union Mod Mods[AGENTS_SQUAD_MAX_COUNT];
-    /** Per-mouser agent command param value Y */
-    short UserVY[MOUSER_USERS_MAX_COUNT];
-    short SpecialItems[MOUSER_USERS_MAX_COUNT];
+    /** Per-user controlled agent command param value Y */
+    short UserVY[LOCAL_USERS_MAX_COUNT];
+    short SpecialItems[LOCAL_USERS_MAX_COUNT];
     short GotoFace;
     ushort PanelTimer;
     short PanelX;
@@ -100,10 +102,10 @@ typedef struct {
     short TargetType;
     ubyte FourPacks[5][AGENTS_SQUAD_MAX_COUNT];
     ubyte WepDelays[AGENTS_SQUAD_MAX_COUNT][32];
-    /** Per-mouser agent command param value X */
-    short UserVX[MOUSER_USERS_MAX_COUNT];
-    /** Per-mouser agent command param value Z */
-    short UserVZ[MOUSER_USERS_MAX_COUNT];
+    /** Per-user controlled agent command param value X */
+    short UserVX[LOCAL_USERS_MAX_COUNT];
+    /** Per-user controlled agent command param value Z */
+    short UserVZ[LOCAL_USERS_MAX_COUNT];
 } PlayerInfo;
 
 

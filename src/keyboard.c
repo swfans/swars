@@ -489,6 +489,7 @@ void set_default_game_keys(void)
     kbkeys[GKey_SEL_WEP_4] = KC_8;
     kbkeys[GKey_SEL_WEP_5] = KC_9;
     kbkeys[GKey_SEL_WEP_6] = KC_0;
+    kbkeys[GKey_USE_MEDIKIT] = KC_UNASSIGNED;
 #endif
 }
 

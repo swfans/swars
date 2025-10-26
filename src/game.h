@@ -411,6 +411,8 @@ extern struct LevelDef level_def;
 
 extern long dword_17710C;
 extern long dword_177110;
+
+/** Index of the local user who controls mouse. */
 extern ubyte mouser;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;

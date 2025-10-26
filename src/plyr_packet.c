@@ -901,7 +901,7 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
             result = PARes_EBADSLT;
             break;
         }
-        if (!person_carries_any_medikit(p_thing)) {
+        if (!person_carries_any_medikit(p_thing->ThingOffset)) {
             result = PARes_TNGBADST;
             break;
         }

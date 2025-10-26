@@ -2709,17 +2709,17 @@ void init_level(void)
     for (plyr_no = 0; plyr_no < PLAYERS_LIMIT; plyr_no++)
     {
         PlayerInfo *p_player;
-        short cmouser;
+        short plagent;
 
         p_player = &players[plyr_no];
-        for (cmouser = 0; cmouser < 4; cmouser++)
+        for (plagent = 0; plagent < LOCAL_USERS_MAX_COUNT; plagent++)
         {
-            p_player->UserVX[cmouser] = 0;
-            p_player->UserVY[cmouser] = 0;
-            p_player->UserVZ[cmouser] = 0;
-            p_player->SpecialItems[cmouser] = 0;
-            p_player->PanelItem[cmouser] = 0;
-            p_player->PanelState[cmouser] = PANEL_STATE_NORMAL;
+            p_player->UserVX[plagent] = 0;
+            p_player->UserVY[plagent] = 0;
+            p_player->UserVZ[plagent] = 0;
+            p_player->SpecialItems[plagent] = 0;
+            p_player->PanelItem[plagent] = 0;
+            p_player->PanelState[plagent] = PANEL_STATE_NORMAL;
         }
         p_player->GotoFace = 0;
         p_player->field_102 = 0;
@@ -4879,6 +4879,7 @@ ubyte weapon_select_input(void)
     return ret;
 #endif
     PlayerInfo *p_locplayer;
+    struct Packet *p_pckt;
     ThingIdx dcthing;
     WeaponType wtype;
     int n;
@@ -4896,9 +4897,21 @@ ubyte weapon_select_input(void)
     static GameTurn last_sel_weapon_turn[WEAPONS_CARRIED_MAX_COUNT] = {0};
 
     p_locplayer = &players[local_player_no];
+    p_pckt = &packets[local_player_no];
     dcthing = p_locplayer->DirectControl[0];
     wtype = WEP_NULL;
 
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_USE_MEDIKIT))
+    {
+        clear_gamekey_pressed(GKey_USE_MEDIKIT);
+        if (person_carries_any_medikit(dcthing))
+        {
+            my_build_packet(p_pckt, PAct_AGENT_USE_MEDIKIT, dcthing, 0, 0, 0);
+            return 1;
+        }
+    }
+#endif
 
     assert(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
 
@@ -4925,17 +4938,17 @@ ubyte weapon_select_input(void)
         return 0;
 
     // Double tapping - select for all agents
-    if (gameturn - last_sel_weapon_turn[n] < 7)
+    if (gameturn - last_sel_weapon_turn[n] < game_num_fps / 2)
     {
         ubyte flag;
 
         flag = (person_get_selected_weapon(dcthing) == wtype) ? WepSel_SELECT : WepSel_HIDE;
-        my_build_packet(&packets[local_player_no], PAct_SELECT_GRP_SPEC_WEAPON, dcthing, wtype, flag, 0);
-        last_sel_weapon_turn[n] -= 7;
+        my_build_packet(p_pckt, PAct_SELECT_GRP_SPEC_WEAPON, dcthing, wtype, flag, 0);
+        last_sel_weapon_turn[n] -= game_num_fps / 2;
     }
     else
     {
-        my_build_packet(&packets[local_player_no], PAct_SELECT_SPECIFIC_WEAPON, dcthing, wtype, WepSel_TOGGLE, 0);
+        my_build_packet(p_pckt, PAct_SELECT_SPECIFIC_WEAPON, dcthing, wtype, WepSel_TOGGLE, 0);
         last_sel_weapon_turn[n] = gameturn;
     }
 

@@ -737,7 +737,10 @@ ubyte load_game(int slot, char *desc)
                 p_locplayer->FourPacks[WFRPK_KOGAS][i] = 1;
             if (weapons_has_weapon(p_locplayer->Weapons[i], WEP_CRAZYGAS))
                 p_locplayer->FourPacks[WFRPK_CRAZYGAS][i] = 1;
+        }
 
+        for (i = 0; i < LOCAL_USERS_MAX_COUNT; i++)
+        {
             p_locplayer->UserVX[i] = 0;
             p_locplayer->UserVZ[i] = 0;
         }

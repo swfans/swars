@@ -62,6 +62,7 @@ enum GameKeys
   GKey_SEL_WEP_4 = 32,
   GKey_SEL_WEP_5 = 33,
   GKey_SEL_WEP_6 = 34,
+  GKey_USE_MEDIKIT = 35,
 #endif
   GKey_KEYS_COUNT,
 };
