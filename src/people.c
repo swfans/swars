@@ -3732,7 +3732,8 @@ ubyte thing_select_specific_weapon(struct Thing *p_person, WeaponType wtype, uby
     if (!person_carries_weapon(p_person, wtype))
         return WepSel_SKIP;
 
-    if (wtype == WEP_MEDI1) // TODO why selecting medkit just uses it? Make it active innstead, and use on LMB? Why make MEDI2 different?
+#if 0 // Disabled by community consensus - medikit should not be auto-consumed when selected
+    if (wtype == WEP_MEDI1)
     {
         if ((p_person->Flag & TngF_PlayerAgent) != 0) {
             PlayerIdx plyr;
@@ -3746,6 +3747,7 @@ ubyte thing_select_specific_weapon(struct Thing *p_person, WeaponType wtype, uby
         person_weapons_remove_one(p_person, wtype);
         return WepSel_HIDE;
     }
+#endif
 
     if (((p_person->U.UPerson.CurrentWeapon == wtype) || (flag == WepSel_HIDE)) && (flag != WepSel_SELECT))
     {
