@@ -241,10 +241,37 @@ TbBool player_agent_is_executing_commands(PlayerIdx plyr, ushort plagent)
 
 TbBool free_slot(ushort plagent, ubyte weapon)
 {
+#if 0
     TbBool ret;
     asm volatile ("call ASM_free_slot\n"
         : "=r" (ret) : "a" (plagent & 0xff), "d" (weapon));
     return ret;
+#endif
+    PlayerInfo *p_locplyr;
+    WeaponType wtype;
+    ubyte used_slots;
+    TbBool has_free;
+    ushort fp;
+
+    p_locplyr = &players[local_player_no];
+    used_slots = 0;
+    // TODO make it accept the "normal" wtype
+
+    fp = weapon_fourpack_index(weapon+1);
+    if ((fp < WFRPK_COUNT) && weapons_has_weapon(p_locplyr->Weapons[plagent], weapon+1))
+    {
+        has_free = cryo_agents.FourPacks[plagent].Amount[fp] < 4;
+    }
+    else
+    {
+        for (wtype = WEP_NULL + 1; wtype < WEP_TYPES_COUNT; wtype++)
+        {
+            if (weapons_has_weapon(p_locplyr->Weapons[plagent], wtype))
+                used_slots++;
+        }
+        has_free = used_slots < WEAPONS_CARRIED_MAX_COUNT;
+    }
+    return has_free;
 }
 
 TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon)
