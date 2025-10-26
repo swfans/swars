@@ -467,6 +467,8 @@ ubyte input_equip_agent_panel_shape(struct ScreenShape *shape, sbyte nagent)
             {
                 if (free_slot(nagent, mo_weapon))
                 {
+                    LOGSYNC("Transferred weapon %s from agent %d to agent %d",
+                      weapon_codename(mo_weapon+1), mo_from_agent, nagent);
                     player_cryo_transfer_weapon_between_agents(mo_from_agent, nagent, mo_weapon+1);
                 }
                 mo_weapon = -1;
@@ -1153,6 +1155,8 @@ void show_weapon_slot(short scr_x, short scr_y, WeaponType wtype)
             lbDisplay.LeftButton = 0;
             mo_weapon = (int)wtype - 1;
             mo_from_agent = selected_agent;
+            LOGSYNC("Dragging weapon %s from agent %d",
+              weapon_codename(mo_weapon+1), mo_from_agent);
         }
     }
 
@@ -1164,7 +1168,12 @@ void show_weapon_slot(short scr_x, short scr_y, WeaponType wtype)
             switch_equip_offer_to_sell();
             equip_update_for_selected_weapon();
         }
-        if ((int)wtype - 1 >= mo_weapon) {
+        // Cancel the dragging, unless the mouse is on active areas handled by other functions
+        // The specific active areas have to be defined here, as we really want to stop
+        // the dragging if mouse was released anywhere else
+        if ((int)wtype - 1 >= mo_weapon && !mouse_over_purple_apps_icon(ApBar_RESEARCH)) {
+            LOGSYNC("Return dragged weapon %s to agent %d",
+              weapon_codename(mo_weapon+1), mo_from_agent);
             mo_weapon = -1;
         }
     }

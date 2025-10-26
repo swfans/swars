@@ -125,15 +125,6 @@ enum PacketRecordMode {
   PktR_PLAYBACK = 0x2,
 };
 
-enum AppBarIcons {
-  ApBar_SYSTEM = 0,
-  ApBar_PANET,
-  ApBar_WORLDMAP,
-  ApBar_CRYO,
-  ApBar_EQUIP,
-  ApBar_RESEARCH,
-};
-
 // For some reason, we have different values for change_screen
 //TODO consolidate with ScreenType, use the same values
 enum ChangeScreenType {

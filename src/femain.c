@@ -1123,12 +1123,115 @@ TbBool is_purple_apps_selection_bar_visible(void)
     return (screentype != SCRT_MAINMENU) && (screentype != SCRT_LOGIN) && !restore_savegame;
 }
 
-void draw_purple_app_utility_icon(short cx, short cy, short iconid)
+TbBool is_purple_apps_utility_space_reserved(short iconid)
+{
+    return  (iconid != ApBar_PANET);
+}
+
+TbBool is_purple_apps_utility_visible(short iconid)
+{
+    // Show research icon only if the player has research facility
+    if ((iconid == ApBar_RESEARCH) && (research.NumBases == 0))
+        return false;
+
+    if (iconid == ApBar_NEWMAIL) {
+        return (new_mail &&
+          (game_system_screen != SySc_NETGAME || screentype != SCRT_SYSMENU));
+    }
+
+
+    if (login_control__State == 5)
+    {
+        TbBool visible;
+
+        if (is_unkn_current_player()) {
+            visible = (iconid != ApBar_PANET && iconid != ApBar_RESEARCH);
+        } else {
+            visible = (iconid != ApBar_PANET &&
+              iconid != ApBar_WORLDMAP &&
+              iconid != ApBar_RESEARCH);
+        }
+        if ((unkn_flags_08 & 0x02) == 0 || (unkn_flags_08 & 0x01) == 0)
+            visible = (iconid == ApBar_SYSTEM);
+        return visible;
+    }
+
+    // Completely hide Public Access Network icon
+    return (iconid != ApBar_PANET);
+}
+
+TbBool get_purple_apps_icon_rect(struct ScreenRect *p_rect, short iconid)
 {
     struct TbSprite *spr;
+    short cicnid;
+    short cx, cy;
 
-    spr = &fe_icons_sprites[byte_155124[iconid]];
-    if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
+    p_rect->X = 0;
+    p_rect->Y = 0;
+    // Show utility icons in bottom left
+    cx = global_apps_bar_box.X;
+    cy = global_apps_bar_box.Y;
+
+    for (cicnid = ApBar_SYSTEM; cicnid < ApBar_NEWMAIL; cicnid++)
+    {
+        if (cicnid == iconid)
+        {
+            p_rect->X = cx;
+            p_rect->Y = cy;
+            if (!is_purple_apps_utility_visible(cicnid)) {
+                p_rect->Width = 0;
+                p_rect->Height = 0;
+                return false;
+            }
+            spr = &fe_icons_sprites[byte_155124[cicnid]];
+            p_rect->Width = spr->SWidth;
+            p_rect->Height = spr->SHeight;
+            return true;
+        }
+        if (is_purple_apps_utility_space_reserved(cicnid))
+        {
+            spr = &fe_icons_sprites[byte_155124[cicnid]];
+            cx += spr->SWidth + 3;
+        }
+    }
+
+    { // Get size of unread mail notification icon
+        if (cicnid == iconid)
+        {
+            p_rect->X = cx;
+            p_rect->Y = cy;
+            if (!is_purple_apps_utility_visible(cicnid)) {
+                p_rect->Width = 0;
+                p_rect->Height = 0;
+                return false;
+            }
+            spr = &fe_icons_sprites[79];
+            p_rect->Width = spr->SWidth;
+            p_rect->Height = spr->SHeight;
+            return true;
+        }
+    }
+    return false;
+}
+
+TbBool mouse_over_purple_apps_icon(short iconid)
+{
+    struct ScreenRect rect;
+
+    if (!get_purple_apps_icon_rect(&rect, iconid))
+        return false;
+
+    return mouse_move_over_box(&rect);
+}
+
+void draw_purple_app_utility_icon(short iconid)
+{
+    struct ScreenRect rect;
+
+    if (!get_purple_apps_icon_rect(&rect, iconid))
+        return;
+
+    if (mouse_move_over_box(&rect))
     {
         if ((byte_1C497E & (1 << iconid)) == 0) {
             byte_1C497E |= (1 << iconid);
@@ -1144,7 +1247,7 @@ void draw_purple_app_utility_icon(short cx, short cy, short iconid)
         {
             lbDisplay.DrawFlags = 0;
         }
-        draw_app_icon_hilight(cx, cy, iconid, byte_1C4984[iconid]);
+        draw_app_icon_hilight(rect.X, rect.Y, iconid, byte_1C4984[iconid]);
         byte_1C4984[iconid]++;
         if (byte_1C4984[iconid] == byte_15512C[iconid])
             byte_1C4984[iconid] = 0;
@@ -1153,7 +1256,7 @@ void draw_purple_app_utility_icon(short cx, short cy, short iconid)
     {
         byte_1C497E &= ~(1 << iconid);
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        draw_app_icon_normal(cx, cy, iconid, byte_1C4984[iconid]);
+        draw_app_icon_normal(rect.X, rect.Y, iconid, byte_1C4984[iconid]);
         if (byte_1C4984[iconid])
         {
             byte_1C4984[iconid]++;
@@ -1167,12 +1270,14 @@ void draw_purple_app_utility_icon(short cx, short cy, short iconid)
     lbDisplay.DrawFlags = 0;
 }
 
-TbBool get_purple_app_utility_icon_inputs(short cx, short cy, short iconid)
+TbBool get_purple_app_utility_icon_inputs(short iconid)
 {
-    struct TbSprite *spr;
+    struct ScreenRect rect;
 
-    spr = &fe_icons_sprites[byte_155124[iconid]];
-    if (mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
+    if (!get_purple_apps_icon_rect(&rect, iconid))
+        return false;
+
+    if (mouse_move_over_box(&rect))
     {
         if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
         {
@@ -1183,6 +1288,8 @@ TbBool get_purple_app_utility_icon_inputs(short cx, short cy, short iconid)
         {
             if (mo_weapon != -1 && mo_weapon == research.CurrentWeapon)
             {
+                LOGSYNC("Transferred weapon %s from agent %d to research",
+                  weapon_codename(mo_weapon+1), mo_from_agent);
                 player_cryo_remove_weapon_one(mo_from_agent, mo_weapon + 1);
                 research_unkn_func_003();
                 mo_weapon = -1;
@@ -1217,15 +1324,17 @@ TbBool get_purple_app_utility_icon_inputs(short cx, short cy, short iconid)
     return false;
 }
 
-void draw_purple_app_unread_email_icon(short cx, short cy)
+void draw_purple_app_unread_email_icon(void)
 {
-    struct TbSprite *spr;
+    struct ScreenRect rect;
 
-    spr = &fe_icons_sprites[79];
+    if (!get_purple_apps_icon_rect(&rect, ApBar_NEWMAIL))
+        return;
+
     if ((is_key_pressed(KC_RETURN, KMod_DONTCARE)
         && ((game_system_screen != SySc_CONTROLS && game_system_screen != SySc_NETGAME)
             || screentype != SCRT_SYSMENU) && !edit_flag)
-        || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
+        || mouse_move_over_box(&rect))
     {
         if (!byte_1C4980 && !is_key_pressed(KC_RETURN, KMod_DONTCARE))
         {
@@ -1238,7 +1347,7 @@ void draw_purple_app_unread_email_icon(short cx, short cy)
         {
             lbDisplay.DrawFlags = 0;
         }
-        draw_unread_email_icon(cx, cy, byte_1C498C);
+        draw_unread_email_icon(rect.X, rect.Y, byte_1C498C);
         if (gameturn & 1)
         {
             if (++byte_1C498C > 5)
@@ -1249,7 +1358,7 @@ void draw_purple_app_unread_email_icon(short cx, short cy)
     {
         byte_1C4980 = 0;
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        draw_unread_email_icon(cx, cy, byte_1C498C);
+        draw_unread_email_icon(rect.X, rect.Y, byte_1C498C);
         if (gameturn & 1)
         {
             if (++byte_1C498C > 6)
@@ -1259,16 +1368,18 @@ void draw_purple_app_unread_email_icon(short cx, short cy)
     lbDisplay.DrawFlags = 0;
 }
 
-TbBool get_purple_app_unread_email_icon_inputs(short cx, short cy)
+TbBool get_purple_app_unread_email_icon_inputs(void)
 {
-    struct TbSprite *spr;
+    struct ScreenRect rect;
     const char *subtext;
 
-    spr = &fe_icons_sprites[79];
+    if (!get_purple_apps_icon_rect(&rect, ApBar_NEWMAIL))
+        return false;
+
     if ((is_key_pressed(KC_RETURN, KMod_DONTCARE)
         && ((game_system_screen != SySc_CONTROLS && game_system_screen != SySc_NETGAME)
             || screentype != SCRT_SYSMENU) && !edit_flag)
-        || mouse_move_over_rect(cx, cx + 1 + spr->SWidth, cy, cy + 1 + spr->SHeight))
+        || mouse_move_over_box(&rect))
     {
         if (lbDisplay.MLeftButton || (joy.Buttons[0] && !net_unkn_pos_02))
         {
@@ -1417,37 +1528,6 @@ TbBool get_purple_app_email_icon_inputs(short cx, short cy, short bri)
     return false;
 }
 
-TbBool is_purple_apps_utility_space_reserved(short iconid)
-{
-    return  (iconid != ApBar_PANET);
-}
-
-TbBool is_purple_apps_utility_visible(short iconid)
-{
-    // Show research icon only if the player has research facility
-    if ((iconid == ApBar_RESEARCH) && (research.NumBases == 0))
-        return false;
-
-    if (login_control__State == 5)
-    {
-        TbBool visible;
-
-        if (is_unkn_current_player()) {
-            visible = (iconid != ApBar_PANET && iconid != ApBar_RESEARCH);
-        } else {
-            visible = (iconid != ApBar_PANET &&
-              iconid != ApBar_WORLDMAP &&
-              iconid != ApBar_RESEARCH);
-        }
-        if ((unkn_flags_08 & 0x02) == 0 || (unkn_flags_08 & 0x01) == 0)
-            visible = (iconid == ApBar_SYSTEM);
-        return visible;
-    }
-
-    // Completely hide Public Access Network icon
-    return (iconid != ApBar_PANET);
-}
-
 /** Show a collection of icons at bottom of the screen.
  */
 void show_purple_apps_selection_bar(void)
@@ -1462,35 +1542,20 @@ void show_purple_apps_selection_bar(void)
     short cx, cy;
 
     // Show utility icons in bottom left
-    cx = global_apps_bar_box.X;
-    cy = global_apps_bar_box.Y;
-
-    for (iconid = 0; iconid < 6; iconid++)
+    for (iconid = ApBar_SYSTEM; iconid < ApBar_NEWMAIL; iconid++)
     {
-        if (is_purple_apps_utility_visible(iconid))
-        {
-            draw_purple_app_utility_icon(cx, cy, iconid);
-        }
-        if (is_purple_apps_utility_space_reserved(iconid))
-        {
-            struct TbSprite *spr;
-            spr = &fe_icons_sprites[byte_155124[iconid]];
-            cx += spr->SWidth + 3;
-        }
+        draw_purple_app_utility_icon(iconid);
     }
 
     // Show unread mail notification icon
-    if (new_mail
-        && (game_system_screen != SySc_NETGAME || screentype != SCRT_SYSMENU))
-    {
-        draw_purple_app_unread_email_icon(cx, cy);
-    }
+    draw_purple_app_unread_email_icon();
 
     // Show email icons in bottom right
     {
         struct TbSprite *spr;
         spr = &fe_icons_sprites[102];
         cx = global_apps_bar_box.X + global_apps_bar_box.Width - spr->SWidth;
+        cy = global_apps_bar_box.Y;
     }
 
     for (bri = word_1C6F40; bri < next_brief; bri++)
@@ -1515,36 +1580,21 @@ TbBool input_purple_apps_selection_bar(void)
     short cx, cy;
 
     // Get inputs from utility icons in bottom left
-    cx = global_apps_bar_box.X;
-    cy = global_apps_bar_box.Y;
-
-    for (iconid = 0; iconid < 6; iconid++)
+    for (iconid = ApBar_SYSTEM; iconid < ApBar_NEWMAIL; iconid++)
     {
-        if (is_purple_apps_utility_visible(iconid))
-        {
-            if (!is_purple_alert_on_top())
-                get_purple_app_utility_icon_inputs(cx, cy, iconid);
-        }
-        if (is_purple_apps_utility_space_reserved(iconid))
-        {
-            struct TbSprite *spr;
-            spr = &fe_icons_sprites[byte_155124[iconid]];
-            cx += spr->SWidth + 3;
-        }
+        if (!is_purple_alert_on_top())
+            get_purple_app_utility_icon_inputs(iconid);
     }
 
     // Get inputs from unread mail notification icon
-    if (new_mail
-        && (game_system_screen != SySc_NETGAME || screentype != SCRT_SYSMENU))
-    {
-        get_purple_app_unread_email_icon_inputs(cx, cy);
-    }
+    get_purple_app_unread_email_icon_inputs();
 
     // Get inputs from email icons in bottom right
     {
         struct TbSprite *spr;
         spr = &fe_icons_sprites[102];
         cx = global_apps_bar_box.X + global_apps_bar_box.Width - spr->SWidth;
+        cy = global_apps_bar_box.Y;
     }
 
     for (bri = word_1C6F40; bri < next_brief; bri++)
