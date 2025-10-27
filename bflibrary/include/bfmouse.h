@@ -29,6 +29,8 @@ extern "C" {
 struct TbSprite;
 struct TbPoint;
 
+#define NORMAL_MOUSE_MOVE_RATIO 256
+
 enum MouseAction {
     MActn_NONE = 0,
     MActn_MOUSEMOVE,
@@ -95,8 +97,10 @@ TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr);
  * Note that this function can be run even before mouse setup. Still, the factor
  *  will be reset during the installation - so use it after LbMouseSetup().
  *
- * @param ratio_x Movement ratio in X direction; 256 means unchanged ratio from OS.
- * @param ratio_y Movement ratio in Y direction; 256 means unchanged ratio from OS.
+ * @param ratio_x Movement ratio in X direction; NORMAL_MOUSE_MOVE_RATIO
+ *   means unchanged ratio from OS.
+ * @param ratio_y Movement ratio in Y direction; NORMAL_MOUSE_MOVE_RATIO
+ *   means unchanged ratio from OS.
  * @return Lb_SUCCESS if the ratio values were of correct range and have been set.
  */
 TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y);
@@ -106,6 +110,16 @@ TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y);
  */
 TbBool LbMouseIsInstalled(void);
 
+/**
+ * Initializes the mouse input support.
+ *
+ * @param pointer_spr Mouse pointer sprite to be used.
+ * @param ratio_x Movement ratio in X direction; NORMAL_MOUSE_MOVE_RATIO
+ *   means unchanged ratio from OS.
+ * @param ratio_y Movement ratio in Y direction; NORMAL_MOUSE_MOVE_RATIO
+ *   means unchanged ratio from OS.
+ * @return Lb_SUCCESS if the setup succeeded.
+ */
 TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y);
 TbResult LbMouseReset(void);
 TbResult LbMouseSuspend(void);

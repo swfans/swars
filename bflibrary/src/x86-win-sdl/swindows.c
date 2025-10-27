@@ -57,7 +57,7 @@ TbResult LbBaseInitialise(void)
     lbDrawSurface = NULL;
     LbMemorySet(lbIdleHandlers, 0, sizeof(lbIdleHandlers));
     lbAppActive = true;
-    LbMouseChangeMoveRatio(256, 256);
+    LbMouseChangeMoveRatio(NORMAL_MOUSE_MOVE_RATIO, NORMAL_MOUSE_MOVE_RATIO);
     // Register default video modes
     if (lbScreenModeInfoNum == 0) {
         LbRegisterStandardVideoModes();

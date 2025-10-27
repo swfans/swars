@@ -119,9 +119,11 @@ TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr)
 
 TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
 {
-    if ((ratio_x < -8192) || (ratio_x > 8192) || (ratio_x == 0))
+    if ((ratio_x < -32 * NORMAL_MOUSE_MOVE_RATIO) ||
+      (ratio_x > 32 * NORMAL_MOUSE_MOVE_RATIO) || (ratio_x == 0))
         return Lb_FAIL;
-    if ((ratio_y < -8192) || (ratio_y > 8192) || (ratio_y == 0))
+    if ((ratio_y < -32 * NORMAL_MOUSE_MOVE_RATIO) ||
+      (ratio_y > 32 * NORMAL_MOUSE_MOVE_RATIO) || (ratio_y == 0))
         return Lb_FAIL;
 
     LOGSYNC("new ratio %ldx%ld", ratio_x, ratio_y);
@@ -270,8 +272,10 @@ void MouseToScreen(struct TbPoint *pos)
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(LB_ENABLE_MOUSE_MOVE_RATIO)
-      pos->x = lbDisplay.MMouseX + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
-      pos->y = lbDisplay.MMouseY + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
+      pos->x = lbDisplay.MMouseX + ((pos->x - mx) *
+        (long)lbDisplay.MouseMoveRatioX) / NORMAL_MOUSE_MOVE_RATIO;
+      pos->y = lbDisplay.MMouseY + ((pos->y - my) *
+        (long)lbDisplay.MouseMoveRatioY) / NORMAL_MOUSE_MOVE_RATIO;
 #else
       pos->x = lbDisplay.MMouseX + (pos->x - mx);
       pos->y = lbDisplay.MMouseY + (pos->y - my);
@@ -292,8 +296,10 @@ void MouseToScreen(struct TbPoint *pos)
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(LB_ENABLE_MOUSE_MOVE_RATIO)
-      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
-      pos->y = my + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
+      pos->x = mx + ((pos->x - mx) *
+        (long)lbDisplay.MouseMoveRatioX) / NORMAL_MOUSE_MOVE_RATIO;
+      pos->y = my + ((pos->y - my) *
+        (long)lbDisplay.MouseMoveRatioY) / NORMAL_MOUSE_MOVE_RATIO;
 #endif
       mx = orig.x;
       my = orig.y;
