@@ -138,9 +138,9 @@ void setup_simple_screen_mode(TbScreenMode mode)
     LbScreenSetup(mode, mdinfo->Width, mdinfo->Height, display_palette);
 
     if (lbDisplay.GraphicsScreenHeight < 400)
-        ratio = 2;
+        ratio = 2 * NORMAL_MOUSE_MOVE_RATIO;
     else
-        ratio = 1;
+        ratio = 1 * NORMAL_MOUSE_MOVE_RATIO;
     LbMouseSetup(NULL, ratio, ratio);
 }
 
@@ -168,9 +168,9 @@ void setup_screen_mode(TbScreenMode mode)
     }
 
     if (lbDisplay.GraphicsScreenHeight < 400)
-        ratio = 2;
+        ratio = 2 * NORMAL_MOUSE_MOVE_RATIO;
     else
-        ratio = 1;
+        ratio = 1 * NORMAL_MOUSE_MOVE_RATIO;
     LbMouseSetup(&pointer_sprites[1], ratio, ratio);
 
     setup_vecs(lbDisplay.WScreen, vec_tmap[0], lbDisplay.PhysicalScreenWidth,

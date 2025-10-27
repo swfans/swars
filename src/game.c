@@ -2320,7 +2320,8 @@ void setup_host(void)
 
     setup_mouse_pointers();
     lbMouseAutoReset = false;
-    LbMouseSetup(&pointer_sprites[1], 2, 2);
+    LbMouseSetup(&pointer_sprites[1],
+      2 * NORMAL_MOUSE_MOVE_RATIO, 2 * NORMAL_MOUSE_MOVE_RATIO);
 
     setup_debug_obj_trace();
 
