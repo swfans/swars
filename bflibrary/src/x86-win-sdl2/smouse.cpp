@@ -271,8 +271,11 @@ void MouseToScreen(struct TbPoint *pos)
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(LB_ENABLE_MOUSE_MOVE_RATIO)
-      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
-      pos->y = my + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
+      pos->x = lbDisplay.MMouseX + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
+      pos->y = lbDisplay.MMouseY + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
+#else
+      pos->x = lbDisplay.MMouseX + (pos->x - mx);
+      pos->y = lbDisplay.MMouseY + (pos->y - my);
 #endif
       mx = orig.x;
       my = orig.y;
