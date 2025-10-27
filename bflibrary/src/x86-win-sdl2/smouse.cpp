@@ -262,10 +262,12 @@ void MouseToScreen(struct TbPoint *pos)
     static long my = 0;
     struct TbRect clip;
     struct TbPoint orig;
+
+    if (!pointerHandler.GetMouseWindow(&clip))
+        return;
+
     if (lbMouseAutoReset)
     {
-      if (!pointerHandler.GetMouseWindow(&clip))
-          return;
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(LB_ENABLE_MOUSE_MOVE_RATIO)
@@ -295,12 +297,16 @@ void MouseToScreen(struct TbPoint *pos)
       my = orig.y;
     }
 
-    if (lbScreenSurfaceDimensions.Width != lbDisplay.GraphicsScreenWidth)
-        pos->x = (pos->x * lbDisplay.GraphicsScreenWidth) /
-            lbScreenSurfaceDimensions.Width;
-    if (lbScreenSurfaceDimensions.Height != lbDisplay.GraphicsScreenHeight)
-        pos->y = (pos->y * lbDisplay.GraphicsScreenHeight) /
-            lbScreenSurfaceDimensions.Height;
+    // Allow the custom set mouse clip window to extend move range beyond graphics screen
+    if (clip.right < lbDisplay.GraphicsScreenWidth)
+        clip.right = lbDisplay.GraphicsScreenWidth;
+    if (clip.bottom < lbDisplay.GraphicsScreenHeight)
+        clip.bottom = lbDisplay.GraphicsScreenHeight;
+    if (lbScreenSurfaceDimensions.Width != clip.right)
+        pos->x = (pos->x * clip.right) / lbScreenSurfaceDimensions.Width;
+    if (lbScreenSurfaceDimensions.Height != clip.bottom)
+        pos->y = (pos->y * clip.bottom) / lbScreenSurfaceDimensions.Height;
+
     LOGNO("before (%ld,%ld) after (%ld,%ld)", orig.x, orig.y, pos->x, pos->y);
 }
 
