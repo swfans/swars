@@ -118,7 +118,43 @@ print_help (const char *argv0)
   argv0);
 }
 
-TbBool test_gpoly(void);
+static TbBool setup_log(void)
+{
+    const char *rel_kind;
+
+#  ifdef DEBUG
+    rel_kind = "debug";
+#  else
+    rel_kind = "standard";
+#  endif
+
+#if !defined(PACKAGE_NAME)
+# error PACKAGE_NAME is not defined, config.h needs to be included
+#endif
+
+    printf(PACKAGE_NAME" ver "VERSION" (%s release)\n"
+        "The original by Bullfrog\n"
+        "Ported by Unavowed and Gynvael Coldwind.\n"
+        "Expanded by other fans, signed in commits.\n"
+        "Web site: https://github.com/swfans/swars/\n",
+        rel_kind);
+
+
+    if (LbErrorLogSetup(NULL, NULL, Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
+        printf("Execution log setup failed\n");
+        return false;
+    }
+
+    LbSyncLog("Application: "PACKAGE" ver "VERSION" (%s release)\n", rel_kind);
+
+    return true;
+}
+
+static void reset_log(void)
+{
+    LbSyncLog("Application: "PACKAGE" ver "VERSION" closing\n");
+    LbErrorLogReset();
+}
 
 // To be moved to its own file when there are more tests
 static void tests_execute(void)
@@ -503,19 +539,12 @@ main (int argc, char **argv)
     ingame.GameMode = GamM_None;
     ingame.LowerMemoryUse = 0;
     ingame.Flags = 0;
-    if (LbErrorLogSetup(NULL, NULL, Lb_ERROR_LOG_NEW) != Lb_SUCCESS)
-            printf("Execution log setup failed\n");
+    setup_log();
     /* Gravis Grip joystick driver initialization */
     joy_driver_init();
 
     if (!process_options(&argc, &argv))
         return 1;
-
-    printf("Syndicate Wars Port "VERSION"\n"
-        "The original by Bullfrog\n"
-        "Ported by Unavowed and Gynvael Coldwind.\n"
-        "Expanded by other fans, signed in commits.\n"
-        "Web site: https://github.com/swfans/swars/\n");
 
     fixup_options();
     adjust_memory_use();
@@ -540,7 +569,7 @@ main (int argc, char **argv)
         LbNetworkReset();
     }
     joy_driver_shutdown();
-    LbErrorLogReset();
+    reset_log();
     LbMemoryReset();
     game_quit();
     // the above function never returns
