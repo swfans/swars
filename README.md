@@ -73,9 +73,9 @@ and then add the neccessary data files. The steps are:
 
 Route "a" - compiling the game by yourself.
 
-7.a. Follow [building instructions](#general-building-instructions) below to get
+7. a. Follow [building instructions](#general-building-instructions) below to get
      a compiled executable and configuration files.
-8.a. After the build succeeded, do `make prefix=<TARGET> install` in the
+8. a. After the build succeeded, do `make prefix=<TARGET> install` in the
      directory where build commands were executed, to copy built files into the
      *\<TARGET\>/swars* installation folder you've chosen. If you've built the
      binary yourself, you already have all the tools neccessary for that install
@@ -85,8 +85,8 @@ Route "a" - compiling the game by yourself.
 
 Route "b" - using the prebuilt *patch* release.
 
-7.b. Extract the downloaded patch file.
-8.b. Move all extracted files and folders to the selected installation folder.
+7. b. Extract the downloaded patch file.
+8. b. Move all extracted files and folders to the selected installation folder.
      Place them all in one folder, so that sub-olders `conf`, `data`, `levels`
      and the executable file `swars` are all next to each other.
 
@@ -105,7 +105,7 @@ into your *Applications* directory.
 You can create the bundle by following these instructions:
 
 1. Download and unpack the source tarball or clone git repo.
-2. Follow [building instructions](#building-on-mac-os-x) below to get
+2. Follow [building instructions](#build-examples-on-mac-os) below to get
    a compiled executable and configuration files.
 3. After the code is compiled, install the data, as explained in the
    [GNU or UNIX](#installing-on-gnu-or-unix) section, to any directory,
@@ -159,9 +159,9 @@ If you've decided on the hand-compilation option, proceed with the following ste
 
 Route "a" - compiling the game by yourself.
 
-7.a. Follow [building instructions](#building-on-windows) below to get
+7. a. Follow [building instructions](#build-examples-on-windows) below to get
      a compiled executable and configuration files.
-8.a. After the build succeeded, do `make prefix=<TARGET> install` in the
+8. a. After the build succeeded, do `make prefix=<TARGET> install` in the
      directory where build commands were executed, to copy built files into the
      *\<TARGET\>/swars* installation folder you've chosen. If you've built the
      binary yourself, you already have all the tools neccessary for that install
@@ -171,8 +171,8 @@ Route "a" - compiling the game by yourself.
 
 Route "b" - using the prebuilt *patch* release.
 
-7.b. Extract the downloaded patch file.
-8.b. Move all extracted files and folders to the selected installation folder.
+7. b. Extract the downloaded patch file.
+8. b. Move all extracted files and folders to the selected installation folder.
      Place them all in one folder, so that sub-olders `conf`, `data`, `levels`
      and the executable file `swars.exe` are all next to each other.
 
@@ -241,7 +241,9 @@ Once you've made sure you have the above, proceed with the following steps:
 
 You should now have a working `src/swars` executable file.
 
-#### Build example - Ubuntu 20.04 64-bit
+### Build examples on Linux
+
+#### Build on Ubuntu 20.04 64-bit
 
 Here are specific commands required to compile the executable on Ubuntu linux.
 
@@ -305,7 +307,9 @@ Some tests to verify the build are included in the project. To execute them:
 make V=1 check
 ```
 
-#### Build example - MSYS2 updated 2023-01 on Windows
+### Build examples on Windows
+
+#### Build on Windows with MSYS2 updated 2023-01
 
 Using Minimal System and the MinGW toolchain available within, it is possible
 to build the executable using the same way as for UNIX systems, with bash and autotools.
@@ -375,7 +379,9 @@ Also, the build system may expect to find `python` binary within `mingw32` folde
 failing to find it if you have it somewhere else. In both cases, just creating a symbolic
 link with name expected by build system will fix the issue.
 
-### Building on Mac OS X
+### Build examples on Mac OS
+
+#### Build on Mac OS X
 
 Mac OS X is at its core a UNIX system. To build the **Syndicate Wars Port** it is
 enough to follow the [general building instructions](#general-building-instructions).
