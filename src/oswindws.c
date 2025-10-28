@@ -8,7 +8,7 @@
 
 #include "oswindws.h"
 
-#define REGISTRY_KEY "Software\\Syndicate Wars\\CurrentVersion"
+#define REGISTRY_KEY "Software\\SyndWarsFX\\CurrentVersion"
 #define REGISTRY_VALUE "InstallPath"
 
 bool
@@ -80,7 +80,7 @@ sys_get_user_path (char *buffer, size_t size)
   if (app_data == NULL)
     return false;
 
-  snprintf(buffer, size, "%s\\Syndicate Wars", app_data);
+  snprintf(buffer, size, "%s\\SyndWarsFX", app_data);
   return true;
 }
 #endif  /* WIN32 */
