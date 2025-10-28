@@ -1,8 +1,8 @@
 # *****************************************************************************
-#  Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
+#  Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
 # *****************************************************************************
 #   @file guitext_comm_ita.po
-#      GUI text for SW Port translation file
+#      GUI text for SyndWarsFX translation file
 #  @par Purpose:
 #      Contains translation of the national text in the game.
 #  @par Comment:
@@ -18,8 +18,8 @@
 # *****************************************************************************
 msgid ""
 msgstr ""
-"Project-Id-Version: GUI text for SW Port\n"
-"Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
+"Project-Id-Version: GUI text for SyndWarsFX\n"
+"Report-Msgid-Bugs-To: https://github.com/swfans/syndwarsfx/issues\n"
 "POT-Creation-Date: 2025-09-20 22:19+0200\n"
 "PO-Revision-Date: 2025-09-20 22:31+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
