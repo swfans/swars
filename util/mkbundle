@@ -3,7 +3,7 @@
 SRC="src"
 DST="."
 
-NAME="Syndicate Wars"
+NAME="SyndWarsFX"
 BDIR="$DST/$NAME.app"
 CDIR="$BDIR/Contents"
 XDIR="$CDIR/MacOS"

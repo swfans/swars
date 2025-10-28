@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim:sw=4
 
-""" Text WAD/IDX conversion tool for Syndicate Wars Port.
+""" Text WAD/IDX conversion tool for Syndicate Wars Fan Expansion.
 
 Prepares WAD/IDX files accepted by game engine.
 """
@@ -532,7 +532,7 @@ def pofile_set_default_metadata(polist, lang):
     else:
         polang = "UNKNOWN"
     polist.metadata = {
-      'Project-Id-Version': 'Menu text for SW Port',
+      'Project-Id-Version': 'Menu text for SyndWarsFX',
       'Report-Msgid-Bugs-To': 'https://github.com/swfans/swars/issues',
       'POT-Creation-Date': '2023-08-20 01:12+0200',
       'PO-Revision-Date': '2023-09-02 12:00+0100',
@@ -550,10 +550,10 @@ def pofile_set_default_metadata(polist, lang):
 def pofile_set_default_head_comment(polist, pofname):
     polist.header = \
       "*****************************************************************************\n" + \
-      " Syndicate Wars Port, source port of the classic strategy game from Bullfrog.\n" + \
+      " Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.\n" + \
       "*****************************************************************************\n" + \
       "  @file " + pofname + "\n" + \
-      "     Menu text for SW Port translation file\n" + \
+      "     Menu text for SyndWarsFX translation file\n" + \
       " @par Purpose:\n" + \
       "     Contains translation of the national text in the game.\n" + \
       " @par Comment:\n" + \
