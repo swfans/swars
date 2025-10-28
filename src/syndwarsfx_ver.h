@@ -1,7 +1,7 @@
 /******************************************************************************/
 // Free implementation of Bullfrog's Syndicate Wars strategy game.
 /******************************************************************************/
-/** @file swars_ver.h
+/** @file syndwarsfx_ver.h
  *     Project name, version, copyrights and global definitions.
  * @par Purpose:
  *     Header file for global names and defines used by resource compiler.
@@ -16,8 +16,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef SWARS_VER_H_
-#define SWARS_VER_H_
+#ifndef SYNDWARSFX_VER_H_
+#define SYNDWARSFX_VER_H_
 
 /* Version definitions */
 #include "config.h"
@@ -28,11 +28,11 @@
 //#define VERSION           "1.2.3.4"
 
 /* Program name, copyrights and file names */
-#define PROGRAM_NAME      "Syndicate Wars Port"
+#define PROGRAM_NAME      "Syndicate Wars Fan Expansion"
 #define PROGRAM_FULL_NAME "Open-source reimplementation of Syndicate Wars game"
 #define PROGRAM_AUTHORS   "see AUTHORS file"
 #define COMPANY_NAME      "Community based"
-#define INTERNAL_NAME     "swars"
+#define INTERNAL_NAME     "syndwarsfx"
 #define LEGAL_COPYRIGHT   "GNU General Public License"
 #define LEGAL_TRADEMARKS  ""
 #define FILE_VERSION      VERSION
@@ -42,5 +42,5 @@
 #define PRODUCT_VERSION   VERSION
 #define DEFAULT_LOG_FILENAME INTERNAL_NAME".log"
 
-#endif // SWARS_VER_H_
+#endif // SYNDWARSFX_VER_H_
 /******************************************************************************/
