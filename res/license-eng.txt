@@ -1,12 +1,12 @@
 ------------------------------------------------------------
 Content
 ------------------------------------------------------------
-1. Syndicate Wars Port license
+1. Syndicate Wars Fan Expansion license
 2. Library licenses
 A. OpenAL (by Creative Labs, Inc.) license
 
 ------------------------------------------------------------
-1. Syndicate Wars Port license
+1. Syndicate Wars Fan Expansion license
 ------------------------------------------------------------
 All source code except the code in src/*.sx is licensed under the GNU
 General Public License, version 3 or any later version.  src/*.sx files are

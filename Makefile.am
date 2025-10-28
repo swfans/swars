@@ -12,9 +12,9 @@ res_DATA =
 resdir = $(prefix)/$(PACKAGE)
 
 if TARGET_WINDOWS
-res_DATA += res/swars_icon.ico
+res_DATA += res/syndwarsfx_icon.ico
 else
-res_DATA += res/swars.icns res/swars_icon.png
+res_DATA += res/syndwarsfx.icns res/syndwarsfx_icon.png
 endif
 
 instscript_DATA = util/install

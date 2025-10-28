@@ -8,10 +8,10 @@ m4_define([ver_release], [8])
 # Set build number to commit count only if ".git" folder is present
 m4_define([ver_build], m4_if(m4_esyscmd_s([ls -1 -d ".git" 2>&1]),.git,[m4_esyscmd_s([git rev-list --count HEAD])],[0]))
 
-m4_define([swars_version],
+m4_define([syndwarsfx_version],
       [ver_major.ver_minor.ver_release.ver_build])
 
-AC_INIT([Syndicate Wars Port], [swars_version], [unavowed@vexillium.org], [swars])
+AC_INIT([Syndicate Wars Fan Expansion], [syndwarsfx_version], [unavowed@vexillium.org], [syndwarsfx])
 
 AC_CONFIG_SUBDIRS([bflibrary bfsoundlib])
 
@@ -49,13 +49,13 @@ AC_ARG_WITH([wildmidi],
 AC_ARG_WITH([data-path],
 	    AS_HELP_STRING(
 	      [--with-data-path],
-	      [path to game data @<:@DATAROOTDIR/swars@:>@]),
+	      [path to game data @<:@DATAROOTDIR/syndwarsfx@:>@]),
 	    [data_path=$withval], [data_path=])
 AS_IF([test "$data_path" = "yes"], [
   AC_MSG_ERROR([The data path must be explicitly specified])
 ])
 AS_IF([test -z "$data_path"], [
-  eval data_path="$datadir/swars"
+  eval data_path="$datadir/syndwarsfx"
   eval data_path="$data_path"
 ])
 
@@ -89,7 +89,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
   AC_MSG_RESULT([yes])
 ], [
   AC_MSG_RESULT([no])
-  AC_MSG_FAILURE([this Syndicate Wars port will only run on i386 processors])
+  AC_MSG_FAILURE([SyndWarsFX will only run on i386 processors])
 ])
 
 AC_MSG_CHECKING([if C symbols need an underscore])
@@ -135,7 +135,7 @@ AM_CONDITIONAL([TARGET_WINDOWS], [test "$have_windows" = "yes"])
 AM_CONDITIONAL([HAS_WINDRES], [test -n "${WINDRES}" -a "$have_windows" = "yes"])
 
 # On Windows, filter out -g from CCASFLAGS.  There are too many symbols in
-# swars.s to include debugging information for, which also results in a lot of
+# swars.sx to include debugging information for, which also results in a lot of
 # warning messages.
 AS_IF([test "$have_windows" = "yes"], [
   CCASFLAGS=`echo $CCASFLAGS | sed -e 's/\(^\|\s\)-g\>//g'`
@@ -276,12 +276,12 @@ AC_CONFIG_FILES([Makefile conf/Makefile lang/Makefile src/Makefile util/Makefile
 
 # Prepare files for Windows installer
 AC_CONFIG_LINKS([
-  res/swars-setup.nsi:res/swars-setup.nsi
+  res/syndwarsfx-setup.nsi:res/syndwarsfx-setup.nsi
   res/lang_n_cdrom.ini:res/lang_n_cdrom.ini
   res/license-eng.txt:res/license-eng.txt
-  res/swars_icon.ico:res/swars_icon.ico
+  res/syndwarsfx_icon.ico:res/syndwarsfx_icon.ico
 ])
-AC_CONFIG_FILES([res/swars-config.nsh])
+AC_CONFIG_FILES([res/syndwarsfx-config.nsh])
 
 # Done - generate and execute `config.status`
 AC_OUTPUT
