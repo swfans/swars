@@ -1,7 +1,7 @@
 /******************************************************************************/
 // Free implementation of Bullfrog's Syndicate Wars strategy game.
 /******************************************************************************/
-/** @file swars_stdres.rc
+/** @file syndwarsfx_stdres.rc
  *     Standard Windows resoures used by SWars application.
  * @par Purpose:
  *     Defines icons and executable information data (VersionInfo)
@@ -19,9 +19,9 @@
 /******************************************************************************/
 
 #include <windows.h> // include for version info constants
-#include "swars_ver.h" // define values for version info
+#include "syndwarsfx_ver.h" // define values for version info
 
-A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "swars_icon.ico"
+A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "syndwarsfx_icon.ico"
 
 // Create version info block, using defines from the header file
 1 VERSIONINFO

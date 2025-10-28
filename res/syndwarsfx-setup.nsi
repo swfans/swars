@@ -1,31 +1,31 @@
-; Syndicate Wars Port install script for NSIS-2
-; Use it to generate Syndicate Wars Port installer
+; SyndWarsFX install script for NSIS-2
+; Use it to generate SyndWarsFX installer
 ; Requires:
 ; - Simple CD-DA Audio Track ripper by j00ru//vx (rip.exe+akrip32.dll)
 ; - OGG Encoder from Vorbis-tools (oggenc.exe+accompanying DLLs)
 ; - GoG ISO Ripper by Moburma (Gogisoripper.exe)
-; - SW Port executable, shared libs, lang files and config files (swars.exe+*.dll+conf/*+lang/*)
-; If you don't have any of these, you may extract them using 7Zip on any existing SW Port Installer.
+; - SyndWarsFX executable, shared libs, lang files and config files (syndwarsfx.exe+*.dll+conf/*+lang/*)
+; If you don't have any of these, you may extract them using 7Zip on any existing SyndWarsFX Installer.
 
 
 SetCompressor zlib
 
-OutFile swars-setup.exe
+OutFile syndwarsfx-setup.exe
 !include WinMessages.nsh
 !include InstallOptions.nsh
 !include FileFunc.nsh
 !insertmacro GetDrives
 !include "MUI2.nsh"
 !include x64.nsh
-!include swars-config.nsh
+!include syndwarsfx-config.nsh
 
 ShowInstDetails show
 
 
 LicenseLangString LIC_ENG 1033 license-eng.txt
 
-Name "Syndicate Wars"
-BrandingText "SW port, by fans for fans"
+Name "Syndicate Wars Fan Expansion"
+BrandingText "SyndWarsFX, by fans for fans"
 
 LangString STR_CHOOSE_DRIVE 1033 "Choose the CD-ROM drive"
 LangString STR_CHOOSE_LANG 1033 "Choose the language"
@@ -48,17 +48,17 @@ Var levels_md5
 Var gfx_md5
 Var sfx_md5
 
-InstallDir "$PROGRAMFILES\Syndicate Wars\"
+InstallDir "$PROGRAMFILES\SyndWarsFX\"
 
 ; Search for built files where `make install` puts them during automatic builds
-!if /FileExists "..\pkg\swars\swars.exe"
-  !define BUILDENV_PKG_DIR "..\pkg\swars"
-!else if /FileExists "..\pkg\mingw64\swars\swars.exe"
-  !define BUILDENV_PKG_DIR "..\pkg\mingw64\swars"
-!else if /FileExists "..\pkg\mingw32\swars\swars.exe"
-  !define BUILDENV_PKG_DIR "..\pkg\mingw32\swars"
+!if /FileExists "..\pkg\syndwarsfx\syndwarsfx.exe"
+  !define BUILDENV_PKG_DIR "..\pkg\syndwarsfx"
+!else if /FileExists "..\pkg\mingw64\syndwarsfx\syndwarsfx.exe"
+  !define BUILDENV_PKG_DIR "..\pkg\mingw64\syndwarsfx"
+!else if /FileExists "..\pkg\mingw32\syndwarsfx\syndwarsfx.exe"
+  !define BUILDENV_PKG_DIR "..\pkg\mingw32\syndwarsfx"
 !else
-  !define BUILDENV_PKG_DIR ".\swars"
+  !define BUILDENV_PKG_DIR ".\syndwarsfx"
 !endif
 
 ; Search for additional utils where they are extracted during automatic builds
@@ -69,9 +69,9 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 !endif
 
 
-!define MUI_ICON "swars_icon.ico"
+!define MUI_ICON "syndwarsfx_icon.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
-!define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Port Setup"
+!define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Fan Expansion Setup"
 !define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\nBuild ${PRODUCT_VERSION}				Graphics ${GFX_VERSION}$\nLevels ${LEVELS_VERSION}				Sound ${SFX_VERSION}"
 
 
@@ -126,7 +126,7 @@ Section "Syndicate Wars Game" Section_0
    Call InstallRegistry
   ${EndIf}
   IfErrors inst_game_fail
-  File "${BUILDENV_PKG_DIR}\swars.exe"
+  File "${BUILDENV_PKG_DIR}\syndwarsfx.exe"
   File "${BUILDENV_PKG_DIR}\libgcc_s_dw2-1.dll"
   File "${BUILDENV_PKG_DIR}\libstdc++-6.dll"
   File "${BUILDENV_PKG_DIR}\libwinpthread-1.dll"
@@ -153,11 +153,11 @@ Section "Syndicate Wars Game" Section_0
   StrCmp $selected_menu_shortcut 1 0 inst_game_menu_end
   SetOutPath $INSTDIR
   CreateDirectory "$SMPROGRAMS\Vexillium"
-  CreateShortCut "$SMPROGRAMS\Vexillium\Syndicate Wars.lnk" "$INSTDIR\swars.exe" "" "$INSTDIR\swars.exe" "" SW_SHOWNORMAL
+  CreateShortCut "$SMPROGRAMS\Vexillium\Syndicate Wars Fan Expansion.lnk" "$INSTDIR\syndwarsfx.exe" "" "$INSTDIR\syndwarsfx.exe" "" SW_SHOWNORMAL
   CreateShortCut "$SMPROGRAMS\Vexillium\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" "" SW_SHOWNORMAL
 inst_game_menu_end:
   StrCmp $selected_desk_shortcut 1 0 inst_game_done
-  CreateShortCut "$DESKTOP\Syndicate Wars.lnk" $INSTDIR\swars.exe "" $INSTDIR\swars.exe "" SW_SHOWNORMAL
+  CreateShortCut "$DESKTOP\Syndicate Wars Fan Expansion.lnk" $INSTDIR\syndwarsfx.exe "" $INSTDIR\syndwarsfx.exe "" SW_SHOWNORMAL
   Goto inst_game_done
 inst_game_fail:
   DetailPrint "An unexpected error has occured during the installation process"
@@ -385,20 +385,20 @@ Function GOGInstallAdditionalLeave
 FunctionEnd
 
 Function UpdateInstall
-!insertmacro MUI_HEADER_TEXT "Syndicate Wars Port Installation Location" "Please indicate where you previously installed the root Syndicate Wars port folder on your computer"
+!insertmacro MUI_HEADER_TEXT "SyndWarsFX Installation Location" "Please indicate where you previously installed the root Syndicate Wars Fan Expansion folder on your computer"
 ${If} $RadioSelected != "UpdateInstall"
    Abort
  ${EndIf}
 
 SetRegView 32
 ; Read the value from the registry key
-ReadRegStr $update_path HKLM "Software\Syndicate Wars\CurrentVersion" "InstallPath" 
+ReadRegStr $update_path HKLM "Software\SyndWarsFX\CurrentVersion" "InstallPath" 
 
     ;Create a custom page
     nsDialogs::Create 1018
     Pop $0
 
-    ${NSD_CreateGroupBox} 5% 20u 90% 70% "Syndicate Wars existing install folder"
+    ${NSD_CreateGroupBox} 5% 20u 90% 70% "SyndWarsFX existing install folder"
     Pop $0
 
         ${NSD_CreateDirRequest} 15% 35u 49% 12u $update_path
@@ -432,7 +432,7 @@ FunctionEnd
 Function UpdateInstallLeave
 ;MessageBox MB_ICONEXCLAMATION|MB_OK "install path is $update_path"
 ${If} $update_path == ""
-        MessageBox MB_ICONEXCLAMATION|MB_OK "You must indicate your existing Syndicate Wars install path before proceeding."
+        MessageBox MB_ICONEXCLAMATION|MB_OK "You must indicate your existing SyndWarsFX install path before proceeding."
         Abort
 ${EndIf}
 
@@ -616,7 +616,7 @@ Function CopyGameFilesFromCD
     SetOutPath $INSTDIR
   ${EndIf}
 
-  ;Update levels and maps from swars-levels repository
+  ;Update levels and maps from syndwarsfx-levels repository
 
   StrCpy $levels_md5 "${LEVELS_PKG_MD5}"
 
@@ -638,7 +638,7 @@ retry_level_download:
  Pop $0
  StrCmp $0 $levels_md5 extract_level_files 0
  SetErrors
- DetailPrint "Error downloading level files from swars-levels repository, please check the source file."
+ DetailPrint "Error downloading level files from syndwarsfx-levels repository, please check the source file."
  DetailPrint "Aborting install"
  Abort
 
@@ -648,7 +648,7 @@ extract_level_files:
  CopyFiles /SILENT $PLUGINSDIR\SWARS\levels\* $INSTDIR\levels
  CopyFiles /SILENT $PLUGINSDIR\SWARS\maps\* $INSTDIR\maps
 
-  ;Update graphics files from swars-gfx repository
+  ;Update graphics files from syndwarsfx-gfx repository
 
   StrCpy $gfx_md5 "${GFX_PKG_MD5}"
 
@@ -670,7 +670,7 @@ retry_gfx_download:
  Pop $0
  StrCmp $0 $gfx_md5 extract_gfx_files 0
  SetErrors
- DetailPrint "Error downloading graphics files from swars-gfx repository, please check the source file."
+ DetailPrint "Error downloading graphics files from syndwarsfx-gfx repository, please check the source file."
  DetailPrint "Aborting install"
  Abort
 
@@ -681,7 +681,7 @@ extract_gfx_files:
  CopyFiles /SILENT $PLUGINSDIR\SWARS\qdata\* $INSTDIR\qdata
  CopyFiles /SILENT $PLUGINSDIR\SWARS\language\* $INSTDIR\language
 
-    ;Update sound files from swars-sfx repository
+    ;Update sound files from syndwarsfx-sfx repository
 
   StrCpy $sfx_md5 "${SFX_PKG_MD5}"
 
@@ -703,7 +703,7 @@ retry_sfx_download:
  Pop $0
  StrCmp $0 $sfx_md5 extract_sfx_files 0
  SetErrors
- DetailPrint "Error downloading sound files from swars-sfx repository, please check the source file."
+ DetailPrint "Error downloading sound files from syndwarsfx-sfx repository, please check the source file."
  DetailPrint "Aborting install"
  Abort
 
@@ -724,21 +724,21 @@ FunctionEnd
 
 Function DownloadLevels
   DetailPrint "Downloading latest game levels from Github..."
-  DetailPrint "https://github.com/swfans/swars-levels/releases/download/${LEVELS_VERSION}/${LEVELS_PACKAGE}.zip"
-  inetc::get "https://github.com/swfans/swars-levels/releases/download/${LEVELS_VERSION}/${LEVELS_PACKAGE}.zip" "$PLUGINSDIR\${LEVELS_PACKAGE}.zip"
+  DetailPrint "https://github.com/swfans/syndwarsfx-levels/releases/download/${LEVELS_VERSION}/${LEVELS_PACKAGE}.zip"
+  inetc::get "https://github.com/swfans/syndwarsfx-levels/releases/download/${LEVELS_VERSION}/${LEVELS_PACKAGE}.zip" "$PLUGINSDIR\${LEVELS_PACKAGE}.zip"
 FunctionEnd
 
 
 Function DownloadGfx
   DetailPrint "Downloading latest game graphics from Github..."
-  DetailPrint "https://github.com/swfans/swars-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip"
-   inetc::get "https://github.com/swfans/swars-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip" "$PLUGINSDIR\${GFX_PACKAGE}.zip"
+  DetailPrint "https://github.com/swfans/syndwarsfx-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip"
+   inetc::get "https://github.com/swfans/syndwarsfx-gfx/releases/download/${GFX_VERSION}/${GFX_PACKAGE}.zip" "$PLUGINSDIR\${GFX_PACKAGE}.zip"
 FunctionEnd
 
 Function DownloadSfx
   DetailPrint "Downloading latest game sound files from Github..."
-  DetailPrint "https://github.com/swfans/swars-sfx/releases/download/${SFX_VERSION}/${SFX_PACKAGE}.zip"
-   inetc::get "https://github.com/swfans/swars-sfx/releases/download/${SFX_VERSION}/${SFX_PACKAGE}.zip" "$PLUGINSDIR\${SFX_PACKAGE}.zip"
+  DetailPrint "https://github.com/swfans/syndwarsfx-sfx/releases/download/${SFX_VERSION}/${SFX_PACKAGE}.zip"
+   inetc::get "https://github.com/swfans/syndwarsfx-sfx/releases/download/${SFX_VERSION}/${SFX_PACKAGE}.zip" "$PLUGINSDIR\${SFX_PACKAGE}.zip"
 FunctionEnd
 
 
@@ -757,7 +757,7 @@ FunctionEnd
 
 Function InstallRegistry
   DetailPrint "Adding the installation path to registry..."
-  WriteRegStr HKLM "Software\Syndicate Wars\CurrentVersion" InstallPath $INSTDIR
+  WriteRegStr HKLM "Software\SyndWarsFX\CurrentVersion" InstallPath $INSTDIR
 FunctionEnd
 
 
@@ -776,7 +776,7 @@ Delete '$INSTDIR\libWildMidi.dll'
 Delete '$INSTDIR\libwinpthread-1.dll'
 Delete '$INSTDIR\SDL.dll'
 Delete '$INSTDIR\SDL2.dll'
-Delete '$INSTDIR\swars.exe'
+Delete '$INSTDIR\syndwarsfx.exe'
 Delete '$INSTDIR\Uninstall.exe'
 Delete '$INSTDIR\zlib1.dll'
 
@@ -1346,13 +1346,13 @@ RMDir "$INSTDIR\language\swe"
 RMDir "$INSTDIR\language"
 
 RMDir "$INSTDIR"
-Delete "$SMPROGRAMS\Vexillium\Syndicate Wars.lnk"
-Delete "$DESKTOP\Syndicate Wars.lnk" 
+Delete "$SMPROGRAMS\Vexillium\Syndicate Wars Fan Expansion.lnk"
+Delete "$DESKTOP\Syndicate Wars Fan Expansion.lnk" 
 Delete "$SMPROGRAMS\Vexillium\Uninstall.lnk"
 RMDir "$SMPROGRAMS\Vexillium"
 
 DetailPrint "Removing Registry Key"
-DeleteRegKey HKLM "Software\Syndicate Wars"
+DeleteRegKey HKLM "Software\SyndWarsFX"
 
 SetAutoClose false
 

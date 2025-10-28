@@ -1,4 +1,4 @@
-; Syndicate Wars Port config header for NSIS-2 install script
+; SyndWarsFX config header for NSIS-2 install script
 
 ; Version number of package
 !define PRODUCT_VERSION "@VERSION@"
