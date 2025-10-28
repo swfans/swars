@@ -1,4 +1,4 @@
-## Missions diagram of the Syndicate campaign
+## Missions diagram of the Eurocorp campaign
 
 ```mermaid
 stateDiagram-v2
@@ -116,7 +116,7 @@ stateDiagram-v2
     %%note left of mission101 : Weapon introduction#58;<br/>Graviton Gun
 ```
 
-## Interesting unused missions of the Syndicate campaign
+## Interesting unused missions of the Eurocorp campaign
 
 ```mermaid
 stateDiagram-v2
@@ -127,7 +127,7 @@ stateDiagram-v2
     mission107: Source x Mission 107<br/>NON00 Sevastopol<br/>AD's Level
 ```
 
-## Early/unfinished/test missions of the Syndicate campaign
+## Early/unfinished/test missions of the Eurocorp campaign
 
 ```mermaid
 stateDiagram-v2
