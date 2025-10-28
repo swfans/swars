@@ -1,5 +1,6 @@
 # Conversion table for Syndicate Wars European languages.
-# Contains UTF-8 chars and corresponding SW charcodes.
+# Contains UTF-8 chars and corresponding game charcodes.
+# Variant 's' - the game uses two different variants.
 0x20	 
 0x21	!
 0x22	"
