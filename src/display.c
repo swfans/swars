@@ -59,7 +59,7 @@ const char * SWResourceMapping(short index)
     switch (index)
     {
     case 1:
-        return "swars_icon.png";
+        return "syndwarsfx_icon.png";
     default:
         return NULL;
     }

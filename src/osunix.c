@@ -25,7 +25,7 @@ sys_get_user_path (char *buffer, size_t size)
   if (xdg_config_home != NULL)
     {
       snprintf(buffer, size,
-		"%s" FS_SEP_STR "swars", xdg_config_home);
+		"%s" FS_SEP_STR "syndwarsfx", xdg_config_home);
       return true;
     }
 
@@ -38,10 +38,10 @@ sys_get_user_path (char *buffer, size_t size)
 
 #ifndef __APPLE__
   snprintf(buffer, size,
-            "%s" FS_SEP_STR ".config" FS_SEP_STR "swars", home);
+            "%s" FS_SEP_STR ".config" FS_SEP_STR "syndwarsfx", home);
 #else
   snprintf(buffer, size,
-            "%s/Library/Preferences/Syndicate Wars", home);
+            "%s/Library/Preferences/SyndWarsFX", home);
 #endif
 
   return true;

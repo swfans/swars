@@ -136,7 +136,7 @@ static TbBool setup_log(void)
         "The original by Bullfrog\n"
         "Ported by Unavowed and Gynvael Coldwind.\n"
         "Expanded by other fans, signed in commits.\n"
-        "Web site: https://github.com/swfans/swars/\n",
+        "Web site: https://github.com/swfans/syndwarsfx/\n",
         rel_kind);
 
 
