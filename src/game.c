@@ -4914,16 +4914,22 @@ ubyte weapon_select_input(void)
     }
 #endif
 
-    assert(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
-
-    for (n = 0; n < (int)(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0])); n++)
-    {
 #ifdef MORE_GAME_KEYS
+    assert(sizeof(sel_weapon_gkeys)/sizeof(sel_weapon_gkeys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
+#else
+    assert(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
+#endif
+
+#ifdef MORE_GAME_KEYS
+    for (n = 0; n < (int)(sizeof(sel_weapon_gkeys)/sizeof(sel_weapon_gkeys[0])); n++)
+    {
         GameKey gkey = sel_weapon_gkeys[n];
         if (is_gamekey_pressed(gkey))
         {
             clear_gamekey_pressed(gkey);
 #else
+    for (n = 0; n < (int)(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0])); n++)
+    {
         ushort kkey = sel_weapon_keys[n];
         if (is_key_pressed(kkey, KMod_NONE))
         {
@@ -5302,7 +5308,7 @@ ubyte do_user_interface(void)
 #endif
         ingame.Scanner.Brightness += 4;
 #ifdef MORE_GAME_KEYS
-    if (GKey_SCANNR_BRIGH_DEC(GKey_SCANNR_BRIGH_INC))
+    if (is_gamekey_pressed(GKey_SCANNR_BRIGH_DEC))
 #else
     if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
 #endif
