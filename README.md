@@ -1,6 +1,6 @@
 # syndwarsfx
 
-**Syndicate Wars Fan Expansion**, alternative binary for the classic Bullfrog game.
+**Syndicate Wars Fan Expansion**, Open Source remake of the classic Bullfrog game.
 
 This is continuation of a port project created by Unavowed and Gynvael Coldwind.
 
@@ -113,9 +113,9 @@ You can create the bundle by following these instructions:
    `/Volumes/SYN WARS QA 9.0`).
 4. Finally, run `util/mkbundle ./data` (replacing `./data` with the directory
    you installed the data to); this will produce an application bundle named
-   `Syndicate Wars.app` in the current directory.
+   `SyndWarsFX.app` in the current directory.
 5. If you want there to be a pretty icon for the bundle, copy `res/syndwarsfx.icns`
-   to `Syndicate Wars.app/Contents/Resources`.
+   to `SyndWarsFX.app/Contents/Resources`.
 
 When all is done, you can [start the game](#starting-the-game).
 
