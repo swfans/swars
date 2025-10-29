@@ -3848,11 +3848,134 @@ msgctxt "Controls"
 msgid "Deep Radar expand"
 msgstr ""
 
+#. Key for increasing brightness of the scanner area, or whole panel if set to transfluent.
+#: guitext:828
+msgctxt "Controls"
+msgid "Scanner brighter"
+msgstr ""
+
+#. Key for decreasing brightness of the scanner area, or whole panel if set to transfluent.
+#: guitext:829
+msgctxt "Controls"
+msgid "Scanner darker"
+msgstr ""
+
+#. Key for switching between tracks used for danger / tension sound.
+#: guitext:830
+msgctxt "Controls"
+msgid "Change tension track"
+msgstr ""
+
+#. Key for switching between music tracks.
+#: guitext:831
+msgctxt "Controls"
+msgid "Change music track"
+msgstr ""
+
+#. Key for increasing volume of sound effects / digital sound samples.
+#: guitext:832
+msgctxt "Controls"
+msgid "Sounds volume up"
+msgstr ""
+
+#. Key for decreasing volume of sound effects / digital sound samples.
+#: guitext:833
+msgctxt "Controls"
+msgid "Sounds volume down"
+msgstr ""
+
+#. Key for increasing volume of danger / tension sound.
+#: guitext:834
+msgctxt "Controls"
+msgid "Tension volume up"
+msgstr ""
+
+#. Key for decreasing volume of danger / tension sound.
+#: guitext:835
+msgctxt "Controls"
+msgid "Tension volume down"
+msgstr ""
+
+#. Key for increasing volume of background music.
+#: guitext:836
+msgctxt "Controls"
+msgid "Music volume up"
+msgstr ""
+
+#. Key for decreasing volume of background music.
+#: guitext:837
+msgctxt "Controls"
+msgid "Music volume down"
+msgstr ""
+
+#. Key for immediately restarting the current mission.
+#: guitext:838
+msgctxt "Controls"
+msgid "Restart mission"
+msgstr ""
+
+#. Key for increasing speed at which the game world progresses.
+#: guitext:839
+msgctxt "Controls"
+msgid "Speed up action"
+msgstr ""
+
+#. Key for decreasing speed at which the game world progresses.
+#: guitext:840
+msgctxt "Controls"
+msgid "Slow down action"
+msgstr ""
+
+#. Key for capturing the momentary screen content and saving on disk as image file.
+#: guitext:841
+msgctxt "Controls"
+msgid "Save screenshot"
+msgstr ""
+
+#. Key for changing wielded weapon into the one is slot 1. Allows to also hide the waepon, or select weapon for the whole group.
+#: guitext:842
+msgctxt "Controls"
+msgid "Select weapon 1"
+msgstr ""
+
+#. Key for changing wielded weapon into the one is slot 2.
+#: guitext:843
+msgctxt "Controls"
+msgid "Select weapon 2"
+msgstr ""
+
+#. Key for changing wielded weapon into the one is slot 3.
+#: guitext:844
+msgctxt "Controls"
+msgid "Select weapon 3"
+msgstr ""
+
+#. Key for changing wielded weapon into the one is slot 4.
+#: guitext:845
+msgctxt "Controls"
+msgid "Select weapon 4"
+msgstr ""
+
+#. Key for changing wielded weapon into the one is slot 5.
+#: guitext:846
+msgctxt "Controls"
+msgid "Select weapon 5"
+msgstr ""
+
+#. Key for changing wielded weapon into the one is slot 6.
+#: guitext:847
+msgctxt "Controls"
+msgid "Select weapon 6"
+msgstr ""
+
+#. Key for immediately using medikit of any kind which the cyborg has in his slots.
+#: guitext:848
+msgctxt "Controls"
+msgid "Use Medikit"
+msgstr ""
+
 #. Key for future use; does nothing currently.
-#: guitext:828 guitext:829 guitext:830 guitext:831 guitext:832 guitext:833
-#: guitext:834 guitext:835 guitext:836 guitext:837 guitext:838 guitext:839
-#: guitext:840 guitext:841 guitext:842 guitext:843 guitext:844 guitext:845
-#: guitext:846 guitext:847 guitext:848 guitext:849
+#: guitext:849
 msgctxt "Controls"
 msgid "Future key"
 msgstr ""
