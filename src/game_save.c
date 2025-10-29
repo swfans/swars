@@ -302,7 +302,13 @@ void read_user_settings(void)
             set_default_game_keys();
             LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
             LbFileRead(fh, jskeys, 23 * sizeof(ushort));
+        } else if (fmtver == 1) {
+            set_default_game_keys();
+            LbFileRead(fh, kbkeys, 29 * sizeof(ushort));
+            LbFileRead(fh, jskeys, 29 * sizeof(ushort));
         } else {
+            if (fmtver != 2)
+                LOGWARN("Settings may be invalid, as \"%s\" has unrecognized format version %d", fname, (int)fmtver);
             LbFileRead(fh, kbkeys, GKey_KEYS_COUNT * sizeof(ushort));
             LbFileRead(fh, jskeys, GKey_KEYS_COUNT * sizeof(ushort));
         }
@@ -362,7 +368,7 @@ TbBool save_user_settings(void)
     int i;
 
     get_user_settings_fname(fname, login_name);
-    fmtver = 1;
+    fmtver = 2;
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
     if (fh == INVALID_FILE)

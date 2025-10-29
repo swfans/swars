@@ -4885,15 +4885,9 @@ ubyte weapon_select_input(void)
     WeaponType wtype;
     int n;
 
-#ifdef MORE_GAME_KEYS
     static const GameKey sel_weapon_gkeys[] = {
         GKey_SEL_WEP_1, GKey_SEL_WEP_2, GKey_SEL_WEP_3, GKey_SEL_WEP_4, GKey_SEL_WEP_5, GKey_SEL_WEP_6,
     };
-#else
-    static TbKeyCode sel_weapon_keys[] = {
-        KC_5, KC_6, KC_7, KC_8, KC_9, KC_0,
-    };
-#endif
 
     static GameTurn last_sel_weapon_turn[WEAPONS_CARRIED_MAX_COUNT] = {0};
 
@@ -4902,7 +4896,6 @@ ubyte weapon_select_input(void)
     dcthing = p_locplayer->DirectControl[0];
     wtype = WEP_NULL;
 
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_USE_MEDIKIT))
     {
         clear_gamekey_pressed(GKey_USE_MEDIKIT);
@@ -4912,29 +4905,15 @@ ubyte weapon_select_input(void)
             return 1;
         }
     }
-#endif
 
-#ifdef MORE_GAME_KEYS
     assert(sizeof(sel_weapon_gkeys)/sizeof(sel_weapon_gkeys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
-#else
-    assert(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
-#endif
 
-#ifdef MORE_GAME_KEYS
     for (n = 0; n < (int)(sizeof(sel_weapon_gkeys)/sizeof(sel_weapon_gkeys[0])); n++)
     {
         GameKey gkey = sel_weapon_gkeys[n];
         if (is_gamekey_pressed(gkey))
         {
             clear_gamekey_pressed(gkey);
-#else
-    for (n = 0; n < (int)(sizeof(sel_weapon_keys)/sizeof(sel_weapon_keys[0])); n++)
-    {
-        ushort kkey = sel_weapon_keys[n];
-        if (is_key_pressed(kkey, KMod_NONE))
-        {
-            clear_key_pressed(kkey);
-#endif
             wtype = find_nth_weapon_held(dcthing, n+1);
             if (wtype != WEP_NULL)
                 break;
@@ -4979,26 +4958,16 @@ TbResult read_palette_file(void)
 void do_music_user_input(void)
 {
     // MIDI Music (tension) volume control
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_DANGR_VOL_INC))
     {
-#else
-    if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
-    {
-#endif
         if (lbShift & KMod_SHIFT)
             startscr_midivol += 1;
         else
             startscr_midivol += 10;
         sfx_apply_midivol();
     }
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_DANGR_VOL_DEC))
     {
-#else
-    if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
-    {
-#endif
         if (lbShift & KMod_SHIFT)
             startscr_midivol -= 1;
         else
@@ -5007,26 +4976,16 @@ void do_music_user_input(void)
     }
 
     // Sample volume control
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_SOUND_VOL_INC))
     {
-#else
-    if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
-    {
-#endif
         if (lbShift & KMod_SHIFT)
             startscr_samplevol += 1;
         else
             startscr_samplevol += 10;
         sfx_apply_samplevol();
     }
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_SOUND_VOL_DEC))
     {
-#else
-    if (is_key_pressed(KC_NUMPAD1, KMod_DONTCARE))
-    {
-#endif
         if (lbShift & KMod_SHIFT)
             startscr_samplevol -= 1;
         else
@@ -5035,26 +4994,16 @@ void do_music_user_input(void)
     }
 
     // CD Music volume control
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_MUSIC_VOL_INC))
     {
-#else
-    if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
-    {
-#endif
         if (lbShift & KMod_SHIFT)
             startscr_cdvolume += 1;
         else
             startscr_cdvolume += 10;
         sfx_apply_cdvolume();
     }
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_MUSIC_VOL_DEC))
     {
-#else
-    if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
-    {
-#endif
         if (lbShift & KMod_SHIFT)
             startscr_cdvolume -= 1;
         else
@@ -5063,24 +5012,14 @@ void do_music_user_input(void)
     }
 
     // Music track control
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_MUSIC_TRACK))
     {
-#else
-    if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
-    {
-#endif
         clear_key_pressed(KC_NUMPAD5);
         if (++ingame.CDTrack > 4)
             ingame.CDTrack = 2;
     }
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_DANGR_TRACK))
     {
-#else
-    if (is_key_pressed(KC_NUMPAD0, KMod_DONTCARE))
-    {
-#endif
         clear_key_pressed(KC_NUMPAD0);
         ingame.DangerTrack = 2 - ingame.DangerTrack + 1;
     }
@@ -5117,15 +5056,9 @@ ubyte do_user_interface(void)
         return process_mouse_imputs() != 0;
 
     // screenshot
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_SCREENSHOT))
     {
         clear_gamekey_pressed(GKey_SCREENSHOT);
-#else
-    if (is_key_pressed(KC_M, KMod_DONTCARE))
-    {
-        clear_key_pressed(KC_M);
-#endif
         LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
     }
 
@@ -5301,17 +5234,9 @@ ubyte do_user_interface(void)
     }
 
     // Scanner appearence control
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_SCANNR_BRIGH_INC))
-#else
-    if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
-#endif
         ingame.Scanner.Brightness += 4;
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_SCANNR_BRIGH_DEC))
-#else
-    if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
-#endif
         ingame.Scanner.Brightness -= 4;
     if (ingame.Scanner.Brightness < 0)
         ingame.Scanner.Brightness = 0;
@@ -5322,15 +5247,9 @@ ubyte do_user_interface(void)
     // Restart level
     if (!in_network_game && (ingame.Flags & GamF_MortalGame) == 0)
     {
-#ifdef MORE_GAME_KEYS
         if (is_gamekey_pressed(GKey_MISSN_RESTART))
         {
             clear_gamekey_pressed(GKey_MISSN_RESTART);
-#else
-        if (is_key_pressed(KC_R, KMod_DONTCARE))
-        {
-            clear_key_pressed(KC_R);
-#endif
             StopCD();
             test_missions(1);
             init_level_3d(1);

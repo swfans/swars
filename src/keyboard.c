@@ -169,10 +169,8 @@ TbKeyMods get_gamekey_modifier(GameKey gkey)
         break;
     case GKey_TRANS_OBJ_SURF_COL:
     case GKey_TRANS_OBJ_LINE_COL:
-#ifdef MORE_GAME_KEYS
     case GKey_GAMESPEED_INC:
     case GKey_GAMESPEED_DEC:
-#endif
         kmodif = KMod_CONTROL;
         break;
     case GKey_CAMERA_PERSPECTV:
@@ -477,7 +475,6 @@ void set_default_game_keys(void)
     kbkeys[GKey_CAMERA_PERSPECTV] = KC_F;
     kbkeys[GKey_TRANS_OBJ_SURF_COL] = KC_J;
     kbkeys[GKey_TRANS_OBJ_LINE_COL] = KC_H;
-#ifdef MORE_GAME_KEYS
     kbkeys[GKey_SCANNR_BRIGH_INC] = KC_NUMPAD6;
     kbkeys[GKey_SCANNR_BRIGH_DEC] = KC_NUMPAD4;
     kbkeys[GKey_DANGR_TRACK] = KC_NUMPAD0;
@@ -499,7 +496,6 @@ void set_default_game_keys(void)
     kbkeys[GKey_SEL_WEP_5] = KC_9;
     kbkeys[GKey_SEL_WEP_6] = KC_0;
     kbkeys[GKey_USE_MEDIKIT] = KC_UNASSIGNED;
-#endif
 }
 
 /******************************************************************************/
