@@ -4973,16 +4973,26 @@ TbResult read_palette_file(void)
 void do_music_user_input(void)
 {
     // MIDI Music (tension) volume control
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_DANGR_VOL_INC))
+    {
+#else
     if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
     {
+#endif
         if (lbShift & KMod_SHIFT)
             startscr_midivol += 1;
         else
             startscr_midivol += 10;
         sfx_apply_midivol();
     }
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_DANGR_VOL_DEC))
+    {
+#else
     if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
     {
+#endif
         if (lbShift & KMod_SHIFT)
             startscr_midivol -= 1;
         else
@@ -4991,16 +5001,26 @@ void do_music_user_input(void)
     }
 
     // Sample volume control
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_SOUND_VOL_INC))
+    {
+#else
     if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
     {
+#endif
         if (lbShift & KMod_SHIFT)
             startscr_samplevol += 1;
         else
             startscr_samplevol += 10;
         sfx_apply_samplevol();
     }
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_SOUND_VOL_DEC))
+    {
+#else
     if (is_key_pressed(KC_NUMPAD1, KMod_DONTCARE))
     {
+#endif
         if (lbShift & KMod_SHIFT)
             startscr_samplevol -= 1;
         else
@@ -5009,16 +5029,26 @@ void do_music_user_input(void)
     }
 
     // CD Music volume control
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_MUSIC_VOL_INC))
+    {
+#else
     if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
     {
+#endif
         if (lbShift & KMod_SHIFT)
             startscr_cdvolume += 1;
         else
             startscr_cdvolume += 10;
         sfx_apply_cdvolume();
     }
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_MUSIC_VOL_DEC))
+    {
+#else
     if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
     {
+#endif
         if (lbShift & KMod_SHIFT)
             startscr_cdvolume -= 1;
         else
@@ -5027,14 +5057,24 @@ void do_music_user_input(void)
     }
 
     // Music track control
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_MUSIC_TRACK))
+    {
+#else
     if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
     {
+#endif
         clear_key_pressed(KC_NUMPAD5);
         if (++ingame.CDTrack > 4)
             ingame.CDTrack = 2;
     }
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_DANGR_TRACK))
+    {
+#else
     if (is_key_pressed(KC_NUMPAD0, KMod_DONTCARE))
     {
+#endif
         clear_key_pressed(KC_NUMPAD0);
         ingame.DangerTrack = 2 - ingame.DangerTrack + 1;
     }
@@ -5071,8 +5111,17 @@ ubyte do_user_interface(void)
         return process_mouse_imputs() != 0;
 
     // screenshot
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_SCREENSHOT))
+    {
+        clear_gamekey_pressed(GKey_SCREENSHOT);
+#else
     if (is_key_pressed(KC_M, KMod_DONTCARE))
+    {
+        clear_key_pressed(KC_M);
+#endif
         LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
+    }
 
 #if 0
     // This looks like some kind of early idea for grouping agents like in C&C
@@ -5246,9 +5295,17 @@ ubyte do_user_interface(void)
     }
 
     // Scanner appearence control
+#ifdef MORE_GAME_KEYS
+    if (is_gamekey_pressed(GKey_SCANNR_BRIGH_INC))
+#else
     if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
+#endif
         ingame.Scanner.Brightness += 4;
+#ifdef MORE_GAME_KEYS
+    if (GKey_SCANNR_BRIGH_DEC(GKey_SCANNR_BRIGH_INC))
+#else
     if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
+#endif
         ingame.Scanner.Brightness -= 4;
     if (ingame.Scanner.Brightness < 0)
         ingame.Scanner.Brightness = 0;
@@ -5259,9 +5316,15 @@ ubyte do_user_interface(void)
     // Restart level
     if (!in_network_game && (ingame.Flags & GamF_MortalGame) == 0)
     {
+#ifdef MORE_GAME_KEYS
+        if (is_gamekey_pressed(GKey_MISSN_RESTART))
+        {
+            clear_gamekey_pressed(GKey_MISSN_RESTART);
+#else
         if (is_key_pressed(KC_R, KMod_DONTCARE))
         {
             clear_key_pressed(KC_R);
+#endif
             StopCD();
             test_missions(1);
             init_level_3d(1);

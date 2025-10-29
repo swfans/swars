@@ -158,12 +158,9 @@ void sprint_joy_key(char *ostr, int buttons_num, ushort jkeys)
     ostr[tx_len] = '\0';
 }
 
-ubyte is_gamekey_kbd_pressed(GameKey gkey)
+TbKeyMods get_gamekey_modifier(GameKey gkey)
 {
-    TbKeyCode kkey;
     TbKeyMods kmodif;
-
-    kkey = kbkeys[gkey];
 
     switch (gkey)
     {
@@ -172,6 +169,10 @@ ubyte is_gamekey_kbd_pressed(GameKey gkey)
         break;
     case GKey_TRANS_OBJ_SURF_COL:
     case GKey_TRANS_OBJ_LINE_COL:
+#ifdef MORE_GAME_KEYS
+    case GKey_GAMESPEED_INC:
+    case GKey_GAMESPEED_DEC:
+#endif
         kmodif = KMod_CONTROL;
         break;
     case GKey_CAMERA_PERSPECTV:
@@ -181,6 +182,16 @@ ubyte is_gamekey_kbd_pressed(GameKey gkey)
         kmodif = KMod_DONTCARE;
         break;
     }
+    return kmodif;
+}
+
+ubyte is_gamekey_kbd_pressed(GameKey gkey)
+{
+    TbKeyCode kkey;
+    TbKeyMods kmodif;
+
+    kkey = kbkeys[gkey];
+    kmodif = get_gamekey_modifier(gkey);
 
     return is_key_pressed(kkey, kmodif);
 }
@@ -295,24 +306,8 @@ void sprint_gamekey_combination_kbd(char *ostr, GameKey gkey)
     ushort keyno;
     TbKeyMods kmodif;
 
-    switch (gkey)
-    {
-    case GKey_SELF_DESTRUCT:
-        kmodif = KMod_ALT;
-        break;
-    case GKey_TRANS_OBJ_SURF_COL:
-    case GKey_TRANS_OBJ_LINE_COL:
-        kmodif = KMod_CONTROL;
-        break;
-    case GKey_CAMERA_PERSPECTV:
-        kmodif = KMod_NONE;
-        break;
-    default:
-        kmodif = KMod_DONTCARE;
-        break;
-    }
-
     keyno = kbkeys[gkey];
+    kmodif = get_gamekey_modifier(gkey);
     if (keyno == KC_UNASSIGNED)
     {
         ostr[0] = '\0';
@@ -483,6 +478,20 @@ void set_default_game_keys(void)
     kbkeys[GKey_TRANS_OBJ_SURF_COL] = KC_J;
     kbkeys[GKey_TRANS_OBJ_LINE_COL] = KC_H;
 #ifdef MORE_GAME_KEYS
+    kbkeys[GKey_SCANNR_BRIGH_INC] = KC_NUMPAD6;
+    kbkeys[GKey_SCANNR_BRIGH_DEC] = KC_NUMPAD4;
+    kbkeys[GKey_DANGR_TRACK] = KC_NUMPAD0;
+    kbkeys[GKey_MUSIC_TRACK] = KC_NUMPAD5;
+    kbkeys[GKey_SOUND_VOL_INC] = KC_NUMPAD7;
+    kbkeys[GKey_SOUND_VOL_DEC] = KC_NUMPAD1;
+    kbkeys[GKey_DANGR_VOL_INC] = KC_NUMPAD8;
+    kbkeys[GKey_DANGR_VOL_DEC] = KC_NUMPAD2;
+    kbkeys[GKey_MUSIC_VOL_INC] = KC_NUMPAD9;
+    kbkeys[GKey_MUSIC_VOL_DEC] = KC_NUMPAD3;
+    kbkeys[GKey_MISSN_RESTART] = KC_R;
+    kbkeys[GKey_GAMESPEED_INC] = KC_ADD;
+    kbkeys[GKey_GAMESPEED_DEC] = KC_SUBTRACT;
+    kbkeys[GKey_SCREENSHOT] = KC_M;
     kbkeys[GKey_SEL_WEP_1] = KC_5;
     kbkeys[GKey_SEL_WEP_2] = KC_6;
     kbkeys[GKey_SEL_WEP_3] = KC_7;
