@@ -292,11 +292,11 @@ jobs:
         uses: joncloud/makensis-action@v4.1
         with:
           additional-plugin-paths: "release/nsis-plugins"
-          script-file: "release/res/syndwarsfx-setup.nsi"
+          script-file: "release/util/syndwarsfx-setup.nsi"
           arguments: "-V3"
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.INSTLR_NAME }}
-          path: release/res/syndwarsfx-setup.exe
+          path: release/util/syndwarsfx-setup.exe
