@@ -17,12 +17,12 @@ OutFile syndwarsfx-setup.exe
 !insertmacro GetDrives
 !include "MUI2.nsh"
 !include x64.nsh
-!include syndwarsfx-config.nsh
+!include ..\res\syndwarsfx-config.nsh
 
 ShowInstDetails show
 
 
-LicenseLangString LIC_ENG 1033 license-eng.txt
+LicenseLangString LIC_ENG 1033 ..\res\license-eng.txt
 
 Name "Syndicate Wars Fan Expansion"
 BrandingText "SyndWarsFX, by fans for fans"
@@ -69,7 +69,7 @@ InstallDir "$PROGRAMFILES\SyndWarsFX\"
 !endif
 
 
-!define MUI_ICON "syndwarsfx_icon.ico"
+!define MUI_ICON "..\res\syndwarsfx_icon.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
 !define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Fan Expansion Setup"
 !define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\nBuild ${PRODUCT_VERSION}				Graphics ${GFX_VERSION}$\nLevels ${LEVELS_VERSION}				Sound ${SFX_VERSION}"
@@ -198,7 +198,7 @@ inst_music_done:
 SectionEnd
 
 Function .onInit
-  !insertmacro INSTALLOPTIONS_EXTRACT "lang_n_cdrom.ini"
+  !insertmacro INSTALLOPTIONS_EXTRACT_AS "..\res\lang_n_cdrom.ini" "lang_n_cdrom.ini"
   !insertmacro INSTALLOPTIONS_WRITE "lang_n_cdrom.ini" "Field 3" State "$(STR_CHOOSE_DRIVE)"
   StrCpy $RadioSelected "" ; Initialize RadioSelected variable
   SectionSetSize ${section_0} 220000

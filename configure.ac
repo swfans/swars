@@ -276,7 +276,7 @@ AC_CONFIG_FILES([Makefile conf/Makefile lang/Makefile src/Makefile util/Makefile
 
 # Prepare files for Windows installer
 AC_CONFIG_LINKS([
-  res/syndwarsfx-setup.nsi:res/syndwarsfx-setup.nsi
+  util/syndwarsfx-setup.nsi:util/syndwarsfx-setup.nsi
   res/lang_n_cdrom.ini:res/lang_n_cdrom.ini
   res/license-eng.txt:res/license-eng.txt
   res/syndwarsfx_icon.ico:res/syndwarsfx_icon.ico
