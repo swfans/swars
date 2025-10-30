@@ -73,9 +73,7 @@ struct gpoly_state {
     int var_098;
     int var_094;
     int var_090;
-    int var_08C;
-    int var_088;
-    int var_084;
+    struct gpoly_blends bldA;
     int var_080;
     int var_07C;
     int var_078;
