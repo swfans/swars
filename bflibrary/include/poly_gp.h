@@ -32,6 +32,10 @@ struct gpoly_factors {
     int S[4];
 };
 
+struct gpoly_blends {
+    int B[3];
+};
+
 struct gpoly_state {
     int ratioCA_X2Y;
     int ratioBA_X2Y;

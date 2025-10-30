@@ -382,7 +382,7 @@ static int gpoly_mul_rot_2(int a1, int a2)
     return val;
 }
 
-static TbPixel gpoly_pixel_shaded(int *a2d, int *a3b, int *a4c, struct gpoly_factors *p_inc)
+static TbPixel gpoly_pixel_shaded(int *a2d, int *a3b, int *a4c, const struct gpoly_factors *p_inc)
 {
     int loc_2d;
     ubyte a3b_h, a3b_l;
@@ -411,7 +411,7 @@ static TbPixel gpoly_pixel_shaded(int *a2d, int *a3b, int *a4c, struct gpoly_fac
     return pixmap.fade_table[(ret_h << 8) | ret_l];
 }
 
-static TbPixel gpoly_pixel_noshade(int *a2d, int *a3b, int *a4c, struct gpoly_factors *p_inc)
+static TbPixel gpoly_pixel_noshade(int *a2d, int *a3b, int *a4c, const struct gpoly_factors *p_inc)
 {
     int loc_2d;
     ubyte a3b_h, a3b_l;
@@ -439,7 +439,7 @@ static TbPixel gpoly_pixel_noshade(int *a2d, int *a3b, int *a4c, struct gpoly_fa
     return ret_l;
 }
 
-static void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_factors *p_inc)
+static void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, const struct gpoly_factors *p_inc)
 {
     int loc_2d;
     ubyte a3b_h, a3b_l;
@@ -465,7 +465,7 @@ static void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_facto
     *a3b = (a3b_h << 8) | a3b_l;
 }
 
-static void gpoly_stb_drw_decr1a(int *a2d, int *a3b, int *a4c, struct gpoly_factors *p_inc)
+static void gpoly_stb_drw_decr1a(int *a2d, int *a3b, int *a4c, const struct gpoly_factors *p_inc)
 {
     int loc_2d;
     ubyte a3b_h, a3b_l;
@@ -491,7 +491,7 @@ static void gpoly_stb_drw_decr1a(int *a2d, int *a3b, int *a4c, struct gpoly_fact
     *a3b = (a3b_h << 8) | a3b_l;
 }
 
-static void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_factors *p_inc)
+static void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, const struct gpoly_factors *p_inc)
 {
     int loc_2d;
     ubyte a3b_h, a3b_l;
@@ -514,7 +514,7 @@ static void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_facto
     *a3b = (a3b_h << 8) | a3b_l;
 }
 
-static void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, struct gpoly_factors *p_inc)
+static void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, const struct gpoly_factors *p_inc)
 {
     int loc_2d;
     ubyte a3b_h, a3b_l;
@@ -1243,7 +1243,7 @@ void gpoly_sta_md28(struct gpoly_state *st)
 
 void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
 {
-    int loc_0E4, loc_08C, loc_088;
+    struct gpoly_blends bld1;
     int loc_0E0, loc_0DC, loc_0D8;
     ubyte *out_ln;
     int range_beg, range_end;
@@ -1268,9 +1268,9 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
         loc_12C = st->ratioBA_X2Y;
         loc_128 = st->ratioCA_X2Y;
     }
-    loc_08C = st->var_08C;
-    loc_088 = st->var_088;
-    loc_0E4 = st->var_084;
+    bld1.B[2] = st->var_08C;
+    bld1.B[0] = st->var_088;
+    bld1.B[1] = st->var_084;
     out_ln = &vec_screen[st->ptA_Y * vec_screen_width];
     if (st->ptA_Y > vec_window_height)
         return;
@@ -1293,7 +1293,7 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
     {
         for (;curr_Y < 0; curr_Y++)
         {
-            gpoly_stb_drw_incr2(&loc_088, &loc_0E4, &loc_08C, &st->incA);
+            gpoly_stb_drw_incr2(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incA);
             loc_0FC = range_beg;
             curr_X -= range_beg >> 16;
             range_end += loc_128;
@@ -1318,24 +1318,24 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
             if (range_beg_scr < 0)
             {
                 for (; curr_X > 0; curr_X--) {
-                    gpoly_stb_drw_decr1a(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_decr1a(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
                 for (; curr_X < 0; curr_X++) {
-                    gpoly_stb_drw_incr2(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_incr2(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
             }
             else
             {
                 for (; curr_X < range_beg_scr; curr_X++) {
-                    gpoly_stb_drw_incr2(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_incr2(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
                 for (; curr_X > range_beg_scr; curr_X--) {
-                    gpoly_stb_drw_decr1a(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_decr1a(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
             }
-            loc_0E0 = loc_08C;
-            loc_0DC = loc_0E4;
-            loc_0D8 = loc_088;
+            loc_0E0 = bld1.B[2];
+            loc_0DC = bld1.B[1];
+            loc_0D8 = bld1.B[0];
 
             height = range_end >> 16;
             if (height > vec_window_width)
@@ -1355,7 +1355,7 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
                     int kk;
 
                     for (kk = kk_max; kk > 0; kk--) {
-                        o[16-kk] = gpoly_pixel_shaded(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                        o[16-kk] = gpoly_pixel_shaded(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                     }
                     if (kk_max != 0) {
                         o += 16;
@@ -1363,7 +1363,7 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
                         if (range_remain <= 0)
                             break;
                     }
-                    o[0] = gpoly_pixel_shaded(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    o[0] = gpoly_pixel_shaded(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                     kk_max = 15;
                 }
             }
@@ -1372,10 +1372,10 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
             loc_0FC += loc_12C;
             curr_X += (loc_0FC >> 16);
             range_beg = loc_0FC;
-            loc_08C = loc_0E0;
-            loc_0E4 = loc_0DC;
-            loc_088 = loc_0D8;
-            gpoly_stb_drw_incr2(&loc_088, &loc_0E4, &loc_08C, &st->incA);
+            bld1.B[2] = loc_0E0;
+            bld1.B[1] = loc_0DC;
+            bld1.B[0] = loc_0D8;
+            gpoly_stb_drw_incr2(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incA);
             out_ln = &loc_0F4[ln_len];
         }
 
@@ -1391,9 +1391,9 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
             st->incA.S[1] = st->var_098;
             st->incA.S[2] = st->var_094;
             st->incA.S[3] = st->var_090;
-            loc_08C = st->var_080;
-            loc_088 = st->var_07C;
-            loc_0E4 = st->var_078;
+            bld1.B[2] = st->var_080;
+            bld1.B[0] = st->var_07C;
+            bld1.B[1] = st->var_078;
             curr_X = st->ptB_X;
             range_beg = st->ptB_X_prc;
         }
@@ -1417,7 +1417,7 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
 
 void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
 {
-    int loc_0E4, loc_08C, loc_088;
+    struct gpoly_blends bld1;
     int loc_0E0, loc_0DC, loc_0D8;
     ubyte *out_ln;
     int range_beg, range_end;
@@ -1442,9 +1442,9 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
         loc_12C = st->ratioBA_X2Y;
         loc_128 = st->ratioCA_X2Y;
     }
-    loc_08C = st->var_08C;
-    loc_088 = st->var_088;
-    loc_0E4 = st->var_084;
+    bld1.B[2] = st->var_08C;
+    bld1.B[0] = st->var_088;
+    bld1.B[1] = st->var_084;
     curr_X = st->ptA_Y;
     out_ln = &vec_screen[st->ptA_Y * vec_screen_width];
     if (st->ptA_Y > vec_window_height)
@@ -1467,7 +1467,7 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
     {
         for (;curr_Y < 0; curr_Y++)
         {
-            gpoly_stb_drw_incr2(&loc_088, &loc_0E4, &loc_08C, &st->incA);
+            gpoly_stb_drw_incr2(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incA);
             loc_0FC = range_beg;
             curr_X -= loc_0FC >> 16;
             range_end += loc_128;
@@ -1488,9 +1488,9 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
             loc_0FC = range_beg;
             loc_0F8 = range_end;
             loc_0F4 = out_ln;
-            loc_0E0 = loc_08C;
-            loc_0DC = loc_0E4;
-            loc_0D8 = loc_088;
+            loc_0E0 = bld1.B[2];
+            loc_0DC = bld1.B[1];
+            loc_0D8 = bld1.B[0];
             range_beg_scr = range_beg >> 16;
             range_end_scr = range_end >> 16;
             range_len = range_end_scr - range_beg_scr;
@@ -1507,7 +1507,7 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
                     int kk;
 
                     for (kk = kk_max; kk > 0; kk--) {
-                        o[16-kk] = gpoly_pixel_shaded(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                        o[16-kk] = gpoly_pixel_shaded(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                     }
                     if (kk_max != 0) {
                         o += 16;
@@ -1515,16 +1515,16 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
                         if (range_remain <= 0)
                             break;
                     }
-                    o[0] = gpoly_pixel_shaded(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    o[0] = gpoly_pixel_shaded(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                     kk_max = 15;
                 }
             }
             range_beg = loc_12C + loc_0FC;
             range_end = loc_128 + loc_0F8;
-            loc_08C = loc_0E0;
-            loc_0E4 = loc_0DC;
-            loc_088 = loc_0D8;
-            gpoly_stb_drw_incr2(&loc_088, &loc_0E4, &loc_08C, &st->incA);
+            bld1.B[2] = loc_0E0;
+            bld1.B[1] = loc_0DC;
+            bld1.B[0] = loc_0D8;
+            gpoly_stb_drw_incr2(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incA);
             out_ln = &loc_0F4[ln_len];
         }
 
@@ -1540,9 +1540,9 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
             st->incA.S[1] = st->var_098;
             st->incA.S[2] = st->var_094;
             st->incA.S[3] = st->var_090;
-            loc_08C = st->var_080;
-            loc_088 = st->var_07C;
-            loc_0E4 = st->var_078;
+            bld1.B[2] = st->var_080;
+            bld1.B[0] = st->var_07C;
+            bld1.B[1] = st->var_078;
             curr_X = st->ptB_X;
             range_beg = st->ptB_X_prc;
         }
@@ -1566,7 +1566,7 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
 
 void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
 {
-    int loc_0E4, loc_08C, loc_088;
+    struct gpoly_blends bld1;
     int loc_0E0, loc_0DC, loc_0D8;
     ubyte *out_ln;
     int range_beg, range_end;
@@ -1590,9 +1590,9 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
         loc_12C = st->ratioBA_X2Y;
         loc_128 = st->ratioCA_X2Y;
     }
-    loc_08C = st->var_08C;
-    loc_088 = st->var_088;
-    loc_0E4 = st->var_084;
+    bld1.B[2] = st->var_08C;
+    bld1.B[0] = st->var_088;
+    bld1.B[1] = st->var_084;
     out_ln = &vec_screen[st->ptA_Y * vec_screen_width];
     if (st->ptA_Y > vec_window_height)
         return;
@@ -1619,7 +1619,7 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
     {
         for (; curr_Y < 0; curr_Y++)
         {
-            gpoly_stb_drw_incr4(&loc_088, &loc_0E4, &loc_08C, &st->incA);
+            gpoly_stb_drw_incr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incA);
             range_beg += loc_12C;
             range_end += loc_128;
             out_ln += ln_len;
@@ -1636,24 +1636,24 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
             if (range_beg_scr < 0)
             {
                 for (; curr_X > 0; curr_X--) {
-                    gpoly_stb_drw_decr4(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_decr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
                 for (; curr_X < 0; curr_X++) {
-                    gpoly_stb_drw_incr4(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_incr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
             }
             else
             {
                 for (; curr_X < range_beg_scr; curr_X++) {
-                    gpoly_stb_drw_incr4(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_incr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
                 for (; curr_X > range_beg_scr; curr_X--) {
-                    gpoly_stb_drw_decr4(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_decr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
             }
-            loc_0E0 = loc_08C;
-            loc_0DC = loc_0E4;
-            loc_0D8 = loc_088;
+            loc_0E0 = bld1.B[2];
+            loc_0DC = bld1.B[1];
+            loc_0D8 = bld1.B[0];
             range_end_scr = range_end >> 16;
             if (range_end_scr > vec_window_width)
                 range_end_scr = vec_window_width;
@@ -1671,7 +1671,7 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
                     int kk;
 
                     for (kk = kk_max; kk > 0; kk--) {
-                        o[16-kk] = gpoly_pixel_noshade(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                        o[16-kk] = gpoly_pixel_noshade(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                     }
                     if (kk_max != 0) {
                         o += 16;
@@ -1679,16 +1679,16 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
                         if (range_remain <= 0)
                             break;
                     }
-                    o[0] = gpoly_pixel_noshade(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    o[0] = gpoly_pixel_noshade(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                     kk_max = 15;
                 }
             }
             range_beg = loc_12C + loc_0FC;
             range_end = loc_128 + loc_0F8;
-            loc_08C = loc_0E0;
-            loc_0E4 = loc_0DC;
-            loc_088 = loc_0D8;
-            gpoly_stb_drw_incr4(&loc_088, &loc_0E4, &loc_08C, &st->incA);
+            bld1.B[2] = loc_0E0;
+            bld1.B[1] = loc_0DC;
+            bld1.B[0] = loc_0D8;
+            gpoly_stb_drw_incr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incA);
             out_ln = &loc_0F4[ln_len];
         }
 
@@ -1703,9 +1703,9 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
             st->incA.S[1] = st->var_098;
             st->incA.S[2] = st->var_094;
             st->incA.S[3] = st->var_090;
-            loc_08C = st->var_080;
-            loc_088 = st->var_07C;
-            loc_0E4 = st->var_078;
+            bld1.B[2] = st->var_080;
+            bld1.B[0] = st->var_07C;
+            bld1.B[1] = st->var_078;
             curr_X = st->ptB_X;
             range_beg = st->ptB_X_prc;
         }
@@ -1729,7 +1729,7 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
 
 void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
 {
-    int loc_0E4, loc_08C, loc_088;
+    struct gpoly_blends bld1;
     int loc_0E0, loc_0DC, loc_0D8;
     ubyte *out_ln;
     int range_beg, range_end;
@@ -1753,9 +1753,9 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
         loc_12C = st->ratioBA_X2Y;
         loc_128 = st->ratioCA_X2Y;
     }
-    loc_08C = st->var_08C;
-    loc_088 = st->var_088;
-    loc_0E4 = st->var_084;
+    bld1.B[2] = st->var_08C;
+    bld1.B[0] = st->var_088;
+    bld1.B[1] = st->var_084;
     out_ln = &vec_screen[st->ptA_Y * vec_screen_width];
     if (st->ptA_Y > vec_window_height)
         return;
@@ -1782,7 +1782,7 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
     {
         for (; curr_Y < 0; curr_Y++)
         {
-            gpoly_stb_drw_incr4(&loc_088, &loc_0E4, &loc_08C, &st->incA);
+            gpoly_stb_drw_incr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incA);
             range_beg += loc_12C;
             range_end += loc_128;
             out_ln += ln_len;
@@ -1799,18 +1799,18 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
             if (range_beg_scr > curr_X)
             {
                 for (; curr_X < range_beg_scr; curr_X++) {
-                    gpoly_stb_drw_incr4(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_incr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
             }
             else
             {
                 for (; curr_X > range_beg_scr; curr_X--) {
-                    gpoly_stb_drw_decr4(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    gpoly_stb_drw_decr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                 }
             }
-            loc_0E0 = loc_08C;
-            loc_0DC = loc_0E4;
-            loc_0D8 = loc_088;
+            loc_0E0 = bld1.B[2];
+            loc_0DC = bld1.B[1];
+            loc_0D8 = bld1.B[0];
             range_end_scr = range_end >> 16;
             range_len = range_end_scr - curr_X;
             if (range_len > 0)
@@ -1826,7 +1826,7 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
                     int kk;
 
                     for (kk = kk_max; kk > 0; kk--) {
-                        o[16-kk] = gpoly_pixel_noshade(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                        o[16-kk] = gpoly_pixel_noshade(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                     }
                     if (kk_max != 0) {
                         o += 16;
@@ -1834,16 +1834,16 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
                         if (range_remain <= 0)
                             break;
                     }
-                    o[0] = gpoly_pixel_noshade(&loc_088, &loc_0E4, &loc_08C, &st->incB);
+                    o[0] = gpoly_pixel_noshade(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incB);
                     kk_max = 15;
                 }
             }
             range_beg = loc_12C + loc_0FC;
             range_end = loc_128 + loc_0F8;
-            loc_08C = loc_0E0;
-            loc_0E4 = loc_0DC;
-            loc_088 = loc_0D8;
-            gpoly_stb_drw_incr4(&loc_088, &loc_0E4, &loc_08C, &st->incA);
+            bld1.B[0] = loc_0D8;
+            bld1.B[1] = loc_0DC;
+            bld1.B[2] = loc_0E0;
+            gpoly_stb_drw_incr4(&bld1.B[0], &bld1.B[1], &bld1.B[2], &st->incA);
             out_ln = &loc_0F4[ln_len];
         }
 
@@ -1858,9 +1858,9 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
             st->incA.S[1] = st->var_098;
             st->incA.S[2] = st->var_094;
             st->incA.S[3] = st->var_090;
-            loc_08C = st->var_080;
-            loc_088 = st->var_07C;
-            loc_0E4 = st->var_078;
+            bld1.B[0] = st->var_07C;
+            bld1.B[1] = st->var_078;
+            bld1.B[2] = st->var_080;
             curr_X = st->ptB_X;
             range_beg = st->ptB_X_prc;
         }
