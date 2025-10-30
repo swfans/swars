@@ -392,9 +392,10 @@ static TbPixel gpoly_pixel_shaded(int *a2d, int *a3b, int *a4c, struct gpoly_sta
     ret_h = *a4c >> 8;
     a3b_l = *a2d;
     a3b_h = *a3b >> 8;
+    loc_2d = *a4c;
 
-    loc_carry = __CFADDL__(*a4c, st->var_0BC);
-    *a4c = *a4c + st->var_0BC;
+    loc_carry = __CFADDL__(loc_2d, st->var_0BC);
+    *a4c = loc_2d + st->var_0BC;
     loc_2d = *a2d + loc_carry;
 
     ret_l = vec_map[(a3b_h << 8) | a3b_l];
@@ -419,9 +420,10 @@ static TbPixel gpoly_pixel_noshade(int *a2d, int *a3b, int *a4c, struct gpoly_st
 
     a3b_l = *a2d;
     a3b_h = *a3b >> 8;
+    loc_2d = *a4c;
 
-    loc_carry = __CFADDL__(*a4c, st->var_0BC);
-    *a4c = *a4c + st->var_0BC;
+    loc_carry = __CFADDL__(loc_2d, st->var_0BC);
+    *a4c = loc_2d + st->var_0BC;
     loc_2d = *a2d + loc_carry;
 
     ret_l = vec_map[(a3b_h << 8) | a3b_l];
@@ -444,9 +446,10 @@ static void gpoly_stb_drw_incr1a(int *a2d, int *a3b, int *a4c, struct gpoly_stat
     ubyte loc_carry;
 
     a3b_h = *a3b >> 8;
+    loc_2d = *a3b;
 
-    loc_carry = __CFADDB__(*a3b, st->inc_S1);
-    a3b_l = *a3b + st->inc_S1;
+    loc_carry = __CFADDB__(loc_2d, st->inc_S1);
+    a3b_l = loc_2d + st->inc_S1;
     loc_2d = *a4c + loc_carry;
 
     loc_carry = __CFADDL__(loc_2d, st->inc_S2);
@@ -470,9 +473,10 @@ static void gpoly_stb_drw_incr1b(int *a2d, int *a3b, int *a4c, struct gpoly_stat
 
     a3b_h = *a3b >> 8;
     a3b_l = *a3b;
+    loc_2d = *a4c;
 
-    loc_carry = __CFADDL__(*a4c, st->inc_S2);
-    *a4c = *a4c + st->inc_S2;
+    loc_carry = __CFADDL__(loc_2d, st->inc_S2);
+    *a4c = loc_2d + st->inc_S2;
     loc_2d = *a2d + loc_carry;
 
     loc_carry = __CFADDL__(loc_2d, st->inc_S3);
@@ -491,9 +495,10 @@ static void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state
     ubyte loc_carry;
 
     a3b_h = *a3b >> 8;
+    loc_2d = *a3b;
 
-    loc_carry = __CFADDB__(*a3b, st->var_0A8);
-    a3b_l = *a3b + st->var_0A8;
+    loc_carry = __CFADDB__(loc_2d, st->var_0A8);
+    a3b_l = loc_2d + st->var_0A8;
     loc_2d = *a4c + loc_carry;
 
     loc_carry = __CFADDL__(loc_2d, st->var_0BC);
@@ -509,16 +514,17 @@ static void gpoly_stb_drw_incr2(int *a2d, int *a3b, int *a4c, struct gpoly_state
     *a3b = (a3b_h << 8) | a3b_l;
 }
 
-static void gpoly_stb_drw_incr3(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
+static void gpoly_stb_drw_decr1a(int *a2d, int *a3b, int *a4c, struct gpoly_state *st)
 {
     int loc_2d;
     ubyte a3b_h, a3b_l;
     ubyte loc_carry;
 
     a3b_h = *a3b >> 8;
+    loc_2d = *a3b;
 
-    loc_carry = __CFSUBB__(*a3b, st->var_0A8);
-    a3b_l = *a3b - st->var_0A8;
+    loc_carry = __CFSUBB__(loc_2d, st->var_0A8);
+    a3b_l = loc_2d - st->var_0A8;
     loc_2d = *a4c - loc_carry;
 
     loc_carry = __CFSUBL__(loc_2d, st->var_0BC);
@@ -542,9 +548,10 @@ static void gpoly_stb_drw_incr4(int *a2d, int *a3b, int *a4c, struct gpoly_state
 
     a3b_h = *a3b >> 8;
     a3b_l = *a3b;
+    loc_2d = *a4c;
 
-    loc_carry = __CFADDL__(*a4c, st->var_0BC);
-    *a4c = *a4c + st->var_0BC;
+    loc_carry = __CFADDL__(loc_2d, st->var_0BC);
+    *a4c = loc_2d + st->var_0BC;
     loc_2d = *a2d + loc_carry;
 
     loc_carry = __CFADDL__(loc_2d, st->var_0B8);
@@ -564,9 +571,10 @@ static void gpoly_stb_drw_decr4(int *a2d, int *a3b, int *a4c, struct gpoly_state
 
     a3b_h = *a3b >> 8;
     a3b_l = *a3b;
+    loc_2d = *a4c;
 
-    loc_carry = __CFSUBL__(*a4c, st->var_0BC);
-    *a4c = *a4c - st->var_0BC;
+    loc_carry = __CFSUBL__(loc_2d, st->var_0BC);
+    *a4c = loc_2d - st->var_0BC;
     loc_2d = *a2d - loc_carry;
 
     loc_carry = __CFSUBL__(loc_2d, st->var_0B8);
@@ -746,7 +754,7 @@ void gpoly_sta_md04(struct gpoly_state *st)
         int dist_c5, mag_a1;
 
         dist_c5 = st->ptC_Y - st->ptA_Y;
-        if ( dist_c5 > 255 )
+        if (dist_c5 > 255)
             mag_a1 = 0x7FFFFFFF / dist_c5;
         else
             mag_a1 = gpoly_reptable[dist_c5];
@@ -1359,7 +1367,7 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
             if (range_beg_scr < 0)
             {
                 for (; curr_X > 0; curr_X--) {
-                    gpoly_stb_drw_incr3(&loc_088, &loc_0E4, &loc_08C, st);
+                    gpoly_stb_drw_decr1a(&loc_088, &loc_0E4, &loc_08C, st);
                 }
                 for (; curr_X < 0; curr_X++) {
                     gpoly_stb_drw_incr2(&loc_088, &loc_0E4, &loc_08C, st);
@@ -1371,7 +1379,7 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
                     gpoly_stb_drw_incr2(&loc_088, &loc_0E4, &loc_08C, st);
                 }
                 for (; curr_X > range_beg_scr; curr_X--) {
-                    gpoly_stb_drw_incr3(&loc_088, &loc_0E4, &loc_08C, st);
+                    gpoly_stb_drw_decr1a(&loc_088, &loc_0E4, &loc_08C, st);
                 }
             }
             loc_0E0 = loc_08C;
