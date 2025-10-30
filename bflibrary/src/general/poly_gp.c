@@ -665,9 +665,9 @@ void gpoly_sta_md03(struct gpoly_state *st)
         st->var_094 = fctr_f;
         st->var_090 = fctr_e;
 
-        st->var_080 = ptB_U_prc << 16;
-        st->var_07C = ((ptB_V_prc << 16) & 0xFFFFFF00) | ((ptB_U_prc >> 16) & 0xFF);
-        st->var_078 = (unsigned int)(ptB_V_prc << 8) >> 24 << 8;
+        st->bldB.B[2] = ptB_U_prc << 16;
+        st->bldB.B[0] = ((ptB_V_prc << 16) & 0xFFFFFF00) | ((ptB_U_prc >> 16) & 0xFF);
+        st->bldB.B[1] = (unsigned int)(ptB_V_prc << 8) >> 24 << 8;
     }
 }
 
@@ -890,11 +890,10 @@ void gpoly_sta_md05(struct gpoly_state *st)
         st->var_094 = fctr_f;
         st->var_090 = fctr_e;
 
-        st->var_078 = (st->var_078 & 0xFFFFFF00) | (ptB_S_prc & 0xFF);
-        st->var_080 = ((ptB_U_prc << 16) & 0xFFFF0000) | ((ptB_S_prc >> 8) & 0xFFFF);
+        st->bldB.B[2] = ((ptB_U_prc << 16) & 0xFFFF0000) | ((ptB_S_prc >> 8) & 0xFFFF);
         fctr_s = (unsigned int)(ptB_V_prc << 8) >> 24 << 8;
-        st->var_07C = ((ptB_V_prc << 16) & 0xFFFFFF00) | ((ptB_U_prc >> 16) & 0xFF);
-        st->var_078 = (fctr_s & 0xFFFFFF00) | (st->var_078 & 0xFF);
+        st->bldB.B[0] = ((ptB_V_prc << 16) & 0xFFFFFF00) | ((ptB_U_prc >> 16) & 0xFF);
+        st->bldB.B[1] = (fctr_s & 0xFFFFFF00) | ((ptB_S_prc) & 0xFF);
     }
 }
 
@@ -1046,9 +1045,9 @@ void gpoly_sta_md27(struct gpoly_state *st)
         st->var_094 = fctr_f;
         st->var_090 = fctr_e;
 
-        st->var_080 = ptB_U_prc << 16;
-        st->var_07C = ((ptB_V_prc << 16) & 0xFFFFFF00) | ((ptB_U_prc >> 16) & 0xFF);
-        st->var_078 = (unsigned int)(ptB_V_prc << 8) >> 24 << 8;
+        st->bldB.B[2] = ptB_U_prc << 16;
+        st->bldB.B[0] = ((ptB_V_prc << 16) & 0xFFFFFF00) | ((ptB_U_prc >> 16) & 0xFF);
+        st->bldB.B[1] = (unsigned int)(ptB_V_prc << 8) >> 24 << 8;
     }
 }
 
@@ -1231,11 +1230,10 @@ void gpoly_sta_md28(struct gpoly_state *st)
         st->var_094 = fctr_f;
         st->var_090 = fctr_e;
 
-        st->var_078 = (st->var_078 & 0xFFFFFF00) | (ptB_S_prc & 0xFF);
-        st->var_080 = ((ptB_U_prc << 16) & 0xFFFF0000) | ((ptB_S_prc >> 8) & 0xFFFF);
+        st->bldB.B[2] = ((ptB_U_prc << 16) & 0xFFFF0000) | ((ptB_S_prc >> 8) & 0xFFFF);
         fctr_s = (unsigned int)(ptB_V_prc << 8) >> 24 << 8;
-        st->var_07C = ((ptB_V_prc << 16) & 0xFFFFFF00) | ((st->var_080 >> 16) & 0xFF);
-        st->var_078 = (fctr_s & 0xFFFFFF00) | (st->var_078 & 0xFF);
+        st->bldB.B[0] = ((ptB_V_prc << 16) & 0xFFFFFF00) | ((st->bldB.B[2] >> 16) & 0xFF);
+        st->bldB.B[1] = (fctr_s & 0xFFFFFF00) | ((ptB_S_prc) & 0xFF);
     }
 }
 
@@ -1383,9 +1381,7 @@ void gpoly_rasterize_shaded_bound(struct gpoly_state *st)
             st->incA.S[1] = st->var_098;
             st->incA.S[2] = st->var_094;
             st->incA.S[3] = st->var_090;
-            bld.B[2] = st->var_080;
-            bld.B[0] = st->var_07C;
-            bld.B[1] = st->var_078;
+            bld = st->bldB;
             curr_X = st->ptB_X;
             range_beg = st->ptB_X_prc;
         }
@@ -1526,9 +1522,7 @@ void gpoly_rasterize_shaded_nobound(struct gpoly_state *st)
             st->incA.S[1] = st->var_098;
             st->incA.S[2] = st->var_094;
             st->incA.S[3] = st->var_090;
-            bld.B[2] = st->var_080;
-            bld.B[0] = st->var_07C;
-            bld.B[1] = st->var_078;
+            bld = st->bldB;
             curr_X = st->ptB_X;
             range_beg = st->ptB_X_prc;
         }
@@ -1683,9 +1677,7 @@ void gpoly_rasterize_noshade_bound(struct gpoly_state *st)
             st->incA.S[1] = st->var_098;
             st->incA.S[2] = st->var_094;
             st->incA.S[3] = st->var_090;
-            bld.B[2] = st->var_080;
-            bld.B[0] = st->var_07C;
-            bld.B[1] = st->var_078;
+            bld = st->bldB;
             curr_X = st->ptB_X;
             range_beg = st->ptB_X_prc;
         }
@@ -1832,9 +1824,7 @@ void gpoly_rasterize_noshade_nobound(struct gpoly_state *st)
             st->incA.S[1] = st->var_098;
             st->incA.S[2] = st->var_094;
             st->incA.S[3] = st->var_090;
-            bld.B[0] = st->var_07C;
-            bld.B[1] = st->var_078;
-            bld.B[2] = st->var_080;
+            bld = st->bldB;
             curr_X = st->ptB_X;
             range_beg = st->ptB_X_prc;
         }

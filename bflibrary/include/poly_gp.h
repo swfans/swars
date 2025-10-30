@@ -74,9 +74,7 @@ struct gpoly_state {
     int var_094;
     int var_090;
     struct gpoly_blends bldA;
-    int var_080;
-    int var_07C;
-    int var_078;
+    struct gpoly_blends bldB;
 };
 
 #pragma pack()
