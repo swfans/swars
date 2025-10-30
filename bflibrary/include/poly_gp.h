@@ -28,6 +28,10 @@ extern "C" {
 
 #pragma pack(1)
 
+struct gpoly_factors {
+    int S[4];
+};
+
 struct gpoly_state {
     int ratioCA_X2Y;
     int ratioBA_X2Y;
@@ -53,9 +57,8 @@ struct gpoly_state {
     int ptC_U;
     int ptC_V;
     int var_134;
-    int inc_S2;
-    int inc_S4;
-    int inc_S3;
+    struct gpoly_factors incA;
+    struct gpoly_factors incB;
     int var_0BC;
     int var_0B8;
     int var_0B4;
@@ -72,7 +75,6 @@ struct gpoly_state {
     int var_080;
     int var_07C;
     int var_078;
-    int inc_S1;
 };
 
 #pragma pack()
