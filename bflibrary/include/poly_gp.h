@@ -53,9 +53,9 @@ struct gpoly_state {
     int ptC_U;
     int ptC_V;
     int var_134;
-    int var_0CC;
-    int var_0C8;
-    int var_0C4;
+    int inc_S2;
+    int inc_S4;
+    int inc_S3;
     int var_0BC;
     int var_0B8;
     int var_0B4;
@@ -72,7 +72,7 @@ struct gpoly_state {
     int var_080;
     int var_07C;
     int var_078;
-    int inc_S;
+    int inc_S1;
 };
 
 #pragma pack()
