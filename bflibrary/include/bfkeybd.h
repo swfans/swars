@@ -221,7 +221,14 @@ extern unsigned char lbIInkey;
 extern unsigned char lbIInkeyFlags;
 
 void LbKeyboardSetLanguage(int lngnum);
+
+/** Adds extra keyboard handler, in addition to lbInkey and lbKeyOn.
+ *
+ * Registers a callback which is called in addition to the other
+ * keystroke handling mechanisms.
+ */
 void LbKeyboardCustomHandler(KeyboardEventHandler handler);
+
 TbBool LbKeyCodeValid(TbKeyCode key);
 
 
