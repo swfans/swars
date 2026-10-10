@@ -239,7 +239,7 @@ void hud_draw_mapcoord_corner_rect(struct DIHudMapCoordRect *p_diMapCorRect)
     struct EnginePoint ep;
 
     ep.X3d = p_diMapCorRect->Pt.X - engn_xc;
-    ep.Y3d = p_diMapCorRect->Pt.Y;// - engn_yc;
+    ep.Y3d = p_diMapCorRect->Pt.Y - engn_yc;
     ep.Z3d = p_diMapCorRect->Pt.Z - engn_zc;
     ep.Flags = 0;
     transform_point(&ep);

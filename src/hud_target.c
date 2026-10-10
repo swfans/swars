@@ -207,7 +207,7 @@ void draw_hud_lock_target(void)
     struct Thing *p_dcthing;
     struct Thing *p_vehicle;
     struct Thing *p_target;
-    int VX, VY, VZ;
+    int VX, VY_m8, VZ;
     int tgtimer;
 
     p_dcthing = &things[players[local_player_no].DirectControl[0]];
@@ -233,7 +233,7 @@ void draw_hud_lock_target(void)
     if (p_target != NULL)
     {
         VX = PRCCOORD_TO_MAPCOORD(p_target->X);
-        VY = PRCCOORD_TO_YCOORD(p_target->Y) + 120;
+        VY_m8 = PRCCOORD_TO_YCOORD(p_target->Y) + 120;
         VZ = PRCCOORD_TO_MAPCOORD(p_target->Z);
     }
     else if ((p_dcthing->Flag & TngF_ShootAtPos) == 0)
@@ -248,13 +248,13 @@ void draw_hud_lock_target(void)
         plyr = p_dcthing->U.UPerson.ComCur >> 2;
         plagent = p_dcthing->U.UPerson.ComCur & 3;
         VX = players[plyr].UserVX[plagent];
-        VY = players[plyr].UserVY[plagent];
+        VY_m8 = 8 * players[plyr].UserVY[plagent];
         VZ = players[plyr].UserVZ[plagent];
     }
     else
     {
         VX = p_dcthing->VX;
-        VY = p_dcthing->VY;
+        VY_m8 = 8 * p_dcthing->VY;
         VZ = p_dcthing->VZ;
     }
 
@@ -277,7 +277,7 @@ void draw_hud_lock_target(void)
             lnthick = 1;
         lnlen = (8 * overall_scale) >> 8;
 
-         enlist_hud_draw_mapcoord_corner_rect(VX, VY, VZ, rctsize, rctsize,
+         enlist_hud_draw_mapcoord_corner_rect(VX, VY_m8, VZ, rctsize, rctsize,
            lnlen, lnthick, 0, colour);
     }
 }
