@@ -1514,7 +1514,7 @@ GLOBAL_FUNC(ASM_draw_hud_lock_target)	/* 0x02017C */
 	jump_202b1:
 		mov    %eax,%edx
 		mov    %esi,%eax
-		call   draw_3d_map_corn_square
+		call   ac_draw_3d_map_corn_square
 	jump_202ba:
 		pop    %esi
 		pop    %edx
@@ -61163,7 +61163,7 @@ GLOBAL_FUNC(ASM_draw_map_flat_rect)	/* 0x705bc */
 
 
 /*----------------------------------------------------------------*/
-draw_3d_map_corn_square:	/* 0x070958 */
+GLOBAL_FUNC(ASM_draw_3d_map_corn_square)	/* 0x070958 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi

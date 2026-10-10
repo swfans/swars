@@ -41,6 +41,7 @@
 #include "player.h"
 #include "sound.h"
 #include "thing.h"
+#include "vehicle.h"
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -200,10 +201,93 @@ void init_draw_target(void)
         target_old_frameno = nstart_ani[983];
 }
 
+void draw_3d_map_corn_square(int x1, int y1, int z1, int w, int h, int col)
+{
+    // Pushed through a register holding them: a "g" operand may be placed
+    // relative to the stack pointer, which each push moves.
+    int stkargs[2];
+
+    stkargs[0] = (int)(intptr_t)h;
+    stkargs[1] = (int)(intptr_t)col;
+
+    asm volatile (
+      "push 4(%4)\n"
+      "push 0(%4)\n"
+      "call ASM_draw_3d_map_corn_square\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (w), "S" (stkargs)
+        : "cc", "memory");
+}
+
 void draw_hud_lock_target(void)
 {
+#if 0
     asm volatile ("call ASM_draw_hud_lock_target\n"
         :  :  : "eax" );
+#endif
+    struct Thing *p_dcthing;
+    struct Thing *p_vehicle;
+    struct Thing *p_target;
+    int VX, VY, VZ;
+    int tgtimer;
+
+    p_dcthing = &things[players[local_player_no].DirectControl[0]];
+    if ((p_dcthing->Flag & TngF_InVehicle) == 0) {
+        return;
+    }
+
+    p_vehicle = &things[p_dcthing->U.UPerson.Vehicle];
+    if ((p_vehicle->SubType != SubTT_VEH_TANK) &&
+      (p_vehicle->SubType != SubTT_VEH_MECH)) {
+        return;
+    }
+
+    p_target = p_dcthing->PTarget;
+    if (p_target != NULL) // Invalid pointer correction
+    {
+        if ((p_target <= &things[0]) || (p_target >= &things[THINGS_LIMIT])) {
+            LOGERR("Tried to shoot at invalid target 0x%p", p_target);
+            p_dcthing->PTarget = p_target = NULL;
+        }
+    }
+
+    if (p_target != NULL)
+    {
+        VX = PRCCOORD_TO_MAPCOORD(p_target->X);
+        VY = PRCCOORD_TO_YCOORD(p_target->Y) + 120;
+        VZ = PRCCOORD_TO_MAPCOORD(p_target->Z);
+    }
+    else if ((p_dcthing->Flag & TngF_ShootAtPos) == 0)
+    {
+        return;
+    }
+    else if ((p_dcthing->Flag & TngF_PlayerAgent) != 0)
+    {
+        PlayerIdx plyr;
+        ushort plagent;
+
+        plyr = p_dcthing->U.UPerson.ComCur >> 2;
+        plagent = p_dcthing->U.UPerson.ComCur & 3;
+        VX = players[plyr].UserVX[plagent];
+        VY = players[plyr].UserVY[plagent];
+        VZ = players[plyr].UserVZ[plagent];
+    }
+    else
+    {
+        VX = p_dcthing->VX;
+        VY = p_dcthing->VY;
+        VZ = p_dcthing->VZ;
+    }
+
+    tgtimer = p_vehicle->OldTarget;
+    if (tgtimer < 2048)
+    {
+        if (tgtimer >= 24) {
+            draw_3d_map_corn_square(VX, VY, VZ,
+              tgtimer >> 1, tgtimer >> 1, colour_lookup[4]);
+        } else {
+            draw_3d_map_corn_square(VX, VY, VZ, 12, 12, colour_lookup[2]);
+        }
+    }
 }
 
 void draw_target_person(struct Thing *p_person, int radius)
