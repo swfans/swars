@@ -46,10 +46,10 @@
 /******************************************************************************/
 static const ushort target_person_frame_elements_sprno[] = { 78, 79, 81, 80 };
 struct TbSprite *target_person_frame_elements_spr[5];
-#if 0
+
 static const ushort target_vehicle_frame_elements_sprno[] = { 84, 85, 87, 86 };
 struct TbSprite *target_vehicle_frame_elements_spr[5];
-#endif
+
 TbBool hud_show_target_health = false;
 
 s32 target_old_frameno = 0;
@@ -242,54 +242,37 @@ void draw_target_vehicle(struct Thing *p_vehicle)
         : : "a" (p_vehicle));
     return;
 #endif
-    struct ShEnginePoint sp;
-    struct TbSprite *p_bspr;
-    struct TbSprite *p_aspr;
-    int cor_x, cor_y, cor_z;
-    int scr_x, scr_y, r;
+    int cor_x, cor_y_m8, cor_z;
+    int radius;
+    int i, n;
 
-    cor_x = (p_vehicle->X >> 8) - engn_xc;
-    cor_z = (p_vehicle->Z >> 8) - engn_zc;
-    cor_y = 8 * (p_vehicle->Y >> 8) - engn_yc;
+    //TODO maybe initialize this during sprite loading?
+    n = sizeof(target_vehicle_frame_elements_sprno)/sizeof(target_vehicle_frame_elements_sprno[0]);
+    for (i = 0; i < n; i++) {
+        target_vehicle_frame_elements_spr[i] = &pop1_sprites[target_vehicle_frame_elements_sprno[i]];
+    }
+    target_vehicle_frame_elements_spr[n] = NULL;
+
+    cor_x = PRCCOORD_TO_MAPCOORD(p_vehicle->X);
+    cor_y_m8 = PRCCOORD_TO_YCOORD(p_vehicle->Y);
+    cor_z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
+    radius = p_vehicle->Radius >> 4;
 
     {
         int cor_lr, cor_sm;
-        if (abs(cor_x) <= abs(cor_z)) {
-            cor_sm = abs(cor_x);
-            cor_lr = abs(cor_z);
+        if (abs(cor_x - engn_xc) <= abs(cor_z - engn_zc)) {
+            cor_sm = abs(cor_x - engn_xc);
+            cor_lr = abs(cor_z - engn_zc);
         } else {
-            cor_sm = abs(cor_z);
-            cor_lr = abs(cor_x);
+            cor_sm = abs(cor_z - engn_zc);
+            cor_lr = abs(cor_x - engn_xc);
         }
         if (cor_lr + (cor_sm >> 1) > TILE_TO_MAPCOORD(20,0))
             return;
     }
 
-    transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-    r = p_vehicle->Radius >> 4;
-
-    p_aspr = &pop1_sprites[84];
-    p_bspr = &pop1_sprites[85];
-
-    scr_x = sp.X - r - p_aspr->SWidth;
-    scr_y = sp.Y - r - p_aspr->SHeight;
-    LbSpriteDraw(scr_x, scr_y, p_aspr);
-
-    scr_x = sp.X + r;
-    scr_y = sp.Y - r - p_aspr->SHeight;
-    LbSpriteDraw(scr_x, scr_y, p_bspr);
-
-    p_aspr = &pop1_sprites[87];
-    p_bspr = &pop1_sprites[86];
-
-    scr_x = sp.X + r;
-    scr_y = sp.Y + r;
-    LbSpriteDraw(scr_x, scr_y, p_aspr);
-
-    scr_x = sp.X - r - p_aspr->SWidth;
-    scr_y = sp.Y + r;
-    LbSpriteDraw(scr_x, scr_y, p_bspr);
+    enlist_hud_draw_mapcoord_sprites_in_quarters_unscaled(cor_x,
+      cor_y_m8, cor_z, target_vehicle_frame_elements_spr, 0, radius);
 }
 
 void draw_hud_health_bar(int x, int y, struct Thing *p_thing)
