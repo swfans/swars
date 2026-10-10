@@ -221,7 +221,7 @@ void draw_3d_map_corn_square(int cor_x, int cor_y, int cor_z, int width, int hei
     return;
 #endif
     struct EnginePoint ep;
-    short len;
+    short thick, len, i;
 
     ep.X3d = cor_x - engn_xc;
     ep.Y3d = cor_y;
@@ -231,6 +231,9 @@ void draw_3d_map_corn_square(int cor_x, int cor_y, int cor_z, int width, int hei
 
     width = (width * overall_scale) >> 8;
     height = (height * overall_scale) >> 8;
+    thick = (1 * overall_scale) >> 8;
+    if (thick < 1)
+        thick = 1;
     len = (8 * overall_scale) >> 8;
 
     int scr_x, scr_y;
@@ -238,22 +241,28 @@ void draw_3d_map_corn_square(int cor_x, int cor_y, int cor_z, int width, int hei
     scr_x = ep.pp.X;
     scr_y = ep.pp.Y;
 
-    LbDrawLine(scr_x - width, scr_y - height,
-      scr_x - width + len, scr_y - height, colour);
-    LbDrawLine(scr_x + width - len, scr_y - height,
-      scr_x + width, scr_y - height, colour);
-    LbDrawLine(scr_x + width, scr_y - height,
-      scr_x + width, scr_y - height + len, colour);
-    LbDrawLine(scr_x + width, scr_y + height - len,
-      scr_x + width, scr_y + height, colour);
-    LbDrawLine(scr_x + width, scr_y + height,
-      scr_x + width - len, scr_y + height, colour);
-    LbDrawLine(scr_x - width, scr_y + height,
-      scr_x - width + len, scr_y + height, colour);
-    LbDrawLine(scr_x - width, scr_y + height,
-      scr_x - width, scr_y + height - len, colour);
-    LbDrawLine(scr_x - width, scr_y - height,
-      scr_x - width, scr_y - height + len, colour);
+    for (i = 0; i < thick; i++)
+    {
+        short s;
+
+        s = i - (thick >> 1);
+        LbDrawLine(scr_x - width, scr_y - height + s,
+          scr_x - width + len, scr_y - height + s, colour);
+        LbDrawLine(scr_x + width - len, scr_y - height + s,
+          scr_x + width, scr_y - height + s, colour);
+        LbDrawLine(scr_x + width + s, scr_y - height,
+          scr_x + width + s, scr_y - height + len, colour);
+        LbDrawLine(scr_x + width + s, scr_y + height - len,
+          scr_x + width + s, scr_y + height, colour);
+        LbDrawLine(scr_x + width, scr_y + height + s,
+          scr_x + width - len, scr_y + height + s, colour);
+        LbDrawLine(scr_x - width, scr_y + height + s,
+          scr_x - width + len, scr_y + height + s, colour);
+        LbDrawLine(scr_x - width + s, scr_y + height,
+          scr_x - width + s, scr_y + height - len, colour);
+        LbDrawLine(scr_x - width + s, scr_y - height,
+          scr_x - width + s, scr_y - height + len, colour);
+    }
 }
 
 void draw_hud_lock_target(void)
