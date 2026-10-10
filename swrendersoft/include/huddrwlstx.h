@@ -114,6 +114,17 @@ struct DIHudMapCoordLine {
     ubyte Col;
 };
 
+struct DIHudMapCoordRect {
+    struct DIMapPoint Pt;
+    short Width;
+    short Height;
+    short LnLen;
+    ushort DrwFlags;
+    ubyte Thick;
+    ubyte Bright;
+    ubyte Col;
+};
+
 struct DIHudMapCoordFrame {
     struct DIMapPoint Pt;
     ushort Frame;
@@ -142,6 +153,7 @@ struct DrawItemHud {
 		struct DIHudClippedText ClpText;
 		struct DIHudWrappedText WrpText;
         struct DIHudMapCoordLine MapCorLine;
+        struct DIHudMapCoordRect MapCorRect;
         struct DIHudMapCoordFrame MapCorFrame;
         struct DIHudMapCoordSprList MapCorSprLst;
 	} U;
@@ -174,6 +186,7 @@ int hud_width_shad_cl_flash_wrapped_text(short px, short py,
   struct TbSprite *p_font, const char *text, ushort drwflags, short units_per_px);
 
 void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine);
+void hud_draw_mapcoord_corner_rect(struct DIHudMapCoordRect *p_diMapCorRect);
 void hud_draw_mapcoord_frame(struct DIHudMapCoordFrame *p_diMapCorFrame);
 void hud_draw_mapcoord_sprites_in_quarters(struct DIHudMapCoordSprList *p_diMapCorSprLst);
 

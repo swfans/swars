@@ -202,75 +202,8 @@ void init_draw_target(void)
         target_old_frameno = nstart_ani[983];
 }
 
-void draw_3d_map_corn_square(int cor_x, int cor_y, int cor_z, int width, int height, int colour)
-{
-#if 0
-    // Pushed through a register holding them: a "g" operand may be placed
-    // relative to the stack pointer, which each push moves.
-    int stkargs[2];
-
-    stkargs[0] = (int)(intptr_t)height;
-    stkargs[1] = (int)(intptr_t)colour;
-
-    asm volatile (
-      "push 4(%4)\n"
-      "push 0(%4)\n"
-      "call ASM_draw_3d_map_corn_square\n"
-        : : "a" (cor_x), "d" (cor_y), "b" (cor_z), "c" (width), "S" (stkargs)
-        : "cc", "memory");
-    return;
-#endif
-    struct EnginePoint ep;
-    short thick, len, i;
-
-    ep.X3d = cor_x - engn_xc;
-    ep.Y3d = cor_y;
-    ep.Z3d = cor_z - engn_zc;
-    ep.Flags = 0;
-    transform_point(&ep);
-
-    width = (width * overall_scale) >> 8;
-    height = (height * overall_scale) >> 8;
-    thick = (1 * overall_scale) >> 8;
-    if (thick < 1)
-        thick = 1;
-    len = (8 * overall_scale) >> 8;
-
-    int scr_x, scr_y;
-
-    scr_x = ep.pp.X;
-    scr_y = ep.pp.Y;
-
-    for (i = 0; i < thick; i++)
-    {
-        short s;
-
-        s = i - (thick >> 1);
-        LbDrawLine(scr_x - width, scr_y - height + s,
-          scr_x - width + len, scr_y - height + s, colour);
-        LbDrawLine(scr_x + width - len, scr_y - height + s,
-          scr_x + width, scr_y - height + s, colour);
-        LbDrawLine(scr_x + width + s, scr_y - height,
-          scr_x + width + s, scr_y - height + len, colour);
-        LbDrawLine(scr_x + width + s, scr_y + height - len,
-          scr_x + width + s, scr_y + height, colour);
-        LbDrawLine(scr_x + width, scr_y + height + s,
-          scr_x + width - len, scr_y + height + s, colour);
-        LbDrawLine(scr_x - width, scr_y + height + s,
-          scr_x - width + len, scr_y + height + s, colour);
-        LbDrawLine(scr_x - width + s, scr_y + height,
-          scr_x - width + s, scr_y + height - len, colour);
-        LbDrawLine(scr_x - width + s, scr_y - height,
-          scr_x - width + s, scr_y - height + len, colour);
-    }
-}
-
 void draw_hud_lock_target(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_hud_lock_target\n"
-        :  :  : "eax" );
-#endif
     struct Thing *p_dcthing;
     struct Thing *p_vehicle;
     struct Thing *p_target;
@@ -328,12 +261,24 @@ void draw_hud_lock_target(void)
     tgtimer = p_vehicle->OldTarget;
     if (tgtimer < 2048)
     {
+        short rctsize, lnlen, lnthick;
+        TbPixel colour;
+
         if (tgtimer >= 24) {
-            draw_3d_map_corn_square(VX, VY, VZ,
-              tgtimer >> 1, tgtimer >> 1, colour_lookup[4]);
+            rctsize = tgtimer >> 1;
+            colour = colour_lookup[4];
         } else {
-            draw_3d_map_corn_square(VX, VY, VZ, 12, 12, colour_lookup[2]);
+            rctsize = 12;
+            colour = colour_lookup[2];
         }
+        rctsize = (rctsize * overall_scale) >> 8;
+        lnthick = (1 * overall_scale) >> 8;
+        if (lnthick < 1)
+            lnthick = 1;
+        lnlen = (8 * overall_scale) >> 8;
+
+         enlist_hud_draw_mapcoord_corner_rect(VX, VY, VZ, rctsize, rctsize,
+           lnlen, lnthick, 0, colour);
     }
 }
 

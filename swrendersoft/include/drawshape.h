@@ -38,6 +38,10 @@ void draw_line_transformed_col(int x1, int y1, int z1, int x2, int y2, int z2,
  */
 void draw_purple_rect(int x, int y, int w, int h, ubyte active);
 
+/** Draws a rectangle, but corners only.
+ */
+void draw_corner_rect(int scr_x, int scr_y,
+  int width, int height, int lnlen, int lnthick, TbPixel colour);
 /******************************************************************************/
 #ifdef __cplusplus
 }

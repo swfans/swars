@@ -419,6 +419,31 @@ TbBool enlist_hud_draw_mapcoord_line(short cor1_x, short cor1_y,
     return true;
 }
 
+TbBool enlist_hud_draw_mapcoord_corner_rect(short cor_x, short cor_y_m8,
+  short cor_z, short width, short height, short lnlen, ubyte thickness,
+  ushort drwflags, TbPixel colour)
+{
+    struct DrawItemHud dih;
+    struct DrawItemHud *p_di;
+
+    p_di = &dih;
+
+    p_di->U.MapCorRect.Pt.X = cor_x;
+    p_di->U.MapCorRect.Pt.Y = cor_y_m8;
+    p_di->U.MapCorRect.Pt.Z = cor_z;
+    p_di->U.MapCorRect.Width = width;
+    p_di->U.MapCorRect.Height = height;
+    p_di->U.MapCorRect.LnLen = lnlen;
+    p_di->U.MapCorRect.DrwFlags = drwflags;
+    p_di->U.MapCorRect.Bright = 32;
+    p_di->U.MapCorRect.Thick = thickness;
+    p_di->U.MapCorRect.Col = colour;
+
+    //TODO enlist instead of drawing directly
+    hud_draw_mapcoord_corner_rect(&p_di->U.MapCorRect);
+    return true;
+}
+
 TbBool enlist_hud_draw_mapcoord_frame_one_colour(short cor_x, short cor_y,
   short cor_z, ushort frm, ushort drwflags, TbPixel colour)
 {

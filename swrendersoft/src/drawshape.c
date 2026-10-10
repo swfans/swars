@@ -70,4 +70,33 @@ void draw_purple_rect(int x, int y, int w, int h, ubyte active)
     LbDrawLine(x, y, x, y + h - 2, col2);
 }
 
+void draw_corner_rect(int scr_x, int scr_y,
+  int width, int height, int lnlen, int lnthick, TbPixel colour)
+{
+    short i;
+
+    for (i = 0; i < lnthick; i++)
+    {
+        short s;
+
+        s = i - (lnthick >> 1);
+        LbDrawLine(scr_x - width, scr_y - height + s,
+          scr_x - width + lnlen, scr_y - height + s, colour);
+        LbDrawLine(scr_x + width - lnlen, scr_y - height + s,
+          scr_x + width, scr_y - height + s, colour);
+        LbDrawLine(scr_x + width + s, scr_y - height,
+          scr_x + width + s, scr_y - height + lnlen, colour);
+        LbDrawLine(scr_x + width + s, scr_y + height - lnlen,
+          scr_x + width + s, scr_y + height, colour);
+        LbDrawLine(scr_x + width, scr_y + height + s,
+          scr_x + width - lnlen, scr_y + height + s, colour);
+        LbDrawLine(scr_x - width, scr_y + height + s,
+          scr_x - width + lnlen, scr_y + height + s, colour);
+        LbDrawLine(scr_x - width + s, scr_y + height,
+          scr_x - width + s, scr_y + height - lnlen, colour);
+        LbDrawLine(scr_x - width + s, scr_y - height,
+          scr_x - width + s, scr_y - height + lnlen, colour);
+    }
+}
+
 /******************************************************************************/

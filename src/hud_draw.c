@@ -98,11 +98,6 @@ void draw_netplayer_name_text_over_thing(void)
 
 void draw_hud(int dcthing)
 {
-#if 0
-    asm volatile ("call ASM_draw_hud\n"
-        : : "a" (dcthing));
-    return;
-#endif
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
