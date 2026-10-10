@@ -21,6 +21,7 @@
 
 #include "bfbox.h"
 #include "bfgentab.h"
+#include "bfline.h"
 #include "bfsprite.h"
 #include "insspr.h"
 #include <stdlib.h>
@@ -201,21 +202,58 @@ void init_draw_target(void)
         target_old_frameno = nstart_ani[983];
 }
 
-void draw_3d_map_corn_square(int x1, int y1, int z1, int w, int h, int col)
+void draw_3d_map_corn_square(int cor_x, int cor_y, int cor_z, int width, int height, int colour)
 {
+#if 0
     // Pushed through a register holding them: a "g" operand may be placed
     // relative to the stack pointer, which each push moves.
     int stkargs[2];
 
-    stkargs[0] = (int)(intptr_t)h;
-    stkargs[1] = (int)(intptr_t)col;
+    stkargs[0] = (int)(intptr_t)height;
+    stkargs[1] = (int)(intptr_t)colour;
 
     asm volatile (
       "push 4(%4)\n"
       "push 0(%4)\n"
       "call ASM_draw_3d_map_corn_square\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (w), "S" (stkargs)
+        : : "a" (cor_x), "d" (cor_y), "b" (cor_z), "c" (width), "S" (stkargs)
         : "cc", "memory");
+    return;
+#endif
+    struct EnginePoint ep;
+    short len;
+
+    ep.X3d = cor_x - engn_xc;
+    ep.Y3d = cor_y;
+    ep.Z3d = cor_z - engn_zc;
+    ep.Flags = 0;
+    transform_point(&ep);
+
+    width = (width * overall_scale) >> 8;
+    height = (height * overall_scale) >> 8;
+    len = (8 * overall_scale) >> 8;
+
+    int scr_x, scr_y;
+
+    scr_x = ep.pp.X;
+    scr_y = ep.pp.Y;
+
+    LbDrawLine(scr_x - width, scr_y - height,
+      scr_x - width + len, scr_y - height, colour);
+    LbDrawLine(scr_x + width - len, scr_y - height,
+      scr_x + width, scr_y - height, colour);
+    LbDrawLine(scr_x + width, scr_y - height,
+      scr_x + width, scr_y - height + len, colour);
+    LbDrawLine(scr_x + width, scr_y + height - len,
+      scr_x + width, scr_y + height, colour);
+    LbDrawLine(scr_x + width, scr_y + height,
+      scr_x + width - len, scr_y + height, colour);
+    LbDrawLine(scr_x - width, scr_y + height,
+      scr_x - width + len, scr_y + height, colour);
+    LbDrawLine(scr_x - width, scr_y + height,
+      scr_x - width, scr_y + height - len, colour);
+    LbDrawLine(scr_x - width, scr_y - height,
+      scr_x - width, scr_y - height + len, colour);
 }
 
 void draw_hud_lock_target(void)
