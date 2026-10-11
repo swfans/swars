@@ -368,7 +368,7 @@ void draw_shadows_for_multicolor_sprites(const ushort *anims, ushort anims_len)
 
                 stand_x = cur_scr_x - fr_beg_x;
                 stand_y = cur_scr_y - fr_beg_y;
-                draw_sorted_sprite1a(frm, stand_x, stand_y, 10);
+                draw_frame_alpha(stand_x, stand_y, frm, overall_scale, 10);
 
                 fr_scr_beg_x = stand_x + fr_beg_x;
                 fr_scr_beg_y = stand_y + fr_beg_y;

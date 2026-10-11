@@ -455,22 +455,14 @@ void draw_hud_target_old_frame(struct Thing *p_target, int frm)
     ep.Flags = 0;
     transform_point(&ep);
 
-    if ((overall_scale == 256) || (overall_scale <= 0) || (overall_scale >= 4096))
-    {
-        int sh_x;
-        sh_x = (12 * overall_scale) >> 9;
-        draw_frame_unscaled(ep.pp.X - sh_x, ep.pp.Y, frm +  0);
-        draw_frame_unscaled(ep.pp.X + sh_x, ep.pp.Y, frm + 10);
-    }
-    else
-    {
-        int sh_x;
-        sh_x = (12 * overall_scale) >> 9;
-        draw_frame_scaled_alpha(ep.pp.X - sh_x, ep.pp.Y, frm +  0,
-          overall_scale, PALETTE_FADE_LEVELS / 2);
-        draw_frame_scaled_alpha(ep.pp.X + sh_x, ep.pp.Y, frm + 10,
-          overall_scale, PALETTE_FADE_LEVELS / 2);
-    }
+    int sh_x;
+    ubyte bri;
+
+    sh_x = (12 * overall_scale) >> 9;
+    bri = PALETTE_FADE_LEVELS / 2;
+
+    draw_frame_alpha(ep.pp.X - sh_x, ep.pp.Y, frm +  0, overall_scale, bri);
+    draw_frame_alpha(ep.pp.X + sh_x, ep.pp.Y, frm + 10, overall_scale, bri);
 
     draw_hud_old_frame_health_bar(ep.pp.X, ep.pp.Y, p_target);
     draw_hud_old_frame_shield_bar(ep.pp.X, ep.pp.Y, p_target);

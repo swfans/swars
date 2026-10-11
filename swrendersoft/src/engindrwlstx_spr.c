@@ -342,7 +342,7 @@ void draw_frame_unscaled_alpha_force(short scr_x, short scr_y, ushort frm, ubyte
     lbDisplay.DrawFlags = 0;
 }
 
-void draw_frame_unscaled_alpha(short scr_x, short scr_y, ubyte *frv, ushort frm,
+void draw_frame_unscaled_alpha_frv(short scr_x, short scr_y, ubyte *frv, ushort frm,
   ubyte bri)
 {
     struct Frame *p_frm;
@@ -563,13 +563,12 @@ void draw_frame_scaled_alpha_frv(short x, short y, ubyte *frv, ushort frm,
     }
 }
 
-void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
+void draw_sorted_sprite1b(ubyte *frv, ushort frm, short scr_x, short scr_y,
   ubyte bri, ubyte angle)
 {
-#if 0
-    debug_check_unkn_sprite_size(__FILE__, __LINE__);
-#endif
+    short scale;
 
+    scale = overall_scale;
     if ((frv[4] != 0) && (angle > 1) && (angle < 7))
         bri += 15;
     if (bri < 10)
@@ -577,44 +576,20 @@ void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
     if (bri > 60)
         bri = 60;
 
-    if ((overall_scale == 256) || (overall_scale <= 0) || (overall_scale >= 4096))
+    if ((scale == 256) || (scale <= 0) || (scale >= 4096))
     {
-        draw_frame_unscaled_alpha(x, y, frv, frm, bri);
+        draw_frame_unscaled_alpha_frv(scr_x, scr_y, frv, frm, bri);
     }
     else
     {
-        draw_frame_scaled_alpha_frv(x, y, frv, frm, bri);
+        draw_frame_scaled_alpha_frv(scr_x, scr_y, frv, frm, bri);
     }
 }
 
-void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte bright)
+void draw_frame_alpha(short scr_x, short scr_y, ushort frm,
+  short scale, ubyte bright)
 {
-    int sscale;
     ubyte bri;
-
-    sscale = overall_scale;
-    bri = bright;
-    if (bri < 10)
-        bri = 10;
-    if (bri > 48)
-        bri = 48;
-
-    if ((sscale == 256) || (sscale <= 0) || (sscale >= 4096))
-    {
-        draw_frame_unscaled_alpha_force(x, y, frm, bri);
-    }
-    else
-    {
-        draw_frame_scaled_alpha(x, y, frm, sscale, bri);
-    }
-}
-
-void draw_sort_sprite1c_sub(ushort frm, short x, short y, ubyte bright, ushort scale)
-{
-    int sscale;
-    ubyte bri;
-
-    sscale = (scale * overall_scale) >> 8;
 
     bri = bright;
     if (bri < 10)
@@ -622,21 +597,26 @@ void draw_sort_sprite1c_sub(ushort frm, short x, short y, ubyte bright, ushort s
     if (bri > 48)
         bri = 48;
 
-    if (sscale == 256 || sscale == 0 || sscale >= 0x1000)
+    if ((scale == 256) || (scale <= 0) || (scale >= 4096))
     {
-        draw_frame_unscaled_alpha_force(x, y, frm, bri);
+        draw_frame_unscaled_alpha_force(scr_x, scr_y, frm, bri);
     }
     else
     {
-        draw_frame_scaled_alpha(x, y, frm, sscale, bri);
+        draw_frame_scaled_alpha(scr_x, scr_y, frm, scale, bri);
     }
 }
 
 void draw_sort_sprite1c(ushort sspr)
 {
     struct SortSprite *p_sspr;
+    int sscale;
+
     p_sspr = &game_sort_sprites[sspr];
-    draw_sort_sprite1c_sub(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness, p_sspr->Scale);
+    sscale = (p_sspr->Scale * overall_scale) >> 8;
+
+    draw_frame_alpha(p_sspr->X, p_sspr->Y,
+      p_sspr->Frame, sscale, p_sspr->Brightness);
 }
 
 void draw_sort_sprite1a(ushort sspr)
@@ -647,7 +627,9 @@ void draw_sort_sprite1a(ushort sspr)
 
     anim_elem_pos_min_set(120, 120);
 
-    draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
+    draw_frame_alpha(p_sspr->X, p_sspr->Y, p_sspr->Frame,
+      overall_scale, p_sspr->Brightness);
+
     screen_sorted_sprite_statc_render_cb(sspr);
 }
 
@@ -675,7 +657,8 @@ void draw_sort_sprite_frame_pers_b(int sspr)
 
     anim_elem_pos_min_set(120, 120);
 
-    draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
+    draw_frame_alpha(p_sspr->X, p_sspr->Y, p_sspr->Frame,
+      overall_scale, p_sspr->Brightness);
 
     screen_sorted_sprite_persn_render_cb(sspr);
 }
@@ -723,20 +706,23 @@ void draw_fire_flame(ushort flm)
 {
     struct FireFlame *p_flame;
     struct SpecialPoint *p_scrpoint;
+    ubyte bri;
 
+    bri = PALETTE_FADE_LEVELS / 2;
     p_flame = &FIRE_flame[flm];
     if (p_flame->big != 0)
     {
         p_scrpoint = &game_screen_point_pool[p_flame->PointOffset];
         draw_frame_scaled_alpha(p_scrpoint->X + dword_176D00,
           p_scrpoint->Y + dword_176D04,
-          p_flame->frame, ((p_flame->big + 128) * overall_scale) >> 7, 0x20);
+          p_flame->frame, ((p_flame->big + 128) * overall_scale) >> 7, bri);
     }
     else
     {
         p_scrpoint = &game_screen_point_pool[p_flame->PointOffset];
-        draw_sorted_sprite1a(p_flame->frame, p_scrpoint->X + dword_176D00,
-          p_scrpoint->Y + dword_176D04, 0x20);
+        draw_frame_alpha(p_scrpoint->X + dword_176D00,
+          p_scrpoint->Y + dword_176D04, p_flame->frame,
+          overall_scale, bri);
     }
 }
 
