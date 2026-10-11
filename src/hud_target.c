@@ -282,6 +282,127 @@ void draw_hud_lock_target(void)
     }
 }
 
+void draw_hud_old_frame_health_bar(int x, int y, struct Thing *p_thing, short space)
+{
+    int dx, dy;
+    int hp_per_px, val_cur, val_max;
+    int h_total, h_cur, h_ext, w;
+    ushort drwflags;
+    TbPixel colour;
+
+    dx = (((space >> 1) + 2) * overall_scale) >> 8;
+    dy = (10 * overall_scale) >> 8;
+    h_total = -(15 * overall_scale) >> 8;
+    w = (2 * overall_scale) >> 8;
+
+    if (p_thing->Type == TT_VEHICLE)
+        val_max = p_thing->U.UVehicle.MaxHealth;
+    else
+        val_max = p_thing->U.UPerson.MaxHealth;
+    hp_per_px = val_max / dy;
+    if (hp_per_px == 0)
+        hp_per_px = 1;
+
+    if (p_thing->Health <= val_max)
+        val_cur = p_thing->Health;
+    else
+        val_cur = val_max;
+
+    h_cur = val_cur / hp_per_px;
+    if (h_cur > dy)
+        h_cur = dy;
+
+    drwflags = Lb_SPRITE_TRANSPAR4;
+    colour = colour_lookup[ColLU_BLUE];
+    enlist_hud_draw_box(dx + x, y + h_total, w, dy,
+      drwflags, 32, colour);
+
+    if (p_thing->Health >= 0)
+    {
+        drwflags = 0;
+        if (h_cur < 3)
+            colour = colour_lookup[ColLU_RED];
+        enlist_hud_draw_box(x + dx, y + dy + h_total - h_cur, w, h_cur,
+          drwflags, 32, colour);
+
+        // Extra health if the thing is above max (soul gun bonus)
+        if (p_thing->Health > val_max)
+        {
+            h_ext = (p_thing->Health - val_max) / hp_per_px;
+            if (h_ext > dy)
+                h_ext = dy;
+
+            drwflags = Lb_SPRITE_TRANSPAR4;
+            colour = colour_lookup[ColLU_YELLOW];
+            enlist_hud_draw_box(dx + x, y + h_total, w, dy,
+              drwflags, 32, colour);
+
+            drwflags = 0;
+            enlist_hud_draw_box(x + dx, y + dy + h_total - h_ext, w, h_ext,
+              drwflags, 32, colour);
+        }
+    }
+}
+
+void draw_hud_old_frame_shield_bar(int x, int y, struct Thing *p_thing, short space)
+{
+    int dx, dy;
+    int sp_per_px;
+    int h_total, h_cur, w;
+    ushort drwflags;
+    TbPixel colour;
+
+    dx = (((space >> 1) + 7) * overall_scale) >> 8;
+    dy = (10 * overall_scale) >> 8;
+    h_total = -(20 * overall_scale) >> 8;
+    w = (2 * overall_scale) >> 8;
+
+    sp_per_px = p_thing->U.UPerson.MaxShieldEnergy / dy;
+    if (sp_per_px == 0)
+        sp_per_px = 1;
+
+    h_cur = p_thing->U.UPerson.ShieldEnergy / sp_per_px;
+    if (h_cur > dy)
+      h_cur = dy;
+
+    colour = colour_lookup[ColLU_BLUE];
+    drwflags = Lb_SPRITE_TRANSPAR4;
+    enlist_hud_draw_box(dx + x, h_total + y, w, dy,
+      drwflags, 32, colour);
+
+    if (p_thing->U.UPerson.ShieldEnergy > 0)
+    {
+        drwflags = 0;
+        if (h_cur < 3)
+            colour = colour_lookup[ColLU_RED];
+        enlist_hud_draw_box(x + dx, y + dy + h_total - h_cur, w, h_cur,
+          drwflags, 32, colour);
+    }
+}
+
+void draw_hud_target_old_frame(struct Thing *p_target, int frm, short space)
+{
+    struct EnginePoint ep;
+
+    ep.X3d = PRCCOORD_TO_MAPCOORD(p_target->X) - engn_xc;
+    ep.Y3d = PRCCOORD_TO_YCOORD(p_target->Y); // subtracted within transform_point(): - 8 * engn_yc;
+    ep.Z3d = PRCCOORD_TO_MAPCOORD(p_target->Z) - engn_zc;
+    ep.Flags = 0;
+    transform_point(&ep);
+
+    int sh_x;
+    ubyte bri;
+
+    sh_x = (space * overall_scale) >> 9;
+    bri = PALETTE_FADE_LEVELS / 2;
+
+    draw_frame_alpha(ep.pp.X - sh_x, ep.pp.Y, frm +  0, overall_scale, bri);
+    draw_frame_alpha(ep.pp.X + sh_x, ep.pp.Y, frm + 10, overall_scale, bri);
+
+    draw_hud_old_frame_health_bar(ep.pp.X, ep.pp.Y, p_target, space);
+    draw_hud_old_frame_shield_bar(ep.pp.X, ep.pp.Y, p_target, space);
+}
+
 void draw_target_person(struct Thing *p_person, int radius)
 {
 #if 0
@@ -294,6 +415,12 @@ void draw_target_person(struct Thing *p_person, int radius)
 
     if ((p_person->Flag & TngF_Destroyed) != 0)
         return;
+
+    if (hud_show_target_health) {
+        draw_hud_target_old_frame(p_person, target_old_frameno, 8 + radius);
+        target_old_frameno = frame[target_old_frameno].Next;
+        return;
+    }
 
     //TODO maybe initialize this during sprite loading?
     n = sizeof(target_person_frame_elements_sprno)/sizeof(target_person_frame_elements_sprno[0]);
@@ -322,6 +449,13 @@ void draw_target_vehicle(struct Thing *p_vehicle)
     int radius;
     int i, n;
 
+    if (hud_show_target_health) {
+        radius = (p_vehicle->Radius >> 4) + (p_vehicle->Radius >> 5);
+        draw_hud_target_old_frame(p_vehicle, target_old_frameno, 8 + radius);
+        target_old_frameno = frame[target_old_frameno].Next;
+        return;
+    }
+
     //TODO maybe initialize this during sprite loading?
     n = sizeof(target_vehicle_frame_elements_sprno)/sizeof(target_vehicle_frame_elements_sprno[0]);
     for (i = 0; i < n; i++) {
@@ -349,123 +483,6 @@ void draw_target_vehicle(struct Thing *p_vehicle)
 
     enlist_hud_draw_mapcoord_sprites_in_quarters_unscaled(cor_x,
       cor_y_m8, cor_z, target_vehicle_frame_elements_spr, 0, radius);
-}
-
-void draw_hud_old_frame_health_bar(int x, int y, struct Thing *p_thing)
-{
-    int dx, dy;
-    int hp_per_px, val_cur;
-    int h_total, h_cur, h_ext, w;
-    ushort drwflags;
-    TbPixel colour;
-
-    dx = (9 * overall_scale) >> 8;
-    dy = (10 * overall_scale) >> 8;
-    h_total = -(15 * overall_scale) >> 8;
-    w = (2 * overall_scale) >> 8;
-
-    hp_per_px = p_thing->U.UPerson.MaxHealth / dy;
-    if (hp_per_px == 0)
-        hp_per_px = 1;
-
-    if (p_thing->Health <= p_thing->U.UPerson.MaxHealth)
-        val_cur = p_thing->Health;
-    else
-        val_cur = p_thing->U.UPerson.MaxHealth;
-
-    h_cur = val_cur / hp_per_px;
-    if (h_cur > dy)
-        h_cur = dy;
-
-    drwflags = Lb_SPRITE_TRANSPAR4;
-    colour = colour_lookup[ColLU_BLUE];
-    enlist_hud_draw_box(dx + x, y + h_total, w, dy,
-      drwflags, 32, colour);
-
-    if (p_thing->Health >= 0)
-    {
-        drwflags = 0;
-        if (h_cur < 3)
-            colour = colour_lookup[ColLU_RED];
-        enlist_hud_draw_box(x + dx, y + dy + h_total - h_cur, w, h_cur,
-          drwflags, 32, colour);
-
-        // Extra health if the thing is above max (soul gun bonus)
-        if (p_thing->Health > p_thing->U.UPerson.MaxHealth)
-        {
-            h_ext = (p_thing->Health - p_thing->U.UPerson.MaxHealth) / hp_per_px;
-            if (h_ext > dy)
-                h_ext = dy;
-
-            drwflags = Lb_SPRITE_TRANSPAR4;
-            colour = colour_lookup[ColLU_YELLOW];
-            enlist_hud_draw_box(dx + x, y + h_total, w, dy,
-              drwflags, 32, colour);
-
-            drwflags = 0;
-            enlist_hud_draw_box(x + dx, y + dy + h_total - h_ext, w, h_ext,
-              drwflags, 32, colour);
-        }
-    }
-}
-
-void draw_hud_old_frame_shield_bar(int x, int y, struct Thing *p_thing)
-{
-    int dx, dy;
-    int sp_per_px;
-    int h_total, h_cur, w;
-    ushort drwflags;
-    TbPixel colour;
-
-    dx = (15 * overall_scale) >> 8;
-    dy = (10 * overall_scale) >> 8;
-    h_total = -(20 * overall_scale) >> 8;
-    w = (2 * overall_scale) >> 8;
-
-    sp_per_px = p_thing->U.UPerson.MaxShieldEnergy / dy;
-    if (sp_per_px == 0)
-        sp_per_px = 1;
-
-    h_cur = p_thing->U.UPerson.ShieldEnergy / sp_per_px;
-    if (h_cur > dy)
-      h_cur = dy;
-
-    colour = colour_lookup[ColLU_BLUE];
-    drwflags = Lb_SPRITE_TRANSPAR4;
-    enlist_hud_draw_box(dx + x, h_total + y, w, dy,
-      drwflags, 32, colour);
-
-    if (p_thing->U.UPerson.ShieldEnergy > 0)
-    {
-        drwflags = 0;
-        if (h_cur < 3)
-            colour = colour_lookup[ColLU_RED];
-        enlist_hud_draw_box(x + dx, y + dy + h_total - h_cur, w, h_cur,
-          drwflags, 32, colour);
-    }
-}
-
-void draw_hud_target_old_frame(struct Thing *p_target, int frm)
-{
-    struct EnginePoint ep;
-
-    ep.X3d = PRCCOORD_TO_MAPCOORD(p_target->X) - engn_xc;
-    ep.Y3d = PRCCOORD_TO_YCOORD(p_target->Y); // subtracted within transform_point(): - 8 * engn_yc;
-    ep.Z3d = PRCCOORD_TO_MAPCOORD(p_target->Z) - engn_zc;
-    ep.Flags = 0;
-    transform_point(&ep);
-
-    int sh_x;
-    ubyte bri;
-
-    sh_x = (12 * overall_scale) >> 9;
-    bri = PALETTE_FADE_LEVELS / 2;
-
-    draw_frame_alpha(ep.pp.X - sh_x, ep.pp.Y, frm +  0, overall_scale, bri);
-    draw_frame_alpha(ep.pp.X + sh_x, ep.pp.Y, frm + 10, overall_scale, bri);
-
-    draw_hud_old_frame_health_bar(ep.pp.X, ep.pp.Y, p_target);
-    draw_hud_old_frame_shield_bar(ep.pp.X, ep.pp.Y, p_target);
 }
 
 void draw_hud_target2(short dcthing, short target)
@@ -508,12 +525,6 @@ void draw_hud_target2(short dcthing, short target)
             break;
         }
     }
-    // Vehicles have their own health drawing method
-    if ((p_target->Type != TT_VEHICLE) && hud_show_target_health)
-    {
-        draw_hud_target_old_frame(p_target, target_old_frameno);
-    }
-    target_old_frameno = frame[target_old_frameno].Next;
 }
 
 /******************************************************************************/
