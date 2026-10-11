@@ -241,6 +241,11 @@ void draw_triangulation_palette(ubyte *pal)
     }
 }
 
+/** Draw all pathfinding triangles, with colors marking passability.
+ *
+ * This debug drawing is typically used to save image file, not to draw
+ * on real screen. It changes screen buffer directly, without drawlists.
+ */
 void draw_triangulation_debug(int beg_x, int beg_y, int cor_shl)
 {
     int tri;
@@ -294,7 +299,6 @@ void draw_triangulation_debug(int beg_x, int beg_y, int cor_shl)
             if (iflg & 0x40) y2++;
         }
         lbDisplay.DrawFlags = 0;
-        //LbDrawTriangle(x0, y0, x2, y2, x1, y1, col); // this function is buggy for some coords
 
         col = (p_tri->enter & 0x01) ? 192 : 15;
         LbDrawLine(x0, y0, x1, y1, col);
