@@ -32,44 +32,36 @@
 #include "swlog.h"
 /******************************************************************************/
 
-void draw_line_transformed_at_ground(int x1, int z1, int x2, int z2, TbPixel colour)
+void draw_line_transformed_at_ground(int cor1_x, int cor1_z,
+  int cor2_x, int cor2_z, TbPixel colour)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_line_transformed_at_ground\n"
-        : : "a" (x1), "d" (z1), "b" (x2), "c" (z2), "g" (colour));
-#endif
     int cor1_y_m8, cor2_y_m8;
 
-    cor1_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(x1, z1));
-    cor2_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(x2, z2));
+    cor1_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor1_x, cor1_z));
+    cor2_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor2_x, cor2_z));
 
-    draw_line_transformed_col(x1, cor1_y_m8, z1, x2, cor2_y_m8, z2, colour);
+    draw_line_transformed_col(cor1_x, cor1_y_m8, cor1_z,
+      cor2_x, cor2_y_m8, cor2_z, colour);
 }
 
-void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text)
+void draw_text_transformed_at_ground(int cor_x, int cor_z, const char *text)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_text_transformed_at_ground\n"
-        : : "a" (coord_x), "d" (coord_z), "b" (text));
-    return;
-#endif
-    int coord_y;
+    int cor_y_m8;
 
-    coord_y = PRCCOORD_TO_YCOORD(alt_at_point(coord_x, coord_z));
-    draw_text_transformed_col(coord_x, coord_y, coord_z, text, colour_lookup[ColLU_RED]);
+    cor_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor_x, cor_z));
+    draw_text_transformed_col(cor_x, cor_y_m8, cor_z,
+      text, colour_lookup[ColLU_RED]);
 }
 
-void draw_number_transformed_at_ground(int coord_x, int coord_z, int num)
+void draw_number_transformed_at_ground(int cor_x, int cor_z, int num)
 {
     char locstr[52];
-    int coord_y;
+    int cor_y_m8;
 
-    coord_y = PRCCOORD_TO_YCOORD(alt_at_point(coord_x, coord_z));
+    cor_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor_x, cor_z));
     sprintf(locstr, "%d", num);
-    draw_text_transformed_col(coord_x, coord_y, coord_z, locstr, colour_lookup[ColLU_RED]);
+    draw_text_transformed_col(cor_x, cor_y_m8, cor_z,
+      locstr, colour_lookup[ColLU_RED]);
 }
 
 /******************************************************************************/

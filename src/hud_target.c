@@ -375,7 +375,7 @@ void draw_hud_old_frame_health_bar(int x, int y, struct Thing *p_thing)
 
     h_cur = val_cur / hp_per_px;
     if (h_cur > dy)
-      h_cur = dy;
+        h_cur = dy;
 
     drwflags = Lb_SPRITE_TRANSPAR4;
     colour = colour_lookup[ColLU_BLUE];
@@ -466,8 +466,10 @@ void draw_hud_target_old_frame(struct Thing *p_target, int frm)
     {
         int sh_x;
         sh_x = (12 * overall_scale) >> 9;
-        draw_frame_scaled_alpha(ep.pp.X - sh_x, ep.pp.Y, frm +  0, overall_scale, PALETTE_FADE_LEVELS / 2);
-        draw_frame_scaled_alpha(ep.pp.X + sh_x, ep.pp.Y, frm + 10, overall_scale, PALETTE_FADE_LEVELS / 2);
+        draw_frame_scaled_alpha(ep.pp.X - sh_x, ep.pp.Y, frm +  0,
+          overall_scale, PALETTE_FADE_LEVELS / 2);
+        draw_frame_scaled_alpha(ep.pp.X + sh_x, ep.pp.Y, frm + 10,
+          overall_scale, PALETTE_FADE_LEVELS / 2);
     }
 
     draw_hud_old_frame_health_bar(ep.pp.X, ep.pp.Y, p_target);

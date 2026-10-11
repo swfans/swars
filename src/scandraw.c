@@ -1106,7 +1106,8 @@ void draw_map_flat_rect(int cor_x, int cor_y, int cor_z, int size_x, int size_z,
     LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
 }
 
-void SCANNER_draw_shape_from_points(int x, int y, const struct TbPoint *points, ushort count, TbPixel col)
+void SCANNER_draw_shape_from_points(int x, int y,
+  const struct TbPoint *points, ushort count, TbPixel col)
 {
     int i;
 
@@ -1132,7 +1133,8 @@ void SCANNER_draw_shape_from_points(int x, int y, const struct TbPoint *points, 
  *
  * This function assumes graphics window set to the scanner map area.
  */
-void SCANNER_draw_shape_part_from_points(int x, int y, const struct TbPoint *points, ushort count, ushort frame, ushort part, TbPixel col)
+void SCANNER_draw_shape_part_from_points(int x, int y,
+  const struct TbPoint *points, ushort count, ushort frame, ushort part, TbPixel col)
 {
     ushort i;
 

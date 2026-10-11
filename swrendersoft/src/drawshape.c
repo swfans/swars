@@ -29,7 +29,8 @@
 #include "privrdlog.h"
 /******************************************************************************/
 
-void draw_line_transformed_col(int x1, int y1_m8, int z1, int x2, int y2_m8, int z2, TbPixel colour)
+void draw_line_transformed_col(int x1, int y1_m8, int z1,
+  int x2, int y2_m8, int z2, TbPixel colour)
 {
     struct EnginePoint ep1, ep2;
 

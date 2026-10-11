@@ -31,9 +31,10 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-void draw_line_transformed_at_ground(int x1, int y1, int x2, int y2, TbPixel colour);
-void draw_number_transformed_at_ground(int coord_x, int coord_z, int num);
-void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text);
+void draw_line_transformed_at_ground(int cor1_x, int cor1_z,
+  int cor2_x, int cor2_z, TbPixel colour);
+void draw_number_transformed_at_ground(int cor_x, int cor_z, int num);
+void draw_text_transformed_at_ground(int cor_x, int cor_z, const char *text);
 
 /******************************************************************************/
 #ifdef __cplusplus
