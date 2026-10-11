@@ -101007,7 +101007,7 @@ SCANNER_draw_new_transparent_sub9:	/* 0xAFAF3 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
+GLOBAL_FUNC(ASM_panel_objective_info_mp_update)	/* 0x0B0908 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi

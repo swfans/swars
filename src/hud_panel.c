@@ -54,9 +54,11 @@
 #include "hud_panecfg.h"
 #include "keyboard.h"
 #include "lvobjctv.h"
+#include "misstat.h"
 #include "mouse.h"
 #include "mydraw.h"
 #include "packet.h"
+#include "pepgroup.h"
 #include "player.h"
 #include "scandraw.h"
 #include "sound.h"
@@ -65,6 +67,8 @@
 /******************************************************************************/
 char player_message_text[PLAYERS_LIMIT][128];
 ubyte player_message_timer[PLAYERS_LIMIT];
+
+extern char panel_objective_text[360];
 
 /** Over which agent weapon the cursor is currently placed.
  *
@@ -430,10 +434,123 @@ void draw_panel_objective_info(short panel)
     draw_objective_info_text(text_x, p_panel->dyn.Y, text_w, p_panel->dyn.Height);
 }
 
-void SCANNER_unkn_func_205(void)
+void panel_objective_info_mp_update(void)
 {
-    asm volatile ("call ASM_SCANNER_unkn_func_205\n"
+#if 0
+    asm volatile ("call ASM_panel_objective_info_mp_update\n"
         :  :  : "eax" );
+    return;
+#endif
+    char locstr[32];
+    int player_unkn2[8];
+    ushort teams_unun1[8];
+    char *text;
+    PlayerIdx plyr;
+
+    if (players[local_player_no].PanelState[mouser] == 17)
+    {
+        char sep;
+
+        if ((gameturn & 1) != 0)
+            sep = '-';
+        else
+            sep = ' ';
+        sprintf(panel_objective_text, "%c%c%s%c",
+          1, net_player_colours[local_player_no],
+          player_message_text[local_player_no], sep);
+        scrollinfo_text = panel_objective_text;
+        return;
+    }
+
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
+    {
+        ubyte t;
+
+        t = net_player_teams[plyr];
+        teams_unun1[t] = 0;
+    }
+
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
+    {
+        struct Thing *p_agent;
+        struct MissionStatus *p_mistat;
+        PlayerIdx plyr2;
+        ubyte t;
+
+        if ((ingame.InNetGame_UNSURE & (1 << plyr)) == 0) {
+            continue;
+        }
+        p_agent = players[plyr].MyAgent[0];
+        plyr2 = p_agent->U.UPerson.ComCur >> 2;
+        p_mistat = &mission_status[plyr2];
+
+        player_unkn2[plyr] = 0;
+        for (plyr2 = 0; plyr2 < PLAYERS_LIMIT; plyr2++)
+        {
+          if (net_player_colours[plyr] == net_player_colours[plyr2])
+              player_unkn2[plyr] -= p_mistat->MP.AgentsKilled[plyr2];
+          else
+              player_unkn2[plyr] += p_mistat->MP.AgentsKilled[plyr2];
+        }
+
+        t = net_player_teams[plyr];
+        if (t != 0) {
+            teams_unun1[t] += player_unkn2[plyr];
+        }
+    }
+
+    text = panel_objective_text;
+    memcpy(text, " - ", 3);
+    text += 3;
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
+    {
+        ubyte t;
+
+        if ((ingame.InNetGame_UNSURE & (1 << plyr)) == 0) {
+            continue;
+        }
+        if (net_player_names[plyr][0] == '\0') {
+            continue;
+        }
+        *text = '\14';
+        text++;
+        *text = net_player_colours[plyr];
+        text++;
+
+        strcpy(text, net_player_names[plyr]);
+        text += strlen(text);
+
+        *text = ' ';
+        text++;
+
+        t = net_player_teams[plyr];
+        if (t != 0)
+            sprintf(locstr, "[%d/%d]", (int)player_unkn2[plyr], (int)teams_unun1[t]);
+        else
+            sprintf(locstr, "%d", (int)player_unkn2[plyr]);
+
+        if ((group_actions[level_def.PlayableGroups[plyr]].Alive)
+          || ((net_game_play_flags & 0x04) != 0) || ((gameturn & 8) == 0)) {
+            strcpy(text, locstr);
+            text += strlen(text);
+        } else {
+            int i;
+            for (i = strlen(locstr); i > 0; i--) {
+                *text = '-';
+                text++;
+            }
+        }
+
+        *text = '\14';
+        text++;
+        *text = SCANNER_colour[0];
+        text++;
+
+        memcpy(text, " - ", 3);
+        text += 3;
+    }
+    *text = '\0';
+    scrollinfo_text = panel_objective_text;
 }
 
 void panel_objective_info_process_turn(short panel)
@@ -445,7 +562,7 @@ void panel_objective_info_process_turn(short panel)
     p_panel = &game_panel[panel];
 
     if (in_network_game) {
-        SCANNER_unkn_func_205();
+        panel_objective_info_mp_update();
         bkgd_w = lbDisplay.GraphicsScreenWidth;
         text_w = bkgd_w - 2;
     } else {
