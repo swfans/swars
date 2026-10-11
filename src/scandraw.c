@@ -1407,11 +1407,6 @@ void SCANNER_draw_mark_point3_blink2_filled(int x, int y, TbPixel col)
 
 void SCANNER_draw_mark_point5_blink4(int x, int y, TbPixel col)
 {
-#if 0
-    asm volatile (
-      "call ASM_SCANNER_draw_mark_point5_blink4\n"
-        : : "a" (x), "d" (y), "b" (col));
-#endif
     ushort frame, sz;
 
     frame = gameturn & 3;
@@ -1428,11 +1423,6 @@ void SCANNER_draw_mark_point5_blink4(int x, int y, TbPixel col)
 
 void SCANNER_draw_mark_point7(int x, int y, TbPixel col)
 {
-#if 0
-    asm volatile (
-      "call ASM_SCANNER_draw_mark_point7\n"
-        : : "a" (x), "d" (y), "b" (col));
-#endif
     ushort sz;
 
     sz = SCANNER_scale_size(7);
@@ -2059,11 +2049,6 @@ static void SCANNER_draw_solid_signals(void)
 
 void SCANNER_draw_signals(void)
 {
-#if 0
-    asm volatile ("call ASM_SCANNER_draw_signals\n"
-        :  :  : "eax" );
-    return;
-#endif
     int sh_x, sh_y;
     int range;
     int pos_mx, pos_mz;

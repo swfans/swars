@@ -267,11 +267,6 @@ int select_thing_for_debug(short x, short y, short z, short ttype)
 
 void count_fnavs(TbBool a1)
 {
-/*
-    asm volatile (
-      "call ASM_count_fnavs\n"
-        : : "a" (a1));
-*/
     if (!a1)
     {
         byte_1DC89C[word_1DC898] = 0;
