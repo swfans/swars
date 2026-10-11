@@ -983,7 +983,7 @@ void things_debug_hud(void)
                 get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_target->ThingOffset);
             else
                 tgtng_x = tgtng_y = tgtng_z = 0;
-            draw_line_transformed_col2(tng_x, tng_y, tng_z, tgtng_x, tgtng_y, tgtng_z,
+            draw_mapcoord_line_col2(tng_x, tng_y, tng_z, tgtng_x, tgtng_y, tgtng_z,
               colour_lookup[ColLU_BLUE]);
         }
 

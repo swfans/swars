@@ -32001,7 +32001,7 @@ GLOBAL_FUNC(ASM_person_attempt_to_leave_ferry)	/* 0x0545E4 */
 		mov    0x2(%edi),%ecx
 		sar    $0x8,%eax
 		sar    $0x10,%ecx
-		call   ac_draw_line_transformed_col2
+		call   ac_draw_mapcoord_line_col2
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+4,%al
 		mov    0x2(%edi),%ecx
@@ -32019,7 +32019,7 @@ GLOBAL_FUNC(ASM_person_attempt_to_leave_ferry)	/* 0x0545E4 */
 		mov    0x18(%ebp),%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   ac_draw_line_transformed_col2
+		call   ac_draw_mapcoord_line_col2
 		cmpw   $0x0,0x72(%ebp)
 		je     jump_54739
 		mov    0x36(%ebp),%eax
@@ -58312,7 +58312,7 @@ GLOBAL_FUNC(ASM_can_i_see_thing)	/* 0x06C28C */
 		mov    %eax,0x30(%esp)
 		mov    %eax,%ecx
 		mov    %esi,%eax
-		call   ac_draw_line_transformed_col2
+		call   ac_draw_mapcoord_line_col2
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(colour_lookup),%al
 		push   %eax
@@ -58323,7 +58323,7 @@ GLOBAL_FUNC(ASM_can_i_see_thing)	/* 0x06C28C */
 		push   $0x0
 		mov    %esi,%eax
 		mov    0x30(%esp),%ecx
-		call   ac_draw_line_transformed_col2
+		call   ac_draw_mapcoord_line_col2
 	jump_6c8da:
 		mov    0x10(%esp),%eax
 		mov    0x3c(%esp),%ebx
@@ -59945,7 +59945,7 @@ GLOBAL_FUNC(ASM_draw_engine_unk3_last)	/* 0x070F94 */
 		mov    EXPORT_SYMBOL(game_col_vects_list),%eax
 		mov    (%edx,%eax,1),%ax
 		and    $0xffff,%eax
-		call   ac_draw_unkn1_bar
+		call   ac_draw_collision_vector_line
 		mov    EXPORT_SYMBOL(game_col_vects_list),%ebp
 		mov    0x2(%edx,%ebp,1),%ax
 		and    $0x7f,%ah
@@ -91730,7 +91730,7 @@ GLOBAL_FUNC(ASM_mem_group_arrived)	/* 0x0A6898 */
 		mov    0x12(%esp),%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
-		call   ac_draw_line_transformed_col2
+		call   ac_draw_mapcoord_line_col2
 	jump_a6960:
 		imul   $0xa8,%esi,%eax
 		mov    EXPORT_SYMBOL(things),%edx
@@ -91805,7 +91805,7 @@ GLOBAL_FUNC(ASM_mem_group_arrived)	/* 0x0A6898 */
 		mov    0x12(%esp),%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
-		call   ac_draw_line_transformed_col2
+		call   ac_draw_mapcoord_line_col2
 	jump_a6a49:
 		imul   $0xa8,%esi,%eax
 		mov    EXPORT_SYMBOL(things),%edx
@@ -109257,7 +109257,7 @@ GLOBAL_FUNC(ASM_unkn_path_func_001)	/* 0x0C0ED4 */
 		push   %eax
 		sar    $0x10,%edx
 		mov    %esi,%eax
-		call   ac_draw_line_transformed_col2
+		call   ac_draw_mapcoord_line_col2
 	jump_c0fe4:
 		mov    (%esp),%ecx
 		inc    %edi

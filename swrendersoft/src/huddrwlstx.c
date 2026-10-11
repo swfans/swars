@@ -236,7 +236,7 @@ void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine)
 {
     lbDisplay.DrawFlags = p_diMapCorLine->DrwFlags;
 
-    draw_line_transformed_col(
+    draw_mapcoord_line_col(
       p_diMapCorLine->PtBeg.X, p_diMapCorLine->PtBeg.Y, p_diMapCorLine->PtBeg.Z,
       p_diMapCorLine->PtEnd.X, p_diMapCorLine->PtEnd.Y, p_diMapCorLine->PtEnd.Z,
       p_diMapCorLine->Col);

@@ -1367,7 +1367,7 @@ void process_view_inputs(int thing)
     process_overall_scale(zoom);
 }
 
-void draw_line_transformed_col2(int cor1_x, int cor1_y, int cor1_z,
+void draw_mapcoord_line_col2(int cor1_x, int cor1_y, int cor1_z,
   int cor2_x, int cor2_y, int cor2_z, TbPixel colour)
 {
 #if 0
@@ -1383,7 +1383,7 @@ void draw_line_transformed_col2(int cor1_x, int cor1_y, int cor1_z,
       "push 8(%4)\n"
       "push 4(%4)\n"
       "push 0(%4)\n"
-      "call ASM_draw_line_transformed_col2\n"
+      "call ASM_draw_mapcoord_line_col2\n"
         : : "a" (cor1_x), "d" (cor1_y), "b" (cor1_z), "c" (cor2_x), "S" (stkargs)
         : "cc", "memory");
     return;

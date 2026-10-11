@@ -31,8 +31,18 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-void draw_line_transformed_col(int x1, int y1_m8, int z1,
-  int x2, int y2_m8, int z2, TbPixel colour);
+/** Draws a line between two map points.
+ */
+void draw_mapcoord_line_col(int cor1_x, int cor1_y_m8, int cor1_z,
+  int cor2_x, int cor2_y_m8, int cor2_z, TbPixel colour);
+
+void draw_mapcoord_line_annotated(int cor1_x, int cor1_y_m8, int cor1_z,
+  int cor2_x, int cor2_y_m8, int cor2_z, const char *annot_text,
+  TbPixel lncol, TbPixel txcol);
+
+void draw_mapcoord_line_annotated_num(int cor1_x, int cor1_y_m8, int cor1_z,
+  int cor2_x, int cor2_y_m8, int cor2_z, int annot_num,
+  TbPixel lncol, TbPixel txcol);
 
 /** Draws simple purple rect directly, without drawlists.
  */
