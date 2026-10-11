@@ -32001,7 +32001,7 @@ GLOBAL_FUNC(ASM_person_attempt_to_leave_ferry)	/* 0x0545E4 */
 		mov    0x2(%edi),%ecx
 		sar    $0x8,%eax
 		sar    $0x10,%ecx
-		call   ac_func_6fd1c
+		call   ac_draw_line_transformed_col2
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+4,%al
 		mov    0x2(%edi),%ecx
@@ -32019,7 +32019,7 @@ GLOBAL_FUNC(ASM_person_attempt_to_leave_ferry)	/* 0x0545E4 */
 		mov    0x18(%ebp),%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   ac_func_6fd1c
+		call   ac_draw_line_transformed_col2
 		cmpw   $0x0,0x72(%ebp)
 		je     jump_54739
 		mov    0x36(%ebp),%eax
@@ -58312,7 +58312,7 @@ GLOBAL_FUNC(ASM_can_i_see_thing)	/* 0x06C28C */
 		mov    %eax,0x30(%esp)
 		mov    %eax,%ecx
 		mov    %esi,%eax
-		call   ac_func_6fd1c
+		call   ac_draw_line_transformed_col2
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(colour_lookup),%al
 		push   %eax
@@ -58323,7 +58323,7 @@ GLOBAL_FUNC(ASM_can_i_see_thing)	/* 0x06C28C */
 		push   $0x0
 		mov    %esi,%eax
 		mov    0x30(%esp),%ecx
-		call   ac_func_6fd1c
+		call   ac_draw_line_transformed_col2
 	jump_6c8da:
 		mov    0x10(%esp),%eax
 		mov    0x3c(%esp),%ebx
@@ -59809,70 +59809,13 @@ GLOBAL_FUNC (ASM_merged_noop_unkn1)	/* 0x6F828 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_show_message)	/* 0x06FA04 */
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %edx
-		push   %esi
-		mov    %eax,%esi
-		xor    %eax,%eax
-		xor    %edx,%edx
-		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
-		mov    %dx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		cmp    $0x1,%eax
-		jne    jump_6fa3e
-		xor    %eax,%eax
-		mov    $0xf,%ecx
-		mov    EXPORT_SYMBOL(colour_lookup)+4,%al
-		mov    $0xfa,%ebx
-		push   %eax
-		mov    $0x32,%edx
-		mov    $0x1e,%eax
-		jmp    jump_6fa5a
-	jump_6fa3e:
-		xor    %eax,%eax
-		mov    $0x1e,%ecx
-		mov    EXPORT_SYMBOL(colour_lookup)+4,%al
-		mov    $0x1f4,%ebx
-		push   %eax
-		mov    $0x64,%edx
-		mov    $0x3c,%eax
-	jump_6fa5a:
-		call   ac_LbDrawBox
-		mov    $0x66,%edx
-		mov    $0x69,%eax
-		xor    %ecx,%ecx
-		xor    %ebx,%ebx
-		mov    EXPORT_SYMBOL(colour_lookup)+1,%cl
-		mov    %bx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		mov    %esi,%ebx
-		call   ac_draw_text
-		call   ac_swap_wscreen
-		call   ac_dos_clock
-		mov    %eax,%edx
-	jump_6fa8d:
-		call   ac_dos_clock
-		sub    %edx,%eax
-		cmp    $0xc8,%eax
-		jae    jump_6faa4
-		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+1
-		je     jump_6fa8d
-	jump_6faa4:
-		pop    %esi
-		pop    %edx
-		pop    %ecx
-		pop    %ebx
-
-
-/*----------------------------------------------------------------*/
 nullsub_7:	/* 0x06FAA8 */
 /*----------------------------------------------------------------*/
 		ret
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_func_6fd1c)	/* 0x6fd1c */
+GLOBAL_FUNC(ASM_draw_line_transformed_col2)	/* 0x6fd1c */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -92699,7 +92642,7 @@ GLOBAL_FUNC(ASM_mem_group_arrived)	/* 0x0A6898 */
 		mov    0x12(%esp),%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
-		call   ac_func_6fd1c
+		call   ac_draw_line_transformed_col2
 	jump_a6960:
 		imul   $0xa8,%esi,%eax
 		mov    EXPORT_SYMBOL(things),%edx
@@ -92774,7 +92717,7 @@ GLOBAL_FUNC(ASM_mem_group_arrived)	/* 0x0A6898 */
 		mov    0x12(%esp),%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
-		call   ac_func_6fd1c
+		call   ac_draw_line_transformed_col2
 	jump_a6a49:
 		imul   $0xa8,%esi,%eax
 		mov    EXPORT_SYMBOL(things),%edx
@@ -112220,7 +112163,7 @@ GLOBAL_FUNC(ASM_unkn_path_func_001)	/* 0x0C0ED4 */
 		push   %eax
 		sar    $0x10,%edx
 		mov    %esi,%eax
-		call   ac_func_6fd1c
+		call   ac_draw_line_transformed_col2
 	jump_c0fe4:
 		mov    (%esp),%ecx
 		inc    %edi

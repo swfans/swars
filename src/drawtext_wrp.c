@@ -71,12 +71,6 @@ void draw_number_transformed_at_ground(int cor_x, int cor_z, int num)
 
 void show_message(const char *text)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_show_message\n"
-        : "=r" (ret) : "a" (text));
-    return;
-#endif
     TbClockMSec start_time;
     int x, y, w, h;
 

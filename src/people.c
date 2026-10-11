@@ -4706,11 +4706,11 @@ void person_attempt_to_leave_ferry(struct Thing *p_person)
     p_cmd = &game_commands[p_person->U.UPerson.ComCur];
     radius_sqr = (p_cmd->Arg1 << 6) * (p_cmd->Arg1 << 6);
     p_vehicle = &things[p_person->U.UPerson.Vehicle];
-    func_6fd1c(PRCCOORD_TO_MAPCOORD(p_person->X),
+    draw_line_transformed_col2(PRCCOORD_TO_MAPCOORD(p_person->X),
       PRCCOORD_TO_MAPCOORD(p_person->Y),
       PRCCOORD_TO_MAPCOORD(p_person->Z),
       p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
-    func_6fd1c(PRCCOORD_TO_MAPCOORD(p_vehicle->X),
+    draw_line_transformed_col2(PRCCOORD_TO_MAPCOORD(p_vehicle->X),
       PRCCOORD_TO_MAPCOORD(p_vehicle->Y),
       PRCCOORD_TO_MAPCOORD(p_vehicle->Z),
       p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_BLUE]);
