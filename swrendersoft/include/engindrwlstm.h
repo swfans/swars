@@ -185,18 +185,20 @@ void enlist_draw_text(int x, int y, int z, short scr_dx, short scr_dy,
 struct SingleObjectFace4 *build_polygon_slice(short x1, short y1,
   short x2, short y2, int w1, int w2, int col, int sort_key, ushort flag);
 
-void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
+void build_polygon_circle(int cor_x, int cor_y, int cor_z, int r1, int r2, int flag,
   struct SingleFloorTexture *p_tex, int col, int bright1, int bright2);
 
-struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1);
+struct SingleObjectFace4 *build_glare(short cor_x, short cor_y, short cor_z,
+  short r1);
 
 void enlist_draw_wobble_line(int x1, int y1, int z1,
  int x2, int y2, int z2, int itime, ubyte slflags, TbBool is_player);
 
 void enlist_draw_bang_wobble_line(ushort shrapnel_beg);
 
-void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
-  int depth_shift, int itime, short ofs_x, short ofs_y, TbPixel colour);
+void enlist_draw_laser(int cor1_x, int cor1_y, int cor1_z,
+  int cor2_x, int cor2_y, int cor2_z, int depth_shift,
+  int itime, short ofs_x, short ofs_y, TbPixel colour);
 
 TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
   ushort edflags, int *bckt_max);

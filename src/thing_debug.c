@@ -172,24 +172,24 @@ void func_6fe80(int probe_x, int probe_y, int probe_z, int target_x, int target_
         prv_z = probe_z + dist_z * (step - 1);
 
         ep1.X3d = cur_x - engn_xc;
-        ep1.Y3d = cur_y - engn_yc;
+        ep1.Y3d = cur_y; // subtracted within transform_point(): - 8 * engn_yc;
         ep1.Z3d = cur_z - engn_zc;
         ep1.Flags = 0;
         transform_point(&ep1);
         ep2.X3d = prv_x + dist_z - engn_xc;
+        ep2.Y3d = cur_y; // subtracted within transform_point(): - 8 * engn_yc;
         ep2.Z3d = prv_z - dist_x - engn_zc;
-        ep2.Y3d = cur_y - engn_yc;
         ep2.Flags = 0;
         transform_point(&ep2);
         LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, col2);
 
         ep1.X3d = cur_x - engn_xc;
-        ep1.Y3d = cur_y - engn_yc;
+        ep1.Y3d = cur_y; // subtracted within transform_point(): - 8 * engn_yc;
         ep1.Z3d = cur_z - engn_zc;
         ep1.Flags = 0;
         transform_point(&ep1);
         ep2.X3d = prv_x - dist_z - engn_xc;
-        ep2.Y3d = cur_y - engn_yc;
+        ep2.Y3d = cur_y; // subtracted within transform_point(): - 8 * engn_yc;
         ep2.Z3d = prv_z + dist_x - engn_zc;
         ep2.Flags = 0;
         transform_point(&ep2);
@@ -197,12 +197,12 @@ void func_6fe80(int probe_x, int probe_y, int probe_z, int target_x, int target_
     }
 
     ep1.X3d = probe_x - engn_xc;
-    ep1.Y3d = probe_y - engn_yc;
+    ep1.Y3d = probe_y; // subtracted within transform_point(): - 8 * engn_yc;
     ep1.Z3d = probe_z - engn_zc;
     ep1.Flags = 0;
     transform_point(&ep1);
     ep2.X3d = target_x - engn_xc;
-    ep2.Y3d = target_y - engn_yc;
+    ep2.Y3d = target_y; // subtracted within transform_point(): - 8 * engn_yc;
     ep2.Z3d = target_z - engn_zc;
     ep2.Flags = 0;
     transform_point(&ep2);

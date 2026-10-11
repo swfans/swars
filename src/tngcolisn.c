@@ -83,15 +83,16 @@ void draw_unkn1_bar(ushort cv)
     char locstr[8];
 
     ep1.X3d = game_col_vects[cv].X1 - engn_xc;
+    ep1.Y3d = game_col_vects[cv].Y1; // subtracted within transform_point(): - 8 * engn_yc;
     ep1.Z3d = game_col_vects[cv].Z1 - engn_zc;
-    ep1.Y3d = game_col_vects[cv].Y1;
     ep1.Flags = 0;
     transform_point(&ep1);
     ep2.X3d = game_col_vects[cv].X2 - engn_xc;
+    ep2.Y3d = game_col_vects[cv].Y2; // subtracted within transform_point(): - 8 * engn_yc;
     ep2.Z3d = game_col_vects[cv].Z2 - engn_zc;
-    ep2.Y3d = game_col_vects[cv].Y2;
     ep2.Flags = 0;
     transform_point(&ep2);
+
     LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour_lookup[ColLU_WHITE]);
     scr_x = ep2.pp.X + ep1.pp.X;
     scr_y = ep2.pp.Y + ep1.pp.Y;

@@ -40,12 +40,12 @@ void draw_line_transformed_at_ground(int x1, int z1, int x2, int z2, TbPixel col
       "call ASM_draw_line_transformed_at_ground\n"
         : : "a" (x1), "d" (z1), "b" (x2), "c" (z2), "g" (colour));
 #endif
-    int coord1_y, coord2_y;
+    int cor1_y_m8, cor2_y_m8;
 
-    coord1_y = PRCCOORD_TO_YCOORD(alt_at_point(x1, z1));
-    coord2_y = PRCCOORD_TO_YCOORD(alt_at_point(x2, z2));
+    cor1_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(x1, z1));
+    cor2_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(x2, z2));
 
-    draw_line_transformed_col(x1, coord1_y, z1, x2, coord2_y, z2, colour);
+    draw_line_transformed_col(x1, cor1_y_m8, z1, x2, cor2_y_m8, z2, colour);
 }
 
 void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text)

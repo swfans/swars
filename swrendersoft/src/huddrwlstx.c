@@ -239,7 +239,7 @@ void hud_draw_mapcoord_corner_rect(struct DIHudMapCoordRect *p_diMapCorRect)
     struct EnginePoint ep;
 
     ep.X3d = p_diMapCorRect->Pt.X - engn_xc;
-    ep.Y3d = p_diMapCorRect->Pt.Y - engn_yc;
+    ep.Y3d = p_diMapCorRect->Pt.Y; // subtracted within transform_point(): - 8 * engn_yc;
     ep.Z3d = p_diMapCorRect->Pt.Z - engn_zc;
     ep.Flags = 0;
     transform_point(&ep);
@@ -257,7 +257,7 @@ void hud_draw_mapcoord_frame(struct DIHudMapCoordFrame *p_diMapCorFrame)
     int pp_X, pp_Y;
 
     ep.X3d = p_diMapCorFrame->Pt.X - engn_xc;
-    ep.Y3d = p_diMapCorFrame->Pt.Y - engn_yc;
+    ep.Y3d = p_diMapCorFrame->Pt.Y; // subtracted within transform_point(): - 8 * engn_yc;
     ep.Z3d = p_diMapCorFrame->Pt.Z - engn_zc;
     ep.Flags = 0;
     transform_point(&ep);
@@ -281,7 +281,7 @@ void hud_draw_mapcoord_sprites_in_quarters(struct DIHudMapCoordSprList *p_diMapC
     int pp_X, pp_Y;
 
     ep.X3d = p_diMapCorSprLst->Pt.X - engn_xc;
-    ep.Y3d = p_diMapCorSprLst->Pt.Y - engn_yc;
+    ep.Y3d = p_diMapCorSprLst->Pt.Y; // subtracted within transform_point(): - 8 * engn_yc;
     ep.Z3d = p_diMapCorSprLst->Pt.Z - engn_zc;
     ep.Flags = 0;
     transform_point(&ep);

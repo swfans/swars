@@ -29,18 +29,18 @@
 #include "privrdlog.h"
 /******************************************************************************/
 
-void draw_line_transformed_col(int x1, int y1, int z1, int x2, int y2, int z2, TbPixel colour)
+void draw_line_transformed_col(int x1, int y1_m8, int z1, int x2, int y2_m8, int z2, TbPixel colour)
 {
     struct EnginePoint ep1, ep2;
 
     ep1.X3d = x1 - engn_xc;
-    ep1.Y3d = y1 - engn_yc;
+    ep1.Y3d = y1_m8; // subtracted within transform_point(): - 8 * engn_yc;
     ep1.Z3d = z1 - engn_zc;
     ep1.Flags = 0;
     transform_point(&ep1);
 
     ep2.X3d = x2 - engn_xc;
-    ep2.Y3d = y2 - engn_yc;
+    ep2.Y3d = y2_m8; // subtracted within transform_point(): - 8 * engn_yc;
     ep2.Z3d = z2 - engn_zc;
     ep2.Flags = 0;
     transform_point(&ep2);

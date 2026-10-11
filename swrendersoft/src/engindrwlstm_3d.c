@@ -660,7 +660,7 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2,
     next_screen_point = pt4;
 }
 
-void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
+void build_polygon_circle(int cor_x, int cor_y, int cor_z, int r1, int r2, int flag,
   struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
 {
     int pp_X, pp_Y;
@@ -668,9 +668,9 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
 
     {
         struct EnginePoint ep;
-        ep.X3d = x1 - engn_xc;
-        ep.Z3d = z1 - engn_zc;
-        ep.Y3d = 8 * y1 - (engn_yc >> 3);
+        ep.X3d = cor_x - engn_xc;
+        ep.Z3d = cor_z - engn_zc;
+        ep.Y3d = 8 * cor_y; // subtracted within transform_point(): - 8 * engn_yc;
         ep.Flags = 0;
         transform_point(&ep);
 
@@ -683,7 +683,8 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
       p_tex, col, bright1, bright2, bckt);
 }
 
-struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
+struct SingleObjectFace4 *build_glare(short cor_x, short cor_y_m8, short cor_z,
+  short r1)
 {
     struct EnginePoint ep;
     struct SpecialPoint *p_scrpoint;
@@ -695,9 +696,9 @@ struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
     uint sftex;
     ushort pt;
 
-    ep.X3d = x1 - engn_xc;
-    ep.Z3d = z1 - engn_zc;
-    ep.Y3d = y1 - (engn_yc >> 3);
+    ep.X3d = cor_x - engn_xc;
+    ep.Z3d = cor_z - engn_zc;
+    ep.Y3d = cor_y_m8; // subtracted within transform_point(): - 8 * engn_yc;
     ep.Flags = 0;
     transform_point(&ep);
 
@@ -935,8 +936,9 @@ void enlist_draw_bang_wobble_line(ushort shrapnel_beg)
     }
 }
 
-void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
-  int depth_shift, int itime, short ofs_x, short ofs_y, TbPixel colour)
+void enlist_draw_laser(int cor1_x, int cor1_y, int cor1_z,
+  int cor2_x, int cor2_y, int cor2_z, int depth_shift,
+  int itime, short ofs_x, short ofs_y, TbPixel colour)
 {
     struct EnginePoint ep1, ep2;
     int scr_x, scr_y, scr_depth;
@@ -946,9 +948,9 @@ void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
     ubyte flg;
 
     ep1.Flags = 0;
-    ep1.X3d = x1 - engn_xc;
-    ep1.Z3d = z1 - engn_zc;
-    ep1.Y3d = 8 * y1 - (engn_yc >> 3);
+    ep1.X3d = cor1_x - engn_xc;
+    ep1.Z3d = cor1_z - engn_zc;
+    ep1.Y3d = 8 * cor1_y; // subtracted within transform_point(): - 8 * engn_yc;
     transform_point(&ep1);
 
     scr_x = ep1.pp.X << 8;
@@ -959,9 +961,9 @@ void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
     scr_y += (ofs_y * overall_scale) >> 1;
 
     ep2.Flags = 0;
-    ep2.X3d = x2 - engn_xc;
-    ep2.Z3d = z2 - engn_zc;
-    ep2.Y3d = 8 * y2 - (engn_yc >> 3);
+    ep2.X3d = cor2_x - engn_xc;
+    ep2.Z3d = cor2_z - engn_zc;
+    ep2.Y3d = 8 * cor2_y; // subtracted within transform_point(): - 8 * engn_yc;
     transform_point(&ep2);
 
     if ((ep2.Flags & ep1.Flags & 0xF) != 0)

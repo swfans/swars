@@ -88,8 +88,8 @@ TbBool enlist_hud_draw_colour_wave_wrapped_text(short px, short py,
 
 /** Enlist drawing line between the provided map coordinates.
  */
-TbBool enlist_hud_draw_mapcoord_line(short cor1_x, short cor1_y,
-  short cor1_z, short cor2_x, short cor2_y, short cor2_z,
+TbBool enlist_hud_draw_mapcoord_line(short cor1_x, short cor1_y_m8,
+  short cor1_z, short cor2_x, short cor2_y_m8, short cor2_z,
   ushort drwflags, ubyte thickness, TbPixel colour);
 
 TbBool enlist_hud_draw_mapcoord_corner_rect(short cor_x, short cor_y_m8,

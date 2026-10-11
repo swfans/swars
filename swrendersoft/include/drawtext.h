@@ -33,10 +33,10 @@ extern "C" {
 
 void draw_text(short x, short y, const char *text, ubyte colour);
 
-void draw_text_transformed_col(int coord_x, int coord_y, int coord_z,
+void draw_text_transformed_col(int cor_x, int cor_y_m8, int cor_z,
   const char *text, TbPixel col);
-void draw_text_transformed(int coord_x, int coord_y, int coord_z, const char *text);
-void draw_number_transformed(int coord_x, int coord_y, int coord_z, int num);
+void draw_text_transformed(int cor_x, int cor_y_m8, int cor_z, const char *text);
+void draw_number_transformed(int cor_x, int cor_y_m8, int cor_z, int num);
 
 /******************************************************************************/
 #ifdef __cplusplus
