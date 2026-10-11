@@ -224,6 +224,14 @@ void hud_draw_colour_wave_wrapped_text(struct DIHudWrappedText *p_diWrpText)
     FontSpacingRestore(p_diWrpText->pFont, space_bkp);
 }
 
+void hud_draw_frame_alpha(struct DIHudFrame *p_diFrame)
+{
+    lbDisplay.DrawFlags = p_diFrame->DrwFlags;
+
+    draw_frame_alpha(p_diFrame->Pos.X, p_diFrame->Pos.Y,
+      p_diFrame->Frame, p_diFrame->Scale, p_diFrame->Bright);
+}
+
 void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine)
 {
     lbDisplay.DrawFlags = p_diMapCorLine->DrwFlags;

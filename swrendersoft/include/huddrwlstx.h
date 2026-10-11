@@ -74,6 +74,15 @@ struct DIHudTexturedBox {
     ushort NumVb;
 };
 
+struct DIHudFrame {
+    struct DIScrPoint Pos;
+    ushort Frame;
+    ushort DrwFlags;
+    short Scale;
+    ubyte Bright;
+    ubyte Col;
+};
+
 struct DIHudSprite {
     struct DIScrRect Rect;
     struct TbSprite *pSpr;
@@ -149,6 +158,7 @@ struct DrawItemHud {
         struct DIHudLine Line;
         struct DIHudBox Box;
         struct DIHudTexturedBox TxtrdBox;
+        struct DIHudFrame Frame;
         struct DIHudSprite Sprite;
 		struct DIHudClippedText ClpText;
 		struct DIHudWrappedText WrpText;
@@ -175,6 +185,7 @@ void hud_draw_low_trans_grey_slant_box(struct DIHudBox *p_diBox);
 void hud_draw_low_trans_grey_vslant_box(struct DIHudBox *p_diBox);
 void hud_draw_textured_flow_slant_box(struct DIHudTexturedBox *p_diBox);
 
+void hud_draw_frame_alpha(struct DIHudFrame *p_diFrame);
 void hud_draw_sprite(struct DIHudSprite *p_diSprite);
 void hud_draw_sprite_scaled(struct DIHudSprite *p_diSprite);
 

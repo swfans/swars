@@ -243,6 +243,32 @@ TbBool enlist_hud_draw_textured_flow_slant_box(short px, short py,
     return true;
 }
 
+TbBool enlist_hud_draw_frame_alpha(short px, short py, ushort frm,
+  ushort drwflags, short scale, short brig)
+{
+    struct DrawItemHud dih;
+    struct DrawItemHud *p_di;
+
+    if (brig > PALETTE_FADE_LEVELS-1)
+        brig = PALETTE_FADE_LEVELS-1;
+    if (brig < 0)
+        brig = 0;
+
+    p_di = &dih;
+
+    p_di->U.Frame.Pos.X = px;
+    p_di->U.Frame.Pos.Y = py;
+    p_di->U.Frame.Frame = frm;
+    p_di->U.Frame.DrwFlags = drwflags;
+    p_di->U.Frame.Scale = scale;
+    p_di->U.Frame.Bright = brig;
+    p_di->U.Frame.Col = colour_lookup[ColLU_WHITE];
+
+    //TODO enlist instead of drawing directly
+    hud_draw_frame_alpha(&p_di->U.Frame);
+    return true;
+}
+
 TbBool enlist_hud_draw_sprite(short px, short py, struct TbSprite *p_spr,
   ushort drwflags, short brig)
 {

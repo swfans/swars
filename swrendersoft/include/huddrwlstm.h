@@ -57,6 +57,9 @@ TbBool enlist_hud_draw_textured_flow_slant_box(short px, short py,
   short width, short height, ubyte vecmode,
   ubyte brig, ubyte tmapno, ushort num_ua, ushort num_vb);
 
+TbBool enlist_hud_draw_frame_alpha(short px, short py, ushort frm,
+  ushort drwflags, short scale, short brig);
+
 TbBool enlist_hud_draw_sprite(short px, short py, struct TbSprite *p_spr,
   ushort drwflags, short brig);
 
