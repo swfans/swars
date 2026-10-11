@@ -132,14 +132,6 @@ int unused_func_200(short x, short y, ushort group)
 
 void func_6fe80(int probe_x, int probe_y, int probe_z, int target_x, int target_y, int target_z, TbPixel colour)
 {
-#if 0
-    asm volatile (
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_func_6fe80\n"
-        : : "a" (probe_x), "d" (probe_y), "b" (probe_z), "c" (target_x), "g" (target_y), "g" (target_z), "g" (colour));
-#endif
     struct EnginePoint ep1;
     struct EnginePoint ep2;
     int dist_x, dist_y, dist_z;

@@ -72,11 +72,6 @@ void set_dome_col(struct Thing *p_building, ubyte flag)
 
 void draw_unkn1_bar(ushort cv)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_unkn1_bar\n"
-        : : "a" (cv));
-#endif
     short scr_x, scr_y;
     struct EnginePoint ep1;
     struct EnginePoint ep2;

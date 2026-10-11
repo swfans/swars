@@ -1795,21 +1795,6 @@ void draw_agent_grouping_bars(short panel)
 
 void draw_rect_around_map_coords(int cor_x, int cor_y_m8, int cor_z, int width, int height, TbPixel colour)
 {
-#if 0
-    // Pushed through a register holding them: a "g" operand may be placed
-    // relative to the stack pointer, which each push moves.
-    int stkargs[2];
-
-    stkargs[0] = (int)(intptr_t)height;
-    stkargs[1] = (int)(intptr_t)colour;
-
-    asm volatile (
-      "push 4(%4)\n"
-      "push 0(%4)\n"
-      "call ASM_draw_rect_around_map_coords\n"
-        : : "a" (cor_x), "d" (cor_y_m8), "b" (cor_z), "c" (width), "S" (stkargs)
-        : "cc", "memory");
-#endif
     int cor_beg_x, cor_beg_z;
     int cor_end_x, cor_end_z;
     int thickness;
