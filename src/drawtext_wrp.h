@@ -31,6 +31,8 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
+void show_message(const char *text);
+
 void draw_line_transformed_at_ground(int cor1_x, int cor1_z,
   int cor2_x, int cor2_z, TbPixel colour);
 void draw_number_transformed_at_ground(int cor_x, int cor_z, int num);

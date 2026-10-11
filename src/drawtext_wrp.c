@@ -20,9 +20,14 @@
 /******************************************************************************/
 #include "drawtext_wrp.h"
 
+#include "bfbox.h"
+#include "bfkeybd.h"
 #include "bfline.h"
 #include "bfscreen.h"
+#include "bftime.h"
+#include "bfwindows.h"
 
+#include "display.h"
 #include "drawtext.h"
 #include "drawshape.h"
 #include "engincolour.h"
@@ -62,6 +67,37 @@ void draw_number_transformed_at_ground(int cor_x, int cor_z, int num)
     sprintf(locstr, "%d", num);
     draw_text_transformed_col(cor_x, cor_y_m8, cor_z,
       locstr, colour_lookup[ColLU_RED]);
+}
+
+void show_message(const char *text)
+{
+#if 0
+    int ret;
+    asm volatile ("call ASM_show_message\n"
+        : "=r" (ret) : "a" (text));
+    return;
+#endif
+    TbClockMSec start_time;
+    int x, y, w, h;
+
+    x = lbDisplay.GraphicsScreenWidth / 12;
+    y = lbDisplay.GraphicsScreenHeight / 4;
+    w = lbDisplay.GraphicsScreenWidth - 2 * x;
+    h = lbDisplay.GraphicsScreenHeight / 8;
+
+    lbDisplay.DrawFlags = 0;
+    LbDrawBox(x, y, w, h, colour_lookup[4]);
+    lbDisplay.DrawFlags = 0;
+    draw_text(x * 3 / 2, y * 1 / 16, text, colour_lookup[1]);
+
+    swap_wscreen();
+
+    start_time = LbTimerClock();
+    while (LbTimerClock() - start_time < 2000) {
+       LbDoMultitasking();
+       if (lbKeyOn[KC_ESCAPE] != 0)
+           break;
+    }
 }
 
 /******************************************************************************/

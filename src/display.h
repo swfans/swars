@@ -74,7 +74,6 @@ TbResult cover_screen_rect_with_sprite(short x, short y,
 TbResult cover_screen_rect_with_raw_file(short x, short y,
   ushort w, ushort h, const char *fname);
 
-
 void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h);
 
 void set_user_selected_brightness(void);

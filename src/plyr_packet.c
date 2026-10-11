@@ -29,6 +29,7 @@
 
 #include "bigmap.h"
 #include "display.h"
+#include "drawtext_wrp.h"
 #include "game_bstype.h"
 #include "game_options.h"
 #include "game_speed.h"
@@ -412,14 +413,6 @@ int net_unkn_func_12(void *a1)
     int ret;
     asm volatile ("call ASM_net_unkn_func_12\n"
         : "=r" (ret) : "a" (a1));
-    return ret;
-}
-
-int show_message(const char *str)
-{
-    int ret;
-    asm volatile ("call ASM_show_message\n"
-        : "=r" (ret) : "a" (str));
     return ret;
 }
 
