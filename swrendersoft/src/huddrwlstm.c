@@ -445,6 +445,33 @@ TbBool enlist_hud_draw_mapcoord_line(short cor1_x, short cor1_y_m8,
     return true;
 }
 
+TbBool enlist_hud_draw_mapcoord_line_annotated_num(short cor1_x,
+  short cor1_y_m8, short cor1_z, short cor2_x, short cor2_y_m8,
+  short cor2_z, int val, ushort drwflags, ubyte thickness,
+  TbPixel lncol, TbPixel txcol)
+{
+    struct DrawItemHud dih;
+    struct DrawItemHud *p_di;
+
+    p_di = &dih;
+
+    p_di->U.MapCorAntLine.PtBeg.X = cor1_x;
+    p_di->U.MapCorAntLine.PtBeg.Y = cor1_y_m8;
+    p_di->U.MapCorAntLine.PtBeg.Z = cor1_z;
+    p_di->U.MapCorAntLine.PtEnd.X = cor2_x;
+    p_di->U.MapCorAntLine.PtEnd.Y = cor2_y_m8;
+    p_di->U.MapCorAntLine.PtEnd.Z = cor2_z;
+    p_di->U.MapCorAntLine.AnnotVal = val;
+    p_di->U.MapCorAntLine.DrwFlags = drwflags;
+    p_di->U.MapCorAntLine.Thick = thickness;
+    p_di->U.MapCorAntLine.Col1 = lncol;
+    p_di->U.MapCorAntLine.Col2 = txcol;
+
+    //TODO enlist instead of drawing directly
+    hud_draw_mapcoord_line_annotated_num(&p_di->U.MapCorAntLine);
+    return true;
+}
+
 TbBool enlist_hud_draw_mapcoord_corner_rect(short cor_x, short cor_y_m8,
   short cor_z, short width, short height, short lnlen, ubyte thickness,
   ushort drwflags, TbPixel colour)

@@ -123,6 +123,16 @@ struct DIHudMapCoordLine {
     ubyte Col;
 };
 
+struct DIHudMapCoordAnnotLine {
+    struct DIMapPoint PtBeg;
+    struct DIMapPoint PtEnd;
+    intptr_t AnnotVal;
+    ushort DrwFlags;
+    ubyte Thick;
+    ubyte Col1;
+    ubyte Col2;
+};
+
 struct DIHudMapCoordRect {
     struct DIMapPoint Pt;
     short Width;
@@ -163,6 +173,7 @@ struct DrawItemHud {
 		struct DIHudClippedText ClpText;
 		struct DIHudWrappedText WrpText;
         struct DIHudMapCoordLine MapCorLine;
+        struct DIHudMapCoordAnnotLine MapCorAntLine;
         struct DIHudMapCoordRect MapCorRect;
         struct DIHudMapCoordFrame MapCorFrame;
         struct DIHudMapCoordSprList MapCorSprLst;
@@ -197,6 +208,7 @@ int hud_width_shad_cl_flash_wrapped_text(short px, short py,
   struct TbSprite *p_font, const char *text, ushort drwflags, short units_per_px);
 
 void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine);
+void hud_draw_mapcoord_line_annotated_num(struct DIHudMapCoordAnnotLine *p_diMapCorAntLine);
 void hud_draw_mapcoord_corner_rect(struct DIHudMapCoordRect *p_diMapCorRect);
 void hud_draw_mapcoord_frame(struct DIHudMapCoordFrame *p_diMapCorFrame);
 void hud_draw_mapcoord_sprites_in_quarters(struct DIHudMapCoordSprList *p_diMapCorSprLst);

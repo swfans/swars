@@ -35,6 +35,11 @@ extern "C" {
 TbBool enlist_hud_draw_line(short beg_x, short beg_y, short end_x, short end_y,
   ushort drwflags, ubyte thickness, short brig, TbPixel colour);
 
+TbBool enlist_hud_draw_mapcoord_line_annotated_num(short cor1_x,
+  short cor1_y_m8, short cor1_z, short cor2_x, short cor2_y_m8,
+  short cor2_z, int val, ushort drwflags, ubyte thickness,
+  TbPixel lncol, TbPixel txcol);
+
 TbBool enlist_hud_draw_box(short px, short py, short width, short height,
   ushort drwflags, short brig, TbPixel colour);
 

@@ -242,6 +242,16 @@ void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine)
       p_diMapCorLine->Col);
 }
 
+void hud_draw_mapcoord_line_annotated_num(struct DIHudMapCoordAnnotLine *p_diMapCorAntLine)
+{
+    lbDisplay.DrawFlags = p_diMapCorAntLine->DrwFlags;
+
+    draw_mapcoord_line_annotated_num(
+      p_diMapCorAntLine->PtBeg.X, p_diMapCorAntLine->PtBeg.Y, p_diMapCorAntLine->PtBeg.Z,
+      p_diMapCorAntLine->PtEnd.X, p_diMapCorAntLine->PtEnd.Y, p_diMapCorAntLine->PtEnd.Z,
+      p_diMapCorAntLine->AnnotVal, p_diMapCorAntLine->Col1, p_diMapCorAntLine->Col2);
+}
+
 void hud_draw_mapcoord_corner_rect(struct DIHudMapCoordRect *p_diMapCorRect)
 {
     struct EnginePoint ep;

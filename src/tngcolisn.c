@@ -21,12 +21,9 @@
 #include <stdio.h>
 #include "bfline.h"
 
-#include "drawshape.h"
-#include "drawtext.h"
-#include "engincam.h"
 #include "engincolour.h"
-#include "engintrns.h"
 #include "enginzoom.h"
+#include "huddrwlstm.h"
 
 #include "bigmap.h"
 #include "drawtext_wrp.h"
@@ -80,8 +77,10 @@ void draw_collision_vector_line(ushort colvect)
     lncol = colour_lookup[ColLU_WHITE];
     txcol = colour_lookup[ColLU_PINK];
 
-    draw_mapcoord_line_annotated_num(p_colvect->X1, p_colvect->Y1, p_colvect->Z1,
-      p_colvect->X2, p_colvect->Y2, p_colvect->Z2, colvect, lncol, txcol);
+    enlist_hud_draw_mapcoord_line_annotated_num(
+      p_colvect->X1, p_colvect->Y1, p_colvect->Z1,
+      p_colvect->X2, p_colvect->Y2, p_colvect->Z2,
+      colvect, 0, 1, lncol, txcol);
 }
 
 void draw_engine_unk3_last(short x, short z)
