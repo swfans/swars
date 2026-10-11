@@ -228,22 +228,6 @@ short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
     return ms_y - box->Y;
 }
 
-TbResult ApDrawSlantBox(ScrCoord x, ScrCoord y, ushort w, ushort h, TbPixel col)
-{
-    short cx, cy;
-    short ch;
-
-    cx = x;
-    cy = y;
-    for (ch = h; ch > 0; ch--)
-    {
-        LbDrawLine(cx, cy, cx + w, cy, col);
-        --cx;
-        ++cy;
-    }
-    return Lb_SUCCESS;
-}
-
 void init_screen_box(struct ScreenBox *p_box, ScrCoord x, ScrCoord y, ushort width, ushort height, int drawspeed)
 {
 #if 0

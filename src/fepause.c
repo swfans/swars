@@ -19,6 +19,7 @@
 #include "fepause.h"
 
 #include "bfbox.h"
+#include "bfjoyst.h"
 #include "bfline.h"
 #include "bfscreen.h"
 #include "bfsprite.h"
@@ -30,9 +31,9 @@
 #include "bfscd.h"
 #include "ssampply.h"
 
+#include "app_box.h"
 #include "engincolour.h"
 
-#include "bfjoyst.h"
 #include "campaign.h"
 #include "display.h"
 #include "game_data.h"
@@ -209,7 +210,7 @@ void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
 
 void draw_slant_box(struct ScreenBox *box, TbPixel colr2)
 {
-    ApDrawSlantBox(box->X, box->Y, box->Width, box->Height, colr2);
+    AppDrawSlantBox(box->X, box->Y, box->Width, box->Height, colr2);
 }
 
 void draw_slant_left_arrow_spr(struct ScreenBox *box, TbPixel colr2)
@@ -264,7 +265,7 @@ void draw_slant_left_arrow(struct ScreenBox *box, TbPixel colr2)
     y = box->Y - stp;
 
     LbDrawTriangle(x + 0, y + stp * 5, x + stp * 11, y - 1, x +  0, y + stp * 11, colour);
-    ApDrawSlantBox(x + stp * 11 - 1, y + 0, stp * 2 / 2, stp * 11, colour);
+    AppDrawSlantBox(x + stp * 11 - 1, y + 0, stp * 2 / 2, stp * 11, colour);
 }
 
 void draw_slant_right_arrow(struct ScreenBox *box, TbPixel colr2)
@@ -284,7 +285,7 @@ void draw_slant_right_arrow(struct ScreenBox *box, TbPixel colr2)
     x = box->X;
     y = box->Y - stp;
 
-    ApDrawSlantBox(x + stp * 10 - 1, y + 0, stp * 2 / 2, stp * 11, colour);
+    AppDrawSlantBox(x + stp * 10 - 1, y + 0, stp * 2 / 2, stp * 11, colour);
     LbDrawTriangle(x + stp * 11, y + stp * 5 + 1, x + 0, y + stp * 11, x +  stp * 11, y + 0, colour);
 }
 

@@ -28,8 +28,11 @@ extern "C" {
 
 /** Draw clipped slant box on graphics window at given point, with dimensions and colour.
  *
+ * Draws slant box / kicked box / parallellogram skewed 45 deg.
  * Graphics window needs to be set and locked. Coordinates are clipped if they
  * exceed the current graphics window.
+ *
+ * This function is like a extension to bflibrary API, but it's defined on application side.
  * This function honors DrawFlags.
  */
 TbResult AppDrawSlantBox(s32 X, s32 Y, s32 Width, s32 Height, TbPixel colour);

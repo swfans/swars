@@ -292,11 +292,6 @@ short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *p_box);
 
 short mouse_move_position_vertical_scrollbar_over_text_box(struct ScreenTextBox *p_box);
 
-/** Draws slant box / kicked box / parallellogram skewed 45 deg.
- * This function is like a extension to bflibrary API, but it's defined on application side.
- */
-TbResult ApDrawSlantBox(ScrCoord x, ScrCoord y, ushort w, ushort h, TbPixel col);
-
 void init_screen_box(struct ScreenBox *p_box, ScrCoord x, ScrCoord y,
   ushort width, ushort height, int drawspeed);
 void init_screen_text_box(struct ScreenTextBox *p_box, ScrCoord x, ScrCoord y,
