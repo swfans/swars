@@ -35,6 +35,7 @@ extern "C" {
  */
 void draw_purple_rect(int x, int y, int w, int h, ubyte active);
 
+void draw_message_box(const char *text);
 void show_message(const char *text);
 
 void draw_line_transformed_at_ground(int cor1_x, int cor1_z,

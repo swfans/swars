@@ -76,7 +76,7 @@ void draw_mapcoord_line_annotated(int cor1_x, int cor1_y_m8, int cor1_z,
     LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, lncol);
     scr_x = (ep2.pp.X + ep1.pp.X) / 2;
     scr_y = (ep2.pp.Y + ep1.pp.Y) / 2;
-    draw_text(scr_x, scr_y, annot_text, txcol);
+    draw_simple_text(scr_x, scr_y, annot_text, txcol);
 }
 
 void draw_mapcoord_line_annotated_num(int cor1_x, int cor1_y_m8, int cor1_z,

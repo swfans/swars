@@ -84,6 +84,33 @@ void draw_purple_rect(int x, int y, int w, int h, ubyte active)
     draw_bevel_rect(x, y, w, h, col1, col2);
 }
 
+static short count_chars_in_text(const char *text, char cc)
+{
+    const char *s;
+    short i;
+
+    s = text;
+    for (i = 0; s[i] != 0; s[i] == cc ? i++ : *s++);
+    return i;
+}
+
+void draw_message_box(const char *text)
+{
+    int x, y, w, h;
+    short ln_count;
+    short ln_height;
+
+    ln_height = simple_text_char_height('A');
+    ln_count = count_chars_in_text(text, '\10') + 1;
+    w = simple_text_width(text) + 2 * ln_height;
+    h = (2 + ln_count) * ln_height;
+    x = (lbDisplay.GraphicsWindowWidth - w) / 2;
+    y = (lbDisplay.GraphicsWindowHeight - h) / 2;
+
+    draw_purple_rect(x, y, w, h, 0);
+    draw_simple_text(x + ln_height, y + ln_height, text, 0xC);
+}
+
 void show_message(const char *text)
 {
     int x, y, w, h;
@@ -96,7 +123,7 @@ void show_message(const char *text)
     lbDisplay.DrawFlags = 0;
     LbDrawBox(x, y, w, h, colour_lookup[ColLU_BLUE]);
     lbDisplay.DrawFlags = 0;
-    draw_text(x * 3 / 2, y * 1 / 16, text, colour_lookup[ColLU_WHITE]);
+    draw_simple_text(x * 3 / 2, y * 1 / 16, text, colour_lookup[ColLU_WHITE]);
 
     swap_wscreen();
 

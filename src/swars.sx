@@ -59996,7 +59996,7 @@ GLOBAL_FUNC(ASM_draw_engine_unk3_last)	/* 0x070F94 */
 		add    %eax,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+2,%cl
 		cwtl
-		call   ac_draw_text
+		call   ac_draw_simple_text
 	jump_711d7:
 		cmpw   $0x0,0x70(%esp)
 		jne    jump_7106e

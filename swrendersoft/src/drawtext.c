@@ -29,7 +29,17 @@
 #include "privrdlog.h"
 /******************************************************************************/
 
-void draw_text(short x, short y, const char *text, ubyte colour)
+short simple_text_width(const char *text)
+{
+    return prop_text_width(text);
+}
+
+short simple_text_char_height(char c)
+{
+    return 5;
+}
+
+void draw_simple_text(short x, short y, const char *text, ubyte colour)
 {
     long scrn_w, scrn_h;
     ubyte *scr;
@@ -61,7 +71,7 @@ void draw_text_transformed_col(int cor_x, int cor_y_m8, int cor_z, const char *t
     transform_point(&ep);
     if ((ep.pp.X > 0) && (ep.pp.Y > 0) && (ep.pp.X < w) && (ep.pp.Y < h))
     {
-        draw_text(ep.pp.X, ep.pp.Y, text, col);
+        draw_simple_text(ep.pp.X, ep.pp.Y, text, col);
     }
 }
 
