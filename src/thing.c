@@ -996,7 +996,7 @@ void process_carried_item(struct SimpleThing *p_item)
 
 void process_temp_light(struct SimpleThing *p_sthing)
 {
-    int bri, rng;
+    int brig, rng;
     short lgtng_x, lgtng_y, lgtng_z;
 
     p_sthing->Timer1--;
@@ -1004,13 +1004,13 @@ void process_temp_light(struct SimpleThing *p_sthing)
         remove_sthing(p_sthing->ThingOffset);
         return;
     }
-    bri = p_sthing->U.ULight.MinBright;
+    brig = p_sthing->U.ULight.MinBright;
     if (p_sthing->U.ULight.RangeBright != 0) {
         rng = p_sthing->U.ULight.RangeBright;
-        bri += (ushort)LbRandomAnyShort() % rng;
+        brig += (ushort)LbRandomAnyShort() % rng;
     }
     get_thing_position_mapcoords(&lgtng_x, &lgtng_y, &lgtng_z, p_sthing->ThingOffset);
-    apply_full_light(lgtng_x, lgtng_y >> 3, lgtng_z, bri, 0);
+    apply_full_light(lgtng_x, lgtng_y >> 3, lgtng_z, brig, 0);
 }
 
 void set_thing_frame(struct Thing *p_thing, ushort anim_start)

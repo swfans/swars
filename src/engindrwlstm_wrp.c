@@ -232,9 +232,9 @@ void draw_pers_e_graphic(struct Thing *p_thing,
     struct ShEnginePoint sp;
     int scr_depth;
     short br_inc;
-    short bri;
+    short brig;
 
-    bri = byte_152EF0[p_thing->SubType] + intensity;
+    brig = byte_152EF0[p_thing->SubType] + intensity;
     br_inc = person_shield_glow_brightness(p_thing);
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
@@ -264,15 +264,15 @@ void draw_pers_e_graphic(struct Thing *p_thing,
         if ((ingame.Flags & GamF_ThermalView) != 0) {
             ushort frm;
             frm = nstart_ani[1066];
-            bri = PALETTE_FADE_LEVELS / 2;
+            brig = PALETTE_FADE_LEVELS / 2;
             draw_pers_frame_basic(p_thing, sp.X, sp.Y,
-              scr_depth, frm, bri);
+              scr_depth, frm, brig);
         }
     }
     else
     {
         draw_pers_frame_versioned(p_thing, sp.X, sp.Y,
-          scr_depth, frame, bri + br_inc);
+          scr_depth, frame, brig + br_inc);
     }
 
     if (br_inc > 0) {

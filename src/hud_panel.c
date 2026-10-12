@@ -856,7 +856,7 @@ void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
         else
             brig = 16 + 2 * ingame.Scanner.Brightness;
 #else
-        brig = 32;
+        brig = PALETTE_FADE_LEVELS / 2;
 #endif
         drwflags = 0;
     }
@@ -888,7 +888,7 @@ void draw_new_panel_sprite_scaled_std(int px, int py, ulong spr_id, int dest_wid
         else
             brig = 16 + 2 * ingame.Scanner.Brightness;
 #else
-        brig = 32;
+        brig = PALETTE_FADE_LEVELS / 2;
 #endif
         drwflags = 0;
     }

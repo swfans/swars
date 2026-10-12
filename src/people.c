@@ -20,6 +20,7 @@
 
 #include "bfmath.h"
 #include "bfmemory.h"
+#include "bfpalette.h"
 #include "bffile.h"
 #include "bfini.h"
 #include "bfutility.h"
@@ -6672,7 +6673,7 @@ void person_burning(struct Thing *p_person)
         : : "a" (p_person));
     return;
 #endif
-    p_person->U.UPerson.Brightness = 32;
+    p_person->U.UPerson.Brightness = PALETTE_FADE_LEVELS / 2;
     apply_super_quick_light(PRCCOORD_TO_MAPCOORD(p_person->X),
       PRCCOORD_TO_MAPCOORD(p_person->Z), 16 + (LbRandomAnyShort() & 0xF));
 

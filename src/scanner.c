@@ -655,7 +655,7 @@ static void SCANNER_fill_in_floor(int x1, int z1, int x2, int z2)
             int alt1, alt2, alt3, alt4;
             int cor_x, cor_z;
             ushort sc_col;
-            short bri;
+            short brig;
             TbPixel col1;
 
             cor_x = tile_x << 7;
@@ -677,13 +677,13 @@ static void SCANNER_fill_in_floor(int x1, int z1, int x2, int z2)
             alt2 = alt_at_point(cor_z, cor_x - 128);
             alt3 = alt_at_point(cor_z + 128, cor_x);
             alt4 = alt_at_point(cor_z - 128, cor_x);
-            bri = ((alt1 - alt2) >> 9) + ((alt3 - alt4) >> 9) + 32;
-            if (bri < 0)
-                bri = 0;
-            if (bri > PALETTE_FADE_LEVELS - 1)
-                bri = PALETTE_FADE_LEVELS - 1;
+            brig = ((alt1 - alt2) >> 9) + ((alt3 - alt4) >> 9) + 32;
+            if (brig < 0)
+                brig = 0;
+            if (brig > PALETTE_FADE_LEVELS - 1)
+                brig = PALETTE_FADE_LEVELS - 1;
 
-            SCANNER_data[tile_x][tile_z] = pixmap.fade_table[256 * bri + col1];
+            SCANNER_data[tile_x][tile_z] = pixmap.fade_table[256 * brig + col1];
         }
     }
 }

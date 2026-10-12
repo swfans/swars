@@ -318,14 +318,14 @@ void build_vehicle(struct Thing *p_thing)
 
 void build_person(struct Thing *p_thing)
 {
-    ushort frame, bri;
+    ushort frame, brig;
     int cor_dx, cor_dy, cor_dz;
     char locstr[12];
 
     if (p_thing->State == PerSt_BEING_PERSUADED)
     {
         frame = p_thing->Frame;
-        bri = PALETTE_FADE_LEVELS / 2;
+        brig = PALETTE_FADE_LEVELS / 2;
     }
     else if (p_thing->U.UPerson.AnimMode == ANIM_PERS_DEAD_BODY)
     {
@@ -335,7 +335,7 @@ void build_person(struct Thing *p_thing)
         sbfrm = get_person_anim_subframe(p_thing);
         angl = ((3 * p_thing->U.UPerson.Angle >> 1) + 12 - byte_176D4A) % 12;
         frame = nstart_ani[p_thing->StartFrame + 1 + angl] + sbfrm;
-        bri = p_thing->U.UPerson.Brightness;
+        brig = p_thing->U.UPerson.Brightness;
     }
     else if ((p_thing->Flag & TngF_Unkn02000000) != 0)
     {
@@ -344,7 +344,7 @@ void build_person(struct Thing *p_thing)
     else if (p_thing->StartFrame == 1066)
     {
         frame = p_thing->Frame;
-        bri = p_thing->U.UPerson.Brightness;
+        brig = p_thing->U.UPerson.Brightness;
     }
     else
     {
@@ -354,7 +354,7 @@ void build_person(struct Thing *p_thing)
         sbfrm = get_person_anim_subframe(p_thing);
         angl = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
         frame = nstart_ani[p_thing->StartFrame + 1 + angl] + sbfrm;
-        bri = p_thing->U.UPerson.Brightness;
+        brig = p_thing->U.UPerson.Brightness;
     }
 
     cor_dx = PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc;
@@ -362,7 +362,7 @@ void build_person(struct Thing *p_thing)
     cor_dz = PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc;
 
     draw_pers_e_graphic(p_thing, cor_dx, cor_dy, cor_dz,
-      frame, p_thing->Radius, bri);
+      frame, p_thing->Radius, brig);
 
     if (debug_hud_collision) {
         enlist_draw_number(cor_dx, cor_dy, cor_dz,

@@ -391,13 +391,13 @@ void draw_hud_target_old_frame(struct Thing *p_target, int frm, short space)
     transform_point(&ep);
 
     int sh_x;
-    ubyte bri;
+    ubyte brig;
 
     sh_x = (space * overall_scale) >> 9;
-    bri = PALETTE_FADE_LEVELS / 2;
+    brig = PALETTE_FADE_LEVELS / 2;
 
-    enlist_hud_draw_frame_alpha(ep.pp.X - sh_x, ep.pp.Y, frm +  0, 0, overall_scale, bri);
-    enlist_hud_draw_frame_alpha(ep.pp.X + sh_x, ep.pp.Y, frm + 10, 0, overall_scale, bri);
+    enlist_hud_draw_frame_alpha(ep.pp.X - sh_x, ep.pp.Y, frm +  0, 0, overall_scale, brig);
+    enlist_hud_draw_frame_alpha(ep.pp.X + sh_x, ep.pp.Y, frm + 10, 0, overall_scale, brig);
 
     draw_hud_old_frame_health_bar(ep.pp.X, ep.pp.Y, p_target, space);
     draw_hud_old_frame_shield_bar(ep.pp.X, ep.pp.Y, p_target, space);

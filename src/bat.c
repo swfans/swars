@@ -296,7 +296,7 @@ static void BAT_ball_colour_fade(void)
 
     if (BAT_level_intro_timer > 60)
     {
-        fade_lv = 32 - 2 * (90 - BAT_level_intro_timer);
+        fade_lv = (PALETTE_FADE_LEVELS / 2) - 2 * (90 - BAT_level_intro_timer);
         if (fade_lv < 0)
             fade_lv = 0;
         BAT_ball_colour = pixmap.fade_table[256 * fade_lv + colour_lookup[1]];
