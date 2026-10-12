@@ -22,6 +22,7 @@
 #include "bfbox.h"
 #include "bfline.h"
 #include "bfmath.h"
+#include "bfpalette.h"
 
 #include "drawtext.h"
 #include "engincam.h"
@@ -53,10 +54,6 @@ struct Thing *p_track2_thing = NULL;
 int dword_1DC7A4 = 0;
 short word_1DC7A0 = 0;
 short word_1DC7A2 = 0;
-
-ushort word_1DC898 = 0;
-ushort word_1DC8CE = 0;
-ubyte byte_1DC89C[50];
 
 s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilterParams *params)
 {
@@ -239,20 +236,28 @@ int select_thing_for_debug(short x, short y, short z, short ttype)
     return thing;
 }
 
-void count_fnavs(TbBool a1)
+void count_fnavs(TbBool now_draw)
 {
-    if (!a1)
+    static ushort dbgfnavs_count = 0;
+    static ubyte dbgfnavs[50];
+
+    if (!now_draw)
     {
-        byte_1DC89C[word_1DC898] = 0;
-        word_1DC898++;
+        if (dbgfnavs_count < sizeof(dbgfnavs)/sizeof(dbgfnavs[0])) {
+            dbgfnavs[dbgfnavs_count] = 0;
+            dbgfnavs_count++;
+        }
         return;
     }
     if ((ingame.Flags & GamF_NaviPerfInfo) != 0)
     {
         ushort i;
-        TbPixel col;
+        TbPixel colour;
+        ubyte brig;
 
-        for (i = 0; i < word_1DC898; i++)
+        brig = PALETTE_FADE_LEVELS / 2;
+
+        for (i = 0; i < dbgfnavs_count; i++)
         {
             short scr_x, scr_y, w, h;
 
@@ -260,28 +265,34 @@ void count_fnavs(TbBool a1)
             h = 3 * (pop1_sprites_scale + 1) / 2;
             scr_x = lbDisplay.GraphicsScreenWidth - 29 * (pop1_sprites_scale + 1) / 2;
             scr_y = lbDisplay.GraphicsScreenHeight - (29 + 6 * i) * (pop1_sprites_scale + 1) / 2;
-            if (byte_1DC89C[i])
-                col = colour_lookup[ColLU_GREEN];
+            if (dbgfnavs[i])
+                colour = colour_lookup[ColLU_GREEN];
             else
-                col = colour_lookup[ColLU_RED];
-            LbDrawBox(scr_x, scr_y, w, h, col);
+                colour = colour_lookup[ColLU_RED];
+            enlist_hud_draw_box(scr_x, scr_y, w, h, 0, brig, colour);
         }
     }
-    word_1DC898 = 0;
+    dbgfnavs_count = 0;
 }
 
-void navi_onscreen_debug(TbBool a1)
+void navi_onscreen_debug(TbBool now_draw)
 {
-    if (!a1)
+    static ushort navuse_count = 0;
+
+    if (!now_draw)
     {
-        word_1DC8CE++;
+        navuse_count++;
         return;
     }
     if ((ingame.Flags & GamF_NaviPerfInfo) != 0)
     {
         ushort i;
+        TbPixel colour;
+        ubyte brig;
 
-        for (i = 0; i < word_1DC8CE; i++)
+        brig = PALETTE_FADE_LEVELS / 2;
+
+        for (i = 0; i < navuse_count; i++)
         {
             short scr_x, scr_y, w, h;
 
@@ -289,10 +300,11 @@ void navi_onscreen_debug(TbBool a1)
             h = 5 * (pop1_sprites_scale + 1) / 2;
             scr_x = lbDisplay.GraphicsScreenWidth - 30 * (pop1_sprites_scale + 1) / 2;
             scr_y = lbDisplay.GraphicsScreenHeight - (30 + 6 * i) * (pop1_sprites_scale + 1) / 2;
-            LbDrawBox(scr_x, scr_y, w, h, colour_lookup[ColLU_BLUE]);
+            colour = colour_lookup[ColLU_BLUE];
+            enlist_hud_draw_box(scr_x, scr_y, w, h, 0, brig, colour);
         }
     }
-    word_1DC8CE = 0;
+    navuse_count = 0;
     count_fnavs(1);
 }
 

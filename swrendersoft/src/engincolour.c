@@ -138,23 +138,23 @@ void palette_apply_brightness(ubyte *pal)
 
     for (colr = 0; colr < 0x300; colr += 3)
     {
-        int sum, bri;
+        int sum, brig;
         sum = 0;
         for (cmpn = 0; cmpn < 3; cmpn++)
             sum += pal[colr + cmpn];
         if ((sum < 56) && (momentary_brightness < -1)) {
-            bri = momentary_brightness * (sum + 8) >> 6;
+            brig = momentary_brightness * (sum + 8) >> 6;
         } else if ((sum > 3*63 - 56) && (momentary_brightness > 1)) {
-            bri = momentary_brightness * (sum - (3*63 - 56) + 8) >> 6;
+            brig = momentary_brightness * (sum - (3*63 - 56) + 8) >> 6;
         } else {
-            bri = momentary_brightness;
+            brig = momentary_brightness;
         }
         for (cmpn = 0; cmpn < 3; cmpn++)
         {
             ubyte *p_intens;
             int i;
             p_intens = &pal[colr + cmpn];
-            i = (*p_intens) + bri;
+            i = (*p_intens) + brig;
             if (i < 0)
               i = 0;
             if (i > 63)

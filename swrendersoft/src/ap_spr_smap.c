@@ -932,17 +932,17 @@ TbResult ApSpriteDrawLowTransGreyRemapUsingScalingData(long posx, long posy, con
         }
         else
         {
-          ubyte bri;
-          bri = (low_trans_grey_brightness <= 8) ? (24 + low_trans_grey_brightness) : (32 + (low_trans_grey_brightness - 8) / 2);
+          ubyte brig;
+          brig = (low_trans_grey_brightness <= 8) ? (24 + low_trans_grey_brightness) : (32 + (low_trans_grey_brightness - 8) / 2);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawRemapUsingScalingUpDataSolidRL(outbuf, scanline,
-               outheight, xstep, ystep, sprite, &transmap[bri * PALETTE_8b_COLORS]);
+               outheight, xstep, ystep, sprite, &transmap[brig * PALETTE_8b_COLORS]);
           }
           else
           {
               return LbSpriteDrawRemapUsingScalingUpDataSolidLR(outbuf, scanline,
-               outheight, xstep, ystep, sprite, &transmap[bri * PALETTE_8b_COLORS]);
+               outheight, xstep, ystep, sprite, &transmap[brig * PALETTE_8b_COLORS]);
           }
         }
     }
@@ -979,17 +979,17 @@ TbResult ApSpriteDrawLowTransGreyRemapUsingScalingData(long posx, long posy, con
         }
         else
         {
-          ubyte bri;
-          bri = (low_trans_grey_brightness <= 8) ? (24 + low_trans_grey_brightness) : (32 + (low_trans_grey_brightness - 8) / 2);
+          ubyte brig;
+          brig = (low_trans_grey_brightness <= 8) ? (24 + low_trans_grey_brightness) : (32 + (low_trans_grey_brightness - 8) / 2);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawRemapUsingScalingDownDataSolidRL(outbuf, scanline,
-               outheight, xstep, ystep, sprite, &transmap[bri * PALETTE_8b_COLORS]);
+               outheight, xstep, ystep, sprite, &transmap[brig * PALETTE_8b_COLORS]);
           }
           else
           {
               return LbSpriteDrawRemapUsingScalingDownDataSolidLR(outbuf, scanline,
-               outheight, xstep, ystep, sprite, &transmap[bri * PALETTE_8b_COLORS]);
+               outheight, xstep, ystep, sprite, &transmap[brig * PALETTE_8b_COLORS]);
           }
         }
     }

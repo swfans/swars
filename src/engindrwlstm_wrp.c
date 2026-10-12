@@ -21,6 +21,7 @@
 #include "bfendian.h"
 #include "bfmath.h"
 #include "bfmemut.h"
+#include "bfpalette.h"
 #include "bfutility.h"
 #include <assert.h>
 #include <limits.h>
@@ -263,7 +264,7 @@ void draw_pers_e_graphic(struct Thing *p_thing,
         if ((ingame.Flags & GamF_ThermalView) != 0) {
             ushort frm;
             frm = nstart_ani[1066];
-            bri = 32;
+            bri = PALETTE_FADE_LEVELS / 2;
             draw_pers_frame_basic(p_thing, sp.X, sp.Y,
               scr_depth, frm, bri);
         }

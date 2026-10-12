@@ -680,8 +680,8 @@ static void SCANNER_fill_in_floor(int x1, int z1, int x2, int z2)
             bri = ((alt1 - alt2) >> 9) + ((alt3 - alt4) >> 9) + 32;
             if (bri < 0)
                 bri = 0;
-            if (bri > 63)
-                bri = 63;
+            if (bri > PALETTE_FADE_LEVELS - 1)
+                bri = PALETTE_FADE_LEVELS - 1;
 
             SCANNER_data[tile_x][tile_z] = pixmap.fade_table[256 * bri + col1];
         }

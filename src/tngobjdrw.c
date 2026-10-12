@@ -19,6 +19,7 @@
 #include "tngobjdrw.h"
 
 #include "bfkeybd.h"
+#include "bfpalette.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -324,7 +325,7 @@ void build_person(struct Thing *p_thing)
     if (p_thing->State == PerSt_BEING_PERSUADED)
     {
         frame = p_thing->Frame;
-        bri = 32;
+        bri = PALETTE_FADE_LEVELS / 2;
     }
     else if (p_thing->U.UPerson.AnimMode == ANIM_PERS_DEAD_BODY)
     {

@@ -283,10 +283,6 @@
 .global EXPORT_SYMBOL(phwoar_num_used);	/* 0x1DC4DC */
 .global EXPORT_SYMBOL(phwoar_num_free);	/* 0x1DC4E0 */
 
-.global EXPORT_SYMBOL(word_1DC898);	/* 0x1DC898 */
-.global EXPORT_SYMBOL(byte_1DC89C);	/* 0x1DC89C */
-.global EXPORT_SYMBOL(word_1DC8CE);	/* 0x1DC8CE */
-
 .global EXPORT_SYMBOL(unkn_mech_mat8);	/* 0x1DC82C */
 .global EXPORT_SYMBOL(unkn_mech_arr3);	/* 0x1DC850 */
 .global EXPORT_SYMBOL(unkn_mech_arr4);	/* 0x1DC854 */

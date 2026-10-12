@@ -225,15 +225,15 @@ TbResult ApSpriteDrawLowTransGreyRemap(long x, long y, const TbSprite *spr, cons
           spd.nextRowDelta,spd.startShift,spd.mirror);
     } else
     if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0) {
-        ubyte bri;
-        bri = (low_trans_grey_brightness <= 8) ? (24 + low_trans_grey_brightness) : (32 + (low_trans_grey_brightness - 8) / 2);
-        return LbSpriteDrawSlRemap(spd.sp,spd.Wd,spd.Ht,spd.r,&transmap[bri * PALETTE_8b_COLORS],
+        ubyte brig;
+        brig = (low_trans_grey_brightness <= 8) ? (24 + low_trans_grey_brightness) : (32 + (low_trans_grey_brightness - 8) / 2);
+        return LbSpriteDrawSlRemap(spd.sp,spd.Wd,spd.Ht,spd.r,&transmap[brig * PALETTE_8b_COLORS],
           spd.nextRowDelta,spd.startShift,spd.mirror);
     } else
     {
-        ubyte bri;
-        bri = (low_trans_grey_brightness <= 8) ? (24 + low_trans_grey_brightness) : (32 + (low_trans_grey_brightness - 8) / 2);
-        return LbSpriteDrawFCRemap(spd.sp,spd.Wd,spd.Ht,spd.r,&transmap[bri * PALETTE_8b_COLORS],
+        ubyte brig;
+        brig = (low_trans_grey_brightness <= 8) ? (24 + low_trans_grey_brightness) : (32 + (low_trans_grey_brightness - 8) / 2);
+        return LbSpriteDrawFCRemap(spd.sp,spd.Wd,spd.Ht,spd.r,&transmap[brig * PALETTE_8b_COLORS],
           spd.nextRowDelta,spd.startShift,spd.mirror);
     }
 }
