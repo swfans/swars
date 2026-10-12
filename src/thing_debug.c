@@ -52,8 +52,8 @@ extern ubyte execute_commands;
 struct Thing *p_track_thing = NULL;
 struct Thing *p_track2_thing = NULL;
 int dword_1DC7A4 = 0;
-short word_1DC7A0 = 0;
-short word_1DC7A2 = 0;
+short dbgcmds_scroll_pos = 0;
+short dbgcmds_count = 0;
 
 s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilterParams *params)
 {
@@ -457,12 +457,33 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     return 0;
 }
 
-void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
+void draw_unkn_func_07(short scr_x, short scr_y, short width, short height, TbPixel colour)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_draw_unkn_func_07\n"
-        : : "a" (x), "d" (y), "b" (a3), "c" (a4), "g" ((u32)a5));
+        : : "a" (scr_x), "d" (scr_y), "b" (width), "c" (height), "g" ((u32)colour));
+#endif
+    LbDrawLine(scr_x, scr_y, scr_x + width, scr_y, colour);
+    LbDrawLine(scr_x + width, scr_y, width + scr_x, scr_y + height, colour);
+    LbDrawLine(scr_x + width, scr_y + height, scr_x, scr_y + height, colour);
+    LbDrawLine(scr_x, scr_y + height, scr_x, scr_y, colour);
+}
+
+ushort person_commands_count(ThingIdx person)
+{
+    struct Thing *p_person;
+    ushort cmds_count;
+    short cmd, cmdhead;
+
+    p_person = &things[person];
+    cmdhead = p_person->U.UPerson.ComHead;
+    cmds_count = 0;
+    for (cmd = cmdhead; cmd != 0; cmds_count++)
+        cmd = game_commands[cmd].Next;
+
+    return cmds_count;
 }
 
 // TODO separate get_person_commands_debug_hud_inputs() from the below
@@ -499,39 +520,30 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
     }
 
     p_person = &things[person];
-    cmdhead = p_person->U.UPerson.ComHead;
-    cmds_count = 0;
-    for (cmd = cmdhead; cmd; cmds_count++)
-        cmd = game_commands[cmd].Next;
-
+    cmds_count = person_commands_count(person);
     if (cmds_count == 0)
         return;
 
     if (row_height * cmds_count + 2 * padding < box_height)
         box_height = row_height * cmds_count + 2 * padding;
-    if ((word_1DC7A0 >> 2) > word_1DC7A2 - 4)
-        word_1DC7A0 = 0;
-    word_1DC7A2 = cmds_count;
+    if ((dbgcmds_scroll_pos >> 2) > dbgcmds_count - 4)
+        dbgcmds_scroll_pos = 0;
+    dbgcmds_count = cmds_count;
+
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     LbDrawBox(box_x, box_y, box_width, box_height, col3);
-    if (lbDisplay.GraphicsScreenHeight < 400) { // TODO get rid of the multiplying, when possible
-        box_width *= 2;
-        box_height *= 2;
-        box_x *= 2;
-        box_y *= 2;
-        row_height *= 2;
-        padding *= 2;
-    }
     lbDisplay.DrawFlags = 0;
     draw_unkn_func_07(box_x, box_y, box_width, box_height, col1);
+
+    cmdhead = p_person->U.UPerson.ComHead;
     cmd = cmdhead;
-    for (j = word_1DC7A0 >> 2; cmd; j--)
+    for (j = dbgcmds_scroll_pos >> 2; cmd; j--)
     {
         if (j == 0)
             break;
         cmd = game_commands[cmd].Next;
     }
-    cy = box_y + padding - 4 * (word_1DC7A0 & 3);
+    cy = box_y + padding - row_height * (dbgcmds_scroll_pos & 3) / 4;
     person_command_to_text(0, 0, 1);
 
     while (cmd != 0)
@@ -540,17 +552,11 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
         {
             if (mouse_move_over_box_coords(box_x + 8, cy, box_x + 8 + box_width, cy + row_height - 1))
             {
-                if (lbDisplay.GraphicsScreenHeight < 400)
-                    LbDrawBox((box_x + padding)/2, (cy - 2)/2, (box_width - 2 * padding)/2, (row_height - 1)/2, col1);
-                else
-                    LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, col1);
+                LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, col1);
             }
             if ((p_person != NULL) && (p_person->U.UPerson.ComCur == cmd))
             {
-                if (lbDisplay.GraphicsScreenHeight < 400)
-                    LbDrawBox((box_x + padding)/2, (cy - 2)/2, (box_width - 2 * padding)/2, (row_height - 1)/2, colour_lookup[ColLU_GREEN]);
-                else
-                    LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, colour_lookup[ColLU_GREEN]);
+                LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, colour_lookup[ColLU_GREEN]);
             }
 
 #if 0
@@ -559,16 +565,12 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
                 hilight_cmd = cmd;
             }
 #endif
-            if (p_person != NULL)
+            if (p_person != NULL) {
                 person_command_dbg_point_to_target(box_x + 2 * padding - 20, cy + 5, cmd, p_person);
-            if (person_command_to_text(locstr, cmd, 0)) {
-                if (lbDisplay.GraphicsScreenHeight < 400)
-                    draw_text((box_x + 2 * padding)/2, (cy)/2, locstr, col2);
-                else
-                    draw_text(box_x + 2 * padding, cy, locstr, col2);
             }
-            else
-            {
+            if (person_command_to_text(locstr, cmd, 0)) {
+                draw_text(box_x + 2 * padding, cy, locstr, col2);
+            } else {
                 cy -= row_height;
             }
             if (cy + 28 > box_height + box_y)
@@ -579,11 +581,11 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
         ++j;
     }
 
-    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-    if ((ms_y < box_y - 20) && (word_1DC7A0 > 0))
-        word_1DC7A0--;
-    if ((ms_y > box_height + box_y + 10) && (word_1DC7A0 >> 2 < word_1DC7A2 - (box_height >> 4)))
-        word_1DC7A0++;
+    ms_y = lbDisplay.MMouseY;
+    if ((ms_y < box_y - 20) && (dbgcmds_scroll_pos > 0))
+        dbgcmds_scroll_pos--;
+    if ((ms_y > box_height + box_y + 10) && (dbgcmds_scroll_pos >> 2 < dbgcmds_count - (box_height >> 4)))
+        dbgcmds_scroll_pos++;
 }
 
 void things_debug_hud(void)
@@ -622,7 +624,7 @@ void things_debug_hud(void)
         return;
 
     if (lbDisplay.GraphicsScreenHeight < 400) {
-        cmdf_scr_w = 125;
+        cmdf_scr_w = 160;
         cmdf_scr_h = 75;
     } else {
         cmdf_scr_w = 250;
@@ -633,7 +635,11 @@ void things_debug_hud(void)
     scr_x = 16 * pop1_sprites_scale;
     scr_y = 30 * pop1_sprites_scale;
     // Right column (commands list)
-    cmdf_scr_x = lbDisplay.GraphicsScreenWidth - cmdf_scr_w - 32 * pop1_sprites_scale;
+    if (lbDisplay.GraphicsScreenHeight < 400) {
+        cmdf_scr_x = lbDisplay.GraphicsScreenWidth - cmdf_scr_w - 8 * pop1_sprites_scale;
+    } else {
+        cmdf_scr_x = lbDisplay.GraphicsScreenWidth - cmdf_scr_w - 32 * pop1_sprites_scale;
+    }
     cmdf_scr_y = scr_y + 38 * pop1_sprites_scale;
 
     if (thing < 0)
