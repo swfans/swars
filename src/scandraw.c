@@ -949,16 +949,18 @@ static void SCANNER_draw_new_transparent_map(void)
     }
 }
 
-void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ, ubyte colour)
+void draw_mapcoord_to_scrcoord_line(short scr_x, short scr_y,
+  int cor_x, int cor_y_m8, int cor_z, TbPixel colour)
 {
     struct EnginePoint ep;
 
-    ep.X3d = ptX - engn_xc;
-    ep.Y3d = ptY; // subtracted within transform_point(): - 8 * engn_yc;
-    ep.Z3d = ptZ - engn_zc;
+    ep.X3d = cor_x - engn_xc;
+    ep.Y3d = cor_y_m8; // subtracted within transform_point(): - 8 * engn_yc;
+    ep.Z3d = cor_z - engn_zc;
     ep.Flags = 0;
     transform_point(&ep);
-    LbDrawLine(x, y, ep.pp.X, ep.pp.Y, colour);
+
+    LbDrawLine(scr_x, scr_y, ep.pp.X, ep.pp.Y, colour);
 }
 
 void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour)
@@ -981,7 +983,7 @@ void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour
         ptY = p_thing->Y;
         ptZ = p_thing->Z;
     }
-    unkn_draw_transformed_point(x, y, ptX, ptY, ptZ, colour);
+    draw_mapcoord_to_scrcoord_line(x, y, ptX, ptY, ptZ, colour);
 }
 
 void draw_map_flat_circle(short cor_x, short cor_y, short cor_z, short radius, TbPixel colour)

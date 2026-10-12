@@ -118,7 +118,7 @@ void unused_func_203(short x, short y, short thing, ubyte colkp)
         x >>= 1;
         y >>= 1;
     }
-    unkn_draw_transformed_point(x, y, tng_x, tng_y, tng_z, colour_lookup[colkp]);
+    draw_mapcoord_to_scrcoord_line(x, y, tng_x, tng_y, tng_z, colour_lookup[colkp]);
 }
 
 int unused_func_200(short x, short y, ushort group)
@@ -340,7 +340,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_GO_TO_POINT:
     case PCmd_GOTOPOINT_FACE:
     case PCmd_RUN_TO_POINT:
-        unkn_draw_transformed_point(
+        draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
@@ -361,14 +361,14 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         unused_func_203(x, y, p_cmd->OtherThing, 5u);
         return 1;
     case PCmd_USE_WEAPON:
-        unkn_draw_transformed_point(
+        draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
         return 1;
     case PCmd_CATCH_FERRY:
     case PCmd_EXIT_FERRY:
-        unkn_draw_transformed_point(
+        draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
@@ -387,7 +387,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         return 1;
     case PCmd_KILL_EVERYONE:
     case PCmd_WITHIN_AREA:
-        unkn_draw_transformed_point(
+        draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
@@ -421,7 +421,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAIT_P_V_I_ARRIVE:
     case PCmd_WAND_P_V_I_ARRIVE:
         unused_func_203(x, y, p_cmd->OtherThing, 1u);
-        unkn_draw_transformed_point(
+        draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
@@ -440,7 +440,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAND_ALL_G_ARRIVE:
         if ((lbShift & KMod_SHIFT) != 0)
             unused_func_200(x, y, p_cmd->OtherThing);
-        unkn_draw_transformed_point(
+        draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
           p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
@@ -493,14 +493,17 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
     short cmd, cmdhead;
     short cy;
     short ms_y;
+    ushort drwflags;
     char locstr[52];
     short box_x, box_y;
     short box_width, box_height;
     short row_height;
     short padding;
+    short brig;
     int j;
 
     dbgcmds_hilight_cmd = -1;
+    brig = PALETTE_FADE_LEVELS / 2;
     box_width = w;
     box_height = h;
     box_x = x;
@@ -524,11 +527,12 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
         dbgcmds_scroll_pos = 0;
     dbgcmds_count = cmds_count;
 
-    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-    LbDrawBox(box_x, box_y, box_width, box_height, col3);
-    lbDisplay.DrawFlags = 0;
-    draw_unkn_func_07(box_x, box_y, box_width, box_height, col1);
-    lbDisplay.DrawFlags = 0;
+    drwflags = Lb_SPRITE_TRANSPAR4;
+    enlist_hud_draw_box(box_x, box_y, box_width, box_height, drwflags,
+      brig, col3);
+    drwflags = Lb_SPRITE_OUTLINE;
+    enlist_hud_draw_box(box_x, box_y, box_width, box_height, drwflags,
+      brig, col1);
 
     // Find first command to be displayed
     cmdhead = p_person->U.UPerson.ComHead;
@@ -558,14 +562,19 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
             dbgcmds_hilight_cmd = cmd;
         }
 
+        drwflags = 0;
         if (dbgcmds_hilight_cmd == cmd)
         {
-            LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, col1);
-            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+            enlist_hud_draw_box(box_x + padding, cy - 2,
+              box_width - 2 * padding, row_height - 1, drwflags,
+              brig, col1);
+            drwflags |= Lb_SPRITE_TRANSPAR4;
         }
         if ((p_person != NULL) && (p_person->U.UPerson.ComCur == cmd))
         {
-            LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, colour_lookup[ColLU_GREEN]);
+            enlist_hud_draw_box(box_x + padding, cy - 2,
+              box_width - 2 * padding, row_height - 1, drwflags,
+              brig, colour_lookup[ColLU_GREEN]);
         }
         lbDisplay.DrawFlags = 0;
 
@@ -956,7 +965,7 @@ void things_debug_hud(void)
         {
             short tgtng_x, tgtng_y, tgtng_z;
             get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_track_thing->U.UPerson.Target2);
-            unkn_draw_transformed_point(trg2_scr_x, trg2_scr_y + ln/2, tgtng_x, tgtng_y, tgtng_z,
+            draw_mapcoord_to_scrcoord_line(trg2_scr_x, trg2_scr_y + ln/2, tgtng_x, tgtng_y, tgtng_z,
               colour_lookup[ColLU_RED]);
         }
 
@@ -964,7 +973,7 @@ void things_debug_hud(void)
         {
             short gttng_x, gttng_y, gttng_z;
             get_thing_position_mapcoords(&gttng_x, &gttng_y, &gttng_z, p_track_thing->GotoThingIndex);
-            unkn_draw_transformed_point(gtti_scr_x, gtti_scr_y + ln/2, gttng_x, gttng_y, gttng_z,
+            draw_mapcoord_to_scrcoord_line(gtti_scr_x, gtti_scr_y + ln/2, gttng_x, gttng_y, gttng_z,
               colour_lookup[ColLU_GREEN]);
         }
 

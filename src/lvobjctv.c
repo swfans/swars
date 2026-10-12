@@ -591,7 +591,7 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
     case GAME_OBJ_ALL_G_ARRIVES:
         // Arrival place
         draw_map_flat_circle(p_objectv->X, p_objectv->Y, p_objectv->Z, p_objectv->Radius << 6, colour_lookup[ColLU_RED]);
-        unkn_draw_transformed_point(draw_objectv_x - 10, draw_objectv_y,
+        draw_mapcoord_to_scrcoord_line(draw_objectv_x - 10, draw_objectv_y,
           p_objectv->X, p_objectv->Y, p_objectv->Z, colour_lookup[colk]);
         break;
     case GAME_OBJ_P_ARRIVES:
@@ -602,7 +602,7 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
         draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         // Arrival place
         draw_map_flat_circle(p_objectv->X, p_objectv->Y, p_objectv->Z, p_objectv->Radius << 6, colour_lookup[ColLU_RED]);
-        unkn_draw_transformed_point(draw_objectv_x - 10, draw_objectv_y,
+        draw_mapcoord_to_scrcoord_line(draw_objectv_x - 10, draw_objectv_y,
           p_objectv->X, p_objectv->Y, p_objectv->Z, colour_lookup[colk]);
         break;
     case GAME_OBJ_PERSUADE_P:

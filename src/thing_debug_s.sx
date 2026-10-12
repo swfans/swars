@@ -230,7 +230,7 @@ GLOBAL_FUNC(ASM_unused_func_200)	/* 0xb8860 */
 		sar    $0x8,%ebx
 		sar    %cl,%eax
 		mov    %esi,%ecx
-		call   ac_unkn_draw_transformed_point
+		call   ac_draw_mapcoord_to_scrcoord_line
 		mov    EXPORT_SYMBOL(things),%ebx
 		inc    %ebp
 		mov    0x12(%edi,%ebx,1),%bx
@@ -298,7 +298,7 @@ unused_func_203:	/* 0xb8c0c */
 		sar    %cl,%eax
 		mov    %edx,%ecx
 		mov    %edi,%edx
-		call   ac_unkn_draw_transformed_point
+		call   ac_draw_mapcoord_to_scrcoord_line
 		add    $0x4,%esp
 		pop    %edi
 		pop    %esi
