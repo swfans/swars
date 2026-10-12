@@ -27,6 +27,7 @@
 #include "engincam.h"
 #include "engincolour.h"
 #include "engintrns.h"
+#include "huddrwlstm.h"
 
 #include "bigmap.h"
 #include "building.h"
@@ -130,10 +131,8 @@ int unused_func_200(short x, short y, ushort group)
     return ret;
 }
 
-void func_6fe80(int probe_x, int probe_y, int probe_z, int target_x, int target_y, int target_z, TbPixel colour)
+void draw_mapcoord_line_directed_to_target(int probe_x, int probe_y, int probe_z, int target_x, int target_y, int target_z, TbPixel colour)
 {
-    struct EnginePoint ep1;
-    struct EnginePoint ep2;
     int dist_x, dist_y, dist_z;
     int tdist;
     int cur_x, cur_y, cur_z;
@@ -155,6 +154,7 @@ void func_6fe80(int probe_x, int probe_y, int probe_z, int target_x, int target_
     col2 = colour - 1;
     steps_tot = tdist / 50;
 
+    // Arrows toward target
     for (step = 1; step < steps_tot; step += 8)
     {
         cur_x = probe_x + dist_x * (step);
@@ -163,42 +163,16 @@ void func_6fe80(int probe_x, int probe_y, int probe_z, int target_x, int target_
         prv_x = probe_x + dist_x * (step - 1);
         prv_z = probe_z + dist_z * (step - 1);
 
-        ep1.X3d = cur_x - engn_xc;
-        ep1.Y3d = cur_y; // subtracted within transform_point(): - 8 * engn_yc;
-        ep1.Z3d = cur_z - engn_zc;
-        ep1.Flags = 0;
-        transform_point(&ep1);
-        ep2.X3d = prv_x + dist_z - engn_xc;
-        ep2.Y3d = cur_y; // subtracted within transform_point(): - 8 * engn_yc;
-        ep2.Z3d = prv_z - dist_x - engn_zc;
-        ep2.Flags = 0;
-        transform_point(&ep2);
-        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, col2);
+        enlist_hud_draw_mapcoord_line(cur_x, cur_y, cur_z,
+          prv_x + dist_z, cur_y, prv_z - dist_x, 0, 1, col2);
 
-        ep1.X3d = cur_x - engn_xc;
-        ep1.Y3d = cur_y; // subtracted within transform_point(): - 8 * engn_yc;
-        ep1.Z3d = cur_z - engn_zc;
-        ep1.Flags = 0;
-        transform_point(&ep1);
-        ep2.X3d = prv_x - dist_z - engn_xc;
-        ep2.Y3d = cur_y; // subtracted within transform_point(): - 8 * engn_yc;
-        ep2.Z3d = prv_z + dist_x - engn_zc;
-        ep2.Flags = 0;
-        transform_point(&ep2);
-        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, col2);
+        enlist_hud_draw_mapcoord_line(cur_x, cur_y, cur_z,
+          prv_x - dist_z, cur_y, prv_z + dist_x, 0, 1, col2);
     }
 
-    ep1.X3d = probe_x - engn_xc;
-    ep1.Y3d = probe_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep1.Z3d = probe_z - engn_zc;
-    ep1.Flags = 0;
-    transform_point(&ep1);
-    ep2.X3d = target_x - engn_xc;
-    ep2.Y3d = target_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep2.Z3d = target_z - engn_zc;
-    ep2.Flags = 0;
-    transform_point(&ep2);
-    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+    // Line from floor under mouse to target
+    enlist_hud_draw_mapcoord_line(probe_x, probe_y, probe_z,
+      target_x, target_y, target_z, 0, 1, colour);
 }
 
 /** Searches all existing things in order to find one for debug.
@@ -243,7 +217,7 @@ int select_thing_for_debug(short x, short y, short z, short ttype)
         tng_z = MAP_COORD_HEIGHT / 2;
         colu = ColLU_GREYMD;
     }
-    func_6fe80(x, alt, z, tng_x, tng_y, tng_z, colour_lookup[colu]);
+    draw_mapcoord_line_directed_to_target(x, alt, z, tng_x, tng_y, tng_z, colour_lookup[colu]);
 
     if (thing == 0)
     {
@@ -678,7 +652,7 @@ void things_debug_hud(void)
     p_track_thing = &things[thing];
     p_track2_thing = &things[thing];
     get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
-    func_6fe80(mouse_map_x, mouse_map_y, mouse_map_z,  tng_x, tng_y, tng_z,
+    draw_mapcoord_line_directed_to_target(mouse_map_x, mouse_map_y, mouse_map_z,  tng_x, tng_y, tng_z,
       colour_lookup[ColLU_WHITE]);
     // Show commands list
     {
