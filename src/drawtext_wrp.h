@@ -31,6 +31,10 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
+/** Draws simple purple rect directly, without drawlists.
+ */
+void draw_purple_rect(int x, int y, int w, int h, ubyte active);
+
 void show_message(const char *text);
 
 void draw_line_transformed_at_ground(int cor1_x, int cor1_z,

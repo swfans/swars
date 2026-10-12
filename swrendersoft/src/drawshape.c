@@ -89,21 +89,13 @@ void draw_mapcoord_line_annotated_num(int cor1_x, int cor1_y_m8, int cor1_z,
       cor2_x, cor2_y_m8, cor2_z, locstr, lncol, txcol);
 }
 
-void draw_purple_rect(int x, int y, int w, int h, ubyte active)
+void draw_bevel_rect(int scr_x, int scr_y,
+  int width, int height, TbPixel colour, TbPixel bvcolour)
 {
-    TbPixel col1, col2;
-
     lbDisplay.DrawFlags &= ~Lb_SPRITE_OUTLINE;
-    if (active) {
-        col1 = 0x0E;
-        col2 = 0x0C;
-    } else {
-        col1 = 0x10;
-        col2 = 0x0E;
-    }
-    LbDrawBox(x, y, w, h, col1);
-    LbDrawLine(x, y, x + w - 2, y, col2);
-    LbDrawLine(x, y, x, y + h - 2, col2);
+    LbDrawBox(scr_x, scr_y, width, height, colour);
+    LbDrawLine(scr_x, scr_y, scr_x + width - 2, scr_y, bvcolour);
+    LbDrawLine(scr_x, scr_y, scr_x, scr_y + height - 2, bvcolour);
 }
 
 void draw_corner_rect(int scr_x, int scr_y,

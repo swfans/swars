@@ -75,6 +75,7 @@
 #include "dos.h"
 #include "drawshape.h"
 #include "drawtext.h"
+#include "drawtext_wrp.h"
 #include "embedanim.h"
 #include "enginbckt.h"
 #include "engindrwlstm_wrp.h"

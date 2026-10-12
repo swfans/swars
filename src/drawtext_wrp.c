@@ -70,6 +70,20 @@ void draw_number_transformed_at_ground(int cor_x, int cor_z, int num)
       locstr, colour_lookup[ColLU_RED]);
 }
 
+void draw_purple_rect(int x, int y, int w, int h, ubyte active)
+{
+    TbPixel col1, col2;
+
+    if (active) {
+        col1 = 0x0E;
+        col2 = 0x0C;
+    } else {
+        col1 = 0x10;
+        col2 = 0x0E;
+    }
+    draw_bevel_rect(x, y, w, h, col1, col2);
+}
+
 void show_message(const char *text)
 {
     int x, y, w, h;
@@ -80,9 +94,9 @@ void show_message(const char *text)
     h = lbDisplay.GraphicsScreenHeight / 8;
 
     lbDisplay.DrawFlags = 0;
-    LbDrawBox(x, y, w, h, colour_lookup[4]);
+    LbDrawBox(x, y, w, h, colour_lookup[ColLU_BLUE]);
     lbDisplay.DrawFlags = 0;
-    draw_text(x * 3 / 2, y * 1 / 16, text, colour_lookup[1]);
+    draw_text(x * 3 / 2, y * 1 / 16, text, colour_lookup[ColLU_WHITE]);
 
     swap_wscreen();
 
