@@ -34,6 +34,7 @@
 #include "engintrns.h"
 
 #include "bigmap.h"
+#include "keyboard.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -71,7 +72,6 @@ void draw_number_transformed_at_ground(int cor_x, int cor_z, int num)
 
 void show_message(const char *text)
 {
-    TbClockMSec start_time;
     int x, y, w, h;
 
     x = lbDisplay.GraphicsScreenWidth / 12;
@@ -86,12 +86,7 @@ void show_message(const char *text)
 
     swap_wscreen();
 
-    start_time = LbTimerClock();
-    while (LbTimerClock() - start_time < 2000) {
-       LbDoMultitasking();
-       if (lbKeyOn[KC_ESCAPE] != 0)
-           break;
-    }
+    screen_wait_seconds_or_until_continue_key(5);
 }
 
 /******************************************************************************/

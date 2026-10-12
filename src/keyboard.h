@@ -241,5 +241,8 @@ void set_default_game_keys(void);
 
 TbResult joy_ext_driver_irq_init(int irqno);
 
+TbKeyCode screen_wait_seconds_or_until_continue_key(int sec);
+TbKeyCode screen_wait_seconds_or_until_yesno_key(int sec);
+
 #endif
 /******************************************************************************/

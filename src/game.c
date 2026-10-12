@@ -1525,67 +1525,6 @@ void screen_animate_draw_outro_text(void)
     func_cc638(text1, text2);
 }
 
-TbKeyCode screen_wait_seconds_or_until_continue_key(int sec)
-{
-    int i;
-    TbKeyCode key;
-
-    clear_key_pressed(KC_SPACE);
-    clear_key_pressed(KC_ESCAPE);
-    clear_key_pressed(KC_RETURN);
-
-    key = KC_UNASSIGNED;
-    for (i = sec*game_num_fps; i != 0; i--)
-    {
-        if (is_key_pressed(KC_SPACE, KMod_DONTCARE)) {
-            key = KC_SPACE;
-            break;
-        }
-        if (is_key_pressed(KC_ESCAPE, KMod_DONTCARE)) {
-            key = KC_ESCAPE;
-            break;
-        }
-        if (is_key_pressed(KC_RETURN, KMod_DONTCARE)) {
-            key = KC_RETURN;
-            break;
-        }
-
-        swap_wscreen();
-        game_update();
-    }
-    clear_key_pressed(key);
-
-    return key;
-}
-
-TbKeyCode screen_wait_seconds_or_until_yesno_key(int sec)
-{
-    int i;
-    TbKeyCode key;
-
-    clear_key_pressed(KC_Y);
-    clear_key_pressed(KC_N);
-
-    key = KC_UNASSIGNED;
-    for (i = sec*game_num_fps; i != 0; i--)
-    {
-        if (is_key_pressed(KC_Y, KMod_DONTCARE)) {
-            key = KC_Y;
-            break;
-        }
-        if (is_key_pressed(KC_N, KMod_DONTCARE)) {
-            key = KC_N;
-            break;
-        }
-
-        swap_wscreen();
-        game_update();
-    }
-    clear_key_pressed(key);
-
-    return key;
-}
-
 void init_outro(void)
 {
     gamep_scene_effect_type = ScEff_NONE;

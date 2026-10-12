@@ -466,10 +466,8 @@ void draw_unkn_func_07(short scr_x, short scr_y, short width, short height, TbPi
       "call ASM_draw_unkn_func_07\n"
         : : "a" (scr_x), "d" (scr_y), "b" (width), "c" (height), "g" ((u32)colour));
 #endif
-    LbDrawLine(scr_x, scr_y, scr_x + width, scr_y, colour);
-    LbDrawLine(scr_x + width, scr_y, width + scr_x, scr_y + height, colour);
-    LbDrawLine(scr_x + width, scr_y + height, scr_x, scr_y + height, colour);
-    LbDrawLine(scr_x, scr_y + height, scr_x, scr_y, colour);
+    lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
+    LbDrawBox(scr_x, scr_y, width, height, colour);
 }
 
 ushort person_commands_count(ThingIdx person)
@@ -530,6 +528,7 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
     LbDrawBox(box_x, box_y, box_width, box_height, col3);
     lbDisplay.DrawFlags = 0;
     draw_unkn_func_07(box_x, box_y, box_width, box_height, col1);
+    lbDisplay.DrawFlags = 0;
 
     // Find first command to be displayed
     cmdhead = p_person->U.UPerson.ComHead;
