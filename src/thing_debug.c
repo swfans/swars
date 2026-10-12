@@ -54,6 +54,7 @@ struct Thing *p_track2_thing = NULL;
 int dword_1DC7A4 = 0;
 short dbgcmds_scroll_pos = 0;
 short dbgcmds_count = 0;
+short dbgcmds_hilight_cmd = -1;
 
 s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilterParams *params)
 {
@@ -492,9 +493,6 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
     struct Thing *p_person;
     ushort cmds_count;
     short cmd, cmdhead;
-#if 0
-    short hilight_cmd;
-#endif
     short cy;
     short ms_y;
     char locstr[52];
@@ -504,9 +502,7 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
     short padding;
     int j;
 
-#if 0
-    hilight_cmd = -1;
-#endif
+    dbgcmds_hilight_cmd = -1;
     box_width = w;
     box_height = h;
     box_x = x;
@@ -535,47 +531,54 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
     lbDisplay.DrawFlags = 0;
     draw_unkn_func_07(box_x, box_y, box_width, box_height, col1);
 
+    // Find first command to be displayed
     cmdhead = p_person->U.UPerson.ComHead;
     cmd = cmdhead;
-    for (j = dbgcmds_scroll_pos >> 2; cmd; j--)
+    for (j = dbgcmds_scroll_pos >> 2; j > 0; j--)
     {
-        if (j == 0)
+        if (cmd == 0)
             break;
         cmd = game_commands[cmd].Next;
     }
+
     cy = box_y + padding - row_height * (dbgcmds_scroll_pos & 3) / 4;
-    person_command_to_text(0, 0, 1);
+    // Skip half-visible command (our simple text draw does not support partial draw)
+    if (dbgcmds_scroll_pos & 3) {
+        if (cmd != 0)
+            cmd = game_commands[cmd].Next;
+        cy += row_height;
+    }
 
     while (cmd != 0)
     {
-        if (cy > box_y)
-        {
-            if (mouse_move_over_box_coords(box_x + 8, cy, box_x + 8 + box_width, cy + row_height - 1))
-            {
-                LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, col1);
-            }
-            if ((p_person != NULL) && (p_person->U.UPerson.ComCur == cmd))
-            {
-                LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, colour_lookup[ColLU_GREEN]);
-            }
+        if (cy + row_height > box_y + box_height)
+            break;
 
-#if 0
-            if (mouse_move_over_box_coords(box_x + 8, cy, box_x + 8 + box_width, cy + row_height - 1))
-            {
-                hilight_cmd = cmd;
-            }
-#endif
-            if (p_person != NULL) {
-                person_command_dbg_point_to_target(box_x + 2 * padding - 20, cy + 5, cmd, p_person);
-            }
-            if (person_command_to_text(locstr, cmd, 0)) {
-                draw_text(box_x + 2 * padding, cy, locstr, col2);
-            } else {
-                cy -= row_height;
-            }
-            if (cy + 28 > box_height + box_y)
-                break;
+        if (mouse_move_over_box_coords(box_x + 8, cy, box_x + 8 + box_width, cy + row_height - 1))
+        {
+            dbgcmds_hilight_cmd = cmd;
         }
+
+        if (dbgcmds_hilight_cmd == cmd)
+        {
+            LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, col1);
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        }
+        if ((p_person != NULL) && (p_person->U.UPerson.ComCur == cmd))
+        {
+            LbDrawBox(box_x + padding, cy - 2, box_width - 2 * padding, row_height - 1, colour_lookup[ColLU_GREEN]);
+        }
+        lbDisplay.DrawFlags = 0;
+
+        if (p_person != NULL) {
+            person_command_dbg_point_to_target(box_x + 2 * padding - 20, cy + 5, cmd, p_person);
+        }
+        if (person_command_to_text(locstr, cmd, 0)) {
+            draw_text(box_x + 2 * padding, cy, locstr, col2);
+        } else {
+            cy -= row_height;
+        }
+
         cy += row_height;
         cmd = game_commands[cmd].Next;
         ++j;
@@ -584,7 +587,7 @@ void person_commands_debug_hud(int x, int y, int w, int h, ThingIdx person, ubyt
     ms_y = lbDisplay.MMouseY;
     if ((ms_y < box_y - 20) && (dbgcmds_scroll_pos > 0))
         dbgcmds_scroll_pos--;
-    if ((ms_y > box_height + box_y + 10) && (dbgcmds_scroll_pos >> 2 < dbgcmds_count - (box_height >> 4)))
+    if ((ms_y > box_y + box_height + 10) && ((dbgcmds_scroll_pos >> 2) < dbgcmds_count - (box_height / row_height)))
         dbgcmds_scroll_pos++;
 }
 
@@ -983,6 +986,7 @@ void things_debug_hud(void)
     }
 }
 
+//TODO remove last arg and add out_len instead?
 TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
 {
     struct Command *p_cmd;
@@ -995,7 +999,7 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
 
     o = out;
     if (a3 == 1)
-        return a3 ^ 1;
+        return 0;
 
     p_cmd = &game_commands[cmd];
 
