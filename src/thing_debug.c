@@ -459,18 +459,6 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     return 0;
 }
 
-void draw_unkn_func_07(short scr_x, short scr_y, short width, short height, TbPixel colour)
-{
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_unkn_func_07\n"
-        : : "a" (scr_x), "d" (scr_y), "b" (width), "c" (height), "g" ((u32)colour));
-#endif
-    lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
-    LbDrawBox(scr_x, scr_y, width, height, colour);
-}
-
 ushort person_commands_count(ThingIdx person)
 {
     struct Thing *p_person;
