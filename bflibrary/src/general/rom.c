@@ -21,7 +21,7 @@
 #include "bftypes.h"
 #include "bfpalette.h"
 
-long tabwidth = 46;
+s32 tabwidth = 46;
 
 const ubyte font[] = {
     0b00000000,
@@ -1031,9 +1031,9 @@ static void prop_text_qaz(ubyte *o, ubyte chtype, ushort colr)
     }
 }
 
-static inline short prop_text_draw_char(ubyte *o, ubyte c, long scanline, ushort colr)
+static inline short prop_text_draw_char(ubyte *o, ubyte c, s32 scanline, ushort colr)
 {
-    ulong fpos; // pos within font data
+    u32 fpos; // pos within font data
     short fln; // line within font data
 
     fpos = 8 * ((c - 32) & 0xFF);
@@ -1045,13 +1045,21 @@ static inline short prop_text_draw_char(ubyte *o, ubyte c, long scanline, ushort
     return font[fpos];
 }
 
-void prop_text(const char *text, TbPixel *out, long scanline, TbPixel colour)
+static inline short prop_text_char_width(ubyte c)
+{
+    u32 fpos; // pos within font data
+
+    fpos = 8 * ((c - 32) & 0xFF) + 6;
+    return font[fpos];
+}
+
+void prop_text(const char *text, TbPixel *out, s32 scanline, TbPixel colour)
 {
     TbPixel *obeg; // current line begin in output buffer
     TbPixel *o; // current pos in output buffer
     ushort colr; // Colour expanded to 16 bits
     const ubyte *pch; // Pointer to currently drawn character
-    ulong linesize; // size of one line within the output buffer
+    u32 linesize; // size of one line within the output buffer
 
     linesize = 6 * scanline;
     colr = (colour << 8) + colour;
@@ -1061,7 +1069,7 @@ void prop_text(const char *text, TbPixel *out, long scanline, TbPixel colour)
 
     while (true)
     {
-        ulong w;
+        u32 w;
         ubyte c;
         TbPixel *otmp;
         short chshift;
@@ -1091,6 +1099,50 @@ void prop_text(const char *text, TbPixel *out, long scanline, TbPixel colour)
             return;
         }
     }
+}
+
+short prop_text_width(const char *text)
+{
+    short lnw, lnwmax;
+    const ubyte *pch; // Pointer to currently drawn character
+
+    pch = (const ubyte *)text;
+    lnwmax = lnw = 0;
+
+    while (true)
+    {
+        u32 w;
+        ubyte c;
+        short chshift;
+
+        c = *pch++;
+        switch (c)
+        {
+        case 9: // Horizontal Tab
+            w = tabwidth;
+            while (w <= lnw)
+            {
+                w += tabwidth;
+            }
+            lnw = w;
+            break;
+        case 10: // Line Feed
+            if (lnwmax < lnw)
+                lnwmax = lnw;
+            lnw = 0;
+            break;
+        default: // Normal character
+            chshift = prop_text_char_width(c);
+            lnw += chshift;
+            break;
+        case 0: // NULL char means end
+            if (lnwmax < lnw)
+                lnwmax = lnw;
+            return lnwmax;
+        }
+    }
+    // unreachable
+    return 0;
 }
 
 void make_fade_table(const ubyte *pal, ubyte *out, ubyte cr, ubyte cg, ubyte cb,

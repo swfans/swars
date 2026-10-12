@@ -28,11 +28,15 @@ extern "C" {
 
 /** Width of tab character in pixels while drawing simple 5x6 font.
  */
-extern long tabwidth;
+extern s32 tabwidth;
 
 /** Draw text on screen using simple built-in 5x6 font.
  */
-void prop_text(const char *text, TbPixel *out, long scanline, TbPixel colour);
+void prop_text(const char *text, TbPixel *out, s32 scanline, TbPixel colour);
+
+/** Get width of given simple text if drawn using `prop_text()`.
+ */
+short prop_text_width(const char *text);
 
 /** Generate table for fading to and from given colour.
  */
