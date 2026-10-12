@@ -44,6 +44,11 @@ void draw_mapcoord_line_annotated_num(int cor1_x, int cor1_y_m8, int cor1_z,
   int cor2_x, int cor2_y_m8, int cor2_z, int annot_num,
   TbPixel lncol, TbPixel txcol);
 
+/** Draws a line between a map point and screen point.
+ */
+void draw_mapcoord_to_scrcoord_line(short scr_x, short scr_y,
+  int cor_x, int cor_y_m8, int cor_z, TbPixel colour);
+
 /** Draws a rectangle on a beveled box.
  */
 void draw_bevel_rect(int scr_x, int scr_y,

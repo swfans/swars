@@ -104,6 +104,12 @@ TbBool enlist_hud_draw_mapcoord_corner_rect(short cor_x, short cor_y_m8,
   short cor_z, short width, short height, short lnlen, ubyte thickness,
   ushort drwflags, TbPixel colour);
 
+/** Enlist drawing line between map coordinates and screen coordinates.
+ */
+TbBool enlist_hud_draw_mapcoord_to_scrcoord_line(short scr1_x,
+  short scr1_y, short cor2_x, short cor2_y_m8, short cor2_z,
+  ushort drwflags, ubyte thickness, TbPixel colour);
+
 /** Enlist drawing a frame on the provided map coordinates.
  */
 TbBool enlist_hud_draw_mapcoord_frame_one_colour(short cor_x, short cor_y,

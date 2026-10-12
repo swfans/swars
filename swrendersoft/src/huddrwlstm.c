@@ -472,6 +472,29 @@ TbBool enlist_hud_draw_mapcoord_line_annotated_num(short cor1_x,
     return true;
 }
 
+TbBool enlist_hud_draw_mapcoord_to_scrcoord_line(short scr1_x,
+  short scr1_y, short cor2_x, short cor2_y_m8, short cor2_z,
+  ushort drwflags, ubyte thickness, TbPixel colour)
+{
+    struct DrawItemHud dih;
+    struct DrawItemHud *p_di;
+
+    p_di = &dih;
+
+    p_di->U.M2SCorLine.Beg.X = scr1_x;
+    p_di->U.M2SCorLine.Beg.Y = scr1_y;
+    p_di->U.M2SCorLine.PtEnd.X = cor2_x;
+    p_di->U.M2SCorLine.PtEnd.Y = cor2_y_m8;
+    p_di->U.M2SCorLine.PtEnd.Z = cor2_z;
+    p_di->U.M2SCorLine.DrwFlags = drwflags;
+    p_di->U.M2SCorLine.Thick = thickness;
+    p_di->U.M2SCorLine.Col = colour;
+
+    //TODO enlist instead of drawing directly
+    hud_draw_mapcoord_to_scrcoord_line(&p_di->U.M2SCorLine);
+    return true;
+}
+
 TbBool enlist_hud_draw_mapcoord_corner_rect(short cor_x, short cor_y_m8,
   short cor_z, short width, short height, short lnlen, ubyte thickness,
   ushort drwflags, TbPixel colour)

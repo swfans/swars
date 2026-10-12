@@ -89,6 +89,20 @@ void draw_mapcoord_line_annotated_num(int cor1_x, int cor1_y_m8, int cor1_z,
       cor2_x, cor2_y_m8, cor2_z, locstr, lncol, txcol);
 }
 
+void draw_mapcoord_to_scrcoord_line(short scr_x, short scr_y,
+  int cor_x, int cor_y_m8, int cor_z, TbPixel colour)
+{
+    struct EnginePoint ep;
+
+    ep.X3d = cor_x - engn_xc;
+    ep.Y3d = cor_y_m8; // subtracted within transform_point(): - 8 * engn_yc;
+    ep.Z3d = cor_z - engn_zc;
+    ep.Flags = 0;
+    transform_point(&ep);
+
+    LbDrawLine(scr_x, scr_y, ep.pp.X, ep.pp.Y, colour);
+}
+
 void draw_bevel_rect(int scr_x, int scr_y,
   int width, int height, TbPixel colour, TbPixel bvcolour)
 {

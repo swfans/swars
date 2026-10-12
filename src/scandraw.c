@@ -949,20 +949,6 @@ static void SCANNER_draw_new_transparent_map(void)
     }
 }
 
-void draw_mapcoord_to_scrcoord_line(short scr_x, short scr_y,
-  int cor_x, int cor_y_m8, int cor_z, TbPixel colour)
-{
-    struct EnginePoint ep;
-
-    ep.X3d = cor_x - engn_xc;
-    ep.Y3d = cor_y_m8; // subtracted within transform_point(): - 8 * engn_yc;
-    ep.Z3d = cor_z - engn_zc;
-    ep.Flags = 0;
-    transform_point(&ep);
-
-    LbDrawLine(scr_x, scr_y, ep.pp.X, ep.pp.Y, colour);
-}
-
 void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour)
 {
     long ptX, ptY, ptZ;

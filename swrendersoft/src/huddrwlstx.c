@@ -242,6 +242,16 @@ void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine)
       p_diMapCorLine->Col);
 }
 
+void hud_draw_mapcoord_to_scrcoord_line(struct DIHudMap2ScrCoordLine *p_diM2SCorLine)
+{
+    lbDisplay.DrawFlags = p_diM2SCorLine->DrwFlags;
+
+    draw_mapcoord_to_scrcoord_line(
+      p_diM2SCorLine->Beg.X, p_diM2SCorLine->Beg.Y,
+      p_diM2SCorLine->PtEnd.X, p_diM2SCorLine->PtEnd.Y, p_diM2SCorLine->PtEnd.Z,
+      p_diM2SCorLine->Col);
+}
+
 void hud_draw_mapcoord_line_annotated_num(struct DIHudMapCoordAnnotLine *p_diMapCorAntLine)
 {
     lbDisplay.DrawFlags = p_diMapCorAntLine->DrwFlags;

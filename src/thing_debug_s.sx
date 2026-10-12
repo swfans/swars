@@ -246,66 +246,6 @@ GLOBAL_FUNC(ASM_unused_func_200)	/* 0xb8860 */
 
 
 /*----------------------------------------------------------------*/
-unused_func_203:	/* 0xb8c0c */
-/*----------------------------------------------------------------*/
-		push   %esi
-		push   %edi
-		sub    $0x4,%esp
-		mov    %eax,%esi
-		mov    %edx,%edi
-		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(lbDisplay)+0x64,%ax
-		cmp    $0x1,%eax
-		sete   %al
-		and    $0xff,%eax
-		mov    %al,(%esp)
-		movswl %bx,%eax
-		test   %eax,%eax
-		jle    jump_b8c49
-		mov    %eax,%ebx
-		shl    $0x2,%eax
-		add    %ebx,%eax
-		shl    $0x2,%eax
-		add    %ebx,%eax
-		mov    EXPORT_SYMBOL(things),%edx
-		shl    $0x3,%eax
-		jmp    jump_b8c59
-	jump_b8c49:
-		mov    %eax,%ebx
-		shl    $0x4,%eax
-		sub    %ebx,%eax
-		mov    EXPORT_SYMBOL(sthings),%edx
-		shl    $0x2,%eax
-	jump_b8c59:
-		add    %edx,%eax
-		mov    0x18(%eax),%ebx
-		mov    0x1c(%eax),%edx
-		sar    $0x8,%ebx
-		mov    0x20(%eax),%eax
-		sar    $0x8,%edx
-		sar    $0x8,%eax
-		and    $0xff,%ecx
-		mov    EXPORT_SYMBOL(colour_lookup)+0x00(%ecx),%cl
-		and    $0xff,%ecx
-		shl    $0x3,%edx
-		movswl %di,%edi
-		movswl %si,%esi
-		push   %ecx
-		mov    0x4(%esp),%cl
-		push   %eax
-		mov    %esi,%eax
-		sar    %cl,%edi
-		sar    %cl,%eax
-		mov    %edx,%ecx
-		mov    %edi,%edx
-		call   ac_draw_mapcoord_to_scrcoord_line
-		add    $0x4,%esp
-		pop    %edi
-		pop    %esi
-		ret
-
-
-/*----------------------------------------------------------------*/
 func_e7590:
 /*----------------------------------------------------------------*/
 		push   %esi

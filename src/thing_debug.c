@@ -109,16 +109,17 @@ s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilt
     return (dtZ * dtZ + dtX * dtX);
 }
 
-void unused_func_203(short x, short y, short thing, ubyte colkp)
+void draw_thingcoord_to_scrcoord_line(short scr_x, short scr_y, ThingIdx thing, ubyte colkp)
 {
     short tng_x, tng_y, tng_z;
     get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
 
     if (lbDisplay.GraphicsScreenHeight < 400) {
-        x >>= 1;
-        y >>= 1;
+        scr_x >>= 1;
+        scr_y >>= 1;
     }
-    draw_mapcoord_to_scrcoord_line(x, y, tng_x, tng_y, tng_z, colour_lookup[colkp]);
+    enlist_hud_draw_mapcoord_to_scrcoord_line(scr_x, scr_y,
+      tng_x, tng_y, tng_z, 0, 1, colour_lookup[colkp]);
 }
 
 int unused_func_200(short x, short y, ushort group)
@@ -331,19 +332,19 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAIT_OBJT_DESTROY:
     case PCmd_WAND_OBJT_DESTROY:
     case PCmd_WAIT_P_PERSUADE:
-        unused_func_203(x, y, p_cmd->OtherThing, 1u);
+        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 1u);
         return 1;
     case PCmd_KILL_PERSON:
     case PCmd_CAMERA_TRACK:
-        unused_func_203(x, y, p_cmd->OtherThing, 2u);
+        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 2u);
         return 1;
     case PCmd_GO_TO_POINT:
     case PCmd_GOTOPOINT_FACE:
     case PCmd_RUN_TO_POINT:
-        draw_mapcoord_to_scrcoord_line(
+        enlist_hud_draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
-          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
+          p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
         return 1;
     case PCmd_KILL_MEM_GROUP:
@@ -354,24 +355,24 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
       return 1;
     case PCmd_BLOCK_PERSON:
     case PCmd_SCARE_PERSON:
-        unused_func_203(x, y, p_cmd->OtherThing, 4u);
+        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 4u);
         return 1;
     case PCmd_PERSUADE_PERSON:
     case PCmd_GET_ITEM:
-        unused_func_203(x, y, p_cmd->OtherThing, 5u);
+        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 5u);
         return 1;
     case PCmd_USE_WEAPON:
-        draw_mapcoord_to_scrcoord_line(
+        enlist_hud_draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
-          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
+          p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         return 1;
     case PCmd_CATCH_FERRY:
     case PCmd_EXIT_FERRY:
-        draw_mapcoord_to_scrcoord_line(
+        enlist_hud_draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
-          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
+          p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
             draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
@@ -387,10 +388,10 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         return 1;
     case PCmd_KILL_EVERYONE:
     case PCmd_WITHIN_AREA:
-        draw_mapcoord_to_scrcoord_line(
+        enlist_hud_draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
-          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
+          p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
             draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
@@ -401,7 +402,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAIT_P_V_I_NEAR:
 	case PCmd_WAND_P_V_I_NEAR:
     case PCmd_UNTIL_P_V_I_NEAR:
-        unused_func_203(x, y, p_cmd->OtherThing, 1u);
+        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 1u);
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
 
         draw_map_flat_circle(tng_x, tng_y, tng_z, p_cmd->Arg1 << 6, 2u);
@@ -420,11 +421,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_UNTIL_P_V_I_ARRIVE:
     case PCmd_WAIT_P_V_I_ARRIVE:
     case PCmd_WAND_P_V_I_ARRIVE:
-        unused_func_203(x, y, p_cmd->OtherThing, 1u);
-        draw_mapcoord_to_scrcoord_line(
+        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 1u);
+        enlist_hud_draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
-          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
+          p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
             draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
                 p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
@@ -440,10 +441,10 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAND_ALL_G_ARRIVE:
         if ((lbShift & KMod_SHIFT) != 0)
             unused_func_200(x, y, p_cmd->OtherThing);
-        draw_mapcoord_to_scrcoord_line(
+        enlist_hud_draw_mapcoord_to_scrcoord_line(
           x >> (lbDisplay.GraphicsScreenHeight < 400),
           y >> (lbDisplay.GraphicsScreenHeight < 400),
-          p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
+          p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
             draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
@@ -965,16 +966,16 @@ void things_debug_hud(void)
         {
             short tgtng_x, tgtng_y, tgtng_z;
             get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_track_thing->U.UPerson.Target2);
-            draw_mapcoord_to_scrcoord_line(trg2_scr_x, trg2_scr_y + ln/2, tgtng_x, tgtng_y, tgtng_z,
-              colour_lookup[ColLU_RED]);
+            enlist_hud_draw_mapcoord_to_scrcoord_line(trg2_scr_x, trg2_scr_y + ln/2,
+              tgtng_x, tgtng_y, tgtng_z, 0, 1, colour_lookup[ColLU_RED]);
         }
 
         if (p_track_thing->GotoThingIndex != 0)
         {
             short gttng_x, gttng_y, gttng_z;
             get_thing_position_mapcoords(&gttng_x, &gttng_y, &gttng_z, p_track_thing->GotoThingIndex);
-            draw_mapcoord_to_scrcoord_line(gtti_scr_x, gtti_scr_y + ln/2, gttng_x, gttng_y, gttng_z,
-              colour_lookup[ColLU_GREEN]);
+            enlist_hud_draw_mapcoord_to_scrcoord_line(gtti_scr_x, gtti_scr_y + ln/2,
+              gttng_x, gttng_y, gttng_z, 0, 1, colour_lookup[ColLU_GREEN]);
         }
 
         if (p_track_thing->PTarget != NULL)
