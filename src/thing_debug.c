@@ -233,7 +233,7 @@ int select_thing_for_debug(short x, short y, short z, short ttype)
         p_sthing = &sthings[thing];
         sprintf(locstr, "TH %d ID %d", thing, p_sthing->UniqueID);
     }
-    draw_text_transformed_at_ground(tng_x, tng_z, locstr);
+    draw_mapcoord_simple_text_at_ground(tng_x, tng_z, locstr);
     return thing;
 }
 

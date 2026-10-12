@@ -17149,7 +17149,7 @@ GLOBAL_FUNC(ASM_do_move_colide)	/* 0x04999C */
 		lea    0x80(%esi),%eax
 		mov    0xa8(%esp),%edx
 		mov    %eax,0xa4(%esp)
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 		push   $0x63
 		lea    0x100(%esi),%eax
 		mov    %ebp,%ecx
@@ -17157,7 +17157,7 @@ GLOBAL_FUNC(ASM_do_move_colide)	/* 0x04999C */
 		mov    %eax,0x9c(%esp)
 		mov    %eax,%ebx
 		mov    %esi,%eax
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 		push   $0x63
 		lea    0x100(%ebp),%eax
 		mov    0x9c(%esp),%ebx
@@ -17165,23 +17165,23 @@ GLOBAL_FUNC(ASM_do_move_colide)	/* 0x04999C */
 		mov    %eax,%ecx
 		mov    %ebp,%edx
 		mov    %ebx,%eax
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 		push   $0x63
 		mov    0xb4(%esp),%ecx
 		mov    0x9c(%esp),%ebx
 		mov    %esi,%eax
 		mov    %ecx,%edx
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 		push   $0x63
 		mov    0xb4(%esp),%edx
 		mov    %ebp,%ecx
 		mov    %esi,%ebx
 		mov    %esi,%eax
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 		mov    %esp,%ebx
 		mov    0xa4(%esp),%edx
 		mov    0xa0(%esp),%eax
-		call   ac_draw_text_transformed_at_ground
+		call   ac_draw_mapcoord_simple_text_at_ground
 	jump_49b11:
 		xor    %esi,%esi
 		mov    0xc0(%esp),%eax
@@ -19370,7 +19370,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		sar    $0x8,%eax
 		add    %eax,%ebx
 		add    %edx,%ecx
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 	jump_4b508:
 		mov    0x3e(%esp),%eax
 		sar    $0x10,%eax
@@ -58082,7 +58082,7 @@ GLOBAL_FUNC(ASM_can_i_see_thing)	/* 0x06C28C */
 		add    $0xc,%esp
 		mov    %edi,%edx
 		mov    %esi,%eax
-		call   ac_draw_text_transformed_at_ground
+		call   ac_draw_mapcoord_simple_text_at_ground
 	jump_6c5f7:
 		mov    0x7c(%esp),%cl
 		test   %cl,%cl
@@ -59916,25 +59916,25 @@ GLOBAL_FUNC(ASM_draw_engine_unk3_last)	/* 0x070F94 */
 		mov    %eax,%ebx
 		mov    %esi,%eax
 		lea    0x100(%edi),%ebp
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 		push   $0x63
 		mov    0x60(%esp),%ebx
 		mov    %ebp,%ecx
 		mov    %edi,%edx
 		mov    %ebx,%eax
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 		push   $0x63
 		mov    0x60(%esp),%ebx
 		mov    %ebp,%ecx
 		mov    %ebp,%edx
 		mov    %esi,%eax
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 		push   $0x63
 		mov    %edi,%ecx
 		mov    %esi,%ebx
 		mov    %ebp,%edx
 		mov    %esi,%eax
-		call   ac_draw_line_transformed_at_ground
+		call   ac_draw_mapcoord_line_at_ground
 		xor    %edx,%edx
 		mov    0x70(%esp),%dx
 		imul   $0x6,%edx,%edx

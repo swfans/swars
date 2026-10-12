@@ -38,7 +38,7 @@
 #include "swlog.h"
 /******************************************************************************/
 
-void draw_line_transformed_at_ground(int cor1_x, int cor1_z,
+void draw_mapcoord_line_at_ground(int cor1_x, int cor1_z,
   int cor2_x, int cor2_z, TbPixel colour)
 {
     int cor1_y_m8, cor2_y_m8;
@@ -50,23 +50,23 @@ void draw_line_transformed_at_ground(int cor1_x, int cor1_z,
       cor2_x, cor2_y_m8, cor2_z, colour);
 }
 
-void draw_text_transformed_at_ground(int cor_x, int cor_z, const char *text)
+void draw_mapcoord_simple_text_at_ground(int cor_x, int cor_z, const char *text)
 {
     int cor_y_m8;
 
     cor_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor_x, cor_z));
-    draw_text_transformed_col(cor_x, cor_y_m8, cor_z,
+    draw_mapcoord_simple_text(cor_x, cor_y_m8, cor_z,
       text, colour_lookup[ColLU_RED]);
 }
 
-void draw_number_transformed_at_ground(int cor_x, int cor_z, int num)
+void draw_mapcoord_simple_text_number_at_ground(int cor_x, int cor_z, int num)
 {
     char locstr[52];
     int cor_y_m8;
 
     cor_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor_x, cor_z));
     sprintf(locstr, "%d", num);
-    draw_text_transformed_col(cor_x, cor_y_m8, cor_z,
+    draw_mapcoord_simple_text(cor_x, cor_y_m8, cor_z,
       locstr, colour_lookup[ColLU_RED]);
 }
 

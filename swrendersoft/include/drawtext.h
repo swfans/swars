@@ -36,7 +36,7 @@ short simple_text_char_height(char c);
 
 void draw_simple_text(short x, short y, const char *text, ubyte colour);
 
-void draw_text_transformed_col(int cor_x, int cor_y_m8, int cor_z,
+void draw_mapcoord_simple_text(int cor_x, int cor_y_m8, int cor_z,
   const char *text, TbPixel col);
 void draw_text_transformed(int cor_x, int cor_y_m8, int cor_z, const char *text);
 void draw_number_transformed(int cor_x, int cor_y_m8, int cor_z, int num);

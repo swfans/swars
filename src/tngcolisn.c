@@ -121,10 +121,10 @@ void draw_engine_unk3_last(short x, short z)
               cor_y = (mapel / 128) << 8;
               cor_x = (mapel % 128) << 8;
               col = 0x63u;
-              draw_line_transformed_at_ground(cor_x, cor_y, cor_x + 256, cor_y, col);
-              draw_line_transformed_at_ground(cor_x + 256, cor_y, cor_x + 256, cor_y + 256, col);
-              draw_line_transformed_at_ground(cor_x, cor_y + 256, cor_x + 256, cor_y + 256, col);
-              draw_line_transformed_at_ground(cor_x, cor_y + 256, cor_x, cor_y, col);
+              draw_mapcoord_line_at_ground(cor_x, cor_y, cor_x + 256, cor_y, col);
+              draw_mapcoord_line_at_ground(cor_x + 256, cor_y, cor_x + 256, cor_y + 256, col);
+              draw_mapcoord_line_at_ground(cor_x, cor_y + 256, cor_x + 256, cor_y + 256, col);
+              draw_mapcoord_line_at_ground(cor_x, cor_y + 256, cor_x, cor_y, col);
 
               p_cvlist = &game_col_vects_list[vl];
               draw_collision_vector_line(p_cvlist->Vect);
@@ -133,7 +133,7 @@ void draw_engine_unk3_last(short x, short z)
               cor_y += 128;
 
               p_cvlist = &game_col_vects_list[vl];
-              draw_number_transformed_at_ground(cor_x, cor_y, p_cvlist->Object);
+              draw_mapcoord_simple_text_number_at_ground(cor_x, cor_y, p_cvlist->Object);
             }
         }
     }
