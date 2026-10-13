@@ -340,7 +340,8 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_RUN_TO_POINT:
         enlist_hud_draw_mapcoord_to_scrcoord_line(x, y,
           p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
-        draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+        enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
+          p_cmd->Arg1 << 6, 0, 1, 2u);
         return 1;
     case PCmd_KILL_MEM_GROUP:
     case PCmd_KILL_ALL_GROUP:
@@ -368,7 +369,8 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
             draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
         } else {
-            draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+            enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 << 6, 0, 1, 2u);
         }
         return 1;
     case PCmd_PROTECT_MEM_G:
@@ -385,7 +387,8 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
             draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
         } else {
-            draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+            enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 << 6, 0, 1, 2u);
         }
         return 1;
     case PCmd_WAIT_P_V_I_NEAR:
@@ -394,7 +397,8 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 1u);
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
 
-        draw_map_flat_circle(tng_x, tng_y, tng_z, p_cmd->Arg1 << 6, 2u);
+        enlist_hud_draw_mapcoord_flat_circle(tng_x, tng_y, tng_z,
+          p_cmd->Arg1 << 6, 0, 1, 2u);
         return 1;
     case PCmd_UNTIL_MEM_G_NEAR:
 	case PCmd_WAIT_ALL_G_NEAR:
@@ -405,7 +409,8 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         if ((lbShift & KMod_SHIFT) != 0)
             unused_func_200(x, y, p_cmd->OtherThing);
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
-        draw_map_flat_circle(tng_x, tng_y, tng_z, p_cmd->Arg1 << 6, 2u);
+        enlist_hud_draw_mapcoord_flat_circle(tng_x, tng_y, tng_z,
+          p_cmd->Arg1 << 6, 0, 1, 2u);
         return 1;
     case PCmd_UNTIL_P_V_I_ARRIVE:
     case PCmd_WAIT_P_V_I_ARRIVE:
@@ -417,7 +422,8 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
             draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
                 p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
         } else {
-            draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+            enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 << 6, 0, 1, 2u);
         }
         return 1;
     case PCmd_UNTIL_MEM_G_ARRIVE:
@@ -434,7 +440,8 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
             draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
         } else {
-            draw_map_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z, p_cmd->Arg1 << 6, 2u);
+            enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 << 6, 0, 1, 2u);
         }
         return 1;
     default:

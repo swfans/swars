@@ -30,6 +30,7 @@
 
 #include "engincolour.h"
 #include "drawtext.h"
+#include "huddrwlstm.h"
 
 #include "bmbang.h"
 #include "bigmap.h"
@@ -6883,7 +6884,8 @@ void process_person(struct Thing *p_person)
             short pstng_x, pstng_y, pstng_z;
             make_peep_protect_peep(p_person, &things[p_person->Owner]);
             get_thing_position_mapcoords(&pstng_x, &pstng_y, &pstng_z, p_person->ThingOffset);
-            draw_map_flat_circle(pstng_x, pstng_y, pstng_z, 200, colour_lookup[ColLU_WHITE]);
+            enlist_hud_draw_mapcoord_flat_circle(pstng_x, pstng_y, pstng_z,
+              200, 0, 1, colour_lookup[ColLU_WHITE]);
         }
     }
     if ((p_person->Flag2 & TgF2_Unkn0020) != 0)
