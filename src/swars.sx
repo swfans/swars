@@ -27378,7 +27378,7 @@ GLOBAL_FUNC(ASM_person_persuade_person)	/* 0x050CD4 */
 
 
 /*----------------------------------------------------------------*/
-peep_return_to_point:	/* 0x050E0C */
+GLOBAL_FUNC(ASM_peep_return_to_point)	/* 0x050E0C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
@@ -27695,7 +27695,7 @@ GLOBAL_FUNC(ASM_person_kill_target2)	/* 0x050E78 */
 		test   $0x80,%dh
 		je     jump_51586
 		mov    %esi,%eax
-		call   peep_return_to_point
+		call   ac_peep_return_to_point
 		add    $0x18,%esp
 		pop    %ebp
 		pop    %edi
@@ -27730,7 +27730,7 @@ GLOBAL_FUNC(ASM_person_kill_target2)	/* 0x050E78 */
 		test   $0x80,%bh
 		je     jump_51586
 		mov    %esi,%eax
-		call   peep_return_to_point
+		call   ac_peep_return_to_point
 		add    $0x18,%esp
 		pop    %ebp
 		pop    %edi
@@ -27978,7 +27978,7 @@ GLOBAL_FUNC(ASM_person_kill_target2)	/* 0x050E78 */
 		testb  $0x80,0xc(%esi)
 		je     jump_5155a
 		mov    %esi,%eax
-		call   peep_return_to_point
+		call   ac_peep_return_to_point
 		add    $0x18,%esp
 		pop    %ebp
 		pop    %edi

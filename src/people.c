@@ -5726,6 +5726,12 @@ void process_danger(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void peep_return_to_point(struct Thing *p_person)
+{
+    asm volatile ("call ASM_peep_return_to_point\n"
+        : : "a" (p_person));
+}
+
 void person_kill_target2(struct Thing *p_person)
 {
 #if 1
