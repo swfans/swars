@@ -128,6 +128,7 @@ enum ThingFlags {
     TngF_InVehicle    = 0x10000000,
     TngF_ShootAtPos   = 0x20000000,
     TngF_Unkn40000000 = 0x40000000,
+    TngF_Unkn80000000 = 0x80000000,
 };
 
 /** Transformation into closed was requested on the building thing.
