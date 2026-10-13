@@ -279,6 +279,14 @@ void hud_draw_mapcoord_corner_rect(struct DIHudMapCoordRect *p_diMapCorRect)
       p_diMapCorRect->LnLen, p_diMapCorRect->Thick, p_diMapCorRect->Col);
 }
 
+void hud_draw_mapcoord_flat_circle(struct DIHudMapCoordCircle *p_diMapCorCircl)
+{
+    lbDisplay.DrawFlags = p_diMapCorCircl->DrwFlags;
+
+    draw_mapcoord_flat_circle_outline(p_diMapCorCircl->Pt.X, p_diMapCorCircl->Pt.Y,
+      p_diMapCorCircl->Pt.Z, p_diMapCorCircl->Radius, p_diMapCorCircl->Col);
+}
+
 void hud_draw_mapcoord_frame(struct DIHudMapCoordFrame *p_diMapCorFrame)
 {
     struct EnginePoint ep;

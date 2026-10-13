@@ -520,6 +520,29 @@ TbBool enlist_hud_draw_mapcoord_corner_rect(short cor_x, short cor_y_m8,
     return true;
 }
 
+TbBool enlist_hud_draw_mapcoord_flat_circle(short cor_x,
+  short cor_y_m8, short cor_z, short radius,
+  ushort drwflags, ubyte thickness, TbPixel colour)
+{
+    struct DrawItemHud dih;
+    struct DrawItemHud *p_di;
+
+    p_di = &dih;
+
+    p_di->U.MapCorCircl.Pt.X = cor_x;
+    p_di->U.MapCorCircl.Pt.Y = cor_y_m8;
+    p_di->U.MapCorCircl.Pt.Z = cor_z;
+    p_di->U.MapCorCircl.Radius = radius;
+    p_di->U.MapCorCircl.DrwFlags = drwflags;
+    p_di->U.MapCorCircl.Bright = 32;
+    p_di->U.MapCorCircl.Thick = thickness;
+    p_di->U.MapCorCircl.Col = colour;
+
+    //TODO enlist instead of drawing directly
+    hud_draw_mapcoord_flat_circle(&p_di->U.MapCorCircl);
+    return true;
+}
+
 TbBool enlist_hud_draw_mapcoord_frame_one_colour(short cor_x, short cor_y,
   short cor_z, ushort frm, ushort drwflags, TbPixel colour)
 {

@@ -104,6 +104,15 @@ TbBool enlist_hud_draw_mapcoord_corner_rect(short cor_x, short cor_y_m8,
   short cor_z, short width, short height, short lnlen, ubyte thickness,
   ushort drwflags, TbPixel colour);
 
+/** Enlist drawing a flat circle centered on given map coords.
+ *
+ * Accepts the radius in map coord units, and draws the circle in the
+ * perspective of the map.
+ */
+TbBool enlist_hud_draw_mapcoord_flat_circle(short cor_x,
+  short cor_y_m8, short cor_z, short radius,
+  ushort drwflags, ubyte thickness, TbPixel colour);
+
 /** Enlist drawing line between map coordinates and screen coordinates.
  */
 TbBool enlist_hud_draw_mapcoord_to_scrcoord_line(short scr1_x,

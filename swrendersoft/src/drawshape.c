@@ -141,4 +141,56 @@ void draw_corner_rect(int scr_x, int scr_y,
     }
 }
 
+void draw_mapcoord_flat_circle_outline(short cor_x, short cor_y_m8, short cor_z,
+  short radius, TbPixel colour)
+{
+    struct EnginePoint ep1;
+    struct EnginePoint ep2;
+    int cir_cor_x, cir_cor_z;
+    int cir_nxt_x, cir_nxt_z;
+    ushort slice;
+
+    cir_cor_x = cor_x;
+    cir_cor_z = cor_z + radius;
+    for (slice = 1; slice < 0x40; slice++)
+    {
+        short cir_dt_x, cir_dt_z;
+        cir_dt_x = (radius * lbSinTable[slice * 2 * LbFPMath_PI / 0x40]) >> 16;
+        cir_dt_z = (radius * lbSinTable[LbFPMath_PI/2 + slice * 2*LbFPMath_PI / 0x40]) >> 16;
+        cir_nxt_x = cor_x + cir_dt_x;
+        cir_nxt_z = cor_z + cir_dt_z;
+
+        ep1.X3d = cir_cor_x - engn_xc;
+        ep1.Y3d = cor_y_m8; // subtracted within transform_point(): - 8 * engn_yc;
+        ep1.Z3d = cir_cor_z - engn_zc;
+        ep1.Flags = 0;
+        transform_point(&ep1);
+        ep2.X3d = cir_nxt_x - engn_xc;
+        ep2.Y3d = cor_y_m8; // subtracted within transform_point(): - 8 * engn_yc;
+        ep2.Z3d = cir_nxt_z - engn_zc;
+        ep2.Flags = 0;
+        transform_point(&ep2);
+        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+
+        cir_cor_x = cir_nxt_x;
+        cir_cor_z = cir_nxt_z;
+    }
+    {
+        cir_nxt_x = cor_x;
+        cir_nxt_z = cor_z + radius;
+
+        ep1.X3d = cir_cor_x - engn_xc;
+        ep1.Y3d = cor_y_m8; // subtracted within transform_point(): - 8 * engn_yc;
+        ep1.Z3d = cir_cor_z - engn_zc;
+        ep1.Flags = 0;
+        transform_point(&ep1);
+        ep2.X3d = cir_nxt_x - engn_xc;
+        ep2.Y3d = cor_y_m8; // subtracted within transform_point(): - 8 * engn_yc;
+        ep2.Z3d = cir_nxt_z - engn_zc;
+        ep2.Flags = 0;
+        transform_point(&ep2);
+        LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+    }
+}
+
 /******************************************************************************/

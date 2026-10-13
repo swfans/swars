@@ -58,6 +58,10 @@ void draw_bevel_rect(int scr_x, int scr_y,
  */
 void draw_corner_rect(int scr_x, int scr_y,
   int width, int height, int lnlen, int lnthick, TbPixel colour);
+
+void draw_mapcoord_flat_circle_outline(short cor_x, short cor_y_m8, short cor_z,
+  short radius, TbPixel colour);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
