@@ -5814,7 +5814,7 @@ void person_kill_target2(struct Thing *p_person)
             }
         }
     }
-    if ((p_person->U.UPerson.Flag3 & 0x01) != 0)
+    if ((p_person->U.UPerson.Flag3 & PrsF3_Unkn01) != 0)
     {
         ushort grp;
         ushort brain_lv;
@@ -5826,8 +5826,8 @@ void person_kill_target2(struct Thing *p_person)
         }
         else
         {
-            p_person->U.UPerson.Flag3 &= ~(0x02|0x01);
-            p_person->U.UPerson.Flag3 |= 0x02;
+            p_person->U.UPerson.Flag3 &= ~(PrsF3_Unkn02|PrsF3_Unkn01);
+            p_person->U.UPerson.Flag3 |= PrsF3_Unkn02;
             brain_lv = person_mod_brain_level(p_person);
             if ((LbRandomAnyShort() & 3) < brain_lv + 1)
                 set_person_animmode_run(p_person);
@@ -5835,15 +5835,15 @@ void person_kill_target2(struct Thing *p_person)
                 ingame.fld_unkC8B = 1;
         }
     }
-    if ((p_person->U.UPerson.Flag3 & 0x02) != 0)
+    if ((p_person->U.UPerson.Flag3 & PrsF3_Unkn02) != 0)
     {
         p_person->Flag |= TngF_Unkn0004;
     }
 
     int target_dist_sq;
 
-    if ((((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->U.UPerson.Flag3 & 0x08) == 0))
-      || person_in_ground_veh || ((p_person->U.UPerson.Flag3 & 0x01) != 0))
+    if ((((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->U.UPerson.Flag3 & PrsF3_Unkn08) == 0))
+      || person_in_ground_veh || ((p_person->U.UPerson.Flag3 & PrsF3_Unkn01) != 0))
     {
         int dx, dy;
 
@@ -5911,11 +5911,11 @@ void person_kill_target2(struct Thing *p_person)
                 p_vehicle = &things[p_person->U.UPerson.Vehicle];
                 p_vehicle->Flag |= TngF_Unkn01000000;
             }
-            if ((p_person->U.UPerson.Flag3 & 0x10) != 0) {
+            if ((p_person->U.UPerson.Flag3 & PrsF3_Unkn10) != 0) {
                 ushort grp;
                 grp = p_target->U.UPerson.EffectiveGroup & 0x1F;
                 group_actions[grp].Storming |= 0x4000;
-                p_person->U.UPerson.Flag3 &= ~0x10u;
+                p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn10;
             }
             if ((p_person->Flag & TngF_PlayerAgent) == 0) {
                 short range;
@@ -5936,10 +5936,10 @@ void person_kill_target2(struct Thing *p_person)
           if (!target_within_range && ((gameturn & 0xF) == 0))
             p_person->U.UPerson.Target2 = 0;
         }
-        else if (((p_person->U.UPerson.Flag3 & 0x40) != 0) ||
-          (!target_within_range && (p_person->U.UPerson.Flag3 & 0x01) == 0))
+        else if (((p_person->U.UPerson.Flag3 & PrsF3_Unkn40) != 0) ||
+          (!target_within_range && (p_person->U.UPerson.Flag3 & PrsF3_Unkn01) == 0))
         {
-            if ((p_person->U.UPerson.Flag3 & 0x02) != 0)
+            if ((p_person->U.UPerson.Flag3 & PrsF3_Unkn02) != 0)
             {
                 short range;
                 range = p_person->U.UPerson.ComRange - 2;
@@ -5957,7 +5957,7 @@ void person_kill_target2(struct Thing *p_person)
                 if ((pc == 2) || (pc == 3 && (gameturn & 7) == 0))
                 {
                     ushort grp;
-                    p_person->U.UPerson.Flag3 |= 0x01;
+                    p_person->U.UPerson.Flag3 |= PrsF3_Unkn01;
                     grp = p_target->U.UPerson.EffectiveGroup & 0x1F;
                     group_actions[grp].Storming++;
                     p_person->Flag |= TngF_Unkn0004;
@@ -5987,10 +5987,10 @@ void person_kill_target2(struct Thing *p_person)
         p_person->GotoThingIndex = bkp_GotoThingIndex;
         return;
     }
-    if ((p_person->U.UPerson.Flag3 & (0x02|0x01)) != 0)
+    if ((p_person->U.UPerson.Flag3 & (PrsF3_Unkn02|PrsF3_Unkn01)) != 0)
     {
         ushort grp;
-        p_person->U.UPerson.Flag3 &= ~(0x02|0x01);
+        p_person->U.UPerson.Flag3 &= ~(PrsF3_Unkn02|PrsF3_Unkn01);
         grp = p_target->U.UPerson.EffectiveGroup & 0x1F;
         group_actions[grp].Storming--;
     }
@@ -6030,7 +6030,7 @@ void person_kill_target2(struct Thing *p_person)
             peep_return_to_point(p_person);
             return;
         }
-        person_init_command(p_person, 8);
+        person_init_command(p_person, PerSt_DROP_ITEM);
     }
     else
     {
@@ -7375,7 +7375,9 @@ void process_person(struct Thing *p_person)
               break;
         case PerSt_GOTO_POINT:
               person_goto_point(p_person);
-              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & PrsF3_Unkn04) != 0) && ((p_person->Flag & TngF_SelectedAgent) == 0))
+              if ((p_person->State == 0) &&
+                ((p_person->U.UPerson.Flag3 & PrsF3_Unkn04) != 0) &&
+                ((p_person->Flag & TngF_SelectedAgent) == 0))
               {
                   p_person->State = PerSt_PROTECT_PERSON;
                   person_protect_update_follow_distance(p_person, p_person->GotoThingIndex);
