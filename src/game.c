@@ -1496,10 +1496,150 @@ void process_sound_heap(void)
         :  :  : "eax" );
 }
 
+/** Get fade level to be used while drawing next character of a text.
+ *
+ *  Computes the colour-remap fade level to be used while drawing the next
+ *  character of a text, advancing the shared letter-reveal
+ *  counter (dword_1DDB68) towards the current progress (outro_unkn02).
+ *
+ * @param fade Receives the computed fade level (0..63 range index offset) if
+ *     the character should be drawn.
+ * @return True if the character is already revealed and should be drawn.
+ */
+static TbBool credits_next_char_fade(long *fade)
+{
+    long f;
+
+    if (dword_1DDB68 > outro_unkn02)
+        return false;
+    dword_1DDB68++;
+    f = (outro_unkn02 - dword_1DDB68) * 2;
+    if (f > 0x1F)
+        f = 0x1F;
+    if (dword_1DDB6C)
+        f += lbSinTable[((dword_1DDB68 + gameturn) & 0xF) * 128] >> 13;
+    if (f < 0)
+        f = 0;
+    *fade = f;
+    return true;
+}
+
 void func_cc0d4(char **str)
 {
+#if 1
     asm volatile ("call ASM_func_cc0d4\n"
         : : "a" (str));
+    return;
+#endif
+    //TODO fix a bug with first line of desc text, compare results
+    TbSprite *p_spr;
+    ubyte *p_ids;
+    char *p_text;
+    long x, y;
+    ubyte c;
+    long fade;
+
+    dword_1DDB6C = 1;
+    dword_1DDB68 = 0;
+    p_spr = NULL;
+
+    // Draw the credits group header (list of roles belonging to this group)
+    p_text = str[0];
+    x = 6;
+    while ((c = *(ubyte *)p_text) != 0)
+    {
+        p_spr = &med_font[c - 31];
+        if (credits_next_char_fade(&fade))
+            LbSpriteDrawRemap(x, 6, p_spr, &pixmap.fade_table[256 * (0x3F - fade)]);
+        x += p_spr->SWidth;
+        p_text++;
+    }
+
+    // Draw every person assigned to this group (name, then description)
+    p_ids = (ubyte *)str[1];
+    y = 14;
+    while (*p_ids != 100)
+    {
+        char **p_person;
+        ubyte *p_scan;
+
+        p_person = &dev_credits_desc[2 * (*p_ids)];
+        dword_1DDB6C = 1;
+        x = 12;
+
+        if (dword_1DDB68 == outro_unkn02)
+        {
+            short smp;
+
+            if (data_155704 != -1)
+                stop_sample_using_heap(0, data_155704);
+            smp = 2 + (LbRandomAnyShort() % 5);
+            data_155704 = smp;
+            play_sample_using_heap(0, smp, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3u);
+        }
+
+        // Draw the person's name
+        p_text = p_person[0];
+        while ((c = *(ubyte *)p_text) != 0)
+        {
+            p_spr = &big_font[c - 31];
+            if (credits_next_char_fade(&fade))
+                LbSpriteDrawRemap(x, y, p_spr, &pixmap.fade_table[256 * (0x3F - fade)]);
+            x += p_spr->SWidth;
+            p_text++;
+        }
+        y += p_spr->SHeight;
+
+        // Draw the person's description, word-wrapped to the screen width
+        p_text = p_person[1];
+        if (*(ubyte *)p_text != 0)
+        {
+            while (1)
+            {
+                c = *(ubyte *)p_text;
+                p_spr = &med2_font[c - 31];
+                if (c == ' ')
+                {
+                    long word_w;
+                    ubyte cs;
+
+                    word_w = 0;
+                    p_scan = (ubyte *)p_text + 1;
+                    if (*p_scan != c)
+                    {
+                        while (1)
+                        {
+                            cs = *p_scan;
+                            if ((cs == 0) || (cs == '\n') || (cs == '['))
+                                break;
+                            word_w += med2_font[cs - 31].SWidth;
+                            if (*(p_scan + 1) != ' ') {
+                                p_scan++;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    if (x + word_w <= lbDisplay.PhysicalScreenWidth - 6) {
+                        x += 4;
+                    } else {
+                        y += 6;
+                        x = 12;
+                    }
+                } else
+                {
+                    if (credits_next_char_fade(&fade))
+                        LbSpriteDrawRemap(x, y, p_spr, &pixmap.fade_table[256 * (0x3F - fade)]);
+                    x += p_spr->SWidth;
+                }
+                p_text++;
+                if (*(ubyte *)p_text == 0)
+                    break;
+            }
+        }
+        y += 10;
+        p_ids++;
+    }
 }
 
 void screen_animate_draw_outro_text(void)

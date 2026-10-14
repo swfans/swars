@@ -52,10 +52,6 @@ void set_netplayer_name_text_over_thing(ScrCoord x, ScrCoord y,
 
 void draw_netplayer_name_text_over_thing(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_netplayer_name_text_over_thing\n"
-        :  :  : "eax" );
-#endif
     char locstr[32];
     struct Thing *p_thing;
     int scr_x, scr_y;

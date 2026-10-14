@@ -179,6 +179,7 @@ extern long outro_unkn02;
 extern long outro_unkn03;
 extern long dev_credits_groups_count;
 extern s32 dword_1DDB68;
+extern s32 dword_1DDB6C;
 
 extern char *dev_credits_desc[];
 extern char *dev_credits_groups[];
