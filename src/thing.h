@@ -103,7 +103,7 @@ enum ThingFlags {
     TngF_Unkn0010     = 0x0010,
     TngF_Unkn0020     = 0x0020,
     TngF_Unkn0040     = 0x0040,
-    TngF_Unkn0080     = 0x0080,
+    TngF_PersKeepPost = 0x0080,		/**< Keep the patrolling post position if not attacked. */
     TngF_PersSupShld  = 0x0100,
     TngF_VehUnkn0100  = 0x0100,
     TngF_StationrSht  = 0x0200,
@@ -128,7 +128,6 @@ enum ThingFlags {
     TngF_InVehicle    = 0x10000000,
     TngF_ShootAtPos   = 0x20000000,
     TngF_Unkn40000000 = 0x40000000,
-    TngF_Unkn80000000 = 0x80000000,
 };
 
 /** Transformation into closed was requested on the building thing.
@@ -141,7 +140,7 @@ enum ThingFlags {
  * A flag with meaning for people, is reused for different purpose
  * when set on a building.
  */
-#define TngF_TransCloseRq TngF_Unkn0080
+#define TngF_TransCloseRq TngF_PersKeepPost
 
 /** Thing on which a person is standing is a valid and really near vehicle.
  * The flag has this meaning for people, different meaning for other things.

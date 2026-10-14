@@ -55,6 +55,10 @@ struct WarFlag { // sizeof=40
   long ugfld_36;
 };
 
+enum GroupActionStormingFlags {
+  GrpAF_UnderAttack = 0x4000,	/**< Whether the group is under attack. */
+};
+
 struct GroupAction {
   u32 FiredOn;
   u32 Hit;

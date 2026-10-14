@@ -1422,7 +1422,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
 
     p_person->Flag |= TngF_Unkn40000000 | TngF_Unkn0004;
     p_person->Owner = p_attacker->ThingOffset;
-    p_person->Flag &= ~(TngF_Unkn00800000|TngF_DangerFlee|TngF_Unkn00020000|TngF_TriggerUse|TngF_Unkn0080);
+    p_person->Flag &= ~(TngF_Unkn00800000|TngF_DangerFlee|TngF_Unkn00020000|TngF_TriggerUse|TngF_PersKeepPost);
 
     set_person_animmode_walk(p_person);
     p_person->U.UPerson.ComTimer = -1;
@@ -5734,7 +5734,7 @@ void peep_return_to_point(struct Thing *p_person)
 
 void person_kill_target2(struct Thing *p_person)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_person_kill_target2\n"
         : : "a" (p_person));
     return;
@@ -5746,7 +5746,8 @@ void person_kill_target2(struct Thing *p_person)
     {
         ushort rnd;
         rnd = LbRandomAnyShort();
-        if (p_person->SubType == PerSt_DROP_ITEM) {
+        // Only police taunt their target with a speech sample while attacking.
+        if (p_person->SubType == SubTT_PERS_POLICE) {
             play_dist_speech(p_person, 54 + (rnd % 3), 0x7Fu, 0x40u, 100, 0, 3);
         }
     }
@@ -5760,6 +5761,9 @@ void person_kill_target2(struct Thing *p_person)
     {
         struct Thing *p_prottng;
 
+        // A bodyguard currently protecting someone usually keeps attacking
+        // its own target2, but may instead take over the protected person's
+        // target, effectively delegating target selection to the protectee.
         p_prottng = &things[p_person->GotoThingIndex];
         if ((p_prottng->Flag2 & TgF2_IgnoreEnemies) != 0)
         {
@@ -5808,6 +5812,7 @@ void person_kill_target2(struct Thing *p_person)
         if (p_vehicle->SubType == SubTT_VEH_GROUND)
         {
             person_in_ground_veh = true;
+            // only the driver gets to steer the vehicle towards the target
             if ((p_vehicle->U.UVehicle.PassengerHead == p_person->ThingOffset) &&
               ((gameturn + p_person->ThingOffset) & 0x7F) == 0) {
                 start_goto_vehicle(p_vehicle, p_target->X >> 8, p_target->Z >> 8);
@@ -5856,7 +5861,7 @@ void person_kill_target2(struct Thing *p_person)
             p_person->U.UPerson.Target2 = 0;
             p_person->State = bkp_State;
             p_person->GotoThingIndex = bkp_GotoThingIndex;
-            if ((p_person->Flag & TngF_Unkn80000000) != 0)
+            if ((p_person->Flag & TngF_PersKeepPost) != 0)
                 peep_return_to_point(p_person);
             return;
         }
@@ -5882,7 +5887,7 @@ void person_kill_target2(struct Thing *p_person)
             p_person->U.UPerson.Target2 = 0;
             p_person->State = bkp_State;
             p_person->GotoThingIndex = bkp_GotoThingIndex;
-            if ((p_person->Flag & TngF_Unkn80000000) != 0)
+            if ((p_person->Flag & TngF_PersKeepPost) != 0)
                 peep_return_to_point(p_person);
             return;
         }
@@ -5914,7 +5919,7 @@ void person_kill_target2(struct Thing *p_person)
             if ((p_person->U.UPerson.Flag3 & PrsF3_Unkn10) != 0) {
                 ushort grp;
                 grp = p_target->U.UPerson.EffectiveGroup & 0x1F;
-                group_actions[grp].Storming |= 0x4000;
+                group_actions[grp].Storming |= GrpAF_UnderAttack;
                 p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn10;
             }
             if ((p_person->Flag & TngF_PlayerAgent) == 0) {
@@ -5999,6 +6004,10 @@ void person_kill_target2(struct Thing *p_person)
     p_person->Flag2 &= ~TgF2_Unkn0040;
     p_person->U.UPerson.Target2 = 0;
 
+    // We are giving up on Target2: if the person was mid-kill-mission on
+    // its PTarget, keep chasing it unless that target has since been destroyed.
+    // Otherwise, fall back to whatever target was being pursued before this
+    // kill-mission started (OldTarget).
     if (bkp_State == PerSt_KILL_PERSON)
     {
         p_target = p_person->PTarget;
@@ -6026,7 +6035,7 @@ void person_kill_target2(struct Thing *p_person)
     if (((p_person->Flag & TngF_PlayerAgent) == 0) &&
       (p_person->U.UPerson.ComCur != 0))
     {
-        if ((p_person->Flag & TngF_Unkn0080) != 0) {
+        if ((p_person->Flag & TngF_PersKeepPost) != 0) {
             peep_return_to_point(p_person);
             return;
         }

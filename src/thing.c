@@ -1193,7 +1193,7 @@ void process_things(void)
     if ((gameturn & 0x1F) == 0)
     {
         for (i = 0; i < PEOPLE_GROUPS_LIMIT+1; i++) {
-            group_actions[i].Storming &= ~0x4000;
+            group_actions[i].Storming &= ~GrpAF_UnderAttack;
         }
     }
 
