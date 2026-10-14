@@ -5,7 +5,7 @@
 /** @file app_text_cw.c
  *     Functions for drawing text on graphical screen, per-application mod.
  * @par Purpose:
- *     Allows drawing text coloured in a wave-like transsition.
+ *     Allows drawing text coloured in a wave-like transition.
  * @par Comment:
  *     This is a modification of `gtext.c` from bflibrary.
  * @author   Tomasz Lis

@@ -5,7 +5,7 @@
 /** @file app_text_cw.h
  *     Header file for app_text_cw.c.
  * @par Purpose:
- *     Allows drawing text coloured in a wave-like transsition.
+ *     Allows drawing text coloured in a wave-like transition.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
