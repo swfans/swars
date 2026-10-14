@@ -161,12 +161,6 @@ ubyte show_campaigns_list(struct ScreenBox *box)
 
 ubyte show_login_name(struct ScreenBox *p_box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_login_name\n"
-        : "=r" (ret) : "a" (p_box));
-    return ret;
-#endif
     short scr_x;
 
     lbFontPtr = med2_font;

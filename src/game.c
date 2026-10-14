@@ -1937,11 +1937,6 @@ void calc_bul_offsets(void)
 
 void init_engine(void)
 {
-#if 0
-    asm volatile ("call ASM_init_engine\n"
-        :  :  : "eax" );
-    return;
-#endif
     p_current_sort_sprite = game_sort_sprites;
     p_current_draw_item = game_draw_list + 1;
 
@@ -3436,11 +3431,6 @@ TbResult clear_vecs_screen(TbPixel colour)
 
 void gproc3_unknsub2(void)
 {
-#if 0
-    asm volatile ("call ASM_gproc3_unknsub2\n"
-        :  :  : "eax" );
-    return;
-#endif
     struct CameraState cam_bkp;
     short ms_x, ms_y, ms_limit;
     TbPixel *outbuf;

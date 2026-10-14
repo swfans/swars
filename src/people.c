@@ -4696,10 +4696,6 @@ void alert_peeps(int cor_x, int cor_y, int cor_z, struct Thing *p_madman)
 
 void person_attempt_to_leave_ferry(struct Thing *p_person)
 {
-#if 0
-    asm volatile ("call ASM_person_attempt_to_leave_ferry\n"
-        : : "a" (p_person));
-#endif
     struct Command *p_cmd;
     struct Thing *p_vehicle;
     int radius_sqr;
@@ -5875,6 +5871,7 @@ void person_kill_target2(struct Thing *p_person)
         if (((p_person->Flag & TngF_InVehicle) == 0) ||
           (p_vehicle->U.UVehicle.PassengerHead == p_person->ThingOffset))
         {
+            //TODO separate drawing from state update
             if (p_person->U.UPerson.Target2 != p_person->GotoThingIndex) {
                 draw_map_flat_circle(p_person->X >> 8,
                   p_person->Y >> 8, p_person->Z >> 8, 320, colour_lookup[0]);
@@ -6664,12 +6661,6 @@ void set_thing_height_on_ground_mesh(struct Thing *p_person, int x, int z)
 
 short person_move(struct Thing *p_person)
 {
-#if 0
-    short ret;
-    asm volatile ("call ASM_person_move\n"
-        : "=r" (ret) : "a" (p_person));
-    return ret;
-#endif
     int speed_x, speed_z;
     int x, y, z;
     short colvect;
@@ -7196,6 +7187,7 @@ void process_person(struct Thing *p_person)
         {
             short pstng_x, pstng_y, pstng_z;
             make_peep_protect_peep(p_person, &things[p_person->Owner]);
+            //TODO separate drawing from state update
             get_thing_position_mapcoords(&pstng_x, &pstng_y, &pstng_z, p_person->ThingOffset);
             enlist_hud_draw_mapcoord_flat_circle(pstng_x, pstng_y, pstng_z,
               200, 0, 1, colour_lookup[ColLU_WHITE]);
@@ -7353,6 +7345,7 @@ void process_person(struct Thing *p_person)
     else
         process_weapon(p_person);
 
+    //TODO separate drawing from state update
     if ((debug_hud_collision == 1) && (p_person->Y != 0))
     {
         char locstr[150];

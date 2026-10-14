@@ -91,10 +91,6 @@ void do_car_glare(struct Thing *p_car)
 
 void process_child_object(struct Thing *p_vehicle)
 {
-#if 0
-    asm volatile ("call ASM_process_child_object\n"
-        : : "a" (p_vehicle));
-#endif
     struct SingleObject *p_sobj;
     struct Thing *p_mgun;
     struct M33 *p_matx;

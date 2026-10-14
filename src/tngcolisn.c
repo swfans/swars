@@ -85,11 +85,6 @@ void draw_collision_vector_line(ushort colvect)
 
 void draw_engine_unk3_last(short x, short z)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_engine_unk3_last\n"
-        : : "a" (x), "d" (z));
-#endif
     int x_beg, x_end;
     int z_beg, z_end;
     int cx, cz;

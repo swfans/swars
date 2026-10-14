@@ -405,11 +405,6 @@ void draw_hud_target_old_frame(struct Thing *p_target, int frm, short space)
 
 void draw_target_person(struct Thing *p_person, int radius)
 {
-#if 0
-    asm volatile ("call ASM_draw_target_person\n"
-        : : "a" (p_person), "d" (radius));
-    return;
-#endif
     int cor_x, cor_y_m8, cor_z;
     int i, n;
 
@@ -440,11 +435,6 @@ void draw_target_person(struct Thing *p_person, int radius)
 
 void draw_target_vehicle(struct Thing *p_vehicle)
 {
-#if 0
-    asm volatile ("call ASM_draw_target_vehicle\n"
-        : : "a" (p_vehicle));
-    return;
-#endif
     int cor_x, cor_y_m8, cor_z;
     int radius;
     int i, n;

@@ -1024,12 +1024,6 @@ void net_grpaint_clear_op(void)
 
 ubyte show_net_grpaint(struct ScreenBox *p_box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_net_grpaint\n"
-        : "=r" (ret) : "a" (p_box));
-    return ret;
-#endif
     int i;
     short dy;
     short ln_height;
