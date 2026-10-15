@@ -118415,9 +118415,9 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    (%edx),%edi
 		cmp    %ecx,%eax
 		jne    jump_cc403
-		cmpl   $0xffffffff,EXPORT_SYMBOL(data_155704)
+		cmpl   $0xffffffff,EXPORT_SYMBOL(outro_last_played_smp)
 		je     jump_cc3c4
-		mov    EXPORT_SYMBOL(data_155704)-2,%edx
+		mov    EXPORT_SYMBOL(outro_last_played_smp)-2,%edx
 		xor    %eax,%eax
 		sar    $0x10,%edx
 		call   ac_stop_sample_using_heap
@@ -118434,9 +118434,9 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    $0x40,%ecx
 		add    $0x2,%edx
 		push   $0x64
-		mov    %edx,EXPORT_SYMBOL(data_155704)
+		mov    %edx,EXPORT_SYMBOL(outro_last_played_smp)
 		mov    $0x7f,%ebx
-		mov    EXPORT_SYMBOL(data_155704)-2,%edx
+		mov    EXPORT_SYMBOL(outro_last_played_smp)-2,%edx
 		xor    %eax,%eax
 		sar    $0x10,%edx
 		call   ac_play_sample_using_heap

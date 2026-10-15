@@ -231,7 +231,7 @@ long dword_153194 = 0x100;
 
 ushort word_1531E0 = 1;
 
-s32 data_155704 = -1;
+s32 outro_last_played_smp = -1;
 
 ulong stored_l3d_next_object;
 ulong stored_l3d_next_object_face3;
@@ -1587,7 +1587,7 @@ void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
                     cs = *p_scan;
                     if ((cs == 0) || (cs == '\n') || (cs == '['))
                         break;
-                    word_w += lbFontPtr[cs - 31].SWidth;
+                    word_w += LbTextCharWidth(cs);
                     if (*(p_scan + 1) != ' ') {
                         p_scan++;
                     } else {
@@ -1651,10 +1651,10 @@ void func_cc0d4(char **text_pargr)
         {
             short smp;
 
-            if (data_155704 != -1)
-                stop_sample_using_heap(0, data_155704);
+            if (outro_last_played_smp != -1)
+                stop_sample_using_heap(0, outro_last_played_smp);
             smp = 2 + (LbRandomAnyShort() % 5);
-            data_155704 = smp;
+            outro_last_played_smp = smp;
             play_sample_using_heap(0, smp, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3u);
         }
 
@@ -1710,7 +1710,7 @@ void init_outro(void)
 
     screen_dark_curtain_down();
 
-    data_155704 = -1;
+    outro_last_played_smp = -1;
     init_things();
     //TODO hard-coded map ID
     change_current_map(51);
@@ -1757,7 +1757,8 @@ void init_outro(void)
                 outro_credits_enabled = 1;
         } else {
             // Randomly play seagull sample if applause is not currently playing
-            if (((LbRandomAnyShort() & 0xF) == 0) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, NULL)) )
+            if (((LbRandomAnyShort() & 0xF) == 0) &&
+              (outro_last_played_smp == -1 || !IsSamplePlaying(0, outro_last_played_smp, NULL)) )
             {
                 play_sample_using_heap(0, 7 + (LbRandomAnyShort() % 5), FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3u);
             }
