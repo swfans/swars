@@ -1499,25 +1499,26 @@ void process_sound_heap(void)
 /** Get fade level to be used while drawing next character of a text.
  *
  *  Computes the colour-remap fade level to be used while drawing the next
- *  character of a text, advancing the shared letter-reveal
- *  counter (dword_1DDB68) towards the current progress (outro_unkn02).
+ *  character of a text, advancing the shared letter-reveal counter
+ *  (cwa_revl_tm) towards the current progress (cwa_timer).
  *
  * @param fade Receives the computed fade level (0..63 range index offset) if
- *     the character should be drawn.
+ *     the character should be drawn. Write-only value.
  * @return True if the character is already revealed and should be drawn.
  */
-static TbBool credits_next_char_fade(long *fade)
+static TbBool credits_next_char_fade(s32 *fade, u32 *p_cwa_revl_tm,
+  u32 cwa_timer, u32 cw_shift)
 {
-    long f;
+    s32 f;
 
-    if (dword_1DDB68 > outro_unkn02)
+    if (*p_cwa_revl_tm > cwa_timer)
         return false;
-    dword_1DDB68++;
-    f = (outro_unkn02 - dword_1DDB68) * 2;
+    (*p_cwa_revl_tm)++;
+    f = (cwa_timer - *p_cwa_revl_tm) * 2;
     if (f > 0x1F)
         f = 0x1F;
     if (dword_1DDB6C)
-        f += lbSinTable[((dword_1DDB68 + gameturn) & 0xF) * 128] >> 13;
+        f += lbSinTable[((*p_cwa_revl_tm + cw_shift) & 0xF) * 128] >> 13;
     if (f < 0)
         f = 0;
     *fade = f;
@@ -1533,10 +1534,11 @@ static TbBool credits_next_char_fade(long *fade)
  * @param space_len
  */
 void put_down_colwavaprtext_sprites(const char *sbuf, const char *ebuf,
-  long x, long y, long space_len,
-  long *fade)
+  s32 x, s32 y, s32 space_len,
+  u32 *p_cwa_revl_tm, u32 cwa_timer, u32 cw_shift)
 {
     const char *c;
+    s32 fade;
     ubyte chr;
 
     for (c=sbuf; c < ebuf; c++)
@@ -1546,10 +1548,10 @@ void put_down_colwavaprtext_sprites(const char *sbuf, const char *ebuf,
         chr = (ubyte)(*c);
         p_spr = LbFontCharSprite(lbFontPtr, chr);
 
-        if (credits_next_char_fade(fade)) {
+        if (credits_next_char_fade(&fade, p_cwa_revl_tm, cwa_timer, cw_shift)) {
             const TbPixel *pxmap;
 
-            pxmap = &pixmap.fade_table[256 * (0x3F - *fade)];
+            pxmap = &pixmap.fade_table[256 * (0x3F - fade)];
             LbSpriteDrawRemap(x, y, p_spr, pxmap);
         }
         x += p_spr->SWidth;
@@ -1557,8 +1559,8 @@ void put_down_colwavaprtext_sprites(const char *sbuf, const char *ebuf,
 }
 
 void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
-  long x, long y, long space_len,
-  long *fade)
+  s32 x, s32 y, s32 space_len,
+  u32 *p_cwa_revl_tm, u32 cwa_timer, u32 cw_shift)
 {
     const char *c;
     ubyte chr;
@@ -1566,13 +1568,14 @@ void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
     for (c=sbuf; c < ebuf; c++)
     {
         const TbSprite *p_spr;
+        s32 fade;
 
         chr = (ubyte)(*c);
         p_spr = LbFontCharSprite(lbFontPtr, chr);
         if (chr == ' ')
         {
             ubyte *p_scan;
-            long word_w;
+            s32 word_w;
             ubyte cs;
 
             word_w = 0;
@@ -1601,10 +1604,10 @@ void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
             continue;
         }
 
-        if (credits_next_char_fade(fade)) {
+        if (credits_next_char_fade(&fade, p_cwa_revl_tm, cwa_timer, cw_shift)) {
             const TbPixel *pxmap;
 
-            pxmap = &pixmap.fade_table[256 * (0x3F - *fade)];
+            pxmap = &pixmap.fade_table[256 * (0x3F - fade)];
             LbSpriteDrawRemap(x, y, p_spr, pxmap);
         }
         x += p_spr->SWidth;
@@ -1620,18 +1623,18 @@ void func_cc0d4(char **text_pargr)
 #endif
     ubyte *p_ids;
     char *s;
-    long x, y;
-    long fade;
+    s32 x, y;
 
     dword_1DDB6C = 1;
-    dword_1DDB68 = 0;
+    colwavapr_reveal_tm = 0;
 
     // Draw the credits group header (list of roles belonging to this group)
     s = text_pargr[0];
     x = 6;
     y = 6;
     lbFontPtr = med_font;
-    put_down_colwavaprtext_sprites(s, s + strlen(s), x, y, 4, &fade);
+    put_down_colwavaprtext_sprites(s, s + strlen(s), x, y, 4,
+      &colwavapr_reveal_tm, colwavapr_timer, gameturn);
 
     // Draw every person assigned to this group (name, then description)
     p_ids = (ubyte *)text_pargr[1];
@@ -1644,7 +1647,7 @@ void func_cc0d4(char **text_pargr)
         dword_1DDB6C = 1;
         x = 12;
 
-        if (dword_1DDB68 == outro_unkn02)
+        if (colwavapr_reveal_tm == colwavapr_timer)
         {
             short smp;
 
@@ -1658,13 +1661,15 @@ void func_cc0d4(char **text_pargr)
         // Draw the person's name
         s = p_person[0];
         lbFontPtr = big_font;
-        put_down_colwavaprtext_sprites(s, s + strlen(s), x, y, 4, &fade);
+        put_down_colwavaprtext_sprites(s, s + strlen(s), x, y, 4,
+          &colwavapr_reveal_tm, colwavapr_timer, gameturn);
         y += LbTextLineHeight();
 
         // Draw the person's description, word-wrapped to the screen width
         s = p_person[1];
         lbFontPtr = med2_font;
-        put_down_colwavaprtext_ini_sprites(s, s + strlen(s), x, y, 4, &fade);
+        put_down_colwavaprtext_ini_sprites(s, s + strlen(s), x, y, 4,
+          &colwavapr_reveal_tm, colwavapr_timer, gameturn);
         y += 10;
         p_ids++;
     }
@@ -1712,8 +1717,8 @@ void init_outro(void)
     load_outro_sprites();
 
     outro_credits_enabled = 0;
-    outro_unkn02 = 0;
-    outro_unkn03 = 0;
+    colwavapr_timer = 0;
+    dev_credits_group = 0;
     gameturn = 0;
     render_clock_set_turn(gameturn);
 
@@ -1767,14 +1772,14 @@ void init_outro(void)
         engine_draw_whole_screen_flyby();
         if (outro_credits_enabled)
         {
-            outro_unkn02++;
-            func_cc0d4((char **)&dev_credits_groups[2 * outro_unkn03]);
-            if (outro_unkn02 > dword_1DDB68 + 50)
+            colwavapr_timer++;
+            func_cc0d4((char **)&dev_credits_groups[2 * dev_credits_group]);
+            if (colwavapr_timer > colwavapr_reveal_tm + 50)
             {
-                outro_unkn02 = 0;
-                outro_unkn03++;
-                if (outro_unkn03 == dev_credits_groups_count)
-                    outro_unkn03 = 0;
+                colwavapr_timer = 0;
+                dev_credits_group++;
+                if (dev_credits_group == dev_credits_groups_count)
+                    dev_credits_group = 0;
             }
           }
           swap_wscreen();

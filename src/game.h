@@ -173,12 +173,12 @@ extern ubyte old_screentype;
 extern ubyte screentype;
 extern char *outro_text_s;
 extern char *outro_text_z;
-extern long data_1dd91c;
-extern long outro_credits_enabled;
-extern long outro_unkn02;
-extern long outro_unkn03;
-extern long dev_credits_groups_count;
-extern s32 dword_1DDB68;
+extern s32 data_1dd91c;
+extern s32 outro_credits_enabled;
+extern s32 dev_credits_group;
+extern s32 dev_credits_groups_count;
+extern u32 colwavapr_timer;
+extern u32 colwavapr_reveal_tm;
 extern s32 dword_1DDB6C;
 
 extern char *dev_credits_desc[];

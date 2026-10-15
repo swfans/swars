@@ -118202,7 +118202,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		xor    %ebx,%ebx
 		mov    %edx,EXPORT_SYMBOL(dword_1DDB6C)
 		mov    (%edi),%ah
-		mov    %ebx,EXPORT_SYMBOL(dword_1DDB68)
+		mov    %ebx,EXPORT_SYMBOL(colwavapr_reveal_tm)
 		test   %ah,%ah
 		je     jump_cc1cc
 	jump_cc10b:
@@ -118216,9 +118216,9 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    %esi,EXPORT_SYMBOL(med2_font)
 		mov    %eax,0x28(%esp)
 		mov    $0x6,%eax
-		mov    outro_unkn02,%edx
+		mov    EXPORT_SYMBOL(colwavapr_timer),%edx
 		mov    %eax,0xc(%esp)
-		mov    EXPORT_SYMBOL(dword_1DDB68),%eax
+		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%eax
 		mov    0x28(%esp),%ebx
 		cmp    %edx,%eax
 		jg     jump_cc1b0
@@ -118226,14 +118226,14 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    %edx,%eax
 		sub    %ecx,%eax
 		add    %eax,%eax
-		mov    %ecx,EXPORT_SYMBOL(dword_1DDB68)
+		mov    %ecx,EXPORT_SYMBOL(colwavapr_reveal_tm)
 		cmp    $0x1f,%eax
 		jle    jump_cc161
 		mov    $0x1f,%eax
 	jump_cc161:
 		cmpl   $0x0,EXPORT_SYMBOL(dword_1DDB6C)
 		je     jump_cc187
-		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
+		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%edx
 		add    EXPORT_SYMBOL(gameturn),%edx
 		and    $0xf,%edx
 		shl    $0x9,%edx
@@ -118337,16 +118337,16 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		jmp    jump_cc33e
 	jump_cc2a5:
 		mov    0x14(%esp),%ebp
-		mov    outro_unkn02,%ecx
+		mov    EXPORT_SYMBOL(colwavapr_timer),%ecx
 		mov    %edi,0x20(%esp)
 		mov    %eax,%ebx
-		mov    EXPORT_SYMBOL(dword_1DDB68),%eax
+		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%eax
 		mov    %esi,EXPORT_SYMBOL(med2_font)
 		cmp    %ecx,%eax
 		jg     jump_cc32d
 		inc    %eax
-		mov    %eax,EXPORT_SYMBOL(dword_1DDB68)
-		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
+		mov    %eax,EXPORT_SYMBOL(colwavapr_reveal_tm)
+		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%edx
 		mov    %ecx,%eax
 		sub    %edx,%eax
 		add    %eax,%eax
@@ -118356,7 +118356,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 	jump_cc2e0:
 		cmpl   $0x0,EXPORT_SYMBOL(dword_1DDB6C)
 		je     jump_cc306
-		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
+		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%edx
 		add    EXPORT_SYMBOL(gameturn),%edx
 		and    $0xf,%edx
 		shl    $0x9,%edx
@@ -118405,12 +118405,12 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    $EXPORT_SYMBOL(dev_credits_desc),%edx
 		mov    $0xc,%ebp
 		mov    $0x1,%ebx
-		mov    outro_unkn02,%ecx
+		mov    EXPORT_SYMBOL(colwavapr_timer),%ecx
 		shl    $0x3,%eax
 		mov    %esi,EXPORT_SYMBOL(med2_font)
 		mov    %ebx,EXPORT_SYMBOL(dword_1DDB6C)
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(dword_1DDB68),%eax
+		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%eax
 		mov    %edx,(%esp)
 		mov    (%edx),%edi
 		cmp    %ecx,%eax
@@ -118451,20 +118451,20 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		imul   $0x6,%eax,%eax
 		mov    EXPORT_SYMBOL(big_font),%edx
 		add    %edx,%eax
-		mov    outro_unkn02,%ecx
+		mov    EXPORT_SYMBOL(colwavapr_timer),%ecx
 		sub    $0xba,%eax
 		mov    %ebp,0x1c(%esp)
 		mov    %eax,0x28(%esp)
 		mov    0x14(%esp),%eax
 		mov    %esi,EXPORT_SYMBOL(med2_font)
 		mov    %eax,0x18(%esp)
-		mov    EXPORT_SYMBOL(dword_1DDB68),%eax
+		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%eax
 		mov    0x28(%esp),%ebx
 		cmp    %ecx,%eax
 		jg     jump_cc4be
 		inc    %eax
-		mov    %eax,EXPORT_SYMBOL(dword_1DDB68)
-		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
+		mov    %eax,EXPORT_SYMBOL(colwavapr_reveal_tm)
+		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%edx
 		mov    %ecx,%eax
 		sub    %edx,%eax
 		add    %eax,%eax
@@ -118474,7 +118474,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 	jump_cc46c:
 		cmpl   $0x0,EXPORT_SYMBOL(dword_1DDB6C)
 		je     jump_cc492
-		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
+		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%edx
 		add    EXPORT_SYMBOL(gameturn),%edx
 		and    $0xf,%edx
 		shl    $0x9,%edx
@@ -120776,13 +120776,13 @@ GLOBAL (outro_text_s)	/* 0x1DDB54 */
 		.long	0x0
 GLOBAL (outro_text_z)	/* 0x1DDB58 */
 		.long	0x0
-GLOBAL (outro_unkn02)	/* 0x1DDB5C */
+GLOBAL (colwavapr_timer)	/* 0x1DDB5C */
 		.long	0x0
-GLOBAL (outro_unkn03)	/* 0x1DDB60 */
+GLOBAL (dev_credits_group)	/* 0x1DDB60 */
 		.long	0x0
 GLOBAL (dev_credits_groups_count)	/* 0x1DDB64 */
 		.long	0x0
-GLOBAL (dword_1DDB68)	/* 0x1ddb68 */
+GLOBAL (colwavapr_reveal_tm)	/* 0x1ddb68 */
 		.long	0x0
 GLOBAL (dword_1DDB6C)	/* 0x1DDB6C */
 		.long	0x0
