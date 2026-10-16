@@ -1634,7 +1634,7 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     uint32_t len;
     int32_t i;
 #if ENABLE_TIMBRE
-    TIMB_chunk *T;
+    struct TIMB_chunk *T;
     static uint8_t TIMB[sizeof(seq->driver->DST->MIDI_data)];
     uint32_t bank, patch;
     VDI_CALL VDI;
@@ -1747,7 +1747,7 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
         len = sizeof(seq->driver->DST->MIDI_data);
     memcpy(TIMB, seq->TIMB, len);
 
-    T = (TIMB_chunk*)TIMB;
+    T = (struct TIMB_chunk *)TIMB;
 
     // If timbre-request callback function registered, pass each bank/patch
     // pair to the function to see if it has to be requested from the driver
@@ -2022,7 +2022,43 @@ int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq)
 
 void AIL2OAL_API_branch_index(SNDSEQUENCE *seq, uint32_t marker)
 {
-    // Not implemented in this wrapper
+    int32_t n,i;
+    struct RBRN_entry *rb;
+
+    if (seq == NULL)
+        return;
+
+    // Make sure RBRN block is present
+    if (seq->RBRN == NULL)
+        return;
+
+    // Get number of RBRN entries
+    n = *(int16_t *) ((uint8_t *)seq->RBRN + 8);
+
+    // Get pointer to RBRN entry list
+    rb = (struct RBRN_entry *) ((uint8_t *)seq->RBRN + 10);
+
+    // Search RBRN list for specified index
+    for (i = 0; i < n; i++) {
+        if ((uint16_t)rb[i].bnum == marker)
+            break;
+    }
+    if (i == n) // index not found
+        return;
+
+    // Move sequence pointer to branch point. First event at the new
+    // location will be the Sequence Branch Index controller.
+    seq->EVNT_ptr = (uint8_t *)seq->EVNT + 8 + rb[i].offset;
+    // Clear interval count, so next event will be fetched immediately
+    seq->interval_count = 0;
+
+    // Cancel all FOR...NEXT loops unless application specifies otherwise
+    if (!AIL_preference[MDI_ALLOW_LOOP_BRANCHING])
+    {
+        for (n=0; n < AIL_FOR_NEST; n++) {
+            seq->FOR_loop_count[n] = -1;
+        }
+    }
 }
 
 AILTRIGGERCB AIL2OAL_API_register_trigger_callback(SNDSEQUENCE *seq, AILTRIGGERCB callback)

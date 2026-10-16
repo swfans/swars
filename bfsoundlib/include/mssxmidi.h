@@ -30,6 +30,27 @@ extern "C" {
 // The support is not fully implemented in this library
 #define ENABLE_TIMBRE 0
 
+/** XMIDI TIMB IFF chunk
+ */
+struct TIMB_chunk {
+    char name[4];
+    uint8_t msb;
+    uint8_t lsb;
+    uint8_t lsb2;
+    uint8_t lsb3;
+    uint16_t n_entries;
+    uint16_t timbre[1];
+};
+
+/** XMIDI RBRN IFF entry
+ */
+struct RBRN_entry {
+    int16_t bnum;
+    uint32_t offset;
+};
+
+/******************************************************************************/
+
 void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix);
 
 int32_t AIL2OAL_API_MDI_driver_type(MDI_DRIVER *mdidrv);
