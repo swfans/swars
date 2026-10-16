@@ -125,15 +125,6 @@ uint8_t *SMACKWRAPCOPY(uint32_t buf_len, uint8_t *pv_tail,
 
 uint8_t RADAPI MSSLOWSOUNDOPEN(uint8_t flags, SmackSndTrk *p_sstrk)
 {
-#if 0
-    uint8_t ret;
-    asm volatile (
-      "push %2\n"
-      "push %1\n"
-      "call ASM_MSSLOWSOUNDOPEN\n"
-        : "=r" (ret) : "g" (flags), "g" (p_sstrk));
-    return ret;
-#endif
     int format;
     uint32_t bsize;
 
@@ -208,13 +199,6 @@ void rm_smack_track(SmackSndTrk *p_sstrk)
 
 void RADAPI MSSLOWSOUNDCLOSE(SmackSndTrk *p_sstrk)
 {
-#if 0
-    asm volatile (
-      "push %0\n"
-      "call ASM_MSSLOWSOUNDCLOSE\n"
-        :  : "g" (p_sstrk));
-    return;
-#endif
     if (fss == NULL) {
         return;
     }
@@ -233,12 +217,6 @@ void RADAPI MSSLOWSOUNDCLOSE(SmackSndTrk *p_sstrk)
 
 void RADAPI MSSLOWSOUNDCHECK(void)
 {
-#if 0
-    asm volatile (
-      "call ASM_MSSLOWSOUNDCHECK\n"
-        :  : );
-    return;
-#endif
     struct SmackSndTrk *p_sstrk;
 
     for (p_sstrk = fss; p_sstrk != NULL; p_sstrk = p_sstrk->next)
@@ -276,14 +254,6 @@ void RADAPI MSSLOWSOUNDCHECK(void)
 
 uint32_t RADAPI MSSLOWSOUNDPLAYED(SmackSndTrk *p_sstrk)
 {
-#if 0
-    uint32_t ret;
-    asm volatile (
-      "push %1\n"
-      "call ASM_MSSLOWSOUNDPLAYED\n"
-        : "=r" (ret) : "g" (p_sstrk));
-    return ret;
-#endif
     uint32_t dt;
 
     MSSLOWSOUNDCHECK();
@@ -296,36 +266,41 @@ uint32_t RADAPI MSSLOWSOUNDPLAYED(SmackSndTrk *p_sstrk)
 
 void RADAPI MSSLOWSOUNDPURGE(SmackSndTrk *p_sstrk)
 {
-#if 0
-    asm volatile (
-      "push %0\n"
-      "call ASM_MSSLOWSOUNDPURGE\n"
-        :  : "g" (p_sstrk));
-    return;
-#else
     AIL_end_sample(p_sstrk->smp);
     p_sstrk->field_50 = 0;
     p_sstrk->field_68 = 0;
     p_sstrk->field_6C = 0;
     doinit(p_sstrk);
-#endif
 }
 
 /** Timer routine when linked to AIL; returns a timer value, in miliseconds.
  */
 uint32_t RADAPI MSSSMACKTIMERREAD(void)
 {
+#if defined(DOS)||defined(GO32)
+    uint8_t b1, b2;
+    uint16_t timer_82c54_count;
+    uint32_t coarse_ms, fine_ms;
+    // Retrieve value from 82C54 timer
+    outb(0x43, 0x0);
+    b1 = inb(0x40);
+    b2 = inb(0x40);
+    timer_82c54_count = (b2 << 8) | b1;
+
+    coarse_ms = 1000 * (uint64_t)mss_i_count / MSSSpeed;
+    fine_ms = 1000 * (uint64_t)(MSSTimerPeriod - timer_82c54_count) / 1193181;
+
+    if (coarse_ms + fine_ms < lasttimer)
+        return lasttimer;
+    lasttimer = coarse_ms + fine_ms;
+    return coarse_ms + fine_ms;
+#else
     return LbTimerClock();
+#endif
 }
 
 void RADAPI MSSSMACKTIMERDONE(void)
 {
-#if 0
-    asm volatile (
-      "call ASM_MSSSMACKTIMERDONE\n"
-        :  : );
-    return;
-#endif
     if (--sndinit != 0)
         return;
     AIL_release_timer_handle(msstimer);
@@ -340,12 +315,6 @@ void mss_int(void *clientval)
 
 void RADAPI MSSSMACKTIMERSETUP(void)
 {
-#if 0
-    asm volatile (
-      "call ASM_MSSSMACKTIMERSETUP\n"
-        :  : );
-    return;
-#endif
     if (++sndinit != 1)
         return;
     AIL_VMM_lock_range(MSSSMACKTIMERREAD, MSSSMACKTIMERSETUP);
@@ -371,15 +340,6 @@ void RADAPI MSSSMACKTIMERSETUP(void)
 
 void RADAPI MSSLOWSOUNDVOLPAN(uint32_t pan, uint32_t volume, SmackSndTrk *sstrk)
 {
-#if 0
-    asm volatile (
-      "push %2\n"
-      "push %1\n"
-      "push %0\n"
-      "call ASM_MSSLOWSOUNDVOLPAN\n"
-        :  : "g" (pan), "g" (volume), "g" (sstrk));
-    return;
-#endif
     if (volume > 0x8000)
         volume = 0x8000;
     AIL_set_sample_volume(sstrk->smp, ((unsigned int)(1270 * (uint64_t)volume / 0x8000) + 5) / 10);
