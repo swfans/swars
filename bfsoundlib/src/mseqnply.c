@@ -211,7 +211,7 @@ void DangerMusicFadeTick(void *clientval)
         {
             if (DangerMusicVoiceMessages[i] != 0) {
               AIL_send_channel_voice_message(MusicDriver, SongHandle,
-                i | 0xB0, 11, DangerMusicVolume);
+                i | MDI_EV_CONTROL, MDI_CTR_EXPRESSION, DangerMusicVolume);
             }
         }
     }

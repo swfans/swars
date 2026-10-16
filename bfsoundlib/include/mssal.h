@@ -243,11 +243,14 @@ enum AILMIDIMetaEvents {
 enum AILMIDIControlMsgs {
     MDI_CTR_GM_BANK_MSB      = 0,
     MDI_CTR_MODULATION       = 1,
+    /** Set Data Entry Most Significant Byte for a previously selected RPN or
+      NRPN. Usually used to set Pitch Bend Range. */
     MDI_CTR_DATA_MSB         = 6,
- /** Scale volume according to sequence's current volume setting
-   and overall driver master volume */
+    /** Scale volume according to sequence's current volume setting
+      and overall driver master volume */
     MDI_CTR_PART_VOLUME      = 7,
     MDI_CTR_PANPOT           = 10,
+    /** Change expression (volume) of a specific MIDI channel */
     MDI_CTR_EXPRESSION       = 11,
     MDI_CTR_DATA_LSB         = 38, // not set everywhere - unsure why
     MDI_CTR_SUSTAIN          = 64,
@@ -258,6 +261,7 @@ enum AILMIDIControlMsgs {
     MDI_CTR_SYSEX_BYTE       = 105,
     /** Control bender range by first sending RPN 0 0. */
     MDI_CTR_PB_RANGE         = 106,
+    /** Mute given MIDI channel, by ignoring any messages to turn notes on */
     MDI_CTR_CHAN_MUTE        = 107,
     /** Override value of next controller event with value from user
       callback function. */
