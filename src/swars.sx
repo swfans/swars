@@ -47052,14 +47052,14 @@ GLOBAL_FUNC(ASM_explode_thing_building)	/* 0x063F34 */
 		mov    0x48(%esp),%edx
 		mov    0x44(%esp),%eax
 		call   ac_triangulation_unkn_func_002
-		mov    EXPORT_SYMBOL(dword_1AA5C4),%edx
+		mov    EXPORT_SYMBOL(redo_scanner_last),%edx
 		inc    %edx
-		mov    EXPORT_SYMBOL(dword_1AA5C8),%ecx
+		mov    EXPORT_SYMBOL(redo_scanner_first),%ecx
 		and    $0x7f,%edx
 		cmp    %ecx,%edx
 		je     jump_649c3
 		mov    0x48(%esp),%bl
-		mov    EXPORT_SYMBOL(dword_1AA5C4),%eax
+		mov    EXPORT_SYMBOL(redo_scanner_last),%eax
 		add    %bl,%bl
 		mov    %bl,EXPORT_SYMBOL(redo_scanner)(,%eax,4)
 		mov    0x44(%esp),%bl
@@ -47070,7 +47070,7 @@ GLOBAL_FUNC(ASM_explode_thing_building)	/* 0x063F34 */
 		mov    %bl,data_1aa3c6(,%eax,4)
 		mov    0x50(%esp),%bl
 		add    %bl,%bl
-		mov    %edx,EXPORT_SYMBOL(dword_1AA5C4)
+		mov    %edx,EXPORT_SYMBOL(redo_scanner_last)
 		mov    %bl,data_1aa3c7(,%eax,4)
 	jump_649c3:
 		mov    0x44(%esp),%esi
@@ -47993,8 +47993,8 @@ GLOBAL_FUNC(ASM_animate_explode)	/* 0x0654C8 */
 		test   %ebx,%ebx
 		je     jump_65540
 	jump_654ea:
-		mov    EXPORT_SYMBOL(dword_1AA5C8),%eax
-		cmp    EXPORT_SYMBOL(dword_1AA5C4),%eax
+		mov    EXPORT_SYMBOL(redo_scanner_first),%eax
+		cmp    EXPORT_SYMBOL(redo_scanner_last),%eax
 		je     jump_674f7
 		xor    %ecx,%ecx
 		xor    %ebx,%ebx
@@ -48005,12 +48005,12 @@ GLOBAL_FUNC(ASM_animate_explode)	/* 0x0654C8 */
 		mov    EXPORT_SYMBOL(redo_scanner)(,%eax,4),%al
 		and    $0xff,%eax
 		call   ac_SCANNER_fill_in_a_little_bit
-		mov    EXPORT_SYMBOL(dword_1AA5C8),%edi
+		mov    EXPORT_SYMBOL(redo_scanner_first),%edi
 		inc    %edi
 		mov    %edi,%eax
-		mov    %edi,EXPORT_SYMBOL(dword_1AA5C8)
+		mov    %edi,EXPORT_SYMBOL(redo_scanner_first)
 		and    $0x7f,%eax
-		mov    %eax,EXPORT_SYMBOL(dword_1AA5C8)
+		mov    %eax,EXPORT_SYMBOL(redo_scanner_first)
 		jmp    jump_654ea
 	jump_65540:
 		mov    $0x1,%edi
@@ -117851,7 +117851,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    $0x6,%ebp
 		mov    (%eax),%edi
 		xor    %ebx,%ebx
-		mov    %edx,EXPORT_SYMBOL(dword_1DDB6C)
+		mov    %edx,EXPORT_SYMBOL(colwav_enable)
 		mov    (%edi),%ah
 		mov    %ebx,EXPORT_SYMBOL(colwavapr_reveal_tm)
 		test   %ah,%ah
@@ -117882,7 +117882,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		jle    jump_cc161
 		mov    $0x1f,%eax
 	jump_cc161:
-		cmpl   $0x0,EXPORT_SYMBOL(dword_1DDB6C)
+		cmpl   $0x0,EXPORT_SYMBOL(colwav_enable)
 		je     jump_cc187
 		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%edx
 		add    EXPORT_SYMBOL(gameturn),%edx
@@ -117922,7 +117922,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    %eax,0x4(%esp)
 		jmp    jump_cc366
 	jump_cc1e5:
-		movl   $0x1,EXPORT_SYMBOL(dword_1DDB6C)
+		movl   $0x1,EXPORT_SYMBOL(colwav_enable)
 		mov    0x28(%esp),%edx
 		xor    %eax,%eax
 		mov    0x14(%esp),%ebx
@@ -118005,7 +118005,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		jle    jump_cc2e0
 		mov    $0x1f,%eax
 	jump_cc2e0:
-		cmpl   $0x0,EXPORT_SYMBOL(dword_1DDB6C)
+		cmpl   $0x0,EXPORT_SYMBOL(colwav_enable)
 		je     jump_cc306
 		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%edx
 		add    EXPORT_SYMBOL(gameturn),%edx
@@ -118059,7 +118059,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    EXPORT_SYMBOL(colwavapr_timer),%ecx
 		shl    $0x3,%eax
 		mov    %esi,EXPORT_SYMBOL(med2_font)
-		mov    %ebx,EXPORT_SYMBOL(dword_1DDB6C)
+		mov    %ebx,EXPORT_SYMBOL(colwav_enable)
 		add    %eax,%edx
 		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%eax
 		mov    %edx,(%esp)
@@ -118123,7 +118123,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		jle    jump_cc46c
 		mov    $0x1f,%eax
 	jump_cc46c:
-		cmpl   $0x0,EXPORT_SYMBOL(dword_1DDB6C)
+		cmpl   $0x0,EXPORT_SYMBOL(colwav_enable)
 		je     jump_cc492
 		mov    EXPORT_SYMBOL(colwavapr_reveal_tm),%edx
 		add    EXPORT_SYMBOL(gameturn),%edx
@@ -120065,9 +120065,9 @@ data_1aa3c6:
 		.byte	0x0
 data_1aa3c7:
 		.fill   0x1fd
-GLOBAL (dword_1AA5C4)	/* 0x1AA5C4 */
+GLOBAL (redo_scanner_last)	/* 0x1AA5C4 */
 		.long	0x0
-GLOBAL (dword_1AA5C8)	/* 0x1AA5C8 */
+GLOBAL (redo_scanner_first)	/* 0x1AA5C8 */
 		.long	0x0
 
 data_1aa660:
@@ -120417,6 +120417,6 @@ GLOBAL (dev_credits_groups_count)	/* 0x1DDB64 */
 		.long	0x0
 GLOBAL (colwavapr_reveal_tm)	/* 0x1ddb68 */
 		.long	0x0
-GLOBAL (dword_1DDB6C)	/* 0x1DDB6C */
+GLOBAL (colwav_enable)	/* 0x1DDB6C */
 		.long	0x0
 		.align	4

@@ -56,6 +56,13 @@ struct BbpAdds {
     s32 dv;
 };
 
+struct rectangle { // sizeof=4
+    ubyte x1;
+    ubyte y1;
+    ubyte x2;
+    ubyte y2;
+};
+
 #pragma pack()
 
 /******************************************************************************/
@@ -82,6 +89,11 @@ ushort SCANNER_user_zoom_factor = 192;
 ubyte SCANNER_scale_dots = true;
 
 s32 scanner_arrow_mode = 1;
+
+extern struct rectangle redo_scanner[128];
+
+extern s32 redo_scanner_last;
+extern s32 redo_scanner_first;
 
 /******************************************************************************/
 
@@ -1539,6 +1551,23 @@ void add_netscan_signal_to_scanner(struct NetscanObjective *p_nsobv, ubyte flag)
 
     // Netscan scanner only supports blippoints
     signal_count = do_netscan_blippoint_scanner(p_nsobv, signal_count);
+}
+
+void redo_scanner_init(void)
+{
+    redo_scanner_last = 0;
+    redo_scanner_first = 0;
+}
+
+void redo_scanner_process(void)
+{
+    while (redo_scanner_first != redo_scanner_last)
+    {
+        struct rectangle *p_rct;
+        p_rct = &redo_scanner[redo_scanner_first];
+        SCANNER_fill_in_a_little_bit(p_rct->x1, p_rct->y1, p_rct->x2, p_rct->y2);
+        redo_scanner_first = (redo_scanner_first + 1) & 0x7F;
+    }
 }
 
 /******************************************************************************/

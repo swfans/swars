@@ -41,19 +41,10 @@
 
 #define EXPLODE_FACE_MAX_ON_MAP_SIZE TILE_TO_MAPCOORD(16,0)
 
-struct rectangle { // sizeof=4
-    ubyte x1;
-    ubyte y1;
-    ubyte x2;
-    ubyte y2;
-};
-
 #pragma pack()
 
 u32 dont_bother_with_explode_faces = false;
 TbBool ex_face_anim_enabled = true;
-
-extern struct rectangle redo_scanner[128];
 
 s32 expl_unkn_cor_x;
 s32 expl_unkn_cor_z;
@@ -61,9 +52,6 @@ s32 expl_unkn_cor_z;
 s32 minimum_explode_size;
 u32 minimum_explode_and;
 s32 minimum_explode_depth;
-
-extern s32 dword_1AA5C4;
-extern s32 dword_1AA5C8;
 
 /******************************************************************************/
 
@@ -600,13 +588,7 @@ void animate_explode(void)
 
     if (dont_bother_with_explode_faces)
     {
-        while (dword_1AA5C8 != dword_1AA5C4)
-        {
-            struct rectangle *p_rct;
-            p_rct = &redo_scanner[dword_1AA5C8];
-            SCANNER_fill_in_a_little_bit(p_rct->x1, p_rct->y1, p_rct->x2, p_rct->y2);
-            dword_1AA5C8 = (dword_1AA5C8 + 1) & 0x7F;
-        }
+        redo_scanner_process();
         return;
     }
 

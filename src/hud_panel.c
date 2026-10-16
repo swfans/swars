@@ -256,8 +256,7 @@ void init_scanner(void)
 {
     LOGDBG("Begin");
     init_scanner_colour();
-    dword_1AA5C4 = 0;
-    dword_1AA5C8 = 0;
+    redo_scanner_init();
     ingame.Scanner.Brightness = 8;
     ingame.Scanner.Contrast = 5;
     SCANNER_width = ingame.Scanner.Width;

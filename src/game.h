@@ -179,7 +179,7 @@ extern s32 dev_credits_group;
 extern s32 dev_credits_groups_count;
 extern u32 colwavapr_timer;
 extern u32 colwavapr_reveal_tm;
-extern s32 dword_1DDB6C;
+extern s32 colwav_enable;
 
 extern char *dev_credits_desc[];
 extern char *dev_credits_groups[];
@@ -201,8 +201,6 @@ extern struct LevelDef level_def;
 
 /** Index of the local user who controls mouse. */
 extern ubyte mouser;
-extern long dword_1AA5C4;
-extern long dword_1AA5C8;
 
 extern ushort next_mission;
 

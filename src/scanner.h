@@ -136,6 +136,10 @@ TbBool mouse_move_over_scanner(void);
 void clear_all_scanner_signals(void);
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag);
 void add_netscan_signal_to_scanner(struct NetscanObjective *p_nsobv, ubyte flag);
+
+void redo_scanner_init(void);
+void redo_scanner_process(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

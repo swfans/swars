@@ -1515,7 +1515,7 @@ static TbBool credits_next_char_fade(s32 *fade, u32 *p_cwa_revl_tm,
     f = (cwa_timer - *p_cwa_revl_tm) * 2;
     if (f > 0x1F)
         f = 0x1F;
-    if (dword_1DDB6C)
+    if (colwav_enable)
         f += lbSinTable[((*p_cwa_revl_tm + cw_shift) & 0xF) * 128] >> 13;
     if (f < 0)
         f = 0;
@@ -1570,6 +1570,7 @@ void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
 
         chr = (ubyte)(*c);
         p_spr = LbFontCharSprite(lbFontPtr, chr);
+
         if (chr == ' ')
         {
             ubyte *p_scan;
@@ -1623,7 +1624,7 @@ void func_cc0d4(char **text_pargr)
     char *s;
     s32 x, y;
 
-    dword_1DDB6C = 1;
+    colwav_enable = 1;
     colwavapr_reveal_tm = 0;
 
     // Draw the credits group header (list of roles belonging to this group)
@@ -1642,7 +1643,7 @@ void func_cc0d4(char **text_pargr)
         char **p_person;
 
         p_person = &dev_credits_desc[2 * (*p_ids)];
-        dword_1DDB6C = 1;
+        colwav_enable = 1;
         x = 12;
 
         if (colwavapr_reveal_tm == colwavapr_timer)
