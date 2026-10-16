@@ -30,28 +30,28 @@
 #include "aildebug.h"
 #include "memfile.h"
 /******************************************************************************/
-extern void *SmackMSSDigDriver;
-extern uint32_t MSSSpeed;
-extern uint32_t MSSTimerPeriod;
+void *SmackMSSDigDriver;
+uint32_t MSSSpeed;
+uint32_t MSSTimerPeriod;
 
 extern uint32_t timeradjust;
 extern uint32_t lasttimerread;
-extern uint32_t mss_i_count;
-extern uint32_t sndinit;
-extern uint32_t msstimer;
+uint32_t mss_i_count;
+uint32_t sndinit;
+uint32_t msstimer;
 
 uint32_t MSSLiteInit = 0;
 SmackSndTrk *fss = NULL;
 
 extern uint8_t RADAPI (*LowSoundOpenAddr)(uint8_t, SmackSndTrk *);
-extern void RADAPI (*LowSoundCloseAddr)(SmackSndTrk *);
-extern uint32_t RADAPI (*LowSoundPlayedAddr)(SmackSndTrk *);
-extern void RADAPI (*LowSoundPurgeAddr)(SmackSndTrk *);
+void RADAPI (*LowSoundCloseAddr)(SmackSndTrk *);
+uint32_t RADAPI (*LowSoundPlayedAddr)(SmackSndTrk *);
+void RADAPI (*LowSoundPurgeAddr)(SmackSndTrk *);
 extern void RADAPI (*LowSoundOffAddr)(SmackSndTrk *);
 extern void RADAPI (*SmackTimerSetupAddr)(void);
 extern uint32_t RADAPI (*SmackTimerReadAddr)(void);
 extern void RADAPI (*SmackTimerDoneAddr)(void);
-extern void RADAPI (*LowSoundCheckAddr)(void);
+void RADAPI (*LowSoundCheckAddr)(void);
 extern void RADAPI (*LowSoundOnAddr)(void);
 extern void RADAPI (*LowSoundVolPanAddr)(uint32_t, uint32_t, SmackSndTrk *);
 
