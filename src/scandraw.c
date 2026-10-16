@@ -973,68 +973,19 @@ void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour
     draw_mapcoord_to_scrcoord_line(x, y, ptX, ptY, ptZ, colour);
 }
 
-//TODO remove when no longer needed - just use the enlist cunct directly
-void draw_map_flat_circle(short cor_x, short cor_y, short cor_z, short radius, TbPixel colour)
+//TODO remove when no longer needed - just use the enlist funct directly
+void draw_map_flat_circle(short cor_x, short cor_y_m8, short cor_z,
+  short radius, TbPixel colour)
 {
-    enlist_hud_draw_mapcoord_flat_circle(cor_x, cor_y, cor_z, radius, 0, 1, colour);
+    enlist_hud_draw_mapcoord_flat_circle(cor_x, cor_y_m8, cor_z, radius,
+      Lb_SPRITE_OUTLINE, 1, colour);
 }
 
-void draw_map_flat_rect(int cor_x, int cor_y, int cor_z, int size_x, int size_z, TbPixel colour)
+void draw_map_flat_rect(short cor_x, short cor_y_m8, short cor_z,
+  short size_x, short size_z, TbPixel colour)
 {
-    struct EnginePoint ep1;
-    struct EnginePoint ep2;
-    int cor_x2, cor_z2;
-
-    cor_x2 = cor_x + size_x;
-    cor_z2 = cor_z + size_z;
-
-    ep1.X3d = cor_x  - engn_xc;
-    ep1.Y3d = cor_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep1.Z3d = cor_z  - engn_zc;
-    ep1.Flags = 0;
-    transform_point(&ep1);
-    ep2.X3d = cor_x2 - engn_xc;
-    ep2.Y3d = cor_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep2.Z3d = cor_z  - engn_zc;
-    ep2.Flags = 0;
-    transform_point(&ep2);
-    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
-
-    ep1.X3d = cor_x2 - engn_xc;
-    ep1.Y3d = cor_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep1.Z3d = cor_z  - engn_zc;
-    ep1.Flags = 0;
-    transform_point(&ep1);
-    ep2.X3d = cor_x2 - engn_xc;
-    ep2.Y3d = cor_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep2.Z3d = cor_z2 - engn_zc;
-    ep2.Flags = 0;
-    transform_point(&ep2);
-    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
-
-    ep1.X3d = cor_x2 - engn_xc;
-    ep1.Y3d = cor_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep1.Z3d = cor_z2 - engn_zc;
-    ep1.Flags = 0;
-    transform_point(&ep1);
-    ep2.X3d = cor_x  - engn_xc;
-    ep2.Y3d = cor_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep2.Z3d = cor_z2 - engn_zc;
-    ep2.Flags = 0;
-    transform_point(&ep2);
-    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
-
-    ep1.X3d = cor_x  - engn_xc;
-    ep1.Y3d = cor_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep1.Z3d = cor_z2 - engn_zc;
-    ep1.Flags = 0;
-    transform_point(&ep1);
-    ep2.Flags = 0;
-    ep2.X3d = cor_x  - engn_xc;
-    ep2.Y3d = cor_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep2.Z3d = cor_z  - engn_zc;
-    transform_point(&ep2);
-    LbDrawLine(ep1.pp.X, ep1.pp.Y, ep2.pp.X, ep2.pp.Y, colour);
+    enlist_hud_draw_mapcoord_flat_box(cor_x, cor_y_m8, cor_z, size_x, size_z,
+      Lb_SPRITE_OUTLINE, 1, colour);
 }
 
 void SCANNER_draw_shape_from_points(int x, int y,

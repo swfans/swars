@@ -59,8 +59,15 @@ void draw_bevel_rect(int scr_x, int scr_y,
 void draw_corner_rect(int scr_x, int scr_y,
   int width, int height, int lnlen, int lnthick, TbPixel colour);
 
+/** Draw a flat circle on XZ plane, centered on given map coords.
+ */
 void draw_mapcoord_flat_circle_outline(short cor_x, short cor_y_m8, short cor_z,
   short radius, TbPixel colour);
+
+/** Draw a flat box on XZ plane, centered on given map coords.
+ */
+void draw_mapcoord_flat_box_outline(short cor_x, short cor_y_m8, short cor_z,
+  short size_x, short size_z, TbPixel colour);
 
 /******************************************************************************/
 #ifdef __cplusplus

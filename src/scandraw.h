@@ -48,8 +48,10 @@ void SCANNER_shift_center_point(int dt_cor_x, int dt_cor_z);
 void draw_mapcoord_to_scrcoord_line(short scr_x, short scr_y,
   int cor_x, int cor_y_m8, int cor_z, TbPixel colour);
 void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour);
-void draw_map_flat_circle(short cor_x, short cor_y, short cor_z, short radius, TbPixel colour);
-void draw_map_flat_rect(int cor_x, int cor_y, int cor_z, int size_x, int size_z, TbPixel colour);
+void draw_map_flat_circle(short cor_x, short cor_y_m8, short cor_z,
+  short radius, TbPixel colour);
+void draw_map_flat_rect(short cor_x, short cor_y_m8, short cor_z,
+  short size_x, short size_z, TbPixel colour);
 
 void SCANNER_fe_draw_solid(void);
 void SCANNER_draw_new_transparent(void);

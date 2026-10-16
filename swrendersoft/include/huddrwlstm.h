@@ -100,17 +100,30 @@ TbBool enlist_hud_draw_mapcoord_line(short cor1_x, short cor1_y_m8,
   short cor1_z, short cor2_x, short cor2_y_m8, short cor2_z,
   ushort drwflags, ubyte thickness, TbPixel colour);
 
+/** Enlist drawing a flat box facing the camera, centered on given map coords.
+ *
+ * Accepts the radius in map coord units, but draws the box facing the camera.
+ */
 TbBool enlist_hud_draw_mapcoord_corner_rect(short cor_x, short cor_y_m8,
   short cor_z, short width, short height, short lnlen, ubyte thickness,
   ushort drwflags, TbPixel colour);
 
-/** Enlist drawing a flat circle centered on given map coords.
+/** Enlist drawing a flat circle on XZ plane, centered on given map coords.
  *
  * Accepts the radius in map coord units, and draws the circle in the
  * perspective of the map.
  */
 TbBool enlist_hud_draw_mapcoord_flat_circle(short cor_x,
   short cor_y_m8, short cor_z, short radius,
+  ushort drwflags, ubyte thickness, TbPixel colour);
+
+/** Enlist drawing a flat box on XZ plane, centered on given map coords.
+ *
+ * Accepts the radius in map coord units, and draws the box in the
+ * perspective of the map.
+ */
+TbBool enlist_hud_draw_mapcoord_flat_box(short cor_x,
+  short cor_y_m8, short cor_z, short width, short height,
   ushort drwflags, ubyte thickness, TbPixel colour);
 
 /** Enlist drawing line between map coordinates and screen coordinates.

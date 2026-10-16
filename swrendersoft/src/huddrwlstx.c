@@ -262,21 +262,21 @@ void hud_draw_mapcoord_line_annotated_num(struct DIHudMapCoordAnnotLine *p_diMap
       p_diMapCorAntLine->AnnotVal, p_diMapCorAntLine->Col1, p_diMapCorAntLine->Col2);
 }
 
-void hud_draw_mapcoord_corner_rect(struct DIHudMapCoordRect *p_diMapCorRect)
+void hud_draw_mapcoord_corner_rect(struct DIHudMapCoordBox *p_diMapCorBox)
 {
     struct EnginePoint ep;
 
-    ep.X3d = p_diMapCorRect->Pt.X - engn_xc;
-    ep.Y3d = p_diMapCorRect->Pt.Y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep.Z3d = p_diMapCorRect->Pt.Z - engn_zc;
+    ep.X3d = p_diMapCorBox->Pt.X - engn_xc;
+    ep.Y3d = p_diMapCorBox->Pt.Y; // subtracted within transform_point(): - 8 * engn_yc;
+    ep.Z3d = p_diMapCorBox->Pt.Z - engn_zc;
     ep.Flags = 0;
     transform_point(&ep);
 
-    lbDisplay.DrawFlags = p_diMapCorRect->DrwFlags;
+    lbDisplay.DrawFlags = p_diMapCorBox->DrwFlags;
 
     draw_corner_rect(ep.pp.X, ep.pp.Y,
-      p_diMapCorRect->Width, p_diMapCorRect->Height,
-      p_diMapCorRect->LnLen, p_diMapCorRect->Thick, p_diMapCorRect->Col);
+      p_diMapCorBox->Width, p_diMapCorBox->Height,
+      p_diMapCorBox->LnLen, p_diMapCorBox->Thick, p_diMapCorBox->Col);
 }
 
 void hud_draw_mapcoord_flat_circle(struct DIHudMapCoordCircle *p_diMapCorCircl)
@@ -285,6 +285,15 @@ void hud_draw_mapcoord_flat_circle(struct DIHudMapCoordCircle *p_diMapCorCircl)
 
     draw_mapcoord_flat_circle_outline(p_diMapCorCircl->Pt.X, p_diMapCorCircl->Pt.Y,
       p_diMapCorCircl->Pt.Z, p_diMapCorCircl->Radius, p_diMapCorCircl->Col);
+}
+
+void hud_draw_mapcoord_flat_box(struct DIHudMapCoordBox *p_diMapCorBox)
+{
+    lbDisplay.DrawFlags = p_diMapCorBox->DrwFlags;
+
+    draw_mapcoord_flat_box_outline(p_diMapCorBox->Pt.X, p_diMapCorBox->Pt.Y,
+      p_diMapCorBox->Pt.Z, p_diMapCorBox->Width, p_diMapCorBox->Height,
+      p_diMapCorBox->Col);
 }
 
 void hud_draw_mapcoord_frame(struct DIHudMapCoordFrame *p_diMapCorFrame)

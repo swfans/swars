@@ -366,11 +366,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         enlist_hud_draw_mapcoord_to_scrcoord_line(x, y,
           p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
-            draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+            enlist_hud_draw_mapcoord_flat_box(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, Lb_SPRITE_OUTLINE, 1, 2u);
         } else {
             enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 << 6, 0, 1, 2u);
+              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, 2u);
         }
         return 1;
     case PCmd_PROTECT_MEM_G:
@@ -384,11 +384,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         enlist_hud_draw_mapcoord_to_scrcoord_line(x, y,
           p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
-            draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+            enlist_hud_draw_mapcoord_flat_box(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, Lb_SPRITE_OUTLINE, 1, 2u);
         } else {
             enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 << 6, 0, 1, 2u);
+              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, 2u);
         }
         return 1;
     case PCmd_WAIT_P_V_I_NEAR:
@@ -419,11 +419,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         enlist_hud_draw_mapcoord_to_scrcoord_line(x, y,
           p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
-            draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
-                p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+            enlist_hud_draw_mapcoord_flat_box(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, Lb_SPRITE_OUTLINE, 1, 2u);
         } else {
             enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 << 6, 0, 1, 2u);
+              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, 2u);
         }
         return 1;
     case PCmd_UNTIL_MEM_G_ARRIVE:
@@ -437,11 +437,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         enlist_hud_draw_mapcoord_to_scrcoord_line(x, y,
           p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
-            draw_map_flat_rect(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, 2u);
+            enlist_hud_draw_mapcoord_flat_box(p_cmd->X, p_cmd->Y, p_cmd->Z,
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, Lb_SPRITE_OUTLINE, 1, 2u);
         } else {
             enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 << 6, 0, 1, 2u);
+              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, 2u);
         }
         return 1;
     default:
