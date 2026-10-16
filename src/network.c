@@ -1785,13 +1785,6 @@ int run_exchange_func()
 
 struct TbSerialDev *LbCommInit(ushort idx)
 {
-#if 0
-    struct TbSerialDev *ret;
-    LOGDBG("Starting");
-    asm volatile ("call ASM_LbCommInit\n"
-        : "=r" (ret) : "a" (idx) );
-    return ret;
-#else
     struct TbSerialDev *p_serdev;
 
     assert(sizeof(struct TbSerialDev) == 4301);
@@ -1838,7 +1831,6 @@ struct TbSerialDev *LbCommInit(ushort idx)
     net_unkn_post_init_3(&netunkst_1E81E0, net_unkn_callback2);
 
     return p_serdev;
-#endif
 }
 
 TbResult LbCommSetBaud(int rate, ushort dev_id)
@@ -1859,12 +1851,6 @@ TbResult LbCommSetBaud(int rate, ushort dev_id)
 
 int LbCommExchange(ushort idx, void *data, int datalen)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_LbCommExchange\n"
-        : "=r" (ret) : "a" (idx), "d" (data), "b" (datalen) );
-    return ret;
-#else
     struct TbSerialDev *p_serdev;
     intptr_t params[2];
 
@@ -1901,7 +1887,6 @@ int LbCommExchange(ushort idx, void *data, int datalen)
             return -7;
     }
     return 1;
-#endif
 }
 
 int LbCommStopExchange(ubyte a1)

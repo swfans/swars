@@ -418,10 +418,6 @@ int net_unkn_func_12(void *a1)
 
 void net_unkn_check_1(void)
 {
-#if 0
-    asm volatile ("call ASM_net_unkn_check_1\n"
-        :  : );
-#endif
     char locstr[100];
     ushort i, m;
     s32 check_val;
