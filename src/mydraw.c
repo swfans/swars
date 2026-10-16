@@ -29,7 +29,10 @@
 #include "swlog.h"
 #include "util.h"
 /******************************************************************************/
-extern ubyte text_colours[15];
+const TbPixel text_colours[] = {
+  0x32, 0xF4, 0xB0, 0xAE, 0x57, 0xF7, 0xF6, 0xF5,
+  0xF8, 0xDA, 0x32, 0xAE, 0xAF, 0xB0, 0x32, 0x00,
+};
 
 ushort my_font_flags = MyFF_NONE;
 ubyte byte_197160 = 0;

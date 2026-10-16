@@ -269,9 +269,9 @@ s32 gamep_unknval_14 = 0;
 s32 gamep_unknval_15 = 0;
 s32 gamep_unknval_16 = 0;
 
-extern long dword_155010;
-extern long dword_155014;
-extern long dword_155018;
+s32 flyby_cam_x = TILE_TO_MAPCOORD(MAP_TILE_WIDTH/2, 0);
+s32 flyby_cam_z = TILE_TO_MAPCOORD(MAP_TILE_HEIGHT/2, 0);
+s32 flyby_cam_y = TILE_TO_MAPCOORD(0, 50);
 
 ubyte simulated_mouse_click;
 ubyte clear_left_button;
@@ -283,8 +283,6 @@ ubyte post_render_action;
 int mouse_map_x = 0x3200;
 int mouse_map_y = 0;
 int mouse_map_z = 0x3200;
-
-extern short last_map_for_lights_func_11;
 
 struct LoginControl login_control[4];
 
@@ -2542,11 +2540,7 @@ void init_level(void)
 
     VNAV_preprocess_bezier_turns(1);
     VNAV_init_new_traffic_system();
-#if 0
-    if (last_map_for_lights_func_11 != current_map) // maps are often reloaded, so we cannot skip lights update
-#endif
     map_lights_update();
-    last_map_for_lights_func_11 = current_map;
     init_scanner();
     find_the_tall_buildings();
     PlayCDTrack(ingame.CDTrack);
@@ -3616,11 +3610,11 @@ void gproc3_unknsub2(void)
     ingame.Flags &= ~GamF_BillboardMovies;
     if (is_key_pressed(KC_Q, KMod_DONTCARE))
     {
-        dword_155010 = 0x4000;
-        dword_155014 = 0x4000;
+        flyby_cam_x = 0x4000;
+        flyby_cam_z = 0x4000;
         dword_1AAB74 = 0;
         dword_1AAB78 = 0;
-        dword_155018 = 50;
+        flyby_cam_y = 50;
     }
 
     bkp_ingame_flags = ingame.Flags;
@@ -3648,8 +3642,8 @@ void gproc3_unknsub2(void)
 
     if (!lbDisplay.MRightButton)
     {
-        dword_155010 += lbSinTable[dword_1AAB74] >> 9;
-        dword_155014 += lbSinTable[dword_1AAB74 + LbFPMath_PI/2] >> 9;
+        flyby_cam_x += lbSinTable[dword_1AAB74] >> 9;
+        flyby_cam_z += lbSinTable[dword_1AAB74 + LbFPMath_PI/2] >> 9;
     }
 
     ms_limit = lbDisplay.MouseWindowY + lbDisplay.MouseWindowHeight * 1 / 3;
@@ -3663,24 +3657,24 @@ void gproc3_unknsub2(void)
     if (dword_1AAB78 < -300)
         dword_1AAB78 = -300;
 
-    i = (alt_at_point(dword_155010, dword_155014) >> 8) - 50;
-    if (i > dword_155018)
-        dword_155018 = i;
+    i = (alt_at_point(flyby_cam_x, flyby_cam_z) >> 8) - 50;
+    if (i > flyby_cam_y)
+        flyby_cam_y = i;
 
-    if (dword_155010 < 0)
-        dword_155010 = 0x8000;
-    if (dword_155010 > 0x8000)
-        dword_155010 = 0;
+    if (flyby_cam_x < 0)
+        flyby_cam_x = 0x8000;
+    if (flyby_cam_x > 0x8000)
+        flyby_cam_x = 0;
 
-    if (dword_155014 < 0)
-        dword_155014 = 0x8000;
-    if (dword_155014 > 0x8000)
-        dword_155014 = 0;
+    if (flyby_cam_z < 0)
+        flyby_cam_z = 0x8000;
+    if (flyby_cam_z > 0x8000)
+        flyby_cam_z = 0;
 
     engn_cam_tilt = dword_1AAB78;
-    engn_xc = dword_155010;
-    engn_yc = dword_155018;
-    engn_zc = dword_155014;
+    engn_xc = flyby_cam_x;
+    engn_yc = flyby_cam_y;
+    engn_zc = flyby_cam_z;
     engn_cam_yaw = 32 * dword_1AAB74;
 
 #if 0

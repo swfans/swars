@@ -119768,19 +119768,6 @@ effect_52_angle_div:	/* 0x154F78, used in unused_create_effects_52_circle */
 plasma_width:
 		.ascii  "\x03\x02\x01\x01\x01\x02\x03\x00"
 
-GLOBAL (dword_155010)	/* 0x155010 */
-		.ascii  "\x00\x40"
-		.short  0x0
-GLOBAL (dword_155014)	/* 0x155014 */
-		.ascii  "\x00\x40"
-		.short  0x0
-GLOBAL (dword_155018)	/* 0x155018 */
-		.ascii  "\x32\x00"
-		.short  0x0
-GLOBAL (last_map_for_lights_func_11)	/* 0x15501C */
-		.byte	0xff
-		.byte	0xff
-		.ascii  "\x00\x00"
 quiver:	/* 0x155020 */
 		.ascii  "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 		.ascii  "\xff\x00\x01\x00\xff\xfd\xff\x00"
@@ -119822,11 +119809,6 @@ GLOBAL (tag_current)	/* 0x1550F0 */
 		.byte	0xff
 		.align	4
 
-GLOBAL (text_colours)	/* 0x1552e4 */
-		.ascii  "\x32\xf4\xb0\xae\x57\xf7\xf6"
-		.ascii  "\xf5\xf8\xda\x32\xae\xaf\xb0\x32"
-		.ascii  "\x00\x01\x00"
-		.short  0x1
 GLOBAL (word_1552F8)	/* 0x1552F8 */
 		.short  0x1
 		.short  0x5
