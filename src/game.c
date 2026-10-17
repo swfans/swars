@@ -229,6 +229,8 @@ long dword_153194 = 0x100;
 
 ushort word_1531E0 = 1;
 
+const char *outro_story_text;
+const char *outro_header_text;
 s32 outro_last_played_smp = -1;
 
 ulong stored_l3d_next_object;
@@ -368,10 +370,6 @@ struct TbLoadFiles missionspr_load_files[] =
   { "qdata/pal.pal",	(void **)&display_palette,	(void **)NULL,				0, 0, 0 },
   { "",					(void **)NULL, 				(void **)NULL,				0, 0, 0 }
 };
-
-char unk_credits_text_s[] = "";
-char unk_credits_text_z[] = "";
-char unk_credits_text_p[] = "";
 
 ubyte reload_menu_flags = 0;
 
@@ -1083,35 +1081,6 @@ void func_cc0d4(char **text_pargr)
     }
 }
 
-char draw_outro_text(const char *text1, const char *text2)
-{
-    int x, y;
-    int i;
-
-    colwavapr_timer = 0;
-    gameturn = 0;
-
-    for (i = 0; i < 200; i++)
-    {
-        colwav_enable = 0;
-        colwavapr_reveal_tm = 0;
-
-        x = 12;
-        y = 14;
-
-        draw_colwavapr_text_with_header(x, &y, text1, text2);
-        colwavapr_timer++;
-        if (colwavapr_timer > colwavapr_reveal_tm + 20)
-            break;
-
-        swap_wscreen();
-        wait_next_gameturn();
-        gameturn++;
-    }
-
-    return 0;
-}
-
 void screen_dark_curtain_down(void)
 {
     int w;
@@ -1184,6 +1153,9 @@ int load_outro_text(ubyte *buf)
     char *s;
     int i;
 
+    outro_header_text = "";
+    outro_story_text = "";
+
     totlen = load_file_alltext("outtro.txt", buf);
     if (totlen == -1) {
         buf[0] = '\0';
@@ -1201,13 +1173,15 @@ int load_outro_text(ubyte *buf)
         s++;
     }
     s++;
-    outro_text_s = s;
+    if (background_type == 0)
+        outro_story_text = s;
 
     while ((*s != ']') && (*s != '\0')) {
         s++;
     }
     s++;
-    outro_text_z = s;
+    if (background_type == 1)
+        outro_story_text = s;
 
     return totlen + 1;
 }
@@ -1738,26 +1712,33 @@ void process_sound_heap(void)
 
 void screen_animate_draw_outro_text(void)
 {
-    const char *text1;
-    const char *text2;
+    const char *text_hdr;
+    const char *text_par;
+    int x, y;
 
-    switch (background_type)
+    text_hdr = outro_header_text;
+    text_par = outro_story_text;
+
+    colwavapr_timer = 0;
+    gameturn = 0;
+
+    while (1)
     {
-    case 0:
-    default:
-        text1 = unk_credits_text_s;
-        text2 = outro_text_s;
-        break;
-    case 1:
-        text1 = unk_credits_text_z;
-        text2 = outro_text_z;
-        break;
-    case 2:
-        text1 = unk_credits_text_p;
-        text2 = outro_text_z;
-        break;
+        colwav_enable = 0;
+        colwavapr_reveal_tm = 0;
+
+        x = 12;
+        y = 14;
+
+        draw_colwavapr_text_with_header(x, &y, text_hdr, text_par);
+        colwavapr_timer++;
+        if (colwavapr_timer > colwavapr_reveal_tm + 20)
+            break;
+
+        swap_wscreen();
+        wait_next_gameturn();
+        gameturn++;
     }
-    draw_outro_text(text1, text2);
 }
 
 void init_outro(void)

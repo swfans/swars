@@ -171,8 +171,6 @@ extern ushort word_1C8446;
 
 extern ubyte old_screentype;
 extern ubyte screentype;
-extern char *outro_text_s;
-extern char *outro_text_z;
 extern s32 data_1dd91c;
 extern s32 outro_credits_enabled;
 extern s32 dev_credits_group;

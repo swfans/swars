@@ -119930,10 +119930,6 @@ data_1dd928:
 GLOBAL (dev_credits_groups)	/* 0x1DDAB4 */
 		.long	0x0
 		.fill   0x9c
-GLOBAL (outro_text_s)	/* 0x1DDB54 */
-		.long	0x0
-GLOBAL (outro_text_z)	/* 0x1DDB58 */
-		.long	0x0
 GLOBAL (colwavapr_timer)	/* 0x1DDB5C */
 		.long	0x0
 GLOBAL (dev_credits_group)	/* 0x1DDB60 */
