@@ -859,8 +859,36 @@ void outro_hot_chars_shift(void)
 
 void func_cc59c(void)
 {
+#if 0
     asm volatile ("call ASM_func_cc59c\n"
         : : );
+#endif
+    int i;
+
+    for (i = 0; i < 8; i++)
+    {
+        struct OutroHotChar *p_hotchr;
+        const struct TbSprite *p_spr;
+
+        p_hotchr = &outro_hot_chars[i];
+        if (p_hotchr->chr == '\0')
+            continue;
+        switch (p_hotchr->font)
+        {
+        case 1:
+            lbFontPtr = big_font;
+            break;
+        default:
+            lbFontPtr = med2_font;
+            break;
+        }
+        p_spr = LbFontCharSprite(lbFontPtr, p_hotchr->chr);
+        LbSpriteDrawRemap(p_hotchr->x, p_hotchr->y,
+          p_spr, &pixmap.fade_table[256 * p_hotchr->fade_lv]);
+    }
+
+    swap_wscreen();
+    wait_next_gameturn();
 }
 
 char draw_outro_text(const char *text1, const char *text2)

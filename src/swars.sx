@@ -118230,7 +118230,7 @@ GLOBAL_FUNC(ASM_func_cc59c)	/* 0xcc59c */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
+GLOBAL_FUNC (ASM_draw_outro_text)	/* 0xcc638 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
