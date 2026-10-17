@@ -301,8 +301,6 @@ ubyte is_single_game = 0;
 ubyte cmdln_colour_tables = 0;
 ubyte cmdln_param_bcg = 0;
 
-ubyte unkn_flags_01 = 0;
-
 ubyte start_into_mission = false;
 ubyte edit_flag = 0;
 ubyte change_screen = 0;
@@ -2755,7 +2753,6 @@ void gproc3_unknsub2(void)
     int i;
 
     u32 bkp_ingame_flags;
-    ubyte bkp_unkn_flags_01;
 
     ingame.Flags &= ~GamF_BillboardMovies;
     if (is_key_pressed(KC_Q, KMod_DONTCARE))
@@ -2768,7 +2765,6 @@ void gproc3_unknsub2(void)
     }
 
     bkp_ingame_flags = ingame.Flags;
-    bkp_unkn_flags_01 = unkn_flags_01;
 
     camera_save_backup_state(&cam_bkp);
 
@@ -2776,7 +2772,6 @@ void gproc3_unknsub2(void)
     render_area_b = 24;
     overall_scale = 18;
 
-    unkn_flags_01 = 1;
     ingame.Flags = 0;
 
     ms_x = lbDisplay.MMouseX;
@@ -2849,7 +2844,6 @@ void gproc3_unknsub2(void)
     camera_load_backup_state(&cam_bkp);
 
     ingame.Flags = bkp_ingame_flags;
-    unkn_flags_01 = bkp_unkn_flags_01;
 
     prepare_drawlist();
 }
@@ -3001,32 +2995,6 @@ void init_agents(void)
         p_player = &players[plyr];
         player_update_agents_from_cryo(p_player);
     }
-}
-
-/** Initializes the research data for a new game.
- */
-void srm_reset_research(void)
-{
-    struct Campaign *p_campgn;
-    int i;
-
-    p_campgn = &campaigns[background_type];
-
-    for (i = 0; i < 32; i++)
-    {
-        research.WeaponDaysDone[i] = 0;
-        research.ModDaysDone[i] = 0;
-        research.WeaponProgress[i][0] = 0;
-        research.ModProgress[i][0] = 0;
-    }
-    research.WeaponsCompleted = p_campgn->StandardWeapons;
-    research.WeaponsAllowed = p_campgn->ResearchWeapons;
-    research.ModsCompleted = p_campgn->StandardMods;
-    research.ModsAllowed = p_campgn->ResearchMods;
-    research.CurrentWeapon = -1;
-    research.CurrentMod = -1;
-    research.Scientists = 0;
-    research.NumBases = 0;
 }
 
 void mission_over_give_extra_reward(ushort missi)
@@ -3581,7 +3549,6 @@ void play_post_mission_fmv(ubyte misend)
     case OMiSta_CampaignDone:
         init_outro();
         overall_scale = get_overall_scale_max();
-        unkn_flags_01 &= ~0x01;
         break;
     }
 }

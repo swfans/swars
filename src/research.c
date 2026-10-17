@@ -20,13 +20,14 @@
 
 #include "bfutility.h"
 
-#include "weapon.h"
+#include "campaign.h"
 #include "cybmod.h"
 #include "feequip.h"
 #include "feresearch.h"
 #include "game_options.h"
 #include "guitext.h"
 #include "wadfile.h"
+#include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
 short daily_scientist_death_chance_permil = 20;
@@ -442,6 +443,30 @@ int research_daily_progress_for_type(ubyte rstype)
         }
     }
     return scientists_died;
+}
+
+void srm_reset_research(void)
+{
+    struct Campaign *p_campgn;
+    int i;
+
+    p_campgn = &campaigns[background_type];
+
+    for (i = 0; i < 32; i++)
+    {
+        research.WeaponDaysDone[i] = 0;
+        research.ModDaysDone[i] = 0;
+        research.WeaponProgress[i][0] = 0;
+        research.ModProgress[i][0] = 0;
+    }
+    research.WeaponsCompleted = p_campgn->StandardWeapons;
+    research.WeaponsAllowed = p_campgn->ResearchWeapons;
+    research.ModsCompleted = p_campgn->StandardMods;
+    research.ModsAllowed = p_campgn->ResearchMods;
+    research.CurrentWeapon = -1;
+    research.CurrentMod = -1;
+    research.Scientists = 0;
+    research.NumBases = 0;
 }
 
 /******************************************************************************/

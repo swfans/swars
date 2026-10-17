@@ -76,6 +76,10 @@ TbBool is_research_cymod_completed(ushort mtype);
 TbBool is_research_cymod_allowed(ushort mtype);
 void research_cymod_allow(ushort mtype);
 void research_cymod_complete(ushort mtype);
+
+/** Initializes the research data for a new game.
+ */
+void srm_reset_research(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

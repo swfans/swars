@@ -446,7 +446,6 @@ void devteam_credits_show(void)
     play_sample_using_heap(0, 1, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_4EVER, 3);
 
     data_1dd91c = 0;
-    //unkn_flags_01 = 1; //TODO seem unused - remove pending
     overall_scale = 40;
     set_brightness_fadedout();
 
