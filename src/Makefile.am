@@ -30,8 +30,6 @@ syndwarsfx_SOURCES = \
 	../bfsmacklib/src/smack2ail.c \
 	../bfsmacklib/src/smailfile.c \
 	../bfsmacklib/src/bfsmacklib_s.sx \
-	linksmk.h \
-	linksmk.c \
 	config.h \
 	bmbang.c \
 	bmbang.h \
@@ -96,6 +94,8 @@ syndwarsfx_SOURCES = \
 	festorage.h \
 	feworld.c \
 	feworld.h \
+	fmvplay.c \
+	fmvplay.h \
 	guiboxes.c \
 	guiboxes.h \
 	guigraph.c \

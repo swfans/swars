@@ -96,15 +96,6 @@ enum OpenMissionEndStatus {
   OMiSta_CampaignDone,
 };
 
-enum MissionFMVPlay {
-    MPly_Intro,
-    MPly_MissiComplete,
-    MPly_MissiFail,
-    MPly_MPartComplete,
-    MPly_GameOver,
-    MPly_Outro,
-};
-
 struct Thing;
 
 struct BezierPt { // sizeof=28
@@ -223,8 +214,6 @@ TbBool player_try_spend_money(long cost);
 void campaign_new_game_prepare(void);
 
 void update_danger_music(ubyte a1);
-
-void play_smacker(ushort vid_type);
 
 void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign);
 

@@ -37,6 +37,7 @@
 #include "ssampply.h"
 
 #include "display.h"
+#include "fmvplay.h"
 #include "game_data.h"
 #include "game_speed.h"
 #include "game_sprts.h"

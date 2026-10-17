@@ -1,14 +1,14 @@
 /******************************************************************************/
 // Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
 /******************************************************************************/
-/** @file linksmk.c
- *     Link between the main game and smacker playback library.
+/** @file fmvplay.h
+ *     Header file for fmvplay.c.
  * @par Purpose:
- *     Callback and setup functions to integrate bfsmacklib with the game.
+ *     Wrapper of Smack player which help with Full Motion Video playback.
  * @par Comment:
- *     None.
+ *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
- * @date     12 Nov 2011 - 13 Jun 2024
+ * @date     13 Apr 2023 - 16 Oct 2026
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,46 +16,39 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "linksmk.h"
+#ifndef FMVPLAY_H
+#define FMVPLAY_H
 
-#include <assert.h>
+#include "bftypes.h"
 
-#include "bfsmack.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+/******************************************************************************/
+#pragma pack(1)
 
-#include "game_data.h"
+enum MissionFMVPlay {
+    MPly_Intro,
+    MPly_MissiComplete,
+    MPly_MissiFail,
+    MPly_MPartComplete,
+    MPly_GameOver,
+    MPly_Outro,
+};
+
+#pragma pack()
+/******************************************************************************/
+
+void play_smacker(ushort vid_type);
+void play_smacker_then_back_to_engine(ushort vid_type);
+void play_smacker_then_back_to_menu(ushort vid_type);
+void play_intro(void);
+
+void smack_malloc_setup(void);
+void smack_malloc_free_all(void);
 
 /******************************************************************************/
-u32 smack_malloc_used_tot = 0;
-
-/******************************************************************************/
-
-/** Primitive but very fast mem allocation.
- */
-void *opti_smack_malloc(uint32_t msize)
-{
-    void *ptr;
-
-    assert(smack_malloc_used_tot + msize < scratch_malloc_size);
-    ptr = scratch_malloc_mem + smack_malloc_used_tot;
-    smack_malloc_used_tot += msize;
-    return ptr;
+#ifdef __cplusplus
 }
-
-void opti_smack_mfree(void *ptr)
-{
-    // Do not free any memory - we have enough space to play one video
-}
-
-void smack_malloc_free_all(void)
-{
-    smack_malloc_used_tot = 0;
-}
-
-void smack_malloc_setup(void)
-{
-    smack_malloc_used_tot = 0;
-    set_smack_malloc(opti_smack_malloc);
-    set_smack_free(opti_smack_mfree);
-}
-
-/******************************************************************************/
+#endif
+#endif
