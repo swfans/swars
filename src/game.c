@@ -844,6 +844,243 @@ void play_intro(void)
     }
 }
 
+/** Get fade level to be used while drawing next character of a text.
+ *
+ *  Computes the colour-remap fade level to be used while drawing the next
+ *  character of a text, advancing the shared letter-reveal counter
+ *  (cwa_revl_tm) towards the current progress (cwa_timer).
+ *
+ * @param fade Receives the computed fade level (0..63 range index offset) if
+ *     the character should be drawn. Write-only value.
+ * @return True if the character is already revealed and should be drawn.
+ */
+static TbBool credits_next_char_fade(s32 *fade, u32 *p_cwa_revl_tm,
+  u32 cwa_timer, u32 cw_shift)
+{
+    s32 f;
+
+    if (*p_cwa_revl_tm > cwa_timer)
+        return false;
+    (*p_cwa_revl_tm)++;
+    f = (cwa_timer - *p_cwa_revl_tm) * 2;
+    if (f > 0x1F)
+        f = 0x1F;
+    if (colwav_enable)
+        f += lbSinTable[((*p_cwa_revl_tm + cw_shift) & 0xF) * 128] >> 13;
+    if (f < 0)
+        f = 0;
+    *fade = f;
+    return true;
+}
+
+/** @internal
+ * Puts colour wave text sprites with appearing animation on screen.
+ * @param sbuf
+ * @param ebuf
+ * @param x
+ * @param y
+ * @param space_len
+ */
+void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
+  s32 scr_x, s32 scr_y, s32 space_len,
+  u32 *p_cwa_revl_tm, u32 cwa_timer, u32 cw_shift)
+{
+    const char *c;
+    int x, y;
+    ubyte chr;
+
+    x = scr_x;
+    y = scr_y;
+    for (c=sbuf; c < ebuf; c++)
+    {
+        const TbSprite *p_spr;
+        s32 fade;
+
+        chr = (ubyte)(*c);
+        p_spr = LbFontCharSprite(lbFontPtr, chr);
+        if (p_spr == NULL)
+            continue;
+
+        if (chr == ' ')
+        {
+            ubyte *p_scan;
+            s32 word_w;
+            ubyte cs;
+
+            word_w = 0;
+            p_scan = (ubyte *)c + 1;
+            if (*p_scan != chr)
+            {
+                while (1)
+                {
+                    cs = *p_scan;
+                    if ((cs == 0) || (cs == '\n') || (cs == '['))
+                        break;
+                    word_w += LbTextCharWidth(cs);
+                    if (*(p_scan + 1) != ' ') {
+                        p_scan++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if (x + word_w <= lbDisplay.PhysicalScreenWidth - 6) {
+                x += 4;
+            } else {
+                y += LbTextLineHeight() * 5 / 6;
+                x = 12;
+            }
+            continue;
+        }
+
+        if (credits_next_char_fade(&fade, p_cwa_revl_tm, cwa_timer, cw_shift)) {
+            const TbPixel *pxmap;
+
+            pxmap = &pixmap.fade_table[256 * (0x3F - fade)];
+            LbSpriteDrawRemap(x, y, p_spr, pxmap);
+        }
+        x += p_spr->SWidth;
+    }
+}
+
+int height_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
+  s32 scr_x, s32 scr_y, s32 space_len)
+{
+    const char *c;
+    int x, y;
+    ubyte chr;
+
+    x = scr_x;
+    y = scr_y;
+    for (c=sbuf; c < ebuf; c++)
+    {
+        const TbSprite *p_spr;
+
+        chr = (ubyte)(*c);
+        p_spr = LbFontCharSprite(lbFontPtr, chr);
+        if (p_spr == NULL)
+            continue;
+
+        if (chr == ' ')
+        {
+            ubyte *p_scan;
+            s32 word_w;
+            ubyte cs;
+
+            word_w = 0;
+            p_scan = (ubyte *)c + 1;
+            if (*p_scan != chr)
+            {
+                while (1)
+                {
+                    cs = *p_scan;
+                    if ((cs == 0) || (cs == '\n') || (cs == '['))
+                        break;
+                    word_w += LbTextCharWidth(cs);
+                    if (*(p_scan + 1) != ' ') {
+                        p_scan++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if (x + word_w <= lbDisplay.PhysicalScreenWidth - 6) {
+                x += 4;
+            } else {
+                y += LbTextLineHeight() * 5 / 6;
+                x = 12;
+            }
+            continue;
+        }
+
+        x += p_spr->SWidth;
+    }
+    if (x != 12)
+        y += LbTextLineHeight() * 5 / 6;
+    return y - scr_y;
+}
+
+void draw_colwavapr_text_with_header(int scr_x, int *p_scr_y, const char *text_hdr, const char *text_par)
+{
+    const char *s;
+    const char *e;
+    int x, y;
+
+    x = scr_x;
+    y = *p_scr_y;
+
+    s = text_hdr;
+    e = strchr(s, '[');
+    if (e == NULL)
+        e = s + strlen(s);
+    lbFontPtr = big_font;
+    put_down_colwavaprtext_ini_sprites(s, e, x, y, 4,
+      &colwavapr_reveal_tm, colwavapr_timer, gameturn);
+    y += height_colwavaprtext_ini_sprites(s, e, x, y, 4);
+
+    s = text_par;
+    e = strchr(s, '[');
+    if (e == NULL)
+        e = s + strlen(s);
+    lbFontPtr = med2_font;
+    put_down_colwavaprtext_ini_sprites(s, e, x, y, 4,
+      &colwavapr_reveal_tm, colwavapr_timer, gameturn);
+    y += height_colwavaprtext_ini_sprites(s, e, x, y, 4);
+    *p_scr_y = y;
+}
+
+void func_cc0d4(char **text_pargr)
+{
+#if 0
+    asm volatile ("call ASM_func_cc0d4\n"
+        : : "a" (text_pargr));
+    return;
+#endif
+    ubyte *p_ids;
+    char *s;
+    int x, y;
+
+    colwav_enable = 1;
+    colwavapr_reveal_tm = 0;
+
+    // Draw the credits group header (list of roles belonging to this group)
+    s = text_pargr[0];
+    x = 6;
+    y = 6;
+    lbFontPtr = med_font;
+    put_down_colwavaprtext_ini_sprites(s, s + strlen(s), x, y, 4,
+      &colwavapr_reveal_tm, colwavapr_timer, gameturn);
+
+    // Draw every person assigned to this group (name, then description)
+    p_ids = (ubyte *)text_pargr[1];
+    x = 12;
+    y += 8;
+    while (*p_ids != 100)
+    {
+        char **p_person;
+
+        p_person = &dev_credits_desc[2 * (*p_ids)];
+        colwav_enable = 1;
+
+        if (colwavapr_reveal_tm == colwavapr_timer)
+        {
+            short smp;
+
+            if (outro_last_played_smp != -1)
+                stop_sample_using_heap(0, outro_last_played_smp);
+            smp = 2 + (LbRandomAnyShort() % 5);
+            outro_last_played_smp = smp;
+            play_sample_using_heap(0, smp, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3u);
+        }
+
+        // Header is the person's name, paragraphed text is person's description
+        draw_colwavapr_text_with_header(x, &y, p_person[0], p_person[1]);
+
+        y += 10;
+        p_ids++;
+    }
+}
+
 void outro_hot_chars_shift(void)
 {
     ushort i;
@@ -882,9 +1119,6 @@ void func_cc59c(void)
         LbSpriteDrawRemap(p_hotchr->x, p_hotchr->y,
           p_spr, &pixmap.fade_table[256 * p_hotchr->fade_lv]);
     }
-
-    swap_wscreen();
-    wait_next_gameturn();
 }
 
 char draw_outro_text(const char *text1, const char *text2)
@@ -914,6 +1148,9 @@ char draw_outro_text(const char *text1, const char *text2)
         chr = (ubyte)*c;
         x += LbTextCharWidth(chr);
         func_cc59c();
+        swap_wscreen();
+        wait_next_gameturn();
+
         outro_hot_chars_shift();
     }
     y += LbTextLineHeight();
@@ -965,12 +1202,18 @@ char draw_outro_text(const char *text1, const char *text2)
             x += med2_font[chr - 31].SWidth;
         }
         func_cc59c();
+        swap_wscreen();
+        wait_next_gameturn();
+
         outro_hot_chars_shift();
     }
 
     for (i = 0; i < 8; i++)
     {
         func_cc59c();
+        swap_wscreen();
+        wait_next_gameturn();
+
         outro_hot_chars_shift();
     }
     return 0;
@@ -1598,186 +1841,6 @@ void process_sound_heap(void)
 {
     asm volatile ("call ASM_process_sound_heap\n"
         :  :  : "eax" );
-}
-
-/** Get fade level to be used while drawing next character of a text.
- *
- *  Computes the colour-remap fade level to be used while drawing the next
- *  character of a text, advancing the shared letter-reveal counter
- *  (cwa_revl_tm) towards the current progress (cwa_timer).
- *
- * @param fade Receives the computed fade level (0..63 range index offset) if
- *     the character should be drawn. Write-only value.
- * @return True if the character is already revealed and should be drawn.
- */
-static TbBool credits_next_char_fade(s32 *fade, u32 *p_cwa_revl_tm,
-  u32 cwa_timer, u32 cw_shift)
-{
-    s32 f;
-
-    if (*p_cwa_revl_tm > cwa_timer)
-        return false;
-    (*p_cwa_revl_tm)++;
-    f = (cwa_timer - *p_cwa_revl_tm) * 2;
-    if (f > 0x1F)
-        f = 0x1F;
-    if (colwav_enable)
-        f += lbSinTable[((*p_cwa_revl_tm + cw_shift) & 0xF) * 128] >> 13;
-    if (f < 0)
-        f = 0;
-    *fade = f;
-    return true;
-}
-
-/** @internal
- * Puts colour wave text sprites with appearing animation on screen.
- * @param sbuf
- * @param ebuf
- * @param x
- * @param y
- * @param space_len
- */
-void put_down_colwavaprtext_sprites(const char *sbuf, const char *ebuf,
-  s32 x, s32 y, s32 space_len,
-  u32 *p_cwa_revl_tm, u32 cwa_timer, u32 cw_shift)
-{
-    const char *c;
-    s32 fade;
-    ubyte chr;
-
-    for (c=sbuf; c < ebuf; c++)
-    {
-        const TbSprite *p_spr;
-
-        chr = (ubyte)(*c);
-        p_spr = LbFontCharSprite(lbFontPtr, chr);
-
-        if (credits_next_char_fade(&fade, p_cwa_revl_tm, cwa_timer, cw_shift)) {
-            const TbPixel *pxmap;
-
-            pxmap = &pixmap.fade_table[256 * (0x3F - fade)];
-            LbSpriteDrawRemap(x, y, p_spr, pxmap);
-        }
-        x += p_spr->SWidth;
-    }
-}
-
-void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
-  s32 x, s32 y, s32 space_len,
-  u32 *p_cwa_revl_tm, u32 cwa_timer, u32 cw_shift)
-{
-    const char *c;
-    ubyte chr;
-
-    for (c=sbuf; c < ebuf; c++)
-    {
-        const TbSprite *p_spr;
-        s32 fade;
-
-        chr = (ubyte)(*c);
-        p_spr = LbFontCharSprite(lbFontPtr, chr);
-
-        if (chr == ' ')
-        {
-            ubyte *p_scan;
-            s32 word_w;
-            ubyte cs;
-
-            word_w = 0;
-            p_scan = (ubyte *)c + 1;
-            if (*p_scan != chr)
-            {
-                while (1)
-                {
-                    cs = *p_scan;
-                    if ((cs == 0) || (cs == '\n') || (cs == '['))
-                        break;
-                    word_w += LbTextCharWidth(cs);
-                    if (*(p_scan + 1) != ' ') {
-                        p_scan++;
-                    } else {
-                        break;
-                    }
-                }
-            }
-            if (x + word_w <= lbDisplay.PhysicalScreenWidth - 6) {
-                x += 4;
-            } else {
-                y += 6;
-                x = 12;
-            }
-            continue;
-        }
-
-        if (credits_next_char_fade(&fade, p_cwa_revl_tm, cwa_timer, cw_shift)) {
-            const TbPixel *pxmap;
-
-            pxmap = &pixmap.fade_table[256 * (0x3F - fade)];
-            LbSpriteDrawRemap(x, y, p_spr, pxmap);
-        }
-        x += p_spr->SWidth;
-    }
-}
-
-void func_cc0d4(char **text_pargr)
-{
-#if 0
-    asm volatile ("call ASM_func_cc0d4\n"
-        : : "a" (text_pargr));
-    return;
-#endif
-    ubyte *p_ids;
-    char *s;
-    s32 x, y;
-
-    colwav_enable = 1;
-    colwavapr_reveal_tm = 0;
-
-    // Draw the credits group header (list of roles belonging to this group)
-    s = text_pargr[0];
-    x = 6;
-    y = 6;
-    lbFontPtr = med_font;
-    put_down_colwavaprtext_sprites(s, s + strlen(s), x, y, 4,
-      &colwavapr_reveal_tm, colwavapr_timer, gameturn);
-
-    // Draw every person assigned to this group (name, then description)
-    p_ids = (ubyte *)text_pargr[1];
-    y += 8;
-    while (*p_ids != 100)
-    {
-        char **p_person;
-
-        p_person = &dev_credits_desc[2 * (*p_ids)];
-        colwav_enable = 1;
-        x = 12;
-
-        if (colwavapr_reveal_tm == colwavapr_timer)
-        {
-            short smp;
-
-            if (outro_last_played_smp != -1)
-                stop_sample_using_heap(0, outro_last_played_smp);
-            smp = 2 + (LbRandomAnyShort() % 5);
-            outro_last_played_smp = smp;
-            play_sample_using_heap(0, smp, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3u);
-        }
-
-        // Draw the person's name
-        s = p_person[0];
-        lbFontPtr = big_font;
-        put_down_colwavaprtext_sprites(s, s + strlen(s), x, y, 4,
-          &colwavapr_reveal_tm, colwavapr_timer, gameturn);
-        y += LbTextLineHeight();
-
-        // Draw the person's description, word-wrapped to the screen width
-        s = p_person[1];
-        lbFontPtr = med2_font;
-        put_down_colwavaprtext_ini_sprites(s, s + strlen(s), x, y, 4,
-          &colwavapr_reveal_tm, colwavapr_timer, gameturn);
-        y += 10;
-        p_ids++;
-    }
 }
 
 void screen_animate_draw_outro_text(void)
