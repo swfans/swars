@@ -394,6 +394,15 @@ int alt_change_at_tile(short tile_x, short tile_z, int *change_xz)
     return abs(alt_max - alt_min);
 }
 
+int is_this_a_nice_place_for_a_picnic(s32 prc_x, s32 prc_z)
+{
+    int ret;
+    asm volatile (
+      "call ASM_is_this_a_nice_place_for_a_picnic\n"
+        : "=r" (ret) : "a" (prc_x), "d" (prc_z));
+    return ret;
+}
+
 ubyte map_coord_to_collision_qbit_index(short x, short z)
 {
     ubyte qb;

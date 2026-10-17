@@ -977,7 +977,7 @@ GLOBAL_FUNC(ASM_simulated_level)	/* 0x0116A4 */
 	jump_11730:
 		mov    %edi,%edx
 		mov    %ebp,%eax
-		call   ASM_is_this_a_nice_place_for_a_picnic
+		call   ac_is_this_a_nice_place_for_a_picnic
 		test   %eax,%eax
 		je     jump_1171c
 		push   $0x40
@@ -986,7 +986,7 @@ GLOBAL_FUNC(ASM_simulated_level)	/* 0x0116A4 */
 		push   $0x32
 		xor    %ecx,%ecx
 		xor    %edx,%edx
-		call   func_756e4
+		call   ac_unkn_create_random_person
 		jmp    jump_1171c
 	jump_11752:
 		xor    %edi,%edi
@@ -1042,7 +1042,7 @@ GLOBAL_FUNC(ASM_simulated_level)	/* 0x0116A4 */
 		shl    $0x8,%edx
 		shl    $0x8,%eax
 		sar    $0x8,%ebp
-		call   ASM_is_this_a_nice_place_for_a_picnic
+		call   ac_is_this_a_nice_place_for_a_picnic
 		test   %eax,%eax
 		je     jump_1178a
 		mov    $0x1a,%ecx
@@ -4408,40 +4408,6 @@ GLOBAL_FUNC(ASM_PacketRecord_Read)	/* 0x035284 */
 		pop    %edx
 		pop    %ecx
 		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_opti_smack_mfree)	/* 0x35644 */
-/*----------------------------------------------------------------*/
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_opti_smack_malloc)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %edx
-		mov    EXPORT_SYMBOL(scratch_malloc_mem),%edx
-		mov    EXPORT_SYMBOL(smack_malloc_used_tot),%ebx
-		add    %ebx,%edx
-		lea    (%ebx,%eax,1),%ecx
-		mov    %ecx,EXPORT_SYMBOL(smack_malloc_used_tot)
-		mov    %edx,%eax
-		pop    %edx
-		pop    %ecx
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_smack_malloc_free_all)
-/*----------------------------------------------------------------*/
-		push   %edx
-		xor    %edx,%edx
-		mov    %edx,EXPORT_SYMBOL(smack_malloc_used_tot)
-		pop    %edx
 		ret
 
 
@@ -56875,7 +56841,7 @@ GLOBAL_FUNC(ASM_replace_thing_given_thing_idx)	/* 0x075674 */
 
 
 /*----------------------------------------------------------------*/
-func_756e4:
+GLOBAL_FUNC(ASM_unkn_create_random_person)	/* 0x756e4 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -60672,7 +60638,7 @@ GLOBAL_FUNC(ASM_start_landing)	/* 0x078240 */
 	jump_78254:
 		mov    0x20(%ebx),%edx
 		mov    0x18(%ebx),%eax
-		call   ASM_is_this_a_nice_place_for_a_picnic
+		call   ac_is_this_a_nice_place_for_a_picnic
 		test   %eax,%eax
 		je     jump_7827a
 		movw   $0x0,0x4c(%ebx)

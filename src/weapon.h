@@ -292,6 +292,8 @@ TbBool weapons_remove_one_for_player(u32 *p_weapons,
 
 void give_take_me_weapon(struct Thing *p_person, int item, int giveortake, short id);
 
+TbBool weapons_add_one_for_npc(u32 *p_weapons, WeaponType wtype);
+
 TbBool weapons_add_one(u32 *p_weapons,
   struct WeaponsFourPack *p_fourpacks, WeaponType wtype);
 

@@ -1759,10 +1759,100 @@ void init_game_controls(void)
     init_user_input_local_controls();
 }
 
+struct Thing *unkn_create_random_person(int cor_x, int cor_y, int cor_z,
+  int a4, int a5, int a6)
+{
+    struct Thing *p_person;
+    ushort rnd;
+    ushort subtype;
+    WeaponType wtype;
+
+    subtype = things_used % 12;
+    if (subtype == 0)
+        subtype = 1;
+    p_person = new_sim_person(cor_x, cor_y, cor_z, subtype);
+
+    rnd = things_used;
+    p_person->U.UPerson.StartTimer2 = 10;
+    p_person->U.UPerson.Angle = rnd & 7;
+    p_person->U.UPerson.Timer2 = 10;
+    p_person->State = PerSt_WANDER;
+
+    wtype = p_person->U.UPerson.CurrentWeapon;
+    weapons_add_one_for_npc(&p_person->U.UPerson.WeaponsCarried, wtype);
+    reset_person_frame(p_person);
+
+    return p_person;
+}
+
 void simulated_level(void)
 {
+#if 0
     asm volatile ("call ASM_simulated_level\n"
         :  :  : "eax" );
+    return;
+#endif
+    int i;
+    ushort tl_z, tl_x;
+    MapCoord cor_x, cor_y, cor_z;
+
+    for (i = 0; i < PEOPLE_GROUPS_LIMIT; i++)
+    {
+        war_flags[i].KillOnSight = 0;
+        war_flags[i].Guardians[0] = 6;
+        war_flags[i].Guardians[1] = 0;
+    }
+
+    for (tl_x = 10; tl_x < 122; tl_x += 8)
+    {
+        cor_x = TILE_TO_MAPCOORD(tl_x, 0);
+        for (tl_z = 10; tl_z < 122; tl_z += 8)
+        {
+            cor_z = TILE_TO_MAPCOORD(tl_z, 0);
+            if (!is_this_a_nice_place_for_a_picnic(
+              MAPCOORD_TO_PRCCOORD(cor_x,0),
+              MAPCOORD_TO_PRCCOORD(cor_z,0)))
+                continue;
+            unkn_create_random_person(cor_x, 0, cor_z, 0, 50, 64);
+        }
+    }
+
+    for (i = 0; i < 100; i++)
+    {
+        struct SimpleThing *p_item;
+        ushort wtype;
+
+        tl_x = 10 + (LbRandomAnyShort() % 100);
+        tl_z = 10 + (LbRandomAnyShort() % 100);
+        cor_x = TILE_TO_MAPCOORD(tl_x, 127);
+        cor_z = TILE_TO_MAPCOORD(tl_z, 127);
+        cor_y = alt_at_point(cor_x, cor_z) >> 8;
+
+        if (!is_this_a_nice_place_for_a_picnic(
+          MAPCOORD_TO_PRCCOORD(cor_x,0),
+          MAPCOORD_TO_PRCCOORD(cor_z,0)))
+            continue;
+
+        wtype = (i % 26) + 1;
+        if (((1 << (i % 26)) & ~0xC0042000) == 0)
+            continue;
+
+        p_item = create_item(cor_x, cor_y, cor_z, 1004u, wtype);
+        if (p_item != NULL)
+        {
+            if ((wtype == WEP_EXPLMINE) || (wtype == WEP_ELEMINE))
+            {
+                p_item->Owner2 = 0;
+                p_item->Timer1 = 999;
+                p_item->StartTimer1 = 999;
+                if (wtype <= WEP_ELEMINE)
+                    p_item->SubType = 7;
+                else
+                    p_item->SubType = 3;
+                p_item->Radius = 50;
+            }
+        }
+    }
 }
 
 void init_local_player_group(void)

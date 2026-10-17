@@ -196,6 +196,8 @@ void map_limit_distance_to_target_fast(short base_x, short base_y, short base_z,
  */
 int alt_change_at_tile(short tile_x, short tile_z, int *change_xz);
 
+int is_this_a_nice_place_for_a_picnic(s32 prc_x, s32 prc_z);
+
 /** Sets some of the map elements flags based on other properties.
  */
 void update_map_flags(void);

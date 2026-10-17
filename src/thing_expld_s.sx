@@ -307,7 +307,7 @@ func_e06d8:
 		shl    $0xe,%ebx
 		mov    %esi,%eax
 		mov    %ebx,%edx
-		call   ASM_is_this_a_nice_place_for_a_picnic
+		call   ac_is_this_a_nice_place_for_a_picnic
 		test   %eax,%eax
 		je     jump_e08e3
 		sar    $0x8,%ebx

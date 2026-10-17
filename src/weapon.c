@@ -740,6 +740,27 @@ TbBool weapons_remove_one_for_player(u32 *p_weapons,
     return true;
 }
 
+TbBool weapons_add_one_for_npc(u32 *p_weapons, WeaponType wtype)
+{
+    ushort fp;
+    TbBool is_first;
+
+    is_first = ((*p_weapons & (1 << (wtype-1))) == 0);
+
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        // Always allow - fourpack count is not preserved for NPCs
+    } else {
+        if (!is_first)
+            return false;
+    }
+
+    if (is_first)
+        *p_weapons |= (1 << (wtype-1));
+
+    return true;
+}
+
 TbBool weapons_add_one(u32 *p_weapons, struct WeaponsFourPack *p_fourpacks, WeaponType wtype)
 {
     ushort fp;
