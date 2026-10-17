@@ -203,8 +203,6 @@ enum ReloadMenuFlags {
     RelMnuF_ScrBoxesFull = 0x04,
 };
 
-#define OUTRO_HOT_CHARS_COUNT 8
-
 #pragma pack(1)
 
 /** A character of the outro text which was already drawn, and is still
@@ -318,8 +316,6 @@ ubyte unkn_flags_01 = 0;
 ubyte start_into_mission = false;
 ubyte edit_flag = 0;
 ubyte change_screen = 0;
-
-struct OutroHotChar outro_hot_chars[OUTRO_HOT_CHARS_COUNT];
 
 ubyte input_char;
 
@@ -1037,24 +1033,30 @@ void func_cc0d4(char **text_pargr)
     return;
 #endif
     ubyte *p_ids;
-    char *s;
     int x, y;
+    int par_padding;
 
     colwav_enable = 1;
     colwavapr_reveal_tm = 0;
 
+    lbFontPtr = med2_font;
+    par_padding = LbTextLineHeight() / 2;
+
     // Draw the credits group header (list of roles belonging to this group)
-    s = text_pargr[0];
     x = 6;
-    y = 6;
-    lbFontPtr = med_font;
-    put_down_colwavaprtext_ini_sprites(s, s + strlen(s), x, y, 4,
-      &colwavapr_reveal_tm, colwavapr_timer, gameturn);
+    y = par_padding;
+    {
+        char *s;
+        s = text_pargr[0];
+        lbFontPtr = med_font;
+        put_down_colwavaprtext_ini_sprites(s, s + strlen(s), x, y, 4,
+          &colwavapr_reveal_tm, colwavapr_timer, gameturn);
+        y += height_colwavaprtext_ini_sprites(s, s + strlen(s), x, y, 4);
+    }
 
     // Draw every person assigned to this group (name, then description)
     p_ids = (ubyte *)text_pargr[1];
     x = 12;
-    y += 8;
     while (*p_ids != 100)
     {
         char **p_person;
@@ -1076,146 +1078,37 @@ void func_cc0d4(char **text_pargr)
         // Header is the person's name, paragraphed text is person's description
         draw_colwavapr_text_with_header(x, &y, p_person[0], p_person[1]);
 
-        y += 10;
+        y += par_padding;
         p_ids++;
-    }
-}
-
-void outro_hot_chars_shift(void)
-{
-    ushort i;
-
-    for (i = 0; i < OUTRO_HOT_CHARS_COUNT - 1; i++)
-    {
-        LbMemoryCopy(&outro_hot_chars[i], &outro_hot_chars[i+1], sizeof(struct OutroHotChar));
-        if (outro_hot_chars[i].fade_lv > 32)
-            outro_hot_chars[i].fade_lv -= 4;
-    }
-    outro_hot_chars[OUTRO_HOT_CHARS_COUNT - 1].chr = 0;
-}
-
-void func_cc59c(void)
-{
-    int i;
-
-    for (i = 0; i < 8; i++)
-    {
-        struct OutroHotChar *p_hotchr;
-        const struct TbSprite *p_spr;
-
-        p_hotchr = &outro_hot_chars[i];
-        if (p_hotchr->chr == '\0')
-            continue;
-        switch (p_hotchr->font)
-        {
-        case 1:
-            lbFontPtr = big_font;
-            break;
-        default:
-            lbFontPtr = med2_font;
-            break;
-        }
-        p_spr = LbFontCharSprite(lbFontPtr, p_hotchr->chr);
-        LbSpriteDrawRemap(p_hotchr->x, p_hotchr->y,
-          p_spr, &pixmap.fade_table[256 * p_hotchr->fade_lv]);
     }
 }
 
 char draw_outro_text(const char *text1, const char *text2)
 {
-    int i;
     int x, y;
-    const char *c;
+    int i;
 
-    for (i = 0; i < OUTRO_HOT_CHARS_COUNT; i += 1) {
-        outro_hot_chars[i].chr = 0;
-    }
+    colwavapr_timer = 0;
+    gameturn = 0;
 
-    lbFontPtr = big_font;
-    x = 12;
-    y = 14;
-    for (c = text1; *c != '\0'; c++)
+    for (i = 0; i < 200; i++)
     {
-        u32 chr;
+        colwav_enable = 0;
+        colwavapr_reveal_tm = 0;
 
-        i = OUTRO_HOT_CHARS_COUNT - 1;
-        outro_hot_chars[i].chr = *c;
-        outro_hot_chars[i].font = 1;
-        outro_hot_chars[i].x = x;
-        outro_hot_chars[i].y = y;
-        outro_hot_chars[i].fade_lv = 63;
+        x = 12;
+        y = 14;
 
-        chr = (ubyte)*c;
-        x += LbTextCharWidth(chr);
-        func_cc59c();
-        swap_wscreen();
-        wait_next_gameturn();
-
-        outro_hot_chars_shift();
-    }
-    y += LbTextLineHeight();
-
-    x = 12;
-    lbFontPtr = med2_font;
-    for (c = text2; *c != '\0'; c++)
-    {
-        u32 chr;
-
-        chr = (ubyte)*c;
-        if (*c == '[')
+        draw_colwavapr_text_with_header(x, &y, text1, text2);
+        colwavapr_timer++;
+        if (colwavapr_timer > colwavapr_reveal_tm + 20)
             break;
-        if (*c == '\r')
-        {
-            // no extra action
-        }
-        else if (*c == '\n')
-        {
-            x = 12;
-            y += 6;
-        }
-        else if (*c == ' ')
-        {
-            const char *cw;
-            int word_w;
 
-            word_w = 0;
-            for (cw = c + 1; *cw != '\0'; cw++)
-            {
-                if ((*cw == ' ') || (*cw == '\n') || (*cw == '['))
-                    break;
-                word_w += LbTextCharWidth(*cw);
-            }
-            if (x + word_w <= lbDisplay.PhysicalScreenWidth - 6) {
-                x += 4;
-            } else {
-                x = 12;
-                y += 9;
-            }
-        }
-        else
-        {
-            outro_hot_chars[7].x = x;
-            outro_hot_chars[7].y = y;
-            outro_hot_chars[7].chr = chr;
-            outro_hot_chars[7].font = 2;
-            outro_hot_chars[7].fade_lv = 63;
-            x += med2_font[chr - 31].SWidth;
-        }
-        func_cc59c();
         swap_wscreen();
         wait_next_gameturn();
-
-        outro_hot_chars_shift();
+        gameturn++;
     }
 
-    for (i = 0; i < 8; i++)
-    {
-        func_cc59c();
-        swap_wscreen();
-        wait_next_gameturn();
-
-        outro_hot_chars_shift();
-    }
     return 0;
 }
 
@@ -1884,12 +1777,6 @@ void init_outro(void)
     change_current_map(51);
     load_outro_sprites();
 
-    outro_credits_enabled = 0;
-    colwavapr_timer = 0;
-    dev_credits_group = 0;
-    gameturn = 0;
-    render_clock_set_turn(gameturn);
-
     screen_animate_draw_outro_text();
     // Sleep for up to 10 seconds
     screen_wait_seconds_or_until_continue_key(10);
@@ -1899,6 +1786,13 @@ void init_outro(void)
     show_black_screen();
     StopAllSamples();
     reset_heaps();
+
+    outro_credits_enabled = 0;
+    dev_credits_group = 0;
+    colwavapr_timer = 0;
+    gameturn = 0;
+    render_clock_set_turn(gameturn);
+
     setup_heaps(SHSC_CreditsSnd, language_3str);
     play_sample_using_heap(0, 1, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_4EVER, 3);
 
