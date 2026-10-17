@@ -1168,20 +1168,20 @@ int load_outro_text(ubyte *buf)
         s[i] = my_char_to_upper(s[i]);
     }
 
+    // Primitive INI parsing - we expect 1st block to always be `header_win`
     s = (char *)buf;
     while ((*s != ']') && (*s != '\0')) {
         s++;
     }
     s++;
-    if (background_type == 0)
-        outro_story_text = s;
+    outro_header_text = s;
 
+    // Primitive INI parsing - we expect 2nd block to always be `message_win`
     while ((*s != ']') && (*s != '\0')) {
         s++;
     }
     s++;
-    if (background_type == 1)
-        outro_story_text = s;
+    outro_story_text = s;
 
     return totlen + 1;
 }
