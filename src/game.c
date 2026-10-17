@@ -859,10 +859,6 @@ void outro_hot_chars_shift(void)
 
 void func_cc59c(void)
 {
-#if 0
-    asm volatile ("call ASM_func_cc59c\n"
-        : : );
-#endif
     int i;
 
     for (i = 0; i < 8; i++)
@@ -893,12 +889,6 @@ void func_cc59c(void)
 
 char draw_outro_text(const char *text1, const char *text2)
 {
-#if 0
-    char ret;
-    asm volatile ("call ASM_draw_outro_text\n"
-        : "=r" (ret) : "a" (text1), "d" (text2));
-    return ret;
-#endif
     int i;
     int x, y;
     const char *c;
@@ -988,11 +978,6 @@ char draw_outro_text(const char *text1, const char *text2)
 
 void screen_dark_curtain_down(void)
 {
-#if 0
-    asm volatile ("call ASM_screen_dark_curtain_down\n"
-        :  :  : "eax" );
-    return;
-#endif
     int w;
     ushort range_beg[MAX_SUPPORTED_SCREEN_WIDTH];
     ushort range_len[MAX_SUPPORTED_SCREEN_WIDTH];
