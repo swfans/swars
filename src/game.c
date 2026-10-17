@@ -891,11 +891,14 @@ void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
         s32 fade;
 
         chr = (ubyte)(*c);
-        p_spr = LbFontCharSprite(lbFontPtr, chr);
-        if (p_spr == NULL)
-            continue;
 
-        if (chr == ' ')
+        if (chr == '\n')
+        {
+            y += LbTextLineHeight() * 5 / 6;
+            x = scr_x;
+            continue;
+        }
+        else if (chr == ' ')
         {
             ubyte *p_scan;
             s32 word_w;
@@ -922,10 +925,14 @@ void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
                 x += 4;
             } else {
                 y += LbTextLineHeight() * 5 / 6;
-                x = 12;
+                x = scr_x;
             }
             continue;
         }
+
+        p_spr = LbFontCharSprite(lbFontPtr, chr);
+        if (p_spr == NULL)
+            continue;
 
         if (credits_next_char_fade(&fade, p_cwa_revl_tm, cwa_timer, cw_shift)) {
             const TbPixel *pxmap;
@@ -951,11 +958,14 @@ int height_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
         const TbSprite *p_spr;
 
         chr = (ubyte)(*c);
-        p_spr = LbFontCharSprite(lbFontPtr, chr);
-        if (p_spr == NULL)
-            continue;
 
-        if (chr == ' ')
+        if (chr == '\n')
+        {
+            y += LbTextLineHeight() * 5 / 6;
+            x = scr_x;
+            continue;
+        }
+        else if (chr == ' ')
         {
             ubyte *p_scan;
             s32 word_w;
@@ -986,6 +996,10 @@ int height_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
             }
             continue;
         }
+
+        p_spr = LbFontCharSprite(lbFontPtr, chr);
+        if (p_spr == NULL)
+            continue;
 
         x += p_spr->SWidth;
     }
