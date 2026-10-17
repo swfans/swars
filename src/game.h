@@ -217,15 +217,16 @@ void init_unkn6_adjustable_variables(void);
 void init_agents(void);
 void srm_reset_research(void);
 void net_new_game_prepare(void);
+void change_current_map(ushort mapno);
 
 TbBool player_try_spend_money(long cost);
 void campaign_new_game_prepare(void);
 
 void update_danger_music(ubyte a1);
 
-void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign);
+void play_smacker(ushort vid_type);
 
-void draw_new_panel(void);
+void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign);
 
 void update_map_thing_and_traffic_refs(void);
 void unkn_lights_processing(void);

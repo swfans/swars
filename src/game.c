@@ -167,15 +167,6 @@
 #include "weapon.h"
 #include "wrcities.h"
 
-/** Expected sizes for font DAT/TAB files for resolution 320x200.
- * Each file has 205 sprites, TAB has 6 bytes per entry, DAT varies to use empirical value.
- */
-#define EXPECTED_FONT_DAT_TAB_SIZE_8 (205 * 6 + 205 * 34)
-
-/** Expected sizes for translation strings TXT files.
- */
-#define EXPECTED_LANG_TXT_SIZE 8000
-
 /** How many game turns should pass before intro is replayed.
  */
 #define INTRO_REPLAY_TURNS 1100
@@ -229,9 +220,6 @@ char user_name[50] = "TEMP";
 long dword_153194 = 0x100;
 
 ushort word_1531E0 = 1;
-
-const char *outro_story_text;
-const char *outro_header_text;
 
 ulong stored_l3d_next_object;
 ulong stored_l3d_next_object_face3;
@@ -838,165 +826,6 @@ void play_intro(void)
     }
 }
 
-void screen_dark_curtain_down(void)
-{
-    int w;
-    // Use 32-bit range to allow 8 lower bits to be fractions of a pixel
-    u32 range_beg[MAX_SUPPORTED_SCREEN_WIDTH];
-    u32 range_len[MAX_SUPPORTED_SCREEN_WIDTH];
-    uint already_count;
-    short angl_A, angl_B, angl_C;
-    short dt_angl_A, dt_angl_B, dt_angl_C;
-
-    dt_angl_B = 20 + (LbRandomAnyShort() & 0x1F);
-    dt_angl_A = 20 + (LbRandomAnyShort() & 0x1F);
-    dt_angl_C = 20 + (LbRandomAnyShort() & 0x1F);
-    angl_B = LbRandomAnyShort() & LbFPMath_AngleMask;
-    angl_A = LbRandomAnyShort() & LbFPMath_AngleMask;
-    angl_C = LbRandomAnyShort() & LbFPMath_AngleMask;
-    for (w = 0; w < 320; w++)
-    {
-        int mag;
-
-        range_beg[w] = 0;
-        mag = lbSinTable[(angl_A & LbFPMath_AngleMask) + 512];
-        mag += lbSinTable[angl_B & LbFPMath_AngleMask];
-        mag -= lbSinTable[angl_C & LbFPMath_AngleMask];
-        range_len[w] = abs(mag) >> 6;
-
-        angl_C += dt_angl_C;
-        angl_A += dt_angl_A;
-        angl_B += dt_angl_B;
-    }
-
-    do
-    {
-        int h_beg, h_end, h;
-
-        already_count = 0;
-        for (w = 0; w < 320; w++)
-        {
-            h_beg = range_beg[w] / (game_num_fps << 8);
-            if (h_beg >= lbDisplay.GraphicsScreenHeight) {
-                already_count++;
-                continue;
-            }
-            h_end = (range_beg[w] + range_len[w]) / (game_num_fps << 8);
-            for (h = h_beg; h < h_end; h++)
-            {
-                TbPixel px;
-                uint scr_pos;
-
-                if (h >= lbDisplay.GraphicsScreenHeight)
-                    break;
-
-                scr_pos = 320 * h + w;
-                px = lbDisplay.WScreen[scr_pos];
-                lbDisplay.WScreen[scr_pos] = pixmap.fade_table[px + 4096];
-            }
-            range_beg[w] += range_len[w];
-            range_len[w] += (1 << 8) + (range_len[w] >> 5);
-            if (range_len[w] > MAX_SUPPORTED_SCREEN_HEIGHT * (4 << 8))
-                range_len[w] = MAX_SUPPORTED_SCREEN_HEIGHT * (4 << 8);
-        }
-        swap_wscreen();
-        game_update();
-    }
-    while (already_count < 320);
-}
-
-int load_outro_text(ubyte *buf)
-{
-    int totlen;
-    char *s;
-    int i;
-
-    outro_header_text = "";
-    outro_story_text = "";
-
-    totlen = load_file_alltext("outtro.txt", buf);
-    if (totlen == -1) {
-        buf[0] = '\0';
-        return 0;
-    }
-    buf[totlen] = '\0';
-    s = (char *)buf;
-    // The font can handle lower case letters, upper case just looks better
-    for (i = 0; i < totlen; i++) {
-        s[i] = my_char_to_upper(s[i]);
-    }
-
-    // Primitive INI parsing - we expect 1st block to always be `header_win`
-    s = (char *)buf;
-    while ((*s != ']') && (*s != '\0')) {
-        s++;
-    }
-    s++;
-    outro_header_text = s;
-
-    // Primitive INI parsing - we expect 2nd block to always be `message_win`
-    while ((*s != ']') && (*s != '\0')) {
-        s++;
-    }
-    s++;
-    outro_story_text = s;
-
-    return totlen + 1;
-}
-
-TbResult load_outro_sprites(void)
-{
-    PathInfo *pinfo;
-    ubyte *p_buf;
-    ubyte *outtxt_ptr;
-    ubyte *peptxt_ptr;
-    int next_pos, next_len;
-    int total_allocs;
-    TbResult tret, ret;
-    short max_detail;
-
-    max_detail = 0;//UNKN_sprites_scale / 2;
-    tret = Lb_OK;
-
-    pinfo = &game_dirs[DirPlace_Data];
-
-    total_allocs = 3 * EXPECTED_FONT_DAT_TAB_SIZE_8 + 2 * EXPECTED_LANG_TXT_SIZE;
-    next_pos = engine_mem_alloc_size - 64000 - total_allocs;
-
-    assert(next_pos >= 0);
-    p_buf = engine_mem_alloc_ptr + next_pos;
-
-    ret = load_sprites_med_font(&p_buf, pinfo->directory, 7, max_detail);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_big_font(&p_buf, pinfo->directory, 6, max_detail + 1);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    ret = load_sprites_med2_font(&p_buf, pinfo->directory, 12, max_detail);
-    if (tret == Lb_OK)
-        tret = ret;
-
-    setup_sprites_med_font();
-    setup_sprites_med2_font();
-    setup_sprites_big_font();
-
-    outtxt_ptr = p_buf;
-    next_len = load_outro_text(outtxt_ptr);
-    p_buf += next_len;
-
-    peptxt_ptr = p_buf;
-    next_len = load_devteam_credits_text(peptxt_ptr);
-    p_buf += next_len;
-
-    assert((p_buf - ((ubyte *)engine_mem_alloc_ptr + next_pos)) <= total_allocs);
-    if (tret == Lb_FAIL) {
-        LOGERR("Some files were not loaded successfully");
-    }
-    return tret;
-}
-
 void fill_floor_textures(void)
 {
 #if 0
@@ -1339,71 +1168,6 @@ void process_engine_unk3(void)
     // state - no simulation code reads it. Advanced here, after the frame was
     // enlisted, it keeps the pace it had within process_things().
     animate_textures();
-}
-
-void screen_animate_draw_outro_text(void)
-{
-    const char *text_hdr;
-    const char *text_par;
-    int x, y;
-
-    text_hdr = outro_header_text;
-    text_par = outro_story_text;
-
-    colwavapr_timer = 0;
-    gameturn = 0;
-
-    while (1)
-    {
-        colwav_enable = false;
-        colwavapr_reveal_tm = 0;
-
-        x = 12;
-        y = 14;
-
-        draw_colwavapr_text_paragraph(x, &y, big_font, text_hdr);
-        draw_colwavapr_text_paragraph(x, &y, med2_font, text_par);
-        colwavapr_timer++;
-        if (colwavapr_timer > colwavapr_reveal_tm + 20)
-            break;
-
-        swap_wscreen();
-        wait_next_gameturn();
-        gameturn++;
-    }
-}
-
-void init_outro(void)
-{
-    gamep_scene_effect_type = ScEff_NONE;
-    gamep_scene_effect_intensity = 1000;
-    StopAllSamples();
-    StopCD();
-
-    play_smacker(MPly_Outro);
-
-    screen_dark_curtain_down();
-
-    init_things();
-    //TODO hard-coded map ID
-    change_current_map(51);
-    load_outro_sprites();
-
-    screen_animate_draw_outro_text();
-    // Sleep for up to 10 seconds
-    screen_wait_seconds_or_until_continue_key(10);
-
-    LbPaletteFade(0, 200, 1);
-
-    show_black_screen();
-    StopAllSamples();
-    reset_heaps();
-
-    setup_heaps(SHSC_CreditsSnd, language_3str);
-    devteam_credits_show();
-    reset_heaps();
-
-    setup_heaps(SHSC_GameSndBestQ, language_3str);
 }
 
 /**

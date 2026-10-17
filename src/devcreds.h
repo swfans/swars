@@ -42,6 +42,8 @@ void draw_colwavapr_text_paragraph(int scr_x, int *p_scr_y,
 
 void devteam_credits_show(void);
 
+void init_outro(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
