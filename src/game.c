@@ -922,7 +922,7 @@ void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
                 }
             }
             if (x + word_w <= lbDisplay.PhysicalScreenWidth - 6) {
-                x += 4;
+                x += space_len;
             } else {
                 y += LbTextLineHeight() * 5 / 6;
                 x = scr_x;
@@ -945,7 +945,7 @@ void put_down_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
 }
 
 int height_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
-  s32 scr_x, s32 scr_y, s32 space_len)
+  s32 scr_x, s32 scr_y, short space_len)
 {
     const char *c;
     int x, y;
@@ -989,10 +989,10 @@ int height_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
                 }
             }
             if (x + word_w <= lbDisplay.PhysicalScreenWidth - 6) {
-                x += 4;
+                x += space_len;
             } else {
                 y += LbTextLineHeight() * 5 / 6;
-                x = 12;
+                x = scr_x;
             }
             continue;
         }
@@ -1003,37 +1003,33 @@ int height_colwavaprtext_ini_sprites(const char *sbuf, const char *ebuf,
 
         x += p_spr->SWidth;
     }
-    if (x != 12)
+    if (x != scr_x)
         y += LbTextLineHeight() * 5 / 6;
     return y - scr_y;
 }
 
-void draw_colwavapr_text_with_header(int scr_x, int *p_scr_y, const char *text_hdr, const char *text_par)
+void draw_colwavapr_text_paragraph(int scr_x, int *p_scr_y, const struct TbSprite *p_font, const char *text)
 {
     const char *s;
     const char *e;
     int x, y;
+    short space_len;
 
     x = scr_x;
     y = *p_scr_y;
 
-    s = text_hdr;
+    s = text;
     e = strchr(s, '[');
     if (e == NULL)
         e = s + strlen(s);
-    lbFontPtr = big_font;
-    put_down_colwavaprtext_ini_sprites(s, e, x, y, 4,
-      &colwavapr_reveal_tm, colwavapr_timer, gameturn);
-    y += height_colwavaprtext_ini_sprites(s, e, x, y, 4);
 
-    s = text_par;
-    e = strchr(s, '[');
-    if (e == NULL)
-        e = s + strlen(s);
-    lbFontPtr = med2_font;
-    put_down_colwavaprtext_ini_sprites(s, e, x, y, 4,
+    lbFontPtr = p_font;
+    space_len = LbTextCharWidth(' ') / 2;
+
+    put_down_colwavaprtext_ini_sprites(s, e, x, y, space_len,
       &colwavapr_reveal_tm, colwavapr_timer, gameturn);
-    y += height_colwavaprtext_ini_sprites(s, e, x, y, 4);
+
+    y += height_colwavaprtext_ini_sprites(s, e, x, y, space_len);
     *p_scr_y = y;
 }
 
@@ -1052,20 +1048,12 @@ void func_cc0d4(char **text_pargr)
     colwavapr_reveal_tm = 0;
 
     lbFontPtr = med2_font;
-    par_padding = LbTextLineHeight() / 2;
+    par_padding = LbTextLineHeight() / 3;
 
     // Draw the credits group header (list of roles belonging to this group)
     x = 6;
     y = par_padding;
-    {
-        char *s;
-        s = text_pargr[0];
-        lbFontPtr = med_font;
-        put_down_colwavaprtext_ini_sprites(s, s + strlen(s), x, y, 4,
-          &colwavapr_reveal_tm, colwavapr_timer, gameturn);
-        y += height_colwavaprtext_ini_sprites(s, s + strlen(s), x, y, 4);
-    }
-
+    draw_colwavapr_text_paragraph(x, &y, med_font, text_pargr[0]);
     // Draw every person assigned to this group (name, then description)
     p_ids = (ubyte *)text_pargr[1];
     x = 12;
@@ -1088,7 +1076,8 @@ void func_cc0d4(char **text_pargr)
         }
 
         // Header is the person's name, paragraphed text is person's description
-        draw_colwavapr_text_with_header(x, &y, p_person[0], p_person[1]);
+        draw_colwavapr_text_paragraph(x, &y, big_font, p_person[0]);
+        draw_colwavapr_text_paragraph(x, &y, med2_font, p_person[1]);
 
         y += par_padding;
         p_ids++;
@@ -1744,7 +1733,8 @@ void screen_animate_draw_outro_text(void)
         x = 12;
         y = 14;
 
-        draw_colwavapr_text_with_header(x, &y, text_hdr, text_par);
+        draw_colwavapr_text_paragraph(x, &y, big_font, text_hdr);
+        draw_colwavapr_text_paragraph(x, &y, med2_font, text_par);
         colwavapr_timer++;
         if (colwavapr_timer > colwavapr_reveal_tm + 20)
             break;
