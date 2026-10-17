@@ -857,12 +857,105 @@ void outro_hot_chars_shift(void)
     outro_hot_chars[OUTRO_HOT_CHARS_COUNT - 1].chr = 0;
 }
 
-char func_cc638(const char *text1, const char *text2)
+void func_cc59c(void)
 {
+    asm volatile ("call ASM_func_cc59c\n"
+        : : );
+}
+
+char draw_outro_text(const char *text1, const char *text2)
+{
+#if 0
     char ret;
-    asm volatile ("call ASM_func_cc638\n"
+    asm volatile ("call ASM_draw_outro_text\n"
         : "=r" (ret) : "a" (text1), "d" (text2));
     return ret;
+#endif
+    int i;
+    int x, y;
+    const char *c;
+
+    for (i = 0; i < OUTRO_HOT_CHARS_COUNT; i += 1) {
+        outro_hot_chars[i].chr = 0;
+    }
+
+    lbFontPtr = big_font;
+    x = 12;
+    y = 14;
+    for (c = text1; *c != '\0'; c++)
+    {
+        u32 chr;
+
+        i = OUTRO_HOT_CHARS_COUNT - 1;
+        outro_hot_chars[i].chr = *c;
+        outro_hot_chars[i].font = 1;
+        outro_hot_chars[i].x = x;
+        outro_hot_chars[i].y = y;
+        outro_hot_chars[i].fade_lv = 63;
+
+        chr = (ubyte)*c;
+        x += LbTextCharWidth(chr);
+        func_cc59c();
+        outro_hot_chars_shift();
+    }
+    y += LbTextLineHeight();
+
+    x = 12;
+    lbFontPtr = med2_font;
+    for (c = text2; *c != '\0'; c++)
+    {
+        u32 chr;
+
+        chr = (ubyte)*c;
+        if (*c == '[')
+            break;
+        if (*c == '\r')
+        {
+            // no extra action
+        }
+        else if (*c == '\n')
+        {
+            x = 12;
+            y += 6;
+        }
+        else if (*c == ' ')
+        {
+            const char *cw;
+            int word_w;
+
+            word_w = 0;
+            for (cw = c + 1; *cw != '\0'; cw++)
+            {
+                if ((*cw == ' ') || (*cw == '\n') || (*cw == '['))
+                    break;
+                word_w += LbTextCharWidth(*cw);
+            }
+            if (x + word_w <= lbDisplay.PhysicalScreenWidth - 6) {
+                x += 4;
+            } else {
+                x = 12;
+                y += 9;
+            }
+        }
+        else
+        {
+            outro_hot_chars[7].x = x;
+            outro_hot_chars[7].y = y;
+            outro_hot_chars[7].chr = chr;
+            outro_hot_chars[7].font = 2;
+            outro_hot_chars[7].fade_lv = 63;
+            x += med2_font[chr - 31].SWidth;
+        }
+        func_cc59c();
+        outro_hot_chars_shift();
+    }
+
+    for (i = 0; i < 8; i++)
+    {
+        func_cc59c();
+        outro_hot_chars_shift();
+    }
+    return 0;
 }
 
 void screen_dark_curtain_down(void)
@@ -1695,7 +1788,7 @@ void screen_animate_draw_outro_text(void)
         text2 = outro_text_z;
         break;
     }
-    func_cc638(text1, text2);
+    draw_outro_text(text1, text2);
 }
 
 void init_outro(void)

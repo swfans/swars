@@ -118168,7 +118168,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 
 
 /*----------------------------------------------------------------*/
-func_cc59c:
+GLOBAL_FUNC(ASM_func_cc59c)	/* 0xcc59c */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -118274,7 +118274,7 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		and    $0xff,%eax
 		inc    %ebp
 		add    %eax,%ebx
-		call   func_cc59c
+		call   ac_func_cc59c
 		mov    $0xc,%eax
 		jmp    jump_cc6ce
 	jump_cc6c6: /* inlined outro_hot_chars_shift() */
@@ -118368,13 +118368,13 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		add    $0x9,%edi
 		mov    %esi,0x4(%esp)
 		mov    %edi,0x8(%esp)
-		call   func_cc59c
+		call   ac_func_cc59c
 		mov    $0xc,%eax
 		jmp    jump_cc863
 	jump_cc7ee:
 		lea    0x4(%ebx),%ecx
 		mov    %ecx,0x4(%esp)
-		call   func_cc59c
+		call   ac_func_cc59c
 		mov    $0xc,%eax
 		jmp    jump_cc863
 	jump_cc801:
@@ -118399,7 +118399,7 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		add    %eax,%edi
 		mov    %edi,0x4(%esp)
 	jump_cc84f:
-		call   func_cc59c
+		call   ac_func_cc59c
 		mov    $0xc,%eax
 		jmp    jump_cc863
 	jump_cc85b: /* inlined outro_hot_chars_shift() */
@@ -118432,7 +118432,7 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		xor    %ebx,%ebx
 		mov    $0x4,%cl
 		mov    $0xc,%ebp
-		call   func_cc59c
+		call   ac_func_cc59c
 		mov    %ebp,%eax
 		jmp    jump_cc8cf
 	jump_cc8b1:
@@ -118442,7 +118442,7 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		/* end of inlined outro_hot_chars_shift() */
 		cmp    $0x8,%ebx
 		jge    jump_cc8f5
-		call   func_cc59c
+		call   ac_func_cc59c
 		mov    %ebp,%eax
 		jmp    jump_cc8cf
 	jump_cc8c7: /* inlined outro_hot_chars_shift() */
