@@ -86,6 +86,7 @@ void wait_for_sound_sample_finish(ushort smpl_id);
 
 void setup_heaps(short setup_cmd, const char *lang);
 void reset_heaps(void);
+void process_sound_heap(void);
 
 /******************************************************************************/
 #endif

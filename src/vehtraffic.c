@@ -542,6 +542,12 @@ void VNAV_init_new_traffic_system(void)
         :  :  : "eax" );
 }
 
+void traffic_unkn_func_01(void)
+{
+    asm volatile ("call ASM_traffic_unkn_func_01\n"
+        :  :  : "eax" );
+}
+
 void process_next_tnode(struct Thing *p_vehicle)
 {
 #if 0

@@ -433,4 +433,10 @@ void setup_heaps(short setup_cmd, const char *lang)
     }
 }
 
+void process_sound_heap(void)
+{
+    asm volatile ("call ASM_process_sound_heap\n"
+        :  :  : "eax" );
+}
+
 /******************************************************************************/

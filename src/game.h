@@ -171,16 +171,6 @@ extern ushort word_1C8446;
 
 extern ubyte old_screentype;
 extern ubyte screentype;
-extern s32 data_1dd91c;
-extern s32 outro_credits_enabled;
-extern s32 dev_credits_group;
-extern s32 dev_credits_groups_count;
-extern u32 colwavapr_timer;
-extern u32 colwavapr_reveal_tm;
-extern s32 colwav_enable;
-
-extern char *dev_credits_desc[];
-extern char *dev_credits_groups[];
 
 extern sbyte mission_result;
 
@@ -231,7 +221,6 @@ void net_new_game_prepare(void);
 TbBool player_try_spend_money(long cost);
 void campaign_new_game_prepare(void);
 
-void process_sound_heap(void);
 void update_danger_music(ubyte a1);
 
 void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign);

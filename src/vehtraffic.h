@@ -71,6 +71,8 @@ struct Thing;
 extern struct TrafficNode *game_traffic_nodes;
 extern ushort next_traffic_node;
 
+extern s32 data_1dd91c;
+
 short get_next_tnode(struct Thing *p_vehicle, struct TrafficNode *p_tnode);
 void tnode_all_unlink_thing(ThingIdx thing);
 
@@ -79,6 +81,7 @@ void process_next_tnode(struct Thing *p_vehicle);
 void VNAV_preprocess_bezier_turns(ulong nturns);
 void VNAV_init_new_traffic_system(void);
 
+void traffic_unkn_func_01(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

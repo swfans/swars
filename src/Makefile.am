@@ -48,6 +48,8 @@ syndwarsfx_SOURCES = \
 	command.h \
 	cybmod.c \
 	cybmod.h \
+	devcreds.c \
+	devcreds.h \
 	display.c \
 	display.h \
 	dos.c \
