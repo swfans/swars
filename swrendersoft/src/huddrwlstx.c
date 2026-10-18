@@ -235,13 +235,11 @@ void hud_draw_frame_alpha(struct DIHudFrame *p_diFrame)
 void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine)
 {
     lbDisplay.DrawFlags = p_diMapCorLine->DrwFlags;
-    assert(!"not implemented");
-#if 0
+
     draw_mapcoord_line_col(
       p_diMapCorLine->PtBeg.X, p_diMapCorLine->PtBeg.Y, p_diMapCorLine->PtBeg.Z,
       p_diMapCorLine->PtEnd.X, p_diMapCorLine->PtEnd.Y, p_diMapCorLine->PtEnd.Z,
       p_diMapCorLine->Col);
-#endif
 }
 
 void hud_draw_mapcoord_line_only_whole(struct DIHudMapCoordLine *p_diMapCorLine)
