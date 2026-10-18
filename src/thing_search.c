@@ -282,7 +282,7 @@ static ThingIdx find_thing_type_on_same_type_list_within_circle_with_bfilter(sho
             if (p_sthing->Type == ttype) {
                 if ((p_sthing->SubType == subtype) || (subtype == -1)) {
 #if 0
-                    draw_mapcoord_line_col2(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_MAPCOORD(p_sthing->Y),
+                    draw_mapcoord_line_col(PRCCOORD_TO_MAPCOORD(p_sthing->X), PRCCOORD_TO_MAPCOORD(p_sthing->Y),
                       PRCCOORD_TO_MAPCOORD(p_sthing->Z), X, PRCCOORD_TO_MAPCOORD(p_sthing->Y), Z, colour_lookup[ColLU_RED]);
 #endif
 
@@ -303,7 +303,7 @@ static ThingIdx find_thing_type_on_same_type_list_within_circle_with_bfilter(sho
             if (p_thing->Type == ttype) {
                 if ((p_thing->SubType == subtype) || (subtype == -1)) {
 #if 0
-                    draw_mapcoord_line_col2(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Y),
+                    draw_mapcoord_line_col(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Y),
                       PRCCOORD_TO_MAPCOORD(p_thing->Z), X, PRCCOORD_TO_MAPCOORD(p_thing->Y), Z, colour_lookup[ColLU_RED]);
 #endif
                     if (thing_is_within_circle(thing, X, Z, R)) {

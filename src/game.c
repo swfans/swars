@@ -820,25 +820,6 @@ void process_view_inputs(int thing)
     process_overall_scale(zoom);
 }
 
-void draw_mapcoord_line_col2(int cor1_x, int cor1_y, int cor1_z,
-  int cor2_x, int cor2_y, int cor2_z, TbPixel colour)
-{
-    struct EnginePoint ep1;
-    struct EnginePoint ep2;
-
-    ep2.X3d = cor1_x - engn_xc;
-    ep2.Y3d = cor1_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep2.Z3d = cor1_z - engn_zc;
-    ep2.Flags = 0;
-    transform_point(&ep2);
-    ep1.X3d = cor2_x - engn_xc;
-    ep1.Y3d = cor2_y; // subtracted within transform_point(): - 8 * engn_yc;
-    ep1.Z3d = cor2_z - engn_zc;
-    ep1.Flags = 0;
-    transform_point(&ep1);
-    LbDrawLine(ep2.pp.X, ep2.pp.Y, ep1.pp.X, ep1.pp.Y, colour);
-}
-
 void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign)
 {
 #if 0

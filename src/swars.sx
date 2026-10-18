@@ -54655,7 +54655,7 @@ GLOBAL_FUNC(ASM_can_i_see_thing)	/* 0x06C28C */
 		mov    %eax,0x30(%esp)
 		mov    %eax,%ecx
 		mov    %esi,%eax
-		call   ac_draw_mapcoord_line_col2
+		call   ac_draw_mapcoord_line_col
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(colour_lookup),%al
 		push   %eax
@@ -54666,7 +54666,7 @@ GLOBAL_FUNC(ASM_can_i_see_thing)	/* 0x06C28C */
 		push   $0x0
 		mov    %esi,%eax
 		mov    0x30(%esp),%ecx
-		call   ac_draw_mapcoord_line_col2
+		call   ac_draw_mapcoord_line_col
 	jump_6c8da:
 		mov    0x10(%esp),%eax
 		mov    0x3c(%esp),%ebx
@@ -87116,7 +87116,7 @@ GLOBAL_FUNC(ASM_mem_group_arrived)	/* 0x0A6898 */
 		mov    0x12(%esp),%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
-		call   ac_draw_mapcoord_line_col2
+		call   ac_draw_mapcoord_line_col
 	jump_a6960:
 		imul   $0xa8,%esi,%eax
 		mov    EXPORT_SYMBOL(things),%edx
@@ -87191,7 +87191,7 @@ GLOBAL_FUNC(ASM_mem_group_arrived)	/* 0x0A6898 */
 		mov    0x12(%esp),%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
-		call   ac_draw_mapcoord_line_col2
+		call   ac_draw_mapcoord_line_col
 	jump_a6a49:
 		imul   $0xa8,%esi,%eax
 		mov    EXPORT_SYMBOL(things),%edx
@@ -104643,7 +104643,7 @@ GLOBAL_FUNC(ASM_unkn_path_func_001)	/* 0x0C0ED4 */
 		push   %eax
 		sar    $0x10,%edx
 		mov    %esi,%eax
-		call   ac_draw_mapcoord_line_col2
+		call   ac_draw_mapcoord_line_col
 	jump_c0fe4:
 		mov    (%esp),%ecx
 		inc    %edi

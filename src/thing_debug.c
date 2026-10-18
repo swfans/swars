@@ -37,6 +37,7 @@
 #include "game.h"
 #include "game_options.h"
 #include "game_sprts.h"
+#include "hud_draw.h"
 #include "keyboard.h"
 #include "pathtrig.h"
 #include "scandraw.h"
@@ -159,15 +160,15 @@ void draw_mapcoord_line_directed_to_target(int probe_x, int probe_y, int probe_z
         prv_x = probe_x + dist_x * (step - 1);
         prv_z = probe_z + dist_z * (step - 1);
 
-        enlist_hud_draw_mapcoord_line(cur_x, cur_y, cur_z,
+        enlist_hud_draw_mapcoord_line_only_whole(cur_x, cur_y, cur_z,
           prv_x + dist_z, cur_y, prv_z - dist_x, 0, 1, col2);
 
-        enlist_hud_draw_mapcoord_line(cur_x, cur_y, cur_z,
+        enlist_hud_draw_mapcoord_line_only_whole(cur_x, cur_y, cur_z,
           prv_x - dist_z, cur_y, prv_z + dist_x, 0, 1, col2);
     }
 
     // Line from floor under mouse to target
-    enlist_hud_draw_mapcoord_line(probe_x, probe_y, probe_z,
+    enlist_hud_draw_mapcoord_line_only_whole(probe_x, probe_y, probe_z,
       target_x, target_y, target_z, 0, 1, colour);
 }
 
@@ -944,31 +945,20 @@ void things_debug_hud(void)
 
         if (p_track_thing->U.UPerson.Target2 != 0)
         {
-            short tgtng_x, tgtng_y, tgtng_z;
-            get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_track_thing->U.UPerson.Target2);
-            enlist_hud_draw_mapcoord_to_scrcoord_line(trg2_scr_x, trg2_scr_y + ln/2,
-              tgtng_x, tgtng_y, tgtng_z, 0, 1, colour_lookup[ColLU_RED]);
+            enlist_hud_draw_line_from_thing_to_scrcoord(p_track_thing->U.UPerson.Target2,
+              trg2_scr_x, trg2_scr_y + ln/2, 0, colour_lookup[ColLU_RED]);
         }
 
         if (p_track_thing->GotoThingIndex != 0)
         {
-            short gttng_x, gttng_y, gttng_z;
-            get_thing_position_mapcoords(&gttng_x, &gttng_y, &gttng_z, p_track_thing->GotoThingIndex);
-            enlist_hud_draw_mapcoord_to_scrcoord_line(gtti_scr_x, gtti_scr_y + ln/2,
-              gttng_x, gttng_y, gttng_z, 0, 1, colour_lookup[ColLU_GREEN]);
+            enlist_hud_draw_line_from_thing_to_scrcoord(p_track_thing->GotoThingIndex,
+              gtti_scr_x, gtti_scr_y + ln/2, 0, colour_lookup[ColLU_GREEN]);
         }
 
         if (p_track_thing->PTarget != NULL)
         {
-            short tgtng_x, tgtng_y, tgtng_z;
-            struct Thing *p_target;
-            p_target = p_track_thing->PTarget;
-            if ((p_target > &things[0]) && (p_target < &things[THINGS_LIMIT]))
-                get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_target->ThingOffset);
-            else
-                tgtng_x = tgtng_y = tgtng_z = 0;
-            draw_mapcoord_line_col2(tng_x, tng_y, tng_z, tgtng_x, tgtng_y, tgtng_z,
-              colour_lookup[ColLU_BLUE]);
+            enlist_hud_draw_line_from_thing_ptr_to_mapcoord(p_track_thing->PTarget,
+              tng_x, tng_y, tng_z, 0, colour_lookup[ColLU_BLUE]);
         }
 
         unkn_path_func_001(p_track_thing, 0);

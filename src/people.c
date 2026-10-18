@@ -46,6 +46,7 @@
 #include "game_data.h"
 #include "game_options.h"
 #include "game_speed.h"
+#include "hud_draw.h"
 #include "lvdraw3d.h"
 #include "lvobjctv.h"
 #include "misstat.h"
@@ -4704,14 +4705,11 @@ void person_attempt_to_leave_ferry(struct Thing *p_person)
     p_cmd = &game_commands[p_person->U.UPerson.ComCur];
     radius_sqr = (p_cmd->Arg1 << 6) * (p_cmd->Arg1 << 6);
     p_vehicle = &things[p_person->U.UPerson.Vehicle];
-    draw_mapcoord_line_col2(PRCCOORD_TO_MAPCOORD(p_person->X),
-      PRCCOORD_TO_MAPCOORD(p_person->Y),
-      PRCCOORD_TO_MAPCOORD(p_person->Z),
-      p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_RED]);
-    draw_mapcoord_line_col2(PRCCOORD_TO_MAPCOORD(p_vehicle->X),
-      PRCCOORD_TO_MAPCOORD(p_vehicle->Y),
-      PRCCOORD_TO_MAPCOORD(p_vehicle->Z),
-      p_cmd->X, p_cmd->Y, p_cmd->Z, colour_lookup[ColLU_BLUE]);
+    //TODO do not draw from thing state update
+    enlist_hud_draw_line_from_thing_ptr_to_mapcoord(p_person,
+      p_cmd->X, p_cmd->Y, p_cmd->Z, 0, colour_lookup[ColLU_RED]);
+    enlist_hud_draw_line_from_thing_ptr_to_mapcoord(p_vehicle,
+      p_cmd->X, p_cmd->Y, p_cmd->Z, 0, colour_lookup[ColLU_BLUE]);
 
     if ((p_vehicle->U.UVehicle.LeisurePlace == 0) || (p_vehicle->Speed != 0)) {
         return;
