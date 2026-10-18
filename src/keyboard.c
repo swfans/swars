@@ -44,6 +44,7 @@
 ushort kbkeys[GKey_KEYS_COUNT];
 
 JoyButtonSet jskeys[GKey_KEYS_COUNT];
+ubyte ctl_joystick_type = JTyp_NONE;
 
 ulong buffered_keys[KEYBOARD_BUFFER_SIZE];
 ulong buffered_keys_read_index;

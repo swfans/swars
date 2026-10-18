@@ -76,6 +76,9 @@ ubyte cheat_research_cybmods = 0;
 ubyte byte_1C4978 = 0;
 ubyte byte_1C4979 = 0;
 
+ubyte current_drawing_mod;
+ubyte new_current_drawing_mod;
+
 // Shared with equip screen
 extern char equip_cost_text[20];
 extern struct ScreenTextBox equip_name_box;

@@ -119356,23 +119356,6 @@ data_1c4770:
 		.long	0x0
 		.align  4
 
-GLOBAL (new_current_drawing_mod)	/* 0x1C4A9C */
-		.byte	0x0
-GLOBAL (current_drawing_mod)	/* 0x1C4A9D */
-		.byte	0x0
-GLOBAL (mo_from_agent)	/* 0x1C4A9E */
-		.byte	0x0
-GLOBAL (ctl_joystick_type)	/* 0x1C4A9F */
-		.byte	0x0
-GLOBAL (display_box_content)	/* 0x1C4AA0 */
-		.byte	0x0
-		.byte	0x0
-GLOBAL (data_1c4aa2)	/* 0x1c4aa2 */
-		.byte	0x0
-GLOBAL (open_ref)	/* 0x1c4aa3 */
-		.byte	0x0
-		.align  4
-
 GLOBAL (dword_1C4B84)	/* 0x1C4B84 no function - remove pending */
 		.long	0x0
 GLOBAL (dword_1C4B88)	/* 0x1C4B88 no function - remove pending  */

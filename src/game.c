@@ -5491,8 +5491,8 @@ void apply_change_screen(void)
         update_cybmod_cost_text();
         redraw_screen_flag = 1;
         reset_mod_draw_states_flag08();
-        current_drawing_mod = 0;
-        new_current_drawing_mod = 0;
+        current_drawing_mod = ModDPt_CHEST;
+        new_current_drawing_mod = ModDPt_CHEST;
         edit_flag = 0;
         change_screen = ChSCRT_NONE;
     }

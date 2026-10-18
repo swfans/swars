@@ -169,12 +169,9 @@ extern ubyte net_player_teams[8];
 extern long dword_153194;
 
 extern ubyte group_factions[8];
-extern ubyte data_1c4aa2;
 extern ubyte start_into_mission;
 extern ubyte edit_flag;
 extern ubyte change_screen;
-extern ubyte current_drawing_mod;
-extern ubyte new_current_drawing_mod;
 
 extern struct LevelDef level_def;
 

@@ -55,6 +55,7 @@
 short next_brief = 0;
 short old_mission_brief = 0;
 short open_brief = 0;
+ubyte open_ref = 0;
 
 struct ScreenTextBox brief_mission_text_box = {0};
 struct ScreenButton unkn1_ACCEPT_button = {0};
@@ -607,7 +608,6 @@ void brief_load_mission_info(void)
     char fname[FILENAME_MAX];
 
     set_heading_box_text(gui_strings[372]);
-    data_1c4aa2 = 0;
     brief_netscan_box.Lines = 0;
 
     if (open_brief != 0)

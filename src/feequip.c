@@ -67,8 +67,9 @@ extern struct ScreenShape equip_agent_select_shapes[5];
 ubyte cheat_research_weapon = 0;
 ubyte equip_agents_panel_draw_state = 0;
 ubyte equip_agent_name_draw_state = 0;
+ubyte display_box_content = DiBoxCt_ANIM;
 
-extern ubyte mo_from_agent;
+ubyte mo_from_agent = 0;
 ubyte refresh_equip_list = 0;
 
 char equip_cost_text[20];
