@@ -354,7 +354,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_KILL_MEM_GROUP:
     case PCmd_KILL_ALL_GROUP:
     case PCmd_UNTRUCE_GROUP:
-      if ((lbShift & KMod_SHIFT) != 0)
+      if ((lbShift & KMod_ALT) != 0)
           draw_lines_scrcoord_to_all_group_members(x, y, p_cmd->OtherThing);
       return 1;
     case PCmd_BLOCK_PERSON:
@@ -384,7 +384,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_PROTECT_MEM_G:
     case PCmd_WAIT_ALL_G_DEAD:
     case PCmd_WAND_ALL_G_DEAD:
-        if ((lbShift & KMod_SHIFT) != 0)
+        if ((lbShift & KMod_ALT) != 0)
             draw_lines_scrcoord_to_all_group_members(x, y, p_cmd->OtherThing);
         return 1;
     case PCmd_KILL_EVERYONE:
@@ -414,7 +414,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_UNTIL_ALL_G_NEAR:
 	case PCmd_WAND_ALL_G_NEAR:
     case PCmd_WAND_MEM_G_NEAR:
-        if ((lbShift & KMod_SHIFT) != 0)
+        if ((lbShift & KMod_ALT) != 0)
             draw_lines_scrcoord_to_all_group_members(x, y, p_cmd->OtherThing);
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
         enlist_hud_draw_mapcoord_flat_circle(tng_x, tng_y, tng_z,
@@ -441,7 +441,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
 	case PCmd_WAIT_ALL_G_ARRIVE:
     case PCmd_WAND_MEM_G_ARRIVE:
     case PCmd_WAND_ALL_G_ARRIVE:
-        if ((lbShift & KMod_SHIFT) != 0)
+        if ((lbShift & KMod_ALT) != 0)
             draw_lines_scrcoord_to_all_group_members(x, y, p_cmd->OtherThing);
         enlist_hud_draw_mapcoord_to_scrcoord_line(x, y,
           p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
