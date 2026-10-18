@@ -1130,6 +1130,8 @@ int static_hit_by_bullet(struct SimpleThing *p_sthing, short hp,
 
 struct Thing *replace_thing_given_thing_idx(int x, int y, int z, short owner, ThingIdx pv_thing);
 
+void process_things_unkn_sub2(int tech_lv, int got_many);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

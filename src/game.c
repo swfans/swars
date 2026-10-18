@@ -286,8 +286,8 @@ ubyte byte_1C6D4A;
 s32 navi2_unkn_counter = 0;
 s32 navi2_unkn_counter_max = 0;
 
-u32 flyby_cam_yaw = 0;
-u32 flyby_cam_tilt = 0;
+s32 flyby_cam_yaw = 0;
+s32 flyby_cam_tilt = 0;
 ushort word_1AABD0 = 0;
 
 ubyte old_screentype;
@@ -1696,10 +1696,71 @@ void init_level_3d(ubyte flag)
     }
 }
 
-void unkn1_handle_agent_groups(void)
+void place_multiplayer_agent_groups(void)
 {
-    asm volatile ("call ASM_unkn1_handle_agent_groups\n"
+#if 0
+    asm volatile ("call ASM_place_multiplayer_agent_groups\n"
         :  :  : "eax" );
+    return;
+#endif
+    PlayerIdx plyr;
+
+    for (plyr = 0; plyr < 8; plyr++)
+    {
+        ushort grp;
+        grp = level_def.PlayableGroups[plyr];
+        fill_netgame_agent_pos(plyr, grp, 4);
+    }
+
+    for (plyr = 0; plyr < 8; plyr++)
+    {
+        ushort grp;
+
+        if ((ingame.InNetGame_UNSURE & (1 << plyr)) == 0)
+            continue;
+
+        grp = level_def.PlayableGroups[plyr];
+        playable_agents = 4;
+        make_group_into_players(grp, plyr, 4, group_factions[plyr]);
+    }
+
+    for (plyr = 0; plyr < 8; plyr++)
+    {
+        struct Thing *p_thing;
+        ThingIdx thing, nxthing;
+        int remain;
+        ushort grp;
+
+        if ((ingame.InNetGame_UNSURE & (1 << plyr)) == 0)
+            continue;
+
+        grp = level_def.PlayableGroups[plyr];
+        remain = things_used;
+        for (thing = things_used_head; thing > 0; thing = nxthing)
+        {
+            if (--remain == -1) {
+                break;
+            }
+            p_thing = &things[thing];
+            nxthing = p_thing->LinkChild;
+
+            if ((p_thing->U.UPerson.Group == grp) &&
+              (p_thing->Type == TT_PERSON) &&
+              ((p_thing->Flag & TngF_PlayerAgent) == 0))
+            {
+                remove_thing(p_thing->ThingOffset);
+                delete_node(p_thing);
+            }
+        }
+    }
+
+    if ((net_game_play_flags & 0x10) != 0)
+    {
+        int i;
+        for (i = 0; i < 45; i++) {
+            process_things_unkn_sub2(login_control[0].TechLevel, 0);
+        }
+    }
 }
 
 void init_game_controls(void)
@@ -2007,7 +2068,7 @@ void init_player(void)
     init_level();
     if (in_network_game)
     {
-        unkn1_handle_agent_groups();
+        place_multiplayer_agent_groups();
         unkn_truce_groups();
     }
     else

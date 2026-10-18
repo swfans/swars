@@ -792,9 +792,9 @@ GLOBAL_FUNC(ASM_fill_netgame_agent_pos)	/* 0x010F10 */
 
 
 /*----------------------------------------------------------------*/
-/* void unkn1_handle_agent_groups()
+/* void place_multiplayer_agent_groups()
 */
-GLOBAL_FUNC(ASM_unkn1_handle_agent_groups)	/* 0x010F94 */
+GLOBAL_FUNC(ASM_place_multiplayer_agent_groups)	/* 0x010F94 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
