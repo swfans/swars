@@ -286,8 +286,8 @@ ubyte byte_1C6D4A;
 s32 navi2_unkn_counter = 0;
 s32 navi2_unkn_counter_max = 0;
 
-extern long dword_1AAB74;
-extern long dword_1AAB78;
+u32 flyby_cam_yaw = 0;
+u32 flyby_cam_tilt = 0;
 ushort word_1AABD0 = 0;
 
 ubyte old_screentype;
@@ -732,14 +732,6 @@ void load_level_wrap(short level, short missi, ubyte reload)
     // No idea what exactly pressing F during level load does
     if (is_key_pressed(KC_F, KMod_DONTCARE))
         unkn_f_pressed_func();
-}
-
-int sub_73C64(char *a1, ubyte a2)
-{
-    char ret;
-    asm volatile ("call ASM_sub_73C64\n"
-        : "=r" (ret) : "a" (a1), "d" (a2));
-    return ret;
 }
 
 void update_map_thing_and_traffic_refs(void)
@@ -2812,8 +2804,8 @@ void gproc3_unknsub2(void)
     {
         flyby_cam_x = 0x4000;
         flyby_cam_z = 0x4000;
-        dword_1AAB74 = 0;
-        dword_1AAB78 = 0;
+        flyby_cam_yaw = 0;
+        flyby_cam_tilt = 0;
         flyby_cam_y = 50;
     }
 
@@ -2832,28 +2824,28 @@ void gproc3_unknsub2(void)
 
     ms_limit = lbDisplay.MouseWindowX + lbDisplay.MouseWindowWidth * 1 / 3;
     if (ms_x < ms_limit)
-        dword_1AAB74 -= 16;
+        flyby_cam_yaw -= 16;
     ms_limit = lbDisplay.MouseWindowX + lbDisplay.MouseWindowWidth * 2 / 3;
     if (ms_x > ms_limit)
-        dword_1AAB74 += 16;
-    dword_1AAB74 &= 0x7FF;
+        flyby_cam_yaw += 16;
+    flyby_cam_yaw &= 0x7FF;
 
     if (!lbDisplay.MRightButton)
     {
-        flyby_cam_x += lbSinTable[dword_1AAB74] >> 9;
-        flyby_cam_z += lbSinTable[dword_1AAB74 + LbFPMath_PI/2] >> 9;
+        flyby_cam_x += lbSinTable[flyby_cam_yaw] >> 9;
+        flyby_cam_z += lbSinTable[flyby_cam_yaw + LbFPMath_PI/2] >> 9;
     }
 
     ms_limit = lbDisplay.MouseWindowY + lbDisplay.MouseWindowHeight * 1 / 3;
     if (ms_y < ms_limit)
-        dword_1AAB78 -= (ms_limit - ms_y) >> 5;
+        flyby_cam_tilt -= (ms_limit - ms_y) >> 5;
     ms_limit = lbDisplay.MouseWindowY + lbDisplay.MouseWindowHeight * 2 / 3;
     if (ms_y > ms_limit)
-        dword_1AAB78 -= (ms_limit - ms_y) >> 5;
-    if (dword_1AAB78 > 300)
-        dword_1AAB78 = 300;
-    if (dword_1AAB78 < -300)
-        dword_1AAB78 = -300;
+        flyby_cam_tilt -= (ms_limit - ms_y) >> 5;
+    if (flyby_cam_tilt > 300)
+        flyby_cam_tilt = 300;
+    if (flyby_cam_tilt < -300)
+        flyby_cam_tilt = -300;
 
     i = (alt_at_point(flyby_cam_x, flyby_cam_z) >> 8) - 50;
     if (i > flyby_cam_y)
@@ -2869,11 +2861,11 @@ void gproc3_unknsub2(void)
     if (flyby_cam_z > 0x8000)
         flyby_cam_z = 0;
 
-    engn_cam_tilt = dword_1AAB78;
+    engn_cam_tilt = flyby_cam_tilt;
     engn_xc = flyby_cam_x;
     engn_yc = flyby_cam_y;
     engn_zc = flyby_cam_z;
-    engn_cam_yaw = 32 * dword_1AAB74;
+    engn_cam_yaw = 32 * flyby_cam_yaw;
 
 #if 0
     outbuf = vec_tmap[5];

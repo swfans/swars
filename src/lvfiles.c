@@ -1795,7 +1795,6 @@ TbResult load_mad_pc(ushort mapno)
     } else {
         ret = Lb_OK;
     }
-    sub_73C64("", 1);
     return ret;
 }
 

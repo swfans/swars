@@ -56158,44 +56158,6 @@ nullsub_7:	/* 0x06FAA8 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_sub_73C64)	/* 0x73C64 */
-/*----------------------------------------------------------------*/
-		push   %ecx
-		test   %dl,%dl
-		je     jump_73c8e
-		mov    $0x1,%ecx
-		mov    EXPORT_SYMBOL(game_object_faces4),%eax
-		mov    %ecx,data_1aab7c
-		mov    0x769c(%eax),%ax
-		and    $0xffff,%eax
-		mov    %eax,data_1aab80
-		xor    %eax,%eax
-		pop    %ecx
-		ret
-	jump_73c8e:
-		cmpl   $0x0,data_1aab7c
-		jne    jump_73c9b
-		xor    %eax,%eax
-		pop    %ecx
-		ret
-	jump_73c9b:
-		mov    EXPORT_SYMBOL(game_object_faces4),%eax
-		mov    0x769c(%eax),%ax
-		mov    data_1aab80,%ebx
-		and    $0xffff,%eax
-		cmp    %ebx,%eax
-		je     jump_73cc2
-		mov    %eax,data_1aab80
-		mov    $0x1,%eax
-		pop    %ecx
-		ret
-	jump_73cc2:
-		xor    %ebx,%eax
-		pop    %ecx
-		ret
-
-
-/*----------------------------------------------------------------*/
 GLOBAL_FUNC (ASM_init_level_3d)	/* 0x07445C */
 /*----------------------------------------------------------------*/
 		push   %ebx
@@ -119247,15 +119209,6 @@ GLOBAL (dword_1AA67C)	/* 0x1aa67c */
 GLOBAL (dword_1AA680)	/* 0x1aa680 */
 		.long	0x0
 		.align  4
-
-GLOBAL (dword_1AAB74)	/* 0x1AAB74 */
-		.long	0x0
-GLOBAL (dword_1AAB78)	/* 0x1AAB78 */
-		.long	0x0
-data_1aab7c:
-		.long	0x0
-data_1aab80:
-		.long	0x0
 
 GLOBAL (last_swoosh_turn)
 		.long	0x0

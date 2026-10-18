@@ -217,7 +217,6 @@ void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign);
 void update_map_thing_and_traffic_refs(void);
 void unkn_lights_processing(void);
 void bang_set_detail(int a1);
-int sub_73C64(char *a1, ubyte a2);
 
 void ingame_palette_reload(void);
 void game_set_cam_track_thing_xz(ThingIdx thing);
