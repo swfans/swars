@@ -36,7 +36,7 @@
 .global EXPORT_SYMBOL(colour_lookup);
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_unused_func_200)	/* 0xb8860 */
+GLOBAL_FUNC(ASM_draw_lines_scrcoord_to_all_group_members)	/* 0xb8860 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
