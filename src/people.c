@@ -4707,9 +4707,9 @@ void person_attempt_to_leave_ferry(struct Thing *p_person)
     p_vehicle = &things[p_person->U.UPerson.Vehicle];
     //TODO do not draw from thing state update
     enlist_hud_draw_line_from_thing_ptr_to_mapcoord(p_person,
-      p_cmd->X, p_cmd->Y, p_cmd->Z, 0, colour_lookup[ColLU_RED]);
+      p_cmd->X, p_cmd->Y, p_cmd->Z, 0, ColLU_RED);
     enlist_hud_draw_line_from_thing_ptr_to_mapcoord(p_vehicle,
-      p_cmd->X, p_cmd->Y, p_cmd->Z, 0, colour_lookup[ColLU_BLUE]);
+      p_cmd->X, p_cmd->Y, p_cmd->Z, 0, ColLU_BLUE);
 
     if ((p_vehicle->U.UVehicle.LeisurePlace == 0) || (p_vehicle->Speed != 0)) {
         return;

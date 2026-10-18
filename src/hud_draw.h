@@ -34,14 +34,14 @@ struct Thing;
 /******************************************************************************/
 
 TbBool enlist_hud_draw_line_from_thing_to_mapcoord(ThingIdx thing,
-  short cor2_x, short cor2_y_m8, short cor2_z, ushort drwflags, TbPixel colour);
+  short cor2_x, short cor2_y_m8, short cor2_z, ushort drwflags, ubyte colkp);
 TbBool enlist_hud_draw_line_from_thing_ptr_to_mapcoord(struct Thing *p_thing,
-  short cor2_x, short cor2_y_m8, short cor2_z, ushort drwflags, TbPixel colour);
+  short cor2_x, short cor2_y_m8, short cor2_z, ushort drwflags, ubyte colkp);
 
 TbBool enlist_hud_draw_line_from_thing_to_scrcoord(ThingIdx thing,
-  short scr_x, short scr_y, ushort drwflags, TbPixel colour);
+  short scr_x, short scr_y, ushort drwflags, ubyte colkp);
 TbBool enlist_hud_draw_line_from_thing_ptr_to_scrcoord(struct Thing *p_thing,
-  short scr_x, short scr_y, ushort drwflags, TbPixel colour);
+  short scr_x, short scr_y, ushort drwflags, ubyte colkp);
 
 void set_netplayer_name_text_over_thing(ScrCoord x, ScrCoord y,
   struct Thing *p_thing);

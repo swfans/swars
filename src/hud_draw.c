@@ -21,6 +21,8 @@
 #include "bfscreen.h"
 #include "bftext.h"
 
+#include "engincolour.h"
+
 #include "engindrwlstx_tng.h"
 #include "game_options.h"
 #include "game_sprts.h"
@@ -43,7 +45,7 @@ int mouse_over_unkn2_y;
 /******************************************************************************/
 
 TbBool enlist_hud_draw_line_from_thing_to_mapcoord(ThingIdx thing,
-  short cor2_x, short cor2_y_m8, short cor2_z, ushort drwflags, TbPixel colour)
+  short cor2_x, short cor2_y_m8, short cor2_z, ushort drwflags, ubyte colkp)
 {
     short cor1_x, cor1_y_m8, cor1_z;
     short thickness;
@@ -52,20 +54,20 @@ TbBool enlist_hud_draw_line_from_thing_to_mapcoord(ThingIdx thing,
     thickness = 1;
 
     return enlist_hud_draw_mapcoord_line(cor1_x, cor1_y_m8, cor1_z,
-      cor2_x, cor2_y_m8, cor2_z, drwflags, thickness, colour);
+      cor2_x, cor2_y_m8, cor2_z, drwflags, thickness, colour_lookup[colkp]);
 }
 
 TbBool enlist_hud_draw_line_from_thing_ptr_to_mapcoord(struct Thing *p_thing,
-  short cor2_x, short cor2_y_m8, short cor2_z, ushort drwflags, TbPixel colour)
+  short cor2_x, short cor2_y_m8, short cor2_z, ushort drwflags, ubyte colkp)
 {
     if ((p_thing <= &things[0]) || (p_thing >= &things[THINGS_LIMIT]))
         return false;
     return enlist_hud_draw_line_from_thing_to_mapcoord(p_thing->ThingOffset,
-      cor2_x, cor2_y_m8, cor2_z, drwflags, colour);
+      cor2_x, cor2_y_m8, cor2_z, drwflags, colkp);
 }
 
 TbBool enlist_hud_draw_line_from_thing_to_scrcoord(ThingIdx thing,
-  short scr_x, short scr_y, ushort drwflags, TbPixel colour)
+  short scr_x, short scr_y, ushort drwflags, ubyte colkp)
 {
     short cor1_x, cor1_y_m8, cor1_z;
     short thickness;
@@ -74,16 +76,16 @@ TbBool enlist_hud_draw_line_from_thing_to_scrcoord(ThingIdx thing,
     thickness = 1;
 
     return enlist_hud_draw_mapcoord_to_scrcoord_line(scr_x, scr_y,
-      cor1_x, cor1_y_m8, cor1_z, drwflags, thickness, colour);
+      cor1_x, cor1_y_m8, cor1_z, drwflags, thickness, colour_lookup[colkp]);
 }
 
 TbBool enlist_hud_draw_line_from_thing_ptr_to_scrcoord(struct Thing *p_thing,
-  short scr_x, short scr_y, ushort drwflags, TbPixel colour)
+  short scr_x, short scr_y, ushort drwflags, ubyte colkp)
 {
     if ((p_thing <= &things[0]) || (p_thing >= &things[THINGS_LIMIT]))
         return false;
     return enlist_hud_draw_line_from_thing_to_scrcoord(p_thing->ThingOffset,
-      scr_x, scr_y, drwflags, colour);
+      scr_x, scr_y, drwflags, colkp);
 }
 
 void set_netplayer_name_text_over_thing(ScrCoord x, ScrCoord y,

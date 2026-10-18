@@ -110,16 +110,6 @@ s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilt
     return (dtZ * dtZ + dtX * dtX);
 }
 
-void draw_thingcoord_to_scrcoord_line(short scr_x, short scr_y, ThingIdx thing, ubyte colkp)
-{
-    short tng_x, tng_y, tng_z;
-
-    get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, thing);
-
-    enlist_hud_draw_mapcoord_to_scrcoord_line(scr_x, scr_y,
-      tng_x, tng_y, tng_z, 0, 1, colour_lookup[colkp]);
-}
-
 int unused_func_200(short x, short y, ushort group)
 {
     int ret;
@@ -330,11 +320,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
     case PCmd_WAIT_OBJT_DESTROY:
     case PCmd_WAND_OBJT_DESTROY:
     case PCmd_WAIT_P_PERSUADE:
-        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 1u);
+        enlist_hud_draw_line_from_thing_to_scrcoord(p_cmd->OtherThing, x, y, 0, ColLU_WHITE);
         return 1;
     case PCmd_KILL_PERSON:
     case PCmd_CAMERA_TRACK:
-        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 2u);
+        enlist_hud_draw_line_from_thing_to_scrcoord(p_cmd->OtherThing, x, y, 0, ColLU_RED);
         return 1;
     case PCmd_GO_TO_POINT:
     case PCmd_GOTOPOINT_FACE:
@@ -342,7 +332,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
         enlist_hud_draw_mapcoord_to_scrcoord_line(x, y,
           p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
-          p_cmd->Arg1 << 6, 0, 1, 2u);
+          p_cmd->Arg1 << 6, 0, 1, colour_lookup[ColLU_RED]);
         return 1;
     case PCmd_KILL_MEM_GROUP:
     case PCmd_KILL_ALL_GROUP:
@@ -352,11 +342,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
       return 1;
     case PCmd_BLOCK_PERSON:
     case PCmd_SCARE_PERSON:
-        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 4u);
+        enlist_hud_draw_line_from_thing_to_scrcoord(p_cmd->OtherThing, x, y, 0, ColLU_BLUE);
         return 1;
     case PCmd_PERSUADE_PERSON:
     case PCmd_GET_ITEM:
-        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 5u);
+        enlist_hud_draw_line_from_thing_to_scrcoord(p_cmd->OtherThing, x, y, 0, ColLU_YELLOW);
         return 1;
     case PCmd_USE_WEAPON:
         enlist_hud_draw_mapcoord_to_scrcoord_line(x, y,
@@ -371,7 +361,7 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, Lb_SPRITE_OUTLINE, 1, 2u);
         } else {
             enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, 2u);
+              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, colour_lookup[ColLU_RED]);
         }
         return 1;
     case PCmd_PROTECT_MEM_G:
@@ -389,17 +379,17 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
               p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, Lb_SPRITE_OUTLINE, 1, 2u);
         } else {
             enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, 2u);
+              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, colour_lookup[ColLU_RED]);
         }
         return 1;
     case PCmd_WAIT_P_V_I_NEAR:
 	case PCmd_WAND_P_V_I_NEAR:
     case PCmd_UNTIL_P_V_I_NEAR:
-        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 1u);
+        enlist_hud_draw_line_from_thing_to_scrcoord(p_cmd->OtherThing, x, y, 0, ColLU_WHITE);
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
 
         enlist_hud_draw_mapcoord_flat_circle(tng_x, tng_y, tng_z,
-          p_cmd->Arg1 << 6, 0, 1, 2u);
+          p_cmd->Arg1 << 6, 0, 1, colour_lookup[ColLU_RED]);
         return 1;
     case PCmd_UNTIL_MEM_G_NEAR:
 	case PCmd_WAIT_ALL_G_NEAR:
@@ -411,20 +401,21 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
             unused_func_200(x, y, p_cmd->OtherThing);
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
         enlist_hud_draw_mapcoord_flat_circle(tng_x, tng_y, tng_z,
-          p_cmd->Arg1 << 6, 0, 1, 2u);
+          p_cmd->Arg1 << 6, 0, 1, colour_lookup[ColLU_RED]);
         return 1;
     case PCmd_UNTIL_P_V_I_ARRIVE:
     case PCmd_WAIT_P_V_I_ARRIVE:
     case PCmd_WAND_P_V_I_ARRIVE:
-        draw_thingcoord_to_scrcoord_line(x, y, p_cmd->OtherThing, 1u);
+        enlist_hud_draw_line_from_thing_to_scrcoord(p_cmd->OtherThing, x, y, 0, ColLU_WHITE);
         enlist_hud_draw_mapcoord_to_scrcoord_line(x, y,
           p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
             enlist_hud_draw_mapcoord_flat_box(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, Lb_SPRITE_OUTLINE, 1, 2u);
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z,
+              Lb_SPRITE_OUTLINE, 1, colour_lookup[ColLU_RED]);
         } else {
             enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, 2u);
+              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, colour_lookup[ColLU_RED]);
         }
         return 1;
     case PCmd_UNTIL_MEM_G_ARRIVE:
@@ -439,10 +430,11 @@ int person_command_dbg_point_to_target(short x, short y, ushort cmd, struct Thin
           p_cmd->X, p_cmd->Y, p_cmd->Z, 0, 1, colour_lookup[ColLU_RED]);
         if ((p_cmd->Flags & PCmdF_AreaIsRect) != 0) {
             enlist_hud_draw_mapcoord_flat_box(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z, Lb_SPRITE_OUTLINE, 1, 2u);
+              p_cmd->Arg1 - p_cmd->X, p_cmd->Time - p_cmd->Z,
+              Lb_SPRITE_OUTLINE, 1, colour_lookup[ColLU_RED]);
         } else {
             enlist_hud_draw_mapcoord_flat_circle(p_cmd->X, p_cmd->Y, p_cmd->Z,
-              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, 2u);
+              p_cmd->Arg1 << 6, Lb_SPRITE_OUTLINE, 1, colour_lookup[ColLU_RED]);
         }
         return 1;
     default:
@@ -946,19 +938,19 @@ void things_debug_hud(void)
         if (p_track_thing->U.UPerson.Target2 != 0)
         {
             enlist_hud_draw_line_from_thing_to_scrcoord(p_track_thing->U.UPerson.Target2,
-              trg2_scr_x, trg2_scr_y + ln/2, 0, colour_lookup[ColLU_RED]);
+              trg2_scr_x, trg2_scr_y + ln/2, 0, ColLU_RED);
         }
 
         if (p_track_thing->GotoThingIndex != 0)
         {
             enlist_hud_draw_line_from_thing_to_scrcoord(p_track_thing->GotoThingIndex,
-              gtti_scr_x, gtti_scr_y + ln/2, 0, colour_lookup[ColLU_GREEN]);
+              gtti_scr_x, gtti_scr_y + ln/2, 0, ColLU_GREEN);
         }
 
         if (p_track_thing->PTarget != NULL)
         {
             enlist_hud_draw_line_from_thing_ptr_to_mapcoord(p_track_thing->PTarget,
-              tng_x, tng_y, tng_z, 0, colour_lookup[ColLU_BLUE]);
+              tng_x, tng_y, tng_z, 0, ColLU_BLUE);
         }
 
         unkn_path_func_001(p_track_thing, 0);
