@@ -227,6 +227,7 @@ int hud_width_shad_cl_flash_wrapped_text(short px, short py,
   struct TbSprite *p_font, const char *text, ushort drwflags, short units_per_px);
 
 void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine);
+void hud_draw_mapcoord_line_only_whole(struct DIHudMapCoordLine *p_diMapCorLine);
 void hud_draw_mapcoord_line_annotated_num(struct DIHudMapCoordAnnotLine *p_diMapCorAntLine);
 void hud_draw_mapcoord_to_scrcoord_line(struct DIHudMap2ScrCoordLine *p_diM2SCorLine);
 void hud_draw_mapcoord_corner_rect(struct DIHudMapCoordBox *p_diMapCorBox);

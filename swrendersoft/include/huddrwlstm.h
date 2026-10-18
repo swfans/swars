@@ -119,8 +119,16 @@ TbBool enlist_hud_draw_colour_wave_wrapped_text(short px, short py,
 
 /** Enlist drawing line between the provided map coordinates.
  */
-TbBool enlist_hud_draw_mapcoord_line(short cor1_x, short cor1_y_m8,
-  short cor1_z, short cor2_x, short cor2_y_m8, short cor2_z,
+TbBool enlist_hud_draw_mapcoord_line(
+  short cor1_x, short cor1_y_m8, short cor1_z,
+  short cor2_x, short cor2_y_m8, short cor2_z,
+  ushort drwflags, ubyte thickness, TbPixel colour);
+
+/** Enlist drawing line between the map coords, only if visible in whole.
+ */
+TbBool enlist_hud_draw_mapcoord_line_only_whole(
+  short cor1_x, short cor1_y_m8, short cor1_z,
+  short cor2_x, short cor2_y_m8, short cor2_z,
   ushort drwflags, ubyte thickness, TbPixel colour);
 
 /** Enlist drawing a flat box facing the camera, centered on given map coords.

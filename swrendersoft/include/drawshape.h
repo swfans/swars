@@ -31,9 +31,9 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-/** Draws a line between two map points.
+/** Draws a line between two map points, only if whole is visible.
  */
-void draw_mapcoord_line_col(int cor1_x, int cor1_y_m8, int cor1_z,
+void draw_mapcoord_line_only_whole_col(int cor1_x, int cor1_y_m8, int cor1_z,
   int cor2_x, int cor2_y_m8, int cor2_z, TbPixel colour);
 
 void draw_mapcoord_line_annotated(int cor1_x, int cor1_y_m8, int cor1_z,

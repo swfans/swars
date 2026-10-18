@@ -30,7 +30,7 @@
 #include "privrdlog.h"
 /******************************************************************************/
 
-void draw_mapcoord_line_col(int cor1_x, int cor1_y_m8, int cor1_z,
+void draw_mapcoord_line_only_whole_col(int cor1_x, int cor1_y_m8, int cor1_z,
   int cor2_x, int cor2_y_m8, int cor2_z, TbPixel colour)
 {
     struct EnginePoint ep1, ep2;
