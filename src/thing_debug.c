@@ -114,12 +114,6 @@ s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilt
 
 int draw_lines_scrcoord_to_all_group_members(short scr_x, short scr_y, ushort group)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_draw_lines_scrcoord_to_all_group_members\n"
-        : "=r" (ret) : "a" (scr_x), "d" (scr_y), "b" (group));
-    return ret;
-#endif
     struct Thing *p_thing;
     ThingIdx thing;
     short i;
