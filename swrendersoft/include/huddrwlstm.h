@@ -32,6 +32,17 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
+/**  Enlist drawing a line between two points on screen.
+ *
+ * @param beg_x First point screen coordinate.
+ * @param beg_y First point screen coordinate.
+ * @param end_x Second point screen coordinate.
+ * @param end_y Second point screen coordinate.
+ * @param drwflags DrawFlags to be set before drawing.
+ * @param thickness Thickness of the line drawn, in pixels.
+ * @param bright Brightness of the drawn colour.
+ * @param colour Base colour of the drawn pixels.
+ */
 TbBool enlist_hud_draw_line(short beg_x, short beg_y, short end_x, short end_y,
   ushort drwflags, ubyte thickness, short brig, TbPixel colour);
 
@@ -62,6 +73,18 @@ TbBool enlist_hud_draw_textured_flow_slant_box(short px, short py,
   short width, short height, ubyte vecmode,
   ubyte brig, ubyte tmapno, ushort num_ua, ushort num_vb);
 
+/** Enlist drawing given frame, standing at given position and with brightness.
+ *
+ * The function accepts precise scale parameter, with 8 bits used
+ * for fractional part, unlike most other functions.
+ *
+ * @param px On-screen Coordinate of the standing position.
+ * @param py On-screen Coordinate of the standing position.
+ * @param frm Index of the frame to be drawn.
+ * @param drwflags DrawFlags to be set before drawing.
+ * @param scale Scale at which the frame is drawn, 100% is 256.
+ * @param bright Brightness of the drawn sprite.
+ */
 TbBool enlist_hud_draw_frame_alpha(short px, short py, ushort frm,
   ushort drwflags, short scale, short brig);
 

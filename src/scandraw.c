@@ -472,6 +472,7 @@ void SCANNER_map_line_sample(void)
         tile_z = (cu_y >> 16);
         *p_out = SCANNER_data[tile_x][tile_z];
         p_out++;
+
         cu_x += SCANNER_nrp_sh_y;
         cu_y += SCANNER_nrp_sh_x;
     }
