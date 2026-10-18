@@ -823,24 +823,6 @@ void process_view_inputs(int thing)
 void draw_mapcoord_line_col2(int cor1_x, int cor1_y, int cor1_z,
   int cor2_x, int cor2_y, int cor2_z, TbPixel colour)
 {
-#if 0
-    // Pushed through a register holding them: a "g" operand may be placed
-    // relative to the stack pointer, which each push moves.
-    int stkargs[3];
-
-    stkargs[0] = (int)(intptr_t)cor2_y;
-    stkargs[1] = (int)(intptr_t)cor2_z;
-    stkargs[2] = (int)(intptr_t)colour;
-
-    asm volatile (
-      "push 8(%4)\n"
-      "push 4(%4)\n"
-      "push 0(%4)\n"
-      "call ASM_draw_mapcoord_line_col2\n"
-        : : "a" (cor1_x), "d" (cor1_y), "b" (cor1_z), "c" (cor2_x), "S" (stkargs)
-        : "cc", "memory");
-    return;
-#endif
     struct EnginePoint ep1;
     struct EnginePoint ep2;
 

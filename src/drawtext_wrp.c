@@ -46,7 +46,7 @@ void draw_mapcoord_line_at_ground(int cor1_x, int cor1_z,
     cor1_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor1_x, cor1_z));
     cor2_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor2_x, cor2_z));
 
-    draw_mapcoord_line_col(cor1_x, cor1_y_m8, cor1_z,
+    draw_mapcoord_line_only_whole_col(cor1_x, cor1_y_m8, cor1_z,
       cor2_x, cor2_y_m8, cor2_z, colour);
 }
 
