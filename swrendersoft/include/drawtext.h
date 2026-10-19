@@ -34,10 +34,15 @@ extern "C" {
 short simple_text_width(const char *text);
 short simple_text_char_height(char c);
 
+/** Draws text on screen using simple build-in font.
+ */
 void draw_simple_text(short x, short y, const char *text, ubyte colour);
 
+/** Draws text on map position using simple build-in font.
+ */
 void draw_mapcoord_simple_text(int cor_x, int cor_y_m8, int cor_z,
-  const char *text, TbPixel col);
+ short scr_dx, short scr_dy, const char *text, TbPixel col);
+
 void draw_text_transformed(int cor_x, int cor_y_m8, int cor_z, const char *text);
 void draw_number_transformed(int cor_x, int cor_y_m8, int cor_z, int num);
 

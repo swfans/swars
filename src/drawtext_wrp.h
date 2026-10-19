@@ -40,7 +40,8 @@ void show_message(const char *text);
 
 void draw_mapcoord_line_at_ground(int cor1_x, int cor1_z,
   int cor2_x, int cor2_z, TbPixel colour);
-void draw_mapcoord_simple_text_number_at_ground(int cor_x, int cor_z, int num);
+void draw_mapcoord_simple_text_number_at_ground(int cor_x, int cor_z,
+  sbyte ln, int num);
 void draw_mapcoord_simple_text_at_ground(int cor_x, int cor_z, const char *text);
 
 /******************************************************************************/

@@ -56,10 +56,11 @@ void draw_mapcoord_simple_text_at_ground(int cor_x, int cor_z, const char *text)
 
     cor_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor_x, cor_z));
     draw_mapcoord_simple_text(cor_x, cor_y_m8, cor_z,
-      text, colour_lookup[ColLU_RED]);
+      0, 0, text, colour_lookup[ColLU_RED]);
 }
 
-void draw_mapcoord_simple_text_number_at_ground(int cor_x, int cor_z, int num)
+void draw_mapcoord_simple_text_number_at_ground(int cor_x, int cor_z,
+  sbyte ln, int num)
 {
     char locstr[52];
     int cor_y_m8;
@@ -67,7 +68,7 @@ void draw_mapcoord_simple_text_number_at_ground(int cor_x, int cor_z, int num)
     cor_y_m8 = PRCCOORD_TO_YCOORD(alt_at_point(cor_x, cor_z));
     sprintf(locstr, "%d", num);
     draw_mapcoord_simple_text(cor_x, cor_y_m8, cor_z,
-      locstr, colour_lookup[ColLU_RED]);
+      0, ln * 7, locstr, colour_lookup[ColLU_RED]);
 }
 
 void draw_purple_rect(int x, int y, int w, int h, ubyte active)

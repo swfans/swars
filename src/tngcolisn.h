@@ -76,6 +76,8 @@ void draw_engine_unk3_last(short x, short z);
 ushort dynamic_insert_vect(s32 x1, s32 y1, s32 z1, s32 x2,
   s32 y2, s32 z2, int owner, ubyte vtype);
 
+void draw_mark_over_tile_with_number(short tl_x, short tl_z, sbyte ln, int num);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

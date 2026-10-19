@@ -6544,22 +6544,14 @@ short do_move_colide(struct Thing *p_person, int dx, int dz, struct MyMapElement
     per_cor_y_m8 = PRCCOORD_TO_YCOORD(p_person->Y);
     per_cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
 
-    if ((cur_colv != 0) && (debug_hud_collision == 1))
+    if ((cur_colv != 0) && (debug_hud_collision))
     {
-        int x0, z0, x1, z1, xc, zc;
+        int xc, zc;
 
-        x0 = tl_x * 256;
-        z0 = tl_z * 256;
-        x1 = x0 + 256;
-        z1 = z0 + 256;
-        xc = x0 + 128;
-        zc = z0 + 128;
+        xc = TILE_TO_MAPCOORD(tl_x, 128);
+        zc = TILE_TO_MAPCOORD(tl_z, 128);
         draw_mapcoord_line_at_ground(xc, zc, per_cor_x, per_cor_z, 0x4F);
-        draw_mapcoord_line_at_ground(x0, z0, x1, z0, 0x63);
-        draw_mapcoord_line_at_ground(x1, z0, x1, z1, 0x63);
-        draw_mapcoord_line_at_ground(x0, z1, x1, z1, 0x63);
-        draw_mapcoord_line_at_ground(x0, z1, x0, z0, 0x63);
-        draw_mapcoord_simple_text_number_at_ground(xc, zc, cur_colv);
+        draw_mark_over_tile_with_number(tl_x, tl_z, -1, cur_colv);
     }
 
     ret = 0;
@@ -7483,7 +7475,7 @@ void process_person(struct Thing *p_person)
         process_weapon(p_person);
 
     //TODO separate drawing from state update
-    if ((debug_hud_collision == 1) && (p_person->Y != 0))
+    if ((debug_hud_collision) && (p_person->Y != 0))
     {
         char locstr[150];
         short pstng_x, pstng_y, pstng_z;
