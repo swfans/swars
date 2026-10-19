@@ -85,17 +85,17 @@ void draw_collision_vector_line(ushort colvect)
 
 void draw_engine_unk3_last(short x, short z)
 {
-    int x_beg, x_end;
-    int z_beg, z_end;
+    int tl_beg_x, tl_end_x;
+    int tl_beg_z, tl_end_z;
     int cx, cz;
 
-    x_beg = (x >> 8) - (render_area_a >> 1);
-    x_end = (x >> 8) + (render_area_a >> 1);
-    z_beg = (z >> 8) - (render_area_b >> 1);
-    z_end = (z >> 8) + (render_area_b >> 1);
-    for (cx = x_beg; cx < x_end; cx++)
+    tl_beg_x = (x >> 8) - (render_area_a >> 1);
+    tl_end_x = (x >> 8) + (render_area_a >> 1);
+    tl_beg_z = (z >> 8) - (render_area_b >> 1);
+    tl_end_z = (z >> 8) + (render_area_b >> 1);
+    for (cx = tl_beg_x; cx < tl_end_x; cx++)
     {
-        for (cz = z_beg; cz < z_end; cz++)
+        for (cz = tl_beg_z; cz < tl_end_z; cz++)
         {
           struct MyMapElement *p_mapel;
           short vl;

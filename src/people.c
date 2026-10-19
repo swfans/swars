@@ -50,6 +50,7 @@
 #include "lvdraw3d.h"
 #include "lvobjctv.h"
 #include "misstat.h"
+#include "pathtrig.h"
 #include "pepgroup.h"
 #include "player.h"
 #include "scandraw.h"
@@ -6505,12 +6506,150 @@ ubyte check_person_within(struct Command *p_cmd, int x, int z)
     return ret;
 }
 
+/** Finds a collision blocking move of a thing by given shift.
+ *
+ * Finds a collision vector within the given map element, which
+ * blocks the move of a person by the given speed vector (dx,dz).
+ *
+ * Also updates globals used for intelligent door handling.
+ *
+ * @return Returns index in `game_col_vects` of the blocking vector, 0 if
+ *     move is not blocked, or -1 if something is out of map range.
+ */
 short do_move_colide(struct Thing *p_person, int dx, int dz, struct MyMapElement *p_mapel)
 {
+#if 0
     short ret;
     asm volatile (
       "call ASM_do_move_colide\n"
         : "=r" (ret) : "a" (p_person), "d" (dx), "b" (dz), "c" (p_mapel));
+    return ret;
+#endif
+    int tl_x, tl_z, tl_idx;
+    ushort cur_colv;
+    int iter;
+    int dx_full, dz_full, dx_half, dz_half;
+    int per_cor_x, per_cor_y_m8, per_cor_z;
+    short ret;
+
+    tl_idx = p_mapel - game_my_big_map;
+    tl_z = tl_idx / MAP_TILE_WIDTH;
+    tl_x = tl_idx % MAP_TILE_WIDTH;
+    if ((tl_z >= MAP_TILE_HEIGHT) || (tl_x >= MAP_TILE_WIDTH))
+        return -1;
+
+    cur_colv = p_mapel->ColHead;
+    word_1AA394 = 0;
+    per_cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+    per_cor_y_m8 = PRCCOORD_TO_YCOORD(p_person->Y);
+    per_cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+
+    if ((cur_colv != 0) && (debug_hud_collision == 1))
+    {
+        int x0, z0, x1, z1, xc, zc;
+
+        x0 = tl_x * 256;
+        z0 = tl_z * 256;
+        x1 = x0 + 256;
+        z1 = z0 + 256;
+        xc = x0 + 128;
+        zc = z0 + 128;
+        draw_mapcoord_line_at_ground(xc, zc, per_cor_x, per_cor_z, 0x4F);
+        draw_mapcoord_line_at_ground(x0, z0, x1, z0, 0x63);
+        draw_mapcoord_line_at_ground(x1, z0, x1, z1, 0x63);
+        draw_mapcoord_line_at_ground(x0, z1, x1, z1, 0x63);
+        draw_mapcoord_line_at_ground(x0, z1, x0, z0, 0x63);
+        draw_mapcoord_simple_text_number_at_ground(xc, zc, cur_colv);
+    }
+
+    ret = 0;
+    if (cur_colv == 0)
+        return ret;
+
+    //TODO half is usually less than full; investigate
+    dz_full = dz >> 8;
+    dx_full = dx >> 8;
+    dx_half = dx >> 7;
+    dz_half = dz >> 7;
+
+    for (iter = 0; iter < 30; iter++)
+    {
+        struct ColVectList *p_cvl;
+        struct ColVect *p_cv;
+
+        p_cvl = &game_col_vects_list[cur_colv];
+        p_cv = &game_col_vects[p_cvl->Vect];
+
+        if ((p_cvl->NextColList & 0x8000) != 0)
+            goto next_vect;
+
+        {
+            int dy;
+
+            dy = p_cv->Y1 - per_cor_y_m8;
+            if (dy < 0)
+                dy = -dy;
+            if (dy >= 0xD0)
+                goto next_vect;
+        }
+
+        if ((per_cor_x == p_cv->X1) && (per_cor_z == p_cv->Z1)) {
+            goto next_vect;
+        }
+        if ((per_cor_x == p_cv->X2) && (per_cor_z == p_cv->Z2)) {
+            goto next_vect;
+        }
+
+        if (!two4_line_intersection(p_cv->X1, p_cv->Z1, p_cv->X2, p_cv->Z2,
+              per_cor_x, per_cor_z, per_cor_x + dx_half, per_cor_z + dz_half)) {
+            goto next_vect;
+        }
+
+        word_1AA38E = cur_colv;
+        ret = p_cvl->Vect;
+
+        if ((p_cvl->Object >= 0) && (p_cv->Face < 0))
+        {
+            struct SingleObjectFace4 *p_face;
+
+            p_face = &game_object_faces4[-p_cv->Face];
+            if ((p_face->GFlags & FGFlg_Unkn10) != 0)
+            {
+                int pt2_x, pt2_z;
+                s32 cross;
+
+                if ((p_person->Flag2 & TgF2_InsideBuilding) != 0)
+                {
+                    pt2_x = per_cor_x + dx_half;
+                    pt2_z = per_cor_z + dz_half;
+                    cross = (pt2_z - p_cv->Z2) * (p_cv->X2 - p_cv->X1)
+                          - (pt2_x - p_cv->X2) * (p_cv->Z2 - p_cv->Z1);
+                    if (cross < 0)
+                        word_1AA394 = 1;
+                }
+                else if (two4_line_intersection(p_cv->X1, p_cv->Z1, p_cv->X2, p_cv->Z2,
+                  per_cor_x, per_cor_z, per_cor_x + dx_full, per_cor_z + dz_full))
+                {
+                    pt2_x = PRCCOORD_TO_MAPCOORD(p_person->X) + dx_half;
+                    pt2_z = PRCCOORD_TO_MAPCOORD(p_person->Z) + dz_half;
+                    cross = (p_cv->X2 - p_cv->X1) * (pt2_z - p_cv->Z2)
+                          - (p_cv->Z2 - p_cv->Z1) * (pt2_x - p_cv->X2);
+                    word_1AA394 = (cross < 0) ? 1 : -1;
+                }
+                word_1AA392 = ret;
+                word_1AA390 = cur_colv;
+            }
+        }
+
+        if ((ret != 0) && (word_1AA392 != 0) && (ret != word_1AA392))
+            break;
+
+    next_vect:
+        cur_colv = p_cvl->NextColList & 0x7FFF;
+        if (cur_colv == 0)
+            break;
+    }
+
     return ret;
 }
 
