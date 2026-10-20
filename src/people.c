@@ -36,6 +36,7 @@
 #include "bigmap.h"
 #include "building.h"
 #include "command.h"
+#include "drawshape.h"
 #include "drawtext_wrp.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
@@ -1362,12 +1363,239 @@ void set_person_animmode_walk(struct Thing *p_person)
     p_person->Speed = calc_person_speed(p_person);
 }
 
+int check_col_collision_floor(int cor_x, int cor_y, int cor_z)
+{
+    int ret;
+    asm volatile ("call ASM_check_col_collision_floor\n"
+        : "=r" (ret) : "a" (cor_x), "d" (cor_y), "b" (cor_z));
+    return ret;
+}
+
+short do_vect_colide(struct MyMapElement *p_me, int x1, int y1, int z1, int x2, int y2, int z2)
+{
+    short ret;
+    // Pushed through a register holding them: a "g" operand may be placed
+    // relative to the stack pointer, which each push moves.
+    int stkargs[3];
+
+    stkargs[0] = (int)(intptr_t)x2;
+    stkargs[1] = (int)(intptr_t)y2;
+    stkargs[2] = (int)(intptr_t)z2;
+
+    asm volatile (
+      "push 8(%5)\n"
+      "push 4(%5)\n"
+      "push 0(%5)\n"
+      "call ASM_do_vect_colide\n"
+        : "=r" (ret)
+        : "a" (p_me), "d" (x1), "b" (y1), "c" (z1), "S" (stkargs)
+        : "cc", "memory");
+    return ret;
+}
+
 int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushort flags)
 {
+#if 1
     int ret;
     asm volatile ("call ASM_can_i_see_thing\n"
         : "=r" (ret) : "a" (p_me), "d" (p_him), "b" (max_dist), "c" (flags));
     return ret;
+#endif
+
+    int cor_dx, cor_dy, cor_dz;
+    int distance;
+    int tl_dx, tl_dz;
+    int cor_swp_inc_x, cor_swp_inc_y, cor_swp_inc_z;
+    TbBool vehicle_involved;
+    int cor_him_x, cor_him_y, cor_him_z;
+    int cor_me_x, cor_me_y, cor_me_z;
+    int cor_swp_x, cor_swp_y, cor_swp_z;
+    short sweep_dist;
+    short delta_angle;
+    int sweep_dist_max;
+    ubyte tl_him_zip;
+
+    if ((p_me == NULL) || (p_him == NULL))
+        return 0;
+    if ((p_him->Flag2 & (TgF2_ExistsOffMap|TgF2_Unkn0002)) != 0)
+        return 0;
+
+    vehicle_involved = (p_him->Type == TT_VEHICLE);
+    if (((p_me->Flag & TngF_InVehicle) != 0) ||
+      ((p_him->Flag & TngF_InVehicle) != 0)) {
+        vehicle_involved = 1;
+    }
+
+    cor_him_x = PRCCOORD_TO_MAPCOORD(p_him->X);
+    cor_him_y = PRCCOORD_TO_MAPCOORD(p_him->Y);
+    cor_him_z = PRCCOORD_TO_MAPCOORD(p_him->Z);
+
+    cor_me_x = PRCCOORD_TO_MAPCOORD(p_me->X);
+    cor_me_y = PRCCOORD_TO_MAPCOORD(p_me->Y);
+    cor_me_z = PRCCOORD_TO_MAPCOORD(p_me->Z);
+
+    cor_dx = cor_him_x - cor_me_x;
+    cor_dy = cor_him_y - cor_me_y;
+    cor_dz = cor_him_z - cor_me_z;
+
+    distance = cor_dz * cor_dz + cor_dx * cor_dx;
+    if (max_dist < distance)
+        return 0;
+
+    distance += ((cor_dy * cor_dy) << 6);
+    delta_angle = arctan(cor_dx, -cor_dz);
+
+    if ((flags & 0x01) == 0)
+    {
+        short angl;
+        angl = (p_me->U.UPerson.Angle << 8) - delta_angle;
+        angl = (angl + 0x0800) & 0x7FF;
+        if (angl > 200 && angl < 0x7FF - 200)
+          return 0;
+    }
+    distance = LbSqrL(distance);
+
+    sweep_dist_max = distance >> 6;
+    if (sweep_dist_max == 0)
+        sweep_dist_max = 1;
+    if (distance == 0)
+        distance = 1;
+
+    {
+        struct MyMapElement *p_mapel;
+        short tl_him_x, tl_him_z;
+
+        tl_him_x = MAPCOORD_TO_TILE(cor_him_x);
+        tl_him_z = MAPCOORD_TO_TILE(cor_him_z);
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_him_z + tl_him_x];
+        tl_him_zip = p_mapel->Zip;
+    }
+
+    cor_me_y += 18;
+    cor_swp_x = cor_me_x;
+    cor_swp_y = cor_me_y;
+    cor_swp_z = cor_me_z;
+
+    cor_swp_inc_x = cor_dx / sweep_dist_max;
+    cor_swp_inc_y = cor_dy / sweep_dist_max;
+    cor_swp_inc_z = cor_dz / sweep_dist_max;
+
+    tl_dx = (cor_dx <= 0) ? -1 : 1;
+    tl_dz = (cor_dz <= 0) ? -1 : 1;
+
+    if (cor_dy != 0)
+        tl_him_zip = 0;
+
+    for (sweep_dist = sweep_dist_max; sweep_dist > 0; sweep_dist--)
+    {
+      struct MyMapElement *p_mapel;
+      short tl_me_x, tl_me_z;
+
+
+      if ((cor_swp_x < 0) || (cor_swp_x >= MAP_COORD_WIDTH))
+          return 0;
+      if ((cor_swp_z < 0) || (cor_swp_z >= MAP_COORD_HEIGHT))
+          return 0;
+      if (vehicle_involved) {
+          if (check_col_collision(cor_swp_x, cor_swp_y, cor_swp_z))
+              return 0;
+      } else {
+          if (check_col_collision_floor(cor_swp_x, cor_swp_y, cor_swp_z))
+              return 0;
+      }
+
+      tl_me_x = MAPCOORD_TO_TILE(cor_swp_x);
+      tl_me_z = MAPCOORD_TO_TILE(cor_swp_z);
+
+      if (debug_hud_collision || byte_1C844F)
+      {
+          char locstr[12];
+          p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_me_z + tl_me_x];
+          sprintf(locstr, "%d", (int)p_mapel->Zip);
+          draw_mapcoord_simple_text_at_ground(cor_swp_x, cor_swp_z, locstr);
+      }
+
+      if ((tl_him_zip != 0) && (tl_him_zip == p_mapel->Zip))
+        break;
+
+      if (!vehicle_involved)
+      {
+          int cor_x, cor_z;
+          {
+              if (debug_hud_collision || byte_1C844F) {
+                  cor_x = (cor_swp_x & 0xFF00);
+                  cor_z = (cor_swp_z & 0xFF00);
+                  draw_map_flat_rect(cor_x, 8 * cor_swp_y, cor_z, 256, 256, colour_lookup[0]);
+              }
+              p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tl_me_z) + (tl_me_x)];
+              if (do_vect_colide(p_mapel, cor_me_x, cor_me_y, cor_me_z,
+                cor_him_x, cor_him_y, cor_him_z))
+                  return 0;
+          }
+          if (tl_dx != 0)
+          {
+              if (debug_hud_collision || byte_1C844F) {
+                  cor_x = (cor_swp_x & 0xFF00) + TILE_TO_MAPCOORD(tl_dx, 0);
+                  cor_z = (cor_swp_z & 0xFF00);
+                  draw_map_flat_rect(cor_x, 8 * cor_swp_y, cor_z, 256, 256, colour_lookup[2]);
+              }
+              p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tl_me_z) + (tl_me_x + tl_dx)];
+              if (do_vect_colide(p_mapel, cor_me_x, cor_me_y, cor_me_z,
+                cor_him_x, cor_him_y, cor_him_z))
+                  return 0;
+          }
+          if (tl_dz != 0)
+          {
+              if (debug_hud_collision || byte_1C844F) {
+                  cor_x = (cor_swp_x & 0xFF00);
+                  cor_z = (cor_swp_z & 0xFF00) + TILE_TO_MAPCOORD(tl_dz, 0);
+                  draw_map_flat_rect(cor_x, 8 * cor_swp_y, cor_z, 256, 256, colour_lookup[4]);
+              }
+              p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tl_me_z + tl_dz) + (tl_me_x)];
+              if (do_vect_colide(p_mapel, cor_me_x, cor_me_y, cor_me_z,
+                cor_him_x, cor_him_y, cor_him_z))
+                  return 0;
+          }
+          {
+              if (debug_hud_collision || byte_1C844F) {
+                  cor_x = (cor_swp_x & 0xFF00) + TILE_TO_MAPCOORD(tl_dx, 0);
+                  cor_z = (cor_swp_z & 0xFF00) + TILE_TO_MAPCOORD(tl_dz, 0);
+                  draw_map_flat_rect(cor_x, 8 * cor_swp_y, cor_z, 256, 256, colour_lookup[3]);
+              }
+              p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tl_me_z + tl_dz) + (tl_me_x + tl_dx)];
+              if (do_vect_colide(p_mapel, cor_me_x, cor_me_y, cor_me_z,
+                cor_him_x, cor_him_y, cor_him_z))
+                  return 0;
+          }
+      }
+      if (debug_hud_collision || byte_1C844F)
+      {
+          int cor_x, cor_y, cor_z;
+          ubyte colkp;
+
+          cor_x = cor_swp_x + cor_swp_inc_x;
+          cor_y = cor_swp_y + cor_swp_inc_y;
+          cor_z = cor_swp_z + cor_swp_inc_z;
+
+          if ((sweep_dist & 1) != 0)
+              colkp = 4;
+          else
+              colkp = 2;
+          draw_mapcoord_line_col(cor_swp_x, 8 * cor_swp_y, cor_swp_z,
+            cor_x, 8 * cor_y, cor_z, colour_lookup[colkp]);
+          colkp = 0;
+          draw_mapcoord_line_col(cor_swp_x, 0, cor_swp_z,
+            cor_x, 0, cor_z, colour_lookup[colkp]);
+      }
+      cor_swp_x += cor_swp_inc_x;
+      cor_swp_y += cor_swp_inc_y;
+      cor_swp_z += cor_swp_inc_z;
+    }
+
+    if ((flags == 0x01) && delta_angle >> 8 != p_me->U.UPerson.Angle )
+        change_person_angle(p_me, ((delta_angle + 128) & 0x7FF) >> 8);
+
+    return distance;
 }
 
 TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle)
@@ -5729,11 +5957,6 @@ void peep_return_to_point(struct Thing *p_person)
 
 void person_kill_target2(struct Thing *p_person)
 {
-#if 0
-    asm volatile ("call ASM_person_kill_target2\n"
-        : : "a" (p_person));
-    return;
-#else
     struct Thing *p_target;
     int wep_range;
 
@@ -6043,7 +6266,6 @@ void person_kill_target2(struct Thing *p_person)
             p_person->State = bkp_State;
         p_person->GotoThingIndex = bkp_GotoThingIndex;
     }
-#endif
 }
 
 void person_wait(struct Thing *p_person)
