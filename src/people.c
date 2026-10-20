@@ -1395,7 +1395,7 @@ short do_vect_colide(struct MyMapElement *p_me, int x1, int y1, int z1, int x2, 
 
 int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushort flags)
 {
-#if 1
+#if 0
     int ret;
     asm volatile ("call ASM_can_i_see_thing\n"
         : "=r" (ret) : "a" (p_me), "d" (p_him), "b" (max_dist), "c" (flags));
