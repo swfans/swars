@@ -1410,9 +1410,8 @@ int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushor
     int cor_him_x, cor_him_y, cor_him_z;
     int cor_me_x, cor_me_y, cor_me_z;
     int cor_swp_x, cor_swp_y, cor_swp_z;
-    short sweep_dist;
     short delta_angle;
-    int sweep_dist_max;
+    int sweep_steps, step;
     ubyte tl_him_zip;
 
     if ((p_me == NULL) || (p_him == NULL))
@@ -1456,9 +1455,9 @@ int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushor
     }
     distance = LbSqrL(distance);
 
-    sweep_dist_max = distance >> 6;
-    if (sweep_dist_max == 0)
-        sweep_dist_max = 1;
+    sweep_steps = distance >> 6;
+    if (sweep_steps == 0)
+        sweep_steps = 1;
     if (distance == 0)
         distance = 1;
 
@@ -1473,13 +1472,15 @@ int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushor
     }
 
     cor_me_y += 18;
+
+    // TODO wouldn't it make sense to keep the values with fractional part, to avoid rounding down on each step?
     cor_swp_x = cor_me_x;
     cor_swp_y = cor_me_y;
     cor_swp_z = cor_me_z;
 
-    cor_swp_inc_x = cor_dx / sweep_dist_max;
-    cor_swp_inc_y = cor_dy / sweep_dist_max;
-    cor_swp_inc_z = cor_dz / sweep_dist_max;
+    cor_swp_inc_x = cor_dx / sweep_steps;
+    cor_swp_inc_y = cor_dy / sweep_steps;
+    cor_swp_inc_z = cor_dz / sweep_steps;
 
     tl_dx = (cor_dx <= 0) ? -1 : 1;
     tl_dz = (cor_dz <= 0) ? -1 : 1;
@@ -1487,7 +1488,7 @@ int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushor
     if (cor_dy != 0)
         tl_him_zip = 0;
 
-    for (sweep_dist = sweep_dist_max; sweep_dist > 0; sweep_dist--)
+    for (step = sweep_steps; step > 0; step--)
     {
       struct MyMapElement *p_mapel;
       short tl_me_x, tl_me_z;
@@ -1579,7 +1580,7 @@ int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushor
           cor_y = cor_swp_y + cor_swp_inc_y;
           cor_z = cor_swp_z + cor_swp_inc_z;
 
-          if ((sweep_dist & 1) != 0)
+          if ((step & 1) != 0)
               colkp = 4;
           else
               colkp = 2;

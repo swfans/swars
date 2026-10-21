@@ -74,7 +74,7 @@ void draw_engine_unk3_last(short x, short z);
  * @return Returns the new `ColVect` index, or 0 on failure.
  */
 ushort dynamic_insert_vect(s32 x1, s32 y1, s32 z1, s32 x2,
-  s32 y2, s32 z2, int owner, ubyte vtype);
+  s32 y2, s32 z2, short owner, ubyte vtype);
 
 void draw_mark_over_tile_with_number(short tl_x, short tl_z, sbyte ln, int num);
 
