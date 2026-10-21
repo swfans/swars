@@ -1420,7 +1420,7 @@ int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushor
     if ((p_him->Flag2 & (TgF2_ExistsOffMap|TgF2_Unkn0002)) != 0)
         return 0;
 
-    vehicle_involved = (p_him->Type == TT_VEHICLE);
+    vehicle_involved = (p_me->Type == TT_VEHICLE) || (p_him->Type == TT_VEHICLE);
     if (((p_me->Flag & TngF_InVehicle) != 0) ||
       ((p_him->Flag & TngF_InVehicle) != 0)) {
         vehicle_involved = 1;
@@ -1434,9 +1434,10 @@ int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushor
     cor_me_y = PRCCOORD_TO_MAPCOORD(p_me->Y);
     cor_me_z = PRCCOORD_TO_MAPCOORD(p_me->Z);
 
-    cor_dx = cor_him_x - cor_me_x;
+    // Subtracting pre-shifted values would not always produce the same results
+    cor_dx = PRCCOORD_TO_MAPCOORD(p_him->X - p_me->X);
     cor_dy = cor_him_y - cor_me_y;
-    cor_dz = cor_him_z - cor_me_z;
+    cor_dz = PRCCOORD_TO_MAPCOORD(p_him->Z - p_me->Z);
 
     distance = cor_dz * cor_dz + cor_dx * cor_dx;
     if (max_dist < distance)
@@ -1507,10 +1508,11 @@ int can_i_see_thing(struct Thing *p_me, struct Thing *p_him, int max_dist, ushor
       tl_me_x = MAPCOORD_TO_TILE(cor_swp_x);
       tl_me_z = MAPCOORD_TO_TILE(cor_swp_z);
 
+      p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_me_z + tl_me_x];
+
       if (debug_hud_collision || byte_1C844F)
       {
           char locstr[12];
-          p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_me_z + tl_me_x];
           sprintf(locstr, "%d", (int)p_mapel->Zip);
           draw_mapcoord_simple_text_at_ground(cor_swp_x, cor_swp_z, locstr);
       }
