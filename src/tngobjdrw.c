@@ -165,10 +165,10 @@ void do_car_glare(struct Thing *p_car)
         p_matx = &local_mats[p_car->U.UVehicle.MatrixIndex];
         matrix_transform(&vec_dst, p_matx, &vec_src);
 
-        dx = (p_car->X >> 8) + (vec_dst.R[0] >> 15);
-        dy = (p_car->Y >> 5) + (vec_dst.R[1] >> 15);
-        dz = (p_car->Z >> 8) + (vec_dst.R[2] >> 15);
-        build_glare(dx, dy, dz, 0x30);
+        dx = PRCCOORD_TO_MAPCOORD(p_car->X) + (vec_dst.R[0] >> 15);
+        dy = PRCCOORD_TO_YCOORD(p_car->Y) + (vec_dst.R[1] >> 15);
+        dz = PRCCOORD_TO_MAPCOORD(p_car->Z) + (vec_dst.R[2] >> 15);
+        build_glare(dx, dy, dz, 48);
     }
 }
 
