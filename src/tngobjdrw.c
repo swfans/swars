@@ -77,6 +77,56 @@ ubyte pers_subtype_to_shpak[] = {
 
 ubyte byte_1C83E4 = 0;
 
+//TODO make some kind of config file for 3D objects, which would include glare locations
+struct CarGlare car_glare[] = {
+  {   0,   16,  336, 0},
+  { -96,  -64,  400, 0},
+  { 128,  -64,  400, 0},
+  {   0,  -96,  304, 0},
+  {-208,  -32, -240, 0},
+  { 208,  -32, -240, 0},
+  { 128, -144,  240, 0},
+  {-112, -144,  240, 0},
+  {  96,  -32,  304, 0},
+  { -80,  -32,  304, 0},
+  {  96,  -96,  528, 0},
+  { -80,  -96,  528, 0},
+  {-128,  -16,  288, 1},
+  { 144,  -16,  288, 2},
+  { 112, -112,  -96, 2},
+  { -96, -112,  -96, 1},
+  { -80, -368,   48, 1},
+  {  96, -368,   48, 2},
+  { -32,  -64,  160, 0},
+  { 112,  -16,  304, 0},
+  { -96,  -16,  304, 0},
+  { -96, -224,  224, 1},
+  {  80, -224,  224, 2},
+  { -96, -224, -288, 2},
+  {  80, -224, -288, 1},
+  {-144,    0,  224, 1},
+  { 176,    0,  224, 2},
+  {-112,  -32,  448, 0},
+  { 144,  -32,  448, 0},
+  {-224, -176,  576, 0},
+  { 224, -176,  576, 0},
+  {   0,   16,  336, 0},
+  { -96,  -64,  400, 0},
+  { 128,  -64,  400, 0},
+  {-160, -672, -688, 0},
+  { 160, -672, -688, 0},
+  {-112,  -32,  448, 0},
+  { 144,  -32,  448, 0},
+  {   0,  -96,  304, 0},
+  { 112,  -16,  304, 0},
+  { -96,  -16,  304, 0},
+};
+
+/** For every car model StartFrame (3D object selection), gives a pair of
+ * {index of the first glare in `car_glare`, amount of glare dots to draw}.
+ */
+extern ubyte master_glare[][2];
+
 /** Callback for setting height of shadow corners.
  */
 s32 (*get_flat_surface_height_below_point_cb)(struct SortMapPoint *p_cor) = NULL;
@@ -85,8 +135,41 @@ s32 (*get_flat_surface_height_below_point_cb)(struct SortMapPoint *p_cor) = NULL
 
 void do_car_glare(struct Thing *p_car)
 {
+#if 0
     asm volatile ("call ASM_do_car_glare\n"
         : : "a" (p_car));
+    return;
+#endif
+    struct M31 vec_src, vec_dst;
+    struct M33 *p_matx;
+    ushort glare_beg, glare_num, i;
+    short dx, dy, dz;
+
+    if (p_car->StartFrame > 31)
+        return;
+
+    glare_beg = master_glare[p_car->StartFrame][0];
+    glare_num = master_glare[p_car->StartFrame][1];
+    if (glare_num == 0)
+        return;
+
+    for (i = glare_beg; i < glare_beg + glare_num; i++)
+    {
+        struct CarGlare *p_glare;
+
+        p_glare = &car_glare[i];
+        vec_src.R[0] = 2 * p_glare->Dix;
+        vec_src.R[1] = -2 * p_glare->Diy;
+        vec_src.R[2] = -2 * p_glare->Diz;
+
+        p_matx = &local_mats[p_car->U.UVehicle.MatrixIndex];
+        matrix_transform(&vec_dst, p_matx, &vec_src);
+
+        dx = (p_car->X >> 8) + (vec_dst.R[0] >> 15);
+        dy = (p_car->Y >> 5) + (vec_dst.R[1] >> 15);
+        dz = (p_car->Z >> 8) + (vec_dst.R[2] >> 15);
+        build_glare(dx, dy, dz, 0x30);
+    }
 }
 
 void process_child_object(struct Thing *p_vehicle)

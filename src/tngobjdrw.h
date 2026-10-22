@@ -29,6 +29,15 @@ extern "C" {
 
 struct Thing;
 
+/** Glare source used to build the glare/shine effect on a car model.
+ */
+struct CarGlare { // sizeof=7
+    short Dix;
+    short Diy;
+    short Diz;
+    ubyte Flag;
+};
+
 #pragma pack()
 
 /** Array for mapping person SubTypes to multicolor shadow packs.
